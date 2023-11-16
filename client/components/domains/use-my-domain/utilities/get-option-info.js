@@ -4,6 +4,7 @@ import page from 'page';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import { getTransferCostText } from './get-transfer-cost-text';
 import {
 	getMappingFreeText,
 	getTransferFreeText,
@@ -70,6 +71,15 @@ export function getOptionInfo( {
 		domain,
 		isSignupStep,
 		siteIsOnPaidPlan,
+		availability,
+	} );
+
+	const transferCostText = getTransferCostText( {
+		cart,
+		currencyCode,
+		domain,
+		productsList,
+		availability,
 	} );
 
 	const transferSalePriceText = getTransferSalePriceText( {
@@ -77,10 +87,12 @@ export function getOptionInfo( {
 		currencyCode,
 		domain,
 		productsList,
+		availability,
 	} );
 
 	const transferPricing = {
-		isFree: isFreeTransfer( { cart, domain } ),
+		isFree: isFreeTransfer( { cart, domain, availability } ),
+		cost: transferCostText,
 		sale: transferSalePriceText,
 		text: transferFreeText,
 	};
@@ -93,12 +105,22 @@ export function getOptionInfo( {
 	switch ( availability.status ) {
 		case domainAvailability.TRANSFERRABLE:
 		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-			transferContent = {
-				...optionInfo.transferSupported,
-				pricing: transferPricing,
-				onSelect: onTransfer,
-				primary: true,
-			};
+		case domainAvailability.TRANSFERRABLE_PREMIUM:
+			if ( availability?.is_price_limit_exceeded === true ) {
+				transferContent = {
+					...optionInfo.transferNotSupported,
+					topText: __(
+						"We're sorry but we can't transfer your domain as it is a high tier premium name that we don't support."
+					),
+				};
+			} else {
+				transferContent = {
+					...optionInfo.transferSupported,
+					pricing: transferPricing,
+					onSelect: onTransfer,
+					primary: true,
+				};
+			}
 			break;
 		case domainAvailability.TLD_NOT_SUPPORTED:
 			transferContent = {
@@ -109,7 +131,7 @@ export function getOptionInfo( {
 						__(
 							"We don't support transfers for domains ending with <strong>.%s</strong>, but you can connect it instead."
 						),
-						getTld( domain )
+						availability.tld || getTld( domain )
 					),
 					{ strong: createElement( 'strong' ) }
 				),

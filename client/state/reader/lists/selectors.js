@@ -7,7 +7,6 @@ import 'calypso/state/reader/init';
 /**
  * Returns true if currently requesting Reader lists, or
  * false otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @returns {boolean}        Whether lists are being requested
  */
@@ -17,7 +16,6 @@ export function isRequestingList( state ) {
 
 /**
  * Returns true if currently creating a Reader list.
- *
  * @param  {Object}  state  Global state tree
  * @returns {boolean}        Whether lists are being requested
  */
@@ -27,7 +25,6 @@ export function isCreatingList( state ) {
 
 /**
  * Returns true if currently updating a Reader list.
- *
  * @param  {Object}  state  Global state tree
  * @returns {boolean}        Whether lists are being requested
  */
@@ -37,7 +34,6 @@ export function isUpdatingList( state ) {
 
 /**
  * Returns the user's subscribed Reader lists.
- *
  * @param  {Object}  state  Global state tree
  * @returns {Array}         Reader lists
  */
@@ -61,7 +57,6 @@ export const getSubscribedLists = createSelector(
 
 /**
  * Returns information about a single Reader list.
- *
  * @param  {Object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
@@ -116,7 +111,6 @@ export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId
 
 /**
  * Check if the user is subscribed to the specified list
- *
  * @param  {Object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
@@ -132,7 +126,6 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 
 /**
  * Check if the requested list is missing (i.e. API 404ed when requesting it)
- *
  * @param  {Object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug

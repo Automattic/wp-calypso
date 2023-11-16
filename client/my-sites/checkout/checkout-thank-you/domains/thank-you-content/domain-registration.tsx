@@ -14,12 +14,19 @@ import type {
 
 const domainRegistrationThankYouProps = ( {
 	domain,
+	domains,
 	email,
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
+	shouldDisplayVerifyEmailStep,
+	onResendEmailVerificationClick,
 	selectedSiteSlug,
 	siteIntent,
 	launchpadScreen,
+	redirectTo,
+	isDomainOnly,
+	selectedSiteId,
+	isActivityPubEnabled,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -38,8 +45,25 @@ const domainRegistrationThankYouProps = ( {
 		launchpadScreen as string,
 		selectedSiteSlug,
 		'REGISTRATION',
+		redirectTo,
 		true
 	);
+
+	const confirmEmailStep = {
+		stepKey: 'domain_registration_whats_next_confirm-email',
+		stepTitle: translate( 'Confirm email address' ),
+		stepDescription:
+			domains.length > 1
+				? translate( 'You must confirm your email address to avoid your domains being suspended.' )
+				: translate(
+						'You must confirm your email address to avoid your domain getting suspended.'
+				  ),
+		stepCta: (
+			<FullWidthButton onClick={ onResendEmailVerificationClick } busy={ false } disabled={ false }>
+				{ translate( 'Resend email' ) }
+			</FullWidthButton>
+		),
+	};
 
 	const createSiteStep = {
 		stepKey: 'domain_registration_whats_next_create-site',
@@ -47,7 +71,7 @@ const domainRegistrationThankYouProps = ( {
 		stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
 		stepCta: (
 			<FullWidthButton
-				href={ createSiteFromDomainOnly( domain, null ) }
+				href={ createSiteFromDomainOnly( domain, selectedSiteId ) }
 				busy={ false }
 				disabled={ false }
 			>
@@ -75,11 +99,29 @@ const domainRegistrationThankYouProps = ( {
 		),
 	};
 
+	const fediverseSettingsStep = {
+		stepKey: 'domain_registration_whats_next_fediverse_settings',
+		stepTitle: translate( 'Connect to the fediverse' ),
+		stepDescription: translate(
+			'You’ve unlocked a durable, portable social networking presence with your domain!'
+		),
+		stepCta: (
+			<FullWidthButton
+				href={ `/settings/discussion/${ selectedSiteSlug }` }
+				busy={ false }
+				disabled={ false }
+			>
+				{ translate( 'Fediverse settings' ) }
+			</FullWidthButton>
+		),
+	};
+
 	const returnProps: DomainThankYouProps = {
 		thankYouNotice: {
-			noticeTitle: translate(
-				'It may take up to 30 minutes for your domain to start working properly.'
-			),
+			noticeTitle:
+				domains.length > 1
+					? translate( 'It may take up to 30 minutes for your domains to start working properly.' )
+					: translate( 'It may take up to 30 minutes for your domain to start working properly.' ),
 			noticeIconCustom: <Icon icon={ info } size={ 24 } />,
 		},
 		sections: [
@@ -89,9 +131,10 @@ const domainRegistrationThankYouProps = ( {
 				nextSteps: launchpadNextSteps
 					? [ launchpadNextSteps ]
 					: [
+							...( shouldDisplayVerifyEmailStep ? [ confirmEmailStep ] : [] ),
 							...( professionalEmail ? [ professionalEmail ] : [] ),
-							...( ! selectedSiteSlug ? [ createSiteStep ] : [] ),
-							viewDomainsStep,
+							...( isDomainOnly && selectedSiteId ? [ createSiteStep ] : [] ),
+							...( isActivityPubEnabled ? [ fediverseSettingsStep ] : [ viewDomainsStep ] ),
 					  ],
 			},
 		],
@@ -102,15 +145,15 @@ const domainRegistrationThankYouProps = ( {
 			height: 'auto',
 		},
 		thankYouTitle: translate( 'All ready to go!' ),
-		thankYouSubtitle: translate(
-			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
-			{
-				args: {
-					domain,
-				},
-				components: { strong: <strong /> },
-			}
-		),
+		thankYouSubtitle:
+			domains.length > 1
+				? translate( 'Your new domains are being set up.' )
+				: translate( 'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.', {
+						args: {
+							domain,
+						},
+						components: { strong: <strong /> },
+				  } ),
 	};
 	return returnProps;
 };

@@ -1,69 +1,60 @@
 import { Button } from '@automattic/components';
 import { useViewportMatch } from '@wordpress/compose';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import blankCanvasImage from '../assets/images/blank-canvas-cta.svg';
 import './style.scss';
 
-type PatternAssemblerCtaProps = {
-	compact?: boolean;
-	hasPrimaryButton?: boolean;
-	onButtonClick: ( shouldGoToAssemblerStep: boolean ) => void;
-	showEditorFallback?: boolean;
-	showHeading?: boolean;
-	text?: string;
+type PatternAssemblerCtaData = {
+	shouldGoToAssemblerStep: boolean;
+	title: string;
+	subtitle: string | ReactNode;
+	buttonText: string;
 };
 
-const PatternAssemblerCta = ( {
-	compact = false,
-	hasPrimaryButton = true,
-	onButtonClick,
-	showEditorFallback = true,
-	showHeading = true,
-	text: customText,
-}: PatternAssemblerCtaProps ) => {
+type PatternAssemblerCtaProps = {
+	onButtonClick: () => void;
+};
+
+export function usePatternAssemblerCtaData(): PatternAssemblerCtaData {
 	const translate = useTranslate();
 	const isDesktop = useViewportMatch( 'large' );
 
 	const shouldGoToAssemblerStep = isDesktop;
 
-	const handleButtonClick = () => {
-		onButtonClick( shouldGoToAssemblerStep );
+	return {
+		shouldGoToAssemblerStep,
+		title: translate( 'Design your own' ),
+		subtitle: shouldGoToAssemblerStep ? (
+			<ul>
+				<li>{ translate( 'Select patterns to create your homepage layout.' ) }</li>
+				<li>{ translate( 'Style it up with premium colors and font pairings.' ) }</li>
+				<li>{ translate( 'Bring your site to life with your own content.' ) }</li>
+			</ul>
+		) : (
+			translate( 'Jump right into the editor to design your homepage from scratch.' )
+		),
+		buttonText: shouldGoToAssemblerStep
+			? translate( 'Get started' )
+			: translate( 'Open the editor' ),
 	};
+}
 
-	if ( ! shouldGoToAssemblerStep && ! showEditorFallback ) {
-		return null;
-	}
-
-	let text = customText;
-	if ( ! text ) {
-		text = shouldGoToAssemblerStep
-			? translate(
-					'Can’t find something you like? Use our library of styles and patterns to build a homepage.'
-			  )
-			: translate(
-					"Can't find something you like? Jump right into the editor to design your homepage from scratch."
-			  );
-	}
+const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
+	const data = usePatternAssemblerCtaData();
 
 	return (
-		<div className={ classnames( 'pattern-assembler-cta-wrapper', { 'is-compact': compact } ) }>
+		<div className="pattern-assembler-cta-wrapper">
 			<div className="pattern-assembler-cta__image-wrapper">
 				<img className="pattern-assembler-cta__image" src={ blankCanvasImage } alt="Blank Canvas" />
 			</div>
-			{ showHeading && (
-				<h3 className="pattern-assembler-cta__title">{ translate( 'Design your own' ) }</h3>
-			) }
-			<p className="pattern-assembler-cta__subtitle">{ text }</p>
-			<Button
-				className="pattern-assembler-cta__button"
-				onClick={ handleButtonClick }
-				primary={ hasPrimaryButton }
-			>
-				{ shouldGoToAssemblerStep
-					? translate( 'Start designing' )
-					: translate( 'Open the editor' ) }
-			</Button>
+			<div className="pattern-assembler-cta__content">
+				<h3 className="pattern-assembler-cta__title">{ data.title }</h3>
+				<div className="pattern-assembler-cta__subtitle">{ data.subtitle }</div>
+				<Button className="pattern-assembler-cta__button" onClick={ onButtonClick } primary>
+					{ data.buttonText }
+				</Button>
+			</div>
 		</div>
 	);
 };

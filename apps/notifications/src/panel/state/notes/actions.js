@@ -38,7 +38,6 @@ export const likeNote = ( noteId, isLiked ) => ( {
  * the app so that stale data coming in from polling
  * operations don't accidentally change this value to
  * an incorrect state and cause a flash of the approval status.
- *
  * @see approveNote
  * @param {number} noteId
  * @returns {Object} action object
@@ -55,7 +54,6 @@ export const resetLocalApproval = ( noteId ) => ( {
  * the app so that stale data coming in from polling
  * operations don't accidentally change this value to
  * an incorrect state and cause a flash of the like status.
- *
  * @see likeNote
  * @param {number} noteId
  * @returns {Object} action object

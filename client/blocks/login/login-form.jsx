@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -21,6 +22,8 @@ import {
 	getSignupUrl,
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
+	canDoMagicLogin,
+	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
@@ -34,6 +37,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'calypso/state/login/actions';
+import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
@@ -43,13 +47,16 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery, isRegularAccount } from 'calypso/state/login/utils';
+import {
+	isPartnerSignupQuery,
+	isPasswordlessAccount,
+	isRegularAccount,
+} from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import Divider from './divider';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
@@ -81,6 +88,10 @@ export class LoginForm extends Component {
 		locale: PropTypes.string,
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
+		hideSignupLink: PropTypes.bool,
+		isSignupExistingAccount: PropTypes.bool,
+		sendMagicLoginLink: PropTypes.func,
+		isSendingEmail: PropTypes.bool,
 	};
 
 	state = {
@@ -91,6 +102,7 @@ export class LoginForm extends Component {
 
 	componentDidMount() {
 		const { disableAutoFocus } = this.props;
+
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
 			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
@@ -181,12 +193,12 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
-
+		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
 		return (
-			! socialAccountIsLinking &&
-			! hasAccountTypeLoaded &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup )
+			isSendingEmail ||
+			( ! socialAccountIsLinking &&
+				! hasAccountTypeLoaded &&
+				! ( this.props.isWoo && ! this.props.isPartnerSignup ) )
 		);
 	}
 
@@ -237,6 +249,10 @@ export class LoginForm extends Component {
 			} );
 
 			return;
+		}
+
+		if ( isPasswordlessAccount( this.props.accountType ) ) {
+			this.props.sendMagicLoginLink?.();
 		}
 
 		this.loginUser();
@@ -308,6 +324,23 @@ export class LoginForm extends Component {
 				</Notice>
 			);
 		}
+	}
+
+	renderLoginFromSignupNotice() {
+		return (
+			<Notice status="is-transparent-info" showDismiss={ false }>
+				{ this.props.translate(
+					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
+					{
+						components: {
+							returnToSignup: (
+								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
+							),
+						},
+					}
+				) }
+			</Notice>
+		);
 	}
 
 	onWooCommerceSocialSuccess = ( ...args ) => {
@@ -544,6 +577,60 @@ export class LoginForm extends Component {
 		);
 	}
 
+	recordSignUpLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-form' } );
+	};
+
+	getSignupUrl() {
+		const { oauth2Client, currentQuery, currentRoute, pathname, locale } = this.props;
+
+		return this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+	}
+
+	handleMagicLoginClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click', {
+			origin: 'login-form',
+		} );
+		this.props.resetMagicLoginRequestForm();
+	};
+
+	renderMagicLoginLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.wccomFrom,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
+		const loginLink = getLoginLinkPageUrl(
+			this.props.locale,
+			this.props.currentRoute,
+			this.props.currentQuery?.signup_url,
+			this.props.oauth2Client?.id
+		);
+		const { query, usernameOrEmail } = this.props;
+		const emailAddress = usernameOrEmail || query?.email_address || this.state.usernameOrEmail;
+
+		const magicLoginPageLinkWithEmail = addQueryArgs( { email_address: emailAddress }, loginLink );
+
+		return this.props.translate(
+			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
+			{
+				components: {
+					magicLoginLink: (
+						<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
+					),
+				},
+			}
+		);
+	}
+
 	render() {
 		const {
 			accountType,
@@ -554,14 +641,14 @@ export class LoginForm extends Component {
 			isP2Login,
 			isJetpackWooDnaFlow,
 			wccomFrom,
-			currentRoute,
 			currentQuery,
-			pathname,
-			locale,
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
 			isWooCoreProfilerFlow,
+			hideSignupLink,
+			isSignupExistingAccount,
+			isSendingEmail,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -572,9 +659,7 @@ export class LoginForm extends Component {
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
 
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+		const signupUrl = this.getSignupUrl();
 
 		const socialToS = this.props.translate(
 			// To make any changes to this copy please speak to the legal team
@@ -604,7 +689,7 @@ export class LoginForm extends Component {
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
 				<Fragment>
-					<Divider>{ this.props.translate( 'or' ) }</Divider>
+					<FormDivider />
 					<SocialLoginForm
 						linkingSocialService={
 							this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
@@ -661,6 +746,9 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
+
+						{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
+
 						<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
 						<FormTextInput
@@ -731,7 +819,7 @@ export class LoginForm extends Component {
 							/>
 
 							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
+								<FormInputValidation isError text={ this.renderMagicLoginLink() } />
 							) }
 						</div>
 					</div>
@@ -739,12 +827,12 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
-						<FormsButton primary disabled={ isSubmitButtonDisabled }>
+						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
 						</FormsButton>
 					</div>
 
-					{ isOauthLogin && (
+					{ ! hideSignupLink && isOauthLogin && (
 						<div className={ classNames( 'login__form-signup-link' ) }>
 							{ this.props.translate(
 								'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
@@ -760,7 +848,7 @@ export class LoginForm extends Component {
 
 				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
 					<Fragment>
-						<Divider>{ this.props.translate( 'or' ) }</Divider>
+						<FormDivider />
 						<SocialLoginForm
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
@@ -812,8 +900,8 @@ export default connect(
 			socialAccountLinkService: getSocialAccountLinkService( state ),
 			userEmail:
 				props.userEmail ||
-				getInitialQueryArguments( state ).email_address ||
-				getCurrentQueryArguments( state ).email_address,
+				getInitialQueryArguments( state )?.email_address ||
+				getCurrentQueryArguments( state )?.email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			currentQuery: getCurrentQueryArguments( state ),
 		};
@@ -825,5 +913,6 @@ export default connect(
 		loginUser,
 		recordTracksEvent,
 		resetAuthAccountType,
+		resetMagicLoginRequestForm,
 	}
 )( localize( LoginForm ) );

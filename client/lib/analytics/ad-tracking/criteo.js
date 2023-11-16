@@ -9,9 +9,8 @@ import './setup';
 
 /**
  * Records an event in Criteo
- *
  * @param {string} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
- * @param {Object} eventProps - Additional details about the event such as `{ item: '1' }`
+ * @param {Record<string, any>} eventProps - Additional details about the event such as `{ item: '1' }`
  * @returns {void}
  */
 export async function recordInCriteo( eventName, eventProps ) {
@@ -62,7 +61,6 @@ export function recordPlansViewInCriteo() {
 
 /**
  * Records that a user viewed the checkout page
- *
  * @param {Object} cart - cart as `ResponseCart` object
  * @returns {void}
  */
@@ -89,7 +87,6 @@ export function recordViewCheckoutInCriteo( cart ) {
 
 /**
  * Converts the products in a cart to the format Criteo expects for its `items` property
- *
  * @param {Object} cart - cart as `ResponseCart` object
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
@@ -106,7 +103,6 @@ export function cartToCriteoItems( cart ) {
 /**
  * Returns the site type value that Criteo expects
  * Note: this logic was provided by Criteo and should not be modified
- *
  * @returns {string} 't', 'm', or 'd' for tablet, mobile, or desktop
  */
 function criteoSiteType() {

@@ -7,6 +7,14 @@
 	width: 100%;
 }
 
+.signup__step.is-domains {
+	.action-buttons.step-wrapper__navigation {
+		@media ( max-width: $break-mobile ) {
+			display: none;
+		}
+	}
+}
+
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
 
@@ -61,6 +69,174 @@
 			border-radius: 0;
 		}
 	}
+
+
+	.domains__domain-cart-foldable-card {
+		position: fixed;
+		width: 100%;
+		bottom: 0;
+		left: 0;
+		z-index: 99;
+		padding-bottom: 6px !important;
+		box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.12);
+
+		.foldable-card__main {
+			max-width: 100%;
+			display: block;
+			width: 100%;
+			margin: 0;
+
+			.foldable-card__action {
+				right: auto;
+				left: 0;
+			}
+			.domains__domain-cart-title {
+				margin-left: 24px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			.domains__domain-cart-total {
+				display: flex;
+				gap: 8px;
+				align-items: center;
+
+				.domains__domain-cart-total-items {
+					font-family: "SF Pro Display", $sans;
+					font-size: $font-body-extra-small;
+					font-weight: 400;
+					line-height: 20px;
+					letter-spacing: 0;
+					text-align: left;
+				}
+				.domains__domain-cart-total-price {
+					font-family: "SF Pro Display", $sans;
+					font-size: $font-body;
+					font-weight: 500;
+					line-height: 24px;
+					letter-spacing: -0.32px;
+					text-align: left;
+
+				}
+			}
+		}
+		.foldable-card__content {
+			max-height: 70vh;
+			border-top: 0;
+			padding: 0 16px;
+			overflow-x: auto;
+			.domains__domain-cart {
+				border-top: 1px solid var(--color-neutral-5);
+			}
+			.domains__domain-cart-rows {
+				padding-top: 6px;
+			}
+		}
+	}
+
+	.domains__domain-cart {
+		border-bottom: 0 !important;
+
+		.domains__domain-cart-title {
+			font-size: $font-body;
+			color: var(--studio-gray-90);
+			margin-bottom: 10px;
+		}
+
+		.domains__domain-cart-rows {
+			.domains__domain-cart-row {
+				padding-bottom: 6px;
+				padding-top: 6px;
+			}
+
+			.domains__domain-cart-row > div {
+				display: flex;
+				justify-content: space-between;
+			}
+			.domains__domain-cart-row > div:nth-child(2) {
+				display: block;
+			}
+
+			.savings-message {
+				color: var(--studio-green);
+				display: flex;
+				align-items: center;
+				font-size: 0.75rem;
+				margin-top: 10px;
+			}
+
+			.domains__domain-cart-domain {
+				display: flex;
+				align-items: center;
+				color: var(--studio-gray-50);
+				font-size: $font-body-small;
+
+				span {
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+				}
+
+				&.limit-width {
+					width: 35%;
+				}
+			}
+
+			.domains__domain-cart-remove {
+				color: var(--studio-gray-50);
+				font-size: $font-body-extra-small;
+				min-width: 50px;
+				margin-right: 10px;
+				text-align: left;
+			}
+
+			.domain-product-price__price {
+				display: flex;
+				align-items: center;
+				font-size: 0.875rem;
+
+				del {
+					font-size: 0.75rem;
+					margin-right: 7px;
+					margin-left: 7px;
+				}
+			}
+
+			.domains__price-free {
+				color: var(--studio-green-50);
+			}
+
+		}
+
+		.domains__domain-cart-total {
+			border-top: 1px solid;
+			border-top-color: var(--studio-gray-5);
+			padding-top: 28px;
+			margin-bottom: 28px;
+			margin-top: 12px;
+			color: var(--studio-gray-60);
+			font-size: $font-body-small;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.domains__domain-cart-continue {
+			width: 100%;
+			height: 40px;
+			padding-left: 24px;
+			padding-right: 24px;
+			border-radius: 4px;
+		}
+
+		.domains__domain-cart-choose-later {
+			width: 100%;
+			height: 40px;
+			color: var(--studio-gray-100);
+			text-decoration: underline;
+			margin-top: 5px;
+		}
+	}
 }
 
 /**
@@ -70,13 +246,45 @@
 body.is-section-signup.is-white-signup {
 	$light-white: #f3f4f5;
 
+	#primary {
+		.signup__step.is-domains,
+		.signup__step.is-domain-only,
+		.signup__step.is-mailbox-domain {
+			@media (max-width: $break-mobile) {
+				.step-wrapper__header {
+					margin-left: 0;
+					margin-right: 0;
+					margin-top: 36px;
+				}
+
+				.formatted-header__title {
+					padding-left: 0;
+					padding-right: 0;
+					font-size: rem(32px);
+				}
+
+				.formatted-header__subtitle {
+					padding-left: 0;
+					padding-right: 0;
+					margin-top: 8px;
+					font-size: rem(16px);
+				}
+			}
+		}
+	}
+
 	.domains__step-content {
 		display: flex;
 
 		.search-component.is-open {
 			border: 1px solid #a7aaad;
 			border-radius: 4px;
-			height: 48px;
+			box-sizing: border-box;
+			height: 40px;
+
+			@include break-mobile {
+				height: 48px;
+			}
 		}
 
 		.search-component.is-open.has-focus {
@@ -95,14 +303,9 @@ body.is-section-signup.is-white-signup {
 			display: none;
 
 			@include break-large {
-				width: 30vw;
 				margin-top: 0;
 				flex-direction: column;
 				display: flex;
-			}
-
-			@include break-wide {
-				width: 350px;
 			}
 		}
 
@@ -138,16 +341,23 @@ body.is-section-signup.is-white-signup {
 			margin: 0;
 
 			@include break-small {
+				width: 290px;
 				margin: 0 20px;
 			}
 
 			@include break-large {
-				margin: 0 20px 0 40px;
+				margin: 0 0 0 40px;
 				padding: 40px 0;
 			}
 
-			@include break-wide {
-				margin: 0 0 0 80px;
+			@include break-huge {
+				margin: 0 0 0 60px;
+			}
+
+			&.fade-out {
+				opacity: 0;
+				visibility: hidden;
+				transition: all 0.4s ease-out;
 			}
 		}
 
@@ -166,16 +376,10 @@ body.is-section-signup.is-white-signup {
 		.register-domain-step__search-card {
 			background: var(--color-surface);
 			box-shadow: none;
-			border-radius: 4px;
 			margin: 20px 0 0;
-			border: 1px solid #a7aaad;
 
 			@include break-small {
 				margin: 20px 20px 0;
-			}
-
-			.search-component.is-open {
-				border: none;
 			}
 
 			@include break-large {
@@ -219,7 +423,11 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.search-filters__dropdown-filters {
-		height: 48px;
+		height: 40px;
+
+		@include break-mobile {
+			height: 48px;
+		}
 
 		&.search-filters__dropdown-filters--is-open {
 			box-shadow: none;
@@ -243,14 +451,11 @@ body.is-section-signup.is-white-signup {
 			background: $accent-blue;
 			border-color: $accent-blue;
 		}
-		.popover__arrow {
-			display: none;
-		}
 	}
 	.signup__step.is-domain-only,
 	.signup__step.is-domains,
 	.signup__step.is-mailbox-domain {
-		padding: 0 20px;
+		padding: 0 12px;
 	}
 }
 

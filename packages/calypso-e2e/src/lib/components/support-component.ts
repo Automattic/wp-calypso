@@ -92,7 +92,13 @@ export class SupportComponent {
 			.getByRole( 'listitem' )
 			.nth( index );
 
+		await locator.waitFor();
 		await locator.click();
+
+		if ( category === 'Docs' ) {
+			// Sometimes, the network call for the help doc can be slow.
+			await this.page.waitForResponse( /\/help\/article/, { timeout: 15 * 1000 } );
+		}
 	}
 
 	/**
@@ -101,7 +107,7 @@ export class SupportComponent {
 	 * @returns {string} Title of the article.
 	 */
 	async getOpenArticleTitle(): Promise< string > {
-		const locator = this.anchor.getByRole( 'article' ).getByRole( 'heading' ).nth( 0 );
+		const locator = this.anchor.getByRole( 'article' ).getByRole( 'heading' ).first();
 
 		await locator.waitFor();
 		return await locator.innerText();
@@ -112,6 +118,7 @@ export class SupportComponent {
 	 */
 	async goBack(): Promise< void > {
 		const locator = this.anchor.getByRole( 'button', { name: 'Back', exact: true } );
+
 		await locator.waitFor();
 		await locator.click();
 	}
@@ -124,7 +131,23 @@ export class SupportComponent {
 	 * @param {string} text Search keyword to be entered into the search field.
 	 */
 	async search( text: string ): Promise< void > {
-		await this.anchor.getByPlaceholder( 'Search for help' ).fill( text );
+		await Promise.all( [
+			// If you don't wait for the request specific to your search, you can actually
+			// go fast enough to act on default or old results!
+			this.page.waitForResponse(
+				( response ) => {
+					return (
+						response.request().url().includes( '/help/search/wpcom' ) &&
+						response
+							.request()
+							.url()
+							.includes( `query=${ encodeURIComponent( text ) }` )
+					);
+				},
+				{ timeout: 15 * 1000 }
+			),
+			this.anchor.getByPlaceholder( 'Search for help' ).fill( text ),
+		] );
 
 		// Wait for the search results to populate.
 		// For any query (valid or invalid), the Recommended resources will populate,

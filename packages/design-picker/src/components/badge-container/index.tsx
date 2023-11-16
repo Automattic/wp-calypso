@@ -1,4 +1,4 @@
-import PremiumBadge from '../premium-badge';
+import { PremiumBadge } from '@automattic/components';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';

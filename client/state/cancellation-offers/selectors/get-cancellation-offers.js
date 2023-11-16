@@ -1,6 +1,5 @@
 /**
  * Get Cancellation offers for the given purchase ID
- *
  * @param state
  * @param purchaseId
  * @returns array

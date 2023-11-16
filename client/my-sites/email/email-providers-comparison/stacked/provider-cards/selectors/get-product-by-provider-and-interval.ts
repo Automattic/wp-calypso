@@ -27,7 +27,7 @@ const getProductSlugForProviderAndInterval = (
 			[ IntervalLength.MONTHLY ]: GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 			[ IntervalLength.ANNUALLY ]: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 		},
-	}[ provider ][ intervalLength ] );
+	} )[ provider ][ intervalLength ];
 
 /**
  * Retrieves the product for the specified provider and interval.

@@ -16,7 +16,6 @@ const allowedKeys = [
 	'phone_account',
 	'email',
 	'email_verified',
-	'blaze_credits_enabled',
 	'is_valid_google_apps_country',
 	'user_ip_country_code',
 	'logout_URL',
@@ -32,6 +31,9 @@ const allowedKeys = [
 	'lasagna_jwt',
 	'i18n_empathy_mode',
 	'use_fallback_for_incomplete_languages',
+	'is_google_domain_owner',
+	'had_hosting_trial',
+	'calypso_multi_domains_experiment',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];

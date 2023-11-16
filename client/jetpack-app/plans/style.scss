@@ -1,0 +1,43 @@
+@import "calypso/my-sites/plans-grid/media-queries";
+@import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/fonts";
+
+body {
+	background-color: var(--studio-white);
+}
+
+.jetpack-app__plans {
+	@include plan-features-layout-switcher;
+
+	.jetpack-app__plans-header {
+		display: block;
+		overflow: auto;
+
+		.formatted-header__title,
+		.formatted-header__subtitle {
+			max-width: unset;
+		}
+
+		h1 {
+			font-family: $brand-serif;
+			font-size: $font-headline-small;
+			margin-bottom: $grid-unit-20;
+		}
+
+		p {
+			font-size: $font-body;
+			color: var(--color-text-subtle);
+			text-align: center;
+			padding: 0 $grid-unit-20;
+			margin-bottom: 0;
+		}
+	}
+
+	.jetpack-app__plans-loading {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+	}
+}

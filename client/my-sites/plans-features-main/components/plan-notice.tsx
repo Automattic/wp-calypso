@@ -7,8 +7,8 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
+import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
+import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -16,10 +16,10 @@ import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sit
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 
 export type PlanNoticeProps = {
-	visiblePlans: PlanSlug[];
-	isInSignup: boolean;
 	siteId: number;
-	discountInformation: {
+	visiblePlans: PlanSlug[];
+	isInSignup?: boolean;
+	discountInformation?: {
 		withDiscount: string;
 		discountEndDate: Date;
 	};
@@ -42,19 +42,16 @@ export type PlanNoticeTypes =
 	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 
 function useResolveNoticeType(
-	{
-		siteId,
-		isInSignup,
-		visiblePlans = [],
-		discountInformation: { withDiscount, discountEndDate },
-	}: PlanNoticeProps,
+	{ siteId, isInSignup, visiblePlans = [], discountInformation }: PlanNoticeProps,
 	isNoticeDismissed: boolean
 ): PlanNoticeTypes {
 	const canUserPurchasePlan = useSelector(
 		( state ) =>
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 	);
-	const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
+	const activeDiscount =
+		discountInformation &&
+		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
@@ -81,17 +78,15 @@ function useResolveNoticeType(
 }
 
 export default function PlanNotice( props: PlanNoticeProps ) {
-	const {
-		siteId,
-		visiblePlans,
-		discountInformation: { withDiscount, discountEndDate },
-	} = props;
+	const { siteId, visiblePlans, discountInformation } = props;
 	const translate = useTranslate();
 	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
 	const noticeType = useResolveNoticeType( props, isNoticeDismissed );
 	const handleDismissNotice = () => setIsNoticeDismissed( true );
-	let activeDiscount = getDiscountByName( withDiscount, discountEndDate );
-	const creditsValue = useCalculateMaxPlanUpgradeCredit( siteId, visiblePlans );
+	let activeDiscount =
+		discountInformation &&
+		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
+	const creditsValue = useCalculateMaxPlanUpgradeCredit( { siteId, plans: visiblePlans } );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
 	switch ( noticeType ) {
@@ -153,7 +148,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 								a: (
 									<a
 										href={ localizeUrl(
-											'https://wordpress.com/support/manage-purchases/#upgrade-credit'
+											'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
 										) }
 										className="get-apps__desktop-link"
 									/>

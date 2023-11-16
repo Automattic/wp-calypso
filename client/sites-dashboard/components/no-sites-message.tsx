@@ -1,36 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import EmptyContent from 'calypso/components/empty-content';
-
-const NoSitesLayout = styled( EmptyContent )`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-
-	${ ( { illustration } ) =>
-		! illustration && {
-			marginBlockStart: '10%',
-		} }
-
-	.empty-content__illustration {
-		margin-block-end: 30px;
-	}
-`;
-
-const SecondaryText = styled.p`
-	max-width: 550px;
-	font-size: 14px;
-	margin-block-end: 0px;
-`;
-
-const Title = styled.div`
-	font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
-	font-size: 32px;
-	margin-block-end: 20px;
-`;
+import NoSitesMessageLayout from 'calypso/components/empty-content/no-sites-message';
 
 type SitesContainerProps = {
 	status: string;
@@ -50,115 +21,99 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 
 	if ( status === 'public' ) {
 		return (
-			<NoSitesLayout
-				title={ <Title> { __( "You haven't launched a site" ) } </Title> }
-				line={
-					<SecondaryText>
-						{ createInterpolateElement(
-							__(
-								'Our <a>support center</a> and team are here to help you as you work your way towards launch.'
-							),
-							{
-								a: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/support/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							}
-						) }
-					</SecondaryText>
-				}
-				illustration=""
+			<NoSitesMessageLayout
+				title={ __( "You haven't launched a site" ) }
+				line={ createInterpolateElement(
+					__(
+						'Our <a>support center</a> and team are here to help you as you work your way towards launch.'
+					),
+					{
+						a: (
+							<a
+								href={ localizeUrl( 'https://wordpress.com/support/' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					}
+				) }
+				illustration={ false }
 			/>
 		);
 	}
 
 	if ( status === 'private' ) {
 		return (
-			<NoSitesLayout
-				title={ <Title> { __( 'You have no private sites' ) } </Title> }
-				line={
-					<SecondaryText>
-						{ createInterpolateElement(
-							__(
-								"Private sites aren't accessible to the world. Read more about them <a>here</a>."
-							),
-							{
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/settings/privacy-settings/'
-										) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							}
-						) }
-					</SecondaryText>
-				}
-				illustration=""
+			<NoSitesMessageLayout
+				title={ __( 'You have no private sites' ) }
+				line={ createInterpolateElement(
+					__( "Private sites aren't accessible to the world. Read more about them <a>here</a>." ),
+					{
+						a: (
+							<a
+								href={ localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					}
+				) }
+				illustration={ false }
 			/>
 		);
 	}
 
 	if ( status === 'coming-soon' ) {
 		return (
-			<NoSitesLayout
-				title={ <Title> { __( 'You have no coming soon sites' ) } </Title> }
-				line={
-					<SecondaryText>
-						{ createInterpolateElement(
-							__(
-								'Coming soon sites will display a landing page letting people know that a site is being built. Read more about them <a>here</a>.'
-							),
-							{
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/settings/privacy-settings/'
-										) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							}
-						) }
-					</SecondaryText>
-				}
-				illustration=""
+			<NoSitesMessageLayout
+				title={ __( 'You have no coming soon sites' ) }
+				line={ createInterpolateElement(
+					__(
+						'Coming soon sites will display a landing page letting people know that a site is being built. Read more about them <a>here</a>.'
+					),
+					{
+						a: (
+							<a
+								href={ localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					}
+				) }
+				illustration={ false }
 			/>
 		);
 	}
 
 	if ( status === 'redirect' ) {
 		return (
-			<NoSitesLayout
-				title={ <Title> { __( 'You have no redirected sites' ) } </Title> }
-				line={
-					<SecondaryText>
-						{ createInterpolateElement(
-							__(
-								'Redirected sites send a visitor directly to the mapped domain. Read more about them <a>here</a>.'
-							),
-							{
-								a: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/support/site-redirect/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							}
-						) }
-					</SecondaryText>
-				}
-				illustration=""
+			<NoSitesMessageLayout
+				title={ __( 'You have no redirected sites' ) }
+				line={ createInterpolateElement(
+					__(
+						'Redirected sites send a visitor directly to the mapped domain. Read more about them <a>here</a>.'
+					),
+					{
+						a: (
+							<a
+								href={ localizeUrl( 'https://wordpress.com/support/site-redirect/' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					}
+				) }
+				illustration={ false }
 			/>
 		);
 	}
 
-	return null;
+	return (
+		<NoSitesMessageLayout
+			title={ __( 'Create your first site' ) }
+			action={ __( 'Create your first site' ) }
+			actionURL="/start?source=sites-dashboard&ref=calypso-nosites"
+		/>
+	);
 };

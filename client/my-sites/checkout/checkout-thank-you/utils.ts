@@ -5,6 +5,9 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	isDomainTransfer,
+	isDomainMapping,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import JetpackBackupPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-backup.svg';
 import JetpackBoostPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-boost.svg';
@@ -13,6 +16,7 @@ import JetpackSocialPluginImage from 'calypso/assets/images/jetpack/jetpack-plug
 import JetpackVideopressPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-videopress.svg';
 import JetpackPluginImage from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 const buildKeyValuePairByProductSlugs = (
 	productSlugs: ReadonlyArray< string >,
@@ -86,4 +90,17 @@ export function getDomainManagementUrl(
 	domain: string | undefined
 ): string {
 	return domain ? domainManagementEdit( slug, domain ) : domainManagementList( slug );
+}
+
+export function isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
+	return purchases?.length > 0 && purchases?.every( isDomainTransfer );
+}
+
+export function isDomainOnly( purchases: ReceiptPurchase[] ): boolean {
+	return (
+		purchases?.length > 0 &&
+		purchases?.every(
+			( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
+		)
+	);
 }

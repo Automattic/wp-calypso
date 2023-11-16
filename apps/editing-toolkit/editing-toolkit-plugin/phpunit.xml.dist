@@ -1,4 +1,6 @@
+<?xml version="1.0"?>
 <phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	bootstrap="phpunit/bootstrap.php"
 	backupGlobals="false"
 	colors="true"
@@ -6,9 +8,10 @@
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	>
-    <php>
-        <const name="WP_TESTS_MULTISITE" value="1" />
-    </php>
+	<php>
+		<env name="WORDPRESS_TABLE_PREFIX" value="wptests_"/>
+		<const name="WP_TESTS_MULTISITE" value="1"/>
+	</php>
 	<testsuites>
 		<testsuite name="default">
 			<directory suffix="-test.php">./phpunit/</directory>
@@ -18,9 +21,6 @@
 		</testsuite>
 		<testsuite name="help-center">
 			<directory suffix="-test.php">./help-center/test/</directory>
-		</testsuite>
-		<testsuite name="tutorials">
-			<directory suffix="-test.php">./tutorials/test/</directory>
 		</testsuite>
 		<testsuite name="wpcom-global-styles">
 			<directory suffix="-test.php">./wpcom-global-styles/test/</directory>

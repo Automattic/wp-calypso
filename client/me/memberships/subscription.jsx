@@ -7,11 +7,11 @@ import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import MaterialIcon from 'calypso/components/material-icon';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
@@ -77,7 +77,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 				title={ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
 			/>
 			<QueryMembershipsSubscriptions />
-			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 			<HeaderCake backHref={ purchasesRoot }>
 				{ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
 			</HeaderCake>

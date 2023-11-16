@@ -6,7 +6,6 @@ const debug = debugFactory( 'wpcom:media' );
 
 /**
  * Build a formData object to be sent in a POST request
- *
  * @param  {Array|File} files - array of files
  * @returns {Array} formData array
  */
@@ -56,7 +55,6 @@ function buildFormData( files ) {
 
 /**
  * Media methods
- *
  * @param {string} id - media id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
@@ -78,7 +76,6 @@ export default function Media( id, sid, wpcom ) {
 
 /**
  * Get media
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -91,7 +88,6 @@ Media.prototype.get = function ( query = {}, fn ) {
 
 /**
  * Update media
- *
  * @param {Object} [query] - query object parameter
  * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
@@ -104,7 +100,6 @@ Media.prototype.update = function ( query, body, fn ) {
 
 /**
  * Edit media
- *
  * @param {Object} [query] - query object parameter
  * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
@@ -135,7 +130,6 @@ Media.prototype.edit = function ( query, body, fn ) {
 
 /**
  * Add media file
- *
  * @param {Object} [query] - query object parameter
  * @param {string | Object | Array} files - files to add
  * @param {Function} fn - callback function
@@ -173,7 +167,6 @@ Media.prototype.addFiles = function ( query, files, fn ) {
 
 /**
  * Filters an array to only return files that can use VideoPress for upload.
- *
  * @param {Array} files An array of file objects
  * @returns {Array}
  */
@@ -183,7 +176,6 @@ Media.prototype.filterFilesUploadableOnVideoPress = function ( files ) {
 
 /**
  * Checks whether a media file can use VideoPress for upload.
- *
  * @param {Object} file A file object
  * @returns {boolean}
  */
@@ -193,7 +185,6 @@ Media.prototype.fileCanBeUploadedOnVideoPress = function ( file ) {
 
 /**
  * Add media files from URL
- *
  * @param {Object} [query] - query object parameter
  * @param {string | Array | Object} media - files to add
  * @param {Function} fn - callback function
@@ -250,7 +241,6 @@ Media.prototype.addUrls = function ( query, media, fn ) {
 
 /**
  * Delete media
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler

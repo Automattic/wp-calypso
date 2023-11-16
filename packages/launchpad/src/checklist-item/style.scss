@@ -2,8 +2,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
-.checklist-item__task-content {
-	align-items: flex-start;
+.checklist-item__task-content.components-button {
+	align-items: center;
 	background-color: transparent;
 	border-bottom: 1px solid var(--studio-gray-5);
 	border-left: none;
@@ -11,13 +11,46 @@
 	border-top: none;
 	display: flex;
 	flex-wrap: wrap;
-	padding: 16px;
+	padding: 16px 0;
 	width: 100%;
 	margin: 0;
-	color: var(--color-text);
+	color: var(--color-neutral-100);
+	height: auto;
+	cursor: pointer;
+	font-family: $sans;
+	font-size: $font-body-small;
+	line-height: 22px;
+	outline: 0;
+	overflow: hidden;
+	text-decoration: none;
+
+	&:visited {
+		color: var(--color-neutral-100);
+	}
+
+	&:disabled {
+		opacity: 1;
+		color: var(--color-neutral-20);
+	}
 
 	&.is-placeholder {
 		padding: 16px 0 16px 0;
+	}
+
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
+
+	.badge {
+		margin-left: auto;
+		background-color: var(--studio-blue-5);
+		color: var(--studio-blue-80);
+		font-size: $font-body-extra-small;
+	}
+
+	.checklist-item__chevron {
+		width: auto;
 	}
 }
 
@@ -38,36 +71,36 @@
 	}
 }
 
-.button.checklist-item__task-content:hover:not([disabled]),
-.button.checklist-item__task-content:focus:not([disabled]) {
+.checklist-item__task-content.components-button:hover:not([disabled]),
+.checklist-item__task-content.components-button:focus:not([disabled]) {
 	fill: var(--studio-blue-50);
 	color: var(--studio-blue-50);
 	border-bottom: 1px solid var(--studio-gray-5);
 }
 
-.checklist-item__task-content .badge {
-	margin-left: auto;
-	background-color: var(--studio-blue-5);
-	color: var(--studio-blue-80);
-	font-size: $font-body-extra-small;
-}
-
-.checklist-item__task-content[disabled],
-.checklist-item__task-content[disabled]:focus {
+.checklist-item__task-content.components-button[disabled],
+.checklist-item__task-content.components-button[disabled]:focus {
 	background-color: transparent;
 	pointer-events: none;
 }
 
-.checklist-item__task-content[data-task="verify_email"] {
+.checklist-item__task-content.components-button[data-task="verify_email"] {
 	color: var(--color-text);
 }
 
+.checklist-item__task-content[data-task="set_up_payments"] .badge {
+	background-color: var(--studio-green-5);
+	cursor: default;
+}
+
 .checklist-item__checkmark-container {
-	margin-right: 8px;
+	margin-right: 7px;
 	width: 20px;
+	display: flex;
+	margin-left: 1px;
+	margin-bottom: -2px;
 
 	.checklist-item__checkmark {
-		top: 2px;
 		vertical-align: text-bottom;
 	}
 }
@@ -75,6 +108,8 @@
 // general styles
 .checklist-item__text {
 	font-weight: 600;
+	flex-grow: 1;
+	text-align: left;
 }
 
 .checklist-item__subtext {
@@ -88,7 +123,7 @@
 	a,
 	a:visited {
 		text-decoration: underline;
-		color: var(--color-text);
+		color: var(--color-neutral-100);
 
 		&:hover {
 			color: var(--studio-blue-50);
@@ -96,8 +131,8 @@
 	}
 }
 
-.checklist-item__task-content:hover .checklist-item__subtext {
-	color: var(--color-text);
+.checklist-item__task-content.components-button:hover .checklist-item__subtext {
+	color: var(--color-neutral-100);
 }
 
 .checklist__has-primary-action .checklist-item__task:nth-last-child(2) {
@@ -122,14 +157,18 @@
 .checklist-item__task.completed.disabled,
 .checklist-item__task.completed.enabled {
 	.checklist-item__text {
-		color: var(--studio-gray-50);
+		color: var(--color-neutral-40);
 		font-weight: 400;
-		text-decoration: line-through;
 	}
 
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
-		fill: var(--studio-gray-50);
+		fill: var(--color-neutral-40);
+	}
+	.checklist-item__counter {
+		color: var(--color-neutral-40);
+		font-weight: 400;
+		margin-right: 0;
 	}
 }
 
@@ -151,6 +190,10 @@
 	.badge {
 		background: var(--studio-blue-10);
 	}
+
+	.checklist-item__task-content[data-task="set_up_payments"] .badge {
+		background-color: var(--studio-green-5);
+	}
 }
 
 // pending disabled tasks
@@ -163,24 +206,32 @@
 .checklist-item__chevron {
 	display: flex;
 	line-height: 20px;
-	text-align: left;
 	width: 30px;
-	margin-left: auto;
 }
 
 .gridicon.checklist-item__chevron {
-	top: 0;
+	top: 2px;
 	margin-top: 0;
 }
 
-.checklist-item__checklist-primary-button {
+.checklist-item__counter {
+	margin-right: 1em;
+	font-weight: 600;
+}
+
+.checklist-item__checklist-primary-button.components-button {
 	width: 100%;
 	font-weight: 500;
 	padding: 11px;
 	margin-top: 12px;
 	background-color: var(--color-primary);
 	border-color: var(--color-primary);
+	border-radius: 4px;
 	color: var(--color-text-inverted);
+	justify-content: center;
+	font-size: $font-body-small;
+	height: auto;
+	line-height: 22px;
 
 	&:hover:not([disabled]) {
 		background-color: var(--color-primary-60);
@@ -192,5 +243,12 @@
 		background-color: var(--color-primary-10);
 		border-color: var(--color-primary-10);
 		color: var(--color-text-inverted);
+	}
+
+	&:disabled {
+		opacity: 1;
+		&:hover {
+			color: var(--color-text-inverted);
+		}
 	}
 }

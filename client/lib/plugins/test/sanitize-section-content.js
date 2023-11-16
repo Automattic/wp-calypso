@@ -9,7 +9,6 @@ import {
 } from '../sanitize-section-content';
 /**
  * Attempts to create a DOM node from given HTML
- *
  * @param {string} html expected HTML to create node
  * @returns {Object | null} possible node described by HTML
  */
@@ -115,7 +114,6 @@ const runTests = ( isSSR = false ) => {
 
 	/**
 	 * The following tests have borrowed from the OWASP XSS Cheat Sheet
-	 *
 	 * @see https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
 	 *
 	 * Instead of pulling all of the tests the ones included are a sampling
@@ -219,11 +217,9 @@ const runTests = ( isSSR = false ) => {
 		);
 	} );
 
-	fixtures.forEach( ( { title, payload, expected, expectedSSR }, index ) => {
-		test( `Fixture test #${ index }: ${ title } `, () => {
-			const toBeExpected = isSSR ? expectedSSR || expected : expected;
-			expect( clean( payload ) ).toBe( toBeExpected );
-		} );
+	test.each( fixtures )( '`Fixture test $#: $title `', ( testConfig ) => {
+		const { payload, expected } = testConfig;
+		expect( clean( payload ) ).toBe( expected );
 	} );
 };
 

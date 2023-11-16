@@ -1,5 +1,5 @@
 ARG use_cache=false
-ARG node_version=18.13.0
+ARG node_version=18.17.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################
@@ -64,6 +64,7 @@ RUN bash /tmp/env-config.sh
 # Calypso development.
 COPY . /calypso/
 RUN yarn install --immutable --check-cache
+RUN node --version && yarn --version && npm --version
 
 # Build the final layer
 #

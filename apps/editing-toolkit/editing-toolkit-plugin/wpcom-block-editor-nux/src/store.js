@@ -72,15 +72,27 @@ const shouldShowFirstPostPublishedModalReducer = ( state = false, action ) => {
 	}
 };
 
+const livePreviewModalReducer = ( state = { suppressed: false }, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_LIVE_PREVIEW_MODAL_SUPPRESS':
+			return { suppressed: true };
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return { suppressed: false };
+		default:
+			return state;
+	}
+};
+
 const reducer = combineReducers( {
 	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
 	shouldShowFirstPostPublishedModal: shouldShowFirstPostPublishedModalReducer,
+	livePreviewModal: livePreviewModalReducer,
 } );
 
-const actions = {
+export const actions = {
 	*fetchWelcomeGuideStatus() {
 		const response = yield apiFetchControls( { path: '/wpcom/v2/block-editor/nux' } );
 
@@ -120,6 +132,9 @@ const actions = {
 	setUsedPageOrPatternsModal: () => {
 		return { type: 'WPCOM_HAS_USED_PATTERNS_MODAL' };
 	},
+	suppressLivePreviewModal: () => {
+		return { type: 'WPCOM_LIVE_PREVIEW_MODAL_SUPPRESS' };
+	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
 	resetStore: () => ( {
@@ -136,6 +151,7 @@ export const selectors = {
 	getWelcomeGuideVariant: ( state ) =>
 		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
 	getShouldShowFirstPostPublishedModal: ( state ) => state.shouldShowFirstPostPublishedModal,
+	getIsLivePreviewModalSuppressed: ( state ) => state.livePreviewModal.suppressed,
 };
 
 export function register() {

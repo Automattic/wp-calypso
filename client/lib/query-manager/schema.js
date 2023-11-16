@@ -51,7 +51,6 @@ const queryManagerSchema = deepFreeze( {
 
 /**
  * Get a queryManagerSchema with a customized items schema
- *
  * @param  {Object} itemsSchema Schema that will be used for the items
  * @returns {Object}            Customized schema
  */

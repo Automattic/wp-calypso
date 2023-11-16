@@ -10,7 +10,6 @@ import 'calypso/state/jetpack-connect/init';
  * Create a user account
  *
  * !! Must have same return shape as createSocialAccount !!
- *
  * @param  {Object} userData          …
  * @param  {string} userData.username Username
  * @param  {string} userData.password Password

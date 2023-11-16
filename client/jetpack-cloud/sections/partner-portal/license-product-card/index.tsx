@@ -5,11 +5,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
-import { useProductDescription } from '../hooks';
+import { useProductDescription, useURLQueryParams } from '../hooks';
+import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../lib';
 import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
 import ProductPriceWithDiscount from '../primary/product-price-with-discount-info';
-import { getProductTitle } from '../utils';
 
 import './style.scss';
 
@@ -33,8 +33,10 @@ export default function LicenseProductCard( props: Props ) {
 		suggestedProduct,
 		isMultiSelect,
 	} = props;
+	const { setParams, resetParams, getParamValue } = useURLQueryParams();
+	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
 	const productTitle = getProductTitle( product.name );
-	const [ showLightbox, setShowLightbox ] = useState( false );
+	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -79,14 +81,21 @@ export default function LicenseProductCard( props: Props ) {
 				} )
 			);
 
+			setParams( [
+				{
+					key: LICENSE_INFO_MODAL_ID,
+					value: product.slug,
+				},
+			] );
 			setShowLightbox( true );
 		},
-		[ dispatch, product ]
+		[ dispatch, product.slug, setParams ]
 	);
 
 	const onHideLightbox = useCallback( () => {
+		resetParams( [ LICENSE_INFO_MODAL_ID ] );
 		setShowLightbox( false );
-	}, [] );
+	}, [ resetParams ] );
 
 	return (
 		<>
@@ -111,7 +120,9 @@ export default function LicenseProductCard( props: Props ) {
 
 								<div className="license-product-card__description">{ productDescription }</div>
 
-								<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
+								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
+									<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
+								) }
 							</div>
 
 							<div

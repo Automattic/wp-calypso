@@ -1,6 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
@@ -9,19 +11,17 @@ export type GlobalStylesStatus = {
 
 // While we are loading the Global Styles Info we can't assume that we should limit global styles, or we would be
 // showing notices for paid sites until we fetch the data from the server.
-export const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
+const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 	shouldLimitGlobalStyles: false,
 	globalStylesInUse: false,
 };
 
-export const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStylesStatus => {
-	if ( siteId == null ) {
-		return {
-			// The next line should be replaced with true once the Gating global styles feature is live.
-			// That will make all non-created sites to limit global styles.
-			shouldLimitGlobalStyles: isEnabled( 'limit-global-styles' ),
+const getGlobalStylesInfoForSite = ( siteId: number | null ): Promise< GlobalStylesStatus > => {
+	if ( siteId === null ) {
+		return Promise.resolve( {
+			shouldLimitGlobalStyles: true,
 			globalStylesInUse: false,
-		};
+		} );
 	}
 
 	return wpcom.req
@@ -36,13 +36,28 @@ export const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStyle
 		.catch( () => DEFAULT_GLOBAL_STYLES_INFO );
 };
 
-export function useSiteGlobalStylesStatus( siteId: number ): GlobalStylesStatus {
-	const { data } = useQuery( {
+export function useSiteGlobalStylesStatus(
+	siteIdOrSlug: number | string | null = null
+): GlobalStylesStatus {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+
+	// When site id is null it means that the site hasn't been created yet.
+	const siteId = useSelector( ( state ) => {
+		const currentSiteId = siteIdOrSlug ?? selectedSiteId;
+		if ( ! currentSiteId ) {
+			return null;
+		}
+
+		const site = getSite( state, currentSiteId );
+		return site?.ID ?? null;
+	} );
+
+	const { data: globalStylesInfo } = useQuery( {
 		queryKey: [ 'globalStylesInfo', siteId ],
 		queryFn: () => getGlobalStylesInfoForSite( siteId ),
 		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
 		refetchOnWindowFocus: false,
 	} );
 
-	return data ?? DEFAULT_GLOBAL_STYLES_INFO;
+	return globalStylesInfo ?? DEFAULT_GLOBAL_STYLES_INFO;
 }

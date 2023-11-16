@@ -2,15 +2,16 @@ import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import Main from 'calypso/components/main';
 import LicenseBundleCardDescription from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card-description';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { useSelector } from 'calypso/state';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import Layout from '../../layout';
+import LayoutBody from '../../layout/body';
+import LayoutHeader from '../../layout/header';
+import LayoutTop from '../../layout/top';
 
 import './style.scss';
 
@@ -78,22 +79,32 @@ export default function Prices() {
 						<div>{ translate( 'Jetpack.com Pricing' ) }</div>
 						<span className="prices__th-detail">{ translate( 'billed yearly' ) }</span>
 					</div>
-					<div>
-						{ translate( '%(price)s/day', {
-							args: {
-								price: formatCurrency( dailyUserYearlyPrice, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
-					<div>
-						{ translate( '%(price)s/year', {
-							args: {
-								price:
-									userYearlyProduct &&
-									formatCurrency( userYearlyProduct.cost, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
+
+					{ /* If monthly and yearly prices are equal we're going to assume there is no yearly plan
+					  and hide the yearly price. Currently this is the case with the Jetpack AI Assistant product.
+					  */ }
+					{ userYearlyProduct.cost !== userMonthlyProduct?.cost && (
+						<>
+							<div>
+								{ translate( '%(price)s/day', {
+									args: {
+										price: formatCurrency( dailyUserYearlyPrice, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+							<div>
+								{ translate( '%(price)s/year', {
+									args: {
+										price:
+											userYearlyProduct &&
+											formatCurrency( userYearlyProduct.cost, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+						</>
+					) }
+
+					{ userYearlyProduct.cost === userMonthlyProduct?.cost && <Gridicon icon="minus" /> }
 				</td>
 				<td>
 					<div className="prices__mobile-description">
@@ -113,59 +124,60 @@ export default function Prices() {
 	} );
 
 	return (
-		<Main wideLayout className="prices">
+		<Layout className="prices" title={ translate( 'Prices' ) } wide>
 			<QueryProductsList type="jetpack" currency="USD" />
 
-			<DocumentHead title={ translate( 'Prices' ) } />
-			<SidebarNavigation />
+			<LayoutTop>
+				<LayoutHeader>
+					<CardHeading size={ 36 }>
+						{ translate( 'Jetpack Agency & Pro Partner Program Product Pricing' ) }
+					</CardHeading>
 
-			<div className="prices__header">
-				<CardHeading size={ 36 }>
-					{ translate( 'Jetpack Agency & Pro Partner Program Product Pricing' ) }
-				</CardHeading>
+					<SelectPartnerKeyDropdown />
+				</LayoutHeader>
+			</LayoutTop>
 
-				<SelectPartnerKeyDropdown />
-			</div>
+			<LayoutBody>
+				<div className="prices__description">
+					<p>
+						{ translate(
+							'The following products are available through the Licenses section. Prices are calculated daily and invoiced at the beginning of the next month. Please note that Jetpack Manage prices will be displayed as a monthly cost. If you want to determine a yearly cost for the Agency/Pro pricing, you can take the daily cost x 365.'
+						) }
+					</p>
+				</div>
 
-			<div className="prices__description">
-				<p>
-					{ translate(
-						'The following products are available through the Licenses section. Prices are calculated daily and invoiced at the beginning of the next month. Please note that the Jetpack pro Dashboard prices will be displayed as a monthly cost. If you want to determine a yearly cost for the Agency/Pro pricing, you can take the daily cost x 365.'
-					) }
-				</p>
-			</div>
-
-			<table className="prices__table">
-				<thead>
-					<tr className="prices__head-row" style={ { backgroundColor: 'transparent' } }>
-						<th colSpan={ 3 }></th>
-						<th className="prices__column-highlight">
-							<div className="prices__column-highlight-content">
-								<Gridicon icon="star" size={ 18 } className="prices__column-highlight-icon" />
-								<span className="prices__column-highlight-label">
-									{ translate( 'Your Price' ) }
-								</span>
-							</div>
-						</th>
-					</tr>
-					<tr className="prices__head-row">
-						<th></th>
-						<th>
-							<div>{ translate( 'Jetpack.com Pricing' ) }</div>
-							<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
-						</th>
-						<th>
-							<div>{ translate( 'Jetpack.com Pricing' ) }</div>
-							<span className="prices__th-detail">{ translate( 'billed yearly' ) }</span>
-						</th>
-						<th>
-							<div>{ translate( 'Agency/Pro Pricing' ) }</div>
-							<span className="prices__th-detail">{ translate( 'daily pricing' ) }</span>
-						</th>
-					</tr>
-				</thead>
-				<tbody>{ productRows }</tbody>
-			</table>
-		</Main>
+				<table className="prices__table">
+					<thead>
+						<tr className="prices__head-row" style={ { backgroundColor: 'transparent' } }>
+							<th colSpan={ 3 }></th>
+							<th className="prices__column-highlight">
+								<div className="prices__column-highlight-content">
+									<Gridicon icon="star" size={ 18 } className="prices__column-highlight-icon" />
+									<span className="prices__column-highlight-label">
+										{ translate( 'Your Price' ) }
+									</span>
+								</div>
+							</th>
+						</tr>
+						<tr className="prices__head-row">
+							<th></th>
+							<th>
+								<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+								<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
+							</th>
+							<th>
+								<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+								<span className="prices__th-detail">{ translate( 'billed yearly' ) }</span>
+							</th>
+							<th>
+								<div>{ translate( 'Agency/Pro Pricing' ) }</div>
+								<span className="prices__th-detail">{ translate( 'daily pricing' ) }</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>{ productRows }</tbody>
+				</table>
+			</LayoutBody>
+		</Layout>
 	);
 }

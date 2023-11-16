@@ -57,10 +57,15 @@
 	&__media {
 		display: flex;
 
-		&--image {
+		&--image,
+		&--video {
 			width: 100%;
 			object-fit: cover;
 		}
+	}
+
+	&__media-item {
+		flex-grow: 1;
 	}
 
 	&__content {

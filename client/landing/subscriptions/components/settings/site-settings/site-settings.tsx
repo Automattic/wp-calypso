@@ -1,9 +1,11 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
+import { getFeedUrl } from 'calypso/reader/route';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
-import { UnsubscribeIcon } from '../icons';
+import { FeedIcon, UnsubscribeIcon } from '../icons';
 import DeliveryFrequencyInput from './delivery-frequency-input';
 import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
@@ -79,24 +81,35 @@ const SiteSettings = ( {
 type SiteSettingsPopoverProps = SiteSettingsProps & {
 	onUnsubscribe: () => void;
 	unsubscribing: boolean;
+	blogId?: number;
+	feedId: number;
+	subscriptionId: number;
 };
 
 export const SiteSettingsPopover = ( {
 	onUnsubscribe,
 	unsubscribing,
+	blogId,
+	feedId,
+	subscriptionId,
 	...props
 }: SiteSettingsPopoverProps ) => {
 	const translate = useTranslate();
+	const recordViewFeedButtonClicked = useRecordViewFeedButtonClicked();
+	const isWpComSite = Reader.isValidId( blogId );
 	return (
-		<SubscriptionsEllipsisMenu popoverClassName="site-settings-popover">
+		<SubscriptionsEllipsisMenu
+			popoverClassName="site-settings-popover"
+			toggleTitle={ translate( 'More actions' ) }
+		>
 			{ ( close: () => void ) => (
 				<>
-					<SiteSettings { ...props } />
-
-					<hr className="subscriptions__separator" />
+					{ isWpComSite && <SiteSettings { ...props } /> }
 
 					<Button
-						className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
+						className={ classNames( 'site-settings-popover__unsubscribe-button', {
+							'is-loading': unsubscribing,
+						} ) }
 						disabled={ unsubscribing }
 						icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
 						onClick={ () => {
@@ -106,6 +119,27 @@ export const SiteSettingsPopover = ( {
 					>
 						{ translate( 'Unsubscribe' ) }
 					</Button>
+
+					<hr className="subscriptions__separator" />
+
+					<VStack spacing={ 4 }>
+						{ Boolean( feedId ) && (
+							<Button
+								className="site-settings-popover__view-feed-button"
+								icon={ <FeedIcon className="subscriptions-ellipsis-menu__item-icon" /> }
+								href={ getFeedUrl( feedId ) }
+								onClick={ () => {
+									recordViewFeedButtonClicked( {
+										blogId: blogId ? String( blogId ) : null,
+										feedId: String( feedId ),
+										source: 'subscription-settings-dropdown',
+									} );
+								} }
+							>
+								{ translate( 'View feed' ) }
+							</Button>
+						) }
+					</VStack>
 				</>
 			) }
 		</SubscriptionsEllipsisMenu>

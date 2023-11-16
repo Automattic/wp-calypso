@@ -34,7 +34,6 @@ const receiveJetpackSettings = ( { siteId }, settings ) =>
 	updateJetpackSettings( siteId, settings );
 /**
  * Dispatches a request to fetch settings for a given site
- *
  * @param   {Object}   action         Redux action
  * @returns {Object}   Dispatched http action
  */
@@ -74,7 +73,6 @@ export const announceRequestFailure =
 
 /**
  * Dispatches a request to save particular settings on a site
- *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */

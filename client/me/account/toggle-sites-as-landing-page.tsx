@@ -1,16 +1,10 @@
-import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isSavingPreference } from 'calypso/state/preferences/selectors';
-
-const ToggleControl = OriginalToggleControl as React.ComponentType<
-	OriginalToggleControl.Props & {
-		disabled?: boolean;
-	}
->;
 
 function ToggleSitesAsLandingPage() {
 	const translate = useTranslate();

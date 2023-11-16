@@ -39,6 +39,8 @@ interface StarterDesign {
 	is_virtual: boolean;
 	preview_data: PreviewData | null;
 	design_type?: DesignType;
+	theme_type?: string;
+	screenshot?: string;
 }
 
 export function useStarterDesignsQuery(
@@ -86,9 +88,12 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		software_sets,
 		preview_data,
 		design_type,
+		screenshot,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
+
+	const is_externally_managed = design.theme_type === 'managed-external';
 
 	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
@@ -101,6 +106,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		recipe,
 		categories,
 		is_premium,
+		is_externally_managed,
 		is_bundled_with_woo_commerce,
 		price,
 		software_sets,
@@ -112,5 +118,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		features: [],
 		template: '',
 		theme: '',
+		screenshot,
 	};
 }

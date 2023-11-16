@@ -36,7 +36,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
-	headerSection,
+	renderHeaderSection,
 	redirectUri,
 	i18n,
 	showGdprBanner,
@@ -52,7 +52,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 					<LayoutLoggedOut
 						primary={ primary }
 						secondary={ secondary }
-						headerSection={ headerSection }
+						renderHeaderSection={ renderHeaderSection }
 						redirectUri={ redirectUri }
 						showGdprBanner={ showGdprBanner }
 					/>
@@ -76,6 +76,8 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
 /**
  * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
  */
+export const redirectLoggedInUrl = () => {};
+export const redirectInvalidLanguage = () => {};
 export const redirectLoggedOut = () => {};
 export const redirectLoggedOutToSignup = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};

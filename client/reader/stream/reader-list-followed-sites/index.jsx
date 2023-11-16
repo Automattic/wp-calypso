@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
@@ -15,8 +14,6 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderListFollowingItem from './item';
 import '../style.scss';
-
-const isSubscriptionManagerEnabled = config.isEnabled( 'reader/subscription-management' );
 
 export class ReaderListFollowedSites extends Component {
 	constructor( props ) {
@@ -59,16 +56,16 @@ export class ReaderListFollowedSites extends Component {
 		} );
 	};
 
-	renderSites = ( sites ) => {
+	renderSites = ( follows ) => {
 		const { path } = this.props;
 		return map(
-			sites,
-			( site ) =>
-				site && (
+			follows,
+			( follow ) =>
+				follow && (
 					<ReaderListFollowingItem
-						key={ site.ID }
+						key={ follow.ID }
 						path={ path }
-						site={ site }
+						follow={ follow }
 						isUnseen={ this.isUnseen() }
 					/>
 				)
@@ -98,10 +95,8 @@ export class ReaderListFollowedSites extends Component {
 		return (
 			<>
 				<h2>
-					{ isSubscriptionManagerEnabled ? translate( 'Subscriptions' ) : translate( 'Following' ) }{ ' ' }
-					<a href={ isSubscriptionManagerEnabled ? '/read/subscriptions' : '/following/manage' }>
-						{ translate( 'Manage' ) }
-					</a>
+					{ translate( 'Subscriptions' ) }{ ' ' }
+					<a href="/read/subscriptions">{ translate( 'Manage' ) }</a>
 				</h2>
 				{ sites.length >= searchThreshold && (
 					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />

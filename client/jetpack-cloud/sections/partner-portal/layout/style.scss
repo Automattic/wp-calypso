@@ -1,0 +1,98 @@
+.is-jetpack-new-navigation {
+	.partner-portal-layout__header h1 {
+		font-weight: 600;
+	}
+}
+
+.main.partner-portal-layout {
+	padding-inline: 0;
+
+	header.current-section {
+		padding: 0 16px;
+
+		button {
+			padding: 20px 8px;
+		}
+	}
+}
+
+.partner-portal-layout__container {
+	max-width: 100%;
+	min-height: calc(100vh - 123px);
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	padding: 0;
+}
+
+.partner-portal-layout__body {
+	margin-block-end: -32px;
+	flex: 1 1 100%;
+}
+
+.partner-portal-layout__top,
+.partner-portal-layout__body {
+	width: 100%;
+
+	&-wrapper {
+		margin-inline: 16px;
+	}
+
+	&-wrapper > * {
+		max-width: 1500px;
+		margin-inline: auto !important;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		// We need these negative margin values because we want to make the container full-width,
+		// but our element is inside a limited-width parent.
+		margin-inline-start: -73px;
+		padding-inline: 73px;
+	}
+}
+
+.partner-portal-layout__header {
+	display: flex;
+	align-items: center;
+
+	> * + * {
+		margin-inline-start: 24px;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		flex-wrap: wrap;
+
+		> * {
+			width: 100%;
+			margin-block-end: 16px;
+		}
+
+		> * + * {
+			margin-inline-start: 0;
+		}
+	}
+
+	.card-heading {
+		margin-block-start: initial;
+	}
+
+	a.button {
+		margin-inline-start: auto;
+	}
+}
+
+.main.partner-portal-layout.is-with-border {
+	.partner-portal-layout__body {
+		padding-block: 16px;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		.partner-portal-layout__top {
+			border-block-end: 1px solid var(--color-primary-5);
+		}
+
+		.partner-portal-layout__body {
+			background: rgba(255, 255, 255, 0.5);
+		}
+	}
+}

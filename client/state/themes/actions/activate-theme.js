@@ -24,7 +24,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
- *
  * @param {string}  themeId            Theme ID
  * @param {number}  siteId             Site ID
  * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
@@ -53,7 +52,7 @@ export function activateTheme(
 		} );
 
 		return wpcom.req
-			.post( `/sites/${ siteId }/themes/mine`, {
+			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
 				theme: themeId,
 				...( dontChangeHomepage && { dont_change_homepage: true } ),
 				...( isEnabled( 'themes/theme-switch-persist-template' ) && {

@@ -9,6 +9,7 @@ export interface StatsPageViewTrackerProps {
 	title: string;
 	properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	options?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	from?: string;
 }
 
 // This component will pass through all properties to PageViewTracker from the analytics library.

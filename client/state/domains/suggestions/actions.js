@@ -11,7 +11,6 @@ import 'calypso/state/domains/init';
 /**
  * Returns an action object to be used in signalling that a domains suggestion object
  * has been received.
- *
  * @param   {Array}    suggestions              domain suggestions
  * @param   {Object}   queryObject              domain suggestions queryObject
  * @returns {Object}   Action object
@@ -26,7 +25,6 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
 
 /**
  * Triggers a network request to find domain suggestions
- *
  * @param   {Object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
  * @param   {number}   queryObject.quantity                 max results

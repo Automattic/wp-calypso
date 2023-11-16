@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -32,6 +31,7 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { requestSites } from 'calypso/state/sites/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
@@ -74,6 +74,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Effects
 		 */
+		useEffect( () => {
+			dispatch( requestSites() );
+		}, [ dispatch ] );
+
 		useEffect( () => {
 			! siteId && site?.ID && setSiteId( site.ID );
 		}, [ siteId, site ] );
@@ -189,9 +193,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						'import__onboarding-page',
 						'import-layout__center',
 						'importer-wrapper',
+						'import__onboarding-page--redesign',
 						{
 							[ `importer-wrapper__${ importer }` ]: !! importer,
-							'import__onboarding-page--redesign': isEnabled( 'onboarding/import-redesign' ),
 						}
 					) }
 					stepName="importer-step"

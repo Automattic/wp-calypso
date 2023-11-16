@@ -10,7 +10,6 @@ import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-edi
  * 2. aspectRatios[ 0 ] if aspectRatio is not included in aspectRatios
  *
  * We return AspectRatios.FREE if no specified aspect ratio is valid.
- *
  * @param   {string} aspectRatio  an aspect ratio which should be validated and used as default one for image editor
  * @param   {Array}  aspectRatios list of aspect ratios to be validated and used in image editor
  * @returns {string}              the default valid aspect ratio image editor should use

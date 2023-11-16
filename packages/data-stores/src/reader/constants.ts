@@ -14,6 +14,7 @@ export enum SiteSubscriptionsFilterBy {
 	All = 'all',
 	Paid = 'paid',
 	P2 = 'p2',
+	RSS = 'rss',
 }
 
 export enum SiteSubscriptionsSortBy {

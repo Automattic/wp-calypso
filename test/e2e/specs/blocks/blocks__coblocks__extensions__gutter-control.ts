@@ -16,11 +16,12 @@ declare const browser: Browser;
 
 const isAtomic = envVariables.TEST_ON_ATOMIC;
 const isSimple = ! envVariables.TEST_ON_ATOMIC;
-const features = envToFeatureKey( {
-	...envVariables,
-	// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
-	COBLOCKS_EDGE: isAtomic || envVariables.COBLOCKS_EDGE,
-} );
+const features = envToFeatureKey( envVariables );
+// For this spec, all Atomic testing is always edge.
+// See https://github.com/Automattic/wp-calypso/pull/73052
+if ( isAtomic ) {
+	features.coblocks = 'edge';
+}
 
 /**
  * This spec requires the following:

@@ -21,7 +21,6 @@ module.exports = {
 	 * Checks if the namespace is available to debug. The namespace could be contained in wildcards.
 	 * Ex: 'server:api:controller' would pass the check (return true) if the 'server:api:controller' is in the
 	 * environment variable or if 'server:api:*' or 'server:*' is in the environment variable.
-	 *
 	 * @param namespace {String} - Namespace to check.
 	 * @returns {boolean} Whether or not the namespace is available.
 	 */

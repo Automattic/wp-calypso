@@ -15,7 +15,6 @@ function isConnected( keyringConnection, externalUser, siteKeyring ) {
  * is stored in the site's settings, there can only be one item in this list.
  * The format of the `connections` returned matches the one returned by
  * `getSiteUserConnectionsForService` used for Publicize services.
- *
  * @param  {Object} state  Global state tree
  * @param  {Object} siteId The site ID
  * @returns {Object}        List of GMB connections for this site

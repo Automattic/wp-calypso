@@ -1,13 +1,12 @@
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch, useStore } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import SiteDeleteConfirmationDialog from './site-delete-confirmation-dialog';
 import type { SiteDetails } from '@automattic/data-stores';
 import './styles.scss';
 
@@ -36,8 +35,8 @@ export default function DIFMSitePickerStep( props: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { goToNextStep } = props;
-	const [ siteId, setSiteId ] = useState< number | null >( null );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const store = useStore();
+
 	const headerText = translate( 'Choose where you want us to build your site.' );
 
 	const onNewSiteClicked = () => {
@@ -59,7 +58,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 			components: {
 				SupportLink: <a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />,
 				NewSiteLink: (
-					<Button isLink={ true } className="subtitle-link" onClick={ onNewSiteClicked } />
+					<Button variant="link" className="subtitle-link" onClick={ onNewSiteClicked } />
 				),
 			},
 		}
@@ -70,23 +69,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 	}, [ dispatch, props.stepName ] );
 
 	const handleSiteSelect = ( siteId: number ) => {
-		setSiteId( siteId );
-	};
-
-	const filterSites = ( site: SiteDetails ) => {
-		return !! (
-			site.capabilities?.manage_options &&
-			( site.is_wpcom_atomic || ! site.jetpack ) &&
-			! site.options?.is_wpforteams_site &&
-			! site.options?.is_difm_lite_in_progress
-		);
-	};
-
-	const onCloseDialog = () => {
-		setSiteId( null );
-	};
-
-	const onConfirmDelete = () => {
+		const siteSlug = getSiteSlug( store.getState(), siteId );
 		dispatch(
 			submitSignupStep(
 				{
@@ -105,24 +88,22 @@ export default function DIFMSitePickerStep( props: Props ) {
 		goToNextStep();
 	};
 
+	const filterSites = ( site: SiteDetails ) => {
+		return !! (
+			site.capabilities?.manage_options &&
+			( site.is_wpcom_atomic || ! site.jetpack ) &&
+			! site.options?.is_wpforteams_site &&
+			! site.options?.is_difm_lite_in_progress
+		);
+	};
+
 	return (
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={
-				<>
-					<DIFMSitePicker filter={ filterSites } onSiteSelect={ handleSiteSelect } />
-					{ siteId && (
-						<SiteDeleteConfirmationDialog
-							onClose={ onCloseDialog }
-							onConfirm={ onConfirmDelete }
-							siteId={ siteId }
-						/>
-					) }
-				</>
-			}
+			stepContent={ <DIFMSitePicker filter={ filterSites } onSiteSelect={ handleSiteSelect } /> }
 			hideSkip
 			{ ...props }
 		/>

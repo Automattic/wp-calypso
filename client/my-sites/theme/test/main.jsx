@@ -10,6 +10,9 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );
+jest.mock( 'dompurify', () => ( {
+	sanitize: jest.fn().mockImplementation( ( text ) => text ),
+} ) );
 
 const themeData = {
 	name: 'Twenty Sixteen',

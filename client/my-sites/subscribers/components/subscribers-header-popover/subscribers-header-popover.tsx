@@ -6,12 +6,15 @@ import { useDispatch } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import { useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
-	siteId: number | null;
+	siteId: number | undefined;
 };
 
 const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) => {
@@ -20,10 +23,12 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
 	const buttonRef = useRef< HTMLButtonElement >( null );
 	const downloadCsvLink = addQueryArgs(
-		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'email' },
+		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'all' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
+	const { grandTotal } = useSubscribersPage();
 	const recordExport = useRecordExport();
+	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 
 	const onDownloadCsvClick = () => {
 		dispatch(
@@ -34,6 +39,14 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 		);
 		recordExport();
 	};
+
+	const hasSubscribers = grandTotal > 0;
+	const hasMultipleSites = currentUserSiteCount && currentUserSiteCount > 1;
+
+	// No point showing the dropdown if they don't have subscribers or sites
+	if ( ! hasSubscribers && ! hasMultipleSites ) {
+		return null;
+	}
 
 	return (
 		<div className="subscriber-popover__container">
@@ -55,9 +68,16 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 				className="subscriber-popover"
 				focusOnShow={ false }
 			>
-				<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
-					{ translate( 'Download email subscribers as CSV' ) }
-				</PopoverMenuItem>
+				{ hasSubscribers && (
+					<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
+						{ translate( 'Download subscribers as CSV' ) }
+					</PopoverMenuItem>
+				) }
+				{ hasMultipleSites && (
+					<PopoverMenuItem href={ `https://wordpress.com/manage/${ siteId }` }>
+						{ translate( 'Migrate subscribers from another WordPress.com site' ) }
+					</PopoverMenuItem>
+				) }
 			</PopoverMenu>
 		</div>
 	);

@@ -27,7 +27,6 @@ import { getSiteDomain } from 'calypso/state/sites/selectors';
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
  * deleted. It also re-fetches the current user.
- *
  * @param  {number} siteId  ID of deleted site
  * @returns {Function}        Action thunk
  */
@@ -44,7 +43,6 @@ export function receiveDeletedSite( siteId ) {
 /**
  * Returns an action object to be used in signalling that a site object has
  * been received.
- *
  * @param  {Object} site Site received
  * @returns {Object}      Action object
  */
@@ -58,7 +56,6 @@ export function receiveSite( site ) {
 /**
  * Returns an action object to be used in signalling that site objects have
  * been received.
- *
  * @param  {Object[]} sites Sites received
  * @returns {Object}         Action object
  */
@@ -71,7 +68,6 @@ export function receiveSites( sites ) {
 
 /**
  * Triggers a network request to request all visible sites
- *
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
@@ -110,7 +106,6 @@ export function requestSites() {
 /**
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
- *
  * @param {number|string} siteFragment Site ID or slug
  * @returns {Function}              Action thunk
  */
@@ -171,7 +166,6 @@ const siteDeletionNoticeOptions = {
 /**
  * Returns a function which, when invoked, triggers a network request to delete
  * a site.
- *
  * @param  {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
@@ -242,7 +236,6 @@ export const sitePluginUpdated = ( siteId ) => ( {
 
 /**
  * Returns an action object to be used to update the site front page options.
- *
  * @param  {number} siteId Site ID
  * @param  {Object} frontPageOptions Object containing the three optional front page options.
  * @param  {string} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
@@ -258,15 +251,13 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => async ( dispa
 			page_for_posts_id: frontPageOptions.page_for_posts,
 		} );
 
-		dispatch( {
-			type: SITE_FRONT_PAGE_UPDATE,
-			siteId,
-			frontPageOptions: {
+		dispatch(
+			receiveSiteFrontPage( siteId, {
 				show_on_front: response.is_page_on_front ? 'page' : 'posts',
-				page_on_front: parseInt( response.page_on_front_id, 10 ),
-				page_for_posts: parseInt( response.page_for_posts_id, 10 ),
-			},
-		} );
+				page_on_front: response.page_on_front_id,
+				page_for_posts: response.page_for_posts_id,
+			} )
+		);
 	} catch {}
 };
 
@@ -281,9 +272,20 @@ function isPageOnFront( showOnFront ) {
 	}
 }
 
+export function receiveSiteFrontPage( siteId, { show_on_front, page_on_front, page_for_posts } ) {
+	return {
+		type: SITE_FRONT_PAGE_UPDATE,
+		siteId,
+		frontPageOptions: {
+			show_on_front,
+			page_on_front: parseInt( page_on_front, 10 ),
+			page_for_posts: parseInt( page_for_posts, 10 ),
+		},
+	};
+}
+
 /**
  * Returns an action object to be used to update the site migration status.
- *
  * @param  {number} siteId Site ID
  * @param  {string} migrationStatus The status of the migration.
  * @param {string} lastModified Optional timestamp from the migration DB record

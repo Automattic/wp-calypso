@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-products",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "This module contains information about the various products sold within calypso, such as product slugs, plan intervals, etc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -36,14 +36,15 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-products#readme",
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
 		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.7.4"
+		"react-dom": "^18.2.0",
+		"typescript": "^5.2.2"
 	},
 	"peerDependencies": {
 		"react": "^18.2.0"
-	},
-	"private": true
+	}
 }

@@ -1,0 +1,49 @@
+.domains-table-bulk-actions-toolbar {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 20px;
+
+	@media ( max-width: 480px) {
+		flex-direction: column;
+		align-items: flex-start;
+		button {
+			width: 100%;
+		}
+	}
+}
+
+.domains-table-bulk-actions-toolbar__icon {
+	margin-right: 4px;
+	vertical-align: text-top;
+}
+
+.domains-table-bulk-actions-toolbar__select.select-dropdown {
+	height: var(--domains-table-toolbar-height);
+	z-index: 1; // Needed for the dropdown to appear overtop of the checkboxes
+	@media ( max-width: 480px) {
+		width: 100%;
+
+		.select-dropdown__container {
+			min-width: 100%;
+		}
+	}
+
+	.select-dropdown__header {
+		height: var(--domains-table-toolbar-height);
+		font-weight: 400;
+		color: var(--studio-gray-70);
+	}
+
+	// Undo some dropdown styling that causes the items within the dropdown to be truncated with ellipsis.
+	.select-dropdown__item {
+		padding-right: 16px;
+		color: var(--studio-gray-70);
+	}
+	.select-dropdown__item::before {
+		content: "";
+	}
+	.select-dropdown__item-text {
+		position: static;
+	}
+}

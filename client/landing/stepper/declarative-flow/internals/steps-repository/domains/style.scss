@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
+@import "../hundred-year-plan-step-wrapper/mixins";
 
 .domains {
 	.step-container {
@@ -105,9 +106,31 @@
 			padding-top: 0;
 			padding-bottom: 16px;
 		}
-		.search-component.has-focus {
-			border-color: unset;
-			box-shadow: unset;
+
+		.search-component {
+			border: 1px solid var(--color-border-subtle);
+			border-radius: 4px;
+		}
+
+		.search-component.is-open {
+			border: 1px solid #a7aaad;
+			border-radius: 4px;
+			box-sizing: border-box;
+			height: 40px;
+
+			@include break-mobile {
+				height: 48px;
+			}
+		}
+
+		.search-component.is-open.has-focus {
+			border-color: #646970;
+			background: var(--color-surface);
+			box-shadow: none;
+
+			.search-component__input {
+				background: var(--color-surface);
+			}
 		}
 
 		.domain-suggestion__action {
@@ -117,8 +140,6 @@
 
 		.register-domain-step__search-card {
 			background: var(--color-surface);
-			border: 1px solid var(--studio-gray-20);
-			border-radius: 4px;
 			box-shadow: none;
 			display: flex;
 			padding: 0;
@@ -185,6 +206,7 @@
 			border-bottom: 1px solid var(--studio-gray-5);
 			border-top: 1px solid #fff;
 			padding: 16px 20px;
+			margin-bottom: 0;
 
 			@include break-mobile {
 				padding: 16px 5px;
@@ -418,4 +440,103 @@
 		padding-left: 0;
 	}
 
+}
+
+// Hundred year plan flow
+.hundred-year-plan.domains {
+	.step-container {
+		margin: 0;
+	}
+
+	.step-container__header {
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(32px);
+				@include break-small {
+					font-size: rem(44px);
+				}
+			}
+			@include break-small {
+				margin-top: 60px;
+				margin-bottom: 0;
+			}
+			margin: 32px 16px;
+		}
+
+		@include break-small {
+			margin-bottom: 40px;
+		}
+	}
+
+	.domains__content {
+		width: 100%;
+		@include break-small {
+			max-width: 780px;
+		}
+
+		.domains__step-content {
+			padding: 0 16px;
+			@include break-small {
+				padding: 0 48px 0 32px;
+			}
+		}
+		// Hide domain prices
+		.domain-product-price {
+			display: none;
+		}
+		// Hide the "Sale" tag
+		.badge.badge--warning {
+			display: none;
+		}
+		// Change button styles
+		.button.is-primary {
+			@include primary-button-black-theme;
+		}
+
+		// Reset styles for the featured domain suggestion
+		.domain-suggestion.card.featured-domain-suggestion {
+			box-shadow: none;
+			border-top: 1px solid transparent;
+			border-bottom: 1px solid var(--studio-gray-5);
+			border-radius: 0;
+			margin-bottom: 0;
+			padding: 16px 20px;
+			@include break-mobile {
+				padding: 16px 5px;
+			}
+
+			&:hover {
+				border-bottom: 1px solid var(--studio-gray-50);
+				border-top: 1px solid var(--studio-gray-50);
+			}
+
+			.domain-suggestion__content {
+				min-height: 54px;
+			}
+
+			.domain-registration-suggestion__title-wrapper {
+				gap: 4px;
+				@include break-mobile {
+					flex-direction: row;
+					align-items: center;
+					gap: 12px;
+				}
+				.domain-registration-suggestion__badges {
+					margin-bottom: 0;
+				}
+			}
+
+			.domain-registration-suggestion__domain-title {
+				font-size: 1rem;
+				.domain-registration-suggestion__domain-title-tld {
+					font-weight: 500;
+				}
+			}
+		}
+
+		// Hide the domain explanation image
+		.register-domain-step__domain-side-content-container-domain-explanation-image {
+			display: none;
+		}
+	}
 }

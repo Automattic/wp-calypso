@@ -2,6 +2,7 @@ import { PERIOD_LIST } from './constants';
 import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
 import type { SelectFromMap } from '../mapped-types';
+import type { PlanSlug as PlanSlugFromProducts } from '@automattic/calypso-products';
 
 export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
 export type PlanSlug = ( typeof plansSlugs )[ number ];
@@ -50,6 +51,30 @@ export interface PlanProduct {
 	annualPrice: string;
 }
 
+export interface PlanIntroductoryOffer {
+	formattedPrice: string;
+	rawPrice: number;
+	intervalUnit: string;
+	intervalCount: number;
+	isOfferComplete: boolean;
+}
+
+export interface SitePlan {
+	planSlug: PlanSlugFromProducts;
+	productId: number;
+	introOffer?: PlanIntroductoryOffer | null;
+	/* This value is only returned for the current plan on the site. */
+	expiry?: string;
+}
+
+export interface PricedAPIPlanIntroductoryOffer {
+	introductory_offer_formatted_price?: string;
+	introductory_offer_raw_price?: number;
+	introductory_offer_interval_unit?: string;
+	introductory_offer_interval_count?: number;
+	introductory_offer_end_date?: string;
+}
+
 /**
  * Item returned from https://public-api.wordpress.com/rest/v1.5/plans response
  * Only the properties that are actually used in the store are typed
@@ -74,9 +99,35 @@ export interface PricedAPIPlan {
 	 * @deprecated use raw_price_integer as using floats for currency is not safe.
 	 */
 	raw_price: number;
+
+	/**
+	 * The orig cost in the currency's smallest unit. Note that origCostInteger is never null. Although orig_cost
+	 * is undefined if the cost of a store product is overridden by a promotion or a coupon, orig_cost_integer
+	 * is not. origCostInteger will return a price identical to raw_price_integer instead.
+	 */
+	orig_cost_integer: number;
+
+	/**
+	 * The orig cost as a float.
+	 *
+	 * @deprecated use orig_cost_integer as using floats for currency is not safe.
+	 */
 	orig_cost?: number | null;
 	currency_code: string;
 }
+
+/**
+ * Item returned from https://public-api.wordpress.com/rest/v1.3/sites/[siteId]/plans response
+ * Only the properties that are actually used in the store are typed
+ * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
+ */
+export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
+	/* product_id: number; // not included in the plan's payload */
+	current_plan?: boolean;
+	expiry?: string;
+	product_slug: StorePlanSlug;
+}
+
 export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_id: 1;
 	cost: 0;

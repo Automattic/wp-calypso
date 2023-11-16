@@ -38,7 +38,6 @@ function trackGlobalStylesMenuSelected( event, target ) {
 
 /**
  * Return the event definition object to track `wpcom_block_editor_global_styles_menu_selected`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {

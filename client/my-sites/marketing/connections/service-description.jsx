@@ -235,6 +235,12 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Mastodon Publicize when no accounts are connected',
 				} );
 			},
+			nextdoor() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Sharing posts to Nextdoor.' );
+				}
+				return this.props.translate( 'Share posts with your local community on Nextdoor.' );
+			},
 		} ),
 		numberOfConnections: 0,
 	};

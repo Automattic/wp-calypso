@@ -4,7 +4,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Creates an action that updates the comments pagination for the given site and filters.
- *
  * @param {number} siteId Site identifier.
  * @param {Array<Object>} comments List of comments.
  * @param {Object} query Current filter parameters.

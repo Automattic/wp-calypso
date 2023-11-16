@@ -7,7 +7,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:18.13.0
+      - image: cimg/node:20.8.1
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -143,7 +143,7 @@ commands:
 jobs:
   wp-desktop-assets:
     docker:
-      - image: cimg/node:18.13.0-browsers
+      - image: cimg/node:20.8.1-browsers
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
@@ -168,7 +168,7 @@ jobs:
   wp-desktop-mac:
     macos:
       xcode: '14.2.0'
-    resource_class: macos.x86.medium.gen2
+    resource_class: macos.m1.medium.gen1
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     environment:
@@ -219,7 +219,9 @@ jobs:
             # If this isn't a full artifact build, ensure to persist the built application for inspection
             if ! ls desktop/release/*.zip &>/dev/null
             then
-              ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+              # Wildcard is to support both Intel and Apple Silicon builds.
+              # Intel artifcats are in `/mac`, Apple Silicon is in `/mac-arm64`.
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac* desktop/release/mac.app.zip
             fi
       - run:
           when: always
@@ -245,7 +247,7 @@ jobs:
     docker:
     # Important: the build fails on 18.13.0, so we pin it to a slightly older
     # version to keep this one working for now.
-      - image: cimg/node:18.10.0-browsers
+      - image: cimg/node:20.8.1-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
@@ -345,11 +347,12 @@ jobs:
             yarn --version
       - run:
           name: Install Make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install Desktop Dependencies
           command: yarn
       - when:
+          # Remove the condition on pipeline.git.tag on both steps to force a full artifact build for Windows.
           condition: << pipeline.git.tag >>
           steps:
             - run:
@@ -429,7 +432,7 @@ jobs:
   # GitHub release and generate the release notes using the Git commits history
   wp-desktop-publish:
     docker:
-      - image: circleci/golang:1.12-node
+      - image: cimg/go:1.20-node
     working_directory: /home/circleci/wp-calypso
     environment:
       VERSION: << pipeline.git.tag >>
@@ -439,7 +442,7 @@ jobs:
           at: /home/circleci/wp-calypso
       - run:
           name: Install Dependencies
-          command: go get github.com/tcnksm/ghr
+          command: go install github.com/tcnksm/ghr@v0.16.0
       - run:
           name: Update wp-desktop repo README
           command: |

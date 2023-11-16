@@ -9,6 +9,10 @@ import {
 	PluginParams,
 	AllDomainsResponse,
 	DomainData,
+	PublicizeConnectionDeletedResponse,
+	PublicizeConnection,
+	SubscriberDeletedResponse,
+	PostCountsResponse,
 } from './types';
 import type { Roles } from './lib';
 import type {
@@ -36,6 +40,10 @@ import type {
 	PluginRemovalResponse,
 	AllWidgetsResponse,
 	CommentLikeResponse,
+	JetpackSearchResponse,
+	JetpackSearchParams,
+	Subscriber,
+	SitePostState,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -186,8 +194,8 @@ export class RestAPIClient {
 	 * This method returns an array of DomainData objects, where
 	 * each object exposes a few key pieces of data from
 	 * the response JSON:
-	 * 	- domain
-	 * 	- blog id
+	 * - domain
+	 * - blog id
 	 *
 	 * @returns {Promise<AllDomainsResponse>} JSON array of sites.
 	 * @throws {Error} If API responded with an error.
@@ -628,6 +636,33 @@ export class RestAPIClient {
 	}
 
 	/* Posts */
+
+	/**
+	 * Given a siteID, checks whether any posts exists of a given state.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @param param1 Keyed object parameter.
+	 * @param {SitePostState} param1.state State of the published post.
+	 */
+	async siteHasPost(
+		siteID: number,
+		{ state = 'publish' }: { state: SitePostState }
+	): Promise< boolean > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response: PostCountsResponse = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/post-counts/post` ),
+			params
+		);
+
+		return response.counts.all[ state ] !== undefined && response.counts.all[ state ] > 0;
+	}
 
 	/**
 	 * Creates a post on the site.
@@ -1089,5 +1124,164 @@ export class RestAPIClient {
 		const widgets = await this.getAllWidgets( siteID );
 
 		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
+	}
+
+	/* Search */
+
+	/**
+	 * Execute a primitive Jetpack site search request.
+	 * Useful for checking if something has been indexed yet.
+	 *
+	 * @param {number} siteId ID of the target site.
+	 * @param {JetpackSearchParams} searchParams The search parameters.
+	 */
+	async jetpackSearch(
+		siteId: number,
+		searchParams: JetpackSearchParams
+	): Promise< JetpackSearchResponse > {
+		// Private sites require auth, so always auth!
+		const requestParams: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const requestUrl = this.getRequestURL( '1.3', `/sites/${ siteId }/search` );
+
+		const { query, size } = searchParams;
+		requestUrl.searchParams.append( 'query', query );
+		if ( size ) {
+			requestUrl.searchParams.append( 'size', size.toString() );
+		}
+
+		const response = await this.sendRequest( requestUrl, requestParams );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Publicize */
+
+	/**
+	 * Returns an array of existing publicize (social) connections.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @returns {Promise<Array<PublicizeConnection>>} Array of Publicize connections.
+	 */
+	async getAllPublicizeConnections( siteID: number ): Promise< Array< PublicizeConnection > > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/publicize-connections` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response[ 'connections' ];
+	}
+
+	/**
+	 * Given siteID and connectionID, deletes the connection.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @param {number} connectionID Publicize connection ID.
+	 * @returns {Promise<PublicizeConnectionDeletedResponse>} Confirmation of connection being deleted.
+	 */
+	async deletePublicizeConnection(
+		siteID: number,
+		connectionID: number
+	): Promise< PublicizeConnectionDeletedResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/publicize-connections/${ connectionID }/delete`
+			),
+			params
+		);
+	}
+
+	/* Subscribers/Email Followers/Newsletters */
+
+	/**
+	 * Given a site ID, returns the list of newsletter subscribers.
+	 *
+	 * @param {number} siteID Site ID to return list of users for.
+	 */
+	async getAllSubscribers( siteID: number ): Promise< Subscriber[] > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		// This is a V2 API call.
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/subscribers`, 'wpcom' ),
+			params
+		);
+
+		return response[ 'subscribers' ];
+	}
+
+	/**
+	 * Given a siteID and email address of the subscribed user to delete,
+	 * removes the subscribed user.
+	 *
+	 * @param {number} siteID Site ID where the user is subscribed.
+	 * @param {string} email Email address of the subscriber to delete.
+	 */
+	async deleteSubscriber(
+		siteID: number,
+		email: string
+	): Promise< SubscriberDeletedResponse | null > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const subscribers = await this.getAllSubscribers( siteID );
+
+		for ( const subscriber of subscribers ) {
+			if ( subscriber.email_address.trim() === email.trim() ) {
+				return await this.sendRequest(
+					this.getRequestURL(
+						'1.1',
+						`/sites/${ siteID }/email-followers/${ subscriber.subscription_id }/delete`
+					),
+					params
+				);
+			}
+		}
+		return null;
 	}
 }

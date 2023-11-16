@@ -1,0 +1,64 @@
+{
+	"name": "@automattic/domains-table",
+	"version": "1.0.0",
+	"description": "Component and hooks for displaying users domains in a table.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/domains-table"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
+		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/typography": "workspace:^",
+		"@automattic/viewport": "workspace:^",
+		"@tanstack/react-query": "^4.29.1",
+		"@wordpress/components": "^25.10.0",
+		"@wordpress/react-i18n": "^3.42.0",
+		"classnames": "^2.3.1",
+		"react-intersection-observer": "^9.4.3"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/jest-dom": "^6.1.4",
+		"@testing-library/react": "^14.0.0",
+		"jest": "^29.7.0",
+		"postcss": "^8.4.5",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"resize-observer-polyfill": "^1.5.1",
+		"typescript": "^5.2.2",
+		"webpack": "^5.68.0"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^9.14.0",
+		"@wordpress/i18n": "^4.44.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"private": true
+}

@@ -12,7 +12,6 @@ const TIMEZONELESS_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
 
 /**
  * Assigns timezone to a date without altering it
- *
  * @param {string} date a date in YYYY-MM-DDTHH:mm:ss format
  * @param {number} offset the offset in hours
  * @returns a moment instance

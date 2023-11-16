@@ -1,13 +1,8 @@
-import { getUrlParts } from '@automattic/calypso-url';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { navigate } from 'calypso/lib/navigate';
-import { createAccountUrl } from 'calypso/lib/paths';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import LikeIcons from './icons';
 import './style.scss';
 
@@ -25,6 +20,7 @@ class LikeButton extends PureComponent {
 		postId: PropTypes.number,
 		slug: PropTypes.string,
 		icon: PropTypes.object,
+		defaultLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -37,6 +33,7 @@ class LikeButton extends PureComponent {
 		postId: null,
 		slug: null,
 		icon: null,
+		defaultLabel: '',
 	};
 
 	constructor( props ) {
@@ -46,10 +43,6 @@ class LikeButton extends PureComponent {
 	}
 
 	toggleLiked( event ) {
-		if ( ! this.props.isLoggedIn ) {
-			const { pathname } = getUrlParts( window.location.href );
-			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
-		}
 		if ( event ) {
 			event.preventDefault();
 		}
@@ -68,6 +61,7 @@ class LikeButton extends PureComponent {
 			onMouseEnter,
 			onMouseLeave,
 			icon,
+			defaultLabel,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
 		const isLink = containerTag === 'a';
@@ -86,7 +80,9 @@ class LikeButton extends PureComponent {
 
 		const labelElement = (
 			<span className="like-button__label">
-				<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
+				<span className="like-button__label-count">
+					{ showLikeCount ? likeCount : defaultLabel }
+				</span>
 			</span>
 		);
 
@@ -101,6 +97,7 @@ class LikeButton extends PureComponent {
 					onClick: ! isLink ? this.toggleLiked : null,
 					onMouseEnter,
 					onMouseLeave,
+					title: this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
 				},
 				( prop ) => prop === null
 			),
@@ -110,6 +107,4 @@ class LikeButton extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => ( {
-	isLoggedIn: isUserLoggedIn( state ),
-} ) )( localize( LikeButton ) );
+export default localize( LikeButton );

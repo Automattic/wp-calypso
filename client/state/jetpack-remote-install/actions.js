@@ -9,7 +9,6 @@ import 'calypso/state/jetpack-remote-install/init';
 
 /**
  * Install the jetpack plugin on a remote .org site.
- *
  * @param {string} url - The remote site url
  * @param {string} user - username or email for remote site login
  * @param {string} password - password for remote site login
@@ -30,7 +29,6 @@ export const jetpackRemoteInstall = ( url, user, password ) => ( {
 /**
  * Update local state with an error received from remote jetpack
  * installation attempt.
- *
  * @param {string} url - remote site url
  * @param {string} errorCode - the error returned from the installation attempt
  * @param {string} errorMessage - additional error info
@@ -45,7 +43,6 @@ export const jetpackRemoteInstallUpdateError = ( url, errorCode, errorMessage ) 
 
 /**
  * Mark a jetpack remote installation complete in local state.
- *
  * @param {string} url - the remote site url
  * @returns {Object} action object
  */

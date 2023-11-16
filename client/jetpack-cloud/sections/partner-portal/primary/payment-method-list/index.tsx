@@ -2,14 +2,11 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-jetpack-partner-portal-stored-cards';
-import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import AddStoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/add-stored-credit-card';
 import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import StoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card';
 import StoredCreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card/stored-credit-card-loading';
 import { useSelector } from 'calypso/state';
@@ -19,6 +16,10 @@ import {
 	isFetchingStoredCards,
 	hasMoreStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
+import Layout from '../../layout';
+import LayoutBody from '../../layout/body';
+import LayoutHeader from '../../layout/header';
+import LayoutTop from '../../layout/top';
 
 import './style.scss';
 
@@ -61,37 +62,39 @@ export default function PaymentMethodList() {
 	);
 
 	return (
-		<Main wideLayout className="payment-method-list">
+		<Layout className="payment-method-list" title={ translate( 'Payment Methods' ) } wide>
 			<QueryJetpackPartnerPortalStoredCards paging={ paging } />
-			<DocumentHead title={ translate( 'Payment Methods' ) } />
-			<SidebarNavigation />
 
-			<div className="payment-method-list__header">
-				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
-			</div>
+			<LayoutTop>
+				<LayoutHeader>
+					<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
+				</LayoutHeader>
+			</LayoutTop>
 
-			<div className="payment-method-list__body">
-				<AddStoredCreditCard />
+			<LayoutBody>
+				<div className="payment-method-list__body">
+					<AddStoredCreditCard />
 
-				{ isFetching && <StoredCreditCardLoading /> }
+					{ isFetching && <StoredCreditCardLoading /> }
 
-				{ ! isFetching &&
-					storedCards.map( ( card: PaymentMethod ) => (
-						<StoredCreditCard key={ card.id } card={ card } />
-					) ) }
-			</div>
+					{ ! isFetching &&
+						storedCards.map( ( card: PaymentMethod ) => (
+							<StoredCreditCard key={ card.id } card={ card } />
+						) ) }
+				</div>
 
-			{ showPagination && (
-				<Pagination
-					className={ classnames( 'payment-method-list__pagination', {
-						'payment-method-list__pagination--has-prev': page > 1,
-						'payment-method-list__pagination--has-next': isFetching || hasMore,
-					} ) }
-					pageClick={ onPageClick }
-					page={ page }
-					perPage={ perPage }
-				/>
-			) }
-		</Main>
+				{ showPagination && (
+					<Pagination
+						className={ classnames( 'payment-method-list__pagination', {
+							'payment-method-list__pagination--has-prev': page > 1,
+							'payment-method-list__pagination--has-next': isFetching || hasMore,
+						} ) }
+						pageClick={ onPageClick }
+						page={ page }
+						perPage={ perPage }
+					/>
+				) }
+			</LayoutBody>
+		</Layout>
 	);
 }

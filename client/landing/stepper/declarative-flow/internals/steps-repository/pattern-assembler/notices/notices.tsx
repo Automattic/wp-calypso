@@ -1,19 +1,20 @@
-import { NoticeList, SnackbarList } from '@wordpress/components';
+import { Notice, SnackbarList } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import i18n from 'i18n-calypso';
-import { ComponentType, ReactNode, ReactChild, useState } from 'react';
+import { ComponentType, ReactNode, ReactElement, useState } from 'react';
 import type { Pattern } from '../types';
 import './notices.scss';
 
 const NOTICE_TIMEOUT = 5000;
 
-type Notice = NoticeList.Notice & {
+type Notice = Omit< React.ComponentProps< typeof Notice >, 'children' > & {
 	timer?: ReturnType< typeof setTimeout >;
+	id: string;
+	content: string;
 };
 
 interface NoticeOperationsProps {
 	showPatternInsertedNotice: ( pattern: Pattern ) => void;
-	showPatternReplacedNotice: ( pattern: Pattern ) => void;
 	showPatternRemovedNotice: ( pattern: Pattern ) => void;
 }
 
@@ -31,7 +32,7 @@ const withNotices = createHigherOrderComponent(
 				setNoticeList( ( current ) => current.filter( ( notice ) => notice.id !== id ) );
 			};
 
-			const createNotice = ( id: string, content: ReactChild ) => {
+			const createNotice = ( id: string, content: ReactElement | string | number ) => {
 				const existingNoticeWithSameId = noticeList.find( ( notice ) => notice.id === id );
 				if ( existingNoticeWithSameId?.timer ) {
 					clearTimeout( existingNoticeWithSameId.timer );
@@ -46,10 +47,10 @@ const withNotices = createHigherOrderComponent(
 					}, NOTICE_TIMEOUT ),
 				};
 
-				setNoticeList( ( current ) => [
-					...current.filter( ( notice ) => notice.id !== id ),
-					newNotice,
-				] );
+				setNoticeList(
+					( current ) =>
+						[ ...current.filter( ( notice ) => notice.id !== id ), newNotice ] as Notice[]
+				);
 			};
 
 			const noticeOperations: NoticeOperationsProps = {
@@ -57,14 +58,6 @@ const withNotices = createHigherOrderComponent(
 					createNotice(
 						'pattern-inserted',
 						i18n.translate( 'Block pattern "%(patternName)s" inserted.', {
-							args: { patternName: pattern.title },
-						} )
-					);
-				},
-				showPatternReplacedNotice: ( pattern: Pattern ) => {
-					createNotice(
-						'pattern-replaced',
-						i18n.translate( 'Block pattern "%(patternName)s" replaced.', {
 							args: { patternName: pattern.title },
 						} )
 					);

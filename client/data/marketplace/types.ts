@@ -94,3 +94,41 @@ export type SearchParams = {
 export type ReinstallPluginsResponse = {
 	message: string;
 };
+
+export type ESRelatedPluginsResult = {
+	fields: ESRelatedPlugin;
+};
+
+export type ESRelatedPlugin = {
+	categories: Array< string >;
+	short_description?: string;
+	icons?: string;
+	software_slug?: string;
+	product_slug?: string;
+	slug?: string;
+	name?: string;
+	rating?: number;
+	variations: {
+		monthly: { product_slug?: string; product_id?: number };
+		yearly: { product_slug?: string; product_id?: number };
+	};
+};
+
+export type RelatedPlugin = {
+	categories: Array< string >;
+	short_description?: string;
+	icon?: string;
+	software_slug?: string;
+	productSlug?: string;
+	slug?: string;
+	name?: string;
+	rating?: number;
+	variations?: {
+		monthly: { product_slug?: string; product_id?: number };
+		yearly: { product_slug?: string; product_id?: number };
+	};
+};
+
+export type AddPluginUpgrade = {
+	success: true;
+};

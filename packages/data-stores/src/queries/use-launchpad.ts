@@ -17,6 +17,7 @@ interface Task {
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
 	warning?: boolean;
+	order?: number;
 }
 
 interface ChecklistStatuses {
@@ -30,15 +31,28 @@ interface ChecklistStatuses {
 	domain_upsell_deferred?: boolean;
 }
 
+type LaunchpadScreen = 'full' | 'off' | 'skipped' | 'minimized';
+
 interface LaunchpadResponse {
 	site_intent?: string | null;
-	launchpad_screen?: string | boolean | null | undefined;
+	launchpad_screen?: LaunchpadScreen | boolean | null | undefined;
 	checklist?: Task[] | null;
 	checklist_statuses?: ChecklistStatuses;
+	is_enabled: boolean;
+	is_dismissed: boolean;
 }
 
 type LaunchpadUpdateSettings = {
 	checklist_statuses?: Record< string, boolean >;
+	is_checklist_dismissed?: {
+		slug: string;
+		is_dismissed: boolean;
+	};
+	launchpad_screen?: 'off' | 'minimized' | 'full' | 'skipped';
+};
+
+export type UseLaunchpadOptions = {
+	onSuccess?: ( data: LaunchpadResponse ) => LaunchpadResponse;
 };
 
 export const fetchLaunchpad = (
@@ -63,26 +77,60 @@ export const fetchLaunchpad = (
 		  } as APIFetchOptions );
 };
 
+const addOrderToTask = ( task: Task, index: number ) => {
+	task.order = index;
+	return task;
+};
+
+export function sortLaunchpadTasksByCompletionStatus( response: LaunchpadResponse ) {
+	const tasks = response.checklist || [];
+	const completedTasks = tasks.filter( ( task: Task ) => task.completed );
+	const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
+	response.checklist = [ ...completedTasks, ...incompleteTasks ].map( addOrderToTask );
+	return response;
+}
+
+const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
+	const tasks = response.checklist || [];
+	response.checklist = tasks.map( addOrderToTask );
+	return response;
+};
+
 export const useLaunchpad = (
 	siteSlug: string | null,
-	checklist_slug?: string | 0 | null | undefined
+	checklist_slug?: string | 0 | null | undefined,
+	options?: UseLaunchpadOptions
 ) => {
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
+	const onSuccessCallback = options?.onSuccess || defaultSuccessCallback;
+
 	return useQuery( {
 		queryKey: key,
-		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ),
+		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ).then( onSuccessCallback ),
 		retry: 3,
 		initialData: {
 			site_intent: '',
 			launchpad_screen: undefined,
 			checklist_statuses: {},
 			checklist: null,
+			is_enabled: false,
+			is_dismissed: false,
 		},
 	} );
 };
 
-export const updateLaunchpadSettings = (
+export const useSortedLaunchpadTasks = (
 	siteSlug: string | null,
+	checklist_slug?: string | 0 | null | undefined
+) => {
+	const launchpadOptions = {
+		onSuccess: sortLaunchpadTasksByCompletionStatus,
+	};
+	return useLaunchpad( siteSlug, checklist_slug, launchpadOptions );
+};
+
+export const updateLaunchpadSettings = (
+	siteSlug: string | number,
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = encodeURIComponent( siteSlug as string );

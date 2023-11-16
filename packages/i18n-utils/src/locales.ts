@@ -11,6 +11,27 @@ export const localesWithGoBlog: Locale[] = [ 'en', 'pt-br', 'de', 'es', 'fr', 'i
 export const localesWithPrivacyPolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 
+export const localesForPricePlans: Locale[] = [
+	'ar',
+	'de',
+	'el',
+	'es',
+	'fr',
+	'he',
+	'id',
+	'it',
+	'ja',
+	'ko',
+	'nl',
+	'pt-br',
+	'ro',
+	'ru',
+	'sv',
+	'tr',
+	'zh-cn',
+	'zh-tw',
+];
+
 type LocaleSubdomain = string;
 
 export const localesToSubdomains: Record< string, LocaleSubdomain > = {

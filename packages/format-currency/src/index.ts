@@ -38,15 +38,17 @@ export function createFormatter(): CurrencyFormatter {
 		geoLocation = geoData.country_short;
 	}
 
+	function getLocaleToUse( options: CurrencyObjectOptions ): string {
+		return options.locale ?? defaultLocale ?? getLocaleFromBrowser();
+	}
+
 	function getFormatter(
 		number: number,
 		code: string,
 		options: CurrencyObjectOptions
 	): Intl.NumberFormat {
-		const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-
 		return getCachedFormatter( {
-			locale,
+			locale: getLocaleToUse( options ),
 			currency: code,
 			noDecimals: isNoDecimals( number, options ),
 		} );
@@ -79,7 +81,6 @@ export function createFormatter(): CurrencyFormatter {
 	 *
 	 * If `isSmallestUnit` is set and the number is not an integer, it will be
 	 * rounded to an integer.
-	 *
 	 * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
 	 * @param      {string}                   code       currency code e.g. 'USD'
 	 * @param      {CurrencyObjectOptions}    options    options object
@@ -90,7 +91,7 @@ export function createFormatter(): CurrencyFormatter {
 		code: string,
 		options: CurrencyObjectOptions = {}
 	): string {
-		const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
+		const locale = getLocaleToUse( options );
 		code = getValidCurrency( code );
 		const currencyOverride = getCurrencyOverride( code );
 		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
@@ -144,7 +145,6 @@ export function createFormatter(): CurrencyFormatter {
 	 *
 	 * If `isSmallestUnit` is set and the number is not an integer, it will be
 	 * rounded to an integer.
-	 *
 	 * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
 	 * @param      {string}                   code       currency code e.g. 'USD'
 	 * @param      {CurrencyObjectOptions}    options    options object
@@ -155,7 +155,7 @@ export function createFormatter(): CurrencyFormatter {
 		code: string,
 		options: CurrencyObjectOptions = {}
 	): CurrencyObject {
-		const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
+		const locale = getLocaleToUse( options );
 		code = getValidCurrency( code );
 		const currencyOverride = getCurrencyOverride( code );
 		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );

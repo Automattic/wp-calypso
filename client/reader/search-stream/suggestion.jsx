@@ -1,3 +1,4 @@
+import { retrieveLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';
@@ -35,8 +36,11 @@ export class Suggestion extends Component {
 			q: suggestion,
 			sort,
 		};
+		const localeFromPath = retrieveLocaleFromPathLocaleInFront( window.location.pathname );
 
-		const searchUrl = '/read/search?' + stringify( args );
+		const searchUrl = localeFromPath
+			? `/${ localeFromPath }/read/search?${ stringify( args ) }`
+			: `/read/search?${ stringify( args ) }`;
 
 		return (
 			<a onClick={ this.handleSuggestionClick } href={ searchUrl }>

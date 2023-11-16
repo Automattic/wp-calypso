@@ -1,6 +1,5 @@
 /**
  * Create a `Users` instance
- *
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {Users|undefined}
  */
@@ -14,7 +13,6 @@ export default function Users( wpcom ) {
 
 /**
  * A list of @mention suggestions for the current user
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler

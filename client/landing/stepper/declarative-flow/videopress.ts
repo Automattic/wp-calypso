@@ -1,18 +1,20 @@
-import { PlansSelect, SiteSelect } from '@automattic/data-stores';
+import config from '@automattic/calypso-config';
+import { LaunchpadNavigator, PlansSelect, SiteSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { PLANS_STORE, SITE_STORE, USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
-import Intro from './internals/steps-repository/intro';
 import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
@@ -27,8 +29,16 @@ const videopress: Flow = {
 		return translate( 'Video' );
 	},
 	useSteps() {
+		const isIntentEnabled = config.isEnabled( 'videopress-onboarding-user-intent' );
+
 		return [
-			{ slug: 'intro', component: Intro },
+			{
+				slug: 'intro',
+				asyncComponent: () =>
+					isIntentEnabled
+						? import( './internals/steps-repository/videopress-onboarding-intent' )
+						: import( './internals/steps-repository/intro' ),
+			},
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
 			{ slug: 'options', component: SiteOptions },
 			{ slug: 'chooseADomain', component: ChooseADomain },
@@ -61,6 +71,7 @@ const videopress: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
+		const siteId = useSiteIdParam();
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -94,6 +105,7 @@ const videopress: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 			[]
 		);
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		const [ isSiteCreationPending, setIsSiteCreationPending ] = useState( false );
 
@@ -103,6 +115,8 @@ const videopress: Flow = {
 			setDomain( undefined );
 			setSelectedDesign( undefined );
 		};
+
+		const siteSlug = useSiteSlug();
 
 		const stepValidateUserIsLoggedIn = () => {
 			if ( ! userIsLoggedIn ) {
@@ -157,6 +171,16 @@ const videopress: Flow = {
 
 				setSelectedSite( newSite.blogid );
 				setIntentOnSite( newSite.site_slug, VIDEOPRESS_FLOW );
+
+				if ( config.isEnabled( 'videomaker-trial' ) ) {
+					saveSiteSettings( newSite.blogid, {
+						launchpad_screen: 'off',
+						blogdescription: siteDescription,
+					} );
+					clearOnboardingSiteOptions();
+					return window.location.assign( `/site-editor/${ newSite.site_slug }` );
+				}
+
 				saveSiteSettings( newSite.blogid, {
 					launchpad_screen: 'full',
 					blogdescription: siteDescription,
@@ -216,22 +240,25 @@ const videopress: Flow = {
 			} );
 		};
 
-		switch ( _currentStep ) {
-			case 'intro':
-				clearOnboardingSiteOptions();
-				break;
-			case 'options':
-				stepValidateUserIsLoggedIn();
-				break;
-			case 'chooseADomain':
-				stepValidateSiteTitle();
-				break;
-			case 'processing':
-				if ( ! _siteSlug ) {
-					addVideoPressPendingAction();
-				}
-				break;
-		}
+		// needs to be wrapped in a useEffect because validation can call `navigate` which needs to be called in a useEffect
+		useEffect( () => {
+			switch ( _currentStep ) {
+				case 'intro':
+					clearOnboardingSiteOptions();
+					break;
+				case 'options':
+					stepValidateUserIsLoggedIn();
+					break;
+				case 'chooseADomain':
+					stepValidateSiteTitle();
+					break;
+				case 'processing':
+					if ( ! _siteSlug ) {
+						addVideoPressPendingAction();
+					}
+					break;
+			}
+		} );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -274,10 +301,16 @@ const videopress: Flow = {
 			return;
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.replace( `/view/${ _siteSlug }` );
+					await skipLaunchpad( {
+						checklistSlug: 'videopress',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'intro' );

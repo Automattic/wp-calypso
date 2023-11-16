@@ -1,3 +1,4 @@
+import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -31,16 +32,16 @@ const trackTagClick = ( slug: string ) => {
 	} );
 };
 
-const TagsColumn = ( props: TagsColProps ) => (
-	<div key={ props.slug }>
-		<a
-			href={ `/tag/${ encodeURIComponent( props.slug ) }` }
-			onClick={ trackTagClick.bind( null, props.slug ) }
-		>
-			<span className="alphabetic-tags__title">{ titlecase( props.title ) }</span>
-		</a>
-	</div>
-);
+const TagsColumn = ( props: TagsColProps ) => {
+	const path = addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( props.slug ) }` );
+	return (
+		<div key={ props.slug }>
+			<a href={ path } onClick={ trackTagClick.bind( null, props.slug ) }>
+				<span className="alphabetic-tags__title">{ titlecase( props.title ) }</span>
+			</a>
+		</div>
+	);
+};
 
 const TagsRow = ( props: TagsRowProps ) => (
 	<div className="alphabetic-tags__row">
@@ -118,7 +119,7 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 						<div className="alphabetic-tags__tag-links">
 							{ Object.keys( tagTables ).map( ( letter: string ) => (
 								<Button
-									isLink
+									variant="link"
 									key={ 'alphabetic-tags-link-' + letter }
 									onClick={ () => scrollToLetter( letter ) }
 								>

@@ -3,6 +3,7 @@ $follow-button-gray-disabled: var(--color-neutral-10);
 .follow-button,
 button.follow-button {
 	align-items: center;
+	background: unset;
 	border: 0;
 	display: flex;
 	padding: 0;
@@ -116,6 +117,42 @@ button.follow-button {
 
 		&:active {
 			border-width: 1px 1px 2px;
+		}
+	}
+
+	&.has-button-style,
+	&.has-button-style:hover {
+		background-color: var(--color-accent);
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-weight: 500;
+		padding: 12px 24px 12px 20px;
+
+		svg.reader-follow-feed * {
+			stroke: var(--color-text-inverted);
+		}
+
+		svg.reader-following-feed * {
+			stroke: var(--color-text);
+		}
+
+		.follow-button__label {
+			color: var(--color-text-inverted);
+			margin-left: 8px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				display: unset;
+			}
+		}
+
+		&.is-following,
+		&.is-following:hover {
+			background-color: var(--color-surface);
+			border: 1px solid var(--color-neutral-10);
+
+			.follow-button__label {
+				color: var(--color-text);
+			}
 		}
 	}
 }

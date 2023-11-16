@@ -7,6 +7,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -61,9 +62,15 @@ class DomainManagementData extends Component {
 						user: this.props.currentUser,
 					} ) }
 				</CalypsoShoppingCartProvider>
+				<UsePresalesChat />
 			</div>
 		);
 	}
+}
+
+export function UsePresalesChat() {
+	usePresalesChat( 'wpcom' );
+	return null;
 }
 
 export default connect( ( state ) => {

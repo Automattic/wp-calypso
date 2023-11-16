@@ -38,6 +38,7 @@ export const LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/ins
 export const QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js';
 export const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
 export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
+export const PARSLEY_SCRIPT_URL = 'https://cdn.parsely.com/keys/wordpress.com/p.js?ver=3.3.2';
 export const TRACKING_IDS = {
 	bingInit: '4074038',
 	criteo: '31321',
@@ -58,9 +59,10 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
+	wpcomGoogleAdsGtagDomainTransferPurchase: 'AW-946162814/8T2PCL3d7rsYEP6YlcMD',
 	wpcomGoogleGA4Gtag: 'G-1H4VG5F5JF',
 	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
-	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
+	jetpackGoogleGA4Gtag: 'G-K8CRH0LL00',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
 	akismetGoogleGA4Gtag: 'G-V8X5PZE9F8',
 	akismetGoogleTagManagerId: 'GTM-NLFBXG5',
@@ -69,6 +71,7 @@ export const TRACKING_IDS = {
 	jetpackLinkedinId: '4537722',
 	jetpackTwitterPixelId: 'odlje',
 	wooGoogleTagManagerId: 'GTM-W64W8Q',
+	parselyTracker: 'wordpress.com',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
@@ -77,3 +80,11 @@ export const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 export const GA_PRODUCT_BRAND_WPCOM = 'WordPress.com';
 export const GA_PRODUCT_BRAND_JETPACK = 'Jetpack';
 export const GA_PRODUCT_BRAND_AKISMET = 'Akismet';
+
+/**
+ * Vendor Id's from refer.wordpress.com
+ */
+export const WOOEXPRESS_AFFILIATE_VENDOR_ID = '67386441';
+export const WPCOM_AFFILIATE_VENDOR_ID = '67402';
+
+export const WPCOM_CLARITY_URI = 'https://www.clarity.ms/tag/j0cc1i1dba';

@@ -159,7 +159,7 @@ export type ShoppingCartState = {
 			loadingError: string;
 			loadingErrorType: ShoppingCartError;
 	  }
- );
+);
 
 export interface WithShoppingCartProps {
 	shoppingCartManager: UseShoppingCart;
@@ -353,6 +353,8 @@ export interface ResponseCartProduct {
 	product_id: number;
 	currency: string;
 
+	product_name_en: string;
+
 	/**
 	 * The cart item's original price in the currency's smallest unit.
 	 *
@@ -434,6 +436,14 @@ export interface ResponseCartProduct {
 	price_tier_maximum_units?: number | null;
 
 	/**
+	 * A cost override is a change to the price of a product. The new price and the old (original) price are both provided.
+	 *
+	 * The override_code is a string that identifies the reason for the override.
+	 * When displaying the reason to the customer, use the human_readable_reason.
+	 */
+	cost_overrides?: ResponseCartCostOverride[];
+
+	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
 	 * we want to bill the customer for, before applying the per unit cost.
 	 *
@@ -488,6 +498,19 @@ export interface ResponseCartProduct {
 	 */
 	is_renewal?: boolean;
 
+	/**
+	 * True if the product is a renewal and the subscription will auto-renew.
+	 *
+	 * A subscription will auto-renew if it both can auto-renew (it's a recurring subscription,
+	 * has a payment method, isn't blocked, etc.) and the user has auto-renew enabled.
+	 */
+	is_renewal_and_will_auto_renew?: boolean;
+
+	/**
+	 * True if the product will not renew.
+	 */
+	is_one_time_purchase?: boolean;
+
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
 
@@ -495,6 +518,11 @@ export interface ResponseCartProduct {
 	 * True if the cart item represents a purchase for a different user's site.
 	 */
 	is_gift_purchase?: boolean;
+
+	/**
+	 * True if cart item is a domain that is included in a 100 Year Plan
+	 */
+	is_included_for_100yearplan: boolean;
 
 	product_variants: ResponseCartProductVariant[];
 
@@ -513,6 +541,16 @@ export interface ResponseCartProductVariant {
 	introductory_offer_terms:
 		| Record< string, never >
 		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
+	volume?: number;
+}
+
+export interface ResponseCartCostOverride {
+	human_readable_reason: string;
+	new_price: number;
+	old_price: number;
+	override_code: string;
+	does_override_original_cost: boolean;
+	reason: string;
 }
 
 export interface IntroductoryOfferTerms {
@@ -590,8 +628,10 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
+	import_dns_records?: boolean;
 	signup?: boolean;
 	headstart_theme?: string;
+	feature_slug?: string;
 }
 
 export interface GSuiteProductUser {
@@ -656,5 +696,28 @@ export type FrDomainContactExtraDetails = {
 export interface TermsOfServiceRecord {
 	key: string;
 	code: string;
-	args?: Record< string, string >;
+	args?: TermsOfServiceRecordArgsBase | TermsOfServiceRecordArgsRenewal;
+}
+
+export interface TermsOfServiceRecordArgsBase {
+	subscription_start_date: string;
+	subscription_expiry_date?: string;
+	subscription_auto_renew_date?: string;
+	subscription_pre_renew_reminder_days?: string;
+	subscription_pre_renew_reminders_count?: number;
+	product_meta: string;
+	product_name: string;
+	renewal_price: string;
+	is_renewal_price_prorated: boolean;
+	regular_renewal_price: string;
+	email?: string;
+	card_type?: string;
+	card_last_4?: string;
+}
+
+export interface TermsOfServiceRecordArgsRenewal extends TermsOfServiceRecordArgsBase {
+	subscription_expiry_date: string;
+	subscription_auto_renew_date: string;
+	subscription_pre_renew_reminder_days: string;
+	subscription_pre_renew_reminders_count: number;
 }

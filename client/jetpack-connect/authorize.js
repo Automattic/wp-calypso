@@ -2,15 +2,19 @@ import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
+	getProductFromSlug,
+	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
+import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
-import { Spinner as WPSpinner } from '@wordpress/components';
+import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
@@ -25,6 +29,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -41,6 +46,7 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlockedError as isSiteBlockedSelector,
 } from 'calypso/state/jetpack-connect/selectors';
+import { logoutUser } from 'calypso/state/logout/actions';
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
@@ -82,6 +88,8 @@ import {
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
+import { WooLoader } from './woo-loader';
+import { ConnectingYourAccountStage, OpeningTheDoorsStage } from './woo-loader-stages';
 
 /**
  * Constants
@@ -291,6 +299,17 @@ export class JetpackAuthorize extends Component {
 				this.isSso()
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
+		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
+			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
+			navigate(
+				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
+				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url
+				// host so that it becomes a relative url.
+				redirectAfterAuth.replace(
+					/^(https?:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)/,
+					''
+				)
+			);
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
@@ -341,7 +360,6 @@ export class JetpackAuthorize extends Component {
 
 	/**
 	 * Check whether this a valid authorized SSO request
-	 *
 	 * @param  {Object}  props          Props to test
 	 * @param  {?string} props.authQuery.from     Where is the request from
 	 * @param  {?number} props.authQuery.clientId Remote site ID
@@ -354,7 +372,6 @@ export class JetpackAuthorize extends Component {
 
 	/**
 	 * Check if the user is coming from the Jetpack upgrade flow.
-	 *
 	 * @param  {Object}  props           Props to test
 	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
 	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
@@ -438,13 +455,35 @@ export class JetpackAuthorize extends Component {
 		return partnerID && 'pressable' !== partnerSlug;
 	}
 
-	handleSignIn = () => {
+	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'connect-after-checkout' );
+	}
+
+	handleSignIn = async ( e, loginURL ) => {
+		e.preventDefault();
+
 		const { recordTracksEvent } = this.props;
-		const { from } = this.props.authQuery;
-		if ( 'woocommerce-onboarding' === from ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
-		} else if ( from === 'woocommerce-core-profiler' ) {
-			recordTracksEvent( 'calypso_jpc_different_user_click' );
+		switch ( true ) {
+			case this.isWooOnboarding():
+				recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+				window.location.href = e.target.href;
+				break;
+			case this.isWooCoreProfiler():
+				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
+				window.location.href = e.target.href;
+				break;
+			default:
+				try {
+					const { redirect_to: redirectTo } = await this.props.logoutUser( loginURL );
+					disablePersistence();
+					await clearStore();
+					window.location.href = redirectTo || '/';
+				} catch ( error ) {
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					this.props.redirectToLogout( loginURL );
+				}
 		}
 	};
 
@@ -509,6 +548,10 @@ export class JetpackAuthorize extends Component {
 
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+		}
+
+		if ( 'woocommerce-core-profiler' === from ) {
+			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
 		}
 
 		return this.authorize();
@@ -774,6 +817,46 @@ export class JetpackAuthorize extends Component {
 		return text;
 	}
 
+	getProductActivationText() {
+		if ( ! this.isFromMyJetpackConnectAfterCheckout() ) {
+			return;
+		}
+		const { translate, isAlreadyOnSitesList } = this.props;
+		const { authorizeSuccess } = this.props.authorizationData;
+		const { redirectAfterAuth } = this.props.authQuery;
+
+		const { searchParams } = getUrlParts( redirectAfterAuth );
+		const productSlug = searchParams.get( 'productSlug' );
+		const siteSlug = searchParams.get( 'fromSiteSlug' );
+		const product = getProductFromSlug( productSlug );
+		const productName = getJetpackProductDisplayName( product );
+		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
+
+		if ( authorizeSuccess || isAlreadyOnSitesList ) {
+			return translate(
+				'You purchased {{strong}}%(productName)s{{/strong}}. Now you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+				{
+					args: { productName, siteName },
+					components: {
+						br: <br />,
+						strong: <strong />,
+					},
+				}
+			);
+		}
+
+		return translate(
+			'You purchased {{strong}}%(productName)s{{/strong}}. Once connected, you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+			{
+				args: { productName, siteName },
+				components: {
+					br: <br />,
+					strong: <strong />,
+				},
+			}
+		);
+	}
+
 	isWaitingForConfirmation() {
 		const { isAuthorizing, authorizeSuccess, siteReceived } = this.props.authorizationData;
 		return ! ( isAuthorizing || authorizeSuccess || siteReceived );
@@ -842,28 +925,56 @@ export class JetpackAuthorize extends Component {
 	renderContent() {
 		const { translate, user, authQuery } = this.props;
 		if ( this.isWooCoreProfiler() ) {
+			let col1Features = [];
+			let col2Features = [];
+			if ( authQuery.plugin_name === 'jetpack-boost' ) {
+				col1Features = [
+					translate( 'Speed up your store' ),
+					translate( 'Optimize CSS loading' ),
+					translate( 'Defer non-essential Javascript' ),
+				];
+				col2Features = [
+					translate( 'Lazy image loading' ),
+					translate( 'Site performance scores' ),
+					translate( 'Improve SEO' ),
+				];
+			} else {
+				col1Features = [
+					translate( 'Speed up content creation' ),
+					translate( 'Prompt based AI assistant' ),
+					translate( 'Adaptive tone adjustment' ),
+					translate( 'Generate text, tables, and lists' ),
+				];
+				col2Features = [
+					translate( 'Quota of 20 requests' ),
+					translate( 'Title and summary generation' ),
+					translate( 'Translate content to multiple languages' ),
+					translate( 'Spelling and grammar correction' ),
+				];
+			}
+
 			return (
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
 						<Card className="jetpack-connect__logged-in-card">
-							<Gravatar user={ user } size={ 40 } />
-							<div>
+							<div className="jetpack-connect__logged-in-form-user">
+								<Gravatar user={ user } size={ 40 } />
 								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-								<LoggedOutFormLinkItem
-									href={ login( {
-										isJetpack: true,
-										redirectTo: window.location.href,
-										from: authQuery.from,
-									} ) }
-									onClick={ this.handleSignIn }
-								>
-									{ translate( 'Sign in as a different user' ) }
-								</LoggedOutFormLinkItem>
 							</div>
+							<LoggedOutFormLinkItem
+								href={ login( {
+									isJetpack: true,
+									redirectTo: window.location.href,
+									from: authQuery.from,
+								} ) }
+								onClick={ this.handleSignIn }
+							>
+								{ translate( 'Sign in as a different user' ) }
+							</LoggedOutFormLinkItem>
 						</Card>
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
-							<JetpackFeatures />
+							<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
 							<Disclaimer siteName={ decodeEntities( authQuery.blogname ) } />
 							<div className="jetpack-connect__jetpack-logo-wrapper">
 								<JetpackLogo monochrome size={ 18 } />{ ' ' }
@@ -882,6 +993,11 @@ export class JetpackAuthorize extends Component {
 			<Card className="jetpack-connect__logged-in-card">
 				<Gravatar user={ user } size={ gravatarSize } />
 				<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+				{ this.isFromMyJetpackConnectAfterCheckout() && (
+					<p className="jetpack-connect__activate-product-text">
+						{ this.getProductActivationText() }
+					</p>
+				) }
 				{ this.renderNotices() }
 				{ this.renderStateAction() }
 			</Card>
@@ -909,12 +1025,14 @@ export class JetpackAuthorize extends Component {
 			return wooDnaFooterLinks;
 		}
 
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
 		return (
 			<LoggedOutFormLinks>
 				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
-					href={ login( { isJetpack: true, redirectTo: window.location.href, from } ) }
-					onClick={ this.handleSignIn }
+					href={ loginURL }
+					onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
@@ -1027,6 +1145,24 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
+		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+
+		if ( this.isWooCoreProfiler() && ( isAuthorizing || authorizeSuccess ) ) {
+			return (
+				// Wrap the loader in a modal to show it in full screen
+				<Modal
+					open
+					title=""
+					overlayClassName="jetpack-connect-woocommerce-loader__modal-overlay"
+					className="jetpack-connect-woocommerce-loader__modal"
+					shouldCloseOnClickOutside={ false }
+					shouldCloseOnEsc={ false }
+					isDismissible={ false }
+				>
+					<WooLoader stages={ [ ConnectingYourAccountStage, OpeningTheDoorsStage ] } />
+				</Modal>
+			);
+		}
 
 		return (
 			<MainWrapper
@@ -1102,6 +1238,7 @@ const connectComponent = connect(
 		recordTracksEvent: recordTracksEventAction,
 		redirectToLogout,
 		retryAuth: retryAuthAction,
+		logoutUser,
 	}
 );
 

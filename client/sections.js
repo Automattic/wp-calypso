@@ -31,6 +31,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'promote-post-i2',
+		paths: [ '/advertising' ],
+		module: 'calypso/my-sites/promote-post-i2',
+		group: 'sites',
+	},
+	{
 		name: 'concierge',
 		paths: [ '/me/concierge', '/me/quickstart' ],
 		module: 'calypso/me/concierge',
@@ -50,7 +56,12 @@ const sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/me/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
+		paths: [
+			'/me/purchases',
+			'/me/purchases-by-owner',
+			'/me/billing',
+			'/payment-methods/add-credit-card',
+		],
 		module: 'calypso/me/purchases',
 		group: 'me',
 	},
@@ -104,6 +115,7 @@ const sections = [
 		module: 'calypso/my-sites/plugins',
 		group: 'sites',
 		enableLoggedOut: true,
+		enableNoSites: true,
 		isomorphic: true,
 		title: 'Plugins',
 	},
@@ -147,6 +159,17 @@ const sections = [
 		name: 'settings-discussion',
 		paths: [ '/settings/discussion' ],
 		module: 'calypso/my-sites/site-settings/settings-discussion',
+		group: 'sites',
+	},
+	{
+		name: 'settings-newsletter',
+		paths: [ '/settings/newsletter' ],
+		module: 'calypso/my-sites/site-settings/settings-newsletter',
+	},
+	{
+		name: 'settings-podcast',
+		paths: [ '/settings/podcasting' ],
+		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
 	},
 	{
@@ -199,6 +222,11 @@ const sections = [
 		isomorphic: true,
 	},
 	{
+		name: 'jetpack-app',
+		paths: [ '/jetpack-app' ],
+		module: 'calypso/jetpack-app',
+	},
+	{
 		name: 'stats',
 		paths: [ '/stats' ],
 		module: 'calypso/my-sites/stats',
@@ -218,6 +246,7 @@ const sections = [
 		paths: [ '/themes', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/themes`, '/design' ],
 		module: 'calypso/my-sites/themes',
 		enableLoggedOut: true,
+		enableNoSites: true,
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes',
@@ -227,9 +256,20 @@ const sections = [
 		paths: [ '/theme', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/theme` ],
 		module: 'calypso/my-sites/theme',
 		enableLoggedOut: true,
+		enableNoSites: true,
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'site-profiler',
+		paths: [ '/site-profiler', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/site-profiler` ],
+		module: 'calypso/site-profiler',
+		enableLoggedOut: true,
+		group: 'site-profiler',
+		isomorphic: true,
+		title: 'Site Profiler',
 		trackLoadPerformance: true,
 	},
 	{
@@ -251,8 +291,8 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'inbox',
-		paths: [ '/inbox' ],
+		name: 'mailboxes',
+		paths: [ '/mailboxes' ],
 		module: 'calypso/my-sites/email',
 		group: 'sites',
 	},
@@ -323,9 +363,10 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/discover' ],
+		paths: [ '/discover', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/discover' ],
 		module: 'calypso/reader/discover',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -336,7 +377,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags' ],
+		paths: [ '/tags', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tags' ],
 		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,
@@ -345,7 +386,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tag' ],
+		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -360,7 +401,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/search', '/recommendations' ],
+		paths: [ '/read/search', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read/search', '/recommendations' ],
 		module: 'calypso/reader/search',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -388,7 +429,12 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/subscriptions' ],
+		paths: [
+			'/read/subscriptions',
+			'/read/subscriptions/comments',
+			'/read/subscriptions/pending',
+			'^/read/subscriptions/(\\d+)(/)?$',
+		],
 		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},
@@ -559,7 +605,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-agency-signup',
-		paths: [ '/agency/signup' ],
+		paths: [ '/manage/signup', '/agency/signup' ],
 		module: 'calypso/jetpack-cloud/sections/agency-signup',
 		group: 'jetpack-cloud',
 	},
@@ -594,15 +640,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'promote-post',
-		paths: [ '/advertising', '/advertising/[^\\/]+', '/advertising/[^\\/]+/[^\\/]+/promote' ],
-		module: 'calypso/my-sites/promote-post',
-		group: 'sites',
-	},
-	{
-		name: 'site-logs',
-		paths: [ '/site-logs' ],
-		module: 'calypso/my-sites/site-logs',
+		name: 'site-monitoring',
+		paths: [ '/site-monitoring', '/site-logs' ],
+		module: 'calypso/my-sites/site-monitoring',
 		group: 'sites',
 	},
 ];

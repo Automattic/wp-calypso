@@ -1,4 +1,4 @@
-import { PaymentLogo } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal//hooks';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';

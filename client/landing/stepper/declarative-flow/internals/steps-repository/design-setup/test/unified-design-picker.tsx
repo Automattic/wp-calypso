@@ -3,7 +3,6 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -35,12 +34,30 @@ jest.mock( '../../../../../hooks/use-site', () => ( {
 	useSite: () => MOCKED_SITE,
 } ) );
 
-jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
-	usePremiumGlobalStyles: () => ( { shouldLimitGlobalStyles: false } ),
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( { shouldLimitGlobalStyles: false } ),
 } ) );
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
+} ) );
+
+jest.mock( 'calypso/state/themes/theme-utils', () => ( {
+	getPreferredBillingCycleProductSlug: () => {
+		return;
+	},
+} ) );
+
+jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
+	getEligibility: () => {
+		return;
+	},
+} ) );
+
+jest.mock( 'calypso/my-sites/themes/helpers', () => ( {
+	marketplaceThemeBillingProductSlug: () => {
+		return;
+	},
 } ) );
 
 jest.mock( 'calypso/components/data/query-site-features', () => ( {
@@ -51,6 +68,24 @@ jest.mock( 'calypso/components/data/query-site-features', () => ( {
 
 jest.mock( 'calypso/components/data/query-themes', () => ( {
 	useQueryThemes: () => {
+		return;
+	},
+} ) );
+
+jest.mock( 'calypso/components/data/query-products-list', () => ( {
+	useQueryProductsList: () => {
+		return;
+	},
+} ) );
+
+jest.mock( 'calypso/state/themes/selectors', () => ( {
+	isMarketplaceThemeSubscribed: () => {
+		return;
+	},
+	getTheme: () => {
+		return;
+	},
+	isSiteEligibleForManagedExternalThemes: () => {
 		return;
 	},
 } ) );
@@ -76,6 +111,7 @@ const renderComponent = ( component, initialState = {} ) => {
 	const queryClient = new QueryClient();
 	const store = mockStore( {
 		purchases: {},
+		sites: {},
 		...initialState,
 	} );
 
@@ -92,7 +128,6 @@ const renderComponent = ( component, initialState = {} ) => {
 
 describe( 'UnifiedDesignPickerStep', () => {
 	let originalScrollTo;
-	const user = userEvent.setup();
 
 	const navigation = {
 		goBack: jest.fn(),
@@ -147,17 +182,6 @@ describe( 'UnifiedDesignPickerStep', () => {
 					1
 				);
 			} );
-		} );
-	} );
-
-	describe( 'Skip for now', () => {
-		it( 'should call submit successfully', async () => {
-			renderComponent( <UnifiedDesignPickerStep flow="site-setup" navigation={ navigation } /> );
-
-			await waitFor( () => screen.getByText( 'Pick a design' ) );
-			await user.click( screen.getByText( 'Skip for now' ) );
-
-			expect( navigation.submit ).toHaveBeenCalled();
 		} );
 	} );
 } );

@@ -10,10 +10,11 @@ export function InstagramSharePreview( {
 	articleTitle,
 	imageUrl,
 	message,
+	media,
 } ) {
 	const translate = useTranslate();
 
-	if ( ! imageUrl ) {
+	if ( ! imageUrl && ! media?.length ) {
 		return (
 			<Notice
 				text={ translate( 'You need a valid image in your post to share to Instagram.' ) }
@@ -35,6 +36,7 @@ export function InstagramSharePreview( {
 			image={ imageUrl }
 			name={ externalName }
 			profileImage={ externalProfilePicture }
+			media={ media }
 		/>
 	);
 }

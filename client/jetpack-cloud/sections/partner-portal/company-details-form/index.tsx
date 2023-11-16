@@ -1,11 +1,14 @@
 import { Button, Gridicon } from '@automattic/components';
+import { SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
+import PartnerProgramOptInFieldSet from '../partner-program-opt-in-fieldset/partner-program-opt-in-fieldset';
 import SearchableDropdown from '../searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 
@@ -25,14 +28,20 @@ function getCountry( country: string, options: CountryOption[] ): string {
 	return options[ 0 ].value;
 }
 
+const companyTypesEligibleForPartnerProgram = [ 'agency', 'freelancer' ];
+
 interface Props {
 	includeTermsOfService?: boolean;
 	isLoading: boolean;
 	onSubmit: ( payload: PartnerDetailsPayload ) => void;
+	referrer?: string;
 	initialValues?: {
 		name?: string;
 		contactPerson?: string;
 		companyWebsite?: string;
+		companyType?: string;
+		managedSites?: string;
+		partnerProgramOptIn?: boolean;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -41,6 +50,7 @@ interface Props {
 		state?: string;
 	};
 	submitLabel: string;
+	showSignupFields?: boolean;
 }
 
 export default function CompanyDetailsForm( {
@@ -49,6 +59,8 @@ export default function CompanyDetailsForm( {
 	initialValues = {},
 	onSubmit,
 	submitLabel,
+	showSignupFields = false,
+	referrer,
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
@@ -63,9 +75,30 @@ export default function CompanyDetailsForm( {
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
+	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
+	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '' );
+	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
+
+	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
+
+	const handleCompanyTypeChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		const selectedType = event.target.value;
+		setCompanyType( selectedType );
+
+		const isEligibleForPartnerProgram =
+			companyTypesEligibleForPartnerProgram.includes( selectedType );
+		setShowPartnerProgramOptIn( isEligibleForPartnerProgram );
+	};
+
+	useEffect( () => {
+		// reset opt-in setting if ineligible company is selected
+		if ( ! companyTypesEligibleForPartnerProgram.includes( companyType ) ) {
+			setPartnerProgramOptIn( false );
+		}
+	}, [ companyType ] );
 
 	useEffect( () => {
 		// Reset the value of state since our options have changed.
@@ -77,11 +110,15 @@ export default function CompanyDetailsForm( {
 			name,
 			contactPerson,
 			companyWebsite,
+			companyType,
+			managedSites,
+			partnerProgramOptIn,
 			city,
 			line1,
 			line2,
 			country,
 			postalCode,
+			referrer,
 			state: addressState,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
@@ -89,11 +126,15 @@ export default function CompanyDetailsForm( {
 			name,
 			contactPerson,
 			companyWebsite,
+			companyType,
+			managedSites,
+			partnerProgramOptIn,
 			city,
 			line1,
 			line2,
 			country,
 			postalCode,
+			referrer,
 			addressState,
 			includeTermsOfService,
 		]
@@ -125,7 +166,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="contactPerson">
 						{ translate( 'Contact first and last name' ) }
@@ -140,7 +180,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="companyWebsite">{ translate( 'Company website' ) }</FormLabel>
 					<FormTextInput
@@ -153,7 +192,62 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
+				{ showSignupFields && (
+					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Choose which of the below options best describes your company:' ) }
+						</FormLabel>
+						<FormRadio
+							label={ translate( 'Agency' ) }
+							value="agency"
+							checked={ companyType === 'agency' }
+							onChange={ handleCompanyTypeChange }
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+						<FormRadio
+							label={ translate( 'Freelancer/Pro' ) }
+							value="freelancer"
+							checked={ companyType === 'freelancer' }
+							onChange={ handleCompanyTypeChange }
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+						<FormRadio
+							label={ translate( 'A business with multiple sites' ) }
+							value="business"
+							checked={ companyType === 'business' }
+							onChange={ handleCompanyTypeChange }
+							disabled={ isLoading }
+							className={ undefined }
+						/>
+					</FormFieldset>
+				) }
+				{ showPartnerProgramOptIn && ! isLoading && (
+					<PartnerProgramOptInFieldSet
+						setPartnerProgramOptIn={ setPartnerProgramOptIn }
+						isChecked={ partnerProgramOptIn }
+					/>
+				) }
+				{ showSignupFields && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
+						<SelectControl
+							id="managed_sites"
+							name="managed_sites"
+							value={ managedSites }
+							options={ [
+								{ value: '1-5', label: translate( '1-5' ) },
+								{ value: '6-20', label: translate( '6-20' ) },
+								{ value: '21-50', label: translate( '21-50' ) },
+								{ value: '51-100', label: translate( '51-100' ) },
+								{ value: '101-500', label: translate( '101-500' ) },
+								{ value: '500+', label: translate( '500+' ) },
+							] }
+							onChange={ setManagedSites }
+						/>
+					</FormFieldset>
+				) }
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
@@ -169,7 +263,6 @@ export default function CompanyDetailsForm( {
 
 					{ ! showCountryFields && <TextPlaceholder /> }
 				</FormFieldset>
-
 				{ showCountryFields && stateOptions && (
 					<FormFieldset>
 						<FormLabel>{ translate( 'State' ) }</FormLabel>
@@ -182,7 +275,6 @@ export default function CompanyDetailsForm( {
 						/>
 					</FormFieldset>
 				) }
-
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
 					<FormTextInput
@@ -206,7 +298,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
 					<FormTextInput
@@ -217,7 +308,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
 					<FormTextInput
@@ -230,7 +320,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				{ includeTermsOfService && (
 					<div className="company-details-form__tos">
 						<p>
@@ -254,7 +343,6 @@ export default function CompanyDetailsForm( {
 						</p>
 					</div>
 				) }
-
 				<div className="company-details-form__controls">
 					<Button
 						primary

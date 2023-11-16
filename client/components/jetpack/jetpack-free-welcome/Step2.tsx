@@ -51,7 +51,7 @@ export const Step2 = () => {
 					} ) }
 				</li>
 				<li>
-					{ translate( '{{a}}Grow your brand{{/a}} with our Social Media Tools.', {
+					{ translate( '{{a}}Grow your brand{{/a}} with Jetpack Social.', {
 						components: {
 							a: (
 								<a

@@ -4,7 +4,6 @@ import tracksRecordEvent from './tracking/track-record-event';
 
 /**
  * Determines the type of the block editor.
- *
  * @returns {(string|undefined)} editor's type
  */
 export const getEditorType = () => {
@@ -30,7 +29,6 @@ export const getEditorType = () => {
 /**
  * Helper for `getBlockEventContextProperties` function.  Builds the properties to return based on
  * the block provided.
- *
  * @param {Object} block block object that provides context.
  * @returns	{Object} Properties for tracking event.
  */
@@ -64,7 +62,6 @@ const buildPropsFromContextBlock = ( block ) => {
 /**
  * Determines the entity context props of a block event, given the rootClientId of the
  * block action.
- *
  * @param {string} rootClientId The rootClientId of the block event.
  * @returns {Object} The block event's context properties.
  */
@@ -105,7 +102,6 @@ export const getBlockEventContextProperties = ( rootClientId ) => {
 /**
  * Compares two objects, returning values in newObject that do not correspond
  * to values in oldObject.
- *
  * @param {Object | Array} newObject The object that has had an update.
  * @param {Object | Array} oldObject The original object to reference.
  * @param {Array}  		 keyMap    Used in recursion.  A list of keys mapping to the changed item.
@@ -143,7 +139,6 @@ const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
  * This returns items in newContent that are different from those found in oldContent.
  * Additionally, items found in oldContent that are not in newContent are added to the
  * change list with their value as 'reset'.
- *
  * @param {Object} newContent The object that has had an update.
  * @param {Object} oldContent The original object to reference.
  * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
@@ -173,7 +168,6 @@ const findUpdates = ( newContent, oldContent ) => {
 
 /**
  * Builds tracks event props for a change in global styles.
- *
  * @param {Array[string]} keyMap A list of keys mapping to the changed item in the global styles content object.
  * @param {*} 			  value  New value of the updated item.
  * @returns {Object} An object containing the event properties for a global styles change.
@@ -230,7 +224,6 @@ const debounceTimer = 500;
 /**
  * Creates the Tracks events for global styles changes. The logic is wrapped
  * in a setTimeout to allow for custom debouncing when invoked.
- *
  * @param {Object} updated   The updated global styles content object.
  * @param {string} eventName Name of the tracks event to send.
  */
@@ -249,7 +242,6 @@ const trackEventsWithTimer = ( updated, eventName ) => {
  * some timing variables to allow for custom debouncing. This is needed
  * to avoid spamming tracks events when using continuous inputs such as a
  * slider or color picker.
- *
  * @param {Object} updated   The updated global styles content object.
  * @param {Object} original  The original global styles content object.
  * @param {string} eventName Name of the tracks event to send.
@@ -291,7 +283,6 @@ export const getFlattenedBlockNames = ( block ) => {
 
 /**
  * Checks the editor for open saving interfaces and returns the result.
- *
  * @returns {string} Name of saving interface found.
  */
 export const findSavingSource = () => {

@@ -1,0 +1,281 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$design-button-primary-color: var(--color-primary);
+$design-button-primary-hover-color: var(--color-primary-60);
+
+.theme-upgrade-modal {
+	display: flex;
+	flex-direction: column;
+
+	&.dialog__content {
+		padding: 0;
+	}
+
+	&.loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		max-width: 775px;
+	}
+
+	@include break-medium() {
+		flex-direction: row;
+		max-width: 775px;
+
+		&.loading {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 775px;
+			height: 430px;
+		}
+	}
+
+	.theme-upgrade-modal__col {
+		position: relative;
+		padding: 45px 25px;
+
+		@include break-medium {
+			padding: 45px;
+
+			&:nth-of-type(1) {
+				width: 62%;
+			}
+
+			&:nth-of-type(2) {
+				width: 38%;
+			}
+		}
+
+		&:nth-of-type(1) {
+			.theme-upgrade-modal__included {
+				display: block;
+				margin-bottom: 36px;
+
+				@include break-medium {
+					display: none;
+				}
+			}
+		}
+
+		&:nth-of-type(2) {
+			display: none;
+			background-color: var(--studio-gray-0);
+			padding-left: 25px;
+			padding-right: 25px;
+
+			@include break-medium {
+				display: block;
+			}
+		}
+	}
+
+	.theme-upgrade-modal__price-value {
+		font-family: Inter, $sans;
+	}
+
+	.theme-upgrade-modal__price-item {
+		display: flex;
+		justify-content: space-between;
+		padding: 20px 0;
+		font-size: $font-body-small;
+
+		&:not(:first-child) {
+			border-top: 1px solid var(--studio-gray-5);
+		}
+	}
+
+	.theme-upgrade-modal__price-summary {
+		padding-bottom: 10px;
+
+		@include break-medium {
+			padding-bottom: 15px;
+		}
+	}
+
+	.theme-upgrade-modal__theme-price {
+		display: flex;
+		margin-bottom: 5px;
+		align-items: baseline;
+		justify-content: flex-start;
+
+		span {
+			@extend .wp-brand-font;
+			font-size: $font-headline-small;
+			margin-right: 10px;
+		}
+	}
+
+	.theme-upgrade-modal__subscription-interval {
+		display: flex;
+		margin-bottom: 15px;
+
+		.form-label {
+			margin-right: 15px;
+
+			&:last-of-type {
+				margin-right: 0;
+			}
+		}
+	}
+
+	.theme-upgrade-modal__plan-nudge {
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+
+		button {
+			color: var(--wp-admin-theme-color);
+			cursor: pointer;
+		}
+	}
+
+	.theme-upgrade-modal__subscription-savings {
+		color: var(--studio-green-50);
+		margin-left: 4px;
+	}
+
+	h1.theme-upgrade-modal__heading {
+		@extend .wp-brand-font;
+		font-size: $font-headline-small;
+		line-height: 1.1;
+		margin-bottom: 15px;
+		&.bundle {
+			margin-top: 15px;
+		}
+
+		&.externally-managed {
+			font-size: $font-title-large;
+		}
+	}
+
+	.theme-upgrade-modal__woo-logo {
+		width: 70px;
+	}
+
+	p {
+		margin-bottom: 20px;
+	}
+
+	.theme-upgrade-modal__close {
+		color: var(--color-text-subtle);
+		position: absolute;
+		top: 0;
+		right: 8px;
+
+		.gridicon {
+			fill: var(--color-text-subtle);
+		}
+	}
+
+	.theme-upgrade-modal__actions.bundle {
+		display: grid;
+		grid-template-columns: repeat(1, 1fr);
+		gap: 20px;
+
+		&.externally-managed {
+			gap: 8px;
+			display: flex;
+			flex-direction: column-reverse;
+
+			@include break-medium {
+				display: grid;
+				gap: 16px;
+			}
+		}
+
+		.button {
+			padding: 9px 25px;
+			border-radius: 4px;
+			font-weight: 500;
+			margin-bottom: 0;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+
+			&.is-primary {
+				background: $design-button-primary-color;
+				border-color: $design-button-primary-color;
+				width: 100%;
+
+				&:hover,
+				&:focus {
+					background: $design-button-primary-hover-color;
+					border-color: $design-button-primary-hover-color;
+				}
+			}
+		}
+
+		@include break-medium {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.theme-upgrade-modal__included {
+		ul,
+		li {
+			font-size: $font-body-small;
+			line-height: 1.7;
+			list-style: none;
+			margin-left: 0;
+			padding-left: 0;
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		li {
+			display: flex;
+			align-items: flex-start;
+
+			> div {
+				display: flex;
+				align-items: center;
+			}
+		}
+
+		.gridicon {
+			fill: var(--studio-green-50);
+			flex-shrink: 0;
+			margin-right: 10px;
+			margin-top: 4px;
+		}
+
+		.components-popover.components-tooltip .components-popover__content {
+			border-radius: 4px;
+			margin: 8px;
+			max-width: 210px;
+			background-color: var(--studio-gray-100);
+			padding: 8px 10px;
+			text-align: start;
+			white-space: pre-line;
+			width: max-content;
+		}
+	}
+
+	.theme-features__features-wrap {
+		margin-top: 25px;
+	}
+
+	h2 {
+		font-size: $font-body-small;
+		font-weight: 500;
+		margin-bottom: 5px;
+	}
+
+	.theme-upgrade-modal__product-list {
+		width: 100%;
+		font-size: 0.875rem;
+
+		tr {
+			td {
+				padding: 15px 0;
+			}
+
+			&:first-child td {
+				border-bottom: 1px solid #ddd;
+			}
+
+			td:first-child {
+				width: 60%;
+			}
+		}
+	}
+}

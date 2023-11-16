@@ -6,7 +6,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-
+import useGlobalStylesUpgradeTranslations from './use-global-styles-upgrade-translations';
 import './style.scss';
 
 export interface PremiumGlobalStylesUpgradeModalProps {
@@ -15,6 +15,8 @@ export interface PremiumGlobalStylesUpgradeModalProps {
 	closeModal: () => void;
 	isOpen: boolean;
 	tryStyle: () => void;
+	/** Now we have 3 types of global styles including style variations, color variations, and font variations */
+	numOfSelectedGlobalStyles?: number;
 }
 
 export default function PremiumGlobalStylesUpgradeModal( {
@@ -23,24 +25,34 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	closeModal,
 	isOpen,
 	tryStyle,
+	numOfSelectedGlobalStyles = 1,
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
+	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 	const isLoading = ! premiumPlanProduct;
-	const features = [
-		<strong>{ translate( 'Free domain for one year' ) }</strong>,
-		<strong>{ translate( 'Premium themes' ) }</strong>,
-		translate( 'Style customization' ),
-		translate( 'Live chat support' ),
-		translate( 'Ad-free experience' ),
-		translate( 'Earn with WordAds' ),
-	];
+
+	const featureList = (
+		<div className="upgrade-modal__included">
+			<h2>{ translations.featuresTitle }</h2>
+			<ul>
+				{ translations.features.map( ( feature, i ) => (
+					<li key={ i } className="upgrade-modal__included-item">
+						<Gridicon icon="checkmark" size={ 16 } />
+						{ feature }
+					</li>
+				) ) }
+			</ul>
+		</div>
+	);
 
 	return (
 		<>
 			<QueryProductsList />
 			<Dialog
-				className={ classNames( 'upgrade-modal', { loading: isLoading } ) }
+				className={ classNames( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
+					loading: isLoading,
+				} ) }
 				isFullScreen
 				isVisible={ isOpen }
 				onClose={ () => closeModal() }
@@ -49,47 +61,28 @@ export default function PremiumGlobalStylesUpgradeModal( {
 				{ ! isLoading && (
 					<>
 						<div className="upgrade-modal__col">
-							<h1 className="upgrade-modal__heading">{ translate( 'Unlock custom styles' ) }</h1>
+							<h1 className="upgrade-modal__heading">{ translate( 'Unlock premium styles' ) }</h1>
 							{ description ?? (
 								<>
-									<p>
-										{ translate(
-											"You've selected a custom style that will only be visible to visitors after upgrading to the Premium plan or higher."
-										) }
-									</p>
-									<p>
-										{ translate(
-											'Upgrade now to unlock your custom style and get access to tons of other features. Or you can decide later and try it out first.'
-										) }
-									</p>
+									<p>{ translations.description }</p>
+									<p>{ translations.promotion }</p>
 								</>
 							) }
+							{ featureList }
 							<div className="upgrade-modal__actions bundle">
 								<Button className="upgrade-modal__cancel" onClick={ () => tryStyle() }>
-									{ translate( 'Decide later' ) }
+									{ translations.cancel }
 								</Button>
 								<Button
 									className="upgrade-modal__upgrade-plan"
 									primary
 									onClick={ () => checkout() }
 								>
-									{ translate( 'Upgrade plan' ) }
+									{ translations.upgrade }
 								</Button>
 							</div>
 						</div>
-						<div className="upgrade-modal__col">
-							<div className="upgrade-modal__included">
-								<h2>{ translate( 'Included with your Premium plan' ) }</h2>
-								<ul>
-									{ features.map( ( feature, i ) => (
-										<li key={ i } className="upgrade-modal__included-item">
-											<Gridicon icon="checkmark" size={ 16 } />
-											{ feature }
-										</li>
-									) ) }
-								</ul>
-							</div>
-						</div>
+						<div className="upgrade-modal__col">{ featureList }</div>
 						<Button className="upgrade-modal__close" borderless onClick={ () => closeModal() }>
 							<Gridicon icon="cross" size={ 12 } />
 							<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>

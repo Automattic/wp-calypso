@@ -239,11 +239,15 @@
 			display: none;
 		}
 
-		.login__divider {
+		.auth-form__separator {
 			margin: 10px auto;
-			text-transform: lowercase;
 
-			span {
+			&::before {
+				width: 0;
+			}
+
+			.auth-form__separator-text {
+				text-transform: lowercase;
 				background-color: transparent;
 				color: var(--color-text);
 				font-size: $font-title-small;
@@ -514,20 +518,6 @@
 	.login__form-signup-link {
 		font-size: $font-body;
 		line-height: 24px;
-	}
-
-	.login__divider {
-		width: 100%;
-		&::before {
-			background: var(--color-neutral-5);
-			content: "";
-			height: 1px;
-			left: 0;
-			position: absolute;
-			top: 50%;
-			width: 100%;
-			z-index: 1;
-		}
 	}
 
 	.masterbar__oauth-client {

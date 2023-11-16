@@ -1,9 +1,11 @@
 import { localize, translate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
@@ -13,8 +15,6 @@ import type { OnInputEnter, OnInputChange } from './types';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
-
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
 	translate: typeof translate;
@@ -72,6 +72,7 @@ const trackEventParams = {
 };
 
 const CaptureStep: React.FunctionComponent< StepProps > = ( {
+	currentUser,
 	goToStep,
 	analyzeUrl,
 	resetError,
@@ -80,18 +81,26 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	recordTracksEvent,
 	disableImportListStep,
 } ) => {
-	/**
-	 ↓ Methods
-	 */
-
+	const isStartingPointEventTriggeredRef = useRef( false );
 	const runProcess = ( url: string ): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
 		analyzeUrl( url ).then( ( response: UrlData ) => {
-			let stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
+			let stepSectionName;
 
-			if ( response.platform === 'wordpress' && response.platform_data?.is_wpcom ) {
-				stepSectionName = 'wpcom';
+			switch ( response.platform ) {
+				case 'unknown':
+					stepSectionName = 'not';
+					break;
+
+				case 'wordpress':
+					stepSectionName = response.platform_data?.is_wpcom ? 'wpcom' : 'preview';
+					break;
+
+				default:
+					stepSectionName = 'preview';
+					break;
 			}
+
 			goToStep( 'ready', stepSectionName );
 		} );
 	};
@@ -123,6 +132,13 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		recordTracksEvent( trackEventName, trackEventParams );
 	};
 
+	const recordMigrationStartingPointEvent = () => {
+		if ( currentUser && currentUser.ID && ! isStartingPointEventTriggeredRef.current ) {
+			isStartingPointEventTriggeredRef.current = true;
+			triggerMigrationStartingEvent( currentUser );
+		}
+	};
+
 	const onDontHaveSiteAddressClick = disableImportListStep ? undefined : () => goToStep( 'list' );
 
 	/**
@@ -130,6 +146,7 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	 */
 	useEffect( recordScanningEvent, [ isAnalyzing ] );
 	useEffect( recordScanningErrorEvent, [ analyzerError ] );
+	useEffect( recordMigrationStartingPointEvent, [ currentUser ] );
 	useEffect( recordCaptureScreen, [] );
 
 	return (
@@ -149,6 +166,7 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 
 const connector = connect(
 	( state ) => ( {
+		currentUser: getCurrentUser( state || {} ),
 		isAnalyzing: isAnalyzing( state ),
 		analyzerError: getAnalyzerError( state ),
 	} ),

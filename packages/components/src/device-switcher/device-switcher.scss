@@ -14,6 +14,77 @@
 	}
 }
 
+.device-switcher__header {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0 10px;
+	box-sizing: border-box;
+
+	.device-switcher__toolbar {
+		margin-bottom: 13px;
+	}
+
+	.device-switcher__zoom-out {
+		--zoom-out-thumb-size: 8px;
+		--zoom-out-primary-color: var(--studio-gray-50, #50575e);
+		--zoom-out-secondary-color: var(--studio-gray-10, #c3c4c7);
+		--wp-components-color-accent: var(--zoom-out-primary-color);
+
+		position: absolute;
+		right: 10px;
+		width: 15%;
+		max-width: 156px;
+		margin-bottom: 13px;
+
+		&:hover {
+			--zoom-out-primary-color: var(--studio-gray-100, #101517);
+		}
+
+		svg {
+			width: 21px;
+			height: 21px;
+			margin-top: -4px;
+			fill: var(--zoom-out-primary-color);
+			stroke: var(--zoom-out-primary-color);
+		}
+
+		.components-range-control__wrapper:hover {
+			.components-range-control__thumb-wrapper {
+				transform: translate(4.5px, -50%) scale(1.5);
+			}
+		}
+
+		.components-range-control__slider + span,
+		.components-range-control__track {
+			height: 3px;
+			background: var(--zoom-out-secondary-color);
+		}
+
+		.components-range-control__track {
+			background: var(--zoom-out-primary-color);
+		}
+
+		.components-range-control__thumb-wrapper {
+			width: var(--zoom-out-thumb-size);
+			height: var(--zoom-out-thumb-size);
+			top: 50%;
+			transform: translate(4.5px, -50%);
+			margin-top: 0;
+			border-color: var(--zoom-out-primary-color);
+			background: var(--zoom-out-primary-color);
+			transition: transform 0.15s ease-in-out;
+
+			> span::before {
+				width: calc(var(--zoom-out-thumb-size) + 4px);
+				height: calc(var(--zoom-out-thumb-size) + 4px);
+				top: -2px;
+				left: -2px;
+			}
+		}
+	}
+}
+
 .device-switcher__container--frame-fixed-viewport {
 	.device-switcher__viewport {
 		position: relative;
@@ -32,20 +103,21 @@
 	flex: 1;
 	width: 100%;
 	overflow: hidden;
-	transition: max-width 0.2s ease-out, max-height 0.2s ease-out;
+	transition: all 0.2s ease-out;
 	max-width: 100%;
 	max-height: 100%;
+	box-sizing: border-box;
 	// Create a new stacking context to fix border-radius with overflow hidden issue on safari
 	// See https://github.com/Automattic/wp-calypso/issues/71440
 	isolation: isolate;
 
 	.device-switcher__container--frame-bordered & {
+		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 		--device-switcher-border-width: 10px;
+		border: var(--device-switcher-border-width) solid var(--color-print);
 		border-radius: var(--device-switcher-border-radius);
 
 		@include break-small {
-			--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
-			border: var(--device-switcher-border-width) solid var(--color-print);
 			box-sizing: border-box;
 
 			.device-switcher__container--frame-shadow & {
@@ -57,7 +129,6 @@
 
 		@include break-large {
 			--device-switcher-border-radius: 20px; /* stylelint-disable-line scales/radii */
-			border: var(--device-switcher-border-width) solid var(--color-print);
 			margin-top: 0;
 
 			.device-switcher__container--frame-shadow & {
@@ -76,7 +147,7 @@
 	.device-switcher__container--is-phone & {
 		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 		max-width: 480px;
-		max-height: 680px;
+		max-height: 844px;
 
 		.device-switcher__container--frame-shadow & {
 			box-shadow:
@@ -87,6 +158,13 @@
 				0 6px 5px rgb(0 0 0 / 2%),
 				0 2px 3px rgb(0 0 0 / 1%);
 		}
+	}
+
+	.device-switcher__container--is-fullscreen & {
+		max-height: 100vh;
+		max-width: 100vw;
+		border-width: 0;
+		border-radius: 0;
 	}
 
 	.device-switcher__container--frame-fixed-viewport & {

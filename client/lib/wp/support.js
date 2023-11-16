@@ -7,7 +7,6 @@ export default function wpcomSupport( wpcom ) {
 
 	/**
 	 * Add the supportUser and supportToken to the query.
-	 *
 	 * @param {Object}  params The original request params object
 	 * @returns {Object}        The new query object with support data injected
 	 */
@@ -26,7 +25,6 @@ export default function wpcomSupport( wpcom ) {
 
 	/**
 	 * Add the supportUser and supportToken to the query.
-	 *
 	 * @param {Object}  params The original request params object
 	 * @returns {Object}        The new query object with support data injected
 	 */

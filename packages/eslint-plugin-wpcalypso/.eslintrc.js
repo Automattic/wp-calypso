@@ -13,6 +13,7 @@ module.exports = {
 				'wpcalypso/i18n-no-this-translate': 'off',
 				'wpcalypso/i18n-no-variables': 'off',
 				'wpcalypso/i18n-translate-identifier': 'off',
+				'wpcalypso/i18n-unlocalized-url': 'off',
 				'wpcalypso/redux-no-bound-selectors': 'off',
 				'wpcalypso/jsx-gridicon-size': 'off',
 				'no-restricted-imports': 'off',

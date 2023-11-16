@@ -1,5 +1,13 @@
 .reader-site-notification-settings__button {
 	color: var(--color-text-subtle);
+	display: flex;
+	gap: 5px;
+	margin: 4px 0;
+
+	svg * {
+		stroke: var(--color-text-subtle);
+	}
+
 	&:focus {
 		box-shadow: none;
 		outline: none;
@@ -21,18 +29,6 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
-	}
-}
-
-.reader-site-notification-settings .gridicons-cog {
-	fill: var(--color-neutral-20);
-	height: 18px;
-	position: relative;
-	top: 4px;
-	left: -4px;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		left: -1px;
 	}
 }
 
@@ -115,4 +111,10 @@
 .reader-site-notification-settings__popout-instructions-hint {
 	margin-top: 4px;
 	width: 250px;
+}
+
+.reader-site-notification-settings__manage-subscription-button.has-icon.has-text {
+	padding: 10px 15px;
+	margin-bottom: 12px;
+	color: var(--color-neutral-70);
 }

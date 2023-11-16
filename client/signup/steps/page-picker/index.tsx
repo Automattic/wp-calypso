@@ -23,6 +23,12 @@ import {
 	PRICING_PAGE,
 	TEAM_PAGE,
 	SHOP_PAGE,
+	CUSTOM_PAGE,
+	EVENTS_PAGE,
+	CAREERS_PAGE,
+	DONATE_PAGE,
+	NEWSLETTER_PAGE,
+	CASE_STUDIES_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
 	BBE_ONBOARDING_PAGE_PICKER_STEP,
@@ -290,6 +296,43 @@ function PageSelector( {
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
+			<PageCell
+				context={ context }
+				pageId={ CAREERS_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ EVENTS_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ DONATE_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ NEWSLETTER_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				context={ context }
+				pageId={ CASE_STUDIES_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				popular
+				context={ context }
+				pageId={ CUSTOM_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 		</PageGrid>
 	);
 }
@@ -332,7 +375,7 @@ function DIFMPagePicker( props: StepProps ) {
 	const [ selectedPages, setSelectedPages ] = useState< string[] >(
 		isStoreFlow
 			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
-			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
 	);
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
 

@@ -5,7 +5,6 @@ import 'calypso/state/posts/init';
 /**
  * Returns the total number of items reported to be found for the given query,
  * or null if the total number of queryable posts is unknown.
- *
  * @param   {Object}  state  Global state tree
  * @param   {?number} siteId Site ID, or `null` for all-sites queries
  * @param   {Object}  query  Post query object

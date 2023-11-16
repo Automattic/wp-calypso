@@ -48,6 +48,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import TransferDomainPrecheck from './transfer-domain-precheck';
@@ -296,12 +297,12 @@ class TransferDomainStep extends Component {
 	}
 
 	startPendingInboundTransfer = ( domain, authCode ) => {
-		const { selectedSite, translate } = this.props;
+		const { currentRoute, selectedSite, translate } = this.props;
 
 		startInboundTransfer( selectedSite.ID, domain, authCode )
 			.then( () => {
 				this.props.fetchSiteDomains( selectedSite.ID );
-				page( domainManagementTransferIn( selectedSite.slug, domain ) );
+				page( domainManagementTransferIn( selectedSite.slug, domain, currentRoute ) );
 			} )
 			.catch( () => {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
@@ -528,6 +529,7 @@ class TransferDomainStep extends Component {
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 				( error, result ) => {
 					const status = get( result, 'status', error );
+					const tld = result.tld || getTld( domain );
 					switch ( status ) {
 						case domainAvailability.AVAILABLE:
 							this.setState( { suggestion: result } );
@@ -541,8 +543,6 @@ class TransferDomainStep extends Component {
 							} );
 							break;
 						case domainAvailability.TLD_NOT_SUPPORTED: {
-							const tld = getTld( domain );
-
 							this.setState( {
 								notice: this.props.translate(
 									'This domain appears to be available for registration, however we do not offer registrations or accept transfers for domains ending in {{strong}}.%(tld)s{{/strong}}. ' +
@@ -562,8 +562,6 @@ class TransferDomainStep extends Component {
 						case domainAvailability.MAPPABLE:
 						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 						case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: {
-							const tld = getTld( domain );
-
 							this.setState( {
 								notice: this.props.translate(
 									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
@@ -712,6 +710,7 @@ const recordMapDomainButtonClick = ( section ) =>
 
 export default connect(
 	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSite: getSelectedSite( state ),

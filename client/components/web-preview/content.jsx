@@ -308,16 +308,18 @@ export default class WebPreviewContent extends Component {
 
 			// To prevent iframe firing the onload event before the embedded page sends the
 			// partially-loaded message, we add a waiting period here.
-			this.loadingTimeoutTimer = setTimeout( () => {
-				debug( 'preview loading timeout' );
+			if ( ! this.props.disableTimeoutRedirect ) {
+				this.loadingTimeoutTimer = setTimeout( () => {
+					debug( 'preview loading timeout' );
 
-				if ( this.props.showClose ) {
-					window.open( this.state.iframeUrl, '_blank' );
-					this.props.onClose();
-				} else {
-					window.location.replace( this.state.iframeUrl );
-				}
-			}, loadingTimeout );
+					if ( this.props.showClose ) {
+						window.open( this.state.iframeUrl, '_blank' );
+						this.props.onClose();
+					} else {
+						window.location.replace( this.state.iframeUrl );
+					}
+				}, loadingTimeout );
+			}
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
 			if ( this.loadingTimeoutTimer ) {
@@ -516,6 +518,8 @@ WebPreviewContent.propTypes = {
 	inlineCss: PropTypes.string,
 	// Uses the CSS selector to scroll to it
 	scrollToSelector: PropTypes.string,
+	// disable the redirection due to the timeout
+	disableTimeoutRedirect: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
@@ -541,4 +545,5 @@ WebPreviewContent.defaultProps = {
 	autoHeight: false,
 	inlineCss: null,
 	scrollToSelector: null,
+	disableTimeoutRedirect: false,
 };

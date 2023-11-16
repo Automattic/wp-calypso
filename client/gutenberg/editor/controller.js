@@ -107,7 +107,6 @@ function waitForPreferredEditorView( context ) {
  * auth cookies from being stored while embedding WP Admin in Calypso (i.e. if the browser is preventing cross-site
  * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
  * redirected back to Calypso when they are authenticated in WP Admin.
- *
  * @param {Object} context Shared context in the route.
  * @param {Function} next  Next registered callback for the route.
  * @returns {*}            Whatever the next callback returns.
@@ -227,8 +226,8 @@ export const redirect = async ( context, next ) => {
 };
 
 function getPressThisData( query ) {
-	const { text, url, title, embed } = query;
-	return url ? { text, url, title, embed } : null;
+	const { url, text, title, comment_content, comment_author } = query;
+	return url ? { url, text, title, comment_content, comment_author } : null;
 }
 
 function getAnchorFmData( query ) {
@@ -293,7 +292,6 @@ export const exitPost = ( context, next ) => {
 
 /**
  * Redirects to the un-iframed Site Editor if the config is enabled.
- *
  * @param {Object} context Shared context in the route.
  * @returns {*}            Whatever the next callback returns.
  */
@@ -306,7 +304,6 @@ export const redirectSiteEditor = async ( context ) => {
 };
 /**
  * Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
- *
  * @param {Object} context Shared context in the route.
  * @param {Function} next  Next registered callback for the route.
  * @returns undefined      Whatever the next callback returns.
@@ -316,23 +313,22 @@ export function redirectToPermalinkIfLoggedOut( context, next ) {
 		return next();
 	}
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
-
-	// The context.path in this case could be one of the following:
-	// - /page/{site}/{id}
-	// - /post/{site}/{id}
-	// - /edit/jetpack-portfolio/{site}/{id}
-	// - /edit/jetpack-testimonial/{site}/{id}
-	const explodedPath = context.path.split( '/' );
-	if (
-		context.path &&
-		explodedPath[ 1 ] === 'edit' &&
-		! CONFIGURABLE_TYPES.includes( explodedPath[ 2 ] )
-	) {
+	if ( ! siteFragment || ! context.path ) {
 		return next();
 	}
-	// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
-	// else the endpoint will redirect the user to the login page.
-	window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
-	return;
+	// "single view" pages are parsed from URLs like these:
+	// (posts, pages, custom post types, etc…)
+	//  - /page/{site}/{post_id}
+	//  - /post/{site}/{post_id}
+	//  - /edit/jetpack-portfolio/{site}/{post_id}
+	//  - /edit/jetpack-testimonial/{site}/{post_id}
+	const postId = parseInt( context.params.post, 10 );
+	const linksToSingleView = postId > 0;
+	if ( linksToSingleView ) {
+		// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+		window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
+		return;
+	}
+	// Else redirect the user to the login page.
+	return next();
 }

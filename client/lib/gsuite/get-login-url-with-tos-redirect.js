@@ -1,6 +1,5 @@
 /**
  * Creates the Google ToS redirect url given email and domain
- *
  * @param {string} email - email
  * @param {string} domain - domain name
  * @returns {string} - ToS url redirect

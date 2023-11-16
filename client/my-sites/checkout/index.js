@@ -25,6 +25,8 @@ import {
 	upsellNudge,
 	upsellRedirect,
 	akismetCheckoutThankYou,
+	hundredYearCheckoutThankYou,
+	transferDomainToAnyUser,
 } from './controller';
 
 export default function () {
@@ -96,6 +98,14 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		'/checkout/100-year/thank-you/:site/:receiptId',
+		loggedInSiteSelection,
+		hundredYearCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
 	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
 	if ( isEnabled( 'akismet/siteless-checkout' ) ) {
 		page(
@@ -131,6 +141,14 @@ export default function () {
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
+
+	page(
+		'/checkout/domain-transfer-to-any-user/thank-you/:domain',
+		redirectLoggedOut,
+		transferDomainToAnyUser,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
@@ -237,6 +255,16 @@ export default function () {
 			clientRender
 		);
 	}
+
+	// Use `noSite` instead of the `siteSelection` middleware for the no-site route.
+	page(
+		'/checkout/offer-professional-email/:domain/:receiptId/no-site',
+		redirectLoggedOut,
+		noSite,
+		checkoutThankYou,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/offer-professional-email/:domain/:receiptId/:site?',

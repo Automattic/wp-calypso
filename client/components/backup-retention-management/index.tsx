@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { UpsellPrice } from 'calypso/components/backup-storage-space/usage-warning/upsell';
+import useUpsellInfo from 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import ExternalLink from 'calypso/components/external-link';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -28,7 +29,6 @@ import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionConfirmationDialog from './retention-confirmation-dialog';
 import RetentionOptionsControl from './retention-options/retention-options-control';
-import useUpsellInfo from './use-upsell-info';
 import type { RetentionOptionInput } from './types';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 import './style.scss';
@@ -110,9 +110,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 	const { upsellSlug, originalPrice, isPriceFetching, currencyCode } = useUpsellInfo(
 		siteId,
-		estimatedCurrentSiteSize,
-		retentionSelected,
-		storageLimitBytes
+		retentionSelected
 	);
 
 	const upgradePrice = (

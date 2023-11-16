@@ -5,7 +5,6 @@ import 'calypso/state/site-settings/init';
 
 /**
  * Returns the Podcasting category ID for a given site ID.
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @returns {number}          Category ID or null if not found

@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QueryTheme from 'calypso/components/data/query-theme';
@@ -7,7 +8,6 @@ import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 
 import './style.scss';
 

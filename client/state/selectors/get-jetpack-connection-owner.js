@@ -3,7 +3,6 @@ import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-c
 
 /**
  * Returns the display name of the Jetpack connection's owner.
- *
  * @param  {Object}   state    Global state tree
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {?string}          The name of the Jetpack connection's owner

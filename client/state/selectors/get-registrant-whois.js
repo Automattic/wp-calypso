@@ -5,7 +5,6 @@ import 'calypso/state/domains/init';
 
 /**
  * Returns registrant's domain contact details if we've successfully requested them.
- *
  * @param  {Object}  state       Global state tree
  * @param  {string}  domain      Domain to query details
  * @returns {Object}              Contact details

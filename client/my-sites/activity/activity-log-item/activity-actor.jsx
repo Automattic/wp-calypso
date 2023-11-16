@@ -18,6 +18,15 @@ const JETPACK_ACTOR = (
 	</div>
 );
 
+const JETPACK_BOOST_ACTOR = (
+	<div className="activity-log-item__actor">
+		<JetpackLogo size={ 40 } />
+		<div className="activity-log-item__actor-info">
+			<div className="activity-log-item__actor-name">Jetpack Boost</div>
+		</div>
+	</div>
+);
+
 const HAPPINESS_ACTOR = (
 	<div className="activity-log-item__actor">
 		<JetpackLogo size={ 40 } />
@@ -84,6 +93,9 @@ export default class ActivityActor extends PureComponent {
 		}
 		if ( actorName === 'Jetpack' && actorType === 'Application' ) {
 			return JETPACK_ACTOR;
+		}
+		if ( actorName === 'Jetpack Boost' && actorType === 'Application' ) {
+			return JETPACK_BOOST_ACTOR;
 		}
 		if ( actorName === 'Happiness Engineer' && actorType === 'Happiness Engineer' ) {
 			return HAPPINESS_ACTOR;

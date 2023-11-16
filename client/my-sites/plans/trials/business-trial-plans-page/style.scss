@@ -1,0 +1,25 @@
+@import "@automattic/typography/styles/woo-commerce";
+@import "@wordpress/base-styles/breakpoints";
+
+body.is-section-plans.is-business-trial-plan {
+	&.color-scheme {
+		--color-surface-backdrop: var(--color-surface);
+	}
+
+	.section-nav {
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	}
+
+	.business-trial-plans__banner-wrapper {
+		margin: 20px 0;
+	}
+
+	.plans,
+	.current-plan {
+		background-color: var(--color-surface);
+	}
+
+	.formatted-header__title {
+		font-family: $woo-title-font;
+	}
+}

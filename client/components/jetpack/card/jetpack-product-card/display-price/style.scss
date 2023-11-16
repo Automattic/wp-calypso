@@ -3,7 +3,7 @@
 .display-price {
 	&.is-free {
 		margin-block-start: -4px;
-		padding-block-start: 24px;
+		padding-block-start: 12px;
 
 		@include break-medium {
 			min-height: 80px;
@@ -32,7 +32,7 @@
 
 		.display-price__price-free {
 			display: block;
-			line-height: $font-headline-medium;
+			font-size: $font-headline-small;
 			letter-spacing: -2px;
 		}
 	}
@@ -61,7 +61,7 @@
 
 			&::before {
 				border-top: 3px solid var(--studio-pink-50);
-				border-radius: 3px; /* stylelint-disable-line scales/radii */
+				border-radius: 3px;
 				transform: initial;
 			}
 		}
@@ -107,7 +107,7 @@
 	&__get-started,
 	&__no-savings {
 		display: inline-block;
-		margin-block-start: 24px;
+		margin-inline-start: 12px;
 		border-radius: 4px;
 		padding: 4px 8px;
 

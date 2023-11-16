@@ -3,18 +3,19 @@
 
 .device-switcher__toolbar {
 	display: none;
+	flex: 1;
 
 	.device-switcher__toolbar-devices {
+		align-items: center;
 		display: flex;
 		height: 58px;
-		margin-bottom: 13px;
+		gap: 18px;
 		justify-content: center;
 
 		> button {
 			border-radius: 2px;
 			color: var(--studio-gray-10);
-			height: auto;
-			margin: 0 9px;
+			height: 28px;
 			padding: 0;
 			transition: color 0.1s ease-in-out;
 

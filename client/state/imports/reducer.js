@@ -58,6 +58,7 @@ function importerStatus( state = {}, action ) {
 					...state[ action.importerId ],
 					importerState: appStates.UPLOAD_FAILURE,
 					errorData: { type: 'preUploadError', description: action.error, code: action.errorCode },
+					file: action.file,
 				},
 			};
 
@@ -111,7 +112,7 @@ function importerStatus( state = {}, action ) {
 				[ action.importerId ]: {
 					...state[ action.importerId ],
 					customData: {
-						...state[ action.importerId ].customData,
+						...state[ action.importerId ]?.customData,
 						sourceAuthors: map(
 							get( state[ action.importerId ], 'customData.sourceAuthors' ),
 							( author ) =>

@@ -3,8 +3,7 @@
  */
 
 import { validExperimentAssignment } from '@automattic/explat-client/src/internal/test-common';
-import { render, act as actReact, waitFor } from '@testing-library/react';
-import { renderHook, act as actReactHooks } from '@testing-library/react-hooks';
+import { act, render, renderHook, waitFor } from '@testing-library/react';
 import createExPlatClientReactHelpers from '../index';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
@@ -47,15 +46,13 @@ describe( 'useExperiment', () => {
 			>
 		 ).mockImplementationOnce( () => controllablePromise1.promise );
 
-		const { result, rerender, waitForNextUpdate } = renderHook( () =>
-			useExperiment( 'experiment_a' )
-		);
+		const { result, rerender } = renderHook( () => useExperiment( 'experiment_a' ) );
 
 		expect( result.current ).toEqual( [ true, null ] );
 		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
-		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
-		expect( result.current ).toEqual( [ true, null ] );
-		await waitForNextUpdate();
+		act( () => controllablePromise1.resolve( validExperimentAssignment ) );
+		await waitFor( () => expect( result.current ).toEqual( [ true, null ] ) );
+		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
 		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
@@ -73,7 +70,7 @@ describe( 'useExperiment', () => {
 		 ).mockImplementationOnce( () => controllablePromise1.promise );
 
 		let isEligible = false;
-		const { result, rerender, waitForNextUpdate } = renderHook( () =>
+		const { result, rerender } = renderHook( () =>
 			useExperiment( 'experiment_a', { isEligible } )
 		);
 
@@ -84,9 +81,9 @@ describe( 'useExperiment', () => {
 		rerender();
 		expect( result.current ).toEqual( [ true, null ] );
 		expect( exPlatClient.loadExperimentAssignment ).toHaveBeenCalledTimes( 1 );
-		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
-		expect( result.current ).toEqual( [ true, null ] );
-		await waitForNextUpdate();
+		act( () => controllablePromise1.resolve( validExperimentAssignment ) );
+		await waitFor( () => expect( result.current ).toEqual( [ true, null ] ) );
+		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
 		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
@@ -128,7 +125,7 @@ describe( 'Experiment', () => {
 			/>
 		);
 		expect( container.textContent ).toBe( 'loading-2' );
-		await actReact( async () => controllablePromise1.resolve( validExperimentAssignment ) );
+		await act( async () => controllablePromise1.resolve( validExperimentAssignment ) );
 		await waitFor( () => expect( container.textContent ).toBe( 'treatment-1' ) );
 		rerender(
 			<Experiment
@@ -161,7 +158,7 @@ describe( 'Experiment', () => {
 			/>
 		);
 		expect( container.textContent ).toBe( 'loading' );
-		await actReact( async () =>
+		await act( async () =>
 			controllablePromise1.resolve( { ...validExperimentAssignment, variationName: null } )
 		);
 		await waitFor( () => expect( container.textContent ).toBe( 'default-1' ) );
@@ -201,7 +198,7 @@ describe( 'ProvideExperimentData', () => {
 		expect( capture.mock.calls[ 0 ] ).toEqual( [ true, null ] );
 		capture.mockReset();
 		const experimentAssignment = { ...validExperimentAssignment, variationName: null };
-		await actReact( async () => controllablePromise1.resolve( experimentAssignment ) );
+		await act( async () => controllablePromise1.resolve( experimentAssignment ) );
 		await waitFor( () => {
 			expect( capture ).toHaveBeenCalledTimes( 1 );
 		} );

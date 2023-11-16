@@ -10,7 +10,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
-	emailManagementInbox,
+	emailManagementMailboxes,
 	emailManagementTitanControlPanelRedirect,
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
@@ -50,7 +50,7 @@ const TitanSetUpThankYou = ( {
 	const translate = useTranslate();
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
-	const inboxPath = emailManagementInbox( selectedSiteSlug );
+	const mailboxesPath = emailManagementMailboxes( selectedSiteSlug );
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
@@ -69,7 +69,7 @@ const TitanSetUpThankYou = ( {
 	let nextSteps = [
 		{
 			stepKey: 'titan_whats_next_view_inbox',
-			stepTitle: translate( 'Access your inbox' ),
+			stepTitle: translate( 'Access your mailboxes' ),
 			stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 			stepCta: (
 				<FullWidthButton
@@ -77,7 +77,7 @@ const TitanSetUpThankYou = ( {
 						titanAppsUrlPrefix,
 						emailAddress,
 						false,
-						`${ window.location.protocol }//${ window.location.host }${ inboxPath }`
+						`${ window.location.protocol }//${ window.location.host }${ mailboxesPath }`
 					) }
 					primary
 					onClick={ () => {
@@ -88,7 +88,7 @@ const TitanSetUpThankYou = ( {
 						} );
 					} }
 				>
-					{ translate( 'Go to Inbox' ) }
+					{ translate( 'Your Mailboxes' ) }
 				</FullWidthButton>
 			),
 		},

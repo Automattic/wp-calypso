@@ -9,7 +9,6 @@ import { combineReducers } from 'calypso/state/utils';
 /**
  * Returns the updated items state after an action has been dispatched.
  * The state contains all past and upcoming billing transactions.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

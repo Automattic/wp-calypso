@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__most-popular {
-	margin-top: 0;
+	margin-top: 3rem;
 }
 
 .jetpack-product-store__most-popular--heading {
@@ -22,13 +22,14 @@
 	list-style-type: none;
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-gap: 30px;
+	grid-gap: 24px;
 	margin: 0;
 
 	@media only screen and (min-width: 821px) {
-		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-columns: 1fr 1fr;
+		justify-items: space-between;
 		margin: 32px auto 0;
-		gap: 30px;
+		gap: 24px;
 	}
 }
 
@@ -38,12 +39,18 @@
 
 
 	.featured-item-card .display-price {
-		display: inline;
+		@media screen and (min-width: 320px) {
+			display: flex;
+			min-height: 24px;
+			align-items: center;
+		}
 	}
 
 	.featured-item-card .item-price .display-price .display-price__billing-time-frame {
-		display: inline;
-		margin-top: 0;
+		@media screen and (min-width: 320px) {
+			margin-top: 0;
+			padding-left: 3px;
+		}
 	}
 }
 

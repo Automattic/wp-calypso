@@ -1,0 +1,25 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.sidebar__site-selector .site-selector__actions {
+	// Leave room for the chat support button + horizontal padding
+	// on mobile screens
+	max-width: calc(100% - 80px - 32px);
+
+	@include breakpoint-deprecated( ">660px" ) {
+		max-width: initial;
+	}
+}
+
+.sidebar__site-selector .site-selector__actions .split-button {
+	display: flex;
+
+	.split-button__main {
+		flex-grow: 1;
+	}
+
+	.split-button__toggle {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+}

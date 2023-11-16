@@ -14,7 +14,6 @@ import {
 
 /**
  * Dispatches a request to fetch all available WordPress.com plans
- *
  * @param {Object} action Redux action
  * @returns {Object} original action
  */
@@ -30,7 +29,6 @@ export const requestPlans = ( action ) =>
 
 /**
  * Dispatches returned WordPress.com plan data
- *
  * @param {Object} action Redux action
  * @param {Array} plans raw data from plans API
  * @returns {Array<Object>} Redux actions
@@ -42,7 +40,6 @@ export const receivePlans = ( action, plans ) => [
 
 /**
  * Dispatches returned error from plans request
- *
  * @param {Object} action Redux action
  * @param {Object} rawError raw error from HTTP request
  * @returns {Object} Redux action

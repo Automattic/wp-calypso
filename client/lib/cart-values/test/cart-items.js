@@ -16,6 +16,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 const { getPlan, getTermDuration } = require( '@automattic/calypso-products' );
 const cartItems = require( '../cart-items' );
@@ -34,6 +35,10 @@ const {
 describe( 'planItem()', () => {
 	test( 'should return null for free plan', () => {
 		expect( planItem( PLAN_FREE ) ).toBe( null );
+	} );
+
+	test( 'should return null for enterprise grid plan', () => {
+		expect( planItem( PLAN_ENTERPRISE_GRID_WPCOM ) ).toBe( null );
 	} );
 
 	[
@@ -841,7 +846,7 @@ describe( 'getRenewalItemFromProduct()', () => {
 					buildPurchase( { product_slug: 'new_plan_does_not_exist' } ),
 					properties
 				)
-			).toThrowError( 'This product cannot be renewed' );
+			).toThrow( 'This product cannot be renewed' );
 		} );
 	} );
 } );

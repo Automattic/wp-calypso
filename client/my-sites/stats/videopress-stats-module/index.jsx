@@ -165,11 +165,15 @@ class VideoPressStatsModule extends Component {
 
 		const isNewVideoPage = config.isEnabled( 'stats/new-video-summary' );
 
+		const csvData = [
+			[ 'post_id', 'title', 'views', 'impressions', 'watch_time', 'retention_rate' ],
+			...completeVideoStats,
+		];
 		const downloadCSV = (
 			<div className="stats-module__heaver-nav-button">
 				<DownloadCsv
 					statType={ statType }
-					data={ completeVideoStats }
+					data={ csvData }
 					query={ query }
 					path={ path }
 					period={ period }
@@ -186,6 +190,7 @@ class VideoPressStatsModule extends Component {
 				impressions: numberFormat( item.impressions ),
 				watch_time:
 					item.watch_time > 1 ? numberFormat( item.watch_time, 1 ) : `< ${ numberFormat( 1, 1 ) }`,
+				retention_rate: item.retention_rate,
 			};
 		} );
 
@@ -215,6 +220,7 @@ class VideoPressStatsModule extends Component {
 									<>
 										<span>{ translate( 'Impressions' ) }</span>
 										<span>{ translate( 'Hours watched' ) }</span>
+										<span>{ translate( 'Retention Rate' ) }</span>
 									</>
 								),
 								body: ( item ) => (
@@ -233,6 +239,13 @@ class VideoPressStatsModule extends Component {
 										>
 											{ item.watch_time }
 										</span>
+										{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+										<span
+											onClick={ () => showStat( 'retention_rate', item ) }
+											onKeyUp={ () => showStat( 'retention_rate', item ) }
+										>
+											{ 0 === item.value ? 'n/a' : `${ item.retention_rate }%` }
+										</span>
 									</>
 								),
 							} }
@@ -249,7 +262,7 @@ class VideoPressStatsModule extends Component {
 							{ summary && (
 								<DownloadCsv
 									statType={ statType }
-									data={ completeVideoStats }
+									data={ csvData }
 									query={ query }
 									path={ path }
 									period={ period }
@@ -259,15 +272,20 @@ class VideoPressStatsModule extends Component {
 						<Card compact className={ cardClasses }>
 							<div className="videopress-stats-module__grid">
 								<div className="videopress-stats-module__header-row-wrapper">
-									<div className="videopress-stats-module__grid-header">Title</div>
-									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Impressions
+									<div className="videopress-stats-module__grid-header">
+										{ translate( 'Title' ) }
 									</div>
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Hours Watched
+										{ translate( 'Impressions' ) }
 									</div>
 									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-										Views
+										{ translate( 'Hours Watched' ) }
+									</div>
+									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+										{ translate( 'Retention Rate' ) }
+									</div>
+									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+										{ translate( 'Views' ) }
 									</div>
 								</div>
 								{ completeVideoStats.map( ( row, index ) => (
@@ -305,6 +323,16 @@ class VideoPressStatsModule extends Component {
 												{ row.watch_time > 1
 													? numberFormat( row.watch_time, 1 )
 													: `< ${ numberFormat( 1, 1 ) }` }
+											</span>
+										</div>
+										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+											<span
+												onClick={ () => showStat( 'retention_rate', row ) }
+												onKeyUp={ () => showStat( 'retention_rate', row ) }
+												tabIndex="0"
+												role="button"
+											>
+												{ 0 === row.value ? 'n/a' : `${ row.retention_rate }%` }
 											</span>
 										</div>
 										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">

@@ -2,6 +2,9 @@
 @import "@automattic/onboarding/styles/mixins.scss";
 
 $headerHeight: 72px;
+$headerHeightI2: 80px;
+$heading-font-family: "SF Pro Display", $sans;
+$heading-font-body-small: 15px;
 
 .blazepress-widget {
 	display: flex;
@@ -21,7 +24,7 @@ $headerHeight: 72px;
 		z-index: 1000;
 
 		@include break-large {
-			border-bottom: 1px solid var(--studio-gray-20);
+			box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
 		}
 
 		h2 {
@@ -45,7 +48,7 @@ $headerHeight: 72px;
 			cursor: pointer;
 			font-style: normal;
 			font-weight: 500;
-			font-size: $font-body-small;
+			font-size: $heading-font-body-small;
 			padding-top: 5px;
 		}
 	}
@@ -59,7 +62,25 @@ $headerHeight: 72px;
 		justify-content: center;
 		align-items: center;
 		flex: auto;
+		flex-direction: row;
 	}
+	.blazepress-widget__content .error-notice {
+		margin-top: 64px;
+		width: 80%;
+		align-self: center;
+		text-align: center;
+
+		.error-notice__title {
+			font-size: $font-title-medium;
+			font-style: normal;
+			font-weight: 500;
+			margin-bottom: 20px;
+		}
+		.error-notice__notice {
+			font-size: $font-body-large;
+		}
+	}
+
 	.blazepress-widget__widget-container {
 		height: 100%;
 
@@ -77,10 +98,89 @@ $headerHeight: 72px;
 			margin-top: 0;
 		}
 	}
-}
 
-.blazepress-widget.dialog__backdrop {
-	background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+	&.blazepress-i2 {
+		.blazepress-widget__header-bar {
+			justify-content: flex-start;
+			width: calc(100% - 40px);
+			min-height: 32px;
+			height: auto;
+			padding: 24px 20px;
+			margin: 0;
+
+			.wordpress-logo {
+				width: 2rem;
+				height: 2rem;
+			}
+
+			.blank-canvas__back {
+				padding: 0;
+				height: 2rem;
+				font-family: $heading-font-family;
+				font-weight: 500;
+				letter-spacing: 0.34px;
+
+				@include break-small {
+					font-size: $heading-font-body-small;
+				}
+			}
+
+			&.no-back-button .blank-canvas__back {
+				display: none;
+			}
+
+			.blank-canvas__header-title {
+				position: initial;
+				margin-left: auto;
+
+				h2 {
+					line-height: 24px;
+					font-style: normal;
+					font-weight: 500;
+					font-size: $heading-font-body-small;
+					font-family: $heading-font-family;
+					color: #8f8e93;
+					padding: 0;
+					letter-spacing: 0.34px;
+				}
+			}
+		}
+		.blazepress-widget__content {
+			height: calc(100% - #{$headerHeightI2});
+			margin-top: $headerHeightI2;
+		}
+	}
+
+	.dialog__content {
+		padding: 30px 80px 15px 30px;
+	}
+
+	&.dialog__backdrop {
+		background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+
+		.dialog.card {
+			max-width: 480px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px;
+
+			.dialog__action-buttons-close {
+				top: 20px;
+				right: 20px;
+			}
+
+			.dialog__action-buttons {
+				text-align: left;
+				padding: 15px 30px 30px;
+				border: none;
+
+				.button {
+					margin-left: 0;
+					margin-right: 16px;
+					border-radius: 4px;
+				}
+			}
+		}
+	}
 }
 
 .is-mobile-app-view {
@@ -94,4 +194,8 @@ $headerHeight: 72px;
 	.blazepress-widget .wpcom__loading-ellipsis {
 		margin-top: 50%;
 	}
+}
+
+html.has-blank-canvas {
+	overflow: hidden;
 }

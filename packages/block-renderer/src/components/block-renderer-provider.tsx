@@ -1,4 +1,7 @@
-import { useGlobalStylesOutput } from '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';
+import {
+	useSafeGlobalStylesOutput,
+	withExperimentalBlockEditorProvider,
+} from '@automattic/global-styles';
 import { useMemo } from 'react';
 import useBlockRendererSettings from '../hooks/use-block-renderer-settings';
 import BlockRendererContext from './block-renderer-context';
@@ -18,8 +21,7 @@ const useBlockRendererContext = (
 ) => {
 	const { data: settings } = useBlockRendererSettings( siteId, stylesheet, useInlineStyles );
 
-	const [ globalStyles ] = useGlobalStylesOutput();
-
+	const [ globalStyles ] = useSafeGlobalStylesOutput();
 	const context = useMemo(
 		() => ( {
 			isReady: !! settings,
@@ -65,4 +67,4 @@ const BlockRendererProvider = ( {
 	);
 };
 
-export default BlockRendererProvider;
+export default withExperimentalBlockEditorProvider( BlockRendererProvider );

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from 'page';
-import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -76,9 +76,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
 
-	const siteCount = getCurrentUser( getState() )?.site_count;
-
-	if ( useSitesAsLandingPage && siteCount > 1 ) {
+	if ( useSitesAsLandingPage ) {
 		return '/sites';
 	}
 

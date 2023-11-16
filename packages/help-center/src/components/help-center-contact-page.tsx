@@ -36,10 +36,15 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
-export const HelpCenterContactPage: FC = () => {
+type HelpCenterContactPageProps = {
+	hideHeaders?: boolean;
+};
+
+export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
+	hideHeaders = false,
+} ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
-
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,
@@ -122,22 +127,46 @@ export const HelpCenterContactPage: FC = () => {
 		);
 	}
 
+	// Create URLSearchParams for forum
+	const forumUrlSearchParams = new URLSearchParams( {
+		mode: 'FORUM',
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const forumUrl = `/contact-form?${ forumUrlSearchParams.toString() }`;
+
+	// Create URLSearchParams for chat
+	const chatUrlSearchParams = new URLSearchParams( {
+		mode: 'CHAT',
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const chatUrl = `/contact-form?${ chatUrlSearchParams.toString() }`;
+
+	// Create URLSearchParams for email
+	const emailUrlSearchParams = new URLSearchParams( {
+		mode: 'EMAIL',
+		// Set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
+		overflow: ( renderChat.eligible && renderChat.state !== 'AVAILABLE' ).toString(),
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
+
 	return (
 		<div className="help-center-contact-page">
-			<BackButton />
+			{ ! hideHeaders && <BackButton /> }
 			<div className="help-center-contact-page__content">
-				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				{ ! hideHeaders && (
+					<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				) }
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
-				{ /* Easter */ }
 				<GMClosureNotice
-					displayAt="2023-04-03 00:00Z"
-					closesAt="2023-04-09 00:00Z"
-					reopensAt="2023-04-10 07:00Z"
+					displayAt="2023-11-06 00:00Z"
+					closesAt="2023-11-11 00:00Z"
+					reopensAt="2023-11-21 07:00Z"
 					enabled={ renderChat.render }
 				/>
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					<Link to="/contact-form?mode=FORUM">
+					<Link to={ forumUrl }>
 						<div
 							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
 							role="button"
@@ -155,10 +184,7 @@ export const HelpCenterContactPage: FC = () => {
 
 					{ renderChat.render && (
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink
-								active={ renderChat.state === 'AVAILABLE' }
-								to="/contact-form?mode=CHAT"
-							>
+							<ConditionalLink active={ renderChat.state === 'AVAILABLE' } to={ chatUrl }>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
 										'is-disabled': renderChat.state !== 'AVAILABLE',
@@ -183,12 +209,7 @@ export const HelpCenterContactPage: FC = () => {
 					) }
 
 					{ renderEmail.render && (
-						<Link
-							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
-							to={ `/contact-form?mode=EMAIL&overflow=${ (
-								renderChat.eligible && renderChat.state !== 'AVAILABLE'
-							).toString() }` }
-						>
+						<Link to={ emailUrl }>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
 								role="button"

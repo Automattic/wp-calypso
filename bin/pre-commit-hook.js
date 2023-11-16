@@ -26,7 +26,6 @@ require( './validate-config-keys' );
 
 /**
  * Parses the output of a git diff command into file paths.
- *
  * @param   {string} command Command to run. Expects output like `git diff --name-only […]`
  * @returns {Array}          Paths output from git command
  */
@@ -45,7 +44,6 @@ function getPathForCommand( command ) {
 	 *
 	 * If we cannot find these commands, we ask the user to run `composer install`, which will install all commands
 	 * and dependencies locally.
-	 *
 	 * @see printPhpcsDocs
 	 */
 	const path_to_command = path.join( __dirname, '..', 'vendor', 'bin', command );

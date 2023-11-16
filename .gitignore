@@ -72,6 +72,8 @@ cached-requests.json
 /apps/*/.cache/
 /desktop/.cache/
 /apps/*/release-files/
+/apps/**/*/build_meta.json
+/apps/editing-toolkit/editing-toolkit-plugin/README.md
 
 # webpack assets
 /assets*.json
@@ -119,3 +121,7 @@ yarn-json-output.json
 
 # Storybook
 storybook-static
+
+# PHPUnit cache
+.phpunit.result.cache
+.phpunit.cache

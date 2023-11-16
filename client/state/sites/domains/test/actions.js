@@ -58,7 +58,7 @@ describe( 'actions', () => {
 		test( 'should dispatch REQUEST action when thunk triggered', () => {
 			const action = domainsRequestAction( siteId );
 			fetchSiteDomains( siteId )( spy );
-			expect( spy ).toBeCalledWith( action );
+			expect( spy ).toHaveBeenCalledWith( action );
 		} );
 
 		test( 'should dispatch RECEIVE action when request completes', () => {
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 			const action = domainsReceiveAction( siteId, domains );
 
 			return fetchSiteDomains( siteId )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( action );
+				expect( spy ).toHaveBeenCalledWith( action );
 			} );
 		} );
 	} );
@@ -85,10 +85,10 @@ describe( 'actions', () => {
 			const failureAction = domainsRequestFailureAction( siteId, message );
 
 			const promise = fetchSiteDomains( siteId )( spy );
-			expect( spy ).toBeCalledWith( requestAction );
+			expect( spy ).toHaveBeenCalledWith( requestAction );
 
 			return promise.then( () => {
-				expect( spy ).toBeCalledWith( failureAction );
+				expect( spy ).toHaveBeenCalledWith( failureAction );
 			} );
 		} );
 	} );

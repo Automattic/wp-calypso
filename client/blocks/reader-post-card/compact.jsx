@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import PropTypes from 'prop-types';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
@@ -7,18 +8,20 @@ import FeaturedAsset from './featured-asset';
 const CompactPost = ( {
 	children,
 	post,
-	isDiscover,
 	expandCard,
 	postKey,
 	isExpanded,
 	site,
 	postByline,
 	teams,
+	openSuggestedFollows,
 } ) => {
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'
 			? () => expandCard( { postKey, post, site } )
 			: null;
+
+	const isSmallScreen = useBreakpoint( '<660px' );
 
 	return (
 		<div className="reader-post-card__post">
@@ -35,25 +38,29 @@ const CompactPost = ( {
 							</AutoDirection>
 							{ postByline }
 						</div>
-						{ ! post.canonical_media && (
+						{ ( ! post.canonical_media || isSmallScreen ) && (
 							<ReaderPostEllipsisMenu
 								site={ site }
 								teams={ teams }
 								post={ post }
-								showFollow={ false }
+								showFollow={ true }
+								openSuggestedFollows={ openSuggestedFollows }
 							/>
 						) }
 					</div>
-					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
+					<ReaderExcerpt post={ post } />
 				</div>
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">
-						<ReaderPostEllipsisMenu
-							site={ site }
-							teams={ teams }
-							post={ post }
-							showFollow={ false }
-						/>
+						{ ! isSmallScreen && (
+							<ReaderPostEllipsisMenu
+								site={ site }
+								teams={ teams }
+								post={ post }
+								showFollow={ true }
+								openSuggestedFollows={ openSuggestedFollows }
+							/>
+						) }
 						<FeaturedAsset
 							post={ post }
 							canonicalMedia={ post.canonical_media }
@@ -73,7 +80,7 @@ const CompactPost = ( {
 CompactPost.propTypes = {
 	post: PropTypes.object.isRequired,
 	postByline: PropTypes.object,
-	isDiscover: PropTypes.bool,
+	openSuggestedFollows: PropTypes.func,
 };
 
 export default CompactPost;

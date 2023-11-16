@@ -19,7 +19,7 @@
 	button:not(.components-button) {
 		opacity: 0;
 		position: absolute;
-		margin: 16px 0 -19px;
+		margin: 16px 0 0;
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {

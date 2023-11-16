@@ -1,5 +1,5 @@
 .form-text-input-with-action {
-	@extend %form-field;
+	@extend %form-field !optional;
 	display: flex;
 	padding: 0;
 

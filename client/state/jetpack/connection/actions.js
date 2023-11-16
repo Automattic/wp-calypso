@@ -95,7 +95,6 @@ export const disconnect = ( siteId ) => {
 
 /**
  * Change the jetpack connection owner.
- *
  * @param {number} siteId the site ID
  * @param {number} newOwnerWporgId the wporg user ID of the new owner
  * @param {string} newOwnerWpcomDisplayName display name for UI messages

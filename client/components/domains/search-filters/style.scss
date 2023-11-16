@@ -3,9 +3,14 @@
 
 .search-filters__dropdown-filters {
 	align-items: center;
-	height: 51px; // same as .search
+	height: 40px;
 	z-index: z-index("root", ".search");
-	margin-left: 16px;
+	margin-left: 12px;
+
+	@include break-mobile {
+		margin-left: 20px;
+		height: 48px;
+	}
 
 	.button {
 		align-items: center;
@@ -19,7 +24,7 @@
 		color: var(--color-text);
 
 		@include break-mobile {
-			min-width: 120px;
+			min-width: 96px;
 		}
 
 		background-color: var(--studio-white);
@@ -49,21 +54,6 @@
 
 		.search-filters__dropdown-filters-button-text {
 			white-space: nowrap;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				display: none;
-			}
-		}
-	}
-
-	&.search-filters__dropdown-filters--has-filter-values {
-		.material-icon {
-			fill: var(--color-accent);
-		}
-		@include break-mobile {
-			.material-icon {
-				fill: initial;
-			}
 		}
 	}
 }
@@ -225,7 +215,7 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 	.search-filters__buttons {
-		margin: 0 20px 48px;
+		margin: 0 20px 0;
 		padding: 0;
 		box-shadow: none;
 
@@ -236,6 +226,6 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.search-filters__buttons .button {
-		margin-left: 0.5em;
+		border-radius: 4px;
 	}
 }

@@ -7,7 +7,6 @@ const configRoot = path.resolve( __dirname, '../config' );
 
 /**
  * Reads a config file given its basename
- *
  * @param {string} filename basename of config file to read, e.g. 'development.json'
  * @returns {string} contents of file
  */
@@ -17,7 +16,6 @@ const readConfigFile = ( filename ) =>
 /**
  * Reads and parses the data from a
  * config file given its basename
- *
  * @throws SyntaxError if contents of config file not valid JSON
  * @param {string} filename basename of config file to read, e.g. 'development.json'
  * @returns {*} parsed data from config file contents

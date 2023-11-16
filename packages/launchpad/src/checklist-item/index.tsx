@@ -1,7 +1,7 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
-import Badge from '../badge';
 import { Task } from '../types';
 
 import './style.scss';
@@ -18,6 +18,24 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 		actionDispatch && actionDispatch();
 	};
 
+	// Display task counter if task is incomplete and has the count properties;
+	const shouldDisplayTaskCounter =
+		task.target_repetitions &&
+		null !== task.repetition_count &&
+		undefined !== task.repetition_count;
+
+	// If the task says we should use the Calypso path, ensure we use that link for the button's href.
+	// This allows the UI routing code to hook into the URL changes and should reduce full-page (re)loads
+	// when clicking on the task list items.
+	const buttonHref = task.useCalypsoPath && task.calypso_path ? task.calypso_path : undefined;
+
+	// The Button component does not accept the `disabled` and `href` props together.
+	// This code will only add href property if the disabled variable is false.
+	const buttonProps = {
+		disabled,
+		...( disabled ? {} : { href: buttonHref } ),
+	};
+
 	return (
 		<li
 			className={ classnames( 'checklist-item__task', {
@@ -30,18 +48,18 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 			{ isPrimaryAction ? (
 				<Button
 					className="checklist-item__checklist-primary-button"
-					disabled={ disabled }
 					data-task={ id }
 					onClick={ handlePrimaryAction }
+					{ ...buttonProps }
 				>
 					{ title }
 				</Button>
 			) : (
 				<Button
 					className="checklist-item__task-content"
-					disabled={ disabled }
 					data-task={ id }
 					onClick={ actionDispatch }
+					{ ...buttonProps }
 				>
 					{ completed && (
 						// show checkmark for completed tasks regardless if they are disabled or kept active
@@ -56,6 +74,11 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					) }
 					<span className="checklist-item__text">{ title }</span>
 					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
+					{ shouldDisplayTaskCounter && (
+						<span className="checklist-item__counter">
+							{ task.repetition_count }/{ task.target_repetitions }
+						</span>
+					) }
 					{ shouldDisplayChevron && (
 						<Gridicon
 							aria-label={ translate( 'Task enabled' ) }

@@ -9,24 +9,24 @@ export function getDiscountedRawPrice(
 	productId: number,
 
 	/**
-	 * If true, attempt to calculate and return the monthly price. Note that this
-	 * is not precise as it relies on float division and could have rounding
-	 * errors.
+	 * If true, attempt to calculate and return the monthly price.
 	 */
-	returnMonthly = false
+	returnMonthly = false,
+	/**
+	 * If true, represent price as a currency's smallest unit ( as integers
+	 * instead of floats ). If precision matters, set to true, as otherwise the
+	 * price relies on float division and could have rounding errors.
+	 */
+	returnSmallestUnit = false
 ): number | null {
 	const plan = getPlan( state, productId );
 	const rawPrice = plan?.raw_price ?? -1;
 	const origCost = plan?.orig_cost ?? -1;
 
-	if ( rawPrice < 0 || origCost < 0 ) {
-		return null;
-	}
-	if ( ! plan ) {
+	if ( rawPrice < 0 || origCost < 0 || ! plan ) {
 		return null;
 	}
 
-	return returnMonthly
-		? calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price )
-		: plan.raw_price;
+	const price = returnSmallestUnit ? plan.raw_price_integer : rawPrice;
+	return returnMonthly ? calculateMonthlyPriceForPlan( plan.product_slug, price ) : price;
 }

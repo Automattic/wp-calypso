@@ -5,7 +5,7 @@
 	display: flex;
 	position: relative;
 	margin-bottom: 30px;
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	border-radius: 3px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: 0 0 0 1px var(--color-border-subtle);

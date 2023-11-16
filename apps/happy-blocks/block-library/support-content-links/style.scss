@@ -1,0 +1,12 @@
+$breakpoint-mobile: 782px; //Mobile size.
+.support-content-links {
+	p {
+		font-size: 1rem;
+		line-height: 24px;
+		margin: 8px 0;
+		@media ( max-width: $breakpoint-mobile ) {
+			display: grid;
+			margin: 16px 0;
+		}
+	}
+}

@@ -1,5 +1,4 @@
-import { filter, flow } from 'lodash';
-import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
+import { flow } from 'lodash';
 import addImageWrapperElement from 'calypso/lib/post-normalizer/rule-add-image-wrapper-element';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
@@ -33,6 +32,7 @@ import {
 	PHOTO_ONLY_MIN_WIDTH,
 	PHOTO_ONLY_MAX_CHARACTER_COUNT,
 	GALLERY_MIN_IMAGES,
+	GALLERY_MAX_IMAGES,
 	GALLERY_MIN_IMAGE_WIDTH,
 	MIN_IMAGE_WIDTH,
 	MIN_IMAGE_HEIGHT,
@@ -74,12 +74,11 @@ const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_
 
 /**
  * Attempt to classify the post into a display type
- *
  * @param  {Object}   post     A post to classify
  * @returns {Object}            The classified post
  */
 export function classifyPost( post ) {
-	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
+	const imagesForGallery = getImagesFromPostToDisplay( post, GALLERY_MAX_IMAGES );
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED;
 
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
@@ -132,7 +131,6 @@ const fastPostNormalizationRules = flow( [
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
-	addDiscoverProperties,
 ] );
 
 export function runFastRules( post ) {

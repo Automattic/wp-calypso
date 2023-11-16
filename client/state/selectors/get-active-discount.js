@@ -29,7 +29,6 @@ export const isDiscountActive = ( discount, state ) => {
 
 /**
  * Returns info whether the site is eligible for spring discount or not.
- *
  * @param  {Object}  state Global state tree.
  * @returns {Object | null}  Promo description
  */

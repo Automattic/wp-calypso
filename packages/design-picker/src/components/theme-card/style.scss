@@ -156,18 +156,22 @@ $theme-card-info-margin-top: 16px;
 }
 
 .theme-card__tooltip {
-	&.is-top,
-	&.is-top-left,
-	&.is-top-right {
-		.popover__arrow {
-			border-top-color: var(--color-neutral-60);
-			bottom: 4px;
-
-			&::before {
-				display: none;
+	@mixin popover__arrow( $side ) {
+		&.is-#{$side},
+		&.is-#{$side}-left,
+		&.is-#{$side}-right {
+			.popover__arrow {
+				// Reset the original style.
+				border-color: transparent;
+				&::before {
+					// Change the color according to ThemeCard's needs.
+					border-#{$side}-color: var(--color-neutral-60);
+				}
 			}
 		}
 	}
+	@include popover__arrow( top );
+	@include popover__arrow( bottom );
 
 	ul {
 		list-style: none;

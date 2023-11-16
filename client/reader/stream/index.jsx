@@ -12,17 +12,11 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import {
-	READER_SEARCH_POPULAR_SITES,
-	READER_DISCOVER_POPULAR_SITES,
-} from 'calypso/reader/follow-sources';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
-import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -31,7 +25,6 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
@@ -45,75 +38,68 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
-import { getReaderTags } from 'calypso/state/reader/tags/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import ReaderListFollowedSites from './reader-list-followed-sites';
-import ReaderPopularSitesSidebar from './reader-popular-sites-sidebar';
 import './style.scss';
 
-const WIDE_DISPLAY_CUTOFF = 900;
+export const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
-const excludesSidebar = [
-	'a8c',
-	'conversations',
-	'conversations-a8c',
-	'feed',
-	'likes',
-	'search',
-	'list',
-	'p2',
-];
 
 class ReaderStream extends Component {
 	static propTypes = {
-		translate: PropTypes.func,
-		trackScrollPage: PropTypes.func.isRequired,
-		suppressSiteNameLink: PropTypes.bool,
-		showPostHeader: PropTypes.bool,
-		showFollowInHeader: PropTypes.bool,
-		onUpdatesShown: PropTypes.func,
-		emptyContent: PropTypes.object,
 		className: PropTypes.string,
-		showDefaultEmptyContentIfMissing: PropTypes.bool,
-		placeholderFactory: PropTypes.func,
+		emptyContent: PropTypes.func,
 		followSource: PropTypes.string,
-		isDiscoverStream: PropTypes.bool,
-		useCompactCards: PropTypes.bool,
-		isMain: PropTypes.bool,
-		intro: PropTypes.object,
 		forcePlaceholders: PropTypes.bool,
+		intro: PropTypes.func,
+		isDiscoverStream: PropTypes.bool,
+		isMain: PropTypes.bool,
+		onUpdatesShown: PropTypes.func,
+		placeholderFactory: PropTypes.func,
 		recsStreamKey: PropTypes.string,
+		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
+		showFollowInHeader: PropTypes.bool,
+		sidebarTabTitle: PropTypes.string,
+		streamHeader: PropTypes.func,
+		streamSidebar: PropTypes.func,
+		suppressSiteNameLink: PropTypes.bool,
+		trackScrollPage: PropTypes.func.isRequired,
+		translate: PropTypes.func,
+		useCompactCards: PropTypes.bool,
+		fixedHeaderHeight: PropTypes.number,
+		selectedStreamName: PropTypes.string,
 	};
 
 	static defaultProps = {
-		showPostHeader: true,
-		suppressSiteNameLink: false,
-		showFollowInHeader: false,
-		onUpdatesShown: noop,
 		className: '',
-		showDefaultEmptyContentIfMissing: true,
+		forcePlaceholders: false,
+		intro: null,
 		isDiscoverStream: false,
 		isMain: true,
-		useCompactCards: false,
-		intro: null,
-		forcePlaceholders: false,
+		onUpdatesShown: noop,
+		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
+		showFollowInHeader: false,
+		suppressSiteNameLink: false,
+		useCompactCards: false,
 	};
 
 	state = {
 		selectedTab: 'posts',
 	};
+
+	isMounted = false;
 
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
@@ -140,7 +126,6 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
-				tags: this.props.recsStream.tags,
 			} );
 		}
 	}
@@ -193,6 +178,7 @@ class ReaderStream extends Component {
 		this.props.resetCardExpansions();
 		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
+		this.isMounted = true;
 
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
@@ -382,20 +368,29 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey, tags } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true, tags } );
+		const { streamKey } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true } );
+	};
+
+	getPageHandle = ( pageHandle, startDate ) => {
+		if ( pageHandle ) {
+			return pageHandle;
+		} else if ( startDate ) {
+			return { before: startDate };
+		}
+		return null;
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate, tags } = props;
+		const { streamKey, stream, startDate } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
 
 			props.trackScrollPage( pageId );
 		}
-		const pageHandle = stream.pageHandle || { before: startDate };
-		props.requestPage( { streamKey, pageHandle, tags } );
+		const pageHandle = this.getPageHandle( stream.pageHandle, startDate );
+		props.requestPage( { streamKey, pageHandle } );
 	};
 
 	showUpdates = () => {
@@ -447,7 +442,6 @@ class ReaderStream extends Component {
 					handleClick={ showPost }
 					postKey={ postKey }
 					suppressSiteNameLink={ this.props.suppressSiteNameLink }
-					showPostHeader={ this.props.showPostHeader }
 					showFollowInHeader={ this.props.showFollowInHeader }
 					isDiscoverStream={ this.props.isDiscoverStream }
 					showSiteName={ this.props.showSiteNameOnCards }
@@ -460,27 +454,17 @@ class ReaderStream extends Component {
 					compact={ this.props.useCompactCards }
 					siteId={ primarySiteId }
 					showFollowButton={ this.props.showFollowButton }
+					fixedHeaderHeight={ this.props.fixedHeaderHeight }
 				/>
-				{ index === 0 && <PerformanceTrackerStop /> }
+				{ index === 0 && <ReaderPerformanceTrackerStop /> }
 			</Fragment>
 		);
 	};
 
 	render() {
-		const {
-			translate,
-			forcePlaceholders,
-			lastPage,
-			streamHeader,
-			streamKey,
-			tag,
-			sites,
-			isDiscoverTags,
-			isDiscoverStream,
-		} = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
-		const hasNoPosts = items.length === 0 && ! isRequesting;
 		let body;
 		let showingStream;
 
@@ -490,16 +474,17 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
-		const path = window.location.pathname;
-		const isTagPage = path.startsWith( '/tag/' );
-		const isSearchPage = path.startsWith( '/read/search' );
+		const hasNoPosts = this.isMounted && items.length === 0 && ! isRequesting;
+
 		const streamType = getStreamType( streamKey );
 
+		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
+		// to be updated before we can remove it.
 		let baseClassnames = classnames( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
-			body = this.props.emptyContent;
+			body = this.props.emptyContent?.();
 			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
 				body = <EmptyContent />;
 			}
@@ -521,45 +506,26 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			let sidebarContent = null;
-			let tabTitle = translate( 'Sites' );
+			const sidebarContentFn = this.props.streamSidebar;
 
-			if ( isTagPage || isDiscoverTags ) {
-				sidebarContent = <ReaderTagSidebar tag={ tag } />;
-				tabTitle = translate( 'Related' );
-				baseClassnames = classnames( 'tag-stream__main', this.props.className );
-			} else if ( isSearchPage ) {
-				sidebarContent = (
-					<ReaderPopularSitesSidebar items={ items } followSource={ READER_SEARCH_POPULAR_SITES } />
-				);
-			} else if ( isDiscoverStream ) {
-				sidebarContent = (
-					<ReaderPopularSitesSidebar
-						items={ sites }
-						followSource={ READER_DISCOVER_POPULAR_SITES }
-					/>
-				);
-			} else {
-				sidebarContent = <ReaderListFollowedSites path={ path } />;
-			}
-
-			if ( excludesSidebar.includes( streamType ) ) {
+			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
+			if ( ! sidebarContentFn || streamType === 'search' ) {
 				body = <div className="reader__content">{ bodyContent }</div>;
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
 						<div className="reader__content">
-							{ streamHeader }
+							{ streamHeader?.() }
 							{ bodyContent }
 						</div>
-						<div className="stream__right-column">{ sidebarContent }</div>
+						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
 			} else {
 				body = (
 					<>
-						{ streamHeader }
+						{ streamHeader?.() }
 						<div className="stream__header">
 							<SectionNav selectedText={ this.state.selectedTab }>
 								<NavTabs label={ translate( 'Status' ) }>
@@ -575,7 +541,7 @@ class ReaderStream extends Component {
 										selected={ this.state.selectedTab === 'sites' }
 										onClick={ this.handleSitesSelected }
 									>
-										{ tabTitle }
+										{ this.props.sidebarTabTitle || translate( 'Sites' ) }
 									</NavItem>
 								</NavTabs>
 							</SectionNav>
@@ -584,7 +550,7 @@ class ReaderStream extends Component {
 							<div className="reader__content">{ bodyContent }</div>
 						) }
 						{ this.state.selectedTab === 'sites' && (
-							<div className="stream__right-column">{ sidebarContent }</div>
+							<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 						) }
 					</>
 				);
@@ -604,7 +570,7 @@ class ReaderStream extends Component {
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }
-				{ showingStream && items.length ? this.props.intro : null }
+				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
 				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
 			</TopLevel>
@@ -616,8 +582,6 @@ export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
-		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
-		const recommendedSites = getReaderRecommendedSites( state, 'discover-recommendations' ) || [];
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -636,9 +600,6 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
-			tag: streamKeySuffix,
-			tags: getReaderTags( state ),
-			sites: recommendedSites,
 		};
 	},
 	{

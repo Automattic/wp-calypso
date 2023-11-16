@@ -1,23 +1,28 @@
-import { Gridicon, CircularProgressBar } from '@automattic/components';
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Badge, CircularProgressBar, Dialog, Gridicon } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { Launchpad } from '@automattic/launchpad';
+import { LaunchpadInternal } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
-import { Icon, copy } from '@wordpress/icons';
+import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
-import Badge from 'calypso/components/badge';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
+import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
+import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -29,7 +34,6 @@ type SidebarProps = {
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
 	flow: string | null;
-	hideNavigation: boolean | null;
 };
 
 function getUrlInfo( url: string ) {
@@ -43,15 +47,19 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-const Sidebar = ( {
-	sidebarDomain,
-	siteSlug,
-	submit,
-	goNext,
-	goToStep,
-	flow,
-	hideNavigation,
-}: SidebarProps ) => {
+function recordUnverifiedDomainDialogShownTracksEvent( site_id?: number ) {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_dialog_shown', {
+		site_id,
+	} );
+}
+
+function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: number ) {
+	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway_clicked', {
+		site_id,
+	} );
+}
+
+const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
@@ -61,8 +69,11 @@ const Sidebar = ( {
 	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const [ showPlansModal, setShowPlansModal ] = useState( false );
+	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+	const queryClient = useQueryClient();
 
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
@@ -73,18 +84,29 @@ const Sidebar = ( {
 		[]
 	);
 
+	const stripeConnectUrl = useSelector( ( state ) =>
+		getConnectUrlForSiteId( state, site?.ID ?? 0 )
+	);
+
 	const showDomain =
 		! isBlogOnboardingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
+
+	const { isEmailUnverified: isDomainEmailUnverified } = useDomainEmailVerification(
+		site?.ID,
+		siteSlug ?? '',
+		selectedDomain?.domain_name ?? sidebarDomain?.domain
+	);
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem, getDomainCartItem } = useSelect(
+	const { planCartItem, domainCartItem, productCartItems } = useSelect(
 		( select ) => ( {
-			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
 		} ),
 		[]
 	);
@@ -97,12 +119,22 @@ const Sidebar = ( {
 			site,
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
+			PLAN_PREMIUM,
+			setShowPlansModal,
+			queryClient,
 			goToStep,
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem(),
-			getDomainCartItem()
+			planCartItem,
+			domainCartItem,
+			productCartItems,
+			stripeConnectUrl,
+			() => {
+				recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
+				setShowConfirmModal( true );
+			},
+			isDomainEmailUnverified
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
@@ -154,93 +186,142 @@ const Sidebar = ( {
 		);
 	}
 
+	if ( ! site ) {
+		return null;
+	}
+
 	return (
-		<div className="launchpad__sidebar">
-			<div className="launchpad__sidebar-content-container">
-				<div className="launchpad__progress-bar-container">
-					<CircularProgressBar
-						size={ 40 }
-						enableDesktopScaling
-						currentStep={ currentTask || null }
-						numberOfSteps={ enhancedTasks?.length || null }
+		<>
+			<QueryMembershipsSettings siteId={ site.ID } source="launchpad" />
+			<div className="launchpad__sidebar">
+				<div className="launchpad__sidebar-content-container">
+					<div className="launchpad__progress-bar-container">
+						<CircularProgressBar
+							size={ 40 }
+							enableDesktopScaling
+							currentStep={ currentTask || null }
+							numberOfSteps={ enhancedTasks?.length || null }
+						/>
+					</div>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
+					<h1 className="launchpad__sidebar-h1">
+						{ showLaunchTitle && launchTitle ? launchTitle : title }
+					</h1>
+					<p className="launchpad__sidebar-description">{ subtitle }</p>
+					{ showDomain && (
+						<div className="launchpad__url-box">
+							{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
+							<div className="launchpad__url-box-domain">
+								<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
+								{ showClipboardButton && (
+									<>
+										<ClipboardButton
+											aria-label={ translate( 'Copy URL' ) }
+											text={ siteSlug }
+											className="launchpad__clipboard-button"
+											borderless
+											compact
+											onCopy={ () => setClipboardCopied( true ) }
+											onMouseLeave={ () => setClipboardCopied( false ) }
+											ref={ clipboardButtonEl }
+										>
+											<Icon icon={ copy } size={ 18 } />
+										</ClipboardButton>
+										<Tooltip
+											context={ clipboardButtonEl.current }
+											isVisible={ clipboardCopied }
+											position="top"
+										>
+											{ translate( 'Copied to clipboard!' ) }
+										</Tooltip>
+									</>
+								) }
+							</div>
+							{ showDomainUpgradeBadge() && (
+								<a href={ getDomainUpgradeBadgeUrl() }>
+									<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+										{ translate( 'Customize' ) }
+									</Badge>
+								</a>
+							) }
+						</div>
+					) }
+					{ isDomainSSLProcessing && (
+						<div className="launchpad__domain-notification">
+							<div className="launchpad__domain-notification-icon">
+								<Gridicon
+									className="launchpad__domain-checkmark-icon"
+									icon="checkmark"
+									size={ 18 }
+								/>
+							</div>
+							<p>
+								{ translate(
+									'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
+									{ components: { br: <br /> } }
+								) }
+							</p>
+						</div>
+					) }
+					<LaunchpadInternal
+						siteSlug={ siteSlug }
+						taskFilter={ () => enhancedTasks || [] }
+						makeLastTaskPrimaryAction={ true }
 					/>
+					{ showPlansModal && site?.ID && (
+						<RecurringPaymentsPlanAddEditModal
+							closeDialog={ () => setShowPlansModal( false ) }
+							product={ {
+								price: 5,
+								subscribe_as_site_subscriber: true,
+								title: translate( 'Paid newsletter' ),
+								type: TYPE_TIER,
+							} }
+							annualProduct={ {
+								price: 5 * 12,
+								subscribe_as_site_subscriber: true,
+								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+							} }
+							siteId={ site.ID }
+						/>
+					) }
 				</div>
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
-				<h1 className="launchpad__sidebar-h1">
-					{ showLaunchTitle && launchTitle ? launchTitle : title }
-				</h1>
-				<p className="launchpad__sidebar-description">{ subtitle }</p>
-				{ showDomain && (
-					<div className="launchpad__url-box">
-						{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-						<div className="launchpad__url-box-domain">
-							<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
-							{ showClipboardButton && (
-								<>
-									<ClipboardButton
-										aria-label={ translate( 'Copy URL' ) }
-										text={ siteSlug }
-										className="launchpad__clipboard-button"
-										borderless
-										compact
-										onCopy={ () => setClipboardCopied( true ) }
-										onMouseLeave={ () => setClipboardCopied( false ) }
-										ref={ clipboardButtonEl }
-									>
-										<Icon icon={ copy } size={ 18 } />
-									</ClipboardButton>
-									<Tooltip
-										context={ clipboardButtonEl.current }
-										isVisible={ clipboardCopied }
-										position="top"
-									>
-										{ translate( 'Copied to clipboard!' ) }
-									</Tooltip>
-								</>
-							) }
-						</div>
-						{ showDomainUpgradeBadge() && (
-							<a href={ getDomainUpgradeBadgeUrl() }>
-								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
-									{ translate( 'Customize' ) }
-								</Badge>
-							</a>
-						) }
-					</div>
-				) }
-				{ isDomainSSLProcessing && (
-					<div className="launchpad__domain-notification">
-						<div className="launchpad__domain-notification-icon">
-							<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark" size={ 18 } />
-						</div>
-						<p>
-							{ translate(
-								'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
-								{ components: { br: <br /> } }
-							) }
-						</p>
-					</div>
-				) }
-				<Launchpad
-					siteSlug={ siteSlug }
-					taskFilter={ () => enhancedTasks || [] }
-					makeLastTaskPrimaryAction={ true }
-				/>
 			</div>
-			{ ! hideNavigation && (
-				<div className="launchpad__sidebar-admin-link">
-					<StepNavigationLink
-						direction="forward"
-						handleClick={ () => {
-							recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
-							goNext?.();
-						} }
-						label={ translate( 'Skip to dashboard' ) }
-						borderless={ true }
-					/>
-				</div>
-			) }
-		</div>
+			<Dialog
+				isVisible={ showConfirmModal }
+				buttons={ [
+					{
+						action: 'cancel',
+						label: translate( 'Cancel' ),
+					},
+					{
+						action: 'launch',
+						label: translate( 'Continue anyway' ),
+						isPrimary: true,
+						onClick: () => {
+							recordUnverifiedDomainContinueAnywayClickedTracksEvent( site?.ID );
+							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
+							setShowConfirmModal( false );
+						},
+					},
+				] }
+				onClose={ () => setShowConfirmModal( false ) }
+			>
+				<p>
+					{ translate(
+						'Your domain email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in the future.{{break/}}{{break/}}Please check your inbox for the ICANN verification email.',
+						{
+							components: {
+								p: <p />,
+								break: <br />,
+								strong: <strong />,
+							},
+							args: { domain: sidebarDomain?.domain },
+						}
+					) }
+				</p>
+			</Dialog>
+		</>
 	);
 };
 

@@ -11,12 +11,14 @@
 	},
 	"scripts": {
 		"build": "NODE_ENV=production yarn dev && yarn run build-translations-manifest",
-		"build-ci": "yarn build && ./bin/prepArtifactForCI.sh",
+		"teamcity:build-app": "./bin/ci-build-steps.sh",
 		"build-calypso-strings": "wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir 'dist/strings' --output './dist/calypso-strings.pot' && rm -rf dist/strings",
 		"build:pricing-plans": "calypso-build --env block='pricing-plans'",
 		"build:universal-header": "calypso-build --env block='universal-header'",
 		"build:universal-footer": "calypso-build --env block='universal-footer'",
 		"build:support-content-footer": "calypso-build --env block='support-content-footer'",
+		"build:education-header": "calypso-build --env block='education-header'",
+		"build:support-content-links": "calypso-build --env block='support-content-links'",
 		"build-translations-manifest": "yarn run build-calypso-strings && node bin/build-translations-manifest.js",
 		"clean": "rm -r release-files block-library/*/build || true",
 		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks"
@@ -32,13 +34,14 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
-		"@emotion/styled": "^11.3.0",
-		"@wordpress/base-styles": "^4.14.0",
-		"@wordpress/block-editor": "^11.0.0",
-		"@wordpress/blocks": "^12.0.0",
-		"@wordpress/components": "^23.0.0",
-		"@wordpress/element": "^5.0.0",
-		"@wordpress/i18n": "^4.23.0",
+		"@emotion/styled": "^11.11.0",
+		"@wordpress/base-styles": "^4.35.0",
+		"@wordpress/block-editor": "^12.12.0",
+		"@wordpress/blocks": "^12.21.0",
+		"@wordpress/components": "^25.10.0",
+		"@wordpress/data": "^9.14.0",
+		"@wordpress/element": "^5.21.0",
+		"@wordpress/i18n": "^4.44.0",
 		"classnames": "^2.3.2",
 		"glob": "^7.1.6",
 		"i18n-calypso": "workspace:^",
@@ -47,16 +50,12 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
-		"@emotion/react": "^11.4.1",
+		"@emotion/react": "^11.11.1",
 		"@testing-library/react": "^14.0.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^2.6.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^2.21.0",
 		"copy-webpack-plugin": "^10.1.0",
 		"glob": "^7.1.6",
-		"jest": "^27.3.1",
 		"postcss": "^8.4.5",
 		"webpack": "^5.68.0"
-	},
-	"peerDependencies": {
-		"@wordpress/data": "^8.0.0"
 	}
 }

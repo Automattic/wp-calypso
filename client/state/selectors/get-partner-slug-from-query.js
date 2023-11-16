@@ -3,7 +3,6 @@ import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-q
 /**
  * Returns the partner slug when partner_id is present is the query and the
  * value maps to a known host.
- *
  * @param {Object}   state Global state tree
  * @returns {?string}       The partner slug or null
  */

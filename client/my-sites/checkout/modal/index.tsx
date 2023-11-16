@@ -7,7 +7,7 @@ import CheckoutMasterbar from 'calypso/layout/masterbar/checkout';
 import { navigate } from 'calypso/lib/navigate';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
+import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector, useDispatch } from 'calypso/state';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -94,7 +94,6 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 
 	return (
 		<Modal
-			open
 			overlayClassName="checkout-modal"
 			bodyOpenClassName="has-checkout-modal"
 			title={ translate( 'Checkout modal' ) }

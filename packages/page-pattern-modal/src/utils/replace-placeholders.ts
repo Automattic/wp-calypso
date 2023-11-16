@@ -32,7 +32,7 @@ const replacePlaceholders = (
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isObjKey< T >( key: any, obj: T ): key is keyof T {
+function isObjKey< T extends object >( key: any, obj: T ): key is keyof T {
 	return key in obj;
 }
 

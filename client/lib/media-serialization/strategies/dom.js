@@ -9,7 +9,6 @@ const REGEXP_IMG_CLASS_ALIGN = /\balign(left|center|right|none)\b/;
 
 /**
  * Given an <img /> HTMLElement, returns an object of parsed attributes.
- *
  * @param  {HTMLElement} node    <img /> HTMLElement
  * @param  {Object}      _parsed In recursion, the known values
  * @returns {Object}              Object of all detected values
@@ -57,7 +56,6 @@ function parseImage( node, _parsed ) {
 /**
  * Given a media HTMLElement object, returns an object containing all detected
  * values.
- *
  * @param  {HTMLElement} node    Media object to parse
  * @param  {Object}      _parsed In recursion, the known values
  * @returns {Object}              Object of all detected values

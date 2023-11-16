@@ -17,7 +17,9 @@ function FormattedHeader( {
 	subHeaderAlign,
 	isSecondary,
 	hasScreenOptions,
+	subHeaderAs: SubHeaderAs = 'p',
 	children,
+	screenReader,
 } ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
@@ -50,8 +52,11 @@ function FormattedHeader( {
 						{ preventWidows( headerText, 2 ) } { tooltip }
 					</h2>
 				) }
+				{ screenReader && <h2 className="screen-reader-text">{ screenReader }</h2> }
 				{ subHeaderText && (
-					<p className={ subtitleClasses }>{ preventWidows( subHeaderText, 2 ) }</p>
+					<SubHeaderAs className={ subtitleClasses }>
+						{ preventWidows( subHeaderText, 2 ) }
+					</SubHeaderAs>
 				) }
 			</div>
 			{ children }
@@ -64,6 +69,7 @@ FormattedHeader.propTypes = {
 	className: PropTypes.string,
 	brandFont: PropTypes.bool,
 	headerText: PropTypes.node,
+	subHeaderAs: PropTypes.elementType,
 	subHeaderText: PropTypes.node,
 	tooltipText: PropTypes.node,
 	compactOnMobile: PropTypes.bool,
@@ -72,6 +78,7 @@ FormattedHeader.propTypes = {
 	subHeaderAlign: PropTypes.oneOf( [ 'center', null ] ),
 	hasScreenOptions: PropTypes.bool,
 	children: PropTypes.node,
+	screenReader: PropTypes.node,
 };
 
 FormattedHeader.defaultProps = {
@@ -84,6 +91,7 @@ FormattedHeader.defaultProps = {
 	isSecondary: false,
 	align: 'center',
 	subHeaderAlign: null,
+	screenReader: null,
 };
 
 export default FormattedHeader;

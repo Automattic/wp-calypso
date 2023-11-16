@@ -8,6 +8,7 @@ import {
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import useDefaultSiteColumns from '../hooks/use-default-site-columns';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
@@ -28,6 +29,7 @@ interface Props {
 
 export default function SiteTableRow( { index, columns, item, setExpanded, isExpanded }: Props ) {
 	const dispatch = useDispatch();
+	const defaultSiteColumnKeys = useDefaultSiteColumns().map( ( { key } ) => key );
 
 	const site = item.site;
 	const blogId = site.value.blog_id;
@@ -38,7 +40,8 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	const isConnected = data?.connected ?? true;
 
 	const currentSiteHasSelectedLicenses =
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
@@ -47,7 +50,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
-	const hasSiteConnectionError = ! item.site.value.is_connected;
+	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
 
 	return (
@@ -125,7 +128,11 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 			{ isExpanded && (
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteExpandedContent site={ site.value } hasError={ siteError } />
+						<SiteExpandedContent
+							columns={ defaultSiteColumnKeys }
+							site={ site.value }
+							hasError={ siteError }
+						/>
 						<SitePhpVersion phpVersion={ site.value.php_version_num } />
 					</td>
 				</tr>

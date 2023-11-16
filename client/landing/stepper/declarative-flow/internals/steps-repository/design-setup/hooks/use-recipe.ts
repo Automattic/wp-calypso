@@ -1,8 +1,11 @@
-import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
+import {
+	isDefaultGlobalStylesVariationSlug,
+	isAssemblerDesign,
+	isAssemblerSupported,
+} from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { GlobalStyles, OnboardSelect, StarterDesigns } from '@automattic/data-stores';
@@ -12,12 +15,12 @@ import type { GlobalStylesObject } from '@automattic/global-styles';
 const useRecipe = (
 	siteId = 0,
 	allDesigns: StarterDesigns | undefined,
-	pickDesign: ( design?: Design ) => void,
+	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
+	pickUnlistedDesign: ( theme: string ) => void,
 	recordPreviewDesign: ( design: Design, styleVariation?: StyleVariation ) => void,
 	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
-	const isDesktop = useViewportMatch( 'large' );
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const { selectedDesign, selectedStyleVariation } = useSelect( ( select ) => {
 		const { getSelectedDesign, getSelectedStyleVariation } = select(
@@ -38,17 +41,41 @@ const useRecipe = (
 		null
 	);
 
-	const hasSelectedGlobalStyles =
-		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) ||
-		!! selectedColorVariation ||
-		!! selectedFontVariation;
+	const numOfSelectedGlobalStyles = [
+		! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ),
+		!! selectedColorVariation,
+		!! selectedFontVariation,
+	].filter( Boolean ).length;
 
 	const [ globalStyles, setGlobalStyles ] = useState< GlobalStylesObject | null >( null );
 
-	const preselectedTheme = searchParams.get( 'theme' );
-	const preselectedStyle = searchParams.get( 'style_variation' );
-	const preselectedColorVariationTitle = searchParams.get( 'color_variation_title' );
-	const preselectedFontVariationTitle = searchParams.get( 'font_variation_title' );
+	/**
+	 * Get the preselect data only when mounting and ignore any changes later.
+	 */
+	const {
+		preselectedThemeSlug,
+		preselectedStyleSlug,
+		preselectedColorVariationTitle,
+		preselectedFontVariationTitle,
+	} = useMemo(
+		() => ( {
+			preselectedThemeSlug: searchParams.get( 'theme' ),
+			preselectedStyleSlug: searchParams.get( 'style_variation' ),
+			preselectedColorVariationTitle: searchParams.get( 'color_variation_title' ),
+			preselectedFontVariationTitle: searchParams.get( 'font_variation_title' ),
+		} ),
+		[]
+	);
+
+	const preselectedDesign = useMemo(
+		() =>
+			allDesigns?.designs.find( ( design ) =>
+				design.is_virtual
+					? design.recipe?.slug === preselectedThemeSlug
+					: design.slug === preselectedThemeSlug
+			),
+		[ allDesigns ]
+	);
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
@@ -124,12 +151,10 @@ const useRecipe = (
 	};
 
 	const previewDesign = ( design: Design, styleVariation?: StyleVariation ) => {
-		// Redirect to Site Assembler if the design_type is set to "assembler".
-		const shouldGoToAssembler = isDesktop && design.design_type === 'assembler';
-
 		recordPreviewDesign( design, styleVariation );
 
-		if ( shouldGoToAssembler ) {
+		// Redirect to Site Assembler if the design_type is set to "assembler".
+		if ( isAssemblerDesign( design ) && isAssemblerSupported() ) {
 			pickDesign( design );
 			return;
 		}
@@ -156,41 +181,37 @@ const useRecipe = (
 
 	// Unset the selected design, thus restarting the design picking experience.
 	useEffect( () => {
-		if ( ! preselectedTheme ) {
+		if ( ! preselectedThemeSlug ) {
 			resetPreview();
 		}
-	}, [ preselectedTheme ] );
+	}, [ preselectedThemeSlug ] );
 
 	// Initialize the preselected design and style variations.
 	useEffect( () => {
-		if ( ! allDesigns || ! preselectedTheme ) {
+		if ( ! preselectedDesign ) {
 			return;
 		}
 
-		const requestedDesign = allDesigns.designs.find(
-			( design ) => design.recipe?.slug === preselectedTheme || design.slug === preselectedTheme
-		);
-		if ( ! requestedDesign ) {
-			return;
-		}
-
-		if ( preselectedStyle ) {
-			const requestedStyleVariation = requestedDesign.style_variations?.find(
-				( styleVariation ) => styleVariation.slug === preselectedStyle
+		setSelectedDesign( preselectedDesign );
+		setIsPreviewingDesign( true );
+		if ( preselectedStyleSlug ) {
+			const preselectedStyleVariation = preselectedDesign.style_variations?.find(
+				( styleVariation ) => styleVariation.slug === preselectedStyleSlug
 			);
 
-			setSelectedStyleVariation( requestedStyleVariation );
+			setSelectedStyleVariation( preselectedStyleVariation );
+		}
+	}, [ preselectedDesign, preselectedStyleSlug, setSelectedDesign, setSelectedStyleVariation ] );
+
+	useEffect( () => {
+		if ( ! allDesigns ) {
+			return;
 		}
 
-		setSelectedDesign( requestedDesign );
-		setIsPreviewingDesign( true );
-	}, [
-		preselectedTheme,
-		preselectedStyle,
-		allDesigns,
-		setSelectedDesign,
-		setSelectedStyleVariation,
-	] );
+		if ( preselectedThemeSlug && ! preselectedDesign ) {
+			pickUnlistedDesign( preselectedThemeSlug );
+		}
+	}, [ allDesigns, preselectedThemeSlug, preselectedDesign, pickUnlistedDesign ] );
 
 	/**
 	 * Initialize the preselected colors
@@ -230,7 +251,7 @@ const useRecipe = (
 		selectedStyleVariation,
 		selectedColorVariation,
 		selectedFontVariation,
-		hasSelectedGlobalStyles,
+		numOfSelectedGlobalStyles,
 		globalStyles,
 		previewDesign,
 		previewDesignVariation,

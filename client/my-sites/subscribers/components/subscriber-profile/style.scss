@@ -14,6 +14,18 @@
 				line-height: rem(22px);
 			}
 
+			a.components-external-link.subscriber-profile__name {
+				color: inherit;
+
+				&:hover {
+					text-decoration: underline;
+				}
+
+				> .components-external-link__icon {
+					display: none;
+				}
+			}
+
 			.subscriber-profile__email {
 				font-size: $font-body-extra-small;
 				line-height: rem(24px);

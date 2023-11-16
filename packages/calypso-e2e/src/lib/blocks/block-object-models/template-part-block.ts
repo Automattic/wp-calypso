@@ -19,7 +19,10 @@ export class TemplatePartBlock {
 	 * @param {Page} page Object representing the base page.
 	 * @param {Locator} block Frame-safe locator to the top element of the block.
 	 */
-	constructor( private page: Page, public block: Locator ) {}
+	constructor(
+		private page: Page,
+		public block: Locator
+	) {}
 
 	/**
 	 * Click the "Start blank" button from the initial state..

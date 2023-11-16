@@ -10,8 +10,7 @@ type Props = {
 const hasLinkInBioSite = ( sites: SiteExcerptData[] ) => {
 	return Boolean(
 		sites.find( ( site ) => {
-			const option = site.options || {};
-			return option.site_intent === 'link-in-bio';
+			return site.options?.site_intent === 'link-in-bio';
 		} )
 	);
 };
@@ -19,7 +18,10 @@ const hasLinkInBioSite = ( sites: SiteExcerptData[] ) => {
 export const LinkInBioBanner = ( props: Props ) => {
 	const { displayMode } = props;
 	const isMobile = useMobileBreakpoint();
-	const { data: sites = [], isLoading } = useSiteExcerptsQuery();
+	const { data: sites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only
+	);
 	const siteCount = sites.length;
 	const doesNotAlreadyHaveALinkInBioSite = ! hasLinkInBioSite( sites );
 	const showBanner = ! isLoading && doesNotAlreadyHaveALinkInBioSite && siteCount < 3;

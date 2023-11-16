@@ -1,11 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useCallback, useMemo, useState } from 'react';
-import {
-	usePaymentProcessors,
-	useTransactionStatus,
-	InvalidPaymentProcessorResponseError,
-} from '../public-api';
+import InvalidPaymentProcessorResponseError from '../lib/invalid-payment-processor-response-error';
+import { usePaymentProcessors, useTransactionStatus } from '../public-api';
 import {
 	PaymentProcessorResponse,
 	PaymentProcessorResponseType,

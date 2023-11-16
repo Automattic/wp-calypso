@@ -1,17 +1,16 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { Button, DeviceSwitcher } from '@automattic/components';
-import { useStyle } from '@automattic/global-styles';
-import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
-import { Icon, layout } from '@wordpress/icons';
+import { isEnabled } from '@automattic/calypso-config';
+import { DeviceSwitcher } from '@automattic/components';
+import { useGlobalStyle } from '@automattic/global-styles';
+import { Popover } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect, useState, CSSProperties } from 'react';
-import { NAVIGATOR_PATHS, STYLES_PATHS } from './constants';
+import React, { useRef, useEffect, useState, useMemo, CSSProperties } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
-import type { MouseEvent } from 'react';
 import './pattern-large-preview.scss';
 
 interface Props {
@@ -24,11 +23,15 @@ interface Props {
 	onMoveDownSection: ( position: number ) => void;
 	onDeleteHeader: () => void;
 	onDeleteFooter: () => void;
+	onShuffle: ( type: string, pattern: Pattern, position?: number ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	isNewSite: boolean;
 }
 
 // The pattern renderer element has 1px min height before the pattern is loaded
 const PATTERN_RENDERER_MIN_HEIGHT = 1;
+
+const LARGE_PREVIEW_OFFSET_TOP = 110;
 
 const PatternLargePreview = ( {
 	header,
@@ -40,97 +43,132 @@ const PatternLargePreview = ( {
 	onMoveDownSection,
 	onDeleteHeader,
 	onDeleteFooter,
+	onShuffle,
 	recordTracksEvent,
+	isNewSite,
 }: Props ) => {
 	const translate = useTranslate();
-	const navigator = useNavigator();
-	const hasSelectedPattern = header || sections.length || footer;
-	const shouldShowSelectPatternHint =
-		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
+	const hasSelectedPattern = Boolean( header || sections.length || footer );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ device, setDevice ] = useState< string >( 'computer' );
-	const [ blockGap ] = useStyle( 'spacing.blockGap' );
-	const [ backgroundColor ] = useStyle( 'color.background' );
-	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
-		'--pattern-large-preview-block-gap': blockGap,
-		'--pattern-large-preview-background': backgroundColor,
-	} as CSSProperties );
+	const [ zoomOutScale, setZoomOutScale ] = useState( 1 );
+	const zoomOutScaleRef = useRef( zoomOutScale );
+	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
+	const patternLargePreviewStyle = useMemo(
+		() =>
+			( {
+				'--pattern-large-preview-zoom-out-scale': zoomOutScale,
+				'--pattern-large-preview-background': backgroundColor,
+			} ) as CSSProperties,
+		[ zoomOutScale, backgroundColor ]
+	);
 
-	const goToSelectHeaderPattern = () => {
-		navigator.goTo( NAVIGATOR_PATHS.HEADER );
-	};
+	const [ debouncedRecordZoomOutScaleChange ] = useDebouncedCallback( ( value: number ) => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE, {
+			from_scale: zoomOutScaleRef.current,
+			to_scale: value,
+		} );
+		zoomOutScaleRef.current = value;
+	}, 300 );
 
-	const handleAddHeaderClick = ( event: MouseEvent ) => {
-		event.preventDefault();
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK );
-		goToSelectHeaderPattern();
-	};
+	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 
-	const getTitle = () => {
-		if ( ! shouldShowSelectPatternHint ) {
-			return translate( 'Welcome to your blank canvas.' );
+	const popoverAnchor = useMemo( () => {
+		if ( ! activeElement ) {
+			return undefined;
 		}
 
-		return translate( 'Ready to start designing?' );
-	};
+		return {
+			getBoundingClientRect() {
+				const { left, top, width, height } = activeElement.getBoundingClientRect();
 
-	const getDescription = () => {
-		if ( ! shouldShowSelectPatternHint ) {
-			return translate( "It's time to get creative. Add your first pattern to get started." );
-		}
-
-		return translate( 'You can view your color and font selections after you select a pattern.' );
-	};
-
-	const getAction = () => {
-		if ( ! shouldShowSelectPatternHint ) {
-			return null;
-		}
-
-		return <Button onClick={ handleAddHeaderClick }>{ translate( 'Add header' ) }</Button>;
-	};
+				return new window.DOMRect(
+					left,
+					// Stick to the top when the partial area of the active element is out of the viewport
+					Math.max( top, LARGE_PREVIEW_OFFSET_TOP ),
+					width,
+					height
+				);
+			},
+		};
+	}, [ activeElement ] );
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
-		const key = type === 'section' ? pattern.key : type;
-		const getActionBarProps = () => {
-			if ( type === 'header' ) {
-				return { onDelete: onDeleteHeader };
-			} else if ( type === 'footer' ) {
-				return { onDelete: onDeleteFooter };
-			}
+		const isSection = type === 'section';
+		const clientId = isSection ? pattern.key : type;
+		const isActive = activeElement?.dataset?.clientId === clientId;
 
-			return {
-				disableMoveUp: position === 0,
-				disableMoveDown: sections?.length === position + 1,
-				onDelete: () => onDeleteSection( position ),
-				onMoveUp: () => onMoveUpSection( position ),
-				onMoveDown: () => onMoveDownSection( position ),
-			};
+		const handleMouseEnter = ( event: React.MouseEvent< HTMLElement > ) => {
+			setActiveElement( event.currentTarget );
+		};
+
+		const handleMouseLeave = ( event: React.MouseEvent< HTMLElement > ) => {
+			const hasNextActiveElement =
+				event.relatedTarget instanceof Node &&
+				! frameRef.current?.contains( event.relatedTarget as Node );
+			if ( ! hasNextActiveElement ) {
+				setActiveElement( null );
+			}
+		};
+
+		const handleDelete = () => {
+			setActiveElement( null );
+			if ( type === 'header' ) {
+				onDeleteHeader();
+			} else if ( type === 'footer' ) {
+				onDeleteFooter();
+			} else {
+				onDeleteSection( position );
+			}
 		};
 
 		return (
 			<li
-				key={ key }
-				className={ classnames(
-					'pattern-large-preview__pattern',
-					`pattern-large-preview__pattern-${ type }`
-				) }
+				key={ clientId }
+				aria-label={ pattern.title }
+				className={ classnames( 'pattern-large-preview__pattern', {
+					'pattern-large-preview__pattern--active': isActive,
+				} ) }
+				data-client-id={ clientId }
+				onMouseEnter={ handleMouseEnter }
 			>
-				<PatternRenderer
-					key={ device }
-					patternId={ encodePatternId( pattern.ID ) }
-					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
-					// Disable default max-height
-					maxHeight="none"
-				/>
-				<PatternActionBar
-					patternType={ type }
-					isRemoveButtonTextOnly
-					source="large_preview"
-					{ ...getActionBarProps() }
-				/>
+				{ !! viewportHeight && (
+					<PatternRenderer
+						key={ device }
+						patternId={ encodePatternId( pattern.ID ) }
+						viewportHeight={ viewportHeight }
+						// Disable default max-height
+						maxHeight="none"
+						shouldShufflePosts={ isNewSite }
+					/>
+				) }
+				{ isActive && (
+					<Popover
+						animate={ false }
+						focusOnMount={ false }
+						resize={ false }
+						flip={ false }
+						anchor={ popoverAnchor }
+						placement="top-start"
+						variant="unstyled"
+					>
+						<PatternActionBar
+							patternType={ type }
+							category={ pattern.category }
+							source="large_preview"
+							isOverflow={ zoomOutScale < 0.75 }
+							disableMoveUp={ position === 0 }
+							disableMoveDown={ sections?.length === position + 1 }
+							onMoveUp={ isSection ? () => onMoveUpSection( position ) : undefined }
+							onMoveDown={ isSection ? () => onMoveDownSection( position ) : undefined }
+							onShuffle={ () => onShuffle( type, pattern, position ) }
+							onDelete={ handleDelete }
+							onMouseLeave={ handleMouseLeave }
+						/>
+					</Popover>
+				) }
 			</li>
 		);
 	};
@@ -138,6 +176,13 @@ const PatternLargePreview = ( {
 	const updateViewportHeight = ( height?: number ) => {
 		// Required for 100vh patterns
 		setViewportHeight( height );
+	};
+
+	const handleZoomOutScale = ( value: number ) => {
+		setZoomOutScale( value );
+		if ( zoomOutScale !== value ) {
+			debouncedRecordZoomOutScaleChange( value );
+		}
 	};
 
 	// Scroll to newly added patterns
@@ -171,14 +216,27 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
-	// Delay updating the styles to make the transition smooth
-	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
+	// Unset the hovered element when the mouse is leaving the large preview
 	useEffect( () => {
-		setPatternLargePreviewStyle( {
-			'--pattern-large-preview-block-gap': blockGap,
-			'--pattern-large-preview-background': backgroundColor,
-		} as CSSProperties );
-	}, [ blockGap, backgroundColor ] );
+		const handleMouseLeave = ( event: MouseEvent ) => {
+			const relatedTarget = event.relatedTarget as HTMLElement | null;
+			if ( ! relatedTarget?.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
+				setActiveElement( null );
+			}
+		};
+
+		// When the value of the `hasSelectedPattern` changes, it will append/remove the
+		// frame to the DOM. Hence, we need to check the value to bind the event again
+		// after the frame is removed and then appended to the DOM.
+		if ( ! hasSelectedPattern ) {
+			return;
+		}
+
+		frameRef.current?.addEventListener( 'mouseleave', handleMouseLeave );
+		return () => {
+			frameRef.current?.removeEventListener( 'mouseleave', handleMouseLeave );
+		};
+	}, [ frameRef, hasSelectedPattern, setActiveElement ] );
 
 	return (
 		<DeviceSwitcher
@@ -187,12 +245,14 @@ const PatternLargePreview = ( {
 			isShowFrameBorder
 			isShowFrameShadow={ false }
 			isFixedViewport={ !! hasSelectedPattern }
+			isZoomable={ hasSelectedPattern }
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				setDevice( device );
 			} }
 			onViewportChange={ updateViewportHeight }
+			onZoomOutScaleChange={ handleZoomOutScale }
 		>
 			{ hasSelectedPattern ? (
 				<ul
@@ -206,10 +266,15 @@ const PatternLargePreview = ( {
 				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">
-					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 56 } />
-					<h2>{ getTitle() }</h2>
-					<span>{ getDescription() }</span>
-					{ getAction() }
+					<h2>{ translate( 'Welcome to your homepage.' ) }</h2>
+					<ul>
+						<li>{ translate( 'Select patterns for your homepage.' ) }</li>
+						<li>{ translate( 'Choose your colors and fonts.' ) } </li>
+						{ isEnabled( 'pattern-assembler/add-pages' ) && (
+							<li>{ translate( 'Pick additional site pages.' ) } </li>
+						) }
+						<li>{ translate( 'Add your own content in the Editor.' ) } </li>
+					</ul>
 				</div>
 			) }
 		</DeviceSwitcher>

@@ -20,7 +20,7 @@ type CachedMessage = {
 type ReturnMessage = [
 	isFetching: boolean,
 	messages: MarketingMessage[],
-	removeMessage: ( id: string ) => void
+	removeMessage: ( id: string ) => void,
 ];
 
 const mockData: MarketingMessage[] = [];

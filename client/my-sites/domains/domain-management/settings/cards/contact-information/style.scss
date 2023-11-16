@@ -23,6 +23,13 @@
 				}
 			}
 		}
+
+		.contact-information__transfer-warn {
+			margin-top: 1em;
+			margin-bottom: 0;
+			color: var(--studio-red-50);
+			font-size: $font-body-small;
+		}
 	}
 
 	&__toggle {

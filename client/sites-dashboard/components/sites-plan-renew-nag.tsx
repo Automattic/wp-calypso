@@ -12,7 +12,7 @@ interface PlanRenewProps {
 	plan: Site.SiteDetailsPlan;
 	isSiteOwner: boolean;
 	checkoutUrl: string;
-	hideRenewLink?: boolean;
+	isUpgradeable?: boolean;
 }
 
 const PlanRenewContainer = styled.div( {
@@ -54,7 +54,7 @@ export const PlanRenewNag = ( {
 	isSiteOwner,
 	plan,
 	checkoutUrl,
-	hideRenewLink,
+	isUpgradeable,
 }: PlanRenewProps ) => {
 	const { __ } = useI18n();
 	const trackCallback = useCallback(
@@ -70,7 +70,8 @@ export const PlanRenewNag = ( {
 		onChange: ( inView ) => inView && trackCallback(),
 	} );
 
-	const renewText = __( 'Renew plan' );
+	const actionText = isUpgradeable ? __( 'Upgrade' ) : __( 'Renew plan' );
+
 	return (
 		<PlanRenewContainer ref={ ref }>
 			<IconContainer>
@@ -87,7 +88,7 @@ export const PlanRenewNag = ( {
 						) }
 					</PlanRenewNoticeExpireText>
 				</PlanRenewNoticeTextContainer>
-				{ isSiteOwner && ! hideRenewLink && (
+				{ isSiteOwner && (
 					<PlanRenewLink
 						onClick={ () => {
 							recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {
@@ -96,9 +97,9 @@ export const PlanRenewNag = ( {
 							} );
 						} }
 						href={ checkoutUrl }
-						title={ renewText }
+						title={ actionText }
 					>
-						{ renewText }
+						{ actionText }
 					</PlanRenewLink>
 				) }
 			</PlanRenewNotice>

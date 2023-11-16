@@ -3,6 +3,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
+	isPlan,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
@@ -27,7 +28,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
+import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -36,6 +37,7 @@ import {
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
+	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -94,7 +96,12 @@ import './style.scss';
 const debug = debugModule( 'calypso:signup' );
 
 function dependenciesContainCartItem( dependencies ) {
-	return !! ( dependencies && ( dependencies.cartItem || dependencies.domainItem ) );
+	// @TODO: cartItem is now deprecated. Remove dependencies.cartItem and
+	// dependencies.domainItem once all steps and flows have been updated to use cartItems
+	return !! (
+		dependencies &&
+		( dependencies.cartItem || dependencies.domainItem || dependencies.cartItems )
+	);
 }
 
 function addLoadingScreenClassNamesToBody() {
@@ -243,8 +250,13 @@ class Signup extends Component {
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
+		// User-social is recorded as user, to avoid messing up the tracks funnels that we have
 		if ( ! this.state.shouldShowLoadingScreen ) {
-			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+			recordSignupStep(
+				this.props.flowName,
+				this.props.stepName === 'user-social' ? 'user' : this.props.stepName,
+				this.getRecordProps()
+			);
 		}
 		this.preloadNextStep();
 	}
@@ -256,7 +268,12 @@ class Signup extends Component {
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( flowName, stepName, this.getRecordProps() );
+			// User-social is recorded as user, to avoid messing up the tracks funnels that we have
+			recordSignupStep(
+				flowName,
+				stepName === 'user-social' ? 'user' : stepName,
+				this.getRecordProps()
+			);
 		}
 
 		if ( stepName !== prevProps.stepName ) {
@@ -268,7 +285,7 @@ class Signup extends Component {
 		if ( sitePlanSlug && prevProps.sitePlanSlug && sitePlanSlug !== prevProps.sitePlanSlug ) {
 			recordSignupPlanChange(
 				flowName,
-				stepName,
+				stepName === 'user-social' ? 'user' : stepName,
 				prevProps.sitePlanName,
 				prevProps.sitePlanSlug,
 				sitePlanName,
@@ -390,9 +407,10 @@ class Signup extends Component {
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		if (
 			isWooOAuth2Client( this.props.oauth2Client ) ||
+			this.props.isGravatar ||
 			'videopress-account' === this.props.flowName
 		) {
-			// We don't want to show the loading screen for the Woo signup and videopress-account flow.
+			// We don't want to show the loading screen for the Woo signup, Gravatar signup, and videopress-account flow.
 			return;
 		}
 
@@ -478,11 +496,18 @@ class Signup extends Component {
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
+		// @TODO: cartItem is now deprecated. Remove this once all steps and flows have been
+		// updated to use cartItems
 		const cartItem = get( dependencies, 'cartItem' );
+		const cartItems = get( dependencies, 'cartItems' );
 		const domainItem = get( dependencies, 'domainItem' );
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
+		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
+		const planProductSlug = cartItems?.length
+			? cartItems.find( ( item ) => isPlan( item ) )?.product_slug
+			: cartItem?.product_slug;
 
 		const debugProps = {
 			isNewishUser,
@@ -508,7 +533,7 @@ class Signup extends Component {
 				siteId,
 				isNewUser,
 				hasCartItems,
-				planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
+				planProductSlug,
 				domainProductSlug:
 					undefined !== domainItem && domainItem.is_domain_registration
 						? domainItem.product_slug
@@ -521,6 +546,7 @@ class Signup extends Component {
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 				isMapping: domainItem && isDomainMapping( domainItem ),
 				isTransfer: domainItem && isDomainTransfer( domainItem ),
+				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 			} );
 		}
 	};
@@ -781,10 +807,7 @@ class Signup extends Component {
 			};
 		}
 
-		const stepClassName =
-			this.props.stepName === 'user-hosting' || this.props.isGravatar
-				? 'user'
-				: this.props.stepName;
+		const stepClassName = this.props.stepName === 'user-hosting' ? 'user' : this.props.stepName;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -840,7 +863,7 @@ class Signup extends Component {
 		}
 
 		// siteDomains is sometimes empty, so we need to force update.
-		if ( isDomainsForSiteEmpty && ! isImportingFlow ) {
+		if ( isDomainsForSiteEmpty && ! isImportingFlow && this.props.siteId ) {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}
@@ -860,7 +883,7 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const isReskinned = isReskinnedFlow( this.props.flowName ) || this.props.isGravatar;
+		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
 
 		return (
@@ -912,7 +935,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const hostingFlow = isInHostingFlow( state );
+		const hostingFlow = startedInHostingFlow( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )

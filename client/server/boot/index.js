@@ -12,7 +12,6 @@ import pwa from 'calypso/server/pwa';
 
 /**
  * Returns the server HTTP request handler "app".
- *
  * @returns {Object} The express app
  */
 export default function setup() {
@@ -25,8 +24,12 @@ export default function setup() {
 	app.use( userAgent.express() );
 	app.use( loggerMiddleware() );
 
+	// TODO: We disabled this middleware to unblock the Node v20 update because `v8-profiler-next` doesn't support Node.js >18
 	if ( process.env.USE_SERVER_PROFILER === 'true' ) {
-		app.use( require( 'calypso/server/middleware/profiler' )() );
+		// 	app.use( require( 'calypso/server/middleware/profiler' )() );
+		console.warn(
+			'Server profiling is temporarily disabled until `v8-profiler-next` adds support for Node.js >18!'
+		);
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {

@@ -7,6 +7,7 @@ import { Page } from 'playwright';
  */
 export type StepName = 'goals' | 'vertical' | 'intent' | 'designSetup' | 'options';
 type Goals = 'Write' | 'Promote' | 'Import Site' | 'Sell' | 'DIFM' | 'Other';
+type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
 
 const selectors = {
 	// Generic
@@ -121,6 +122,29 @@ export class StartSiteFlow {
 		const readBack = await locator.inputValue();
 		if ( readBack !== tagline ) {
 			throw new Error( `Failed to set blog tagline: expected ${ tagline }, got ${ readBack }` );
+		}
+	}
+
+	/* Write Goal */
+
+	/**
+	 * Performs action available in the Write intent.
+	 *
+	 * @param {WriteActions} action Actions for the Write intent.
+	 */
+	async clickWriteAction( action: WriteActions ) {
+		await this.page.getByRole( 'button', { name: action } ).click();
+
+		if ( action === 'Start writing' ) {
+			// Extended timeout because the site is being
+			// headstarted at this time.
+			await this.page.waitForURL( /setup\/site-setup\/processing/, { timeout: 20 * 1000 } );
+		}
+		if ( action === 'Start learning' ) {
+			await this.page.waitForURL( /setup\/site-setup\/courses/ );
+		}
+		if ( action === 'View designs' ) {
+			await this.page.waitForURL( /setup\/site-setup\/designSetup/ );
 		}
 	}
 

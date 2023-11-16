@@ -1,8 +1,8 @@
+import { Badge } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import * as React from 'react';
-import Badge from 'calypso/components/badge';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import {
 	getThreatPayloadSubtitle,

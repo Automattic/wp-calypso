@@ -1,6 +1,83 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "calypso/my-sites/plan-features-2023-grid/media-queries";
+@import "@wordpress/base-styles/variables";
+@import "calypso/my-sites/plans-grid/media-queries";
+
+:root {
+	--scss-font-body-small: #{$font-body-small};
+}
+
+.plans-features-main__escape-hatch {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+
+	button {
+		text-decoration: underline;
+		font-size: var(--scss-font-body-small);
+		font-weight: 500;
+	}
+}
+
+.is-2023-pricing-grid {
+	margin: 0 auto;
+
+	.signup__steps & {
+		width: auto;
+	}
+
+	.is-section-stepper &,
+	.is-section-signup & {
+		@include plan-features-layout-switcher;
+	}
+
+	.is-section-plans:not(.is-sidebar-collapsed) & {
+		@include plan-features-layout-switcher-with-sidebar;
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@include plan-features-layout-switcher;
+	}
+
+	.signup__steps .plans-features-main__group.is-scrollable & {
+		max-width: 100%;
+	}
+
+	.plans-wrapper {
+		margin: 0 20px;
+		padding: 0 0 10px;
+		overflow-x: visible;
+
+		@include plans-2023-break-small {
+			padding-top: 35px; // enough to cover `plans-grid__popular-badge` repositioning (top: -35px)
+			margin: 0;
+		}
+
+		@include plans-2023-break-medium {
+			margin: 0 20px;
+		}
+
+		@include plans-section-break-medium {
+			margin: 0;
+		}
+
+		@include plans-2023-break-medium {
+			margin: 0 20px;
+		}
+
+		@include plans-section-break-medium {
+			margin: 0;
+		}
+	}
+}
+
+.plans-features-main__comparison-grid-container {
+	&.is-hidden {
+		display: none;
+	}
+}
 
 // Content group
 .plans-features-main__group {
@@ -58,6 +135,27 @@
 			margin-left: -240px;
 		}
 	}
+}
+
+/**
+ * We auto-scroll to the plan comparison grid when it is shown.
+ * However, on the /plans page, due to the presence of the masterbar on top,
+ * we need to add a scroll offset.
+ */
+.is-section-plans .plans-features-main__comparison-grid-container {
+	scroll-margin-top: $plan-features-header-banner-height + 24px;
+	margin: auto;
+	@include plan-comparison-grid-breakpoints-with-sidebar;
+}
+
+.is-section-signup .plans-features-main__comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
+}
+
+.is-section-stepper .plans-features-main__comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
 }
 
 .is-2023-pricing-grid .plan-features-2023-grid__content {
@@ -198,7 +296,7 @@ body.is-section-signup.is-white-signup {
 				font-weight: normal;
 			}
 
-			.plan-pill {
+			.plans-grid__plan-pill {
 				background: var(--color-text);
 				color: var(--color-text-inverted);
 				font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */

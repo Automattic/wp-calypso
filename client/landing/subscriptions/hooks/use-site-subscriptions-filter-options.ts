@@ -11,6 +11,7 @@ const useSiteSubscriptionsFilterOptions = () => {
 			{ value: FilterBy.All, label: translate( 'All' ) },
 			{ value: FilterBy.Paid, label: translate( 'Paid' ) },
 			{ value: FilterBy.P2, label: translate( 'P2' ) },
+			{ value: FilterBy.RSS, label: translate( 'RSS' ) },
 		],
 		[ translate ]
 	);

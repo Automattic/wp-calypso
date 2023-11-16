@@ -6,7 +6,7 @@ import {
 	AllureRuntime,
 	AllureConfig,
 } from '@automattic/jest-circus-allure-reporter';
-import { EnvironmentContext } from '@jest/environment';
+import { EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
 import { parse as parseDocBlock } from 'jest-docblock';
 import NodeEnvironment from 'jest-environment-node';
 import {
@@ -56,16 +56,22 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	/**
 	 * Constructs the instance of the JestEnvironmentNode.
 	 *
-	 * @param {Config.ProjectConfig} config Jest configuration.
-	 * @param {EnvironmentContext} context Jest execution context.
+	 * @param config Jest configuration.
+	 * @param context Jest execution context.
 	 */
-	constructor( config: Config.ProjectConfig, context: EnvironmentContext ) {
-		super( config );
+	constructor( config: JestEnvironmentConfig, context: EnvironmentContext ) {
+		super( config, context );
 
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
+		// We need the test file name for some ENV var calculation.
+		// Set the global value both in the Jest context (the code here)...
+		global.testFileName = this.testFilename;
+		// ...and pass the global value to the environment running the test code. (What the "this" does here.)
+		// Yes, we need to do both!
+		this.global.testFileName = this.testFilename;
 		this.testArtifactsPath = '';
-		this.allure = this.initializeAllureReporter( config );
+		this.allure = this.initializeAllureReporter( config.projectConfig );
 	}
 
 	/**
@@ -97,6 +103,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	async setup() {
 		await super.setup();
 
+		// Make sure we have valid env variables, and fail early if we don't!
+		env.validate();
+
 		// Determine the browser that should be used for the spec.
 		const browserType: BrowserType = await determineBrowser( this.testFilePath );
 
@@ -110,20 +119,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testArtifactsPath = await fs.mkdtemp(
 			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
 		);
-		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
 		// Start the browser.
 		const browser = await browserType.launch( {
 			...config.launchOptions,
-			logger: {
-				log: async ( name: string, severity: string, message: string ) => {
-					await fs.appendFile(
-						logFilePath,
-						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-					);
-				},
-				isEnabled: ( name ) => name === 'api',
-			},
 		} );
 
 		// Set up the proxy trap.
@@ -151,20 +150,30 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			if ( this.failure ) {
 				let contextIndex = 1;
 
-				const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+				// Spec file name and step that filed.
+				let artifactPrefix = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+
+				if ( env.RUN_ID ) {
+					artifactPrefix = `${ artifactPrefix }__${ sanitizeString( env.RUN_ID ) }`;
+				}
+
+				if ( env.RETRY_COUNT ) {
+					artifactPrefix = `${ artifactPrefix }__retry-${ env.RETRY_COUNT }`;
+				}
 
 				for await ( const context of contexts ) {
 					let pageIndex = 1;
+					// Save trace file per page.
 					const traceFilePath = path.join(
 						this.testArtifactsPath,
-						`${ artifactFilename }__${ contextIndex }.zip`
+						`${ artifactPrefix }__${ contextIndex }.zip`
 					);
 
 					// Traces are saved per context.
 					await context.tracing.stop( { path: traceFilePath } );
 
 					for await ( const page of context.pages() ) {
-						const pageName = `${ artifactFilename }__${ contextIndex }-${ pageIndex }`;
+						const pageName = `${ artifactPrefix }__${ contextIndex }-${ pageIndex }`;
 						// Define artifact filename.
 						const mediaFilePath = path.join( this.testArtifactsPath, pageName );
 
@@ -418,6 +427,17 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 						if ( response.status() === 502 ) {
 							await page.reload();
 						}
+					} );
+
+					// Add route abort for slow requests on AT sites.
+					await page.route( /store\/v1\/cart/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /rest\/v1\/batch/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /pubmine/, ( route ) => {
+						route.abort();
 					} );
 
 					const context = page.context();

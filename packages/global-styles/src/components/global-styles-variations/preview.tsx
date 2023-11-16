@@ -4,11 +4,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useReducedMotion, useResizeObserver } from '@wordpress/compose';
-import {
-	useSetting,
-	useStyle,
-} from '@wordpress/edit-site/build-module/components/global-styles/hooks';
 import { useState } from '@wordpress/element';
+import { useGlobalSetting, useGlobalStyle } from '../../gutenberg-bridge';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import type { Color } from '../../types';
 
@@ -56,22 +53,21 @@ interface Props {
 }
 
 const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut }: Props ) => {
-	const [ fontWeight ] = useStyle( 'typography.fontWeight' );
-	const [ fontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
-	const [ headingFontFamily = fontFamily ] = useStyle( 'elements.h1.typography.fontFamily' );
-	const [ headingFontWeight = fontWeight ] = useStyle( 'elements.h1.typography.fontWeight' );
-	const [ textColor = 'black' ] = useStyle( 'color.text' );
-	const [ headingColor = textColor ] = useStyle( 'elements.h1.color.text' );
-	const [ backgroundColor = 'white' ] = useStyle( 'color.background' );
-	const [ gradientValue ] = useStyle( 'color.gradient' );
+	const [ fontWeight ] = useGlobalStyle( 'typography.fontWeight' );
+	const [ fontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
+	const [ headingFontFamily = fontFamily ] = useGlobalStyle( 'elements.h1.typography.fontFamily' );
+	const [ headingFontWeight = fontWeight ] = useGlobalStyle( 'elements.h1.typography.fontWeight' );
+	const [ textColor = 'black' ] = useGlobalStyle( 'color.text' );
+	const [ headingColor = textColor ] = useGlobalStyle( 'elements.h1.color.text' );
+	const [ backgroundColor = 'white' ] = useGlobalStyle( 'color.background' );
+	const [ gradientValue ] = useGlobalStyle( 'color.gradient' );
 	const disableMotion = useReducedMotion();
-	const [ coreColors ] = useSetting( 'color.palette.core' );
-	const [ themeColors ] = useSetting( 'color.palette.theme' );
-	const [ customColors ] = useSetting( 'color.palette.custom' );
+	const [ coreColors ] = useGlobalSetting( 'color.palette.core' );
+	const [ themeColors ] = useGlobalSetting( 'color.palette.theme' );
+	const [ customColors ] = useGlobalSetting( 'color.palette.custom' );
 	const [ isHovered, setIsHovered ] = useState( false );
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / normalizedWidth : 1;
-
 	const paletteColors = ( themeColors ?? [] )
 		.concat( customColors ?? [] )
 		.concat( coreColors ?? [] );
@@ -81,7 +77,6 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 			( { color }: { color: Color } ) => color !== backgroundColor && color !== headingColor
 		)
 		.slice( 0, 2 );
-
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }
@@ -132,7 +127,7 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 						</motion.div>
 						<VStack spacing={ 4 * ratio }>
 							{ highlightedColors.map(
-								( { slug, color }: { slug: string; color: Color }, index: number ) => (
+								( { slug, color }: { slug: string; color: string }, index: number ) => (
 									<motion.div
 										key={ slug }
 										style={ {

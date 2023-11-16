@@ -1,6 +1,7 @@
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
+import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -8,14 +9,13 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import BannerActivation from './banner-activation';
 import type { FollowersQuery } from './types';
 import type { Member } from '../types';
-
 import './style.scss';
 
 interface Props {
@@ -81,12 +81,16 @@ function Subscribers( props: Props ) {
 		templateState = 'default';
 	}
 
+	const isFreeSite = site?.plan?.is_free ?? false;
+	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
+	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
+
 	switch ( templateState ) {
 		case 'default':
 		case 'loading':
 			return (
 				<>
-					<BannerActivation />
+					<SubscriptionsModuleBanner />
 
 					<PeopleListSectionHeader
 						isPlaceholder={ isLoading }
@@ -141,6 +145,7 @@ function Subscribers( props: Props ) {
 									siteId={ site?.ID }
 									submitBtnAlwaysEnable={ true }
 									onImportFinished={ refetch }
+									hasSubscriberLimit={ hasSubscriberLimit }
 								/>
 							</EmailVerificationGate>
 						</>

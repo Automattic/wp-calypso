@@ -13,6 +13,7 @@ import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
+import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -31,19 +32,17 @@ import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
-import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
+import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import {
 	recordAction,
@@ -54,6 +53,7 @@ import {
 import { showSelectedPost } from 'calypso/reader/utils';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import { userCan } from 'calypso/state/posts/utils';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
@@ -245,6 +245,12 @@ export class FullPostView extends Component {
 			this.props.post,
 			{ context: 'full-post', event_source: 'keyboard' }
 		);
+	};
+
+	onEditClick = () => {
+		recordAction( 'edit_post' );
+		recordGaEvent( 'Clicked Edit Post', 'full_post' );
+		recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
 	};
 
 	handleRelatedPostFromSameSiteClicked = () => {
@@ -474,7 +480,6 @@ export class FullPostView extends Component {
 			classes[ 'feed-' + post.feed_ID ] = true;
 		}
 
-		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
@@ -503,7 +508,7 @@ export class FullPostView extends Component {
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
 						icon={ true }
-						href={ externalHref }
+						href={ post.URL }
 						onClick={ this.handleVisitSiteClick }
 						target="_blank"
 					>
@@ -531,6 +536,15 @@ export class FullPostView extends Component {
 							/>
 						) }
 						<div className="reader-full-post__sidebar-comment-like">
+							{ userCan( 'edit_post', post ) && (
+								<PostEditButton
+									post={ post }
+									site={ site }
+									iconSize={ 20 }
+									onClick={ this.onEditClick }
+								/>
+							) }
+
 							{ shouldShowComments( post ) && (
 								<CommentButton
 									key="comment-button"
@@ -583,10 +597,7 @@ export class FullPostView extends Component {
 							</EmbedContainer>
 						) }
 
-						{ post.use_excerpt && ! isDiscoverPost( post ) && (
-							<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-						) }
-						{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
+						{ post.use_excerpt && <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
 						{ isDailyPostChallengeOrPrompt( post ) && (
 							<DailyPostButton post={ post } site={ site } />
 						) }
@@ -598,7 +609,7 @@ export class FullPostView extends Component {
 							fullPost={ true }
 						/>
 
-						{ ! isLoading && <PerformanceTrackerStop /> }
+						{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
 						{ showRelatedPosts && (
 							<RelatedPostsFromSameSite

@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
-import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
+import { ThankYouSectionProps, ThankYouThemeData } from 'calypso/components/thank-you/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
@@ -12,7 +12,11 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 import MasterbarStyled from './masterbar-styled';
 
-export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
+export function useThemesThankYouData(
+	themeSlugs: string[],
+	isOnboardingFlow: boolean,
+	continueWithPluginBundle: boolean | null
+): ThankYouThemeData {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -50,7 +54,13 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 			.filter( ( theme ) => theme )
 			.map( ( theme ) => ( {
 				stepKey: `theme_information_${ theme.id }`,
-				stepSection: <ThankYouThemeSection theme={ theme } />,
+				stepSection: (
+					<ThankYouThemeSection
+						theme={ theme }
+						isOnboardingFlow={ isOnboardingFlow }
+						continueWithPluginBundle={ continueWithPluginBundle }
+					/>
+				),
 			} ) ),
 	};
 
@@ -71,7 +81,7 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 						translate( 'Activating the theme feature' ), // Transferring to Atomic
 						translate( 'Setting up theme installation' ), // Transferring to Atomic
 						translate( 'Installing theme' ), // Transferring to Atomic
-						translate( 'Activating theme' ),
+						translate( 'Getting the theme ready' ),
 				  ],
 		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,6 +101,7 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
 
 	return [
+		themesList[ 0 ] ?? null,
 		themesSection,
 		allThemesFetched,
 		goBackSection,
@@ -98,5 +109,6 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 		subtitle,
 		thankyouSteps,
 		isAtomicNeeded,
+		null,
 	];
 }

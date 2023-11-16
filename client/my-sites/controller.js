@@ -7,21 +7,23 @@ import page from 'page';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	setSectionMiddleware,
+	redirectLoggedOut,
+} from 'calypso/controller';
 import { composeHandlers } from 'calypso/controller/shared';
 import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import { withoutHttp } from 'calypso/lib/url';
-import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import {
-	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -34,13 +36,14 @@ import {
 	domainManagementDnsAddRecord,
 	domainManagementDnsEditRecord,
 	domainAddNew,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
 	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
-	emailManagementInbox,
+	emailManagementMailboxes,
 	emailManagementInDepthComparison,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
@@ -51,7 +54,11 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
-import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	isUserLoggedIn,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -64,7 +71,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
+import wasTrialSite from 'calypso/state/selectors/was-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -168,20 +175,6 @@ export function renderNoVisibleSites( context ) {
 	clientRender( context );
 }
 
-function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	reactContext.primary = (
-		<>
-			<PageViewTracker path="/view/:site" title="Domain Only" />
-			<DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />
-		</>
-	);
-
-	reactContext.secondary = createNavigation( reactContext );
-
-	makeLayout( reactContext, noop );
-	clientRender( reactContext );
-}
-
 function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
 	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
 
@@ -193,7 +186,6 @@ function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
 
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
 	const allPaths = [
-		domainManagementContactsPrivacy,
 		domainManagementDns,
 		domainManagementDnsAddRecord,
 		domainManagementDnsEditRecord,
@@ -208,7 +200,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementAddEmailForwards,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
-		emailManagementInbox,
+		emailManagementMailboxes,
 		emailManagementInDepthComparison,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
@@ -255,8 +247,16 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/purchases/billing-history/${ slug }`,
 		`/purchases/payment-methods/${ slug }`,
 		`/purchases/subscriptions/${ slug }`,
-		// Any page under `/domsina/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
+		// Any page under `/domains/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
 		'/domains/manage/all/',
+		'/email/all/',
+		'/people/',
+		'/settings/start-site-transfer/',
+		// Add A Domain > Search for a domain
+		domainAddNew( slug ),
+		// Add A Domain > Use a domain I own
+		// Start Transfer button
+		domainUseMyDomain( slug ),
 	];
 
 	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
@@ -269,7 +269,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 /**
  * The paths allowed for domain-only sites and DIFM in-progress sites are the same
  * with one exception - /domains/add should be allowed for DIFM in-progress sites.
- *
  * @param {string} path The path to be checked
  * @param {string} slug The site slug
  * @param {Array} domains The list of site domains
@@ -294,38 +293,35 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	// Use getSitePlanSlug() as it ignores expired plans.
+	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
-	// If migration is in progress, only /migrate paths should be loaded for the site
-	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
+	// If we had a trial plan, and the user doesn't have an active paid plan, redirect to fullpage trial expired page.
+	if (
+		wasTrialSite( state, selectedSite.ID ) &&
+		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
+	) {
+		const permittedPathPrefixes = [
+			'/checkout/',
+			'/domains/',
+			'/email/',
+			'/export/',
+			'/plans/my-plan/trial-expired/',
+			'/purchases/',
+			'/settings/delete-site/',
+		];
 
-	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
-		page.redirect( `/migrate/${ selectedSite.slug }` );
-		return false;
-	}
-
-	// If we had an eCommerce trial, and the user doesn't have an active paid plan,
-	// redirect to
-	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
-		// Use getSitePlanSlug() as it ignores expired plans.
-		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
-
-		if ( [ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug ) ) {
-			const permittedPathPrefixes = [
-				'/checkout/',
-				'/domains/',
-				'/email/',
-				'/export/',
-				'/plans/my-plan/trial-expired/',
-				'/purchases/',
-				'/settings/delete-site/',
-			];
-
-			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
-				page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
-				return false;
-			}
-
-			context.hideLeftNavigation = true;
+		if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+			page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
+			return false;
+		}
+		context.hideLeftNavigation = true;
+	} else {
+		// If migration is in progress, only /migrate paths should be loaded for the site
+		const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
+		if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
+			page.redirect( `/migrate/${ selectedSite.slug }` );
+			return false;
 		}
 	}
 
@@ -339,7 +335,7 @@ function onSelectedSiteAvailable( context ) {
 			context.params
 		)
 	) {
-		renderSelectedSiteIsDomainOnly( context, selectedSite );
+		page.redirect( domainManagementRoot() );
 		return false;
 	}
 
@@ -388,7 +384,6 @@ export function updateRecentSitesPreferences( context ) {
 
 /**
  * Returns the site-picker react element.
- *
  * @param {Object} context -- Middleware context
  * @returns {Object} A site-picker React element
  */
@@ -460,9 +455,11 @@ export function noSite( context, next ) {
 	const { getState } = getStore( context );
 	const currentUser = getCurrentUser( getState() );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
-	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
 
@@ -471,6 +468,7 @@ export function noSite( context, next ) {
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
 		! isGiftCheckoutFlow &&
+		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these
 		// users an error message on the checkout page.
 		! isRenewal &&
@@ -503,15 +501,17 @@ export function siteSelection( context, next ) {
 	const isUnlinkedCheckout =
 		'1' === context.query?.unlinked && context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i );
 
+	const shouldRenderNoSites = ! context.section.enableNoSites && ! isUnlinkedCheckout;
+
 	// The user doesn't have any sites: render `NoSitesMessage`
-	if ( currentUser && currentUser.site_count === 0 && ! isUnlinkedCheckout ) {
+	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
 		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
-	if ( currentUser && currentUser.visible_site_count === 0 && ! isUnlinkedCheckout ) {
+	if ( currentUser && currentUser.visible_site_count === 0 && shouldRenderNoSites ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return;
@@ -673,7 +673,6 @@ export function navigation( context, next ) {
 
 /**
  * Middleware that adds the site selector screen to the layout.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -709,7 +708,6 @@ export function redirectWithoutSite( redirectPath ) {
 
 /**
  * Use this middleware to prevent navigation to pages which are not supported by staging sites.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -732,7 +730,6 @@ export function stagingSiteNotSupportedRedirect( context, next ) {
  *
  * If you need to prevent navigation to pages for the P2 project in general,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -756,7 +753,6 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
 /**
  * For P2s, only hubs can have a plan. If we are on P2 a site that is a site under
  * a hub, we redirect the hub's plans page.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -785,7 +781,6 @@ export function p2RedirectToHubPlans( context, next ) {
  *
  * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
- *
  * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
@@ -804,7 +799,6 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 
 /**
  * Whether we need to redirect user to the Jetpack site for authorization.
- *
  * @param {Object} context -- The context object.
  * @param {Object} site -- The site information.
  * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
@@ -815,7 +809,6 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
 
 /**
  * Get redirect URL to the Jetpack site for authorization.
- *
  * @param {Object} context -- The context object.
  * @param {Object} site -- The site information.
  * @returns {string} redirectURL -- The redirect URL.
@@ -831,6 +824,13 @@ export function getJetpackAuthorizeURL( context, site ) {
 	);
 }
 
+export function selectSite( context ) {
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+}
+
 export function selectSiteIfLoggedIn( context, next ) {
 	const state = context.store.getState();
 	if ( ! isUserLoggedIn( state ) ) {
@@ -838,8 +838,40 @@ export function selectSiteIfLoggedIn( context, next ) {
 		return;
 	}
 
-	// Logged in: Terminate the regular handler path by not calling next()
-	// and render the site selection screen, redirecting the user if they
-	// only have one site.
-	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+	selectSite( context );
+}
+
+export function selectSiteIfLoggedInWithSites( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) && ! context.params.site_id ) {
+		selectSite( context );
+		return;
+	}
+
+	siteSelection( context, next );
+}
+
+export function hideNavigationIfLoggedInWithNoSites( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) === 0 ) {
+		context.hideLeftNavigation = true;
+	}
+	next();
+}
+
+export function addNavigationIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+		navigation( context, next );
+	}
+	next();
+}
+
+export function redirectToLoginIfSiteRequested( context, next ) {
+	if ( context.params.site_id ) {
+		redirectLoggedOut( context, next );
+		return;
+	}
+
+	next();
 }

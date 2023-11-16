@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+- New `useAllDomainsQuery` which fetches all the current user's domains
+
+### Breaking changes
+
+- Remove custom query and mutation hooks (based on `@tanstack/query`) from `support-queries/*`. These are moved to `@automattic/help-center`.
+- Move the following query and mutation hooks (based on `@tanstack/query`) from `queries/*` to `@automattic/help-center`
+  - `useIsWpOrgSite`
+  - `useSiteAnalysis`
+  - `useJetpackSearchAIQuery`
+  - `useSubmitForumsMutation`
+  - `useSupportAvailability`
+  - `useSupportActivity`
+  - `useUpdateZendeskUserFieldsMutation`
+  - `useUserSites`
+  - `useWpcomSite`
+
 ## 3.0.1
 
 - Add missing dependency @automattic/domain-utils, use-debounce

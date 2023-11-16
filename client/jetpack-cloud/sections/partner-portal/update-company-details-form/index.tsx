@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
-import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import formatApiPartner from 'calypso/jetpack-cloud/sections/partner-portal/lib/format-api-partner';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -21,6 +21,8 @@ export default function UpdateCompanyDetailsForm() {
 	const name = partner?.name ?? '';
 	const contactPerson = partner?.contact_person ?? '';
 	const companyWebsite = partner?.company_website ?? '';
+	const companyType = partner?.company_type ?? '';
+	const managedSites = partner?.managed_sites ?? '';
 	const country = partner?.address.country ?? '';
 	const city = partner?.address.city ?? '';
 	const line1 = partner?.address.line1 ?? '';
@@ -61,6 +63,8 @@ export default function UpdateCompanyDetailsForm() {
 					name: payload.name,
 					contact_person: payload.contactPerson,
 					company_website: payload.companyWebsite,
+					company_type: payload.companyType,
+					managed_sites: payload.managedSites,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
@@ -70,7 +74,7 @@ export default function UpdateCompanyDetailsForm() {
 				} )
 			);
 		},
-		[ notificationId, partner?.id, updateCompanyDetails.mutate, dispatch ]
+		[ dispatch, updateCompanyDetails, partner?.id, companyType ]
 	);
 
 	return (
@@ -79,6 +83,8 @@ export default function UpdateCompanyDetailsForm() {
 				name,
 				contactPerson,
 				companyWebsite,
+				companyType,
+				managedSites,
 				country,
 				city,
 				line1,

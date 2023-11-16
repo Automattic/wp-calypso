@@ -1,13 +1,14 @@
 import {
 	JETPACK_RESET_PLANS,
-	JETPACK_MONTHLY_ONLY_PRODUCTS,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	JETPACK_BACKUP_ADDON_PRODUCTS,
-	getMonthlyPlanByYearly,
-	getYearlyPlanByMonthly,
+	JETPACK_STATS_PRODUCTS,
+	PRODUCT_JETPACK_STATS_YEARLY,
+	findPlansKeys,
+	getPlan,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -21,8 +22,12 @@ export const getPlansToDisplay = ( {
 	duration: Duration;
 	currentPlanSlug: string | null;
 } ): SelectorProduct[] => {
-	const currentPlanTerms = currentPlanSlug
-		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
+	const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+	const currentPlanTerms = currentPlan
+		? findPlansKeys( {
+				type: currentPlan.type,
+				group: currentPlan.group,
+		  } )
 		: [];
 
 	let planSlugsToDisplay = SELECTOR_PLANS;
@@ -93,14 +98,17 @@ export const getProductsToDisplay = ( {
 		// Remove add-on products
 		.filter( removeAddons )
 		// Remove products that don't match the selected duration
-		// However, allow products that ONLY have a monthly term to come through in either view
-		.filter(
-			( product ): product is SelectorProduct =>
-				product?.term === duration ||
-				( JETPACK_MONTHLY_ONLY_PRODUCTS as ReadonlyArray< string > ).includes(
-					product?.productSlug
-				)
-		)
+		.filter( ( product ): product is SelectorProduct => product?.term === duration )
+		// TODO: Identify a suitable Stats plan according to the site classification.
+		.filter( ( product ) => {
+			if (
+				( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
+			) {
+				return product?.productSlug === PRODUCT_JETPACK_STATS_YEARLY;
+			}
+
+			return true;
+		} )
 		// Remove duplicates (only happens if the site somehow has the same product
 		// both purchased and included in a plan, very unlikely)
 		.filter( ( product ) => {

@@ -1,28 +1,21 @@
+import { Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
-import Count from 'calypso/components/count';
-import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/lib/license-filters';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import UrlSearch from 'calypso/lib/url-search';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import './style.scss';
 
-interface Props {
-	doSearch: ( query: string ) => void;
-	getSearchOpen: () => boolean;
-}
-
-function LicenseStateFilter( { doSearch }: Props ) {
+function LicenseStateFilter() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { filter, search } = useContext( LicenseListContext );
+	const { filter } = useContext( LicenseListContext );
 	const counts = useSelector( getLicenseCounts );
 	const basePath = '/partner-portal/licenses/';
 
@@ -64,13 +57,9 @@ function LicenseStateFilter( { doSearch }: Props ) {
 
 	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 
-	const onSearch = ( query: string ) => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_search', { query } ) );
-		doSearch( query );
-	};
-
 	return (
 		<SectionNav
+			applyUpdatedStyles
 			selectedText={
 				<span>
 					{ selectedItem.label }
@@ -80,26 +69,13 @@ function LicenseStateFilter( { doSearch }: Props ) {
 			selectedCount={ selectedItem.count }
 			className="license-state-filter"
 		>
-			<NavTabs
-				label={ translate( 'State' ) }
-				selectedText={ selectedItem.label }
-				selectedCount={ selectedItem.count }
-			>
+			<NavTabs selectedText={ selectedItem.label } selectedCount={ selectedItem.count }>
 				{ navItems.map( ( props ) => (
 					<NavItem { ...props } compactCount={ true } />
 				) ) }
 			</NavTabs>
-
-			<Search
-				pinned
-				fitsContainer
-				initialValue={ search }
-				onSearch={ onSearch }
-				placeholder={ translate( 'Search licenses' ) }
-				delaySearch={ true }
-			/>
 		</SectionNav>
 	);
 }
 
-export default UrlSearch( LicenseStateFilter );
+export default LicenseStateFilter;

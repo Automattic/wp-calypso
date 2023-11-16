@@ -19,7 +19,6 @@ export type OptionalUserData = {
 	display_name: string;
 	email: string;
 	email_verified: boolean;
-	blaze_credits_enabled: boolean;
 	has_unseen_notes: boolean;
 	is_new_reader: boolean;
 	is_valid_google_apps_country: boolean;
@@ -43,4 +42,7 @@ export type OptionalUserData = {
 	username: string;
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
+	is_google_domain_owner: boolean;
+	had_hosting_trial: boolean;
+	calypso_multi_domains_experiment?: string;
 };

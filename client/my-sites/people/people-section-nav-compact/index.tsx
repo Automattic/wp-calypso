@@ -23,11 +23,6 @@ function PeopleSectionNavCompact( props: Props ) {
 			title: translate( 'Team' ),
 			path: '/people/team/' + site?.slug,
 		},
-		{
-			id: 'subscribers',
-			title: translate( 'Subscribers' ),
-			path: '/people/subscribers/' + site?.slug,
-		},
 	];
 
 	return (

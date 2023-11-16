@@ -1,4 +1,5 @@
 import {
+	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -9,22 +10,31 @@ import {
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	PRODUCT_JETPACK_BOOST_BI_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
+	PRODUCT_JETPACK_SCAN_BI_YEARLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_MONITOR_MONTHLY,
+	PRODUCT_JETPACK_MONITOR_YEARLY,
 } from './jetpack';
 
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
@@ -40,6 +50,7 @@ export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_50GB_STORAGE = '50gb-storage';
 export const FEATURE_200GB_STORAGE = '200gb-storage';
+export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
@@ -103,6 +114,8 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+export const FEATURE_STATS_PAID = 'stats-paid';
+export const FEATURE_STATS_FREE = 'stats-free';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -171,15 +184,20 @@ export const FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY = PRODUCT_JETPACK_BACKUP_RE
 export const FEATURE_JETPACK_BACKUP_T0_YEARLY = PRODUCT_JETPACK_BACKUP_T0_YEARLY;
 export const FEATURE_JETPACK_BACKUP_T0_MONTHLY = PRODUCT_JETPACK_BACKUP_T0_MONTHLY;
 export const FEATURE_JETPACK_BACKUP_T1_YEARLY = PRODUCT_JETPACK_BACKUP_T1_YEARLY;
+export const FEATURE_JETPACK_BACKUP_T1_BI_YEARLY = PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY;
 export const FEATURE_JETPACK_BACKUP_T1_MONTHLY = PRODUCT_JETPACK_BACKUP_T1_MONTHLY;
 export const FEATURE_JETPACK_BACKUP_T2_YEARLY = PRODUCT_JETPACK_BACKUP_T2_YEARLY;
 export const FEATURE_JETPACK_BACKUP_T2_MONTHLY = PRODUCT_JETPACK_BACKUP_T2_MONTHLY;
+export const FEATURE_JETPACK_SCAN_BI_YEARLY = PRODUCT_JETPACK_SCAN_BI_YEARLY;
 export const FEATURE_JETPACK_SCAN_DAILY = PRODUCT_JETPACK_SCAN;
 export const FEATURE_JETPACK_SCAN_DAILY_MONTHLY = PRODUCT_JETPACK_SCAN_MONTHLY;
+export const FEATURE_JETPACK_ANTI_SPAM_BI_YEARLY = PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY;
 export const FEATURE_JETPACK_ANTI_SPAM = PRODUCT_JETPACK_ANTI_SPAM;
 export const FEATURE_JETPACK_ANTI_SPAM_MONTHLY = PRODUCT_JETPACK_ANTI_SPAM_MONTHLY;
+export const FEATURE_JETPACK_SEARCH_BI_YEARLY = PRODUCT_JETPACK_SEARCH_BI_YEARLY;
 export const FEATURE_JETPACK_SEARCH = PRODUCT_JETPACK_SEARCH;
 export const FEATURE_JETPACK_SEARCH_MONTHLY = PRODUCT_JETPACK_SEARCH_MONTHLY;
+export const FEATURE_JETPACK_VIDEOPRESS_BI_YEARLY = PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY;
 export const FEATURE_JETPACK_VIDEOPRESS = PRODUCT_JETPACK_VIDEOPRESS;
 export const FEATURE_JETPACK_VIDEOPRESS_MONTHLY = PRODUCT_JETPACK_VIDEOPRESS_MONTHLY;
 export const FEATURE_JETPACK_VIDEOPRESS_EDITOR = 'jetpack-videopress-editor';
@@ -187,17 +205,26 @@ export const FEATURE_JETPACK_VIDEOPRESS_STORAGE = 'jetpack-videopress-storage';
 export const FEATURE_JETPACK_VIDEOPRESS_UNBRANDED = 'jetpack-videopress-unbranded';
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
+export const FEATURE_JETPACK_BOOST_BI_YEARLY = PRODUCT_JETPACK_BOOST_BI_YEARLY;
 export const FEATURE_JETPACK_BOOST = PRODUCT_JETPACK_BOOST;
 export const FEATURE_JETPACK_BOOST_MONTHLY = PRODUCT_JETPACK_BOOST_MONTHLY;
 export const FEATURE_CLOUD_CRITICAL_CSS = 'cloud-critical-css';
+export const FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY = PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY;
 export const FEATURE_JETPACK_SOCIAL_ADVANCED = PRODUCT_JETPACK_SOCIAL_ADVANCED;
 export const FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY = PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY;
+export const FEATURE_JETPACK_SOCIAL_BASIC_BI_YEARLY = PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY;
 export const FEATURE_JETPACK_SOCIAL_BASIC = PRODUCT_JETPACK_SOCIAL_BASIC;
 export const FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY = PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY;
 export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
 export const FEATURE_SOCIAL_INSTAGRAM_CONNECTION = 'social-instagram-connection';
+export const FEATURE_SOCIAL_NEXTDOOR_CONNECTION = 'social-nextdoor-connection';
+export const FEATURE_JETPACK_MONITOR_MONTHLY = PRODUCT_JETPACK_MONITOR_MONTHLY;
+export const FEATURE_JETPACK_MONITOR_YEARLY = PRODUCT_JETPACK_MONITOR_YEARLY;
+export const FEATURE_MONITOR_1_MINUTE_CHECK_INTERVAL = 'monitor-1-minute-check-interval';
+export const FEATURE_MONITOR_MULTIPLE_EMAIL_RECIPIENTS = 'monitor-multiple-email-recipients';
+export const FEATURE_MONITOR_SMS_NOTIFICATIONS = 'monitor-sms-notifications';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_1GB_BACKUP_STORAGE = 'jetpack-1gb-backup-storage';
@@ -237,6 +264,7 @@ export const FEATURE_WOOCOMMERCE = 'woocommerce';
 export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';
 
 // From class-wpcom-features.php in WPCOM
+export const WPCOM_FEATURES_AI_ASSISTANT = 'ai-assistant';
 export const WPCOM_FEATURES_AKISMET = 'akismet';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
 export const WPCOM_FEATURES_ATOMIC = 'atomic';
@@ -260,6 +288,8 @@ export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
+export const WPCOM_FEATURES_LOCKED_MODE = 'locked-mode';
+export const WPCOM_FEATURES_LEGACY_CONTACT = 'legacy-contact';
 export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
 export const WPCOM_FEATURES_UPLOAD_PLUGINS = 'upload-plugins';
 export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';
@@ -292,7 +322,12 @@ export const FEATURE_PAYMENT_TRANSACTION_FEES_8 = 'payment-transaction-fees-8';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_4 = 'payment-transaction-fees-4';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_2 = 'payment-transaction-fees-2';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_0 = 'payment-transaction-fees-0';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO = 'payment-transaction-fees-0-woo';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL = 'payment-transaction-fees-0-all';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR = 'payment-transaction-fees-2-regular';
 export const FEATURE_GROUP_PAYMENT_TRANSACTION_FEES = 'payment-transaction-fees-group';
+export const FEATURE_COMMISSION_FEE_STANDARD_FEATURES = 'payment-commission-fee-standard';
+export const FEATURE_COMMISSION_FEE_WOO_FEATURES = 'payment-commission-fee-woo';
 export const FEATURE_THE_READER = 'the-reader';
 
 // Pricing Grid 2023 Features
@@ -367,6 +402,8 @@ export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
 export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
 export const FEATURE_DONATIONS_AND_TIPS_JP = 'donations-and-tips-jp';
+export const FEATURE_PAYPAL_JP = 'payments-paypal-jp';
+export const FEATURE_PAYMENT_BUTTONS_JP = 'payment-buttons-jp';
 export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';
 export const FEATURE_PREMIUM_STORE_THEMES = 'premium-store-themes';
 export const FEATURE_STORE_DESIGN = 'store-design';
@@ -384,6 +421,13 @@ export const FEATURE_INVENTORY_MGMT = 'inventory-mgmt';
 export const FEATURE_STREAMLINED_CHECKOUT = 'streamlined-checkout';
 export const FEATURE_SELL_60_COUNTRIES = 'sell-60-countries';
 export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
+export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
+export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
+
+export const WPCOM_STORAGE_ADD_ONS = < const >[
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
+];
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
@@ -411,3 +455,4 @@ export const FEATURE_CUSTOM_ORDER_EMAILS = 'custom-order-emails'; // Custom orde
 export const FEATURE_LIVE_SHIPPING_RATES = 'live-shipping-rates'; // Live shipping rates
 export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted shipping
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
+export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions

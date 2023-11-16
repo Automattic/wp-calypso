@@ -13,6 +13,8 @@ export class TwitterSharePreview extends PureComponent {
 			imageUrl,
 			seoTitle,
 			articleSummary,
+			hidePostPreview,
+			media,
 		} = this.props;
 
 		return (
@@ -30,8 +32,10 @@ export class TwitterSharePreview extends PureComponent {
 							profileImage: externalProfilePicture,
 							screenName: externalDisplay,
 							text: message,
+							media,
 						},
 					] }
+					hidePostPreview={ hidePostPreview }
 				/>
 			</div>
 		);

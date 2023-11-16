@@ -7,7 +7,6 @@ import { AppState } from 'calypso/types';
 /**
  * Returns the URL for opening customizing the given site in either the block editor with
  * Full Site Editing, or the Customizer for unsupported sites. Can be used wherever
- *
  * @see getThemeCustomizeUrl is used as a drop-in replacement.
  *
  * Ensure that your view makes use of the `QueryBlogStickers` component to function properly.

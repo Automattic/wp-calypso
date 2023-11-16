@@ -4,7 +4,6 @@ import { some } from 'lodash';
 /**
  * Determines if an iframe is from a source we trust. We allow these to be the featured media and also give
  * them a freer sandbox
- *
  * @param  {Object} iframe the iframe to check
  * @returns {boolean} true if allowed
  */

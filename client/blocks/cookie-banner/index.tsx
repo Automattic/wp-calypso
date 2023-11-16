@@ -1,6 +1,7 @@
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
@@ -25,6 +26,14 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 
 	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >(
 		( buckets ) => {
+			recordTracksEvent( 'a8c_cookie_banner_ok', {
+				site: document.location.host,
+				path: document.location.pathname,
+				essential: buckets.essential,
+				analytics: buckets.analytics,
+				advertising: buckets.advertising,
+			} );
+
 			setTrackingPrefs( { ok: true, buckets } );
 			// If the user is logged in, update their advertising opt-out setting
 			if ( isLoggedIn ) {
@@ -43,6 +52,13 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 			)
 		);
 	}, [ dispatch ] );
+
+	useEffect( () => {
+		recordTracksEvent( 'a8c_cookie_banner_view', {
+			site: document.location.host,
+			path: document.location.pathname,
+		} );
+	}, [] );
 
 	return <CookieBanner content={ content } onAccept={ handleAccept } />;
 };

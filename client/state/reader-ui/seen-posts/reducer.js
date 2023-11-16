@@ -2,7 +2,6 @@ import { READER_UNSEEN_STATUS_RECEIVE } from 'calypso/state/reader-ui/action-typ
 
 /**
  * Reader Unseen status for any section (used global reader unseen bubble)
- *
  * @param state redux state
  * @param action redux action
  * @returns {boolean|*} redux state

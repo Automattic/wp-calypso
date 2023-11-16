@@ -22,7 +22,6 @@ export const deleteOldTicket = () => {
 
 /**
  * Updates `wpcom` to pass a store sandbox ticket if one is present.
- *
  * @param {Object} wpcom Original WPCOM instance
  */
 export const injectGuestSandboxTicketHandler = ( wpcom ) => {

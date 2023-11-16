@@ -12,6 +12,7 @@ jest.mock( '@automattic/calypso-config' );
 jest.mock( '../../../hooks/use-subscription-plans' );
 
 describe( 'SubscriberRow', () => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const commonProps: any = {
 		user_id: 123,
 		subscription_id: 456,
@@ -35,7 +36,7 @@ describe( 'SubscriberRow', () => {
 	>;
 
 	beforeEach( () => {
-		mockUseSubscriptionPlans.mockReturnValue( [ 'Plan 1', 'Plan 2' ] );
+		mockUseSubscriptionPlans.mockReturnValue( [ { plan: 'Plan 1' }, { plan: 'Plan 2' } ] );
 		( isEnabled as jest.MockedFunction< typeof isEnabled > ).mockReturnValue( true );
 
 		render(
@@ -68,7 +69,7 @@ describe( 'SubscriberRow', () => {
 		const ellipsisButton = screen.getByRole( 'button', { name: /open subscriber menu/i } );
 		fireEvent.click( ellipsisButton );
 
-		const unsubscribeButton = await screen.findByRole( 'menuitem', { name: /unsubscribe/i } );
+		const unsubscribeButton = await screen.findByRole( 'menuitem', { name: /remove/i } );
 		fireEvent.click( unsubscribeButton );
 
 		expect( mockOnUnsubscribe ).toHaveBeenCalledWith( commonProps.subscriber );

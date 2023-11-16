@@ -5,15 +5,14 @@ export enum CampaignStatus {
 	'finished',
 }
 
-export const AudienceListKeys = {
-	topics: 'topics',
-	countries: 'countries',
-	devices: 'devices',
-	OSs: 'OSs',
-};
-
 export type AudienceList = {
-	[ key in keyof typeof AudienceListKeys ]: string;
+	devices: string;
+	cities: string;
+	states: string;
+	regions: string;
+	countries: string;
+	topics: string;
+	languages: string;
 };
 
 export type Campaign = {
@@ -57,4 +56,41 @@ export type CampaignStats = {
 	clicks_total: number;
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
+};
+
+export type BlazablePost = {
+	ID: number;
+	author: string;
+	date: string;
+	date_gtm?: string;
+	modified: string;
+	modified_gmt?: string;
+	status?: string;
+	guid?: string;
+	title: string;
+	type: string;
+	comment_count: number;
+	like_count: number;
+	monthly_view_count: number;
+	post_url: string;
+	featured_image: string | false;
+	post_thumbnail?: string;
+};
+
+export type BlazePagedItem = BlazablePost | Campaign;
+
+export type PostQueryResult = {
+	posts?: BlazablePost[];
+	has_more_pages: boolean;
+	total_items: number;
+	total_pages: number;
+	page: number;
+};
+
+export type CampaignQueryResult = {
+	campaigns: Campaign[];
+	total_items: number;
+	total_pages: number;
+	page: number;
+	has_more_pages: boolean;
 };

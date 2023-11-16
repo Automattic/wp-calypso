@@ -9,10 +9,6 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { identifyUser } from 'calypso/lib/analytics/identify-user';
 import { addToQueue } from 'calypso/lib/analytics/queue';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	getDomainOrigin,
-	removeDomainOrigin,
-} from 'calypso/lib/analytics/utils/signup_domain_origin';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
@@ -24,6 +20,15 @@ export function recordSignupStart( flow, ref, optionalProps ) {
 	// Marketing
 	adTrackSignupStart( flow );
 }
+
+// domain sources for calypso_signup_complete tracks event
+export const SIGNUP_DOMAIN_ORIGIN = {
+	USE_YOUR_DOMAIN: 'use-your-domain',
+	CHOOSE_LATER: 'choose-later',
+	FREE: 'free',
+	CUSTOM: 'custom',
+	NOT_SET: 'not-set',
+};
 
 export function recordSignupComplete(
 	{
@@ -40,6 +45,7 @@ export function recordSignupComplete(
 		startingPoint,
 		isTransfer,
 		isMapping,
+		signupDomainOrigin,
 	},
 	now
 ) {
@@ -64,12 +70,11 @@ export function recordSignupComplete(
 				startingPoint,
 				isTransfer,
 				isMapping,
+				signupDomainOrigin,
 			},
 			true
 		);
 	}
-
-	const signUpDomainOrigin = getDomainOrigin();
 
 	// Tracks
 	// Note that Tracks expects blog_id to differntiate sites, hence using
@@ -89,10 +94,8 @@ export function recordSignupComplete(
 		starting_point: startingPoint,
 		is_transfer: isTransfer,
 		is_mapping: isMapping,
-		signup_domain_origin: signUpDomainOrigin,
+		signup_domain_origin: signupDomainOrigin,
 	} );
-
-	removeDomainOrigin();
 
 	// Google Analytics
 	const flags = [
@@ -139,7 +142,6 @@ export function recordSignupInvalidStep( flow, step ) {
 
 /**
  * Records registration event.
- *
  * @param {Object} param {}
  * @param {Object} param.userData User data
  * @param {string} param.flow Registration flow
@@ -162,7 +164,6 @@ export function recordRegistration( { userData, flow, type } ) {
 
 /**
  * Records loading of the processing screen
- *
  * @param {string} flow Signup flow name
  * @param {string} previousStep The step before the processing screen
  * @param {string} optionalProps Extra properties to record
@@ -179,7 +180,6 @@ export function recordSignupProcessingScreen( flow, previousStep, optionalProps 
 
 /**
  * Records plan change in signup flow
- *
  * @param {string} flow Signup flow name
  * @param {string} step The step when the user changes the plan
  * @param {string} previousPlanName The plan name before changing

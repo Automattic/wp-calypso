@@ -1,10 +1,11 @@
 import { safeImageUrl } from '@automattic/calypso-url';
+import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
+import { Moment } from 'moment';
 import page from 'page';
 import { Fragment, useMemo } from 'react';
-import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -24,7 +25,7 @@ import './style.scss';
 interface Props {
 	campaign: Campaign;
 }
-const getCampaignEndText = ( localizedMomentInstance: any, status: string, end_date: string ) => {
+const getCampaignEndText = ( end_date: Moment, status: string ) => {
 	if (
 		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
 	) {
@@ -33,7 +34,7 @@ const getCampaignEndText = ( localizedMomentInstance: any, status: string, end_d
 		return __( 'Ongoing' );
 	} else if ( [ campaignStatus.CANCELED, campaignStatus.FINISHED ].includes( status ) ) {
 		// return moment in format similar to 27 June
-		return localizedMomentInstance( end_date ).format( 'D MMMM' );
+		return end_date.format( 'D MMMM' );
 	}
 	return '-';
 };
@@ -59,7 +60,7 @@ export default function CampaignItem( props: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
-	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
 	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
@@ -76,7 +77,7 @@ export default function CampaignItem( props: Props ) {
 		</Badge>
 	);
 	const openCampaignURL = getAdvertisingDashboardPath(
-		`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
+		`/campaigns/${ campaign.campaign_id }/${ selectedSiteSlug }`
 	);
 
 	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLElement > ) => {
@@ -126,9 +127,10 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row">
 					<div className="promote-post-i2__campaign-item-wrapper">
 						{ adCreativeUrl && (
-							<div className="campaign-item__header-image">
-								<img src={ adCreativeUrl } alt="" />
-							</div>
+							<div
+								className="campaign-item__header-image"
+								style={ { backgroundImage: `url(${ adCreativeUrl })` } }
+							></div>
 						) }
 						<div className="campaign-item__title-row">
 							<div className="campaign-item__title">{ name }</div>
@@ -139,7 +141,11 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row campaign-item__data-row-mobile">
 					<div className="campaign-item__stats-mobile">{ getMobileStats() }</div>
 					<div className="campaign-item__actions-mobile">
-						<Button onClick={ navigateToDetailsPage } isLink className="campaign-item__view-link">
+						<Button
+							onClick={ navigateToDetailsPage }
+							variant="link"
+							className="campaign-item__view-link"
+						>
 							{ __( 'Open details' ) }
 						</Button>
 					</div>
@@ -152,7 +158,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ statusBadge }</div>
 			</td>
 			<td className="campaign-item__ends">
-				<div>{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }</div>
+				<div>{ getCampaignEndText( moment( campaign.end_date ), campaign.status ) }</div>
 			</td>
 			<td className="campaign-item__budget">
 				<div>{ budgetString }</div>
@@ -164,7 +170,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
 			<td className="campaign-item__action">
-				<Button onClick={ navigateToDetailsPage } isLink icon={ chevronRight } />
+				<Button onClick={ navigateToDetailsPage } variant="link" icon={ chevronRight } />
 			</td>
 		</tr>
 	);

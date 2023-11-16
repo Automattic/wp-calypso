@@ -5,7 +5,7 @@
 body .customer-home__layout .domain-upsell__card {
 	padding: 16px 16px 20px;
 	@include break-small {
-		padding: 40px 46px;
+		padding: 32px 24px;
 	}
 }
 
@@ -35,6 +35,15 @@ body .customer-home__layout .domain-upsell__card {
 			height: 18px;
 		}
 
+	}
+
+	.domain-upsell-subtitle {
+		margin-bottom: 12px;
+	}
+
+	.domain-upsell-description {
+		font-size: rem(14px);
+		font-style: italic;
 	}
 
 	.domain-upsell-actions {

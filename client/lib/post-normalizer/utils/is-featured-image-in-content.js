@@ -13,7 +13,6 @@ function getPathname( uri ) {
 
 /**
  * returns whether or not a posts featuredImages is contained within the contents
- *
  * @param {Object} post - the post to check
  * @returns {boolean|number} false if featuredImage is not within content content_images.
  *   otherwise returns the index of the dupe in post.images.

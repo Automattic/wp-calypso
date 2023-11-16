@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -11,7 +10,7 @@ import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everyth
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -25,17 +24,16 @@ import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
-import { Confirm } from './confirm';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 interface Props {
+	initImportRun?: boolean;
 	sourceSiteId: number | null;
 	targetSite: SiteDetails;
 	targetSiteId: number | null;
 	targetSiteSlug: string;
-	targetSiteEligibleForProPlan: boolean;
 	stepNavigator?: StepNavigator;
 	showConfirmDialog: boolean;
 	sourceUrlAnalyzedData?: UrlData | null;
@@ -106,32 +104,46 @@ export class ImportEverything extends SectionMigrate {
 	};
 
 	recordMigrationStatusChange = ( prevState: State ) => {
+		const trackEventProps = {
+			source_site_id: this.props.sourceSiteId,
+			source_site_url: this.props.sourceUrlAnalyzedData?.url,
+			target_site_id: this.props.targetSiteId,
+			target_site_slug: this.props.targetSiteSlug,
+			is_trial: isMigrationTrialSite( this.props.targetSite ),
+		};
+
 		if (
 			prevState.migrationStatus !== MigrationStatus.BACKING_UP &&
 			this.state.migrationStatus === MigrationStatus.BACKING_UP
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_backing_up' );
+			this.props.recordTracksEvent(
+				'calypso_site_importer_import_progress_backing_up',
+				trackEventProps
+			);
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.RESTORING &&
 			this.state.migrationStatus === MigrationStatus.RESTORING
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_restoring' );
+			this.props.recordTracksEvent(
+				'calypso_site_importer_import_progress_restoring',
+				trackEventProps
+			);
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.ERROR &&
 			this.state.migrationStatus === MigrationStatus.ERROR
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_failure' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_failure', trackEventProps );
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.DONE &&
 			this.state.migrationStatus === MigrationStatus.DONE
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_success' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_success', trackEventProps );
 		}
 	};
 
@@ -143,11 +155,8 @@ export class ImportEverything extends SectionMigrate {
 		const {
 			sourceSite,
 			targetSite,
-			targetSiteSlug,
-			sourceUrlAnalyzedData,
 			isTargetSitePlanCompatible,
 			stepNavigator,
-			showConfirmDialog = true,
 			isMigrateFromWp,
 			onContentOnlySelection,
 			translate,
@@ -158,7 +167,9 @@ export class ImportEverything extends SectionMigrate {
 			return (
 				<NotAuthorized
 					onStartBuilding={ () => {
-						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard' );
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+							from: 'target-staging',
+						} );
 						stepNavigator.goToDashboardPage();
 					} }
 					onStartBuildingText={ translate( 'Skip to dashboard' ) }
@@ -166,38 +177,25 @@ export class ImportEverything extends SectionMigrate {
 			);
 		}
 
-		if ( isEnabled( 'onboarding/import-redesign' ) ) {
-			return (
-				<PreMigrationScreen
-					startImport={ this.startMigration }
-					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-					targetSite={ targetSite }
-					onContentOnlyClick={ onContentOnlySelection }
-					isMigrateFromWp={ isMigrateFromWp }
-				/>
-			);
-		}
-
-		if ( sourceSite ) {
-			return (
-				<Confirm
-					startImport={ this.startMigration }
-					isMigrateFromWp={ isMigrateFromWp }
-					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-					targetSite={ targetSite }
-					targetSiteSlug={ targetSiteSlug }
-					sourceSite={ sourceSite }
-					sourceSiteUrl={ sourceSite.URL }
-					sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
-					showConfirmDialog={ showConfirmDialog }
-				/>
-			);
-		}
-
 		return (
-			<NotAuthorized
-				onStartBuilding={ stepNavigator?.goToIntentPage }
-				onBackToStart={ stepNavigator?.goToImportCapturePage }
+			<PreMigrationScreen
+				sourceSite={ sourceSite }
+				targetSite={ targetSite }
+				initImportRun={ this.props.initImportRun }
+				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
+				isMigrateFromWp={ isMigrateFromWp }
+				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+				startImport={ this.startMigration }
+				onContentOnlyClick={ onContentOnlySelection }
+				onFreeTrialClick={ () => {
+					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
+				} }
+				onNotAuthorizedClick={ () => {
+					recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+						from: 'pre-migration',
+					} );
+					stepNavigator?.goToDashboardPage();
+				} }
 			/>
 		);
 	}
@@ -250,14 +248,11 @@ export class ImportEverything extends SectionMigrate {
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
 		return (
-			<>
-				<Hooray>
-					{ ! isMigrateFromWp
-						? this.renderDefaultHoorayScreen()
-						: this.renderHoorayScreenWithDomainInfo() }
-				</Hooray>
-				{ ! isEnabled( 'onboarding/import-redesign' ) && <GettingStartedVideo /> }
-			</>
+			<Hooray>
+				{ ! isMigrateFromWp
+					? this.renderDefaultHoorayScreen()
+					: this.renderHoorayScreenWithDomainInfo() }
+			</Hooray>
 		);
 	}
 
@@ -376,7 +371,6 @@ export const connector = connect(
 				ownProps.targetSiteId as number,
 				'import.php'
 			),
-			targetSiteEligibleForProPlan: isEligibleForProPlan( state, ownProps.targetSiteId as number ),
 		};
 	},
 	{

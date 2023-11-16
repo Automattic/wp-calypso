@@ -33,18 +33,30 @@ import {
 	isAkismetProduct,
 	isAkismetFreeProduct,
 	isJetpackBackupT1Slug,
+	isJetpackStarterPlan,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
+	JETPACK_STARTER_UPGRADE_MAP,
+	is100Year,
 } from '@automattic/calypso-products';
-import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
+import {
+	Badge,
+	Spinner,
+	Button,
+	Card,
+	CompactCard,
+	ProductIcon,
+	Gridicon,
+} from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
-import Badge from 'calypso/components/badge';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -57,6 +69,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDomainRegistrationAgreementUrl,
@@ -84,6 +97,7 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
+import { DOMAIN_CANCEL, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { PreCancellationDialog } from 'calypso/me/purchases/pre-cancellation-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -111,14 +125,15 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
-import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { hasLoadedSiteDomains, getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { IAppState } from 'calypso/state/types';
+import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
@@ -190,6 +205,9 @@ export interface ManagePurchaseConnectedProps {
 	site?: SiteDetails | null;
 	siteId?: number | null;
 	theme: false | 0 | Theme | null | undefined;
+	domainsDetails: Record< string, ResponseDomain[] >;
+	currentRoute?: string;
+	dispatch: CalypsoDispatch;
 
 	// Actions
 
@@ -316,7 +334,8 @@ class ManagePurchase extends Component<
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
-			isAkismetFreeProduct( purchase )
+			isAkismetFreeProduct( purchase ) ||
+			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
 			return null;
 		}
@@ -344,6 +363,7 @@ class ManagePurchase extends Component<
 			! isEcommerce( purchase ) &&
 			! isPro( purchase ) &&
 			! isComplete( purchase ) &&
+			! is100Year( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
 			! isPlan( purchase ) &&
@@ -468,9 +488,21 @@ class ManagePurchase extends Component<
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
 			// for immediate upgrades to the next plan. We will change this in the future
 			// with appropriate page.
-			return AKISMET_UPGRADES_PRODUCTS_MAP[
-				purchase.productSlug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
-			];
+			if ( AKISMET_UPGRADES_PRODUCTS_MAP.hasOwnProperty( purchase.productSlug ) ) {
+				return AKISMET_UPGRADES_PRODUCTS_MAP[
+					purchase.productSlug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
+				];
+			}
+
+			return null;
+		}
+
+		if ( isJetpackStarterPlan( purchase.productSlug ) ) {
+			const upgradePlan =
+				JETPACK_STARTER_UPGRADE_MAP[
+					purchase.productSlug as keyof typeof JETPACK_STARTER_UPGRADE_MAP
+				];
+			return `/checkout/${ siteSlug }/${ upgradePlan }`;
 		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
@@ -492,7 +524,8 @@ class ManagePurchase extends Component<
 			! isEcommerce( purchase ) &&
 			! isPro( purchase ) &&
 			! isComplete( purchase ) &&
-			! isP2Plus( purchase );
+			! isP2Plus( purchase ) &&
+			! is100Year( purchase );
 
 		const isUpgradeableBackupProduct = (
 			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
@@ -954,10 +987,27 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isDomainTransfer( purchase ) ) {
-			return translate(
-				'Transfers an existing domain from another provider to WordPress.com, ' +
-					'helping you manage your site and domain in one place.'
+			const { currentRoute, site, translate, dispatch } = this.props;
+
+			const transferDomain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+				( domain ) => domain.domain === purchase.meta
 			);
+
+			if ( transferDomain ) {
+				const { noticeText } = resolveDomainStatus( transferDomain, null, translate, dispatch, {
+					siteSlug: site?.slug,
+					getMappingErrors: true,
+					currentRoute,
+				} );
+				if ( noticeText ) {
+					return noticeText;
+				}
+
+				return translate(
+					'Transfers an existing domain from another provider to WordPress.com, ' +
+						'helping you manage your site and domain in one place.'
+				);
+			}
 		}
 
 		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
@@ -1039,9 +1089,49 @@ class ManagePurchase extends Component<
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
+		const helpOptions = {
+			components: {
+				strong: <strong />,
+				a: <a href={ localizeUrl( SUPPORT_ROOT ) } rel="noopener noreferrer" target="_blank" />,
+			},
+		};
+
+		const cancelOptions = {
+			components: {
+				strong: <strong />,
+				a: <a href={ localizeUrl( DOMAIN_CANCEL ) } rel="noopener noreferrer" target="_blank" />,
+			},
+		};
+		const supportText = translate(
+			'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
+			helpOptions
+		);
+
+		const cancelText = translate(
+			'Cancel Domain and Refund? Please {{a}}click here.{{/a}}',
+			cancelOptions
+		);
+
+		const domainTransferDuration = translate(
+			'Domain transfers can take anywhere from five to seven days to complete.'
+		);
 		return (
 			<div className="manage-purchase__content">
-				<span className="manage-purchase__description">{ this.getPurchaseDescription() }</span>
+				<span className="manage-purchase__description">
+					<div className="manage-purchase__content-domain-description">
+						{ this.getPurchaseDescription() }
+					</div>
+					<div className="manage-purchase__content-domain-description">
+						{ purchase.productType === 'domain_transfer' && (
+							<>
+								{ cancelText } { domainTransferDuration }
+							</>
+						) }
+					</div>
+					<div className="manage-purchase__content-domain-description">
+						{ purchase.productType === 'domain_transfer' && supportText }
+					</div>
+				</span>
 
 				<span className="manage-purchase__settings-link">
 					{ ! isJetpackCloud() && site && (
@@ -1157,6 +1247,8 @@ class ManagePurchase extends Component<
 			return this.renderPlaceholder();
 		}
 
+		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
+
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': purchase && isPersonal( purchase ),
@@ -1189,13 +1281,17 @@ class ManagePurchase extends Component<
 									} ) }
 								</div>
 							) : (
-								<PlanPrice
-									rawPrice={ purchase.regularPriceInteger }
-									isSmallestUnit
-									currencyCode={ purchase.currencyCode }
-									taxText={ purchase.taxText }
-									isOnSale={ !! purchase.saleAmount }
-								/>
+								<>
+									{ isOneTimePurchase( purchase ) && (
+										<PlanPrice
+											rawPrice={ purchase.regularPriceInteger }
+											isSmallestUnit
+											currencyCode={ purchase.currencyCode }
+											taxText={ purchase.taxText }
+											isOnSale={ !! purchase.saleAmount }
+										/>
+									) }
+								</>
 							) }
 						</div>
 					</header>
@@ -1228,7 +1324,10 @@ class ManagePurchase extends Component<
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
-						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
+						{ ! preventRenewal &&
+							! renderMonthlyRenewalOption &&
+							! isActive100YearPurchase &&
+							this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
@@ -1239,10 +1338,7 @@ class ManagePurchase extends Component<
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
-						{ /* We don't want to show the Cancel/Remove nav item for "Jetpack" temporary sites, but we DO
-						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
-						{ /* TODO: Add ability to Cancel Akismet subscription */ }
-						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
+						{ this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>
@@ -1430,71 +1526,81 @@ function PurchasesQueryComponent( {
 	return <QueryUserPurchases />;
 }
 
-export default connect(
-	( state: IAppState, props: ManagePurchaseProps ) => {
-		const purchase = getByPurchaseId( state, props.purchaseId );
+export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
+	const purchase = getByPurchaseId( state, props.purchaseId );
 
-		const purchaseAttachedTo =
-			purchase && purchase.attachedToPurchaseId
-				? getByPurchaseId( state, purchase.attachedToPurchaseId )
-				: null;
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteId = purchase?.siteId ?? null;
-		const purchases = purchase && getSitePurchases( state, purchase.siteId );
-		const userId = getCurrentUserId( state );
-		const isProductOwner = purchase && purchase.userId === userId;
-		const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
-		const isPurchasePlan = purchase && isPlan( purchase );
-		const isPurchaseTheme = purchase && isThemePurchase( purchase );
-		const productsList = getProductsList( state );
-		const site = getSite( state, siteId ?? undefined );
-		const hasLoadedSites = ! isRequestingSites( state );
-		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
-		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
-		const relatedMonthlyPlanPrice = siteId
-			? getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug ) ?? 0
-			: 0;
-		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
+	const purchaseAttachedTo =
+		purchase && purchase.attachedToPurchaseId
+			? getByPurchaseId( state, purchase.attachedToPurchaseId )
+			: null;
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteId = purchase?.siteId ?? null;
+	const purchases = purchase && getSitePurchases( state, purchase.siteId );
+	const userId = getCurrentUserId( state );
+	const isProductOwner = purchase && purchase.userId === userId;
+	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
+	const isPurchasePlan = purchase && isPlan( purchase );
+	const isPurchaseTheme = purchase && isThemePurchase( purchase );
+	const productsList = getProductsList( state );
+	const site = getSite( state, siteId ?? undefined );
+	const hasLoadedSites = ! isRequestingSites( state );
+	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
+	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
+	const relatedMonthlyPlanPrice = siteId
+		? getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug ) ?? 0
+		: 0;
+	const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
+	const currentRoute = getCurrentRoute( state );
 
-		return {
-			hasCustomPrimaryDomain: hasCustomDomain( site ),
-			hasLoadedDomains,
-			hasLoadedPurchasesFromServer: props.isSiteLevel
-				? hasLoadedSitePurchasesFromServer( state )
-				: hasLoadedUserPurchasesFromServer( state ),
-			hasLoadedSites,
-			hasNonPrimaryDomainsFlag: getCurrentUser( state )
-				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-				: false,
-			hasSetupAds: Boolean(
-				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
-			),
-			isAtomicSite: isSiteAtomic( state, siteId ),
-			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			isProductOwner,
-			isPurchaseTheme,
-			plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
-			primaryDomain: primaryDomain,
-			productsList,
-			purchase,
-			purchaseAttachedTo,
-			purchases,
-			relatedMonthlyPlanPrice,
-			relatedMonthlyPlanSlug,
-			renewableSitePurchases,
-			selectedSiteId,
-			site,
-			siteId,
-			theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
-		};
-	},
-	{
-		handleRenewNowClick,
-		handleRenewMultiplePurchasesClick,
-		errorNotice,
-		successNotice,
-	}
-)( localize( ManagePurchase ) );
+	return {
+		currentRoute,
+		domainsDetails: getAllDomains( state ),
+		hasCustomPrimaryDomain: hasCustomDomain( site ),
+		hasLoadedDomains,
+		hasLoadedPurchasesFromServer: props.isSiteLevel
+			? hasLoadedSitePurchasesFromServer( state )
+			: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedSites,
+		hasNonPrimaryDomainsFlag: getCurrentUser( state )
+			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			: false,
+		hasSetupAds: Boolean(
+			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+		),
+		isAtomicSite: isSiteAtomic( state, siteId ),
+		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
+		isProductOwner,
+		isPurchaseTheme,
+		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
+		primaryDomain: primaryDomain,
+		productsList,
+		purchase,
+		purchaseAttachedTo,
+		purchases,
+		relatedMonthlyPlanPrice,
+		relatedMonthlyPlanSlug,
+		renewableSitePurchases,
+		selectedSiteId,
+		site,
+		siteId,
+		theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
+	};
+}, mapDispatchToProps )( localize( ManagePurchase ) );
+
+function mapDispatchToProps( dispatch: CalypsoDispatch ) {
+	return {
+		dispatch,
+		...bindActionCreators(
+			{
+				handleRenewNowClick,
+				handleRenewMultiplePurchasesClick,
+				errorNotice,
+				successNotice,
+			},
+			dispatch
+		),
+	};
+}
 
 function getCancelPurchaseNavText(
 	purchase: Purchase,

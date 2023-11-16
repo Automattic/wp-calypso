@@ -45,7 +45,10 @@ export class StartImportFlow {
 	 * @param {Page} page The underlying page.
 	 * @param framework
 	 */
-	constructor( private page: Page, private framework: 'signup' | 'stepper' ) {}
+	constructor(
+		private page: Page,
+		private framework: 'signup' | 'stepper'
+	) {}
 
 	/**
 	 * Given text, click on the button's first instance with the text.
@@ -89,6 +92,13 @@ export class StartImportFlow {
 		await this.page.waitForSelector(
 			selectors.startBuildingHeader( 'Your content is ready for its brand new home' )
 		);
+	}
+
+	/**
+	 * Validates that we've landed on the import (migration) ready page.
+	 */
+	async validateUpgradePlanPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.startBuildingHeader( 'Upgrade your plan' ) );
 	}
 
 	/**

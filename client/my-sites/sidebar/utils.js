@@ -11,7 +11,6 @@ const isManageAllSitesPluginsPath = ( path ) =>
 
 /**
  * Checks if `currentPath` starts with the first fragment of `path`
- *
  * @param {string} path The path to check against.
  * @param {string} currentPath The current path.
  * @returns {boolean} True if paths match, false otherwise.

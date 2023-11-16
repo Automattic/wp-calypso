@@ -20,12 +20,10 @@ import {
 
 interface Props {
 	canGoToCheckout?: boolean;
-	forcePremium?: boolean;
+	isLockedStyleVariation?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
 	themeId: string;
-	tooltipHeader?: string;
-	tooltipMessage?: string;
 }
 
 const ThemeTypeBadgeTooltipUpgradeLink = ( {
@@ -55,7 +53,7 @@ const ThemeTypeBadgeTooltipUpgradeLink = ( {
 	};
 
 	return (
-		<LinkButton isLink onClick={ () => goToCheckout() }>
+		<LinkButton variant="link" onClick={ () => goToCheckout() }>
 			{ children }
 		</LinkButton>
 	);
@@ -63,16 +61,13 @@ const ThemeTypeBadgeTooltipUpgradeLink = ( {
 
 const ThemeTypeBadgeTooltip = ( {
 	canGoToCheckout = true,
-	forcePremium,
+	isLockedStyleVariation,
 	siteId,
 	siteSlug,
 	themeId,
-	tooltipHeader,
-	tooltipMessage,
 }: Props ) => {
 	const translate = useTranslate();
-	const _type = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const type = forcePremium ? PREMIUM_THEME : _type;
+	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
@@ -103,8 +98,8 @@ const ThemeTypeBadgeTooltip = ( {
 	}, [ themeId ] );
 
 	const getHeader = (): string | null => {
-		if ( tooltipHeader ) {
-			return tooltipHeader;
+		if ( isLockedStyleVariation ) {
+			return null;
 		}
 
 		const headers = {
@@ -114,7 +109,10 @@ const ThemeTypeBadgeTooltip = ( {
 				textOnly: true,
 			} ),
 			[ WOOCOMMERCE_THEME ]: translate( 'WooCommerce theme' ),
-			[ MARKETPLACE_THEME ]: translate( 'Paid theme' ),
+			[ MARKETPLACE_THEME ]: translate( 'Partner theme', {
+				context: 'This theme is developed and supported by a theme partner',
+				textOnly: true,
+			} ),
 		} as { [ key: string ]: string };
 
 		if ( ! ( type in headers ) ) {
@@ -125,8 +123,10 @@ const ThemeTypeBadgeTooltip = ( {
 	};
 
 	let message;
-	if ( tooltipMessage ) {
-		message = tooltipMessage;
+	if ( isLockedStyleVariation ) {
+		message = translate(
+			'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
@@ -201,7 +201,7 @@ const ThemeTypeBadgeTooltip = ( {
 		} else if ( ! isPurchased && isIncludedCurrentPlan ) {
 			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			message = translate(
-				'This premium theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
+				'This theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
 				{
 					args: {
 						annualPrice: subscriptionPrices.year ?? '',
@@ -213,7 +213,7 @@ const ThemeTypeBadgeTooltip = ( {
 			message = createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This premium theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',

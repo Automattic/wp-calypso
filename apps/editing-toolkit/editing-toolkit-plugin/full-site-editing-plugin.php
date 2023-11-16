@@ -203,7 +203,7 @@ function load_blog_posts_block() {
 	$disable_block = (
 		( defined( 'WP_CLI' ) && WP_CLI ) ||
 		/* phpcs:ignore WordPress.Security.NonceVerification */
-		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && preg_match( $slug_regex, sanitize_text_field( wp_unslash( $_GET['plugin'] ) ) ) ) ||
+		( isset( $_GET['action'] ) && isset( $_GET['plugin'] ) && 'activate' === $_GET['action'] && preg_match( $slug_regex, sanitize_text_field( wp_unslash( $_GET['plugin'] ) ) ) ) ||
 		preg_grep( $slug_regex, (array) get_option( 'active_plugins' ) ) ||
 		preg_grep( $slug_regex, (array) get_site_option( 'active_sitewide_plugins' ) )
 	);
@@ -230,6 +230,24 @@ function load_wpcom_block_editor_nux() {
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
+
+/**
+ * Re-register some core patterns to push them down in the inserter list.
+ * The reason is that Dotcom curate the pattern list based on their look.
+ */
+function reorder_curated_core_patterns() {
+	$pattern_names = array( 'core/social-links-shared-background-color' );
+	foreach ( $pattern_names as $pattern_name ) {
+		$pattern = \WP_Block_Patterns_Registry::get_instance()->get_registered( $pattern_name );
+		if ( $pattern ) {
+			unregister_block_pattern( $pattern_name );
+			register_block_pattern(
+				$pattern_name,
+				$pattern
+			);
+		}
+	}
+}
 
 /**
  * Return a function that loads and register block patterns from the API. This
@@ -259,6 +277,8 @@ function register_patterns_on_api_request( $register_patterns_func ) {
 		};
 
 		$register_patterns_func();
+
+		reorder_curated_core_patterns();
 
 		return $response;
 	};
@@ -350,14 +370,6 @@ function load_error_reporting() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
 
 /**
- * Universal themes.
- */
-function load_universal_themes() {
-	require_once __DIR__ . '/wpcom-universal-themes/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_universal_themes', 11 ); // load just after the Gutenberg plugin.
-
-/**
  * Tags Education
  */
 function load_tags_education() {
@@ -370,8 +382,26 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  */
 function load_help_center() {
 	// disable help center in P2s.
-	if ( defined( 'IS_WPCOM' ) && IS_WPCOM && \WPForTeams\is_wpforteams_site( get_current_blog_id() ) ) {
+	if (
+		defined( 'IS_WPCOM' )
+		&& IS_WPCOM
+		&& \WPForTeams\is_wpforteams_site( get_current_blog_id() )
+	) {
 		return false;
+	}
+
+	// disable help center if Jetpack isn't active.
+	if ( ! defined( 'IS_WPCOM' ) ) {
+		// Make sure the function have been loaded.
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		// This doesn't work if Jetpack is an mu-plugin.
+		// Since this isn't running in WPCOM this shouldn't matter.
+		if ( ! is_plugin_active( 'jetpack/jetpack.php' ) ) {
+			return false;
+		}
 	}
 
 	require_once __DIR__ . '/help-center/class-help-center.php';
@@ -387,7 +417,7 @@ function load_paragraph_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
 
 /**
- * Override org documentation links
+ * Override org documentation links.
  */
 function load_wpcom_documentation_links() {
 	require_once __DIR__ . '/wpcom-documentation-links/class-wpcom-documentation-links.php';
@@ -395,7 +425,7 @@ function load_wpcom_documentation_links() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' );
 
 /**
- * Add support links to block description
+ * Add support links to block description.
  */
 function load_block_description_links() {
 	require_once __DIR__ . '/wpcom-block-description-links/class-wpcom-block-description-links.php';
@@ -418,39 +448,3 @@ function load_wpcom_domain_upsell_callout() {
 	require_once __DIR__ . '/wpcom-domain-upsell-callout/class-wpcom-domain-upsell-callout.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_domain_upsell_callout' );
-/**
- * Shows a confirm prompt when the plugin is about to be deactivated on a unlaunched site.
- *
- * This will filter the FSE actions on the plugin manager list to add the confirm
- * prompt on the click event of the action=deactivate.
- *
- * The option launch-status exists only on wpcom sites.
- *
- * @TODO: Remove after coming-soon is migrated to the new jetpack-mu-wpcom plugin
- */
-if ( has_action( 'plugins_loaded', 'Jetpack\Mu_Wpcom\load_coming_soon' ) === false ) {
-	add_filter(
-		'plugin_action_links_' . plugin_basename( __FILE__ ),
-		function ( $actions ) {
-			$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
-
-			if ( $unlaunched ) {
-				$actions = array_map(
-					function ( $action ) {
-						$message = __( 'Disabling this plugin will make your site public.', 'full-site-editing' );
-						$confirm = "confirm('$message') ? null : event.preventDefault()";
-
-						return str_replace(
-							'<a href="plugins.php?action=deactivate',
-							"<a onclick=\"$confirm\" href=\"plugins.php?action=deactivate",
-							$action
-						);
-					},
-					$actions
-				);
-			}
-
-			return $actions;
-		}
-	);
-}

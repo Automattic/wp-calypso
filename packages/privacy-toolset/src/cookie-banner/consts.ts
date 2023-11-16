@@ -5,3 +5,9 @@ export const allBucketsTrue: Buckets = {
 	analytics: true,
 	advertising: true,
 };
+
+export const defaultBuckets: Buckets = {
+	essential: true,
+	analytics: true,
+	advertising: false,
+};

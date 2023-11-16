@@ -14,6 +14,8 @@ const UniversalNavbarHeader = ( {
 	sectionName,
 	logoColor,
 	variant = 'default',
+	startUrl,
+	loginUrl,
 }: HeaderProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
@@ -21,18 +23,20 @@ const UniversalNavbarHeader = ( {
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const startUrl = addQueryArgs(
-		// url
-		sectionName === 'plugins'
-			? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
-			: localizeUrl( '//wordpress.com/start', locale, isLoggedIn ),
-		// query
-		sectionName
-			? {
-					ref: sectionName + '-lp',
-			  }
-			: {}
-	);
+	if ( ! startUrl ) {
+		startUrl = addQueryArgs(
+			// url
+			sectionName === 'plugins'
+				? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
+				: localizeUrl( '//wordpress.com/start', locale, isLoggedIn ),
+			// query
+			sectionName
+				? {
+						ref: sectionName + '-lp',
+				  }
+				: {}
+		);
+	}
 
 	return (
 		<div className={ className }>
@@ -136,7 +140,7 @@ const UniversalNavbarHeader = ( {
 														) }
 														<ClickableItem
 															titleValue=""
-															content={ __( 'Store', __i18n_text_domain__ ) }
+															content={ __( 'Commerce', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
 															type="dropdown"
 															target="_self"
@@ -266,15 +270,27 @@ const UniversalNavbarHeader = ( {
 															type="dropdown"
 															target="_self"
 														/>
-														{ isEnglishLocale && (
-															<ClickableItem
-																titleValue=""
-																content={ __( 'Popular Tags', __i18n_text_domain__ ) }
-																urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
-																type="dropdown"
-																target="_self"
-															/>
-														) }
+														<ClickableItem
+															titleValue=""
+															content={ __( 'Discover New Posts', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl( '//wordpress.com/discover/' ) }
+															type="dropdown"
+															target="_self"
+														/>
+														<ClickableItem
+															titleValue=""
+															content={ __( 'Popular Tags', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
+															type="dropdown"
+															target="_self"
+														/>
+														<ClickableItem
+															titleValue=""
+															content={ __( 'Blog Search', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
+															type="dropdown"
+															target="_self"
+														/>
 														<ClickableItem
 															titleValue=""
 															content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
@@ -311,7 +327,10 @@ const UniversalNavbarHeader = ( {
 											className="x-nav-item x-nav-item__wide"
 											titleValue=""
 											content={ __( 'Log In', __i18n_text_domain__ ) }
-											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ) }
+											urlValue={
+												loginUrl ||
+												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
+											}
 											type="nav"
 										/>
 									) }
@@ -380,13 +399,23 @@ const UniversalNavbarHeader = ( {
 									<ul className="x-menu-grid">
 										<ClickableItem
 											titleValue=""
-											content={ __( 'Sign Up', __i18n_text_domain__ ) }
+											content={
+												<>
+													{ __( 'Sign Up', __i18n_text_domain__ ) }{ ' ' }
+													<span className="x-menu-link-chevron" />
+												</>
+											}
 											urlValue={ startUrl }
 											type="menu"
 										/>
 										<ClickableItem
 											titleValue=""
-											content={ __( 'Log In', __i18n_text_domain__ ) }
+											content={
+												<>
+													{ __( 'Log In', __i18n_text_domain__ ) }{ ' ' }
+													<span className="x-menu-link-chevron" />
+												</>
+											}
 											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ) }
 											type="menu"
 										/>
@@ -463,7 +492,7 @@ const UniversalNavbarHeader = ( {
 											) }
 											<ClickableItem
 												titleValue=""
-												content={ __( 'Store', __i18n_text_domain__ ) }
+												content={ __( 'Commerce', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
 												type="menu"
 											/>
@@ -496,8 +525,6 @@ const UniversalNavbarHeader = ( {
 												urlValue={ localizeUrl( '//wordpress.com/features/' ) }
 												type="menu"
 											/>
-										</ul>
-										<ul className="x-menu-grid">
 											<ClickableItem
 												titleValue=""
 												content={ __( 'WordPress Themes', __i18n_text_domain__ ) }
@@ -563,14 +590,24 @@ const UniversalNavbarHeader = ( {
 												urlValue={ localizeUrl( '//wordpress.com/logo-maker/' ) }
 												type="menu"
 											/>
-											{ isEnglishLocale && (
-												<ClickableItem
-													titleValue=""
-													content={ __( 'Popular Tags', __i18n_text_domain__ ) }
-													urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
-													type="menu"
-												/>
-											) }
+											<ClickableItem
+												titleValue=""
+												content={ __( 'Discover New Posts', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/discover/' ) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue=""
+												content={ __( 'Popular Tags', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue=""
+												content={ __( 'Blog Search', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
+												type="menu"
+											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Daily Webinars', __i18n_text_domain__ ) }

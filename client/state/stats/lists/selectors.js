@@ -8,7 +8,6 @@ import 'calypso/state/stats/init';
 /**
  * Returns true if currently requesting stats for the statType and query combo, or false
  * otherwise.
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  statType Type of stat
@@ -23,7 +22,6 @@ export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) 
 /**
  * Returns true if the stats request for the statType and query combo has finished, or false
  * otherwise.
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  statType Type of stat
@@ -42,7 +40,6 @@ export function hasSiteStatsForQueryFinished( state, siteId, statType, query ) {
 /**
  * Returns true if the stats request for the statType and query combo has failed, or false
  * otherwise.
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  statType Type of stat
@@ -59,7 +56,6 @@ export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
 /**
  * Returns object of stats data for the statType and query combo, or null if no stats have been
  * received.
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  statType Type of stat
@@ -74,7 +70,6 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
 /**
  * Returns a parsed object of statsStreak data for a given query, or default "empty" object
  * if no statsStreak data has been received for that site.
- *
  * @param   {Object}  state    			Global state tree
  * @param   {number}  siteId   			Site ID
  * @param   {Object}  query    			Stats query object
@@ -111,7 +106,6 @@ export const getSiteStatsPostStreakData = treeSelect(
 /**
  * Returns normalized stats data for a given query and stat type, or the un-normalized response
  * from the API if no normalizer method for that stats type exists in ./utils
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  statType Type of stat
@@ -135,7 +129,6 @@ export const getVideoPressPlaysComplete = treeSelect(
 /**
  * Returns normalized stats data for a given query and stat type, or the un-normalized response
  * from the API if no normalizer method for that stats type exists in ./utils
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  statType Type of stat
@@ -162,7 +155,6 @@ export const getSiteStatsNormalizedData = treeSelect(
 
 /**
  * Returns an array of stats data ready for csv export
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  statType Type of stat
@@ -184,7 +176,6 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 
 /**
  * Returns the date of the last site stats query
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  statType Type of stat
@@ -198,7 +189,6 @@ export function getSiteStatsQueryDate( state, siteId, statType, query ) {
 
 /**
  * Returns the date of the last site stats query
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @returns {Object}           Stats View Summary
@@ -270,7 +260,8 @@ const getSortedPostsAndPages = ( data ) => {
 			if ( post.id in topPosts ) {
 				topPosts[ post.id ].views += post.views;
 			} else {
-				topPosts[ post.id ] = post;
+				// Use the shallow copy of the post object to avoid mutating the original data.
+				topPosts[ post.id ] = Object.assign( {}, post );
 			}
 		} );
 	} );

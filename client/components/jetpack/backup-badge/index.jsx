@@ -1,7 +1,6 @@
-import { ScreenReaderText } from '@automattic/components';
+import { Badge, ScreenReaderText } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import Badge from 'calypso/components/badge';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { useLatestBackupAttempt } from 'calypso/my-sites/backup/status/hooks';
 

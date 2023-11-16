@@ -54,6 +54,7 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 			  }
 			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
+		isDomain: Boolean( purchase.is_domain ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
@@ -62,6 +63,7 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
+		ownershipId: Number( purchase.ownership_id ),
 		priceText: purchase.price_text,
 		priceTierList: purchase.price_tier_list?.map(
 			( rawTier ): PurchasePriceTier => ( {

@@ -18,12 +18,12 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SITE_PRODUCTS_WITH_FEATURES,
+	WOOCOMMERCE_EXTENSIONS_PRODUCTS,
 	objectIsProduct,
 	Plan,
 	Product,
 	PRODUCTS_LIST,
 	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	getJetpackProductWhatIsIncluded,
 	getJetpackProductWhatIsIncludedComingSoon,
@@ -42,6 +42,8 @@ import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
+	INDIRECT_CHECKOUT_PRODUCTS_LIST,
+	INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
@@ -57,6 +59,10 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 	return (
 		[ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ] as ReadonlyArray< string >
 	 ).includes( slug );
+}
+
+function slugIsWooCommerceProductSlug( slug: string ) {
+	return slug in WOOCOMMERCE_EXTENSIONS_PRODUCTS;
 }
 
 function objectIsSelectorProduct(
@@ -78,8 +84,16 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]();
 	}
 
+	if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( slug ) ) {
+		return INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP[ slug ]();
+	}
+
 	if ( slugIsJetpackProductSlug( slug ) ) {
 		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
+	}
+
+	if ( slugIsWooCommerceProductSlug( slug ) ) {
+		return ( WOOCOMMERCE_EXTENSIONS_PRODUCTS as Record< string, Product > )[ slug ];
 	}
 
 	if ( slugIsJetpackPlanSlug( slug ) ) {
@@ -90,21 +104,8 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 }
 
 function getDisclaimerLink() {
-	const backupStorageFaqId = 'backup-storage-limits-faq';
-
-	const urlParams = new URLSearchParams( window.location.search );
-	const calypsoEnv = urlParams.get( 'calypso_env' );
-	// Check to see if FAQ is on the current page
-	// This is so we can anchor link to it instead of opening a new window if it is on the page already
-	const backupStorageFaq = document.getElementById( backupStorageFaqId );
-
-	if ( backupStorageFaq ) {
-		return `#${ backupStorageFaqId }`;
-	}
-
-	return calypsoEnv === 'development'
-		? `http://jetpack.cloud.localhost:3000/pricing#${ backupStorageFaqId }`
-		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
+	const backupStorageFaqId = 'backup-storage-limits-lightbox-faq';
+	return `#${ backupStorageFaqId }`;
 }
 
 function getFeaturedProductDescription( item: Product ) {
@@ -124,7 +125,6 @@ function getLightboxPlanDescription( item: Plan ) {
 }
 /**
  * Converts data from a product, plan, or selector product to selector product.
- *
  * @param item Product, Plan, or SelectorProduct.
  * @returns SelectorProduct
  */
@@ -150,8 +150,8 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
-		// We do not support TERM_BIENNIALLY or TERM_TRIENIALLY for Jetpack plans
-		if ( [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ) {
+		// We do not support TERM_TRIENIALLY for Jetpack plans
+		if ( [ TERM_TRIENNIALLY ].includes( item.term ) ) {
 			return null;
 		}
 
@@ -224,7 +224,7 @@ function itemToSelectorProduct(
 				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],
 			monthlyProductSlug,
-			term: [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ? TERM_ANNUALLY : item.term,
+			term: [ TERM_TRIENNIALLY ].includes( item.term ) ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},
@@ -238,7 +238,6 @@ function itemToSelectorProduct(
 
 /**
  * Converts an item slug to a SelectorProduct item type.
- *
  * @param slug string
  * @returns SelectorProduct | null
  */

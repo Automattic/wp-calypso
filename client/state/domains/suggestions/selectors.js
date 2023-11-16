@@ -4,7 +4,6 @@ import 'calypso/state/domains/init';
 
 /**
  * Returns domains suggestions information for a query.
- *
  * @param   {Object}   state                                Global state tree
  * @param   {Object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
@@ -23,7 +22,6 @@ export function getDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns true, if we're currently requesting domains suggestions.
- *
  * @param   {Object}     state                                Global state tree
  * @param   {Object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery
@@ -42,7 +40,6 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
 
 /**
  * Returns an error for a given domains suggestions query.
- *
  * @param   {Object}     state                                Global state tree
  * @param   {Object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery

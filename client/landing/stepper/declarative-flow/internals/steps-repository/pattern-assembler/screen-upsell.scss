@@ -1,0 +1,41 @@
+@import "@automattic/typography/styles/fonts";
+
+.screen-upsell {
+	.screen-upsell__heading {
+		margin-bottom: 4px;
+	}
+
+	.screen-upsell__description {
+		margin-bottom: 32px;
+		font-size: $font-body-small;
+
+		p {
+			margin-bottom: 16px;
+		}
+	}
+
+	ul.screen-upsell__features {
+		margin: 0;
+		font-size: $font-body-small;
+		list-style: none;
+
+		li {
+			display: flex;
+			align-items: center;
+			margin-top: 8px;
+			gap: 16px;
+		}
+
+		strong {
+			font-weight: normal;
+		}
+
+		svg {
+			color: var(--studio-blue-50);
+		}
+	}
+
+	.pattern-assembler__button + .pattern-assembler__button {
+		margin-top: 8px;
+	}
+}

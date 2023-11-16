@@ -19,18 +19,14 @@ const stepNameToModuleName = {
 	'mailbox-domain': 'domains',
 	emails: 'emails',
 	mailbox: 'emails',
-	'from-url': 'import-url',
-	/* import-url will eventually replace from-url step. Forgive temporary naming. */
-	'import-url': 'import-url-onboarding',
-	'intent-screen': 'intent-screen',
 	launch: 'launch-site',
 	'mailbox-plan': 'plans',
 	plans: 'plans',
 	'plans-new': 'plans',
 	'plans-business': 'plans',
-	'plans-ecommerce': 'plans',
+	'plans-business-with-plugin': 'plans',
 	'plans-hosting': 'plans',
-	'plans-pm': 'plans-pm',
+	'plans-pm': 'plans',
 	'plans-pro': 'plans',
 	'plans-starter': 'plans',
 	'plans-import': 'plans',
@@ -39,15 +35,12 @@ const stepNameToModuleName = {
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
 	'plans-site-selected-legacy': 'plans',
-	'plans-store-nux': 'plans-atomic-store',
-	'select-domain': 'domains',
 	site: 'site',
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',
 	'site-or-domain': 'site-or-domain',
 	'site-picker': 'site-picker',
-	'site-title': 'site-title',
 	'site-options': 'site-options',
 	'store-options': 'site-options',
 	'store-features': 'store-features',
@@ -59,6 +52,7 @@ const stepNameToModuleName = {
 	'user-new': 'user',
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
+	'user-social': 'user',
 	'reader-landing': 'reader-landing',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
@@ -68,6 +62,7 @@ const stepNameToModuleName = {
 	'p2-join-workspace': 'p2-join-workspace',
 	'plans-business-monthly': 'plans',
 	'plans-ecommerce-monthly': 'plans',
+	'plans-ecommerce-fulfilled': 'plans',
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
 	'plans-business-2y': 'plans',
@@ -84,7 +79,6 @@ const stepNameToModuleName = {
 	'difm-page-picker': 'page-picker',
 	'website-content': 'website-content',
 	intent: 'intent',
-	'select-site': 'woocommerce-install/select-site',
 	'store-address': 'woocommerce-install/step-store-address',
 	'business-info': 'woocommerce-install/step-business-info',
 	confirm: 'woocommerce-install/confirm',
@@ -95,7 +89,9 @@ const stepNameToModuleName = {
 export function getStepModuleName( stepName ) {
 	return stepNameToModuleName[ stepName ] || '';
 }
-
+export function getStepModuleMap() {
+	return stepNameToModuleName;
+}
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(

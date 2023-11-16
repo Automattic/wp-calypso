@@ -8,8 +8,8 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 
 	.main.is-wide-layout {
 		@media ( max-width: $break-medium ) {
-			padding-left: 20px;
-			padding-right: 20px;
+			padding-left: 1.25rem;
+			padding-right: 1.25rem;
 		}
 	}
 
@@ -17,7 +17,7 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 		text-align: center;
 
 		@media ( max-width: $break-medium ) {
-			padding-top: 40px;
+			padding-top: 2.5rem;
 		}
 
 		.ecommerce-trial-expired__title {
@@ -48,7 +48,9 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 		flex-direction: column;
 		gap: 2em;
 		justify-content: center;
-		padding-top: 2em;
+		margin: auto;
+		max-width: 800px;
+		padding-top: 1.5em;
 
 		@media ( min-width: $break-small ) {
 			flex-direction: row;

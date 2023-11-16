@@ -44,8 +44,11 @@ const addBlockSupportLinks = (
 	name: string
 ) => {
 	// If block has a parent, use the parents name in the switch. This will apply the link to all nested blocks.
-	const isChild = settings[ 'parent' ];
-	const blockName = isChild ? settings[ 'parent' ].toString() : name;
+	// The exception is "post content" block because it's used to allow blocks like "more" and "jetpack/paywall" only in post content areas & post editor
+	// `parent` is actually an array of strings, so converting to string is going to join multiple blocks together, making the method buggy.
+	const parentName = settings?.parent?.toString();
+	const isChild = parentName && parentName !== 'core/post-content';
+	const blockName = isChild ? parentName : name;
 
 	/**
 	 * This is needed because the `blocks.registerBlockType` filter is also triggered for deprecations.

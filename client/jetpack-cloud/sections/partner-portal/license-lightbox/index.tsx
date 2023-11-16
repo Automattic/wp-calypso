@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
 import { FunctionComponent, useCallback } from 'react';
 import JetpackLightbox, {
 	JetpackLightboxAside,
@@ -20,6 +21,8 @@ export type LicenseLightBoxProps = {
 	onActivate: ( product: APIProductFamilyProduct ) => void;
 	onClose: () => void;
 	product: APIProductFamilyProduct;
+	extraAsideContent?: JSX.Element;
+	className?: string;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -29,6 +32,8 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	onActivate,
 	onClose,
 	product,
+	extraAsideContent,
+	className,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -42,7 +47,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 
 	return (
 		<JetpackLightbox
-			className="license-lightbox"
+			className={ classNames( 'license-lightbox', className ) }
 			isOpen={ true }
 			onClose={ onClose }
 			onAfterOpen={ initMobileSidebar }
@@ -64,6 +69,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 				>
 					{ ctaLabel }
 				</Button>
+				{ extraAsideContent }
 			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);

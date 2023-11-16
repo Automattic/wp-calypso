@@ -1,6 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
+import ShareButton from 'calypso/blocks/reader-share';
+import { shouldShowReblog } from 'calypso/blocks/reader-share/helper';
+import { useSelector } from 'calypso/state';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import CommentLikeButtonContainer from './comment-likes';
 
 import './comment-actions.scss';
@@ -9,6 +13,7 @@ const noop = () => {};
 
 const CommentActions = ( {
 	post,
+	comment,
 	comment: { isPlaceholder },
 	translate,
 	activeReplyCommentId,
@@ -17,9 +22,12 @@ const CommentActions = ( {
 	onReplyCancel,
 	showReadMore,
 	onReadMore,
+	onLikeToggle,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
+	const hasSites = !! useSelector( getPrimarySiteId );
+	const showReblogButton = shouldShowReblog( post, hasSites );
 
 	// Only render actions for non placeholders
 	if ( isPlaceholder ) {
@@ -44,6 +52,17 @@ const CommentActions = ( {
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 				</Button>
 			) }
+			{ showReblogButton && (
+				<ShareButton
+					post={ post }
+					comment={ comment }
+					position="bottom"
+					tagName="div"
+					iconSize={ 18 }
+					isReblogSelection
+					showReblogLabel
+				/>
+			) }
 			{ showCancelReplyButton && (
 				<Button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
@@ -55,6 +74,7 @@ const CommentActions = ( {
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
+				onLikeToggle={ onLikeToggle }
 			/>
 		</div>
 	);

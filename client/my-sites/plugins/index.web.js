@@ -14,7 +14,9 @@ import {
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
+	relatedPlugins,
 	redirectTrialSites,
+	redirectMailPoetUpgrade,
 	scrollTopIfNoHash,
 	navigationIfLoggedIn,
 	maybeRedirectLoggedOut,
@@ -132,6 +134,34 @@ export default function ( router ) {
 		redirectTrialSites,
 		jetpackCanUpdate,
 		plugins,
+		makeLayout,
+		clientRender
+	);
+
+	// This rule needs to preceed the one below, to work
+	// when the site_id parameter is omitted.
+	router(
+		`/${ langParam }/plugins/:plugin/related/:site_id?`,
+		maybeRedirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigationIfLoggedIn,
+		redirectTrialSites,
+		relatedPlugins,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		`/${ langParam }/plugins/mailpoet-business/upgrade/:site_id`,
+		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		redirectTrialSites,
+		redirectMailPoetUpgrade,
 		makeLayout,
 		clientRender
 	);

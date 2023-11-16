@@ -2,7 +2,6 @@ const path = require( 'path' );
 
 /**
  * Return a Webpack loader configuration object for files / images.
- *
  * @param {Object} options Rule.generator options
  * @param options.outputPath Where to output the asset
  * @param options.name Name of the asset

@@ -11,6 +11,9 @@ import {
 } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { SMALL_MEDIA_QUERY } from '../utils';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 const SortingButton = styled( Button )( {
 	alignSelf: 'stretch',
 	flexDirection: 'row-reverse',
@@ -101,6 +104,7 @@ export const SitesSortingDropdown = ( {
 							onClose();
 						} }
 						choices={ choices }
+						onHover={ noop }
 					/>
 				</NavigableMenu>
 			) }

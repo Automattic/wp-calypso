@@ -97,8 +97,8 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	}
 
 	const validSiteIntent =
-		site.options.launchpad_screen === 'full' &&
-		site.options.site_intent &&
+		site.options?.launchpad_screen === 'full' &&
+		site.options?.site_intent &&
 		[ 'link-in-bio' ].includes( site.options.site_intent )
 			? site.options.site_intent
 			: false;

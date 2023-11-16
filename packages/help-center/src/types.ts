@@ -1,4 +1,4 @@
-import type { HelpCenterSite, AnalysisReport } from '@automattic/data-stores';
+import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 export interface Container {
@@ -71,3 +71,59 @@ export interface MessagingAvailability {
 }
 
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
+
+interface Availability {
+	presale: boolean;
+	precancellation: boolean;
+}
+
+export interface ChatAvailability {
+	locale: string;
+	is_user_eligible: boolean;
+	supportLevel:
+		| 'free'
+		| 'personal'
+		| 'personal-with-legacy-chat'
+		| 'starter'
+		| 'premium'
+		| 'pro'
+		| 'business'
+		| 'ecommerce'
+		| 'jetpack-paid'
+		| 'p2-plus';
+	nickname: string;
+	availability: Availability;
+	is_presales_chat_open: boolean;
+	is_precancellation_chat_open: boolean;
+	wapuu_assistant_enabled: boolean;
+}
+
+export interface OtherSupportAvailability {
+	is_user_eligible_for_upwork: boolean;
+	is_user_eligible_for_tickets: boolean;
+	is_user_eligible_for_chat: boolean;
+}
+
+export interface SupportActivity {
+	id: number;
+	status: string;
+	subject: string;
+	timestamp: number;
+	channel: string;
+}
+
+type ResultType =
+	| 'DISABLED'
+	| 'LOADING'
+	| 'OWNED_BY_USER'
+	| 'WPORG'
+	| 'UNKNOWN'
+	| 'NOT_OWNED_BY_USER'
+	| 'UNKNOWN';
+
+export type AnalysisReport = {
+	result: ResultType;
+	site?: SiteDetails | HelpCenterSite;
+	siteURL: string | undefined;
+	isWpcom: boolean;
+};

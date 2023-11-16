@@ -81,7 +81,7 @@ export class PluginAutoUpdateToggle extends Component {
 			);
 		}
 
-		if ( ! site ) {
+		if ( ! site || ! site.options ) {
 			// we don't have enough info
 			return null;
 		}

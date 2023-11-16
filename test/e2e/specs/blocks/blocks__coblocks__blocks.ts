@@ -20,11 +20,12 @@ import { TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;
 
-const features = envToFeatureKey( {
-	...envVariables,
-	// See https://github.com/Automattic/wp-calypso/pull/73052
-	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
-} );
+const features = envToFeatureKey( envVariables );
+// For this spec, all Atomic testing is always edge.
+// See https://github.com/Automattic/wp-calypso/pull/73052
+if ( envVariables.TEST_ON_ATOMIC ) {
+	features.coblocks = 'edge';
+}
 
 /**
  * This spec requires the following:

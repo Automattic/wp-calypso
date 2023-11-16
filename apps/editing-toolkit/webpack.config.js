@@ -20,7 +20,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args.
- *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
  * @param   {Object}  env                           environment options

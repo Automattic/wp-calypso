@@ -134,7 +134,7 @@ class Global_Styles {
 	 * @return \Automattic\Jetpack\Global_Styles\Global_Styles
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 

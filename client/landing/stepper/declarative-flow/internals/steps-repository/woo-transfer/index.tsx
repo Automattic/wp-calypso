@@ -85,6 +85,7 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 			const startTime = new Date().getTime();
 			const totalTimeout = 1000 * 180;
 			const maxFinishTime = startTime + totalTimeout;
+			const maxRetry = 3;
 
 			// Initiate transfer
 			await initiateAtomicTransfer( siteId, 'woo-on-plans' );
@@ -138,6 +139,7 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 
 			// Poll for software status
 			let stopPollingSoftware = false;
+			let pollingSoftwareRetry = 0;
 
 			while ( ! stopPollingSoftware ) {
 				await requestAtomicSoftwareStatus( siteId, 'woo-on-plans' );
@@ -145,21 +147,25 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 
 				const softwareError = getAtomicSoftwareError( siteId, 'woo-on-plans' );
 				if ( softwareError ) {
-					handleTransferFailure( {
-						type: 'transfer',
-						error: softwareError.message || '',
-						code: softwareError.status || '',
-					} );
-					throw new Error( 'software install error' );
+					if ( pollingSoftwareRetry < maxRetry ) {
+						pollingSoftwareRetry++;
+					} else {
+						handleTransferFailure( {
+							type: 'software_install',
+							error: softwareError.message || '',
+							code: softwareError.status || '',
+						} );
+						throw new Error( 'software install error' );
+					}
 				}
 
 				if ( maxFinishTime < new Date().getTime() ) {
 					handleTransferFailure( {
-						type: 'transfer_timeout',
-						error: 'transfer took too long',
+						type: 'software_install_timeout',
+						error: 'software install took too long',
 						code: 'transfer_timeout',
 					} );
-					throw new Error( 'transfer timeout' );
+					throw new Error( 'software_install timeout' );
 				}
 
 				stopPollingSoftware = !! softwareStatus?.applied;

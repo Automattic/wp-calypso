@@ -4,12 +4,13 @@ import {
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/route';
-import { managePurchase } from 'calypso/me/purchases/paths';
 import {
 	EXTERNAL_PRODUCTS_LIST,
+	INDIRECT_CHECKOUT_PRODUCTS_LIST,
 	PURCHASE_FLOW_UPSELLS_MATRIX,
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	PurchaseURLCallback,
@@ -19,7 +20,6 @@ import type {
 
 /**
  * build the URL to checkout page for the enviroment and products.
- *
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
@@ -30,6 +30,8 @@ export function buildCheckoutURL(
 	urlQueryArgs: QueryArgs = {}
 ): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
+	// Since purchases of multiple products are allowed, we need to pass all products separated
+	// by comma in the URL.
 	const productsString = productsArray.join( ',' );
 
 	if ( isJetpackCloud() ) {
@@ -71,21 +73,20 @@ export function buildCheckoutURL(
 		);
 	}
 
-	// If there is not siteSlug, we need to redirect the user to the site selection
-	// step of the flow. Since purchases of multiple products are allowed, we need
-	// to pass all products separated by comma in the URL.
+	// If there is not siteSlug, we need to redirect the user to the site selection step of the
+	// flow (`/checkout/:productSlug` (without a site) will open site selection, if a site has not already been selected).
+	// The Jetpack Search product executes this flow (because price is based on the site's number of posts).
 	const path = siteSlug
 		? `/checkout/${ siteSlug }/${ productsString }`
-		: `/jetpack/connect/${ productsString }`;
+		: `/checkout/${ productsString }`;
 
 	return isJetpackCloud()
-		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
+		? addQueryArgs( urlQueryArgs, `${ host }${ path }` )
 		: addQueryArgs( urlQueryArgs, path );
 }
 
 /**
  * Build the URL to the upsell page.
- *
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
@@ -121,7 +122,6 @@ export const buildUpsellURL = (
 
 /**
  * Get the function for generating the URL for the product checkout page
- *
  * @param {string} siteSlug Slug of the site
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url
  * @param {string} locale Selected locale
@@ -149,8 +149,13 @@ export const getPurchaseURLCallback =
 			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 		}
 		if ( purchase ) {
-			const relativePath = managePurchase( siteSlug, purchase.id );
+			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.id );
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
+		}
+
+		// Visit the indirect checkout URL to determine the purchasable product on another page.
+		if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( product.productSlug ) ) {
+			return product.indirectCheckoutUrl?.replace( '{siteSlug}', siteSlug ) || '';
 		}
 
 		let url;

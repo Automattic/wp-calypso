@@ -1,19 +1,18 @@
-import { isEnabled } from '@automattic/calypso-config';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import TimeSince from 'calypso/components/time-since';
-import useSubscriptionPlans from '../../hooks/use-subscription-plans';
+import { useSubscriptionPlans } from '../../hooks';
 import { Subscriber } from '../../types';
 import { SubscriberPopover } from '../subscriber-popover';
 import { SubscriberProfile } from '../subscriber-profile';
 
-type SubscriberRowProps = {
+export type SubscriberRowProps = {
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
 	onView: ( subscriber: Subscriber ) => void;
 	subscriber: Subscriber;
 };
 
 export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: SubscriberRowProps ) => {
-	const { avatar, display_name, email_address, date_subscribed, open_rate } = subscriber;
+	const { avatar, display_name, email_address, url, date_subscribed, open_rate } = subscriber;
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
 
 	return (
@@ -22,12 +21,17 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 				<FormCheckbox />
 			</div>
 			<span className="subscriber-list__profile-column" role="cell">
-				<SubscriberProfile avatar={ avatar } displayName={ display_name } email={ email_address } />
+				<SubscriberProfile
+					avatar={ avatar }
+					displayName={ display_name }
+					email={ email_address }
+					url={ url }
+				/>
 			</span>
 			<span className="subscriber-list__subscription-type-column" role="cell">
 				{ subscriptionPlans &&
 					subscriptionPlans.map( ( subscriptionPlan, index ) => (
-						<div key={ index }>{ subscriptionPlan }</div>
+						<div key={ index }>{ subscriptionPlan.plan }</div>
 					) ) }
 			</span>
 			<span className="subscriber-list__rate-column hidden" role="cell">
@@ -40,7 +44,7 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 				<SubscriberPopover
 					onView={ () => onView( subscriber ) }
 					onUnsubscribe={ () => onUnsubscribe( subscriber ) }
-					isViewButtonVisible={ isEnabled( 'subscribers/view-subscriber-details' ) }
+					isViewButtonVisible
 				/>
 			</span>
 		</li>

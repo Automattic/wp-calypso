@@ -19,7 +19,6 @@ const debug = debugFactory( 'calypso:desktop' );
 const DesktopListeners = {
 	/**
 	 * Bootstraps network connection status change handler.
-	 *
 	 * @param {Object} reduxStore The redux store.
 	 */
 	init: function ( reduxStore ) {

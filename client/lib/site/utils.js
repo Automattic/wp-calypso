@@ -8,7 +8,6 @@ export function userCan( capability, site ) {
 
 /**
  * site's timezone getter
- *
  * @param   {Object} site - site object
  * @returns {string} timezone
  */
@@ -18,7 +17,6 @@ export function timezone( site ) {
 
 /**
  * site's gmt_offset getter
- *
  * @param   {Object} site - site object
  * @returns {string} gmt_offset
  */
@@ -93,7 +91,6 @@ export function isMainNetworkSite( site ) {
 
 /**
  * Checks whether a site has a custom mapped URL.
- *
  * @param   {undefined|null|{domain?: string; wpcom_url?: string}}   site Site object
  * @returns {boolean|null}      Whether site has custom domain
  */
@@ -106,12 +103,11 @@ export function hasCustomDomain( site ) {
 }
 
 export function isModuleActive( site, moduleId ) {
-	return site.options.active_modules && site.options.active_modules.indexOf( moduleId ) > -1;
+	return site.options?.active_modules?.includes( moduleId );
 }
 
 /**
  * Returns the WordPress.com URL of a site (simple or Atomic)
- *
  * @param {Object} site Site object
  * @returns {?string} WordPress.com URL
  */
@@ -126,7 +122,6 @@ export function getUnmappedUrl( site ) {
 /**
  * Returns a filtered array of WordPress.com site IDs where a Jetpack site
  * exists in the set of sites with the same URL.
- *
  * @param {Array} siteList Array of site objects
  * @returns {number[]} Array of site IDs with URL collisions
  */

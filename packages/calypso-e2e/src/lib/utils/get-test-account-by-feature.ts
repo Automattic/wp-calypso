@@ -1,10 +1,19 @@
 import defaultCriteria from './criteria-for-test-accounts';
 import type { TestAccountName } from '../../secrets';
-import type { JetpackTarget, SupportedEnvVariables } from '../../types/env-variables.types';
+import type {
+	AtomicVariation,
+	JetpackTarget,
+	SupportedEnvVariables,
+} from '../../types/env-variables.types';
 
 export type TestAccountEnvVariables = Pick<
 	SupportedEnvVariables,
-	'GUTENBERG_EDGE' | 'GUTENBERG_NIGHTLY' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC' | 'JETPACK_TARGET'
+	| 'GUTENBERG_EDGE'
+	| 'GUTENBERG_NIGHTLY'
+	| 'COBLOCKS_EDGE'
+	| 'TEST_ON_ATOMIC'
+	| 'JETPACK_TARGET'
+	| 'ATOMIC_VARIATION'
 >;
 
 type Env = 'edge' | 'stable' | 'nightly';
@@ -18,6 +27,7 @@ export type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
 	siteType: SiteType;
 	variant?: Variant;
 	jetpackTarget?: JetpackTarget;
+	atomicVariation?: AtomicVariation;
 };
 export type FeatureCriteria = FeatureKey & { accountName: TestAccountName };
 type FeatureMap = Map< string, TestAccountName >;
@@ -123,6 +133,13 @@ export function envToFeatureKey( envVariables: TestAccountEnvVariables ): Featur
 		jetpackTarget = envVariables.JETPACK_TARGET as JetpackTarget;
 	}
 
+	let atomicVariation: AtomicVariation | undefined;
+	if ( ! envVariables.TEST_ON_ATOMIC || envVariables.ATOMIC_VARIATION === 'default' ) {
+		atomicVariation = undefined;
+	} else {
+		atomicVariation = envVariables.ATOMIC_VARIATION;
+	}
+
 	let siteType: SiteType;
 	if ( envVariables.JETPACK_TARGET === 'remote-site' ) {
 		// All remote sites have similar handling to atomic sites in places like the editor,
@@ -154,5 +171,6 @@ export function envToFeatureKey( envVariables: TestAccountEnvVariables ): Featur
 		gutenberg: gutenbergVersionType,
 		siteType: siteType,
 		jetpackTarget: jetpackTarget,
+		atomicVariation: atomicVariation,
 	};
 }

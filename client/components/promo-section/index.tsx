@@ -5,7 +5,7 @@ import type { Props as PromoCardCtaProps } from './promo-card/cta';
 import type { TranslateResult } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
 
-interface PromoSectionCardProps extends PromoCardProps {
+export interface PromoSectionCardProps extends PromoCardProps {
 	body: string | TranslateResult;
 	actions?: PromoCardCtaProps;
 }

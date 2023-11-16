@@ -21,22 +21,25 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 const PluginSectionContainer = styled.div`
 	display: flex;
 	flex-direction: row;
-	width: 720px;
+	width: 100%;
 	box-sizing: border-box;
 	align-items: center;
-	padding: 24px 0 24px 0;
+	gap: 16px;
+	padding: 24px;
+	border-radius: 2px;
+	border: 1px solid var( --color-border-subtle );
+	flex-wrap: wrap;
 
 	div {
 		min-width: auto;
 	}
 
-	@media ( max-width: 740px ) {
-		width: 500px;
-		gap: 16px;
+	@media ( min-width: 782px ) {
+		width: 720px;
 	}
 
-	@media ( max-width: 520px ) {
-		width: 280px;
+	@media ( min-width: 480px ) {
+		padding: 20px 25px;
 	}
 `;
 
@@ -44,10 +47,9 @@ const PluginSectionContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
-	margin: 0 16px;
-
-	@media ( max-width: 740px ) {
-		margin: 0;
+	flex-basis: 100%;
+	@media ( min-width: 480px ) {
+		flex-basis: initial;
 	}
 `;
 
@@ -56,6 +58,7 @@ const PluginSectionName = styled.div`
 	font-weight: 500;
 	line-height: 24px;
 	color: var( --studio-gray-100 );
+	flex-grow: 1;
 `;
 
 const PluginSectionExpirationDate = styled.div`
@@ -77,7 +80,9 @@ const PluginButton = styled( Button )`
 
 const PluginIcon = styled.img`
 	border-radius: 10px;
-	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
+	box-shadow:
+		0px 15px 20px rgba( 0, 0, 0, 0.04 ),
+		0px 13px 10px rgba( 0, 0, 0, 0.03 ),
 		0px 6px 6px rgba( 0, 0, 0, 0.02 );
 `;
 

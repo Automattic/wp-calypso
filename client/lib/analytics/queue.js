@@ -21,7 +21,11 @@ function clear() {
 		return; // Not possible.
 	}
 
-	window.localStorage.removeItem( lsKey() );
+	try {
+		window.localStorage.removeItem( lsKey() );
+	} catch {
+		// Do nothing.
+	}
 }
 
 function get() {
@@ -29,12 +33,16 @@ function get() {
 		return []; // Not possible.
 	}
 
-	let items = window.localStorage.getItem( lsKey() );
+	try {
+		let items = window.localStorage.getItem( lsKey() );
 
-	items = items ? JSON.parse( items ) : [];
-	items = Array.isArray( items ) ? items : [];
+		items = items ? JSON.parse( items ) : [];
+		items = Array.isArray( items ) ? items : [];
 
-	return items;
+		return items;
+	} catch {
+		return [];
+	}
 }
 
 function runTrigger( moduleName, trigger, ...args ) {
@@ -50,7 +58,6 @@ function runTrigger( moduleName, trigger, ...args ) {
 
 /**
  * Add an item to the analytics queue.
- *
  * @param {string} moduleName the name of the module where the queued method exists, e.g. `signup`.
  * See the `modules` constant at the top of this file (`lib/analytics/queue.js`).
  * @param {string} trigger the exported function in the chosen module to be run, e.g. `recordSignupStart` in `signup`.
@@ -62,14 +69,19 @@ export function addToQueue( moduleName, trigger, ...args ) {
 		return runTrigger( moduleName, trigger, ...args );
 	}
 
-	let items = get();
-	const newItem = { moduleName, trigger, args };
+	try {
+		let items = get();
+		const newItem = { moduleName, trigger, args };
 
-	items.push( newItem );
-	items = items.slice( -100 ); // Upper limit.
+		items.push( newItem );
+		items = items.slice( -100 ); // Upper limit.
 
-	queueDebug( 'Adding new item to queue.', newItem );
-	window.localStorage.setItem( lsKey(), JSON.stringify( items ) );
+		queueDebug( 'Adding new item to queue.', newItem );
+		window.localStorage.setItem( lsKey(), JSON.stringify( items ) );
+	} catch {
+		// If an error happens while enqueuing, trigger it now.
+		return runTrigger( moduleName, trigger, ...args );
+	}
 }
 
 /**

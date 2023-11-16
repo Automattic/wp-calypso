@@ -6,8 +6,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
@@ -18,7 +20,10 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_STATS_PRODUCTS,
 	getPlan,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
+	JETPACK_CREATOR_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -42,7 +47,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		useSelector( ( state ) => getSiteProducts( state, siteId ) )
 			?.map( ( { productSlug } ) => productSlug )
 			.filter( ( productSlug ) =>
-				( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug )
+				( [ ...JETPACK_PRODUCTS_LIST ] as ReadonlyArray< string > ).includes( productSlug )
 			) ?? [];
 
 	// Directly and indirectly owned products
@@ -57,6 +62,15 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
 	}
 
+	// If Jetpack Creator is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_CREATOR_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_CREATOR_PRODUCTS ];
+	}
+
 	const backupProductsToShow: string[] = [];
 
 	const ownsBackupT0 =
@@ -64,7 +78,8 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T0_MONTHLY );
 	const ownsBackupT1 =
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_MONTHLY );
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_MONTHLY ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY );
 	const ownsBackupT2 =
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
@@ -73,6 +88,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Otherwise the one owned will be displayed via purchasedProducts.
 	if ( ! ownsBackupT0 && ! ownsBackupT1 && ! ownsBackupT2 ) {
 		backupProductsToShow.push(
+			PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 			PRODUCT_JETPACK_BACKUP_T1_MONTHLY
 		);
@@ -122,12 +138,23 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		availableProducts = [ ...availableProducts, ...JETPACK_BOOST_PRODUCTS ];
 	}
 
+	// If Jetpack Stats is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_STATS_PRODUCTS ];
+	}
+
 	const socialProductsToShow: string[] = [];
 
 	const ownsSocialBasic =
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY );
 	const ownsSocialAdvanced =
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY );
 
@@ -135,6 +162,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Otherwise the one owned will be displayed via purchasedProducts.
 	if ( ! ownsSocialBasic && ! ownsSocialAdvanced ) {
 		socialProductsToShow.push(
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_ADVANCED,
 			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY
 		);

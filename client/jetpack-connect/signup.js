@@ -8,7 +8,7 @@
 
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { Button, Card } from '@wordpress/components';
+import { Button, Card, Modal } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes } from 'lodash';
@@ -49,6 +49,8 @@ import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
+import { WooLoader } from './woo-loader';
+import { CreatingYourAccountStage } from './woo-loader-stages';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 const noop = () => {};
@@ -172,7 +174,6 @@ export class JetpackSignup extends Component {
 
 	/**
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
-	 *
 	 * @see client/signup/steps/user/index.jsx
 	 * @param {string} service      The name of the social service
 	 * @param {string} access_token An OAuth2 acccess token
@@ -190,12 +191,14 @@ export class JetpackSignup extends Component {
 
 	/**
 	 * Handle user creation result
-	 *
 	 * @param {Object} _             …
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
 	 */
 	handleUserCreationSuccess = ( { username, bearerToken } ) => {
+		if ( this.isWooCoreProfiler() ) {
+			this.props.recordTracksEvent( 'calypso_jpc_wc_coreprofiler_create_account_success' );
+		}
 		this.setState( {
 			newUsername: username,
 			bearerToken,
@@ -205,7 +208,6 @@ export class JetpackSignup extends Component {
 
 	/**
 	 * Handle error on user creation
-	 *
 	 * @param {?Object} error Error result
 	 */
 	handleUserCreationError = ( error ) => {
@@ -387,7 +389,7 @@ export class JetpackSignup extends Component {
 				header = wooDna.getServiceName();
 				if ( wooDna.getFlowName() === 'woodna:woocommerce-payments' ) {
 					subHeader = translate(
-						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments'
 					);
 				} else {
 					subHeader = translate( 'Enter your email address to get started' );
@@ -455,8 +457,28 @@ export class JetpackSignup extends Component {
 		if ( this.getWooDnaConfig().isWooDnaFlow() ) {
 			return this.renderWooDna();
 		}
-		const { isCreatingAccount } = this.state;
+		const { isCreatingAccount, newUsername, bearerToken } = this.state;
 		const isWooCoreProfiler = this.isWooCoreProfiler();
+
+		const isLogging = newUsername && bearerToken;
+		if ( isWooCoreProfiler && ( isCreatingAccount || isLogging ) ) {
+			return (
+				// Wrap the loader in a modal to show it in full screen
+				<Modal
+					open
+					title=""
+					overlayClassName="jetpack-connect-woocommerce-loader__modal-overlay"
+					className="jetpack-connect-woocommerce-loader__modal"
+					shouldCloseOnClickOutside={ false }
+					shouldCloseOnEsc={ false }
+					isDismissible={ false }
+				>
+					<WooLoader stages={ [ CreatingYourAccountStage ] } />
+					{ this.renderLoginUser() }
+				</Modal>
+			);
+		}
+
 		return (
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }

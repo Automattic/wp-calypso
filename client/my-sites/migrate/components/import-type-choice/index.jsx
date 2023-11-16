@@ -1,8 +1,8 @@
+import { Badge } from '@automattic/components';
 import classNames from 'classnames';
 import { findKey, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import Badge from 'calypso/components/badge';
 import FormRadio from 'calypso/components/forms/form-radio';
 
 import './style.scss';

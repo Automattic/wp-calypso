@@ -12,7 +12,6 @@ export const apiTransformer = ( data ) => data.connected_applications;
 
 /**
  * Dispatches a request to fetch connected applications of the current user
- *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
@@ -28,7 +27,6 @@ export const requestConnectedApplications = ( action ) =>
 
 /**
  * Dispatches a user connected applications receive action when the request succeeded.
- *
  * @param   {Object} action Redux action
  * @param   {Object} apps   Connected applications
  * @returns {Object} Dispatched user connected applications receive action

@@ -34,6 +34,7 @@ import type {
 	CheckoutStepGroupState,
 	CheckoutStepCompleteStatus,
 	CheckoutStepGroupStore,
+	StepChangedCallback,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
@@ -101,22 +102,28 @@ function createCheckoutStepGroupActions(
 	onStateChange: () => void
 ): CheckoutStepGroupActions {
 	const setActiveStepNumber = ( stepNumber: number ) => {
-		if ( stepNumber < 1 ) {
-			throw new Error( `Cannot set step number to '${ stepNumber }' because it is too low` );
-		}
+		debug( `setting active step number to ${ stepNumber }` );
 		if ( stepNumber > state.totalSteps && state.totalSteps === 0 ) {
 			throw new Error(
 				`Cannot set step number to '${ stepNumber }' because the total number of steps is 0`
 			);
 		}
 		if ( stepNumber > state.totalSteps ) {
+			debug( `setting active step number to ${ stepNumber }; using highest step instead` );
 			stepNumber = state.totalSteps;
 		}
 		if ( stepNumber === state.activeStepNumber ) {
+			debug( `setting active step number to ${ stepNumber }; step already active` );
 			return;
 		}
 		state.activeStepNumber = stepNumber;
 		onStateChange();
+	};
+
+	const validateActiveStepNumber = () => {
+		if ( state.activeStepNumber > state.totalSteps ) {
+			state.activeStepNumber = state.totalSteps;
+		}
 	};
 
 	const setTotalSteps = ( stepCount: number ) => {
@@ -127,11 +134,24 @@ function createCheckoutStepGroupActions(
 			return;
 		}
 		state.totalSteps = stepCount;
+		validateActiveStepNumber();
 		onStateChange();
 	};
 
+	/**
+	 * Update the current status of which steps are complete and which are
+	 * incomplete.
+	 *
+	 * Remember that a complete step can be active and an incomplete step can be
+	 * inactive. They are not connected.
+	 *
+	 * This merges the new status with the current status, so it's important to
+	 * explicitly disable any step that you want to be incomplete.
+	 */
 	const setStepCompleteStatus = ( newStatus: CheckoutStepCompleteStatus ) => {
-		state.stepCompleteStatus = newStatus;
+		const mergedStatus = { ...state.stepCompleteStatus, ...newStatus };
+		debug( `setting step complete status to '${ JSON.stringify( mergedStatus ) }'` );
+		state.stepCompleteStatus = mergedStatus;
 		onStateChange();
 	};
 
@@ -156,6 +176,7 @@ function createCheckoutStepGroupActions(
 	};
 
 	const setStepComplete = async ( stepId: string ) => {
+		debug( `attempting to set step complete: '${ stepId }'` );
 		const stepNumber = getStepNumberFromId( stepId );
 		if ( ! stepNumber ) {
 			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step complete.` );
@@ -165,6 +186,9 @@ function createCheckoutStepGroupActions(
 		for ( let step = 1; step <= stepNumber; step++ ) {
 			if ( ! state.stepCompleteStatus[ step ] ) {
 				const didStepComplete = await getStepCompleteCallback( step )();
+				debug(
+					`attempting to set step complete: '${ stepId }'; step ${ step } result was ${ didStepComplete }`
+				);
 				if ( ! didStepComplete ) {
 					return false;
 				}
@@ -238,8 +262,6 @@ export const CheckoutSummaryArea = ( {
 	);
 };
 
-export const CheckoutSummaryCard = styled.div``;
-
 function isElementAStep( el: ReactNode ): boolean {
 	const childStep = el as { type?: { isCheckoutStep?: boolean } };
 	return !! childStep?.type?.isCheckoutStep;
@@ -270,7 +292,7 @@ export const CheckoutStepGroupInner = ( {
 		'active step',
 		activeStepNumber,
 		'step complete status',
-		stepCompleteStatus,
+		JSON.stringify( stepCompleteStatus ),
 		'total steps',
 		totalSteps
 	);
@@ -283,7 +305,7 @@ export const CheckoutStepGroupInner = ( {
 				}
 				if ( isElementAStep( child ) ) {
 					stepNumber = nextStepNumber || 0;
-					nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
+					nextStepNumber = stepNumber === totalSteps ? 0 : stepNumber + 1;
 					const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 					const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 					return (
@@ -316,10 +338,14 @@ function CheckoutStepGroupWrapper( {
 	children,
 	className,
 	loadingContent,
+	loadingHeader,
+	onStepChanged,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
+	loadingHeader?: ReactNode;
+	onStepChanged?: StepChangedCallback;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -345,8 +371,21 @@ function CheckoutStepGroupWrapper( {
 		} );
 	}, [ store ] );
 
-	// Change the step if the url changes
-	useChangeStepNumberForUrl( store.actions.setActiveStepNumber );
+	const previousStepNumber = useRef( store.state.activeStepNumber );
+	const activePaymentMethod = usePaymentMethod();
+	// Call the `onStepChanged` callback when a step changes.
+	useEffect( () => {
+		if ( store.state.activeStepNumber !== previousStepNumber.current ) {
+			onStepChanged?.( {
+				stepNumber: store.state.activeStepNumber,
+				previousStepNumber: previousStepNumber.current,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+			} );
+			previousStepNumber.current = store.state.activeStepNumber;
+		}
+		// We only want to run this when the step changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ store.state.activeStepNumber ] );
 
 	// WordPress.com checkout session activity.
 	const classNames = joinClasses( [
@@ -359,6 +398,7 @@ function CheckoutStepGroupWrapper( {
 		return (
 			<CheckoutWrapper className={ classNames }>
 				<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
+					{ loadingHeader }
 					{ loadingContent ? loadingContent : <LoadingContent /> }
 				</MainContentWrapper>
 			</CheckoutWrapper>
@@ -379,6 +419,7 @@ function CheckoutStepGroupWrapper( {
 export const CheckoutStep = ( {
 	activeStepContent,
 	activeStepFooter,
+	activeStepHeader,
 	completeStepContent,
 	titleContent,
 	stepId,
@@ -392,8 +433,7 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
-	const { state, actions } = useContext( CheckoutStepGroupContext );
-	const { stepCompleteStatus } = state;
+	const { actions } = useContext( CheckoutStepGroupContext );
 	const {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -403,12 +443,11 @@ export const CheckoutStep = ( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { onPageLoadError, onStepChanged } = useContext( CheckoutContext );
+	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
-		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
+		setStepCompleteStatus( { [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
-	const activePaymentMethod = usePaymentMethod();
 
 	// This is the callback called when you press "Continue" on a step.
 	const goToNextStep = async () => {
@@ -417,16 +456,8 @@ export const CheckoutStep = ( {
 		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
 		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
 		setThisStepCompleteStatus( completeResult );
-		if ( completeResult ) {
-			onStepChanged?.( {
-				stepNumber: nextStepNumber,
-				previousStepNumber: stepNumber,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-			} );
-			if ( nextStepNumber ) {
-				saveStepNumberToUrl( nextStepNumber );
-				setActiveStepNumber( nextStepNumber );
-			}
+		if ( completeResult && nextStepNumber !== null ) {
+			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
 		return completeResult;
@@ -465,6 +496,7 @@ export const CheckoutStep = ( {
 			}
 			activeStepContent={
 				<>
+					{ activeStepHeader }
 					{ activeStepContent }
 					{ activeStepFooter }
 				</>
@@ -490,7 +522,9 @@ export const CheckoutStepAreaWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		margin-bottom: 0;
+		&.checkout__step-wrapper--last-step {
+			margin-bottom: 0;
+		}
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -521,8 +555,6 @@ export const SubmitButtonWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px 0px 24px 40px;
-
 		.checkout-button {
 			width: 100%;
 		}
@@ -531,8 +563,12 @@ export const SubmitButtonWrapper = styled.div`
 			position: relative;
 		}
 
-		.rtl & {
-			padding: 24px 40px 24px 0px;
+		.checkout__step-wrapper & {
+			padding: 24px 0px 24px 40px;
+
+			.rtl & {
+				padding: 24px 40px 24px 0px;
+			}
 		}
 	}
 `;
@@ -546,7 +582,7 @@ export const SubmitFooterWrapper = styled.div`
 	}
 `;
 
-export function CheckoutStepArea( {
+function CheckoutStepArea( {
 	children,
 	className,
 }: PropsWithChildren< {
@@ -570,15 +606,20 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader,
 	submitButtonFooter,
 	disableSubmitButton,
+	submitButton,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
+	submitButton?: ReactNode;
 } ) {
 	const { state } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps } = state;
+	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
+		( isComplete ) => isComplete === true
+	);
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const onSubmitButtonLoadError = useCallback(
 		( error: Error ) => onPageLoadError?.( 'submit_button_load', error ),
@@ -589,14 +630,32 @@ export function CheckoutFormSubmit( {
 		customPropertyForSubmitButtonHeight
 	);
 
+	const isDisabled = ( () => {
+		if ( disableSubmitButton ) {
+			return true;
+		}
+		if ( activeStepNumber === 0 && areAllStepsComplete ) {
+			// We enable the submit button if no step is active and all the steps are
+			// complete so that we have the option of marking all steps as complete.
+			return false;
+		}
+		if ( isThereAnotherNumberedStep ) {
+			// If there is another step after the active one, we disable the submit
+			// button so you have to complete the step first.
+			return true;
+		}
+		return false;
+	} )();
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
-			<CheckoutSubmitButton
-				validateForm={ validateForm }
-				disabled={ isThereAnotherNumberedStep || disableSubmitButton }
-				onLoadError={ onSubmitButtonLoadError }
-			/>
+			{ submitButton || (
+				<CheckoutSubmitButton
+					validateForm={ validateForm }
+					disabled={ isDisabled }
+					onLoadError={ onSubmitButtonLoadError }
+				/>
+			) }
 			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
 		</SubmitButtonWrapper>
 	);
@@ -1031,92 +1090,30 @@ Stepper.propTypes = {
 	isActive: PropTypes.bool,
 };
 
-function saveStepNumberToUrl( stepNumber: number ) {
-	if ( ! window?.history || ! window?.location ) {
-		return;
-	}
-	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
-	if ( window.location.hash === newHash ) {
-		return;
-	}
-	const newUrl = window.location.hash
-		? window.location.href.replace( window.location.hash, newHash )
-		: window.location.href + newHash;
-	debug( 'updating url to', newUrl );
-	// We've seen this call to replaceState fail sometimes when the current URL
-	// is somehow different ("A history state object with URL
-	// 'https://wordpress.com/checkout/example.com#step2' cannot be created
-	// in a document with origin 'https://wordpress.com' and URL
-	// 'https://www.username@wordpress.com/checkout/example.com'.") so we
-	// wrap this in try/catch. It's not critical that the step number is saved to
-	// the URL.
-	try {
-		window.history.replaceState( null, '', newUrl );
-	} catch ( error ) {
-		debug( 'changing the url failed' );
-		return;
-	}
-	// Modifying history does not trigger a hashchange event which is what
-	// composite-checkout uses to change its current step, so we must fire one
-	// manually.
-	//
-	// We use try/catch because we support IE11 and that browser does not include
-	// HashChange.
-	try {
-		const event = new HashChangeEvent( 'hashchange' );
-		window.dispatchEvent( event );
-	} catch ( error ) {
-		debug( 'hashchange firing failed' );
-	}
-}
-
-function getStepNumberFromUrl() {
-	const hashValue = window.location?.hash;
-	if ( hashValue?.startsWith?.( '#step' ) ) {
-		const parts = hashValue.split( '#step' );
-		const stepNumber = parts.length > 1 ? parts[ 1 ] : '1';
-		return parseInt( stepNumber, 10 );
-	}
-	return 1;
-}
-
-function useChangeStepNumberForUrl( setActiveStepNumber: ( stepNumber: number ) => void ) {
-	// If there is a step number on page load, remove it
-	useEffect( () => {
-		const newStepNumber = getStepNumberFromUrl();
-		if ( newStepNumber ) {
-			saveStepNumberToUrl( 1 );
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
-
-	useEffect( () => {
-		let isSubscribed = true;
-		window.addEventListener?.( 'hashchange', () => {
-			const newStepNumber = getStepNumberFromUrl();
-			debug( 'step number in url changed to', newStepNumber );
-			isSubscribed && setActiveStepNumber( newStepNumber );
-		} );
-		return () => {
-			isSubscribed = false;
-		};
-	}, [ setActiveStepNumber ] );
-}
-
 export function CheckoutStepGroup( {
 	children,
 	areStepsActive,
 	stepAreaHeader,
 	store,
+	onStepChanged,
 	loadingContent,
+	loadingHeader,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
+	onStepChanged?: StepChangedCallback;
 	loadingContent?: ReactNode;
+	loadingHeader?: ReactNode;
 } > ) {
 	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
-		<CheckoutStepGroupWrapper store={ stepGroupStore } loadingContent={ loadingContent }>
+		<CheckoutStepGroupWrapper
+			store={ stepGroupStore }
+			loadingContent={ loadingContent }
+			loadingHeader={ loadingHeader }
+			onStepChanged={ onStepChanged }
+		>
 			{ stepAreaHeader }
 			<CheckoutStepArea>
 				<CheckoutStepGroupInner areStepsActive={ areStepsActive }>

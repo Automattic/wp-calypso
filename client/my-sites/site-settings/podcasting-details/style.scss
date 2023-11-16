@@ -1,38 +1,3 @@
-// Podcasting section/link on Writing settings page
-
-.podcasting-details__link {
-	&:not(.is-enabled) {
-		.podcasting-details__link-button {
-			padding-left: 24px;
-			padding-right: 24px;
-		}
-	}
-
-	.podcasting-details__link-action-container {
-		display: flex;
-		align-items: flex-start;
-
-		.podcasting-details__link-info {
-			flex-grow: 1;
-			color: var(--color-text);
-		}
-
-		.podcasting-details__link-button {
-			color: var(--color-neutral-50);
-			font-weight: 600;
-			flex-shrink: 0;
-			margin-left: 12px;
-			// For viewports/translations when the text is taller than the button
-			align-self: center;
-		}
-	}
-
-	.podcasting-details__link-feed-label {
-		font-weight: 600;
-		margin-bottom: 5px;
-	}
-}
-
 .podcasting-details__publish-wrapper {
 	display: flex;
 	align-items: flex-start;
@@ -64,10 +29,6 @@
 		color: var(--color-neutral-70);
 		text-decoration: underline;
 	}
-
-	.podcasting-details__support-link {
-		margin-left: 4px;
-	}
 }
 
 .podcasting-details__publish-button {
@@ -77,24 +38,6 @@
 	margin-left: 12px;
 	// For viewports/translations when the text is taller than the button
 	align-self: center;
-}
-
-.podcasting-details__link.is-enabled {
-	.podcasting-details__link-feed {
-		margin-top: 20px;
-	}
-}
-
-@include breakpoint-deprecated( "<800px" ) {
-	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
-	.podcasting-details__publish-wrapper {
-		display: block;
-		text-align: right;
-	}
-	.podcasting-details__link.is-enabled .podcasting-details__link-info,
-	.podcasting-details__publish-notice {
-		margin-bottom: 8px;
-	}
 }
 
 // Podcasting details page
@@ -152,15 +95,6 @@
 
 .podcasting-details__private-site,
 .podcasting-details__no-permissions {
-	.site-settings .podcasting-details__link & {
-		p {
-			margin-bottom: 0.75em;
-		}
-		// Necessary to state this again for specificity
-		p:last-child {
-			margin-bottom: 0;
-		}
-	}
 	p:last-child {
 		margin-bottom: 0;
 	}
@@ -175,9 +109,4 @@
 	.button {
 		margin: 12px 0 6px;
 	}
-}
-
-.podcasting-details__support-link {
-	text-decoration: underline;
-	white-space: nowrap;
 }

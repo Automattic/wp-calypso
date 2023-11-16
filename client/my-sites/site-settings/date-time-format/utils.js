@@ -7,7 +7,6 @@ import moment from 'moment-timezone';
  * or as a timezone identifier ("Europe/London").
  * In the first case, the date-time must be adjusted by the UTC offset converted in minutes;
  * in the latter, it's enough to use the tz() method provided by Moment.js.
- *
  * @see http://momentjs.com/docs/#/manipulating/utc-offset/
  * @see http://momentjs.com/timezone/docs/#/using-timezones/parsing-in-zone/
  * @param {string} timezoneString A timezone string.
@@ -25,7 +24,6 @@ export function getLocalizedDate( timezoneString ) {
  *
  * The "S" case is an exception, since it's only used in conjunction with "j":
  * PHP `date( 'jS' )` returns "1st", which is equivalent to `moment().format( 'Do' )`)
- *
  * @see http://php.net/manual/en/function.date.php#refsect1-function.date-parameters
  * @see http://momentjs.com/docs/#/displaying/format/
  * @type {Object}
@@ -81,7 +79,6 @@ const phpToMomentMapping = {
 
 /**
  * Convert a PHP datetime format string into a Moment.js one.
- *
  * @param {Object} momentDate A Moment.js object of the current date and time.
  * @param {string} formatString A PHP datetime format string
  * @returns {string} A Moment.js datetime format string

@@ -1,12 +1,13 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Gridicon } from '@automattic/components';
+import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
-import Badge from 'calypso/components/badge';
 import FormattedDate from 'calypso/components/formatted-date';
+import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import {
@@ -14,12 +15,14 @@ import {
 	LicenseFilter,
 	LicenseType,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import LicenseActions from './license-actions';
+
 import './style.scss';
 
 interface Props {
@@ -56,6 +59,8 @@ export default function LicensePreview( {
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
+
+	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -101,6 +106,9 @@ export default function LicensePreview( {
 			);
 		}
 	}, [] );
+
+	const isSiteAtomic =
+		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
 	return (
 		<div
@@ -184,9 +192,20 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					<Button onClick={ open } className="license-preview__toggle" borderless>
-						<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
-					</Button>
+					{ isSiteAtomic ? (
+						<LicenseActions
+							siteUrl={ siteUrl }
+							licenseKey={ licenseKey }
+							product={ product }
+							attachedAt={ attachedAt }
+							revokedAt={ revokedAt }
+							licenseType={ licenseType }
+						/>
+					) : (
+						<Button onClick={ open } className="license-preview__toggle" borderless>
+							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
+						</Button>
+					) }
 				</div>
 			</LicenseListItem>
 

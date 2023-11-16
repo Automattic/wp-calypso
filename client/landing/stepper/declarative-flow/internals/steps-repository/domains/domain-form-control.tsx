@@ -1,4 +1,9 @@
-import { DOMAIN_UPSELL_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import {
+	DOMAIN_UPSELL_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
+	isDomainUpsellFlow,
+	LINK_IN_BIO_TLD_FLOW,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
@@ -93,6 +98,10 @@ export function DomainFormControl( {
 		includeWordPressDotCom = false;
 	}
 
+	if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
+		includeWordPressDotCom = false;
+	}
+
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
@@ -108,6 +117,10 @@ export function DomainFormControl( {
 	};
 
 	const getSideContent = () => {
+		if ( HUNDRED_YEAR_PLAN_FLOW === flow ) {
+			return null;
+		}
+
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
 				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
@@ -196,7 +209,7 @@ export function DomainFormControl( {
 			return false;
 		}
 
-		return [ DOMAIN_UPSELL_FLOW ].includes( flow );
+		return isDomainUpsellFlow( flow );
 	};
 
 	const renderDomainForm = () => {
@@ -219,8 +232,6 @@ export function DomainFormControl( {
 				// filter before counting length
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
-				// when it's provided via the query arg, follow the convention of /start/domains to show it
-				initialState.hideInitialQuery = ! domainSearchInQuery;
 			}
 		}
 

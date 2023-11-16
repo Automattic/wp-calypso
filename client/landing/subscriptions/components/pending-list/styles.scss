@@ -3,6 +3,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .subscription-manager__pending-list {
+	margin: 0;
 
 	.row {
 		border-bottom: 1px solid var(--color-border-subtle);
@@ -27,12 +28,8 @@
 			flex: 1.83;
 			min-width: 0;
 
-			.icon {
-				fill: var(--color-text-subtle);
-				width: 40px;
-				height: 40px;
-				flex: none;
-				border-radius: 50%;
+			.site-icon {
+				max-width: 40px;
 			}
 
 			.title-column {

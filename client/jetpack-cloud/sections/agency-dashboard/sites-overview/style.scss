@@ -1,6 +1,26 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.is-jetpack-new-navigation {
+	.sites-overview__page-title {
+		margin-block-end: 8px;
+		font-weight: 600;
+	}
+
+	.sites-overview__tabs {
+		border-block-end: none;
+	}
+
+	.sites-overview__container {
+		// The -76px is to undo the padding of layout.has-no-masterbar (32px), .layout__content (32px) and .sites-overview_container (6px + 6px)
+		min-height: calc(100vh - 76px);
+	}
+
+	.is-sticky .sites-overview__licenses-buttons {
+		margin-block: auto;
+	}
+}
+
 .sites-overview__large-screen {
 	.site-search-filter-container__search .search.is-open .search__open-icon {
 		width: 60px;
@@ -12,16 +32,15 @@
 		padding: 0 16px;
 	}
 }
+
 .sites-overview__container {
 	display: flex;
 	flex-direction: column;
 	// The -123px is to undo the padding of .layout__content (79px + 32px) and .sites-overview_container ( 8px + 8px )
 	min-height: calc(100vh - 123px);
-	padding: 16px 0;
-	@include break-xlarge {
-		padding: 6px 0;
-	}
+	padding: 6px 0;
 }
+
 .sites-overview__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
@@ -38,13 +57,48 @@
 		border-bottom: 1px solid var(--color-primary-5);
 	}
 }
+
+.sites-overview__add-site-issue-license-buttons {
+	// We need these negative margin values because we want to make the container full-width,
+	// but our element is inside a limited-width parent.
+	margin: 0 -48px 8px;
+	padding: 8px 48px;
+
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	> a,
+	> button {
+		font-size: 1rem;
+		box-sizing: border-box;
+		max-height: 40px;
+	}
+
+	&.is-with-split-button {
+		flex-direction: row;
+
+		.sites-overview__issue-license-button {
+			flex-grow: 1;
+		}
+	}
+
+	@include break-large {
+		flex-direction: row;
+	}
+}
+
+.sites-overview__add-new-site {
+	white-space: nowrap;
+}
+
 .sites-overview__content {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
 	margin: 0 -32px -32px;
 	padding: 8px 48px;
 	flex: 1 1 100%;
-	@include breakpoint-deprecated( ">660px" ) {
+	@include break-large {
 		padding: 16px 48px;
 		background: rgba(255, 255, 255, 0.5);
 		margin: 0 -32px -38px;
@@ -55,7 +109,7 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
-		align-items: center;
+		justify-content: space-between;
 	}
 
 	&.is-sticky {
@@ -103,8 +157,8 @@
 		text-underline-offset: 3px;
 	}
 }
-.sites-overview__status-select-license,
-.sites-overview__status-unselect-license {
+
+.sites-overview__column-action-button {
 	max-width: 100%;
 	display: inline-flex;
 	flex-direction: row;
@@ -122,22 +176,43 @@
 	border: 1px solid var(--studio-gray-5);
 	padding: 2px 11px;
 	cursor: pointer;
+	white-space: nowrap;
+
 	span {
 		margin: 0 0.2em;
 	}
 	svg {
 		margin-inline-start: -0.4em;
 	}
-	&:hover {
+	&:hover:not(.is-link) {
 		background: var(--studio-gray-80);
 		color: var(--studio-white);
 	}
+
+	&:visited:not(:hover) {
+		color: var(--studio-gray-80);
+	}
+
+	&.is-selected {
+		background: var(--studio-jetpack-green-50);
+		color: var(--studio-white);
+		border: none;
+	}
+
+	&.is-link {
+		border: none;
+		background: none;
+		text-decoration: underline;
+		outline: none;
+		margin: 0;
+		padding: 0;
+
+		&:hover {
+			color: var(--studio-gray-80);
+		}
+	}
 }
-.sites-overview__status-unselect-license {
-	background: var(--studio-jetpack-green-50);
-	color: var(--studio-white);
-	border: none;
-}
+
 .sites-overview__grey-icon {
 	vertical-align: middle;
 	color: var(--studio-gray-40);
@@ -158,7 +233,7 @@
 .sites-overview__stats-trend__down {
 	fill: var(--studio-red-50);
 }
-.sites-overview__stats-trend__same {
+.sites-overview__stats-trend__same .empty-icon {
 	vertical-align: middle;
 	height: 8px;
 	width: 8px;
@@ -207,6 +282,29 @@
 		font-size: 1rem !important;
 	}
 }
+
+.fixed-host-column {
+	display: none;
+	margin-inline-end: 10px;
+	min-width: 40px;
+	text-align: center;
+
+	.wordpress-logo {
+		display: inline-block;
+		fill: var(--studio-blue-50);
+		visibility: hidden;
+		margin: auto 0;
+
+		&.is-visible {
+			visibility: visible;
+		}
+	}
+
+	@include break-wide {
+		display: inline-block;
+	}
+}
+
 .sites-overview__overlay {
 	display: block;
 	position: absolute;
@@ -419,20 +517,39 @@
 	color: var(--studio-red-50);
 }
 
-.sites-overview__boost-score {
+@mixin boost-score-style($color, $background-color) {
+	@extend .sites-overview__column-content;
+	color: $color;
+	background-color: $background-color;
+
+	&:hover,
+	&:active,
+	&:focus {
+		color: $color;
+		background-color: $background-color;
+	}
+}
+
+a.sites-overview__boost-score {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	font-weight: 500;
+	user-select: none;
+
 	&.boost-score-good {
-		@extend .sites-overview__column-content;
-		color: var(--studio-green-50);
+		@include boost-score-style(var(--studio-green-50), var(--studio-green-0));
 	}
 
 	&.boost-score-okay {
-		@extend .sites-overview__column-content;
-		color: var(--studio-yellow-50);
+		@include boost-score-style(var(--studio-yellow-50), var(--studio-yellow-0));
 	}
 
 	&.boost-score-bad {
-		@extend .sites-overview__column-content;
-		color: var(--studio-red-50);
+		@include boost-score-style(var(--studio-red-50), var(--studio-red-0));
 	}
 }
 

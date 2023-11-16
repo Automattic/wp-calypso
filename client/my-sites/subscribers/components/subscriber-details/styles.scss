@@ -1,0 +1,55 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.subscriber-details {
+	.subscriber-details__header {
+		margin-top: 48px;
+		margin-bottom: 40px;
+	}
+
+	.subscriber-details__content {
+		display: flex;
+		flex-direction: column;
+		padding: 24px;
+		border-radius: 4px;
+		border: 1px solid $studio-gray-5;
+		gap: 16px;
+
+		&:not(:last-child) {
+			margin-bottom: 32px;
+		}
+
+		.subscriber-details__content-column {
+			flex: 1 1 0;
+			overflow: hidden;
+			word-wrap: break-word;
+		}
+	}
+
+	.subscriber-details__content-title {
+		color: #000;
+		font-size: $font-body-large;
+		line-height: rem(26px);
+	}
+
+	.subscriber-details__content-body {
+		display: flex;
+		gap: 32px;
+
+		.subscriber-details__content-label {
+			font-size: $font-body-small;
+			font-weight: 500;
+			line-height: rem(20px);
+			letter-spacing: -0.15px;
+			margin-bottom: 4px;
+		}
+
+		.subscriber-details__content-value {
+			display: block;
+			color: $studio-gray-60;
+			font-size: $font-body-small;
+			line-height: rem(20px);
+			letter-spacing: -0.15px;
+		}
+	}
+}

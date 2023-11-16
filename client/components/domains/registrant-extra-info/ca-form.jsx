@@ -12,7 +12,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 
-const ciraAgreementUrl = 'https://cira.ca/agree';
+const ciraAgreementUrl = 'https://www.cira.ca/en/resources/documents/about/registrant-agreement/';
 const defaultValues = {
 	lang: 'EN',
 	legalType: 'CCT',

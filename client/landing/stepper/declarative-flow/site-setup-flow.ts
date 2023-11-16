@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -20,37 +20,9 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import StartingPointStep from './internals/steps-repository/blogger-starting-point';
-import BusinessInfo from './internals/steps-repository/business-info';
-import CoursesStep from './internals/steps-repository/courses';
-import DesignSetup from './internals/steps-repository/design-setup';
-import DIFMStartingPoint from './internals/steps-repository/difm-starting-point';
-import EditEmail from './internals/steps-repository/edit-email';
-import ErrorStep from './internals/steps-repository/error-step';
-import GoalsStep from './internals/steps-repository/goals';
-import ImportStep from './internals/steps-repository/import';
+import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
-import ImportLight from './internals/steps-repository/import-light';
-import ImportList from './internals/steps-repository/import-list';
-import ImportReady from './internals/steps-repository/import-ready';
-import ImportReadyNot from './internals/steps-repository/import-ready-not';
-import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
-import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import ImporterBlogger from './internals/steps-repository/importer-blogger';
-import ImporterMedium from './internals/steps-repository/importer-medium';
-import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
-import ImporterWix from './internals/steps-repository/importer-wix';
-import ImporterWordpress from './internals/steps-repository/importer-wordpress';
-import IntentStep from './internals/steps-repository/intent-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import SiteOptions from './internals/steps-repository/site-options';
-import StoreAddress from './internals/steps-repository/store-address';
-import WooConfirm from './internals/steps-repository/woo-confirm';
-import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
-import WooTransfer from './internals/steps-repository/woo-transfer';
-import WooVerifyEmail from './internals/steps-repository/woo-verify-email';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -60,6 +32,10 @@ import {
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
+
+type ExitFlowOptions = {
+	skipLaunchpad?: boolean;
+};
 
 function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
@@ -84,42 +60,37 @@ const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'goals', component: GoalsStep },
-			{ slug: 'intent', component: IntentStep },
-			{ slug: 'options', component: SiteOptions },
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'bloggerStartingPoint', component: StartingPointStep },
-			{ slug: 'courses', component: CoursesStep },
-			{ slug: 'import', component: ImportStep },
-			...( isEnabled( 'onboarding/import-light' )
-				? [ { slug: 'importLight', component: ImportLight } ]
-				: [] ),
-			{ slug: 'importList', component: ImportList },
-			{ slug: 'importReady', component: ImportReady },
-			{ slug: 'importReadyNot', component: ImportReadyNot },
-			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
-			{ slug: 'importReadyPreview', component: ImportReadyPreview },
-			{ slug: 'importerWix', component: ImporterWix },
-			{ slug: 'importerBlogger', component: ImporterBlogger },
-			{ slug: 'importerMedium', component: ImporterMedium },
-			{ slug: 'importerSquarespace', component: ImporterSquarespace },
-			{ slug: 'importerWordpress', component: ImporterWordpress },
-			{ slug: 'businessInfo', component: BusinessInfo },
-			{ slug: 'storeAddress', component: StoreAddress },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: ErrorStep },
-			{ slug: 'wooTransfer', component: WooTransfer },
-			{ slug: 'wooInstallPlugins', component: WooInstallPlugins },
-			...( isEnabled( 'signup/woo-verify-email' )
-				? [ { slug: 'wooVerifyEmail', component: WooVerifyEmail } ]
-				: [] ),
-			{ slug: 'wooConfirm', component: WooConfirm },
-			{ slug: 'editEmail', component: EditEmail },
-			...( isEnabled( 'signup/woo-verify-email' )
-				? [ { slug: 'editEmail', component: EditEmail } ]
-				: [] ),
-			{ slug: 'difmStartingPoint', component: DIFMStartingPoint },
+			STEPS.GOALS,
+			STEPS.INTENT,
+			STEPS.OPTIONS,
+			STEPS.DESIGN_SETUP,
+			STEPS.PATTERN_ASSEMBLER,
+			STEPS.BLOGGER_STARTING_POINT,
+			STEPS.COURSES,
+			STEPS.IMPORT,
+			STEPS.IMPORT_LIGHT,
+			STEPS.IMPORT_LIST,
+			STEPS.IMPORT_READY,
+			STEPS.IMPORT_READY_NOT,
+			STEPS.IMPORT_READY_WPCOM,
+			STEPS.IMPORT_READY_PREVIEW,
+			STEPS.IMPORTER_WIX,
+			STEPS.IMPORTER_BLOGGER,
+			STEPS.IMPORTER_MEDIUM,
+			STEPS.IMPORTER_SQUARESPACE,
+			STEPS.IMPORTER_WORDPRESS,
+			STEPS.VERIFY_EMAIL,
+			STEPS.TRIAL_ACKNOWLEDGE,
+			STEPS.BUSINESS_INFO,
+			STEPS.STORE_ADDRESS,
+			STEPS.PROCESSING,
+			STEPS.ERROR,
+			STEPS.WOO_TRANSFER,
+			STEPS.WOO_INSTALL_PLUGINS,
+			STEPS.WOO_VERIFY_EMAIL,
+			STEPS.WOO_CONFIRM,
+			STEPS.EDIT_EMAIL,
+			STEPS.DIFM_STARTING_POINT,
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
@@ -141,6 +112,7 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
 			[]
 		);
+		const siteId = useSiteIdParam();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
@@ -184,7 +156,7 @@ const siteSetupFlow: Flow = {
 			setStepProgress( flowProgress );
 		}
 
-		const exitFlow = ( to: string ) => {
+		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
 				/**
 				 * This implementation seems very hacky.
@@ -216,8 +188,12 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						const launchpadScreen =
-							isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
+						let launchpadScreen;
+						if ( ! options.skipLaunchpad ) {
+							launchpadScreen = isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
+						} else {
+							launchpadScreen = 'skipped';
+						}
 
 						settings.launchpad_screen = launchpadScreen;
 					}
@@ -268,8 +244,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const _selectedDesign = providedDependencies?.selectedDesign as Design;
-					if ( _selectedDesign?.design_type === 'assembler' ) {
+					const { selectedDesign: _selectedDesign } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -286,7 +262,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( isBlankCanvasDesign( selectedDesign ) ) {
+					if ( isAssemblerDesign( selectedDesign ) ) {
 						const params = new URLSearchParams( {
 							canvas: 'edit',
 							assembler: '1',
@@ -331,9 +307,12 @@ const siteSetupFlow: Flow = {
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
-						return exitFlow( `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }` );
+						const url = siteId
+							? `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`
+							: `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+						return exitFlow( url );
 					}
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
 				case 'bloggerStartingPoint': {
@@ -346,7 +325,9 @@ const siteSetupFlow: Flow = {
 							return navigate( 'courses' );
 						}
 						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteSlug }` );
+							return exitFlow( `/home/${ siteId ?? siteSlug }`, {
+								skipLaunchpad: true,
+							} );
 						}
 						default: {
 							return navigate( intent );
@@ -374,7 +355,7 @@ const siteSetupFlow: Flow = {
 					const submittedIntent = params[ 0 ];
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
-							return exitFlow( `https://wordpress.com/home/${ siteSlug }` );
+							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
 						}
 						case 'build': {
 							return navigate( 'designSetup' );
@@ -468,6 +449,22 @@ const siteSetupFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 				}
 
+				case 'trialAcknowledge': {
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'importer':
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
+						default:
+							return;
+					}
+				}
+
+				case 'verifyEmail':
+					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+
 				case 'difmStartingPoint': {
 					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 				}
@@ -538,6 +535,10 @@ const siteSetupFlow: Flow = {
 				case 'import':
 					return navigate( 'goals' );
 
+				case 'verifyEmail':
+				case 'trialAcknowledge':
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+
 				case 'difmStartingPoint':
 					return navigate( 'goals' );
 
@@ -555,12 +556,14 @@ const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'intent':
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 
 				case 'goals':
 					// Skip to dashboard must have been pressed
 					setIntent( SiteIntent.Build );
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }`, {
+						skipLaunchpad: true,
+					} );
 
 				case 'import':
 					return navigate( 'importList' );
@@ -617,8 +620,8 @@ const siteSetupFlow: Flow = {
 			};
 		}
 
-		const canManageOptions = useCanUserManageOptions();
-		if ( canManageOptions === 'requesting' ) {
+		const { canManageOptions, isLoading } = useCanUserManageOptions();
+		if ( isLoading ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 			};

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import './style.scss';
 
-type Props = ComboboxControl.Props & {
+type Props = React.ComponentProps< typeof ComboboxControl > & {
 	disabled?: boolean;
 };
 
@@ -16,13 +16,7 @@ export default function SearchableDropdown( props: Props ) {
 				'is-disabled': disabled,
 			} ) }
 		>
-			<Disabled
-				// TODO: The type definition for Disabled is incorrect, isDisabled actually exists. Upgrading the @wordpress/components
-				// which the latest version now ships with its own type definitions which fixes the issue.
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				isDisabled={ disabled }
-			>
+			<Disabled isDisabled={ disabled }>
 				<ComboboxControl { ...props } />
 			</Disabled>
 		</div>

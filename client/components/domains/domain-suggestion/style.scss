@@ -39,11 +39,10 @@
 	}
 
 	.badge {
-		margin-left: 0;
 		border-radius: 4px;
 		font-size: 0.75rem;
 		font-weight: 500;
-		margin-right: 4px;
+		margin: 2px 4px 0 0;
 
 		&.badge--warning {
 			background-color: var(--color-warning-10);
@@ -173,6 +172,7 @@
 	display: flex;
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
+	align-items: flex-start;
 
 	@include break-mobile {
 		flex-direction: row;
@@ -196,15 +196,11 @@
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
-		display: flex;
-	}
-
-	.badge {
-		align-self: center;
 	}
 
 	.domain-registration-suggestion__hsts-tooltip {
-		display: flex;
+		display: inline;
+		vertical-align: middle;
 		align-items: center;
 		justify-content: center;
 		margin-left: 4px;
@@ -222,7 +218,6 @@
 	word-break: break-all;
 
 	@include breakpoint-deprecated( ">480px" ) {
-		align-self: center;
 		padding-right: 2em;
 	}
 }
@@ -257,7 +252,7 @@
 	@include break-mobile {
 		width: auto;
 		flex: 1 0 auto;
-		margin-left: 1em;
+		margin-left: 28px;
 		margin-top: 0;
 	}
 
@@ -309,7 +304,6 @@
 
 	@include break-mobile {
 		margin: 0 0 0 4px;
-		align-self: center;
 	}
 }
 
@@ -321,7 +315,6 @@ body.is-section-signup.is-white-signup {
 
 	.domain-registration-suggestion__badges {
 		margin-left: 0;
-		margin-top: 0;
 		margin-bottom: 10px;
 
 		.badge {
@@ -332,8 +325,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			align-self: baseline;
-			margin-left: 12px;
 			margin-bottom: 0;
 			flex: 1;
 		}
@@ -347,7 +338,9 @@ body.is-section-signup.is-white-signup {
 		flex-direction: column;
 		box-shadow: none;
 
-		@include break-mobile {
+		margin: 0;
+
+		@include break-small {
 			margin: 0 20px;
 			flex-direction: row;
 		}
@@ -362,7 +355,6 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
-			margin-right: 40px;
 		}
 
 		.domain-product-price__free-text {
@@ -388,6 +380,7 @@ body.is-section-signup.is-white-signup {
 
 		.domain-registration-suggestion__title {
 			font-size: 0.875rem;
+			margin-right: 12px;
 
 			@include break-mobile {
 				font-size: 1rem;
@@ -421,7 +414,7 @@ body.is-section-signup.is-white-signup {
 			padding: 16px 20px;
 
 			@include break-mobile {
-				padding: 16px 5px;
+				padding: 16px 24px;
 			}
 
 			.domain-registration-suggestion__domain-title {
@@ -446,6 +439,33 @@ body.is-section-signup.is-white-signup {
 				font-size: $font-body-small;
 			}
 
+			.domain-suggestion__action.is-borderless {
+				color: var(--color-text);
+				padding: 0 1.5em;
+				line-height: 24px;
+				@include break-mobile {
+					width: auto;
+				}
+
+				.gridicons-checkmark {
+					color: var(--studio-green-60);
+				}
+
+				&:disabled {
+					color: var(--color-neutral-20);
+
+					.gridicons-checkmark {
+						color: var(--color-neutral-20);
+					}
+				}
+
+				&.is-busy {
+					pointer-events: none;
+					animation: button__busy-animation 3000ms infinite linear;
+					background-size: 120px 100%;
+					background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
+				}
+			}
 			.domain-suggestion__action:not(.is-borderless) {
 				width: 100%;
 				height: auto;
@@ -453,7 +473,6 @@ body.is-section-signup.is-white-signup {
 				padding: 0.57em 1.17em;
 				font-weight: 500;
 				border-radius: 4px;
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
 				font-size: 0.875rem;
@@ -494,6 +513,32 @@ body.is-section-signup.is-white-signup {
 					fill: $cod-grey;
 					margin-left: 0;
 				}
+			}
+		}
+
+		&.featured-domain-suggestion .domain-suggestion__action-container .domain-suggestion__action.is-borderless {
+			padding: 0.57em 1.3em !important;
+			box-shadow: none !important;
+			color: var(--color-text);
+			font-weight: normal !important;
+
+			.gridicons-checkmark {
+				color: var(--studio-green-60);
+			}
+
+			&:disabled {
+				color: var(--color-neutral-20);
+
+				.gridicons-checkmark {
+					color: var(--color-neutral-20);
+				}
+			}
+
+			&.is-busy {
+				pointer-events: none;
+				animation: button__busy-animation 3000ms infinite linear;
+				background-size: 120px 100%;
+				background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
 			}
 		}
 	}

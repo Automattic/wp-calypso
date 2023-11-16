@@ -2,6 +2,7 @@ import config, { isCalypsoLive } from '@automattic/calypso-config';
 import { includes, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
+import validUrl from 'valid-url';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
@@ -36,7 +37,9 @@ export function authQueryTransformer( queryObject ) {
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
-		redirectAfterAuth: queryObject.redirect_after_auth || null,
+		redirectAfterAuth: validUrl.isWebUri( queryObject.redirect_after_auth )
+			? queryObject.redirect_after_auth
+			: null,
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
 		userEmail: queryObject.user_email || null,
@@ -45,6 +48,11 @@ export function authQueryTransformer( queryObject ) {
 		allowSiteConnection: queryObject.skip_user || queryObject.allow_site_connection || null,
 		// Used by woo core profiler flow to determine if we need to show a success notice after installing extensions or not.
 		installedExtSuccess: queryObject.installed_ext_success || null,
+
+		// This is a temporary param used for Jetpack A.I and Jetpack Boost A/B testing in WooCommerce core
+		// Related WooCommerce PR: https://github.com/woocommerce/woocommerce/pull/39799
+		// this param will be removed after the expierment is over
+		plugin_name: queryObject.plugin_name || null,
 	};
 }
 
@@ -67,6 +75,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	state: PropTypes.string.isRequired,
 	userEmail: PropTypes.string,
 	installedExtSuccess: PropTypes.string,
+	plugin_name: PropTypes.string,
 } );
 
 export function addCalypsoEnvQueryArg( url ) {
@@ -79,7 +88,6 @@ export function addCalypsoEnvQueryArg( url ) {
 
 /**
  * Sanitize a user-supplied URL so we can use it for network requests.
- *
  * @param {string} inputUrl User-supplied URL
  * @returns {string} Sanitized URL
  */
@@ -97,7 +105,6 @@ export function cleanUrl( inputUrl ) {
  *
  * Auth queries include a scope like `role:hash`. This function will attempt to extract the role
  * when provided with a scope.
- *
  * @param  {string}  scope From authorization query
  * @returns {?string}       Role parsed from scope if found
  */
@@ -114,7 +121,6 @@ export function getRoleFromScope( scope ) {
 
 /**
  * Parse an authorization query
- *
  * @property {Function} parser Lazy-instatiated parser
  * @param  {Object}     query  Authorization query
  * @returns {?Object}           Query after transformation. Null if invalid or errored during transform.
@@ -136,7 +142,6 @@ export function parseAuthorizationQuery( query ) {
 
 /**
  * Manage Jetpack Connect redirect after various site states
- *
  * @param  {string}     type Redirect type
  * @param  {string}     url Site url
  * @param  {?string}    product Product slug

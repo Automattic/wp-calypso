@@ -10,12 +10,19 @@ export type DomainThankYouProps = Required<
 
 export type DomainThankYouParams = {
 	domain: string;
+	domains: string[];
 	email?: string;
+	shouldDisplayVerifyEmailStep?: boolean;
+	onResendEmailVerificationClick?(): void;
 	hasProfessionalEmail: boolean;
 	hideProfessionalEmailStep: boolean;
 	launchpadScreen: ReturnType< typeof useSiteOption >;
 	selectedSiteSlug: string;
+	selectedSiteId?: number;
+	isDomainOnly: boolean;
 	siteIntent: ReturnType< typeof useSiteOption >;
+	redirectTo: 'home' | 'setup';
+	isActivityPubEnabled?: boolean;
 };
 
 export type DomainThankYouPropsGetter = ( params: DomainThankYouParams ) => DomainThankYouProps;

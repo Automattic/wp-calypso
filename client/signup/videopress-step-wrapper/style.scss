@@ -1,4 +1,14 @@
-@import url( https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap );
+@font-face {
+	font-family: Inter;
+	font-weight: 400 700;
+	font-style: normal;
+	// stylelint-disable-next-line property-no-unknown
+	font-named-instance: "Regular";
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2-variations&v=3.19) format("woff2-variations"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
+}
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/videopress-extends";
@@ -38,7 +48,7 @@
 	--videopress-font-size-form-xxl: 32px;
 }
 
-.videopress-step-wrapper {
+body.is-section-signup .videopress-step-wrapper {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
@@ -154,18 +164,25 @@
 	}
 
 	.signup-form__social-buttons button {
-		background: none;
-		border: none;
+		background: none !important;
+		border: none !important;
 		border-radius: 0;
-		color: var(--videopress-color-text);
 		box-shadow: none;
 		margin: 0;
 		transition: 0.3s;
 
+		span {
+			color: var(--videopress-color-text);
+			margin-left: 8px;
+		}
+
 		&:focus {
 			outline: none;
 			border: none;
-			color: var(--videopress-color-link);
+
+			span {
+				color: var(--videopress-color-link);
+			}
 
 			.social-icons {
 				border-color: var(--videopress-color-link);
@@ -173,7 +190,9 @@
 		}
 
 		&:hover {
-			color: var(--videopress-color-link);
+			span {
+				color: var(--videopress-color-link);
+			}
 
 			.social-icons {
 				border-color: var(--videopress-color-link);
@@ -181,7 +200,7 @@
 		}
 
 		.social-icons {
-			padding: 12px;
+			padding: 12px !important;
 			border: 1px solid var(--videopress-color-separator-light);
 			// We deserve circles
 			// stylelint-disable-next-line scales/radii
@@ -203,15 +222,16 @@
 		display: none;
 	}
 
-	.signup-form__separator {
+	.auth-form__separator {
 		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		margin: 32px 0 0;
+		width: 100%;
 	}
 
-	.signup-form__separator::before {
+	.auth-form__separator::before {
 		position: absolute;
 		content: "";
 		border-inline-start: 0;
@@ -222,7 +242,7 @@
 		width: 100%;
 	}
 
-	.signup-form__separator-text {
+	.auth-form__separator-text {
 		font-size: 0.75rem;
 		padding: 0 24px;
 		z-index: 1;
@@ -245,12 +265,12 @@
 			align-items: stretch;
 		}
 
-		.signup-form__separator {
+		.auth-form__separator {
 			width: 60px;
 			margin-top: 0;
 		}
 
-		.signup-form__separator::before {
+		.auth-form__separator::before {
 			width: 100%;
 			height: 100%;
 			border-inline-start: 1px solid var(--videopress-color-separator-light);
@@ -261,7 +281,7 @@
 			content: "";
 		}
 
-		.signup-form__separator-text {
+		.auth-form__separator-text {
 			padding: 24px 0;
 		}
 
@@ -409,7 +429,19 @@
 	}
 }
 
-.is-videopress-signup {
+.is-videopress-tv-signup {
+	font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.videopress-step-wrapper__middle .videopress-step-wrapper__header-text {
+		font-family: inherit;
+		font-size: rem(38px); //typography-exception
+		font-weight: 700;
+		letter-spacing: -0.02em;
+	}
+}
+
+.is-videopress-signup,
+.is-videopress-tv-signup {
 	.progress-bar {
 		display: block;
 		border-radius: 0;

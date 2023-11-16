@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
@@ -12,23 +12,27 @@ import './continue-as-user.scss';
 
 // Validate redirect URL using the REST endpoint.
 // Return validated URL in case of success, `null` in case of failure.
-async function validateUrl( redirectUrl ) {
-	if ( ! redirectUrl ) {
-		return null;
-	}
+function useValidatedURL( redirectUrl ) {
+	const [ url, setURL ] = useState( '' );
+	const [ isLoading, setIsLoading ] = useState( false );
 
-	try {
-		const response = await wpcom.req.get( '/me/validate-redirect', { redirect_url: redirectUrl } );
-
-		if ( ! response || ! response.redirect_to ) {
-			return null;
+	useEffect( () => {
+		if ( redirectUrl ) {
+			setIsLoading( true );
+			wpcom.req
+				.get( '/me/validate-redirect', { redirect_url: redirectUrl } )
+				.then( ( res ) => {
+					setURL( res?.redirect_to );
+					setIsLoading( false );
+				} )
+				.catch( () => {
+					setURL( null );
+					setIsLoading( false );
+				} );
 		}
+	}, [ redirectUrl ] );
 
-		return response.redirect_to;
-	} catch {
-		// Ignore error, let the redirect link default to `/`.
-		return null;
-	}
+	return { url, loading: isLoading && !! redirectUrl };
 }
 
 function ContinueAsUser( {
@@ -40,15 +44,12 @@ function ContinueAsUser( {
 	isWooOAuth2Client,
 } ) {
 	const translate = useTranslate();
-	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
-	const [ isLoading, setIsLoading ] = useState( true );
+	const { url: validatedRedirectUrlFromQuery, loading: validatingQueryURL } =
+		useValidatedURL( redirectUrlFromQuery );
 
-	useEffect( () => {
-		validateUrl( redirectUrlFromQuery ).then( ( maybeValidatedUrl ) => {
-			setValidatedRedirectUrl( maybeValidatedUrl );
-			setIsLoading( false );
-		} );
-	}, [ redirectUrlFromQuery ] );
+	const { url: validatedRedirectPath, loading: validatingPath } = useValidatedURL( redirectPath );
+
+	const isLoading = validatingQueryURL || validatingPath;
 
 	const userName = currentUser.display_name || currentUser.username;
 
@@ -84,7 +85,7 @@ function ContinueAsUser( {
 	const gravatarLink = (
 		<a
 			style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
-			href={ validatedRedirectUrl || redirectPath || '/' }
+			href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
 			className="continue-as-user__gravatar-link"
 		>
 			<Gravatar
@@ -113,7 +114,11 @@ function ContinueAsUser( {
 							{ translate( 'Log in with a different WordPress.com account' ) }
 						</button>
 					</div>
-					<Button busy={ isLoading } primary href={ validatedRedirectUrl || redirectPath || '/' }>
+					<Button
+						busy={ isLoading }
+						primary
+						href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+					>
 						{ `${ translate( 'Continue as', {
 							context: 'Continue as an existing WordPress.com user',
 						} ) } ${ userName }` }
@@ -127,7 +132,11 @@ function ContinueAsUser( {
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
 				{ gravatarLink }
-				<Button busy={ isLoading } primary href={ validatedRedirectUrl || redirectPath || '/' }>
+				<Button
+					busy={ isLoading }
+					primary
+					href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+				>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>

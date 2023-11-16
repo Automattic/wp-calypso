@@ -1,9 +1,19 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { capitalize } from 'lodash';
 import { ImporterPlatform } from './types';
 
 export const CAPTURE_URL_RGX =
-	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
+	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/i;
+
+/**
+ * This regex is a bit more lenient than CAPTURE_URL_RGX, and is used for receiving any redirects like:
+ * - http://www.example.com
+ * - https://www.example.com
+ * - http://localhost:9090
+ * - http://somethingelse
+ * - http://somecampaing#withhash?andquery
+ */
+export const CAPTURE_URL_RGX_SOFT =
+	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;
 
 const platformMap: { [ key in ImporterPlatform ]: string } = {
 	wordpress: 'WordPress',
@@ -67,23 +77,14 @@ export function getWpComMigrateUrl( siteSlug: string, fromSite?: string ): strin
 export function getWpComOnboardingUrl(
 	siteSlug: string,
 	platform: ImporterPlatform,
-	fromSite?: string,
-	framework: 'signup' | 'stepper' = 'signup'
+	fromSite?: string
 ): string {
 	let route;
-	switch ( framework ) {
-		case 'signup':
-			route = '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}&run=true';
-			break;
 
-		case 'stepper':
-		default:
-			if ( platform === 'wordpress' && isEnabled( 'onboarding/import-redesign' ) ) {
-				route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&option=everything&run=true';
-				break;
-			}
-			route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&run=true';
-			break;
+	if ( platform === 'wordpress' ) {
+		route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&option=everything';
+	} else {
+		route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}';
 	}
 
 	return route

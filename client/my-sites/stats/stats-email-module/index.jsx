@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -39,6 +39,7 @@ class StatsEmailModule extends Component {
 		const moduleStrings = statsStrings()[ path ];
 		// TODO: Support error state in redux store
 		const hasError = false;
+		const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : null;
 
 		return (
 			<>
@@ -49,6 +50,7 @@ class StatsEmailModule extends Component {
 					emptyMessage={ moduleStrings.empty }
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					metricLabel={ metricLabel }
 					heroElement={
 						path === 'countries' && (
 							<Geochart kind="email" statType={ statType } postId={ postId } query={ query } />

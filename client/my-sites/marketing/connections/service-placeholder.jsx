@@ -1,8 +1,8 @@
-import { Button, Gridicon } from '@automattic/components';
+/* eslint-disable jsx-a11y/heading-has-content */
+import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 
 class SharingServicePlaceholder extends Component {
 	static propTypes = {

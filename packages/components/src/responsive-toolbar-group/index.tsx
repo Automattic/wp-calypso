@@ -17,6 +17,7 @@ const ResponsiveToolbarGroup = ( {
 	swipeBreakpoint = '<660px',
 	hrefList = [],
 	forceSwipe = false,
+	swipeEnabled = true,
 }: {
 	children: ReactNode[];
 	className?: string;
@@ -36,11 +37,16 @@ const ResponsiveToolbarGroup = ( {
 	 * Rendering mode
 	 */
 	forceSwipe?: boolean;
+
+	/**
+	 * When false completely disables swipe at all breakpoints.
+	 */
+	swipeEnabled?: boolean;
 } ) => {
 	const classes = classnames( 'responsive-toolbar-group', className );
-	const shouldSwipe = useBreakpoint( swipeBreakpoint ) || forceSwipe;
+	const isWithinBreakpoint = useBreakpoint( swipeBreakpoint );
 
-	if ( shouldSwipe ) {
+	if ( forceSwipe || ( swipeEnabled && isWithinBreakpoint ) ) {
 		return (
 			<SwipeGroup
 				className={ classes }

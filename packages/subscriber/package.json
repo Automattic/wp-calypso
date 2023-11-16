@@ -33,15 +33,15 @@
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
-		"@popperjs/core": "^2.10.2",
-		"@wordpress/base-styles": "^4.14.0",
-		"@wordpress/components": "^23.0.0",
-		"@wordpress/dom": "^3.23.0",
-		"@wordpress/element": "^5.0.0",
-		"@wordpress/i18n": "^4.23.0",
-		"@wordpress/icons": "^9.14.0",
-		"@wordpress/primitives": "^3.21.0",
-		"@wordpress/react-i18n": "^3.21.0",
+		"@popperjs/core": "^2.11.8",
+		"@wordpress/base-styles": "^4.35.0",
+		"@wordpress/components": "^25.10.0",
+		"@wordpress/dom": "^3.44.0",
+		"@wordpress/element": "^5.21.0",
+		"@wordpress/i18n": "^4.44.0",
+		"@wordpress/icons": "^9.35.0",
+		"@wordpress/primitives": "^3.42.0",
+		"@wordpress/react-i18n": "^3.42.0",
 		"classnames": "^2.3.1",
 		"debug": "^4.3.4",
 		"react-popper": "^2.3.0"
@@ -49,12 +49,12 @@
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.5.5"
+		"typescript": "^5.2.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^8.0.0",
+		"@wordpress/data": "^9.14.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.1.2"
+		"redux": "^4.2.1"
 	}
 }

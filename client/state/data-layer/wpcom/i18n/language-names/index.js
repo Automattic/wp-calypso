@@ -12,7 +12,6 @@ const noop = () => {};
 
 /**
  * Dispatches a request to fetch localized language names
- *
  * @param {Object} action Redux action
  * @returns {Object} original action
  */
@@ -27,7 +26,6 @@ export const fetchLanguageNames = ( action ) =>
 	);
 /**
  * Dispatches returned localized language names data
- *
  * @param {Object} action Redux action
  * @param {Array} data raw data from i18n/language-names
  * @returns {Array<Object>} Redux actions

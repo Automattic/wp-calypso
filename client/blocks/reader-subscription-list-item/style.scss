@@ -91,6 +91,8 @@
 	display: -webkit-box;
 	line-height: 18px;
 	overflow: hidden;
+	overflow-wrap: break-word;
+	max-width: 190px;
 	width: auto;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;

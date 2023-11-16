@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
+import { RestrictionType } from '../../types';
 import type { StateMonitorSettingsEmail } from '../../../sites-overview/types';
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 	defaultUserEmailAddresses: string[];
 	toggleAddEmailModal: () => void;
 	allEmailItems: StateMonitorSettingsEmail[];
+	restriction: RestrictionType;
 }
 
 export default function EmailNotification( {
@@ -22,33 +24,35 @@ export default function EmailNotification( {
 	defaultUserEmailAddresses,
 	toggleAddEmailModal,
 	allEmailItems,
+	restriction,
 }: Props ) {
 	const translate = useTranslate();
 
-	const isMultipleEmailEnabled: boolean = isEnabled(
-		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
-	);
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	return (
 		<>
 			<div className="notification-settings__toggle-container">
 				<div className="notification-settings__toggle">
 					<ToggleControl
+						label={
+							enableEmailNotification
+								? translate( 'Disable email notifications' )
+								: translate( 'Enable email notifications' )
+						}
 						onChange={ ( isEnabled ) => {
 							recordEvent( isEnabled ? 'email_notification_enable' : 'email_notification_disable' );
 							setEnableEmailNotification( isEnabled );
 						} }
 						checked={ enableEmailNotification }
+						className="notification-settings__toggle-control"
 					/>
 				</div>
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">
 						<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
-						{ isMultipleEmailEnabled && (
-							<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
-						) }
 					</div>
-					{ isMultipleEmailEnabled ? (
+					{ isPaidTierEnabled ? (
 						<>
 							<div className="notification-settings__content-sub-heading">
 								{ translate( 'Receive email notifications with one or more recipients.' ) }
@@ -64,13 +68,14 @@ export default function EmailNotification( {
 				</div>
 			</div>
 
-			{ enableEmailNotification && isMultipleEmailEnabled && (
+			{ enableEmailNotification && isPaidTierEnabled && (
 				<ContactList
 					type="email"
 					onAction={ toggleAddEmailModal }
 					items={ allEmailItems }
 					recordEvent={ recordEvent }
 					verifiedItemKey={ verifiedItem?.email }
+					restriction={ restriction }
 				/>
 			) }
 		</>

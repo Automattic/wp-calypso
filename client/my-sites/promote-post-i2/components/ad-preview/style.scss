@@ -1,21 +1,14 @@
+@import "../../style.scss";
+
 
 .promote-post-ad-preview__loading {
-	width: 300px;
-	height: 250px;
-	background-color: hsl(200, 20%, 90%);
 	border-radius: 4px;
 	display: inline-block;
-	position: relative;
+	height: 250px;
 	overflow: hidden;
+	position: relative;
 	min-height: 16px;
-	animation: skeleton-loading 1s linear infinite alternate;
-	@keyframes skeleton-loading {
-		0% {
-			background-color: hsl(200, 20%, 80%);
-		}
-		100% {
-			background-color: hsl(200, 20%, 95%);
-		}
-	}
+	width: 300px;
 
+	@include blazepress-animated-skeleton;
 }

@@ -1,6 +1,39 @@
 .stats .inner-notice-container {
 	padding-top: 32px;
+
 	p {
 		margin-bottom: 0;
+	}
+
+	.stats-icon {
+		vertical-align: middle;
+		display: inline-block;
+	}
+
+	&.inner-notice-container--calypso {
+		p,
+		button,
+		a {
+			font-size: $font-body-small;
+		}
+
+		.notice-banner__action-button {
+			background-color: var(--color-accent);
+			border-color: var(--color-accent);
+			color: var(--color-text-inverted);
+			border-radius: 2px;
+		}
+
+		.notice-banner {
+
+			&.is-info {
+				border-left-color: var(--color-accent);
+			}
+		}
+
+		.notice-banner__action-link > span {
+			border-bottom: 0;
+			vertical-align: middle;
+		}
 	}
 }

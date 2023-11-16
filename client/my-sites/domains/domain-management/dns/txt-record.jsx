@@ -6,6 +6,7 @@ import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { DNS_TXT_RECORD_CHAR_LIMIT } from 'calypso/lib/url/support';
@@ -23,9 +24,9 @@ class TxtRecord extends Component {
 
 		if ( value?.length === 0 ) {
 			return translate( 'TXT records may not be empty' );
-		} else if ( value?.length > 255 ) {
+		} else if ( value?.length > 2048 ) {
 			return translate(
-				'TXT records may not exceed 255 characters. {{supportLink}}Learn more{{/supportLink}}.',
+				'TXT records may not exceed 2048 characters. {{supportLink}}Learn more{{/supportLink}}.',
 				{
 					components: {
 						supportLink: (
@@ -44,6 +45,7 @@ class TxtRecord extends Component {
 		const classes = classnames( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
 		const isDataValid = isValid( 'data' );
+		const isTTLValid = isValid( 'ttl' );
 		// eslint-disable-next-line no-control-regex
 		const hasNonAsciiData = /[^\u0000-\u007f]/.test( fieldValues.data );
 		const validationError = this.getValidationErrorMessage( fieldValues.data );
@@ -81,6 +83,24 @@ class TxtRecord extends Component {
 					) }
 					{ ! isDataValid && validationError && (
 						<FormInputValidation text={ validationError } isError />
+					) }
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel>TTL (time to live)</FormLabel>
+					<FormTextInput
+						name="ttl"
+						isError={ ! isTTLValid }
+						onChange={ onChange }
+						value={ fieldValues.ttl }
+						defaultValue={ 3600 }
+						placeholder={ 3600 }
+					/>
+					{ ! isTTLValid && (
+						<FormInputValidation
+							text={ translate( 'Invalid TTL value - Use a value between 300 and 86400' ) }
+							isError
+						/>
 					) }
 				</FormFieldset>
 			</div>

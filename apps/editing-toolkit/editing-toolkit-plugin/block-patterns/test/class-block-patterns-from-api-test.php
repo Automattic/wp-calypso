@@ -29,7 +29,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	/**
 	 * Pre-test setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->pattern_mock_object = array(
 			'ID'            => '1',
@@ -41,8 +41,9 @@ class Block_Patterns_From_Api_Test extends TestCase {
 			'source_url'    => 'http;//test',
 			'modified_date' => 'dd:mm:YY',
 			'categories'    => array(
-				array(
-					'title' => 'test-category',
+				'test_slug' => array(
+					'title'       => 'category title',
+					'description' => 'category description',
 				),
 			),
 		);

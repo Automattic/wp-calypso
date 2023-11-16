@@ -10,7 +10,6 @@ import 'calypso/state/active-promotions/init';
 
 /**
  * Action creator function: RECEIVE
- *
  * @param {Array} activePromotions - WordPress.com activePromotions list
  * @returns {Object} action object
  */
@@ -23,7 +22,6 @@ export function activePromotionsReceiveAction( activePromotions ) {
 
 /**
  * Action creator function: REQUEST_SUCCESS
- *
  * @returns {Object} action object
  */
 export function activePromotionsRequestSuccessAction() {
@@ -32,7 +30,6 @@ export function activePromotionsRequestSuccessAction() {
 
 /**
  * Action creator function: REQUEST_FAILURE
- *
  * @param {string} error - error message
  * @returns {Object} action object
  */
@@ -45,7 +42,6 @@ export function activePromotionsRequestFailureAction( error ) {
 
 /**
  * Action creator to request WordPress.com activePromotions: REQUEST
- *
  * @returns {Object} action object
  */
 export const requestActivePromotions = () => ( { type: ACTIVE_PROMOTIONS_REQUEST } );

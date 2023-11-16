@@ -74,6 +74,8 @@ export interface APIPartner {
 	name: string;
 	contact_person: string;
 	company_website: string;
+	company_type: string;
+	managed_sites: string;
 	address: APIPartnerAddress;
 	keys: APIPartnerKey[];
 	tos: string;
@@ -148,6 +150,8 @@ export interface CompanyDetailsPayload {
 	name: string;
 	contactPerson: string;
 	companyWebsite: string;
+	companyType: string;
+	managedSites: string;
 	city: string;
 	line1: string;
 	line2: string;
@@ -157,7 +161,10 @@ export interface CompanyDetailsPayload {
 }
 
 export interface PartnerDetailsPayload extends CompanyDetailsPayload {
+	partnerProgramOptIn: boolean;
+	companyType: string;
 	tos?: 'consented';
+	referrer?: string;
 }
 
 /**
@@ -185,6 +192,8 @@ export interface Partner {
 	slug: string;
 	contact_person: string;
 	company_website: string;
+	company_type: string;
+	managed_sites: string;
 	name: string;
 	address: PartnerAddress;
 	keys: PartnerKey[];

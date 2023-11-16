@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
@@ -5,7 +6,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData } from './types';
-import type { BulkDomainTransferData, State } from '.';
+import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
@@ -55,6 +56,8 @@ export function* createVideoPressSite( {
 	const defaultTheme = selectedDesign?.theme || 'premium/videomaker';
 	const siteVertical = 'premium/videomaker' === defaultTheme ? 'videomaker' : 'videomaker-white';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
+	const isVideomakerTrial = config.isEnabled( 'videomaker-trial' );
+	const themeSlug = isVideomakerTrial ? 'pub/videomaker' : 'pub/twentytwentytwo'; // NOTE: keep this a consistent, free theme so post ids during headstart re-run after premium theme switch remain consistent
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
@@ -67,7 +70,7 @@ export function* createVideoPressSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'videopress',
 			enable_fse: true,
-			theme: 'pub/twentytwentytwo', // NOTE: keep this a consistent, free theme so post ids during headstart re-run after premium theme switch remain consistent,
+			theme: themeSlug,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {
@@ -76,6 +79,53 @@ export function* createVideoPressSite( {
 			} ),
 			use_patterns: true,
 			site_vertical_name: siteVertical,
+			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+			is_videopress_initial_purchase: ! isVideomakerTrial,
+		},
+	};
+
+	const success: NewSiteBlogDetails | undefined = yield dispatch(
+		SITE_STORE,
+		'createSite',
+		params
+	);
+
+	return success;
+}
+
+export function* createVideoPressTvSite( {
+	languageSlug,
+	visibility = Visibility.PublicNotIndexed,
+}: CreateSiteBaseActionParameters ) {
+	const { selectedDesign, selectedFonts, selectedFeatures }: State = yield select(
+		STORE_KEY,
+		'getState'
+	);
+
+	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
+	const blogTitle = 'VideoPress TV';
+
+	const params: CreateSiteParams = {
+		blog_name: '', // will be replaced on server with random domain
+		blog_title: blogTitle,
+		public: visibility,
+		options: {
+			site_information: {
+				title: blogTitle,
+			},
+			lang_id: lang_id,
+			site_creation_flow: 'videopress-tv',
+			enable_fse: true,
+			theme: 'pub/videopress-hq',
+			timezone_string: guessTimezone(),
+			...( selectedDesign?.template && { template: selectedDesign.template } ),
+			...( selectedFonts && {
+				font_base: selectedFonts.base,
+				font_headings: selectedFonts.headings,
+			} ),
+			use_patterns: true,
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
@@ -451,9 +501,16 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 	domainCartItem,
 } );
 
-export const setBulkDomainsData = ( bulkDomainsData: BulkDomainTransferData | undefined ) => ( {
-	type: 'SET_BULK_DOMAINS_DATA' as const,
+export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
+	type: 'SET_DOMAINS_TRANSFER_DATA' as const,
 	bulkDomainsData,
+} );
+
+export const setShouldImportDomainTransferDnsRecords = (
+	shouldImportDomainTransferDnsRecords: boolean
+) => ( {
+	type: 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' as const,
+	shouldImportDomainTransferDnsRecords,
 } );
 
 export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
@@ -493,7 +550,8 @@ export type OnboardAction = ReturnType<
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
-	| typeof setBulkDomainsData
+	| typeof setDomainsTransferData
+	| typeof setShouldImportDomainTransferDnsRecords
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch

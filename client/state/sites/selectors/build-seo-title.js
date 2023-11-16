@@ -23,9 +23,9 @@ export default (
 				buildTitle( 'posts', {
 					siteName: site.name,
 					tagline: site.description,
-					postTitle: post.title ?? '',
+					postTitle: post?.title ?? '',
 				} ) ||
-				post.title ||
+				post?.title ||
 				''
 			);
 
@@ -33,7 +33,7 @@ export default (
 			return buildTitle( 'pages', {
 				siteName: site.name,
 				tagline: site.description,
-				pageTitle: post.title ?? '',
+				pageTitle: post?.title ?? '',
 			} );
 
 		case 'groups':
@@ -52,6 +52,6 @@ export default (
 			} );
 
 		default:
-			return post.title || site.name;
+			return post?.title || site.name;
 	}
 };

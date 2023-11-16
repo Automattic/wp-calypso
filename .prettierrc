@@ -6,3 +6,4 @@ bracketSpacing: true
 parenSpacing: true
 bracketSameLine: false
 semi: true
+trailingComma: 'es5'

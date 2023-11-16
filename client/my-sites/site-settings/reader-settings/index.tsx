@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -33,13 +34,12 @@ const ReaderSettingsSection = ( {
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader title={ translate( 'Reader settings' ) } />
 			<Card className="site-settings__card">
-				{ /* @ts-expect-error FormLegend is not typed and has a className error */ }
 				<FormLegend>{ translate( 'Reader content' ) }</FormLegend>
 				<SupportInfo
 					text={ translate(
 						"Settings that control how the site's content is displayed in the Reader."
 					) }
-					link="https://wordpress.com/support/reader/"
+					link={ localizeUrl( 'https://wordpress.com/support/reader/' ) }
 					privacyLink={ siteIsJetpack && ! isAtomic }
 				/>
 				<ToggleControl

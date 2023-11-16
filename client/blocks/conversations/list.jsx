@@ -74,20 +74,26 @@ export class ConversationCommentList extends Component {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_click', {
-			blog_id: this.props.post.site_ID,
-			comment_id: commentId,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_reply_click',
+			{
+				comment_id: commentId,
+			},
+			{ post: this.props.post }
+		);
 	};
 
 	onReplyCancel = () => {
 		this.setState( { commentText: '' } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
-			blog_id: this.props.post.site_ID,
-			comment_id: this.props.activeReplyCommentId,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_reply_cancel_click',
+			{
+				comment_id: this.props.activeReplyCommentId,
+			},
+			{ post: this.props.post }
+		);
 		this.resetActiveReplyComment();
 	};
 

@@ -18,12 +18,12 @@ import Main from 'calypso/components/main';
 import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
-import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import {
 	getTaxValidationResult,
 	isContactValidationResponseValid,
-} from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
-import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+} from 'calypso/my-sites/checkout/src/lib/contact-validation';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
@@ -52,7 +52,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { updateCartContactDetailsForCheckout } from '../composite-checkout/lib/update-cart-contact-details-for-checkout';
+import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import PurchaseModal, { wrapValueInManagedValue } from './purchase-modal';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
@@ -62,7 +62,7 @@ import type {
 	ManagedContactDetails,
 	VatDetails,
 } from '@automattic/wpcom-checkout';
-import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
@@ -215,12 +215,17 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 
 	render() {
-		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType } = this.props;
+		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType, upgradeItem } = this.props;
 		const styleClass =
 			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
 				? 'business-plan-upgrade-upsell-new-design'
 				: upsellType;
 
+		// There is no `siteId` if we're purchasing a domain-only site, so we pass the site slug to the query component instead.
+		const siteId =
+			upsellType === PROFESSIONAL_EMAIL_UPSELL
+				? upgradeItem
+				: parseInt( String( selectedSiteId ), 10 );
 		return (
 			<Main
 				className={ classnames( styleClass, {
@@ -228,9 +233,11 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				} ) }
 			>
 				<QueryPaymentCountries />
-				<QuerySites siteId={ selectedSiteId } />
+				<QuerySites siteId={ siteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
-				{ ! hasSitePlans && <QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } /> }
+				{ ! hasSitePlans && typeof siteId === 'number' && ! isNaN( siteId ) && (
+					<QuerySitePlans siteId={ siteId } />
+				) }
 				{ this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }

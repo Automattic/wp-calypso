@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -9,13 +11,17 @@ import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import Gravatar from 'calypso/components/gravatar';
 import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl } from 'calypso/lib/paths';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
@@ -59,6 +65,7 @@ class PostComment extends PureComponent {
 		showNestingReplyArrow: PropTypes.bool,
 		showReadMoreInActions: PropTypes.bool,
 		hidePingbacksAndTrackbacks: PropTypes.bool,
+		isInlineComment: PropTypes.bool,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -75,7 +82,7 @@ class PostComment extends PureComponent {
 		enableCaterpillar: PropTypes.bool,
 
 		// connect()ed props:
-		currentUser: PropTypes.object.isRequired,
+		currentUser: PropTypes.object,
 		shouldHighlightNew: PropTypes.bool,
 	};
 
@@ -101,7 +108,32 @@ class PostComment extends PureComponent {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
 
+	onLikeToggle = () => {
+		if ( ! this.props.isLoggedIn ) {
+			// Redirect to create account page when not logged in and the login window component is not enabled
+			const { pathname } = getUrlParts( window.location.href );
+			if ( isReaderTagEmbedPage( window.location ) ) {
+				return window.open(
+					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
+					'_blank'
+				);
+			}
+			// Do not redirect to create account page when not logged in and the login window component is enabled
+			if ( ! config.isEnabled( 'reader/login-window' ) ) {
+				return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+			}
+		}
+	};
+
 	handleReply = () => {
+		if ( ! this.props.isLoggedIn ) {
+			return this.props.registerLastActionRequiresLogin( {
+				type: 'reply',
+				siteId: this.props.post.site_ID,
+				postId: this.props.post.ID,
+				commentId: this.props.commentId,
+			} );
+		}
 		this.props.onReplyClick( this.props.commentId );
 		this.setState( { showReplies: true } ); // show the comments when replying
 	};
@@ -109,12 +141,14 @@ class PostComment extends PureComponent {
 	handleAuthorClick = ( event ) => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_author_click', {
-			blog_id: this.props.post.site_ID,
-			post_id: this.props.post.ID,
-			comment_id: this.props.commentId,
-			author_url: event.target.href,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_author_click',
+			{
+				comment_id: this.props.commentId,
+				author_url: event.target.href,
+			},
+			{ post: this.props.post }
+		);
 	};
 
 	handleCommentPermalinkClick = ( event ) => {
@@ -218,6 +252,7 @@ class PostComment extends PureComponent {
 				{ showReplies && (
 					<ol className="comments__list">
 						{ commentChildrenIds.map( ( childId ) => (
+							// eslint-disable-next-line no-use-before-define
 							<ConnectedPostComment
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
 								showReadMoreInActions={ this.props.showReadMoreInActions }
@@ -236,6 +271,7 @@ class PostComment extends PureComponent {
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
+								isInlineComment={ this.props.isInlineComment }
 							/>
 						) ) }
 					</ol>
@@ -266,6 +302,7 @@ class PostComment extends PureComponent {
 				commentText={ this.props.commentText }
 				onUpdateCommentText={ this.props.onUpdateCommentText }
 				onCommentSubmit={ this.props.onCommentSubmit }
+				isInlineComment={ this.props.isInlineComment }
 			/>
 		);
 	}
@@ -308,11 +345,15 @@ class PostComment extends PureComponent {
 			} );
 		recordAction( 'comment_read_more_click' );
 		recordGaEvent( 'Clicked Comment Read More' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_read_more_click', {
-			blog_id: this.props.post.site_ID,
-			post_id: this.props.post.ID,
-			comment_id: this.props.commentId,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_read_more_click',
+			{
+				comment_id: this.props.commentId,
+			},
+			{
+				post: this.props.post,
+			}
+		);
 	};
 
 	render() {
@@ -355,7 +396,7 @@ class PostComment extends PureComponent {
 		// If it's a pending comment, use the current user as the author
 		if ( comment.isPlaceholder ) {
 			comment.author = this.props.currentUser;
-			comment.author.name = this.props.currentUser.display_name;
+			comment.author.name = this.props.currentUser?.display_name;
 		} else {
 			comment.author.name = decodeEntities( comment.author.name );
 		}
@@ -390,7 +431,7 @@ class PostComment extends PureComponent {
 			<li className={ postCommentClassnames }>
 				<div className="comments__comment-author">
 					{ commentAuthorUrl ? (
-						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick }>
+						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick } tabIndex={ -1 }>
 							<Gravatar user={ comment.author } />
 						</a>
 					) : (
@@ -445,6 +486,7 @@ class PostComment extends PureComponent {
 					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
 					handleReply={ this.handleReply }
+					onLikeToggle={ this.onLikeToggle }
 					onReplyCancel={ this.props.onReplyCancel }
 					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }
 					onReadMore={ this.onReadMore }
@@ -468,8 +510,9 @@ class PostComment extends PureComponent {
 const ConnectedPostComment = connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ expandComments, recordReaderTracksEvent }
+	{ expandComments, recordReaderTracksEvent, registerLastActionRequiresLogin }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

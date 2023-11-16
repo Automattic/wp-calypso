@@ -10,15 +10,16 @@
 @import "../variables.scss";
 
 .twitter-preview {
-	background-color: #fff;
 	padding: 20px;
 }
 
 .twitter-preview__wrapper {
-	padding: 20px;
 	background-color: #fff;
 	max-width: clamp(200px, 100%, 635px);
 	margin-inline: auto;
+	padding-top: 1rem;
+	border-radius: 4px;
+	padding-inline-end: 1rem;
 }
 
 .twitter-preview__section.social-preview__section {
@@ -29,11 +30,6 @@
 	.social-preview__section-desc {
 		padding-inline-start: 17px;
 	}
-}
-
-// When the preview is in a section of all previews
-.twitter-preview__section .twitter-preview__wrapper {
-	padding: 0;
 }
 
 .twitter-preview__container {
@@ -70,6 +66,7 @@
 
 	.twitter-preview__main {
 		padding-bottom: 1rem;
+		overflow: hidden;
 	}
 
 	.twitter-preview__header {

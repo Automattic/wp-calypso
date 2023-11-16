@@ -4,9 +4,9 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -46,7 +46,7 @@ const SecurityAccountRecovery = ( props ) => (
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
 
-		<FormattedHeader brandFont headerText={ props.translate( 'Security' ) } align="left" />
+		<NavigationHeader navigationItems={ [] } title={ props.translate( 'Security' ) } />
 
 		{ ! config.isEnabled( 'security/security-checkup' ) && (
 			<SecuritySectionNav path={ props.path } />

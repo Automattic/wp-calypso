@@ -12,6 +12,4 @@ Other accepted props are two boolean flags and a callback, all of which are rela
 
 ## Props
 
-- `emptyContent`: element ( optional ), element that will be displayed when the list is empty, if null or not provided default EmptyContent will be used.
-
 For a complete list of props along with their types, please refer to the `ThemesList` component's `propTypes` member.

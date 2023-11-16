@@ -17,10 +17,25 @@ $font-family: "SF Pro Text", $sans;
 	height: calc(100vh - 60px);
 	width: 100%;
 
+	.navigator-header {
+		// Force display because by default it shows only for min-width break-xlarge
+		display: block;
+	}
+
 	.pattern-assembler__button {
 		width: 100%;
 		height: 40px;
 		border-radius: 4px;
+
+		&.components-button.is-primary[aria-disabled="true"] {
+			&,
+			&:hover,
+			&:active {
+				background-color: var(--studio-gray-5);
+				border-color: var(--studio-gray-5);
+				color: var(--studio-white);
+			}
+		}
 	}
 
 	.step-container__content {
@@ -51,122 +66,16 @@ $font-family: "SF Pro Text", $sans;
 		}
 	}
 
-	/**
-	 * Pattern Layout
-	 */
-	.pattern-layout {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		width: 100%;
-		margin: 0;
+	.pattern-assembler__sidebar-panel {
+		margin-inline-end: 22px;
 
-		button {
-			display: flex;
-			align-items: center;
-			border: 0;
-			padding: 0;
-			font-family: inherit;
-			color: var(--color-link);
-			transition: color 0.2s ease-in;
-			background-color: transparent;
+		// Disable the animation of the transform on the panel
+		.components-navigator-screen {
+			transform: none !important;
 		}
 
-		.pattern-layout__list {
-			list-style: none;
-			font-family: Inter, sans-serif;
-			font-style: normal;
-			font-weight: 500;
-			font-size: $font-body-small;
-			color: #101517;
-			letter-spacing: -0.24px;
-			user-select: none;
-			overflow-y: auto;
-			overflow-x: hidden;
-			scrollbar-width: none;
-			// Fix for tooltip position issue
-			padding-bottom: 25px;
-
-			&::-webkit-scrollbar {
-				display: none;
-			}
-		}
-
-		.pattern-layout__list-item {
-			position: relative;
-			display: flex;
-			align-items: center;
-			list-style: none;
-			height: 48px;
-			line-height: 48px;
-			border-bottom: 1px solid #eee;
-
-			.pattern-layout__list-item-text {
-				text-overflow: ellipsis;
-				overflow: hidden;
-				max-width: 235px;
-				white-space: nowrap;
-			}
-
-			&:hover,
-			&:focus,
-			&:focus-within {
-				button {
-					color: var(--color-link-dark);
-				}
-
-				.pattern-layout__list-item-text {
-					max-width: 154px;
-				}
-
-				.pattern-action-bar {
-					animation: slideInShort 0.2s forwards, fadeIn 0.3s forwards;
-					animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
-				}
-			}
-
-			&:last-child {
-				border-bottom: 0;
-			}
-
-			&:first-child {
-				margin-top: auto;
-			}
-		}
-
-		.pattern-layout__list-item-button {
-			width: 100%;
-			height: 100%;
-		}
-
-		.pattern-layout__add-button {
-			flex-shrink: 0;
-			gap: 16px;
-			font-family: Inter, sans-serif;
-
-			.pattern-layout__add-button-icon {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 24px;
-				height: 24px;
-				padding: 5px 6px 6px;
-				border-radius: 2px;
-				box-sizing: border-box;
-				color: var(--studio-white);
-				background-color: var(--color-link);
-				transition: background-color 0.2s ease-in;
-			}
-
-			&:hover,
-			&:focus,
-			&:focus-within {
-				color: var(--color-link-dark);
-
-				.pattern-layout__add-button-icon {
-					background-color: var(--color-link-dark);
-				}
-			}
+		&:empty {
+			display: none;
 		}
 	}
 
@@ -220,6 +129,7 @@ $font-family: "SF Pro Text", $sans;
 
 			&:last-child {
 				margin-bottom: 0;
+				padding-bottom: 0;
 			}
 		}
 
@@ -271,8 +181,6 @@ $font-family: "SF Pro Text", $sans;
 		margin: 0 -16px 32px;
 		margin-bottom: 32px;
 		overflow-y: auto;
-		// Reserve space for the scrollbar to prevent unwanted layout change
-		scrollbar-gutter: stable;
 
 		&.screen-category-list__body {
 			// Reduces .navigator-header margin
@@ -282,6 +190,13 @@ $font-family: "SF Pro Text", $sans;
 
 	.screen-container__footer {
 		margin-top: auto;
+
+		.screen-container__footer-description {
+			display: inline-block;
+			margin-bottom: 8px;
+			font-size: $font-body-small;
+			color: var(--studio-gray-80);
+		}
 	}
 
 	.screen-container__description {
@@ -343,44 +258,5 @@ $font-family: "SF Pro Text", $sans;
 	 */
 	.components-button:focus:not(:disabled) {
 		box-shadow: 0 0 0 2px var(--color-primary-light);
-	}
-}
-
-.popover.is-right.pattern-layout__add-button-popover {
-	margin-left: 6px;
-	outline: none;
-
-	.popover__arrow {
-		border-right-color: transparent;
-
-		&::before {
-			border-width: 10px 16px;
-			border-right-color: var(--studio-black);
-		}
-	}
-
-	.popover__inner {
-		line-height: 20px;
-		padding: 4px 8px;
-		border-radius: 4px;
-		border: 0;
-		color: #eee;
-		background-color: var(--studio-black);
-	}
-}
-
-/**
- * Revamp styles
- */
-.pattern-assembler.pattern-assembler__sidebar-revamp {
-	.pattern-layout {
-		.pattern-layout__list {
-			// Fix for tooltip position issue
-			margin: 0 0 -9px;
-		}
-
-		.pattern-action-bar {
-			right: 2px;
-		}
 	}
 }

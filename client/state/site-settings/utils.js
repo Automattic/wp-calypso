@@ -1,6 +1,5 @@
 /**
  * Normalize API Settings
- *
  * @param {Object} settings Raw API settings
  * @returns {Object}          Normalized settings
  */

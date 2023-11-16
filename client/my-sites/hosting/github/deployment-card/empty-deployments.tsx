@@ -10,7 +10,7 @@ export const EmptyDeployments = () => {
 					'Push to the connected branch to trigger a deployment. {{a}}Learn more{{/a}}',
 					{
 						components: {
-							a: <ExternalLink href="#" />,
+							a: <ExternalLink href="#" children={ null } />,
 						},
 					}
 				) }

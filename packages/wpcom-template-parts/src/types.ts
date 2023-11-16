@@ -7,6 +7,8 @@ export interface HeaderProps {
 	sectionName?: string;
 	logoColor?: string;
 	variant?: 'default' | 'minimal';
+	startUrl?: string;
+	loginUrl?: string;
 }
 
 export interface FooterProps {
@@ -24,7 +26,7 @@ export interface PureFooterProps extends FooterProps {
 }
 
 export interface MenuItemProps {
-	content: string;
+	content: string | React.ReactNode;
 	className?: string;
 }
 

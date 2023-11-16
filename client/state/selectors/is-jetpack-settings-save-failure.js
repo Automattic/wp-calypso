@@ -2,7 +2,6 @@ import getJetpackSettingsSaveRequestStatus from 'calypso/state/selectors/get-jet
 
 /**
  * Returns true if the save Jetpack site settings requests is successful
- *
  * @param  {Object}  state     Global state tree
  * @param  {number}  siteId    Site ID
  * @param  {Object}  settings  The settings we're updating

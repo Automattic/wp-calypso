@@ -6,7 +6,6 @@ const EMPTY_ARRAY = [];
 
 /**
  * Returns array value of notice item state
- *
  * @param  {Object} state Global state tree
  * @returns {Array}        Notice objects as array
  */

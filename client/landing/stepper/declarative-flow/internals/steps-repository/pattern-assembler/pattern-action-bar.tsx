@@ -1,8 +1,11 @@
 import { Button } from '@wordpress/components';
-import { chevronUp, chevronDown, close, edit } from '@wordpress/icons';
+import { chevronUp, chevronDown, edit, shuffle, trash } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import type { Category } from './types';
 import './pattern-action-bar.scss';
 
 type PatternActionBarProps = {
@@ -10,11 +13,14 @@ type PatternActionBarProps = {
 	onDelete: () => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
+	onShuffle: () => void;
+	onMouseLeave?: ( event: React.MouseEvent< HTMLElement > ) => void;
 	disableMoveUp?: boolean;
 	disableMoveDown?: boolean;
 	patternType: string;
-	isRemoveButtonTextOnly?: boolean;
+	category?: Category;
 	source: 'list' | 'large_preview';
+	isOverflow?: boolean;
 };
 
 const PatternActionBar = ( {
@@ -22,18 +28,31 @@ const PatternActionBar = ( {
 	onDelete,
 	onMoveUp,
 	onMoveDown,
+	onShuffle,
+	onMouseLeave,
 	disableMoveUp,
 	disableMoveDown,
 	patternType,
-	isRemoveButtonTextOnly,
+	category,
 	source,
+	isOverflow,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
+	const eventProps = {
+		pattern_type: patternType,
+		pattern_category: category?.name,
+		source,
+	};
+
 	return (
+		// eslint-disable-next-line jsx-a11y/interactive-supports-focus
 		<div
-			className="pattern-action-bar"
+			className={ classnames( 'pattern-assembler__pattern-action-bar', {
+				'pattern-assembler__pattern-action-bar--overflow': isOverflow,
+			} ) }
 			role="menubar"
 			aria-label={ translate( 'Pattern actions' ) }
+			onMouseLeave={ onMouseLeave }
 		>
 			{ onMoveUp && onMoveDown && (
 				<div className="pattern-action-bar__block">
@@ -43,9 +62,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move up' ) }
 						onClick={ () => {
-							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_MOVEUP_CLICK, {
-								source,
-							} );
+							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_MOVEUP_CLICK, eventProps );
 							onMoveUp?.();
 						} }
 						icon={ chevronUp }
@@ -57,9 +74,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move down' ) }
 						onClick={ () => {
-							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_MOVEDOWN_CLICK, {
-								source,
-							} );
+							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_MOVEDOWN_CLICK, eventProps );
 							onMoveDown?.();
 						} }
 						icon={ chevronDown }
@@ -67,16 +82,25 @@ const PatternActionBar = ( {
 					/>
 				</div>
 			) }
+			<Button
+				className="pattern-action-bar__block pattern-action-bar__action pattern-action-bar__action--shuffle"
+				role="menuitem"
+				label={ translate( 'Shuffle' ) }
+				onClick={ () => {
+					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SHUFFLE_CLICK, eventProps );
+					onShuffle();
+				} }
+				icon={ shuffle }
+				iconSize={ 23 }
+				text={ category?.label }
+			/>
 			{ onReplace && (
 				<Button
 					className="pattern-action-bar__block pattern-action-bar__action"
 					role="menuitem"
 					label={ translate( 'Replace' ) }
 					onClick={ () => {
-						recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_REPLACE_CLICK, {
-							pattern_type: patternType,
-							source,
-						} );
+						recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_REPLACE_CLICK, eventProps );
 						onReplace();
 					} }
 					icon={ edit }
@@ -86,19 +110,14 @@ const PatternActionBar = ( {
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label={ translate( 'Remove' ) }
+				label={ translate( 'Delete' ) }
 				onClick={ () => {
-					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, {
-						pattern_type: patternType,
-						source,
-					} );
+					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, eventProps );
 					onDelete();
 				} }
-				icon={ ! isRemoveButtonTextOnly ? close : null }
+				icon={ trash }
 				iconSize={ 23 }
-			>
-				{ isRemoveButtonTextOnly ? translate( 'Remove' ) : null }
-			</Button>
+			/>
 		</div>
 	);
 };

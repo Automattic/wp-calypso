@@ -1,7 +1,6 @@
-import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { isNotAtomicJetpack } from '../utils';
+import { isNotAtomicJetpack, isTrialSite } from '../utils';
 import { PlanRenewNag } from './sites-plan-renew-nag';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -31,7 +30,7 @@ const STAGING_PLAN_LABEL = 'Staging';
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 	const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
-	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const trialSite = isTrialSite( site );
 
 	return (
 		<SitePlanContainer>
@@ -47,8 +46,12 @@ export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 							<PlanRenewNag
 								plan={ site.plan }
 								isSiteOwner={ site?.site_owner === userId }
-								checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
-								hideRenewLink={ isECommerceTrialSite }
+								checkoutUrl={
+									trialSite
+										? `/plans/${ site.slug }`
+										: `/checkout/${ site.slug }/${ site.plan?.product_slug }`
+								}
+								isUpgradeable={ trialSite }
 							/>
 						</PlanRenewNagContainer>
 					) : (

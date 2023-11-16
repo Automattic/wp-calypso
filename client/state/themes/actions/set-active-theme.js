@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:themes:actions' );
 
 /**
  * Sets the active theme for a given site.
- *
  * @param  {number}   siteId Site for which to check active theme
  * @param  {Object}   theme The theme to set as active
  * @returns {Function}        Redux thunk with request action

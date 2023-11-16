@@ -1,5 +1,6 @@
+import { Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Count from 'calypso/components/count';
+import { useCurrentRoute } from 'calypso/components/route';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { type as domainType } from 'calypso/lib/domains/constants';
@@ -15,6 +16,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 		selectedSite.ID,
 		domain.name
 	);
+	const { currentRoute } = useCurrentRoute();
 
 	let emailAddresses: string[] = [];
 
@@ -40,11 +42,12 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 			} ) }
 			ctaText={ translate( 'Add professional email' ) }
 			isPrimary={ true }
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	) : (
 		<DomainInfoCard
 			type="href"
-			href={ emailManagement( selectedSite.slug, domain.name ) }
+			href={ emailManagement( selectedSite.slug, domain.name, currentRoute ) }
 			title={
 				<>
 					{ translate( 'Email' ) }
@@ -53,6 +56,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 			}
 			description={ emailAddresses.join( '\n' ) }
 			ctaText={ translate( 'View emails' ) }
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	);
 };

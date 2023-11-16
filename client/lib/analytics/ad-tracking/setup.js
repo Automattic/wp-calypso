@@ -80,6 +80,10 @@ if ( typeof window !== 'undefined' ) {
 	if ( mayWeInitTracker( 'googleTagManager' ) ) {
 		setupGtmGtag();
 	}
+
+	if ( mayWeInitTracker( 'clarity' ) ) {
+		setupClarityGlobal();
+	}
 }
 
 /**
@@ -235,4 +239,19 @@ function setupGtmGtag() {
 		window.dataLayer = window.dataLayer || [];
 		window.dataLayer.push( { 'gtm.start': new Date().getTime(), event: 'gtm.js' } );
 	}
+}
+
+/**
+ * This sets up the global window.clarity method that Clarity expects to be set before the script is loaded.
+ * @returns {void}
+ */
+function setupClarityGlobal() {
+	if ( window.clarity ) {
+		return;
+	}
+	window.clarity =
+		window.clarity ||
+		function () {
+			( window.clarity.q = window.clarity.q || [] ).push( arguments );
+		};
 }

@@ -8,7 +8,8 @@ import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { EmptySitesDashboard } from './components/empty-sites-dashboard';
+import { hideMasterbar } from 'calypso/state/ui/actions';
+import { HostingFlowForkingPage } from './components/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
@@ -46,17 +47,18 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 }
 
 export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count;
-
-	if ( ! context.query[ 'new-site' ] && siteCount === 0 ) {
-		return emptySites( context, next );
+	if ( context.query[ 'hosting-flow' ] ) {
+		return hostingFlowForkingPage( context, next );
 	}
 
 	return sitesDashboard( context, next );
 }
 
-function emptySites( context: PageJSContext, next: () => void ) {
-	const emptySitesDashboardGlobalStyles = css`
+function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
+	context.store.dispatch( hideMasterbar() );
+	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
+
+	const hostingFlowForkingPageGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #fff;
 
@@ -84,8 +86,8 @@ function emptySites( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
-			<Global styles={ emptySitesDashboardGlobalStyles } />
-			<EmptySitesDashboard />
+			<Global styles={ hostingFlowForkingPageGlobalStyles } />
+			<HostingFlowForkingPage siteCount={ siteCount } />
 		</>
 	);
 

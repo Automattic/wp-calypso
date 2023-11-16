@@ -46,6 +46,14 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	else if ( basePath.includes( '/offer-plan-upgrade/' ) && basePath.startsWith( '/checkout/' ) ) {
 		searchPositions = [ 2 ];
 	}
+	// For this specific path, the site fragment is in the last index position.
+	// e.g /checkout/offer-professional-email/new-domain.com/example.wordpress.com (last)
+	else if (
+		basePath.includes( '/offer-professional-email/' ) &&
+		basePath.startsWith( '/checkout/' )
+	) {
+		searchPositions = [ pieces.length - 1 ];
+	}
 
 	// Search for site slug in the URL positions defined in searchPositions.
 	for ( let i = 0; i < searchPositions.length; i++ ) {
@@ -155,7 +163,6 @@ export function getMessagePathForJITM( path: URLString, siteFragment?: SiteSlug 
 // TODO: Add status enum (see `client/my-sites/pages/main.jsx`).
 /**
  * Post status in our routes mapped to valid API values
- *
  * @param status  Status param from route
  * @returns        mapped status value
  */

@@ -20,6 +20,7 @@ import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/select
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { deleteSite } from 'calypso/state/sites/actions';
+import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -37,6 +38,7 @@ class DeleteSite extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		isTrialSite: PropTypes.bool,
 	};
 
 	state = {
@@ -317,6 +319,7 @@ class DeleteSite extends Component {
 					<DeleteSiteWarningDialog
 						isVisible={ this.state.showWarningDialog }
 						onClose={ this.closeWarningDialog }
+						isTrialSite={ this.props.isTrialSite }
 					/>
 					<Dialog
 						isVisible={ this.state.showConfirmDialog }
@@ -370,6 +373,7 @@ export default connect(
 			siteExists: !! getSite( state, siteId ),
 			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 			useSitesAsLandingPage: hasSitesAsLandingPage( state ),
+			isTrialSite: isTrialSite( state, siteId ),
 		};
 	},
 	{

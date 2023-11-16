@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import photon from 'photon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SHOW_ALL_SLUG } from '../constants';
+import { SHOW_ALL_SLUG, DEFAULT_ASSEMBLER_DESIGN } from '../constants';
 import {
 	getDesignPreviewUrl,
 	getMShotOptions,
@@ -14,7 +15,7 @@ import {
 	filterDesignsByCategory,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
-import PatternAssemblerCta from './pattern-assembler-cta';
+import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
@@ -25,7 +26,7 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 
 interface DesignPreviewImageProps {
 	design: Design;
-	locale: string;
+	locale?: string;
 	styleVariation?: StyleVariation;
 }
 
@@ -36,12 +37,26 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
+	if ( design.is_externally_managed && design.screenshot ) {
+		const fit = '479,360';
+		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
+		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+
+		return (
+			<img
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+				alt={ design.description }
+			/>
+		);
+	}
+
 	return (
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
-				language: locale,
 				use_screenshot_overrides: true,
 				style_variation: styleVariation,
+				...( locale && { language: locale } ),
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
@@ -110,6 +125,7 @@ const useTrackDesignView = ( {
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
 					is_virtual: design.is_virtual,
+					is_externally_managed: design.is_externally_managed,
 				} );
 
 				if ( category ) {
@@ -137,12 +153,7 @@ interface DesignCardProps {
 	shouldLimitGlobalStyles?: boolean;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -155,19 +166,14 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onPreview,
 	getBadge,
 } ) => {
-	const { __ } = useI18n();
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
 	const { style_variations = [] } = design;
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
 	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
-	const isPremiumStyleVariation =
+	const isLockedStyleVariation =
 		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
-	const badgeTooltipHeader = isPremiumStyleVariation ? __( 'Premium style' ) : '';
-	const badgeTooltipMessage = isPremiumStyleVariation
-		? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
-		: '';
 
 	return (
 		<ThemeCard
@@ -183,12 +189,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getBadge(
-				design.slug,
-				isPremiumStyleVariation,
-				badgeTooltipHeader,
-				badgeTooltipMessage
-			) }
+			badge={ getBadge( design.slug, isLockedStyleVariation ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
@@ -203,24 +204,21 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 interface DesignPickerProps {
 	locale: string;
-	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design ) => void;
+	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onSelectBlankCanvas,
+	onDesignYourOwn,
+	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -238,26 +236,35 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		return designs;
 	}, [ designs, categorization?.selection ] );
 
+	const assemblerCtaData = usePatternAssemblerCtaData();
+
 	return (
 		<div>
-			{ categorization && hasCategories && (
-				<UnifiedDesignPickerCategoryFilter
-					categories={ categorization.categories }
-					onSelect={ categorization.onSelect }
-					selectedSlug={ categorization.selection }
-				/>
-			) }
+			<div className="design-picker__filters">
+				{ categorization && hasCategories && (
+					<UnifiedDesignPickerCategoryFilter
+						className="design-picker__category-filter"
+						categories={ categorization.categories }
+						onSelect={ categorization.onSelect }
+						selectedSlug={ categorization.selection }
+					/>
+				) }
+				{ assemblerCtaData.shouldGoToAssemblerStep && (
+					<Button
+						className={ classnames( 'design-picker__design-your-own-button', {
+							'design-picker__design-your-own-button-without-categories': ! hasCategories,
+						} ) }
+						onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }
+					>
+						{ assemblerCtaData.title }
+					</Button>
+				) }
+			</div>
+
 			<div className="design-picker__grid">
 				{ filteredDesigns.map( ( design, index ) => {
 					if ( isBlankCanvasDesign( design ) ) {
-						return (
-							<PatternAssemblerCta
-								key={ index }
-								onButtonClick={ ( shouldGoToAssemblerStep ) =>
-									onSelectBlankCanvas( design, shouldGoToAssemblerStep )
-								}
-							/>
-						);
+						return null;
 					}
 
 					return (
@@ -274,6 +281,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
+				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN ) } />
 			</div>
 		</div>
 	);
@@ -281,7 +289,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design ) => void;
+	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
@@ -290,17 +299,13 @@ export interface UnifiedDesignPickerProps {
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
-	getBadge: (
-		themeId: string,
-		forcePremium: boolean,
-		tooltipHeader: string,
-		tooltipMessage: string
-	) => React.ReactNode;
+	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
-	onSelectBlankCanvas,
+	onDesignYourOwn,
+	onClickDesignYourOwnTopButton,
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
@@ -338,7 +343,8 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
-					onSelectBlankCanvas={ onSelectBlankCanvas }
+					onDesignYourOwn={ onDesignYourOwn }
+					onClickDesignYourOwnTopButton={ onClickDesignYourOwnTopButton }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }

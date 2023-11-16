@@ -14,11 +14,10 @@ import 'calypso/state/posts/init';
 
 /**
  * Action creator function: POST_REVISIONS_REQUEST
- *
  * @param {string} siteId of the revisions
  * @param {string} postId of the revisions
  * @param {string} postType of the parent post
- * @param {string} [comparisons=[]] list of revision objects to compare in format:
+ * @param {string} [comparisons] list of revision objects to compare in format:
  * 					[
  * 						{ from: 6, to: 8 },
  * 						{ from: 4, to: 5 },

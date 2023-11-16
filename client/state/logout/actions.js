@@ -5,7 +5,6 @@ import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/uti
 
 /**
  * Logs the current user out.
- *
  * @param  {string}   redirectTo Url to redirect the user to upon successful logout
  * @returns {Function}            A thunk that can be dispatched
  */

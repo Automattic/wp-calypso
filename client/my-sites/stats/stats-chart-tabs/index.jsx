@@ -48,6 +48,7 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+		hideLegend: PropTypes.bool,
 	};
 
 	intervalId = null;
@@ -97,19 +98,22 @@ class StatModuleChartTabs extends Component {
 			'is-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
+				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ classNames( ...classes ) }>
-				<Legend
-					activeCharts={ this.props.activeLegend }
-					activeTab={ this.props.activeTab }
-					availableCharts={ this.props.availableLegend }
-					clickHandler={ this.onLegendClick }
-					tabs={ this.props.charts }
-				/>
+				{ ! this.props.hideLegend && (
+					<Legend
+						activeCharts={ this.props.activeLegend }
+						activeTab={ this.props.activeTab }
+						availableCharts={ this.props.availableLegend }
+						clickHandler={ this.onLegendClick }
+						tabs={ this.props.charts }
+					/>
+				) }
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
@@ -144,19 +148,31 @@ const memoizedQuery = memoizeLast( ( chartTab, date, period, quantity, siteId ) 
 } ) );
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period }, chartTab, queryDate } ) => {
+	(
+		state,
+		{ activeLegend, period: { period }, chartTab, queryDate, customQuantity, customRange }
+	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
 		}
 
-		const quantity = 'year' === period ? 10 : 30;
+		// Set up quantity for API call.
+		const defaultQuantity = 'year' === period ? 10 : 30;
+		const quantity = customQuantity ? customQuantity : defaultQuantity;
+
 		const counts = getCountRecords( state, siteId, period );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
+		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+
+		// The end date of the chart depends on the customRange.
+		// If not provided we compute the value. (maintains previous behaviour)
+		const date = customRange
+			? customRange.chartEnd
+			: getQueryDate( queryDate, timezoneOffset, period, quantity );
+
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId );
 

@@ -3,14 +3,14 @@ import { PreviewComponent } from '../components';
 
 const selectors = {
 	// Preview
-	demoPane: '.theme__sheet-screenshot',
+	demoButton: 'button:text("Demo site")',
 
 	// Main body
 	activateDesignButton: 'button:text("Activate this design")',
 	customizeDesignButton: 'span:text("Customize site")',
 
 	// Activate modal
-	activateModal: '.themes__auto-loading-homepage-modal',
+	activateModal: '.themes__activation-modal',
 	activateModalButton: '.dialog__action-buttons button:has-text("Activate")',
 
 	// Thanks modal
@@ -38,7 +38,7 @@ export class ThemesDetailPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async preview(): Promise< void > {
-		await this.page.click( selectors.demoPane );
+		await this.page.click( selectors.demoButton );
 		const previewComponent = new PreviewComponent( this.page );
 		await previewComponent.previewReady();
 	}

@@ -1,0 +1,84 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+@import "../hundred-year-plan-step-wrapper/mixins";
+
+.hundred-year-plan-site-picker {
+	.step-container__content {
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(32px);
+				@include break-small {
+					font-size: rem(44px);
+				}
+			}
+			margin: 32px 24px 0 24px;
+			@include break-small {
+				margin-top: 72px;
+			}
+		}
+
+		.hundred-year-plan-site-picker__container {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			@include break-small {
+				max-width: 780px;
+			}
+			.site-selector.sites-list {
+				border-radius: 4px;
+				width: 100%;
+				margin: 0 24px;
+				@include break-small {
+					border: 1px solid var(--studio-gray-5);
+					margin: 0 48px 0 32px;
+				}
+
+				.search {
+					margin-inline-start: 0;
+					margin-inline-end: 0;
+					@include break-small {
+						margin: 24px 24px 18px 24px;
+					}
+				}
+
+				.site-selector__sites {
+					border-top: none;
+
+					@include breakpoint-deprecated( "<660px" ) {
+						max-height: none;
+					}
+
+					.site {
+						cursor: pointer;
+						.site__content {
+							padding: 14px 8px;
+							@include break-small {
+								padding: 14px 24px;
+							}
+							&:hover {
+								background-color: var(--studio-gray-0);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+.hundred-year-plan-site-picker__confirmation-modal-overlay {
+	background-color: rgba(0, 0, 0, 0.6);
+	align-items: center;
+	justify-content: center;
+}
+.hundred-year-plan-site-picker__confirmation-modal {
+	height: max-content;
+	margin: 0 16px;
+	.is-placeholder {
+		@include onboarding-placeholder;
+	}
+
+	.components-button.is-primary {
+		@include primary-button-black-theme;
+	}
+}

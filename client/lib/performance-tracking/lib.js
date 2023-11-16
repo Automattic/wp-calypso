@@ -14,7 +14,6 @@ import { collectTranslationTimings, clearTranslationTimings } from './collectors
 /**
  * This reporter is added to _all_ performance tracking metrics.
  * Be sure to add only metrics that make sense for tracked pages and are always present.
- *
  * @param state redux state
  */
 const buildDefaultCollector = ( state ) => {
@@ -62,10 +61,17 @@ export const startPerformanceTracking = ( name, { fullPageLoad = false } = {} ) 
 	}
 };
 
-export const stopPerformanceTracking = ( name, { state = {}, metadata = {} } = {} ) => {
+export const stopPerformanceTracking = (
+	name,
+	{ state = {}, metadata = {}, extraCollectors = [] } = {}
+) => {
 	if ( isPerformanceTrackingEnabled() ) {
 		stop( name, {
-			collectors: [ buildDefaultCollector( state ), buildMetadataCollector( metadata ) ],
+			collectors: [
+				buildDefaultCollector( state ),
+				buildMetadataCollector( metadata ),
+				...extraCollectors.map( ( collector ) => collector( state, metadata ) ),
+			],
 		} );
 	}
 };

@@ -15,6 +15,11 @@ export default ( state = {}, action ) => {
 						'data.connected_account_default_currency',
 						null
 					),
+					connectedAccountMinimumCurrency: get(
+						action,
+						'data.connected_account_minimum_currency',
+						null
+					),
 					connectUrl: get( action, 'data.connect_url', null ),
 				},
 			};

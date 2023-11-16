@@ -23,6 +23,7 @@
 .card.stats-module {
 	padding: 0;
 	margin-bottom: 10px;
+	overflow-x: auto;
 }
 // Site sections
 .stats__module-list {
@@ -561,26 +562,6 @@ ul.module-header-actions {
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.stats-module__availability-warning {
-	padding: 12px 20px 0;
-	display: flex;
-
-	.gridicon {
-		fill: var(--color-text-subtle);
-	}
-}
-
-.stats-module__availability-warning-message {
-	font-size: $font-body-small;
-	margin-left: 8px;
-	margin-bottom: 0;
-	color: var(--color-text-subtle);
-}
-
-.stats__module-list .stats-module__availability-warning-message {
-	font-size: $font-body-extra-small;
-}
-
 .stats__module--insights-unified {
 	.card.section-header {
 		border-radius: 5px 5px 0 0; /* stylelint-disable-line scales/radii */
@@ -680,7 +661,6 @@ ul.module-header-actions {
 		}
 	}
 
-	.stats-module__expand,
 	.stats-module .module-expand {
 		margin: 20px 0;
 

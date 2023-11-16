@@ -1,29 +1,41 @@
 # Notices
 
 A subtree of state that manages global notices.
-Supported types of notices are `error`, `success`.
+Supported types of notices are `error`, `success`, `info`, and `warning`.
 
 ## How to use?
 
-### Connect to Redux
+### Functional components
 
-First, the component that wants to send notices must be connected to Redux.
+```js
+import { useDispatch } from 'react-redux';
+import { errorNotice } from 'calypso/state/notices/actions';
+
+function Component() {
+	const reduxDispatch = useDispatch();
+	useEffect(() => {
+		reduxDispatch(errorNotice('Something went wrong'));
+	}, []);
+}
+```
+
+### Class components
+
+The component that wants to send notices must be connected to Redux.
 
 ```javascript
 import { connect } from 'react-redux';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
+class Component {
+	componentDidMount() {
+		this.props.successNotice( 'Settings saved successfully!', {
+			duration: 4000,
+		} );
+	}
+}
+
 export default connect( null, { successNotice, errorNotice } )( Component );
-```
-
-### Uses
-
-Now you can use notices like so:
-
-```javascript
-this.props.successNotice( 'Settings saved successfully!', {
-	duration: 4000,
-} );
 ```
 
 ### The available methods are

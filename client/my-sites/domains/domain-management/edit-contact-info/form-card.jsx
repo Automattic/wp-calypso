@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import { get, includes, isEmpty, isEqual, snakeCase } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -13,20 +13,19 @@ import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import wp from 'calypso/lib/wp';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import TransferLockOptOutForm from 'calypso/my-sites/domains/domain-management/components/transfer-lock-opt-out-form';
-import {
-	domainManagementContactsPrivacy,
-	domainManagementEdit,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestWhois, saveWhois } from 'calypso/state/domains/management/actions';
 import {
-	isUpdatingWhois,
 	getWhoisData,
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
+	isUpdatingWhois,
 } from 'calypso/state/domains/management/selectors';
-import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { createUserEmailPendingUpdate } from 'calypso/state/user-settings/thunks/create-user-email-pending-update';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
 
 import './style.scss';
@@ -44,6 +43,10 @@ class EditContactInfoFormCard extends Component {
 		whoisSaveSuccess: PropTypes.bool,
 		showContactInfoNote: PropTypes.bool,
 		backUrl: PropTypes.string.isRequired,
+		bulkEdit: PropTypes.bool,
+		wwdDomains: PropTypes.arrayOf( PropTypes.object ),
+		bulkUpdateContactInfo: PropTypes.func,
+		forceShowTransferLockOptOut: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -129,7 +132,9 @@ class EditContactInfoFormCard extends Component {
 
 	requiresConfirmation( newContactDetails ) {
 		const { firstName, lastName, organization, email } = this.getContactFormFieldValues();
-		const isWwdDomain = this.props.selectedDomain.registrar === registrarNames.WWD;
+		const isWwdDomain =
+			this.props.selectedDomain.registrar === registrarNames.WWD ||
+			( this.props.bulkEdit && this.props.wwdDomains?.length > 0 );
 
 		const primaryFieldsChanged = ! (
 			firstName === newContactDetails.firstName &&
@@ -145,13 +150,13 @@ class EditContactInfoFormCard extends Component {
 	handleFormSubmittingComplete = () => this.setState( { formSubmitting: false } );
 
 	renderTransferLockOptOut() {
-		const { domainRegistrationAgreementUrl, translate } = this.props;
+		const { domainRegistrationAgreementUrl, translate, forceShowTransferLockOptOut } = this.props;
 		const registrationDatePlus60Days = moment
 			.utc( this.props.selectedDomain.registrationDate )
 			.add( 60, 'days' );
 		const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
 
-		if ( ! isLocked ) {
+		if ( forceShowTransferLockOptOut || ! isLocked ) {
 			return (
 				<>
 					<TransferLockOptOutForm
@@ -230,6 +235,18 @@ class EditContactInfoFormCard extends Component {
 				onClose={ this.handleDialogClose }
 			>
 				<h1>{ translate( 'Confirmation Needed' ) }</h1>
+				{ this.props.bulkEdit && this.props.wwdDomains?.length > 0 && (
+					<>
+						<span>{ translate( 'Confirmation is needed for the following domains:' ) }</span>
+						<ul>
+							{ this.props.wwdDomains.map( ( domain ) => (
+								<li key={ domain }>
+									<strong>{ domain.domain }</strong>
+								</li>
+							) ) }
+						</ul>
+					</>
+				) }
 				<p>{ text }</p>
 				{ email !== wpcomEmail && this.renderBackupEmail() }
 			</Dialog>
@@ -279,6 +296,15 @@ class EditContactInfoFormCard extends Component {
 				showNonDaConfirmationDialog: false,
 			},
 			() => {
+				if ( this.props.bulkEdit ) {
+					this.updateWpcomEmail( newContactDetails, updateWpcomEmail );
+					this.props.bulkUpdateContactInfo?.(
+						newContactDetails,
+						transferLock,
+						this.getNoticeMessage()
+					);
+					return;
+				}
 				this.props.saveWhois(
 					selectedDomain.name,
 					newContactDetails,
@@ -288,41 +314,7 @@ class EditContactInfoFormCard extends Component {
 			}
 		);
 
-		const { email } = newContactDetails;
-		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
-			wp.me()
-				.settings()
-				.update( { user_email: email } )
-				.then( ( data ) => {
-					if ( data.user_email_change_pending ) {
-						this.props.infoNotice(
-							this.props.translate(
-								'There is a pending change of your WordPress.com email to %(newEmail)s. Please check your inbox for a confirmation link.',
-								{
-									args: { newEmail: data.new_user_email },
-								}
-							),
-							{
-								showDismiss: true,
-								isPersistent: true,
-								duration: null,
-							}
-						);
-					}
-				} )
-				.catch( () => {
-					this.props.errorNotice(
-						this.props.translate(
-							'There was a problem updating your WordPress.com Account email.'
-						),
-						{
-							showDismiss: true,
-							isPersistent: true,
-							duration: null,
-						}
-					);
-				} );
-		}
+		this.updateWpcomEmail( newContactDetails, updateWpcomEmail );
 	};
 
 	onWhoisUpdateSuccess = () => {
@@ -336,14 +328,15 @@ class EditContactInfoFormCard extends Component {
 			),
 		} );
 
+		this.showNoticeAndGoBack( this.getNoticeMessage() );
+	};
+
+	getNoticeMessage = () => {
 		if ( ! this.state.requiresConfirmation ) {
-			this.showNoticeAndGoBack(
-				this.props.translate(
-					'The contact info has been updated. ' +
-						'There may be a short delay before the changes show up in the public records.'
-				)
+			return this.props.translate(
+				'The contact info has been updated. ' +
+					'There may be a short delay before the changes show up in the public records.'
 			);
-			return;
 		}
 
 		const { email } = this.getContactFormFieldValues();
@@ -371,18 +364,13 @@ class EditContactInfoFormCard extends Component {
 			);
 		}
 
-		this.showNoticeAndGoBack( message );
+		return message;
 	};
 
 	getReturnDestination = () => {
 		const domainName = this.props.selectedDomain.name;
 		const siteSlug = this.props.selectedSite.slug;
-		const domainSettingsPage = domainManagementEdit( siteSlug, domainName );
-		const contactsPrivacyPage = domainManagementContactsPrivacy( siteSlug, domainName );
-
-		return this.props.previousPath?.startsWith( domainSettingsPage )
-			? domainSettingsPage
-			: contactsPrivacyPage;
+		return domainManagementEdit( siteSlug, domainName, this.props.currentRoute );
 	};
 
 	showNoticeAndGoBack = ( message ) => {
@@ -428,6 +416,9 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	getIsFieldDisabled = ( name ) => {
+		if ( this.props.bulkEdit && ! this.state.formSubmitting ) {
+			return false;
+		}
 		const unmodifiableFields = get(
 			this.props,
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
@@ -435,6 +426,13 @@ class EditContactInfoFormCard extends Component {
 		);
 		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
 	};
+
+	updateWpcomEmail( newContactDetails, updateWpcomEmail ) {
+		const { email } = newContactDetails;
+		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
+			this.props.createUserEmailPendingUpdate( email );
+		}
+	}
 
 	shouldDisableSubmitButton() {
 		const { haveContactDetailsChanged, formSubmitting } = this.state;
@@ -448,7 +446,8 @@ class EditContactInfoFormCard extends Component {
 	}
 
 	render() {
-		const { selectedDomain, showContactInfoNote, translate } = this.props;
+		const { selectedDomain, showContactInfoNote, translate, forceShowTransferLockOptOut } =
+			this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
@@ -457,7 +456,6 @@ class EditContactInfoFormCard extends Component {
 		}
 
 		const updateWpcomEmailCheckboxDisabled = this.shouldDisableUpdateWpcomEmailCheckbox();
-
 		return (
 			<>
 				{ showContactInfoNote && (
@@ -483,7 +481,8 @@ class EditContactInfoFormCard extends Component {
 						updateWpcomEmailCheckboxDisabled={ updateWpcomEmailCheckboxDisabled }
 						onUpdateWpcomEmailCheckboxChange={ this.handleUpdateWpcomEmailCheckboxChange }
 					>
-						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
+						{ ( forceShowTransferLockOptOut || canUseDesignatedAgent ) &&
+							this.renderTransferLockOptOut() }
 					</ContactDetailsFormFields>
 				</form>
 				{ this.renderDialog() }
@@ -495,6 +494,7 @@ class EditContactInfoFormCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
+			currentRoute: getCurrentRoute( state ),
 			currentUser: getCurrentUser( state ),
 			isUpdatingWhois: isUpdatingWhois( state, ownProps.selectedDomain.name ),
 			previousPath: getPreviousPath( state ),
@@ -506,9 +506,9 @@ export default connect(
 	{
 		errorNotice,
 		fetchSiteDomains,
-		infoNotice,
 		requestWhois,
 		saveWhois,
 		successNotice,
+		createUserEmailPendingUpdate,
 	}
 )( localize( EditContactInfoFormCard ) );

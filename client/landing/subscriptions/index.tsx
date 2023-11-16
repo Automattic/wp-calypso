@@ -2,7 +2,7 @@ import 'calypso/components/environment-badge/style.scss';
 import '@automattic/calypso-polyfills';
 import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { CurrentUser, User } from '@automattic/data-stores';
+import { CurrentUser, User, UserActions } from '@automattic/data-stores';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import ReactDom from 'react-dom';
@@ -15,6 +15,10 @@ import GlobalNotices from 'calypso/components/global-notices';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { WindowLocaleEffectManager } from 'calypso/landing/stepper/utils/window-locale-effect-manager';
 import { SiteSubscriptionPage } from 'calypso/landing/subscriptions/components/site-subscription-page';
+import {
+	SubscriptionManagerContextProvider,
+	SubscriptionsPortal,
+} from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { SubscriptionManagerPage } from 'calypso/landing/subscriptions/components/subscription-manager-page';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
@@ -35,9 +39,9 @@ const setupReduxStore = ( user: CurrentUser ) => {
 	const userStoreKey = User.register( { client_id: '', client_secret: '' } );
 	if ( user?.ID ) {
 		reduxStore.dispatch( setCurrentUser( user ) as AnyAction );
-		dispatch( userStoreKey ).receiveCurrentUser( user );
+		( dispatch( userStoreKey ) as UserActions ).receiveCurrentUser( user );
 	} else {
-		dispatch( userStoreKey ).receiveCurrentUserFailed();
+		( dispatch( userStoreKey ) as UserActions ).receiveCurrentUserFailed();
 	}
 
 	return reduxStore;
@@ -63,7 +67,16 @@ window.AppBoot = async () => {
 						<BrowserRouter>
 							<RecordPageView />
 							<Routes>
-								<Route path="/subscriptions/site/:blogId/*" element={ <SiteSubscriptionPage /> } />
+								<Route
+									path="/subscriptions/site/:blogId/*"
+									element={
+										<SubscriptionManagerContextProvider
+											portal={ SubscriptionsPortal.Subscriptions }
+										>
+											<SiteSubscriptionPage />
+										</SubscriptionManagerContextProvider>
+									}
+								/>
 								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
 							</Routes>
 						</BrowserRouter>

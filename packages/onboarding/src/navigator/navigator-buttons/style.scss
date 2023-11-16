@@ -1,0 +1,47 @@
+@import "@automattic/typography/styles/fonts";
+
+.components-item.navigator-item {
+	height: 44px;
+	line-height: 44px;
+	padding: 0 5px 0 8px;
+	margin: 0 -5px 0 -8px;
+	font-size: $font-body-small;
+	font-weight: 400;
+	letter-spacing: -0.15px;
+	color: var(--studio-gray-100);
+	border: none;
+	background: transparent;
+	cursor: pointer;
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: var(--studio-blue-50);
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+
+	&:active {
+		background-color: var(--studio-blue-0);
+	}
+
+	.navigator-item__text {
+		padding-left: 1px;
+	}
+
+	&--active {
+		background-color: var(--studio-blue-0);
+		color: var(--studio-blue-50);
+	}
+}

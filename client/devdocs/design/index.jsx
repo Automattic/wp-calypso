@@ -4,8 +4,11 @@ import {
 	Gravatar,
 	SpinnerExample as Spinner,
 } from '@automattic/components';
+import Badge from '@automattic/components/src/badge/docs/example';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
+import Count from '@automattic/components/src/count/docs/example';
+import FoldableCard from '@automattic/components/src/foldable-card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
 import ListTile from '@automattic/components/src/list-tile/docs/example';
 import ProductLogoExample from '@automattic/components/src/logos/docs/example';
@@ -13,8 +16,10 @@ import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
 import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
+import SelectDropdown from '@automattic/components/src/select-dropdown/docs/example';
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import page from 'page';
@@ -25,7 +30,6 @@ import ActionCard from 'calypso/components/action-card/docs/example';
 import ActionPanel from 'calypso/components/action-panel/docs/example';
 import Animate from 'calypso/components/animate/docs/example';
 import BackButton from 'calypso/components/back-button/docs/example';
-import Badge from 'calypso/components/badge/docs/example';
 import Banner from 'calypso/components/banner/docs/example';
 import Breadcrumb from 'calypso/components/breadcrumb/docs/example';
 import BulkSelect from 'calypso/components/bulk-select/docs/example';
@@ -34,7 +38,6 @@ import CardHeading from 'calypso/components/card-heading/docs/example';
 import Chart from 'calypso/components/chart/docs/example';
 import Checklist from 'calypso/components/checklist/docs/example';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input/docs/example';
-import Count from 'calypso/components/count/docs/example';
 import DocumentHead from 'calypso/components/data/document-head';
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
@@ -48,9 +51,7 @@ import FAQ from 'calypso/components/faq/docs/example';
 import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FeatureItem from 'calypso/components/feature-item/docs/example';
 import FilePickers from 'calypso/components/file-picker/docs/example';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header/docs/example';
 import FocusableExample from 'calypso/components/focusable/docs/example';
-import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
@@ -79,6 +80,7 @@ import ListEnd from 'calypso/components/list-end/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
 import MultipleChoiceQuestionExample from 'calypso/components/multiple-choice-question/docs/example';
+import NavigationHeader from 'calypso/components/navigation-header/docs/example';
 import Notices from 'calypso/components/notice/docs/example';
 import PaginationExample from 'calypso/components/pagination/docs/example';
 import PaymentLogo from 'calypso/components/payment-logo/docs/example';
@@ -97,7 +99,6 @@ import Section from 'calypso/components/section/docs/example';
 import SectionHeader from 'calypso/components/section-header/docs/example';
 import SectionNav from 'calypso/components/section-nav/docs/example';
 import SegmentedControl from 'calypso/components/segmented-control/docs/example';
-import SelectDropdown from 'calypso/components/select-dropdown/docs/example';
 import ShareButton from 'calypso/components/share-button/docs/example';
 import SocialLogos from 'calypso/components/social-logo/docs/example';
 import SpinnerButton from 'calypso/components/spinner-button/docs/example';
@@ -115,7 +116,6 @@ import TimeSince from 'calypso/components/time-since/docs/example';
 import Timeline from 'calypso/components/timeline/docs/example';
 import Timezone from 'calypso/components/timezone/docs/example';
 import TokenFields from 'calypso/components/token-field/docs/example';
-import Tooltip from 'calypso/components/tooltip/docs/example';
 import UserItem from 'calypso/components/user/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';
@@ -210,10 +210,6 @@ export default class DesignAssets extends Component {
 					<FeatureGate readmeFilePath="feature-example" />
 					<FeatureItem readmeFilePath="feature-item" />
 					<FilePickers readmeFilePath="file-picker" />
-					<FixedNavigationHeader
-						searchKeywords="breadcrumbs"
-						readmeFilePath="fixed-navigation-header"
-					/>
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
@@ -245,6 +241,7 @@ export default class DesignAssets extends Component {
 					<ProductLogoExample />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
+					<NavigationHeader readmeFilePath="navigation-header" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />

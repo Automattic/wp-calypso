@@ -2,28 +2,41 @@ import styled from '@emotion/styled';
 import {
 	ABOUT_PAGE,
 	BLOG_PAGE,
+	CAREERS_PAGE,
+	CASE_STUDIES_PAGE,
 	CONTACT_PAGE,
+	CUSTOM_PAGE,
+	DONATE_PAGE,
+	EVENTS_PAGE,
 	FAQ_PAGE,
 	HOME_PAGE,
+	NEWSLETTER_PAGE,
 	PHOTO_GALLERY_PAGE,
+	PORTFOLIO_PAGE,
 	PRICING_PAGE,
-	SERVICE_SHOWCASE_PAGE,
+	type PageId,
+	SERVICES_PAGE,
 	SHOP_PAGE,
-	SITEMAP_PAGE,
 	TEAM_PAGE,
 	TESTIMONIALS_PAGE,
+	VIDEO_GALLERY_PAGE,
 } from 'calypso/signup/difm/constants';
 import aboutPage from 'calypso/signup/difm/images/page-descriptions/about-page.svg';
 import blogPage from 'calypso/signup/difm/images/page-descriptions/blog-page.svg';
+import caseStudies from 'calypso/signup/difm/images/page-descriptions/case-studies.svg';
 import contactPage from 'calypso/signup/difm/images/page-descriptions/contact-page.svg';
+import donate from 'calypso/signup/difm/images/page-descriptions/donate.svg';
+import eventsPage from 'calypso/signup/difm/images/page-descriptions/events.svg';
 import faqPage from 'calypso/signup/difm/images/page-descriptions/faq-page.svg';
 import homePage from 'calypso/signup/difm/images/page-descriptions/home-page.svg';
+import newsletter from 'calypso/signup/difm/images/page-descriptions/newsletter.svg';
 import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gallery.svg';
+import portfolio from 'calypso/signup/difm/images/page-descriptions/portfolio.svg';
 import pricingPage from 'calypso/signup/difm/images/page-descriptions/pricing-page.svg';
-import serviceShowcase from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
-import sitemapPage from 'calypso/signup/difm/images/page-descriptions/sitemap-page.svg';
+import services from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
 import teamPage from 'calypso/signup/difm/images/page-descriptions/team-page.svg';
 import testimonials from 'calypso/signup/difm/images/page-descriptions/testimonials.svg';
+import videoGallery from 'calypso/signup/difm/images/page-descriptions/video-gallery.svg';
 import threeDots from 'calypso/signup/difm/images/three-dots.svg';
 
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
@@ -117,6 +130,28 @@ const SelectedCount = styled.div`
 	bottom: 5px;
 `;
 
+const pageIdToThumbnailImageMap: Record< PageId, string | null > = {
+	[ ABOUT_PAGE ]: aboutPage,
+	[ BLOG_PAGE ]: blogPage,
+	[ CONTACT_PAGE ]: contactPage,
+	[ HOME_PAGE ]: homePage,
+	[ PHOTO_GALLERY_PAGE ]: photoGallery,
+	[ SHOP_PAGE ]: photoGallery,
+	[ TESTIMONIALS_PAGE ]: testimonials,
+	[ PRICING_PAGE ]: pricingPage,
+	[ FAQ_PAGE ]: faqPage,
+	[ TEAM_PAGE ]: teamPage,
+	[ VIDEO_GALLERY_PAGE ]: videoGallery,
+	[ PORTFOLIO_PAGE ]: portfolio,
+	[ SERVICES_PAGE ]: services,
+	[ CUSTOM_PAGE ]: null,
+	[ CAREERS_PAGE ]: faqPage,
+	[ EVENTS_PAGE ]: eventsPage,
+	[ DONATE_PAGE ]: donate,
+	[ NEWSLETTER_PAGE ]: newsletter,
+	[ CASE_STUDIES_PAGE ]: caseStudies,
+};
+
 export function BrowserView( {
 	pageId,
 	isSelected,
@@ -124,50 +159,19 @@ export function BrowserView( {
 	selectedIndex,
 	onClick,
 }: {
-	pageId: string;
+	pageId: PageId;
 	isSelected?: boolean;
 	isClickDisabled?: boolean;
 	selectedIndex: number;
 	onClick: () => void;
 } ) {
-	const getPageImage = () => {
-		switch ( pageId ) {
-			case ABOUT_PAGE:
-				return aboutPage;
-			case BLOG_PAGE:
-				return blogPage;
-			case CONTACT_PAGE:
-				return contactPage;
-			case SITEMAP_PAGE:
-				return sitemapPage;
-			case HOME_PAGE:
-				return homePage;
-			case PHOTO_GALLERY_PAGE:
-			case SHOP_PAGE:
-				return photoGallery;
-			case SERVICE_SHOWCASE_PAGE:
-				return serviceShowcase;
-			case TESTIMONIALS_PAGE:
-				return testimonials;
-			case PRICING_PAGE:
-				return pricingPage;
-			case FAQ_PAGE:
-				return faqPage;
-			case TEAM_PAGE:
-				return teamPage;
-			default:
-				return homePage;
-		}
-	};
-
 	const selectionProps = { isSelected, isClickDisabled };
+	const imageSrc = pageIdToThumbnailImageMap[ pageId ];
 	return (
 		<Container { ...selectionProps } onClick={ onClick }>
 			{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
 			<Header { ...selectionProps } />
-			<Content>
-				<img src={ getPageImage() } alt="page preview" />
-			</Content>
+			<Content>{ imageSrc && <img src={ imageSrc } alt="page preview" /> }</Content>
 		</Container>
 	);
 }

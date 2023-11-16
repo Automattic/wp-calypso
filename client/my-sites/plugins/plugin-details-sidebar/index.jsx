@@ -3,6 +3,7 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -53,10 +54,13 @@ const PluginDetailsSidebar = ( {
 
 	const supportLinks = [
 		{
-			href: 'https://wordpress.com/support/help-support-options/#live-chat-support',
+			href: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
 			label: translate( 'How to get help!' ),
 		},
-		{ href: 'https://automattic.com/privacy/', label: translate( 'See privacy policy' ) },
+		{
+			href: localizeUrl( 'https://automattic.com/privacy/' ),
+			label: translate( 'See privacy policy' ),
+		},
 	];
 	documentation_url &&
 		supportLinks.unshift( {

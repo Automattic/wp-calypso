@@ -6,7 +6,6 @@ import noticon2gridicon from '../utils/noticon2gridicon';
 /**
  * Create the actual DOM nodes for a given piece of text/ranges and
  * recurse downward into the range tree if necessary.
- *
  * @param {string} new_sub_text Plaintext on which ranges act
  * @param {Array} new_sub_range Position/applicable ranges array
  * @param {Object} range_info The origin range data for this render
@@ -171,7 +170,6 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 
 /**
  * Recurse into the data and produce DOM node output
- *
  * @param {string} sub_text  Plain-text upon which ranges act
  * @param {Array} sub_ranges Position/applicable ranges array
  * @param {Array} range_data All range data

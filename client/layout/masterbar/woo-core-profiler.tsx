@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
+import { isWebUri } from 'valid-url';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
@@ -15,33 +16,36 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 // Masterbar for WooCommerce Core Profiler Jetpack step
 const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) => string } ) => {
-	const { redirectTo, shouldShowProgressBar, shouldShowNoThanks } = useSelector( ( state ) => {
-		const currentRoute = getCurrentRoute( state );
-		let redirectTo = null;
-		let shouldShowProgressBar = true;
-		let shouldShowNoThanks = true;
-		switch ( currentRoute ) {
-			case '/jetpack/connect/authorize':
-				redirectTo = getCurrentQueryArguments( state )?.redirect_after_auth;
-			case '/log-in/jetpack':
-				redirectTo = getQueryArg( getRedirectToOriginal( state ) || '', 'redirect_after_auth' );
-			default:
-		}
+	const { redirectTo, shouldShowProgressBar, shouldShowNoThanks, currentRoute } = useSelector(
+		( state ) => {
+			const currentRoute = getCurrentRoute( state );
+			let redirectTo = null;
+			let shouldShowProgressBar = true;
+			let shouldShowNoThanks = true;
+			switch ( currentRoute ) {
+				case '/jetpack/connect/authorize':
+					redirectTo = getCurrentQueryArguments( state )?.redirect_after_auth;
+				case '/log-in/jetpack':
+					redirectTo = getQueryArg( getRedirectToOriginal( state ) || '', 'redirect_after_auth' );
+				default:
+			}
 
-		if (
-			currentRoute === '/log-in/jetpack/lostpassword' ||
-			getCurrentQueryArguments( state )?.lostpassword_flow
-		) {
-			shouldShowProgressBar = false;
-			shouldShowNoThanks = false;
-		}
+			if (
+				currentRoute === '/log-in/jetpack/lostpassword' ||
+				getCurrentQueryArguments( state )?.lostpassword_flow
+			) {
+				shouldShowProgressBar = false;
+				shouldShowNoThanks = false;
+			}
 
-		return {
-			redirectTo,
-			shouldShowProgressBar,
-			shouldShowNoThanks,
-		};
-	} );
+			return {
+				redirectTo,
+				shouldShowProgressBar,
+				shouldShowNoThanks,
+				currentRoute,
+			};
+		}
+	);
 
 	return (
 		<Fragment>
@@ -62,12 +66,14 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 							</a>
 						</li>
 						<li className="masterbar__woo-nav-item">
-							{ shouldShowNoThanks && typeof redirectTo === 'string' && redirectTo.length && (
+							{ shouldShowNoThanks && typeof redirectTo === 'string' && isWebUri( redirectTo ) && (
 								<Button
 									onClick={ () => {
-										recordTracksEvent( 'calypso_jpc_wc_coreprofiler_skip' );
-										window.location.href = redirectTo;
+										recordTracksEvent( 'calypso_jpc_wc_coreprofiler_skip', {
+											page: currentRoute,
+										} );
 									} }
+									href={ redirectTo }
 									className="masterbar__no-thanks-button"
 								>
 									{ translate( 'No, Thanks' ) }

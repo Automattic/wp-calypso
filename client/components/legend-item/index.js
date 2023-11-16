@@ -37,13 +37,12 @@ class LegendItem extends Component {
 		const { percent, value } = this.props;
 
 		let valueString = '';
-
 		if ( value && percent ) {
 			valueString = `${ value } (${ percent }%)`;
 		} else if ( value ) {
 			valueString = value;
 		} else if ( percent ) {
-			valueString = `${ percent }%`;
+			valueString = percent === '0' ? '-' : `${ percent }%`;
 		}
 
 		return valueString.length > 0 ? (
@@ -55,11 +54,12 @@ class LegendItem extends Component {
 		const { circleClassName, description, name } = this.props;
 
 		return (
-			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			<div
 				className="legend-item"
+				/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 				onMouseOver={ this.handleMouseOver }
 				onMouseOut={ this.handleMouseOut }
+				/* eslint-enable jsx-a11y/mouse-events-have-key-events */
 			>
 				<div className="legend-item__title">
 					<svg

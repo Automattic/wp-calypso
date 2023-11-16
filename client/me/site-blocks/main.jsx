@@ -6,9 +6,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteBlocks from 'calypso/components/data/query-site-blocks';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InfiniteList from 'calypso/components/infinite-list';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import {
@@ -56,7 +56,7 @@ class SiteBlockList extends Component {
 				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
-				<FormattedHeader brandFont headerText={ translate( 'Blocked Sites' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Blocked Sites' ) } />
 
 				<Card className="site-blocks__intro">
 					<p>

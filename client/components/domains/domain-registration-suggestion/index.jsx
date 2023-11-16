@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -7,7 +7,6 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
@@ -19,6 +18,7 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
+	getDomainRegistrations,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
@@ -28,8 +28,10 @@ import {
 	isDotGayNoticeRequired,
 } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from './premium-badge';
@@ -51,6 +53,7 @@ class DomainRegistrationSuggestion extends Component {
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 			currency_code: PropTypes.string,
 		} ).isRequired,
+		suggestionSelected: PropTypes.bool,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		premiumDomain: PropTypes.object,
@@ -130,14 +133,15 @@ class DomainRegistrationSuggestion extends Component {
 			isSignupStep,
 			selectedSite,
 			suggestion,
+			suggestionSelected,
 			translate,
 			pendingCheckSuggestion,
 			premiumDomain,
 			isCartPendingUpdateDomain,
+			flowName,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = hasDomainInCart( cart, domain );
-
+		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 
@@ -148,6 +152,15 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
+
+			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+				buttonStyles = { ...buttonStyles, borderless: true };
+
+				buttonContent = translate( '{{checkmark/}} Selected', {
+					context: 'Domain is already added to shopping cart',
+					components: { checkmark: <Gridicon icon="checkmark" /> },
+				} );
+			}
 		} else {
 			buttonContent =
 				! isSignupStep &&
@@ -181,6 +194,11 @@ class DomainRegistrationSuggestion extends Component {
 		) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
+
+		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
+			buttonStyles = { ...buttonStyles, primary: false };
+		}
+
 		return {
 			buttonContent,
 			buttonStyles,
@@ -213,7 +231,6 @@ class DomainRegistrationSuggestion extends Component {
 	 * becomes the tld. This is not very comprehensive since there can be
 	 * subdomains which would fail this test. However, for our purpose of
 	 * highlighting the TLD in domain suggestions, this is good enough.
-	 *
 	 * @param {string} domain The domain to be parsed
 	 */
 	getDomainParts( domain ) {
@@ -226,16 +243,6 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	renderDomainParts( domain ) {
-		const { name, tld } = this.getDomainParts( domain );
-		return (
-			<div className="domain-registration-suggestion__domain-title">
-				<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
-				<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
-			</div>
-		);
-	}
-
 	renderDomain() {
 		const {
 			showHstsNotice,
@@ -243,7 +250,7 @@ class DomainRegistrationSuggestion extends Component {
 			suggestion: { domain_name: domain },
 		} = this.props;
 
-		const title = this.renderDomainParts( domain );
+		const { name, tld } = this.getDomainParts( domain );
 
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
@@ -253,7 +260,11 @@ class DomainRegistrationSuggestion extends Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">
-					{ title } { ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+					<div className="domain-registration-suggestion__domain-title">
+						<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+						<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+						{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+					</div>
 				</h3>
 				{ this.renderBadges() }
 			</div>
@@ -308,6 +319,7 @@ class DomainRegistrationSuggestion extends Component {
 				className="domain-registration-suggestion__hsts-tooltip"
 				iconSize={ infoPopoverSize }
 				position="right"
+				showOnHover
 			>
 				{ ( showHstsNotice && this.getHstsMessage() ) ||
 					( showDotGayNotice && this.getDotGayMessage() ) }
@@ -462,6 +474,7 @@ const mapStateToProps = ( state, props ) => {
 		productCost,
 		productSaleCost,
 		flowName,
+		currentUser: getCurrentUser( state ),
 	};
 };
 

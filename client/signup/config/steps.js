@@ -1,4 +1,3 @@
-import { current as currentPage } from 'page';
 import {
 	addAddOnsToCart,
 	addPlanToCart,
@@ -19,7 +18,6 @@ import {
 	isAddOnsFulfilled,
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
-	isNewOrExistingSiteFulfilled,
 	createSiteAndAddDIFMToCart,
 	excludeStepIfEmailVerified,
 	submitWebsiteContent,
@@ -36,7 +34,6 @@ export default generateSteps( {
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
-	currentPage,
 	setDesignOnSite,
 	setThemeOnSite,
 	setOptionsOnSite,
@@ -48,7 +45,6 @@ export default generateSteps( {
 	isAddOnsFulfilled,
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
-	isNewOrExistingSiteFulfilled,
 	createSiteAndAddDIFMToCart,
 	excludeStepIfEmailVerified,
 	excludeStepIfProfileComplete,

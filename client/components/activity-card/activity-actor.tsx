@@ -53,6 +53,19 @@ const ActivityActor: FunctionComponent< Props > = ( {
 		);
 	}
 
+	if ( actorName === 'Jetpack Boost' && actorType === 'Application' ) {
+		return (
+			<div className="activity-card__actor">
+				{ isEnabled( 'jetpack/backup-simplified-screens-i4' ) && <JetpackLogo size={ size } /> }
+				{ ! withoutInfo && (
+					<div className="activity-card__actor-info">
+						<div className="activity-card__actor-name">Jetpack Boost</div>
+					</div>
+				) }
+			</div>
+		);
+	}
+
 	if ( actorName === 'Happiness Engineer' && actorType === 'Happiness Engineer' ) {
 		return (
 			<div className="activity-card__actor">

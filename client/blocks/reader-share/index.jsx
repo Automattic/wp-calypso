@@ -1,72 +1,18 @@
-import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
-import SiteSelector from 'calypso/components/site-selector';
-import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
-import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
-import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
-import { infoNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-
+import ReaderReblogSelection from './reblog';
+import ReaderSocialShareSelection from './social';
 import './style.scss';
-
-/**
- * Local variables
- */
-const actionMap = {
-	twitter( post ) {
-		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
-		const params = new URLSearchParams( {
-			text: post.title,
-			url: post.URL,
-		} );
-		baseUrl.search = params.toString();
-
-		const twitterUrl = baseUrl.href;
-
-		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
-	},
-	facebook( post ) {
-		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
-		const params = new URLSearchParams( {
-			u: post.URL,
-			app_id: config( 'facebook_api_key' ),
-		} );
-		baseUrl.search = params.toString();
-
-		const facebookUrl = baseUrl.href;
-
-		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
-	},
-	copy_link() {},
-};
-
-function buildQuerystringForPost( post ) {
-	const args = {};
-
-	if ( post.content_embeds && post.content_embeds.length ) {
-		args.embed = post.content_embeds[ 0 ].embedUrl || post.content_embeds[ 0 ].src;
-	}
-
-	args.title = `${ post.title } — ${ post.site_name }`;
-	args.text = post.excerpt;
-	args.url = post.URL;
-	args.is_post_share = true; // There is a dependency on this here https://github.com/Automattic/wp-calypso/blob/a69ded693a99fa6a957b590b1a538f32a581eb8a/client/gutenberg/editor/controller.js#L209
-
-	const params = new URLSearchParams( args );
-	return params.toString();
-}
 
 class ReaderShare extends Component {
 	static propTypes = {
@@ -113,11 +59,26 @@ class ReaderShare extends Component {
 
 	toggle = () => {
 		if ( ! this.state.showingMenu ) {
-			stats.recordAction( 'open_share' );
-			stats.recordGaEvent( 'Opened Share' );
-			stats.recordTrack( 'calypso_reader_share_opened', {
-				has_sites: this.props.hasSites,
-			} );
+			// Determine if we want to use reblog or share for stat/tracks names.
+			// If reblogging a comment, add comment to the reblog stat/tracks names.
+			const actionName = this.props.isReblogSelection
+				? `open_reader_${ this.props.comment ? 'comment_' : '' }reblog`
+				: 'open_share';
+			const eventName = this.props.isReblogSelection
+				? `Opened Reader ${ this.props.comment ? 'Comment ' : '' }Reblog`
+				: 'Opened Share';
+			const trackName = this.props.isReblogSelection
+				? `calypso_reader_${ this.props.comment ? 'comment_' : '' }reblog_opened`
+				: 'calypso_reader_share_opened';
+			stats.recordAction( actionName );
+			stats.recordGaEvent( eventName );
+			this.props.recordReaderTracksEvent(
+				trackName,
+				{
+					has_sites: this.props.hasSites,
+				},
+				{ post: this.props.post }
+			);
 		}
 		this.deferMenuChange( ! this.state.showingMenu );
 	};
@@ -131,34 +92,22 @@ class ReaderShare extends Component {
 		}
 	};
 
-	pickSiteToShareTo = ( slug ) => {
-		stats.recordAction( 'share_wordpress' );
-		stats.recordGaEvent( 'Clicked on Share to WordPress' );
-		stats.recordTrack( 'calypso_reader_share_to_site' );
-		page( `/post/${ slug }?` + buildQuerystringForPost( this.props.post ) );
-		return true;
-	};
-
-	closeExternalShareMenu = ( action ) => {
-		this.closeMenu();
-		const actionFunc = actionMap[ action ];
-		if ( actionFunc ) {
-			stats.recordAction( 'share_' + action );
-			stats.recordGaEvent( 'Clicked on Share to ' + action );
-			stats.recordTrack( 'calypso_reader_share_action_picked', {
-				action: action,
-			} );
-			actionFunc( this.props.post );
-		}
-	};
-
 	render() {
-		const { onCopyLinkClick } = this.props;
 		const buttonClasses = classnames( {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
 		} );
+
+		const popoverProps = {
+			key: 'menu',
+			context: this.shareButton.current,
+			isVisible: this.state.showingMenu,
+			position: this.props.position,
+			className: 'popover reader-share__popover',
+		};
+
+		const reblogTitle = this.props.comment && translate( 'Turn this comment into its own post' );
 
 		// The event.preventDefault() on the wrapping div is needed to prevent the
 		// full post opening when a share method is selected in the popover
@@ -174,56 +123,48 @@ class ReaderShare extends Component {
 					onMouseEnter={ preloadEditor }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
+					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
 				>
-					{ ReaderShareIcon( {
-						iconSize: this.props.iconSize,
-					} ) }
-				</Button>
-				{ this.state.showingMenu && (
-					<ReaderPopoverMenu
-						key="menu"
-						context={ this.shareButton.current }
-						isVisible={ this.state.showingMenu }
-						onClose={ this.closeExternalShareMenu }
-						position={ this.props.position }
-						className="popover reader-share__popover"
-						popoverTitle={ translate( 'Share on' ) }
-					>
-						<PopoverMenuItem
-							action="facebook"
-							className="reader-share__popover-item"
-							title={ translate( 'Share on Facebook' ) }
-							focusOnHover={ false }
-						>
-							<ReaderFacebookIcon iconSize={ 20 } />
-							<span>Facebook</span>
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							action="twitter"
-							className="reader-share__popover-item"
-							title={ translate( 'Share on Twitter' ) }
-							focusOnHover={ false }
-						>
-							<ReaderTwitterIcon iconSize={ 20 } />
-							<span>Twitter</span>
-						</PopoverMenuItem>
-						<PopoverMenuItemClipboard
-							action="copy_link"
-							text={ this.props.post.URL }
-							onCopy={ onCopyLinkClick }
-							icon="link"
-						>
-							{ translate( 'Copy link' ) }
-						</PopoverMenuItemClipboard>
-						{ this.props.hasSites && (
-							<SiteSelector
-								className="reader-share__site-selector"
-								onSiteSelect={ this.pickSiteToShareTo }
-								groups
+					{ ! this.props.isReblogSelection ? (
+						<>
+							{ ReaderShareIcon( {
+								iconSize: this.props.iconSize,
+							} ) }
+							{ this.props.showLabel && (
+								<span className="reader-share__label">{ translate( 'Share' ) }</span>
+							) }
+						</>
+					) : (
+						<>
+							<Gridicon
+								icon="reblog"
+								size={ this.props.iconSize }
+								title={ reblogTitle }
+								style={ { height: this.props.iconSize, width: this.props.iconSize } }
 							/>
-						) }
-					</ReaderPopoverMenu>
-				) }
+							{ this.props.showLabel && (
+								<span className="reader-share__label" title={ reblogTitle }>
+									{ translate( 'Reblog' ) }
+								</span>
+							) }
+						</>
+					) }
+				</Button>
+				{ this.state.showingMenu &&
+					( ! this.props.isReblogSelection ? (
+						<ReaderSocialShareSelection
+							post={ this.props.post }
+							popoverProps={ popoverProps }
+							closeMenu={ this.closeMenu }
+						/>
+					) : (
+						<ReaderReblogSelection
+							post={ this.props.post }
+							comment={ this.props.comment }
+							popoverProps={ popoverProps }
+							closeMenu={ this.closeMenu }
+						/>
+					) ) }
 			</div>
 		);
 	}
@@ -235,17 +176,6 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = { infoNotice };
+const mapDispatchToProps = { recordReaderTracksEvent };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const onCopyLinkClick = () => {
-		dispatchProps.infoNotice( translate( 'Link copied to clipboard.' ), { duration: 3000 } );
-	};
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCopyLinkClick } );
-};
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	mergeProps
-)( localize( ReaderShare ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ReaderShare ) );

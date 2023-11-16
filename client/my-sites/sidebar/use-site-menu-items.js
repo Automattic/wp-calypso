@@ -1,12 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
-import { useEffect } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -18,6 +20,7 @@ import buildFallbackResponse from './static-data/fallback-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
@@ -25,6 +28,8 @@ const useSiteMenuItems = () => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
+	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
+	const isAllDomainsView = '/domains/manage' === currentRoute;
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -51,7 +56,7 @@ const useSiteMenuItems = () => {
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, selectedSiteId ) );
 
-	const shouldShowInbox = ! isP2;
+	const shouldShowMailboxes = ! isP2;
 
 	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
 
@@ -59,10 +64,44 @@ const useSiteMenuItems = () => {
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
+	// Temporary fix to display the Newsletter menu item in the Settings menu for Jetpack sites.
+	// This can be removed once the code is released: https://github.com/Automattic/jetpack/pull/33065
+	const menuItemsWithNewsletterSettings = useMemo( () => {
+		if ( ! isJetpack || ! Array.isArray( menuItems ) || menuItems.length === 0 ) {
+			return menuItems;
+		}
+
+		return menuItems.map( ( menuItem ) => {
+			if ( menuItem.icon === 'dashicons-admin-settings' && Array.isArray( menuItem.children ) ) {
+				// Check if the 'Newsletter' submenu already exists.
+				const newsletterExists = menuItem.children.some(
+					( child ) => child.url && child.url.startsWith( '/settings/newsletter/' )
+				);
+
+				if ( ! newsletterExists ) {
+					return {
+						...menuItem,
+						children: [
+							...menuItem.children,
+							{
+								parent: menuItem.children[ 0 ].parent,
+								slug: 'newsletter',
+								title: translate( 'Newsletter' ),
+								type: 'submenu-item',
+								url: `/settings/newsletter/${ siteDomain }`,
+							},
+						],
+					};
+				}
+			}
+			return menuItem;
+		} );
+	}, [ isJetpack, menuItems, siteDomain, translate ] );
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
-	if ( ! siteDomain ) {
+	if ( ! siteDomain || isAllDomainsView ) {
 		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
 	}
 
@@ -89,12 +128,12 @@ const useSiteMenuItems = () => {
 		siteDomain,
 		shouldShowWooCommerce,
 		shouldShowThemes,
-		shouldShowInbox,
+		shouldShowMailboxes,
 		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
-		showSiteLogs: isAtomic,
+		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
 };
 
 export default useSiteMenuItems;

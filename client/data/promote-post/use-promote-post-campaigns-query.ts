@@ -1,26 +1,64 @@
 import { useQuery } from '@tanstack/react-query';
-import { requestDSP } from 'calypso/lib/promote-post';
-import { Campaign } from './types';
+import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
+import { AudienceList } from './types';
 
-export enum CampaignStatus {
-	ALL = -1,
-	TODO0 = 0,
-	TODO1 = 1,
-	TODO2 = 2,
-}
+export type CampaignResponse = {
+	audience_list: AudienceList;
+	content_config: {
+		clickUrl: string;
+		title: string;
+	};
+	display_delivery_estimate: string;
+	campaign_id: number;
+	start_date: string;
+	created_at: string;
+	end_date: string;
+	display_name: string;
+	creative_html: string;
+	width: number;
+	height: number;
+	status: string;
+	ui_status: string;
+	target_urn: string;
+	delivery_percent: number;
+	format: string;
+	campaign_stats: {
+		impressions_total: number;
+		clicks_total: number;
+		clickthrough_rate: number;
+		duration_days: number;
+		total_budget: number;
+		budget_left: number;
+		total_budget_used: number;
+		display_delivery_estimate: string;
+		views_total: number;
+		stats_enabled: boolean;
+		views_organic: number;
+		views_organic_rate: number;
+		views_ad_rate: number;
+	};
+	billing_data: {
+		payment_method: string;
+		subtotal: number;
+		credits: number;
+		currency: string;
+		total: number;
+		card_name: string;
+	};
+};
 
-const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
+const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {} ) => {
 	return useQuery( {
-		queryKey: [ 'promote-post-campaigns', siteId ],
+		queryKey: [ 'promote-post-campaigns', siteId, campaignId ],
 		queryFn: async () => {
-			const { results: campaigns } = await requestDSP< { results: Campaign[] } >(
+			const campaign = await requestDSPHandleErrors< CampaignResponse >(
 				siteId,
-				`/campaigns/site/${ siteId }/summary`
+				`/sites/${ siteId }/campaigns/${ campaignId }`
 			);
-			return campaigns;
+			return campaign;
 		},
 		...queryOptions,
-		enabled: !! siteId,
+		enabled: !! campaignId && !! siteId,
 		retryDelay: 3000,
 		meta: {
 			persist: false,

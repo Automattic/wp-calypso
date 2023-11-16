@@ -5,7 +5,6 @@ const root = '/me/two-step/';
 export default class MeTwoStep {
 	/**
 	 * `MeTwoStep` constructor.
-	 *
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
@@ -18,7 +17,6 @@ export default class MeTwoStep {
 
 	/**
 	 * Get information about current user's two factor configuration.
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -29,7 +27,6 @@ export default class MeTwoStep {
 
 	/**
 	 * Return a `MeTwoStepSMS` instance.
-	 *
 	 * @returns {MeTwoStepSMS} MeTwoStepSMS instance
 	 */
 	sms() {

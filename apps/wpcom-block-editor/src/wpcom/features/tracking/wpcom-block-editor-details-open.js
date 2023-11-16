@@ -2,7 +2,6 @@ import tracksRecordEvent from './track-record-event';
 
 /**
  * Return the event definition object to track `wpcom_block_editor_details_open`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {

@@ -1,0 +1,59 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.heading-information {
+	background: #fff;
+	border: 1px solid rgb(220 220 222 / 60%);
+	border-radius: 3px;
+	box-shadow: 0 4px 10px 0 #0000000d;
+
+	p {
+		font-size: 1rem !important;
+		margin: 0;
+	}
+
+	h5 {
+		font-size: 0.875rem;
+		color: var(--studio-gray-50);
+	}
+
+	.domain {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 3rem;
+		line-height: 1;
+		color: var(--studio-gray-100);
+		word-break: break-all;
+		margin: 0.5rem 0 1rem 0;
+	}
+
+	summary {
+		padding: 1.5rem;
+	}
+
+	footer {
+		background: var(--studio-gray-0);
+		border-radius: 0 0 2px 2px;
+		padding: 1rem 1.5rem;
+
+		p {
+			margin-bottom: 1rem;
+		}
+	}
+
+	.cta-wrapper {
+		display: flex;
+		gap: 1rem;
+	}
+
+	@media (max-width: $break-small ) {
+		.domain {
+			font-size: 2rem;
+			line-height: 1;
+			margin: 0.5rem 0;
+		}
+
+		.status-icon {
+			padding: 4px !important;
+			top: -3px !important;
+		}
+	}
+}

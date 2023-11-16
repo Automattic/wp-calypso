@@ -14,8 +14,10 @@ import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { addDns, updateDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ARecord from './a-record';
+import AliasRecord from './alias-record';
 import CnameRecord from './cname-record';
 import MxRecord from './mx-record';
 import SrvRecord from './srv-record';
@@ -48,6 +50,19 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
+					data: '',
+				},
+			},
+			{
+				component: AliasRecord,
+				types: [ 'ALIAS' ],
+				description: translate(
+					'An ALIAS record is a non-standard DNS record that is used to direct your domain to the target domain. The IP address of the target is resolved on the DNS server.'
+				),
+				initialFields: {
+					name: '@',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -59,6 +74,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -70,6 +86,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 					aux: 10,
 				},
@@ -82,6 +99,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					data: '',
 				},
 			},
@@ -93,6 +111,7 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
 					service: '',
 					aux: 10,
 					weight: 10,
@@ -118,9 +137,10 @@ class DnsAddNew extends React.Component {
 	}
 
 	getFieldsForType( type ) {
-		const dnsRecord = find( this.dnsRecords, ( record ) => {
-			return includes( record.types, type );
-		} );
+		const dnsRecord =
+			find( this.dnsRecords, ( record ) => {
+				return includes( record.types, type );
+			} ) ?? this.dnsRecords[ 0 ];
 
 		return {
 			...dnsRecord.initialFields,
@@ -153,6 +173,11 @@ class DnsAddNew extends React.Component {
 		const isRootDomainRecord = recordToEdit.name === `${ recordToEdit.domain }.`;
 		if ( isRootDomainRecord && 'name' === field ) {
 			return '';
+		}
+
+		// SRV records can have a target of '.', which means that service is unavailable
+		if ( 'SRV' === recordToEdit.type && 'target' === field && '.' === recordToEdit[ field ] ) {
+			return '.';
 		}
 
 		if ( [ 'data', 'target' ].includes( field ) && 'TXT' !== recordToEdit.type ) {
@@ -208,9 +233,9 @@ class DnsAddNew extends React.Component {
 	};
 
 	handleSuccess = ( message ) => {
-		const { selectedSite, selectedDomainName } = this.props;
+		const { currentRoute, selectedSite, selectedDomainName } = this.props;
 
-		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
+		page( domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute ) );
 		this.props.successNotice( message, { duration: 3000 } );
 	};
 
@@ -302,7 +327,8 @@ class DnsAddNew extends React.Component {
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
-		return { selectedSite };
+		const currentRoute = getCurrentRoute( state );
+		return { selectedSite, currentRoute };
 	},
 	{
 		addDns,

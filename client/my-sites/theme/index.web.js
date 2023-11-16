@@ -1,33 +1,14 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import { makeLayout, redirectWithoutLocaleParamIfLoggedIn } from 'calypso/controller';
 import {
-	makeLayout,
-	redirectLoggedOut,
-	redirectWithoutLocaleParamIfLoggedIn,
-} from 'calypso/controller';
-import { createNavigation, selectSiteIfLoggedIn, siteSelection } from 'calypso/my-sites/controller';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+	selectSiteIfLoggedInWithSites,
+	redirectToLoginIfSiteRequested,
+} from 'calypso/my-sites/controller';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { details, fetchThemeDetailsData } from './controller';
 
-function redirectToLoginIfSiteRequested( context, next ) {
-	if ( context.params.site_id ) {
-		redirectLoggedOut( context, next );
-		return;
-	}
-
-	next();
-}
-
-function addNavigationIfLoggedIn( context, next ) {
-	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) ) {
-		context.secondary = createNavigation( context );
-	}
-	next();
-}
-
-function setTitleAndSelectSiteIfLoggedIn( context, next ) {
+function setTitleIfThemeExisted( context, next ) {
 	const theme = getTheme( context.store.getState(), 'wpcom', context.params.slug );
 	const themeOrg = getTheme( context.store.getState(), 'wporg', context.params.slug );
 	if ( theme || themeOrg ) {
@@ -39,28 +20,18 @@ function setTitleAndSelectSiteIfLoggedIn( context, next ) {
 				components: { strong: <strong /> },
 			} );
 	}
-	selectSiteIfLoggedIn( context, next );
+	next();
 }
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
 	router(
-		`/${ langParam }/theme/:slug/:section(setup|support)?`,
+		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
 		redirectWithoutLocaleParamIfLoggedIn,
 		redirectToLoginIfSiteRequested,
-		setTitleAndSelectSiteIfLoggedIn,
-		fetchThemeDetailsData,
-		details,
-		makeLayout
-	);
-
-	router(
-		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id`,
-		redirectWithoutLocaleParamIfLoggedIn,
-		redirectToLoginIfSiteRequested,
-		addNavigationIfLoggedIn,
-		siteSelection,
+		setTitleIfThemeExisted,
+		selectSiteIfLoggedInWithSites,
 		fetchThemeDetailsData,
 		details,
 		makeLayout

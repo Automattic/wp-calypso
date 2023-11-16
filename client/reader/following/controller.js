@@ -1,4 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { getQueryString } from '@wordpress/url';
 import i18n from 'i18n-calypso';
+import page from 'page';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad, setPageTitle } from 'calypso/reader/controller-helper';
@@ -7,6 +10,11 @@ const analyticsPageTitle = 'Reader';
 
 const exported = {
 	followingManage( context, next ) {
+		if ( isEnabled( 'subscription-management-redirect-following' ) ) {
+			const queryString = getQueryString( window.location.href );
+			return page.redirect( '/read/subscriptions' + ( queryString ? '?' + queryString : '' ) );
+		}
+
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites';
 		const mcKey = 'following_manage';
@@ -34,4 +42,4 @@ const exported = {
 
 export default exported;
 
-export const { followingEdit, followingManage } = exported;
+export const { followingManage } = exported;

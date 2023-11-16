@@ -69,7 +69,7 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 						>
 							<div className="guide__buttons">
 								{ currentPage > 0 && (
-									<Button className="guide__back-button" isTertiary onClick={ goBack }>
+									<Button className="guide__back-button" variant="tertiary" onClick={ goBack }>
 										{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 										{ /* @ts-ignore This is declared as a global variable and provided by webpack. */ }
 										{ __( 'Back', __i18n_text_domain__ ) }
@@ -78,7 +78,7 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 								<Button
 									className="guide__forward-button"
 									autoFocus={ currentPage === 0 } // eslint-disable-line jsx-a11y/no-autofocus
-									isPrimary
+									variant="primary"
 									onClick={ goForward }
 								>
 									{ canGoForward ? __( 'Next' ) : __( 'Done' ) }

@@ -3,24 +3,20 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
+import { DEFAULT_DOWNTIME_MONITORING_DURATION } from '../../constants';
 import DashboardModalForm from '../../dashboard-modal-form';
-import {
-	useUpdateMonitorSettings,
-	useJetpackAgencyDashboardRecordTrackEvent,
-	useShowVerifiedBadge,
-} from '../../hooks';
+import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import {
-	availableNotificationDurations as durations,
-	getSiteCountText,
-} from '../../sites-overview/utils';
-import EmailAddressEditor from '../configure-email-notification/email-address-editor';
-import PhoneNumberEditor from '../configure-sms-notification/phone-number-editor';
+import useNotificationDurations from '../../sites-overview/hooks/use-notification-durations';
+import useSiteCountText from '../../sites-overview/hooks/use-site-count-text';
+import ContactEditor from '../contact-editor';
+import { RestrictionType } from '../types';
 import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
 import NotificationDuration from './form-content/notification-duration';
 import SMSNotification from './form-content/sms-notification';
+import useShowVerifiedBadge from './use-show-verified-badge';
 import type {
 	MonitorSettings,
 	Site,
@@ -32,6 +28,7 @@ import type {
 	InitialMonitorSettings,
 	StateMonitorSettingsSMS,
 	MonitorSettingsContact,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 
 import './style.scss';
@@ -54,14 +51,14 @@ export default function NotificationSettings( {
 }: Props ) {
 	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
-
-	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
-	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
-	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
+	const siteCountText = useSiteCountText( sites );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
-	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
+	const durations = useNotificationDurations();
+	const defaultDuration = durations.find(
+		( duration ) => duration.time === DEFAULT_DOWNTIME_MONITORING_DURATION
+	);
 
 	const [ enableSMSNotification, setEnableSMSNotification ] = useState< boolean >( false );
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
@@ -90,6 +87,13 @@ export default function NotificationSettings( {
 	} );
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState< boolean >( false );
 
+	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings(
+		sites,
+		selectedDuration?.time
+	);
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
+	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
+
 	const isMultipleEmailEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 	);
@@ -97,6 +101,18 @@ export default function NotificationSettings( {
 	const isSMSNotificationEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
+
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	// Check if current site or all sites selected has a paid license.
+	const hasPaidLicenses = ! sites.find( ( site ) => ! site.has_paid_agency_monitor );
+
+	let restriction: RestrictionType = 'none';
+
+	if ( ! hasPaidLicenses ) {
+		// We need to set the restriction type to determine correct messaging.
+		restriction = isBulkUpdate ? 'free_site_selected' : 'upgrade_required';
+	}
 
 	const isContactListMatch = (
 		list1: ReadonlyArray< MonitorSettingsContact >,
@@ -172,13 +188,13 @@ export default function NotificationSettings( {
 		setHasUnsavedChanges( false );
 	}, [] );
 
-	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
-		setAllEmailItems( items );
+	const handleSetAllEmailItems = ( items: StateMonitoringSettingsContact[] ) => {
+		setAllEmailItems( items as StateMonitorSettingsEmail[] );
 		setHasUnsavedChanges( false );
 	};
 
-	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
-		setAllPhoneItems( items );
+	const handleSetAllPhoneItems = ( items: StateMonitoringSettingsContact[] ) => {
+		setAllPhoneItems( items as StateMonitorSettingsSMS[] );
 		clearValidationError();
 	};
 
@@ -198,7 +214,6 @@ export default function NotificationSettings( {
 		const params = {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
-			jetmon_defer_status_down_minutes: selectedDuration?.time,
 		} as UpdateMonitorSettingsParams;
 
 		const eventParams = { ...params } as any; // Adding eventParams since parameters for tracking events should be flat, not nested.
@@ -330,11 +345,13 @@ export default function NotificationSettings( {
 
 			// Set duration
 			let foundDuration = defaultDuration;
-			if ( settings?.monitor_deferment_time ) {
-				foundDuration = durations.find(
-					( duration ) => duration.time === settings.monitor_deferment_time
-				);
-				setSelectedDuration( foundDuration );
+			if ( settings?.check_interval ) {
+				foundDuration = durations.find( ( duration ) => duration.time === settings.check_interval );
+
+				// We need to make sure that we are not setting a paid duration if there is no license.
+				if ( hasPaidLicenses || ! foundDuration?.isPaid ) {
+					setSelectedDuration( foundDuration );
+				}
 			}
 
 			// Set initial settings
@@ -349,10 +366,12 @@ export default function NotificationSettings( {
 		},
 		[
 			defaultDuration,
+			durations,
 			getAllEmailItems,
 			getAllPhoneItems,
 			handleSetEmailItems,
 			handleSetPhoneItems,
+			hasPaidLicenses,
 			isMultipleEmailEnabled,
 			isSMSNotificationEnabled,
 		]
@@ -414,14 +433,15 @@ export default function NotificationSettings( {
 
 	if ( isAddEmailModalOpen ) {
 		return (
-			<EmailAddressEditor
-				toggleModal={ toggleAddEmailModal }
-				selectedEmail={ selectedEmail }
-				selectedAction={ selectedAction }
-				allEmailItems={ allEmailItems }
-				setAllEmailItems={ handleSetAllEmailItems }
+			<ContactEditor
+				type="email"
+				onClose={ toggleAddEmailModal }
+				selectedContact={ selectedEmail }
+				action={ selectedAction }
+				contacts={ allEmailItems }
+				setContacts={ handleSetAllEmailItems }
 				recordEvent={ recordEvent }
-				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
+				setVerifiedContact={ ( item ) => handleSetVerifiedItem( 'email', item ) }
 				sites={ sites }
 			/>
 		);
@@ -429,14 +449,15 @@ export default function NotificationSettings( {
 
 	if ( isAddSMSModalOpen ) {
 		return (
-			<PhoneNumberEditor
-				toggleModal={ toggleAddSMSModal }
-				selectedPhone={ selectedPhone }
-				allPhoneItems={ allPhoneItems }
-				selectedAction={ selectedAction }
-				setAllPhoneItems={ handleSetAllPhoneItems }
+			<ContactEditor
+				type="sms"
+				onClose={ toggleAddSMSModal }
+				selectedContact={ selectedPhone }
+				action={ selectedAction }
+				contacts={ allPhoneItems }
+				setContacts={ handleSetAllPhoneItems }
 				recordEvent={ recordEvent }
-				setVerifiedPhoneNumber={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
+				setVerifiedContact={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
 				sites={ sites }
 			/>
 		);
@@ -446,7 +467,7 @@ export default function NotificationSettings( {
 		<DashboardModalForm
 			className="notification-settings"
 			title={ translate( 'Set custom notification' ) }
-			subtitle={ getSiteCountText( sites ) }
+			subtitle={ siteCountText }
 			onClose={ handleOnClose }
 			onSubmit={ onSave }
 		>
@@ -460,8 +481,10 @@ export default function NotificationSettings( {
 					recordEvent={ recordEvent }
 					selectedDuration={ selectedDuration }
 					selectDuration={ selectDuration }
+					restriction={ restriction }
 				/>
-				{ isSMSNotificationEnabled && (
+
+				{ isPaidTierEnabled && (
 					<SMSNotification
 						recordEvent={ recordEvent }
 						enableSMSNotification={ enableSMSNotification }
@@ -469,13 +492,11 @@ export default function NotificationSettings( {
 						toggleModal={ toggleAddSMSModal }
 						allPhoneItems={ allPhoneItems }
 						verifiedItem={ verifiedItem }
+						restriction={ restriction }
+						settings={ settings }
 					/>
 				) }
-				<MobilePushNotification
-					recordEvent={ recordEvent }
-					enableMobileNotification={ enableMobileNotification }
-					setEnableMobileNotification={ setEnableMobileNotification }
-				/>
+
 				<EmailNotification
 					recordEvent={ recordEvent }
 					verifiedItem={ verifiedItem }
@@ -484,6 +505,13 @@ export default function NotificationSettings( {
 					defaultUserEmailAddresses={ defaultUserEmailAddresses }
 					toggleAddEmailModal={ toggleAddEmailModal }
 					allEmailItems={ allEmailItems }
+					restriction={ restriction }
+				/>
+
+				<MobilePushNotification
+					recordEvent={ recordEvent }
+					enableMobileNotification={ enableMobileNotification }
+					setEnableMobileNotification={ setEnableMobileNotification }
 				/>
 			</div>
 			<NotificationSettingsFormFooter

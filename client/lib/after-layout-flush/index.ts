@@ -14,7 +14,6 @@ interface Cancelable {
  *
  * Inspired by the Firefox performance best practices MDN article at:
  * https://developer.mozilla.org/en-US/Firefox/Performance_best_practices_for_Firefox_fe_engineers
- *
  * @param func - The function to be invoked after the layout flush
  * @returns The new delayed function
  */
@@ -29,6 +28,7 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 
 	const scheduleRAF = function ( rafFunc: T ) {
 		return function ( this: any, ...args: any[] ) {
+			// eslint-disable-next-line @typescript-eslint/no-this-alias
 			lastThis = this;
 			lastArgs = args;
 
@@ -48,6 +48,7 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 	const scheduleTimeout = function ( timeoutFunc: T ) {
 		return function ( this: any, ...args: any[] ) {
 			if ( ! hasRAF ) {
+				// eslint-disable-next-line @typescript-eslint/no-this-alias
 				lastThis = this;
 				lastArgs = args;
 			}

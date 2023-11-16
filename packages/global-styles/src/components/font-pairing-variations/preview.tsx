@@ -2,49 +2,55 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
-import {
-	useSetting,
-	useStyle,
-} from '@wordpress/edit-site/build-module/components/global-styles/hooks';
-import { translate } from 'i18n-calypso';
+import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
 import { useMemo, useState } from 'react';
-import { STYLE_PREVIEW_WIDTH, STYLE_PREVIEW_HEIGHT, SYSTEM_FONT_SLUG } from '../../constants';
+import {
+	FONT_PREVIEW_LARGE_WIDTH,
+	FONT_PREVIEW_LARGE_HEIGHT,
+	FONT_PREVIEW_WIDTH,
+	FONT_PREVIEW_HEIGHT,
+	SYSTEM_FONT_SLUG,
+} from '../../constants';
+import { useGlobalSetting, useGlobalStyle } from '../../gutenberg-bridge';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
 
-const DEFAULT_FONT_STYLES: React.CSSProperties = {
-	whiteSpace: 'nowrap',
-	overflow: 'hidden',
-	textOverflow: 'ellipsis',
+const DEFAULT_LARGE_FONT_STYLES: React.CSSProperties = {
+	fontSize: '13vw', // 18px for min-width wide breakpoint and 15px for max-width wide
+	lineHeight: '20px',
+	color: '#000000',
 };
 
-interface Props {
-	title?: string;
-}
+const FontPairingVariationPreview = () => {
+	const [ fontFamilies ] = useGlobalSetting( 'typography.fontFamilies.theme' ) as [ FontFamily[] ];
 
-const FontPairingVariationPreview = ( { title }: Props ) => {
-	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
+	const [ textFontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
+	const [ textFontStyle = 'normal' ] = useGlobalStyle( 'typography.fontStyle' );
+	const [ textLetterSpacing = '-0.15px' ] = useGlobalStyle( 'typography.letterSpacing' );
+	const [ textFontWeight = 400 ] = useGlobalStyle( 'typography.fontWeight' );
 
-	const [ textFontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
-	const [ textFontStyle = 'normal' ] = useStyle( 'typography.fontStyle' );
-	const [ textFontWeight = 400 ] = useStyle( 'typography.fontWeight' );
-
-	const [ headingFontFamily = textFontFamily ] = useStyle(
+	const [ headingFontFamily = textFontFamily ] = useGlobalStyle(
 		'elements.heading.typography.fontFamily'
 	);
-	const [ headingFontStyle = textFontStyle ] = useStyle( 'elements.heading.typography.fontStyle' );
-	const [ headingFontWeight = textFontWeight ] = useStyle(
+	const [ headingFontStyle = textFontStyle ] = useGlobalStyle(
+		'elements.heading.typography.fontStyle'
+	);
+	const [ headingFontWeight = textFontWeight ] = useGlobalStyle(
 		'elements.heading.typography.fontWeight'
+	);
+	const [ headingLetterSpacing = textLetterSpacing ] = useGlobalStyle(
+		'elements.heading.typography.letterSpacing'
 	);
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();
-	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
-	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio * 0.5 );
+	const isDesktop = useViewportMatch( 'large' );
+	const defaultWidth = isDesktop ? FONT_PREVIEW_LARGE_WIDTH : FONT_PREVIEW_WIDTH;
+	const defaultHeight = isDesktop ? FONT_PREVIEW_LARGE_HEIGHT : FONT_PREVIEW_HEIGHT;
+	const ratio = width ? width / defaultWidth : 1;
+	const normalizedHeight = Math.ceil( defaultHeight * ratio );
 	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
 	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
-
 	const getFontFamilyName = ( targetFontFamily: string ) => {
 		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );
 		return fontFamily?.name || fontFamily?.fontFamily || targetFontFamily;
@@ -75,7 +81,6 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 						height: width ? normalizedHeight : 0,
 						width: '100%',
 						background: 'white',
-						opacity: isLoaded ? 1 : 0,
 						cursor: 'pointer',
 					} }
 				>
@@ -83,74 +88,52 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 						style={ {
 							height: '100%',
 							overflow: 'hidden',
+							opacity: isLoaded ? 1 : 0,
 						} }
 					>
-						{ title ? (
-							<HStack
-								spacing={ 10 * ratio }
-								justify="flex-start"
+						<HStack
+							spacing={ 10 * ratio }
+							justify="flex-start"
+							style={ {
+								height: '100%',
+								overflow: 'hidden',
+							} }
+						>
+							<VStack
+								spacing={ 1 }
 								style={ {
-									height: '100%',
-									overflow: 'hidden',
-								} }
-							>
-								<VStack spacing={ 1 } style={ { margin: '16px' } }>
-									<div
-										title={ headingFontFamilyName }
-										aria-label={ headingFontFamilyName }
-										style={ {
-											...DEFAULT_FONT_STYLES,
-											color: '#000000',
-											fontSize: '16px',
-											fontWeight: headingFontWeight,
-											fontFamily: headingFontFamily,
-											fontStyle: headingFontStyle,
-										} }
-									>
-										{ headingFontFamilyName }
-									</div>
-									<div
-										title={ textFontFamilyName }
-										aria-label={ textFontFamilyName }
-										style={ {
-											...DEFAULT_FONT_STYLES,
-											color: '#444444',
-											fontSize: '14px',
-											fontWeight: textFontWeight,
-											fontFamily: textFontFamily,
-											fontStyle: textFontStyle,
-										} }
-									>
-										{ textFontFamilyName }
-									</div>
-								</VStack>
-							</HStack>
-						) : (
-							<HStack
-								align="center"
-								justify="flex-start"
-								style={ {
-									height: '100%',
-									overflow: 'hidden',
-									padding: '16px',
-									boxSizing: 'border-box',
+									margin: '10px',
+									width: '100%',
+									textAlign: isDesktop ? 'center' : 'left',
 								} }
 							>
 								<div
+									aria-label={ headingFontFamilyName }
 									style={ {
-										fontFamily: textFontFamily,
-										fontStyle: textFontStyle,
-										color: '#000000',
-										fontSize: '16px',
-										fontWeight: textFontWeight,
-										lineHeight: '1em',
-										textAlign: 'center',
+										...DEFAULT_LARGE_FONT_STYLES,
+										letterSpacing: headingLetterSpacing,
+										fontWeight: headingFontWeight,
+										fontFamily: headingFontFamily,
+										fontStyle: headingFontStyle,
 									} }
 								>
-									{ translate( 'Default' ) }
+									{ headingFontFamilyName }
 								</div>
-							</HStack>
-						) }
+								<div
+									aria-label={ textFontFamilyName }
+									style={ {
+										...DEFAULT_LARGE_FONT_STYLES,
+										fontSize: '13px',
+										letterSpacing: textLetterSpacing,
+										fontWeight: textFontWeight,
+										fontFamily: textFontFamily,
+										fontStyle: textFontStyle,
+									} }
+								>
+									{ textFontFamilyName }
+								</div>
+							</VStack>
+						</HStack>
 					</div>
 				</div>
 				<FontFamiliesLoader fontFamilies={ externalFontFamilies } onLoad={ handleOnLoad } />

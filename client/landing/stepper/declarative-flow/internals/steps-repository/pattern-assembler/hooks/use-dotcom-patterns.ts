@@ -1,5 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { PATTERN_CATEGORIES } from '../constants';
 import type { Pattern } from '../types';
 
 const useDotcomPatterns = (
@@ -14,8 +15,8 @@ const useDotcomPatterns = (
 				method: 'GET',
 				apiVersion: '1.1',
 				query: new URLSearchParams( {
-					tags: 'pattern',
-					pattern_meta: 'is_web',
+					tags: 'assembler,assembler_priority',
+					categories: PATTERN_CATEGORIES.join( ',' ),
 				} ).toString(),
 			} );
 		},

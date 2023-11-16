@@ -1,6 +1,5 @@
-import { Card, PostStatsCard } from '@automattic/components';
+import { Card, Count, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
@@ -71,40 +70,43 @@ export default function PostDetailHighlightsSection( {
 		postId > 0 && isWPcomSite && post?.date && new Date( post?.date ) >= new Date( '2023-05-30' );
 
 	return (
-		<div className="stats__post-detail-highlights-section">
-			{ siteId && (
-				<>
-					<QuerySiteStats siteId={ siteId } statType="stats" query={ {} } />
-					<QuerySiteStats siteId={ siteId } statType="statsInsights" />
-				</>
-			) }
-
-			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
-
-				{ isEmailTabsAvailable && (
+		<>
+			{ isEmailTabsAvailable && (
+				<div className="stats-navigation stats-navigation--modernized">
 					<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
+				</div>
+			) }
+			<div className="stats__post-detail-highlights-section">
+				{ siteId && (
+					<>
+						<QuerySiteStats siteId={ siteId } statType="stats" query={ {} } />
+						<QuerySiteStats siteId={ siteId } statType="statsInsights" />
+					</>
 				) }
 
-				<div className="highlight-cards-list">
-					<PostStatsCard
-						heading={ translate( 'All-time stats' ) }
-						likeCount={ post?.like_count || 0 }
-						post={ postData }
-						viewCount={ viewCount }
-						commentCount={ post?.comment_count || 0 }
-						locale={ userLocale }
-					/>
+				<div className="highlight-cards">
+					<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
 
-					<Card className="highlight-card">
-						<div className="highlight-card-heading">
-							<span>{ translate( 'Post likes' ) }</span>
-							<Count count={ post?.like_count || 0 } />
-						</div>
-						<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
-					</Card>
+					<div className="highlight-cards-list">
+						<PostStatsCard
+							heading={ translate( 'All-time stats' ) }
+							likeCount={ post?.like_count || 0 }
+							post={ postData }
+							viewCount={ viewCount }
+							commentCount={ post?.comment_count || 0 }
+							locale={ userLocale }
+						/>
+
+						<Card className="highlight-card">
+							<div className="highlight-card-heading">
+								<span>{ translate( 'Post likes' ) }</span>
+								<Count count={ post?.like_count || 0 } />
+							</div>
+							<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
+						</Card>
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }

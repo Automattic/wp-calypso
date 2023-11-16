@@ -7,11 +7,6 @@ interface ConfigurationData {
 }
 
 const blockParentSelector = '[aria-label="Block: Paid Content"]';
-const selectors = {
-	subscriberViewButton: 'button:has-text("Subscriber View")',
-	subscriberHeader: '[aria-label="Block: Subscriber View"] [aria-label="Block: Heading"]',
-	subscriberParagraph: '[aria-label="Block: Subscriber View"] [aria-label="Paragraph block"]',
-};
 
 /**
  * Class representing the flow of using a Paid Content block in the editor.
@@ -37,22 +32,34 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorParent = await context.editorPage.getEditorParent();
+		// The Guest View will load by default. Wait for this view to fully render.
+		await context.addedBlockLocator
+			.getByRole( 'document', { name: 'Block: Guest View' } )
+			.waitFor();
 
+		// Using the Block Toolbar, change to the Subscriber view.
+		// The exact steps differ between the viewports.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile viewport hides the Subscriber/Guest view
-			// into a pseudo-dropdown.
-			await editorParent.getByRole( 'button', { name: 'Change view' } ).click();
+			// Mobile viewport hides the Subscriber/Guest buttons into a dropdown.
+			await context.editorPage.clickBlockToolbarButton( { name: 'Change view' } );
+			await context.editorPage.selectFromToolbarPopover( 'Subscriber View' );
+		} else {
+			// Block toolbar for the desktop viewport shows both as a top-level button.
+			await context.editorPage.clickBlockToolbarButton( { name: 'Subscriber View' } );
 		}
 
-		const subscriberViewButtonLocator = editorParent.locator( selectors.subscriberViewButton );
-		await subscriberViewButtonLocator.click();
+		// Verify the Subscriber version of the block is now loaded.
+		await context.addedBlockLocator
+			.getByRole( 'document', { name: 'Block: Subscriber View' } )
+			.waitFor();
 
-		const subscriberHeaderLocator = editorParent.locator( selectors.subscriberHeader );
-		await subscriberHeaderLocator.fill( this.configurationData.subscriberTitle );
-
-		const subscriberParagraphLocator = editorParent.locator( selectors.subscriberParagraph );
-		await subscriberParagraphLocator.fill( this.configurationData.subscriberText );
+		// Fill the title and text for Subscriber view.
+		await context.addedBlockLocator
+			.getByRole( 'document', { name: 'Block: Heading' } )
+			.fill( this.configurationData.subscriberTitle );
+		await context.addedBlockLocator
+			.getByRole( 'document', { name: /Paragraph/ } )
+			.fill( this.configurationData.subscriberText );
 	}
 
 	/**
@@ -62,14 +69,15 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Since we're viewing as the publishing user, we should see the subscriber version of the content.
-		const expectedTitle = context.page.locator(
-			`text="${ this.configurationData.subscriberTitle }"`
-		);
-		await expectedTitle.waitFor();
+		await context.page
+			.getByRole( 'heading', {
+				name: this.configurationData.subscriberTitle,
+			} )
+			.waitFor();
 
-		const expectedText = context.page.locator(
-			`text="${ this.configurationData.subscriberText }"`
-		);
-		await expectedText.waitFor();
+		await context.page
+			.getByRole( 'paragraph' )
+			.filter( { hasText: this.configurationData.subscriberText } )
+			.waitFor();
 	}
 }

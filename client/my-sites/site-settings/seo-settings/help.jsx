@@ -3,7 +3,6 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
-import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
@@ -42,16 +41,6 @@ export const SeoSettingsHelpCard = ( {
 						) }
 					</p>
 
-					{ siteIsJetpack && (
-						<SupportInfo
-							text={ translate(
-								'To help improve your search page ranking, you can customize how the content titles' +
-									' appear for your site. You can reorder items such as ‘Site Name’ and ‘Tagline’,' +
-									' and also add custom separators between the items.'
-							) }
-							link="https://jetpack.com/support/seo-tools/"
-						/>
-					) }
 					{ siteIsJetpack && (
 						<JetpackModuleToggle
 							siteId={ siteId }

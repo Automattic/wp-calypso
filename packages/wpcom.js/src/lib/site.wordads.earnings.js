@@ -1,6 +1,5 @@
 /**
  * `SiteWordAdsEarnings` constructor.
- *
  * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {SiteWordAdsEarnings|undefined}
@@ -18,15 +17,14 @@ export default function SiteWordAdsEarnings( sid, wpcom ) {
  * Get detailed WordAds earnings information about the site.
  *
  * Example:*
- *    // Get site earnings information
- *    wpcom
- *    .site( 'my-blog.wordpress.com' )
- *    .wordAds()
- *    .earnings()
- *    .get( function( err, data ) {
- *      // `earnings` information object
- *    } );
- *
+ * // Get site earnings information
+ * wpcom
+ * .site( 'my-blog.wordpress.com' )
+ * .wordAds()
+ * .earnings()
+ * .get( function( err, data ) {
+ * // `earnings` information object
+ * } );
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler

@@ -36,6 +36,8 @@ export class SiteAddressChanger extends Component {
 		currentDomainSuffix: PropTypes.string.isRequired,
 		currentDomain: PropTypes.object.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		onSiteAddressChanged: PropTypes.func,
+		hasNonWpcomDomains: PropTypes.bool,
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
@@ -58,7 +60,7 @@ export class SiteAddressChanger extends Component {
 		this.props.clearValidationError( this.props.siteId );
 	}
 
-	onConfirm = () => {
+	onConfirm = async () => {
 		const { domainFieldValue, newDomainSuffix } = this.state;
 		const { currentDomain, currentDomainSuffix, siteId } = this.props;
 		const oldDomain = get( currentDomain, 'name', null );
@@ -67,13 +69,15 @@ export class SiteAddressChanger extends Component {
 				? freeSiteAddressType.BLOG
 				: freeSiteAddressType.MANAGED;
 
-		this.props.requestSiteAddressChange(
+		await this.props.requestSiteAddressChange(
 			siteId,
 			domainFieldValue,
 			newDomainSuffix.substr( 1 ),
 			oldDomain,
 			type
 		);
+
+		this.props.onSiteAddressChanged?.();
 	};
 
 	setValidationState = () => {
@@ -332,8 +336,15 @@ export class SiteAddressChanger extends Component {
 	};
 
 	renderNewAddressForm = () => {
-		const { currentDomain, isAvailable, siteId, selectedSiteSlug, translate, isAtomicSite } =
-			this.props;
+		const {
+			currentDomain,
+			isAvailable,
+			siteId,
+			selectedSiteSlug,
+			translate,
+			isAtomicSite,
+			hasNonWpcomDomains,
+		} = this.props;
 
 		if ( isAtomicSite ) {
 			return (
@@ -380,15 +391,22 @@ export class SiteAddressChanger extends Component {
 				</FormSectionHeading>
 				<div className="site-address-changer__info">
 					<p>
-						{ translate(
-							'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
-							{
-								args: { currentDomainName },
-								components: {
-									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
-								},
-							}
-						) }
+						{ hasNonWpcomDomains
+							? translate(
+									'Once you change your site address, %(currentDomainName)s will no longer be available.',
+									{
+										args: { currentDomainName },
+									}
+							  )
+							: translate(
+									'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
+									{
+										args: { currentDomainName },
+										components: {
+											a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+										},
+									}
+							  ) }
 					</p>
 				</div>
 				<div className="site-address-changer__details">

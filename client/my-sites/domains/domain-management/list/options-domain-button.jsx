@@ -2,6 +2,7 @@
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { Icon, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -23,12 +24,14 @@ class AddDomainButton extends Component {
 		specificSiteActions: PropTypes.bool,
 		ellipsisButton: PropTypes.bool,
 		borderless: PropTypes.bool,
+		allDomainsList: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		specificSiteActions: false,
 		ellipsisButton: false,
 		borderless: false,
+		allDomainsList: false,
 	};
 
 	state = {
@@ -60,7 +63,24 @@ class AddDomainButton extends Component {
 	};
 
 	renderOptions = () => {
-		const { selectedSiteSlug, specificSiteActions, translate } = this.props;
+		const { allDomainsList, selectedSiteSlug, specificSiteActions, translate } = this.props;
+
+		if ( allDomainsList ) {
+			return (
+				<Fragment>
+					<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
+						{ translate( 'Register a new domain' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem
+						icon="domains"
+						href="/setup/domain-transfer"
+						onClick={ this.trackMenuClick }
+					>
+						{ translate( 'Transfer domains' ) }
+					</PopoverMenuItem>
+				</Fragment>
+			);
+		}
 
 		if ( specificSiteActions ) {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
@@ -105,7 +125,7 @@ class AddDomainButton extends Component {
 		return (
 			<>
 				<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
-				<span className="options-domain-button__desktop">{ label }</span>
+				{ ! isMobile() && <span className="options-domain-button__desktop">{ label }</span> }
 			</>
 		);
 	}

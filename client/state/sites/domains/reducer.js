@@ -18,13 +18,13 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT,
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
+	DOMAIN_MARK_AS_PENDING_MOVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**
  * Returns a copy of the domains state object with some modifications
- *
  * @param {Object} state - current state
  * @param {number} siteId - site ID
  * @param {string} domain - domain name
@@ -47,7 +47,6 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
 
 /**
  * Domains `Reducer` function
- *
  * @param {Object} state - current state
  * @param {Object} action - domains action
  * @returns {Object} updated state
@@ -79,6 +78,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				privateDomain: false,
 				contactInfoDisclosed: false,
 			} );
+		case DOMAIN_MARK_AS_PENDING_MOVE:
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+				isMoveToNewSitePending: true,
+			} );
 	}
 
 	return state;
@@ -88,7 +91,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * Updating privacy reducer
  *
  * Figure out if we're in the middle of privacy modification command
- *
  * @param {Object} state - current state
  * @param {Object} action - action
  * @returns {any} - new state
@@ -126,7 +128,6 @@ export const updatingPrivacy = ( state = {}, action ) => {
 /**
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
- *
  * @param {Object} state - current state
  * @param {Object} action - domains action
  * @returns {Object} updated state
@@ -146,7 +147,6 @@ export const requesting = ( state = {}, action ) => {
 
 /**
  * `Reducer` function which handles ERRORs REST-API response actions
- *
  * @param {Object} state - current state
  * @param {Object} action - domains action
  * @returns {Object} updated state

@@ -1,3 +1,8 @@
+import {
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 
 export const TRACK_SOURCE_NAME = 'sites-dashboard';
@@ -14,8 +19,8 @@ export const getSettingsUrl = ( slug: string ) => {
 	return `/settings/general/${ slug }`;
 };
 
-export const getSiteLogsUrl = ( slug: string ) => {
-	return `/site-logs/${ slug }`;
+export const getSiteMonitoringUrl = ( slug: string ) => {
+	return `/site-monitoring/${ slug }`;
 };
 
 export const getPluginsUrl = ( slug: string ) => {
@@ -34,7 +39,10 @@ export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
 
-export function isCustomDomain( siteSlug: string ): boolean {
+export function isCustomDomain( siteSlug: string | null | undefined ): boolean {
+	if ( ! siteSlug ) {
+		return false;
+	}
 	return ! siteSlug.endsWith( '.wordpress.com' ) && ! siteSlug.endsWith( '.wpcomstaging.com' );
 }
 
@@ -48,6 +56,34 @@ export const isP2Site = ( site: SiteExcerptNetworkData ) => {
 
 export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
 	return site?.is_wpcom_staging_site;
+};
+
+export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
+};
+
+export const isHostingTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return site?.plan?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY;
+};
+
+export const isECommerceTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return site?.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+};
+
+export const isBusinessTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return isMigrationTrialSite( site ) || isHostingTrialSite( site );
+};
+
+export const isTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return isBusinessTrialSite( site ) || isECommerceTrialSite( site );
+};
+
+export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
+	return site?.options?.wpcom_admin_interface;
+};
+
+export const getSiteWpAdminUrl = ( site: SiteExcerptNetworkData ) => {
+	return site?.options?.admin_url;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

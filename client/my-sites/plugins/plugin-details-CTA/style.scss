@@ -65,6 +65,10 @@
 			margin: 0 0 0 5px;
 		}
 	}
+
+	.plugin-details-cta__manage-button {
+		width: 100%;
+	}
 }
 
 .plugin-details-cta__t-and-c {
@@ -132,6 +136,15 @@
 	color: var(--studio-gray-100);
 	font-size: $font-body;
 	height: 40px;
+
+	@include breakpoint-deprecated( "<1280px" ) {
+		font-size: $font-body-small;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		font-size: $font-body;
+	}
+
 
 	.plugin-details-cta__installed-text-quantity {
 		color: var(--studio-green-50);

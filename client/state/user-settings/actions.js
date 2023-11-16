@@ -17,7 +17,6 @@ export { default as setUserSetting } from './thunks/set-user-setting';
 
 /**
  * Fetch user settings from WordPress.com API and store them in UserSettings instance
- *
  * @returns {Object} Action object
  */
 export const fetchUserSettings = () => ( {
@@ -26,7 +25,6 @@ export const fetchUserSettings = () => ( {
 
 /**
  * Used in signalling that requesting user settings was not successful
- *
  * @param {Object} error Error object received from the API
  * @returns {Object} Action object
  */
@@ -37,7 +35,6 @@ export const fetchUserSettingsFailure = ( error ) => ( {
 
 /**
  * Used in signalling that requesting user settings was successful.
- *
  * @param {Object} settingValues Object containing fetched user settings
  * @returns {Object} Action object
  */
@@ -48,7 +45,6 @@ export const fetchUserSettingsSuccess = ( settingValues ) => ( {
 
 /**
  * Post settings to WordPress.com API at /me/settings endpoint
- *
  * @param {Object} settingsOverride - default settings object
  */
 export const saveUserSettings = ( settingsOverride ) => ( {
@@ -58,7 +54,6 @@ export const saveUserSettings = ( settingsOverride ) => ( {
 
 /**
  * Returns an action object signalling the settings have been received from server.
- *
  * @param  {Object} settingValues Setting values (the subset of keys to be updated)
  * @returns {Object}               Action object
  */

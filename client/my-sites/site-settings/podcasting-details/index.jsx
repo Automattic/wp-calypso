@@ -2,7 +2,7 @@ import { PLAN_PERSONAL, WPCOM_FEATURES_UPLOAD_AUDIO_FILES } from '@automattic/ca
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { map, pick, flowRight } from 'lodash';
+import { pick, flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
@@ -15,7 +15,9 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import { decodeEntities } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -35,8 +37,7 @@ import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingPublishNotice from './publish-notice';
-import PodcastingSupportLink from './support-link';
-import podcastingTopics from './topics';
+import TopicsSelector from './topics-selector';
 
 /**
  * Selectors, actions, and query components
@@ -131,32 +132,13 @@ class PodcastingDetails extends Component {
 	renderTopicSelector( key ) {
 		const { fields, handleSelect, isRequestingSettings, isPodcastingEnabled } = this.props;
 		return (
-			<FormSelect
+			<TopicsSelector
 				id={ key }
 				name={ key }
 				onChange={ handleSelect }
 				value={ fields[ key ] || 0 }
 				disabled={ isRequestingSettings || ! isPodcastingEnabled }
-			>
-				<option value="0">None</option>
-				{ map( Object.entries( podcastingTopics ), ( [ topic, subtopics ] ) => {
-					// The keys for podcasting in Apple Podcasts use &amp;
-					const topicKey = topic.replace( '&', '&amp;' );
-					return [
-						<option key={ topicKey } value={ topicKey }>
-							{ topic }
-						</option>,
-						...map( subtopics, ( subtopic ) => {
-							const subtopicKey = topicKey + ',' + subtopic.replace( '&', '&amp;' );
-							return (
-								<option key={ subtopicKey } value={ subtopicKey }>
-									{ topic } » { subtopic }
-								</option>
-							);
-						} ),
-					];
-				} ) }
-			</FormSelect>
+			/>
 		);
 	}
 
@@ -181,7 +163,6 @@ class PodcastingDetails extends Component {
 	render() {
 		const {
 			handleSubmitForm,
-			siteSlug,
 			siteId,
 			translate,
 			isPodcastingEnabled,
@@ -195,29 +176,28 @@ class PodcastingDetails extends Component {
 		}
 
 		const error = this.renderSettingsError();
-		const writingHref = `/settings/writing/${ siteSlug }`;
 
 		const classes = classNames( 'podcasting-details__wrapper', {
 			'is-disabled': ! error && ! isPodcastingEnabled,
 		} );
 
 		return (
-			<div
-				className="main main-column" // eslint-disable-line
-				role="main"
-			>
-				<DocumentHead title={ translate( 'Podcasting Settings' ) } />
+			<Main>
+				<DocumentHead title={ translate( 'Podcasting' ) } />
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Podcasting' ) }
+					subtitle={ translate(
+						'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="podcasting" showIcon={ false } />,
+							},
+						}
+					) }
+				/>
+
 				<form id="site-settings" onSubmit={ handleSubmitForm }>
-					<HeaderCake
-						actionButton={ error ? null : this.renderSaveButton() }
-						backHref={ writingHref }
-						backText={ translate( 'Writing' ) }
-					>
-						<h1>
-							{ translate( 'Podcasting Settings' ) }
-							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
-						</h1>
-					</HeaderCake>
 					{ ! error && plansDataLoaded && (
 						<UpsellNudge
 							plan={ PLAN_PERSONAL }
@@ -256,7 +236,7 @@ class PodcastingDetails extends Component {
 						</div>
 					) }
 				</form>
-			</div>
+			</Main>
 		);
 	}
 
@@ -488,7 +468,6 @@ const connectComponent = connect( ( state, ownProps ) => {
 
 	return {
 		siteId,
-		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isPodcastingEnabled,

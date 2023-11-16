@@ -24,14 +24,13 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
-	buildType(HelpCentreE2ETests)
 	buildType(QuarantinedE2ETests)
 })
 
 object BuildDockerImage : BuildType({
 	uuid = "89fff49e-c79b-4e68-a012-a7ba405359b6"
 	name = "Docker image"
-	description = "Build docker image containing Calypso"
+	description = "Build the primary Docker image for Calypso which will be deployed to calypso.live (for PRs) or to production (on trunk)."
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
@@ -58,6 +57,21 @@ object BuildDockerImage : BuildType({
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
+	}
+
+	// Normally, this build can be triggered via snapshot dependencies, such as
+	// the e2e tests. If those builds don't run (e.g. if they're disabled for certain
+	// directories), then we still want the docker image to be triggered for the
+	// deploy system. This build chain sends requests to missioncontrol which start
+	// different aspects of the deploy system. So the entire deploy system depends
+	// on this build getting triggered either here or via snapshot dependencies.
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
 	}
 
 	steps {
@@ -225,20 +239,25 @@ object BuildDockerImage : BuildType({
 			"""
 		}
 
+		// TODO: Cache rebuilding is currently disabled. It takes a long time and
+		// causes timeouts on trunk. It needs to run more quickly to be worth it.
+		// For now, the cache will be rebuilt a couple times a day by the dedicated
+		// cache build.
+
 		// Conditions don't seem to support and/or, so we do this in a separate step.
 		// Essentially, UPDATE_BASE_IMAGE_CACHE will remain false by default, but
 		// if we're on trunk and get WEBPACK_CACHE_INVALIDATED set by the docker build,
 		// then we can flip it to true to trigger the cache rebuild.
-		script {
-			name = "Set cache update"
-			conditions {
-				equals("env.WEBPACK_CACHE_INVALIDATED", "true")
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				echo "##teamcity[setParameter name='UPDATE_BASE_IMAGE_CACHE' value='true']"
-			"""
-		}
+		// script {
+		// 	name = "Set cache update"
+		// 	conditions {
+		// 		equals("env.WEBPACK_CACHE_INVALIDATED", "true")
+		// 		equals("teamcity.build.branch.is_default", "true")
+		// 	}
+		// 	scriptContent = """
+		// 		echo "##teamcity[setParameter name='UPDATE_BASE_IMAGE_CACHE' value='true']"
+		// 	"""
+		// }
 
 		// This updates the base docker image when the webpack cache invalidates.
 		// It does so by re-using the layers already generated above, and simply
@@ -346,6 +365,9 @@ object RunAllUnitTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
+				echo -n "Node version: " && node --version
+				echo -n "Yarn version: " && yarn --version
+				echo -n "NPM version: " && npm --version
 
 				# Install modules
 				${_self.yarn_install_cmd}
@@ -446,7 +468,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 8
 	}
 	features {
 		feature {
@@ -684,9 +706,9 @@ object Translate : BuildType({
 	triggers {
 		vcs {
 			branchFilter = """
-			+:*
-			-:pull*
-		""".trimIndent()
+				+:*
+				-:pull*
+			""".trimIndent()
 		}
 	}
 
@@ -731,7 +753,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		""".trimIndent(),
 		testGroup = "calypso-pr",
 		buildParams = {
-			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,defaultUser,atomicUser")
+			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 			param("env.LIVEBRANCHES", "true")
 			param("env.VIEWPORT_NAME", "$targetDevice")
 		},
@@ -787,7 +809,6 @@ object PreReleaseE2ETests : BuildType({
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.TEAMCITY_VERSION", "2021")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
 		param("env.VIEWPORT_NAME", "desktop")
@@ -823,11 +844,37 @@ object PreReleaseE2ETests : BuildType({
 				cd test/e2e
 				mkdir temp
 
+				# Disable exit on error to support retries.
+				set +o errexit
+
 				# Run suite.
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release
+
+				# Restore exit on error.
+				set -o errexit
+
+				# Retry failed tests only.
+				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
+
+		bashNodeScript {
+				name = "Send TeamCity Message"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
+
+					export slack_oauth_token="%TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN%"
+					export tc_build_conf_name="%system.teamcity.buildConfName%"
+					export tc_project_name="%system.teamcity.projectName%"
+					export tc_build_number=%build.number%
+					export tc_build_branch=%teamcity.build.branch%
+
+					node ./bin/teamcity-e2e-slack-notify.mjs --file test/e2e/pre-release-test-results.json
+				"""
+				dockerImage = "%docker_image_e2e%"
+			}
 
 		bashNodeScript {
 			name = "Collect results"
@@ -919,6 +966,9 @@ object PreReleaseE2ETests : BuildType({
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 		nonZeroExitCode = false
 
+		// Support retries using the --onlyFailures flag in Jest.
+		supportTestRetry = true
+
 		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
 		failOnMetricChange {
 			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
@@ -969,153 +1019,6 @@ object AuthenticationE2ETests : E2EBuildType(
 		}
 	}
 )
-
-object HelpCentreE2ETests : E2EBuildType(
-	buildId = "calypso_WebApp_Calypso_E2E_Help_Centre",
-	buildUuid = "a0e62582-8598-483e-8b82-9de540288f6d",
-	buildName = "Help Centre E2E Tests",
-	buildDescription = "Runs a suite of Help Centre E2E tests.",
-	testGroup = "help-centre",
-	buildParams = {
-		param("env.VIEWPORT_NAME", "desktop")
-	},
-	buildFeatures = {
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	},
-	buildTriggers = {
-		schedule {
-			schedulingPolicy = cron {
-				hours = "*/3"
-			}
-			branchFilter = "+:<default>"
-			triggerBuild = always()
-			withPendingChangesOnly = false
-		}
-	}
-)
-
-object KPIDashboardTests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_KPI_Dashboard")
-	uuid = "441efac5-721a-4557-9448-9234e89fb6b1"
-	name = "Test build for KPI Dashboard project"
-	description = "Test build configuration for KPI dashboard."
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-		allure-results.tgz => allure-results.tgz
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	params {
-		param("env.NODE_CONFIG_ENV", "test")
-		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.TEAMCITY_VERSION", "2021")
-		param("env.HEADLESS", "true")
-		param("env.LOCALE", "en")
-		param("env.DEBUG", "")
-		param("env.VIEWPORT_NAME", "desktop")
-		param("env.ALLURE_RESULTS_PATH", "allure-results")
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				# Install deps
-				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-				# Decrypt secrets
-				# Must do before build so the secrets are in the dist output
-				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Run tests"
-			scriptContent = """
-				# Configure bash shell.
-				shopt -s globstar
-				set -x
-
-				# Enter testing directory.
-				cd test/e2e
-				mkdir temp
-
-				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=kpi
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-
-				mkdir -p allure-results
-				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 tar cvfz allure-results.tgz
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
-	features {
-		perfmon {
-		}
-	}
-
-	// By default, no triggers are defined for this template class.
-	triggers {}
-
-	failureConditions {
-		executionTimeoutMin = 20
-		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
-		nonZeroExitCode = false
-
-		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-})
 
 object QuarantinedE2ETests: E2EBuildType(
 	buildId = "calypso_WebApp_Quarantined_E2E_Tests",

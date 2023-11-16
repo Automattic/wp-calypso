@@ -14,13 +14,16 @@ import {
 	following,
 	incompleteUrlRedirects,
 	legacyRedirects,
-	prettyRedirects,
 	readA8C,
 	readFollowingP2,
+	redirectLoggedOutToDiscover,
 	sidebar,
 	updateLastRoute,
 	blogDiscoveryByFeedId,
-	sitesSubscriptionManager,
+	siteSubscriptionsManager,
+	siteSubscription,
+	commentSubscriptionsManager,
+	pendingSubscriptionsManager,
 } from './controller';
 
 import './style.scss';
@@ -46,7 +49,7 @@ export default async function () {
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
 			'/read',
-			redirectLoggedOutToSignup,
+			redirectLoggedOutToDiscover,
 			updateLastRoute,
 			sidebar,
 			following,
@@ -70,7 +73,6 @@ export default async function () {
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			updateLastRoute,
-			prettyRedirects,
 			sidebar,
 			feedDiscovery,
 			feedListing,
@@ -85,7 +87,6 @@ export default async function () {
 			'/read/blogs/:blog_id',
 			redirectLoggedOutToSignup,
 			updateLastRoute,
-			prettyRedirects,
 			sidebar,
 			blogListing,
 			makeLayout,
@@ -129,7 +130,43 @@ export default async function () {
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
-		sitesSubscriptionManager,
+		siteSubscriptionsManager,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/read/subscriptions/comments',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		commentSubscriptionsManager,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/read/subscriptions/pending',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		pendingSubscriptionsManager,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/read/subscriptions/:subscription_id',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		siteSubscription,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/read/site/subscription/:blog_id',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		siteSubscription,
 		makeLayout,
 		clientRender
 	);

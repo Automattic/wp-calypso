@@ -6,7 +6,9 @@
 	width: 100%;
 }
 
-.hero-image--container-inner {
+.hero-image--container-inner-small-screen,
+.hero-image--container-inner-medium-screen,
+.hero-image--container-inner-large-screen {
 	display: block;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -16,4 +18,47 @@
 	position: absolute;
 	right: 0;
 	top: 0;
+}
+
+/* Mobile first — "landscape" image */
+.hero-image--container-inner-small-screen {
+	display: block;
+}
+
+.hero-image--container-inner-medium-screen {
+	display: none;
+}
+
+.hero-image--container-inner-large-screen {
+	display: none;
+}
+
+/* Swap at the larger sizes to the "portrait" image */
+@include break-mobile {
+	.hero-image--container-inner-small-screen {
+		display: none;
+	}
+
+	.hero-image--container-inner-medium-screen {
+		display: none;
+	}
+
+	.hero-image--container-inner-large-screen {
+		display: block;
+	}
+}
+
+/* For Jetpack Complete - In custom medium breakpoint we are using a different image since actual image is overflowing */
+@media only screen and ( min-width: 821px ) and ( max-width: 1024px ) {
+	.hero-image--container-inner-small-screen {
+		display: none;
+	}
+
+	.hero-image--container-inner-medium-screen {
+		display: block;
+	}
+
+	.hero-image--container-inner-large-screen {
+		display: none;
+	}
 }

@@ -15,7 +15,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to fetch themes for the specified site and query.
- *
  * @param  {number|string} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
  * @param  {Object}        query         Theme query
  * @param  {string}        query.search  Search string

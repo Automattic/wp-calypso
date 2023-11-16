@@ -35,7 +35,7 @@ import {
 	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
-	getSiteLogsUrl,
+	getSiteMonitoringUrl,
 	isCustomDomain,
 	isNotAtomicJetpack,
 	isP2Site,
@@ -49,7 +49,7 @@ interface SitesMenuItemProps {
 	onClick?: () => void;
 }
 
-interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
+interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof CoreMenuItem >, 'href' > {
 	href?: string;
 }
 
@@ -95,15 +95,15 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
-const SiteLogsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const SiteMonitoringItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
 		<MenuItemLink
-			href={ getSiteLogsUrl( site.slug ) }
-			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_logs_click' ) }
+			href={ getSiteMonitoringUrl( site.slug ) }
+			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_monitoring_click' ) }
 		>
-			{ __( 'Site logs' ) }
+			{ __( 'Site monitoring' ) }
 		</MenuItemLink>
 	);
 };
@@ -127,7 +127,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
+			info={ ! hasManagePluginsFeature ? __( 'Requires a Business Plan' ) : undefined }
 		>
 			{ label }
 		</MenuItemLink>
@@ -297,7 +297,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'web_server_settings',
 			},
 			{
-				label: __( 'Clear cache' ),
+				label: __( 'Cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
 				sectionName: 'cache',
 			},
@@ -311,7 +311,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const displayUpsell = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
-		offsetTop: -8,
+		offset: -8,
 	} );
 
 	if ( submenuItems.length === 0 ) {
@@ -327,11 +327,12 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 					product_slug: site.plan?.product_slug,
 				} }
 			/>
-			<MenuItemLink info={ displayUpsell && __( 'Requires a Business Plan' ) }>
+			<MenuItemLink info={ displayUpsell ? __( 'Requires a Business Plan' ) : undefined }>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
 				{ ...submenuProps.submenu }
+				inline={ true }
 				focusOnMount={ displayUpsell ? false : 'firstElement' }
 			>
 				{ displayUpsell ? (
@@ -412,7 +413,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ site.is_wpcom_atomic && <SiteLogsItem { ...props } /> }
+					{ site.is_wpcom_atomic && <SiteMonitoringItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (

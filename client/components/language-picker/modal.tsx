@@ -70,10 +70,12 @@ function IncompleteLocaleNoticeMessage( {
 		<Tooltip
 			position="top center"
 			text={
-				<div className="language-picker__modal-incomplete-locale-tooltip-text">
-					{ __( 'You can help translate WordPress.com into your language.' ) }
-					<a href={ translateFAQLink }>{ __( 'Learn more' ) }</a>
-				</div>
+				(
+					<div className="language-picker__modal-incomplete-locale-tooltip-text">
+						{ __( 'You can help translate WordPress.com into your language.' ) }
+						<a href={ translateFAQLink }>{ __( 'Learn more' ) }</a>
+					</div>
+				 ) as unknown as string
 			}
 		>
 			<div className="language-picker__modal-incomplete-locale-notice-info">
@@ -165,11 +167,11 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	const buttons = [
 		<>{ checkboxes }</>,
 		<div className="language-picker__modal-buttons">
-			<Button isLink onClick={ onClose }>
+			<Button variant="link" onClick={ onClose }>
 				{ __( 'Cancel' ) }
 			</Button>
 			<Button
-				isSecondary
+				variant="secondary"
 				onClick={ () => {
 					onClose();
 					if ( selectedLanguage ) {

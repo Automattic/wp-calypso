@@ -7,7 +7,6 @@ const debug = debugFactory( 'calypso:media' );
 
 /**
  * Redux thunk to fetch next page of media items
- *
  * @param {number} siteId site identifier
  */
 export const fetchNextMediaPage = ( siteId ) => ( dispatch, getState ) => {

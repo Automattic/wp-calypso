@@ -1,6 +1,5 @@
 import debugFactory from 'debug';
 import { useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
-import CheckoutContext from '../lib/checkout-context';
 import {
 	FormStatus,
 	FormStatusAction,
@@ -8,11 +7,12 @@ import {
 	FormStatusManager,
 	FormStatusSetter,
 } from '../types';
+import { FormStatusContext } from './form-status-context';
 
 const debug = debugFactory( 'composite-checkout:form-status' );
 
 export function useFormStatus(): FormStatusController {
-	const { formStatus, setFormStatus } = useContext( CheckoutContext );
+	const { formStatus, setFormStatus } = useContext( FormStatusContext );
 	const formStatusActions = useMemo(
 		() => ( {
 			setFormLoading: () => setFormStatus( FormStatus.LOADING ),
@@ -32,8 +32,40 @@ export function useFormStatus(): FormStatusController {
 	);
 }
 
+/**
+ * A React hook to create the context required by the `FormStatusProvider`.
+ *
+ * The state can be accessed with `useFormStatus` and will always be in one of
+ * the following states:
+ *
+ * - `FormStatus.LOADING`
+ * - `FormStatus.READY`
+ * - `FormStatus.VALIDATING`
+ * - `FormStatus.SUBMITTING`
+ * - `FormStatus.COMPLETE`
+ *
+ * You can change the current form status by using the `setFormStatus` function
+ * returned by the `useFormStatus` hook.
+ *
+ * For the `LOADING` and `VALIDATING` states, you can also optionally set the
+ * `isLoading` and `isValidating` arguments to this hook, respectively. These
+ * are provided so that the form's initial state can be set more easily.
+ */
 export function useFormStatusManager(
+	/**
+	 * If true, this will set the current form status to LOADING without
+	 * needing to call `setFormStatus`.
+	 *
+	 * This will take priority over the `isValidating` prop if both are set.
+	 */
 	isLoading: boolean,
+
+	/**
+	 * If true, this will set the current form status to VALIDATING without
+	 * needing to call `setFormStatus`.
+	 *
+	 * The `isLoading` prop will take priority over this if both are set.
+	 */
 	isValidating: boolean
 ): FormStatusManager {
 	const [ formStatus, dispatchFormStatus ] = useReducer(
@@ -51,7 +83,7 @@ export function useFormStatusManager(
 	}, [ isLoading, isValidating, setFormStatus ] );
 
 	debug( `form status is ${ formStatus }` );
-	return [ formStatus, setFormStatus ];
+	return { formStatus, setFormStatus };
 }
 
 function formStatusReducer( state: FormStatus, action: FormStatusAction ): FormStatus {

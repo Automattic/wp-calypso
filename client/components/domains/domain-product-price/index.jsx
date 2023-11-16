@@ -1,3 +1,4 @@
+import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -5,6 +6,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -17,6 +20,7 @@ class DomainProductPrice extends Component {
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isMappingProduct: PropTypes.bool,
 		salePrice: PropTypes.string,
+		isCurrentPlan100YearPlan: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -58,7 +62,7 @@ class DomainProductPrice extends Component {
 	}
 
 	renderReskinFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
+		const { isMappingProduct, translate, isCurrentPlan100YearPlan } = this.props;
 
 		const domainPriceElement = ( message ) => (
 			<div className="domain-product-price__free-text">{ message }</div>
@@ -66,6 +70,10 @@ class DomainProductPrice extends Component {
 
 		if ( isMappingProduct ) {
 			return domainPriceElement( translate( 'Included in paid plans' ) );
+		}
+
+		if ( isCurrentPlan100YearPlan ) {
+			return domainPriceElement( translate( 'Free with your plan' ) );
 		}
 
 		const message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
@@ -82,7 +90,7 @@ class DomainProductPrice extends Component {
 
 		return (
 			<div className="domain-product-price__price">
-				<del>{ priceText }</del>
+				<strong>{ this.props.salePrice }</strong> <del>{ priceText }</del>
 			</div>
 		);
 	}
@@ -206,4 +214,5 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: getCurrentUser( state )
 		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 		: true,
+	isCurrentPlan100YearPlan: getSitePlanSlug( state, getSelectedSiteId( state ) ) === PLAN_100_YEARS,
 } ) )( localize( DomainProductPrice ) );

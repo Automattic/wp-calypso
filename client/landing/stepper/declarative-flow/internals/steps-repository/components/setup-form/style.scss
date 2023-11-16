@@ -22,7 +22,8 @@
 	}
 
 	label,
-	textarea {
+	textarea,
+	.expanding-area textarea {
 		font-family: "SF Pro Text", $sans;
 		font-weight: 400;
 	}
@@ -83,13 +84,9 @@
 
 	.setup-form__submit {
 		border: none;
-		background-color: var(--studio-blue-50);
-		border-radius: 4px;
-		color: var(--color-surface);
-		font-weight: 500;
 		width: 100%;
 		// adds +2 px of padding to the button to match the input field height
-		padding: 10px 14px;
+		height: 40px;
 		margin-top: 16px;
 		&.disabled,
 		&.disabled:focus,
@@ -103,9 +100,6 @@
 			outline: 2px solid var(--studio-blue-60);
 			outline-offset: 1px;
 			background: var(--studio-blue-60);
-		}
-		&:hover {
-			background-color: var(--wp-admin-theme-color-darker-10);
 		}
 	}
 }

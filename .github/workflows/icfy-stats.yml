@@ -9,12 +9,11 @@ jobs:
     env:
       NODE_OPTIONS: --max-old-space-size=4096
     steps:
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '^18.13.0'
       - name: Checkout code
         uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
       - name: Fetch git history
         run: git fetch --prune --unshallow
       - name: Install dependencies

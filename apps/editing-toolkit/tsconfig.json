@@ -43,6 +43,7 @@
 		{ "path": "../../packages/plans-grid" },
 		{ "path": "../../packages/state-utils" },
 		{ "path": "../../packages/site-picker" },
-		{ "path": "../../packages/tour-kit" }
+		{ "path": "../../packages/tour-kit" },
+		{ "path": "../../packages/whats-new" }
 	]
 }

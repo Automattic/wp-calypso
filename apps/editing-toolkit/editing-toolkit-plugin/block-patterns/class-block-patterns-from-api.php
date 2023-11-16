@@ -76,7 +76,7 @@ class Block_Patterns_From_API {
 			foreach ( (array) $block_patterns as $pattern ) {
 				foreach ( (array) $pattern['categories'] as $slug => $category ) {
 					// Register categories from first pattern in each category.
-					if ( ! $pattern_categories[ $slug ] ) {
+					if ( ! isset( $pattern_categories[ $slug ] ) ) {
 						$pattern_categories[ $slug ] = array(
 							'label'       => $category['title'],
 							'description' => $category['description'],
@@ -118,8 +118,11 @@ class Block_Patterns_From_API {
 						'Blog Posts',
 						'full-site-editing'
 					);
-				} elseif ( 'gallery' === $slug ) {
-					$category_properties['label'] = __( 'Image Gallery', 'full-site-editing' );
+				} elseif ( 'testimonials' === $slug ) {
+					$category_properties['label'] = __(
+						'Quotes',
+						'full-site-editing'
+					);
 				}
 				register_block_pattern_category( $slug, $category_properties );
 			}
@@ -134,13 +137,6 @@ class Block_Patterns_From_API {
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
-
-					// The API /ptk/patterns/ adds all patterns to the category Featured because it's reused as All.
-					// Here we remove the category from All patterns because the editor crashes
-					// when rendering all patterns in the background.
-					if ( array_key_exists( 'featured', $pattern['categories'] ) ) {
-						unset( $pattern['categories']['featured'] );
-					}
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
@@ -161,8 +157,10 @@ class Block_Patterns_From_API {
 		}
 
 		$this->update_core_patterns_with_wpcom_categories();
+		$this->update_pattern_block_types();
 
-		$this->update_pattern_post_types();
+		// Temporarily removing the call to `update_pattern_post_types` while we investigate
+		// https://github.com/Automattic/wp-calypso/issues/79145.
 
 		return $results;
 	}
@@ -297,6 +295,30 @@ class Block_Patterns_From_API {
 
 				$pattern['postTypes'] = $post_types;
 				$pattern_name         = $pattern['name'];
+				unset( $pattern['name'] );
+				register_block_pattern( $pattern_name, $pattern );
+			}
+		}
+	}
+
+	/**
+	 * Ensure that all patterns with a blockType property are registered with appropriate postTypes.
+	 */
+	private function update_pattern_block_types() {
+		if ( ! class_exists( 'WP_Block_Patterns_Registry' ) ) {
+			return;
+		}
+		foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
+			if ( ! array_key_exists( 'blockTypes', $pattern ) || empty( $pattern['blockTypes'] ) ) {
+				continue;
+			}
+
+			$post_content_offset = array_search( 'core/post-content', $pattern['blockTypes'], true );
+			if ( $post_content_offset !== false ) {
+				unregister_block_pattern( $pattern['name'] );
+
+				$pattern['blockTypes'] = array_splice( $pattern['blockTypes'], $post_content_offset, 1 );
+				$pattern_name          = $pattern['name'];
 				unset( $pattern['name'] );
 				register_block_pattern( $pattern_name, $pattern );
 			}

@@ -1,7 +1,16 @@
 import config from '@automattic/calypso-config';
+import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { startsWith } from 'lodash';
 import page from 'page';
-import { makeLayout, redirectLoggedOutToSignup, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectLoggedOutToSignup,
+	redirectInvalidLanguage,
+	redirectLoggedInUrl,
+	render as clientRender,
+} from 'calypso/controller';
+import { setLocaleMiddleware } from 'calypso/controller/shared';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { tagListing } from './controller';
 
@@ -20,9 +29,30 @@ const redirectToSignup = ( context, next ) => {
 };
 
 export default function () {
+	const langParam = getLanguageRouteParam();
+	const anyLangParam = getAnyLanguageRouteParam();
+
 	page( '/tag/*', redirectHashtaggedTags );
+
+	page( `/${ anyLangParam }/tag/:tag`, redirectInvalidLanguage );
+
+	if ( isReaderTagEmbedPage( window.location ) ) {
+		page(
+			[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
+			setLocaleMiddleware(),
+			redirectToSignup,
+			updateLastRoute,
+			tagListing,
+			makeLayout,
+			clientRender
+		);
+		return;
+	}
+
 	page(
-		'/tag/:tag',
+		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
+		redirectLoggedInUrl,
+		setLocaleMiddleware(),
 		redirectToSignup,
 		updateLastRoute,
 		sidebar,

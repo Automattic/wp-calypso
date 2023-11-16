@@ -18,6 +18,7 @@ import {
 	OUTBRAIN_SCRIPT_URL,
 	PINTEREST_SCRIPT_URL,
 	GOOGLE_GTM_SCRIPT_URL,
+	WPCOM_CLARITY_URI,
 } from './constants';
 
 // Ensure setup has run.
@@ -104,6 +105,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.akismetGoogleTagManagerId );
 	}
 
+	if ( mayWeTrackByTracker( 'clarity' ) ) {
+		scripts.push( WPCOM_CLARITY_URI );
+	}
+
 	return scripts;
 }
 
@@ -183,7 +188,6 @@ function attemptLoad( loader ) {
 
 /**
  * Returns the URL for Quantcast's Purchase Confirmation Tag
- *
  * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
  * @returns {string} The URL
  */

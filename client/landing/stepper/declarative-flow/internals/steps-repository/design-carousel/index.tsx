@@ -98,7 +98,7 @@ const DesignCarousel: Step = function DesignCarousel( { navigation, flow } ) {
 
 	function pickDesign( _selectedDesign: Design ) {
 		setSelectedDesign( _selectedDesign );
-		submit?.( { theme: _selectedDesign.slug, theme_type: _selectedDesign.design_type } );
+		submit?.( { theme: _selectedDesign?.slug, theme_type: _selectedDesign?.design_type } );
 	}
 
 	return (

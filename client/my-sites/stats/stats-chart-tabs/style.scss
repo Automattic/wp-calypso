@@ -27,10 +27,6 @@ ul.module-tabs {
 			width: 25%;
 			text-align: center;
 
-			&.is-post-summary {
-				width: 33%;
-			}
-
 			&:first-child {
 				border-left: none;
 			}
@@ -230,4 +226,17 @@ ul.module-tabs {
 			background: var(--color-neutral-0);
 		}
 	}
+}
+
+.is-chart-tabs {
+	.chart__bars {
+		justify-content: space-between;
+	}
+	&.has-less-than-three-bars .chart__bars {
+		justify-content: space-around;
+	}
+	.chart__bar {
+		max-width: 156px;
+	}
+
 }

@@ -67,7 +67,6 @@ function WpcomNux() {
 
 /**
  * This function returns a collection of NUX slide data
- *
  * @returns { Array } a collection of <NuxPage /> props
  */
 function getWpcomNuxPages() {

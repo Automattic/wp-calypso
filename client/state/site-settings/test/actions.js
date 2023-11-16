@@ -74,7 +74,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSiteSettings( 2916284 )( spy, getState );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_SETTINGS_REQUEST,
 				siteId: 2916284,
 			} );
@@ -82,7 +82,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy, getState ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining(
 						receiveSiteSettings( 2916284, {
 							blogname: 'blog name',
@@ -96,7 +96,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch request success action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy, getState ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: SITE_SETTINGS_REQUEST_SUCCESS,
 						siteId: 2916284,
@@ -107,7 +107,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestSiteSettings( 2916285 )( spy, getState ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId: 2916285,
 					error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			saveSiteSettings( 2916284, { settingKey: 'chicken' } )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_SETTINGS_SAVE,
 				siteId: 2916284,
 			} );
@@ -142,7 +142,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch update action when request completes', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					updateSiteSettings( 2916284, {
 						real_update: 'ribs',
 					} )
@@ -152,7 +152,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch save success action when request completes', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId: 2916284,
 				} );
@@ -161,7 +161,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return saveSiteSettings( 2916285 )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId: 2916285,
 					error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),

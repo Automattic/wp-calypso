@@ -2,7 +2,6 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**
  * Returns true if the Jetpack site has Secure Sign On (SSO) enabled.
- *
  * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {boolean} Whether the site has SSO enabled.

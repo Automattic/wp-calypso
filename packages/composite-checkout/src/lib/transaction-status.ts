@@ -1,6 +1,5 @@
 import debugFactory from 'debug';
 import { useCallback, useContext, useMemo, useReducer } from 'react';
-import CheckoutContext from '../lib/checkout-context';
 import {
 	TransactionStatus,
 	TransactionStatusState,
@@ -8,11 +7,12 @@ import {
 	TransactionStatusManager,
 	TransactionStatusPayloads,
 } from '../types';
+import { TransactionStatusContext } from './transaction-status-context';
 
 const debug = debugFactory( 'composite-checkout:transaction-status' );
 
 export function useTransactionStatus(): TransactionStatusManager {
-	const { transactionStatusManager } = useContext( CheckoutContext );
+	const transactionStatusManager = useContext( TransactionStatusContext );
 	if ( ! transactionStatusManager ) {
 		throw new Error( 'useTransactionStatus can only be called inside CheckoutProvider' );
 	}

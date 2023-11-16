@@ -11,7 +11,14 @@
 	// Override the default minimum width.
 	.highlight-card {
 		min-width: 240px;
+
+		// make it more compact for is-compact
+		&.is-compact {
+			min-width: 90px;
+			padding: 0;
+		}
 	}
+
 	// Hide unused icon div.
 	.highlight-card-icon {
 		display: none;

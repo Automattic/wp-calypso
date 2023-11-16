@@ -1,0 +1,41 @@
+.upgrade-popover {
+	z-index: 100000;
+	border-radius: 4px;
+
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+.upgrade-popover__heading {
+	font-size: rem(14px);
+	line-height: 1.5;
+}
+
+.upgrade-popover__list {
+	margin: 0;
+	list-style: none;
+	font-size: rem(14px);
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+
+	li {
+		background: url(calypso/assets/images/jetpack/jetpack-green-checkmark.svg) no-repeat 0 2px;
+		padding-inline-start: 24px;
+		background-size: 16px;
+		background-position-y: 2px;
+		margin-block: 4px;
+	}
+}
+
+.upgrade-popover__close-button {
+	position: absolute;
+	top: 12px;
+	right: 20px;
+}

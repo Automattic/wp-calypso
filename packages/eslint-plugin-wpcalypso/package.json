@@ -1,6 +1,6 @@
 {
 	"name": "eslint-plugin-wpcalypso",
-	"version": "7.0.0",
+	"version": "8.0.0",
 	"description": "Custom ESLint rules for the WordPress.com Calypso project.",
 	"repository": {
 		"type": "git",
@@ -21,14 +21,14 @@
 		"lib/"
 	],
 	"engines": {
-		"node": ">=14"
+		"node": ">=v20.8.1"
 	},
 	"peerDependencies": {
-		"@babel/core": ">=7.17.5",
-		"eslint": ">=8.6.0",
-		"eslint-plugin-inclusive-language": "^2.2.0",
-		"eslint-plugin-jsdoc": "^39.6.8",
-		"eslint-plugin-react": "^7.28.0",
+		"@babel/core": ">=7.23.2",
+		"eslint": ">=8.52.0",
+		"eslint-plugin-inclusive-language": "^2.2.1",
+		"eslint-plugin-jsdoc": "^46.8.2",
+		"eslint-plugin-react": "^7.33.2",
 		"eslint-plugin-react-hooks": "^4.3.0"
 	},
 	"peerDependenciesMeta": {
@@ -41,9 +41,9 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@babel/core": "^7.17.5",
-		"@babel/eslint-parser": "^7.17.0",
-		"@babel/parser": "^7.17.3",
-		"eslint": "^8.34.0"
+		"@babel/core": "^7.23.2",
+		"@babel/eslint-parser": "^7.22.15",
+		"@babel/parser": "^7.23.0",
+		"eslint": "^8.52.0"
 	}
 }

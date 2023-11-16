@@ -1,9 +1,16 @@
 import { Popover } from '@wordpress/components';
-import { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+	LegacyRef,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	ComponentProps,
+} from 'react';
 
-interface SubmenuPopoverProps extends Popover.Props {
+type SubmenuPopoverProps = ComponentProps< typeof Popover > & {
 	isVisible?: boolean;
-	offset?: number | { mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null };
 	placement?:
 		| 'top'
 		| 'top-start'
@@ -17,9 +24,11 @@ interface SubmenuPopoverProps extends Popover.Props {
 		| 'left'
 		| 'left-start'
 		| 'left-end';
-	anchorRef?: React.MutableRefObject< HTMLElement | undefined >;
-	__unstableForcePosition?: boolean;
-}
+	anchor?: Element | undefined;
+	flip?: boolean;
+	resize?: boolean;
+	inline?: boolean;
+};
 
 /**
  * Adds a11y support to the submenu popover.
@@ -74,9 +83,14 @@ function useHasRightSpace( parentElement: HTMLElement | undefined, isVisible: bo
 }
 
 export function useSubmenuPopoverProps< T extends HTMLElement >(
-	options: { offsetTop?: number } = {}
+	options: Omit< SubmenuPopoverProps, 'isVisible' | 'placement' | 'anchor' | 'children' > = {
+		offset: 0,
+		flip: true,
+		resize: true,
+		inline: false,
+	}
 ) {
-	const { offsetTop = 0 } = options;
+	const { offset, inline, flip, resize } = options;
 	const [ isVisible, setIsVisible ] = useState( false );
 	const anchor = useRef< T >();
 	const parentElement = anchor?.current;
@@ -86,9 +100,11 @@ export function useSubmenuPopoverProps< T extends HTMLElement >(
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
-		anchorRect: anchor?.current?.getBoundingClientRect(),
-		offset: { crossAxis: offsetTop },
-		__unstableForcePosition: true,
+		anchor: anchor?.current,
+		offset,
+		flip,
+		resize,
+		inline,
 	};
 
 	const parent = {

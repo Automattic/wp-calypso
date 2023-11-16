@@ -1,4 +1,3 @@
-import { trim } from 'lodash';
 import {
 	READER_TAGS_REQUEST,
 	READER_TAGS_RECEIVE,
@@ -15,12 +14,13 @@ import 'calypso/state/reader/init';
 
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.
- *
  * @param  {string} tag  Tag name to parse into a slug
  * @returns {string}      Tag slug
  */
 export const slugify = ( tag ) =>
-	encodeURIComponent( trim( tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) );
+	typeof tag === 'string'
+		? encodeURIComponent( tag.trim().toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) )
+		: '';
 
 export const requestTags = ( tag, locale = null ) => {
 	const slug = tag ? slugify( tag ) : null;

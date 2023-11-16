@@ -1,6 +1,5 @@
 /**
  * `SiteWordAdsSettings` constructor.
- *
  * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
  * @returns {SiteWordAdsSettings|undefined}
@@ -18,15 +17,14 @@ export default function SiteWordAdsSettings( sid, wpcom ) {
  * Get detailed WordAds settings information about the site.
  *
  * Example:*
- *    // Get site settings information
- *    wpcom
- *    .site( 'my-blog.wordpress.com' )
- *    .wordAds()
- *    .settings()
- *    .get( function( err, data ) {
- *      // `settings` information object
- *    } );
- *
+ * // Get site settings information
+ * wpcom
+ * .site( 'my-blog.wordpress.com' )
+ * .wordAds()
+ * .settings()
+ * .get( function( err, data ) {
+ * // `settings` information object
+ * } );
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -39,17 +37,16 @@ SiteWordAdsSettings.prototype.get = function ( query, fn ) {
  * Update WordAds settings for the site.
  *
  * Example:*
- *    var settings = {}; // your settings here
+ * var settings = {}; // your settings here
  *
- *    // Get site settings information
- *    wpcom
- *    .site( 'my-blog.wordpress.com' )
- *    .wordAds()
- *    .settings()
- *    .update( settings, function( err, data ) {
- *      // data settings information object
- *    } );
- *
+ * // Get site settings information
+ * wpcom
+ * .site( 'my-blog.wordpress.com' )
+ * .wordAds()
+ * .settings()
+ * .update( settings, function( err, data ) {
+ * // data settings information object
+ * } );
  * @param {Object} [query] - query object parameter
  * @param {Object} body - body object parameter
  * @param {Function} fn - callback function

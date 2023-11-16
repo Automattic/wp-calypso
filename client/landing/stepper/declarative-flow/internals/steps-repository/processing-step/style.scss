@@ -29,8 +29,7 @@
 }
 
 .import-focused .step-container__content,
-.site-setup.processing .step-container__content,
-.anchor-fm.processing .step-container__content {
+.site-setup.processing .step-container__content {
 	width: 100%;
 }
 
@@ -74,7 +73,21 @@
 
 }
 
-.is-videopress-stepper.is-processing-step {
+.is-videopress-tv-stepper,
+.is-videopress-tv-purchase-stepper {
+	font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.processing-step__progress-step {
+		font-family: inherit;
+		font-size: rem(38px); //typography-exception
+		font-weight: 700;
+		letter-spacing: -0.02em;
+	}
+}
+
+.is-videopress-stepper.is-processing-step,
+.is-videopress-tv-stepper,
+.is-videopress-tv-purchase-stepper {
 	padding: 0;
 	color: #fff;
 
@@ -99,14 +112,3 @@
 	}
 }
 
-
-.is-section-stepper .newsletter.processing {
-	.processing-step {
-		.loading-bar {
-			background-color: var(--studio-blue-10);
-			&::before {
-				background: var(--studio-blue-50);
-			}
-		}
-	}
-}

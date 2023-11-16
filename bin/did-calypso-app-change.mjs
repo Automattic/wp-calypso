@@ -1,17 +1,40 @@
 import { exec as _exec } from 'node:child_process';
-import { createWriteStream } from 'node:fs';
+import { createWriteStream, constants as fsConstants } from 'node:fs';
+import { access } from 'node:fs/promises';
+import path from 'node:path';
 import { Readable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import util from 'node:util';
-const exec = util.promisify( _exec );
+const promiseExec = util.promisify( _exec );
 
-export default async function didCalypsoAppChange( { slug, dir, newReleaseDir, customNormalize } ) {
+const exec = async ( cmd, opts ) => {
+	return promiseExec( cmd, {
+		encoding: 'UTF-8',
+		stdio: 'inherit',
+		...opts,
+	} );
+};
+
+export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) {
 	await downloadPrevBuild( slug, dir );
-	await customNormalize?.();
+	const prevReleaseDir = path.join( dir, 'prev-release' );
+
+	const normalizer = path.join( dir, 'bin/normalize-artifact.sh' );
+	try {
+		await access( normalizer, fsConstants.X_OK );
+		await exec( normalizer, { cwd: prevReleaseDir } );
+		console.info( `Successfully normalized ${ slug }.` );
+	} catch ( e ) {
+		if ( e.code !== 'ENOENT' ) {
+			// ENOENT is expected for many apps which don't need this functionality.
+			console.error( e );
+		}
+	}
+
 	try {
 		await exec(
-			`diff -rq --exclude="*.js.map" --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" ${ newReleaseDir } ${ dir }/prev-release/`,
-			{ encoding: 'UTF-8', cwd: dir, stdio: 'inherit' }
+			`diff -r --exclude="*.js.map" --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" ${ artifactDir } ${ prevReleaseDir }`,
+			{ cwd: dir, maxBuffer: 1024 * 1024 * 10 } // 10MB buffer for large diffs.
 		);
 		return false;
 	} catch ( { code, stdout, stderr } ) {
@@ -28,18 +51,17 @@ async function downloadPrevBuild( appSlug, dir ) {
 	const prevBuildZip = `${ dir }/prev-archive-download.zip`;
 	const stream = createWriteStream( prevBuildZip );
 
-	const prevBuildUrl = `${ process.env.tc_sever_url }/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/${ appSlug }-release-build.tcbuildtag/${ appSlug }.zip?guest=1&branch=try-parallel-app-processing`;
+	const prevBuildUrl = `${ process.env.tc_sever_url }/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/${ appSlug }-release-build.tcbuildtag/${ appSlug }.zip?guest=1&branch=trunk`;
 	console.info( `Fetching previous release build for ${ appSlug } from ${ prevBuildUrl }` );
 
 	const { body, status } = await fetch( prevBuildUrl );
 	if ( status !== 200 ) {
-		throw new Error( `Could not fetch previous build! Response code ${ status }.` );
+		throw new Error(
+			`Could not fetch previous build for ${ appSlug }! Response code ${ status }.`
+		);
 	}
 
 	console.info( `Extracting downloaded archive for ${ appSlug }...` );
 	await finished( Readable.fromWeb( body ).pipe( stream ) );
-	await exec( `unzip -q ${ prevBuildZip } -d ${ dir }/prev-release`, {
-		encoding: 'UTF-8',
-		stdio: 'inherit',
-	} );
+	await exec( `unzip -q ${ prevBuildZip } -d ${ dir }/prev-release` );
 }

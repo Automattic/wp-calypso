@@ -1,0 +1,23 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../hundred-year-plan-step-wrapper/mixins";
+
+.hundred-year-plan-setup {
+	.step-container__content {
+		.components-button.setup-form__submit.is-primary {
+			@include primary-button-black-theme;
+		}
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(32px);
+				@include break-small {
+					font-size: rem(44px);
+				}
+			}
+			@include break-small {
+				margin-top: 72px;
+			}
+			margin: 32px 16px;
+		}
+	}
+}

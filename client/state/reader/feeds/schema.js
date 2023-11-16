@@ -18,6 +18,7 @@ export const itemsSchema = {
 				image: { type: [ 'string', 'null' ] },
 				organization_id: { type: [ 'integer', 'null' ] },
 				unseen_count: { type: [ 'integer', 'null' ] },
+				subscription_id: { type: [ 'integer', 'null' ] },
 			},
 		},
 	},

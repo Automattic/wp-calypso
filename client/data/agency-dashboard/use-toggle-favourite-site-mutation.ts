@@ -2,13 +2,9 @@ import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/re
 import {
 	APIError,
 	APIToggleFavorite,
+	ToggleFavoriteOptions,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-
-interface ToggleFavoriteOptions {
-	siteId: number;
-	isFavorite: boolean;
-}
 
 function mutationToggleFavoriteSite( {
 	siteId,

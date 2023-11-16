@@ -1,3 +1,4 @@
+import { SearchIcon, type ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
 import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -8,9 +9,7 @@ import SelectDropdown from 'calypso/components/select-dropdown';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
-import { SitesSearchIcon } from './sites-search-icon';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
-import type { ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
 
 export interface SitesDashboardQueryParams {
 	page?: number;
@@ -92,7 +91,6 @@ type SitesContentControlsProps = {
 /**
  * Updates one or more query param used by the sites dashboard, causing a page navigation.
  * Param will be removed if it is empty or matches its default value.
- *
  * @param queryParams Query parameters to assign to the URL.
  */
 export function handleQueryParamChange( queryParams: SitesDashboardQueryParams ) {
@@ -131,7 +129,7 @@ export const SitesContentControls = ( {
 	return (
 		<FilterBar>
 			<SitesSearch
-				searchIcon={ <SitesSearchIcon /> }
+				searchIcon={ <SearchIcon /> }
 				onSearch={ ( term ) => onQueryParamChange( { search: term?.trim(), page: undefined } ) }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }

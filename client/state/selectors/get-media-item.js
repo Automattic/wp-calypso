@@ -7,7 +7,6 @@ import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-i
  * Also ensures that if the passed in media ID is a transient ID that
  * the transient item or the corresponding saved media item is correctly
  * returned.
- *
  * @param {number}  mediaId Media ID
  * @returns {?Object}         Media object, if known
  */

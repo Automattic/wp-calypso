@@ -1,6 +1,5 @@
 /**
  * Determines whether G Suite is allowed for the specified domain.
- *
  * @param {string} domainName - domain name
  * @returns {boolean} - true if G Suite is allowed, false otherwise
  */

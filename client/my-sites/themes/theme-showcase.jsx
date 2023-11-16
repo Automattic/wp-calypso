@@ -1,53 +1,47 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import UpworkBanner from 'calypso/blocks/upwork-banner';
-import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
-import DocumentHead from 'calypso/components/data/document-head';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import SearchThemes from 'calypso/components/search-themes';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
+import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
+import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
+import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
-	getThemeShowcaseDescription,
-	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
-import {
-	addTracking,
-	appendStyleVariationToThemesPath,
-	getSubjectsFromTermTable,
-	trackClick,
-	localizeThemesPath,
-} from './helpers';
-import InstallThemeButton from './install-theme-button';
+import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
 import ThemePreview from './theme-preview';
-import ThemesHeader from './themes-header';
+import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
@@ -59,6 +53,21 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
+const staticFilters = {
+	MYTHEMES: {
+		key: 'my-themes',
+		text: translate( 'My Themes' ),
+	},
+	RECOMMENDED: {
+		key: 'recommended',
+		text: translate( 'Recommended' ),
+	},
+	ALL: {
+		key: 'all',
+		text: translate( 'All' ),
+	},
+};
+
 class ThemeShowcase extends Component {
 	constructor( props ) {
 		super( props );
@@ -67,16 +76,12 @@ class ThemeShowcase extends Component {
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
-
-		this.state = {
-			tabFilter: this.getTabFilterFromUrl( props.filter ),
-		};
 	}
 
 	static propTypes = {
-		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
+		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
@@ -89,12 +94,14 @@ class ThemeShowcase extends Component {
 		loggedOutComponent: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
+		isSiteECommerceFreeTrial: PropTypes.bool,
+		isSiteWooExpress: PropTypes.bool,
+		isSiteWooExpressOrEcomFreeTrial: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		tier: '',
 		search: '',
-		emptyContent: null,
 		upsellBanner: false,
 		showUploadButton: true,
 	};
@@ -128,11 +135,15 @@ class ThemeShowcase extends Component {
 	}
 
 	componentWillUnmount() {
-		this.props.setBackPath( this.constructUrl( { searchString: this.props.search } ) );
+		this.props.setBackPath( this.constructUrl() );
 	}
 
+	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
+
+	getDefaultStaticFilter = () => staticFilters.RECOMMENDED;
+
 	isStaticFilter = ( tabFilter ) => {
-		return Object.values( this.getStaticFilters() ).some(
+		return Object.values( staticFilters ).some(
 			( staticFilter ) => tabFilter.key === staticFilter.key
 		);
 	};
@@ -153,57 +164,48 @@ class ThemeShowcase extends Component {
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
-		const staticFilters = this.getStaticFilters();
 		return {
-			...( shouldShowMyThemesFilter && {
-				MYTHEMES: staticFilters.MYTHEMES,
-			} ),
+			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
+			RECOMMENDED: staticFilters.RECOMMENDED,
 			ALL: staticFilters.ALL,
 			...this.subjectFilters,
 		};
 	};
 
-	getStaticFilters = () => {
-		return {
-			MYTHEMES: {
-				key: 'my-themes',
-				text: this.props.translate( 'My Themes' ),
-				order: 3,
-			},
-			ALL: {
-				key: 'all',
-				text: this.props.translate( 'Recommended' ),
-				order: 4,
-			},
-		};
-	};
-
 	getTiers = () => {
-		return [
+		const { isSiteWooExpressOrEcomFreeTrial } = this.props;
+		const tiers = [
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
-			{ value: 'premium', label: this.props.translate( 'Premium' ) },
-			{
-				value: 'marketplace',
-				label: this.props.translate( 'Paid', {
-					context: 'Refers to paid service, such as paid theme',
-				} ),
-			},
 		];
+
+		if ( ! isSiteWooExpressOrEcomFreeTrial ) {
+			tiers.push( { value: 'premium', label: this.props.translate( 'Premium' ) } );
+		}
+
+		tiers.push( {
+			value: 'marketplace',
+			label: this.props.translate( 'Partner', {
+				context: 'This theme is developed and supported by a theme partner',
+			} ),
+		} );
+
+		return tiers;
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		this.getStaticFilters().ALL;
+		this.getDefaultStaticFilter();
 
-	getTabFilterFromUrl = ( filterString = '' ) => {
-		const filterArray = filterString.split( '+' );
+	getSelectedTabFilter = () => {
+		const filter = this.props.filter ?? '';
+		const filterArray = filter.split( '+' );
 		const matches = Object.values( this.subjectTermTable ).filter( ( value ) =>
 			filterArray.includes( value )
 		);
 
 		if ( ! matches.length ) {
-			return this.findTabFilter( this.getStaticFilters(), this.state?.tabFilter.key );
+			return this.findTabFilter( staticFilters, this.props.category );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
@@ -211,6 +213,8 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		let y = 0;
+
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
 			// If you are a larger screen where the theme info is displayed horizontally.
 			if ( window.innerWidth > 600 ) {
@@ -226,77 +230,106 @@ class ThemeShowcase extends Component {
 			const yOffset = -( headerHeight + screenOptionTab ); // Total height of admin bar and screen options on mobile.
 			const elementBoundary = this.scrollRef.current.getBoundingClientRect();
 
-			const y = elementBoundary.top + window.pageYOffset + yOffset;
-			window.scrollTo( { top: y } );
+			y = elementBoundary.top + window.pageYOffset + yOffset;
 		}
+
+		window.scrollTo( { top: y } );
 	};
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable } = this.props;
+		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
 
-		const filters = searchBoxContent.match( filterRegex ) || [];
+		const filters =
+			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
+
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
+
+		const search = searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim();
 
 		const url = this.constructUrl( {
 			filter: filterString,
 			// Strip filters and excess whitespace
-			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
+			search,
+			...( ( this.isThemeDiscoveryEnabled() && ! this.props.category && search ) ||
+				( filterString && {
+					category: staticFilters.ALL.key,
+				} ) ),
+			// If a category isn't selected we search in the all category.
+			...( search &&
+				! subjectStringFilter && {
+					category: staticFilters.ALL.key,
+				} ),
 		} );
 
-		this.setState( { tabFilter: this.getTabFilterFromUrl( filterString ) } );
 		page( url );
 		this.scrollToSearchInput();
 	};
 
 	/**
 	 * Returns a full showcase url from current props.
-	 *
 	 * @param {Object} sections fields from this object will override current props.
 	 * @param {string} sections.vertical override vertical prop
 	 * @param {string} sections.tier override tier prop
 	 * @param {string} sections.filter override filter prop
 	 * @param {string} sections.siteSlug override siteSlug prop
-	 * @param {string} sections.searchString override searchString prop
+	 * @param {string} sections.search override search prop
+	 * @param {string} sections.isCollectionView should display the collection view.
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { vertical, tier, filter, siteSlug, searchString, locale, isLoggedIn } = {
+		const {
+			category,
+			vertical,
+			tier,
+			filter,
+			siteSlug,
+			search,
+			locale,
+			isLoggedIn,
+			isCollectionView,
+		} = {
 			...this.props,
 			...sections,
 		};
-
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
+		const categorySection =
+			category && category !== this.getDefaultStaticFilter().key ? `/${ category }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
-		const url = localizeThemesPath(
-			`/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
-			locale,
-			! isLoggedIn
-		);
-		return buildRelativeSearchUrl( url, searchString );
+
+		const collectionSection = isCollectionView ? `/collection` : '';
+
+		let url = `/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ collectionSection }${ siteIdSection }`;
+
+		url = localizeThemesPath( url, locale, ! isLoggedIn );
+
+		return buildRelativeSearchUrl( url, search );
 	};
 
-	onTierSelect = ( { value: tier } ) => {
-		// Due to the search backend limitation, static filters other than "All"
-		// can only have "All" tier.
-		const staticFilters = this.getStaticFilters();
-		if (
-			tier !== 'all' &&
-			this.isStaticFilter( this.state.tabFilter ) &&
-			this.state.tabFilter.key !== staticFilters.ALL.key
-		) {
-			this.setState( { tabFilter: staticFilters.ALL } );
-		}
-
+	onTierSelectFilter = ( { value: tier } ) => {
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
 
-		const url = this.constructUrl( { tier } );
+		const category = tier !== 'all' && ! this.props.category ? '' : this.props.category;
+		const showCollection =
+			this.isThemeDiscoveryEnabled() && ! this.props.filterString && ! category && tier !== 'all';
+
+		const url = this.constructUrl( {
+			tier,
+			category,
+			search: showCollection ? '' : this.props.search,
+			// Due to the search backend limitation, "My Themes" can only have "All" tier.
+			...( tier !== 'all' &&
+				this.props.category === staticFilters.MYTHEMES.key && {
+					category: staticFilters.RECOMMENDED.key,
+				} ),
+		} );
+
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -305,46 +338,71 @@ class ThemeShowcase extends Component {
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 
-		let callback = () => null;
-		// Due to the search backend limitation, static filters other than "All"
-		// can only have "All" tier.
-		if (
-			this.isStaticFilter( tabFilter ) &&
-			tabFilter.key !== this.getStaticFilters().ALL.key &&
-			this.props.tier !== 'all'
-		) {
-			callback = () => {
-				this.onTierSelect( { value: 'all' } );
-				this.scrollToSearchInput();
-			};
-		}
-
-		const { filter = '', search, filterToTermTable } = this.props;
-		const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
+		const { filter = '', filterToTermTable } = this.props;
 		const subjectFilters = Object.values( this.subjectTermTable );
 		const filterWithoutSubjects = filter
 			.split( '+' )
 			.filter( ( key ) => ! subjectFilters.includes( key ) )
 			.join( '+' );
 
-		const newFilter = ! this.isStaticFilter( tabFilter )
-			? [ filterWithoutSubjects, subjectTerm ].join( '+' )
-			: filterWithoutSubjects;
+		const newUrlParams = {};
 
-		page( this.constructUrl( { filter: newFilter, searchString: search } ) );
+		if ( this.isStaticFilter( tabFilter ) ) {
+			newUrlParams.category = tabFilter.key;
+			newUrlParams.filter = filterWithoutSubjects;
+			// Due to the search backend limitation, "My Themes" can only have "All" tier.
+			if ( tabFilter.key === staticFilters.MYTHEMES.key && this.props.tier !== 'all' ) {
+				newUrlParams.tier = 'all';
+			}
+		} else {
+			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
+			newUrlParams.filter = [ filterWithoutSubjects, subjectTerm ].join( '+' );
+			newUrlParams.category = null;
+		}
 
-		this.setState( { tabFilter }, callback );
+		page( this.constructUrl( newUrlParams ) );
+
+		this.scrollToSearchInput();
 	};
 
 	allThemes = ( { themeProps } ) => {
-		const { isJetpackSite, children } = this.props;
+		const { filter, isCollectionView, isJetpackSite, tier, children, search, category } =
+			this.props;
 		if ( isJetpackSite ) {
 			return children;
 		}
 
+		// In Collection View of pricing tiers (e.g. Partner themes), prevent requesting only recommended themes.
+		const themesSelectionProps = {
+			...themeProps,
+			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
+		};
+
+		const showCollections =
+			! ( category || search || filter || isCollectionView ) &&
+			tier === '' &&
+			this.isThemeDiscoveryEnabled();
+
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themeProps } />
+				<ThemesSelection { ...themesSelectionProps }>
+					{ showCollections && (
+						<>
+							<ShowcaseThemeCollection
+								{ ...THEME_COLLECTIONS.marketplace }
+								getOptions={ this.getThemeOptions }
+								getScreenshotUrl={ this.getScreenshotUrl }
+								getActionLabel={ this.getActionLabel }
+								onSeeAll={ () =>
+									this.onCollectionSeeAll( {
+										tier: THEME_COLLECTIONS.marketplace.query.tier,
+										filter: THEME_COLLECTIONS.marketplace.query.filter,
+									} )
+								}
+							/>
+						</>
+					) }
+				</ThemesSelection>
 			</div>
 		);
 	};
@@ -375,7 +433,7 @@ class ThemeShowcase extends Component {
 	};
 
 	renderBanner = () => {
-		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner, isUpsellCardDisplayed } =
+		const { loggedOutComponent, upsellBanner, isUpsellCardDisplayed, isSiteECommerceFreeTrial } =
 			this.props;
 
 		// Don't show the banner if there is already an upsell card displayed
@@ -383,68 +441,89 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const tabKey = this.state.tabFilter.key;
-
-		const staticFilters = this.getStaticFilters();
-		if (
-			tabKey !== staticFilters.MYTHEMES?.key &&
-			! isExpertBannerDissmissed &&
-			! loggedOutComponent
-		) {
-			// these are from the time we rely on the redirect.
-			// See p2-pau2Xa-4nq#comment-12480
-			let location = 'theme-banner';
-			let refURLParam = 'built-by-wordpress-com-redirect';
-
-			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
-			switch ( tabKey ) {
-				case staticFilters.ALL.key:
-					location = 'all-theme-banner';
-					refURLParam = 'themes';
+		// In ecommerce trial sites, we only want to show upsell banner.
+		if ( isSiteECommerceFreeTrial ) {
+			if ( upsellBanner ) {
+				return upsellBanner;
 			}
+			return null;
+		}
 
-			return <UpworkBanner location={ location } refURLParam={ refURLParam } />;
+		if ( config.isEnabled( 'jitms' ) && ! loggedOutComponent ) {
+			return (
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					placeholder={ null }
+					messagePath="calypso:themes:showcase-website-design"
+				/>
+			);
 		}
 
 		return upsellBanner;
 	};
 
 	renderThemes = ( themeProps ) => {
-		const tabKey = this.state.tabFilter.key;
+		const tabKey = this.getSelectedTabFilter().key;
+
 		switch ( tabKey ) {
-			case this.getStaticFilters().MYTHEMES?.key:
+			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
 		}
 	};
 
+	getScreenshotUrl = ( theme, themeOptions ) => {
+		const { getScreenshotOption, locale, isLoggedIn } = this.props;
+
+		if ( ! getScreenshotOption( theme ).getUrl ) {
+			return null;
+		}
+
+		return localizeThemesPath(
+			getScreenshotOption( theme ).getUrl( theme, themeOptions ),
+			locale,
+			! isLoggedIn
+		);
+	};
+
+	getActionLabel = ( theme ) => this.props.getScreenshotOption( theme ).label;
+	getThemeOptions = ( theme ) => {
+		return pickBy(
+			addTracking( this.props.options ),
+			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
+		);
+	};
+
+	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
+		const url = this.constructUrl( {
+			isCollectionView: true,
+			filter,
+			tier,
+		} );
+
+		page( url );
+		window.scrollTo( { top: 0 } );
+	};
+
 	render() {
 		const {
 			siteId,
-			options,
 			getScreenshotOption,
 			search,
 			filter,
 			isLoggedIn,
+			isSearchV2,
 			pathName,
-			title,
+			featureStringFilter,
 			filterString,
 			isMultisite,
-			locale,
 			premiumThemesEnabled,
+			isSiteWooExpressOrEcomFreeTrial,
+			isCollectionView,
 		} = this.props;
-		const tier = this.props.tier || '';
-
+		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-
-		const metas = [
-			{ name: 'description', property: 'og:description', content: this.props.description },
-			{ property: 'og:title', content: title },
-			{ property: 'og:url', content: canonicalUrl },
-			{ property: 'og:type', content: 'website' },
-			{ property: 'og:site_name', content: 'WordPress.com' },
-		];
 
 		const themeProps = {
 			forceWpOrgSearch: true,
@@ -455,124 +534,116 @@ class ThemeShowcase extends Component {
 			upsellBanner: this.props.upsellBanner,
 			search: search,
 			tier: this.props.tier,
-			tabFilter: this.state.tabFilter.key,
+			tabFilter: this.getSelectedTabFilter().key,
 			defaultOption: this.props.defaultOption,
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
 			bookmarkRef: this.bookmarkRef,
-			getScreenshotUrl: ( theme, styleVariation ) => {
-				if ( ! getScreenshotOption( theme ).getUrl ) {
-					return null;
-				}
-
-				return localizeThemesPath(
-					appendStyleVariationToThemesPath(
-						getScreenshotOption( theme ).getUrl( theme ),
-						styleVariation
-					),
-					locale,
-					! isLoggedIn
-				);
-			},
+			getScreenshotUrl: this.getScreenshotUrl,
 			onScreenshotClick: ( themeId ) => {
 				if ( ! getScreenshotOption( themeId ).action ) {
 					return;
 				}
 				getScreenshotOption( themeId ).action( themeId );
 			},
-			getActionLabel: ( theme ) => getScreenshotOption( theme ).label,
+			getActionLabel: this.getActionLabel,
 			trackScrollPage: this.props.trackScrollPage,
-			emptyContent: this.props.emptyContent,
 			scrollToSearchInput: this.scrollToSearchInput,
-			getOptions: ( theme ) =>
-				pickBy(
-					addTracking( options ),
-					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-				),
+			getOptions: this.getThemeOptions,
 		};
 
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
+		const classnames = classNames( 'theme-showcase', {
+			'is-collection-view': isCollectionView,
+		} );
+
 		return (
-			<div className="theme-showcase">
-				<DocumentHead title={ title } meta={ metas } />
+			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<ThemesHeader
-					title={
-						isLoggedIn
-							? translate( 'Themes' )
-							: translate( 'Find the perfect theme for your website' )
-					}
-					description={
-						isLoggedIn
-							? translate(
-									'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-									{
-										components: {
-											learnMoreLink: (
-												<InlineSupportLink supportContext="themes" showIcon={ false } />
-											),
-										},
-									}
-							  )
-							: translate(
-									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, activate the one that is right for you.'
-							  )
-					}
-				>
-					{ isLoggedIn && (
-						<>
-							<div className="themes__install-theme-button-container">
-								<InstallThemeButton />
-							</div>
-							<ScreenOptionsTab wpAdminPath="themes.php" />
-						</>
-					) }
-				</ThemesHeader>
+				<ThemeShowcaseHeader
+					canonicalUrl={ canonicalUrl }
+					filter={ this.props.filter }
+					tier={ this.props.tier }
+					vertical={ this.props.vertical }
+					isCollectionView={ isCollectionView }
+					noIndex={ isCollectionView }
+				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
-					<div className="themes__controls">
-						<SearchThemes
-							query={ filterString + search }
-							onSearch={ this.doSearch }
-							recordTracksEvent={ this.recordSearchThemesTracksEvent }
-						/>
-						{ tabFilters && (
-							<div className="theme__filters">
+					{ isSiteWooExpressOrEcomFreeTrial && (
+						<div className="themes__showcase">{ this.renderBanner() }</div>
+					) }
+					{ ! isCollectionView && (
+						<div className="themes__controls">
+							<div className="theme__search">
+								<div className="theme__search-input">
+									{ isSearchV2 ? (
+										<SearchThemesV2
+											query={ featureStringFilter + search }
+											onSearch={ this.doSearch }
+										/>
+									) : (
+										<SearchThemes
+											query={ filterString + search }
+											onSearch={ this.doSearch }
+											recordTracksEvent={ this.recordSearchThemesTracksEvent }
+										/>
+									) }
+								</div>
+								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+									<SelectDropdown
+										className="section-nav-tabs__dropdown"
+										onSelect={ this.onTierSelectFilter }
+										selectedText={ translate( 'View: %s', {
+											args: getOptionLabel( tiers, tier ) || '',
+										} ) }
+										options={ tiers }
+										initialSelected={ tier }
+									></SelectDropdown>
+								) }
+							</div>
+							{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
 								<ThemesToolbarGroup
 									items={ Object.values( tabFilters ) }
-									selectedKey={ this.state.tabFilter.key }
+									selectedKey={ this.getSelectedTabFilter().key }
 									onSelect={ ( key ) =>
 										this.onFilterClick(
 											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
 										)
 									}
 								/>
-								{ premiumThemesEnabled && ! isMultisite && (
-									<SimplifiedSegmentedControl
-										key={ tier }
-										initialSelected={ tier || 'all' }
-										options={ tiers }
-										onSelect={ this.onTierSelect }
-									/>
-								) }
-							</div>
-						) }
-					</div>
+							) }
+						</div>
+					) }
+					{ isCollectionView && (
+						<ThemeCollectionViewHeader
+							backUrl={ this.constructUrl( {
+								isCollectionView: false,
+								tier: '',
+								filter: '',
+								search: '',
+								category: this.getDefaultStaticFilter().key,
+							} ) }
+							filter={ this.props.filter }
+							tier={ this.props.tier }
+							isLoggedIn={ isLoggedIn }
+						/>
+					) }
 					<div className="themes__showcase">
-						{ this.renderBanner() }
+						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
 					<ThanksModal source="list" />
-					<AutoLoadingHomepageModal source="list" />
+					<ActivationModal source="list" />
 					<EligibilityWarningModal />
 					<ThemePreview />
 				</div>
@@ -581,22 +652,26 @@ class ThemeShowcase extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+const mapStateToProps = ( state, { siteId, filter } ) => {
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
-		isExpertBannerDissmissed: isUpworkBannerDismissed( state ),
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
-		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
+		featureStringFilter: prependThemeFilterKeys( state, filter, [ 'subject' ] ),
+		subjectStringFilter: prependThemeFilterKeys( state, filter, [], [ 'subject' ] ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
+		isSiteECommerceFreeTrial: isSiteOnECommerceTrial( state, siteId ),
+		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
+		isSiteWooExpressOrEcomFreeTrial:
+			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
 	};
 };
 

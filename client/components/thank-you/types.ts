@@ -1,5 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
+import { Theme } from 'calypso/types';
 
 export type ThankYouNextStepProps = {
 	stepCta?: React.ReactNode;
@@ -61,7 +62,10 @@ export type ThankYouData = [
 	string,
 	string,
 	string[],
-	boolean
+	boolean,
+	React.ReactElement | null,
 ];
+
+export type ThankYouThemeData = [ Theme, ...ThankYouData ];
 
 export type ThankYouSteps = { steps: string[]; additionalSteps: string[] };

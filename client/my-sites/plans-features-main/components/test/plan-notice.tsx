@@ -14,9 +14,9 @@ import React from 'react';
 import { useMarketingMessage } from 'calypso/components/marketing-message/use-marketing-message';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { Purchase } from 'calypso/lib/purchases/types';
-import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit';
-import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
+import { useCalculateMaxPlanUpgradeCredit } from 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit';
+import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
@@ -44,18 +44,12 @@ jest.mock( 'calypso/components/marketing-message/use-marketing-message', () => (
 jest.mock( 'calypso/lib/discounts', () => ( {
 	getDiscountByName: jest.fn(),
 } ) );
-jest.mock(
-	'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible',
-	() => ( {
-		useIsPlanUpgradeCreditVisible: jest.fn(),
-	} )
-);
-jest.mock(
-	'calypso/my-sites/plan-features-2023-grid/hooks/use-calculate-max-plan-upgrade-credit',
-	() => ( {
-		useCalculateMaxPlanUpgradeCredit: jest.fn(),
-	} )
-);
+jest.mock( 'calypso/my-sites/plans-grid/hooks/use-is-plan-upgrade-credit-visible', () => ( {
+	useIsPlanUpgradeCreditVisible: jest.fn(),
+} ) );
+jest.mock( 'calypso/my-sites/plans-grid/hooks/use-calculate-max-plan-upgrade-credit', () => ( {
+	useCalculateMaxPlanUpgradeCredit: jest.fn(),
+} ) );
 jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
 } ) );
@@ -105,7 +99,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
 		mUseIsPlanUpgradeCreditVisible.mockImplementation( () => true );
 		mUseCalculateMaxPlanUpgradeCredit.mockImplementation( () => 100 );
-		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } as Purchase ) );
+		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
 		mIsProPlan.mockImplementation( () => false );
 	} );
 
@@ -229,7 +223,7 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Show in app purchase <PlanNotice /> when the current site was purchased in an app', () => {
-		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: true } as Purchase ) );
+		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: true } ) as Purchase );
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }

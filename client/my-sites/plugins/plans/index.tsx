@@ -1,18 +1,13 @@
-import {
-	getPlan,
-	PLAN_BUSINESS,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import ActionCard from 'calypso/components/action-card';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import DocumentHead from 'calypso/components/data/document-head';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -29,14 +24,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
-
 	const dispatch = useDispatch();
-
-	const currentPlanSlug = selectedSite?.plan?.product_slug;
-	let currentPlanType = null;
-	if ( currentPlanSlug ) {
-		currentPlanType = getPlan( currentPlanSlug )?.type;
-	}
 
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
@@ -45,14 +33,6 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					label: translate( 'Plugins' ),
 					href: `/plugins/${ selectedSite?.slug || '' }`,
 					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-							},
-						}
-					),
 				} )
 			);
 		}
@@ -96,7 +76,19 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 		<MainComponent className="plugin-plans-main" wideLayout>
 			<PageViewTracker path="/plugins/plans/:interval/:site" title="Plugins > Plan Upgrade" />
 			<DocumentHead title={ translate( 'Plugins > Plan Upgrade' ) } />
-			<FixedNavigationHeader navigationItems={ breadcrumbs } />
+			<NavigationHeader
+				navigationItems={ breadcrumbs }
+				title={ translate( 'Plugins' ) }
+				subtitle={ translate(
+					'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+						},
+					}
+				) }
+			/>
+
 			<FormattedHeader
 				className="plugin-plans-header"
 				headerText={ `Your current plan doesn't support plugins` }
@@ -107,13 +99,10 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			<div className="plans">
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
-					site={ selectedSite }
+					siteId={ selectedSite?.ID }
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
-					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
-					isInMarketplace
-					shouldShowPlansFeatureComparison
-					isReskinned
+					intent="plans-plugins"
 				/>
 			</div>
 

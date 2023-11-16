@@ -18,7 +18,7 @@
 	$gray-60: #50575e;
 	$gray-50: #646970;
 
-	background: #fdfdfd;
+	background: #fff;
 	min-height: 100%;
 
 	* {
@@ -259,6 +259,7 @@
 		padding-bottom: 0;
 		margin: 0;
 		line-height: 24px;
+		-webkit-font-smoothing: subpixel-antialiased;
 
 		a {
 			color: $woo-purple-70;
@@ -563,7 +564,7 @@
 		display: none;
 	}
 
-	.login__divider span {
+	.auth-form__separator .auth-form__separator-text {
 		padding: 0 27px;
 		background-color: #fdfdfd;
 	}
@@ -794,6 +795,7 @@
 			margin-bottom: 12px;
 			font-size: $woo-font-title-large;
 			line-height: 32px;
+			font-weight: 500;
 
 			@media screen and ( max-width: 660px ) {
 				font-size: rem(28px);

@@ -19,10 +19,10 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
@@ -30,6 +30,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { withSyncStatus } from 'calypso/my-sites/hosting/staging-site-card/use-site-sync-status';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -121,6 +122,7 @@ class ActivityLog extends Component {
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		isMultisite: PropTypes.bool,
+		hideRewindProgress: PropTypes.bool,
 	};
 
 	state = {
@@ -206,7 +208,6 @@ class ActivityLog extends Component {
 
 	/**
 	 * Close Restore, Backup, or Transfer confirmation dialog.
-	 *
 	 * @param {string} type Type of dialog to close.
 	 */
 	handleCloseDialog = ( type ) => {
@@ -224,7 +225,6 @@ class ActivityLog extends Component {
 	/**
 	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
 	 * times need to be formatted for display to ensure all times are displayed as site times.
-	 *
 	 * @param   {Object} date Moment to adjust.
 	 * @returns {Object}      Moment adjusted for site timezone or gmtOffset.
 	 */
@@ -241,13 +241,12 @@ class ActivityLog extends Component {
 
 	/**
 	 * Render a card showing the progress of a restore.
-	 *
 	 * @returns {Object} Component showing progress.
 	 */
 	renderActionProgress() {
-		const { siteId, restoreProgress, backupProgress } = this.props;
+		const { siteId, restoreProgress, backupProgress, hideRewindProgress } = this.props;
 
-		if ( ! restoreProgress && ! backupProgress ) {
+		if ( ( ! restoreProgress && ! backupProgress ) || hideRewindProgress ) {
 			return null;
 		}
 
@@ -279,7 +278,6 @@ class ActivityLog extends Component {
 
 	/**
 	 * Display the status of the operation currently being performed.
-	 *
 	 * @param   {number} siteId         Id of the site where the operation is performed.
 	 * @param   {Object}  actionProgress Current status of operation performed.
 	 * @param   {string}  action         Action type. Allows to set the right text without waiting for data.
@@ -306,7 +304,6 @@ class ActivityLog extends Component {
 
 	/**
 	 * Display a success or error card based on the last status of operation.
-	 *
 	 * @param   {number} siteId   Id of the site where the operation was performed.
 	 * @param   {Object}  progress Last status of operation.
 	 * @returns {Object}           Card showing success or error.
@@ -361,9 +358,9 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
-		const { rewindState, translate } = this.props;
+		const { rewindState, translate, hideRewindProgress } = this.props;
 
-		if ( ! rewindState.rewind || rewindState.rewind.status !== 'failed' ) {
+		if ( ! rewindState.rewind || rewindState.rewind.status !== 'failed' || hideRewindProgress ) {
 			return null;
 		}
 
@@ -377,12 +374,20 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, displayRulesLoaded, logsLoaded, siteId, translate, hasFullActivityLog, slug } =
-			this.props;
+		const {
+			filter,
+			displayRulesLoaded,
+			logsLoaded,
+			siteId,
+			translate,
+			hasFullActivityLog,
+			slug,
+			syncLoaded,
+		} = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
-		if ( displayRulesLoaded && logsLoaded ) {
+		if ( displayRulesLoaded && logsLoaded && syncLoaded ) {
 			return isFilterEmpty ? (
 				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ ! hasFullActivityLog } />
 			) : (
@@ -480,15 +485,12 @@ class ActivityLog extends Component {
 
 				{ isJetpackCloud() && <SidebarNavigation /> }
 
-				<FormattedHeader
-					brandFont
-					className="activity-log__page-heading"
-					headerText={ translate( 'Activity' ) }
-					subHeaderText={ translate(
-						"Keep tabs on all your site's activity — plugin and theme updates, user logins, " +
-							'setting modifications, and more.'
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Activity' ) }
+					subtitle={ translate(
+						"Keep tabs on all your site's activity — plugin and theme updates, user logins, setting modifications, and more."
 					) }
-					align="left"
 				/>
 
 				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
@@ -725,4 +727,4 @@ export default connect(
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
 		updateBreadcrumbs,
 	}
-)( withActivityLog( localize( withLocalizedMoment( ActivityLog ) ) ) );
+)( withSyncStatus( withActivityLog( localize( withLocalizedMoment( ActivityLog ) ) ) ) );

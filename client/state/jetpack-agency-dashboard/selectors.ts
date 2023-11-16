@@ -16,6 +16,18 @@ export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE =
 export const JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE =
 	'jetpack-dashboard-agency-program-survey-banner-preference';
 
+export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE =
+	'jetpack-dashboard-agency-program-downtime-monitoring-upgrade-banner-preference';
+
+export const JETPACK_DASHBOARD_CHECKOUT_REDIRECT_MODAL_DISMISSED =
+	'agency-program-checkout-redirect-modal-dismissed';
+
+export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_TOOLTIP_PREFERENCE =
+	'jetpack-dashboard-agency-program-downtime-monitoring-upgrade-tooltip-preference';
+
+export const JETPACK_DASHBOARD_WPCOM_HOSTING_FEATURE_TOOLTIP_PREFERENCE =
+	'jetpack-dashboard-agency-program-wpcom-hosting-feature-tooltip-preference';
+
 /**
  * Returns preference associated with the key provided.
  */

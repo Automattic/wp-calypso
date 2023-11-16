@@ -32,6 +32,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 	return {
 		time_added_to_cart: Date.now(),
 		product_name: 'Replace me',
+		product_name_en: 'Replace me',
 		product_slug: 'replace-me',
 		currency: 'USD',
 		extra: {},
@@ -46,6 +47,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		product_cost_integer: 0,
 		item_subtotal_monthly_cost_integer: 0,
 		item_original_subtotal_integer: 0,
+		is_included_for_100yearplan: false,
 		is_domain_registration: false,
 		is_bundled: false,
 		is_sale_coupon_applied: false,

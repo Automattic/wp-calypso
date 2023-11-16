@@ -10,7 +10,7 @@
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
 # Repository configuration
-.github @Automattic/kitkat
+.github @Automattic/team-calypso-platform
 
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
@@ -36,23 +36,14 @@
 /client/state/gsuite-users @Automattic/letero
 
 # Payments
-/client/components/credit-card-form-fields/ @Automattic/shilling
-/client/components/payment-logo/ @Automattic/shilling
-/client/lib/cart-values/ @Automattic/shilling
-/client/lib/checkout/ @Automattic/shilling
-/client/lib/siftscience/ @Automattic/shilling
-/client/lib/store-transactions/ @Automattic/shilling
-/client/me/memberships/ @Automattic/shilling
-/client/me/purchases/ @Automattic/shilling
-/client/my-sites/checkout/ @Automattic/shilling
+/client/me/purchases/add-new-payment-method/ @Automattic/shilling
+/client/me/purchases/billing-history/ @Automattic/shilling
+/client/me/purchases/manage-purchase/ @Automattic/shilling
+/client/me/purchases/payment-methods/ @Automattic/shilling
+/client/my-sites/checkout/checkout-main-wrapper.tsx @Automattic/shilling
+/client/my-sites/checkout/src/ @Automattic/shilling
+/client/my-sites/checkout/get-thank-you-page-url/ @Automattic/shilling
 /client/my-sites/purchases/ @Automattic/shilling
-/client/state/billing-transactions/ @Automattic/shilling
-/client/state/memberships/ @Automattic/shilling
-/client/state/order-transactions/ @Automattic/shilling
-/client/state/plans/ @Automattic/shilling
-/client/state/receipts/ @Automattic/shilling
-/client/state/sites/plans/ @Automattic/shilling
-/client/state/stored-cards/ @Automattic/shilling
 /packages/calypso-stripe/ @Automattic/shilling
 /packages/composite-checkout/ @Automattic/shilling
 /packages/shopping-cart/ @Automattic/shilling
@@ -70,8 +61,6 @@
 # Editing Toolkit Modules
 /apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
 /apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
-/apps/editing-toolkit/editing-toolkit-plugin/posts-list-block @Automattic/ajax
-/apps/editing-toolkit/editing-toolkit-plugin/global-styles @Automattic/cylon @nosolosw
 /apps/editing-toolkit/editing-toolkit-plugin/block-patterns @Automattic/dotcom-view-design
 
 # Editing Toolkit Workflow Files
@@ -81,9 +70,6 @@
 # Experimentation platform legacy library and new client
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
-
-# Jetpack Search
-/client/my-sites/jetpack-search @Automattic/jetpack-search
 
 # TeamCity configuration
 /.teamcity @Automattic/team-calypso-platform
@@ -111,11 +97,11 @@
 /packages/languages @Automattic/i18n
 
 # E2E specs
-/test/e2e @Automattic/kitkat @worldomonation
-/packages/calypso-e2e @Automattic/kitkat @worldomonation
+/test/e2e @Automattic/team-calypso-platform
+/packages/calypso-e2e @Automattic/team-calypso-platform
 
 # Node updates
-/.nvmrc @Automattic/ground-control
+/.nvmrc @Automattic/team-calypso-platform
 
 # Domains
 /client/components/data/domain-management @Automattic/nomado
@@ -147,7 +133,7 @@
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
 # Plans
-/client/my-sites/plan-features-2023-grid @Automattic/martech-decepticons
+/client/my-sites/plans-grid @Automattic/martech-decepticons
 
 # Importing
 /client/my-sites/importer @Automattic/caribou
@@ -170,3 +156,7 @@
 /client/landing/stepper/declarative-flow/internals/steps-repository/importer-wordpress @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/migration-handler @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/site-picker @Automattic/caribou
+
+# Renovate config
+/renovate.json5 @noahtallen
+/.github/workflows/renovate.yml @noahtallen

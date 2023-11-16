@@ -17,6 +17,7 @@ import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { applyDnsTemplate, updateDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import RestoreDefaultARecordsDialog from './restore-default-a-records-dialog';
+import RestoreDefaultCnameRecordDialog from './restore-default-cname-record-dialog';
 import RestoreEmailDnsDialog from './restore-email-dns-dialog';
 import type {
 	DnsMenuOptionsButtonProps,
@@ -61,7 +62,8 @@ const emailProviderKeys: EmailProviderKey[] = [ EmailProvider.TITAN, EmailProvid
 
 function DnsMenuOptionsButton( {
 	domain,
-	pointsToWpcom,
+	hasDefaultARecords,
+	hasDefaultCnameRecord,
 	dns,
 	dispatchApplyDnsTemplate,
 	dispatchUpdateDns,
@@ -79,7 +81,9 @@ function DnsMenuOptionsButton( {
 			} )
 		)
 	);
-	const [ isRestoreDialogVisible, setRestoreDialogVisible ] = useState( false );
+	const [ isRestoreARecordsDialogVisible, setRestoreARecordsDialogVisible ] = useState( false );
+	const [ isRestoreCnameRecordDialogVisible, setRestoreCnameRecordDialogVisible ] =
+		useState( false );
 	const optionsButtonRef = useRef( null );
 
 	const toggleMenu = useCallback( () => {
@@ -88,7 +92,7 @@ function DnsMenuOptionsButton( {
 
 	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 
-	const getRecordsToRemove = useCallback( () => {
+	const getARecordsToRemove = useCallback( () => {
 		const dnsRecords = dns.records ?? [];
 
 		return dnsRecords.filter(
@@ -98,7 +102,28 @@ function DnsMenuOptionsButton( {
 		);
 	}, [ dns ] );
 
+	const getCnameRecordToRemove = useCallback( () => {
+		const dnsRecords = dns.records ?? [];
+
+		return dnsRecords.filter(
+			( record ) =>
+				record.domain !== record.data?.replace( /\.$/, '' ) &&
+				'CNAME' === record.type &&
+				'www' === record.name
+		);
+	}, [ dns ] );
+
 	const domainName = domain?.domain ?? domain?.name;
+
+	const getDefaultCnameRecord = useCallback( () => {
+		return [
+			{
+				type: 'CNAME',
+				data: `${ domainName }.`,
+				name: 'www',
+			},
+		];
+	}, [ domainName ] );
 
 	const restoreEmailDnsRecords = useCallback(
 		async ( {
@@ -122,8 +147,8 @@ function DnsMenuOptionsButton( {
 		[ dispatchApplyDnsTemplate, dispatchErrorNotice, dispatchSuccessNotice, domainName ]
 	);
 
-	const restoreDefaultRecords = useCallback( async () => {
-		dispatchUpdateDns( domainName, [], getRecordsToRemove() )
+	const restoreDefaultARecords = useCallback( async () => {
+		dispatchUpdateDns( domainName, [], getARecordsToRemove(), true )
 			.then( () => dispatchSuccessNotice( __( 'Default A records restored' ) ) )
 			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default A records' ) ) );
 	}, [
@@ -132,17 +157,45 @@ function DnsMenuOptionsButton( {
 		dispatchSuccessNotice,
 		dispatchUpdateDns,
 		domainName,
-		getRecordsToRemove,
+		getARecordsToRemove,
 	] );
 
-	const closeRestoreDialog = ( result: RestoreDialogResult ) => {
-		setRestoreDialogVisible( false );
+	const restoreDefaultCnameRecord = useCallback( async () => {
+		dispatchUpdateDns( domainName, getDefaultCnameRecord(), getCnameRecordToRemove() )
+			.then( () => dispatchSuccessNotice( __( 'Default CNAME record restored' ) ) )
+			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default CNAME record' ) ) );
+	}, [
+		__,
+		dispatchErrorNotice,
+		dispatchSuccessNotice,
+		dispatchUpdateDns,
+		domainName,
+		getDefaultCnameRecord,
+		getCnameRecordToRemove,
+	] );
+
+	const closeRestoreARecordsDialog = ( result: RestoreDialogResult ) => {
+		setRestoreARecordsDialogVisible( false );
 		if ( result?.shouldRestoreDefaultRecords ?? false ) {
-			restoreDefaultRecords();
+			restoreDefaultARecords();
 		}
 	};
 
-	const showRestoreDialog = useCallback( () => setRestoreDialogVisible( true ), [] );
+	const closeRestoreCnameRecordDialog = ( result: RestoreDialogResult ) => {
+		setRestoreCnameRecordDialogVisible( false );
+		if ( result?.shouldRestoreDefaultRecords ?? false ) {
+			restoreDefaultCnameRecord();
+		}
+	};
+
+	const showRestoreARecordsDialog = useCallback(
+		() => setRestoreARecordsDialogVisible( true ),
+		[]
+	);
+	const showRestoreCnameRecordDialog = useCallback(
+		() => setRestoreCnameRecordDialogVisible( true ),
+		[]
+	);
 
 	const closeEmailRestoreDialog = ( {
 		providerKey,
@@ -208,9 +261,14 @@ function DnsMenuOptionsButton( {
 	return (
 		<>
 			<RestoreDefaultARecordsDialog
-				visible={ isRestoreDialogVisible }
-				onClose={ closeRestoreDialog }
+				visible={ isRestoreARecordsDialogVisible }
+				onClose={ closeRestoreARecordsDialog }
 				defaultRecords={ null }
+			/>
+
+			<RestoreDefaultCnameRecordDialog
+				visible={ isRestoreCnameRecordDialogVisible }
+				onClose={ closeRestoreCnameRecordDialog }
 			/>
 
 			{ emailDnsDialogs }
@@ -231,9 +289,20 @@ function DnsMenuOptionsButton( {
 				context={ optionsButtonRef.current }
 				position="bottom"
 			>
-				<PopoverMenuItem onClick={ showRestoreDialog } disabled={ pointsToWpcom || ! domain }>
+				<PopoverMenuItem
+					onClick={ showRestoreARecordsDialog }
+					disabled={ hasDefaultARecords || ! domain }
+				>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
 					{ __( 'Restore default A records' ) }
+				</PopoverMenuItem>
+
+				<PopoverMenuItem
+					onClick={ showRestoreCnameRecordDialog }
+					disabled={ hasDefaultCnameRecord || ! domain }
+				>
+					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
+					{ __( 'Restore default CNAME record' ) }
 				</PopoverMenuItem>
 
 				{ emailRestoreItems }

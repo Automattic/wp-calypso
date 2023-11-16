@@ -44,14 +44,14 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			fetchPreferences()( spy );
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: PREFERENCES_FETCH,
 			} );
 		} );
 
 		test( 'should dispatch PREFERENCES_RECEIVE when request completes', () => {
 			return fetchPreferences()( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: PREFERENCES_RECEIVE,
 						values: responseShape[ USER_SETTING_KEY ],
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success action when request completes', () => {
 			return fetchPreferences()( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: PREFERENCES_FETCH_SUCCESS,
 					} )
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return fetchPreferences()( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: PREFERENCES_FETCH_FAILURE,
 					} )
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {
 			savePreference( 'preferenceKey', 'preferenceValue' )( spy );
-			expect( spy ).toBeCalledWith(
+			expect( spy ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					type: PREFERENCES_SET,
 					key: 'preferenceKey',
@@ -137,7 +137,7 @@ describe( 'actions', () => {
 				'preferenceKey',
 				'preferenceValue'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: PREFERENCES_RECEIVE,
 						values: responseShape[ USER_SETTING_KEY ],
@@ -151,7 +151,7 @@ describe( 'actions', () => {
 				'preferenceKey',
 				'preferenceValue'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: PREFERENCES_SAVE_SUCCESS,
 						key: 'preferenceKey',

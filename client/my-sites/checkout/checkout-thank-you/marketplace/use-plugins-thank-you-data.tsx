@@ -1,12 +1,19 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import {
+	getAutomatedTransferStatus,
+	isFetchingAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -19,17 +26,20 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 import MasterbarStyled from './masterbar-styled';
 
-export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
+export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-
 	// texts
-	const title = translate( "Congrats on your site's new superpowers!" );
+	const title = translate( 'Your site, more powerful than ever' );
 	const subtitle = translate(
-		"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
-	);
+		'All set! Time to put your new plugin to work.',
+		'All set! Time to put your new plugins to work.',
+		{
+			count: pluginSlugs.length,
+		}
+	).toString();
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
@@ -72,6 +82,9 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
+	const isFetchingTransferStatus = useSelector( ( state ) =>
+		isFetchingAutomatedTransferStatus( state, siteId )
+	);
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const pluginsInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
@@ -112,6 +125,12 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 		// we only rerun when areWporgPluginsFetched changes
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
+
+	useEffect( () => {
+		if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
+			dispatch( fetchAutomatedTransferStatus( siteId as number ) );
+		}
+	}, [ dispatch, isFetchingTransferStatus, siteId, transferStatus ] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
@@ -170,6 +189,44 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 		[ translate ]
 	);
 
+	const sendTrackEvent = useCallback(
+		( name: string ) => {
+			recordTracksEvent( name, {
+				site_id: siteId,
+				plugins: pluginSlugs.join(),
+			} );
+		},
+		[ siteId, pluginSlugs ]
+	);
+
+	const ThankYouHeaderAction = styled.div`
+		padding: 20px 24px 0 24px;
+		@media ( max-width: 480px ) {
+			text-align: left;
+		}
+	`;
+
+	const ThankYouHeaderActionButton = styled( Button )`
+		border-radius: 4px;
+	`;
+
+	const thankYouHeaderAction =
+		pluginsInformationList.length > 1 ? (
+			<>
+				<ThankYouHeaderAction>
+					<ThankYouHeaderActionButton
+						primary
+						href={ `https://${ siteSlug }/wp-admin/plugins.php` }
+						onClick={ () => {
+							sendTrackEvent( 'calypso_plugin_thank_you_setup_plugins_click' );
+						} }
+					>
+						{ translate( 'Setup the plugins' ) }
+					</ThankYouHeaderActionButton>
+				</ThankYouHeaderAction>
+			</>
+		) : null;
+
 	// Plugins are only installed in atomic sites
 	// so atomic is always needed as long as we have plugins
 	const isAtomicNeeded = pluginSlugs.length > 0;
@@ -182,6 +239,7 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 		subtitle,
 		thankyouSteps,
 		isAtomicNeeded,
+		thankYouHeaderAction,
 	];
 }
 

@@ -1,6 +1,6 @@
 import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
-import { initializeAnalytics, getGenericSuperPropsGetter } from '@automattic/calypso-analytics';
+import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
@@ -17,6 +17,7 @@ import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import getSuperProps from 'calypso/lib/analytics/super-props';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -24,8 +25,6 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { requestSites } from 'calypso/state/sites/actions';
-import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
@@ -41,14 +40,9 @@ declare const window: AppWindow;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( setCurrentUser( user ) );
-	reduxStore.dispatch( requestSites() );
 }
 
 function determineFlow() {
-	if ( isAnchorFmFlow() ) {
-		return availableFlows[ 'anchor-fm-flow' ];
-	}
-
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
@@ -106,14 +100,13 @@ window.AppBoot = async () => {
 
 	const queryClient = await createQueryClient( userId );
 
-	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
-
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
 
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 

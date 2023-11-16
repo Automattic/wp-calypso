@@ -11,6 +11,7 @@ import {
 	SITE_DOMAINS_REQUEST_FAILURE,
 	DOMAIN_CONTACT_INFO_DISCLOSE,
 	DOMAIN_CONTACT_INFO_REDACT,
+	DOMAIN_MARK_AS_PENDING_MOVE,
 } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import { createSiteDomainObject } from './assembler';
@@ -28,7 +29,6 @@ const debug = debugFactory( 'calypso:state:sites:domains:actions' );
  * Returns an action object to be used in signalling that
  * an object containing the domains for
  * a given site have been received.
- *
  * @param {number} siteId - identifier of the site
  * @param {Object} domains - domains array gotten from WP REST-API response
  * @returns {Object} the action object
@@ -48,7 +48,6 @@ export const domainsReceiveAction = ( siteId, domains ) => {
  * Action creator function
  *
  * Return SITE_DOMAINS_REQUEST action object
- *
  * @param {number} siteId - side identifier
  * @returns {Object} siteId - action object
  */
@@ -66,7 +65,6 @@ export const domainsRequestAction = ( siteId ) => {
  * Action creator function
  *
  * Return SITE_DOMAINS_REQUEST_SUCCESS action object
- *
  * @param {number} siteId - side identifier
  * @returns {Object} siteId - action object
  */
@@ -84,7 +82,6 @@ export const domainsRequestSuccessAction = ( siteId ) => {
  * Action creator function
  *
  * Return SITE_DOMAINS_REQUEST_FAILURE action object
- *
  * @param {number} siteId - site identifier
  * @param {Object} error - error message according to REST-API error response
  * @returns {Object} action object
@@ -102,7 +99,6 @@ export const domainsRequestFailureAction = ( siteId, error ) => {
 
 /**
  * Fetches domains for the given site.
- *
  * @param {number} siteId - identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
@@ -175,6 +171,14 @@ export function discloseDomainContactInfo( siteId, domain ) {
 export function redactDomainContactInfo( siteId, domain ) {
 	return {
 		type: DOMAIN_CONTACT_INFO_REDACT,
+		siteId,
+		domain,
+	};
+}
+
+export function markAsPendingMove( siteId, domain ) {
+	return {
+		type: DOMAIN_MARK_AS_PENDING_MOVE,
 		siteId,
 		domain,
 	};

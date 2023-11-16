@@ -25,7 +25,6 @@ import { itemsSchema, subscriptionsSchema } from './schema';
 
 /**
  * Tracks all known list objects, indexed by list ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -93,7 +92,6 @@ export const listItems = ( state = {}, action ) => {
 
 /**
  * Tracks which list IDs the current user is subscribed to.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -135,7 +133,6 @@ export const subscribedLists = withSchemaValidation(
 
 /**
  * Returns the updated requests state after an action has been dispatched.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -153,7 +150,6 @@ export function isRequestingList( state = false, action ) {
 
 /**
  * Records if there is a pending list creation request.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -171,7 +167,6 @@ export function isCreatingList( state = false, action ) {
 
 /**
  * Records if there is a pending list update request.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -189,7 +184,6 @@ export function isUpdatingList( state = false, action ) {
 
 /**
  * Returns the updated requests state after an action has been dispatched.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

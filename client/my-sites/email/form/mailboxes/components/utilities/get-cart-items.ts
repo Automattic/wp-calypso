@@ -39,7 +39,7 @@ const getGSuiteCartItems = (
 ) => {
 	const { isAdditionalMailboxesPurchase, emailProduct, newQuantity, quantity } = mailProperties;
 
-	const users = mailboxes.map( ( mailbox ) => <GSuiteProductUser>mailbox.getAsCartItem() );
+	const users = mailboxes.map( ( mailbox ) => < GSuiteProductUser >mailbox.getAsCartItem() );
 
 	const domain = mailboxes[ 0 ].formFields.domain.value;
 

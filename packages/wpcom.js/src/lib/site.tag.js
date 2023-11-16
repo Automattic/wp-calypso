@@ -1,6 +1,5 @@
 /**
  * Tag methods
- *
  * @param {string} [slug] - tag slug
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
@@ -22,7 +21,6 @@ export default function Tag( slug, sid, wpcom ) {
 
 /**
  * Set tag `slug`
- *
  * @param {string} slug - tag slug
  */
 Tag.prototype.slug = function ( slug ) {
@@ -31,7 +29,6 @@ Tag.prototype.slug = function ( slug ) {
 
 /**
  * Get tag
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -43,7 +40,6 @@ Tag.prototype.get = function ( query, fn ) {
 
 /**
  * Add tag
- *
  * @param {Object} [query] - query object parameter
  * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
@@ -56,7 +52,6 @@ Tag.prototype.add = function ( query, body, fn ) {
 
 /**
  * Edit tag
- *
  * @param {Object} [query] - query object parameter
  * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
@@ -69,7 +64,6 @@ Tag.prototype.update = function ( query, body, fn ) {
 
 /**
  * Delete tag
- *
  * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler

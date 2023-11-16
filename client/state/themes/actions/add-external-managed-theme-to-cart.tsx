@@ -8,10 +8,8 @@ import page from 'page';
 import 'calypso/state/themes/init';
 import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
-import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -22,6 +20,7 @@ import {
 import { CalypsoDispatch } from 'calypso/state/types';
 import { AppState } from 'calypso/types';
 import { THEMES_LOADING_CART } from '../action-types';
+import { getPreferredBillingCycleProductSlug } from '../theme-utils';
 
 const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) => {
 	dispatch( {
@@ -31,35 +30,9 @@ const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) =>
 };
 
 /**
- * Get the preferred product slug from the products list.
- *
- * @param products list of products
- * @returns string
- */
-function getPreferredBillingCycleProductSlug(
-	products: Array< ProductListItem >,
-	currentPlan?: SitePlanData | any
-): string {
-	if ( products.length === 0 ) {
-		throw new Error( 'No products available' );
-	}
-	let preferredBillingCycle = 'month';
-
-	if ( currentPlan && ! isWpComMonthlyPlan( currentPlan.productSlug ) ) {
-		preferredBillingCycle = 'year';
-	}
-
-	const preferredProduct = products.find(
-		( product ) => product.product_term === preferredBillingCycle
-	);
-	return preferredProduct?.product_slug ?? products[ 0 ].product_slug;
-}
-
-/**
  * Add the business plan and/or the external theme to the cart and redirect to checkout.
  * This action also manages the loading state of the cart. We'll use it to lock the CTA
  * button while the cart is being updated.
- *
  * @param themeId Theme ID to add to cart
  * @param siteId
  * @returns

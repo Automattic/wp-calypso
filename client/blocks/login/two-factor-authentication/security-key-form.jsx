@@ -1,4 +1,5 @@
 import { Card, Spinner } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -8,6 +9,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/stat
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 import './verification-code-form.scss';
+import './security-key-form.scss';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
@@ -45,7 +47,9 @@ class SecurityKeyForm extends Component {
 
 		return (
 			<form
-				className="two-factor-authentication__verification-code-form-wrapper"
+				className={ classNames( 'two-factor-authentication__verification-code-form-wrapper', {
+					isWoo: isWoo,
+				} ) }
 				onSubmit={ this.initiateSecurityKeyAuthentication }
 			>
 				<Card compact className="two-factor-authentication__verification-code-form">

@@ -639,3 +639,14 @@ export function emailSummary( context, next ) {
 
 	next();
 }
+
+export function purchase( context, next ) {
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-purchase"
+			placeholder={ PageLoading }
+			query={ context.query }
+		/>
+	);
+	next();
+}

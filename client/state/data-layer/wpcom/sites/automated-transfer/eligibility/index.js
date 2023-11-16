@@ -33,7 +33,6 @@ const statusMapping = {
 
 /**
  * Maps from API response the issues which prevent automated transfer
- *
  * @param {Object} response API response data
  * @param {Array} response.errors List of { code, message } pairs describing issues
  * @param {Object} options object
@@ -52,7 +51,6 @@ export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
- *
  * @param {Object} response API response data
  * @param {Object} response.warnings Lists of warnings by type, { plugins, themes }
  * @returns {Array} flat list of warnings with { name, description, supportUrl }
@@ -70,7 +68,6 @@ const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
 
 /**
  * Maps from API response to internal representation of automated transfer eligibility data
- *
  * @param {Object} data API response data
  * @param {Object} options object
  * @returns {Object} Calypso eligibility information
@@ -83,7 +80,6 @@ const fromApi = ( data, options = {} ) => ( {
 
 /**
  * Build track events for eligibility status
- *
  * @param {Object} data eligibility data from the api
  * @returns {Object} An analytics event object
  */
@@ -110,7 +106,6 @@ const trackEligibility = ( data ) => {
 
 /**
  * Issues an API request to fetch eligibility information for a site
- *
  * @param {Function} action dispatcher
  * @returns {Object} action
  */

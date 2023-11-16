@@ -100,15 +100,7 @@ body.is-section-promote-post-i2 {
 		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 	}
 
-	.search {
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		margin-bottom: 32px;
-
-		&.is-open .search__open-icon {
-			fill: $studio-gray-30;
-		}
-	}
+	@include blazepress-search-component;
 
 	&__search-bar-wrapper {
 		.form-text-input.search__input {

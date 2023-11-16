@@ -1,6 +1,7 @@
 import { FormTokenField } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
-import type { FormTokenField as FormTokenFieldType } from '@wordpress/components';
+
+type TokenValue = React.ComponentProps< typeof FormTokenField >[ 'value' ];
 
 const FormTokenFieldExample = withState( {
 	tokens: [],
@@ -21,7 +22,7 @@ const FormTokenFieldExample = withState( {
 	}: {
 		tokens: string[];
 		suggestions: string[];
-		setState: ( { tokens }: { tokens: readonly FormTokenFieldType.Value[] } ) => void;
+		setState: ( { tokens }: { tokens: TokenValue } ) => void;
 	} ) => (
 		<FormTokenField
 			value={ tokens }

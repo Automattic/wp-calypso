@@ -1,8 +1,20 @@
+import page from 'page';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import CampaignItemPage from 'calypso/my-sites/promote-post-i2/components/campaign-item-page';
-import PromotedPostsRedesignI2 from 'calypso/my-sites/promote-post-i2/main';
+import PromotedPostsRedesignI2, { TAB_OPTIONS } from 'calypso/my-sites/promote-post-i2/main';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getAdvertisingDashboardPath } from './utils';
+
+// Compatibility: Checks that the order of the tab and site are correct, redirects the user if they are switched
+export const checkValidTabInNavigation = ( context, next ) => {
+	const { site, tab } = context.params;
+	if ( site && tab && ! TAB_OPTIONS.includes( tab ) ) {
+		return page.redirect( getAdvertisingDashboardPath( `/${ site }/${ tab }` ) );
+	}
+
+	next();
+};
 
 export const promotedPosts = ( context, next ) => {
 	const { tab } = context.params;

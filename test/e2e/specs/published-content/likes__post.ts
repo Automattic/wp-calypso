@@ -1,5 +1,7 @@
 /**
  * @group gutenberg
+ * @group calypso-pr
+ * @group calypso-release
  */
 
 import {
@@ -51,7 +53,7 @@ describe( 'Likes: Post', function () {
 		);
 	} );
 
-	describe( 'As the posting user', function () {
+	describe( 'While authenticated', function () {
 		let publishedPostPage: PublishedPostPage;
 
 		it( 'View post', async function () {
@@ -75,7 +77,7 @@ describe( 'Likes: Post', function () {
 		} );
 	} );
 
-	describe( 'As an unrelated user', function () {
+	describe( 'While unauthenticated', function () {
 		let newPage: Page;
 		let publishedPostPage: PublishedPostPage;
 
@@ -94,10 +96,8 @@ describe( 'Likes: Post', function () {
 				await otherUser.logInViaPopupPage( popup );
 			} );
 
-			await ElementHelper.reloadAndRetry( newPage, async () => {
-				publishedPostPage = new PublishedPostPage( newPage );
-				await publishedPostPage.likePost();
-			} );
+			publishedPostPage = new PublishedPostPage( newPage );
+			await publishedPostPage.likePost();
 		} );
 	} );
 

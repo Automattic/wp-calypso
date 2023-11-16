@@ -8,7 +8,6 @@ const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
  * Unlike the rest of the SSRed pages, the log-in page enables SSRing also when a set of parameters is set (see below
  * validQueryKeys). Some of these parameters may need to fulfill additional formats (example: when redirect_to is
  * present, then it also needs to start with a certain prefix).
- *
  * @param {Object}   context  The entire request context
  * @param {Function} next     Next middleware in the running sequence
  */
@@ -24,7 +23,6 @@ export function setShouldServerSideRenderLogin( context, next ) {
 
 /**
  * Verifies if the given redirect_to value enables SSR or not.
- *
  * @param {string}   redirectToQueryValue The URI-encoded value of the analyzed redirect_to
  * @returns {boolean} If the value of &redirect_to= on the log-in page is compatible with SSR
  */

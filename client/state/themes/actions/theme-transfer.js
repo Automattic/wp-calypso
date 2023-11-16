@@ -53,7 +53,6 @@ function initiateTransfer( siteId, plugin, theme, geoAffinity, context, onProgre
 
 /**
  * Start an Automated Transfer with an uploaded theme.
- *
  * @param {number} siteId -- the site to transfer
  * @param {window.File} file -- theme zip to upload
  * @param {string} plugin -- plugin slug
@@ -151,7 +150,6 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  *
  * The returned promise is only for testing purposes, and therefore is never rejected,
  * to avoid unhandled rejections in production.
- *
  * @param {number} siteId -- the site being transferred
  * @param {number} transferId -- the specific transfer
  * @param {number} [interval] -- time between poll attempts

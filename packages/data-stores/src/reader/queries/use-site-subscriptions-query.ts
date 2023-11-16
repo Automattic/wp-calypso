@@ -1,34 +1,37 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useMemo, useEffect, useCallback } from 'react';
 import { SiteSubscriptionsFilterBy, SiteSubscriptionsSortBy } from '../constants';
+import { useSiteSubscriptionsQueryProps } from '../contexts';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import type { SiteSubscription } from '../types';
+import type { SiteSubscriptionsResponseItem } from '../types';
+
+export const siteSubscriptionsQueryKeyPrefix = [ 'read', 'site-subscriptions' ];
 
 type SubscriptionManagerSiteSubscriptions = {
-	subscriptions: SiteSubscription[];
+	subscriptions: SiteSubscriptionsResponseItem[];
 	page: number;
 	total_subscriptions: number;
 };
 
 type SubscriptionManagerSiteSubscriptionsQueryProps = {
-	searchTerm?: string;
-	filterOption?: SiteSubscriptionsFilterBy;
-	sortTerm?: SiteSubscriptionsSortBy;
 	number?: number;
 };
 
-const sortByDateSubscribed = ( a: SiteSubscription, b: SiteSubscription ) =>
+const sortByDateSubscribed = (
+	a: SiteSubscriptionsResponseItem,
+	b: SiteSubscriptionsResponseItem
+) =>
 	a.date_subscribed instanceof Date && b.date_subscribed instanceof Date
 		? b.date_subscribed.getTime() - a.date_subscribed.getTime()
 		: 0;
 
-const sortByLastUpdated = ( a: SiteSubscription, b: SiteSubscription ) =>
+const sortByLastUpdated = ( a: SiteSubscriptionsResponseItem, b: SiteSubscriptionsResponseItem ) =>
 	a.last_updated instanceof Date && b.last_updated instanceof Date
 		? b.last_updated.getTime() - a.last_updated.getTime()
 		: 0;
 
-const sortBySiteName = ( a: SiteSubscription, b: SiteSubscription ) =>
+const sortBySiteName = ( a: SiteSubscriptionsResponseItem, b: SiteSubscriptionsResponseItem ) =>
 	a.name.localeCompare( b.name );
 
 const getSortFunction = ( sortTerm: SiteSubscriptionsSortBy ) => {
@@ -45,14 +48,12 @@ const getSortFunction = ( sortTerm: SiteSubscriptionsSortBy ) => {
 };
 
 const useSiteSubscriptionsQuery = ( {
-	searchTerm = '',
-	filterOption = SiteSubscriptionsFilterBy.All,
-	sortTerm = SiteSubscriptionsSortBy.LastUpdated,
 	number = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
-	const cacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const cacheKey = useCacheKey( siteSubscriptionsQueryKeyPrefix );
+	const { searchTerm, filterOption, sortTerm } = useSiteSubscriptionsQueryProps();
 
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =
 		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >(
@@ -95,12 +96,14 @@ const useSiteSubscriptionsQuery = ( {
 	}, [ nextPage, fetchNextPage ] );
 
 	const filterFunction = useCallback(
-		( item: SiteSubscription ) => {
+		( item: SiteSubscriptionsResponseItem ) => {
 			switch ( filterOption ) {
 				case SiteSubscriptionsFilterBy.Paid:
 					return item.is_paid_subscription;
 				case SiteSubscriptionsFilterBy.P2:
 					return item.is_wpforteams_site;
+				case SiteSubscriptionsFilterBy.RSS:
+					return item.is_rss;
 				case SiteSubscriptionsFilterBy.All:
 				default:
 					return true;
@@ -114,7 +117,7 @@ const useSiteSubscriptionsQuery = ( {
 		const flattenedData = data?.pages?.map( ( page ) => page.subscriptions ).flat();
 
 		const searchTermLowerCase = searchTerm.toLowerCase();
-		const searchFilter = ( item: SiteSubscription ) => {
+		const searchFilter = ( item: SiteSubscriptionsResponseItem ) => {
 			if ( searchTerm === '' ) {
 				return true;
 			}

@@ -1,0 +1,9 @@
+.domains-table-placeholder {
+	// Custom border radius used to create a pill shape
+	// stylelint-disable-next-line scales/radii
+	border-radius: 100px;
+
+	&.is-header {
+		background-color: var(--color-neutral-5);
+	}
+}

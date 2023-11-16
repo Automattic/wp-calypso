@@ -1,4 +1,4 @@
-import { camelCase, mapKeys } from 'lodash';
+import { camelCase } from 'lodash';
 import {
 	getDomainRegistrationAgreementUrl,
 	getDomainType,
@@ -11,7 +11,12 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 		return;
 	}
 
-	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
+	return Object.fromEntries(
+		Object.entries( googleAppsSubscription ).map( ( [ key, value ] ) => [
+			camelCase( key ),
+			value,
+		] )
+	);
 }
 
 function assembleCurrentUserCannotAddEmailReason( reason ) {
@@ -34,7 +39,6 @@ function assembleCurrentUserCannotAddEmailReason( reason ) {
 
 /**
  * Creates a ResponseDomain object.
- *
  * @param {Object} domain domain object
  * @returns {import('calypso/lib/domains/types').ResponseDomain} Response domain
  */
@@ -95,10 +99,12 @@ export const createSiteDomainObject = ( domain ) => {
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
+		isDomainOnlySite: Boolean( domain.is_domain_only_site ),
 		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),
 		isRedeemable: Boolean( domain.is_redeemable ),
 		isEligibleForInboundTransfer: Boolean( domain.is_eligible_for_inbound_transfer ),
+		isMoveToNewSitePending: Boolean( domain.move_to_new_site_pending ),
 		isAutoRenewing: Boolean( domain.auto_renewing ),
 		isIcannVerificationSuspended:
 			typeof domain.is_icann_verification_suspended === 'boolean'
@@ -112,6 +118,7 @@ export const createSiteDomainObject = ( domain ) => {
 		isSubdomain: Boolean( domain.is_subdomain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		isWpcomStagingDomain: Boolean( domain.is_wpcom_staging_domain ),
+		lastTransferError: String( domain.last_transfer_error ?? '' ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
 		mustRemovePrivacyBeforeContactUpdate: Boolean(
 			domain.must_remove_privacy_before_contact_update
@@ -134,6 +141,8 @@ export const createSiteDomainObject = ( domain ) => {
 		renewableUntil: String( domain.renewable_until ),
 		redeemableUntil: String( domain.redeemable_until ),
 		registryExpiryDate: String( domain.registry_expiry_date ?? '' ),
+		siteSlug: String( domain.site_slug ),
+		siteTitle: String( domain.blog_name ),
 		sslStatus: ! domain.ssl_status ? null : String( domain.ssl_status ),
 		subdomainPart: String( domain.subdomain_part ),
 		subscriptionId: domain.subscription_id,

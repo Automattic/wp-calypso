@@ -100,13 +100,13 @@ describe( 'JetpackSignup', () => {
 			authQuery: {
 				...DEFAULT_PROPS.authQuery,
 				from: 'woocommerce-payments',
-				woodna_service_name: 'WooCommerce Payments',
+				woodna_service_name: 'WooPayments',
 				isFullLoginFormVisible: false,
 			},
 		};
 
 		const expectedText =
-			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce Payments';
+			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments';
 
 		render( <JetpackSignup { ...props } /> );
 

@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
@@ -12,7 +13,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
+import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -21,8 +22,8 @@ import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
-import { convertErrorToString } from '../../composite-checkout/lib/analytics';
-import type { RedirectInstructions } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
+import { convertErrorToString } from '../../src/lib/analytics';
+import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
 	OrderTransaction,
@@ -37,6 +38,14 @@ interface CheckoutPendingProps {
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -72,14 +81,16 @@ function CheckoutPending( {
 	receiptId,
 	siteSlug,
 	redirectTo,
+	fromSiteSlug,
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
-	useRedirectOnTransactionSuccess( {
+	const { headingText } = useRedirectOnTransactionSuccess( {
 		orderId,
 		receiptId,
 		siteSlug,
 		redirectTo,
+		fromSiteSlug,
 	} );
 
 	return (
@@ -94,18 +105,15 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<PendingContent />
+			<PendingContent heading={ headingText } />
 		</Main>
 	);
 }
 
-function PendingContent() {
-	const translate = useTranslate();
+function PendingContent( { heading }: { heading: React.ReactNode } ) {
 	return (
 		<div className="pending-content__wrapper">
-			<div className="pending-content__title">
-				{ translate( "Almost there – we're currently finalizing your order." ) }
-			</div>
+			<div className="pending-content__title">{ heading }</div>
 			<LoadingEllipsis />
 		</div>
 	);
@@ -140,12 +148,21 @@ function useRedirectOnTransactionSuccess( {
 	receiptId,
 	siteSlug,
 	redirectTo,
+	fromSiteSlug,
 }: {
 	orderId: number | undefined;
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
-} ): void {
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
+} ): { headingText: React.ReactNode } {
 	const translate = useTranslate();
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
@@ -168,6 +185,19 @@ function useRedirectOnTransactionSuccess( {
 	const productName = firstPurchase?.productName ?? '';
 	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
 	const saasRedirectUrl = getSaaSProductRedirectUrl( receipt );
+
+	const { searchParams } = getUrlParts( redirectTo || '/' );
+	const isConnectAfterCheckoutFlow =
+		searchParams.size &&
+		searchParams.get( 'from' ) === 'connect-after-checkout' &&
+		searchParams.get( 'connect_url_redirect' ) === 'true';
+
+	const defaultPendingText = translate( "Almost there – we're currently finalizing your order." );
+	const connectingJetpackText = translate(
+		"Transaction finalized – we're now connecting Jetpack."
+	);
+
+	const [ headingText, setHeadingText ] = useState( defaultPendingText );
 
 	// Fetch receipt data once we have a receipt Id.
 	const didFetchReceipt = useRef( false );
@@ -210,6 +240,7 @@ function useRedirectOnTransactionSuccess( {
 			redirectTo,
 			siteSlug,
 			saasRedirectUrl,
+			fromSiteSlug,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -217,6 +248,9 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		didRedirect.current = true;
+		if ( isConnectAfterCheckoutFlow ) {
+			setHeadingText( connectingJetpackText );
+		}
 		triggerPostRedirectNotices( {
 			redirectInstructions,
 			isRenewal,
@@ -241,7 +275,10 @@ function useRedirectOnTransactionSuccess( {
 		transaction,
 		translate,
 		willAutoRenew,
+		fromSiteSlug,
 	] );
+
+	return { headingText };
 }
 
 function isTransactionSuccessful(

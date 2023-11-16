@@ -1,6 +1,5 @@
 /** @jest-environment jsdom */
 jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="step-wrapper" /> );
-jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 jest.mock( 'calypso/components/data/query-plans', () => 'query-plans' );
 jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
@@ -40,6 +39,15 @@ const props = {
 	translate: ( string ) => string,
 };
 
+function getCartItems( overrides ) {
+	return [
+		{
+			product_slug: PLAN_FREE,
+			...overrides,
+		},
+	];
+}
+
 describe( 'Plans basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		render( <PlansStep { ...props } /> );
@@ -62,23 +70,22 @@ describe( 'Plans.onSelectPlan', () => {
 			goToNextStep: jest.fn(),
 		};
 		const comp = new PlansStep( myProps );
-		comp.onSelectPlan( { product_slug: PLAN_FREE } );
+		comp.onSelectPlan( getCartItems() );
 		expect( myProps.goToNextStep ).toHaveBeenCalled();
 	} );
 
 	test( 'Should call submitSignupStep with step details', () => {
 		const submitSignupStep = jest.fn();
-
+		const cartItems = getCartItems();
 		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
-		const cartItem = { product_slug: PLAN_FREE };
-		comp.onSelectPlan( cartItem );
+		comp.onSelectPlan( cartItems );
 		expect( submitSignupStep ).toHaveBeenCalled();
 
 		const calls = submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
 		expect( args[ 0 ].stepName ).toEqual( 'Step name' );
 		expect( args[ 0 ].stepSectionName ).toEqual( 'Step section name' );
-		expect( args[ 0 ].cartItem ).toBe( cartItem );
+		expect( args[ 0 ].cartItems ).toBe( cartItems );
 		expect( 'test' in args[ 0 ] ).toEqual( false );
 	} );
 
@@ -89,10 +96,8 @@ describe( 'Plans.onSelectPlan', () => {
 			additionalStepData: { test: 23 },
 			submitSignupStep,
 		};
-
 		const comp = new PlansStep( myProps );
-		const cartItem = { product_slug: PLAN_FREE };
-		comp.onSelectPlan( cartItem );
+		comp.onSelectPlan( getCartItems() );
 		expect( submitSignupStep ).toHaveBeenCalled();
 
 		const calls = submitSignupStep.mock.calls;
@@ -103,20 +108,19 @@ describe( 'Plans.onSelectPlan', () => {
 	test( 'Should call submitSignupStep with correct providedDependencies', () => {
 		const submitSignupStep = jest.fn();
 		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
-		const cartItem = { product_slug: PLAN_FREE };
-		comp.onSelectPlan( cartItem );
+		const cartItems = getCartItems();
+		comp.onSelectPlan( cartItems );
 		expect( submitSignupStep ).toHaveBeenCalled();
 
 		const calls = submitSignupStep.mock.calls;
 		const args = calls[ calls.length - 1 ];
-		expect( args[ 1 ].cartItem ).toBe( cartItem );
+		expect( args[ 1 ].cartItems ).toBe( cartItems );
 	} );
 
 	test( 'Should call recordEvent when cartItem is specified', () => {
 		const recordTracksEvent = jest.fn();
 		const comp = new PlansStep( { ...tplProps, recordTracksEvent } );
-		const cartItem = { product_slug: PLAN_FREE, free_trial: false };
-		comp.onSelectPlan( cartItem );
+		comp.onSelectPlan( getCartItems( { free_trial: false } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalled();
 
@@ -143,11 +147,12 @@ describe( 'Plans.onSelectPlan', () => {
 				...tplProps,
 				goToNextStep: jest.fn(),
 			};
-			const cartItem = { product_slug: plan };
+			const cartItems = getCartItems( { product_slug: plan } );
+			const [ planCartItem ] = cartItems;
 			const comp = new PlansStep( myProps );
-			comp.onSelectPlan( cartItem );
+			comp.onSelectPlan( cartItems );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
-			expect( cartItem.extra ).toEqual( {
+			expect( planCartItem.extra ).toEqual( {
 				is_store_signup: true,
 			} );
 		}
@@ -167,11 +172,12 @@ describe( 'Plans.onSelectPlan', () => {
 				flowName: 'signup',
 				goToNextStep: jest.fn(),
 			};
-			const cartItem = { product_slug: plan };
+			const cartItems = getCartItems( { product_slug: plan } );
+			const [ planCartItem ] = cartItems;
 			const comp = new PlansStep( myProps );
-			comp.onSelectPlan( cartItem );
+			comp.onSelectPlan( cartItems );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
-			expect( cartItem.extra ).toEqual( undefined );
+			expect( planCartItem.extra ).toEqual( undefined );
 		}
 	);
 
@@ -183,10 +189,11 @@ describe( 'Plans.onSelectPlan', () => {
 				designType: 'other',
 			},
 		};
-		const cartItem = { product_slug: PLAN_FREE };
+		const cartItems = getCartItems();
+		const [ planCartItem ] = cartItems;
 		const comp = new PlansStep( myProps );
-		comp.onSelectPlan( cartItem );
-		expect( cartItem.extra ).toEqual( undefined );
+		comp.onSelectPlan( cartItems );
+		expect( planCartItem.extra ).toEqual( undefined );
 	} );
 
 	test.each( [
@@ -205,10 +212,11 @@ describe( 'Plans.onSelectPlan', () => {
 	] )(
 		`Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (%s)`,
 		( plan ) => {
-			const cartItem = { product_slug: plan };
+			const cartItems = getCartItems( { product_slug: plan } );
+			const [ planCartItem ] = cartItems;
 			const comp = new PlansStep( tplProps );
-			comp.onSelectPlan( cartItem );
-			expect( cartItem.extra ).toEqual( undefined );
+			comp.onSelectPlan( cartItems );
+			expect( planCartItem.extra ).toEqual( undefined );
 		}
 	);
 } );

@@ -1,39 +1,81 @@
 import {
-	PLAN_JETPACK_STARTER_YEARLY,
-	PLAN_JETPACK_SECURITY_T1_YEARLY,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_STARTER_MONTHLY,
-	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_BI_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 } from '@automattic/calypso-products';
-import HeroComplete from 'calypso/assets/images/jetpack/hero-complete.png';
-import HeroSecurity from 'calypso/assets/images/jetpack/hero-security.png';
-import HeroStarter from 'calypso/assets/images/jetpack/hero-starter.png';
+import CompleteLg from 'calypso/assets/images/jetpack/hero-complete-lg.png';
+import CompleteMd from 'calypso/assets/images/jetpack/hero-complete-md.png';
+import CompleteSm from 'calypso/assets/images/jetpack/hero-complete-sm.png';
+import SecurityLg from 'calypso/assets/images/jetpack/hero-security-lg.png';
+import SecuritySm from 'calypso/assets/images/jetpack/hero-security-sm.png';
 import { HeroImageProps } from '../types';
 import './style.scss';
 
-const HERO_IMAGES: Record< string, string > = {
-	[ PLAN_JETPACK_STARTER_YEARLY ]: HeroStarter,
-	[ PLAN_JETPACK_STARTER_MONTHLY ]: HeroStarter,
-	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: HeroSecurity,
-	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: HeroSecurity,
-	[ PLAN_JETPACK_COMPLETE ]: HeroComplete,
-	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: HeroComplete,
+const HERO_IMAGES: Record< string, { lg: string; md: string; sm: string } > = {
+	[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: {
+		lg: SecurityLg,
+		md: SecurityLg,
+		sm: SecuritySm,
+	},
+	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
+		lg: SecurityLg,
+		md: SecurityLg,
+		sm: SecuritySm,
+	},
+	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
+		lg: SecurityLg,
+		md: SecurityLg,
+		sm: SecuritySm,
+	},
+	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
+		lg: CompleteLg,
+		md: CompleteMd,
+		sm: CompleteSm,
+	},
+	[ PLAN_JETPACK_COMPLETE ]: {
+		lg: CompleteLg,
+		md: CompleteMd,
+		sm: CompleteSm,
+	},
+	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: {
+		lg: CompleteLg,
+		md: CompleteMd,
+		sm: CompleteSm,
+	},
 };
 
 export const HeroImage: React.FC< HeroImageProps > = ( { item } ) => {
-	const image = HERO_IMAGES[ item.productSlug ];
+	const smallScreenImage = HERO_IMAGES[ item.productSlug ]?.sm;
+	const largeScreenImage = HERO_IMAGES[ item.productSlug ]?.lg;
 
-	if ( ! image ) {
+	//mediumScreenImage is just only for Jetpack Complete, for other products it is same as largeScreenImage
+	const mediumScreenImage = HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage;
+
+	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
 		return null;
 	}
 
 	return (
 		<div className="hero-image--container">
 			<div
-				className="hero-image--container-inner"
+				className="hero-image--container-inner-small-screen"
 				style={ {
-					backgroundImage: `url(${ image })`,
+					backgroundImage: `url(${ smallScreenImage })`,
+				} }
+			/>
+			<div
+				className="hero-image--container-inner-medium-screen"
+				style={ {
+					backgroundImage: `url(${ mediumScreenImage })`,
+				} }
+			/>
+			<div
+				className="hero-image--container-inner-large-screen"
+				style={ {
+					backgroundImage: `url(${ largeScreenImage })`,
 				} }
 			/>
 		</div>

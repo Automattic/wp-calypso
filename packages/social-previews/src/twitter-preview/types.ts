@@ -35,4 +35,4 @@ export type TextProps = {
 
 export type TwitterPreviewProps = SidebarProps &
 	HeaderProps &
-	Partial< MediaProps & QuoteTweetProps & TwitterCardProps & Pick< TextProps, 'text' > >;
+	Partial< QuoteTweetProps & TwitterCardProps & Pick< TextProps, 'text' > >;

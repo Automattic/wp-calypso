@@ -1,5 +1,5 @@
 import { UseQueryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 interface SiteLogsAPIResponse {
@@ -15,6 +15,7 @@ export type SiteLogsData = {
 	total_results: number;
 	logs: Record< string, unknown >[];
 	scroll_id: string | null;
+	has_more: boolean;
 };
 
 export type SiteLogsTab = 'php' | 'web';
@@ -35,7 +36,6 @@ export function useSiteLogsQuery(
 ) {
 	const queryClient = useQueryClient();
 	const [ scrollId, setScrollId ] = useState< string | undefined >();
-	const [ isFinishedPaging, setIsFinishedPaging ] = useState< boolean >( false );
 
 	// The scroll ID represents the state of a particular set of filtering arguments. If any of
 	// those filter arguments change we throw out the scroll ID so we can start over.
@@ -58,7 +58,7 @@ export function useSiteLogsQuery(
 		queryFn: () => {
 			const logTypeFragment = params.logType === 'php' ? 'error-logs' : 'logs';
 			const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
-			return wpcom.req.post(
+			return wpcom.req.get(
 				{ path, apiNamespace: 'wpcom/v2' },
 				{
 					start: params.start,
@@ -69,25 +69,16 @@ export function useSiteLogsQuery(
 				}
 			);
 		},
+		keepPreviousData: true,
 		enabled: !! siteId && params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
 		select( { data } ) {
 			return {
 				...data,
+				has_more: !! data.scroll_id,
 				total_results:
 					typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
 			};
-		},
-		onSuccess( data ) {
-			if ( data.scroll_id ) {
-				setScrollId( data.scroll_id );
-			} else {
-				setIsFinishedPaging( true );
-			}
-
-			if ( queryOptions.onSuccess ) {
-				return queryOptions.onSuccess( data );
-			}
 		},
 		meta: {
 			persist: false,
@@ -95,13 +86,20 @@ export function useSiteLogsQuery(
 		...queryOptions,
 	} );
 
+	const { data } = queryResult;
+
+	useEffect( () => {
+		if ( data?.has_more && scrollId !== data.scroll_id ) {
+			setScrollId( data.scroll_id ?? undefined );
+		}
+	}, [ data, scrollId ] );
+
 	// The state represented by scroll ID will have already advanced to the next page, so we
 	// can't allow `refetch` to be used. Remember, the logs are fetched with a POST and the
 	// requests are not idempotent.
 	const { refetch, ...remainingQueryResults } = queryResult;
 
 	return {
-		isFinishedPaging,
 		...remainingQueryResults,
 	};
 }

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import { createElement } from 'react';
@@ -8,12 +7,12 @@ import wpcom from 'calypso/lib/wp';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
 import {
@@ -33,22 +32,6 @@ function userHasHistory( context ) {
 
 function renderFeedError( context, next ) {
 	context.primary = createElement( FeedError );
-	next();
-}
-
-export function prettyRedirects( context, next ) {
-	// Do we have a 'pretty' site or feed URL? We only use this for /discover.
-	let redirect;
-	if ( context.params.blog_id ) {
-		redirect = getPrettySiteUrl( context.params.blog_id );
-	} else if ( context.params.feed_id ) {
-		redirect = getPrettyFeedUrl( context.params.feed_id );
-	}
-
-	if ( redirect ) {
-		return page.redirect( redirect );
-	}
-
 	next();
 }
 
@@ -137,7 +120,11 @@ export function following( context, next ) {
 	}
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-	recordTrack( 'calypso_reader_following_loaded' );
+	recordTrack(
+		'calypso_reader_following_loaded',
+		{},
+		{ pathnameOverride: getCurrentRoute( state ) }
+	);
 
 	setPageTitle( context, i18n.translate( 'Following' ) );
 
@@ -345,11 +332,80 @@ export async function blogDiscoveryByFeedId( context, next ) {
 		} );
 }
 
-export async function sitesSubscriptionManager( context, next ) {
-	if ( config.isEnabled( 'reader/subscription-management' ) ) {
-		context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
-		return next();
-	}
+export async function siteSubscriptionsManager( context, next ) {
+	const basePath = sectionify( context.path );
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Subscription Management > Sites';
+	const mcKey = 'subscription-sites';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	return context.redirect( '/read' );
+	context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
+	return next();
+}
+
+export async function siteSubscription( context, next ) {
+	// It can be the 2 following:
+	// - /read/subscriptions/<subscription_id>
+	// - /read/site/subscription
+	const basePath = context.params.subscription_id
+		? '/read/subscriptions/<subscription_id>'
+		: sectionify( context.path );
+
+	const fullAnalyticsPageTitle =
+		analyticsPageTitle +
+		' > Subscription Management > Site ' +
+		( context.params.subscription_id
+			? 'Subscription: ' + context.params.subscription_id
+			: 'Blog: ' + context.params.blog_id );
+	const mcKey = 'subscription-site';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+	context.primary = (
+		<AsyncLoad
+			require="calypso/reader/site-subscription"
+			subscriptionId={ context.params.subscription_id }
+			blogId={ context.params.blog_id }
+			transition={ context.query.transition === 'true' }
+		/>
+	);
+	return next();
+}
+
+export async function commentSubscriptionsManager( context, next ) {
+	const basePath = sectionify( context.path );
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Subscription Management > Comments';
+	const mcKey = 'subscription-comments';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+	context.primary = (
+		<AsyncLoad require="calypso/reader/site-subscriptions-manager/comment-subscriptions-manager" />
+	);
+	return next();
+}
+
+export async function pendingSubscriptionsManager( context, next ) {
+	const basePath = sectionify( context.path );
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Subscription Management > Comments';
+	const mcKey = 'subscription-pending';
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+	context.primary = (
+		<AsyncLoad require="calypso/reader/site-subscriptions-manager/pending-subscriptions-manager" />
+	);
+	return next();
+}
+
+/**
+ * Middleware to redirect logged out users to /discover.
+ * Intended for reader pages that do not support logged out users such as /read.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToDiscover( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+	return page.redirect( '/discover' );
 }

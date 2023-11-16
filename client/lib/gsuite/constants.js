@@ -9,7 +9,6 @@ export const GOOGLE_WORKSPACE_PRODUCT_FAMILY = 'Google Workspace';
 
 /**
  * Defines product types to use as slugs in urls.
- *
  * @see emailManagementAddGSuiteUsers() in client/my-sites/email/paths.js
  */
 export const GOOGLE_WORKSPACE_PRODUCT_TYPE = 'google-workspace';

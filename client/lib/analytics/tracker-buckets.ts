@@ -31,6 +31,8 @@ const allAdTrackers = [
 	'pandora',
 	'quora',
 	'adroll',
+	'parsely',
+	'clarity',
 ] as const;
 
 type AdTracker = ( typeof allAdTrackers )[ number ];
@@ -43,6 +45,7 @@ export enum Bucket {
 
 export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	// Analytics trackers:
+	parsely: Bucket.ANALYTICS,
 
 	// Advertising trackers:
 	ga: Bucket.ADVERTISING,
@@ -69,6 +72,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	pandora: null,
 	quora: null,
 	adroll: null,
+	clarity: null,
 };
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
@@ -92,6 +96,8 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	criteo: () => 'criteo_q' in window,
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
+	parsely: () => 'PARSELY' in window,
+	clarity: () => 'clarity' in window,
 };
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {

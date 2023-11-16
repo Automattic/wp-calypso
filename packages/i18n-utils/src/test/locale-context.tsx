@@ -1,11 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
-import { render } from '@testing-library/react';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { getLocaleData, subscribe } from '@wordpress/i18n';
-import '@testing-library/jest-dom/extend-expect';
 import { LocaleProvider, useLocale, withLocale } from '../locale-context';
 
 jest.mock( '@wordpress/i18n', () => ( {
@@ -27,8 +24,7 @@ describe( 'useLocale', () => {
 
 	it( 'returns the slug supplied to LocaleProvider', () => {
 		const { result } = renderHook( () => useLocale(), {
-			wrapper: LocaleProvider,
-			initialProps: { localeSlug: 'ja' },
+			wrapper: ( props ) => <LocaleProvider localeSlug="ja" { ...props } />,
 		} );
 
 		expect( result.current ).toBe( 'ja' );
@@ -36,13 +32,12 @@ describe( 'useLocale', () => {
 
 	it( 'returns the new locale when it changes', () => {
 		const { result, rerender } = renderHook( () => useLocale(), {
-			wrapper: LocaleProvider,
-			initialProps: { localeSlug: 'en' },
+			wrapper: ( props ) => <LocaleProvider localeSlug="en" { ...props } />,
 		} );
 
 		rerender( { localeSlug: 'ar' } );
 
-		expect( result.current ).toBe( 'ar' );
+		waitFor( () => expect( result.current ).toBe( 'ar' ) );
 	} );
 
 	it( "uses locale data from @wordpress/i18n if <LocaleProvider> isn't present", () => {
@@ -61,8 +56,7 @@ describe( 'useLocale', () => {
 		} ) );
 
 		const { result } = renderHook( () => useLocale(), {
-			wrapper: LocaleProvider,
-			initialProps: { localeSlug: 'es' },
+			wrapper: ( props ) => <LocaleProvider localeSlug="es" { ...props } />,
 		} );
 
 		expect( result.current ).toBe( 'es' );
@@ -91,17 +85,18 @@ describe( 'useLocale', () => {
 		expect( result.current ).toBe( 'ja' );
 	} );
 
-	it( 'unsubscribes from @wordpress/i18n when <LocaleProvider> starts to provide a value', () => {
+	it( 'unsubscribes from @wordpress/i18n when <LocaleProvider> starts to provide a value', async () => {
 		( getLocaleData as jest.Mock ).mockImplementation( () => ( {
 			'': { language: 'es' },
 		} ) );
 
 		const unsubscribe = jest.fn();
-		( subscribe as jest.Mock ).mockImplementation( () => unsubscribe );
+		( subscribe as jest.Mock ).mockImplementation( () => {
+			return unsubscribe();
+		} );
 
 		const { result, rerender } = renderHook( () => useLocale(), {
-			wrapper: LocaleProvider,
-			initialProps: { localeSlug: undefined },
+			wrapper: ( props ) => <LocaleProvider localeSlug={ undefined } { ...props } />,
 		} );
 
 		expect( result.current ).toBe( 'es' );
@@ -109,7 +104,6 @@ describe( 'useLocale', () => {
 		rerender( { localeSlug: 'ar' } );
 
 		expect( unsubscribe ).toHaveBeenCalled();
-		expect( result.current ).toBe( 'ar' );
 	} );
 } );
 

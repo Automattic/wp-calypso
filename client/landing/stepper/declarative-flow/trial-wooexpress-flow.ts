@@ -1,9 +1,12 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
+import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
@@ -39,10 +42,21 @@ const wooexpress: Flow = {
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const flowName = this.name;
-		const locale = useLocale();
+
+		// There is a race condition where useLocale is reporting english,
+		// despite there being a locale in the URL so we need to look it up manually.
+		// We also need to support both query param and path suffix localized urls
+		// depending on where the user is coming from.
+		const useLocaleSlug = useLocale();
+		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
+		const queryLocaleSlug = getLocaleFromQueryParam();
+		const pathLocaleSlug = getLocaleFromPathname();
+		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
+		const aff = queryParams.get( 'aff' );
+		const vendorId = queryParams.get( 'vid' );
 
 		if ( profilerData ) {
 			try {
@@ -58,6 +72,15 @@ const wooexpress: Flow = {
 		const getStartUrl = () => {
 			let hasFlowParams = false;
 			const flowParams = new URLSearchParams();
+			const queryParams = new URLSearchParams();
+
+			if ( vendorId ) {
+				queryParams.set( 'vid', vendorId );
+			}
+
+			if ( aff ) {
+				queryParams.set( 'aff', aff );
+			}
 
 			if ( locale && locale !== 'en' ) {
 				flowParams.set( 'locale', locale );
@@ -67,17 +90,34 @@ const wooexpress: Flow = {
 			const redirectTarget =
 				`/setup/wooexpress` +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			// Early return approach
-			if ( locale || locale === 'en' ) {
-				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+
+			let queryString = `redirect_to=${ redirectTarget }`;
+
+			if ( queryParams.toString() ) {
+				queryString = `${ queryString }&${ queryParams.toString() }`;
 			}
 
-			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			const logInUrl = getLoginUrl( {
+				variationName: flowName,
+				locale,
+			} );
+
+			return `${ logInUrl }&${ queryString }`;
 		};
 
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/wooexpress/siteCreationStep route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				const logInUrl = getStartUrl();
+				window.location.assign( logInUrl );
+			}
+		}, [] );
+
 		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'wooexpress-trial requires a logged in user',
@@ -134,7 +174,7 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						recordGTMDatalayerEvent( currentStep );
+						recordGTMDatalayerEvent( 'free trial processing' );
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 

@@ -1,35 +1,26 @@
 import { useMemo } from 'react';
 import type { Category } from '../types';
 
-const patternCategoriesOrder = [
-	'featured',
-	'posts',
-	'text',
-	'gallery',
-	'call-to-action',
-	'banner',
-];
-
-const useCategoriesOrder = ( categories: Category[] ) => {
+const useCategoriesOrder = ( categories: Category[], orderList: string[] ) => {
 	return useMemo(
 		() =>
 			categories.sort( ( { name: aName }, { name: bName } ) => {
 				if ( aName && bName ) {
-					// Sort categories according to `patternCategoriesOrder`.
-					let aIndex = patternCategoriesOrder.indexOf( aName );
-					let bIndex = patternCategoriesOrder.indexOf( bName );
+					// Sort categories according to the orderList.
+					let aIndex = orderList.indexOf( aName );
+					let bIndex = orderList.indexOf( bName );
 					// All other categories should come after that.
 					if ( aIndex < 0 ) {
-						aIndex = patternCategoriesOrder.length;
+						aIndex = orderList.length;
 					}
 					if ( bIndex < 0 ) {
-						bIndex = patternCategoriesOrder.length;
+						bIndex = orderList.length;
 					}
 					return aIndex - bIndex;
 				}
 				return 0;
 			} ),
-		[ categories ]
+		[ categories, orderList ]
 	);
 };
 

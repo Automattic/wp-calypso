@@ -37,7 +37,7 @@ describe( 'index', () => {
 
 			await user.click( container.querySelector( '.sites-dropdown__selected' ) );
 
-			expect( toggleOpenSpy ).toBeCalledTimes( 1 );
+			expect( toggleOpenSpy ).toHaveBeenCalledTimes( 1 );
 
 			expect( container.firstChild ).toHaveClass( 'has-multiple-sites' );
 			expect( container.firstChild ).toHaveClass( 'is-open' );
@@ -53,7 +53,7 @@ describe( 'index', () => {
 
 			await user.click( container.querySelector( '.sites-dropdown__selected' ) );
 
-			expect( toggleOpenSpy ).toBeCalledTimes( 1 );
+			expect( toggleOpenSpy ).toHaveBeenCalledTimes( 1 );
 
 			expect( container.firstChild ).not.toHaveClass( 'has-multiple-sites' );
 			expect( container.firstChild ).not.toHaveClass( 'is-open' );
@@ -75,10 +75,10 @@ describe( 'index', () => {
 
 			SitesDropdown.prototype.selectSite.call( fakeContext, 12345 );
 
-			expect( siteSelectedSpy ).toBeCalledTimes( 1 );
+			expect( siteSelectedSpy ).toHaveBeenCalledTimes( 1 );
 			expect( siteSelectedSpy ).toHaveBeenCalledWith( 12345 );
 
-			expect( setStateSpy ).toBeCalledTimes( 1 );
+			expect( setStateSpy ).toHaveBeenCalledTimes( 1 );
 			expect( setStateSpy ).toHaveBeenCalledWith( { open: false, selectedSiteId: 12345 } );
 		} );
 	} );
@@ -95,7 +95,7 @@ describe( 'index', () => {
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
 
-			expect( setStateSpy ).toBeCalledTimes( 1 );
+			expect( setStateSpy ).toHaveBeenCalledTimes( 1 );
 			expect( setStateSpy ).toHaveBeenCalledWith( { open: false } );
 		} );
 
@@ -109,7 +109,7 @@ describe( 'index', () => {
 			};
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
-			expect( onCloseSpy ).toBeCalledTimes( 1 );
+			expect( onCloseSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

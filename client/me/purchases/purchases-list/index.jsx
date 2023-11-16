@@ -3,20 +3,21 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
-import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -99,7 +100,7 @@ class PurchasesList extends Component {
 				return (
 					<Main wideLayout className="purchases-list">
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+						<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 						<PurchasesNavigation section="activeUpgrades" />
 						<NoSitesMessage />
 					</Main>
@@ -118,7 +119,7 @@ class PurchasesList extends Component {
 							) }
 							action={ translate( 'Upgrade now' ) }
 							actionURL="/plans"
-							illustration="/calypso/images/illustrations/illustration-nosites.svg"
+							illustration={ noSitesIllustration }
 						/>
 					</CompactCard>
 				</>
@@ -131,10 +132,10 @@ class PurchasesList extends Component {
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 
-				<FormattedHeader
-					brandFont
-					headerText={ titles.sectionTitle }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ titles.sectionTitle }
+					subtitle={ translate(
 						'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -142,7 +143,6 @@ class PurchasesList extends Component {
 							},
 						}
 					) }
-					align="left"
 				/>
 				<PurchasesNavigation section="activeUpgrades" />
 				{ content }

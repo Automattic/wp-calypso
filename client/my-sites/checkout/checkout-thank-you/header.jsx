@@ -13,6 +13,7 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
+import { withI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -20,6 +21,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
 import {
@@ -36,8 +38,10 @@ import {
 	getJetpackSearchDashboardUrl,
 } from 'calypso/state/sites/selectors';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
-
 import './style.scss';
+import Product from './redesign-v2/sections/Product';
+import getHeading from './redesign-v2/sections/get-heading';
+import { isBulkDomainTransfer } from './utils';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -55,7 +59,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		titanAppsUrlPrefix: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		_n: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
+		isRedesignV2: PropTypes.bool,
+		currency: PropTypes.string,
 	};
 
 	isSearch() {
@@ -63,43 +70,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 		return purchases?.length > 0 && purchases[ 0 ].productType === 'search';
 	}
 
-	getHeading() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
-
-		if ( ! isDataLoaded ) {
-			return this.props.translate( 'Loading…' );
-		}
-
-		if ( hasFailedPurchases ) {
-			return translate( 'Some items failed.' );
-		}
-
-		if ( this.isSearch() ) {
-			return translate( 'Welcome to Jetpack Search!' );
-		}
-
-		if (
-			primaryPurchase &&
-			isDomainMapping( primaryPurchase ) &&
-			! primaryPurchase.isRootDomainWithUs
-		) {
-			return preventWidows( translate( 'Almost done!' ) );
-		}
-
-		if ( primaryPurchase && isChargeback( primaryPurchase ) ) {
-			return translate( 'Thank you!' );
-		}
-
-		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
-			return preventWidows( translate( 'Almost done!' ) );
-		}
-
-		return translate( 'Congratulations on your purchase!' );
-	}
-
 	getText() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
-			this.props;
+		const {
+			translate,
+			_n,
+			isDataLoaded,
+			hasFailedPurchases,
+			primaryPurchase,
+			displayMode,
+			purchases,
+		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
@@ -120,6 +100,31 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
+		if ( isBulkDomainTransfer( purchases ) ) {
+			return (
+				<>
+					<div>
+						{ preventWidows(
+							_n(
+								"We've got it from here. Your domain is being transferred with no downtime.",
+								"We've got it from here! Your domains are being transferred with no downtime.",
+								purchases?.length
+							)
+						) }
+					</div>
+					<div>
+						{ preventWidows(
+							_n(
+								"We'll send an email when your domain is ready to use.",
+								"We'll send an email when your domains are ready to use.",
+								purchases?.length
+							)
+						) }
+					</div>
+				</>
+			);
+		}
+
 		if ( ! isDataLoaded || ! primaryPurchase ) {
 			if ( 'concierge' === displayMode ) {
 				return translate(
@@ -134,8 +139,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( isPlan( primaryPurchase ) ) {
 			return preventWidows(
 				translate(
-					'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-						"It's doing somersaults in excitement!",
+					'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 					{
 						args: { productName: primaryPurchase.productName },
 						components: { strong: <strong /> },
@@ -385,7 +389,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isPlan( primaryPurchase ) ) {
-			return translate( 'View my new features' );
+			return translate( 'Let’s work on the site' );
 		}
 
 		if (
@@ -540,8 +544,33 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	getHeaderText() {
+		const { purchases, _n } = this.props;
+
+		if ( isBulkDomainTransfer( purchases ) ) {
+			return _n(
+				'Your domain transfer has started',
+				'Your domain transfers have started',
+				purchases?.length
+			);
+		}
+
+		return getHeading( {
+			...this.props,
+			isSearch: this.isSearch(),
+		} );
+	}
+
 	render() {
-		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase } = this.props;
+		const {
+			isDataLoaded,
+			isSimplified,
+			hasFailedPurchases,
+			primaryPurchase,
+			isRedesignV2,
+			selectedSite,
+			purchases,
+		} = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
@@ -559,22 +588,34 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
-				<div className="checkout-thank-you__header-icon">
-					<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
-				</div>
+				{ isBulkDomainTransfer( purchases ) && <UsePresalesChat /> }
+				{ ! isRedesignV2 && (
+					<div className="checkout-thank-you__header-icon">
+						<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
+					</div>
+				) }
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
-						<h1 className="checkout-thank-you__header-heading">{ this.getHeading() }</h1>
-
+						<h1 className="checkout-thank-you__header-heading">
+							{ preventWidows( this.getHeaderText() ) }
+						</h1>
 						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
 							this.renderSimplifiedContent()
 						) : (
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
 
+						{ isRedesignV2 && (
+							<Product
+								siteSlug={ selectedSite?.slug }
+								primaryPurchase={ primaryPurchase }
+								siteID={ selectedSite?.ID }
+								purchases={ this.props.purchases }
+								currency={ this.props.currency }
+							/>
+						) }
 						{ this.props.children }
-
-						{ this.getButtons() }
+						{ ! isRedesignV2 && this.getButtons() }
 					</div>
 				</div>
 			</div>
@@ -585,8 +626,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const { translate, primaryPurchase } = this.props;
 		const messages = [
 			translate(
-				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-					'Enjoy your powerful new features!',
+				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
 				{
 					args: { productName: primaryPurchase.productName },
 					components: { strong: <strong /> },
@@ -619,6 +659,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 }
 
+export function UsePresalesChat() {
+	usePresalesChat( 'wpcom' );
+}
+
 export default connect(
 	( state, ownProps ) => ( {
 		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
@@ -633,4 +677,4 @@ export default connect(
 		recordStartTransferClickInThankYou,
 		recordTracksEvent,
 	}
-)( localize( CheckoutThankYouHeader ) );
+)( localize( withI18n( CheckoutThankYouHeader ) ) );

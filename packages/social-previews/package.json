@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "2.0.1-beta.5",
+	"version": "2.0.1-beta.10",
 	"description": "A suite of components to generate previews for a post for both social and search engines.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -40,10 +40,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@emotion/react": "^11.4.1",
-		"@wordpress/components": "^23.0.0",
-		"@wordpress/element": "^5.0.0",
-		"@wordpress/i18n": "^4.22.0",
+		"@emotion/react": "^11.11.1",
+		"@wordpress/components": "^25.10.0",
+		"@wordpress/element": "^5.21.0",
+		"@wordpress/i18n": "^4.44.0",
 		"classnames": "^2.3.1",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"
@@ -51,17 +51,16 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/jest-dom": "^6.1.4",
 		"@testing-library/react": "^14.0.0",
-		"@types/wordpress__components": "^23.0.1",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"typescript": "^4.7.4",
+		"typescript": "^5.2.2",
 		"webpack": "^5.68.0"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7",
+		"@babel/runtime": "^7.23.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

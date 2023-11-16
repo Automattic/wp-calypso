@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import languages, { LanguageSlug } from '@automattic/languages';
 import {
 	UseQueryResult,
@@ -13,6 +12,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	extractSearchInformation,
 	getPreinstalledPremiumPluginsVariations,
+	mapStarRatingToPercent,
 } from 'calypso/lib/plugins/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -33,8 +33,6 @@ const getIconUrl = ( pluginSlug: string, icon: string ): string => {
 function buildDefaultIconUrl( pluginSlug: string ) {
 	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
 }
-
-const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) / 5 ) * 100;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) {
@@ -124,10 +122,7 @@ export const getESPluginsInfiniteQueryParams = (
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 	const queryKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
-	const groupId =
-		config.isEnabled( 'marketplace-jetpack-plugin-search' ) && options.category !== 'popular'
-			? 'marketplace'
-			: 'wporg';
+	const groupId = options.category !== 'popular' ? 'marketplace' : 'wporg';
 	const queryFn = ( { pageParam = 1 } ) =>
 		search( {
 			query: searchTerm,
@@ -161,7 +156,7 @@ export const useESPluginsInfinite = (
 			};
 		},
 		getNextPageParam: ( lastPage ) => {
-			return lastPage.data.page_handle || undefined;
+			return lastPage?.data?.page_handle;
 		},
 		enabled,
 		staleTime,

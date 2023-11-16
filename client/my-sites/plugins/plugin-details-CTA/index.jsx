@@ -5,11 +5,13 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
+import { setQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/route';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
@@ -20,7 +22,11 @@ import StagingSiteNotice from 'calypso/my-sites/plugins/plugin-details-CTA/stagi
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { isUserLoggedIn, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import {
+	isUserLoggedIn,
+	getCurrentUserId,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -54,6 +60,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const currentUserId = useSelector( getCurrentUserId );
 
+	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
+
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
@@ -62,8 +70,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const currentPurchase = getPluginPurchased( plugin, purchases );
 
 	// Site type
-	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
@@ -79,7 +87,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, softwareSlug )
 	);
-	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 
 	const shouldUpgrade =
 		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
@@ -97,8 +104,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);
 	const installedOnSitesQuantity = sitesWithPlugin.length;
-
-	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
 
 	// Eligibilities for Simple Sites.
 	// eslint-disable-next-line prefer-const
@@ -140,9 +145,13 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 
-	const toggleDisplayManageSitePluginsModal = useCallback( () => {
-		setDisplayManageSitePluginsModal( ! displayManageSitePluginsModal );
-	}, [ displayManageSitePluginsModal ] );
+	const onIntervalSwitcherChange = useCallback(
+		( interval ) => {
+			setQueryArgs( { interval: interval?.toLowerCase() }, true );
+			dispatch( setBillingInterval( interval ) );
+		},
+		[ dispatch ]
+	);
 
 	// Activation and deactivation translations.
 	const activeText = translate( '{{span}}active{{/span}}', {
@@ -191,8 +200,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						{ translate( 'Upgrade my plan' ) }
 					</Button>
 				) }
-				{ ! selectedSite && ! isLoggedIn && (
+				{ ( ! isLoggedIn || ! currentUserSiteCount ) && (
 					<GetStartedButton
+						plugin={ plugin }
+						isMarketplaceProduct={ isMarketplaceProduct }
 						onClick={ () => {
 							dispatch(
 								recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -270,37 +281,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		);
 	}
 
-	if ( ! selectedSite && isLoggedIn ) {
-		// Check if there is no site selected
-		return (
-			<div className="plugin-details-cta__container">
-				<ManageSitePluginsDialog
-					plugin={ plugin }
-					isVisible={ displayManageSitePluginsModal }
-					onClose={ () => setDisplayManageSitePluginsModal( false ) }
-				/>
-				<div className="plugin-details-cta__installed-text">
-					{ !! installedOnSitesQuantity &&
-						translate(
-							'Installed on {{span}}%d site{{/span}}',
-							'Installed on {{span}}%d sites{{/span}}',
-							{
-								args: [ installedOnSitesQuantity ],
-								installedOnSitesQuantity,
-								components: {
-									span: <span className="plugin-details-cta__installed-text-quantity"></span>,
-								},
-								count: installedOnSitesQuantity,
-							}
-						) }
-				</div>
-				<Button onClick={ toggleDisplayManageSitePluginsModal }>
-					{ translate( 'Manage sites' ) }
-				</Button>
-			</div>
-		);
-	}
-
 	return (
 		<Fragment>
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
@@ -320,11 +300,11 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 									<>
 										{ price ? (
 											<>
-												{ price + ' ' }
+												{ price }
 												<span className="plugin-details-cta__period">{ period }</span>
 											</>
 										) : (
-											<FreePrice />
+											<FreePrice shouldUpgrade={ shouldUpgrade } />
 										) }
 									</>
 								)
@@ -335,13 +315,15 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				{ isMarketplaceProduct && ! plugin.isSaasProduct && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
-						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
+						onChange={ onIntervalSwitcherChange }
 						plugin={ plugin }
 					/>
 				) }
 				<div className="plugin-details-cta__install">
 					<PrimaryButton
 						isLoggedIn={ isLoggedIn }
+						selectedSite={ selectedSite }
+						currentUserSiteCount={ currentUserSiteCount }
 						shouldUpgrade={ shouldUpgrade }
 						hasEligibilityMessages={ hasEligibilityMessages }
 						incompatiblePlugin={ incompatiblePlugin }
@@ -350,6 +332,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						plugin={ plugin }
 						saasRedirectHRef={ saasRedirectHRef }
 						isWpcomStaging={ isWpcomStaging }
+						sitesWithPlugins={ sitesWithPlugins }
+						installedOnSitesQuantity={ installedOnSitesQuantity }
 					/>
 				</div>
 				{ isDisabledForWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
@@ -363,7 +347,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 										<a
 											target="_blank"
 											rel="noopener noreferrer"
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 										/>
 									),
 									thirdPartyTos: (
@@ -378,10 +362,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						) }
 					</div>
 				) }
-				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
 					<UpgradeRequiredContent translate={ translate } />
 				) }
-				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
 					<div className="plugin-details-cta__upgrade-required-card">
 						<UpgradeRequiredContent translate={ translate } />
 						<Button
@@ -401,6 +385,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 function PrimaryButton( {
 	isLoggedIn,
+	selectedSite,
+	currentUserSiteCount,
 	shouldUpgrade,
 	hasEligibilityMessages,
 	incompatiblePlugin,
@@ -409,6 +395,8 @@ function PrimaryButton( {
 	plugin,
 	saasRedirectHRef,
 	isWpcomStaging,
+	sitesWithPlugins,
+	installedOnSitesQuantity,
 } ) {
 	const dispatch = useDispatch();
 
@@ -427,8 +415,20 @@ function PrimaryButton( {
 		);
 	}, [ dispatch, plugin, isLoggedIn ] );
 
-	if ( ! isLoggedIn ) {
-		return <GetStartedButton onClick={ onClick } />;
+	if ( isLoggedIn && currentUserSiteCount > 0 && sitesWithPlugins.length > 0 && ! selectedSite ) {
+		return (
+			<ManageSitesButton plugin={ plugin } installedOnSitesQuantity={ installedOnSitesQuantity } />
+		);
+	}
+
+	if ( ! isLoggedIn || ! selectedSite ) {
+		return (
+			<GetStartedButton
+				onClick={ onClick }
+				plugin={ plugin }
+				isMarketplaceProduct={ isMarketplaceProduct }
+			/>
+		);
 	}
 	if ( plugin.isSaasProduct ) {
 		return (
@@ -453,15 +453,18 @@ function PrimaryButton( {
 	);
 }
 
-function GetStartedButton( { onClick } ) {
+function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
+			plugin: plugin.slug,
+			billing_period: isMarketplaceProduct ? billingPeriod : '',
 		},
-		'/start/business'
+		'/start/with-plugin'
 	);
 	return (
 		<Button
@@ -476,20 +479,59 @@ function GetStartedButton( { onClick } ) {
 	);
 }
 
-function FreePrice() {
+function ManageSitesButton( { plugin, installedOnSitesQuantity } ) {
+	const translate = useTranslate();
+	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
+	const toggleDisplayManageSitePluginsModal = useCallback( () => {
+		setDisplayManageSitePluginsModal( ( value ) => ! value );
+	}, [] );
+
+	return (
+		<>
+			<ManageSitePluginsDialog
+				plugin={ plugin }
+				isVisible={ displayManageSitePluginsModal }
+				onClose={ () => setDisplayManageSitePluginsModal( false ) }
+			/>
+			{ !! installedOnSitesQuantity && (
+				<div className="plugin-details-cta__installed-text">
+					{ translate(
+						'Installed on {{span}}%d site{{/span}}',
+						'Installed on {{span}}%d sites{{/span}}',
+						{
+							args: [ installedOnSitesQuantity ],
+							installedOnSitesQuantity,
+							components: {
+								span: <span className="plugin-details-cta__installed-text-quantity"></span>,
+							},
+							count: installedOnSitesQuantity,
+						}
+					) }
+				</div>
+			) }
+			<Button
+				className="plugin-details-cta__manage-button"
+				onClick={ toggleDisplayManageSitePluginsModal }
+			>
+				{ translate( 'Manage sites' ) }
+			</Button>
+		</>
+	);
+}
+
+function FreePrice( { shouldUpgrade } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const selectedSite = useSelector( getSelectedSite );
 
-	if ( ! isLoggedIn ) {
-		return (
-			<>
-				{ translate( 'Free' ) }
+	return (
+		<>
+			{ translate( 'Free' ) }
+			{ ( ! isLoggedIn || ! selectedSite || shouldUpgrade ) && (
 				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
-			</>
-		);
-	}
-
-	return translate( 'Free' );
+			) }
+		</>
+	);
 }
 
 function UpgradeRequiredContent( { translate } ) {

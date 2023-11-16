@@ -9,6 +9,7 @@ import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import EmptyContent from 'calypso/components/empty-content';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { withApplySiteOffset } from 'calypso/components/site-offset';
@@ -19,6 +20,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
@@ -148,6 +150,7 @@ class ActivityCardList extends Component {
 			userLocale,
 			availableActions,
 			onClickClone,
+			siteSlug,
 		} = this.props;
 
 		const today = ( applySiteOffset ?? moment )();
@@ -163,6 +166,19 @@ class ActivityCardList extends Component {
 				: 'activity-card-list__secondary-card';
 
 		const dateFormat = userLocale === 'en' ? 'MMM Do' : 'LL';
+
+		if ( pageLogs.length === 0 ) {
+			return (
+				<>
+					<EmptyContent
+						title={ translate( 'No matching events found.' ) }
+						line={ translate( 'Try adjusting your date range or activity type filters' ) }
+						action={ translate( 'Remove all filters' ) }
+						actionURL={ '/activity-log/' + siteSlug }
+					/>
+				</>
+			);
+		}
 
 		return pageLogs.map( ( { date, logs: dateLogs, hasMore }, index ) => (
 			<div key={ `activity-card-list__date-group-${ index }` }>
@@ -191,6 +207,32 @@ class ActivityCardList extends Component {
 		) );
 	}
 
+	/**
+	 * Renders the filter bar for the activity card list.
+	 *
+	 * The filter bar visibility is determined based on the `showFilter` prop and the loading state.
+	 * The filter bar becomes invisible while the `requestingRewindPolicies` or `requestingSiteFeatures` are ongoing.
+	 * @returns the Filterbar component
+	 */
+	renderFilterbar() {
+		const { filter, siteId, requestingRewindPolicies, requestingSiteFeatures, showFilter } =
+			this.props;
+
+		const isLoading = requestingRewindPolicies || requestingSiteFeatures;
+		const shouldShowFilter = showFilter && ! isLoading;
+
+		return (
+			<div className="activity-card-list__filterbar-ctn" ref={ this.filterBarRef }>
+				<Filterbar
+					siteId={ siteId }
+					filter={ filter }
+					isLoading={ isLoading }
+					isVisible={ shouldShowFilter }
+				/>
+			</div>
+		);
+	}
+
 	renderData() {
 		const {
 			applySiteOffset,
@@ -200,9 +242,7 @@ class ActivityCardList extends Component {
 			isBreakpointActive: isMobile,
 			logs,
 			pageSize,
-			showFilter,
 			showPagination,
-			siteId,
 		} = this.props;
 
 		const visibleLimitCutoffDate = Number.isFinite( visibleDays )
@@ -225,19 +265,7 @@ class ActivityCardList extends Component {
 		const showLimitUpsell = visibleLogs.length < logs.length && actualPage >= pageCount;
 
 		return (
-			<div className="activity-card-list">
-				{ showFilter && (
-					<div className="activity-card-list__filterbar-ctn" ref={ this.filterBarRef }>
-						<Filterbar
-							{ ...{
-								siteId,
-								filter,
-								isLoading: false,
-								isVisible: true,
-							} }
-						/>
-					</div>
-				) }
+			<>
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile }
@@ -268,7 +296,7 @@ class ActivityCardList extends Component {
 						total={ visibleLogs.length }
 					/>
 				) }
-			</div>
+			</>
 		);
 	}
 
@@ -278,7 +306,6 @@ class ActivityCardList extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="activity-card-list__loading-placeholder">
-				<div className="filterbar" />
 				{ showPagination && (
 					<div
 						className={ classNames( 'activity-card-list__pagination-top', {
@@ -332,15 +359,18 @@ class ActivityCardList extends Component {
 			return this.renderLoading();
 		}
 
+		const isLoading = ! logs || requestingRewindPolicies;
+
 		return (
 			<>
 				<QueryRewindPolicies siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
 				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
-
-				{ ( ! logs || requestingRewindPolicies ) && this.renderLoading() }
-				{ logs && this.renderData() }
+				<div className="activity-card-list">
+					{ this.renderFilterbar() }
+					{ isLoading ? this.renderLoading() : this.renderData() }
+				</div>
 			</>
 		);
 	}
@@ -357,6 +387,7 @@ const mapStateToProps = ( state ) => {
 	const rewindPoliciesRequestStatus = getRewindPoliciesRequestStatus( state, siteId );
 
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+	const requestingSiteFeatures = isRequestingSiteFeatures( state, siteId );
 
 	return {
 		filter,
@@ -367,6 +398,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		userLocale,
 		isAtomic,
+		isRequestingSiteFeatures: requestingSiteFeatures,
 	};
 };
 

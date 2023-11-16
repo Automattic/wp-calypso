@@ -6,10 +6,7 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
 	"client_slug": false,
-	"discover_blog_id": 53424024,
-	"discover_feed_id": 41325786,
 	"daily_post_blog_id": 489937,
-	"discover_logged_out_redirect_url": false,
 	"facebook_api_key": false,
 	"features": {},
 	"google_analytics_key": false,
@@ -33,7 +30,7 @@
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
-	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
+	"dsp_widget_js_src": "https://dsp.wp.com/widget.js",
 	"advertising_dashboard_path_prefix": "/advertising",
 	"zendesk_presales_chat_key": false,
 	"zendesk_presales_chat_key_akismet": false,
@@ -205,6 +202,7 @@
 		"simple",
 		"woocommerce-install",
 		"with-theme",
+		"with-plugin",
 		"with-theme-assembler",
 		"free",
 		"personal",
@@ -223,7 +221,8 @@
 		"starter",
 		"domain",
 		"onboarding-2023-pricing-grid",
-		"domain-transfer"
+		"domain-transfer",
+		"site-selected"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

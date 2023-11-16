@@ -2,6 +2,7 @@ import { Category } from '@automattic/design-picker';
 
 const CATEGORY_BLOG = 'blog';
 const CATEGORY_STORE = 'store';
+const CATEGORY_BUSINESS = 'business';
 
 /**
  * Ensures the category appears at the top of the design category list
@@ -22,6 +23,7 @@ function makeSortCategoryToTop( slug: string ) {
 
 const sortBlogToTop = makeSortCategoryToTop( CATEGORY_BLOG );
 const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
+const sortBusinessToTop = makeSortCategoryToTop( CATEGORY_BUSINESS );
 
 export function getCategorizationOptions( intent: string ) {
 	const result = {
@@ -43,6 +45,12 @@ export function getCategorizationOptions( intent: string ) {
 				...result,
 				defaultSelection: CATEGORY_STORE,
 				sort: sortStoreToTop,
+			};
+		case 'build':
+			return {
+				...result,
+				defaultSelection: CATEGORY_BUSINESS,
+				sort: sortBusinessToTop,
 			};
 		default:
 			return {

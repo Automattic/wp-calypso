@@ -1,0 +1,77 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.l-block {
+	padding: 5rem 0;
+
+	@media (max-width: $break-small) {
+		padding: 2.5rem 0;
+	}
+
+	&.is-mono-bg {
+		background-color: #e9eff5;
+	}
+
+	&.animate {
+		animation: l-block-fade-in 250ms ease-in;
+	}
+
+	&.width-small {
+		.l-block-wrapper {
+			max-width: 600px;
+		}
+	}
+
+	&.width-medium {
+		.l-block-wrapper {
+			max-width: 1015px;
+		}
+	}
+}
+
+.l-block-wrapper {
+	max-width: 1224px;
+	margin: 0 auto;
+	padding: 0 1.5rem;
+
+	.l-block-col-2 {
+		gap: 5rem;
+		display: flex;
+		justify-content: space-between;
+
+		@media (max-width: $break-small) {
+			gap: 2.5rem;
+		}
+	}
+
+	.l-block-col-2 .l-block-content {
+		box-sizing: border-box;
+		width: 50%;
+	}
+
+	@media (max-width: $break-medium) {
+		.l-block-col-2 {
+			flex-direction: column;
+
+			.l-block-content {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.l-block-section {
+	padding: 1.5rem 0;
+
+	@media (max-width: $break-small) {
+		padding: 1rem 0;
+	}
+}
+
+@keyframes l-block-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

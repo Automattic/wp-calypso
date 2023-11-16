@@ -3,16 +3,35 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .subscribers.main {
-	padding: 0 32px;
-
 	.subscribers__section {
 		margin-bottom: 64px;
 	}
 
 	.add-subscribers-button {
-		display: flex;
-		gap: 10px;
-		margin-right: 24px;
+		.gridicon {
+			margin-right: 0;
+		}
+
+		.add-subscribers-button-text {
+			margin-left: 4px;
+			display: none;
+		}
+
+		@media ( min-width: $break-small ) {
+			.add-subscribers-button-text {
+				display: inline;
+			}
+		}
+	}
+	padding: 0 32px;
+
+	@media ( max-width: $break-small ) {
+		padding: 0 16px;
+	}
+	.navigation-header {
+		@media ( max-width: $break-small ) {
+			padding: 16px 0;
+		}
 	}
 }
 
@@ -21,6 +40,7 @@
 	margin-bottom: 30px;
 	font-size: $font-title-small;
 	line-height: 26px;
+
 
 	.subscribers__title {
 		font-weight: 500;
@@ -39,7 +59,6 @@
 .is-section-subscribers .layout__content {
 	padding-left: var(--sidebar-width-max);
 	padding-right: 0;
-	padding-top: calc(var(--masterbar-height) + 71px);
 	padding-bottom: 0;
 }
 

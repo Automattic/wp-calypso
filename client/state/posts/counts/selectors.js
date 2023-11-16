@@ -5,7 +5,6 @@ import 'calypso/state/posts/init';
 
 /**
  * Returns true if post counts request is in progress, or false otherwise.
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  postType Post type
@@ -17,7 +16,6 @@ export function isRequestingPostCounts( state, siteId, postType ) {
 
 /**
  * Returns post counts for all users on a site, filtered by post type.
- *
  * @param  {Object} state    Global state tree
  * @param  {number|undefined} siteId   Site ID
  * @param  {string} postType Post type
@@ -30,7 +28,6 @@ export function getAllPostCounts( state, siteId, postType ) {
 /**
  * Returns post count for all users on a site, filtered by post type and
  * status.
- *
  * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
@@ -48,7 +45,6 @@ export function getAllPostCount( state, siteId, postType, status ) {
 
 /**
  * Returns post counts for current user on a site, filtered by post type.
- *
  * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
@@ -61,7 +57,6 @@ export function getMyPostCounts( state, siteId, postType ) {
 /**
  * Returns post count for current user on a site, filtered by post type and
  * status.
- *
  * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
@@ -80,7 +75,6 @@ export function getMyPostCount( state, siteId, postType, status ) {
 /**
  * Returns an object of normalized post counts, summing publish/private and
  * pending/draft counts.
- *
  * @param  {Object}   state         Global state tree
  * @param  {number}   siteId        Site ID
  * @param  {string}   postType      Post type
@@ -124,7 +118,6 @@ export function getNormalizedPostCounts(
 /**
  * Returns an object of normalized post counts for current user, summing
  * publish/private and pending/draft counts.
- *
  * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type

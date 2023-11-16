@@ -23,6 +23,7 @@ class MxRecord extends Component {
 		const isNameValid = isValid( 'name' );
 		const isDataValid = isValid( 'data' );
 		const isAuxValid = isValid( 'aux' );
+		const isTTLValid = isValid( 'ttl' );
 
 		return (
 			<div className={ classes }>
@@ -83,6 +84,24 @@ class MxRecord extends Component {
 					/>
 					{ ! isAuxValid && (
 						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />
+					) }
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel>TTL (time to live)</FormLabel>
+					<FormTextInput
+						name="ttl"
+						isError={ ! isTTLValid }
+						onChange={ onChange }
+						value={ fieldValues.ttl }
+						defaultValue={ 3600 }
+						placeholder={ 3600 }
+					/>
+					{ ! isTTLValid && (
+						<FormInputValidation
+							text={ translate( 'Invalid TTL value - Use a value between 300 and 86400' ) }
+							isError
+						/>
 					) }
 				</FormFieldset>
 			</div>

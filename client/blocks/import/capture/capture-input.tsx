@@ -40,7 +40,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
 		if ( urlValue ) {
 			const isValid = CAPTURE_URL_RGX.test( urlValue );
-			if ( isValid ) {
+			if ( isValid && ! hasError ) {
 				onInputEnter( urlValue );
 				setSubmitted( true );
 			} else {
@@ -119,9 +119,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton type="submit" size={ 0 }>
-				{ translate( 'Continue' ) }
-			</NextButton>
+			<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
 		</form>
 	);
 };

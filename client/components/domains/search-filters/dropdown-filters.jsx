@@ -1,16 +1,15 @@
 import config from '@automattic/calypso-config';
-import { Button, Popover } from '@automattic/components';
+import { Button, Count, Popover } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import Count from 'calypso/components/count';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import MaterialIcon from 'calypso/components/material-icon';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 
@@ -150,11 +149,9 @@ export class DropdownFilters extends Component {
 					aria-describedby={ this.props.popoverId }
 					aria-expanded={ this.state.showPopover }
 					aria-haspopup="true"
-					borderless
 					ref={ this.button }
 					onClick={ this.togglePopover }
 				>
-					<MaterialIcon icon="filter_list" />
 					<span className="search-filters__dropdown-filters-button-text">
 						{ this.props.translate( 'Filter' ) }
 						{ hasFilterValues && <Count primary count={ this.getFiltercounts() } /> }
@@ -173,7 +170,6 @@ export class DropdownFilters extends Component {
 
 	/**
 	 * Show the first 5 TLDs from the TLD endpoint as recommended and sort the rest alphabetically
-	 *
 	 * @param availableTlds array of TLDs
 	 */
 	addTldsLabels = ( availableTlds ) => {
@@ -207,7 +203,9 @@ export class DropdownFilters extends Component {
 				id={ popoverId }
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
-				position="bottom left"
+				position={ isWithinBreakpoint( '>660px' ) ? 'bottom' : 'bottom left' }
+				{ ...( isWithinBreakpoint( '>660px' ) && { relativePosition: { left: -238 } } ) }
+				hideArrow
 			>
 				{ isLengthFilterEnabled && (
 					<ValidationFieldset

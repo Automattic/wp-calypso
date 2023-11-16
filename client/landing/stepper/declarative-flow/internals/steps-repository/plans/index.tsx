@@ -4,15 +4,12 @@ import {
 	isNewHostedSiteCreationFlow,
 	StepContainer,
 } from '@automattic/onboarding';
-import { useSelector } from 'react-redux';
-import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { ProvidedDependencies, Step } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const plans: Step = function Plans( { navigation, flow } ) {
-	const hostingFlow = useSelector( isInHostingFlow );
 	const { goBack, submit } = navigation;
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
@@ -27,8 +24,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 		submit?.( providedDependencies );
 	};
 
-	const isAllowedToGoBack =
-		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && hostingFlow );
+	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
 
 	return (
 		<StepContainer
@@ -40,7 +36,13 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
 			hideBack={ ! isAllowedToGoBack }
-			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
+			stepContent={
+				<PlansWrapper
+					flowName={ flow }
+					onSubmit={ handleSubmit }
+					shouldIncludeFAQ={ isNewHostedSiteCreationFlow( flow ) }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

@@ -66,7 +66,6 @@ function isValidSerializedState( schema, reducer, state ) {
  * The wrapped reducer implements the `deserialize` method and checks if the persisted state
  * is a valid state. If yes, it returns the persisted state (and calls the inner reducer's
  * `deserialize` method if defined). Otherwise it returns the initial state of the inner reducer.
- *
  * @example
  * ```js
  * const ageReducer = ( state = 0, action ) => GROW === action.type ? state + 1 : state

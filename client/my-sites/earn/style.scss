@@ -1,5 +1,48 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+
+.earn__launchpad {
+	padding: 4px 20px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	margin-bottom: 16px;
+	display: flex;
+	gap: 30px;
+	background: #fff;
+
+	.earn__launchpad-header {
+		padding: 20px 0;
+		.earn__launchpad-progress-bar-container {
+			margin: 0 0 10px 6px;
+		}
+		.earn__launchpad-title {
+			font-weight: 600;
+		}
+		.earn__launchpad-description {
+			margin-bottom: 0;
+			color: var(--color-neutral-60);
+			font-size: $font-body-small;
+		}
+	}
+	.launchpad__checklist-wrapper {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		.checklist__tasks {
+			flex: 1;
+			.checklist-item__task-content {
+				padding: 12px 0;
+				&.is-placeholder:nth-of-type(3),
+				&.is-placeholder:nth-of-type(4) {
+					display: none;
+				}
+				.checklist-item__text {
+					font-weight: 400;
+				}
+			}
+		}
+	}
+}
 
 .earn .promo-section__promos img {
 	width: 48px;
@@ -38,6 +81,9 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 .earn .formatted-header__subtitle a {
 	text-decoration: underline;
 }
+.earn .promo-card a.button {
+	text-decoration: none;
+}
 
 .earn__notes {
 	clear: both;
@@ -49,4 +95,18 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	em {
 		font-weight: 600;
 	}
+}
+
+// Override heading/SectionNav styles for Ads Dashboard
+.earn__ads-header {
+	margin: 20px 0;
+
+	h2.formatted-header__title {
+		margin: 0 0 20px;
+	}
+}
+
+h3.highlight-cards-heading,
+h3.ads__table-header-title {
+	font-size: 1.25rem;
 }

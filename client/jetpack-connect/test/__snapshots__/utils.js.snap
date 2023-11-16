@@ -15,6 +15,7 @@ Object {
   "isPopup": false,
   "jpVersion": null,
   "nonce": "foobar",
+  "plugin_name": null,
   "redirectAfterAuth": null,
   "redirectUri": "https://yourjetpack.blog/wp-admin/admin.php",
   "scope": "administrator:34579bf2a3185a47d1b31aab30125d",

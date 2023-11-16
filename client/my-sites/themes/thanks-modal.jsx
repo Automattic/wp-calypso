@@ -17,6 +17,7 @@ import {
 	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
+	getIsLivePreviewStarted,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
 	hasActivatedTheme,
@@ -65,6 +66,12 @@ class ThanksModal extends Component {
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.isLivePreviewStarted ) {
+			return {
+				isVisible: true,
+				wasInstalling: false,
+			};
+		}
 		if ( nextProps.shouldRedirectToThankYouPage ) {
 			return {
 				isVisible: false,
@@ -234,12 +241,18 @@ class ThanksModal extends Component {
 		);
 	};
 
-	getEditSiteLabel = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
+	getLoadingLabel = () => {
+		const { isLivePreviewStarted } = this.props;
 
-		if ( ! hasActivated ) {
-			return this.props.translate( 'Activating theme…' );
+		if ( isLivePreviewStarted ) {
+			return this.props.translate( 'Preparing theme preview…' );
 		}
+
+		return this.props.translate( 'Activating theme…' );
+	};
+
+	getEditSiteLabel = () => {
+		const { shouldEditHomepageWithGutenberg, isFSEActive } = this.props;
 
 		if ( isFSEActive ) {
 			return (
@@ -272,13 +285,8 @@ class ThanksModal extends Component {
 		</span>
 	);
 
-	getButtons = () => {
-		const {
-			shouldEditHomepageWithGutenberg,
-			hasActivated,
-			isFSEActive,
-			doesThemeBundleUsableSoftware,
-		} = this.props;
+	getButtons = ( shouldDisplayContent ) => {
+		const { shouldEditHomepageWithGutenberg, isFSEActive } = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
 			? {
@@ -287,41 +295,55 @@ class ThanksModal extends Component {
 					onClick: this.trackVisitSite,
 					href: this.props.siteUrl,
 					target: '_blank',
+					disabled: false,
 			  }
 			: {
 					action: 'learn',
 					label: this.props.translate( 'Learn about this theme' ),
 					onClick: this.learnThisTheme,
 					href: this.props.detailsUrl,
+					disabled: false,
 			  };
 
-		return [
-			{
-				...firstButton,
-				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
-			},
-			{
-				action: 'customizeSite',
-				label: this.getEditSiteLabel(),
-				isPrimary: true,
-				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
-				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
-				href: this.props.customizeUrl,
-				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
-			},
-		];
+		const primaryButton = {
+			action: 'customizeSite',
+			label: this.getEditSiteLabel(),
+			isPrimary: true,
+			disabled: false,
+			onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
+			href: this.props.customizeUrl,
+			target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
+		};
+
+		/**
+		 * It does not make sense to show "Learn about this theme" or "View site" buttons
+		 * in such a short loading moment.
+		 */
+		if ( ! shouldDisplayContent ) {
+			return [
+				{
+					...primaryButton,
+					label: this.getLoadingLabel(),
+					disabled: true,
+				},
+			];
+		}
+
+		return [ firstButton, primaryButton ];
 	};
 
 	render() {
-		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware } = this.props;
+		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware, isLivePreviewStarted } =
+			this.props;
 
-		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
+		const shouldDisplayContent =
+			hasActivated && currentTheme && ! doesThemeBundleUsableSoftware && ! isLivePreviewStarted;
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
 				isVisible={ this.state.isVisible }
-				buttons={ this.getButtons() }
+				buttons={ this.getButtons( shouldDisplayContent ) }
 				onClose={ this.onCloseModal }
 			>
 				{ shouldDisplayContent ? this.renderContent() : this.renderLoading() }
@@ -356,6 +378,8 @@ const ConnectedThanksModal = connect(
 
 		const activatingThemeId = state.themes.activationRequests?.themeId;
 
+		const isLivePreviewStarted = getIsLivePreviewStarted( state );
+
 		return {
 			siteId,
 			siteUrl,
@@ -371,11 +395,12 @@ const ConnectedThanksModal = connect(
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
-			isActivating: !! isActivatingTheme( state, siteId ),
-			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
+			isActivating: !! isActivatingTheme( state, siteId ),
 			isFSEActive,
+			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
+			isLivePreviewStarted,
+			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
 	{

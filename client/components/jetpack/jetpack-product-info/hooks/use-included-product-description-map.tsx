@@ -1,6 +1,4 @@
 import {
-	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
-	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -12,8 +10,9 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
-	JETPACK_STARTER_PLANS,
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_STATS_PRODUCTS,
+	JETPACK_CREATOR_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -30,7 +29,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 	return useMemo( (): Record< string, ProductDescription > => {
 		const backupDescription = translate(
-			'Real-time backups as you edit. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
+			'Real-time backups as you edit. {{span}}30-day{{/span}} activity log archive*. Unlimited one-click restores.',
 			{
 				components: {
 					span: <span />,
@@ -38,7 +37,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			}
 		);
 		const backupT2Description = translate(
-			'Real-time backups as you edit. {{span}}1-year{{/span}} activity log archive. Unlimited one-click restores.',
+			'Real-time backups as you edit. {{span}}1-year{{/span}} activity log archive*. Unlimited one-click restores.',
 			{
 				components: {
 					span: <span />,
@@ -62,21 +61,8 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		const crmDescription = translate(
 			'Manage your sales funnel. Entrepreneur plan with 30 extensions.'
 		);
-
-		const INCLUDED_PRODUCT_DESCRIPTION_T0_MAP: Record< string, ProductDescription > = {
-			...setProductDescription(
-				[ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_BACKUP_T0_MONTHLY ],
-				{
-					value: backupDescription,
-					calloutText: translate( '1GB cloud storage' ),
-				}
-			),
-
-			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
-				value: antiSpamDescription,
-				calloutText: translate( '1k API calls/mo' ),
-			} ),
-		};
+		const statsDescription = translate( 'Simple, yet powerful stats to grow your site.' );
+		const creatorDescription = translate( 'Create, grow, and monetize your audience.' );
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, ProductDescription > = {
 			...setProductDescription(
@@ -122,23 +108,24 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, ProductDescription > = {
 			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
 
+			...setProductDescription( JETPACK_STATS_PRODUCTS, {
+				value: statsDescription,
+			} ),
+
 			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
 				value: antiSpamDescription,
 				calloutText: translate( '60k API calls/mo' ),
 			} ),
+
+			...setProductDescription( JETPACK_CREATOR_PRODUCTS, {
+				value: creatorDescription,
+			} ),
 		};
 
 		const productMap = ( () => {
-			const isJetpackStarterPlan = ( JETPACK_STARTER_PLANS as ReadonlyArray< string > ).includes(
-				productSlug
-			);
 			const isJetpackCompletePlan = ( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
 				productSlug
 			);
-
-			if ( isJetpackStarterPlan ) {
-				return INCLUDED_PRODUCT_DESCRIPTION_T0_MAP;
-			}
 
 			if ( isJetpackCompletePlan ) {
 				return INCLUDED_PRODUCT_DESCRIPTION_T2_MAP;

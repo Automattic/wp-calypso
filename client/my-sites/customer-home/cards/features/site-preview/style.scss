@@ -1,0 +1,81 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.home-site-preview {
+	.home-site-preview__thumbnail-wrapper {
+		flex-grow: 1;
+		overflow: hidden;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		max-height: 235px;
+		cursor: pointer;
+		transition: all 200ms ease-in-out;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 3px;
+
+		&:hover,
+		&:focus {
+			box-shadow: 0 0 0 1px var(--color-border-subtle), rgba(0, 0, 0, 0.2) 0 7px 30px -10px;
+			.home-site-preview__thumbnail {
+				opacity: 0.8;
+			}
+
+			.home-site-preview__thumbnail-label {
+				opacity: 1;
+				animation: home-site-preview__thumbnail-label 150ms ease-in-out;
+			}
+		}
+
+		.home-site-preview__thumbnail {
+			display: block;
+			height: 235px;
+			pointer-events: none;
+			width: 100%;
+			iframe {
+				// The idea is to zoom-out the iframe to get most of the content
+				// into the thumbnail and then we scale it down so it remains the
+				// size of the parent component (357% * 0.28 ~= 100%)
+				min-height: 375%;
+				width: 357%;
+				max-width: 357%;
+				transform: scale(0.28);
+				transform-origin: top left;
+				translate: 0 -10px;
+			}
+		}
+
+		.home-site-preview__thumbnail-label {
+			opacity: 0;
+			position: absolute;
+			z-index: 1;
+		}
+	}
+
+	.home-site-preview__remove-pointer {
+		cursor: default;
+	}
+
+	.home-site-preview__action-bar {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 16px 0 0 0;
+
+		.home-site-preview__site-info {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			max-width: calc(100% - 24px);
+
+			.home-site-preview__info-title {
+				color: var(--color-neutral-80);
+				flex: 1 1 auto;
+				font-family: inherit;
+				font-size: $font-body;
+				font-weight: 500;
+				line-height: 24px;
+			}
+		}
+	}
+}

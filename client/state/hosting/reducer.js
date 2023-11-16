@@ -3,6 +3,8 @@ import {
 	HOSTING_GEO_AFFINITY_REQUEST,
 	HOSTING_GEO_AFFINITY_SET,
 	HOSTING_PHP_VERSION_SET,
+	HOSTING_WP_VERSION_REQUEST,
+	HOSTING_WP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
 	HOSTING_SSH_ACCESS_SET,
@@ -76,6 +78,26 @@ const phpVersion = ( state = null, { type, version } ) => {
 	return state;
 };
 
+const isFetchingWpVersion = ( state = false, { type } ) => {
+	switch ( type ) {
+		case HOSTING_WP_VERSION_REQUEST:
+			return true;
+		case HOSTING_WP_VERSION_SET:
+			return false;
+	}
+
+	return state;
+};
+
+const wpVersion = ( state = null, { type, version } ) => {
+	switch ( type ) {
+		case HOSTING_WP_VERSION_SET:
+			return version;
+	}
+
+	return state;
+};
+
 const sshAccess = ( state = null, { type, status } ) => {
 	switch ( type ) {
 		case HOSTING_SSH_ACCESS_SET:
@@ -126,6 +148,8 @@ const atomicHostingReducer = combineReducers( {
 	sshAccess,
 	isLoadingSshAccess,
 	staticFile404,
+	isFetchingWpVersion,
+	wpVersion,
 	lastCacheClearTimestamp,
 } );
 

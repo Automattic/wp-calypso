@@ -1,4 +1,5 @@
-import React from 'react';
+import usePatternInlineCss from '../hooks/use-pattern-inline-css';
+import usePatternMinHeightVh from '../hooks/use-pattern-min-height-vh';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
 
@@ -8,8 +9,9 @@ interface Props {
 	viewportHeight?: number;
 	minHeight?: number;
 	maxHeight?: 'none' | number;
-	minHeightFor100vh?: number;
 	placeholder?: JSX.Element;
+	prependHtml?: string;
+	shouldShufflePosts: boolean;
 }
 
 const PatternRenderer = ( {
@@ -18,25 +20,27 @@ const PatternRenderer = ( {
 	viewportHeight,
 	minHeight,
 	maxHeight,
-	minHeightFor100vh,
+	prependHtml = '',
+	shouldShufflePosts,
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
+	const patternHtml = usePatternMinHeightVh( prependHtml + pattern?.html, viewportHeight );
+	const inlineCss = usePatternInlineCss( patternId, patternHtml, shouldShufflePosts );
 
 	return (
 		<BlockRendererContainer
+			key={ pattern?.ID }
 			styles={ pattern?.styles ?? [] }
 			scripts={ pattern?.scripts ?? '' }
 			viewportWidth={ viewportWidth }
-			viewportHeight={ viewportHeight }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }
-			isMinHeight100vh={ pattern?.html?.includes( 'min-height:100vh' ) }
-			minHeightFor100vh={ minHeightFor100vh }
+			inlineCss={ inlineCss }
 		>
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: pattern?.html ?? '' } }
+				dangerouslySetInnerHTML={ { __html: patternHtml ?? '' } }
 			/>
 		</BlockRendererContainer>
 	);

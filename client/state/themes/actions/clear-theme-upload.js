@@ -5,7 +5,6 @@ import 'calypso/state/themes/init';
 /**
  * Clears any state remaining from a previous
  * theme upload to the given site.
- *
  * @param {number} siteId -- site to clear state for
  * @returns {Object} the action object to dispatch
  */

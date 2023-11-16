@@ -406,7 +406,7 @@ class TermTreeSelectorList extends Component {
 					{ ( { width } ) => (
 						<List
 							ref={ this.setListRef }
-							width={ width }
+							width={ width - 2 } // -2 for border
 							height={ isSmall ? this.getCompactContainerHeight() : height }
 							onRowsRendered={ this.setRequestedPages }
 							rowCount={ rowCount }

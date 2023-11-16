@@ -3,16 +3,22 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import version_compare from 'calypso/lib/version-compare';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	getSiteSlug,
+	getJetpackStatsAdminVersion,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
-import StatsPageHeader from '../stats-page-header';
 import PageViewTracker from '../stats-page-view-tracker';
 import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
@@ -37,8 +43,14 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	// Run-time configuration.
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isChartVisible = config.isEnabled( 'stats/subscribers-chart-section' );
+	// Always show chart for Calypso, and check compatibility for Odyssey.
+	const isChartVisible =
+		! isOdysseyStats ||
+		( statsAdminVersion && version_compare( statsAdminVersion, '0.11.0-alpha', '>=' ) );
 
 	const today = new Date().toISOString().slice( 0, 10 );
 
@@ -60,10 +72,13 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className="stats">
-				<StatsPageHeader
-					page="subscribers"
-					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
-				/>
+				<NavigationHeader
+					className="stats__section-header modernized-header"
+					title={ translate( 'Jetpack Stats' ) }
+					subtitle={ translate( "View your site's performance and learn from trends." ) }
+					screenReader={ navItems.subscribers?.label }
+					navigationItems={ [] }
+				></NavigationHeader>
 				{ siteId && (
 					<div>
 						<DomainTip

@@ -29,6 +29,10 @@ function validateField( { name, value, type, domainName } ) {
 			const intValue = parseInt( value, 10 );
 			return intValue >= 0 && intValue <= 65535;
 		}
+		case 'ttl': {
+			const intValue = parseInt( value, 10 );
+			return intValue >= 300 && intValue <= 86400;
+		}
 		case 'service':
 			return value.match( /^[^\s.]+$/ );
 		default:
@@ -37,7 +41,9 @@ function validateField( { name, value, type, domainName } ) {
 }
 
 function isValidDomain( name, type ) {
-	if ( name.length > 253 ) {
+	const maxLength = name.endsWith( '.' ) ? 254 : 253;
+
+	if ( name.length > maxLength ) {
 		return false;
 	}
 
@@ -45,7 +51,7 @@ function isValidDomain( name, type ) {
 		return true;
 	}
 
-	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
+	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}(\.)?$/i.test( name );
 }
 
 function isValidName( name, type, domainName ) {
@@ -57,6 +63,10 @@ function isValidName( name, type, domainName ) {
 		case 'A':
 		case 'AAAA':
 			return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( name );
+		case 'CNAME':
+			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name ) || name === '*';
+		case 'TXT':
+			return /^(\*\.|)([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
 		default:
 			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
 	}
@@ -68,11 +78,12 @@ function isValidData( data, type ) {
 			return data.match( /^(\d{1,3}\.){3}\d{1,3}$/ );
 		case 'AAAA':
 			return data.match( /^[a-f0-9:]+$/i );
+		case 'ALIAS':
 		case 'CNAME':
 		case 'MX':
 			return isValidDomain( data );
 		case 'TXT':
-			return data.length > 0 && data.length < 256;
+			return data.length > 0 && data.length <= 2048;
 	}
 }
 
@@ -113,7 +124,7 @@ function isRootDomain( name, domainName ) {
 }
 
 function canBeRootDomain( type ) {
-	return [ 'A', 'AAAA', 'MX', 'SRV', 'TXT' ].includes( type );
+	return [ 'A', 'AAAA', 'ALIAS', 'MX', 'SRV', 'TXT' ].includes( type );
 }
 
 function getFieldWithDot( field ) {

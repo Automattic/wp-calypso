@@ -5,7 +5,6 @@ import createElementFromString from '../create-element-from-string';
 /**
  * Given a media string, attempts to parse as a shortcode and returns an
  * object containing all detected values.
- *
  * @param  {string} node    Media object to parse
  * @param  {Object} _parsed In recursion, the known values
  * @returns {Object}         Object of all detected values
@@ -24,7 +23,6 @@ function parseAsShortcode( node, _parsed ) {
 /**
  * Given a media string, attempts to parse as an HTMLElement and returns an
  * object containing all detected values.
- *
  * @param  {string} node    Media object to parse
  * @param  {Object} _parsed In recursion, the known values
  * @returns {Object}         Object of all detected values
@@ -43,7 +41,6 @@ function parseAsElement( node, _parsed ) {
 
 /**
  * Given a media string, returns an object containing all detected values.
- *
  * @param  {string} node    Media object to parse
  * @param  {Object} _parsed In recursion, the known values
  * @returns {Object}         Object of all detected values

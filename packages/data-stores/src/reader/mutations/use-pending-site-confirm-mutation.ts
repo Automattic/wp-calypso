@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
+import { siteSubscriptionsQueryKeyPrefix } from '../queries';
+import { subscriptionsCountQueryKeyPrefix } from '../queries/use-subscriptions-count-query';
 import { PendingSiteSubscriptionsResult, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type PendingSiteConfirmParams = {
@@ -13,9 +15,11 @@ type PendingSiteConfirmResponse = {
 };
 
 const usePendingSiteConfirmMutation = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const countCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
+	const subscriptionsCacheKey = useCacheKey( siteSubscriptionsQueryKeyPrefix );
+	const countCacheKey = useCacheKey( subscriptionsCountQueryKeyPrefix );
+
 	return useMutation( {
 		mutationFn: async ( params: PendingSiteConfirmParams ) => {
 			if ( ! params.activation_key ) {
@@ -26,8 +30,10 @@ const usePendingSiteConfirmMutation = () => {
 			}
 
 			const response = await callApi< PendingSiteConfirmResponse >( {
+				apiNamespace: 'wpcom/v2',
 				path: `/pending-blog-subscriptions/${ params.activation_key }/confirm`,
 				method: 'POST',
+				isLoggedIn,
 				apiVersion: '2',
 			} );
 			if ( ! response.confirmed ) {
@@ -41,6 +47,7 @@ const usePendingSiteConfirmMutation = () => {
 		},
 		onMutate: async ( params ) => {
 			await queryClient.cancelQueries( [ 'read', 'pending-site-subscriptions', isLoggedIn ] );
+			await queryClient.cancelQueries( subscriptionsCacheKey );
 			await queryClient.cancelQueries( countCacheKey );
 
 			const previousPendingSiteSubscriptions =
@@ -95,6 +102,7 @@ const usePendingSiteConfirmMutation = () => {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( [ 'read', 'pending-site-subscriptions', isLoggedIn ] );
+			queryClient.invalidateQueries( subscriptionsCacheKey );
 			queryClient.invalidateQueries( countCacheKey );
 		},
 	} );

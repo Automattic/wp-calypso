@@ -4,13 +4,13 @@ import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Gravatar from 'calypso/components/gravatar';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 
 import './form.scss';
@@ -60,6 +60,14 @@ class PostCommentForm extends Component {
 	};
 
 	handleTextChange = ( event ) => {
+		if ( ! this.props.isLoggedIn ) {
+			return this.props.registerLastActionRequiresLogin( {
+				type: 'comment',
+				siteId: this.props.post.site_ID,
+				postId: this.props.post.ID,
+				commentId: this.props.placeholderId,
+			} );
+		}
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( event.target.value );
 	};
@@ -73,6 +81,17 @@ class PostCommentForm extends Component {
 		if ( ! commentText ) {
 			this.resetCommentText(); // Clean up any newlines
 			return false;
+		}
+
+		// Do not submit form if the user is not logged in
+		if ( ! this.props.isLoggedIn ) {
+			return this.props.registerLastActionRequiresLogin( {
+				type: 'comment-submit',
+				siteId: this.props.post.site_ID,
+				postId: this.props.post.ID,
+				commentId: this.props.placeholderId,
+				commentText: commentText,
+			} );
 		}
 
 		if ( this.props.placeholderId ) {
@@ -89,6 +108,7 @@ class PostCommentForm extends Component {
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
 			parent_post_id: this.props.parentCommentId ? this.props.parentCommentId : undefined,
+			is_inline_comment: this.props.isInlineComment,
 		} );
 
 		this.resetCommentText();
@@ -116,12 +136,7 @@ class PostCommentForm extends Component {
 		const { post, error, errorType, translate } = this.props;
 
 		// Don't display the form if comments are closed
-		if (
-			post &&
-			post.discussion &&
-			post.discussion.comments_open === false &&
-			! isCommentableDiscoverPost( post )
-		) {
+		if ( post && post.discussion && post.discussion.comments_open === false ) {
 			// If we already have some comments, show a 'comments closed message'
 			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
 				return <p className="comments__form-closed">{ translate( 'Comments closed.' ) }</p>;
@@ -146,7 +161,7 @@ class PostCommentForm extends Component {
 					<Gravatar user={ this.props.currentUser } />
 					<AutoresizingFormTextarea
 						value={ this.getCommentText() }
-						placeholder={ translate( 'Enter your comment here…' ) }
+						placeholder={ translate( 'Add a comment…' ) }
 						onKeyUp={ this.handleKeyUp }
 						onKeyDown={ this.handleKeyDown }
 						onFocus={ this.handleFocus }
@@ -175,9 +190,11 @@ PostCommentForm.propTypes = {
 	commentText: PropTypes.string,
 	onUpdateCommentText: PropTypes.func.isRequired,
 	onCommentSubmit: PropTypes.func,
+	isInlineComment: PropTypes.bool,
+	isLogedIn: PropTypes.bool,
 
 	// connect()ed props:
-	currentUser: PropTypes.object.isRequired,
+	currentUser: PropTypes.object,
 	writeComment: PropTypes.func.isRequired,
 	deleteComment: PropTypes.func.isRequired,
 	replyComment: PropTypes.func.isRequired,
@@ -191,6 +208,7 @@ PostCommentForm.defaultProps = {
 export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ writeComment, deleteComment, replyComment }
+	{ writeComment, deleteComment, replyComment, registerLastActionRequiresLogin }
 )( localize( PostCommentForm ) );

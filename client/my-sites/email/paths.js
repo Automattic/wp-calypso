@@ -6,7 +6,6 @@ export const emailManagementAllSitesPrefix = '/email/all';
 
 /**
  * Builds a URL query string from an object. Handles null values.
- *
  * @param {Object} parameters - optional path prefix
  * @returns {string} the corresponding query string
  */
@@ -28,8 +27,7 @@ function resolveRootPath( relativeTo ) {
 /**
  * Retrieves the url of the Add New Mailboxes page for email forwarding:
  *
- *   https://wordpress.com/email/:domainName/forwarding/add/:siteName
- *
+ * https://wordpress.com/email/:domainName/forwarding/add/:siteName
  * @param {string} siteSlug - slug of the current site
  * @param {string} domainName - domain name to add forwarding for
  * @param {string} relativeTo - optional path prefix
@@ -48,11 +46,10 @@ export function emailManagementAddEmailForwards(
 /**
  * Retrieves the url of the Add New Mailboxes page either for G Suite or Google Workspace:
  *
- *   https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
- *   https://wordpress.com/email/:domainName/gsuite/add-users/:siteName
- *   https://wordpress.com/email/google-workspace/add-users/:siteName
- *   https://wordpress.com/email/gsuite/add-users/:siteName
- *
+ * https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
+ * https://wordpress.com/email/:domainName/gsuite/add-users/:siteName
+ * https://wordpress.com/email/google-workspace/add-users/:siteName
+ * https://wordpress.com/email/gsuite/add-users/:siteName
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name of the account to add users to
  * @param {string} productType - type of account
@@ -112,8 +109,7 @@ export function emailManagementNewTitanAccount(
 /**
  * Retrieves the url to set up Titan mailboxes
  *
- *   https://wordpress.com/email/:domainName/forwarding/add/:siteName
- *
+ * https://wordpress.com/email/:domainName/forwarding/add/:siteName
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name to add forwarding for
  * @param {string | null} relativeTo - optional path prefix
@@ -201,8 +197,7 @@ export function emailManagementForwarding( siteName, domainName, relativeTo = nu
 /**
  * Retrieves the url of the Email Comparison page:
  *
- *   https://wordpress.com/email/:domainName/purchase/:siteName
- *
+ * https://wordpress.com/email/:domainName/purchase/:siteName
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name of the account to add users to
  * @param {string|undefined|null} relativeTo - optional path prefix
@@ -229,8 +224,7 @@ export function emailManagementPurchaseNewEmailAccount(
 /**
  * Retrieves the url of the Email In-Depth Comparison page:
  *
- *   https://wordpress.com/email/:domainName/in-depth-comparison/:siteName
- *
+ * https://wordpress.com/email/:domainName/in-depth-comparison/:siteName
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name of the account to add users to
  * @param {string|undefined|null} relativeTo - optional path prefix
@@ -281,18 +275,17 @@ export function emailManagementEdit(
 }
 
 /**
- * Retrieves the url of the Inbox page:
+ * Retrieves the url of the Mailboxes page:
  *
- *   https://wordpress.com/inbox/:siteName
- *
+ * https://wordpress.com/mailboxes/:siteName
  * @param {string|null|undefined} siteName - slug of the current site
  * @returns {string} the corresponding url
  */
-export function emailManagementInbox( siteName = null ) {
+export function emailManagementMailboxes( siteName = null ) {
 	if ( siteName ) {
-		return `/inbox/${ siteName }`;
+		return `/mailboxes/${ siteName }`;
 	}
-	return `/inbox`;
+	return `/mailboxes`;
 }
 
 export function isUnderEmailManagementAll( path ) {

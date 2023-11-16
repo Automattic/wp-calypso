@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import Modal from 'react-modal';
 import Gridicon from '../gridicon';
 import ButtonBar from './button-bar';
-import type { Button, BaseButton } from './button-bar';
+import type { BaseButton } from './button-bar';
 import type { PropsWithChildren } from 'react';
 
 import './style.scss';
@@ -12,7 +12,7 @@ type Props = {
 	additionalClassNames?: Parameters< typeof classnames >[ 0 ];
 	additionalOverlayClassNames?: Parameters< typeof classnames >[ 0 ];
 	baseClassName?: string;
-	buttons?: Button[];
+	buttons?: ( React.ReactElement | BaseButton )[];
 	className?: string;
 	isBackdropVisible?: boolean;
 	isFullScreen?: boolean;
@@ -23,6 +23,8 @@ type Props = {
 	shouldCloseOnEsc?: boolean;
 	showCloseIcon?: boolean;
 	shouldCloseOnOverlayClick?: boolean;
+	labelledby?: string;
+	describedby?: string;
 };
 
 const Dialog = ( {
@@ -41,6 +43,8 @@ const Dialog = ( {
 	shouldCloseOnEsc,
 	showCloseIcon = false,
 	shouldCloseOnOverlayClick = true,
+	labelledby,
+	describedby,
 }: PropsWithChildren< Props > ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const onButtonClick = useCallback(
@@ -66,6 +70,7 @@ const Dialog = ( {
 
 	return (
 		<Modal
+			aria={ { labelledby, describedby } }
 			isOpen={ isVisible }
 			onRequestClose={ close }
 			closeTimeoutMS={ leaveTimeout }
@@ -78,7 +83,11 @@ const Dialog = ( {
 			shouldCloseOnOverlayClick={ shouldCloseOnOverlayClick }
 		>
 			{ showCloseIcon && (
-				<button className="dialog__action-buttons-close" onClick={ () => onClose?.( this ) }>
+				<button
+					aria-label="Close"
+					className="dialog__action-buttons-close"
+					onClick={ () => onClose?.( this ) }
+				>
 					<Gridicon icon="cross" size={ 24 } />
 				</button>
 			) }

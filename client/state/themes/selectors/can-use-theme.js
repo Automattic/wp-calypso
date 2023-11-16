@@ -18,7 +18,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Checks whether the given theme is included in the current plan of the site.
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {string}  themeId Theme ID

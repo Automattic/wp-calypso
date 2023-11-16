@@ -6,6 +6,7 @@ export type Railcar = {
 	fetch_algo: string;
 	fetch_lang: string;
 	fetch_position: number;
+	fetch_query?: string;
 	rec_blog_id: string;
 } & Record< string, string | number >;
 

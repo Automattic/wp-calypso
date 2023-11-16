@@ -1,9 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, LoadingPlaceholder } from '@automattic/components';
-import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stores';
+import { LoadingPlaceholder } from '@automattic/components';
+import { HelpCenterSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -11,8 +12,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import stripTags from 'striptags';
 import './help-center-article-content.scss';
+import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
+import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
 	:not( :last-child ) {
@@ -31,11 +34,11 @@ const GPTResponseDisclaimer = styled.div`
 	}
 `;
 
-interface Props {
+interface LoadingPlaceholderProps {
 	loadingMessage: string;
 }
 
-const LoadingPlaceholders: React.FC< Props > = ( { loadingMessage } ) => (
+const LoadingPlaceholders: React.FC< LoadingPlaceholderProps > = ( { loadingMessage } ) => (
 	<>
 		<p className="help-center-gpt-response__loading">{ loadingMessage }</p>
 		<GPTResponsePlaceholder width="80%" />
@@ -44,7 +47,11 @@ const LoadingPlaceholders: React.FC< Props > = ( { loadingMessage } ) => (
 	</>
 );
 
-export function HelpCenterGPT() {
+interface Props {
+	onResponseReceived: ( response: JetpackSearchAIResult ) => void;
+}
+
+export function HelpCenterGPT( { onResponseReceived }: Props ) {
 	const { __ } = useI18n();
 
 	const [ feedbackGiven, setFeedbackGiven ] = useState< boolean >( false );
@@ -84,6 +91,8 @@ export function HelpCenterGPT() {
 				location: 'help-center',
 				answer_source: data?.source,
 			} );
+
+			onResponseReceived( data );
 		}
 	}, [ data ] );
 
@@ -99,7 +108,7 @@ export function HelpCenterGPT() {
 
 	const loadingMessage = useTyper( loadingMessages, ! data?.response, {
 		delayBetweenCharacters: 80,
-		delayBetweenWords: 1400,
+		delayBetweenPhrases: 1400,
 	} );
 
 	const doThumbsUp = ( source: string ) => {

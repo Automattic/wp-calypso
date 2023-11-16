@@ -1,31 +1,63 @@
 @import "@automattic/onboarding/styles/mixins";
 
+.theme-jetpack-cloud .backup-contents-page {
+	--wp-components-color-accent: var(--studio-jetpack-green-50);
+	--wp-admin-theme-color: var(--studio-jetpack-green-50);
+}
+
 .backup-contents-page {
+	.card {
+		padding: 24px 22px;
+	}
+
 	&__back-button.components-button.is-link {
 		color: #000;
+		padding: 12px 0;
 		text-decoration: none;
+		margin: 4px 0;
 
 		svg {
 			margin-right: 2px;
 		}
 	}
 
+	// We are using the deprecated mixin to match the when the mobile navigation appears
+	// which is at 660px instead of the 600px break-small breakpoint.
+	@include breakpoint-deprecated( ">660px" ) {
+		&__back-button.components-button.is-link {
+			padding: 0 0 12px 0;
+			margin: 0;
+		}
+	}
+
 	&__header {
-		padding-bottom: 30px;
+		padding-left: 2px;
+		padding-right: 2px;
 
 		&.daily-backup-status {
 			box-shadow: none;
+			margin-bottom: 0;
 		}
 	}
 
 	&__body {
-		border-top: 1px solid var(--studio-gray-5);
-		overflow-x: scroll;
-		padding-top: 30px;
+		overflow-x: auto;
+		padding-bottom: 14px;
 	}
 
 	.file-browser-node {
-		min-width: max-content;
+		margin-top: 2px;
+		margin-left: 2px;
+		min-width: fit-content;
+
+		&.is-root {
+			margin-left: 0;
+			padding-top: 30px;
+		}
+
+		&.wordpress > .file-card .file-card__actions {
+			margin-top: 0;
+		}
 
 		&__loading {
 			&.placeholder {
@@ -38,12 +70,12 @@
 		&__contents {
 			display: flex;
 			flex-direction: column;
-			overflow-x: auto;
 			background-color: #fff;
+			padding-left: 26px;
+		}
 
-			&:not(:first-child) {
-				padding-left: 26px;
-			}
+		&.is-root > .file-browser-node__contents {
+			padding-left: 0;
 		}
 
 		.file-browser-node__title {
@@ -69,19 +101,176 @@
 		.file-card {
 			background: var(--studio-gray-0);
 			margin: 4px 0;
-			padding: 20px 24px 24px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			max-width: 100%;
 
 			span {
 				font-size: $font-body-small;
 			}
 
-			&__details {
-				padding-bottom: 16px;
+			@include break-mobile {
+				&__detail-group {
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: space-between;
+				}
+			}
+
+			&__details,
+			&__actions {
+				margin-left: 24px;
+				margin-right: 24px;
+			}
+
+			&__actions {
+				display: flex;
+				gap: 1rem;
+				margin-top: 16px;
 			}
 
 			&__label {
 				font-weight: bold;
 			}
+
+			&__prepare-download-spinner {
+				display: inline-block;
+				margin-right: 6px;
+				margin-top: -3px;
+				vertical-align: middle;
+			}
+
+			&__preview {
+				margin: 16px auto 0;
+				padding: 0 8px;
+				max-width: 620px;
+				text-align: center;
+
+				&--is-loading {
+					margin-bottom: 0;
+					padding: 0;
+					max-width: 100%;
+
+					.placeholder {
+						height: 100px;
+						margin: 0;
+					}
+				}
+
+				audio,
+				video,
+				img {
+					max-width: 100%;
+				}
+
+				&.image,
+				&.video {
+					padding: 0;
+					margin-bottom: -20px;
+				}
+
+				&.code,
+				&.text {
+					margin-bottom: -12px;
+					text-align: initial;
+				}
+
+				pre {
+					background-color: #fff;
+					font-size: 0.75rem;
+					margin: 0;
+					max-height: 400px;
+				}
+			}
+
+			&__preview-sensitive {
+				background-color: var(--studio-gray-60);
+				color: #fff;
+				margin: 16px auto 0;
+				max-width: 100%;
+				padding: 20px 8px;
+				text-align: center;
+
+				p {
+					font-size: 0.875rem;
+				}
+			}
+		}
+
+		.form-checkbox {
+			margin: 8px;
+			&.mixed {
+				background-color: var(--studio-gray-10);
+			}
+		}
+	}
+
+	.file-browser-header {
+		padding: 0 2px;
+		border-bottom: 1px solid var(--studio-gray-5);
+		.file-browser-header__action-buttons .button {
+			padding: 8px 32px;
+			margin-right: 16px;
+		}
+		.file-browser-header__selecting {
+			display: flex;
+			margin-top: 30px;
+
+			.bulk-select {
+				padding: 6px 0;
+			}
+			.count {
+				border: none;
+				font-weight: 400;
+				padding-top: 2px;
+			}
+			.file-browser-header__selecting-info {
+				flex-grow: 1;
+				font-size: $font-body-extra-small;
+				padding: 6px 0;
+			}
+			.form-checkbox {
+				margin: 8px;
+				&.mixed {
+					background-color: var(--studio-gray-10);
+				}
+			}
+			.button {
+				margin-left: 8px;
+				color: #000;
+				&.is-primary {
+					&:disabled {
+						color: #000;
+					}
+					color: #fff;
+				}
+			}
+		}
+	}
+
+	.components-checkbox-control {
+		float: left;
+
+		.components-checkbox-control__input-container {
+			margin: 8px;
+			line-height: 0;
+			width: 16px;
+			height: 16px;
+		}
+
+		.components-checkbox-control__input {
+			height: 16px;
+			vertical-align: middle;
+			width: 16px;
+			min-width: 16px;
+		}
+
+		svg.components-checkbox-control__checked,
+		svg.components-checkbox-control__indeterminate {
+			left: -2px;
+			top: -2px;
+			height: 20px;
+			width: 20px;
 		}
 	}
 }

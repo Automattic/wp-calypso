@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Onboard } from '@automattic/data-stores';
+import { Onboard, getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -151,10 +151,11 @@ const pluginBundleFlow: Flow = {
 
 			let defaultExitDest = `/home/${ siteSlug }`;
 			if ( siteDetails?.options?.theme_slug ) {
+				const themeId = getThemeIdFromStylesheet( siteDetails?.options?.theme_slug );
 				if ( isEnabled( 'themes/display-thank-you-page-for-woo' ) ) {
-					defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ siteDetails?.options?.theme_slug }`;
+					defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }`;
 				} else {
-					defaultExitDest = `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`;
+					defaultExitDest = `/theme/${ themeId }/${ siteSlug }`;
 				}
 			}
 			switch ( currentStep ) {
@@ -296,8 +297,8 @@ const pluginBundleFlow: Flow = {
 			};
 		}
 
-		const canManageOptions = useCanUserManageOptions();
-		if ( canManageOptions === 'requesting' ) {
+		const { canManageOptions, isLoading } = useCanUserManageOptions();
+		if ( isLoading ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 			};

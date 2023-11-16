@@ -1,6 +1,5 @@
 import {
 	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_PLUGINS,
 	PLAN_ECOMMERCE,
@@ -14,8 +13,8 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -26,10 +25,10 @@ import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 // Necessary for ThanksModal
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
@@ -68,7 +67,6 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import ThemesHeader from '../themes-header';
 
 import './style.scss';
 
@@ -207,7 +205,7 @@ class Upload extends Component {
 	};
 
 	renderUpgradeBanner() {
-		const { siteSlug, isCommerceTrial, eligibleForProPlan, translate } = this.props;
+		const { siteSlug, isCommerceTrial, translate } = this.props;
 		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
 
 		let upsellPlan = PLAN_BUSINESS;
@@ -218,10 +216,6 @@ class Upload extends Component {
 			upsellPlan = PLAN_ECOMMERCE;
 			title = translate( 'Upgrade your plan to access the theme install features' );
 			upgradeUrl = `/plans/${ siteSlug }`;
-		} else if ( eligibleForProPlan ) {
-			upsellPlan = PLAN_WPCOM_PRO;
-			title = translate( 'Upgrade to the Pro plan to access the theme install features' );
-			upgradeUrl = `/checkout/${ siteSlug }/pro?redirect_to=${ redirectTo }`;
 		}
 
 		return (
@@ -287,7 +281,12 @@ class Upload extends Component {
 			<WrapperComponent>
 				<Card>
 					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ isDisabled } />
+						<AsyncLoad
+							require="calypso/blocks/upload-drop-zone"
+							placeholder={ null }
+							doUpload={ uploadAction }
+							disabled={ isDisabled }
+						/>
 					) }
 					{ inProgress && this.renderProgressBar() }
 					{ complete && ! failed && uploadedTheme && this.renderTheme() }
@@ -340,10 +339,11 @@ class Upload extends Component {
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal source="upload" />
-				<AutoLoadingHomepageModal source="upload" />
+				<ActivationModal source="upload" />
 
-				<ThemesHeader
-					description={ translate(
+				<NavigationHeader
+					title={ translate( 'Themes' ) }
+					subtitle={ translate(
 						'If you have a theme in .zip format, you may install or update it by uploading it here. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -353,7 +353,8 @@ class Upload extends Component {
 							},
 						}
 					) }
-				/>
+				></NavigationHeader>
+
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 
 				{ showUpgradeBanner && this.renderUpgradeBanner() }
@@ -389,8 +390,6 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
-	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
-
 	const canUploadThemesOrPlugins =
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
@@ -422,7 +421,6 @@ const mapStateToProps = ( state ) => {
 		canUploadThemesOrPlugins,
 		isFetchingPurchases:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-		eligibleForProPlan,
 	};
 };
 

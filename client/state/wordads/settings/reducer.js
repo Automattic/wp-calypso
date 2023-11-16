@@ -11,7 +11,6 @@ import { items as itemsSchema } from './schema';
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID to the WordAds settings object.
- *
  * @param  {Object}  state  Current state
  * @param  {Object}  action Action payload
  * @returns {Object}        Updated state
@@ -45,7 +44,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 /**
  * Returns the updated request state after an action has been dispatched. The
  * state maps site ID to a boolean, indicating whether settings are being saved for that site.
- *
  * @param  {Object}  state  Current state
  * @param  {Object}  action Action payload
  * @returns {Object}        Updated state

@@ -10,7 +10,6 @@ import './setup';
 
 /**
  * Records that an item was added to the cart
- *
  * @param {Object} cartItem - The item added to the cart
  * @returns {void}
  */

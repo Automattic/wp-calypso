@@ -31,6 +31,7 @@ export class DoneButton extends PureComponent {
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
 			importer_id: type,
+			action: 'view-site',
 		} );
 
 		const destination = '/view/' + ( siteSlug || '' );

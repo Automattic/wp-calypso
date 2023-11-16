@@ -1,10 +1,8 @@
-import {
-	GlobalStylesProvider,
-	useGlobalStylesOutput,
-	useSyncGlobalStylesUserConfig,
-	transformStyles,
-} from '@automattic/global-styles';
-import { useMemo, useEffect } from 'react';
+import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { useViewportMatch } from '@wordpress/compose';
+import classnames from 'classnames';
+import { useMemo, useState } from 'react';
+import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
@@ -21,24 +19,29 @@ interface DesignPreviewProps {
 	pricingBadge?: React.ReactNode;
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
+	selectedDesignTitle: string;
 	onSelectVariation: ( variation: StyleVariation ) => void;
-	splitPremiumVariations: boolean;
+	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
 	siteId: number;
 	stylesheet: string;
+	isVirtual?: boolean;
+	screenshot?: string;
+	isExternallyManaged?: boolean;
+	disableGlobalStyles?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
-	onGlobalStylesChange: ( globalStyles: GlobalStylesObject | null ) => void;
+	onGlobalStylesChange: ( globalStyles?: GlobalStylesObject | null ) => void;
+	limitGlobalStyles: boolean;
+	onNavigatorPathChange?: ( path?: string ) => void;
+	onScreenSelect?: ( screenSlug: string ) => void;
+	onScreenBack?: ( screenSlug: string ) => void;
+	onScreenSubmit?: ( screenSlug: string ) => void;
 }
-
-const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; }`;
-
-const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
-	variations.find( ( variation ) => variation.slug === slug );
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
 const Preview: React.FC< DesignPreviewProps > = ( {
@@ -52,50 +55,74 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	variations,
 	selectedVariation,
 	onSelectVariation,
-	splitPremiumVariations,
+	splitDefaultVariation,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	screenshot,
+	isVirtual,
+	isExternallyManaged,
+	disableGlobalStyles,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
 	onSelectFontVariation,
 	onGlobalStylesChange,
+	selectedDesignTitle,
+	limitGlobalStyles,
+	onScreenSelect,
+	onScreenBack,
+	onScreenSubmit,
+	onNavigatorPathChange,
 } ) => {
+	const isDesktop = useViewportMatch( 'large' );
+	const [ isInitialScreen, setIsInitialScreen ] = useState( true );
 	const selectedVariations = useMemo(
 		() =>
 			[ selectedColorVariation, selectedFontVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ selectedColorVariation, selectedFontVariation ]
 	);
 
-	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
+	const inlineCss = useInlineCss( variations, selectedVariation );
 
-	const [ globalStyles ] = useGlobalStylesOutput();
+	const screens = useScreens( {
+		siteId,
+		stylesheet,
+		isVirtual,
+		isExternallyManaged,
+		disableGlobalStyles,
+		limitGlobalStyles,
+		variations,
+		splitDefaultVariation,
+		selectedVariation,
+		selectedColorVariation,
+		selectedFontVariation,
+		onSelectVariation,
+		onSelectColorVariation,
+		onSelectFontVariation,
+		onScreenSelect,
+		onScreenBack,
+		onScreenSubmit,
+	} );
 
-	const sitePreviewInlineCss = useMemo( () => {
-		let inlineCss = INJECTED_CSS;
+	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );
 
-		if ( globalStyles ) {
-			inlineCss += transformStyles( globalStyles );
-		}
+	const handleNavigatorPathChange = ( path?: string ) => {
+		setIsInitialScreen( path === '/' );
+		onNavigatorPathChange?.( path );
+	};
 
-		if ( variations && selectedVariation ) {
-			inlineCss +=
-				selectedVariation.inline_css ??
-				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
-		}
-
-		return inlineCss;
-	}, [ variations, selectedVariation, globalStyles ] );
-
-	useEffect( () => {
-		onGlobalStylesChange( syncedGlobalStylesUserConfig );
-	}, [ syncedGlobalStylesUserConfig ] );
+	useSyncGlobalStylesUserConfig( selectedVariations, onGlobalStylesChange );
 
 	return (
-		<div className="design-preview">
+		<div
+			className={ classnames( 'design-preview', {
+				'design-preview--has-multiple-screens': screens.length > 1,
+				'design-preview--is-fullscreen': isFullscreen,
+			} ) }
+		>
 			<Sidebar
 				title={ title }
 				author={ author }
@@ -103,36 +130,39 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				description={ description }
 				shortDescription={ shortDescription }
 				pricingBadge={ pricingBadge }
-				variations={ variations }
-				selectedVariation={ selectedVariation }
-				onSelectVariation={ onSelectVariation }
-				splitPremiumVariations={ splitPremiumVariations }
-				onClickCategory={ onClickCategory }
+				screens={ screens }
 				actionButtons={ actionButtons }
-				siteId={ siteId }
-				stylesheet={ stylesheet }
-				selectedColorVariation={ selectedColorVariation }
-				onSelectColorVariation={ onSelectColorVariation }
-				selectedFontVariation={ selectedFontVariation }
-				onSelectFontVariation={ onSelectFontVariation }
+				onClickCategory={ onClickCategory }
+				onNavigatorPathChange={ handleNavigatorPathChange }
 			/>
 			<SitePreview
 				url={ previewUrl }
-				inlineCss={ sitePreviewInlineCss }
+				inlineCss={ inlineCss }
+				isFullscreen={ isFullscreen }
+				animated={ ! isDesktop && screens.length > 0 }
+				screenshot={ screenshot }
+				title={ selectedDesignTitle }
+				isExternallyManaged={ isExternallyManaged }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>
 	);
 };
 
-const DesignPreview = ( props: DesignPreviewProps ) => (
-	<GlobalStylesProvider
-		siteId={ props.siteId }
-		stylesheet={ props.stylesheet }
-		placeholder={ null }
-	>
-		<Preview { ...props } />
-	</GlobalStylesProvider>
-);
+const DesignPreview = ( props: DesignPreviewProps ) => {
+	if ( props.isExternallyManaged ) {
+		return <Preview { ...props } />;
+	}
+
+	return (
+		<GlobalStylesProvider
+			siteId={ props.siteId }
+			stylesheet={ props.stylesheet }
+			placeholder={ null }
+		>
+			<Preview { ...props } />
+		</GlobalStylesProvider>
+	);
+};
 
 export default DesignPreview;

@@ -3,7 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import type { GlobalStylesObject } from '../types';
 
 const useGetGlobalStylesBaseConfig = ( siteId: number | string, stylesheet: string ) => {
-	return useQuery< any, unknown, unknown >( {
+	return useQuery< any, unknown, GlobalStylesObject >( {
 		queryKey: [ 'global-styles-base-config', siteId, stylesheet ],
 		queryFn: async () =>
 			wpcomRequest< GlobalStylesObject >( {

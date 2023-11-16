@@ -82,9 +82,8 @@ describe(
 
 					let tracksEventProperties: TracksEventProperties;
 					beforeAll( async function () {
-						[ , tracksEventProperties ] = await editorTracksEventManager.getMostRecentMatchingEvent(
-							'wpcom_block_inserted'
-						);
+						[ , tracksEventProperties ] =
+							await editorTracksEventManager.getMostRecentMatchingEvent( 'wpcom_block_inserted' );
 					} );
 
 					it( '"editor_type" is "post"', async function () {
@@ -306,9 +305,8 @@ describe(
 				// to adjust the test to match the tracking behavior or adjust
 				// the underlyting tracking behavior.
 				it( '"wpcom_block_instered" event does NOT fire', async function () {
-					const eventDidFire = await editorTracksEventManager.didEventFire(
-						'wpcom_block_inserted'
-					);
+					const eventDidFire =
+						await editorTracksEventManager.didEventFire( 'wpcom_block_inserted' );
 					expect( eventDidFire ).toBe( false );
 				} );
 			} );

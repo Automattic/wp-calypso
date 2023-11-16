@@ -2,7 +2,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Returns the ThemePreview state
- *
  * @param  {Object}  state Global state tree
  * @returns {?string}  ThemePreview state
  */

@@ -13,11 +13,14 @@ import './style.scss';
 
 export function InstagramPostPreview( {
 	image,
+	media,
 	name,
 	profileImage,
 	caption,
 }: InstagramPreviewProps ) {
 	const username = name || 'username';
+
+	const mediaItem = media?.[ 0 ];
 
 	return (
 		<div className="instagram-preview__wrapper">
@@ -34,7 +37,20 @@ export function InstagramPostPreview( {
 					</div>
 				</div>
 				<div className="instagram-preview__media">
-					<img className="instagram-preview__media--image" src={ image } alt="" />
+					{ mediaItem ? (
+						<div className="instagram-preview__media-item">
+							{ mediaItem.type.startsWith( 'video/' ) ? (
+								// eslint-disable-next-line jsx-a11y/media-has-caption
+								<video controls={ false } className="instagram-preview__media--video">
+									<source src={ mediaItem.url } type={ mediaItem.type } />
+								</video>
+							) : (
+								<img className="instagram-preview__media--image" src={ image } alt="" />
+							) }
+						</div>
+					) : (
+						<img className="instagram-preview__media--image" src={ image } alt="" />
+					) }
 				</div>
 				<div className="instagram-preview__content">
 					<section className="instagram-preview__content--actions">

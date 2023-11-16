@@ -1,6 +1,5 @@
 /**
  * Are two strings equal, when ignoring whitespace and case?
- *
  * @param {string} a the first string
  * @param {string} b the second string
  */

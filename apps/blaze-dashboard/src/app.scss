@@ -7,6 +7,12 @@
 @import "./styles/typography.scss";
 
 .jp-blaze-dashboard {
+	.promote-post-notice {
+		margin: 0;
+		border: none;
+		box-shadow: none;
+	}
+
 	.promote-post-i2 {
 		.jetpack-header {
 			padding: 0;
@@ -59,7 +65,11 @@
 
 			.section-nav-tab {
 				&.is-selected {
-					height: 36px;
+					height: 36px !important;
+				}
+
+				.section-nav-tab__text .count {
+					line-height: 1.43;
 				}
 
 				.section-nav-tab__link {
@@ -98,10 +108,12 @@
 			border-radius: 4px;
 			font-weight: 600;
 			font-size: 0.75rem;
+			background-color: var(--color-surface);
 
 			&:hover {
 				text-decoration: underline;
 				color: var(--color-accent);
+				background-color: var(--color-surface);
 			}
 		}
 
@@ -156,11 +168,17 @@
 $break-medium-expanded-menu: $break-medium + 272px;
 @media screen and (max-width: $break-medium-expanded-menu) {
 	body #wpcontent .jp-blaze-dashboard .promote-post-i2 {
-		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-			padding: 12px;
-			line-height: 16px;
-			font-weight: 600;
-			font-size: 0.75rem;
+		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile {
+			.button.post-item__view-link {
+				border: 1px solid var(--studio-gray-50);
+				line-height: 38px;
+			}
+			button.post-item__post-promote-button {
+				font-size: 0.75rem;
+				font-weight: 600;
+				line-height: 16px;
+				padding: 12px;
+			}
 		}
 	}
 }

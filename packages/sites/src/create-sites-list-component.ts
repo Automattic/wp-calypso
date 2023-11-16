@@ -94,7 +94,7 @@ type CreatedComponentProps<
 	TSite extends MinimumSite,
 	TGrouping extends boolean,
 	TSorting extends boolean,
-	TFiltering extends boolean
+	TFiltering extends boolean,
 > = {
 	sites: TSite[];
 	children( processedData: RenderProp< TSite, TGrouping > ): ReactElement;
@@ -105,7 +105,7 @@ type CreatedComponentProps<
 export const createSitesListComponent = <
 	TGrouping extends boolean = true,
 	TSorting extends boolean = true,
-	TFiltering extends boolean = true
+	TFiltering extends boolean = true,
 >( { grouping, sorting, filtering }: Features< TGrouping, TSorting, TFiltering > = {} ) => {
 	return < TSite extends MinimumSite >( {
 		children,

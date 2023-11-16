@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -6,13 +7,14 @@
 		--color-surface-backdrop: var(--studio-white);
 	}
 
-	.layout:not(.has-no-sidebar) .layout__content {
-		padding-top: var(--masterbar-height);
+	.main > .notice.is-error {
+		margin-top: 24px;
+		margin-bottom: 0;
 	}
 }
 
 .is-logged-out {
-	.themes__header::before,
+	.themes__header-logged-out::before,
 	.themes__controls::before {
 		background-color: #e5f4ff;
 		content: "";
@@ -24,7 +26,8 @@
 		z-index: -1;
 	}
 
-	.themes__header {
+	.themes__header-logged-out {
+		padding: 24px 16px;
 		border: none;
 		margin: 0;
 		position: relative;
@@ -52,6 +55,10 @@
 	.themes__content {
 		position: relative;
 
+		.themes-toolbar-group {
+			padding: 72px 0 24px;
+		}
+
 		.themes__controls,
 		.themes__showcase {
 			padding: 0 16px;
@@ -64,9 +71,6 @@
 	}
 
 	.search-themes-card {
-		border-radius: 4px;
-		max-width: 450px;
-		transition: max-width 0.2s ease-out;
 
 		&.is-suggestions-open {
 			max-width: 100%;
@@ -111,6 +115,11 @@
 				background-color: var(--studio-blue-50);
 			}
 		}
+
+		&.is-selected {
+			background-color: var(--studio-blue-50);
+			color: var(--color-text-inverted);
+		}
 	}
 
 	.theme__filters {
@@ -125,11 +134,139 @@
 			}
 		}
 	}
+
+	.theme__search {
+
+		@include break-mobile {
+			width: 100%;
+		}
+
+		@include break-small {
+			width: 75%;
+		}
+
+		@include break-medium {
+			width: 70%;
+		}
+
+		@include break-large {
+			width: 60%;
+		}
+
+		@include break-xlarge {
+			width: 50%;
+		}
+
+		.section-nav-tabs__dropdown {
+			box-shadow:
+				0 0 0 0 rgba(38, 19, 19, 0.03),
+				0 1px 2px 0 rgba(38, 19, 19, 0.03),
+				0 4px 4px 0 rgba(38, 19, 19, 0.03),
+				0 9px 5px 0 rgba(38, 19, 19, 0.02),
+				0 16px 6px 0 rgba(38, 19, 19, 0),
+				0 25px 7px 0 rgba(38, 19, 19, 0);
+
+			.select-dropdown__header {
+				border-width: 0;
+				color: #575d63;
+				line-height: 1.5;
+			}
+
+			.is-selected {
+				color: var(--color-text-inverted);
+				background-color: var(--color-neutral-80);
+			}
+
+			.select-dropdown__option:hover {
+				background: var(--studio-gray-0);
+			}
+
+			.select-dropdown__item:not(.is-selected):hover {
+				color: var(--studio-blue-90);
+				background-color: rgba(var(--studio-blue-rgb), 0.1);
+			}
+		}
+	}
 }
 
 .theme-showcase {
+
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding-bottom: 16px;
+		}
+	}
+
+	.theme__search {
+		.keyed-suggestions {
+			top: 42px;
+		}
+
+		.select-dropdown__header {
+			font-weight: 400;
+		}
+
+		.select-dropdown__options {
+			position: absolute;
+			width: 100%;
+
+			@include break-mobile {
+				position: inherit;
+			}
+		}
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: 10px;
+
+		.search-themes-card {
+			.search {
+				height: 43px;
+				border-radius: 2px;
+			}
+		}
+
+		.section-nav-tabs__dropdown .select-dropdown__container {
+			width: 100%;
+		}
+
+		.theme__search-input {
+			width: 100%;
+			padding: 0 0 10px 0;
+			@include break-mobile {
+				padding: 0 10px 0 0;
+			}
+		}
+
+		.section-nav-tabs__dropdown {
+			width: 100%;
+			flex-shrink: 0;
+			@include break-mobile {
+				width: auto;
+			}
+
+			.is-selected {
+				background-color: var(--studio-blue-50);
+			}
+		}
+	}
+
+	.themes-toolbar-group {
+		padding-top: 15px;
+		margin: 0;
+	}
+
+	.themes__showcase {
+		margin-top: 32px;
+	}
+
 	.themes__selection .themes-list {
-		margin: 32px -16px 0;
+		margin: 0 -16px;
 	}
 
 	.themes__content .upsell-nudge {
@@ -137,9 +274,13 @@
 		border: none;
 		box-shadow: none;
 		margin-top: 32px;
-		margin-bottom: 0;
+		margin-bottom: 32px;
 		padding: 24px 30px;
 		border-radius: 4px;
+
+		&.is-wooexpress-or-free-trial-plan {
+			margin-bottom: 32px;
+		}
 
 		&.is-dismissible {
 			.dismissible-card__close-button {
@@ -218,6 +359,33 @@
 	}
 }
 
+.themes:not(.is-logged-out) {
+	.theme-showcase {
+		.theme__search {
+			.section-nav-tabs__dropdown {
+				.is-selected {
+					color: var(--color-text-inverted);
+					background-color: var(--color-neutral-80);
+				}
+
+				.select-dropdown__item:not(.is-selected):hover {
+					color: var(--color-neutral-60);
+					background-color: var(--studio-gray-0);
+				}
+			}
+		}
+	}
+}
+
+.popover__menu {
+	.popover__menu-item:hover,
+	.popover__menu-item:focus,
+	.popover__menu-item:active {
+		color: var(--color-neutral-60);
+		background-color: var(--studio-gray-0);
+	}
+}
+
 .themes__upload-button {
 	float: right;
 
@@ -248,7 +416,7 @@
 
 	.themes__controls,
 	.themes__showcase {
-		@include breakpoint-deprecated( "<660px" ) {
+		@media (max-width: $break-small) {
 			padding: 0 16px;
 		}
 	}

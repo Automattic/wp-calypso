@@ -1,9 +1,12 @@
+/* URLs are localized within the function where these URLs are used. */
+/* eslint-disable wpcalypso/i18n-unlocalized-url */
 const blockLinks: { [ key: string ]: string } = {
 	/**
 	 * Core Blocks
 	 */
 	'core/template-part':
 		'https://wordpress.com/support/full-site-editing/theme-blocks/template-part-block/',
+
 	'core/site-title':
 		'https://wordpress.com/support/full-site-editing/theme-blocks/site-title-block/',
 
@@ -129,6 +132,8 @@ const blockLinks: { [ key: string ]: string } = {
 	/**
 	 * Jetpack Blocks
 	 */
+	'jetpack/blogroll': 'https://wordpress.com/support/wordpress-editor/blocks/blogroll-block/',
+
 	'jetpack/timeline': 'https://wordpress.com/support/wordpress-editor/blocks/timeline-block/',
 
 	'jetpack/story': 'https://wordpress.com/support/wordpress-editor/blocks/story-block/',
@@ -185,6 +190,8 @@ const blockLinks: { [ key: string ]: string } = {
 	'jetpack/layout-grid': 'https://wordpress.com/support/wordpress-editor/blocks/layout-grid-block/',
 
 	'jetpack/mailchimp': 'https://wordpress.com/support/wordpress-editor/blocks/mailchimp-block/',
+
+	'jetpack/paywall': 'https://wordpress.com/support/paid-newsletters/#use-the-paywall-block',
 };
 
 export const blockLinksWithVariations: {

@@ -15,7 +15,6 @@ const debug = debugFactory( 'calypso:site-products:actions' );
 
 /**
  * Fetches products for the given site.
- *
  * @param {number} siteId identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
@@ -52,7 +51,6 @@ export function fetchSiteProducts( siteId ) {
 /**
  * Returns an action object to be used in signalling that an object containing
  * the products for a given site have been received.
- *
  * @param {number} siteId - identifier of the site
  * @param {Object} products - list of products received from the API
  * @returns {Object} the corresponding action object

@@ -30,7 +30,6 @@ export const getPlan = createSelector(
 
 /**
  * Returns a plan searched by its slug
- *
  * @param  {Object} state      global state
  * @param  {string} planSlug the plan slug
  * @returns {Object} the matching plan
@@ -42,7 +41,6 @@ export const getPlanBySlug = createSelector(
 
 /**
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
- *
  * @param  {Object}  state     global state
  * @param  {number}  productId the plan productId
  * @returns {string}  plan product_slug
@@ -55,7 +53,6 @@ export function getPlanSlug( state: AppState, productId: string | number ): stri
 
 /**
  * Returns a plan bill_period. Useful for comparing plan billing periods
- *
  * @param {Object} state global state
  * @param {PlanSlug} planSlug the plan slug
  * @returns {number} plan bill_period

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -6,19 +7,19 @@ import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { captureException } from 'calypso/lib/sentry';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutMain from './composite-checkout/components/checkout-main';
-import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
-import { convertErrorToString } from './composite-checkout/lib/analytics';
+import CheckoutMain from './src/components/checkout-main';
+import PrePurchaseNotices from './src/components/prepurchase-notices';
+import { convertErrorToString } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
+	captureException( error.cause ? error.cause : error );
 	logToLogstash( {
 		feature: 'calypso_client',
 		message: 'composite checkout load error',
@@ -29,7 +30,6 @@ const logCheckoutError = ( error: Error ) => {
 			message: convertErrorToString( error ),
 		},
 	} );
-	captureException( error );
 };
 
 const CheckoutMainWrapperStyles = styled.div`
@@ -53,6 +53,9 @@ export default function CheckoutMainWrapper( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	connectAfterCheckout,
+	fromSiteSlug,
+	adminUrl,
 }: {
 	productAliasFromUrl?: string;
 	productSourceFromUrl?: string;
@@ -70,6 +73,16 @@ export default function CheckoutMainWrapper( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	connectAfterCheckout?: boolean;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
+	adminUrl?: string;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -130,6 +143,9 @@ export default function CheckoutMainWrapper( {
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }
 							isUserComingFromLoginForm={ isUserComingFromLoginForm }
+							connectAfterCheckout={ connectAfterCheckout }
+							fromSiteSlug={ fromSiteSlug }
+							adminUrl={ adminUrl }
 						/>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>

@@ -4,7 +4,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { createTestReduxStore } from 'calypso/my-sites/checkout/composite-checkout/test/util';
+import { createTestReduxStore } from 'calypso/my-sites/checkout/src/test/util';
 import {
 	BillingTransaction,
 	BillingTransactionItem,

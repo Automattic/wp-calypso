@@ -15,16 +15,12 @@ export function useCanvas() {
 		}
 
 		const unsubscribe = subscribe( () => {
-			// Subscriber callbacks run before the URL actually changes, so we need
-			// to delay the execution.
-			setTimeout( () => {
-				const params = new URLSearchParams( window.location.search );
+			const params = new URLSearchParams( window.location.search );
 
-				const _canvas = params.get( 'canvas' ) ?? 'view';
-				setCanvas( _canvas );
-				setViewCanvasPath( _canvas === 'view' ? params.get( 'path' ) : undefined );
-			}, 0 );
-		}, 'core/edit-site' );
+			const _canvas = params.get( 'canvas' ) ?? 'view';
+			setCanvas( _canvas );
+			setViewCanvasPath( _canvas === 'view' ? params.get( 'path' ) : undefined );
+		} );
 
 		return () => unsubscribe();
 	}, [ isSiteEditor ] );

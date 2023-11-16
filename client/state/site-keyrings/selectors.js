@@ -4,7 +4,6 @@ const EMPTY_ARRAY = [];
 
 /**
  * Returns true if we are requesting keyrings for the specified site ID, false otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether site keyrings is being requested
@@ -15,7 +14,6 @@ export function isRequestingSiteKeyrings( state, siteId ) {
 
 /**
  * Returns the keyrings for the specified site ID
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {Object}  Site keyrings indexed by keyring ids
@@ -26,7 +24,6 @@ export function getSiteKeyrings( state, siteId ) {
 
 /**
  * Returns the keyrings for the specified site ID and service
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  service The service name to filter with
@@ -40,7 +37,6 @@ export function getSiteKeyringsForService( state, siteId, service ) {
 
 /**
  * Returns the matching site keyring connection or undefined if it does not exist.
- *
  * @param  {Object}  state          Global state tree
  * @param  {number}  siteId         Site ID
  * @param  {number}  keyringId      Keyring Id

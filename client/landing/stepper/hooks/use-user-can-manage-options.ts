@@ -1,27 +1,25 @@
-import { useSelect } from '@wordpress/data';
-import { useSelector } from 'calypso/state';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isRequestingSites from 'calypso/state/sites/selectors/is-requesting-sites';
-import { SITE_STORE } from '../stores';
-import { useSiteSlugParam } from './use-site-slug-param';
-import type { SiteSelect } from '@automattic/data-stores';
+import { requestSite } from 'calypso/state/sites/actions';
+import { useSiteData } from './use-site-data';
 
 export function useCanUserManageOptions() {
-	const siteSlug = useSiteSlugParam();
-	const siteId = useSelect(
-		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
-		[ siteSlug ]
-	);
-	const isRequesting = useSelector( ( state ) => isRequestingSites( state ) );
-	const hasManageOptionsCap = useSelector( ( state ) =>
-		canCurrentUser( state, siteId as number, 'manage_options' )
+	const dispatch = useDispatch();
+	const { site, siteSlugOrId } = useSiteData();
+	const canManageOptions = useSelector( ( state ) =>
+		canCurrentUser( state, site?.ID, 'manage_options' )
 	);
 
-	if ( isRequesting ) {
-		return 'requesting';
-	}
+	// Request the site for the redux store
+	useEffect( () => {
+		if ( siteSlugOrId ) {
+			dispatch( requestSite( siteSlugOrId ) );
+		}
+	}, [ siteSlugOrId ] );
 
-	if ( siteId ) {
-		return hasManageOptionsCap ?? false;
-	}
+	return {
+		canManageOptions,
+		isLoading: siteSlugOrId && ! site,
+	};
 }

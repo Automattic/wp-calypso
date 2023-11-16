@@ -6,7 +6,6 @@ import { getSiteFrontPage } from 'calypso/state/sites/selectors';
 
 /**
  * Checks whether the tasklist has been completed.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {string} null if there's no data yet, false if the tasklist is incomplete, true if it's complete.
@@ -33,7 +32,6 @@ export default function isSiteChecklistComplete( state, siteId ) {
 	 *	Any other case leads to a pending task.
 	 *	C) the mobile_app_installed task, because it shouldn't affect the site setup status.
 	 *	D) the site_menu_updated task, because it shouldn't affect the site setup status.
-	 *
 	 *		@param   {Object}  task The task that we'll check to see if it's completed.
 	 *		@returns {boolean}      Whether the task is considered to be completed or not.
 	 */

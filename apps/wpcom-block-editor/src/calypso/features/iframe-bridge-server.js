@@ -58,7 +58,6 @@ function triggerOverrideHandler( e ) {
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function transmitDraftId( calypsoPort ) {
@@ -83,7 +82,6 @@ function transmitDraftId( calypsoPort ) {
 
 /**
  * Sends a message to the parent frame when the "Move to trash" button is clicked.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
@@ -142,46 +140,46 @@ function overrideRevisions( calypsoPort ) {
  * Listens for post lock status changing to locked, and overrides the modal dialog
  * actions, addind an event handler for the All Posts button, and changing the
  * Take Over Url to work inside the iframe.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostLocked( calypsoPort ) {
 	const unsubscribe = subscribe( () => {
 		const isLocked = select( 'core/editor' ).isPostLocked();
 		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
-		const lockedDialogButtons = document.querySelectorAll(
-			'div.editor-post-locked-modal__buttons > a'
-		);
 
-		const isPostTakeoverDialog = isLocked && ! isLockTakeover && lockedDialogButtons.length === 3;
-
-		if ( isPostTakeoverDialog ) {
-			//signal the parent frame to navigate to All Posts
-			lockedDialogButtons[ 0 ].addEventListener(
-				'click',
-				( event ) => {
-					event.preventDefault();
-					calypsoPort.postMessage( { action: 'goToAllPosts' } );
-				},
-				false
+		if ( isLocked && ! isLockTakeover ) {
+			const lockedDialogButtons = document.querySelectorAll(
+				'div.editor-post-locked-modal__buttons > a'
 			);
 
-			//overrides the all posts link just in case the user treats the link... as a link.
-			if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
-				lockedDialogButtons[ 0 ].setAttribute( 'target', '_parent' );
-				lockedDialogButtons[ 0 ].setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+			if ( lockedDialogButtons.length === 3 ) {
+				//signal the parent frame to navigate to All Posts
+				lockedDialogButtons[ 0 ].addEventListener(
+					'click',
+					( event ) => {
+						event.preventDefault();
+						calypsoPort.postMessage( { action: 'goToAllPosts' } );
+					},
+					false
+				);
+
+				//overrides the all posts link just in case the user treats the link... as a link.
+				if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
+					lockedDialogButtons[ 0 ].setAttribute( 'target', '_parent' );
+					lockedDialogButtons[ 0 ].setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+				}
+
+				//changes the Take Over link url to add the frame-nonce
+				lockedDialogButtons[ 2 ].setAttribute(
+					'href',
+					addQueryArgs( lockedDialogButtons[ 2 ].getAttribute( 'href' ), {
+						calypsoify: 1,
+						'frame-nonce': getQueryArg( window.location.href, 'frame-nonce' ),
+					} )
+				);
+
+				unsubscribe();
 			}
-
-			//changes the Take Over link url to add the frame-nonce
-			lockedDialogButtons[ 2 ].setAttribute(
-				'href',
-				addQueryArgs( lockedDialogButtons[ 2 ].getAttribute( 'href' ), {
-					calypsoify: 1,
-					'frame-nonce': getQueryArg( window.location.href, 'frame-nonce' ),
-				} )
-			);
-
-			unsubscribe();
 		}
 	} );
 }
@@ -189,35 +187,35 @@ function handlePostLocked( calypsoPort ) {
 /**
  * Listens for post lock status changing to locked, and for the post to have been taken over
  * by another user, adding an event handler for the All Posts button.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostLockTakeover( calypsoPort ) {
 	const unsubscribe = subscribe( () => {
 		const isLocked = select( 'core/editor' ).isPostLocked();
 		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
-		const allPostsButton = document.querySelector( 'div.editor-post-locked-modal__buttons > a' );
 
-		const isPostTakeoverDialog = isLocked && isLockTakeover && allPostsButton;
+		if ( isLocked && isLockTakeover ) {
+			const allPostsButton = document.querySelector( 'div.editor-post-locked-modal__buttons > a' );
 
-		if ( isPostTakeoverDialog ) {
-			//handle All Posts button click event
-			allPostsButton.addEventListener(
-				'click',
-				( event ) => {
-					event.preventDefault();
-					calypsoPort.postMessage( { action: 'goToAllPosts' } );
-				},
-				false
-			);
+			if ( allPostsButton ) {
+				//handle All Posts button click event
+				allPostsButton.addEventListener(
+					'click',
+					( event ) => {
+						event.preventDefault();
+						calypsoPort.postMessage( { action: 'goToAllPosts' } );
+					},
+					false
+				);
 
-			//overrides the all posts link just in case the user treats the link... as a link.
-			if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
-				allPostsButton.setAttribute( 'target', '_parent' );
-				allPostsButton.setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+				//overrides the all posts link just in case the user treats the link... as a link.
+				if ( calypsoifyGutenberg && calypsoifyGutenberg.closeUrl ) {
+					allPostsButton.setAttribute( 'target', '_parent' );
+					allPostsButton.setAttribute( 'href', calypsoifyGutenberg.closeUrl );
+				}
+
+				unsubscribe();
 			}
-
-			unsubscribe();
 		}
 	} );
 }
@@ -257,7 +255,6 @@ function handlePostStatusChange( calypsoPort ) {
 /**
  * Listens for image changes or removals happening in the Media Modal,
  * and updates accordingly all blocks containing them.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleUpdateImageBlocks( calypsoPort ) {
@@ -276,7 +273,6 @@ function handleUpdateImageBlocks( calypsoPort ) {
 
 	/**
 	 * Updates all the blocks containing a given edited image.
-	 *
 	 * @param {Array} blocks Array of block objects for the current post.
 	 * @param {Object} image The edited image.
 	 * @param {number} image.id The image ID.
@@ -396,7 +392,6 @@ function handleUpdateImageBlocks( calypsoPort ) {
 /**
  * Listens for insert media events happening in a Media Modal opened in a Classic Block,
  * and inserts the media into the appropriate block.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleInsertClassicBlockMedia( calypsoPort ) {
@@ -417,7 +412,6 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
 /**
  * Prevents the default closing flow and sends a message to the parent frame to
  * perform the navigation on the client side.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleCloseEditor( calypsoPort ) {
@@ -522,7 +516,6 @@ function isNavSidebarPresent() {
 
 /**
  * Modify links in order to open them in parent window and not in a child iframe.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 async function openLinksInParentFrame( calypsoPort ) {
@@ -654,10 +647,11 @@ async function openLinksInParentFrame( calypsoPort ) {
 	const body = document.querySelector( '.interface-interface-skeleton__body' );
 	sidebarsObserver.observe( body, { childList: true } );
 
+	// Observes the popover slot for the "Manage reusable blocks" link which can be found
+	// in the reusable block's more menu or in the block-editor menu
 	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
-		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
-
 		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
+			// We should leave the URL alone so it goes to the fancy site-editor view, not a regular old post listing
 			anchorElem.href = manageReusableBlocksUrl;
 			anchorElem.target = '_top';
 		};
@@ -671,11 +665,13 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				if ( isComponentsPopover( node ) ) {
-					const manageReusableBlocksAnchorElem = node.querySelector(
-						'a[href$="edit.php?post_type=wp_block"]'
+				const popoverSlot = node.querySelector( '.components-popover' );
+
+				if ( popoverSlot ) {
+					const manageReusableBlocksAnchorElem = popoverSlot.querySelector(
+						'a[href$="site-editor.php?path=%2Fpatterns"]'
 					);
-					const manageNavigationMenusAnchorElem = node.querySelector(
+					const manageNavigationMenusAnchorElem = popoverSlot.querySelector(
 						'a[href$="edit.php?post_type=wp_navigation"]'
 					);
 
@@ -699,7 +695,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 		}
 	} );
-	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
+	const popoverSlotElem = document.querySelector( 'body' );
 	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
@@ -720,7 +716,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 
 /**
  * Ensures the Calypso Customizer is opened when clicking on the FSE blocks' edit buttons.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openCustomizer( calypsoPort ) {
@@ -739,7 +734,6 @@ function openCustomizer( calypsoPort ) {
 /**
  * Sends a message to Calypso when clicking the "Edit Header" or "Edit Footer"
  * buttons in order to perform the navigation in Calypso instead of in the iFrame.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openTemplatePartLinks( calypsoPort ) {
@@ -768,7 +762,6 @@ function openTemplatePartLinks( calypsoPort ) {
  * Ensures the calypsoifyGutenberg close URL matches the one on the client.
  * This is important because we modify the close URL client side in the
  * context of template part blocks in FSE.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getCloseButtonUrl( calypsoPort ) {
@@ -805,7 +798,6 @@ function getCloseButtonUrl( calypsoPort ) {
  * Ensures gutenboarding status and corresponding data is placed on the calypsoifyGutenberg object.
  * This is imporant because it allows us to adapt small changes to the editor when
  * used in the context of Gutenboarding.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getGutenboardingStatus( calypsoPort ) {
@@ -828,7 +820,6 @@ function getGutenboardingStatus( calypsoPort ) {
 
 /**
  * Hooks the nav sidebar to change some of its button labels and behaviour.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getNavSidebarLabels( calypsoPort ) {
@@ -864,7 +855,6 @@ function getNavSidebarLabels( calypsoPort ) {
 /**
  * Retrieves info to allow the bridge to build calypso urls. Hook parts of
  * the editor that use this info.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getCalypsoUrlInfo( calypsoPort ) {
@@ -1004,7 +994,6 @@ function handleCheckoutModal( calypsoPort ) {
 
 /**
  * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleSiteEditorBackButton( calypsoPort ) {
@@ -1040,7 +1029,6 @@ function handleSiteEditorBackButton( calypsoPort ) {
  * If WelcomeTour is set to show, check if the App Banner is visible.
  * If App Banner is visible, we set the Welcome Tour to not show.
  * When the App Banner gets dismissed, we set the Welcome Tour to show.
- *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleAppBannerShowing( calypsoPort ) {

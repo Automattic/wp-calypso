@@ -197,7 +197,7 @@ class PlansSetup extends Component {
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
 				error: 'secondary_network_site',
 			} );
-		} else if ( site.options.is_multi_network ) {
+		} else if ( site.options?.is_multi_network ) {
 			reason = translate( "We can't install plugins on multi-network sites." );
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error', {
 				error: 'multinetwork',

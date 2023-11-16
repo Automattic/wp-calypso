@@ -93,6 +93,7 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 			<Accordion
 				title={ translate( 'Set as primary', { textOnly: true } ) }
 				subtitle={ translate( 'Make this domain your primary site address', { textOnly: true } ) }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<p className="set-as-primary__content">
 					{ translate( 'Your current primary site address is {{strong}}%(domainName)s{{/strong}}', {

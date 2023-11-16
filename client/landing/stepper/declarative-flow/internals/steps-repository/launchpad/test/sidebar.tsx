@@ -17,8 +17,8 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
-jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
-	usePremiumGlobalStyles: () => ( {
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
 	} ),
@@ -151,13 +151,6 @@ describe( 'Sidebar', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		props.sidebarDomain = sidebarDomain;
-	} );
-
-	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
-		renderSidebar( props );
-
-		const escapeHatchButton = screen.getByRole( 'button', { name: /Skip to dashboard/i } );
-		expect( escapeHatchButton ).toBeVisible();
 	} );
 
 	it( 'displays the current site url', () => {

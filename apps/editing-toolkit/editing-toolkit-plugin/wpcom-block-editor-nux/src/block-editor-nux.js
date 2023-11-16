@@ -15,6 +15,7 @@ import { HasSeenSellerCelebrationModalProvider } from '../../dotcom-fse/lib/sell
 import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
 import DraftPostModal from './draft-post-modal';
 import FirstPostPublishedModal from './first-post-published-modal';
+import LivePreviewModal from './live-preview-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
 import PostPublishedSharingModal from './sharing-modal';
@@ -23,10 +24,21 @@ import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
-	'@wordpress/edit-site'
-);
+/**
+ * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
+ * FIXME: The new version allow it by default, but we might need to ensure that all the site has the new version.
+ * @see https://github.com/Automattic/wp-calypso/pull/79663
+ */
+let unlock;
+try {
+	unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+		'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
+		'@wordpress/edit-site'
+	).unlock;
+} catch ( error ) {
+	// eslint-disable-next-line no-console
+	console.error( 'Error: Unable to get the unlock api. Reason: %s', error );
+}
 
 function WelcomeTour() {
 	const [ showDraftPostModal ] = useState(
@@ -43,15 +55,19 @@ function WelcomeTour() {
 	} = useSelect( ( select ) => {
 		const welcomeGuideStoreSelect = select( 'automattic/wpcom-welcome-guide' );
 		const starterPageLayoutsStoreSelect = select( 'automattic/starter-page-layouts' );
-		const _canvasMode =
-			select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
+		let canvasMode;
+		if ( unlock && select( 'core/edit-site' ) ) {
+			canvasMode =
+				select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
+		}
+
 		return {
 			show: welcomeGuideStoreSelect.isWelcomeGuideShown(),
 			isLoaded: welcomeGuideStoreSelect.isWelcomeGuideStatusLoaded(),
 			variant: welcomeGuideStoreSelect.getWelcomeGuideVariant(),
 			isManuallyOpened: welcomeGuideStoreSelect.isWelcomeGuideManuallyOpened(),
 			isNewPageLayoutModalOpen: starterPageLayoutsStoreSelect?.isOpen(), // Handle the case where SPT is not initalized.
-			siteEditorCanvasMode: _canvasMode,
+			siteEditorCanvasMode: canvasMode,
 		};
 	}, [] );
 
@@ -110,6 +126,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 					<SellerCelebrationModal />
 					<PurchaseNotice />
 					<VideoPressCelebrationModal />
+					<LivePreviewModal />
 				</ShouldShowFirstPostPublishedModalProvider>
 			</HasSeenVideoCelebrationModalProvider>
 		</HasSeenSellerCelebrationModalProvider>

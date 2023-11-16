@@ -22,7 +22,6 @@ const sectionReducer = combineReducers( { isOpen: expansionReducer } );
 /**
  * Higher-order reducer to enable expanding/collapsing of all
  * the sidebar sections via a single action.
- *
  * @param reducer Function the keyed reducer to be enhanced
  */
 const withAllSectionsSidebarControls = ( reducer ) => ( state, action ) => {

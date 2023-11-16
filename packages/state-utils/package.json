@@ -30,8 +30,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/is-shallow-equal": "^4.23.0",
-		"@wordpress/warning": "^2.23.0",
+		"@wordpress/is-shallow-equal": "^4.44.0",
+		"@wordpress/warning": "^2.44.0",
 		"lodash": "^4.17.21",
 		"redux": "^4.2.1",
 		"redux-thunk": "^2.4.2",
@@ -39,6 +39,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.7.4"
+		"typescript": "^5.2.2"
 	}
 }

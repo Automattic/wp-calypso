@@ -23,7 +23,6 @@ const joinChannel = async ( store, topic ) => {
 
 /**
  * Middleware
- *
  * @param store middleware store
  */
 export default ( store ) => ( next ) => ( action ) => {

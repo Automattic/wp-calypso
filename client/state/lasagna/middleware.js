@@ -20,7 +20,6 @@ export const lasagna = new Lasagna( jwtFetcher, config( 'lasagna_url' ) );
 /**
  * Compose a list of middleware into one middleware
  * Props @rhc3
- *
  * @param m middlewares to compose
  */
 const combineMiddleware = ( ...m ) => {

@@ -15,7 +15,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns an action object that sets the current user object on the store
- *
  * @param  {Object} user user object
  * @returns {Object}        Action object
  */

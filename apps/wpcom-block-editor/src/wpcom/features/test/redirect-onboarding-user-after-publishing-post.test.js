@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { redirectOnboardingUserAfterPublishingPost } from '../redirect-onboarding-user-after-publishing-post';
+import { RedirectOnboardingUserAfterPublishingPost } from '../redirect-onboarding-user-after-publishing-post';
 
 beforeAll( () => {} );
 
@@ -44,7 +44,7 @@ jest.mock( '@wordpress/data', () => ( {
 	},
 } ) );
 
-describe( 'redirectOnboardingUserAfterPublishingPost', () => {
+describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 	it( 'should NOT redirect the user to the launchpad if start-writing query parameter is NOT present', () => {
 		delete global.window;
 		global.window = {
@@ -54,9 +54,9 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 			},
 		};
 
-		redirectOnboardingUserAfterPublishingPost();
+		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockCloseSidebar ).toBeCalledTimes( 0 );
+		expect( mockCloseSidebar ).toHaveBeenCalledTimes( 0 );
 		expect( mockSubscribeFunction[ 0 ] ).toBe( undefined );
 		expect( global.window.location.href ).toBe( undefined );
 	} );
@@ -71,12 +71,12 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 			},
 		};
 
-		redirectOnboardingUserAfterPublishingPost();
+		RedirectOnboardingUserAfterPublishingPost();
 
 		expect( mockSubscribeFunction[ 0 ] ).not.toBe( undefined );
 		mockSubscribeFunction[ 1 ]();
 
-		expect( mockUnSubscribe ).toBeCalledTimes( 0 );
+		expect( mockUnSubscribe ).toHaveBeenCalledTimes( 0 );
 		expect( global.window.location.href ).toBe( undefined );
 	} );
 
@@ -91,12 +91,12 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 			},
 		};
 
-		redirectOnboardingUserAfterPublishingPost();
+		RedirectOnboardingUserAfterPublishingPost();
 		mockSubscribeFunction[ 1 ]();
 
 		expect( mockSubscribeFunction ).not.toBe( null );
-		expect( mockUnSubscribe ).toBeCalledTimes( 1 );
-		expect( mockClosePublishSidebar ).toBeCalledTimes( 1 );
+		expect( mockUnSubscribe ).toHaveBeenCalledTimes( 1 );
+		expect( mockClosePublishSidebar ).toHaveBeenCalledTimes( 1 );
 		expect( global.window.location.href ).toBe(
 			'https://calypso.localhost:3000/setup/start-writing/launchpad?siteSlug=wordpress.com&start-writing=true'
 		);
@@ -113,10 +113,10 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 			},
 		};
 
-		redirectOnboardingUserAfterPublishingPost();
+		RedirectOnboardingUserAfterPublishingPost();
 		mockSubscribeFunction[ 0 ]();
 
-		expect( mockCloseSidebar ).toBeCalledTimes( 1 );
+		expect( mockCloseSidebar ).toHaveBeenCalledTimes( 1 );
 		expect( mockSubscribeFunction ).not.toBe( null );
 	} );
 } );

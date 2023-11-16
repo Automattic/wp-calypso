@@ -1,7 +1,4 @@
-@import "shared/colors";
-
-// Default color scheme
-@import "shared/color-schemes/default";
+@import "calypso-color-schemes-root";
 
 // Color schemes that override default properties
 @import "shared/color-schemes/aquatic";

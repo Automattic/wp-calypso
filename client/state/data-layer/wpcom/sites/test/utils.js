@@ -181,7 +181,7 @@ describe( 'utility functions', () => {
 
 			handleWriteCommentFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
 
-			expect( dispatch ).toBeCalledWith(
+			expect( dispatch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					type: NOTICE_CREATE,
 					notice: {

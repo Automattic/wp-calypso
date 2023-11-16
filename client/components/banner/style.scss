@@ -101,7 +101,7 @@
 	}
 
 	.banner__icon-no-circle {
-		display: flex;
+		display: none;
 		padding: 3px 4px 4px 3px;
 		margin-right: 16px;
 		align-items: center;
@@ -115,6 +115,9 @@
 			display: none;
 		}
 		.banner__icon-circle {
+			display: flex;
+		}
+		.banner__icon-no-circle {
 			display: flex;
 		}
 	}

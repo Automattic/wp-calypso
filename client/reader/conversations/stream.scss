@@ -1,5 +1,9 @@
-.conversations__stream .card.is-compact {
-	padding: 0;
+.is-section-reader .conversations__header.navigation-header {
+	margin: 0 auto;
+	max-width: 600px;
+	@media only screen and (max-width: 660px) {
+		padding: 0 30px;
+	}
 }
 
 .conversations__stream .reader-post-card.card.is-compact .reader-post-options-menu {
@@ -19,12 +23,12 @@
 		max-height: none;
 	}
 
-	.reader-post-card__byline-author-site {
+	.reader-post-card__byline-site {
 		font-weight: 600;
 		margin-right: 5px;
 	}
 
-	.reader-post-card__timestamp-and-tag {
+	.reader-post-card__author-and-timestamp {
 		margin-left: 0;
 	}
 
@@ -49,10 +53,6 @@
 
 	&:not(:first-child) {
 		margin-top: 16px;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 16px 16px;
 	}
 
 	// Hides Follow button and tags in Conversations stream

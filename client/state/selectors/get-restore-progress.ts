@@ -3,7 +3,6 @@ import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-lo
 
 /**
  * Get the progress details of a restore for a specified site
- *
  * @param {AppState} state Global state tree
  * @param {number | string} siteId the site ID
  * @returns {RestoreProgress} Progress details

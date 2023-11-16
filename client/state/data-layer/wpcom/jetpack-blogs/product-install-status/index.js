@@ -10,7 +10,6 @@ const noop = () => {};
 
 /**
  * Request the current Jetpack product install status.
- *
  * @param   {Object} action Action to request the product install status.
  * @returns {Object}        The dispatched action.
  */
@@ -26,7 +25,6 @@ export const requestJetpackProductInstallStatus = ( action ) =>
 
 /**
  * Dispatches a product install status receive action when the request succeeded.
- *
  * @param   {Object} action Redux action
  * @param   {number} action.siteId
  * @param   {Object} status Status as returned from the endpoint

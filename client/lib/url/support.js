@@ -1,8 +1,9 @@
+// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 const root = 'https://wordpress.com/support';
 
 export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;
 export const ADDING_TITAN_TO_YOUR_SITE = `${ root }/add-email/adding-professional-email-to-your-site/`;
-export const AUTO_RENEWAL = `${ root }/manage-purchases/#automatic-renewal`;
+export const AUTO_RENEWAL = `${ root }/support/manage-purchases/automatic-renewal/`;
 export const CHANGE_NAME_SERVERS = `${ root }/domains/change-name-servers/`;
 export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-name-servers/#find-your-new-name-servers`;
 export const CONCIERGE_SUPPORT = `${ root }/concierge-support/`;
@@ -52,7 +53,7 @@ export const MAP_SUBDOMAIN_WITH_CNAME_RECORDS = `${ root }/domains/connect-subdo
 export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/connect-existing-domain/#step-2-change-your-domains-name-servers`;
 export const PRIVACY_PROTECTION = `${ root }/domains/domain-registrations-and-privacy/#privacy-protection`;
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;
-export const REFUNDS = `${ root }/manage-purchases/#refund-policy`;
+export const REFUNDS = `${ root }/refunds/`;
 export const REGISTER_DOMAIN = `${ root }/domains/register-domain/`;
 export const SETTING_PRIMARY_DOMAIN = `${ root }/domains/set-a-primary-address/`;
 export const SETTING_UP_PREMIUM_SERVICES = `${ root }/setting-up-premium-services/`;

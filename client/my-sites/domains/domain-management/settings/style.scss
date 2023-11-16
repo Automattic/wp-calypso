@@ -14,8 +14,6 @@ body.edit__body-white.theme-default.color-scheme {
 
 .settings-header {
 	&__container {
-		margin-bottom: 24px;
-
 		&-title {
 			display: flex;
 			flex-wrap: wrap;
@@ -27,24 +25,6 @@ body.edit__body-white.theme-default.color-scheme {
 			header.settings-header__title {
 				margin: 8px 0;
 				text-transform: lowercase;
-
-				.formatted-header__title {
-					font-weight: 400;
-					margin: 0;
-					line-height: 100%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-
-					@include break-zoomed-in {
-						font-size: $font-title-medium;
-					}
-
-					@include break-small {
-						font-size: $font-title-large;
-					}
-				}
-			}
-
-			@include breakpoint-deprecated( "<660px" ) {
-				margin: 0 16px 24px;
 			}
 		}
 
@@ -168,6 +148,19 @@ body.edit__body-white.theme-default.color-scheme {
 			}
 		}
 	}
+
+	&__domain-notice-dismiss-button {
+		margin-left: auto;
+		width: 18px;
+		height: 18px;
+		color: var(--color-text-subtle);
+		cursor: pointer;
+
+		@include break-small {
+			width: 24px;
+			height: 24px;
+		}
+	}
 }
 
 .domain-settings-page {
@@ -203,4 +196,8 @@ body.edit__body-white.theme-default.color-scheme {
 			color: var(--studio-gray-80);
 		}
 	}
+}
+
+.is-mobile-app-view .domain-settings-page .breadcrumbs-back {
+	display: none;
 }

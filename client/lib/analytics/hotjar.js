@@ -7,15 +7,21 @@ const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 
 let hotJarScriptLoaded = false;
 
+export function mayWeLoadHotJarScript() {
+	return config( 'hotjar_enabled' ) && mayWeTrackByTracker( 'hotjar' );
+}
+
+export function getHotjarSiteSettings() {
+	return isJetpackCloud()
+		? { hjid: 3165344, hjsv: 6 } // Calypso green (cloud.jetpack.com)
+		: { hjid: 227769, hjsv: 5 }; // Calypso blue (wordpress.com)
+}
+
 export function addHotJarScript() {
-	if ( hotJarScriptLoaded || ! config( 'hotjar_enabled' ) || ! mayWeTrackByTracker( 'hotjar' ) ) {
+	if ( hotJarScriptLoaded || ! mayWeLoadHotJarScript() ) {
 		hotjarDebug( 'Not loading HotJar script' );
 		return;
 	}
-
-	const hotjarSiteSettings = isJetpackCloud()
-		? { hjid: 3165344, hjsv: 6 } // Calypso green (cloud.jetpack.com)
-		: { hjid: 227769, hjsv: 5 }; // Calypso blue (wordpress.com)
 
 	( function ( h, o, t, j, a, r ) {
 		hotjarDebug( 'Loading HotJar script' );
@@ -24,7 +30,7 @@ export function addHotJarScript() {
 			function () {
 				( h.hj.q = h.hj.q || [] ).push( arguments );
 			};
-		h._hjSettings = hotjarSiteSettings;
+		h._hjSettings = getHotjarSiteSettings();
 		a = o.getElementsByTagName( 'head' )[ 0 ];
 		r = o.createElement( 'script' );
 		r.async = 1;

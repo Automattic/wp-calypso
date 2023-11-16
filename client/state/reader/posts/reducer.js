@@ -12,7 +12,6 @@ import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Tracks all known post objects, indexed by post ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

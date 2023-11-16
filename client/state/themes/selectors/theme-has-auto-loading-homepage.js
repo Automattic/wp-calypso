@@ -8,7 +8,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Checks if a theme has auto loading homepage feature.
- *
  * @param {Object} state   Global state tree
  * @param {string} themeId An identifier for the theme
  * @param {number} siteId  An identifier for the site

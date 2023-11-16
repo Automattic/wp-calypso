@@ -8,6 +8,8 @@ import {
 	isFetchingAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -16,6 +18,8 @@ export function useAtomicTransfer(
 ): [ boolean, number, boolean, Dispatch< SetStateAction< boolean > > ] {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
+
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
@@ -40,21 +44,24 @@ export function useAtomicTransfer(
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
 	useEffect( () => {
-		if ( siteId && transferStatus === transferStates.COMPLETE ) {
+		// Check the transfer status through the isSiteAtomic selector.
+		// This uses the `is_wpcom_atomic` flag returned by the sites endpoint.
+		if ( siteId && isSiteAtomic ) {
 			setIsAtomicTransferCheckComplete( true );
 		}
 
-		if (
-			! siteId ||
-			transferStatus === transferStates.COMPLETE ||
-			isJetpackSelfHosted ||
-			! isAtomicNeeded
-		) {
+		if ( ! siteId || isSiteAtomic || isJetpackSelfHosted || ! isAtomicNeeded ) {
 			return;
 		}
 
-		if ( ! isFetchingTransferStatus ) {
+		if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
 			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
+		}
+
+		// Once the transferStatus is reported complete, query the sites endpoint
+		// until the `is_wpcom_atomic` = true is returned
+		if ( transferStatus === transferStates.COMPLETE && ! isSiteAtomic ) {
+			waitFor( 2 ).then( () => dispatch( requestSite( siteId ) ) );
 		}
 	}, [
 		siteId,
@@ -63,6 +70,7 @@ export function useAtomicTransfer(
 		isFetchingTransferStatus,
 		isJetpackSelfHosted,
 		isAtomicNeeded,
+		isSiteAtomic,
 	] );
 
 	// Set progressbar (currentStep) depending on transfer/plugin status.

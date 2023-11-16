@@ -1,0 +1,33 @@
+.badge.not-available-badge {
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: rem(10px);
+	font-weight: bold;
+	padding: 0 6px;
+	text-align: center;
+	user-select: none;
+	text-transform: uppercase;
+
+	color: var(--studio-gray-50);
+	background-color: var(--studio-gray-5);
+}
+
+.not-available-badge__wrapper {
+	display: inline-flex;
+	align-items: center;
+}
+
+.not-available-badge__tooltip {
+	.popover__arrow {
+		&::before {
+			border-bottom-color: var(--studio-gray-60) !important;
+			inset-block-start: 1px !important;
+		}
+	}
+	.popover__inner {
+		background: var(--studio-gray-60);
+		color: var(--studio-white);
+		padding: 10px 12px;
+		border: none;
+	}
+}

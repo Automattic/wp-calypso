@@ -6,12 +6,16 @@ import 'calypso/state/themes/init';
 
 export function isFullSiteEditingTheme(
 	state: AppState,
-	themeId: string | null | undefined
+	themeId: string | null | undefined,
+	siteId: number | null | undefined
 ): boolean {
 	if ( ! themeId ) {
 		return false;
 	}
-	const theme = getTheme( state, 'wpcom', themeId );
+	const theme =
+		getTheme( state, 'wpcom', themeId ) ||
+		getTheme( state, 'wporg', themeId ) ||
+		( siteId && getTheme( state, siteId, themeId ) );
 	if ( ! theme ) {
 		return false;
 	}

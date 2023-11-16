@@ -12,3 +12,7 @@ export { default as useRecordPostEmailsSetFrequency } from './use-record-post-em
 export { default as useRecordPostEmailsToggle } from './use-record-post-emails-toggle';
 export { default as useRecordRecommendedSiteSubscribed } from './use-record-recommended-site-subscribed';
 export { default as useRecordRecommendedSiteDismissed } from './use-record-recommended-site-dismissed';
+export { default as useRecordSearchPerformed } from './use-record-search-performed';
+export { default as useRecordSearchByUrlPerformed } from './use-record-search-by-url-performed';
+export { default as useRecordSearchSiteSubscribed } from './use-record-search-site-subscribed';
+export { default as useRecordViewFeedButtonClicked } from './use-record-view-feed-button-clicked';

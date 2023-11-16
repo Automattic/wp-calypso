@@ -27,6 +27,16 @@ Below is a list of supported props.
 
 The HTML page's `title`.
 
+### `faviconUrl`
+
+<table>
+	<tr><td>Type</td><td>String</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>undefined</code></td></tr>
+</table>
+
+The URL of the favicon to use. If not provided, the default WordPress.com favicon will be used.
+
 ### `children`
 
 <table>

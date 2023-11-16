@@ -1,0 +1,348 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+@media ( max-width: $break-small ) {
+	.domains-table {
+		padding: 0 16px;
+	}
+}
+
+.domains-table {
+	.domains-table-toolbar {
+		--domains-table-toolbar-height: 40px;
+		background: var(--color-surface-backdrop);
+	}
+
+	table {
+		margin-top: 14px; /* 30px - 16px of the table heading padding */
+		border-collapse: collapse;
+
+		--row-gap: 20px;
+
+		display: grid;
+		gap: var(--row-gap) 16px;
+
+		// Note: The checkbox does not count for column counting purposes
+
+		&.is-7-column {
+			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
+		}
+		&.is-7-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr 1fr auto auto auto 36px;
+		}
+		&.is-6-column {
+			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-6-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-5-column {
+			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+		&.is-5-column:not(.has-checkbox) {
+			grid-template-columns: 1fr minmax(auto, 1fr) auto auto 36px;
+		}
+
+		tr::after {
+			display: block;
+			content: "";
+			height: 1px;
+			background: #f0f0f0;
+			grid-column: 1 / -1;
+		}
+	}
+
+	thead,
+	tbody,
+	tr {
+		// For CSS gird to work the table cells need to be direct children of the grid parent.
+		// display: contents prevents the intermediate table elements from generating their own CSS boxes.
+		// This means we can keep the HTML semantics of a table for accessibility.
+		display: contents;
+	}
+
+	td {
+		min-height: 44px;
+		display: flex;
+		align-items: center;
+
+		color: var(--studio-gray-50);
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-style: normal;
+	}
+
+	.domains-table__domain-name {
+		color: var(--studio-gray-100);
+		font-size: $font-body;
+		line-height: 24px;
+		font-weight: 500;
+	}
+
+	a.domains-table__domain-name:hover,
+	.domains-table__add-site-link {
+		text-decoration: underline;
+		color: var(--color-link);
+	}
+
+	.domains-table__primary-domain-label {
+		margin-bottom: 4px;
+	}
+
+	.domains-table-row__status-cell {
+		white-space: pre-line;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		font-size: $font-body-small;
+
+		svg {
+			color: currentColor;
+		}
+
+		&__status-success,
+		&__status-premium {
+			color: var(--studio-green-50);
+		}
+
+		&__status-verifying,
+		&__status-warning {
+			color: var(--studio-orange-50);
+		}
+
+		&__status-alert,
+		&__status-error {
+			color: var(--studio-red-50);
+		}
+	}
+
+	.domains-table-row__domain {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+	}
+
+	.domains-table-row__actions {
+		text-align: right;
+	}
+}
+
+.domains-table-row-loading-placeholder {
+	&-checkbox-column {
+		width: 20px;
+	}
+	&-domain-column {
+		width: 170px;
+	}
+	&-owner-column {
+		width: 107px;
+	}
+	&-site-column {
+		width: 70px;
+	}
+	&-expires-column {
+		width: 107px;
+	}
+	&-status-column {
+		width: 107px;
+	}
+}
+
+.domains-table-row__actions-group {
+	.components-button {
+		&:visited {
+			color: var(--color-text);
+		}
+
+		&:hover:not(:disabled) {
+			color: var(--color-primary);
+		}
+	}
+}
+
+.domains-bulk-update-status-popover {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	color: var(--studio-gray-50);
+
+	&-item {
+		color: var(--studio-gray-100);
+
+		> div {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+
+	&-item-date {
+		margin-left: 16px;
+		font-size: smaller;
+		color: var(--studio-gray-50);
+	}
+
+	&-item-indicator {
+		border-radius: 50%;
+		height: 8px;
+		width: 8px;
+		min-height: 8px;
+		min-width: 8px;
+		flex-shrink: 0;
+
+		&__pending {
+			@extend .domains-bulk-update-status-popover-item-indicator;
+			background-color: var(--studio-orange-40);
+		}
+	}
+}
+
+.domains-table-bulk-actions-notice-popover {
+	max-height: 300px;
+	overflow-y: auto;
+	p {
+		line-height: 1.2;
+		font-size: smaller;
+	}
+}
+
+.domains-table-row__renews-on-cell {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.domains-table-row__domain-type-text {
+	display: none;
+	font-size: $font-body-extra-small;
+	font-style: italic;
+	font-weight: 400;
+	line-height: 20px;
+
+	@include break-large {
+		display: block;
+	}
+}
+
+.domains-table-mobile-cards {
+	.domains-table-mobile-cards-select-all {
+		display: flex;
+		align-items: center;
+		span {
+			font-size: smaller;
+		}
+	}
+
+	.domains-table__bulk-action-container {
+		margin-top: 16px;
+	}
+
+	&-controls {
+		width: 100%;
+		display: flex;
+		gap: 16px;
+	}
+
+	&-sort-dropdown {
+		width: 100%;
+		flex-grow: 1;
+		.select-dropdown__container {
+			width: 100%;
+			.select-dropdown__header {
+				text-transform: capitalize;
+			}
+		}
+	}
+}
+
+.domains-table-mobile-card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px 0;
+	border-bottom: 1px solid #f0f0f0;
+
+	&-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		.domains-table__domain-name {
+			text-align: left;
+		}
+
+		.components-base-control,
+		.components-checkbox-control__input,
+		.components-checkbox-control__checked {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	> div {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&-label {
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		color: var(--gray-gray-60);
+	}
+
+	&-registered-date {
+		font-size: $font-body-small;
+	}
+
+	&-status {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
+	&-loading-placeholder {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 16px 0;
+		border-bottom: 1px solid #f0f0f0;
+
+		> div {
+			display: flex;
+			justify-content: space-between;
+			gap: 80px;
+		}
+
+		&-actions {
+			width: 50px;
+		}
+
+		&-status {
+			width: 120px;
+		}
+	}
+
+}
+
+a.domains-table-add-email-button {
+	font-size: $font-body-small;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px; /* 142.857% */
+	letter-spacing: -0.15px;
+	text-decoration: underline;
+	color: var(--color-link);
+}
+
+a.domains-table-view-email-button {
+	color: var(--studio-gray-90);
+	font-size: $font-body-small;
+	&:hover {
+		color: var(--color-link);
+	}
+}

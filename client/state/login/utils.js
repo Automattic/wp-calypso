@@ -38,7 +38,6 @@ export class HTTPError extends Error {
 
 /**
  * Retrieves the first error message from the specified HTTP error.
- *
  * @param {Object} httpError HTTP error
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
@@ -125,7 +124,6 @@ export function getErrorFromHTTPError( httpError ) {
 
 /**
  * Transforms WPCOM error to the error object we use for login purposes
- *
  * @param {Object} wpcomError HTTP error
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
@@ -138,7 +136,6 @@ export const getErrorFromWPCOMError = ( wpcomError ) => ( {
 
 /**
  * Determines whether the user account uses regular authentication by password.
- *
  * @param {string} authAccountType - authentication account type
  * @returns {boolean} true if the account is regular, false otherwise
  */
@@ -146,7 +143,6 @@ export const isRegularAccount = ( authAccountType ) => authAccountType === 'regu
 
 /**
  * Determines whether the user account uses authentication without password.
- *
  * @param {string} authAccountType - authentication account type
  * @returns {boolean} true if the account is passwordless, false otherwise
  */

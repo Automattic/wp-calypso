@@ -52,9 +52,9 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), function () {
 		await themesPage.search( themeName );
 	} );
 
-	it( `Select ${ themeName } and click on Live Demo popover item`, async function () {
+	it( `Select ${ themeName } and click on Demo site popover item`, async function () {
 		const selectedTheme = await themesPage.select( themeName );
-		await themesPage.clickPopoverItem( selectedTheme, 'Live Demo' );
+		await themesPage.clickPopoverItem( selectedTheme, 'Demo site' );
 	} );
 
 	it( 'Preview theme', async function () {

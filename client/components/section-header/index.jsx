@@ -1,7 +1,6 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Count } from '@automattic/components';
 import classNames from 'classnames';
 import { PureComponent } from 'react';
-import Count from 'calypso/components/count';
 
 import './style.scss';
 

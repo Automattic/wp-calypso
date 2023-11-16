@@ -1,0 +1,93 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.add-subscribers-modal {
+	.components-modal__frame {
+		width: 560px;
+
+		.components-modal__header {
+			padding: 0 24px;
+		}
+
+		.components-modal__content {
+			padding: 0 24px 24px;
+		}
+
+		@media ( max-width: $break-small ) {
+			width: auto;
+		}
+	}
+
+	.add-subscriber__form--container {
+		.add-subscriber__form--disclaimer {
+			margin-top: 16px !important;
+			margin-bottom: 24px !important;
+		}
+
+		.components-base-control__help {
+			top: 7px !important;
+			margin-top: 0;
+		}
+
+		.form-input-validation {
+			padding-left: 0 !important;
+
+			svg {
+				position: static !important;
+				margin-left: 0 !important;
+				margin-right: 5px;
+			}
+		}
+
+		.is-error .components-base-control__field {
+			margin-bottom: 6px !important;
+		}
+
+		.components-base-control__field {
+			margin-top: 0 !important;
+			margin-bottom: 8px !important;
+		}
+
+		.components-text-control__input {
+			border-radius: 2px;
+			padding: 10px 16px !important;
+		}
+	}
+
+	.add-subscribers-modal__label {
+		display: block;
+		margin-bottom: 6px;
+		font-size: $font-body-small;
+		font-weight: 500;
+		line-height: rem(20px);
+	}
+
+	.add-subscriber__form-submit-btn {
+		float: right;
+		min-width: auto;
+	}
+
+	.add-subscribers-modal__form--hidden {
+		opacity: 0;
+		height: 0;
+		overflow: hidden;
+	}
+
+	.loading-bar {
+		height: 4px;
+		margin-bottom: 24px;
+		margin-top: 0;
+
+		&::before {
+			background-color: $studio-gray-70;
+		}
+	}
+
+	.add-subscribers-modal__loading-text {
+		color: $studio-gray-50;
+		font-size: $font-body;
+		font-weight: 400;
+		line-height: rem(20px);
+	}
+}

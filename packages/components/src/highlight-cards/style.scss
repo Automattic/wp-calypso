@@ -83,8 +83,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		cursor: pointer;
 
 		&:focus {
-			outline: 2px solid #3057dc;
-			border-radius: 2px;
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 
 		svg {
@@ -200,6 +199,14 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
 }
+
+// Remove the border and background from the compact highlight cards
+.highlight-card.is-compact {
+	box-shadow: 0 0 0 0;
+	background: none;
+}
+
+
 .highlight-year-navigation {
 	display: flex;
 	justify-content: space-between;
@@ -219,6 +226,9 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 			width: 244px;
 			box-sizing: border-box;
 			border-radius: 5px; // stylelint-disable-line scales/radii
+		}
+		button:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
 
@@ -383,6 +393,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
+.highlight-card-tooltip-note {
+	font-size: $font-body-extra-small;
+	padding-top: 8px;
+}
 .highlight-card__settings-tooltip {
 	.highlight-card-tooltip-content {
 		flex-direction: column;

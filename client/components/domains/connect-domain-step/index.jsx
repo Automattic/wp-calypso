@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -6,7 +6,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
@@ -20,8 +19,10 @@ import {
 	domainManagementList,
 	domainUseMyDomain,
 	domainMappingSetup,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
@@ -43,6 +44,7 @@ function ConnectDomainStep( {
 	isFirstVisit,
 	queryError,
 	queryErrorDescription,
+	currentRoute,
 } ) {
 	const { __ } = useI18n();
 	const stepsDefinition = isSubdomain( domain )
@@ -201,10 +203,31 @@ function ConnectDomainStep( {
 		verifyConnection( false );
 	}, [ showErrors, verifyConnection ] );
 
-	const renderBreadcrumbs = () => {
+	const renderTitle = () => {
+		const headerText = sprintf(
+			/* translators: %s: domain name being connected (ex.: example.com) */
+			__( 'Connect %s' ),
+			domain
+		);
+
+		return (
+			<div className={ baseClassName + '__title' }>
+				<FormattedHeader
+					className={ baseClassName + '__page-heading' }
+					headerText={ headerText }
+					align="left"
+				/>
+				{ modeType.ADVANCED === mode && (
+					<Badge className={ baseClassName + '__badge' }>{ __( 'Advanced' ) }</Badge>
+				) }
+			</div>
+		);
+	};
+
+	const renderHeader = () => {
 		let items = [
 			{
-				label: __( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute ) ? __( 'All Domains' ) : __( 'Domains' ),
 				href: domainManagementList( selectedSite.slug, domain ),
 			},
 			{
@@ -228,53 +251,33 @@ function ConnectDomainStep( {
 			items = [
 				{
 					label: __( 'Domains' ),
-					href: domainManagementList( selectedSite.slug, domain ),
+					href: domainManagementList( selectedSite.slug, currentRoute ),
 				},
 				{
 					label: domain,
-					href: domainManagementEdit( selectedSite.slug, domain ),
+					href: domainManagementEdit( selectedSite.slug, domain, currentRoute ),
 				},
 				{ label: __( 'Connect' ) },
 			];
 
 			mobileItem = {
 				label: __( 'Back' ),
-				href: domainManagementEdit( selectedSite.slug, domain ),
+				href: domainManagementEdit( selectedSite.slug, domain, currentRoute ),
 				showBackArrow: true,
 			};
 		}
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader items={ items } mobileItem={ mobileItem } titleOverride={ renderTitle() } />
+		);
 	};
 
 	const goBack = () => {
 		if ( prevPageSlug ) {
 			setPageSlug( prevPageSlug );
 		} else {
-			page( domainManagementList( selectedSite.slug ) );
+			page( domainManagementList( selectedSite.slug, currentRoute ) );
 		}
-	};
-
-	const renderTitle = () => {
-		const headerText = sprintf(
-			/* translators: %s: domain name being connected (ex.: example.com) */
-			__( 'Connect %s' ),
-			domain
-		);
-
-		return (
-			<div className={ baseClassName + '__title' }>
-				<FormattedHeader
-					brandFont
-					className={ baseClassName + '__page-heading' }
-					headerText={ headerText }
-					align="left"
-				/>
-				{ modeType.ADVANCED === mode && (
-					<Badge className={ baseClassName + '__badge' }>{ __( 'Advanced' ) }</Badge>
-				) }
-			</div>
-		);
 	};
 
 	const renderContent = () => {
@@ -332,8 +335,7 @@ function ConnectDomainStep( {
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'connect-domain-setup__body-white' ] } />
-			{ renderBreadcrumbs() }
-			{ renderTitle() }
+			{ renderHeader() }
 			{ isTwoColumnLayout ? (
 				<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 			) : (
@@ -376,5 +378,6 @@ export default connect( ( state ) => {
 		domains: getDomainsBySiteId( state, siteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 		selectedSite,
+		currentRoute: getCurrentRoute( state ),
 	};
 } )( ConnectDomainStep );

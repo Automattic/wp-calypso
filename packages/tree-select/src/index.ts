@@ -43,11 +43,16 @@ export interface CachedSelector< S, A extends unknown[], R = unknown > {
 export default function treeSelect<
 	State = unknown,
 	Args extends unknown[] = unknown[],
+	// Note: SArgs is only necessary because TS will attempt to infer Args
+	// from selector instead of getDependents, which causes issues when selector
+	// doesn't utilize args.
+	// Same issue as https://github.com/Automattic/wp-calypso/pull/74540#issuecomment-1650834391
+	SArgs extends Args = Args,
 	Deps extends WeakMapKey[] = any[], // eslint-disable-line @typescript-eslint/no-explicit-any
-	Result = unknown
+	Result = unknown,
 >(
 	getDependents: ( state: State, ...args: Args ) => Deps,
-	selector: ( deps: Deps, ...args: Args ) => Result,
+	selector: ( deps: Deps, ...args: SArgs ) => Result,
 	options: Options< Args > = {}
 ): CachedSelector< State, Args, Result > {
 	if ( process.env.NODE_ENV !== 'production' ) {
@@ -84,7 +89,7 @@ export default function treeSelect<
 			return leafCache.get( key ) as Result;
 		}
 
-		const value = selector( dependents, ...args );
+		const value = selector( dependents, ...( args as SArgs ) );
 		leafCache.set( key, value );
 		return value;
 	};

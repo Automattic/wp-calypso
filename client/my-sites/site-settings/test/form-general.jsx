@@ -272,14 +272,14 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Private' ) ).toBeChecked();
 
 			await userEvent.click( publicRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
 			} );
 
 			await userEvent.click( discourageRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -368,7 +368,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( discourageRadio ).not.toBeChecked();
 
 			await userEvent.click( discourageRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -493,7 +493,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 
 			await userEvent.click( publicRadio );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -584,7 +584,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( publicRadio ).not.toBeChecked();
 
 			await userEvent.click( hiddenCheckbox );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -604,7 +604,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( publicRadio ).toBeChecked();
 
 			await userEvent.click( hiddenCheckbox );
-			expect( testProps.updateFields ).toBeCalledWith( {
+			expect( testProps.updateFields ).toHaveBeenCalledWith( {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 				wpcom_public_coming_soon: 0,
@@ -647,7 +647,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					const radioButton = getByLabelText( text, { exact: false } );
 					expect( radioButton ).not.toBeChecked();
 					await userEvent.click( radioButton );
-					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
+					expect( testProps.updateFields ).toHaveBeenCalledWith( updatedFields );
 				} );
 			} );
 
@@ -789,6 +789,66 @@ describe( 'SiteSettingsFormGeneral', () => {
 
 				expect( container.querySelectorAll( '#site-privacy-settings' ) ).toHaveLength( 0 );
 			} );
+		} );
+	} );
+
+	describe( 'Built By Upsell', () => {
+		const testProps = {
+			...props,
+			site: {
+				ID: 1234,
+				domain: 'example.wordpress.com',
+				options: {
+					created_at: '2023-06-14T04:37:53+00:00',
+				},
+			},
+			isUnlaunchedSite: true,
+			siteDomains: [ 'example.wordpress.com' ],
+		};
+
+		it( 'Should not show the upsell for launched sites', () => {
+			const { container } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } isUnlaunchedSite={ false } />
+			);
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 0 );
+		} );
+
+		it( 'Should not show the upsell for sites without created_at', () => {
+			const testPropsWithoutCreatedAt = {
+				...testProps,
+				site: {
+					...testProps.site,
+					options: {
+						created_at: null,
+					},
+				},
+			};
+
+			const { container } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testPropsWithoutCreatedAt } />
+			);
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 0 );
+		} );
+
+		it( 'Should not show the upsell for sites newer than 4 days', () => {
+			jest
+				.useFakeTimers()
+				.setSystemTime( Date.parse( '2023-06-14T04:37:53+00:00' ) + 3 * 24 * 60 * 60 * 1000 );
+
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+			jest.setSystemTime( jest.getRealSystemTime() );
+			jest.useRealTimers();
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 0 );
+		} );
+
+		it( 'Should show the upsell for unlaunched sites older than 4 days', () => {
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

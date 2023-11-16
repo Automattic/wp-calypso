@@ -10,7 +10,6 @@ const noop = () => {};
 /**
  * Converts an value/label pairs from API into object whose
  * keys are the values and whose values are the labels.
- *
  * @example
  * valueLabelToObject( [ { value: 'foo', label: 'bar' }, { value: 'biz', label: 'bat' } ] )
  * // returns { foo: 'bar', biz: 'bat' }
@@ -22,7 +21,6 @@ const timezonePairsToMap = ( pairs ) =>
 
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.
- *
  * @returns {Object} normalized timezones data.
  */
 export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent } ) => ( {

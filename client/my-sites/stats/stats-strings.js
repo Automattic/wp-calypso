@@ -1,4 +1,6 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import { SUPPORT_URL } from './const';
 
 export default function () {
 	const statsStrings = {};
@@ -7,9 +9,16 @@ export default function () {
 		title: translate( 'Posts & pages', { context: 'Stats: title of module' } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
-		empty: translate( 'No posts or pages viewed', {
-			context: 'Stats: Info box label when the Posts & Pages module is empty',
-		} ),
+		empty: translate(
+			'Your most popular {{link}}posts and pages{{/link}} will display here once you begin to get some visitors.',
+			{
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
+				},
+				context: 'Stats: Info box label when the Posts & Pages module is empty',
+			}
+		),
 	};
 
 	statsStrings.referrers = {
@@ -18,9 +27,16 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of post views by referrer.',
 		} ),
-		empty: translate( 'No referrers recorded', {
-			context: 'Stats: Info box label when the Referrers module is empty',
-		} ),
+		empty: translate(
+			"We'll show you which websites are {{link}}referring visitors{{/link}} to your site.",
+			{
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+				},
+				context: 'Stats: Info box label when the Referrers module is empty',
+			}
+		),
 	};
 
 	statsStrings.clicks = {
@@ -29,7 +45,11 @@ export default function () {
 		value: translate( 'Clicks', {
 			context: 'Stats: module row header for number of clicks on a given link in a post.',
 		} ),
-		empty: translate( 'No clicks recorded', {
+		empty: translate( 'Your most {{link}}clicked external links{{/link}} will display here.', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+			},
 			context: 'Stats: Info box label when the Clicks module is empty',
 		} ),
 	};
@@ -40,9 +60,16 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views from a country.',
 		} ),
-		empty: translate( 'No countries recorded', {
-			context: 'Stats: Info box label when the Countries module is empty',
-		} ),
+		empty: translate(
+			'Stats on visitors and {{link}}their viewing location{{/link}} will make its way here.',
+			{
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+				},
+				context: 'Stats: Info box label when the Countries module is empty',
+			}
+		),
 	};
 
 	statsStrings.search = {
@@ -53,7 +80,11 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for views of a given search in search terms.',
 		} ),
-		empty: translate( 'No search terms recorded', {
+		empty: translate( 'See {{link}}terms that visitors search{{/link}} to find your site, here. ', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
+			},
 			context: 'Stats: Info box label when the Search Terms module is empty',
 		} ),
 	};
@@ -64,7 +95,11 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per author.',
 		} ),
-		empty: translate( 'No posts or pages viewed', {
+		empty: translate( '{{link}}Traffic that authors have generated{{/link}} will show here.', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#authors` ) } />,
+			},
 			context: 'Stats: Info box label when the Authors module is empty',
 		} ),
 	};
@@ -75,7 +110,11 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per video.',
 		} ),
-		empty: translate( 'No videos viewed', {
+		empty: translate( 'Your most viewed {{link}}video stats{{/link}} will show up here.', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
+			},
 			context: 'Stats: Info box label when the Videos module is empty',
 		} ),
 	};
@@ -86,7 +125,11 @@ export default function () {
 		value: translate( 'downloads', {
 			context: 'Stats: module row header for number of downloads per file.',
 		} ),
-		empty: translate( 'No files downloaded', {
+		empty: translate( 'Stats from any {{link}}downloaded files{{/link}} will display here.', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) } />,
+			},
 			context: 'Stats: Info box label when the file downloads module is empty',
 		} ),
 	};
@@ -97,7 +140,11 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per tag or category.',
 		} ),
-		empty: translate( 'No tagged posts or pages viewed', {
+		empty: translate( 'Most viewed {{link}}tags & categories{{/link}} will be listed here.', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#:~:text=Tags%20,%20Categories` ) } />,
+			},
 			context: 'Stats: Info box label when the Tags module is empty',
 		} ),
 	};
@@ -117,7 +164,11 @@ export default function () {
 		title: translate( 'Emails', { context: 'Stats: title of module' } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Opens', { context: 'Stats: module row header for number of email opens.' } ),
-		empty: translate( 'No email opens', {
+		empty: translate( 'Stats from {{link}}your emails{{/link}} will display here.', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+			},
 			context: 'Stats: Info box label when the Email Open module is empty',
 		} ),
 	};

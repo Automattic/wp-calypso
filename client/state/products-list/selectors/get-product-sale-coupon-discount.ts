@@ -5,7 +5,6 @@ import 'calypso/state/products-list/init';
 
 /**
  * Returns the discount percentage of a sale coupon, or null if there is no sale coupon.
- *
  * @param {Object} state - global state tree
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {number|null} - the discount percentage of a sale coupon, or null if there is no sale coupon.

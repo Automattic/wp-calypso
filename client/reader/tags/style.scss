@@ -35,7 +35,7 @@
 	}
 }
 
-.is-section-reader.has-no-sidebar .layout__content {
+.is-section-reader.has-no-sidebar .layout__content .tags__main {
 	padding-left: 24px;
 	padding-right: 24px;
 	max-width: 1140px;
@@ -131,7 +131,7 @@
 	}
 }
 .alphabetic-tags__header {
-	background: var(--studio-white);
+	background: inherit;
 	padding-top: 20px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid var(--studio-gray-5);

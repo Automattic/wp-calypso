@@ -1,6 +1,6 @@
+import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -8,6 +8,8 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import usePluginVersionInfo from '../plugin-management-v2/hooks/use-plugin-version-info';
+
 import './style.scss';
 
 const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
@@ -16,6 +18,8 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 	const { localizePath } = useLocalizedPlugins();
 
 	const selectedSite = useSelector( getSelectedSite );
+
+	const { currentVersionsRange } = usePluginVersionInfo( plugin, selectedSite?.ID );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
@@ -74,7 +78,10 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 				</div>
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
-					<div className="plugin-details-header__info-value">{ plugin.version }</div>
+					<div className="plugin-details-header__info-value">
+						{ currentVersionsRange?.min }
+						{ currentVersionsRange?.max && ` - ${ currentVersionsRange.max }` }
+					</div>
 				</div>
 				{ Boolean( plugin.active_installs ) && (
 					<div className="plugin-details-header__info">

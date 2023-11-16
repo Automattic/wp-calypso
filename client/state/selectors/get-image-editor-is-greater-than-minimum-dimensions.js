@@ -3,7 +3,6 @@ import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image
 
 /**
  * Returns whether the original image size is greater than minimumImageDimensions values.
- *
  * @param  {Object}  state Global state tree
  * @param   {number} minimumWidth the minimum width of the image
  * @param   {number} minimumHeight the minimum height of the image

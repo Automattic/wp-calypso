@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import * as React from 'react';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
+import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { RequestCart } from '@automattic/shopping-cart';
@@ -59,7 +59,6 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 
 	return isOpen ? (
 		<Modal
-			open={ isOpen }
 			overlayClassName="editor-checkout-modal"
 			onRequestClose={ onClose }
 			title={ String( translate( 'Checkout modal' ) ) }

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 import { createActions } from '../actions';
 import {
 	SiteLaunchError,
@@ -410,6 +409,7 @@ describe( 'Site Actions', () => {
 
 	describe( 'Design Actions', () => {
 		const mockedRecipe = { stylesheet: 'pub/zoologist' };
+		const mockedGlobalStylesId = 1;
 		const mockedDesign = {
 			title: 'Zoologist',
 			slug: 'zoologist',
@@ -438,19 +438,37 @@ describe( 'Site Actions', () => {
 		const createMockedThemeSwitchApiRequest = ( payload ) => ( {
 			type: 'WPCOM_REQUEST',
 			request: {
-				path: `/sites/${ siteSlug }/themes/mine`,
+				path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 				apiVersion: '1.1',
 				body: payload,
 				method: 'POST',
 			},
 		} );
 
-		const createMockedThemeSetupApiRequest = ( payload ) => ( {
+		const createMockedGetGlobalStylesApiRequest = ( stylesheet ) => ( {
 			type: 'WPCOM_REQUEST',
 			request: {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ siteSlug }/global-styles/themes/${ stylesheet }/variations`,
+				apiNamespace: 'wp/v2',
+				method: 'GET',
+			},
+		} );
+
+		const createMockedSetGlobalStylesApiRequest = ( globalStylesId, payload ) => ( {
+			type: 'WPCOM_REQUEST',
+			request: {
+				path: `/sites/${ siteSlug }/global-styles/${ globalStylesId }`,
+				apiNamespace: 'wp/v2',
 				body: payload,
+				method: 'POST',
+			},
+		} );
+
+		const createMockedThemeSetupApiRequest = () => ( {
+			type: 'WPCOM_REQUEST',
+			request: {
+				path: `/sites/${ siteSlug }/theme-setup/?_locale=user`,
+				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 			},
 		} );
@@ -461,113 +479,47 @@ describe( 'Site Actions', () => {
 				styleVariation: mockedStyleVariation,
 			} );
 
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			// 1st iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSwitchApiRequest( {
 					theme: 'zoologist',
-					dont_change_homepage: true,
+				} )
+			);
+
+			// 2nd iteration: WP_COM_REQUEST to /sites/${ siteSlug }/global-styles/themes/${ stylesheet }/variations is fired
+			expect(
+				generator.next( {
+					stylesheet: mockedDesign.recipe.stylesheet,
+					global_styles_id: mockedGlobalStylesId,
+				} as any ).value
+			).toEqual( createMockedGetGlobalStylesApiRequest( mockedDesign.recipe.stylesheet ) );
+
+			// 3rd iteration: WP_COM_REQUEST to /sites/${ siteSlug }/global-styles/${ globalStylesId } is fired
+			expect( generator.next( [ mockedStyleVariation ] as any ).value ).toEqual(
+				createMockedSetGlobalStylesApiRequest( mockedGlobalStylesId, {
+					id: mockedGlobalStylesId,
+					settings: mockedStyleVariation.settings,
+					styles: mockedStyleVariation.styles,
 				} )
 			);
 		} );
 
-		it( 'should send pattern_ids to theme-setup API if the recipe of the design has this property', () => {
+		it( 'should call theme-setup api', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const patternIds = [ 1, 2, 3 ];
 			const generator = setDesignOnSite( siteSlug, {
 				...mockedDesign,
-				recipe: {
-					...mockedRecipe,
-					pattern_ids: patternIds,
-				},
+				slug: 'arbutus',
 			} );
 
 			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSwitchApiRequest( {
-					theme: 'zoologist',
-					dont_change_homepage: true,
+					theme: 'arbutus',
 				} )
 			);
 
 			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSetupApiRequest( {
-					trim_content: true,
-					pattern_ids: patternIds,
-				} )
-			);
-		} );
-
-		it( 'should send header_pattern_ids to theme-setup API if the recipe of the design has this property', () => {
-			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const headerPatternIds = [ 1, 2, 3 ];
-			const generator = setDesignOnSite( siteSlug, {
-				...mockedDesign,
-				recipe: {
-					...mockedRecipe,
-					header_pattern_ids: headerPatternIds,
-				},
-			} );
-
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSwitchApiRequest( {
-					theme: 'zoologist',
-					dont_change_homepage: true,
-				} )
-			);
-
-			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSetupApiRequest( {
-					trim_content: true,
-					header_pattern_ids: headerPatternIds,
-				} )
-			);
-		} );
-
-		it( 'should send footer_pattern_ids to theme-setup API if the recipe of the design has this property', () => {
-			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const footerPatternIds = [ 1, 2, 3 ];
-			const generator = setDesignOnSite( siteSlug, {
-				...mockedDesign,
-				recipe: {
-					...mockedRecipe,
-					footer_pattern_ids: footerPatternIds,
-				},
-			} );
-
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSwitchApiRequest( {
-					theme: 'zoologist',
-					dont_change_homepage: true,
-				} )
-			);
-
-			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSetupApiRequest( {
-					trim_content: true,
-					footer_pattern_ids: footerPatternIds,
-				} )
-			);
-		} );
-
-		it( 'should not call theme-setup api if the design is any of the anchor designs', () => {
-			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const generator = setDesignOnSite( siteSlug, {
-				...mockedDesign,
-				template: 'hannah',
-			} );
-
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSwitchApiRequest( {
-					theme: 'zoologist',
-					dont_change_homepage: true,
-				} )
-			);
+			expect( generator.next().value ).toEqual( createMockedThemeSetupApiRequest() );
 
 			// Second iteration: Complete the cycle
 			expect( generator.next().done ).toEqual( true );

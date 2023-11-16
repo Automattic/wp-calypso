@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPartner } from 'calypso/state/partner-portal/partner/actions';
 import { hasFetchedPartner } from 'calypso/state/partner-portal/partner/selectors';
 
-export default function QueryJetpackPartnerPortalPartner() {
+export const useQueryJetpackPartnerPortalPartner = () => {
 	const dispatch = useDispatch();
 	const hasFetched = useSelector( hasFetchedPartner );
 
@@ -12,6 +12,10 @@ export default function QueryJetpackPartnerPortalPartner() {
 			dispatch( fetchPartner() );
 		}
 	}, [ hasFetched, dispatch ] );
+};
+
+export default function QueryJetpackPartnerPortalPartner() {
+	useQueryJetpackPartnerPortalPartner();
 
 	return null;
 }

@@ -1,11 +1,10 @@
-import { Button, Gridicon, Spinner } from '@automattic/components';
+import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { useInstanceId } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
@@ -39,6 +38,7 @@ const Task = ( {
 	illustration,
 	illustrationAlwaysShow,
 	illustrationHeader,
+	illustrationTopActions = false,
 	isLoading: forceIsLoading = false,
 	isUrgent = false,
 	showSkip = true,
@@ -61,6 +61,7 @@ const Task = ( {
 	illustration?: string;
 	illustrationAlwaysShow?: boolean;
 	illustrationHeader?: ReactNode;
+	illustrationTopActions?: boolean;
 	isLoading?: boolean;
 	isUrgent?: boolean;
 	showSkip?: boolean;
@@ -87,7 +88,7 @@ const Task = ( {
 			actionUrl: string;
 			actionButton?: ReactNode;
 	  }
- ) &
+) &
 	(
 		| {
 				hasSecondaryAction?: false;
@@ -103,7 +104,7 @@ const Task = ( {
 				secondaryActionUrl: string;
 				secondaryActionButton?: ReactNode;
 		  }
-	 ) ) => {
+	) ) => {
 	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();
@@ -252,6 +253,12 @@ const Task = ( {
 				) }
 				<h2 className="task__title">{ title }</h2>
 				<p className="task__description">{ description }</p>
+				{ illustrationTopActions && ( illustrationAlwaysShow || isDesktop() ) && illustration && (
+					<div className="task__illustration-top-actions">
+						{ illustrationHeader && <> { illustrationHeader } </> }
+						<img src={ illustration } alt="" />
+					</div>
+				) }
 				<div className="task__actions">
 					{ renderAction() }
 					{ renderSecondaryAction() }

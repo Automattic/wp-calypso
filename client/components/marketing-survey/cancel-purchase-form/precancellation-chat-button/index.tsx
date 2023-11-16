@@ -42,11 +42,13 @@ const PrecancellationChatButton: FC< Props > = ( {
 		onClick();
 	};
 
+	const purchaseDomain = purchase.isDomain
+		? `domain: ${ purchase.meta }`
+		: `site: ${ purchase.domain }`;
 	const initialMessage =
 		'User is contacting us from the pre-cancellation flow.\n' +
 		"Product they're attempting to cancel: " +
-		purchase.productName +
-		` (${ purchase.domain })`;
+		`${ purchase.productName } (slug: ${ purchase.productSlug }, ${ purchaseDomain })`;
 
 	return (
 		<ChatButton

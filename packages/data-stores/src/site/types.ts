@@ -71,6 +71,7 @@ export interface CreateSiteParams {
 		anchor_fm_podcast_id?: string;
 		is_blank_canvas?: boolean;
 		is_videopress_initial_purchase?: boolean;
+		wpcom_admin_interface?: string;
 	};
 }
 
@@ -121,7 +122,7 @@ export interface SiteDetails {
 	locale: string;
 	logo: { id: string; sizes: string[]; url: string };
 	name: string | undefined;
-	options: SiteDetailsOptions;
+	options?: SiteDetailsOptions;
 	p2_thumbnail_elements?: P2ThumbnailElements | null;
 	plan?: SiteDetailsPlan;
 	products?: SiteDetailsPlan[];
@@ -131,6 +132,8 @@ export interface SiteDetails {
 	title: string;
 	visible?: boolean;
 	was_ecommerce_trial?: boolean;
+	was_migration_trial?: boolean;
+	was_hosting_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
 
@@ -243,9 +246,11 @@ export interface SiteDetailsOptions {
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
+	is_commercial?: boolean | null;
+	wpcom_admin_interface?: string;
 }
 
-export type SiteOption = keyof SiteDetails[ 'options' ];
+export type SiteOption = keyof NonNullable< SiteDetails[ 'options' ] >;
 
 export interface SiteError {
 	error: string;
@@ -334,6 +339,7 @@ export interface Domain {
 	bundled_plan_subscription_id?: any;
 	product_slug?: any;
 	owner: string;
+	is_pending_icann_verification?: boolean;
 }
 
 export interface SiteSettings {
@@ -480,15 +486,6 @@ export interface LaunchPadCheckListTasksStatuses {
 	plan_completed?: boolean;
 }
 
-export interface ThemeSetupOptions {
-	trim_content?: boolean;
-	vertical_id?: string;
-	pattern_ids?: number[] | string[];
-	header_pattern_ids?: number[] | string[];
-	footer_pattern_ids?: number[] | string[];
-	posts_source_site_id?: number;
-}
-
 export interface ActiveTheme {
 	stylesheet: string;
 	_links: {
@@ -512,11 +509,17 @@ export interface SourceSiteMigrationDetails {
 	target_blog_slug?: string;
 }
 
+export interface Page {
+	title: string;
+	content: string;
+}
+
 export interface AssembleSiteOptions {
 	homeHtml?: string;
 	headerHtml?: string;
 	footerHtml?: string;
+	pages?: Page[];
 	globalStyles?: GlobalStyles;
-	shouldResetContent?: boolean;
+	canReplaceContent?: boolean;
 	siteSetupOption?: string;
 }

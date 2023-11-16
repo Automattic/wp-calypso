@@ -1,4 +1,4 @@
-import { useSupportAvailability } from '@automattic/data-stores';
+import { useSupportAvailability } from '../data/use-support-availability';
 
 export function useShouldRenderEmailOption() {
 	const { data: supportAvailability, isFetching } = useSupportAvailability( 'OTHER' );

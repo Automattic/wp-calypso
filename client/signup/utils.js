@@ -193,6 +193,10 @@ export const isVideoPressFlow = ( flowName ) => {
 	return flowName === 'videopress' || flowName === 'videopress-account';
 };
 
+export const isVideoPressTVFlow = ( flowName ) => {
+	return flowName === 'videopress-tv' || flowName === 'videopress-tv-purchase';
+};
+
 export const isWpccFlow = ( flowName ) => {
 	return flowName === 'wpcc';
 };
@@ -200,7 +204,6 @@ export const isWpccFlow = ( flowName ) => {
 /**
  * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
  * i.e. Check "launch-site" flow while having a purchased paid plan
- *
  * @param  {Object} flowSteps steps in the current flow
  * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
  */

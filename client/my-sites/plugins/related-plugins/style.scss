@@ -1,0 +1,82 @@
+@import "@wordpress/base-styles/colors.native";
+
+.related-plugins {
+	margin-top: 48px;
+	margin-bottom: 32px;
+}
+
+.related-plugins__header {
+	display: flex;
+	flex-direction: row;
+	line-height: 40px;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 32px;
+
+	h2 {
+		font-family: $brand-serif;
+		font-size: $font-title-large;
+		overflow-wrap: anywhere;
+		color: $gray-100;
+	}
+
+}
+
+.related-plugins__list {
+	display: grid;
+	grid-template-columns: repeat(2, calc(50% - 12px));
+	column-gap: 24px;
+	row-gap: 32px;
+
+
+	.related-plugins-item__icon {
+		float: left;
+		margin-right: 16px;
+		width: 70px;
+		height: 70px;
+	}
+
+	.related-plugins-item__info,
+	.related-plugins-item__excerpt,
+	.related-plugins-item__title {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.related-plugins-item__info {
+		color: $gray-60;
+		font-family: var(--font-sf-pro-text);
+		font-size: $font-body-small;
+		line-height: 20px;
+	}
+
+	.related-plugins-item__title {
+		color: $gray-100;
+		font-weight: 500;
+		font-size: $font-body;
+		line-height: 24px;
+	}
+
+	.related-plugins-item__excerpt {
+		color: $gray-60;
+	}
+
+	.related-plugins-item__details {
+		margin-top: 8px;
+		line-height: 18px;
+		font-size: $font-body-extra-small;
+		color: $gray-70;
+	}
+
+	.related-plugins-item__category {
+		color: $gray-60;
+		text-transform: capitalize;
+
+		&::before {
+			color: $gray-20;
+			content: "•";
+			margin: 0 8px;
+		}
+	}
+}

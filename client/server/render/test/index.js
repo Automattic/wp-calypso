@@ -4,7 +4,6 @@ import { shouldServerSideRender, setShouldServerSideRender } from '..';
  * A mutable hashmap that is used to create the current context (i.e. the values set here can be used as return
  * values for some specific methods that are being called). Each test can override these values by calling the remock
  * function.
- *
  * @see remock function for the default values.
  * @type {{ojbect}}
  */
@@ -13,7 +12,6 @@ let mockReturnValues = {};
 /**
  * Updates the values returned by the mocks. Combines the given parameters with the default ones, such that the the
  * tests can focus on what they really want to change and express that in the code.
- *
  * @see mockReturnValues
  * @param {{object}} newReturnValues A key value set of properties that are combined with the defaults.
  */

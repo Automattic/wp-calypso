@@ -59,8 +59,9 @@ class PluginEligibility extends Component {
 }
 
 // It was 2:45AM, I wanted to deploy, and @dmsnell made me do it... props to @dmsnell :)
-const withNavigation = ( WrappedComponent ) => ( props ) =>
-	<WrappedComponent { ...{ ...props, navigateTo: page } } />;
+const withNavigation = ( WrappedComponent ) => ( props ) => (
+	<WrappedComponent { ...{ ...props, navigateTo: page } } />
+);
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );

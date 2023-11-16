@@ -1,11 +1,15 @@
 import config from '@automattic/calypso-config';
-import { __ } from '@wordpress/i18n';
+import { InfiniteData } from '@tanstack/react-query';
+import { __, _x } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
 import {
-	PagedBlazeContentData,
-	PagedBlazeSearchResponse,
-} from 'calypso/my-sites/promote-post-i2/main';
+	BlazablePost,
+	BlazePagedItem,
+	Campaign,
+	CampaignQueryResult,
+	PostQueryResult,
+} from 'calypso/data/promote-post/types';
+import { PagedBlazeContentData } from 'calypso/my-sites/promote-post-i2/main';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -111,8 +115,10 @@ export const getCampaignDurationFormatted = ( start_date?: string, end_date?: st
 	if ( campaignDays === 0 ) {
 		durationFormatted = '-';
 	} else {
-		const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
-		const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
+		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+		const format = _x( 'MMM D', 'shorter date format' );
+		const dateStartFormatted = moment.utc( start_date ).format( format );
+		const dateEndFormatted = moment.utc( end_date ).format( format );
 		durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted }`;
 	}
 
@@ -172,17 +178,34 @@ export const canCancelCampaign = ( status: string ) => {
 	);
 };
 
+type PagedDataMode = 'campaigns' | 'posts';
+
+type BlazeDataPaged = {
+	campaigns?: Campaign[];
+	posts?: BlazablePost[];
+};
+
 export const getPagedBlazeSearchData = (
-	mode: 'campaigns' | 'posts',
-	campaignsData?: PagedBlazeSearchResponse
+	mode: PagedDataMode,
+	pagedData?: InfiniteData< CampaignQueryResult | PostQueryResult >
 ): PagedBlazeContentData => {
-	const lastPage = campaignsData?.pages?.[ campaignsData?.pages?.length - 1 ];
+	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		const foundContent = campaignsData?.pages
-			?.map( ( page: any ) => page[ mode ] )
-			?.flat() as Campaign[];
+		let foundContent: BlazePagedItem[] = pagedData?.pages
+			?.map( ( item: BlazeDataPaged ) => item[ mode ] )
+			?.flat()
+			?.filter( ( item?: BlazePagedItem ): item is BlazePagedItem => 'undefined' !== typeof item );
+
+		if ( foundContent?.length ) {
+			switch ( mode ) {
+				case 'campaigns':
+					foundContent = foundContent as Campaign[];
+				case 'posts':
+					foundContent = foundContent as BlazablePost[];
+			}
+		}
 
 		return {
 			has_more_pages,
@@ -199,7 +222,6 @@ export const getPagedBlazeSearchData = (
 
 /**
  * Update the path by adding the advertising section URL prefix
- *
  * @param {string} path partial URL
  * @returns pathname concatenated with the advertising configured path prefix
  */
@@ -208,46 +230,32 @@ export function getAdvertisingDashboardPath( path: string ) {
 	return `${ pathPrefix }${ path }`;
 }
 
-/**
- * Unifies the campaign list with the stats list
- *
- * @param {Campaign[]} campaigns List of campaigns
- * @param {CampaignStats[]} campaignsStats List of campaign stats
- * @returns A unified list of campaign with the stats
- */
-export const unifyCampaigns = (
-	campaigns: Campaign[] = [],
-	campaignsStats: CampaignStats[] = []
-) => {
-	return campaigns.map( ( campaign ) => {
-		const stats = campaignsStats.find( ( cs ) => cs.campaign_id === campaign.campaign_id );
-		return {
-			...campaign,
-			...( stats ? stats : {} ),
-		};
-	} );
-};
-
 export const getShortDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	const now = moment();
 
-	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
-	switch ( dateDiff ) {
-		case 0:
-			return __( 'hours ago' );
-		case 1:
-			return __( '1 day ago' );
-		default:
-			return timestamp.isSame( now, 'year' )
-				? moment( date ).format( 'MMM DD' )
-				: moment( date ).format( 'MMM DD, YYYY' );
+	const minuteDiff = Math.abs( now.diff( timestamp, 'minutes' ) );
+	if ( minuteDiff < 1 ) {
+		return __( 'Now' );
 	}
+
+	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
+	if ( dateDiff < 7 ) {
+		return timestamp.fromNow();
+	}
+
+	const format = timestamp.isSame( now, 'year' )
+		? // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`). Wrap text [] to be displayed as is, for example `DD [de] MMM` will be formatted as `05 de sep.`.
+		  _x( 'MMM DD', 'short date format' )
+		: // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`), `YYYY` refers to the full year format (e.g. `2023`). Wrap text [] to be displayed as is, for example `DD [de] MMM [de] YYYY` will be formatted as `05 de sep. de 2023`.
+		  _x( 'MMM DD, YYYY', 'short date with year format' );
+
+	return moment( date ).format( format );
 };
 
 export const getLongDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
-	const sameElse: string = __( 'll [at] LT' );
+	const sameElse: string = __( 'll [at] LT' ) ?? 'll [at] LT';
 	return timestamp.calendar( null, { sameElse } );
 };

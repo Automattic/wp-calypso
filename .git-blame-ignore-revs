@@ -14,3 +14,7 @@ b7a4a072ae2a13785fb6ccbf9c34ed8e65739705
 fb0aab8f67a8738d25d5426343df8599935cdd29
 # Eslint format in #72348
 a14b6727ffc1ed68b951c95f8a43ca6e1cb15ccc
+# Prettier format (2.8.5) in #74775
+d6c65e414a1041b53f2efc726d4bf664e0484718
+# Prettier format (3.0.3) in #81899
+d26e6d3d415d1a56256dc3a9beec2a2bab3bf386

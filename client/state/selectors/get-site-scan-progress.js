@@ -5,7 +5,6 @@ import 'calypso/state/data-layer/wpcom/sites/scan';
  * Scan is in the 'scanning' state. If the Scan is in the 'scanning' state but
  * there is no progress in its state, we return 0.
  * Returns undefined in any other case.
- *
  * @param {Object} state	Global state tree
  * @param {number} siteId	The ID of the site we're querying
  * @returns {?number}		Undefined or percentage of the scan completed

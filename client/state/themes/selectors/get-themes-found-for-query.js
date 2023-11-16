@@ -3,7 +3,6 @@ import 'calypso/state/themes/init';
 /**
  * Returns the total number of items reported to be found for the given query,
  * or null if the total number of queryable themes if unknown.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {Object}  query  Theme query object

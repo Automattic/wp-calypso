@@ -6,7 +6,6 @@ import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -14,6 +13,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -26,6 +26,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import UpdatedGravatarString from './updated-gravatar-string';
+
 import './style.scss';
 
 class Profile extends Component {
@@ -52,10 +53,10 @@ class Profile extends Component {
 			<Main className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader
-					brandFont
-					headerText={ this.props.translate( 'My Profile' ) }
-					subHeaderText={ this.props.translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ this.props.translate( 'My Profile' ) }
+					subtitle={ this.props.translate(
 						'Set your name, bio, and other public-facing information. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -65,7 +66,6 @@ class Profile extends Component {
 							},
 						}
 					) }
-					align="left"
 				/>
 
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />

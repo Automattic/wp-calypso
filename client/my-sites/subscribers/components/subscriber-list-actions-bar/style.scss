@@ -1,12 +1,35 @@
 @import "@automattic/color-studio/dist/color-variables";
 
 .list-actions-bar {
-	margin-bottom: 57px;
+	margin-bottom: 24px;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
+
+	.subscribers__filter-control {
+		min-width: 115px;
+
+		&.select-dropdown,
+		.select-dropdown__header {
+			height: 48px;
+			width: fit-content;
+			justify-content: space-between;
+
+			.gridicon {
+				margin-left: 10px;
+			}
+
+			.select-dropdown__header-text {
+				font-weight: 400;
+			}
+		}
+
+		.select-dropdown__item.is-selected {
+			background-color: var(--color-primary);
+		}
+	}
 
 	.search-component {
 		min-width: min(400px, 100%);

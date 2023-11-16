@@ -3,8 +3,8 @@ import {
 	__unstableEditorStyles as EditorStyles,
 } from '@wordpress/block-editor';
 import { useRefEffect } from '@wordpress/compose';
-import { useGlobalStylesOutput } from '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';
 import { useMemo } from 'react';
+import { useSafeGlobalStylesOutput } from '../../gutenberg-bridge';
 import './style.scss';
 
 interface Props {
@@ -25,8 +25,7 @@ const GlobalStylesVariationContainer = ( {
 	onFocusOut,
 	...props
 }: Props ) => {
-	const [ styles ] = useGlobalStylesOutput();
-
+	const [ styles ] = useSafeGlobalStylesOutput();
 	// Reset leaked styles from WP common.css and remove main content layout padding and border.
 	const editorStyles = useMemo( () => {
 		if ( styles ) {
@@ -46,14 +45,11 @@ const GlobalStylesVariationContainer = ( {
 				},
 			];
 		}
-
 		return styles;
 	}, [ styles ] );
-
 	return (
 		<Iframe
 			className="global-styles-variation-container__iframe"
-			head={ <EditorStyles styles={ editorStyles } /> }
 			style={ {
 				height,
 				visibility: width ? 'visible' : 'hidden',
@@ -64,11 +60,9 @@ const GlobalStylesVariationContainer = ( {
 				// See https://github.com/WordPress/gutenberg/blob/aa8e1c52c7cb497e224a479673e584baaca97113/packages/block-editor/src/components/writing-flow/use-tab-nav.js#L136
 				const handleFocusOut = ( event: Event ) => {
 					event.stopImmediatePropagation();
-
 					// Explicitly call the focusOut handler, if available.
 					onFocusOut?.();
 				};
-
 				bodyElement.addEventListener( 'focusout', handleFocusOut );
 				return () => {
 					bodyElement.removeEventListener( 'focusout', handleFocusOut );
@@ -77,6 +71,7 @@ const GlobalStylesVariationContainer = ( {
 			scrolling="no"
 			{ ...props }
 		>
+			<EditorStyles styles={ editorStyles ?? [] } />
 			{ containerResizeListener }
 			{ children }
 		</Iframe>

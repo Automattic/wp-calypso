@@ -1,4 +1,3 @@
-import type { LineItem } from '@automattic/composite-checkout';
 import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -35,20 +34,33 @@ export interface TaxVendorInfo {
 	country_code: string;
 
 	/**
-	 * The localized name of the tax (eg: "VAT", "GST", etc.).
-	 */
-	tax_name: string;
-
-	/**
 	 * The mailing address to display on receipts as a list of strings (each
 	 * string should be on its own line).
 	 */
 	address: string[];
 
 	/**
+	 * An object containing tax names and corresponding vendor ids that are used for the user's country
+	 *
+	 * This will deprecate the vat_id and tax_name properties
+	 * For now, those two properties will stay in place for backwards compatibility
+	 *
+	 * Key:   The localized name of the tax (eg: "VAT", "GST", etc.).
+	 * Value: A8c vendor id for that specific tax
+	 */
+	tax_name_and_vendor_id_array: Record< string, string >;
+
+	/**
 	 * The vendor's VAT id.
+	 * @deprecated This is still in place for backwards compability with cached clients
 	 */
 	vat_id: string;
+
+	/**
+	 * The localized name of the tax (eg: "VAT", "GST", etc.).
+	 * @deprecated This is still in place for backwards compability with cached clients
+	 */
+	tax_name: string;
 }
 
 export interface Purchase {
@@ -70,6 +82,8 @@ export interface Purchase {
 	saas_redirect_url?: string;
 	will_auto_renew?: boolean;
 	tax_vendor_info?: TaxVendorInfo;
+	blog_id: number;
+	price_integer?: number;
 }
 
 export interface TransactionRequest {
@@ -114,12 +128,18 @@ export type WPCOMTransactionEndpointRequestPayload = {
 	payment: WPCOMTransactionEndpointPaymentDetails;
 	domainDetails?: DomainContactDetails;
 	tos?: ToSAcceptanceTrackingDetails;
+	ad_conversion?: AdConversionDetails;
 };
 
 export type ToSAcceptanceTrackingDetails = {
 	path: string;
 	locale: string;
 	viewport: string;
+};
+
+export type AdConversionDetails = {
+	ad_details: string;
+	sensitive_pixel_options: string; // sensitive_pixel_options
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
@@ -222,12 +242,19 @@ export type PayPalExpressEndpointRequestPayload = {
 	country: string;
 	postalCode: string;
 	tos?: ToSAcceptanceTrackingDetails;
+	ad_conversion?: AdConversionDetails;
 };
 
 export type PayPalExpressEndpointResponse = unknown;
 
+export interface LineItemType {
+	id: string;
+	type: string;
+	label: string;
+	formattedAmount: string;
+}
+
 export interface WPCOMCart {
-	total: LineItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 }
 
@@ -408,7 +435,6 @@ export type ManagedContactDetailsUpdaters = {
 
 /**
  * Request parameter expected by the domain contact validation endpoint.
- *
  * @see WPCOM_JSON_API_Signups_Validation_User_Endpoint
  */
 export type SignupValidationResponse = {
@@ -424,7 +450,6 @@ export type SignupValidationResponse = {
 
 /**
  * Request parameter expected by the domain contact validation endpoint.
- *
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
 export type ContactValidationRequestContactInformation = {

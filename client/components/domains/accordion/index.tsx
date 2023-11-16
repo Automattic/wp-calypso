@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { FoldableCard } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
-import FoldableCard from 'calypso/components/foldable-card';
 import type { AccordionProps } from './types';
 import './style.scss';
 
@@ -10,7 +10,10 @@ const Accordion = ( {
 	subtitle,
 	children,
 	isPlaceholder,
+	isDisabled,
 	expanded = false,
+	onClose,
+	className,
 }: AccordionProps ) => {
 	const classes = classNames( {
 		'is-placeholder': isPlaceholder,
@@ -29,9 +32,10 @@ const Accordion = ( {
 		<div className="accordion">
 			<FoldableCard
 				clickableHeader
+				className={ className }
 				header={ renderHeader() }
 				expanded={ expanded }
-				disabled={ isPlaceholder }
+				disabled={ isPlaceholder || isDisabled }
 				actionButton={
 					<button className="foldable-card__action foldable-card__expand">
 						<span className="screen-reader-text">More</span>
@@ -44,6 +48,7 @@ const Accordion = ( {
 						<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
 					</button>
 				}
+				onClose={ onClose }
 			>
 				{ children }
 			</FoldableCard>

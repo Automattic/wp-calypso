@@ -95,7 +95,6 @@ $segmentedControlItemBorderRadius: 4px;
 	}
 }
 
-/* stylelint-disable-next-line scss/at-rule-no-unknown */
 @container (max-width: #{$break-mobile}) {
 	@include stats-widget-single-column-view;
 }

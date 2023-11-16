@@ -1,0 +1,132 @@
+{
+	extends: [ 'config:recommended', 'default:pinDigestsDisabled', 'mergeConfidence:all-badges' ],
+	// --- Individual dependency settings ---
+	packageRules: [
+		{
+			extends: [ 'monorepo:wordpress', 'schedule:daily' ],
+			separateMajorMinor: false,
+			prPriority: 3,
+			// We want to update these ASAP, so we don't want to wait for the minimum release age.
+			minimumReleaseAge: '0 days',
+		},
+		{
+			groupName: 'nodejs',
+			matchPackagePatterns: [ '/node$' ],
+			matchDepNames: [ 'node', 'cimg/node' ],
+			matchDatasources: [ 'docker', 'node' ],
+			prPriority: 2,
+		},
+		{
+			groupName: 'nodejs',
+			matchDepNames: [ 'node' ],
+			// This gets published with broader Node support, so we'll update it when needed.
+			ignorePaths: [ 'packages/eslint-plugin-wpcalypso' ],
+		},
+		{
+			groupName: 'nodejs',
+			matchDepNames: [ '@types/node' ],
+		},
+		{
+			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
+			prPriority: 2,
+			ignorePaths: [ 'packages/interpolate-components' ],
+		},
+		{
+			groupName: 'redux-related packages',
+			matchPackagePatterns: [ 'redux' ],
+			matchPackageNames: [ 'react-redux' ],
+			excludePackageNames: [ '@wordpress/redux-routine' ],
+			prPriority: 2,
+		},
+		{
+			groupName: 'typescript-related packages',
+			matchPackagePatterns: [ 'typescript-eslint' ],
+			matchPackageNames: [ 'typescript' ],
+			prPriority: 2,
+		},
+		{
+			groupName: 'webpack packages',
+			matchPackageNames: [
+				'style-loader',
+				'html-loader',
+				'exports-loader',
+				'loader-utils',
+				'postcss-loader',
+				'css-loader',
+			],
+			matchPackagePatterns: [ 'webpack', 'terser' ],
+			excludePackagePatterns: [ '^@storybook' ],
+			prPriority: 2,
+		},
+		{
+			groupName: 'size-limit',
+			matchPackageNames: [ '@size-limit/file', 'size-limit' ],
+		},
+		{ extends: [ 'monorepo:storybook' ], prPriority: 2 },
+		{ extends: [ 'packages:linters' ], groupName: 'linters', prPriority: 2 },
+		{
+			extends: [ 'packages:unitTest' ],
+			groupName: 'unit test packages',
+			prPriority: 2,
+		},
+		{ extends: [ 'monorepo:babel' ], prPriority: 1 },
+		{ extends: [ 'monorepo:lodash' ], prPriority: 1 },
+		// Disable maven -- it only exists because of TeamCity, which we don't update.
+		{
+			matchManagers: [ 'maven' ],
+			enabled: false,
+		},
+	],
+	ignoreDeps: [ 'electron-builder' ],
+	regexManagers: [
+		// Update the renovate-version in the action itself.
+		// See also https://github.com/renovatebot/github-action/issues/756
+		{
+			fileMatch: [ '^\\.github/workflows/renovate\\.yml$' ],
+			matchStrings: [ 'RENOVATE_VERSION: (?<currentValue>[^\\s]+)' ],
+			datasourceTemplate: 'docker',
+			depNameTemplate: 'renovate',
+			packageNameTemplate: 'ghcr.io/renovatebot/renovate',
+		},
+		{
+			fileMatch: [ '^Dockerfile$' ],
+			matchStrings: [ 'ARG node_version=(?<currentValue>.*?)\\n' ],
+			depNameTemplate: 'node',
+			datasourceTemplate: 'node',
+		},
+	],
+
+	// --- Update & schedule settings ---
+	rangeStrategy: 'bump',
+	postUpdateOptions: [ 'yarnDedupeHighest' ],
+	minimumReleaseAge: '10 days',
+	// Note that security PRs are opened immediately regardless of how many other
+	// renovate PRs are open. This keeps our queue of deps to update more manageable.
+	prConcurrentLimit: 10,
+	// Avoid overwhelming reviewers with a constant stream of updates. We'll get
+	// some new updates to handle each weekend, but throughout the week, any new
+	// PR notifications should always be actionable.
+	schedule: [ 'every weekend' ],
+	// Create PRs immediately. Extra branches we don't see still consume CI resources
+	// when they are created/rebased, so we want visibility into them quickly.
+	prCreation: 'immediate',
+	internalChecksFilter: 'strict',
+	// Don't rebase PRs constantly, to avoid using too much CI.
+	rebaseWhen: 'conflicted',
+
+	// --- Metadata settings for git ---
+	labels: [ 'Framework', '[Type] Task', 'dependencies' ],
+	reviewers: [ 'team:team-calypso-platform', 'team:team-calypso-frameworks' ],
+	branchPrefix: 'renovate/',
+	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
+	platform: 'github',
+	semanticCommits: 'enabled',
+	semanticCommitType: 'chore',
+	repositories: [ 'Automattic/wp-calypso' ],
+
+	// --- Misc Settings ---
+	allowPlugins: true,
+	allowScripts: true,
+	ignoreScripts: false,
+	dependencyDashboardTitle: 'Renovate Dependency Updates',
+}

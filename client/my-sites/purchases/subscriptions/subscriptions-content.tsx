@@ -1,5 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
@@ -7,7 +8,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
 import {
 	getSitePurchases,
@@ -119,7 +120,7 @@ function NoPurchasesMessage() {
 				line={ translate( 'You have made no purchases for this site.' ) }
 				action={ translate( 'Upgrade now' ) }
 				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
-				illustration="/calypso/images/illustrations/illustration-nosites.svg"
+				illustration={ noSitesIllustration }
 			/>
 		</CompactCard>
 	);

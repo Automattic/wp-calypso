@@ -1,6 +1,5 @@
-import { Gridicon } from '@automattic/components';
+import { Count, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarHeading from 'calypso/layout/sidebar/heading';

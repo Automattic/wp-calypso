@@ -15,7 +15,6 @@ const byId = ( a, b ) => a.id - b.id;
  * However, in order to keep the changeset
  * small we are copying over this non-ideal
  * code until more formal refactorings.
- *
  * @param {Object} notesState
  * @returns {Object[]} list of notification objects
  */

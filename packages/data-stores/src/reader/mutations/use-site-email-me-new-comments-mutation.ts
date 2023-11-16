@@ -1,11 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { callApi } from '../helpers';
-import { useCacheKey, useIsLoggedIn } from '../hooks';
+import { buildQueryKey, callApi } from '../helpers';
+import {
+	alterSiteSubscriptionDetails,
+	invalidateSiteSubscriptionDetails,
+} from '../helpers/optimistic-update';
+import { useIsLoggedIn } from '../hooks';
 import type { SiteSubscriptionsPages, SiteSubscriptionDetails } from '../types';
 
 type SiteSubscriptionEmailMeNewCommentsParams = {
 	send_comments: boolean;
 	blog_id: number | string;
+	subscriptionId: number;
 };
 
 type SiteSubscriptionEmailMeNewCommentsResponse = {
@@ -13,16 +18,9 @@ type SiteSubscriptionEmailMeNewCommentsResponse = {
 	subscribed: boolean;
 };
 
-const useSiteEmailMeNewCommentsMutation = ( blog_id?: string ) => {
-	const { isLoggedIn } = useIsLoggedIn();
+const useSiteEmailMeNewCommentsMutation = () => {
+	const { id, isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-
-	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
-	const siteSubscriptionDetailsCacheKey = useCacheKey( [
-		'read',
-		'site-subscription-details',
-		...( blog_id ? [ blog_id ] : [] ),
-	] );
 
 	return useMutation( {
 		mutationFn: async ( params: SiteSubscriptionEmailMeNewCommentsParams ) => {
@@ -51,31 +49,33 @@ const useSiteEmailMeNewCommentsMutation = ( blog_id?: string ) => {
 
 			return response;
 		},
-		onMutate: async ( params ) => {
-			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
-
-			const previousSiteSubscriptions =
-				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
-			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-				siteSubscriptionDetailsCacheKey
+		onMutate: async ( { blog_id, send_comments, subscriptionId } ) => {
+			const siteSubscriptionsQueryKey = buildQueryKey(
+				[ 'read', 'site-subscriptions' ],
+				isLoggedIn,
+				id
 			);
 
+			await queryClient.cancelQueries( siteSubscriptionsQueryKey );
+
+			const previousSiteSubscriptions =
+				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
+
 			if ( previousSiteSubscriptions ) {
-				queryClient.setQueryData( siteSubscriptionsCacheKey, {
+				queryClient.setQueryData( siteSubscriptionsQueryKey, {
 					...previousSiteSubscriptions,
 					pages: previousSiteSubscriptions.pages.map( ( page ) => {
 						return {
 							...page,
 							subscriptions: page.subscriptions.map( ( siteSubscription ) => {
-								if ( siteSubscription.blog_ID === params.blog_id ) {
+								if ( siteSubscription.blog_ID === blog_id ) {
 									return {
 										...siteSubscription,
 										delivery_methods: {
 											...siteSubscription.delivery_methods,
 											email: {
 												...siteSubscription.delivery_methods?.email,
-												send_comments: params.send_comments,
+												send_comments: send_comments,
 											},
 										},
 									};
@@ -86,34 +86,51 @@ const useSiteEmailMeNewCommentsMutation = ( blog_id?: string ) => {
 					} ),
 				} );
 			}
-			if ( previousSiteSubscriptionDetails ) {
-				queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
-					...previousSiteSubscriptionDetails,
-					delivery_methods: {
-						...previousSiteSubscriptionDetails.delivery_methods,
-						email: {
-							...previousSiteSubscriptionDetails.delivery_methods?.email,
-							send_comments: params.send_comments,
+
+			const previousSiteSubscriptionDetails = await alterSiteSubscriptionDetails(
+				queryClient,
+				{ blogId: String( blog_id ), subscriptionId: String( subscriptionId ), isLoggedIn, id },
+				( previousData ) => {
+					return {
+						...previousData,
+						delivery_methods: {
+							...previousData.delivery_methods,
+							email: {
+								...previousData.delivery_methods?.email,
+								send_comments: send_comments,
+							},
 						},
-					},
-				} );
-			}
-			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
+					} as SiteSubscriptionDetails;
+				}
+			);
+
+			return {
+				previousSiteSubscriptions,
+				previousSiteSubscriptionDetails,
+			};
 		},
-		onError: ( err, params, context ) => {
+		onError: ( _err, _, context ) => {
 			if ( context?.previousSiteSubscriptions ) {
-				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
-			}
-			if ( context?.previousSiteSubscriptionDetails ) {
 				queryClient.setQueryData(
-					siteSubscriptionDetailsCacheKey,
-					context.previousSiteSubscriptionDetails
+					buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
+					context.previousSiteSubscriptions
 				);
 			}
+
+			if ( context?.previousSiteSubscriptionDetails ) {
+				for ( const { key, data } of context.previousSiteSubscriptionDetails ) {
+					queryClient.setQueryData( key, data );
+				}
+			}
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
+		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
+			invalidateSiteSubscriptionDetails( queryClient, {
+				blogId: String( blog_id ),
+				subscriptionId: String( subscriptionId ),
+				isLoggedIn,
+				id,
+			} );
+			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 		},
 	} );
 };

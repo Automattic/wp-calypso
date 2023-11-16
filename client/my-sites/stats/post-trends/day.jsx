@@ -1,13 +1,13 @@
 import { Icon, postContent } from '@wordpress/icons';
 import classNames from 'classnames';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent, Fragment } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
 class PostTrendsDay extends PureComponent {
 	static propTypes = {
-		label: PropTypes.string,
+		date: PropTypes.object,
 		className: PropTypes.string,
 		postCount: PropTypes.number,
 	};
@@ -16,7 +16,6 @@ class PostTrendsDay extends PureComponent {
 		postCount: 0,
 	};
 
-	localeSlug = getLocaleSlug();
 	state = { showPopover: false };
 	dayRef = createRef();
 
@@ -30,10 +29,9 @@ class PostTrendsDay extends PureComponent {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	buildTooltipData = () => {
-		const { label, postCount } = this.props;
-		const date = new Date( label );
-		const weekDay = date.toLocaleDateString( this.localeSlug, { weekday: 'long' } );
-		const formattedDate = date.toLocaleDateString( this.localeSlug, {
+		const { date, postCount, locale } = this.props;
+		const weekDay = date.toLocaleDateString( locale, { weekday: 'long' } );
+		const formattedDate = date.toLocaleDateString( locale, {
 			month: 'long',
 			day: 'numeric',
 			year: 'numeric',

@@ -1,9 +1,68 @@
 // Overrides styles for the Create campaign widget
-.blazepress-widget {
+div.MuiPopover-root,
+div.MuiPickersPopper-root,
+div.MuiDialog-root,
+div.MuiModal-root {
 	z-index: 99999;
 }
 
 // Fixes double scrolls on widget creation overlay
-html.has-blank-canvas body {
+html.has-blank-canvas {
 	overflow: hidden;
+	body {
+		overflow: hidden;
+	}
+}
+.blazepress-widget {
+	z-index: 99999;
+
+	// Fix conflict with the WP forms-css file
+	input[type="text"],
+	input[type="password"],
+	input[type="color"],
+	input[type="date"],
+	input[type="datetime"],
+	input[type="datetime-local"],
+	input[type="email"],
+	input[type="month"],
+	input[type="number"],
+	input[type="search"],
+	input[type="tel"],
+	input[type="time"],
+	input[type="url"],
+	input[type="week"],
+	select {
+		box-shadow: none;
+		border-radius: 0;
+		border: none;
+		background-color: inherit;
+		color: currentcolor;
+
+		padding: 16.5px 14px;
+		line-height: inherit;
+		min-height: inherit;
+
+		&:focus {
+			outline: none;
+		}
+	}
+	textarea {
+		box-shadow: none;
+		border-radius: 0;
+		border: none;
+		background-color: inherit;
+		color: currentcolor;
+
+		padding: 0;
+		line-height: inherit;
+		min-height: inherit;
+		height: auto;
+
+		&:focus {
+			outline: none;
+		}
+	}
+	input.MuiInputBase-inputAdornedStart {
+		padding: 0;
+	}
 }

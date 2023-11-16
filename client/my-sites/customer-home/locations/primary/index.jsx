@@ -11,6 +11,7 @@ import {
 	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	NOTICE_STAGING_SITE,
+	NOTICE_HOME_LIMITED_TIME_OFFER_COUPON,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EARN_FEATURES,
 	TASK_GO_MOBILE_ANDROID,
@@ -31,9 +32,12 @@ import {
 	TASK_REACTIVATE_RESTORE_BACKUP,
 	TASK_FIVERR,
 	TASK_DOMAIN_UPSELL,
-	LAUNCHPAD_KEEP_BUILDING,
+	TASK_GOOGLE_DOMAIN_OWNERS,
+	LAUNCHPAD_INTENT_BUILD,
+	LAUNCHPAD_INTENT_HOSTING,
 } from 'calypso/my-sites/customer-home/cards/constants';
-import LaunchpadKeepBuilding from 'calypso/my-sites/customer-home/cards/launchpad/keep-building';
+import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
+import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -46,7 +50,9 @@ import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upse
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
+import GoogleDomainOwners from 'calypso/my-sites/customer-home/cards/tasks/google-domain-owners';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
+import NoticeHomeLimitedTimeOfferCoupon from 'calypso/my-sites/customer-home/cards/tasks/notice-home-limited-time-offer-coupon';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
@@ -67,6 +73,7 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_COPY ]: CelebrateSiteCopy,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
+	[ NOTICE_HOME_LIMITED_TIME_OFFER_COUPON ]: NoticeHomeLimitedTimeOfferCoupon,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
@@ -80,13 +87,15 @@ const cardComponents = {
 	[ TASK_REACTIVATE_RESTORE_BACKUP ]: ReviveAutoRevertedAtomic,
 	[ TASK_SITE_RESUME_COPY ]: SiteResumeCopy,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
-	[ LAUNCHPAD_KEEP_BUILDING ]: LaunchpadKeepBuilding,
+	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
+	[ LAUNCHPAD_INTENT_HOSTING ]: LaunchpadIntentHosting,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
+	[ TASK_GOOGLE_DOMAIN_OWNERS ]: GoogleDomainOwners,
 	[ TASK_FIVERR ]: Fiverr,
 };
 

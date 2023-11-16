@@ -3,7 +3,7 @@ import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { AddOnMeta } from './use-add-ons';
+import type { AddOnMeta } from '@automattic/data-stores';
 
 /**
  * Returns whether add-on product has been purchased or included in site plan.

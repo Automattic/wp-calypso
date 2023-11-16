@@ -18,7 +18,6 @@ const root = '/sites';
 class SitePost {
 	/**
 	 * SitePost methods
-	 *
 	 * @param {string} id - post id
 	 * @param {string} sid site id
 	 * @param {WPCOM} wpcom - wpcom instance
@@ -45,7 +44,6 @@ class SitePost {
 
 	/**
 	 * Set post `id`
-	 *
 	 * @param {string} id - site id
 	 */
 	id( id ) {
@@ -54,7 +52,6 @@ class SitePost {
 
 	/**
 	 * Set post `slug`
-	 *
 	 * @param {string} slug - site slug
 	 */
 	slug( slug ) {
@@ -63,7 +60,6 @@ class SitePost {
 
 	/**
 	 * Get post url path
-	 *
 	 * @returns {string} post path
 	 */
 
@@ -73,7 +69,6 @@ class SitePost {
 
 	/**
 	 * Get post
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -88,7 +83,6 @@ class SitePost {
 
 	/**
 	 * Get post by slug
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -99,7 +93,6 @@ class SitePost {
 
 	/**
 	 * Add post
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
@@ -144,7 +137,6 @@ class SitePost {
 
 	/**
 	 * Edit post
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
@@ -156,7 +148,6 @@ class SitePost {
 
 	/**
 	 * Delete post
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
@@ -168,7 +159,6 @@ class SitePost {
 
 	/**
 	 * Del post, alias of Delete
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
@@ -179,7 +169,6 @@ class SitePost {
 
 	/**
 	 * Restore post
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -190,7 +179,6 @@ class SitePost {
 
 	/**
 	 * Search within a site for related posts
-	 *
 	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -201,7 +189,6 @@ class SitePost {
 
 	/**
 	 * Create a `Comment` instance
-	 *
 	 * @param {string} [cid] - comment id
 	 * @returns {Comment} Comment instance
 	 */
@@ -211,7 +198,6 @@ class SitePost {
 
 	/**
 	 * Return recent comments
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -223,7 +209,6 @@ class SitePost {
 
 	/**
 	 * Create a `Like` instance
-	 *
 	 * @returns {Like} Like instance
 	 */
 	like() {
@@ -232,7 +217,6 @@ class SitePost {
 
 	/**
 	 * Create a `Reblog` instance
-	 *
 	 * @returns {Reblog} Reblog instance
 	 */
 	reblog() {
@@ -243,10 +227,9 @@ class SitePost {
 	 * Return a `Subscriber` instance.
 	 *
 	 * Example:
-	 *    // Create a Subscriber instance of a post
-	 *    var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
-	 *    var subs = post.subscriber();
-	 *
+	 * // Create a Subscriber instance of a post
+	 * var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
+	 * var subs = post.subscriber();
 	 * @returns {Subscriber} Subscriber instance
 	 */
 	subscriber() {

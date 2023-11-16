@@ -7,7 +7,6 @@ import 'calypso/state/posts/init';
 
 /**
  * Returns an action object to be used in signalling that a post has been saved
- *
  * @param  {number}   siteId     Site ID
  * @param  {number}   postId     Post ID
  * @param  {Object}   savedPost  Updated post

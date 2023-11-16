@@ -4,7 +4,6 @@ import 'calypso/state/domains/init';
 
 /**
  * Return a boolean value indicating whether requesting WHOIS details is in progress.
- *
  * @param  {Object} state	Global state tree
  * @param  {string} domain	the domain in question
  * @returns {boolean} If the request is in progress

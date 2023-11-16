@@ -80,11 +80,7 @@ const Subscriptions = ( {
 			</CompactCard>
 
 			<CompactCard href={ viewFollowersSubscribersLink }>
-				{ translate( 'View your email followers' ) }
-			</CompactCard>
-
-			<CompactCard href={ 'https://wordpress.com/manage/' + selectedSiteId }>
-				{ translate( 'Migrate followers from another site' ) }
+				{ translate( 'View or add subscribers' ) }
 			</CompactCard>
 		</div>
 	);

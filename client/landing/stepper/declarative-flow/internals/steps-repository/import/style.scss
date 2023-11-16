@@ -2,7 +2,10 @@
 
 .import-hosted-site.import,
 .site-setup.import,
-.import-focused.import {
+.import-focused.import,
+.import-hosted-site.import-list,
+.site-setup.import-list,
+.import-focused.import-list {
 	.import__onboarding-page {
 		@include onboarding-block-margin;
 	}

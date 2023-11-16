@@ -188,7 +188,7 @@ describe( 'Logger middleware', () => {
 			res: fakeResponse(),
 		} );
 		process.env.NODE_ENV = oldNodeEnv;
-		expect( requestLogger.info ).not.toBeCalled();
+		expect( requestLogger.info ).not.toHaveBeenCalled();
 	} );
 
 	it( 'Does not log non-static requests in dev mode', () => {
@@ -201,7 +201,7 @@ describe( 'Logger middleware', () => {
 			res: fakeResponse(),
 		} );
 		process.env.NODE_ENV = oldNodeEnv;
-		expect( requestLogger.info ).toBeCalled();
+		expect( requestLogger.info ).toHaveBeenCalled();
 	} );
 
 	it( 'Does log static requests in non-dev mode', () => {
@@ -214,6 +214,6 @@ describe( 'Logger middleware', () => {
 			res: fakeResponse(),
 		} );
 		process.env.NODE_ENV = oldNodeEnv;
-		expect( requestLogger.info ).toBeCalled();
+		expect( requestLogger.info ).toHaveBeenCalled();
 	} );
 } );

@@ -32,14 +32,14 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
-	const { show, isMinimized, initialRoute } = useSelect(
-		( select ) => ( {
-			show: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-			isMinimized: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsMinimized(),
-			initialRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getInitialRoute(),
-		} ),
-		[]
-	);
+	const { show, isMinimized, initialRoute } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			show: store.isHelpCenterShown(),
+			isMinimized: store.getIsMinimized(),
+			initialRoute: store.getInitialRoute(),
+		};
+	}, [] );
 
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 

@@ -8,7 +8,7 @@ export async function uploadAndSetSiteLogo( siteId: string | number | undefined,
 			{
 				ID: number;
 				URL: string;
-			}
+			},
 		];
 	} >( {
 		path: `/sites/${ encodeURIComponent( siteId as string ) }/media/new`,

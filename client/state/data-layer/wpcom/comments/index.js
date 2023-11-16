@@ -1,5 +1,6 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import { compact, get, startsWith, pickBy, map } from 'lodash';
+import { get, startsWith, pickBy, map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,
@@ -120,7 +121,10 @@ export const announceFailure =
 			? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
 			: translate( 'Could not retrieve comments for post' );
 
-		dispatch( errorNotice( error, { duration: 5000 } ) );
+		const environment = config( 'env_id' );
+		if ( environment === 'development' ) {
+			dispatch( errorNotice( error, { duration: 5000 } ) );
+		}
 	};
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
@@ -151,7 +155,7 @@ export const deleteComment = ( action ) => ( dispatch, getState ) => {
 export const handleDeleteSuccess = ( { options, refreshCommentListQuery } ) => {
 	const showSuccessNotice = get( options, 'showSuccessNotice', false );
 
-	return compact( [
+	return [
 		showSuccessNotice &&
 			successNotice( translate( 'Comment deleted permanently.' ), {
 				duration: 5000,
@@ -159,7 +163,7 @@ export const handleDeleteSuccess = ( { options, refreshCommentListQuery } ) => {
 				isPersistent: true,
 			} ),
 		!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
-	] );
+	].filter( Boolean );
 };
 
 export const announceDeleteFailure = ( action ) => {

@@ -19,24 +19,28 @@ body.is-section-signup {
 				opacity: 1;
 			}
 		}
+
 		/**
 		* Removed the navigation back button step from mobile viewports.
 		* This is done because the there is usally already a back button displayed to the user (Browser back button)
 		* and the current back button is redundent.
 		*/
 		.signup__step .plans.plans-step .step-wrapper__navigation {
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				display: none;
 			}
 		}
 	}
-	&.is-videopress-signup {
+
+	&.is-videopress-signup,
+	&.is-videopress-tv-signup {
 		background: var(--videopress-color-background-dark);
 		color: var(--videopress-color-text);
 
 		&.has-loading-screen-signup {
 			background: var(--videopress-color-background-dark);
 			color: var(--videopress-color-text);
+
 			&::before {
 				content: "";
 				position: absolute;
@@ -71,9 +75,10 @@ body.is-section-signup {
 			max-width: none;
 		}
 
-		@include breakpoint-deprecated( "<480px" ) {
+		@include breakpoint-deprecated("<480px") {
 			.locale-suggestions {
 				margin-top: 0;
+
 				.notice {
 					border-radius: 0;
 				}
@@ -89,6 +94,7 @@ body.is-section-signup {
 		&.has-loading-screen-signup {
 			background: var(--p2-color-text);
 			color: var(--p2-color-white);
+
 			&::before {
 				content: "";
 				position: absolute;
@@ -121,9 +127,10 @@ body.is-section-signup {
 			max-width: none;
 		}
 
-		@include breakpoint-deprecated( "<480px" ) {
+		@include breakpoint-deprecated("<480px") {
 			.locale-suggestions {
 				margin-top: 0;
+
 				.notice {
 					border-radius: 0;
 				}
@@ -162,6 +169,7 @@ body.is-section-signup {
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
 body.is-section-signup .layout:not(.dops) {
+
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
@@ -177,8 +185,8 @@ body.is-section-signup .layout:not(.dops) {
 			background: var(--color-surface);
 			padding-bottom: 16px;
 			margin-bottom: 24px;
-			border-radius: 6px; /* stylelint-disable-line scales/radii */
-			@include elevation( 3dp );
+			border-radius: 4px;
+			@include elevation(3dp);
 		}
 
 		.empty-content__title {
@@ -207,10 +215,10 @@ body.is-section-signup .layout:not(.dops) {
 		right: 0;
 		max-height: 350px;
 		overflow: auto;
-		@include elevation( 2dp );
+		@include elevation(2dp);
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		.layout:not(.is-horizontal-layout) button:not(.is-compact):not(.is-primary) {
 			font-size: $font-body;
 			padding-top: 12px;
@@ -353,6 +361,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 	.signup-form__social {
 		padding-bottom: 0;
 		margin-top: 16px;
+
 		p {
 			font-size: $font-body-extra-small;
 			color: var(--studio-gray-60);
@@ -369,6 +378,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 
 	.logged-out-form__footer {
 		text-align: center;
+
 		.button.is-primary {
 			border: 0;
 			box-shadow: none;
@@ -400,6 +410,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			fill: var(--color-text);
 			transform-origin: 0 0;
 		}
+
 		.signup-header__right {
 			inset-block-start: 22px;
 			inset-inline-end: 20px;
@@ -463,14 +474,14 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		.step-wrapper__header {
 			margin: 24px 20px 38px;
 
-			@media ( min-width: 880px ) {
+			@media (min-width: 880px) {
 				margin: 24px 20px;
 			}
 		}
 	}
 
 	.step-wrapper__header-button {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated("<660px") {
 			margin-top: 16px;
 			margin-bottom: -16px;
 		}
@@ -483,7 +494,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
+			font-size: 2.25rem;
 
 			@include break-xlarge {
 				font-size: 2.75rem;
@@ -494,7 +505,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			color: $gray-60;
 			font-size: 1rem;
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				margin-top: 16px;
 			}
 		}
@@ -510,6 +521,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 
 		&.is-left-align {
+
 			.formatted-header__title,
 			.formatted-header__subtitle {
 				padding: 0;
@@ -518,6 +530,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 
 		&.is-right-align {
+
 			.formatted-header__title,
 			.formatted-header__subtitle {
 				padding: 0;
@@ -526,23 +539,20 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup__step.is-user {
+	.signup__step.is-user,
+	.signup__step.is-user-social {
 		.formatted-header {
 			.formatted-header__title {
 				text-align: center;
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					line-height: 3.5rem;
 				}
 			}
 
 			.formatted-header__subtitle {
 				text-align: center;
 				color: #646970;
-
 				a {
 					color: var(--studio-gray-90);
 					text-decoration: underline;
@@ -551,7 +561,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
@@ -592,23 +601,15 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			text-align: start;
 			padding-left: 0;
 			padding-bottom: 0;
-			border: 0;
 			box-shadow: none;
 			background-color: transparent;
 
 			@include break-small {
 				text-align: center;
-				margin-bottom: 5px;
 			}
 
 			@include break-medium {
 				text-align: start;
-			}
-
-			> svg {
-				border: 1px solid var(--studio-gray-10);
-				padding: 12px;
-				border-radius: 24px; /* stylelint-disable-line scales/radii */
 			}
 		}
 
@@ -654,11 +655,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				margin: 0;
 			}
 
-			> .logged-out-form__links {
+			>.logged-out-form__links {
 				max-width: 100%;
 				margin-top: 30px;
 
-				@media screen and ( max-width: $breakpoint-mobile ) {
+				@media screen and (max-width: $breakpoint-mobile ) {
 					margin-top: 0;
 
 					&::before,
@@ -721,53 +722,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				display: none;
 			}
 
-			.signup-form__separator {
-				position: relative;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: calc(100% - 32px);
-				margin: 20px auto;
-
-				@include break-medium {
-					width: 60px;
-					margin: 0;
-				}
-
-				&::before {
-					position: absolute;
-					content: "";
-					border-inline-start: 0;
-					border-block-start: $separator-style;
-					inset-block-start: 50%;
-					inset-inline-start: 0;
-					height: 0;
-					width: 100%;
-
-					@include break-medium {
-						border-inline-start: $separator-style;
-						border-block-start: 0;
-						inset-block-start: 0;
-						inset-inline-start: 50%;
-						height: 100%;
-					}
-				}
-			}
-
-			.signup-form__separator-text {
-				background-color: #fdfdfd;
-				text-transform: uppercase;
-				text-align: center;
-				padding: 24px 0;
-				font-size: 0.75rem;
-				z-index: 1;
-				color: var(--studio-gray-50);
-
-				@media screen and ( max-width: $breakpoint-mobile ) {
-					padding: 0 24px;
-				}
-			}
-
 			.social-buttons__service-name {
 				margin-inline-start: 12px;
 			}
@@ -788,6 +742,142 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			}
 		}
 	}
+	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
+	// This selector is part of an experiment which is supposed to be cleaned up
+	// https://github.com/Automattic/wp-calypso/pull/83886
+	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment,
+	.signup__step.is-user-social {
+		margin-top: 25vh;
+
+		.step-wrapper__header {
+			margin-bottom: 24px !important;
+		}
+
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(30px);
+				line-height: 40px;
+
+				@include break-small {
+					font-size: 2rem;
+					line-height: 3.25;
+				}
+			}
+
+			.formatted-header__subtitle {
+				@include break-small {
+					font-size: rem(18px);
+				}
+			}
+		}
+
+		a.step-wrapper__navigation-link {
+			color: #1d2327;
+			font-family: "SF Pro Text", sans-serif;
+			font-size: 0.875rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 20px;
+			text-underline-offset: 5px;
+
+			&:hover {
+				color: var(--studio-blue-50, #0675c4);
+			}
+
+			&:focus {
+				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline-offset: 3px;
+				box-shadow: none;
+				border-radius: 0;
+			}
+		}
+
+		.signup-form__social-buttons {
+			gap: 16px;
+		}
+
+		.social-buttons__button {
+			display: flex;
+			height: 48px;
+			padding: 4px 16px !important;
+			justify-content: center;
+			align-items: center;
+			align-self: stretch;
+			border-radius: 4px;
+			border: 1px solid var(--studio-gray-50, #646970) !important;
+			background: var(--black-white-white, #fff);
+			margin-bottom: 0;
+
+			&:hover {
+				background: var(--studio-gray-0, #f6f7f7);
+			}
+
+			&:focus {
+				background: var(--studio-gray-0, #f6f7f7);
+				outline: 2px solid var(--studio-gray-90, #1d2327);
+				outline-offset: 1px;
+			}
+
+			>svg {
+				margin-right: auto;
+			}
+
+			span {
+				color: var(--studio-gray-80, #2c3338);
+				font-feature-settings: "clig" off, "liga" off;
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: normal;
+				letter-spacing: 0.32px;
+				margin-right: auto;
+				margin-left: -20px;
+			}
+		}
+	}
+
+	.signup__step.is-user {
+		.formatted-header {
+			.formatted-header__title {
+				@include break-small {
+					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
+					line-height: 56px;
+				}
+			}
+
+			.formatted-header__subtitle {
+				@include break-small {
+					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+				}
+			}
+		}
+
+		.social-buttons__button {
+			border: 0;
+
+			> svg {
+				border: 1px solid var(--studio-gray-10);
+				padding: 12px;
+				border-radius: 24px; /* stylelint-disable-line scales/radii */
+			}
+		}
+	}
+
+	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
+	// This selector is part of an experiment which is supposed to be cleaned up
+	// https://github.com/Automattic/wp-calypso/pull/83886
+	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment {
+		.social-buttons__button {
+			border: 0;
+			> svg {
+				border: none;
+				padding: 0;
+				border-radius: 0;
+
+			}
+		}
+	}
 
 	/* TODO: Remove the following when the 2023 pricig grid is live to all users */
 	.signup:not(.is-onboarding-2023-pricing-grid) .signup__step .plans.plans-step {
@@ -797,6 +887,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 2.5rem;
 				font-weight: 500;
+
 				@include break-mobile {
 					font-size: 2.75rem;
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -819,7 +910,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				line-height: 2.5rem;
 				font-weight: 400;
 
-				@media ( min-width: 880px ) {
+				@media (min-width: 880px) {
 					font-size: 2.75rem;
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3rem;
@@ -832,30 +923,15 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.signup__step.is-emails,
 	.signup__step.is-mailbox,
 	.is-domain-only {
-		@include break-large {
-			margin: 0 0 0 20px;
-		}
-
-		@include break-wide {
-			padding-inline-start: 20px;
-		}
 		.is-wide-layout {
 			max-width: 1280px;
-		}
-
-		.formatted-header__subtitle {
-			text-align: start;
-		}
-
-		.formatted-header__title {
-			text-align: start;
 		}
 	}
 
 	.signup__step.is-design-setup-site,
 	.signup__step.is-difm-design-setup-site {
 		.step-wrapper__header {
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				margin-left: 0;
 				margin-right: 0;
 			}
@@ -885,51 +961,13 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	}
 }
 
-body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
-	.signup__step.is-user .signup-form.is-horizontal {
-		p.signup-form__social-buttons-tos {
-			font-size: 0.875rem;
-		}
+body.is-section-signup .is-gravatar {
+	height: 100%;
+	background-color: #e7e9ea;
 
-		@include break-small {
-			.signup-form__social {
-				position: relative;
-				display: flex;
-				justify-content: center;
-				width: 100%;
-				padding-bottom: 62px;
-			}
-
-			.social-buttons__button {
-				text-align: unset;
-			}
-
-			p.signup-form__social-buttons-tos {
-				position: absolute;
-				left: 0;
-				bottom: 0;
-			}
-		}
-
-		@include break-medium {
-			.signup-form__social {
-				justify-content: start;
-				padding-bottom: 0;
-			}
-
-			.signup-form__social-buttons {
-				transform: translateY(40px);
-			}
-
-			p.signup-form__social-buttons-tos {
-				position: unset;
-			}
-		}
-
-		@include break-large {
-			.signup-form__social-buttons {
-				transform: translateY(30px);
-			}
+	@include break-small {
+		.layout__content {
+			padding-top: 80px;
 		}
 	}
 }

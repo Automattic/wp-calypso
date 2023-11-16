@@ -5,7 +5,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -26,6 +25,7 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementTransfer,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -140,12 +140,14 @@ class TransferDomainToOtherUser extends Component {
 		return first_name && last_name ? `${ first_name } ${ last_name } (${ nice_name })` : nice_name;
 	}
 
-	renderBreadcrumbs() {
+	renderHeader() {
 		const { translate, selectedSite, selectedDomainName, currentRoute } = this.props;
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					selectedDomainName,
@@ -181,18 +183,10 @@ class TransferDomainToOtherUser extends Component {
 				</>
 			);
 		}
-
-		const { translate } = this.props;
-
 		return (
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'transfer-to-other-user' ] } />
-				{ this.renderBreadcrumbs() }
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Transfer to another user' ) }
-					align="left"
-				/>
+				{ this.renderHeader() }
 				<div className="transfer-to-other-user__container">
 					<div className="transfer-to-other-user__main">{ this.renderSection() }</div>
 				</div>

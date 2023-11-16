@@ -1,0 +1,228 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/woo-commerce";
+
+body.is-section-plans.is-ecommerce-trial-plan,
+body.is-section-plans.is-business-trial-plan {
+
+	// Overwrite section nav styles so they look like the desktop version on mobile as well
+	.section-nav {
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav-group {
+			display: flex;
+		}
+
+		.section-nav-tabs__list {
+			display: flex;
+		}
+
+		.section-nav-tab {
+			border-bottom: 2px solid transparent;
+
+			&.is-selected {
+				border-bottom-color: var(--color-neutral-100);
+
+				.section-nav-tab__link {
+					background: none;
+				}
+
+				.section-nav-tab__text {
+					color: var(--color-neutral-100);
+				}
+			}
+		}
+
+		.section-nav-tab__link {
+			display: block;
+			font-weight: inherit;
+		}
+
+		.section-nav-tab__text {
+			display: inline;
+		}
+	}
+
+	&.color-scheme {
+		--color-surface-backdrop: var(--color-surface);
+	}
+
+	.feature-included-card__card {
+		display: flex;
+		flex-direction: row;
+		margin-bottom: 16px;
+		padding: 24px 16px;
+		width: 100%;
+
+		@media (min-width: $break-large) {
+			flex-direction: column;
+			width: calc(50% - 24px);
+			margin-right: 12px;
+			margin-left: 12px;
+			margin-bottom: 24px;
+			padding: 48px 24px 24px;
+		}
+
+		@media (min-width: $break-wide) {
+			width: calc(25% - 24px);
+		}
+
+		.feature-included-card__content {
+			margin-left: 24px;
+
+			@media (min-width: $break-large) {
+				margin-left: 0;
+			}
+
+			.feature-included-card__title {
+				margin-bottom: 8px;
+			}
+		}
+
+		.feature-included-card__illustration {
+			width: 48px;
+
+			@media (min-width: $break-large) {
+				width: 60px;
+			}
+		}
+
+		.feature-included-card__text {
+			margin-bottom: 8px;
+		}
+	}
+
+	.feature-not-included-card__card {
+
+		&:last-of-type {
+			margin-bottom: 4px;
+		}
+
+		.feature-not-included-card__content {
+			padding-left: 16px;
+
+			@media (min-width: $break-large) {
+				padding-left: 25px;
+			}
+
+			.feature-not-included-card__title {
+				margin-bottom: 2px;
+
+				@media (min-width: $break-large) {
+					margin-bottom: 8px;
+				}
+			}
+
+			.feature-not-included-card__text {
+				margin-bottom: 8px;
+			}
+		}
+	}
+
+	.current-plan__content {
+		.section-nav {
+			box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+		}
+
+		.trial-current-plan__banner-wrapper {
+			margin: 20px 0;
+		}
+
+		.trial-current-plan__section-title {
+			font-size: $font-title-medium;
+			text-align: center;
+			font-weight: 400;
+			color: var(--color-neutral-80);
+			margin: 40px 0 10px;
+
+			@media (max-width: $break-mobile) {
+				text-align: left;
+				font-size: $font-title-small;
+				padding: 0 20px;
+			}
+
+			&:nth-of-type(2) {
+				margin-top: 56px;
+				margin-bottom: 12px;
+			}
+		}
+
+		.trial-current-plan__section-subtitle {
+			text-align: center;
+			font-size: $font-body;
+			color: var(--color-neutral-40);
+			padding: 0 25%;
+
+			@media (max-width: $break-mobile) {
+				text-align: left;
+				font-size: $woo-font-body-extra-small;
+				padding: 0 20px;
+			}
+		}
+
+		.trial-current-plan__included-wrapper {
+			display: flex;
+			flex-flow: row wrap;
+			list-style: none;
+			padding: 0;
+			margin-top: 30px;
+
+			@media (max-width: $break-mobile) {
+				padding: 0 20px;
+
+				.trial-current-plan__included-view-all {
+					color: var(--color-accent);
+					font-size: $woo-font-body-extra-small;
+					border: 0;
+					padding: 0;
+					text-align: center;
+					width: 100%;
+
+					&.is-ecommerce {
+						margin-top: 20px;
+					}
+					&:not(.is-ecommerce) {
+						margin-bottom: 40px;
+					}
+				}
+
+				.feature-included-card__text {
+					font-size: $woo-font-body-extra-small;
+				}
+			}
+		}
+
+		.trial-current-plan__more-wrapper {
+			display: flex;
+			flex-flow: row wrap;
+			list-style: none;
+			padding: 20px;
+			margin-top: 30px;
+
+			@media (max-width: $break-mobile) {
+				.feature-not-included-card__text {
+					font-size: $woo-font-body-extra-small;
+				}
+				margin-top: 12px;
+			}
+		}
+
+		.trial-current-plan__cta-wrapper {
+			text-align: center;
+			margin-bottom: 30px;
+
+			@media (max-width: $break-mobile) {
+				padding: 0 20px;
+				margin-top: 0;
+			}
+
+			button {
+				@media (max-width: $break-mobile) {
+					width: 100%;
+					line-height: 30px;
+				}
+			}
+		}
+	}
+}

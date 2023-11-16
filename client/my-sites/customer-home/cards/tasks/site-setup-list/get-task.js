@@ -149,6 +149,19 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.CART_ITEMS_ABANDONED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Complete checkout' ),
+				description: translate(
+					'Unlock all the benefits of managed hosting, including unmetered bandwidth, multisite management, and realtime backups.'
+				),
+				actionText: translate( 'Go to checkout' ),
+				actionUrl: `/checkout/${ siteSlug }`,
+				actionDisableOnComplete: false,
+				isSkippable: true,
+			};
+			break;
 		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
 			taskData = {
 				timing: 7,
@@ -334,10 +347,10 @@ export const getTask = (
 				title: translate( 'Enable post sharing' ),
 				description: isBlogger
 					? translate(
-							'Enable post sharing to automatically share your new blog posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+							'Enable post sharing to automatically share your new blog posts to Facebook, LinkedIn, Instagram, Tumblr, or Mastodon to ensure your audience will never miss an update.'
 					  )
 					: translate(
-							'Enable post sharing to automatically share your new posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+							'Enable post sharing to automatically share your new posts to Facebook, LinkedIn, Instagram, Tumblr, or Mastodon to ensure your audience will never miss an update.'
 					  ),
 				actionText: translate( 'Enable sharing' ),
 				actionUrl: `/marketing/connections/${ siteSlug }`,

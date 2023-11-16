@@ -78,7 +78,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 			<div>
 				<p>
 					{ __( 'Changes pushed to the selected branch will be automatically deployed. ' ) }
-					<ExternalLink href="#" target="_blank" rel="noopener noreferrer">
+					<ExternalLink href="#" rel="noopener noreferrer">
 						{ __( 'Learn more' ) }
 					</ExternalLink>
 				</p>

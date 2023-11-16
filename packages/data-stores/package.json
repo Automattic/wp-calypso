@@ -31,12 +31,15 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
-		"@wordpress/api-fetch": "^6.20.0",
-		"@wordpress/data-controls": "^2.23.0",
-		"@wordpress/deprecated": "^3.23.0",
+		"@wordpress/api-fetch": "^6.41.0",
+		"@wordpress/data-controls": "^3.13.0",
+		"@wordpress/deprecated": "^3.44.0",
+		"@wordpress/element": "^5.21.0",
+		"@wordpress/url": "^3.45.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
@@ -47,18 +50,19 @@
 		"validator": "^13.5.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^8.0.0",
+		"@wordpress/data": "^9.14.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@remix-run/router": "^1.5.0",
 		"@types/validator": "^13.7.1",
 		"jest-fetch-mock": "^3.0.3",
-		"nock": "^12.0.3",
+		"nock": "^13.3.8",
 		"node-fetch": "^2.6.6",
-		"typescript": "^4.7.4",
+		"typescript": "^5.2.2",
 		"wait-for-expect": "^3.0.2",
 		"wpcom-proxy-request": "workspace:^"
 	}

@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
-import { siteColumns } from '../utils';
 import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
@@ -11,23 +10,20 @@ import './style.scss';
 
 interface Props {
 	site: Site;
-	columns?: AllowedTypes[];
+	columns: AllowedTypes[];
 	isSmallScreen?: boolean;
 	hasError: boolean;
 }
 
-const defaultColumns: AllowedTypes[] = siteColumns.map( ( { key } ) => key );
-
 export default function SiteExpandedContent( {
 	site,
-	columns = defaultColumns,
+	columns,
 	isSmallScreen = false,
 	hasError,
 }: Props ) {
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
 
 	const stats = site.site_stats;
-	const boostData = site.jetpack_boost_scores;
 	const siteUrlWithScheme = site.url_with_scheme;
 
 	const trackEvent = ( eventName: string ) => {
@@ -49,14 +45,7 @@ export default function SiteExpandedContent( {
 				/>
 			) }
 			{ columns.includes( 'boost' ) && (
-				<BoostSitePerformance
-					boostData={ boostData }
-					siteId={ site.blog_id }
-					siteUrlWithScheme={ siteUrlWithScheme }
-					hasBoost={ site.has_boost }
-					trackEvent={ trackEvent }
-					hasError={ hasError }
-				/>
+				<BoostSitePerformance site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			) }
 			{ columns.includes( 'backup' ) && stats && (
 				<BackupStorage site={ site } trackEvent={ trackEvent } hasError={ hasError } />

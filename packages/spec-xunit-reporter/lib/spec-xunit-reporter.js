@@ -21,7 +21,6 @@ exports = module.exports = SpecXUnit;
 
 /**
  * Initialize a new `SpecXUnit` test reporter.
- *
  * @param {Object} runner Test runner object, handled implicitly by mocha
  */
 function SpecXUnit( runner ) {

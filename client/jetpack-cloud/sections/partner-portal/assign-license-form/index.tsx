@@ -2,14 +2,19 @@ import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import { SITE_CARDS_PER_PAGE } from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form/constants';
-import { useAssignMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { useAssignLicensesToSite } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
-import { areLicenseKeysAssignableToMultisite } from '../utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { areLicenseKeysAssignableToMultisite, isWooCommerceProduct } from '../lib';
 import './style.scss';
 
 function setPage( pageNumber: number ): void {
@@ -34,6 +39,20 @@ function paginate( arr: Array< any >, currentPage: number ): Array< any > {
 	);
 }
 
+const getLicenseKeysFromUrl = () => {
+	const products = getQueryArg( window.location.href, 'products' );
+	if ( typeof products === 'string' ) {
+		return products.split( ',' );
+	}
+
+	const licenseKey = getQueryArg( window.location.href, 'key' );
+	if ( typeof licenseKey === 'string' ) {
+		return [ licenseKey ];
+	}
+
+	return [];
+};
+
 export default function AssignLicenseForm( {
 	sites,
 	currentPage,
@@ -43,15 +62,20 @@ export default function AssignLicenseForm( {
 	currentPage: number;
 	search: string;
 } ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
-	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
-	const products = getQueryArg( window.location.href, 'products' ) as string;
-	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
 	const onSelectSite = ( site: any ) => {
 		setSelectedSite( site );
 	};
-	const [ assignLicenses, isLoading ] = useAssignMultipleLicenses( licenseKeysArray, selectedSite );
+
+	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
+		},
+	} );
+
+	const licenseKeysArray = getLicenseKeysFromUrl();
 
 	// We need to filter out multisites if the licenses are not assignable to a multisite.
 	let results = areLicenseKeysAssignableToMultisite( licenseKeysArray )
@@ -74,7 +98,7 @@ export default function AssignLicenseForm( {
 						className="assign-license-form__site-card-radio"
 						label={ site.domain }
 						name="site_select"
-						disabled={ isLoading }
+						disabled={ ! isReady }
 						checked={ selectedSite?.ID === site.ID }
 					/>
 				</Card>
@@ -82,14 +106,50 @@ export default function AssignLicenseForm( {
 		}
 	} );
 
-	const onAssignLater = () => {
+	const onClickAssignLater = useCallback( () => {
 		if ( licenseKeysArray.length > 1 ) {
 			page.redirect( '/partner-portal/licenses' );
 		}
-		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
-	};
 
-	if ( ! results.length ) {
+		const licenseKey = licenseKeysArray[ 0 ];
+		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
+	}, [ licenseKeysArray ] );
+
+	const onClickAssignLicenses = useCallback( async () => {
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
+				products: licenseKeysArray.join( ',' ),
+				selected_site: selectedSite?.ID,
+			} )
+		);
+
+		const assignLicensesResult = await assignLicensesToSite( licenseKeysArray );
+
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicensesResult ) );
+
+		const goToDownloadStep = licenseKeysArray.some( ( licenseKey ) =>
+			isWooCommerceProduct( licenseKey )
+		);
+
+		if ( goToDownloadStep ) {
+			return page.redirect(
+				addQueryArgs(
+					{ products: licenseKeysArray.join( ',' ), attachedSiteId: selectedSite?.ID },
+					partnerPortalBasePath( '/download-products' )
+				)
+			);
+		}
+
+		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+		if ( fromDashboard ) {
+			return page.redirect( '/dashboard' );
+		}
+
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
+	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
+
+	if ( ! results.length && search === '' ) {
 		return (
 			<div className="assign-license-form__empty-state">
 				<p>
@@ -97,7 +157,7 @@ export default function AssignLicenseForm( {
 						'It looks like you don’t have any connected Jetpack sites you can apply this license to.'
 					) }
 				</p>
-				<Button primary onClick={ onAssignLater }>
+				<Button primary onClick={ onClickAssignLater }>
 					{ translate( 'Assign license later', 'Assign licenses later', {
 						count: licenseKeysArray.length,
 					} ) }
@@ -127,8 +187,8 @@ export default function AssignLicenseForm( {
 				<div className="assign-license-form__controls">
 					<Button
 						borderless
-						onClick={ onAssignLater }
-						disabled={ isLoading }
+						onClick={ onClickAssignLater }
+						disabled={ ! isReady }
 						className="assign-license-form__assign-later"
 					>
 						{ translate( 'Assign later' ) }
@@ -137,8 +197,8 @@ export default function AssignLicenseForm( {
 						primary
 						className="assign-license-form__assign-now"
 						disabled={ selectedSite?.ID === 0 }
-						busy={ isLoading }
-						onClick={ assignLicenses }
+						busy={ ! isReady }
+						onClick={ onClickAssignLicenses }
 					>
 						{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {
 							count: licenseKeysArray.length,

@@ -1,0 +1,16 @@
+
+@import "@wordpress/base-styles/breakpoints";
+
+main.mailpoet-upgrade.mailpoet-upgrade-header {
+	padding-top: 0;
+}
+.mailpoet-upgrade-actions {
+	display: flex;
+	flex-direction: column;
+	justify-content: left;
+	padding: 28px 0 0;
+	gap: 16px;
+	@media (min-width: ( $break-large + 1 )) {
+		flex-direction: row;
+	}
+}

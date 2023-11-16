@@ -166,7 +166,11 @@ function LanguagePicker< TLanguage extends Language >( {
 					hideLabelFromVision
 					value={ selectControlOptions.find( ( option ) => option.key === filter ) }
 					options={ selectControlOptions }
-					onChange={ ( { selectedItem } ) => selectedItem && setFilter( selectedItem.key ) }
+					onChange={ ( {
+						selectedItem,
+					}: {
+						selectedItem: ( typeof selectControlOptions )[ number ];
+					} ) => selectedItem && setFilter( selectedItem.key ) }
 				/>
 				<div className="language-picker-component__search-mobile">
 					<Search
@@ -208,7 +212,7 @@ function LanguagePicker< TLanguage extends Language >( {
 				<div className="language-picker-component__language-buttons">
 					{ languagesToRender.map( ( language ) => (
 						<Button
-							isPrimary={ selectedLanguage && language.langSlug === selectedLanguage.langSlug }
+							variant={ language.langSlug === selectedLanguage?.langSlug ? 'primary' : undefined }
 							className="language-picker-component__language-button"
 							key={ language.langSlug }
 							onClick={ () => onSelectLanguage( language ) }

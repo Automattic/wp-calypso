@@ -9,9 +9,31 @@
 		}
 	}
 
-	.unsubscribe-button.components-button.has-icon,
-	.resubscribe-button.components-button.has-icon {
-		margin-top: 24px;
+	.subscriptions__separator {
+		margin-bottom: 24px;
+	}
+
+	&__unsubscribe-button.components-button.has-icon,
+	&__view-feed-button.components-button.has-icon,
+	&__manage-subscription-button.components-button.has-icon {
+		display: flex;
+		width: 100%;
+		height: auto;
+		padding: 0;
+		font-size: $font-body-small;
+		line-height: $font-title-small;
+
+		&:visited {
+			color: inherit;
+		}
+
+		&:not(:last-child) {
+			margin-bottom: 24px;
+		}
+
+		.subscriptions-ellipsis-menu__item-icon {
+			width: 20px;
+			height: 20px;
+		}
 	}
 }
-

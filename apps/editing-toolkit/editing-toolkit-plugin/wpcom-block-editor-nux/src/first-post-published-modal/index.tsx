@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { isURL } from '@wordpress/url';
 import React from 'react';
 import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
+import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import NuxModal from '../nux-modal';
 import postPublishedImage from './images/post-published.svg';
 
@@ -20,7 +21,7 @@ type CoreEditorPlaceholder = {
 /**
  * Show the first post publish modal
  */
-const FirstPostPublishedModal: React.FC = () => {
+const FirstPostPublishedModalInner: React.FC = () => {
 	const { link } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
@@ -90,11 +91,11 @@ const FirstPostPublishedModal: React.FC = () => {
 			imageSrc={ postPublishedImage }
 			actionButtons={
 				<>
-					<Button isPrimary onClick={ handleViewPostClick }>
+					<Button variant="primary" onClick={ handleViewPostClick }>
 						{ __( 'View Post', 'full-site-editing' ) }
 					</Button>
 					{ launchpadScreenOption === 'full' && siteIntentOption === 'write' && (
-						<Button isSecondary onClick={ handleNextStepsClick }>
+						<Button variant="secondary" onClick={ handleNextStepsClick }>
 							{ __( 'Next Steps', 'full-site-editing' ) }
 						</Button>
 					) }
@@ -104,6 +105,14 @@ const FirstPostPublishedModal: React.FC = () => {
 			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_first_post_published_modal_show' ) }
 		/>
 	);
+};
+
+const FirstPostPublishedModal = () => {
+	const { siteIntent: intent } = useSiteIntent();
+	if ( intent === 'write' ) {
+		return <FirstPostPublishedModalInner />;
+	}
+	return null;
 };
 
 export default FirstPostPublishedModal;

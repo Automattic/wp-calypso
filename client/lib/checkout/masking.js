@@ -2,7 +2,6 @@ import { getCreditCardType } from 'calypso/lib/checkout';
 
 /**
  * Formats a credit card card number
- *
  * @param {string} cardNumber unformatted field value
  * @returns {string} formatted value
  */
@@ -20,7 +19,6 @@ export function formatCreditCard( cardNumber ) {
 
 /**
  * Formats an American Express card number
- *
  * @param {string} cardNumber unformatted field value
  * @returns {string} formatted value
  */
@@ -133,7 +131,6 @@ fieldMasks.document = {
 
 /**
  * Formats a field value
- *
  * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
  * @param {string} previousValue the current value of the field before change
  * @param {string} nextValue the new, incoming value of the field on change
@@ -150,7 +147,6 @@ export function maskField( fieldName, previousValue, nextValue ) {
 
 /**
  * Reverses masking formats of a field value
- *
  * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
  * @param {string} previousValue the current value of the field before change
  * @param {string} nextValue the new, incoming value of the field on change

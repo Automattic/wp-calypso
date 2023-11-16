@@ -1,0 +1,284 @@
+@import "@automattic/calypso-color-schemes";
+@import "~@automattic/color-studio/dist/color-variables";
+@import "@automattic/onboarding/styles/mixins";
+
+$breakpoint-mobile: 782px; //Mobile size.
+$breakpoint-tablet: 1224px; //Large tablet size.
+$breakpoint-desktop: 1440px; //Desktop size.
+
+$search-icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"%3E%3Cpath d="M9.16667 15.8333C12.8486 15.8333 15.8333 12.8486 15.8333 9.16667C15.8333 5.48477 12.8486 2.5 9.16667 2.5C5.48477 2.5 2.5 5.48477 2.5 9.16667C2.5 12.8486 5.48477 15.8333 9.16667 15.8333Z" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M17.5 17.5L13.875 13.875" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3C/svg%3E';
+$recoleta-font-family: "Recoleta", sans-serif;
+$system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
+	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+
+// Only for categories page, tablet or bellow viewport, set the search box width to 100%.
+body.archive {
+	@media only screen and ( max-width: $breakpoint-tablet ) {
+		div.happy-blocks-search__inside-wrapper {
+			width: 100%;
+		}
+	}
+}
+
+.happy-blocks_inner_search {
+	height: 0;
+	.happy-blocks-search__inside-wrapper {
+		height: 57px;
+	}
+
+	@media only screen and ( max-width: $breakpoint-tablet ) {
+		height: 57px;
+		margin-bottom: 16px !important;
+		justify-content: flex-start !important;
+
+		div.happy-blocks-search__inside-wrapper {
+			width: var(--wp--style--global--content-size);
+		}
+	}
+	@media only screen and ( max-width: $breakpoint-mobile ) {
+		margin: 16px 0 !important;
+	}
+
+}
+
+.happy-blocks-search {
+	min-height: 399px;
+	position: relative;
+	padding: 0;
+}
+
+.happy-blocks-global-header__top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	@media only screen and ( max-width: $breakpoint-mobile ) {
+		flex-direction: column-reverse;
+	}
+}
+
+.happy-blocks-global-header__tabs {
+	display: flex;
+	width: 100%;
+}
+
+.happy-blocks-global-header__tab {
+	display: block;
+	padding: 3px 2px 10px 2px;
+	margin-right: 22px;
+	font-size: 1rem;
+	text-decoration: none !important;
+	color: var(--studio-blue-50);
+
+	&.active {
+		border-bottom: 2px solid var(--studio-gray-70);
+		color: var(--studio-gray-100);
+	}
+
+	&:hover,
+	&:active {
+		border-bottom: 2px solid var(--studio-gray-70);
+	}
+}
+
+.happy-blocks-mini-search {
+	margin-top: 32px;
+	@media only screen and ( max-width: $breakpoint-mobile ) {
+		margin-top: 16px;
+		margin-bottom: 0;
+	}
+	.screen-reader-text {
+		clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+		clip: rect(1px, 1px, 1px, 1px);
+		position: absolute !important;
+	}
+	// This applies to all search bars
+	.happy-blocks-search__inside-wrapper {
+		// width is 1/3 of the grid width minus 30px * 2 / 3 for the grid gap (gap is 30px, we need 2/3 of it)
+		width: calc(var(--wp--style--global--wide-size, 1224px) / 3 - 30px * 2 / 3);
+		max-width: 100%;
+		position: relative;
+		border-radius: 4px;
+		background-color: #fff;
+		box-shadow: 0 0 0 1px var(--color-neutral-5) inset;
+		display: flex;
+
+		@media only screen and ( max-width: $breakpoint-mobile ) {
+			margin-left: 0;
+			width: 100%;
+		}
+
+		input {
+			flex: 1;
+			padding: 16px 20px 16px 46px;
+			background-color: transparent;
+			// Removes duplicated glass icon on mobile browsers
+			-webkit-appearance: none;
+			border-width: 0;
+			border-style: none;
+			border-radius: 4px;
+			width: 366px;
+			height: 55px;
+
+			&,
+			&::placeholder {
+				font-size: 1rem;
+				color: var(--color-neutral-50);
+			}
+
+			font-size: 1rem;
+			color: var(--color-neutral-50);
+		}
+
+		&::before {
+			z-index: 10;
+			content: "";
+			background: url($search-icon) 16px no-repeat;
+			background-position: center;
+			position: absolute;
+			top: 0;
+			bottom: -1px;
+			left: 0;
+			width: 46px;
+		}
+	}
+
+	.happy-blocks-search-container {
+		margin: 0 auto;
+		max-width: var(--wp--style--global--wide-size, 1224px);
+
+		hr {
+			border-bottom-width: 0;
+			margin: 0;
+			position: absolute;
+			width: 100%;
+			left: 0;
+			height: 0;
+			border-top: solid 1px $studio-gray-5;
+		}
+		form {
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+			@media ( max-width: $breakpoint-mobile ) {
+				margin-top: 0;
+			}
+		}
+
+		@media ( max-width: $breakpoint-desktop ) {
+			padding: 0 24px;
+		}
+	}
+
+	&.happy-blocks-header {
+		&.is-learn {
+			margin-top: 120px;
+			margin-bottom: 6px;
+
+			@media ( max-width: $breakpoint-mobile ) {
+				margin-top: 56px;
+				margin-bottom: 8px;
+			}
+
+			.happy-blocks-global-header-site__title {
+				display: flex;
+				flex-direction: column;
+
+				.happy-blocks-global-header-site__title__wrapper {
+					margin-bottom: 32px;
+					@media ( max-width: $breakpoint-mobile ) {
+						margin-top: 0;
+					}
+				}
+
+				h1 {
+					font-size: rem(70px);
+					line-height: 76px;
+					@media ( max-width: $breakpoint-mobile ) {
+						font-size: rem(50px);
+						line-height: 57px;
+					}
+				}
+				// subtitle
+				p {
+					margin-top: 16px;
+					font-size: rem(18px);
+					line-height: 26px;
+					@media ( max-width: $breakpoint-mobile ) {
+						font-size: 1rem;
+						line-height: 24px;
+					}
+				}
+				// search bar
+				form {
+					display: flex;
+					justify-content: start;
+				}
+			}
+		}
+
+		&.is-webinars,
+		&.is-courses {
+			@media ( max-width: $breakpoint-mobile ) {
+				margin-top: 23px;
+			}
+			.happy-blocks-global-header-site__title__wrapper {
+				@media ( max-width: $breakpoint-mobile ) {
+					margin-top: 0;
+
+					p {
+						font-size: 1rem;
+						margin-top: 2px;
+					}
+				}
+			}
+		}
+
+
+		.happy-blocks-search__inside-wrapper {
+			input {
+				background-color: var(--studio-gray-0);
+			}
+		}
+	}
+}
+
+.happy-blocks-global-header-site__title {
+	display: flex;
+	align-items: center;
+	margin-top: 24px;
+	@media ( max-width: $breakpoint-mobile ) {
+		flex-direction: column;
+		margin-top: 0;
+	}
+	h1 {
+		font-family: $recoleta-font-family;
+		font-size: 2.75rem;
+		line-height: 52px;
+		margin: 0;
+		@media ( max-width: $breakpoint-tablet ) {
+			font-size: 1.75rem;
+			line-height: 29px;
+		}
+	}
+
+	p {
+		color: var(--color-neutral-60);
+		font-family: $system-font-family;
+		font-size: 1rem;
+		margin-top: 0;
+		margin-bottom: 0;
+
+		@media ( max-width: $breakpoint-tablet ) {
+			font-size: 0.875rem;
+			line-height: 20px;
+			margin-top: 0;
+		}
+	}
+
+	.happy-blocks-global-header-site__title__wrapper {
+		width: 100%;
+		@media ( max-width: $breakpoint-mobile ) {
+			margin: 16px 0 16px 0;
+		}
+	}
+}

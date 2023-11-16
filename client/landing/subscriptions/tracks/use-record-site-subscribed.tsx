@@ -9,7 +9,7 @@ const useRecordSiteSubscribed = () => {
 	const { isReaderPortal } = useSubscriptionManagerContext();
 
 	const recordSiteSubscribed = ( tracksProps: {
-		blog_id: string;
+		blog_id: string | null;
 		url: string;
 		source?: string;
 	} ) => {

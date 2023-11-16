@@ -8,7 +8,6 @@ const noop = () => {};
 
 /**
  * Dispatches returned post revisions
- *
  * @param {Object} action Redux action
  * @param {string} action.siteId of the revisions
  * @param {string} action.postId of the revisions
@@ -21,7 +20,6 @@ export const receiveSuccess = ( { siteId, postId }, response ) =>
 
 /**
  * Dispatches a request to fetch post revisions
- *
  * @param {Object} action Redux action
  * @returns {Object} Redux action
  */

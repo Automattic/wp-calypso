@@ -61,6 +61,11 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
+	const description = __(
+		"Change all of your site's fonts, colors and more. Available on the Premium plan.",
+		'full-site-editing'
+	);
+
 	return (
 		<Modal
 			className="wpcom-global-styles-modal"
@@ -73,12 +78,7 @@ const GlobalStylesModal = () => {
 					<h1 className="wpcom-global-styles-modal__heading">
 						{ __( 'A powerful new way to style your site', 'full-site-editing' ) }
 					</h1>
-					<p className="wpcom-global-styles-modal__description">
-						{ __(
-							"Change all of your site's fonts, colors and more. Available on the Premium plan.",
-							'full-site-editing'
-						) }
-					</p>
+					<p className="wpcom-global-styles-modal__description">{ description }</p>
 					<div className="wpcom-global-styles-modal__actions">
 						<Button variant="secondary" onClick={ closeModal }>
 							{ __( 'Try it out', 'full-site-editing' ) }

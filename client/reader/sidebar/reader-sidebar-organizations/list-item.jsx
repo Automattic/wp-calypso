@@ -1,7 +1,7 @@
+import { Count } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Count from 'calypso/components/count';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Favicon from 'calypso/reader/components/favicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';

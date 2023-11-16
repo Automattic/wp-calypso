@@ -4,13 +4,19 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 export function notifications( context, next ) {
 	const basePath = sectionify( context.path );
 	const mcKey = 'notifications';
+	const state = context.store.getState();
 
 	trackPageLoad( basePath, 'Reader > Notifications', mcKey );
-	recordTrack( 'calypso_reader_notifications_viewed' );
+	recordTrack(
+		'calypso_reader_notifications_viewed',
+		{},
+		{ pathnameOverride: getCurrentRoute( state ) }
+	);
 
 	const NotificationTitle = () => {
 		const translate = useTranslate();

@@ -38,7 +38,10 @@ export enum ContentType {
 }
 
 export default class JestAllureInterface extends Allure {
-	constructor( private readonly reporter: AllureReporter, runtime: AllureRuntime ) {
+	constructor(
+		private readonly reporter: AllureReporter,
+		runtime: AllureRuntime
+	) {
 		super( runtime );
 	}
 

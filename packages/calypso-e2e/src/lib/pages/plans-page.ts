@@ -20,6 +20,12 @@ const selectors = {
 		}
 		return `button.is-${ name.toLowerCase() }-plan:visible`;
 	},
+	selectModalUpsellPlanButton: ( name: 'Free' | 'Personal' ) => {
+		if ( name === 'Free' ) {
+			return `button.is-upsell-modal-free-plan:visible`;
+		}
+		return `button.is-upsell-modal-${ name.toLowerCase() }-plan:visible`;
+	},
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
@@ -86,6 +92,21 @@ export class PlansPage {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
 		// In the `/plans` view, there are two buttons for "Upgrade" on the
 		// plan comparison chart. Select the first one.
+		await locator.first().click();
+	}
+
+	/**
+	 * Selects the plan on the modal upsell.
+	 *
+	 * @param {Plans} plan Plan to select.
+	 */
+	async selectModalUpsellPlan( plan: Plans ): Promise< void > {
+		if ( plan !== 'Free' && plan !== 'Personal' ) {
+			throw Error( `Unsupported plan to be selected in modal upsell: ${ plan }` );
+		}
+
+		const locator = this.page.locator( selectors.selectModalUpsellPlanButton( plan ) );
+
 		await locator.first().click();
 	}
 

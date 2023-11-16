@@ -103,7 +103,6 @@ function selectorHandler() {
  * Return the event definition object to track `wpcom_block_picker_search_term`,
  * adding the context event property with the `inserter_inline` value.
  * It also tracks `wpcom_block_picker_no_results` if the search term doesn't return any results.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {

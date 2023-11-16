@@ -47,7 +47,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 	}
 
 	// Do not limit Global Styles if the site paid for it.
-	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
+	if ( wpcom_site_has_global_styles_feature( $blog_id ) ) {
 		return false;
 	}
 
@@ -161,13 +161,19 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		true
 	);
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
+
+	$reset_global_styles_support_url = 'https://wordpress.com/support/using-styles/#reset-all-styles';
+	if ( class_exists( 'WPCom_Languages' ) ) {
+		$reset_global_styles_support_url = WPCom_Languages::localize_url( $reset_global_styles_support_url );
+	}
 	wp_localize_script(
 		'wpcom-global-styles-editor',
 		'wpcomGlobalStyles',
 		array(
-			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=style-customization",
-			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
+			'assetsUrl'                   => plugins_url( 'dist/', __FILE__ ),
+			'upgradeUrl'                  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=style-customization",
+			'wpcomBlogId'                 => wpcom_global_styles_get_wpcom_current_blog_id(),
+			'resetGlobalStylesSupportUrl' => $reset_global_styles_support_url,
 		)
 	);
 	wp_enqueue_style(
@@ -295,8 +301,18 @@ function wpcom_global_styles_in_use_by_wp_global_styles_post( array $wp_global_s
 		return false;
 	}
 
-	$global_style_keys    = array_keys( json_decode( $wp_global_styles_post['post_content'], true ) ?? array() );
-	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	$global_styles_content = json_decode( $wp_global_styles_post['post_content'], true ) ?? array();
+
+	// Some keys are ignored because they are not relevant to a custom style
+	// behaviours are not relevant if blank - as they where when included during GB16.4 and later removed.
+	$ignored_keys = array( 'version', 'isGlobalStylesUserThemeJSON' );
+	if ( isset( $global_styles_content['behaviors'] ) && empty( $global_styles_content['behaviors'] ) ) {
+		$ignored_keys[] = 'behaviors';
+	}
+
+	$global_style_keys    = array_keys( $global_styles_content );
+	$global_styles_in_use = count( array_diff( $global_style_keys, $ignored_keys ) ) > 0;
+
 	return $global_styles_in_use;
 }
 
@@ -371,12 +387,6 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 		return wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exempt', $blog_id );
 	}
 
-	// Non-Simple sites on a lower plan are temporary edge cases.
-	// We exempt them to prevent unexpected temporary changes in their styles.
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return true;
-	}
-
 	// If the current user cannot modify the `wp_global_styles` CPT, the exemption check is not needed;
 	// other conditions will determine whether they can use GS.
 	if ( ! wpcom_global_styles_current_user_can_edit_wp_global_styles( $blog_id ) ) {
@@ -385,9 +395,10 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 
 	switch_to_blog( $blog_id );
 
-	$note = 'See https://wp.me/p7DVsv-fY6#comment-44778';
+	$note = 'Automated sticker. See https://wp.me/p7DVsv-fY6#comment-44778';
+	$user = 'a8c'; // A non-empty string avoids storing the current user as author of the sticker change.
 
-	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $note, null, $blog_id );
+	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $note, $user, $blog_id );
 
 	$global_styles_used = false;
 
@@ -405,7 +416,7 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 	}
 
 	if ( $global_styles_used ) {
-		add_blog_sticker( 'wpcom-premium-global-styles-exempt', $note, null, $blog_id );
+		add_blog_sticker( 'wpcom-premium-global-styles-exempt', $note, $user, $blog_id );
 	}
 
 	restore_current_blog();
@@ -433,7 +444,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=style-customization';
+	$upgrade_url = "https://wordpress.com/plans/$site_slug?plan=value_bundle&feature=style-customization";
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$preview_location = add_query_arg( 'hide-global-styles', '' );
@@ -472,7 +483,10 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					<?php
 					$message = sprintf(
 						/* translators: %s - documentation URL. */
-						__( 'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.', 'full-site-editing' ),
+						__(
+							'Your site includes <a href="%s" target="_blank">premium styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+							'full-site-editing'
+						),
 						'https://wordpress.com/support/using-styles/'
 					);
 					echo sprintf(
@@ -502,12 +516,12 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					<svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M5.8125 5.6875C5.8125 4.75552 6.56802 4 7.5 4C8.43198 4 9.1875 4.75552 9.1875 5.6875C9.1875 6.55621 8.53108 7.2716 7.6872 7.36473C7.58427 7.37609 7.5 7.45895 7.5 7.5625V8.5M7.5 9.25V10.375M13.5 7C13.5 10.3137 10.8137 13 7.5 13C4.18629 13 1.5 10.3137 1.5 7C1.5 3.68629 4.18629 1 7.5 1C10.8137 1 13.5 3.68629 13.5 7Z" stroke="#1E1E1E" stroke-width="1.5"/>
 					</svg>
-					<?php echo esc_html__( 'Remove custom styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Remove premium styles', 'full-site-editing' ); ?>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M18.2 17c0 .7-.6 1.2-1.2 1.2H7c-.7 0-1.2-.6-1.2-1.2V7c0-.7.6-1.2 1.2-1.2h3.2V4.2H7C5.5 4.2 4.2 5.5 4.2 7v10c0 1.5 1.2 2.8 2.8 2.8h10c1.5 0 2.8-1.2 2.8-2.8v-3.6h-1.5V17zM14.9 3v1.5h3.7l-6.4 6.4 1.1 1.1 6.4-6.4v3.7h1.5V3h-6.3z"></path></svg>
 				</a>
 				<a class="launch-bar-global-styles-preview" href="<?php echo esc_url( $preview_location ); ?>">
 					<label><input type="checkbox" <?php echo wpcom_is_previewing_global_styles() ? 'checked' : ''; ?>><span></span></label>
-					<?php echo esc_html__( 'Preview custom styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Preview premium styles', 'full-site-editing' ); ?>
 				</a>
 			</div>
 			<a class="launch-bar-global-styles-toggle" href="#">
@@ -559,4 +573,56 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	return ! isset( $_GET['hide-global-styles'] ) && user_can( $user_id, 'administrator' );
+}
+
+/**
+ * Checks whether the site has a Personal plan.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site has a Personal plan.
+ */
+function wpcom_site_has_personal_plan( $blog_id ) {
+	$personal_plans = array_filter(
+		wpcom_get_site_purchases( $blog_id ),
+		function ( $purchase ) {
+			return strpos( $purchase->product_slug, 'personal-bundle' ) === 0;
+		}
+	);
+
+	return ! empty( $personal_plans );
+}
+
+/**
+ * Checks whether the site has a plan that grants access to the Global Styles feature.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site has access to Global Styles.
+ */
+function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
+	/*
+	 * Non-Simple sites on a lower plan are temporary edge cases. We grant them access
+	 * to Global Styles to prevent unexpected temporary changes in their styles.
+	 */
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
+	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
+		return true;
+	}
+
+	// Users who bought a Personal plan during the GS on Personal experiment should
+	// retain access to Global Styles.
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+		if ( wpcom_site_has_personal_plan( $blog_id ) ) {
+			return true;
+		} else {
+			$note = 'Automated sticker. See https://wp.me/paYJgx-3yE';
+			$user = 'a8c'; // A non-empty string avoids storing the current user as author of the sticker change.
+			remove_blog_sticker( 'wpcom-global-styles-personal-plan', $note, $user, $blog_id );
+			return false;
+		}
+	}
+
+	return false;
 }

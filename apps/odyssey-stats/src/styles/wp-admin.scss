@@ -16,6 +16,12 @@
 	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	margin-bottom: 2px;
 
+	// Avoid overriding hidden notices.
+	&[aria-hidden="true"],
+	&.hidden {
+		display: none;
+	}
+
 	h2,
 	h3 {
 		color: var(--studio-gray-90);

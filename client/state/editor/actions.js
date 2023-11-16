@@ -20,7 +20,6 @@ export const MODAL_VIEW_STATS = {
 /**
  * Returns an action object to be used in signalling that the editor should
  * begin to edit the post with the specified post ID, or `null` as a new post.
- *
  * @param  {number}  siteId   Site ID
  * @param  {?number} postId   Post ID
  * @returns {any}           Action object
@@ -36,7 +35,6 @@ export function startEditingPost( siteId, postId ) {
 /**
  * Returns an action object to be used in signalling that the editor should
  * stop editing.
- *
  * @param  {number}  siteId Site ID
  * @param  {?number} postId Post ID
  * @returns {any}         Action object
@@ -52,7 +50,6 @@ export function stopEditingPost( siteId, postId ) {
 /**
  * Returns an action object used in signalling that the media modal current
  * view should be updated in the context of the post editor.
- *
  * @param  {ModalViews} view Media view
  * @returns {Object}          Action object
  */
@@ -67,6 +64,10 @@ export function setEditorMediaModalView( view ) {
 	return action;
 }
 
+/**
+ * @param {boolean} isIframeLoaded
+ * @param {MessagePort | null} iframePort
+ */
 export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null ) => ( {
 	type: EDITOR_IFRAME_LOADED,
 	isIframeLoaded,

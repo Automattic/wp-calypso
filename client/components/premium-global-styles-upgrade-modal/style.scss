@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.upgrade-modal {
+.premium-global-styles-upgrade-modal.upgrade-modal {
 	display: flex;
 	flex-direction: column;
 
@@ -29,23 +29,42 @@
 		}
 	}
 
-	&__col {
+	.upgrade-modal__col {
 		position: relative;
-		padding: 45px;
+		padding: 45px 25px;
+
 		@include break-medium {
+			padding: 45px;
+
 			&:nth-of-type(1) {
-				width: 58%;
+				width: 62%;
 			}
 
 			&:nth-of-type(2) {
-				width: 42%;
+				width: 38%;
+			}
+		}
+
+		&:nth-of-type(1) {
+			.upgrade-modal__included {
+				display: block;
+				margin-bottom: 36px;
+
+				@include break-medium {
+					display: none;
+				}
 			}
 		}
 
 		&:nth-of-type(2) {
+			display: none;
 			background-color: var(--studio-gray-0);
 			padding-left: 25px;
 			padding-right: 25px;
+
+			@include break-medium {
+				display: block;
+			}
 		}
 	}
 
@@ -63,7 +82,7 @@
 		margin-bottom: 20px;
 	}
 
-	&__close {
+	.upgrade-modal__close {
 		color: var(--color-text-subtle);
 		position: absolute;
 		top: 0;
@@ -74,10 +93,10 @@
 		}
 	}
 
-	&__actions.bundle {
+	.upgrade-modal__actions.bundle {
 		display: grid;
-		grid-template-columns: 50% 50%;
-		column-gap: 20px;
+		grid-template-columns: repeat(1, 1fr);
+		gap: 20px;
 
 		.button {
 			padding: 9px 25px;
@@ -87,20 +106,16 @@
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
 			&.is-primary {
-				background: var(--color-accent);
-				border-color: var(--color-accent);
 				width: 100%;
-
-				&:hover,
-				&:focus {
-					background: var(--color-accent-60);
-					border-color: var(--color-accent-60);
-				}
 			}
+		}
+
+		@include break-medium {
+			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
-	&__included {
+	.upgrade-modal__included {
 		ul,
 		li {
 			font-size: $font-body-small;

@@ -1,5 +1,6 @@
 import { exec as _exec } from 'node:child_process';
 import { createHmac } from 'node:crypto';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import util from 'node:util';
@@ -13,14 +14,33 @@ const IS_DEFAULT_BRANCH = process.env.is_default_branch === 'true';
 const dirname = fileURLToPath( new URL( '.', import.meta.url ) );
 const appRoot = path.resolve( dirname, '../apps' );
 
-const apps = [
-	{
-		slug: 'happy-blocks',
-		dir: path.resolve( appRoot, 'happy-blocks' ),
-		newReleaseDir: path.resolve( appRoot, 'happy-blocks/release-files' ),
-		slackNotify: true,
+// Most apps don't need extra config, but some do. To enable slack notifications
+// when a trunk build changes an app, set "slackNotify: true" for the app which
+// requires it.
+const APP_CONFIG = {
+	'editing-toolkit': {
+		artifactDir: path.resolve( appRoot, 'editing-toolkit/editing-toolkit-plugin' ),
 	},
-];
+	'o2-blocks': {
+		artifactDir: path.resolve( appRoot, 'o2-blocks/release-files' ),
+	},
+	'happy-blocks': {
+		artifactDir: path.resolve( appRoot, 'happy-blocks/release-files' ),
+	},
+};
+
+// STEP 0: Create a list of app information based on the app directories.
+const apps = ( await fs.readdir( appRoot, { withFileTypes: true } ) )
+	.filter( ( dirent ) => dirent.isDirectory() )
+	.map( ( { name: slug } ) => ( {
+		slug,
+		dir: path.resolve( appRoot, slug ),
+		artifactDir: path.resolve( appRoot, slug, 'dist' ),
+		// Override with custom info if required.
+		...( APP_CONFIG[ slug ] ?? {} ),
+	} ) );
+
+console.log( apps );
 
 // STEP 1: Check if any apps have changed. If skipping the diff, continue as if all apps have changed.
 const changedApps = SKIP_BUILD_DIFF
@@ -29,7 +49,7 @@ const changedApps = SKIP_BUILD_DIFF
 			await Promise.all(
 				apps.map( async ( app ) => ( ( await didCalypsoAppChange( app ) ) ? app : null ) )
 			)
-	   ).filter( Boolean );
+	  ).filter( Boolean );
 
 if ( changedApps.length ) {
 	console.info(
@@ -103,7 +123,11 @@ async function addGitHubComment( _changedApps ) {
 	const header = '**This PR modifies the release build for the following Calypso Apps:**';
 	const docsMsg = '_For info about this notification, see here: PCYsg-OT6-p2_';
 	const changedAppsMsg = notifyApps.map( ( { slug } ) => `* ${ slug }` ).join( '\n' );
-	const testMsg = `To test WordPress.com changes, run "install-plugin.sh $pluginSlug ${ process.env.git_branch }" on your sandbox.`;
+	// Note: extra escaping is necessary because the message is passed to bash.
+	const testMsg =
+		'To test WordPress.com changes, run \\`install-plugin.sh \\$pluginSlug ' +
+		process.env.git_branch +
+		'\\` on your sandbox.';
 
 	const appMsg = `${ header }\n\n${ docsMsg }\n\n${ changedAppsMsg }\n\n${ testMsg }`;
 

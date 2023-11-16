@@ -17,25 +17,26 @@ import {
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
+import { Gridicon, Popover } from '@automattic/components';
 import {
 	CheckoutModal,
 	FormStatus,
 	useFormStatus,
 	Button,
 	Theme,
-	LineItem as LineItemType,
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useState, PropsWithChildren } from 'react';
-import { getLabel, getSublabel } from './checkout-labels';
+import { useState, PropsWithChildren, useRef } from 'react';
+import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { hasCheckoutVersion } from './checkout-version-checker';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
+import type { LineItemType } from './types';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -73,7 +74,7 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	}
 `;
 
-export const LineItem = styled( WPLineItem )< {
+export const LineItem = styled( CheckoutLineItem )< {
 	theme?: Theme;
 } >`
 	display: flex;
@@ -82,7 +83,7 @@ export const LineItem = styled( WPLineItem )< {
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
 	font-size: 1.1em;
-	padding: 20px 0;
+	padding: ${ hasCheckoutVersion( '2' ) ? '10px' : '20px' } 0;
 	position: relative;
 
 	.checkout-line-item__price {
@@ -95,12 +96,6 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 } >`
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
-	}
-`;
-
-const GiftBadgeWrapper = styled.span`
-	@media ( max-width: 660px ) {
-		width: 100%;
 	}
 `;
 
@@ -126,6 +121,29 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	gap: 2px 10px;
 `;
 
+const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
+	justify-content: flex-start;
+	gap: 4px;
+	.gridicon {
+		fill: ${ ( props ) => props.theme.colors.textColorLight };
+	}
+`;
+
+const UpgradeCreditPopover = styled( Popover )< { theme?: Theme } >`
+	&.popover .popover__inner {
+		color: ${ ( props ) => props.theme.colors.textColorOnDarkBackground };
+		background: ${ ( props ) => props.theme.colors.textColorDark };
+		text-align: start;
+		border-radius: 4px;
+		min-height: 32px;
+		width: 300px;
+		align-items: center;
+		font-style: normal;
+		padding: 8px 10px;
+		overflow-wrap: break-word;
+	}
+`;
+
 const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
 	display: block;
@@ -142,27 +160,33 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	display: flex;
 	gap: 0.5em;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;
 	}
 `;
-
+const BillingLine = styled.div`
+	width: 100%;
+	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'block' };
+	justify-content: ${ hasCheckoutVersion( '2' ) ? 'space-between' : 'inherit' };
+	align-items: ${ hasCheckoutVersion( '2' ) ? 'center' : 'inherit' };
+`;
 const DeleteButtonWrapper = styled.div`
 	width: 100%;
+	display: ${ hasCheckoutVersion( '2' ) ? 'flex' : 'inherit' };
+	justify-content: ${ hasCheckoutVersion( '2' ) ? 'flex-end' : 'inherit' };
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
-	display: inline-block;
 	width: auto;
-	font-size: 0.75rem;
+	font-size: ${ hasCheckoutVersion( '2' ) ? '14px' : 'inherit' };
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	margin-top: 4px;
 `;
 
 function LineItemPrice( {
@@ -209,7 +233,7 @@ function WPNonProductLineItem( {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const label = lineItem.label;
-	const actualAmountDisplay = lineItem.amount.displayValue;
+	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
@@ -250,7 +274,9 @@ function WPNonProductLineItem( {
 								setIsModalVisible( true );
 							} }
 						>
-							{ translate( 'Remove from cart' ) }
+							{ hasCheckoutVersion( '2' )
+								? translate( 'Remove' )
+								: translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
@@ -595,72 +621,47 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 export function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
-	const sublabel = getSublabel( product );
+	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 
-	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
-		if ( isP2Plus( product ) ) {
-			// This is the price for one item for products with a quantity (eg. seats in a license).
-			const itemPrice = formatCurrency(
-				product.item_original_cost_for_quantity_one_integer,
-				product.currency,
-				{ isSmallestUnit: true, stripZeros: true }
-			);
-			const members = product?.current_quantity || 1;
-			const p2Options = {
-				args: {
-					itemPrice,
-					members,
-				},
-				count: members,
-			};
-
-			return (
-				<>
-					{ translate(
-						'Monthly subscription: %(itemPrice)s x %(members)s member',
-						'Monthly subscription: %(itemPrice)s x %(members)s members',
-						p2Options
-					) }
-				</>
-			);
-		}
-
-		const options = {
+	if ( isP2Plus( product ) ) {
+		// This is the price for one item for products with a quantity (eg. seats in a license).
+		const itemPrice = formatCurrency(
+			product.item_original_cost_for_quantity_one_integer,
+			product.currency,
+			{ isSmallestUnit: true, stripZeros: true }
+		);
+		const members = product?.current_quantity || 1;
+		const p2Options = {
 			args: {
-				sublabel,
-				price: formatCurrency( product.item_original_subtotal_integer, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
+				itemPrice,
+				members,
 			},
+			count: members,
 		};
 
-		if ( isTieredVolumeSpaceAddon( product ) ) {
-			const spaceQuantity = product?.quantity ?? 1;
-			return (
-				<>
-					{ translate( '%(quantity)s GB extra space, %(price)s per year', {
-						args: { quantity: spaceQuantity, price: options.args.price },
-					} ) }
-				</>
-			);
-		}
+		return (
+			<>
+				{ translate(
+					'Monthly subscription: %(itemPrice)s x %(members)s member',
+					'Monthly subscription: %(itemPrice)s x %(members)s members',
+					p2Options
+				) }
+			</>
+		);
+	}
 
-		if ( isMonthlyProduct( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
-		}
-
-		if ( isYearly( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per year', options ) }</>;
-		}
-
-		if ( isBiennially( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
-		}
-
-		if ( isTriennially( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per three years', options ) }</>;
-		}
+	if ( isTieredVolumeSpaceAddon( product ) ) {
+		const spaceQuantity = product?.quantity ?? 1;
+		return (
+			<>
+				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
+					args: { quantity: spaceQuantity, price },
+				} ) }
+			</>
+		);
 	}
 
 	if (
@@ -668,32 +669,25 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product )
 	) {
-		let billingInterval = null;
-
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			billingInterval = translate( 'billed annually' );
+			const billingInterval = translate( 'billed annually' );
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+				</>
+			);
 		}
 
 		if ( product.months_per_bill_period === 1 ) {
-			billingInterval = translate( 'billed monthly' );
+			const billingInterval = translate( 'billed monthly' );
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+				</>
+			);
 		}
 
-		if ( billingInterval === null ) {
-			return <>{ sublabel }</>;
-		}
-
-		return (
-			<>
-				{ translate( '%(productDescription)s: %(billingInterval)s', {
-					args: {
-						productDescription: sublabel,
-						billingInterval,
-					},
-					comment:
-						"Product description and billing interval (already translated) separated by a colon (e.g. 'Mailboxes and Productivity Tools: billed annually')",
-				} ) }
-			</>
-		);
+		return <DefaultLineItemSublabel product={ product } />;
 	}
 
 	if ( isDIFMProduct( product ) ) {
@@ -742,31 +736,107 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMapping = productSlug === 'domain_map';
+	const isDomainTransfer = productSlug === 'domain_transfer';
 
 	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
 
 		return (
 			<>
-				{ translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
-					args: {
-						premiumLabel,
-						sublabel: sublabel,
-						interval: translate( 'billed annually' ),
-					},
-					comment:
-						'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
-				} ) }
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
+				{ ! product.is_included_for_100yearplan && <>: { translate( 'billed annually' ) }</> }
 			</>
 		);
 	}
 
-	return <>{ sublabel || null }</>;
+	if ( isDomainTransfer ) {
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
+
+		return (
+			<>
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( 'billed annually' ) } { price }
+			</>
+		);
+	}
+
+	const shouldRenderBasicTermSublabel =
+		isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug );
+	if ( shouldRenderBasicTermSublabel && isMonthlyProduct( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per month', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isYearly( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per year', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isBiennially( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per two years', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isTriennially( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per three years', { args: { price } } ) }
+			</>
+		);
+	}
+
+	return <DefaultLineItemSublabel product={ product } />;
 }
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
 	return coupon_savings_integer > 0;
 }
+
+const UpgradeCreditHelpIconLink = () => {
+	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const translate = useTranslate();
+	const ref = useRef( null );
+
+	function toggleIsPopoverOpen() {
+		setIsPopoverOpen( ( isPopoverOpen ) => ! isPopoverOpen );
+	}
+
+	return (
+		<>
+			<span
+				ref={ ref }
+				onMouseEnter={ () => setIsPopoverOpen( true ) }
+				onMouseLeave={ () => setIsPopoverOpen( false ) }
+				onTouchStart={ toggleIsPopoverOpen }
+			>
+				<Gridicon icon="help-outline" size={ 18 } />
+			</span>
+			<UpgradeCreditPopover
+				autoPosition={ true }
+				context={ ref.current }
+				isVisible={ isPopoverOpen }
+				hideArrow={ true }
+			>
+				{ translate(
+					'Upgrade now and we’ll automatically apply the remaining credit from your current plan. Remember, upgrade credit can only be used toward plan upgrades for the same website.'
+				) }
+			</UpgradeCreditPopover>
+		</>
+	);
+};
 
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
@@ -804,6 +874,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 						} ),
 					},
 				} ) }
+				<UpgradeCreditHelpIconLink />
 			</>
 		);
 	}
@@ -822,6 +893,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 						} ),
 					},
 				} ) }
+				<UpgradeCreditHelpIconLink />
 			</>
 		);
 	}
@@ -840,6 +912,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 						} ),
 					},
 				} ) }
+				<UpgradeCreditHelpIconLink />
 			</>
 		);
 	}
@@ -879,8 +952,11 @@ function PartnerLogo( { className }: { className?: string } ) {
 function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
-	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
-	if ( isFreeBundledDomainRegistration ) {
+	if ( product.is_included_for_100yearplan ) {
+		return <DiscountCallout>{ translate( 'Included with your plan' ) }</DiscountCallout>;
+	}
+
+	if ( product.is_bundled ) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 
@@ -916,7 +992,27 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 	return null;
 }
 
-function WPLineItem( {
+function GiftBadgeWithText() {
+	const translate = useTranslate();
+	return <GiftBadge>{ translate( 'Gift' ) }</GiftBadge>;
+}
+
+const MobileGiftWrapper = styled.div`
+	display: block;
+	width: 100%;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: none;
+	}
+`;
+
+const DesktopGiftWrapper = styled.div`
+	display: none;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: block;
+	}
+`;
+
+function CheckoutLineItem( {
 	children,
 	product,
 	className,
@@ -944,7 +1040,6 @@ function WPLineItem( {
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const isMobile = useViewportMatch( 'small', '<' );
 	const hasBundledDomainsInCart = responseCart.products.some(
 		( product ) =>
 			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
@@ -996,14 +1091,7 @@ function WPLineItem( {
 
 	const containsPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
-		products: [ product ],
 	} );
-
-	const giftBadgeElement = (
-		<GiftBadgeWrapper>
-			<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
-		</GiftBadgeWrapper>
-	);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -1012,10 +1100,18 @@ function WPLineItem( {
 			data-e2e-product-slug={ productSlug }
 			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
-			{ isMobile && responseCart.is_gift_purchase && giftBadgeElement }
+			{ responseCart.is_gift_purchase && (
+				<MobileGiftWrapper>
+					<GiftBadgeWithText />
+				</MobileGiftWrapper>
+			) }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
-				{ ! isMobile && responseCart.is_gift_purchase && giftBadgeElement }
+				{ responseCart.is_gift_purchase && (
+					<DesktopGiftWrapper>
+						<GiftBadgeWithText />
+					</DesktopGiftWrapper>
+				) }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice
@@ -1026,11 +1122,11 @@ function WPLineItem( {
 				/>
 			</span>
 
-			{ product && ! containsPartnerCoupon && (
+			{ ! hasCheckoutVersion( '2' ) && product && ! containsPartnerCoupon && (
 				<>
-					<LineItemMeta>
+					<UpgradeCreditInformationLineItem>
 						<UpgradeCreditInformation product={ product } />
-					</LineItemMeta>
+					</UpgradeCreditInformationLineItem>
 					<LineItemMeta>
 						<LineItemSublabelAndPrice product={ product } />
 						<DomainDiscountCallout product={ product } />
@@ -1051,66 +1147,69 @@ function WPLineItem( {
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
 
-			{ children }
+			<BillingLine>
+				{ children }
+				{ hasDeleteButton && removeProductFromCart && (
+					<>
+						<DeleteButtonWrapper>
+							<DeleteButton
+								className="checkout-line-item__remove-product"
+								buttonType="text-button"
+								aria-label={ String(
+									translate( 'Remove %s from cart', {
+										args: label,
+									} )
+								) }
+								disabled={ isDisabled }
+								onClick={ () => {
+									setIsModalVisible( true );
+									onRemoveProductClick?.( label );
+								} }
+							>
+								{ hasCheckoutVersion( '2' )
+									? translate( 'Remove' )
+									: translate( 'Remove from cart' ) }
+							</DeleteButton>
+						</DeleteButtonWrapper>
 
-			{ hasDeleteButton && removeProductFromCart && (
-				<>
-					<DeleteButtonWrapper>
-						<DeleteButton
-							className="checkout-line-item__remove-product"
-							buttonType="text-button"
-							aria-label={ String(
-								translate( 'Remove %s from cart', {
-									args: label,
-								} )
-							) }
-							disabled={ isDisabled }
-							onClick={ () => {
-								setIsModalVisible( true );
-								onRemoveProductClick?.( label );
+						<CheckoutModal
+							isVisible={ isModalVisible }
+							closeModal={ () => {
+								setIsModalVisible( false );
 							} }
-						>
-							{ translate( 'Remove from cart' ) }
-						</DeleteButton>
-					</DeleteButtonWrapper>
+							primaryAction={ () => {
+								let product_uuids_to_remove = [ product.uuid ];
 
-					<CheckoutModal
-						isVisible={ isModalVisible }
-						closeModal={ () => {
-							setIsModalVisible( false );
-						} }
-						primaryAction={ () => {
-							let product_uuids_to_remove = [ product.uuid ];
+								// Gifts need to be all or nothing, to prevent leaving
+								// the site in a state where it requires other purchases
+								// in order to actually work correctly for the period of
+								// the gift (for example, gifting a plan renewal without
+								// a domain renewal would likely lead the site's domain
+								// to expire soon afterwards).
+								if ( product.is_gift_purchase ) {
+									product_uuids_to_remove = responseCart.products
+										.filter( ( cart_product ) => cart_product.is_gift_purchase )
+										.map( ( cart_product ) => cart_product.uuid );
+								}
 
-							// Gifts need to be all or nothing, to prevent leaving
-							// the site in a state where it requires other purchases
-							// in order to actually work correctly for the period of
-							// the gift (for example, gifting a plan renewal without
-							// a domain renewal would likely lead the site's domain
-							// to expire soon afterwards).
-							if ( product.is_gift_purchase ) {
-								product_uuids_to_remove = responseCart.products
-									.filter( ( cart_product ) => cart_product.is_gift_purchase )
-									.map( ( cart_product ) => cart_product.uuid );
-							}
-
-							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-								// Nothing needs to be done here. CartMessages will display the error to the user.
-							} );
-							onRemoveProduct?.( label );
-						} }
-						cancelAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
-						title={ modalCopy.title }
-						copy={ modalCopy.description }
-					/>
-				</>
-			) }
+								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+									// Nothing needs to be done here. CartMessages will display the error to the user.
+								} );
+								onRemoveProduct?.( label );
+							} }
+							cancelAction={ () => {
+								onRemoveProductCancel?.( label );
+							} }
+							secondaryAction={ () => {
+								onRemoveProductCancel?.( label );
+							} }
+							secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
+							title={ modalCopy.title }
+							copy={ modalCopy.description }
+						/>
+					</>
+				) }
+			</BillingLine>
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

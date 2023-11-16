@@ -24,12 +24,12 @@ describe( 'reader utils', () => {
 	describe( '#showSelectedPost', () => {
 		test( 'does not do anything if postKey argument is missing', () => {
 			showSelectedPost( {} )( dispatch, getState );
-			expect( page ).not.toBeCalled();
+			expect( page ).not.toHaveBeenCalled();
 		} );
 
 		test( 'redirects if passed a post key', () => {
 			showSelectedPost( { postKey: { feedId: 1, postId: 5 } } )( dispatch, getState );
-			expect( page ).toBeCalledTimes( 1 );
+			expect( page ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'redirects to a #comments URL if we passed comments argument', () => {
@@ -37,7 +37,7 @@ describe( 'reader utils', () => {
 				dispatch,
 				getState
 			);
-			expect( page ).toBeCalledWith( '/read/feeds/1/posts/5#comments' );
+			expect( page ).toHaveBeenCalledWith( '/read/feeds/1/posts/5#comments' );
 		} );
 	} );
 } );

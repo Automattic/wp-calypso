@@ -1,10 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
-import {
-	CONNECT_DOMAIN_FLOW,
-	isNewHostedSiteCreationFlow,
-	isTransferringHostedSiteCreationFlow,
-	SITE_SETUP_FLOW,
-} from '@automattic/onboarding';
 import classnames from 'classnames';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -29,13 +24,12 @@ const StepRoute = ( {
 	renderStep,
 }: StepRouteProps ) => {
 	const renderProgressBar = () => {
-		// The progress bar is removed from the site-setup due to its fragility.
-		// See https://github.com/Automattic/wp-calypso/pull/73653
-		if (
-			[ SITE_SETUP_FLOW, CONNECT_DOMAIN_FLOW ].includes( flow.name ) ||
-			isNewHostedSiteCreationFlow( flow.name ) ||
-			isTransferringHostedSiteCreationFlow( flow.name )
-		) {
+		// The visual progress bar is removed due to its fragility.
+		// The component will be cleaned up but it'll require more untangling as the component
+		// is involved in some framework mechanisms and Tracks events
+		// See https://github.com/Automattic/dotcom-forge/issues/3160
+
+		if ( ! isEnabled( 'onboarding/stepper-loading-bar' ) ) {
 			return null;
 		}
 
@@ -59,7 +53,13 @@ const StepRoute = ( {
 				kebabCase( step.slug )
 			) }
 		>
-			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
+			{
+				! isEnabled( 'videopress-onboarding-user-intent' ) &&
+					'videopress' === flow.name &&
+					'intro' === step.slug && (
+						<VideoPressIntroBackground />
+					) /* Temporary disbale intro background while we run videopress-onboarding-intent as intro page */
+			}
 			{ renderProgressBar() }
 			<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
 			{ renderStep( step ) }

@@ -6,5 +6,6 @@
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/test/*" ]
+	"exclude": [ "**/test/*" ],
+	"references": [ { "path": "../calypso-products" }, { "path": "../shopping-cart" } ]
 }

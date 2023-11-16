@@ -277,13 +277,14 @@
 	flex-grow: 1;
 }
 .memberships__products-product-price {
-	color: var(--color-neutral-70);
-	font-size: $font-body;
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
 	line-height: 1.5;
 }
 .memberships__products-product-title {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
+	color: var(--color-text);
+	font-size: $font-body;
+	font-weight: bold;
 }
 .memberships__products-product-badge {
 	margin-top: 10px;
@@ -305,31 +306,6 @@
 }
 .memberships__subscriber-actions {
 	float: right;
-}
-
-.memberships__dialog-nav.section-nav {
-	box-shadow: none;
-	border-bottom: 1px solid var(--color-neutral-5);
-}
-
-.memberships__dialog-sections {
-	display: grid;
-	grid-template: "item" 1fr / 1fr;
-}
-
-.memberships__dialog-section {
-	grid-area: item; // Sections are displayed in the same grid area so the dialog takes the size of the biggest section.
-	background-color: var(--color-surface);
-
-	&.is-visible {
-		z-index: z-index(".dialog__backdrop", ".memberships__dialog-section.is-visible"); // Visible section is placed above so it hides the ones below.
-	}
-}
-
-.memberships__dialog-form-header {
-	font-size: $font-body-small;
-	font-weight: 600;
-	margin-bottom: 1.5em;
 }
 
 /**

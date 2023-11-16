@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 /**
  * @component Search
  */
@@ -103,6 +106,23 @@
 	.type-selector__selection-close.button:hover {
 		color: var(--color-text-inverted);
 		background-color: var(--color-neutral-60);
+	}
+
+	.filterbar__text-control {
+		flex-grow: 1;
+		margin: 0 8px 0 16px;
+
+		.search {
+			margin-bottom: 0;
+
+			border: 1px solid var(--color-neutral-20);
+			font-size: 0.75rem;
+			width: 100%;
+
+			@include break-xlarge {
+				width: 65%;
+			}
+		}
 	}
 }
 

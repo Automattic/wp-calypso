@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isFreePlan } from '@automattic/calypso-products';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,25 +15,23 @@ export class SitePickerSubmit extends Component {
 		const hasPaidPlan = siteHasPaidPlan( selectedSite );
 		const { ID: siteId, slug: siteSlug } = selectedSite;
 
-		this.props.submitSignupStep( {
-			stepName,
-			stepSectionName,
-			siteId,
-			siteSlug,
-		} );
-
 		this.props.submitSignupStep(
-			{ stepName: 'themes', wasSkipped: true },
+			{
+				stepName,
+				stepSectionName,
+				siteId,
+				siteSlug,
+			},
 			{ themeSlugWithRepo: 'pub/twentysixteen' }
 		);
 
 		if ( hasPaidPlan ) {
 			this.props.submitSignupStep(
 				{ stepName: 'plans-site-selected', wasSkipped: true },
-				{ cartItem: null }
+				{ cartItems: null, themeSlugWithRepo: 'pub/twentysixteen' }
 			);
 
-			goToStep( 'user' );
+			goToStep( config.isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' );
 		} else {
 			goToStep( 'plans-site-selected' );
 		}

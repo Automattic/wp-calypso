@@ -54,7 +54,7 @@ class Sites extends Component {
 			if ( site?.is_wpcom_staging_site ) {
 				return false;
 			}
-			return ! site.jetpack || site.options.is_automated_transfer;
+			return ! site.jetpack || site.options?.is_automated_transfer;
 		}
 
 		// If a site is Jetpack, plans are available only when it is upgradeable.
@@ -84,7 +84,6 @@ class Sites extends Component {
 
 	/**
 	 * Get the site path the user is trying to access.
-	 *
 	 * @returns {string} The path.
 	 */
 	getPath() {
@@ -116,7 +115,7 @@ class Sites extends Component {
 				path = translate( 'Activity' );
 				break;
 			case 'stats':
-				path = translate( 'Insights' );
+				path = translate( 'Stats' );
 				break;
 			case 'plans':
 				path = translate( 'Plans' );
@@ -145,8 +144,8 @@ class Sites extends Component {
 			case 'jetpack-search':
 				path = 'Jetpack Search';
 				break;
-			case 'site-logs':
-				path = translate( 'Site Logs' );
+			case 'site-monitoring':
+				path = translate( 'Site Monitoring' );
 				break;
 		}
 

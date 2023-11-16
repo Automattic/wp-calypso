@@ -5,7 +5,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Returns a list of comment IDs for the requested page and filters.
- *
  * @param {Object} state Redux state.
  * @param {number} siteId Site identifier.
  * @param {Object} query Filter parameters.

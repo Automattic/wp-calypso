@@ -16,6 +16,9 @@ const INITIAL_STATE = {
 	sites: {
 		items: {},
 	},
+	ui: {
+		selectedSiteId: 1,
+	},
 };
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
@@ -80,6 +83,20 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-sync', () => ( {
+	__esModule: true,
+	usePushToStagingMutation: jest.fn( () => {
+		return {
+			pushToStaging: jest.fn(),
+		};
+	} ),
+	usePullFromStagingMutation: jest.fn( () => {
+		return {
+			pullFromStaging: jest.fn(),
+		};
+	} ),
+} ) );
+
 jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-site', () => ( {
 	__esModule: true,
 	useStagingSite: jest.fn(),
@@ -119,7 +136,6 @@ describe( 'StagingSiteCard component', () => {
 		);
 		expect( useStagingSite ).toHaveBeenCalledWith( defaultProps.siteId, {
 			enabled: true,
-			onError: expect.any( Function ),
 		} );
 
 		expect( screen.getByTestId( 'loading-placeholder' ) ).toBeInTheDocument();
@@ -225,6 +241,7 @@ describe( 'StagingSiteCard component', () => {
 			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: false } ],
 			isLoading: false,
 		} );
+
 		render(
 			<Provider store={ store }>
 				<StagingSiteCard { ...defaultProps } />

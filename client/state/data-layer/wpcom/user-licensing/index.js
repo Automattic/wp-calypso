@@ -19,7 +19,6 @@ import {
 // -- LICENSES handlers --
 /**
  * Dispatches a request to fetch user licenses
- *
  * @param {Object} action Redux action
  * @returns {Object} original action
  */
@@ -44,7 +43,6 @@ export const requestLicenses = ( action ) =>
 
 /**
  * Dispatches returned user licenses data
- *
  * @param {Object} action Redux action
  * @param {Object} licenses raw data from user licensing API
  * @returns {Array<Object>} Redux actions
@@ -56,7 +54,6 @@ export const receiveLicenses = ( action, licenses ) => [
 
 /**
  * Dispatches returned error from user licenses request
- *
  * @param {Object} action Redux action
  * @param {Object} rawError raw error from HTTP request
  * @returns {Object} Redux action
@@ -67,7 +64,6 @@ export const receiveLicensesError = ( action, rawError ) =>
 // -- License COUNTS handlers --
 /**
  * Dispatches a request to fetch user licenses counts
- *
  * @param {Object} action Redux action
  * @returns {Object} original action
  */
@@ -83,7 +79,6 @@ export const requestCounts = ( action ) =>
 
 /**
  * Dispatches returned user licenses counts data
- *
  * @param {Object} action Redux action
  * @param {Object} counts raw count data from user licensing API
  * @returns {Array<Object>} Redux actions
@@ -95,7 +90,6 @@ export const receiveCounts = ( action, counts ) => [
 
 /**
  * Dispatches returned error user license counts request
- *
  * @param {Object} action Redux action
  * @param {Object} rawError raw error from HTTP request
  * @returns {Object} Redux action

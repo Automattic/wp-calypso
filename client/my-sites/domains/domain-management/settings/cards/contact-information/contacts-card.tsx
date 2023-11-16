@@ -3,8 +3,8 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
-import ContactDisplay from 'calypso/my-sites/domains/domain-management/contacts-privacy/contact-display';
 import {
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
@@ -18,10 +18,18 @@ import {
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
 import { IAppState } from 'calypso/state/types';
+import ContactDisplay from './contact-display';
 import type { ContactsCardPassedProps, ContactsCardProps } from './types';
 
 const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 	const translate = useTranslate();
+
+	const { data, isLoading } = useDomainTransferRequestQuery(
+		props.selectedSite.slug,
+		props.selectedDomainName
+	);
+	const disableEdit = !! ( isLoading || data?.email );
+
 	const togglePrivacy = () => {
 		const { selectedSite, privateDomain, selectedDomainName: name } = props;
 
@@ -148,7 +156,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent } = props;
+	const { selectedDomainName, canManageConsent, currentRoute } = props;
 
 	return (
 		<div>
@@ -157,26 +165,39 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
 						<Button
-							href={ domainManagementEditContactInfo(
-								props.selectedSite.slug,
-								props.selectedDomainName,
-								props.currentRoute as undefined
-							) }
+							disabled={ disableEdit }
+							href={
+								disableEdit
+									? ''
+									: domainManagementEditContactInfo(
+											props.selectedSite.slug,
+											props.selectedDomainName,
+											currentRoute
+									  )
+							}
 						>
 							{ translate( 'Edit' ) }
 						</Button>
+
 						{ canManageConsent && (
 							<Button
 								href={ domainManagementManageConsent(
 									props.selectedSite.slug,
 									props.selectedDomainName,
-									props.currentRoute as undefined
+									currentRoute
 								) }
 							>
 								{ translate( 'Manage consent' ) }
 							</Button>
 						) }
 					</div>
+					{ disableEdit && (
+						<p className="contact-information__transfer-warn">
+							{ translate(
+								'Contact modifications are disabled while domain transfers are pending.'
+							) }
+						</p>
+					) }
 				</div>
 				<div className="contact-information__toggle-container">
 					{ getPrivacyProtection() }

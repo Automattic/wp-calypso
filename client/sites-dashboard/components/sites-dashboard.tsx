@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
@@ -8,6 +10,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
+import { WpcomCommandPalette } from 'calypso/components/command-pallette/wpcom-command-pallette';
 import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -26,7 +29,6 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
-import { SitesDashboardOptInBanner } from './sites-dashboard-opt-in-banner';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
@@ -140,6 +142,10 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 	}
 `;
 
+const ManageAllDomainsButton = styled( Button )`
+	margin-inline-end: 1rem;
+`;
+
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
@@ -153,7 +159,10 @@ export function SitesDashboard( {
 		ref: 'topbar',
 	} );
 	const { __, _n } = useI18n();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only
+	);
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
@@ -171,23 +180,31 @@ export function SitesDashboard( {
 		smoothScrolling: true,
 	} );
 
+	const isMobile = useMobileBreakpoint();
+	const isYoloCommandPalletteDevelopment = isEnabled( 'yolo/command-pallette' );
+
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
 	return (
 		<main>
+			{ isYoloCommandPalletteDevelopment && <WpcomCommandPalette /> }
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
+					<ManageAllDomainsButton href="/domains/manage">
+						{ __( 'Manage all domains' ) }
+					</ManageAllDomainsButton>
 					<SplitButton
 						primary
 						whiteSeparator
-						label={ __( 'Add new site' ) }
+						label={ isMobile ? undefined : __( 'Add new site' ) }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 						} }
 						href={ createSiteUrl }
+						toggleIcon={ isMobile ? 'plus' : undefined }
 					>
 						<PopoverMenuItem
 							onClick={ () => {
@@ -214,7 +231,6 @@ export function SitesDashboard( {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<SitesDashboardOptInBanner sites={ allSites } />
 				<SitesDashboardSitesList
 					sites={ allSites }
 					filtering={ { search } }

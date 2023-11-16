@@ -2,6 +2,7 @@ import * as Analyzer from './analyzer';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
+import * as LaunchpadNavigator from './launchpad-navigator';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
@@ -12,26 +13,25 @@ import * as Subscriber from './subscriber';
 import * as User from './user';
 import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
-export { useJetpackSearchAIQuery } from './queries/use-jetpack-search-ai';
-export { useSiteAnalysis } from './queries/use-site-analysis';
-export { useUserSites } from './queries/use-user-sites';
-export type { AnalysisReport } from './queries/use-site-analysis';
 export { useSiteIntent } from './queries/use-site-intent';
-export { useSupportAvailability } from './support-queries/use-support-availability';
-export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
-export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
-export { useUpdateZendeskUserFieldsMutation } from './support-queries/use-update-zendesk-user-fields';
-export { useSupportActivity } from './support-queries/use-support-activity';
+export * from './add-ons/types';
 export * from './starter-designs-queries';
-export * from './support-queries/types';
 export * from './site/types';
 export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
+export * from './theme';
 export * from './user/types';
+export * from './wpcom-plans-ui/types';
+export * from './add-ons/use-add-on-checkout-link';
 export * from './queries/use-launchpad';
-export * from './queries/use-is-domain-code-valid';
+export * from './queries/use-launchpad-navigator';
+export * from './queries/use-all-domains-query';
+export * from './queries/use-site-domains-query';
+export * from './queries/use-site-query';
+export * from './mutations/use-domains-bulk-actions-mutation';
+export * from './queries/use-bulk-domain-update-status-query';
 
 const { SubscriptionManager } = Reader;
 
@@ -40,6 +40,7 @@ export {
 	User,
 	DomainSuggestions,
 	HelpCenter,
+	LaunchpadNavigator,
 	Site,
 	Plans,
 	WpcomPlansUI,
@@ -65,3 +66,4 @@ export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
+export type { UserActions } from './user';

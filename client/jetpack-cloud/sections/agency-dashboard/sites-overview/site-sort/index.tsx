@@ -6,12 +6,16 @@ import { updateSort } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { defaultSortIcon, ascendingSortIcon, descendingSortIcon } from '../../icons';
 import SitesOverviewContext from '../context';
 import { AllowedTypes } from '../types';
-import { siteColumnKeyMap } from '../utils';
 
 import './style.scss';
 
 const SORT_DIRECTION_ASC = 'asc';
 const SORT_DIRECTION_DESC = 'desc';
+
+// Mapping the columns to the site data keys
+const SITE_COLUMN_KEY_MAP: { [ key: string ]: string } = {
+	site: 'url',
+};
 
 export default function SiteSort( {
 	columnKey,
@@ -29,12 +33,12 @@ export default function SiteSort( {
 
 	const { field, direction } = sort;
 
-	const isDefault = field !== siteColumnKeyMap?.[ columnKey ] || ! field || ! direction;
+	const isDefault = field !== SITE_COLUMN_KEY_MAP?.[ columnKey ] || ! field || ! direction;
 
 	const setSort = () => {
 		const updatedSort = { ...sort };
 		if ( isDefault ) {
-			updatedSort.field = siteColumnKeyMap?.[ columnKey ];
+			updatedSort.field = SITE_COLUMN_KEY_MAP?.[ columnKey ];
 			updatedSort.direction = SORT_DIRECTION_ASC;
 		} else if ( direction === SORT_DIRECTION_ASC ) {
 			updatedSort.direction = SORT_DIRECTION_DESC;

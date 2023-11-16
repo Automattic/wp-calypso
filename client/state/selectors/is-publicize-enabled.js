@@ -3,7 +3,6 @@ import { isJetpackModuleActive, getSiteOption } from 'calypso/state/sites/select
 
 /**
  * Returns true if Publicize is enabled for the post type and the given site.
- *
  * @param {Object} state 	Global state tree
  * @param {number} siteId 	Site ID
  * @param {string} postType Post type slug

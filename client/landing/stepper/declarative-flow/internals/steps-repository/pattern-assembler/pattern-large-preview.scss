@@ -13,14 +13,6 @@
 	box-sizing: border-box;
 	z-index: 1;
 	transition: margin-inline-start 0.2s ease-out;
-
-	.pattern-assembler__pattern-panel-list--is-open & {
-		margin-inline-start: 360px;
-
-		@include break-wide {
-			margin-inline-start: 365px;
-		}
-	}
 }
 
 .pattern-large-preview__patterns {
@@ -31,55 +23,19 @@
 	overflow: auto;
 	background: var(--pattern-large-preview-background);
 
-	.pattern-large-preview__pattern-header {
-		margin-block-end: var(--pattern-large-preview-block-gap);
-	}
-
-	.pattern-large-preview__pattern-footer {
-		margin-block-start: var(--pattern-large-preview-block-gap);
+	/**
+	 * Hides the scrollbar to avoid the layout keeps changes forever
+	 * See https://github.com/Automattic/wp-calypso/issues/78357.
+	 */
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
 	}
 }
 
 .pattern-large-preview__pattern {
 	$pattern-large-preview-outer-border-radius: calc(var(--device-switcher-border-radius) - var(--device-switcher-border-width));
 	position: relative;
-
-	.pattern-action-bar {
-		position: absolute;
-		top: 16px;
-		left: 16px;
-		right: unset;
-		padding: 6px;
-		border: 1px solid #1e1e1e;
-		border-radius: 2px;
-		gap: 6px;
-		background-color: #fff;
-		opacity: 0;
-		z-index: 1;
-		// Scale up the action bar in fixed viewport
-		transform: scale(calc(1 / var(--viewport-scale)));
-		transform-origin: top left;
-
-		> .pattern-action-bar__action {
-			position: relative;
-			min-width: 28px;
-			height: 28px;
-			padding: 2px;
-
-			&:last-child:not(:only-child):not(.has-icon) {
-				padding-right: 6px;
-			}
-
-			&::before {
-				content: "";
-				position: absolute;
-				left: -6px;
-				right: -6px;
-				top: -6px;
-				bottom: -6px;
-			}
-		}
-	}
 
 	&::after {
 		content: "";
@@ -101,16 +57,13 @@
 		border-bottom-right-radius: $pattern-large-preview-outer-border-radius;
 	}
 
+	&--active,
 	&:hover,
 	&:focus,
 	&:focus-within {
-		.pattern-action-bar {
-			opacity: 1;
-		}
-
 		&::after {
-			// Scale up the border of a hovered pattern in fixed viewport
-			border: calc(2px * (1 / var(--viewport-scale))) solid var(--color-primary-light);
+			// Scale up the border of a active pattern
+			border: calc(2px * (1 / var(--viewport-scale) / var(--pattern-large-preview-zoom-out-scale))) solid var(--color-primary-light);
 		}
 	}
 }
@@ -124,36 +77,52 @@
 	color: var(--studio-gray-60);
 	background: #f8f8f8;
 
-	.pattern-large-preview__placeholder-icon {
-		margin-bottom: 24px;
-		fill: var(--studio-gray-10);
-	}
-
 	h2 {
 		color: #000;
-		margin-bottom: 4px;
-		font-size: $font-title-small;
-		font-weight: 500;
+		margin-bottom: 16px;
+		font-size: $font-body-large;
+		font-weight: 400;
 	}
 
-	span {
-		color: #000;
-		font-size: $font-body;
-		max-width: 600px;
-		text-align: center;
-	}
-
-	button {
-		border: 1px solid var(--studio-gray-10);
-		border-radius: 4px;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-		background-color: #fff;
-		color: var(--studio-gray-100);
+	> ul {
+		color: var(--studio-gray-80);
+		counter-reset: li;
+		display: flex;
+		flex-direction: column;
 		font-size: $font-body-small;
-		font-weight: 500;
-		letter-spacing: -0.15px;
+		font-weight: 400;
+		gap: 10px;
 		line-height: 20px;
-		margin-top: 24px;
-		padding: 10px 24px;
+		list-style-type: none;
+		margin: 0;
+		max-width: 300px;
+
+		> li {
+			align-items: center;
+			display: flex;
+			padding-left: 28px;
+			position: relative;
+
+			&::before {
+				align-items: center;
+				border: 0.909px solid var(--studio-gray-100);
+				border-radius: 50%;
+				box-sizing: border-box;
+				color: var(--studio-gray-100);
+				content: counter(li);
+				counter-increment: li;
+				display: flex;
+				font-size: 10.909px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-weight: 400;
+				height: 16px;
+				justify-content: center;
+				left: 0;
+				letter-spacing: -0.061px;
+				line-height: 16px;
+				position: absolute;
+				top: 2px;
+				width: 16px;
+			}
+		}
 	}
 }

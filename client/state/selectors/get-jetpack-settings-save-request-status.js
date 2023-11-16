@@ -4,7 +4,6 @@ import getRequest from 'calypso/state/selectors/get-request';
 
 /**
  * Returns the status of the last Jetpack site settings save request
- *
  * @param  {Object}  state     Global state tree
  * @param  {number}  siteId    Site ID
  * @param  {Object}  settings  The settings we're updating

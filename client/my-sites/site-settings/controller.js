@@ -1,10 +1,13 @@
 import page from 'page';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import wasBusinessTrialSite from 'calypso/state/selectors/was-business-trial-site';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DeleteSite from './delete-site';
@@ -59,8 +62,21 @@ export function general( context, next ) {
 }
 
 export function deleteSite( context, next ) {
-	context.primary = <DeleteSite path={ context.path } />;
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	let trialType = undefined;
 
+	if ( wasEcommerceTrialSite( state, siteId ) ) {
+		trialType = 'ecommerce';
+	} else if ( wasBusinessTrialSite( state, siteId ) ) {
+		trialType = 'business';
+	}
+
+	context.store.dispatch(
+		recordTracksEvent( 'calypso_settings_delete_site_page', { trial_type: trialType } )
+	);
+
+	context.primary = <DeleteSite path={ context.path } />;
 	next();
 }
 

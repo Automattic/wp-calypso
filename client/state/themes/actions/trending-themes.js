@@ -9,7 +9,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Receives themes and dispatches them with trending themes success signal.
- *
  * @param {Array} themes array of received theme objects
  * @returns {Function} Action thunk
  */
@@ -21,7 +20,6 @@ export function receiveTrendingThemes( themes ) {
 
 /**
  * Initiates network request for trending themes.
- *
  * @param {string} filter A filter string for a theme query
  * @returns {Function} Action thunk
  */

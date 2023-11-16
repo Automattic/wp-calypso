@@ -1,17 +1,17 @@
 import {
 	FEATURE_SOCIAL_INSTAGRAM_CONNECTION,
 	FEATURE_SOCIAL_MASTODON_CONNECTION,
+	FEATURE_SOCIAL_NEXTDOOR_CONNECTION,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
 import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
 import MastodonSharePreview from 'calypso/components/share/mastodon-share-preview';
+import NextdoorSharePreview from 'calypso/components/share/nextdoor-share-preview';
 import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
 import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
 import VerticalMenu from 'calypso/components/vertical-menu';
@@ -29,19 +29,21 @@ import {
 	getExcerptForPost,
 	getSummaryForPost,
 	getPostCustomImage,
-	isSocialPost,
+	getSigImageUrl,
+	getPostCustomMedia,
 } from './utils';
 
 import './style.scss';
 
-const serviceNames = {
-	facebook: 'Facebook',
-	'instagram-business': 'Instagram',
-	twitter: 'Twitter',
-	linkedin: 'LinkedIn',
-	tumblr: 'Tumblr',
-	mastodon: 'Mastodon',
-};
+const defaultServices = [
+	'facebook',
+	'instagram-business',
+	'x',
+	'linkedin',
+	'tumblr',
+	'mastodon',
+	'nextdoor',
+];
 
 class SharingPreviewPane extends PureComponent {
 	static propTypes = {
@@ -58,7 +60,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	static defaultProps = {
-		services: Object.keys( serviceNames ),
+		services: defaultServices,
 	};
 
 	constructor( props ) {
@@ -83,7 +85,7 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon, siteName } =
+		const { post, site, message, connections, translate, seoTitle, siteIcon, siteName } =
 			this.props;
 		const { selectedService } = this.state;
 
@@ -91,53 +93,38 @@ class SharingPreviewPane extends PureComponent {
 			return null;
 		}
 
-		const connection = find( connections, { service: selectedService } );
-
-		if ( ! connection ) {
-			return (
-				<Notice
-					text={ translate( 'Connect to %s to see the preview', {
-						args: serviceNames[ selectedService ],
-					} ) }
-					status="is-info"
-					showDismiss={ false }
-				>
-					<NoticeAction href={ '/marketing/connections/' + siteSlug }>
-						{ translate( 'Settings' ) }
-					</NoticeAction>
-				</Notice>
-			);
-		}
-
 		const articleUrl = get( post, 'URL', '' );
 		const articleTitle = get( post, 'title', '' );
 		const articleContent = getExcerptForPost( post );
 		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
-		const imageUrl = getPostImage( post );
-		const customImage = getPostCustomImage( post );
-		const {
-			external_name: externalName,
-			external_profile_url: externalProfileURL,
-			external_profile_picture: externalProfilePicture,
-			external_display: externalDisplay,
-		} = connection;
+		const imageUrl = getSigImageUrl( post ) || getPostCustomImage( post ) || getPostImage( post );
+		const media = getPostCustomMedia( post );
 
+		const connection = find( connections, { service: selectedService } ) ?? {};
+
+		/**
+		 * Props to pass to the preview component. Will be populated with the connection
+		 * specific data if the selected service is connected.
+		 * @type {Object}
+		 */
 		const previewProps = {
 			articleUrl,
 			articleTitle,
 			articleContent,
 			articleSummary,
-			externalDisplay,
-			externalName,
-			externalProfileURL,
-			externalProfilePicture,
 			message,
 			imageUrl,
 			seoTitle,
 			siteDomain,
 			siteIcon,
 			siteName,
+			media,
+			hidePostPreview: ! connection.ID,
+			externalDisplay: connection.external_display,
+			externalName: connection.external_name,
+			externalProfileURL: connection.external_profile_URL,
+			externalProfilePicture: connection.external_profile_picture,
 		};
 
 		switch ( selectedService ) {
@@ -147,7 +134,6 @@ class SharingPreviewPane extends PureComponent {
 						{ ...previewProps }
 						articleExcerpt={ post.excerpt }
 						articleContent={ post.content }
-						customImage={ customImage }
 					/>
 				);
 			case 'instagram-business':
@@ -157,21 +143,27 @@ class SharingPreviewPane extends PureComponent {
 					<TumblrSharePreview
 						{ ...previewProps }
 						articleContent={ post.content }
-						externalProfileURL={ connection.external_profile_URL }
+						externalProfileURL={ connection?.external_profile_URL }
 					/>
 				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
-			case 'twitter':
-				return <TwitterSharePreview { ...previewProps } externalDisplay={ externalDisplay } />;
+			case 'x':
+				return <TwitterSharePreview { ...previewProps } />;
 			case 'mastodon':
 				return (
 					<MastodonSharePreview
 						{ ...previewProps }
 						articleExcerpt={ post.excerpt }
 						articleContent={ post.content }
-						customImage={ customImage }
-						isSocialPost={ isSocialPost( post ) }
+					/>
+				);
+			case 'nextdoor':
+				return (
+					<NextdoorSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
 					/>
 				);
 			default:
@@ -224,6 +216,11 @@ const mapStateToProps = ( state, ownProps ) => {
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_INSTAGRAM_CONNECTION ) ) {
 		disabledServices.push( 'instagram-business' );
 	}
+
+	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_NEXTDOOR_CONNECTION ) ) {
+		disabledServices.push( 'nextdoor' );
+	}
+
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ) ) {
 		disabledServices.push( 'mastodon' );
 	}

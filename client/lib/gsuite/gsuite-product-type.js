@@ -3,7 +3,6 @@ import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/
 
 /**
  * Retrieves the product type to use as slug in urls for the specified product slug.
- *
  * @param {string} productSlug - slug of the product
  * @returns {string} the corresponding product type
  * @see emailManagementAddGSuiteUsers() in client/my-sites/email/paths.js

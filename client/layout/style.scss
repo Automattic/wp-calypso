@@ -53,8 +53,15 @@ body.is-focus-sites {
 
 	// Checkout sets it own padding/margin
 	.is-section-checkout &,
-	.is-section-checkout.has-no-sidebar &,
-	.is-section-checkout.has-no-sidebar .theme-default .focus-content & {
+	.is-section-checkout.has-no-sidebar & {
+		padding: 0;
+		margin: 0;
+	}
+	// Note that we have to use a 0,0,3,1 specificity selector to override the
+	// one in `client/my-sites/sidebar/style.scss` which has 0,0,3,0 in case it
+	// loads second, which happens if checkout is not the first page of calypso
+	// to load.
+	.theme-default.is-section-checkout div.is-section-checkout.focus-content & {
 		padding: 0;
 		margin: 0;
 	}
@@ -66,9 +73,13 @@ body.is-focus-sites {
 		margin: 0;
 	}
 
+	.is-section-themes.has-no-sidebar.is-logged-in & {
+		padding: 79px 32px 32px;
+	}
+
 	.is-section-theme & {
 		.sites.main {
-			padding-top: 79px;
+			padding-top: calc(79px - var(--masterbar-height));
 		}
 	}
 
@@ -91,6 +102,10 @@ body.is-focus-sites {
 		.is-section-themes.has-no-sidebar & {
 			padding: 0;
 			margin: 0;
+		}
+
+		.is-section-themes.has-no-sidebar.is-logged-in & {
+			padding: 47px 0 0;
 		}
 
 		.is-section-preview & {
@@ -123,7 +138,16 @@ body.is-focus-sites {
 		padding-bottom: 0;
 	}
 }
-
+body.is-mobile-app-view {
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable length-zero-no-unit */
+	--sidebar-width-max: 0px;
+	--sidebar-width-min: 0px;
+	/* stylelint-enable length-zero-no-unit */
+	.layout__secondary {
+		display: none;
+	}
+}
 // Setup the secondary element, which contains the sidebar and
 // the site-selector elements.
 .layout__secondary {
@@ -362,5 +386,14 @@ body.is-focus-sites {
 .theme-default.is-contrast {
 	.layout__secondary {
 		outline: 1px solid var(--color-sidebar-border);
+	}
+}
+
+// Ensure reader streams have the neutral background.
+.layout.is-section-reader {
+	background: var(--color-neutral-0);
+	min-height: 100vh;
+	.layout__content {
+		background: var(--color-neutral-0);
 	}
 }

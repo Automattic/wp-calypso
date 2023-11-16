@@ -9,7 +9,6 @@ const TITAN_APPS = {
 
 /**
  * Returns the base URL for Titan Apps
- *
  * @param {import('calypso/lib/domains/types').ResponseDomain|undefined} domain - Domain object
  * @returns {string} - The Apps URL prefix
  */
@@ -19,7 +18,6 @@ export function getTitanAppsUrlPrefix( domain ) {
 
 /**
  * Generates a URL pointing to the given Titan App
- *
  * @param {string} titanAppsUrlPrefix - The base url for Titan Apps
  * @param {string?} email - The email address of the Titan account. Used for autofill on Titan's login page.
  * @param {string?} app - Can be one of the `TITAN_APPS` - `email`, `calendar` or `contacts`
@@ -53,7 +51,6 @@ function getTitanUrl(
 
 /**
  * Gets the Web client URL for Professional Email
- *
  * @param { string } titanAppsUrlPrefix URL prefix to build the final URL based on the next parameters
  * @param { string | undefined } email Email account is going to be used
  * @param { boolean } clearPreviousSessions Flag to clear session in the Web Client

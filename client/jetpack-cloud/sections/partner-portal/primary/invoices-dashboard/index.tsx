@@ -1,27 +1,28 @@
 import { useTranslate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
 import InvoicesList from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
-import './style.scss';
+import Layout from '../../layout';
+import LayoutBody from '../../layout/body';
+import LayoutHeader from '../../layout/header';
+import LayoutTop from '../../layout/top';
 
 export default function InvoicesDashboard() {
 	const translate = useTranslate();
 
 	return (
-		<Main wideLayout className="invoices-dashboard">
-			<DocumentHead title={ translate( 'Invoices' ) } />
-			<SidebarNavigation />
+		<Layout className="invoices-dashboard" title={ translate( 'Invoices' ) } wide>
+			<LayoutTop>
+				<LayoutHeader>
+					<CardHeading size={ 36 }>{ translate( 'Invoices' ) }</CardHeading>
 
-			<div className="invoices-dashboard__header">
-				<CardHeading size={ 36 }>{ translate( 'Invoices' ) }</CardHeading>
+					<SelectPartnerKeyDropdown />
+				</LayoutHeader>
+			</LayoutTop>
 
-				<SelectPartnerKeyDropdown />
-			</div>
-
-			<InvoicesList />
-		</Main>
+			<LayoutBody>
+				<InvoicesList />
+			</LayoutBody>
+		</Layout>
 	);
 }

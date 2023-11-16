@@ -179,6 +179,7 @@ $videopress-background: #010101;
 
 		.domain-registration-suggestion__badges,
 		.domain-registration-suggestion__match-reasons {
+			flex: 1 1 0%;
 			background-color: rgba(255, 255, 255, 0.2);
 		}
 	}
@@ -227,6 +228,26 @@ $videopress-background: #010101;
 			color: #fff;
 			background: none;
 		}
+	}
+
+	.domain-registration-suggestion__title {
+		align-self: baseline;
+		flex: 0 1 auto;
+	}
+
+	.domain-registration-suggestion__badges {
+		align-self: baseline;
+		flex: 1;
+		white-space: nowrap;
+
+		@media (max-width: 1080px) {
+			margin-left: 0;
+		}
+	}
+
+	.featured-domain-suggestion.card .domain-product-price {
+		align-items: flex-start;
+		margin-top: 12px;
 	}
 }
 

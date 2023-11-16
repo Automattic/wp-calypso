@@ -201,7 +201,7 @@ const useMyDomain = ( context, next ) => {
 			path += `?suggestion=${ context.query.initialQuery }`;
 
 			if ( context.query.initialMode ) {
-				path = `/domains/manage/${ context.params.site }`;
+				path = `/domains/manage/${ context.query.initialQuery }/edit/${ context.params.site }`;
 			}
 		}
 

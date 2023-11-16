@@ -4,7 +4,7 @@ const useRecordRecommendedSiteSubscribed = () => {
 	const recordSubscriptionsTracksEvent = useRecordSubscriptionsTracksEvent();
 
 	const recordRecommendedSiteSubscribed = ( tracksProps: {
-		blog_id: string;
+		blog_id: string | null;
 		url: string;
 		source?: string;
 	} ) => {

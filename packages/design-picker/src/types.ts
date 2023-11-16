@@ -60,8 +60,11 @@ export interface StyleVariationStylesColor {
 export interface DesignRecipe {
 	stylesheet?: string;
 	pattern_ids?: number[] | string[];
+	pattern_html?: string;
 	header_pattern_ids?: number[] | string[];
+	header_html?: string;
 	footer_pattern_ids?: number[] | string[];
+	footer_html?: string;
 	color_variation_title?: string;
 	font_variation_title?: string;
 	slug?: string;
@@ -96,6 +99,7 @@ export interface Design {
 	description?: string;
 	recipe?: DesignRecipe;
 	is_premium: boolean;
+	is_externally_managed?: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
 	is_featured_picks?: boolean; // Whether this design will be featured in the sidebar. Example: Blank Canvas
@@ -108,6 +112,7 @@ export interface Design {
 	is_bundled_with_woo_commerce?: boolean;
 	is_virtual?: boolean;
 	preview_data?: PreviewData;
+	screenshot?: string;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
@@ -128,23 +133,18 @@ export interface Design {
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
 	globalStyles?: GlobalStyles;
-	pageTemplate?: string;
-	trimContent?: boolean;
-	posts_source_site_id?: number;
-	keepHomepage?: boolean;
 }
 
 export interface DesignPreviewOptions {
 	language?: string;
-	vertical_id?: string;
 	site_title?: string;
 	site_tagline?: string;
-	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
 	remove_assets?: boolean;
 	style_variation?: StyleVariation;
+	viewport_unit_to_px?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

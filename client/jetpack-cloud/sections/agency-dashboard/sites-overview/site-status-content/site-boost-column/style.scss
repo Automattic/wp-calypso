@@ -1,0 +1,60 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-boost-column__extra-button {
+	margin-block-start: 1rem;
+	margin-block-end: 0;
+	width: 100%;
+	padding: 10px 16px;
+}
+
+.site-boost-column__notice {
+	padding: 12px 6px;
+	font-size: rem(14px);
+
+	a {
+		color: var(--studio-black);
+		text-decoration: underline;
+		font-weight: 600;
+	}
+}
+
+.site-boost-column__upgrade-modal {
+	.jetpack-product-info__regular-list {
+
+		li {
+			margin-block: 2px;
+		}
+
+		.premium-feature {
+			display: flex;
+			align-items: center;
+
+			.premium-feature-title {
+				font-weight: 600;
+				flex: auto;
+			}
+
+			span.premium-feature-badge {
+				// Using !important is the only way to override the inline style
+				display: inline-block !important;
+				margin-inline-start: 20px;
+				background-color: var(--studio-jetpack-green-5);
+				color: var(--studio-jetpack-green-50);
+				padding: 2px 8px;
+				border-radius: 4px;
+				font-weight: bold;
+				font-size: rem(11px);
+			}
+
+			@include break-medium {
+				width: 90%;
+			}
+
+			@include break-xlarge {
+				width: 80%;
+			}
+		}
+	}
+}
+

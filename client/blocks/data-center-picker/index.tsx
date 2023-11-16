@@ -26,7 +26,9 @@ const DataCenterOptions = [
 	{
 		value: 'bur',
 		name: 'geo_affinity',
-		label: translate( 'US West' ),
+		get label(): string {
+			return translate( 'US West' );
+		},
 		thumbnail: {
 			imageUrl: burImg,
 		},
@@ -34,7 +36,9 @@ const DataCenterOptions = [
 	{
 		value: 'dfw',
 		name: 'geo_affinity',
-		label: translate( 'US Central' ),
+		get label(): string {
+			return translate( 'US Central' );
+		},
 		thumbnail: {
 			imageUrl: dfwImg,
 		},
@@ -42,7 +46,9 @@ const DataCenterOptions = [
 	{
 		value: 'dca',
 		name: 'geo_affinity',
-		label: translate( 'US East' ),
+		get label(): string {
+			return translate( 'US East' );
+		},
 		thumbnail: {
 			imageUrl: dcaImg,
 		},
@@ -50,7 +56,9 @@ const DataCenterOptions = [
 	{
 		value: 'ams',
 		name: 'geo_affinity',
-		label: translate( 'EU West' ),
+		get label(): string {
+			return translate( 'EU West' );
+		},
 		thumbnail: {
 			imageUrl: amsImg,
 		},
@@ -241,7 +249,7 @@ const DataCenterPicker = ( {
 					</span>
 					&nbsp;
 					<Button
-						isTertiary={ true }
+						variant="tertiary"
 						onClick={ () => {
 							onClickShowPicker();
 							setIsFormShowing( ! isFormShowing );
@@ -256,7 +264,7 @@ const DataCenterPicker = ( {
 				<Form>
 					<FormHeadingContainer>
 						<FormHeading>{ translate( 'Pick your primary data center' ) }</FormHeading>
-						<Button isTertiary={ true } onClick={ onCancel }>
+						<Button variant="tertiary" onClick={ onCancel }>
 							{ translate( 'Cancel' ) }
 						</Button>
 					</FormHeadingContainer>

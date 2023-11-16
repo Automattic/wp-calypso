@@ -1,20 +1,21 @@
 import { Button, Gridicon } from '@automattic/components';
-import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
+	PaymentLogo,
 	getCreditsLineItemFromCart,
 	getItemIntroductoryOfferDisplay,
 	LineItemSublabelAndPrice,
+	LineItemType,
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback } from 'react';
-import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
+import { CheckIcon } from '../../src/components/check-icon';
 import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
-import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
@@ -23,7 +24,7 @@ function PurchaseModalStep( { children, id }: { children: ReactNode; id: string 
 	return (
 		<div className="purchase-modal__step">
 			<span className="purchase-modal__step-icon">
-				<CheckoutCheckIcon id={ id } />
+				<CheckIcon id={ id } />
 			</span>
 			{ children }
 		</div>
@@ -137,7 +138,7 @@ function OrderReview( {
 	tax,
 	total,
 }: {
-	creditsLineItem?: LineItem | null;
+	creditsLineItem?: LineItemType | null;
 	shouldDisplayTax: boolean;
 	tax: string;
 	total: string;
@@ -148,7 +149,7 @@ function OrderReview( {
 		<dl className="purchase-modal__review">
 			{ creditsLineItem && <dt className="purchase-modal__credits">{ creditsLineItem.label }</dt> }
 			{ creditsLineItem && (
-				<dd className="purchase-modal__credits">{ creditsLineItem.amount.displayValue }</dd>
+				<dd className="purchase-modal__credits">{ creditsLineItem.formattedAmount }</dd>
 			) }
 
 			{ shouldDisplayTax && <dt className="purchase-modal__tax">{ translate( 'Taxes' ) }</dt> }

@@ -31,7 +31,9 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
+import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
+import HundredYearPlanThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -45,7 +47,23 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkoutJetpackSiteless( context, next ) {
-	sitelessCheckout( context, next, { sitelessCheckoutType: 'jetpack' } );
+	const connectAfterCheckout = context.query?.connect_after_checkout === 'true';
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 * @type {string|undefined}
+	 */
+	const fromSiteSlug = context.query?.from_site_slug;
+	const adminUrl = context.query?.admin_url;
+	sitelessCheckout( context, next, {
+		sitelessCheckoutType: 'jetpack',
+		connectAfterCheckout,
+		...( fromSiteSlug && { fromSiteSlug } ),
+		...( adminUrl && { adminUrl } ),
+	} );
 }
 
 export function checkoutAkismetSiteless( context, next ) {
@@ -251,6 +269,16 @@ export function checkoutPending( context, next ) {
 		? Number( context.query.receiptId )
 		: undefined;
 
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 * @type {string|undefined}
+	 */
+	const fromSiteSlug = context.query?.from_site_slug;
+
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
@@ -259,6 +287,7 @@ export function checkoutPending( context, next ) {
 			siteSlug={ siteSlug }
 			redirectTo={ redirectTo }
 			receiptId={ receiptId }
+			fromSiteSlug={ fromSiteSlug }
 		/>
 	);
 
@@ -438,7 +467,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
 
 	const { product } = context.params;
-	const { receiptId, source, siteId } = context.query;
+	const { receiptId, source, siteId, fromSiteSlug } = context.query;
 
 	if ( ! userHasJetpackSites ) {
 		page.redirect(
@@ -455,6 +484,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 				receiptId={ receiptId }
 				source={ source }
 				jetpackTemporarySiteId={ siteId }
+				fromSiteSlug={ fromSiteSlug }
 			/>
 		);
 	}
@@ -472,6 +502,16 @@ export function licensingThankYouAutoActivationCompleted( context, next ) {
 		/>
 	);
 
+	next();
+}
+
+export function hundredYearCheckoutThankYou( context, next ) {
+	context.primary = (
+		<HundredYearPlanThankYou
+			siteSlug={ context.params.site }
+			receiptId={ context.params.receiptId }
+		/>
+	);
 	next();
 }
 
@@ -500,6 +540,14 @@ export function giftThankYou( context, next ) {
 	// background via .is-section-checkout-gift-thank-you
 	context.section.name = 'checkout-gift-thank-you';
 	context.primary = <GiftThankYou site={ context.params.site } />;
+	next( context );
+}
+
+export function transferDomainToAnyUser( context, next ) {
+	// Overriding section name here in order to apply a top level
+	// background via .is-section-checkout-thank-you
+	context.section.name = 'checkout-thank-you';
+	context.primary = <DomainTransferToAnyUser domain={ context.params.domain } />;
 	next( context );
 }
 

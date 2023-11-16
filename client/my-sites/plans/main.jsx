@@ -1,16 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	getPlan,
+	FEATURE_LEGACY_STORAGE_200GB,
 	getIntervalTypeForTerm,
-	PLAN_FREE,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	getPlan,
 	isFreePlanProduct,
-	PLAN_WOOEXPRESS_SMALL,
-	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_FREE,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -19,7 +20,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -38,6 +39,7 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -45,6 +47,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -55,6 +58,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
@@ -253,13 +257,13 @@ class Plans extends Component {
 		}
 
 		const hideFreePlan = this.props.isDomainAndPlanPackageFlow;
-		// The Jetpack mobile app only wants to display two plans -- personal and premium
-		const planTypes = this.props.jetpackAppPlans ? [ TYPE_PERSONAL, TYPE_PREMIUM ] : null;
-
+		// The Jetpack mobile app wants to display a specific selection of plans
+		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
 			( ! this.props.isDomainUpsell ||
 				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
+
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
@@ -272,10 +276,12 @@ class Plans extends Component {
 				redirectTo={ this.props.redirectTo }
 				withDiscount={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
-				site={ selectedSite }
+				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
-				planTypes={ planTypes }
+				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
+				intent={ plansIntent }
+				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
 			/>
 		);
 	}
@@ -302,6 +308,16 @@ class Plans extends Component {
 		return <ECommerceTrialPlansPage interval={ interval } site={ selectedSite } />;
 	}
 
+	renderBusinessTrialPage() {
+		const { selectedSite } = this.props;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		return <BusinessTrialPlansPage selectedSite={ selectedSite } />;
+	}
+
 	renderWooExpressPlansPage() {
 		const { currentPlan, selectedSite, isSiteEligibleForMonthlyPlan } = this.props;
 
@@ -321,13 +337,17 @@ class Plans extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
+	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
 		if ( isWooExpressPlan ) {
 			return this.renderWooExpressPlansPage();
 		}
+		if ( isBusinessTrial ) {
+			return this.renderBusinessTrialPage();
+		}
+
 		return this.renderPlansMain();
 	}
 
@@ -354,6 +374,9 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isBusinessTrial =
+			currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+			currentPlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
 		const isWooExpressPlan = [
 			PLAN_WOOEXPRESS_MEDIUM,
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -388,7 +411,7 @@ class Plans extends Component {
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
+				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -430,7 +453,11 @@ class Plans extends Component {
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
-								{ this.renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) }
+								{ this.renderMainContent( {
+									isEcommerceTrial,
+									isBusinessTrial,
+									isWooExpressPlan,
+								} ) }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>
@@ -471,10 +498,24 @@ const ConnectedPlans = connect( ( state ) => {
 		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
 		isFreePlan: isFreePlanProduct( currentPlan ),
 		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
+		siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
 export default function PlansWrapper( props ) {
+	const { sendNudge } = useOdieAssistantContext();
+
+	useEffect( () => {
+		if ( props.intervalType === 'monthly' ) {
+			sendNudge( {
+				nudge: 'monthly-plan',
+				initialMessage:
+					'I see you are sitting on a monthly plan. I can recommend you to switch to an annual plan, so you can save some money.',
+				context: { plan: 'monthly' },
+			} );
+		}
+	}, [ props.intervalType ] );
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans { ...props } />

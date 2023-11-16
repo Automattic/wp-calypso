@@ -6,16 +6,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
-import {
-	useSubmitTicketMutation,
-	useSubmitForumsMutation,
-	useSiteAnalysis,
-	useUserSites,
-	AnalysisReport,
-	SiteDetails,
-	HelpCenterSite,
-	useJetpackSearchAIQuery,
-} from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
@@ -34,6 +24,11 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
+import { useSiteAnalysis } from '../data/use-site-analysis';
+import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
+import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
+import { useUserSites } from '../data/use-user-sites';
 import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
@@ -43,7 +38,9 @@ import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
-import type { HelpCenterSelect } from '@automattic/data-stores';
+import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
+import type { AnalysisReport } from '../types';
+import type { HelpCenterSelect, SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -91,6 +88,7 @@ export const HelpCenterContactForm = () => {
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const overflow = params.get( 'overflow' ) === 'true';
+	const wapuuFlow = params.get( 'wapuuFlow' ) === 'true';
 	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
@@ -106,6 +104,7 @@ export const HelpCenterContactForm = () => {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
+	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
 	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -185,11 +184,13 @@ export const HelpCenterContactForm = () => {
 		supportSite = currentSite as HelpCenterSite;
 	}
 
-	const [ debouncedMessage ] = useDebounce( message || '', 5000 );
-	const [ debouncedSubject ] = useDebounce( subject || '', 5000 );
+	const [ debouncedMessage ] = useDebounce( message || '', 500 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
 	const enableGPTResponse =
-		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
+		config.isEnabled( 'help/gpt-response' ) &&
+		! ( params.get( 'disable-gpt' ) === 'true' ) &&
+		! wapuuFlow;
 
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
@@ -263,7 +264,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	function handleCTA() {
-		if ( ! enableGPTResponse && ! showingSearchResults ) {
+		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -272,13 +273,19 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 
-		if ( ! showingGPTResponse && enableGPTResponse ) {
+		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow ) {
 			params.set( 'show-gpt', 'true' );
 			navigate( {
 				pathname: '/contact-form',
 				search: params.toString(),
 			} );
 			return;
+		}
+
+		// if the user was chatting with Wapuu, we need to disable GPT (no more AI)
+		if ( wapuuFlow ) {
+			params.set( 'disable-gpt', 'true' );
+			params.set( 'show-gpt', 'false' );
 		}
 
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
@@ -305,7 +312,15 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					openChatWidget( message, supportSite.URL, () => setHasSubmittingError( true ) );
+					let initialChatMessage = message;
+					if ( gptResponse ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
+						initialChatMessage += gptResponse.response;
+					}
+					openChatWidget( initialChatMessage, supportSite.URL, () =>
+						setHasSubmittingError( true )
+					);
 					break;
 				}
 				break;
@@ -324,7 +339,6 @@ export const HelpCenterContactForm = () => {
 							}`
 						);
 					}
-
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {
@@ -335,6 +349,8 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
+						ai_chat_id: gptResponse?.answer_id,
+						ai_message: gptResponse?.response,
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
@@ -344,7 +360,9 @@ export const HelpCenterContactForm = () => {
 								section: sectionName,
 							} );
 							navigate( '/success' );
-							resetStore();
+							if ( ! wapuuFlow ) {
+								resetStore();
+							}
 							// reset support-history cache
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
@@ -418,21 +436,6 @@ export const HelpCenterContactForm = () => {
 
 	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
 
-	const isCTADisabled = () => {
-		if ( isSubmitting || ! message || ownershipStatusLoading ) {
-			return true;
-		}
-
-		switch ( mode ) {
-			case 'CHAT':
-				return ! supportSite;
-			case 'EMAIL':
-				return ! supportSite || ! subject;
-			case 'FORUM':
-				return ! subject;
-		}
-	};
-
 	const getHEsTraySection = () => {
 		return (
 			<section>
@@ -462,8 +465,29 @@ export const HelpCenterContactForm = () => {
 		siteId: '9619154',
 		query: jpSearchAiQueryText,
 		stopAt: 'response',
-		enabled: enableGPTResponse,
+		enabled: enableGPTResponse && showingGPTResponse,
 	} );
+
+	const isCTADisabled = () => {
+		if ( isSubmitting || ! message || ownershipStatusLoading ) {
+			return true;
+		}
+
+		// We're prefetching the GPT response,
+		// so only disabling the button while fetching if we're on the response screen
+		if ( showingGPTResponse && isFetchingGPTResponse && ! wapuuFlow ) {
+			return true;
+		}
+
+		switch ( mode ) {
+			case 'CHAT':
+				return ! supportSite;
+			case 'EMAIL':
+				return ! supportSite || ! subject;
+			case 'FORUM':
+				return ! subject;
+		}
+	};
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
@@ -511,29 +535,24 @@ export const HelpCenterContactForm = () => {
 		return (
 			<div className="help-center__articles-page">
 				<BackButton />
-				<HelpCenterGPT />
+				<HelpCenterGPT onResponseReceived={ setGptResponse } />
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
-						disabled={ isFetchingGPTResponse }
+						disabled={ isCTADisabled() }
 						onClick={ handleCTA }
-						isPrimary={ ! showingGPTResponse || isGPTError }
-						isSecondary={ showingGPTResponse && ! isGPTError }
+						variant={ showingGPTResponse && ! isGPTError ? 'secondary' : 'primary' }
 						className="help-center-contact-form__site-picker-cta"
 					>
 						{ getCTALabel() }
 					</Button>
 					{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
-						<Button
-							isPrimary={ ! isGPTError }
-							isSecondary={ isGPTError }
-							onClick={ handleGPTClose }
-						>
+						<Button variant={ isGPTError ? 'secondary' : 'primary' } onClick={ handleGPTClose }>
 							{ __( 'Close', __i18n_text_domain__ ) }
 						</Button>
 					) }
 					{ isFetchingGPTResponse && ! isGPTError && (
-						<Button isSecondary onClick={ handleGPTCancel }>
+						<Button variant="secondary" onClick={ handleGPTCancel }>
 							{ __( 'Cancel', __i18n_text_domain__ ) }
 						</Button>
 					) }
@@ -566,7 +585,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -648,7 +667,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					isPrimary
+					variant="primary"
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }

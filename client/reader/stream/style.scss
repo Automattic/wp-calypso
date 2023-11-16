@@ -17,8 +17,6 @@
 
 		&.is-discover-stream {
 			.reader-tag-sidebar-recommended-sites {
-				max-width: 270px;
-
 				.reader-subscription-list-item .follow-button__label,
 				.reader-subscription-list-item__settings-label {
 					display: none;
@@ -33,13 +31,14 @@
 }
 
 .is-reader-page .reader__card.card.is-placeholder {
-	border-bottom: 1px solid var(--color-neutral-10);
+	border-bottom: 1px solid #e9e9ea;
 	box-shadow: none;
-	margin-bottom: 0;
-	padding: 6px 0 30px;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
+	margin-bottom: 16px;
+	padding: 6px 16px 30px;
 
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 15px;
+		margin: 0 15px 16px;
 	}
 
 	.reader__post-footer {
@@ -260,13 +259,11 @@
 .is-reader-page {
 
 	.reader__card.card.is-x-post {
-		border-bottom: 1px solid var(--color-neutral-10);
 		margin: 0 15px;
-		padding: 20px;
+		padding: 16px 0 16px;
 
-		@include breakpoint-deprecated( ">660px" ) {
-			margin: 0;
-			padding: 20px 52px;
+		+ .reader-post-card {
+			margin-top: 16px;
 		}
 
 		.reader__post-title-link,
@@ -443,7 +440,6 @@
 
 // In-stream Recommendations
 .reader-stream__recommended-posts {
-	border-bottom: 1px solid var(--color-neutral-10);
 	padding-bottom: 12px;
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -487,7 +483,6 @@
 
 	@include breakpoint-deprecated( ">960px" ) {
 		flex-direction: column;
-		margin-top: -40px;
 		width: 50%;
 	}
 
@@ -512,7 +507,6 @@
 
 	.card.reader-related-card {
 		margin: 0;
-		padding-top: 6px;
 
 		.reader-related-card__meta .gravatar {
 			margin: 3px 8px 0 0;
@@ -663,6 +657,15 @@
 			overflow: hidden;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
+			white-space: nowrap;
+			position: relative;
+
+			.stream__two-column & {
+				width: 225px;
+			}
+			.stream__two-column &::after {
+				@include long-content-fade( $size: 5%, $color: var(--color-neutral-0) );
+			}
 		}
 	}
 
@@ -712,10 +715,15 @@
 	}
 	.reader-tag-sidebar-related-tags,
 	.reader-tag-sidebar-related-sites {
+		margin-bottom: 32px;
 		h2 {
-			font-size: $font-body-small;
+			font-size: $font-body;
 			margin-bottom: 14px;
 		}
+	}
+	.reader-tag-sidebar-related-tags__follow-button {
+		// compensate for line height so that visual margin is 36px;
+		margin-bottom: 27px;
 	}
 	.reader-tag-sidebar-tags-page {
 		display: block;
@@ -726,11 +734,27 @@
 		color: var(--color-neutral-100);
 	}
 
+	.reader-tag-sidebar__recent-prompts {
+		h2 {
+			font-size: $font-body;
+			margin-bottom: 14px;
+		}
+		.reader-tag-sidebar__recent-prompt-link {
+			display: block;
+			font-size: $font-body-small;
+			text-decoration: underline;
+			font-weight: 500;
+			color: var(--color-neutral-100);
+			margin-bottom: 12px;
+		}
+	}
 	.reader-tag-sidebar-stats {
 		display: flex;
 		flex-direction: row;
 		gap: 20px;
-		margin-bottom: 32px;
+		// compensate for line height so that visual margin is 36px;
+		margin-bottom: 29px;
+
 
 		.reader-tag-sidebar-stats__item {
 			display: flex;
@@ -738,7 +762,7 @@
 		}
 
 		.reader-tag-sidebar-stats__count {
-			font-size: $font-title-medium;
+			font-size: $font-title-small;
 			font-weight: bold;
 			width: 90px;
 		}
@@ -786,12 +810,23 @@
 	.reader-tag-sidebar-related-tags {
 		margin-bottom: 32px;
 	}
+
+	.reader-feed-header__seen-button {
+		margin-bottom: 24px;
+	}
 }
 
 // Posts and Sites tabbed headers
 .stream__header .section-nav-tabs__dropdown,
 .stream__header .section-nav__mobile-header {
 	display: none;
+}
+
+.tag-stream__main .stream__header .section-nav {
+	margin-top: 26px;
+	@include break-medium {
+		margin-top: 0;
+	}
 }
 
 .stream__header .section-nav {
@@ -818,6 +853,11 @@
 	@include break-medium {
 		margin-top: 0;
 	}
+}
+
+// Stop the sidebar from expanding too wide when shown in a 2 column layout.
+.stream__two-column .stream__right-column {
+	max-width: 270px;
 }
 
 .stream__header .section-nav-group {
@@ -865,23 +905,15 @@
 	margin: 6px 0 0 0;
 
 	@include breakpoint-deprecated(">660px") {
-		padding: 12px 0 4px 0;
+		padding: 0;
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
-		margin: 6px 0 0 15px;
+		margin: 0;
 	}
 
 	.blogging-prompt__menu {
 		display: none;
-	}
-
-	+ article.reader-post-card {
-		border-top: 5px solid var(--color-neutral-0);
-
-		@include breakpoint-deprecated(">660px") {
-			border-top: 1px solid var(--color-neutral-5);
-		}
 	}
 
 	.blogging-prompt__card,
@@ -890,3 +922,6 @@
 	}
 }
 
+.is-site-stream .stream__two-column .stream__right-column {
+	margin-top: 0;
+}

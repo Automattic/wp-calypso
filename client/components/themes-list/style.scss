@@ -19,8 +19,6 @@
 	.pattern-assembler-cta-wrapper {
 		grid-column: 1/-1;
 		grid-row-start: 9;
-		background: #fff;
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 16px 48px;
 	}
 
@@ -137,6 +135,47 @@
 	.themes-list__option-description {
 		color: var(--studio-gray-60);
 		font-size: 0.875rem;
+
+		> ul {
+			color: var(--studio-gray-60);
+			counter-reset: li;
+			display: flex;
+			flex-direction: column;
+			font-size: 0.875rem;
+			font-weight: 400;
+			gap: 12px;
+			line-height: 20px;
+			list-style-type: none;
+			margin: 0;
+
+			> li {
+				align-items: center;
+				display: flex;
+				padding-left: 28px;
+				position: relative;
+
+				&::before {
+					align-items: center;
+					border: 0.909px solid var(--studio-gray-80);
+					border-radius: 50%;
+					box-sizing: border-box;
+					color: var(--studio-gray-80);
+					content: counter(li);
+					counter-increment: li;
+					display: flex;
+					font-size: 10.909px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+					font-weight: 400;
+					height: 20px;
+					justify-content: center;
+					left: 0;
+					letter-spacing: -0.061px;
+					line-height: 20px;
+					position: absolute;
+					top: 0;
+					width: 20px;
+				}
+			}
+		}
 	}
 
 	.themes-list__option:last-child {
@@ -149,6 +188,19 @@
 			@include break-small {
 				padding-bottom: 20px;
 			}
+		}
+	}
+}
+
+.theme-showcase.is-collection-view {
+	.themes-list {
+		grid-template-columns: repeat(1, 1fr);
+
+		@include breakpoint-deprecated( ">660px" ) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		@include break-xlarge {
+			grid-template-columns: repeat(3, 1fr);
 		}
 	}
 }

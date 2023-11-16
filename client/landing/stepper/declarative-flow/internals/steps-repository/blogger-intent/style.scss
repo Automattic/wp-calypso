@@ -40,6 +40,7 @@
 
 	.blogger-intent__heading {
 		@include onboarding-heading-title;
+		text-align: center;
 	}
 
 	.blogger-intent__content {
@@ -48,10 +49,13 @@
 		align-items: flex-start;
 		justify-content: center;
 		margin: 32px 0 0 0;
-		min-width: 20vw;
+
+		@include break-small {
+			min-width: 456px;
+		}
 
 		hr {
-			color: var(--color-neutral-10);
+			background-color: var(--studio-gray-5);
 			width: 100%;
 			margin-bottom: 6px;
 		}
@@ -72,6 +76,7 @@
 			margin-top: 24px;
 			margin-right: 40px;
 			margin-left: 5px;
+			font-size: rem(20px);
 
 			@include break-mobile {
 				margin-left: 0;
@@ -90,7 +95,27 @@
 			margin-top: 24px;
 			margin-left: 52px;
 			background-color: var(--studio-blue-50);
-			border-color: var(--studio-blue-50);
+			border: none;
+			border-radius: 4px;
+			font-weight: 500;
+			min-width: 136px;
+
+			&.disabled,
+			&.disabled:focus,
+			&.disabled:hover,
+			&:disabled {
+				background: var(--studio-blue-20);
+				cursor: default;
+			}
+			&:focus {
+				box-shadow: none;
+				outline: 2px solid var(--studio-blue-60);
+				outline-offset: 1px;
+				background: var(--studio-blue-60);
+			}
+			&:hover {
+				background-color: var(--wp-admin-theme-color-darker-10);
+			}
 		}
 	}
 }

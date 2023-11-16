@@ -8,7 +8,10 @@ export type Pattern = {
 	key?: string;
 	pattern_meta?: Record< string, boolean | undefined >;
 	html?: string;
+	tags: Record< string, Tag | undefined >;
 };
+
+export type PatternType = 'header' | 'footer' | 'section';
 
 export interface NavigatorLocation {
 	path: string;
@@ -20,4 +23,21 @@ export type Category = {
 	slug?: string;
 	label?: string;
 	description?: string;
+};
+
+export type PanelObject = {
+	type: PatternType;
+	label?: string;
+	description?: string;
+	category?: string;
+	selectedPattern: Pattern | null;
+	selectedPatterns?: Pattern[];
+};
+
+export type ScreenName = 'main' | 'styles' | 'confirmation' | 'activation' | 'upsell' | 'pages';
+
+export type Tag = {
+	slug: string;
+	title: string;
+	description: string;
 };

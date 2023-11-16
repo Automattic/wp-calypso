@@ -5,7 +5,6 @@ import {
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
@@ -20,7 +19,6 @@ import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -44,14 +42,16 @@ import './style.scss';
 const noop = () => {};
 
 interface ExternalProps {
+	siteId?: number | null;
 	isEligible?: boolean;
-	backUrl: string;
+	backUrl?: string;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
+	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
 	disableContinueButton?: boolean;
 }
@@ -86,10 +86,6 @@ export const EligibilityWarnings = ( {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
 
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, siteId || undefined )
-	);
-
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
@@ -117,7 +113,7 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
+			const planSlug = PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
@@ -320,7 +316,7 @@ EligibilityWarnings.defaultProps = {
 
 /**
  * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the
- * INSTALL_PURCHASED_PLUGINS feature is present.
+ * INSTALL_PURCHASED_PLUGINS feature is present or is onboarding flow.
  *
  * Starter plans do not have the ATOMIC feature, but they have the
  * INSTALL_PURCHASED_PLUGINS feature which allows them to buy marketplace
@@ -330,20 +326,27 @@ EligibilityWarnings.defaultProps = {
  * 'NO_BUSINESS_PLAN' hold on atomic transfer; however, if we're about to buy a
  * marketplace addon which provides the ATOMIC feature, then we can ignore this
  * hold.
+ *
+ * The Onboarding flow takes care of upgrading the Business plan so we can
+ * can ignore the 'NO_BUSINESS_PLAN' hold.
  */
 const processMarketplaceExceptions = (
 	state: Record< string, unknown >,
 	eligibilityData: EligibilityData,
-	isEligible: boolean
+	isEligible: boolean,
+	isOnboarding?: boolean
 ) => {
 	// If no eligibilityHolds are defined, skip.
 	if ( typeof eligibilityData.eligibilityHolds === 'undefined' ) {
 		return { eligibilityData, isEligible };
 	}
 
-	// If missing INSTALL_PURCHASED_PLUGINS feature, skip.
+	// If is not Onboarding flow and missing INSTALL_PURCHASED_PLUGINS feature, skip.
 	const siteId = getSelectedSiteId( state );
-	if ( ! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ) {
+	if (
+		! isOnboarding &&
+		! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	) {
 		return { eligibilityData, isEligible };
 	}
 
@@ -357,7 +360,7 @@ const processMarketplaceExceptions = (
 };
 
 const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalProps ) => {
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId( state ) || ownProps.siteId || null;
 	const siteSlug = getSelectedSiteSlug( state );
 	let eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
 	let isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );
@@ -367,7 +370,8 @@ const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalPr
 		( { eligibilityData, isEligible } = processMarketplaceExceptions(
 			state,
 			eligibilityData,
-			isEligible
+			isEligible,
+			ownProps.isOnboarding
 		) );
 	}
 

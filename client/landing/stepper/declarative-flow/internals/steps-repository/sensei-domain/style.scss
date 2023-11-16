@@ -171,35 +171,30 @@
 	}
 
 	.register-domain-step__search-card {
-		border-radius: 4px;
 		box-shadow: none;
-		border: 1px solid #a7aaad;
-		&:focus-within {
-			border-color: #646970;
-
-		}
 	}
 
 	.search-component {
-		box-shadow: none;
-		min-width: 0;
+		border: 1px solid var(--color-border-subtle);
+	}
 
-		&.is-open.has-focus:hover {
-			box-shadow: unset;
-		}
 
-		button,
-		.components-button:focus:not(:disabled),
-		input {
-			border: 0;
-			outline: none;
+	.search-component.is-open {
+		border: 1px solid var(--color-border-subtle);
+		height: 40px;
+
+		@include break-mobile {
+			height: 48px;
 		}
 	}
 
-	.search-filters__dropdown-filters {
-		button {
-			border: 0;
-			background: none;
+	.search-component.is-open.has-focus {
+		border-color: #646970;
+		background: var(--color-surface);
+		box-shadow: none;
+
+		.search-component__input {
+			background: var(--color-surface);
 		}
 	}
 

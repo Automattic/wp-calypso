@@ -2,7 +2,6 @@ import tracksRecordEvent from './track-record-event';
 
 /**
  * Return the event definition object to track `wpcom-site-editor-document-actions-dropdown-clicks`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomSiteEditorDocumentActionsDropdownOpen = () => ( {
@@ -14,7 +13,6 @@ export const wpcomSiteEditorDocumentActionsDropdownOpen = () => ( {
 
 /**
  * Return the event definition object to track `wpcom-site-editor-document-actions-template-area-click`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomSiteEditorDocumentActionsTemplateAreaClick = () => ( {
@@ -65,7 +63,6 @@ export const wpcomSiteEditorDocumentActionsTemplateAreaClick = () => ( {
 
 /**
  * Return the event definition object to track `wpcom-site-editor-document-actions-template-areas-item-more`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomSiteEditorDocumentActionsRevertClick = () => ( {
@@ -77,7 +74,6 @@ export const wpcomSiteEditorDocumentActionsRevertClick = () => ( {
 
 /**
  * Return the event definition object to track `wpcom-site-editor-document-actions-show-all-click`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomSiteEditorDocumentActionsShowAllClick = () => ( {

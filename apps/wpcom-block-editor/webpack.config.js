@@ -3,7 +3,6 @@
  */
 
 const path = require( 'path' );
-const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
@@ -18,7 +17,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args. Note that webpack-cli seems to convert
  * kebab-case (like `--ouput-path`) to camelCase (`outputPath`)
- *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
  * @param   {Object}  env                           environment options
@@ -72,7 +70,6 @@ function getWebpackConfig(
 					}
 				},
 			} ),
-			BuildMetaPlugin( { outputPath } ),
 		],
 	};
 }

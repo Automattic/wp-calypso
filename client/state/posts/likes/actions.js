@@ -14,7 +14,6 @@ import 'calypso/state/posts/init';
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post likes for a post.
- *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
  * @returns {Object}        Action
@@ -29,7 +28,6 @@ export function requestPostLikes( siteId, postId ) {
 
 /**
  * Create a like action for a given site and post
- *
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
  * @returns {Object} The like action
@@ -43,7 +41,6 @@ export const like = ( siteId, postId, { source } = {} ) => ( {
 
 /**
  * Create an unlike action for a given site and post
- *
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
  * @returns {Object} The unlike action

@@ -4,11 +4,7 @@
 .quick-links.foldable-card.card {
 	box-shadow: none;
 	@include breakpoint-deprecated( ">660px" ) {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-	}
-
-	&:not(.is-expanded) {
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 3px;
 	}
 
 	.foldable-card__header {
@@ -33,6 +29,11 @@
 		border: 0;
 		padding-bottom: 0;
 		padding-top: 0;
+	}
+
+	// Fix for alignment issue in Safari.
+	.foldable-card__expand .gridicon {
+		width: auto;
 	}
 }
 
@@ -118,4 +119,10 @@
 
 .quick-links__action-box-label {
 	font-size: $font-body-small;
+}
+
+.quick-links__boxes .jetpack-logo {
+	width: 16px;
+	height: 16px;
+	margin-left: 2px;
 }

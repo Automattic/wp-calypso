@@ -21,3 +21,9 @@
 	@extend %row-title-label;
 	background: $studio-green-50;
 }
+
+%rss-label {
+	@extend %row-title-label;
+	color: $studio-gray-0;
+	background: $studio-orange-20;
+}

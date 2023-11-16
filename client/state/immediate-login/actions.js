@@ -4,7 +4,6 @@ import 'calypso/state/immediate-login/init';
 
 /**
  * Stores immediate link-related information in state so it can be reused later
- *
  * @param {boolean} success - Whether the immediate login attempt was successful.
  * @param {string} reason - Reason for this immediate login, if known.
  * @param {string} email - Email address used for the immediate login attempt,

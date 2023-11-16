@@ -3,6 +3,7 @@ import { PostStatsCard, ComponentSwapper } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
@@ -18,9 +19,9 @@ import {
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getTopPostAndPage,
-	isRequestingSiteStatsForQuery,
 	hasSiteStatsForQueryFinished,
 } from 'calypso/state/stats/lists/selectors';
+import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import LatestPostCard from './latest-post-card';
 
 const POST_STATS_CARD_TITLE_LIMIT = 60;
@@ -60,9 +61,8 @@ const getStatsQueries = createSelector(
 	( state, siteId ) => getSiteOption( state, siteId, 'gmt_offset' )
 );
 
-const getStatsData = createSelector(
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => {
+const getStatsTopPostsData = createSelector(
+	( state, siteId, topPostsQuery ) => {
 		const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
 
 		return {
@@ -70,11 +70,7 @@ const getStatsData = createSelector(
 			topPage,
 		};
 	},
-	// Refresh memoized data from createSelector with the loading flag
-	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => [
-		topPostsQuery,
-		isTopViewedPostRequesting,
-	]
+	( state, siteId, topPostsQuery ) => [ state, siteId, topPostsQuery ]
 );
 
 export default function PostCardsGroup( {
@@ -99,17 +95,21 @@ export default function PostCardsGroup( {
 
 	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
 	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
-	const isTopViewedPostRequesting = useSelector( ( state ) =>
-		isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery )
-	);
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
-		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
+		getStatsTopPostsData( state, siteId, topPostsQuery )
 	);
 
 	// Prepare the most popular post card.
 	const mostPopularPost = useSelector( ( state ) =>
 		getSitePost( state, siteId, topViewedPost?.id )
 	);
+
+	// Determine the most popular post in the past year by the `stats/top-posts` API.
+	// Align the most popular post views count with the Post Details page by the `stats/post` API to avoid confusion.
+	const mostPopularPostViewCount = useSelector(
+		( state ) => getPostStat( state, siteId, topViewedPost?.id, 'views' ) || 0
+	);
+
 	const mostPopularPostData = {
 		date: mostPopularPost?.date,
 		post_thumbnail: mostPopularPost?.post_thumbnail?.URL || null,
@@ -117,16 +117,16 @@ export default function PostCardsGroup( {
 			stripHTML( textTruncator( mostPopularPost?.title, POST_STATS_CARD_TITLE_LIMIT ) )
 		),
 		likeCount: mostPopularPost?.like_count,
-		viewCount: topViewedPost?.views,
+		viewCount: mostPopularPostViewCount,
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
 
 	// Check if the most popular post is ready to be displayed.
-	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
-		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
-	);
 	const isRequestingMostPopularPost = useSelector( ( state ) =>
 		isRequestingSitePost( state, siteId, topViewedPost?.id )
+	);
+	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
+		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
 	);
 	const isPreparingMostPopularPost = ! hasTopViewedPostQueryFinished || isRequestingMostPopularPost;
 
@@ -177,6 +177,7 @@ export default function PostCardsGroup( {
 			{ siteId && topViewedPost && (
 				<>
 					<QueryPosts siteId={ siteId } postId={ topViewedPost.id } query={ {} } />
+					<QueryPostStats siteId={ siteId } postId={ topViewedPost.id } />
 				</>
 			) }
 

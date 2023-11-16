@@ -2,7 +2,6 @@ import 'calypso/state/posts/init';
 
 /**
  * Returns an author (user) object by ID.
- *
  * @param {any} state Redux state
  * @param {number} userId User ID
  * @returns {Object}        User object

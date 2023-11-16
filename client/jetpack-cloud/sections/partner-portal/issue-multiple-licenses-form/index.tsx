@@ -3,11 +3,14 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import {
+	isJetpackBundle,
+	isWooCommerceProduct,
+	isWpcomHostingProduct,
+} from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
-import { isJetpackBundle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -26,6 +29,7 @@ import {
 } from 'calypso/state/partner-portal/products/selectors';
 import { APIProductFamilyProduct, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
+import useSubmitForm from './use-submit-form';
 
 import './style.scss';
 
@@ -35,7 +39,6 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ selectedBundle, setSelectedBundle ] = useState< string | null >( null );
 
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 
@@ -55,9 +58,23 @@ export default function IssueMultipleLicensesForm( {
 		allProducts?.filter(
 			( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
 		) || [];
+	const backupAddons =
+		allProducts
+			?.filter(
+				( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-backup-storage'
+			)
+			.sort( ( a, b ) => a.product_id - b.product_id ) || [];
 	const products =
 		allProducts?.filter(
-			( { family_slug }: { family_slug: string } ) => family_slug !== 'jetpack-packs'
+			( { family_slug }: { family_slug: string } ) =>
+				family_slug !== 'jetpack-packs' &&
+				family_slug !== 'jetpack-backup-storage' &&
+				! isWooCommerceProduct( family_slug ) &&
+				! isWpcomHostingProduct( family_slug )
+		) || [];
+	const wooExtensions =
+		allProducts?.filter( ( { family_slug }: { family_slug: string } ) =>
+			isWooCommerceProduct( family_slug )
 		) || [];
 
 	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
@@ -98,21 +115,8 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
-	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
-		selectedBundle ? [ selectedBundle ] : selectedProductSlugs,
-		selectedSite,
-		suggestedProductSlugs
-	);
-
 	const onSelectProduct = useCallback(
 		( product: APIProductFamilyProduct ) => {
-			// A bundle cannot be combined with other products.
-			if ( isJetpackBundle( product.slug ) ) {
-				dispatch( clearSelectedProductSlugs() );
-				setSelectedBundle( product.slug );
-				return;
-			}
-
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select_multiple', {
 					product: product.slug,
@@ -126,85 +130,104 @@ export default function IssueMultipleLicensesForm( {
 		[ dispatch, selectedProductSlugs ]
 	);
 
-	useEffect( () => {
-		// In the case of a bundle, we want to take the user immediately to the next step since
-		// they can't select any additional item after selecting a bundle.
-		if ( selectedBundle ) {
-			// Identify if a user had an existing standalone product license already before purchased a bundle.
+	const { submitForm, isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
+
+	const [ selectedBundle, setSelectedBundle ] = useState< APIProductFamilyProduct | null >( null );
+	const onSelectBundle = useCallback(
+		( product: APIProductFamilyProduct ) => {
+			setSelectedBundle( product );
+
+			// People aren't allowed to select anything else after selecting a bundle;
+			// thus, after someone selects a bundle, we immediately clear any existing
+			// selections and issue a license for the bundle
+			// (as well as do any necessary page redirects on the front end).
+
+			dispatch( clearSelectedProductSlugs() );
+
 			if ( hasPurchasedProductsWithoutBundle ) {
+				// If this person already had an existing standalone product license
+				// before purchasing this bundle, let's make a note of it
 				dispatch(
 					recordTracksEvent(
 						'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
 					)
 				);
 			}
-			issueLicenses();
-		}
-		// Do not update the dependency array with issueLicenses since
-		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedBundle ] );
+
+			submitForm( [ product.slug ] );
+		},
+		[ dispatch, submitForm, hasPurchasedProductsWithoutBundle ]
+	);
+
+	const onClickIssueLicenses = useCallback( () => {
+		submitForm( selectedProductSlugs );
+	}, [ submitForm, selectedProductSlugs ] );
+
+	if ( isLoadingProducts ) {
+		return (
+			<div className="issue-multiple-licenses-form">
+				<div className="issue-multiple-licenses-form__placeholder" />
+			</div>
+		);
+	}
 
 	const selectedSiteDomain = selectedSite?.domain;
-
 	const selectedLicenseCount = selectedProductSlugs.length;
 
 	return (
 		<div className="issue-multiple-licenses-form">
-			{ isLoadingProducts && <div className="issue-multiple-licenses-form__placeholder" /> }
-
-			{ ! isLoadingProducts && (
+			<QueryProductsList type="jetpack" currency="USD" />
+			<div className="issue-multiple-licenses-form__top">
+				<p className="issue-multiple-licenses-form__description">
+					{ selectedSiteDomain
+						? translate(
+								'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
+								{
+									args: { selectedSiteDomain },
+									components: { strong: <strong /> },
+								}
+						  )
+						: translate(
+								'Select the Jetpack products you would like to issue a new license for:'
+						  ) }
+				</p>
+				<div className="issue-multiple-licenses-form__controls">
+					<TotalCost />
+					{ selectedLicenseCount > 0 && (
+						<Button
+							primary
+							className="issue-multiple-licenses-form__select-license"
+							busy={ ! isReady }
+							onClick={ onClickIssueLicenses }
+						>
+							{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicenseCount,
+								args: {
+									numLicenses: selectedLicenseCount,
+								},
+							} ) }
+						</Button>
+					) }
+				</div>
+			</div>
+			<div className="issue-multiple-licenses-form__bottom">
+				{ products &&
+					products.map( ( productOption, i ) => (
+						<LicenseProductCard
+							isMultiSelect
+							key={ productOption.slug }
+							product={ productOption }
+							onSelectProduct={ onSelectProduct }
+							isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+							tabIndex={ 100 + i }
+							suggestedProduct={ suggestedProduct }
+						/>
+					) ) }
+			</div>
+			{ bundles && (
 				<>
-					<QueryProductsList type="jetpack" currency="USD" />
-					<div className="issue-multiple-licenses-form__top">
-						<p className="issue-multiple-licenses-form__description">
-							{ selectedSiteDomain
-								? translate(
-										'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
-										{
-											args: { selectedSiteDomain },
-											components: { strong: <strong /> },
-										}
-								  )
-								: translate(
-										'Select the Jetpack products you would like to issue a new license for:'
-								  ) }
-						</p>
-						<div className="issue-multiple-licenses-form__controls">
-							<TotalCost />
-							{ selectedLicenseCount > 0 && (
-								<Button
-									primary
-									className="issue-multiple-licenses-form__select-license"
-									busy={ isLoading }
-									onClick={ issueLicenses }
-								>
-									{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-										context: 'button label',
-										count: selectedLicenseCount,
-										args: {
-											numLicenses: selectedLicenseCount,
-										},
-									} ) }
-								</Button>
-							) }
-						</div>
-					</div>
-					<div className="issue-multiple-licenses-form__bottom">
-						{ products &&
-							products.map( ( productOption, i ) => (
-								<LicenseProductCard
-									isMultiSelect
-									key={ productOption.slug }
-									product={ productOption }
-									onSelectProduct={ onSelectProduct }
-									isSelected={ selectedProductSlugs.includes( productOption.slug ) }
-									isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-									tabIndex={ 100 + i }
-									suggestedProduct={ suggestedProduct }
-								/>
-							) ) }
-					</div>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">
 						{ translate( 'Or select any of our {{strong}}recommended bundles{{/strong}}:', {
@@ -212,15 +235,60 @@ export default function IssueMultipleLicensesForm( {
 						} ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ bundles &&
-							bundles.map( ( productOption, i ) => (
-								<LicenseBundleCard
-									key={ productOption.slug }
-									product={ productOption }
-									onSelectProduct={ onSelectProduct }
-									tabIndex={ 100 + ( products?.length || 0 ) + i }
-								/>
-							) ) }
+						{ bundles.map( ( productOption, i ) => (
+							<LicenseBundleCard
+								key={ productOption.slug }
+								product={ productOption }
+								isBusy={ ! isReady && selectedBundle?.slug === productOption.slug }
+								isDisabled={ ! isReady && selectedBundle?.slug !== productOption.slug }
+								onSelectProduct={ onSelectBundle }
+								tabIndex={ 100 + ( products?.length || 0 ) + i }
+							/>
+						) ) }
+					</div>
+				</>
+			) }
+			{ wooExtensions.length > 0 && (
+				<>
+					<hr className="issue-multiple-licenses-form__separator" />
+					<p className="issue-multiple-licenses-form__description">
+						{ translate( 'WooCommerce Extensions:' ) }
+					</p>
+					<div className="issue-multiple-licenses-form__bottom">
+						{ wooExtensions.map( ( productOption, i ) => (
+							<LicenseProductCard
+								isMultiSelect
+								key={ productOption.slug }
+								product={ productOption }
+								onSelectProduct={ onSelectProduct }
+								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+								tabIndex={ 100 + i }
+								suggestedProduct={ suggestedProduct }
+							/>
+						) ) }
+					</div>
+				</>
+			) }
+			{ backupAddons.length > 0 && (
+				<>
+					<hr className="issue-multiple-licenses-form__separator" />
+					<p className="issue-multiple-licenses-form__description">
+						{ translate( 'VaultPress Backup Add-on Storage:' ) }
+					</p>
+					<div className="issue-multiple-licenses-form__bottom">
+						{ backupAddons.map( ( productOption, i ) => (
+							<LicenseProductCard
+								isMultiSelect
+								key={ productOption.slug }
+								product={ productOption }
+								onSelectProduct={ onSelectProduct }
+								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
+								tabIndex={ 100 + i }
+								suggestedProduct={ suggestedProduct }
+							/>
+						) ) }
 					</div>
 				</>
 			) }

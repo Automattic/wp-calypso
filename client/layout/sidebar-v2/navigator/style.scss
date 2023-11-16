@@ -1,0 +1,61 @@
+.sidebar-v2__navigator {
+	.components-surface.components-card {
+		background-color: var(--color-sidebar-background);
+	}
+}
+
+.sidebar-v2__navigator-sub-menu.components-card-body {
+	// Container cuts off content if we do not add 1px padding.
+	padding: 1px;
+}
+
+.sidebar-v2__navigator-group-description {
+	color: var(--studio-gray-50);
+	font-size: rem(12px);
+	margin-block-end: 16px;
+	padding: 0 12px;
+}
+
+.sidebar-v2__navigator-sub-menu ul {
+	list-style: none;
+	margin: 0;
+}
+
+.sidebar-v2__navigator-sub-menu-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--studio-gray-90);
+	font-size: rem(16px);
+	font-weight: 600;
+	justify-content: start;
+	margin-block-end: 8px;
+}
+
+.sidebar-v2__menu-item.components-item {
+	color: inherit;
+
+	font-size: rem(13px);
+}
+
+.sidebar-v2__navigator-sub-menu .components-navigator-back-button,
+.sidebar-v2__menu-item.components-item {
+	border-radius: 4px;
+
+	&:hover:not(.is-active) {
+		background: var(--studio-gray-0);
+		color: initial;
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 1px var(--studio-gray-10);
+	}
+}
+
+.sidebar-v2__external-icon {
+	color: var(--studio-gray-30);
+}

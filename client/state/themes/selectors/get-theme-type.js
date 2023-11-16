@@ -15,7 +15,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Get the theme type.
- *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @returns {string}         theme type

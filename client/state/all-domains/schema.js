@@ -5,6 +5,7 @@ export const allDomainsSchema = {
 		required: [ 'domain' ],
 		properties: {
 			blogId: { type: 'number' },
+			isDomainOnlySite: { type: 'boolean' },
 			domain: { type: 'string' },
 			expiry: { type: [ 'null', 'string' ] },
 			hasRegistration: { type: 'boolean' },
@@ -12,6 +13,8 @@ export const allDomainsSchema = {
 			isWpcomStagingDomain: { type: 'boolean' },
 			name: { type: 'string' },
 			registrationDate: { type: 'string' },
+			siteSlug: { type: 'string' },
+			siteTitle: { type: 'string' },
 			type: { type: 'string' },
 			currentUserIsOwner: { type: 'boolean' },
 		},

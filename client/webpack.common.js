@@ -2,7 +2,6 @@ const { cpus } = require( 'os' );
 
 /**
  * Get an env var that should be a positive integer greater than 0
- *
  * @param {string} envVarName   Environment variable name
  * @param {number} defaultValue Fallback in case env variable isn't present or invalid
  * @returns {number} Value

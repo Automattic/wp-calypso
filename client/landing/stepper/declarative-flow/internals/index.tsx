@@ -1,11 +1,12 @@
 import {
+	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 	isSenseiFlow,
 	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState, useCallback, Suspense, lazy, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -18,7 +19,9 @@ import {
 	getSignupCompleteFlowNameAndClear,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
-import { useSite } from '../../hooks/use-site';
+import { useSelector } from 'calypso/state';
+import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
@@ -26,7 +29,7 @@ import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
-import { AssertConditionState, Flow, StepperStep } from './types';
+import { AssertConditionState, Flow, StepperStep, StepProps } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
 
@@ -36,7 +39,6 @@ import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stor
  * 1. It renders a react-router route for every step in the flow.
  * 2. It gives every step the ability to navigate back and forth within the flow
  * 3. It's responsive to the dynamic changes in side the flow's hooks (useSteps and useStepsNavigation)
- *
  * @param props
  * @param props.flow the flow you want to render
  * @returns A React router switch will all the routes
@@ -46,11 +48,23 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
+	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
+		() =>
+			flowSteps.reduce(
+				( acc, flowStep ) => ( {
+					...acc,
+					[ flowStep.slug ]:
+						'asyncComponent' in flowStep ? lazy( flowStep.asyncComponent ) : flowStep.component,
+				} ),
+				{}
+			),
+		[ flowSteps ]
+	);
+
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
 	const { __ } = useI18n();
 	const navigate = useNavigate();
-	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -62,10 +76,21 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	const urlQueryParams = useQuery();
-	const isInHostingFlow = useRef( urlQueryParams.get( 'hosting-flow' ) === 'true' ).current;
-
-	const site = useSite();
 	const ref = urlQueryParams.get( 'ref' ) || '';
+
+	const { site, siteSlugOrId } = useSiteData();
+
+	// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
+	// See https://github.com/Automattic/wp-calypso/pull/82981.
+	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
+	const isRequestingSelectedSite = useSelector(
+		( state ) => site && isRequestingSite( state, siteSlugOrId )
+	);
+
+	// Short-circuit this if the site slug or ID is not available.
+	const hasRequestedSelectedSite = siteSlugOrId
+		? !! selectedSite && ! isRequestingSelectedSite
+		: true;
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -105,7 +130,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 		const _path = path.includes( '?' ) // does path contain search params
 			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
-			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ search }` );
+			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ window.location.search }` );
 
 		navigate( _path, { state: stepPaths } );
 		setPreviousProgress( stepProgress?.progress ?? 0 );
@@ -135,7 +160,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( ! currentStepRoute ) {
+		if ( ! currentStepRoute || ! hasRequestedSelectedSite ) {
 			return;
 		}
 
@@ -146,7 +171,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( ! isReEnteringStep ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
 				intent,
-				is_in_hosting_flow: isInHostingFlow,
+				is_in_hosting_flow: isAnyHostingFlow( flow.name ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 			} );
 		}
@@ -159,9 +184,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentStepRoute ] );
+	}, [ flow.name, currentStepRoute, hasRequestedSelectedSite ] );
 
-	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
+	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
+		state: AssertConditionState.SUCCESS,
+	};
 
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
@@ -173,7 +200,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <></>;
 		}
 
-		const StepComponent = 'asyncComponent' in step ? lazy( step.asyncComponent ) : step.component;
+		const StepComponent = stepComponents[ step.slug ];
 
 		return (
 			<StepComponent
@@ -225,7 +252,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				<Route
 					path="*"
 					element={
-						<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+						<Navigate
+							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${
+								window.location.search
+							}` }
+							replace
+						/>
 					}
 				/>
 			</Routes>

@@ -4,7 +4,6 @@ import 'calypso/state/route/init';
 
 /**
  * Gets the last route set by a ROUTE_SET action
- *
  * @param {Object} state - global redux state
  * @returns {string} current route value
  */

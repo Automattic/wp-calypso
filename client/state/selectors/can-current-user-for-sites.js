@@ -6,7 +6,6 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
  * false if the user does not have the capability, or null if the capability
  * cannot be determined (if the site is not currently known, or if specifying
  * an invalid capability).
- *
  * @param  {Object}   state      Global state tree
  * @param  {Array}   siteIds     List of site IDs
  * @param  {string}   capability Capability label

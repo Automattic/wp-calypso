@@ -83,18 +83,20 @@ export const applyDnsTemplate = ( domainName, provider, service, variables ) => 
 	return applyResult;
 };
 
-export const updateDns = ( domainName, recordsToAdd, recordsToRemove ) => ( dispatch ) => {
-	dispatch( { type: DOMAINS_DNS_UPDATE, recordsToAdd, recordsToRemove } );
+export const updateDns =
+	( domainName, recordsToAdd, recordsToRemove, restoreDefaultARecords ) => ( dispatch ) => {
+		dispatch( { type: DOMAINS_DNS_UPDATE, recordsToAdd, recordsToRemove } );
 
-	const updateResult = updateDnsRequest( domainName, {
-		records_to_add: recordsToAdd,
-		records_to_remove: recordsToRemove,
-	} );
+		const updateResult = updateDnsRequest( domainName, {
+			records_to_add: recordsToAdd,
+			records_to_remove: recordsToRemove,
+			restore_default_a_records: restoreDefaultARecords,
+		} );
 
-	updateResult.then(
-		( { records } ) => dispatch( { type: DOMAINS_DNS_UPDATE_COMPLETED, domainName, records } ),
-		() => dispatch( { type: DOMAINS_DNS_UPDATE_FAILED, domainName } )
-	);
+		updateResult.then(
+			( { records } ) => dispatch( { type: DOMAINS_DNS_UPDATE_COMPLETED, domainName, records } ),
+			() => dispatch( { type: DOMAINS_DNS_UPDATE_FAILED, domainName } )
+		);
 
-	return updateResult;
-};
+		return updateResult;
+	};

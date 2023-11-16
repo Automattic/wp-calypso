@@ -47,7 +47,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			return fetchConnections( 2916284 )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: PUBLICIZE_CONNECTIONS_REQUEST,
 					siteId: 2916284,
 				} );
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return fetchConnections( 2916284 )( spy ).then( () => {
-				expect( spy ).toBeCalledTimes( 3 );
+				expect( spy ).toHaveBeenCalledTimes( 3 );
 
 				const action1 = spy.mock.calls[ 1 ][ 0 ];
 				expect( action1.type ).toEqual( PUBLICIZE_CONNECTIONS_RECEIVE );
@@ -71,7 +71,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return fetchConnections( 77203074 )( spy ).then( () => {
-				expect( spy ).toBeCalledTimes( 2 );
+				expect( spy ).toHaveBeenCalledTimes( 2 );
 
 				const action = spy.mock.calls[ 1 ][ 0 ];
 				expect( action.type ).toEqual( PUBLICIZE_CONNECTIONS_REQUEST_FAILURE );
@@ -146,7 +146,7 @@ describe( 'actions', () => {
 				2,
 				1
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
 					error: expect.objectContaining( {
 						message: 'An active access token must be used to access publicize connections.',
@@ -194,7 +194,7 @@ describe( 'actions', () => {
 				{ ID: 2, site_ID: 77203074, label: 'Facebook' },
 				attributes
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 					error: expect.objectContaining( {
 						message: 'An active access token must be used to access publicize connections.',
@@ -221,7 +221,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch delete action when request completes', () => {
 			return deleteSiteConnection( { ID: 2, site_ID: 2916284 } )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: PUBLICIZE_CONNECTION_DELETE,
 					connection: {
 						ID: 2,
@@ -233,7 +233,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return deleteSiteConnection( { ID: 2, site_ID: 77203074 } )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
 					error: expect.objectContaining( {
 						message: 'An active access token must be used to access publicize connections.',

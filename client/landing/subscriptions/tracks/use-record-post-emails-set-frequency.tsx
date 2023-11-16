@@ -5,7 +5,7 @@ const useRecordPostEmailsSetFrequency = () => {
 	const recordSubscriptionsTracksEvent = useRecordSubscriptionsTracksEvent();
 
 	const recordPostEmailsSetFrequency = ( tracksProps: {
-		blog_id: string;
+		blog_id: string | null;
 		delivery_frequency: Reader.EmailDeliveryFrequency;
 	} ) => {
 		recordSubscriptionsTracksEvent(

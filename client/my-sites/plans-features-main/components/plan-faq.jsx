@@ -18,7 +18,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 	}
 `;
 
-const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
+const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const onFaqToggle = useCallback(
@@ -140,17 +140,28 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 				question={ translate( 'Can I get an email account?' ) }
 				onToggle={ onFaqToggle }
 			>
-				{ translate(
-					'Absolutely! We offer a few different options to meet your needs. For most customers, our ' +
-						'Professional Email service is the smart choice. This robust hosted email solution is ' +
-						'available for any domain hosted with WordPress.com and starts at just %(titanMonthlyRenewalCost)s/mo per mailbox.{{br /}}{{br /}}' +
-						'We also offer a Google Workspace integration, and for users who need something simpler, you ' +
-						'can set up email forwarding for free.',
-					{
-						components: { br: <br /> },
-						args: { titanMonthlyRenewalCost },
-					}
-				) }
+				{ titanMonthlyRenewalCost
+					? translate(
+							'Absolutely! We offer a few different options to meet your needs. For most customers, our ' +
+								'Professional Email service is the smart choice. This robust hosted email solution is ' +
+								'available for any domain hosted with WordPress.com and starts at just %(titanMonthlyRenewalCost)s/mo per mailbox.{{br /}}{{br /}}' +
+								'We also offer a Google Workspace integration, and for users who need something simpler, you ' +
+								'can set up email forwarding for free.',
+							{
+								components: { br: <br /> },
+								args: { titanMonthlyRenewalCost },
+							}
+					  )
+					: translate(
+							'Absolutely! We offer a few different options to meet your needs. For most customers, our ' +
+								'Professional Email service is the smart choice. This robust hosted email solution is ' +
+								'available for any domain hosted with WordPress.com.{{br /}}{{br /}}' +
+								'We also offer a Google Workspace integration, and for users who need something simpler, you ' +
+								'can set up email forwarding for free.',
+							{
+								components: { br: <br /> },
+							}
+					  ) }
 			</FoldableFAQ>
 			<FoldableFAQ
 				id="faq-9"

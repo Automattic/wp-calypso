@@ -1,5 +1,7 @@
 /* Parameter Interfaces */
 
+export type SitePostState = 'publish' | 'draft' | 'trash' | 'future';
+
 export interface AccountDetails {
 	userID: number;
 	username: string;
@@ -187,6 +189,58 @@ export interface PluginRemovalResponse {
 	log: string[];
 }
 
+export interface JetpackSearchParams {
+	query: string;
+	size?: number;
+	// Lots more of course -- add as needed!
+}
+
+export interface JetpackSearchResponse {
+	results: unknown[];
+	// Lots more of course -- add as needed!
+}
+
+export interface PublicizeConnection {
+	ID: number;
+	site_ID: number;
+	label: string;
+	external_ID: string;
+}
+
+export interface PublicizeConnectionDeletedResponse {
+	ID: number;
+	deleted: boolean;
+}
+
+export interface Subscriber {
+	user_id: number;
+	subscription_id: number;
+	email_address: string;
+	display_name: string;
+	date_subscribed: string;
+}
+
+export interface SubscriberDeletedResponse {
+	follower_id: string;
+	deleted: true;
+}
+
+export interface PostCountsResponse {
+	counts: {
+		all: {
+			publish: number;
+			future: number;
+			draft: number;
+			trash: number;
+		};
+		mine: {
+			draft: number;
+			publish: number;
+			trash: number;
+		};
+	};
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {
@@ -196,7 +250,7 @@ export interface BearerTokenErrorResponse {
 			{
 				code: string;
 				message: string;
-			}
+			},
 		];
 	};
 }

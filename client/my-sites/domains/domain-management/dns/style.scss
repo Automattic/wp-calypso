@@ -28,28 +28,11 @@ body.dns__body-white {
 }
 
 .dns-records {
-	.formatted-header {
-		&.is-left-align,
-		&.is-right-align {
-			margin-bottom: 4px;
-
-			h1.formatted-header__title {
-				color: $gray-900;
-				font-size: $font-title-medium;
-
-				@include break-mobile {
-					font-size: $font-title-large;
-				}
-			}
-		}
-	}
-
 	.dns__details {
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
 		margin: 4px 16px;
 		@include break-mobile {
-			margin: 0;
 			max-width: 677px;
 		}
 	}
@@ -74,7 +57,7 @@ body.dns__body-white {
 			}
 
 			@include break-mobile {
-				padding: 16px 0;
+				padding: 16px;
 				border-top: none;
 				border-bottom: 1px solid $gray-5;
 			}
@@ -176,6 +159,28 @@ body.dns__body-white {
 			}
 		}
 	}
+	.dns-records-notice {
+		flex-basis: 100%;
+		background-color: var(--studio-gray-0);
+		display: flex;
+		align-items: center;
+		padding: 8px;
+		gap: 8px;
+		border-radius: 2px;
+		margin-top: 24px;
+
+		&__icon.gridicon {
+			min-width: 18px;
+			fill: var(--studio-orange-40);
+		}
+
+		&__message {
+			font-weight: 400;
+			font-size: $font-body-small;
+			color: var(--studio-gray-80);
+		}
+	}
+
 }
 
 .dns-records-list__action-menu-item.gridicon {
@@ -220,18 +225,21 @@ body.dns__body-white {
 	}
 }
 
-a.dns__breadcrumb-button {
+a.dns__breadcrumb-button,
+button.dns__breadcrumb-button {
 	display: flex;
 	align-items: center;
 
-	&.add-record {
+	&.add-record,
+	&.import-bind-file {
 		@include break-mobile {
 			svg {
 				margin-right: 8px;
 			}
 		}
 	}
-	&.add-record.is-icon-button {
+	&.add-record.is-icon-button,
+	&.import-bind-file.is-icon-button {
 		width: 40px;
 		display: flex;
 		justify-content: center;

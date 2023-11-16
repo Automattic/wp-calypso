@@ -1,16 +1,18 @@
 .videopress-stats-module__grid {
 	display: grid;
-	grid-template-columns: 50% auto auto auto;
+	grid-template-columns: 50% auto auto auto auto;
 	padding: 0.5em 0;
 	line-height: 40px;
 	font-size: 0.875rem;
 
 	color: var(--color-text);
+	min-width: 100%;
+	width: fit-content;
 }
 
 @media screen and ( max-width: 450px ) {
 	.videopress-stats-module__grid {
-		grid-template-columns: 40% auto auto auto;
+		grid-template-columns: 40% auto auto auto auto;
 	}
 }
 
@@ -34,7 +36,7 @@
 
 .videopress-stats-module__grid-link {
 	color: var(--color-primary);
-	overflow-x: clip;
+	overflow-x: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }

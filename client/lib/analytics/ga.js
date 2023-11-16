@@ -6,6 +6,8 @@ import {
 	fireGoogleAnalyticsEvent,
 } from 'calypso/lib/analytics/ad-tracking';
 import isAkismetCheckout from '../akismet/is-akismet-checkout';
+import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
+import isJetpackCloud from '../jetpack/is-jetpack-cloud';
 import { mayWeTrackByTracker } from './tracker-buckets';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
@@ -19,8 +21,8 @@ function initialize() {
 			...getGoogleAnalyticsDefaultConfig(),
 		};
 
-		// We enable custom cross-domain linking only for Akismet checkouts
-		if ( isAkismetCheckout() ) {
+		// We enable custom cross-domain linking for Akismet and Jetpack checkouts + Jetpack Cloud
+		if ( isAkismetCheckout() || isJetpackCloud() || isJetpackCheckout() ) {
 			const queryParams = new URLSearchParams( location.search );
 			const gl = queryParams.get( '_gl' );
 
@@ -74,38 +76,34 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
  * {string} label Is the string that will appear as the event label.
  * {string} value Is a non-negative integer that will appear as the event value.
  */
-export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recordEvent(
-	category,
-	action,
-	label,
-	value
-) {
-	if ( 'undefined' !== typeof value && ! isNaN( Number( String( value ) ) ) ) {
-		value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
-		// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
+export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction(
+	function recordEvent( category, action, label, value ) {
+		if ( 'undefined' !== typeof value && ! isNaN( Number( String( value ) ) ) ) {
+			value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
+			// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
+		}
+
+		let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
+
+		if ( 'undefined' !== typeof label ) {
+			debugText += ' [Option Label: ' + label + ']';
+		}
+
+		if ( 'undefined' !== typeof value ) {
+			debugText += ' [Option Value: ' + value + ']';
+		}
+
+		gaDebug( debugText );
+
+		fireGoogleAnalyticsEvent( category, action, label, value );
 	}
-
-	let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
-
-	if ( 'undefined' !== typeof label ) {
-		debugText += ' [Option Label: ' + label + ']';
-	}
-
-	if ( 'undefined' !== typeof value ) {
-		debugText += ' [Option Value: ' + value + ']';
-	}
-
-	gaDebug( debugText );
-
-	fireGoogleAnalyticsEvent( category, action, label, value );
-} );
+);
 
 /**
  * Wrap Google Analytics with debugging, possible analytics supression, and initialization
  *
  * This method will display debug output if Google Analytics is suppresed, otherwise it will
  * initialize and call the Google Analytics function it is passed.
- *
  * @see mayWeTrackByTracker
  * @param  {Function} func Google Analytics tracking function
  * @returns {Function} Wrapped function

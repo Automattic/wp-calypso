@@ -11,8 +11,6 @@ import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/m
 import { ProductList, MockProvider, ProductListWithoutHook } from './utils/mock-components';
 import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
 
-import '@testing-library/jest-dom/extend-expect';
-
 const emptyResponseCart = getEmptyResponseCart();
 
 describe( 'useShoppingCart', () => {

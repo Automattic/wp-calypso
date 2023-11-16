@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/components';
 import {
 	FREE_THEME,
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
 	WOOCOMMERCE_THEME,
 	PREMIUM_THEME,
-	PremiumBadge,
-	WooCommerceBundledBadge,
 } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -19,36 +18,31 @@ import './style.scss';
 
 interface Props {
 	canGoToCheckout?: boolean;
-	forcePremium?: boolean;
+	isLockedStyleVariation?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
 	themeId: string;
-	tooltipHeader?: string;
-	tooltipMessage?: string;
 }
 
 const ThemeTypeBadge = ( {
 	canGoToCheckout,
-	forcePremium,
+	isLockedStyleVariation,
 	siteId,
 	siteSlug,
 	themeId,
-	tooltipHeader,
-	tooltipMessage,
 }: Props ) => {
 	const translate = useTranslate();
-	const _type = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const type = forcePremium ? PREMIUM_THEME : _type;
+	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 
 	useEffect( () => {
-		if ( type === FREE_THEME ) {
+		if ( type === FREE_THEME && ! isLockedStyleVariation ) {
 			return;
 		}
 		recordTracksEvent( 'calypso_upgrade_nudge_impression', {
 			cta_name: 'theme-upsell',
 			theme: themeId,
 		} );
-	}, [ type, themeId ] );
+	}, [ type, themeId, isLockedStyleVariation ] );
 
 	const badgeContentProps = {
 		className: 'theme-type-badge__content',
@@ -56,12 +50,10 @@ const ThemeTypeBadge = ( {
 		tooltipContent: (
 			<ThemeTypeBadgeTooltip
 				canGoToCheckout={ canGoToCheckout }
-				forcePremium={ forcePremium }
+				isLockedStyleVariation={ isLockedStyleVariation }
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				themeId={ themeId }
-				tooltipHeader={ tooltipHeader }
-				tooltipMessage={ tooltipMessage }
 			/>
 		),
 		tooltipPosition: 'top',
@@ -70,7 +62,9 @@ const ThemeTypeBadge = ( {
 	};
 
 	let badgeContent;
-	if ( type === FREE_THEME ) {
+	if ( isLockedStyleVariation ) {
+		badgeContent = <PremiumBadge { ...badgeContentProps } labelText={ translate( 'Upgrade' ) } />;
+	} else if ( type === FREE_THEME ) {
 		badgeContent = <>{ translate( 'Free' ) }</>;
 	} else if ( type === DOT_ORG_THEME ) {
 		badgeContent = (
@@ -89,8 +83,8 @@ const ThemeTypeBadge = ( {
 			<PremiumBadge
 				{ ...badgeContentProps }
 				className={ classNames( badgeContentProps.className, 'is-marketplace' ) }
-				labelText={ translate( 'Paid', {
-					context: 'Refers to paid service, such as paid theme',
+				labelText={ translate( 'Partner', {
+					context: 'This theme is developed and supported by a theme partner',
 					textOnly: true,
 				} ) }
 			/>

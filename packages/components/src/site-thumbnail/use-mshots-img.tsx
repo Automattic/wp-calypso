@@ -78,16 +78,24 @@ export const useMshotsImg = (
 		}
 
 		async function checkRedirectImage() {
-			const { isError, isRedirect } = await fetchAwaitRedirect( mshotUrl );
-			if ( isError ) {
+			try {
+				const { isError, isRedirect } = await fetchAwaitRedirect( mshotUrl );
+				if ( ! timeout.current ) {
+					return;
+				}
+				if ( isError ) {
+					setIsLoading( false );
+					setIsError( true );
+				}
+				// 307 is the status code for a temporary redirect used by mshots.
+				// If we `follow` the redirect, the `response.url` will be 'https://s0.wp.com/mshots/v1/default'
+				// and the `response.headers.get('content-type)` will be 'image/gif'
+				if ( ! isRedirect ) {
+					setIsLoading( false );
+				}
+			} catch ( e ) {
 				setIsLoading( false );
 				setIsError( true );
-			}
-			// 307 is the status code for a temporary redirect used by mshots.
-			// If we `follow` the redirect, the `response.url` will be 'https://s0.wp.com/mshots/v1/default'
-			// and the `response.headers.get('content-type)` will be 'image/gif'
-			if ( ! isRedirect ) {
-				setIsLoading( false );
 			}
 		}
 

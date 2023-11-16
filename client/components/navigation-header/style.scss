@@ -1,0 +1,106 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.navigation-header {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 16px;
+	margin-bottom: 0;
+	@include break-small {
+		padding: 0 0 24px 0;
+	}
+
+	.breadcrumbs {
+		li {
+			color: var(--studio-gray-60, #50575e);
+			font-family: "SF Pro Text", $sans;
+			font-size: $font-body-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+			&:last-of-type:not(:first-of-type) {
+				color: var(--studio-gray-100, #101517);
+				font-weight: 400;
+			}
+		}
+	}
+
+	// Add extra space when there is a classic/non classic option tab at the top on mobile that collides with cta's
+	&.navigation-header__screen-options-tab {
+		padding-top: 38px; // 30 for screen options tab + 8 gap
+	}
+	@include break-small {
+		&.navigation-header__screen-options-tab {
+			// There are existing workarounds for desktop layouts, revert back to 16 here
+			padding-top: 16px;
+		}
+	}
+}
+
+.navigation-header__main {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-sizing: border-box;
+
+	@media ( max-width: 660px ) {
+		min-height: 60px;
+	}
+
+	> .formatted-header {
+		flex: 1;
+
+		> div:first-child {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+	}
+
+	.formatted-header__title {
+		font-family: "SF Pro Display", $sans;
+		font-size: $font-title-small;
+		font-weight: 500;
+		line-height: 26px;
+		margin-bottom: 0;
+	}
+
+	.formatted-header__subtitle {
+		color: var(--color-neutral-60);
+		margin: 0;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+
+		// Hide subtitle text on small screens
+		display: none;
+		@media ( min-width: $break-small ) {
+			display: inline-block;
+		}
+	}
+
+	.button {
+		display: flex;
+		line-height: 20px;
+	}
+
+	.info-popover {
+		// Show subtitle text on small screens under help icon
+		display: inline-block;
+		@media ( min-width: $break-small ) {
+			display: none;
+		}
+	}
+
+	.navigation-header__actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+}
+
+#primary header.navigation-header header.formatted-header {
+	margin: 0;
+}
+

@@ -1,12 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EmailDeliveryFrequency } from '../constants';
-import { callApi, applyCallbackToPages } from '../helpers';
-import { useCacheKey, useIsLoggedIn } from '../hooks';
-import type { PagedQueryResult, SiteSubscription, SiteSubscriptionDetails } from '../types';
+import { callApi, applyCallbackToPages, buildQueryKey } from '../helpers';
+import {
+	alterSiteSubscriptionDetails,
+	invalidateSiteSubscriptionDetails,
+} from '../helpers/optimistic-update';
+import { useIsLoggedIn } from '../hooks';
+import type {
+	PagedQueryResult,
+	SiteSubscriptionsResponseItem,
+	SiteSubscriptionDetails,
+} from '../types';
 
 type SiteSubscriptionDeliveryFrequencyParams = {
 	delivery_frequency: EmailDeliveryFrequency;
 	blog_id: number | string;
+	subscriptionId: number;
 };
 
 type SubscriptionResponse = {
@@ -22,16 +31,9 @@ type SiteSubscriptionDeliveryFrequencyResponse = {
 	subscription: SubscriptionResponse | null;
 };
 
-const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
-	const { isLoggedIn } = useIsLoggedIn();
+const useSiteDeliveryFrequencyMutation = () => {
+	const { id, isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-
-	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
-	const siteSubscriptionDetailsCacheKey = useCacheKey( [
-		'read',
-		'site-subscription-details',
-		...( blog_id ? [ blog_id ] : [] ),
-	] );
 
 	return useMutation( {
 		mutationFn: async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {
@@ -60,67 +62,83 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
 
 			return response;
 		},
-		onMutate: async ( params ) => {
+		onMutate: async ( { blog_id, delivery_frequency, subscriptionId } ) => {
+			const siteSubscriptionsCacheKey = buildQueryKey(
+				[ 'read', 'site-subscriptions' ],
+				isLoggedIn,
+				id
+			);
+
 			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
-					siteSubscriptionsCacheKey
-				);
-			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-				siteSubscriptionDetailsCacheKey
-			);
-
-			const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', SiteSubscription >(
-				previousSiteSubscriptions,
-				( page ) => ( {
-					...page,
-					subscriptions: page.subscriptions.map( ( siteSubscription ) => {
-						if ( siteSubscription.blog_ID === params.blog_id ) {
-							return {
-								...siteSubscription,
-								delivery_methods: {
-									...siteSubscription.delivery_methods,
-									email: {
-										...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
-										post_delivery_frequency: params.delivery_frequency,
-									},
+				queryClient.getQueryData<
+					PagedQueryResult< SiteSubscriptionsResponseItem, 'subscriptions' >
+				>( siteSubscriptionsCacheKey );
+			const mutatedSiteSubscriptions = applyCallbackToPages<
+				'subscriptions',
+				SiteSubscriptionsResponseItem
+			>( previousSiteSubscriptions, ( page ) => ( {
+				...page,
+				subscriptions: page.subscriptions.map( ( siteSubscription ) => {
+					if ( siteSubscription.blog_ID === blog_id ) {
+						return {
+							...siteSubscription,
+							delivery_methods: {
+								...siteSubscription.delivery_methods,
+								email: {
+									...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
+									post_delivery_frequency: delivery_frequency,
 								},
-							};
-						}
-						return siteSubscription;
-					} ),
-				} )
-			);
+							},
+						};
+					}
+					return siteSubscription;
+				} ),
+			} ) );
 			queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 
-			if ( previousSiteSubscriptionDetails ) {
-				queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
-					...previousSiteSubscriptionDetails,
-					delivery_methods: {
-						...previousSiteSubscriptionDetails.delivery_methods,
-						email: {
-							...previousSiteSubscriptionDetails.delivery_methods?.email,
-							post_delivery_frequency: params.delivery_frequency,
+			const previousSiteSubscriptionDetails = await alterSiteSubscriptionDetails(
+				queryClient,
+				{ blogId: String( blog_id ), subscriptionId: String( subscriptionId ), isLoggedIn, id },
+				( previousData ) => {
+					return {
+						...previousData,
+						delivery_methods: {
+							...previousData.delivery_methods,
+							email: {
+								...( previousData.delivery_methods?.email ?? { send_posts: false } ),
+								post_delivery_frequency: delivery_frequency,
+							},
 						},
-					},
-				} );
-			}
-
-			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
-		},
-		onError: ( err, params, context ) => {
-			queryClient.setQueryData( siteSubscriptionsCacheKey, context?.previousSiteSubscriptions );
-			queryClient.setQueryData(
-				siteSubscriptionDetailsCacheKey,
-				context?.previousSiteSubscriptionDetails
+					} as SiteSubscriptionDetails;
+				}
 			);
+
+			return {
+				previousSiteSubscriptions,
+				previousSiteSubscriptionDetails,
+			};
 		},
-		onSettled: () => {
-			// pass in a more minimal key, everything to the right will be invalidated
-			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
+		onError: ( err, _, context ) => {
+			queryClient.setQueryData(
+				buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
+				context?.previousSiteSubscriptions
+			);
+			if ( context?.previousSiteSubscriptionDetails ) {
+				for ( const { key, data } of context.previousSiteSubscriptionDetails ) {
+					queryClient.setQueryData( key, data );
+				}
+			}
+		},
+		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
+			invalidateSiteSubscriptionDetails( queryClient, {
+				blogId: String( blog_id ),
+				subscriptionId: String( subscriptionId ),
+				isLoggedIn,
+				id,
+			} );
+			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 		},
 	} );
 };

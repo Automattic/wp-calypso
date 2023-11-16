@@ -16,7 +16,9 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
+import { initialClientsData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
 
@@ -59,6 +61,8 @@ class Document extends Component {
 			useTranslationChunks,
 			target,
 			featuresHelper,
+			params,
+			query,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -82,7 +86,11 @@ class Document extends Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
-			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n`;
+			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
+			// Inject the locale if we can get it from the route via `getLanguageRouteParam`
+			( params && params.hasOwnProperty( 'lang' )
+				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
+				: '' );
 
 		const isJetpackWooCommerceFlow =
 			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;
@@ -95,6 +103,20 @@ class Document extends Component {
 
 		const isRTL = isLocaleRtl( lang );
 
+		let headTitle = head.title;
+		let headFaviconUrl;
+
+		// To customize the page title and favicon for the Gravatar passwordless login relevant pages.
+		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
+			const searchParams = new URLSearchParams( query.redirect_to.split( '?' )[ 1 ] );
+			// Get the client ID from the redirect URL to cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
+			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
+			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
+
+			headTitle = isGravPoweredClient ? oauth2Client.title : headTitle;
+			headFaviconUrl = isGravPoweredClient ? oauth2Client.favicon : headFaviconUrl;
+		}
+
 		return (
 			<html
 				lang={ lang }
@@ -102,9 +124,10 @@ class Document extends Component {
 				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
-					title={ head.title }
+					title={ headTitle }
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
+					faviconUrl={ headFaviconUrl }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />

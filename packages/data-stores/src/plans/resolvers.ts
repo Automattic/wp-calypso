@@ -72,17 +72,20 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 }
 
 function processFeatures( features: DetailsAPIFeature[] ) {
-	return features.reduce( ( features, feature ) => {
-		features[ feature.id ] = {
-			id: feature.id,
-			name: feature.name,
-			description: feature.description,
-			type: 'checkbox',
-			requiresAnnuallyBilledPlan:
-				FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN.indexOf( feature.id ) > -1,
-		};
-		return features;
-	}, {} as Record< string, PlanFeature > );
+	return features.reduce(
+		( features, feature ) => {
+			features[ feature.id ] = {
+				id: feature.id,
+				name: feature.name,
+				description: feature.description,
+				type: 'checkbox',
+				requiresAnnuallyBilledPlan:
+					FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN.indexOf( feature.id ) > -1,
+			};
+			return features;
+		},
+		{} as Record< string, PlanFeature >
+	);
 }
 
 function featureRequiresAnnual(
@@ -186,10 +189,13 @@ export function* getSupportedPlans( locale = 'en' ) {
 			features: processPlanFeatures( plan, features ),
 			storage: plan.storage,
 			title: plan.short_name,
-			featuresSlugs: plan.features.reduce( ( slugs, slug ) => {
-				slugs[ slug ] = true;
-				return slugs;
-			}, {} as Record< string, boolean > ),
+			featuresSlugs: plan.features.reduce(
+				( slugs, slug ) => {
+					slugs[ slug ] = true;
+					return slugs;
+				},
+				{} as Record< string, boolean >
+			),
 			isFree: planSlug === TIMELESS_PLAN_FREE,
 			isPopular: planSlug === TIMELESS_PLAN_PREMIUM,
 			periodAgnosticSlug: planSlug,

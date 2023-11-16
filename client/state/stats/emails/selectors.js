@@ -6,7 +6,6 @@ import 'calypso/state/stats/init';
 /**
  * Returns an array containing the path the data is to be found at.
  * Omits the date key when period is all time
- *
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
  * @param  {string}  period The period (eg day, week, month, year)
@@ -24,7 +23,6 @@ function getDataPath( siteId, postId, period, statType, date = null ) {
 /**
  * Returns true if current requesting email stat for the specified site ID,
  * email ID, period and stat key, or * false otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
@@ -46,7 +44,6 @@ export function isRequestingEmailStats( state, siteId, postId, period, statType,
 /**
  * Returns true if current requesting all time email stat for the specified site ID,
  * email ID, period and stat key, or * false otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
@@ -66,7 +63,6 @@ export function isRequestingAlltimeEmailStats( state, siteId, postId, statType )
 /**
  * Returns true if we should show a loading indicator
  * Returns false if we have data or if we are requesting data
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
@@ -91,7 +87,6 @@ export function shouldShowLoadingIndicator( state, siteId, postId, period, statT
 
 /**
  * Returns the stats for the specified site ID, postId
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Email Id
@@ -103,7 +98,6 @@ export function getEmailStats( state, siteId, postId ) {
 
 /**
  * Returns an array of emails objects by site ID.
- *
  * @param   {Object} state  Global state tree
  * @param   {number} siteId Site ID
  * @returns {Array}         Site emails
@@ -126,7 +120,6 @@ export const getSiteEmails = createSelector(
 
 /**
  * Returns a email object by site ID, email ID pair.
- *
  * @param   {Object}  state  Global state tree
  * @param   {number}  siteId Site ID
  * @param   {string}  postId Email ID
@@ -154,7 +147,6 @@ export const getSiteEmail = createSelector(
 /**
  * Returns the stat value for the specified site ID,
  * email ID and stat key
- *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {number}  postId   Email Id
@@ -172,7 +164,6 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
 /**
  * Returns the email stats for the specified site ID,
  * post ID, period, date and stat key
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {number}  postId  Email
@@ -195,7 +186,6 @@ export function getEmailStatsNormalizedData( state, siteId, postId, period, stat
 /**
  * Returns the email stats for the specified site ID, post ID
  * This is for alltime stats
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {number}  postId  Email Id

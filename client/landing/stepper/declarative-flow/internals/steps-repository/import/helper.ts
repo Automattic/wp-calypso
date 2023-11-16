@@ -14,8 +14,7 @@ export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
 	platform: ImporterPlatform,
-	isAtomicSite: boolean | null,
-	framework: 'signup' | 'stepper' = 'signup'
+	isAtomicSite: boolean | null
 ) {
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
@@ -30,7 +29,7 @@ export function getFinalImporterUrl(
 			);
 		} )
 	) {
-		importerUrl = getWpComOnboardingUrl( targetSlug, platform, encodedFromSite, framework );
+		importerUrl = getWpComOnboardingUrl( targetSlug, platform, encodedFromSite );
 
 		if ( platform === 'wordpress' && ! fromSite && isAtomicSite ) {
 			importerUrl = getWpOrgImporterUrl( targetSlug, platform );
@@ -48,7 +47,6 @@ export function getFinalImporterUrl(
 
 /**
  * Stepper's redirection handlers
- * generateStepPath share the same interface/params between 'signup' & 'stepper' frameworks
  */
 export function generateStepPath( stepName: string, stepSectionName?: string ) {
 	if ( stepName === 'intent' ) {

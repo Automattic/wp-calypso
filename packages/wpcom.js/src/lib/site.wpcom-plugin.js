@@ -6,7 +6,6 @@ const root = '/sites';
 class SiteWPComPlugin {
 	/**
 	 * `SiteWPComPlugin` constructor.
-	 *
 	 * @param {string} [slug] - the plugin slug
 	 * @param {number|string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
@@ -31,7 +30,6 @@ class SiteWPComPlugin {
 
 	/**
 	 * Update the plugin configuration
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Object} body - plugin body object
 	 * @param {Function} [fn] - callback function
@@ -44,7 +42,6 @@ class SiteWPComPlugin {
 	/**
 	 * Activate the plugin
 	 * This method is a shorthand of update()
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -56,7 +53,6 @@ class SiteWPComPlugin {
 	/**
 	 * Deactivate the plugin
 	 * This method is a shorthand of update()
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise

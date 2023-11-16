@@ -1,3 +1,5 @@
+import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -10,9 +12,8 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
@@ -27,6 +28,7 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
+import { RelatedPlugins } from 'calypso/my-sites/plugins/related-plugins';
 import {
 	siteObjectsToSiteIds,
 	useLocalizedPlugins,
@@ -70,6 +72,7 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
+import { usePluginIsMaintained } from './use-plugin-is-maintained';
 
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
@@ -125,7 +128,7 @@ function PluginDetails( props ) {
 		);
 
 	// Header Navigation and billing period switcher.
-	const isWide = useBreakpoint( '>1280px' );
+	const isWide = useBreakpoint( '>960px' );
 
 	// Determine if the plugin is WPcom or WPorg hosted
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
@@ -187,7 +190,8 @@ function PluginDetails( props ) {
 
 	const existingPlugin = useMemo( () => {
 		if (
-			( ! isMarketplaceProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
+			( ! isMarketplaceProduct &&
+				( isWporgPluginFetching || ( ! isWporgPluginFetched && ! wporgPluginError ) ) ) ||
 			( isMarketplaceProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
 		) {
 			return 'unknown';
@@ -213,6 +217,7 @@ function PluginDetails( props ) {
 		isWpComPluginFetched,
 		isWporgPluginFetching,
 		isWporgPluginFetched,
+		wporgPluginError,
 		fullPlugin,
 		requestingPluginsForSites,
 	] );
@@ -224,14 +229,6 @@ function PluginDetails( props ) {
 					label: translate( 'Plugins' ),
 					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-							},
-						}
-					),
 				} )
 			);
 		}
@@ -267,6 +264,8 @@ function PluginDetails( props ) {
 		setBreadcrumbs( breadcrumbs );
 	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
+	const isMaintained = usePluginIsMaintained( fullPlugin?.tested );
+
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
 			args: { pluginName: fullPlugin.name },
@@ -299,8 +298,39 @@ function PluginDetails( props ) {
 		);
 	}
 
+	const downloadText = translate(
+		'This plugin is {{org_link}}available for download{{/org_link}} to be used on your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} installation.',
+		{
+			components: {
+				org_link: (
+					<a
+						href={ 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ) }
+						target="_blank"
+						rel="noreferrer noopener"
+					/>
+				),
+				wpcom_vs_wporg_link: (
+					<a
+						href={ localizeUrl(
+							'https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/'
+						) }
+						target="_blank"
+						rel="noreferrer noopener"
+					/>
+				),
+			},
+		}
+	);
+
+	const structuredData = JSON.stringify( {
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareApplication',
+		name: fullPlugin?.name,
+		sameAs: 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ),
+	} );
+
 	return (
-		<MainComponent wideLayout>
+		<MainComponent className="is-plugin-details" wideLayout isLoggedOut={ ! isLoggedIn }>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker
 				path={ analyticsPath }
@@ -312,7 +342,7 @@ function PluginDetails( props ) {
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
+			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
@@ -353,9 +383,25 @@ function PluginDetails( props ) {
 										status="is-warning"
 										showDismiss={ false }
 									>
-										<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+										<NoticeAction
+											href={ localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' ) }
+										>
 											{ translate( 'More info' ) }
 										</NoticeAction>
+									</Notice>
+								) }
+
+								{ ! isMaintained && (
+									<Notice showDismiss={ false } status="is-warning">
+										{ translate(
+											'This plugin {{strong}}hasn’t been tested with the latest 3 major releases of WordPress{{/strong}}. It may no longer be maintained or supported and may have compatibility issues when used with more recent versions of WordPress. Try {{a}}searching{{/a}} for a similar plugin.',
+											{
+												components: {
+													a: <a href={ `/plugins/${ selectedSite?.slug ?? '' }` } />,
+													strong: <strong />,
+												},
+											}
+										) }
 									</Notice>
 								) }
 
@@ -364,15 +410,42 @@ function PluginDetails( props ) {
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />
 								) }
+								<RelatedPlugins
+									slug={ props.pluginSlug }
+									seeAllLink={ `/plugins/${ props.pluginSlug }/related/${
+										selectedSite?.slug ?? ''
+									}` }
+								/>
 							</div>
 						) }
 					</div>
 
 					<div className="plugin-details__actions">
-						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+						<div className="plugin-details__sidebar">
+							<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 
-						{ ! showPlaceholder && ! requestingPluginsForSites && (
-							<PluginDetailsSidebar plugin={ fullPlugin } />
+							{ ! showPlaceholder && ! requestingPluginsForSites && (
+								<PluginDetailsSidebar plugin={ fullPlugin } />
+							) }
+						</div>
+
+						{ ! showPlaceholder && ! requestingPluginsForSites && isWporgPluginFetched && (
+							<div className="plugin-details__plugin-download">
+								<div className="plugin-details__plugin-download-text">
+									<span>{ downloadText }</span>
+								</div>
+								<div className="plugin-details__plugin-download-cta">
+									<Button
+										href={ `https://downloads.wordpress.org/plugin/${
+											fullPlugin?.slug || ''
+										}.zip` }
+										rel="nofollow"
+									>
+										{ translate( 'Download' ) }
+									</Button>
+								</div>
+								<script type="application/ld+json">{ structuredData }</script>
+							</div>
 						) }
 					</div>
 				</div>

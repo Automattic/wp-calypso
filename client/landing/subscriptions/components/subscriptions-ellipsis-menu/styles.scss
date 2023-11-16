@@ -59,20 +59,11 @@
 	.setting-item__hint {
 		width: 212px;
 	}
-
-	.unsubscribe-button.components-button.has-icon,
-	.resubscribe-button.components-button.has-icon {
-		height: auto;
-		padding: 0;
-		font-size: $font-body-small;
-		line-height: $font-title-small;
-	}
 }
 
 $rotateOnOpenDeg: 90deg;
 
 .subscriptions-ellipsis-menu {
-	height: 24px;
 
 	&__toggle {
 		cursor: pointer;

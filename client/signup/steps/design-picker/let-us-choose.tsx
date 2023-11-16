@@ -1,3 +1,4 @@
+import { translationExists } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -49,14 +50,18 @@ const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 		} );
 	}
 
+	const title = translationExists(
+		"Can't decide? No problem, we can create the perfect design for your site!"
+	)
+		? translate( "Can't decide? No problem, we can create the perfect design for your site!" )
+		: translate(
+				"Can't decide? No problem, our experts can choose the perfect design for your site!"
+		  );
+
 	return (
 		<LetUsChooseContainer>
-			<div>
-				{ translate(
-					"Can't decide? No problem, our experts can choose the perfect design for your site!"
-				) }
-			</div>
-			<LetUsChooseButton isSecondary onClick={ onClick }>
+			<div>{ title }</div>
+			<LetUsChooseButton variant="secondary" onClick={ onClick }>
 				{ translate( 'Let us choose' ) }
 			</LetUsChooseButton>
 		</LetUsChooseContainer>

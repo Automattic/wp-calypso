@@ -20,6 +20,11 @@
 .reader-full-post__content {
 	margin: 0 auto;
 
+	.comment-button__icon path,
+	.conversation-follow-button path {
+		fill: var(--color-neutral-0);
+	}
+
 	@include breakpoint-deprecated( ">1280px" ) {
 		width: 720px;
 		padding-left: 260px;
@@ -422,10 +427,6 @@
 		top: 9px;
 	}
 
-	.comment-button__icon {
-		margin-right: 0;
-	}
-
 	.comment-button__label-status {
 		display: none;
 	}
@@ -533,6 +534,10 @@
 	&:hover {
 		color: var(--color-primary-light);
 	}
+}
+
+.reader-full-post .reader-post-card__tag {
+	background-color: var(--color-surface);
 }
 
 .reader-full-post .reader-post-card__tag-link {

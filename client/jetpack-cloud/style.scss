@@ -23,6 +23,63 @@
 	}
 }
 
+// New navigation will not include a masterbar
+.theme-jetpack-cloud .layout.has-no-masterbar.is-jetpack-new-navigation {
+	--masterbar-height: 0;
+
+	// By default, there's 32px of top padding on the layout component.
+	// On mobile views this accommodates the masterbar, but we don't have one;
+	// so, we can remove it by default and re-add it when our width is >660px.
+	.layout__content {
+		padding-top: initial;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding-top: 32px;
+	}
+}
+
+.theme-jetpack-cloud .is-jetpack-new-navigation .layout__secondary {
+	border-right: initial;
+
+	// Allow visible overflow, so the profile dropdown menu can be displayed
+	overflow: initial;
+
+	// Make the selected-site navigation full-height
+	.my-sites__navigation {
+		height: 100%;
+	}
+
+	.site-selector {
+		top: 80px;
+
+		.site-selector__sites {
+			border-top: initial;
+		}
+
+		.all-sites {
+			border-bottom: initial;
+
+			// Remove the long-content fade if All Sites is selected
+			.all-sites__title::after {
+				display: none;
+			}
+		}
+
+		.all-sites,
+		.site {
+			--color-sidebar-menu-selected-background: #e3f0e4;
+
+			margin: 4px 4px 0 4px;
+
+			&.is-selected,
+			&:hover {
+				border-radius: 4px;
+			}
+		}
+	}
+}
+
 .button {
 	color: var(--color-accent);
 	background: var(--studio-white);
@@ -388,5 +445,35 @@ body.is-section-jetpack-cloud-pricing.is-group-jetpack-cloud .mini-cart {
 			color: var(--color-accent-20);
 			border-color: var(--color-accent-5);
 		}
+	}
+}
+
+// Override Split button styles for Jetpack Cloud
+.split-button {
+
+	.button {
+		font-size: 1rem;
+		height: 40px;
+
+		&:focus {
+			border-color: var(--studio-jetpack-green-70);
+			border-width: 1px;
+			box-shadow: none;
+		}
+	}
+
+	.button.split-button__toggle {
+		border-radius: 4px;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+
+	.gridicon {
+		width: 20px;
+		height: 20px;
+		fill: var(--studio-white);
 	}
 }

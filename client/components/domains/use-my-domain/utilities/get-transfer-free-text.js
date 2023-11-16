@@ -1,7 +1,17 @@
 import { __ } from '@wordpress/i18n';
 import { isDomainBundledWithPlan, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
-export function getTransferFreeText( { cart, domain, isSignupStep, siteIsOnPaidPlan } ) {
+export function getTransferFreeText( {
+	cart,
+	domain,
+	isSignupStep,
+	siteIsOnPaidPlan,
+	availability,
+} ) {
+	if ( availability?.status === domainAvailability.TRANSFERRABLE_PREMIUM ) {
+		return null;
+	}
 	const siteHasNoPaidPlan = ! siteIsOnPaidPlan || isSignupStep;
 
 	let domainProductFreeText = null;

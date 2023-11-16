@@ -24,7 +24,6 @@ export default function DashboardModal( {
 	return (
 		<Modal
 			shouldCloseOnClickOutside={ shouldCloseOnClickOutside }
-			open={ true }
 			onRequestClose={ onClose }
 			title={ title }
 			className={ classNames( 'dashboard-modal', className ) }

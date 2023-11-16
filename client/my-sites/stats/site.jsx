@@ -5,6 +5,7 @@ import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +13,7 @@ import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import { AVAILABLE_PAGE_MODULES } from 'calypso/blocks/stats-navigation/constants';
+import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -23,6 +24,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	recordGoogleEvent,
@@ -48,7 +50,6 @@ import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
-import StatsPageHeader from './stats-page-header';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
@@ -115,6 +116,7 @@ class StatsSite extends Component {
 	state = {
 		activeTab: null,
 		activeLegend: null,
+		customChartQuantity: null,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -162,6 +164,31 @@ class StatsSite extends Component {
 		}
 	}
 
+	getValidDateOrNullFromInput( inputDate ) {
+		if ( inputDate === undefined ) {
+			return null;
+		}
+		const isValid = moment( inputDate ).isValid();
+		return isValid ? inputDate : null;
+	}
+
+	// Return a default amount of days to subtracts from the present day depending on the period selected.
+	// Used in case no starting date is present in the URL.
+	getDefaultDaysForPeriod( period ) {
+		switch ( period ) {
+			case 'day':
+				return 30;
+			case 'week':
+				return 12 * 7; // ~last 3 months
+			case 'month':
+				return 6 * 30; // ~last 6 months
+			case 'year':
+				return 5 * 365; // ~last 5 years
+			default:
+				return 30;
+		}
+	}
+
 	renderStats() {
 		const {
 			date,
@@ -185,6 +212,56 @@ class StatsSite extends Component {
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
+
+		// For the new date picker
+		const isDateControlEnabled = config.isEnabled( 'stats/date-control' );
+
+		// Set up a custom range for the chart.
+		// Dependant on new date range picker controls.
+		let customChartRange = null;
+		let customChartQuantity;
+
+		if ( isDateControlEnabled ) {
+			// Sort out end date for chart.
+			const chartEnd = this.getValidDateOrNullFromInput( context.query?.chartEnd );
+
+			if ( chartEnd ) {
+				customChartRange = { chartEnd };
+			} else {
+				customChartRange = { chartEnd: moment().format( 'YYYY-MM-DD' ) };
+			}
+
+			// Find the quantity of bars for the chart.
+			let daysInRange = this.getDefaultDaysForPeriod( period );
+			const chartStart = this.getValidDateOrNullFromInput( context.query?.chartStart );
+			const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
+
+			if ( chartStart && isSameOrBefore ) {
+				// Add one to calculation to include the start date.
+				daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
+				customChartRange.chartStart = chartStart;
+			} else {
+				// if start date is missing let the frequency of data take over to avoid showing one bar
+				// (e.g. months defaulting to 30 days and showing one point)
+				customChartRange.chartStart = moment()
+					.subtract( daysInRange, 'days' )
+					.format( 'YYYY-MM-DD' );
+			}
+
+			// Calculate diff between requested start and end in `priod` units.
+			// Move end point (most recent) to the end of period to account for partial periods
+			// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
+			const adjustedChartEndDate =
+				period === 'day'
+					? moment( customChartRange.chartEnd )
+					: moment( customChartRange.chartEnd ).endOf( period );
+
+			customChartQuantity = Math.ceil(
+				adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
+			);
+
+			customChartRange.daysInRange = daysInRange;
+		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -221,9 +298,10 @@ class StatsSite extends Component {
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
 				) }
-				<StatsPageHeader
-					page="traffic"
-					subHeaderText={ translate(
+				<NavigationHeader
+					className="stats__section-header modernized-header"
+					title={ translate( 'Jetpack Stats' ) }
+					subtitle={ translate(
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
@@ -231,14 +309,20 @@ class StatsSite extends Component {
 							},
 						}
 					) }
-				/>
+					screenReader={ navItems.traffic?.label }
+					navigationItems={ [] }
+				></NavigationHeader>
 				<StatsNavigation
 					selectedItem="traffic"
 					interval={ period }
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				<StatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+				<StatsNotices
+					siteId={ siteId }
+					isOdysseyStats={ isOdysseyStats }
+					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
+				/>
 				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
@@ -248,7 +332,17 @@ class StatsSite extends Component {
 								period={ period }
 								url={ `/stats/${ period }/${ slug }` }
 								queryParams={ context.query }
+								pathTemplate={ pathTemplate }
+								charts={ CHARTS }
+								availableLegend={ this.getAvailableLegend() }
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								onChangeLegend={ this.onChangeLegend }
+								isWithNewDateControl={ isDateControlEnabled }
+								slug={ slug }
+								dateRange={ customChartRange }
 							>
+								{ ' ' }
 								<DatePicker
 									period={ period }
 									date={ date }
@@ -258,7 +352,9 @@ class StatsSite extends Component {
 									isShort
 								/>
 							</StatsPeriodNavigation>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+							{ ! isDateControlEnabled && (
+								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+							) }
 						</StatsPeriodHeader>
 
 						<ChartTabs
@@ -272,6 +368,9 @@ class StatsSite extends Component {
 							queryDate={ queryDate }
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
+							customQuantity={ customChartQuantity }
+							customRange={ customChartRange }
+							hideLegend={ isDateControlEnabled }
 						/>
 					</>
 

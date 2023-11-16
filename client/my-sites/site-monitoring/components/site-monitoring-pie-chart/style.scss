@@ -1,0 +1,46 @@
+.site-monitoring-pie-chart {
+	.pie-chart__chart-drawing {
+		height: 250px;
+		width: 250px;
+		max-width: none;
+		transform: scaleX(-1);
+	}
+	.pie-chart__chart-drawing-empty {
+		visibility: hidden;
+	}
+	.site-monitoring__chart-container {
+		position: relative;
+		.components-spinner {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 1;
+			height: 20px;
+			width: 20px;
+			margin: 0;
+		}
+	}
+	.pie-chart__legend {
+		margin-top: 24px;
+		flex-direction: row;
+		justify-content: center;
+		gap: 16px;
+		.legend-item {
+			flex-direction: row;
+			.legend-item__title::after {
+				content: ":";
+				padding-right: 3px;
+			}
+			.legend-item__detail {
+				margin-left: 0;
+			}
+		}
+		.legend-item__title-sample-drawing {
+			margin-right: 4px;
+		}
+		.legend-item:not(:first-child) {
+			margin-top: auto;
+		}
+	}
+}

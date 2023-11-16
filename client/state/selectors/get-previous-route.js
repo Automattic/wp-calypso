@@ -3,7 +3,6 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousQuery from 'calypso/state/selectors/get-previous-query';
 /**
  * Gets the previous route set by a ROUTE_SET action
- *
  * @param {Object} state - global redux state
  * @returns {string} previous route value
  */

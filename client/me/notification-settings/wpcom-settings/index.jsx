@@ -3,9 +3,9 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -21,6 +21,7 @@ import {
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import Navigation from '../navigation';
 import ActionButtons from '../settings-form/actions';
+import SubscriptionManagementBackButton from '../subscription-management-back-button';
 import EmailCategory from './email-category';
 
 import './style.scss';
@@ -197,10 +198,12 @@ class WPCOMNotifications extends Component {
 					title="Me > Notifications > Updates from WordPress.com"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader
-					brandFont
-					headerText={ this.props.translate( 'Notification Settings' ) }
-					align="left"
+
+				<SubscriptionManagementBackButton />
+
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ this.props.translate( 'Notification Settings' ) }
 				/>
 
 				<Navigation path={ this.props.path } />

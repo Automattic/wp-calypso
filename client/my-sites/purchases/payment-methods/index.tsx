@@ -1,21 +1,17 @@
 import config from '@automattic/calypso-config';
-import {
-	StripeHookProvider,
-	StripeSetupIntentIdProvider,
-	useStripe,
-} from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -24,10 +20,11 @@ import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
+import { PaymentMethodSelectorSubmitButtonContent } from 'calypso/me/purchases/manage-purchase/payment-method-selector/payment-method-selector-submit-button-content';
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import titles from 'calypso/me/purchases/titles';
-import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
-import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
+import { useCreateCreditCard } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
+import { convertErrorToString } from 'calypso/my-sites/checkout/src/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -65,11 +62,9 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
 			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="payment-methods__page-heading"
-					headerText={ titles.sectionTitle }
-					subHeaderText={ translate(
+				<NavigationHeader
+					title={ titles.sectionTitle }
+					subtitle={ translate(
 						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -79,7 +74,6 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 							},
 						}
 					) }
-					align="left"
 				/>
 			) }
 			<PurchasesNavigation section="paymentMethods" siteSlug={ siteSlug } />
@@ -107,7 +101,9 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 		stripeLoadingError,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: String( translate( 'Save card' ) ),
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Save card' ) } />
+		),
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );
@@ -134,14 +130,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 				title={ String( titles.addPaymentMethod ) }
 			/>
 			<DocumentHead title={ titles.addPaymentMethod } />
-			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="payment-methods__page-heading"
-					headerText={ titles.sectionTitle }
-					align="left"
-				/>
-			) }
+			{ ! isJetpackCloud() && <NavigationHeader title={ titles.sectionTitle } /> }
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -170,9 +159,7 @@ export function SiteLevelAddNewPaymentMethod( props: { siteSlug: string } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
-				<SiteLevelAddNewPaymentMethodForm { ...props } />
-			</StripeSetupIntentIdProvider>
+			<SiteLevelAddNewPaymentMethodForm { ...props } />
 		</StripeHookProvider>
 	);
 }

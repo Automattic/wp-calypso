@@ -10,7 +10,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import accept from 'calypso/lib/accept';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
@@ -19,7 +18,7 @@ import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { removePlugin } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
-import { getPluginActionDailogMessage } from '../utils';
+import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 
 import './style.scss';
 
@@ -27,23 +26,8 @@ class PluginRemoveButton extends Component {
 	static displayName = 'PluginRemoveButton';
 
 	removeAction = () => {
-		const { translate, plugin, site } = this.props;
-		const dialogOptions = {
-			additionalClassNames: 'plugins__confirmation-modal',
-			isScary: true,
-		};
-		const heading = translate( 'Remove %(pluginName)s', {
-			args: {
-				pluginName: plugin.name,
-			},
-		} );
-		accept(
-			getPluginActionDailogMessage( [ site ], [ plugin ], heading, 'deactivate and delete' ),
-			this.processRemovalConfirmation,
-			heading,
-			null,
-			dialogOptions
-		);
+		const { plugin, site, showPluginActionDialog } = this.props;
+		showPluginActionDialog( 'remove', [ plugin ], [ site ], this.processRemovalConfirmation );
 	};
 
 	processRemovalConfirmation = ( accepted ) => {
@@ -78,7 +62,7 @@ class PluginRemoveButton extends Component {
 	};
 
 	getDisabledInfo = () => {
-		if ( ! this.props.site ) {
+		if ( ! this.props.site || ! this.props.site.options ) {
 			// we don't have enough info
 			return null;
 		}
@@ -229,4 +213,4 @@ export default connect(
 		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, REMOVE_PLUGIN ),
 	} ),
 	{ removePlugin, removePluginStatuses }
-)( localize( PluginRemoveButton ) );
+)( withShowPluginActionDialog( localize( PluginRemoveButton ) ) );

@@ -7,6 +7,7 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
+import { getQueryArgs } from '@wordpress/url';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	getTheme,
@@ -49,6 +50,7 @@ import {
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
 	getIsLoadingCart,
+	getIsLivePreviewSupported,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -94,6 +96,28 @@ const quadrat = {
 const sidekick = {
 	id: 'sidekick',
 	template: 'superhero',
+};
+
+const appleton = {
+	id: 'appleton',
+	taxonomies: {
+		theme_feature: [ { slug: 'full-site-editing' } ],
+	},
+};
+
+const pendant = {
+	id: 'pendant',
+	taxonomies: {
+		theme_feature: [ { slug: 'full-site-editing' } ],
+	},
+};
+
+const nokul = {
+	id: 'nokul',
+	theme_type: 'managed-external',
+	taxonomies: {
+		theme_feature: [ { slug: 'full-site-editing' } ],
+	},
 };
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -832,6 +856,9 @@ describe( 'themes selectors', () => {
 		test( 'should return null if the query is not tracked', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {},
 					},
@@ -846,6 +873,9 @@ describe( 'themes selectors', () => {
 		test( 'should return null if the query manager has not received items for query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -865,6 +895,9 @@ describe( 'themes selectors', () => {
 		test( 'should return a concatenated array of all site themes ignoring page', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -894,6 +927,9 @@ describe( 'themes selectors', () => {
 		test( 'should remove recommendedThemes with no filter and no search in query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -922,6 +958,9 @@ describe( 'themes selectors', () => {
 		test( "should omit found items for which the requested result hasn't been received", () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -1505,9 +1544,15 @@ describe( 'themes selectors', () => {
 				'mood'
 			);
 
-			expect( signupUrl ).toEqual(
-				'/start/with-theme?ref=calypshowcase&theme=mood&premium=true&theme_type=premium'
-			);
+			const queryArgs = getQueryArgs( signupUrl );
+
+			expect( signupUrl.startsWith( '/start/with-theme' ) ).toBe( true );
+			expect( queryArgs ).toEqual( {
+				ref: 'calypshowcase',
+				theme: 'mood',
+				premium: 'true',
+				theme_type: 'premium',
+			} );
 		} );
 	} );
 
@@ -3173,6 +3218,195 @@ describe( '#isExternallyManagedTheme()', () => {
 				},
 			} );
 			expect( isLoading ).toBe( false );
+		} );
+	} );
+} );
+
+describe( '#getIsLivePreviewSupported()', () => {
+	const baseState = {
+		currentUser: {
+			id: 1234,
+		},
+		themes: {
+			activeThemes: {
+				2916284: 'twentysixteen',
+			},
+			queries: {
+				[ 2916284 ]: new ThemeQueryManager( {
+					items: { pendant },
+				} ),
+			},
+		},
+		sites: {
+			items: {
+				2916284: {
+					jetpack: true,
+				},
+			},
+			features: {
+				2916284: {
+					data: {
+						active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ],
+					},
+				},
+			},
+		},
+	};
+	test( 'should return false if the user is NOT logged in', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				currentUser: {
+					id: null,
+				},
+			},
+			'twentysixteen',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	test( 'should return false if the theme is the active theme', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				...baseState,
+				themes: {
+					activeThemes: {
+						2916284: 'twentysixteen',
+					},
+				},
+			},
+			'twentysixteen',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	test( 'should return false if the theme is not Full Site Editing compatible', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				...baseState,
+				themes: {
+					...baseState.themes,
+					queries: {
+						[ 2916284 ]: new ThemeQueryManager( {
+							items: { twentyfifteen },
+						} ),
+					},
+				},
+			},
+			'twentyfifteen',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	test( 'should return false if the theme is listed in the un-compatible themes', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				...baseState,
+				themes: {
+					...baseState.themes,
+					queries: {
+						[ 2916284 ]: new ThemeQueryManager( {
+							items: { appleton },
+						} ),
+					},
+				},
+			},
+			'appleton',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	describe( 'Externally managed themes', () => {
+		test( 'should return true if the user is subscribed to the theme AND the site is eligible for managed external themes', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported(
+				{
+					...baseState,
+					themes: {
+						...baseState.themes,
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { nokul },
+							} ),
+						},
+					},
+					purchases: {
+						data: [
+							{
+								blog_id: 2916284,
+								product_slug: 'wp_mp_theme_nokul_monthly',
+							},
+						],
+					},
+					productsList: {
+						items: {
+							wp_mp_theme_nokul_monthly: {
+								product_slug: 'wp_mp_theme_nokul_monthly',
+								billing_product_slug: 'wp-mp-theme-nokul',
+							},
+						},
+					},
+				},
+				'nokul',
+				2916284
+			);
+			expect( isLivePreviewSupported ).toBeTruthy();
+		} );
+		test( 'should return false on Simple sites even if the user is still subscribed to the theme', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported(
+				{
+					...baseState,
+					purchases: {
+						data: [
+							{
+								blog_id: 2916284,
+								product_slug: 'wp_mp_theme_nokul_monthly',
+							},
+						],
+					},
+					productsList: {
+						items: {
+							wp_mp_theme_nokul_monthly: {
+								product_slug: 'wp_mp_theme_nokul_monthly',
+								billing_product_slug: 'wp-mp-theme-nokul',
+							},
+						},
+					},
+					sites: {
+						items: {
+							2916284: {
+								// Simple site
+								jetpack: false,
+							},
+						},
+					},
+				},
+				'nokul',
+				2916284
+			);
+			expect( isLivePreviewSupported ).toBeFalsy();
+		} );
+	} );
+	describe( 'on Atomic sites', () => {
+		test( 'should return true even if the theme is NOT installed', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported(
+				{
+					...baseState,
+					themes: {
+						...baseState.themes,
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { pendant },
+							} ),
+						},
+					},
+				},
+				'pendant',
+				2916284
+			);
+			expect( isLivePreviewSupported ).toBe( true );
+		} );
+		test( 'should return true if the theme supports live preview', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported( baseState, 'pendant', 2916284 );
+			expect( isLivePreviewSupported ).toBe( true );
 		} );
 	} );
 } );

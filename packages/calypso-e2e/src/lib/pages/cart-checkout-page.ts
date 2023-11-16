@@ -28,7 +28,7 @@ const selectors = {
 	lastNameInput: `input[aria-describedby="validation-field-last-name"]`,
 	phoneInput: `input[name="phone"]`,
 	phoneSelect: 'select.phone-input__country-select',
-	countrySelect: 'select[aria-describedby="validation-field-country-code"]',
+	countrySelect: 'select[aria-describedby="country-selector-description"]',
 	addressInput: 'input[aria-describedby="validation-field-address-1"]',
 	cityInput: 'input[aria-describedby="validation-field-city"]',
 	stateSelect: 'select[aria-describedby="validation-field-state"]',
@@ -294,7 +294,7 @@ export class CartCheckoutPage {
 
 		const cvvFrame = ( await (
 			await this.page.waitForSelector( selectors.cardCVVFrame )
-		 ).contentFrame() ) as Frame;
+		).contentFrame() ) as Frame;
 		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
 		await cvvInput.fill( paymentDetails.cvv );
 	}

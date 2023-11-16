@@ -50,7 +50,6 @@ const mergeStringPieces = ( a, b ) => ( {
  * Converts an individual title format
  * from the API representation to a
  * Calypso-native format
- *
  * @param {Array} list List of raw format pieces
  * @returns {Array} List of native format pieces
  */
@@ -63,7 +62,6 @@ export const rawToNative = ( list ) =>
  * Converts an individual title format
  * from the Calypso-native representation
  * to a Calypso-native format
- *
  * @param {Array} listNative List of native format pieces
  * @returns {Array} List of raw format pieces
  */

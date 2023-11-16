@@ -122,9 +122,18 @@ $grid-vertical-gutters: 32px;
 		grid-area: social-followers;
 	}
 
-	.stats__module-wrapper--latest-post-summary,
-	.list-latest-post-summary {
+	.stats__module-wrapper--latest-post-summary {
 		grid-area: latest-post-summary;
+	}
+}
+
+/* custom video stats style to allow for scrolling */
+.is-section-stats .list-videoplays {
+	overflow-x: auto;
+
+	.stats-card--header-and-body {
+		width: fit-content;
+		min-width: 100%;
 	}
 }
 

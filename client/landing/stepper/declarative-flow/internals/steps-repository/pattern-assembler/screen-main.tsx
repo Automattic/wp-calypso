@@ -1,175 +1,142 @@
-import { Button } from '@automattic/components';
+import { NavigatorHeader, NavigatorItem, NavigatorItemGroup } from '@automattic/onboarding';
 import {
-	__experimentalHStack as HStack,
+	Button,
+	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import { focus } from '@wordpress/dom';
-import { header, footer, layout, color, typography } from '@wordpress/icons';
+import { header, footer } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef } from 'react';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import { NavigationButtonAsItem } from './navigator-buttons';
-import NavigatorHeader from './navigator-header';
-import { NavigatorItemGroup } from './navigator-item-group';
-import Survey from './survey';
-import type { OnboardSelect } from '@automattic/data-stores';
-import type { MouseEvent } from 'react';
+import { useScreen, usePatternCountMapByCategory } from './hooks';
+import NavigatorTitle from './navigator-title';
+import PatternCategoryList from './pattern-category-list';
+import PatternCount from './pattern-count';
+import { Category, Pattern, PatternType } from './types';
 
 interface Props {
-	onSelect: ( name: string ) => void;
-	onContinueClick: ( callback?: () => void ) => void;
-	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
-	surveyDismissed: boolean;
-	setSurveyDismissed: ( dismissed: boolean ) => void;
-	hasSections: boolean;
+	onMainItemSelect: ( name: string ) => void;
 	hasHeader: boolean;
 	hasFooter: boolean;
-	hasColor: boolean;
-	hasFont: boolean;
+	sections: Pattern[];
+	categories: Category[];
+	patternsMapByCategory: Record< string, Pattern[] >;
+	onContinueClick: () => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 const ScreenMain = ( {
-	onSelect,
-	onContinueClick,
-	recordTracksEvent,
-	surveyDismissed,
-	setSurveyDismissed,
-	hasSections,
+	onMainItemSelect,
 	hasHeader,
 	hasFooter,
-	hasColor,
-	hasFont,
+	sections,
+	categories,
+	patternsMapByCategory,
+	onContinueClick,
+	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
-	const [ disabled, setDisabled ] = useState( true );
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const { location } = useNavigator();
-	const isInitialLocation = location.isInitial && ! location.isBack;
-	const selectedDesign = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-		[]
-	);
+	const { title, description, continueLabel } = useScreen( 'main' );
+	const { location, params, goTo } = useNavigator();
+	const patternCountMapByCategory = usePatternCountMapByCategory( sections );
+	const selectedCategory = params.categorySlug as string;
+	const totalPatternCount = Number( hasHeader ) + sections.length + Number( hasFooter );
+	const isButtonDisabled = totalPatternCount === 0;
 
-	const headerDescription = selectedDesign?.is_virtual
-		? translate( 'Customize your homepage with our library of styles and patterns.' )
-		: translate( 'Use our library of styles and patterns to build a homepage.' );
+	const handleSelectCategory = ( category: string, type: PatternType = 'section' ) => {
+		const basePath = NAVIGATOR_PATHS.MAIN;
+		const isBack = category === selectedCategory;
+		const nextPath = ! isBack ? `${ basePath }/${ category }` : basePath;
+		goTo( nextPath, { replace: true } );
 
-	// Use the mousedown event to prevent either the button focusing or text selection
-	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
-		if ( disabled ) {
-			event.preventDefault();
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
+		if ( ! isBack ) {
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
+				pattern_category: category,
+			} );
+
+			if ( type !== 'section' ) {
+				onMainItemSelect( type );
+			}
 		}
 	};
-
-	const handleClick = () => {
-		if ( ! disabled ) {
-			onContinueClick();
-		}
-	};
-
-	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
-	useEffect( () => {
-		const timeoutId = window.setTimeout( () => setDisabled( false ), 300 );
-		return () => {
-			window.clearTimeout( timeoutId );
-		};
-	}, [] );
-
-	useEffect( () => {
-		if ( ! isInitialLocation || ! wrapperRef.current ) {
-			return;
-		}
-
-		const activeElement = wrapperRef.current.ownerDocument.activeElement;
-		if ( wrapperRef.current.contains( activeElement ) ) {
-			return;
-		}
-
-		const firstTabbable = ( focus.tabbable.find( wrapperRef.current ) as HTMLElement[] )[ 0 ];
-		const elementToFocus = firstTabbable ?? wrapperRef.current;
-		elementToFocus.focus();
-	}, [ isInitialLocation ] );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Design your own' ) }
-				description={ headerDescription }
+				title={ <NavigatorTitle title={ title } /> }
+				description={ description }
 				hideBack
 			/>
-			<div className="screen-container__body" ref={ wrapperRef }>
-				<HStack direction="column" alignment="top" spacing="4" expanded={ false }>
+			<div className="screen-container__body">
+				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
-						<NavigationButtonAsItem
-							checked={ hasHeader }
-							path={ NAVIGATOR_PATHS.HEADER }
+						<NavigatorItem
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
-							onClick={ () => onSelect( 'header' ) }
+							onClick={ () => handleSelectCategory( 'header', 'header' ) }
+							active={ location.path === NAVIGATOR_PATHS.MAIN_HEADER }
 						>
-							{ translate( 'Header' ) }
-						</NavigationButtonAsItem>
-						<NavigationButtonAsItem
-							checked={ hasSections }
-							path={ hasSections ? NAVIGATOR_PATHS.SECTION : NAVIGATOR_PATHS.SECTION_PATTERNS }
-							icon={ layout }
-							aria-label={ translate( 'Homepage' ) }
-							onClick={ () => onSelect( 'section' ) }
-						>
-							{ translate( 'Homepage' ) }
-						</NavigationButtonAsItem>
-						<NavigationButtonAsItem
-							checked={ hasFooter }
-							path={ NAVIGATOR_PATHS.FOOTER }
+							<>
+								{ translate( 'Header' ) }
+								<PatternCount count={ Number( hasHeader ) } />
+							</>
+						</NavigatorItem>
+
+						<VStack spacing="4">
+							<PatternCategoryList
+								categories={ categories }
+								patternsMapByCategory={ patternsMapByCategory }
+								patternCountMapByCategory={ patternCountMapByCategory }
+								selectedCategory={ selectedCategory }
+								onSelectCategory={ handleSelectCategory }
+							/>
+						</VStack>
+
+						<NavigatorItem
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
-							onClick={ () => onSelect( 'footer' ) }
+							onClick={ () => handleSelectCategory( 'footer', 'footer' ) }
+							active={ location.path === NAVIGATOR_PATHS.MAIN_FOOTER }
 						>
-							{ translate( 'Footer' ) }
-						</NavigationButtonAsItem>
+							<>
+								{ translate( 'Footer' ) }
+								<PatternCount count={ Number( hasFooter ) } />
+							</>
+						</NavigatorItem>
 					</NavigatorItemGroup>
-					<NavigatorItemGroup title={ translate( 'Style' ) }>
-						<>
-							<NavigationButtonAsItem
-								checked={ hasColor }
-								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
-								icon={ color }
-								aria-label={ translate( 'Colors' ) }
-								onClick={ () => onSelect( 'color-palettes' ) }
-							>
-								{ translate( 'Colors' ) }
-							</NavigationButtonAsItem>
-							<NavigationButtonAsItem
-								checked={ hasFont }
-								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
-								icon={ typography }
-								aria-label={ translate( 'Fonts' ) }
-								onClick={ () => onSelect( 'font-pairings' ) }
-							>
-								{ translate( 'Fonts' ) }
-							</NavigationButtonAsItem>
-						</>
-					</NavigatorItemGroup>
-				</HStack>
-				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
+				</VStack>
 			</div>
 			<div className="screen-container__footer">
-				<span className="screen-container__description">
-					{ translate( 'Ready? Go to the Site Editor to continue editing.' ) }
+				<span className="screen-container__footer-description">
+					{ totalPatternCount > 0 &&
+						translate(
+							'You’ve selected {{strong}}%(count)s{{/strong}} pattern.',
+							'You’ve selected {{strong}}%(count)s{{/strong}} patterns.',
+							{
+								count: totalPatternCount,
+								args: {
+									count: totalPatternCount,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
 				</span>
 				<Button
 					className="pattern-assembler__button"
-					primary
-					aria-disabled={ disabled }
-					onMouseDown={ handleMouseDown }
-					onClick={ handleClick }
-				>
-					{ translate( 'Continue' ) }
-				</Button>
+					disabled={ isButtonDisabled }
+					showTooltip={ isButtonDisabled }
+					onClick={ onContinueClick }
+					label={
+						isButtonDisabled
+							? translate( 'Select your first pattern to get started.' )
+							: continueLabel
+					}
+					variant="primary"
+					text={ continueLabel }
+					__experimentalIsFocusable
+				/>
 			</div>
 		</>
 	);

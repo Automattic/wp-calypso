@@ -9,7 +9,6 @@ import {
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
 	TYPE_FREE,
-	TYPE_STARTER,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
 	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
@@ -22,6 +21,7 @@ import {
 	WPCOM_FEATURES_WORDADS,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
+	TYPE_100_YEAR,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -242,19 +242,6 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
-	getStarterFeatuers() {
-		const { selectedSite, planHasDomainCredit } = this.props;
-
-		return (
-			<Fragment>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<SiteActivity />
-				<MobileApps onClick={ this.handleMobileAppsClick } />
-			</Fragment>
-		);
-	}
-
 	getJetpackFreeFeatures() {
 		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 		return (
@@ -391,7 +378,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
 				[ TYPE_PRO ]: () => this.getProFeatuers(),
-				[ TYPE_STARTER ]: () => this.getStarterFeatuers(),
+				[ TYPE_100_YEAR ]: () => this.getBusinessFeatures(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),

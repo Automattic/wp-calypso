@@ -97,7 +97,7 @@ describe( 'getTestAccountByFeature', function () {
 		expect( () =>
 			/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 			getTestAccountByFeature( { coblocks: 'foo', siteType: 'bar' } as any )
-		).toThrowError();
+		).toThrow();
 	} );
 
 	it( 'will keep the existing feature criteria when more are passed to the function', () => {
@@ -160,6 +160,7 @@ describe( 'envToFeatureKey', () => {
 		TEST_ON_ATOMIC: false,
 		GUTENBERG_NIGHTLY: false,
 		JETPACK_TARGET: 'wpcom-production',
+		ATOMIC_VARIATION: 'default',
 	};
 
 	it( 'will return a proper `FeatureKey` object', () => {
@@ -211,11 +212,11 @@ describe( 'envToFeatureKey', () => {
 	} );
 
 	it( 'will include the value for "jetpackTarget" if it is not "wpcom-production"', () => {
-		expect( envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'wpcom-staging' } ) ).toMatchObject(
-			{
-				jetpackTarget: 'wpcom-staging',
-			}
-		);
+		expect(
+			envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'wpcom-deployment' } )
+		).toMatchObject( {
+			jetpackTarget: 'wpcom-deployment',
+		} );
 	} );
 
 	it( 'will set atomic to true if "jetpackTarget" is "remote-site"', () => {

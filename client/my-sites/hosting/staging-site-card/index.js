@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/manage-staging-site-card-content';
@@ -15,24 +16,36 @@ import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-
+import { usePullFromStagingMutation, usePushToStagingMutation } from './use-staging-sync';
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
 const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
-export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
+export const StagingSiteCard = ( {
+	currentUserId,
+	disabled,
+	siteId,
+	siteOwnerId,
+	translate,
+	isJetpack,
+	isPossibleJetpackConnectionProblem,
+} ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const [ loadingError, setLoadingError ] = useState( false );
-	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+	const [ syncError, setSyncError ] = useState( null );
+	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
 	const removeAllNotices = () => {
 		dispatch( removeNotice( stagingSiteAddSuccessNoticeId ) );
@@ -41,27 +54,31 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		dispatch( removeNotice( stagingSiteDeleteFailureNoticeId ) );
 	};
 
-	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
-		siteId,
-		{
-			enabled: ! disabled,
-			onError: () => {
-				setIsErrorValidQuota( true );
-			},
-		}
-	);
-
-	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
+	const {
+		data: hasValidQuota,
+		isLoading: isLoadingQuotaValidation,
+		error: isErrorValidQuota,
+	} = useHasValidQuotaQuery( siteId, {
 		enabled: ! disabled,
-		onError: ( error ) => {
+	} );
+
+	const {
+		data: stagingSites,
+		isLoading: isLoadingStagingSites,
+		error: loadingError,
+	} = useStagingSite( siteId, {
+		enabled: ! disabled,
+	} );
+
+	useEffect( () => {
+		if ( loadingError ) {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_load_failure', {
-					code: error.code,
+					code: loadingError.code,
 				} )
 			);
-			setLoadingError( error );
-		},
-	} );
+		}
+	}, [ dispatch, loadingError ] );
 
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
@@ -195,6 +212,36 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		addStagingSite();
 	};
 
+	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
+			setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+					code: error.code,
+				} )
+			);
+			setSyncError( error.code );
+		},
+	} );
+
+	const { pullFromStaging } = usePullFromStagingMutation( siteId, stagingSite?.id, {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
+			setSyncError( null );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
+					code: error.code,
+				} )
+			);
+			setSyncError( error.code );
+		},
+	} );
+
 	const getTransferringStagingSiteContent = useCallback( () => {
 		return (
 			<>
@@ -205,7 +252,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 				/>
 			</>
 		);
-	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
+	}, [ progress, siteOwnerId, currentUserId, isReverting ] );
 
 	let stagingSiteCardContent;
 
@@ -248,9 +295,13 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		stagingSiteCardContent = (
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
+				siteId={ siteId }
 				onDeleteClick={ deleteStagingSite }
-				isButtonDisabled={ disabled }
+				onPushClick={ pushToStaging }
+				onPullClick={ pullFromStaging }
+				isButtonDisabled={ disabled || isSyncInProgress }
 				isBusy={ isReverting }
+				error={ syncError }
 			/>
 		);
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
@@ -258,7 +309,12 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			<NewStagingSiteCardContent
 				onAddClick={ onAddClick }
 				isButtonDisabled={
-					disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota
+					disabled ||
+					addingStagingSite ||
+					isLoadingQuotaValidation ||
+					! hasValidQuota ||
+					isSyncInProgress ||
+					isPossibleJetpackConnectionProblem
 				}
 				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }
 			/>
@@ -267,7 +323,14 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
 
-	return <CardContentWrapper>{ stagingSiteCardContent }</CardContentWrapper>;
+	return (
+		<CardContentWrapper>
+			{ isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
+			{ stagingSiteCardContent }
+		</CardContentWrapper>
+	);
 };
 
 export default connect( ( state ) => {
@@ -277,6 +340,8 @@ export default connect( ( state ) => {
 
 	return {
 		currentUserId,
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		siteId,
 		siteOwnerId,
 	};

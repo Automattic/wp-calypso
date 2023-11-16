@@ -74,6 +74,7 @@ const TrialUpgradeConfirmation = () => {
 					{ tasks.map( ( task ) => (
 						<ConfirmationTask
 							key={ task.id }
+							context="wooexpress_trial"
 							{ ...task }
 							taskActionUrlProps={ taskActionUrlProps }
 						/>

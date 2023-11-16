@@ -11,7 +11,6 @@ import './setup';
 
 /**
  * Tracks a signup conversion
- *
  * @param {boolean} isNewUserSite Whether the signup is new user with a new site created
  * @returns {void}
  */

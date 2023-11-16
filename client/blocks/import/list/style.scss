@@ -78,6 +78,7 @@ html[dir="rtl"] {
 
 		.importer__service-icon {
 			width: 48px;
+			min-width: 48px !important;
 			height: 48px;
 			margin-top: 10px;
 			margin-right: 0;
@@ -99,6 +100,8 @@ html[dir="rtl"] {
 
 		.list__importer-action {
 			position: relative;
+			display: inline-block !important;
+			width: calc(100% - 72px);
 
 			button {
 				background: none;

@@ -1,4 +1,4 @@
-@import "calypso/my-sites/plan-features-2023-grid/media-queries";
+@import "calypso/my-sites/plans-grid/media-queries";
 
 .is-section-stepper .plans-features-main__group.is-2023-pricing-grid,
 .is-section-signup .is-2023-pricing-grid .plan-features-2023-grid__content {
@@ -13,11 +13,11 @@
 	@include pricing-grid-breakpoints;
 }
 
-.is-section-plans:not(.is-sidebar-collapsed) .is-2023-pricing-grid .plan-features-2023-grid__plan-comparison-grid-container {
+.is-section-plans:not(.is-sidebar-collapsed) .is-2023-pricing-grid .plans-features-main__comparison-grid-container {
 	@include plan-comparison-grid-breakpoints-with-sidebar;
 }
 
-.is-section-plans.is-sidebar-collapsed .is-2023-pricing-grid .plan-features-2023-grid__plan-comparison-grid-container {
+.is-section-plans.is-sidebar-collapsed .is-2023-pricing-grid .plans-features-main__comparison-grid-container {
 	@include plan-comparison-grid-breakpoints;
 }
 

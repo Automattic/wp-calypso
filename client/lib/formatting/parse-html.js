@@ -1,6 +1,5 @@
 /**
  * Parses HTML by using the browser's built in string to DOM converter.
- *
  * @param  {string} html HTML String to be converted into DOM fragment
  * @returns {window.DocumentFragment} DOM fragment that can be queried using built in browser functions.
  */

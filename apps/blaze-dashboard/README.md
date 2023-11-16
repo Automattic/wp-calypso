@@ -1,6 +1,6 @@
 # Blaze Dashboard App
 
-Blaze Dashboard is built as a standalone application to be used inside Jetpack, and in the future, into WooCommerce. TBD: The counterpart of the project in Jetpack
+Blaze Dashboard is built as a standalone application to be used inside Jetpack, and in the future, into WooCommerce. The Jetpack counterpart of the project is in [here](https://github.com/Automattic/jetpack/tree/trunk/projects/packages/blaze).
 
 ## Hiarachy
 
@@ -49,11 +49,15 @@ cd apps/blaze-dashboard
 yarn build
 ```
 
-### Development
+### Development with local Jetpack
 
-```bash
-BLAZE_DASHBOARD_PACKAGE_PATH=/path/to/jetpack/projects/packages/blaze yarn dev
-```
+1. Ensure you have a working local Jetpack installation
+2. Run `BLAZE_DASHBOARD_PACKAGE_PATH=/path/to/jetpack/projects/packages/blaze yarn dev`
+
+## Development with sandbox
+
+1. Ensure you have a working sandbox and the its hostname is `wpcom-sandbox`
+2. Run `yarn dev --sync` to build and sync files as you change them.
 
 ## Uploading to CDN
 

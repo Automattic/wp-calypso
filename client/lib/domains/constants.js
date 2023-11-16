@@ -12,6 +12,7 @@ export const transferStatus = {
 	CANCELLED: 'CANCELLED',
 	COMPLETED: 'COMPLETED',
 	PENDING_START: 'PENDING_START',
+	PENDING_ASYNC: 'PENDING_ASYNC',
 };
 
 export const registrar = {
@@ -79,6 +80,10 @@ export const dnsTemplates = {
 	G_SUITE: {
 		PROVIDER: 'g-suite',
 		SERVICE: 'G-Suite',
+	},
+	ICLOUD_MAIL: {
+		PROVIDER: 'apple-icloud-mail',
+		SERVICE: 'icloud-mail',
 	},
 	MICROSOFT_OFFICE365: {
 		PROVIDER: 'microsoft-office365',

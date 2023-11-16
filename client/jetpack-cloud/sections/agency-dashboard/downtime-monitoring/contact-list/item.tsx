@@ -1,27 +1,23 @@
-import { Card, Button } from '@automattic/components';
+import { Badge, Card, Button } from '@automattic/components';
 import { Icon, moreHorizontal } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useContext, useCallback } from 'react';
-import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import { getContactActionEventName, getContactItemValue } from './utils';
 import type {
-	StateMonitorSettingsEmail,
 	AllowedMonitorContactActions,
-	StateMonitorSettingsSMS,
 	AllowedMonitorContactTypes,
+	StateMonitorSettingsEmail,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
 
 import './style.scss';
 
 type Props = {
-	item: StateMonitorSettingsEmail | StateMonitorSettingsSMS;
-	onAction?: (
-		item: StateMonitorSettingsEmail | StateMonitorSettingsSMS,
-		action: AllowedMonitorContactActions
-	) => void;
+	item: StateMonitoringSettingsContact;
+	onAction?: ( item: StateMonitoringSettingsContact, action: AllowedMonitorContactActions ) => void;
 	recordEvent?: ( action: string, params?: object ) => void;
 	showVerifiedBadge?: boolean;
 	type: AllowedMonitorContactTypes;

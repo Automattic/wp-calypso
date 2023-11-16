@@ -1,3 +1,6 @@
+// Links are localized at InlineSupportLink during render
+/* eslint-disable wpcalypso/i18n-unlocalized-url */
+
 const contextLinks = {
 	'account-settings': {
 		link: 'https://wordpress.com/support/account-settings/',
@@ -8,8 +11,8 @@ const contextLinks = {
 		post_id: 213203,
 	},
 	autorenewal: {
-		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
-		post_id: 111349,
+		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',
+		post_id: 267092,
 	},
 	backups: {
 		link: 'https://wordpress.com/support/restore/',
@@ -28,8 +31,8 @@ const contextLinks = {
 		post_id: 240330,
 	},
 	cancel_purchase: {
-		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
-		post_id: 111349,
+		link: 'https://wordpress.com/support/manage-purchases/cancel-a-purchase/',
+		post_id: 267077,
 	},
 	categories: {
 		link: 'https://wordpress.com/support/posts/categories/',
@@ -39,6 +42,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
 	},
+	dashboard: {
+		link: 'https://wordpress.com/support/dashboard/',
+		post_id: 137,
+	},
 	discussion: {
 		link: 'https://wordpress.com/support/settings/discussion-settings/',
 		post_id: 1504,
@@ -46,6 +53,10 @@ const contextLinks = {
 	domains: {
 		link: 'https://wordpress.com/support/domains/',
 		post_id: 1988,
+	},
+	donations: {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/donations/',
+		post_id: 171110,
 	},
 	earn: {
 		link: 'https://wordpress.com/support/monetize-your-site/',
@@ -60,8 +71,8 @@ const contextLinks = {
 		post_id: 2087,
 	},
 	'export-media-library': {
-		link: 'https://wordpress.com/support/export/#exporting-the-media-library',
-		post_id: 2087,
+		link: 'https://wordpress.com/support/export-your-media-library',
+		post_id: 278472,
 	},
 	followers: {
 		link: 'https://wordpress.com/support/followers/',
@@ -117,7 +128,7 @@ const contextLinks = {
 	},
 	'importers-substack': {
 		link: 'https://wordpress.com/support/import/import-from-substack/',
-		post_id: 87696,
+		post_id: 257527,
 	},
 	'importers-wix': {
 		link: 'https://wordpress.com/support/import/import-from-wix/',
@@ -155,6 +166,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/paid-newsletters/',
 		post_id: 168381,
 	},
+	payment_button_block: {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block',
+		post_id: 169123,
+	},
 	payment_method_all_subscriptions: {
 		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
 		post_id: 76237,
@@ -166,6 +181,10 @@ const contextLinks = {
 	payment_methods_manage: {
 		link: 'https://wordpress.com/support/payment/#manage-payment-methods',
 		post_id: 76237,
+	},
+	paypal: {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/',
+		post_id: 168671,
 	},
 	performance: {
 		link: 'https://wordpress.com/support/settings/performance-settings/',
@@ -186,6 +205,10 @@ const contextLinks = {
 	posts: {
 		link: 'https://wordpress.com/support/posts/',
 		post_id: 84,
+	},
+	premium_content_block: {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
+		post_id: 243475,
 	},
 	privacy: {
 		link: 'https://wordpress.com/support/settings/privacy-settings/',
@@ -266,6 +289,18 @@ const contextLinks = {
 	'webmaster-tools': {
 		link: 'https://wordpress.com/support/webmaster-tools/',
 		post_id: 5022,
+	},
+	'site-monitoring': {
+		link: 'https://wordpress.com/support/site-monitoring/',
+		post_id: 259521,
+	},
+	'subscriptions-and-newsletters': {
+		link: 'https://wordpress.com/support/subscriptions-and-newsletters/',
+		post_id: 67810,
+	},
+	'featured-images': {
+		link: 'https://wordpress.com/support/featured-images/',
+		post_id: 5259,
 	},
 };
 

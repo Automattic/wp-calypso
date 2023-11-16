@@ -34,9 +34,15 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 		! urlData && goToHomeStep();
 	}, [ urlData, navigation ] );
 
-	// redirect directly to importer page if it comes from move to wpcom plugin
+	// redirect directly to importer page
 	useEffect( () => {
-		urlData && isMigrateFromWp && goToImporterPage();
+		if ( ! urlData ) {
+			return;
+		}
+
+		if ( isMigrateFromWp || urlData.platform === 'wordpress' ) {
+			goToImporterPage();
+		}
 	}, [ urlData, isMigrateFromWp ] );
 
 	/**
@@ -51,8 +57,7 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 			siteSlug as string,
 			urlData.url,
 			urlData.platform,
-			isAtomicSite,
-			'stepper'
+			isAtomicSite
 		);
 
 		navigation.submit?.( { url } );

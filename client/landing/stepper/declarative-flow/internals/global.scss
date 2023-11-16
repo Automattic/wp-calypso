@@ -1,7 +1,6 @@
 /*
     Global styles for Stepper framework
 */
-@import "@wordpress/components/build-style/style";
 @import "@automattic/calypso-color-schemes";
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/onboarding/styles/mixins";
@@ -65,17 +64,20 @@ button {
 /**
  * Site Setup
  */
+.ai-assembler,
+.new-hosted-site,
 .import-hosted-site,
 .site-setup,
 .import-focused,
 .plugin-bundle,
 .newsletter-setup,
+.newsletter-goals,
 .newsletter-post-setup,
 .plans,
 .domains,
 .patterns,
-.link-in-bio-setup,
 .link-in-bio-post-setup,
+.link-in-bio,
 .anchor-fm,
 .subscribers,
 .ecommerce,
@@ -89,7 +91,9 @@ button {
 .setup-blog,
 .celebration-step,
 .use-my-domain,
-.update-design {
+.domain-transfer,
+.update-design,
+.hundred-year-plan {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -158,8 +162,6 @@ button {
  	 * Step Container
  	 */
 	.step-container {
-		--color-accent: #117ac9;
-		--color-accent-60: #0e64a5;
 
 		.form-fieldset {
 			label {
@@ -167,9 +169,44 @@ button {
 			}
 		}
 	}
+
+	// While we don't standardize all Calypso interfaces, we need to override this for onboarding flows #79851
+	.components-button.is-primary {
+		border-radius: 4px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		justify-content: center;
+
+		&[disabled],
+		&:disabled,
+		&.disabled {
+			color: #fff;
+			background-color: var(--studio-blue-20);
+			border-color: var(--studio-blue-20);
+		}
+	}
+
+	.components-button.is-link {
+		color: var(--color-accent);
+
+		&:hover:not(:disabled):not(.disabled),
+		&:focus:not(:disabled):not(.disabled) {
+			color: var(--color-neutral-70);
+		}
+	}
+
+	// WordPress.org components no longer use blue-50 as the primary color.
+	// This changes the primary color to blue-50 to conform to the WordPress.com colors.
+	--color-accent: var(--studio-blue-50);
+	--color-accent-60: var(--studio-blue-60);
+	--wp-components-color-accent-darker-10: var(--studio-blue-60);
+	--wp-components-color-accent-darker-20: var(--studio-blue-70);
+	--wp-components-color-accent: var(--studio-blue-50);
+
 }
 
-.import-focused .step-container.site-picker {
+.import-focused .step-container.site-picker,
+.import-hosted-site .step-container.site-picker {
 	max-width: 1280px;
 	padding: 1.5rem;
 }
@@ -182,7 +219,7 @@ button {
 }
 
 .intro {
-	.signup-header {
+	&:not(.newsletter).signup-header {
 		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
 }
@@ -242,12 +279,6 @@ button {
 .link-in-bio-tld,
 .setup-form__form {
 	button {
-		&[type="submit"] {
-			font-size: $font-body-small;
-			background-color: var(--studio-blue-50);
-			font-weight: 500;
-		}
-
 		&.site-icon-with-picker__upload-button {
 			border-radius: 4px;
 			border: 1px solid rgba($color: #000, $alpha: 0.2);

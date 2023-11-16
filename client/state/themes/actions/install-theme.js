@@ -14,10 +14,9 @@ import 'calypso/state/themes/init';
  * Triggers a network request to install a WordPress.org or WordPress.com theme on a Jetpack site.
  * To install a theme from WordPress.com, suffix the theme name with '-wpcom'. Note that this options
  * requires Jetpack 4.4
- *
- * @param  {string}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
- * @param  {string}   siteId  Jetpack Site ID
- * @returns {Function}         Action thunk
+ * @param  {string} themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
+ * @param  {number} siteId  Jetpack Site ID
+ * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
 export function installTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {

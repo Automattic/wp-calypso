@@ -50,7 +50,7 @@ const Comments = () => {
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			<div className="list-actions-bar">
+			<div className="comments-list-actions-bar">
 				<SearchInput
 					placeholder={ translate( 'Search by post, site title, or address…' ) }
 					searchIcon={ <SearchIcon size={ 18 } /> }
@@ -58,7 +58,7 @@ const Comments = () => {
 				/>
 
 				<SelectDropdown
-					className="subscriptions-manager__filter-control subscriptions-manager__list-actions-bar-spacer"
+					className="list-actions-bar__filter-control list-actions-bar__spacer"
 					options={ availableFilterOptions }
 					onSelect={ ( selectedOption: Option< Reader.SiteSubscriptionsFilterBy > ) =>
 						setFilterOption( selectedOption.value as Reader.SiteSubscriptionsFilterBy )

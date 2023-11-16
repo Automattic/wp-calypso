@@ -29,6 +29,7 @@ const ThemesToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 			initialActiveIndex={ activeIndex }
 			forceSwipe={ 'undefined' === typeof window }
 			onClick={ ( index: number ) => onSelect( items[ index ]?.key ) }
+			swipeEnabled={ false }
 		>
 			{ items.map( ( item ) => (
 				<span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>

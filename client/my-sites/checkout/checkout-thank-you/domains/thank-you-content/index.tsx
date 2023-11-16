@@ -5,7 +5,7 @@ import domainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-
 import domainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
-	emailManagementInbox,
+	emailManagementMailboxes,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -35,7 +35,7 @@ const StepCTA = ( { email, primary, siteName }: StepCTAProps ) => {
 
 	const redirectUrl = `${ window.location.protocol }//${
 		window.location.host
-	}${ emailManagementInbox( siteName ) }`;
+	}${ emailManagementMailboxes( siteName ) }`;
 
 	return (
 		<FullWidthButton
@@ -49,13 +49,13 @@ const StepCTA = ( { email, primary, siteName }: StepCTAProps ) => {
 				} );
 			} }
 		>
-			{ translate( 'Go to Inbox' ) }
+			{ translate( 'Your Mailboxes' ) }
 		</FullWidthButton>
 	);
 };
 
 /**
- * Helper function to reuse Get Inbox/Access your inbox components
+ * Helper function to reuse Get mailboxes/Access your mailboxes components
  */
 export function buildDomainStepForProfessionalEmail(
 	{
@@ -103,7 +103,7 @@ export function buildDomainStepForProfessionalEmail(
 
 	return {
 		stepKey: `domain_${ domainType }_whats_next_email_setup_view_inbox`,
-		stepTitle: translate( 'Access your inbox' ),
+		stepTitle: translate( 'Access your mailboxes' ),
 		stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 		stepCta: <StepCTA siteName={ selectedSiteSlug } email={ email } primary={ primary } />,
 	};
@@ -117,6 +117,7 @@ export function buildDomainStepForLaunchpadNextSteps(
 	launchpadScreen: string,
 	selectedSiteSlug: string,
 	domainType: DomainThankYouType,
+	redirectTo: string,
 	primary: boolean
 ): ThankYouNextStepProps | null {
 	if ( launchpadScreen !== 'full' || ! siteIntent || ! selectedSiteSlug ) {
@@ -130,11 +131,13 @@ export function buildDomainStepForLaunchpadNextSteps(
 		),
 		stepCta: (
 			<FullWidthButton
-				onClick={ () =>
-					window.location.replace(
-						`/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`
-					)
-				}
+				onClick={ () => {
+					const redirectUrl =
+						redirectTo === 'home'
+							? `/home/${ selectedSiteSlug }`
+							: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`;
+					window.location.replace( redirectUrl );
+				} }
 				className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 				primary={ primary }
 				busy={ false }

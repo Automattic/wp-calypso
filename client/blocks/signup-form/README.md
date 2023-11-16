@@ -39,4 +39,3 @@ function render() {
 - (optional) `email` string: Initial value for email input
 - (optional) `disableEmailInput` boolean: Disables the email input. Useful if email must be a certain value and that value is passed in through the `email` prop
 - (optional) `disableEmailExplanation` string: Explanation text that appears beneath the email field when disabled.
-- (optional) `loginUrl` string: Sets it to display the WordPress.com login link among the social buttons for OAuth2 clients (e.g. Gravatar), which can enhance the UX.

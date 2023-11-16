@@ -10,7 +10,6 @@ type TransientItemsState = {
 /**
  * Wraps the transformation of a site's transientItems state. This cuts down
  * on boilerplate in the reducer, especially when it comes to null-safe defaults.
- *
  * @param state The full `transientItems` state
  * @param siteId The ID of the site being transformed
  * @param map A function accepting the transient items state for a site and returning a new state for the site

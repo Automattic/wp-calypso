@@ -31,6 +31,7 @@ type OwnProps = {
 	originalPrice?: number;
 	productName: TranslateResult;
 	tooltipText?: TranslateResult | ReactNode;
+	displayPriceText?: TranslateResult | null;
 };
 
 const DisplayPrice: React.FC< OwnProps > = ( {
@@ -52,6 +53,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	pricesAreFetching,
 	productName,
 	tooltipText,
+	displayPriceText,
 } ) => {
 	if ( isDeprecated ) {
 		return <Deprecated productName={ productName } />;
@@ -87,6 +89,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 			displayFrom={ displayFrom }
 			tooltipText={ tooltipText }
 			expiryDate={ expiryDate }
+			displayPriceText={ displayPriceText }
 		/>
 	);
 };

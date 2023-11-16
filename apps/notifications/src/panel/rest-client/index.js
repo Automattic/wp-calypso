@@ -341,7 +341,6 @@ function cleanupLocalCache() {
  * Update lastSeenTime in object instance, localStorage, and remote database.
  * Advance this.lastSeenTime to proposedTime or the latest visible note time.
  * If the timestamp comes from a note, update the remote database.
- *
  * @param {number} proposedTime A proposed update to our lastSeenTime timestamp
  * @param {boolean} fromStorage Whether this call is from handleStorageEvent
  * @returns {boolean} whether or not we will update our lastSeenTime value

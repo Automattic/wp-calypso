@@ -7,7 +7,6 @@ import { getUrlParts } from '@automattic/calypso-url';
  * - query: query string extracted from url
  * - filePath: path of the file on remote site, even if url is photon url
  * - isRelativeToSiteRoot: true if the file come from remote site identified by siteSlug, false otherwise
- *
  * @param {string} mediaUrl Media file URL.
  * @param {string} siteSlug Slug of the site this file belongs to.
  * @returns {{query: string, filePath: string, isRelativeToSiteRoot: boolean}}	Dictionary

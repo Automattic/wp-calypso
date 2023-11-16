@@ -47,7 +47,9 @@ class SiteRedirectCard extends Component {
 	};
 
 	componentDidMount() {
-		this.props.fetchSiteRedirect( this.props.selectedSite.domain );
+		if ( this.props.selectedSite ) {
+			this.props.fetchSiteRedirect( this.props.selectedSite.domain );
+		}
 	}
 
 	componentWillUnmount() {
@@ -55,7 +57,9 @@ class SiteRedirectCard extends Component {
 	}
 
 	closeRedirectNotice = () => {
-		this.props.closeSiteRedirectNotice( this.props.selectedSite.domain );
+		if ( this.props.selectedSite ) {
+			this.props.closeSiteRedirectNotice( this.props.selectedSite.domain );
+		}
 	};
 
 	handleChange = ( event ) => {
@@ -65,35 +69,37 @@ class SiteRedirectCard extends Component {
 	};
 
 	handleClick = () => {
-		this.props
-			.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
-			.then( ( success ) => {
-				this.props.recordUpdateSiteRedirectClick(
-					this.props.selectedDomainName,
-					this.state.redirectUrl,
-					success
-				);
-
-				if ( success ) {
-					this.props.fetchSiteDomains( this.props.selectedSite.ID );
-					this.props.fetchSiteRedirect( this.state.redirectUrl.replace( /\/+$/, '' ).trim() );
-
-					page(
-						domainManagementSiteRedirect(
-							this.props.selectedSite.slug,
-							this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
-							this.props.currentRoute
-						)
+		if ( this.props.selectedSite ) {
+			this.props
+				.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
+				.then( ( success ) => {
+					this.props.recordUpdateSiteRedirectClick(
+						this.props.selectedDomainName,
+						this.state.redirectUrl,
+						success
 					);
 
-					this.props.successNotice(
-						this.props.translate( 'Site redirect updated successfully.' ),
-						noticeOptions
-					);
-				} else {
-					this.props.errorNotice( this.props.location.notice.text );
-				}
-			} );
+					if ( success ) {
+						this.props.fetchSiteDomains( this.props.selectedSite.ID );
+						this.props.fetchSiteRedirect( this.state.redirectUrl.replace( /\/+$/, '' ).trim() );
+
+						page(
+							domainManagementSiteRedirect(
+								this.props.selectedSite.slug,
+								this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
+								this.props.currentRoute
+							)
+						);
+
+						this.props.successNotice(
+							this.props.translate( 'Site redirect updated successfully.' ),
+							noticeOptions
+						);
+					} else {
+						this.props.errorNotice( this.props.location.notice.text );
+					}
+				} );
+		}
 	};
 
 	handleFocus = () => {

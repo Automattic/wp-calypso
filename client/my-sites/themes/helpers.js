@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
@@ -71,34 +70,18 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 	return path;
 }
 
-export function addStyleVariation( options, styleVariation, isLoggedIn ) {
+export function addOptionsToGetUrl( options, { tabFilter, styleVariationSlug } ) {
 	return mapValues( options, ( option ) =>
 		Object.assign( {}, option, {
 			...( option.getUrl && {
-				getUrl: ( t ) =>
-					isLoggedIn
-						? option.getUrl( t, styleVariation )
-						: option.getUrl( t, null, styleVariation ),
+				getUrl: ( t ) => option.getUrl( t, { tabFilter, styleVariationSlug } ),
 			} ),
 		} )
 	);
 }
 
-export function appendStyleVariationToThemesPath( path, styleVariation ) {
-	if ( ! styleVariation ) {
-		return path;
-	}
-
-	const [ base, query ] = path.split( '?' );
-	const params = new URLSearchParams( query );
-	params.set( 'style_variation', styleVariation.slug );
-
-	return `${ base }?${ params.toString() }`;
-}
-
 /**
  * Creates the billing product slug for a given theme ID.
- *
  * @param themeId Theme ID
  * @returns string
  */
@@ -122,7 +105,6 @@ export function getSubjectsFromTermTable( filterToTermTable ) {
  * - WP.com themes are prioritized over WP.org themes.
  * - Retired WP.org themes or duplicate WP.org themes (those that are also WP.com themes) are excluded.
  * - WP.org block themes are prioritized over WP.org classic themes.
- *
  * @param wpComThemes List of WP.com themes.
  * @param wpOrgThemes List of WP.org themes.
  * @param searchTerm Search term.
@@ -171,27 +153,10 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 	);
 
 	// 3. WP.org themes (only if the list of WP.com themes has reached the last page).
-	if ( isEnabled( 'themes/interlaced-dotorg-themes' ) && isLastPage ) {
-		const restWpOrgBlockThemes = [];
-		const restWpOrgClassicThemes = [];
-
-		validWpOrgThemes.forEach( ( theme ) => {
-			if ( theme.id === matchingTheme?.id ) {
-				return;
-			}
-			if (
-				theme.taxonomies?.theme_feature?.some(
-					( feature ) => feature?.slug === 'full-site-editing'
-				)
-			) {
-				restWpOrgBlockThemes.push( theme );
-			} else {
-				restWpOrgClassicThemes.push( theme );
-			}
-		} );
-
-		interlacedThemes.push( ...restWpOrgBlockThemes );
-		interlacedThemes.push( ...restWpOrgClassicThemes );
+	if ( isLastPage ) {
+		interlacedThemes.push(
+			...validWpOrgThemes.filter( ( theme ) => theme.id !== matchingTheme?.id )
+		);
 	}
 
 	return interlacedThemes;

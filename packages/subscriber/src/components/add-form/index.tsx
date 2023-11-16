@@ -27,7 +27,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
-	isSiteOnFreePlan?: boolean;
+	hasSubscriberLimit?: boolean;
 	flowName?: string;
 	showTitle?: boolean;
 	showSubtitle?: boolean;
@@ -39,11 +39,13 @@ interface Props {
 	manualListEmailInviting?: boolean;
 	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
+	onImportStarted?: ( hasFile: boolean ) => void;
 	onImportFinished?: () => void;
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
 	showSkipLink?: boolean;
+	hidden?: boolean;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -54,7 +56,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
-		isSiteOnFreePlan,
+		hasSubscriberLimit,
 		flowName,
 		showTitle = true,
 		showSubtitle,
@@ -65,12 +67,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		allowEmptyFormSubmit,
 		manualListEmailInviting,
 		recordTracksEvent,
+		onImportStarted,
 		onImportFinished,
 		onChangeIsImportValid,
 		onSkipBtnClick,
 		titleText,
 		subtitleText,
 		showSkipLink,
+		hidden = false,
 	} = props;
 
 	const {
@@ -162,6 +166,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
 		setSubmitAttemptCount( submitAttemptCount + 1 );
+		onImportStarted?.( !! selectedFile );
 
 		const validEmails = getValidEmails();
 
@@ -363,13 +368,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							submitBtnName
 						),
 						{
-							Button: createElement( Button, {
-								isLink: true,
-								target: '_blank',
-								href: localizeUrl(
-									'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-								),
-							} ),
+							Button: (
+								<Button
+									variant="link"
+									target="_blank"
+									href={ localizeUrl(
+										'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+									) }
+								/>
+							),
 						}
 					) }
 				</p>
@@ -378,23 +385,25 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvLabel() {
-		const ariaLabelMsg = isSiteOnFreePlan
+		const ariaLabelMsg = hasSubscriberLimit
 			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
 			: translate( 'Or upload a CSV file of emails from your existing list. Learn more.' );
 
 		const interpolateElement = {
 			uploadBtn: formFileUploadElement,
-			Button: createElement( Button, {
-				isLink: true,
-				target: '_blank',
-				rel: 'noreferrer',
-				href: localizeUrl(
-					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-				),
-			} ),
+			Button: (
+				<Button
+					variant="link"
+					target="_blank"
+					rel="noreferrer"
+					href={ localizeUrl(
+						'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+					) }
+				/>
+			),
 		};
 
-		const labelText = isSiteOnFreePlan
+		const labelText = hasSubscriberLimit
 			? createInterpolateElement(
 					translate(
 						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more</Button>.'
@@ -434,15 +443,16 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						{
 							strong: createElement( 'strong' ),
 							uploadBtn: formFileUploadElement,
-							removeBtn: createElement( Button, {
-								isLink: true,
-								onClick: onFileRemoveClick,
-							} ),
+							removeBtn: <Button variant="link" onClick={ onFileRemoveClick } />,
 						}
 					) }
 				</label>
 			)
 		);
+	}
+
+	if ( hidden ) {
+		return null;
 	}
 
 	return (

@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
@@ -14,9 +15,9 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -27,7 +28,6 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import JetpackDisconnectedNotice from '../jetpack-disconnected-notice';
 import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
 import PluginsNavigationHeader from '../plugins-navigation-header';
@@ -78,6 +78,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	);
 
 	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isRequestingSitesData = useSelector( isRequestingSites );
 	const noPermissionsError = useSelector(
 		( state ) =>
@@ -85,6 +86,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( siteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -149,7 +151,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				}
 			/>
 
-			<PluginsAnnouncementModal />
 			{ ! hideHeader && (
 				<PluginsNavigationHeader
 					navigationHeaderRef={ navigationHeaderRef }
@@ -158,7 +159,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 					search={ search }
 				/>
 			) }
-			<JetpackDisconnectedNotice />
+			{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			<SearchBoxHeader
 				searchRef={ searchRef }
 				categoriesRef={ categoriesRef }

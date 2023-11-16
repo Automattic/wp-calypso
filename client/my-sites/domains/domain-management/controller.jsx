@@ -1,9 +1,10 @@
+import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
-import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
-	domainManagementContactsPrivacy,
+	domainManagementAllEditSelectedContactInfo,
+	domainManagementEditSelectedContactInfo,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
 	domainManagementDnsEditRecord,
@@ -17,6 +18,7 @@ import {
 	domainManagementTransferIn,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
+	domainManagementTransferToAnyUser,
 	domainManagementTransferToOtherSite,
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
@@ -29,15 +31,9 @@ import DomainManagement from '.';
 export default {
 	domainManagementList( pageContext, next ) {
 		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementList( ':site' ) }
+			<DomainManagement.BulkSiteDomains
+				analyticsPath={ domainManagementRoot( ':site' ) }
 				analyticsTitle="Domain Management"
-				component={ DomainManagement.SiteDomains }
-				context={ pageContext }
-				needsContactDetails
-				needsDomains
-				needsPlans
-				needsProductsList
 			/>
 		);
 		next();
@@ -45,11 +41,9 @@ export default {
 
 	domainManagementListAllSites( pageContext, next ) {
 		pageContext.primary = (
-			<DomainManagementData
+			<DomainManagement.BulkAllDomains
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
-				component={ DomainManagement.AllDomains }
-				context={ pageContext }
 			/>
 		);
 		next();
@@ -113,20 +107,6 @@ export default {
 		next();
 	},
 
-	domainManagementContactsPrivacy( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts"
-				component={ DomainManagement.ContactsPrivacy }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
 	domainManagementManageConsent( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
@@ -153,6 +133,32 @@ export default {
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementAllEditSelectedContactInfo( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementAllEditSelectedContactInfo() }
+				analyticsTitle="Domain Management > Edit Selected Contact Info"
+				component={ DomainManagement.BulkEditContactInfoPage }
+				context={ pageContext }
+				needsDomains
+			/>
+		);
+		next();
+	},
+
+	domainManagementEditSelectedContactInfo( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementEditSelectedContactInfo( ':site' ) }
+				analyticsTitle="Domain Management > Edit Selected Contact Info"
+				component={ DomainManagement.BulkEditContactInfoPage }
+				context={ pageContext }
+				needsDomains
 			/>
 		);
 		next();
@@ -283,6 +289,20 @@ export default {
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
 				component={ DomainManagement.TransferDomainToOtherUser }
+				context={ pageContext }
+				needsDomains
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementTransferToAnyUser( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementTransferToAnyUser( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Transfer To Another User"
+				component={ DomainManagement.TransferDomainToAnyUser }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

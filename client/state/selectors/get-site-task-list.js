@@ -5,7 +5,6 @@ import getSiteChecklist from './get-site-checklist';
 
 /**
  * Returns the checklist for the specified site ID
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {Object}        Site settings

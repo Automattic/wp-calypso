@@ -83,6 +83,11 @@
 .backup__header-right {
 	text-align: right;
 	margin-top: 8px;
+
+	.backup__clone-button {
+		white-space: nowrap;
+
+	}
 }
 
 .backup__header-title {

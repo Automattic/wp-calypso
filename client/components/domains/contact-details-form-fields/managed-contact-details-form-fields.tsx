@@ -14,13 +14,17 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
-import CountrySelectMenu from 'calypso/my-sites/checkout/composite-checkout/components/country-select-menu';
+import CountrySelectMenu from 'calypso/my-sites/checkout/src/components/country-select-menu';
 import {
 	prepareDomainContactDetails,
 	convertDomainContactDetailsToManagedContactDetails,
-} from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+} from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import getCountries from 'calypso/state/selectors/get-countries';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
@@ -29,13 +33,33 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { GSuiteFields } from './g-suite-fields';
-import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
+import type {
+	DomainContactDetails as DomainContactDetailsData,
+	DomainContactDetailsExtra,
+} from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors, ManagedContactDetails } from '@automattic/wpcom-checkout';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
+
+export interface FieldProps {
+	labelClass: string;
+	additionalClasses: string;
+	disabled: boolean;
+	isError: boolean;
+	errorMessage:
+		| React.ReactElement
+		| string
+		| number
+		| DomainContactDetailsErrors[ 'extra' ]
+		| undefined;
+	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	onBlur: () => void;
+	value: string | DomainContactDetailsExtra | undefined;
+	name: string;
+	eventFormName: string | undefined;
+}
 
 export interface ManagedContactDetailsFormFieldsProps {
 	eventFormName?: string;
@@ -55,6 +79,8 @@ export interface ManagedContactDetailsFormFieldsConnectedProps {
 	countryCode: string | undefined;
 	hasCountryStates: boolean;
 	countriesList: CountryListItem[] | null;
+	needsEmailVerification: boolean;
+	userEmail: string;
 }
 
 interface ManagedContactDetailsFormFieldsState {
@@ -156,7 +182,10 @@ export class ManagedContactDetailsFormFields extends Component<
 		this.updateParentState( updatedParentState );
 	};
 
-	getFieldProps = ( name: string, { customErrorMessage = null } ) => {
+	getFieldProps = (
+		name: string,
+		{ customErrorMessage }: { customErrorMessage?: DomainContactDetailsErrors[ 'firstName' ] }
+	) => {
 		const { eventFormName, getIsFieldDisabled } = this.props;
 		const camelName = camelCase( name );
 
@@ -197,15 +226,21 @@ export class ManagedContactDetailsFormFields extends Component<
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
+	maybeDisplayEmailVerificationNotice = () => {
+		if (
+			this.props.contactDetails.email !== this.props.userEmail ||
+			this.props.needsEmailVerification ||
+			this.props.isLoggedOutCart
+		) {
+			return this.props.translate( 'Remember to confirm your email address' );
+		}
+	};
+
 	createEmailField() {
 		return (
 			<Input
 				label={ this.props.translate( 'Email' ) }
-				description={
-					this.props.isLoggedOutCart
-						? this.props.translate( "You'll use this email address to access your account later" )
-						: undefined
-				}
+				description={ this.maybeDisplayEmailVerificationNotice() }
 				labelClass="contact-details-form-fields__label"
 				additionalClasses="contact-details-form-fields__field"
 				disabled={ this.props.getIsFieldDisabled( 'email' ) }
@@ -462,6 +497,8 @@ export default connect( ( state: IAppState, props: ManagedContactDetailsFormFiel
 		countryCode,
 		countriesList: getCountries( state, 'domains' ),
 		hasCountryStates,
+		userEmail: getCurrentUserEmail( state ),
+		needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 	};
 } )( localize( ManagedContactDetailsFormFields ) );
 

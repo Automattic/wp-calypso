@@ -127,7 +127,7 @@ describe( 'useWithServerCredentials HOC', () => {
 		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
 		await userEvent.click( submitButton );
 		expect( errorMessagesContainer.innerHTML ).toContain( 'Please enter your server password.' );
-		expect( actions.updateCredentials ).not.toBeCalled();
+		expect( actions.updateCredentials ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should update credentials (should not display error messages)', async () => {
@@ -155,7 +155,7 @@ describe( 'useWithServerCredentials HOC', () => {
 
 		expect( errorMessagesContainer ).toBeEmptyDOMElement();
 		expect( actions.updateCredentials ).toHaveBeenCalledTimes( 1 );
-		expect( actions.updateCredentials ).toBeCalledWith(
+		expect( actions.updateCredentials ).toHaveBeenCalledWith(
 			9999,
 			expect.objectContaining( {
 				role: 'main',
@@ -176,7 +176,7 @@ describe( 'useWithServerCredentials HOC', () => {
 		const deleteButton = utils.getByText( 'Delete' );
 		await userEvent.click( deleteButton );
 		expect( actions.deleteCredentials ).toHaveBeenCalledTimes( 1 );
-		expect( actions.deleteCredentials ).toBeCalledWith( 9999, 'main' );
+		expect( actions.deleteCredentials ).toHaveBeenCalledWith( 9999, 'main' );
 	} );
 
 	it( 'should toggle the advanced section', async () => {

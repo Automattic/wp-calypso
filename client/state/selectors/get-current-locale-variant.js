@@ -4,7 +4,6 @@ import 'calypso/state/ui/init';
 
 /**
  * Gets the current ui locale variant
- *
  * @param {Object} state - global redux state
  * @returns {string?} current state value
  */

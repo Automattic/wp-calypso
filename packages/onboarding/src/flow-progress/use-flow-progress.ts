@@ -5,6 +5,8 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	FREE_FLOW,
 	COPY_SITE_FLOW,
+	VIDEOPRESS_TV_FLOW,
+	VIDEOPRESS_TV_PURCHASE_FLOW,
 } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
@@ -18,7 +20,8 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	newsletter: {
 		intro: 0,
 		user: 0,
-		newsletterSetup: 1,
+		newsletterSetup: 0,
+		newsletterGoals: 1,
 		domains: 2,
 		'plans-newsletter': 3,
 		subscribers: 4,
@@ -63,6 +66,13 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		chooseADomain: 4,
 		processing: 5,
 		launchpad: 6,
+	},
+	[ VIDEOPRESS_TV_FLOW ]: {
+		intro: 0,
+		processing: 1,
+	},
+	[ VIDEOPRESS_TV_PURCHASE_FLOW ]: {
+		processing: 0,
 	},
 	sensei: {
 		senseiSetup: 1,

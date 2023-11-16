@@ -25,6 +25,7 @@ node_modules/
 packages/calypso-color-schemes/src/__color-studio
 packages/calypso-color-schemes/css
 packages/calypso-color-schemes/js
+packages/calypso-color-schemes/root-only
 
 #
 # Eslint won't lint json, but prettier shares this ignore

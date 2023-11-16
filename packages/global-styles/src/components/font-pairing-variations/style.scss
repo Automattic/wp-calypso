@@ -1,69 +1,70 @@
 .font-pairing-variations {
 	display: grid;
-	gap: 12px;
-	grid-template-columns: repeat(1, 1fr);
-	width: 100%;
+	gap: 10px 6px;
+	grid-template-columns: repeat(2, 1fr);
+	min-width: 100%;
 	box-sizing: border-box;
-	margin: 14px -2px 26px;
+	margin: 14px -2px 2px;
 
 	.global-styles-variation-container__iframe {
-		max-height: 80px;
+		max-height: 106px;
 	}
 
-	&:last-child {
-		margin-bottom: 0;
+	.global-styles-variation__item {
+		position: relative;
+		margin: 2px;
+		cursor: pointer;
+
+		&::after {
+			content: "";
+			display: block;
+			position: absolute;
+			top: -2px;
+			bottom: -2px;
+			left: -2px;
+			right: -2px;
+			border-radius: 3px;
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		&:hover,
+		&:focus-visible,
+		&.is-active {
+			&::after {
+				opacity: 1;
+			}
+		}
+
+		&.is-active {
+			&::after {
+				box-shadow: 0 0 0 2px var(--studio-gray);
+			}
+		}
+
+		&:hover,
+		&:focus-visible {
+			&::after {
+				box-shadow: 0 0 0 2px var(--color-primary-light);
+			}
+		}
+	}
+
+	.global-styles-variation__item-preview {
+		padding: 1px;
 	}
 }
 
-.global-styles-variation__title {
+.global-styles-variations__group-title {
 	display: flex;
 	color: var(--color-neutral-100);
 	font-size: $font-body-small;
 	font-weight: 500;
 	letter-spacing: -0.15px;
-	line-height: 1.4;
+	line-height: 1.7;
+	align-items: center;
 }
 
-.global-styles-variation__item {
-	position: relative;
-	margin: 2px;
-	cursor: pointer;
-
-	&::after {
-		content: "";
-		display: block;
-		position: absolute;
-		top: -2px;
-		bottom: -2px;
-		left: -2px;
-		right: -2px;
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		opacity: 0;
-		pointer-events: none;
-	}
-
-	&:hover,
-	&:focus-visible,
-	&.is-active {
-		&::after {
-			opacity: 1;
-		}
-	}
-
-	&.is-active {
-		&::after {
-			box-shadow: 0 0 0 2px var(--studio-gray);
-		}
-	}
-
-	&:hover,
-	&:focus-visible {
-		&::after {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
-	}
-}
-
-.global-styles-variation__item-preview {
-	padding: 1px;
+.global-styles-variations__group-title-actual {
+	white-space: nowrap;
 }

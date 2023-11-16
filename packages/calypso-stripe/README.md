@@ -8,17 +8,18 @@ This uses [Stripe elements](https://stripe.com/payments/elements).
 
 You'll need to wrap this context provider around any component that wishes to use `useStripe` or `withStripeProps`. It accepts the following props:
 
-- `children: JSX.Element`
+- `children: React.ReactNode`
 - `fetchStripeConfiguration: GetStripeConfiguration` A function to fetch the stripe configuration from the WP.com HTTP API.
-- `configurationArgs?: null | GetStripeConfigurationArgs` Options to pass to the fetchStripeConfiguration function, specifically `country`.
 - `locale?: string` An optional locale string used to localize error messages for the Stripe elements fields.
+- `country?: string` An optional country string used to determine which Stripe account to use. If not provided, the country will be detected based on Geo IP.
 
 ## StripeSetupIntentIdProvider
 
 You'll need to wrap this context provider around any component that wishes to use `useStripeSetupIntentId`. It accepts the following props:
 
-- `children: JSX.Element`
-- `fetchStripeConfiguration: GetStripeSetupIntentId` A function to fetch the stripe configuration from the WP.com HTTP API. It will be passed `{needs_intent: true}`.
+- `children: React.ReactNode`
+- `fetchStripeSetupIntentId: GetStripeSetupIntentId` A function to fetch the stripe setup intent from the WP.com HTTP API.
+- `isDisabled?: boolean` An option to disable the fetching of the setup intent if it is not needed.
 
 ## useStripe
 
@@ -44,3 +45,13 @@ A function that can be used to create a Stripe setup intent with a setup intent 
 ## withStripeProps
 
 A higher-order-component function for use when using `useStripe` is not possible. Provides the same data as returned by `useStripe` as props to a component.
+
+## loadStripeLibrary
+
+Loads the Stripe.js library directly.
+
+Unlike `StripeHookProvider` and `useStripe`, this does not keep any state, so try not to call it too often.
+
+This can be useful when you need a different stripe object (eg: for a different country) than the one in `StripeHookProvider`, or if you cannot easily use the provider.
+
+If `country` is provided, it will be used to determine which Stripe account to load. If `paymentPartner` is provided, it will be used instead. If neither is provided, the geolocation will be used.

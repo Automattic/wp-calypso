@@ -1,10 +1,14 @@
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
-import { SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
-import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
-import { SubscribersSortBy } from '../../constants';
+import { Option, SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
+import { useSubscribersFilterOptions } from 'calypso/landing/subscriptions/hooks';
+import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import useManySubsSite from '../../hooks/use-many-subs-site';
 import './style.scss';
 import { useRecordSort } from '../../tracks';
 
@@ -15,9 +19,23 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 
 const ListActionsBar = () => {
 	const translate = useTranslate();
-	const { handleSearch, sortTerm, setSortTerm } = useSubscriberListManager();
+	const {
+		handleSearch,
+		searchTerm,
+		pageChangeCallback,
+		sortTerm,
+		setSortTerm,
+		filterOption,
+		setFilterOption,
+		siteId,
+	} = useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
+	const { hasManySubscribers } = useManySubsSite( siteId );
+	const filterOptions = useSubscribersFilterOptions( hasManySubscribers, siteId );
+	const selectedText = translate( 'Subscribers: %s', {
+		args: getOptionLabel( filterOptions, filterOption ) || '',
+	} );
 
 	return (
 		<div className="list-actions-bar">
@@ -25,16 +43,31 @@ const ListActionsBar = () => {
 				placeholder={ translate( 'Search by name, username or email…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
 				onSearch={ handleSearch }
+				onSearchClose={ () => handleSearch( '' ) }
+				defaultValue={ searchTerm }
 			/>
 
-			<SortControls
-				options={ sortOptions }
-				value={ sortTerm }
-				onChange={ ( term ) => {
-					setSortTerm( term );
-					recordSort( { sort_field: term } );
+			<SelectDropdown
+				className="subscribers__filter-control"
+				options={ filterOptions }
+				onSelect={ ( selectedOption: Option< SubscribersFilterBy > ) => {
+					setFilterOption( selectedOption.value );
+					pageChangeCallback( 1 );
 				} }
+				selectedText={ selectedText }
+				initialSelected={ filterOption }
 			/>
+
+			{ ! hasManySubscribers && (
+				<SortControls
+					options={ sortOptions }
+					value={ sortTerm }
+					onChange={ ( term ) => {
+						setSortTerm( term );
+						recordSort( { sort_field: term } );
+					} }
+				/>
+			) }
 		</div>
 	);
 };

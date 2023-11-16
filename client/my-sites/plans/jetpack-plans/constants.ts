@@ -18,13 +18,10 @@ import {
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
-	PLAN_JETPACK_STARTER_YEARLY,
-	PLAN_JETPACK_STARTER_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
@@ -41,10 +38,11 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	JETPACK_VIDEOPRESS_PRODUCTS,
-	JETPACK_STARTER_PLANS,
 	JETPACK_SECURITY_T1_PLANS,
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
@@ -160,13 +158,66 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct >
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
 };
 
+// Jetpack Stats
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct => ( {
+	type: ITEM_TYPE_PRODUCT,
+	iconSlug: 'jetpack_stats',
+	tagline: translate( 'Simple, yet powerful analytics' ),
+	description: translate(
+		'With Jetpack Stats, you don’t need to be a data scientist to see how your site is performing.'
+	),
+	shortDescription: translate( 'Simple, yet powerful stats to grow your site.' ),
+	buttonLabel: translate( 'Get Stats' ),
+	features: {
+		items: [],
+	},
+	hidePrice: true,
+
+	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
+	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
+	displayName: translate( 'Stats (Personal)' ),
+	shortName: translate( 'Stats (Personal)' ),
+	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	term: TERM_ANNUALLY,
+
+	// Set the price directly with the translated string.
+	displayPriceText: translate( 'Varies', {
+		comment:
+			'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+	} ),
+
+	moreAboutUrl: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing',
+	indirectCheckoutUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
+} );
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
+	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
+	displayName: translate( 'Stats (Free)' ),
+	shortName: translate( 'Stats (Free)' ),
+	productSlug: PRODUCT_JETPACK_STATS_FREE,
+	costProductSlug: PRODUCT_JETPACK_STATS_FREE,
+	isFree: true,
+} );
+
+// List of products showcased in the Plans grid but not sold via checkout URL directly.
+export const INDIRECT_CHECKOUT_PRODUCTS_LIST = [
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
+];
+
+// Indirect checkout Product slugs to SelectorProduct.
+export const INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct > = {
+	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY,
+	[ PRODUCT_JETPACK_STATS_FREE ]: INDIRECT_CHECKOUT_PRODUCT_STATS_FREE,
+};
+
 /**
  * Constants that contain products including option and regular types.
  */
 
 export const SELECTOR_PLANS = [
-	PLAN_JETPACK_STARTER_YEARLY,
-	PLAN_JETPACK_STARTER_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
@@ -199,7 +250,6 @@ export const PRODUCT_UPSELLS_BY_FEATURE: Record< string, JetpackPlanSlug > = {
  * Matrix of products upsold in the purchase flow, in between the pricing and checkout pages.
  */
 export const PURCHASE_FLOW_UPSELLS_MATRIX: Record< string, JetpackPurchasableItemSlug > = {
-	[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: PLAN_JETPACK_STARTER_YEARLY,
 	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: PLAN_JETPACK_SECURITY_T1_YEARLY,
 	[ PRODUCT_JETPACK_SCAN ]: PLAN_JETPACK_SECURITY_T1_YEARLY,
 	[ PRODUCT_JETPACK_ANTI_SPAM ]: PLAN_JETPACK_SECURITY_T1_YEARLY,
@@ -256,7 +306,6 @@ export const MOST_POPULAR_PRODUCTS = [
 ];
 
 export const MOST_POPULAR_BUNDLES = [
-	...JETPACK_STARTER_PLANS,
 	...JETPACK_SECURITY_T1_PLANS,
 	...JETPACK_SECURITY_T2_PLANS,
 	...JETPACK_COMPLETE_PLANS,

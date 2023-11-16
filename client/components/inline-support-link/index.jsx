@@ -1,21 +1,18 @@
 import { Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { dispatch as dataStoreDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import { withRouteModal } from 'calypso/lib/route-modal';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
-import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 class InlineSupportLink extends Component {
 	state = {
@@ -35,7 +32,6 @@ class InlineSupportLink extends Component {
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
-		routeModalData: PropTypes.object,
 		showSupportModal: PropTypes.bool,
 		noWrap: PropTypes.bool,
 	};
@@ -66,14 +62,11 @@ class InlineSupportLink extends Component {
 
 	onSupportLinkClick( event, supportPostId, url ) {
 		const { showSupportModal, openDialog } = this.props;
-
 		if ( ! showSupportModal ) {
 			return;
 		}
 
-		const openDialogReturn = openDialog( event, supportPostId, url );
-		this.props.routeModalData.openModal( supportPostId );
-		return openDialogReturn;
+		openDialog( event, supportPostId, url );
 	}
 
 	render() {
@@ -149,24 +142,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
 			];
 			if ( analyticsEvents.length > 0 ) {
-				return dispatch(
-					withAnalytics(
-						composeAnalytics( ...analyticsEvents ),
-						openSupportArticleDialog( { postId: supportPostId, postUrl: supportLink } )
-					)
-				);
+				dispatch( composeAnalytics( ...analyticsEvents ) );
 			}
-			return dispatch(
-				openSupportArticleDialog( {
-					postId: supportPostId,
-					postUrl: supportLink,
-				} )
-			);
+
+			dataStoreDispatch( HELP_CENTER_STORE ).setShowSupportDoc( supportLink, supportPostId );
 		},
 	};
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( withRouteModal( 'support-article' )( InlineSupportLink ) ) );
+export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );

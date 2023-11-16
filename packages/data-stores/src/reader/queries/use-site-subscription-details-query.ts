@@ -1,22 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
-import { callApi } from '../helpers';
-import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
+import { buildQueryKey, callApi } from '../helpers';
+import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscriptionDetailsResponse } from '../types';
 
-const useSiteSubscriptionDetailsQuery = ( siteId: string ) => {
-	const { isLoggedIn } = useIsLoggedIn();
+const useSiteSubscriptionDetailsQuery = ( blogId = '', subscriptionId = '' ) => {
+	const { id, isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
-	const cacheKey = useCacheKey( [ 'read', 'site-subscription-details', siteId ] );
+
 	return useQuery( {
-		queryKey: cacheKey,
+		queryKey: buildQueryKey(
+			[ 'read', 'site-subscription-details', blogId, subscriptionId ],
+			isLoggedIn,
+			id
+		),
 		queryFn: async () => {
-			const subscriptionDetails = await callApi< SiteSubscriptionDetailsResponse >( {
-				path: '/read/sites/' + siteId + '/subscription-details',
+			return callApi< SiteSubscriptionDetailsResponse< string > >( {
+				path: blogId
+					? '/read/sites/' + blogId + '/subscription-details'
+					: '/read/subscriptions/' + subscriptionId,
 				isLoggedIn,
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 			} );
-			return subscriptionDetails;
 		},
 		enabled,
 		refetchOnWindowFocus: false,

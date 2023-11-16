@@ -10,6 +10,7 @@ import {
 	FREE_FLOW,
 	isFreeFlow,
 } from './utils';
+import type { ActiveTheme } from '@automattic/data-stores';
 
 const ONBOARD_STORE = Onboard.register();
 // `client_id` and `client_secret` are only needed when signing up users.
@@ -70,8 +71,20 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
 				settings.site_intent = isLinkInBioFlow( flowName ) ? LINK_IN_BIO_FLOW : FREE_FLOW;
 				if ( selectedDesign && selectedDesign.is_virtual ) {
-					const { applyThemeWithPatterns } = dispatch( SITE_STORE ) as SiteActions;
-					promises.push( applyThemeWithPatterns( String( siteId ), selectedDesign ) );
+					const { assembleSite } = dispatch( SITE_STORE ) as SiteActions;
+					promises.push(
+						wpcomRequest< ActiveTheme[] >( {
+							path: `/sites/${ encodeURIComponent( siteId ) }/themes?status=active`,
+							apiNamespace: 'wp/v2',
+						} ).then( ( activeThemes ) => {
+							assembleSite( String( siteId ), activeThemes[ 0 ].stylesheet, {
+								homeHtml: selectedDesign.recipe?.pattern_html,
+								headerHtml: selectedDesign.recipe?.header_html,
+								footerHtml: selectedDesign.recipe?.footer_html,
+								siteSetupOption: 'assembler-virtual-theme',
+							} );
+						} )
+					);
 				}
 			} else {
 				settings.site_intent = flowName;

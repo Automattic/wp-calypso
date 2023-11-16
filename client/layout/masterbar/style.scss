@@ -9,10 +9,15 @@ $masterbar-color-secondary: #101517;
 @import "calypso/assets/stylesheets/shared/animation";
 
 // Hide the masterbar on WP Mobile App views.
-.is-mobile-app-view {
+body.is-mobile-app-view {
 	.masterbar {
 		display: none;
 	}
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-checkout-height: 0px;
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 }
 
 // The WordPress.com Masterbar
@@ -42,12 +47,44 @@ $masterbar-color-secondary: #101517;
 		border-bottom: 1px solid var(--studio-orange-60);
 	}
 
+	&.masterbar__loggedout {
+		padding-top: 10px;
+		padding-bottom: 40px;
+
+		.masterbar__item:hover {
+			background: transparent;
+			text-decoration: underline;
+		}
+		.masterbar__item:last-child {
+			margin-left: 6px;
+			margin-right: 12px;
+			background-color: #fff;
+			border-radius: 2px;
+
+			.masterbar__item-content {
+				font-weight: 600;
+				color: var(--color-sidebar-text);
+			}
+		}
+		.masterbar__item:last-child:hover {
+			background: #fff;
+			text-decoration: none;
+		}
+		.masterbar__item:last-child:hover .masterbar__item-content {
+			color: var(--color-sidebar-text);
+		}
+	}
+
 	&.masterbar--is-checkout {
 		background-color: var(--studio-white);
 		border-bottom: none 0;
 		color: var(--color-checkout-masterbar-text);
-		height: var(--masterbar-checkout-height);
+		height: var(--masterbar-height);
 		position: absolute;
+
+		@include break-mobile {
+			height: var(--masterbar-checkout-height);
+		}
 
 		@include breakpoint-deprecated( ">960px" ) {
 			background-color: var(--color-checkout-masterbar-background);
@@ -204,8 +241,12 @@ $masterbar-color-secondary: #101517;
 	justify-content: center;
 
 	.masterbar--is-checkout & {
-		height: var(--masterbar-checkout-height);
-		line-height: var(--masterbar-checkout-height);
+		height: var(--masterbar-height);
+		line-height: var(--masterbar-height);
+		@include break-mobile {
+			height: var(--masterbar-checkout-height);
+			line-height: var(--masterbar-checkout-height);
+		}
 	}
 
 	&:visited {
@@ -371,6 +412,10 @@ $masterbar-color-secondary: #101517;
 	flex: 0 0 auto;
 	padding-left: 0;
 	text-transform: uppercase;
+
+	@include breakpoint-deprecated( "<480px" ) {
+		display: none;
+	}
 
 	.masterbar__item-content {
 		display: block;
@@ -589,8 +634,10 @@ $masterbar-color-secondary: #101517;
 		padding-left: 0;
 	}
 
-	.masterbar__item:last-child {
-		padding-right: 20px;
+	@include breakpoint-deprecated( ">480px" ) {
+		.masterbar__item:last-child {
+			margin-right: 20px;
+		}
 	}
 }
 
@@ -727,11 +774,11 @@ $masterbar-color-secondary: #101517;
 	.notifications-bell-icon__bubble {
 		animation: bubble-unread-indication 0.5s linear both;
 		transition: all 150ms ease-in;
-		transform-origin: 20px 4px;
+		transform-origin: 8px 4px;
 
 		use {
 			transition: all 150ms ease-in;
-			transform-origin: 20px 4px;
+			transform-origin: 8px 4px;
 		}
 	}
 
@@ -785,7 +832,6 @@ $masterbar-color-secondary: #101517;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	// stylelint-disable-next-line scales/radii
 	border-radius: 0 0 3px 3px;
 
 	.count {
@@ -859,6 +905,16 @@ a.masterbar__quick-language-switcher {
 		margin: 0 5px;
 	}
 
+	.masterbar__close-button {
+		flex: initial;
+		width: initial;
+		margin-right: 10px;
+
+		@include break-mobile {
+			margin-right: 0;
+		}
+	}
+
 	.masterbar__secure-checkout-text {
 		color: var(--color-checkout-masterbar-text);
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -885,21 +941,8 @@ a.masterbar__quick-language-switcher {
 .masterbar__item-help {
 	padding: 0 11px;
 
-	.masterbar--is-checkout & {
-		padding: 0 24px;
-
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
-	}
-
 	svg {
 		fill: var(--color-masterbar-text);
-
-		.masterbar--is-checkout & {
-			fill: var(--color-checkout-masterbar-text);
-			margin-right: 6px;
-		}
 	}
 }
 

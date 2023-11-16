@@ -8,15 +8,14 @@ const debug = debugFactory( 'calypso:url-search' );
  * Function for constructing the url to page to. Here are some examples:
  * 1. { uri: 'google.com', search:'hello' } --> 'https://google.com/?s=hello'
  * 2. {
- *     uri: 'wordpress.com/read/search?q=reader+is+awesome',
- *     search: 'reader is super awesome'
- *     queryKey: 'q',
- *    } --> result.searchParams.get( 'q' ) === 'reader is super awesome'
- *
+ * uri: 'wordpress.com/read/search?q=reader+is+awesome',
+ * search: 'reader is super awesome'
+ * queryKey: 'q',
+ * } --> result.searchParams.get( 'q' ) === 'reader is super awesome'
  * @param {Object} options the options object
  * @param {string} options.uri the base uri to modify and add a query to
  * @param {string} options.search the search term
- * @param {string} [options.queryKey = s] the key to place in the url.  defaults to s
+ * @param {string} [options.queryKey] the key to place in the url.  defaults to s
  * @returns {URL} The built search url
  */
 export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {

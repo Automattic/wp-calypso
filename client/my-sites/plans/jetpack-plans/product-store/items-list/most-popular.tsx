@@ -78,7 +78,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 					const moreInfoLink = ! hideMoreInfoLink ? (
 						<MoreInfoLink
 							item={ item }
-							isExternal={ isExternal }
+							isLinkExternal={ isExternal }
 							onClick={ onClickMoreInfoFactory( item ) }
 						/>
 					) : null;

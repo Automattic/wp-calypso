@@ -2,23 +2,35 @@ import Banner from 'calypso/components/banner';
 import './survey.scss';
 
 interface Props {
+	eventName?: string;
+	eventUrl?: string;
+	title?: string | React.ReactNode;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
 }
 
-const Survey = ( { setSurveyDismissed }: Props ) => {
+const Survey = ( { eventName, eventUrl, title, setSurveyDismissed }: Props ) => {
+	if ( ! eventUrl ) {
+		return null;
+	}
+
 	return (
 		<Banner
 			className="pattern-assembler__survey"
-			// Translation to other locales is not required
 			title={
-				<>
-					<a href="https://lucasmdo.survey.fm/assembler-survey-modal" target="blank">
-						Fill out this quick survey
-					</a>{ ' ' }
-					and help us to improve our product.
-				</>
+				title ? (
+					title
+				) : (
+					// Translation to other locales is not required
+					<>
+						We’d love to hear your thoughts. Fill out this{ ' ' }
+						<a href={ eventUrl } target="blank">
+							quick survey
+						</a>{ ' ' }
+						on your onboarding experience.
+					</>
+				)
 			}
-			event="assembler-june-2023"
+			event={ eventName }
 			onDismiss={ ( e: Event ) => {
 				e.stopPropagation();
 				setSurveyDismissed( true );

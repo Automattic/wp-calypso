@@ -1,5 +1,5 @@
 import { AnyAction } from 'redux';
-import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import formatApiPartner from 'calypso/jetpack-cloud/sections/partner-portal/lib/format-api-partner';
 import { JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';

@@ -1,0 +1,481 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+
+.domain-transfer {
+	height: 100%;
+	padding: 60px 0 0;
+	margin: 0 auto;
+	max-width: 1024px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 30px;
+
+	button:disabled {
+		pointer-events: none;
+	}
+
+	.is-invisible-field {
+		visibility: hidden;
+		// On mobile, display:none, keeps the layout without breaking it
+		@media (max-width: $break-mobile ) {
+			display: none;
+		}
+	}
+
+	.components-button:focus:not(:disabled) {
+		border: 0;
+		outline: none;
+		box-shadow: unset;
+	}
+
+	.components-button:active:not(:disabled) {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+		outline: 3px solid transparent;
+	}
+
+	&.domains {
+		padding: 0;
+		width: 754px;
+
+		.step-container__header {
+			margin-top: 96px;
+
+			.formatted-header__title {
+				font-size: 2.75rem;
+			}
+
+			.formatted-header__subtitle {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				margin-top: 16px;
+				line-height: 20px;
+			}
+		}
+
+		.step-container__navigation.action-buttons {
+			position: absolute;
+			top: 8px;
+			inset-inline-start: 72px;
+			inset-inline-end: 24px;
+			padding: 1px 0 0;
+			background-color: transparent;
+			border: none;
+			box-shadow: none;
+		}
+
+		@media (min-width: $break-medium ) {
+			.formatted-header .formatted-header__subtitle {
+				text-align: center;
+			}
+		}
+
+		@media (max-width: $break-medium ) {
+			.step-container__header {
+				width: 100%;
+				margin-top: 48px;
+
+				.formatted-header__title {
+					font-size: 2rem;
+					text-align: left;
+				}
+			}
+
+			gap: 0;
+			justify-content: flex-start;
+			margin-top: 24px;
+			width: 100%;
+		}
+	}
+
+	&.step-container {
+		@media (max-width: $break-medium ) {
+			padding: 0 20px;
+		}
+
+		.step-container__jetpack-powered {
+			padding-top: 65px;
+			padding-bottom: 56px;
+			margin: 0;
+
+			@media (min-width: $break-large ) {
+				margin-top: auto;
+			}
+
+			@media (max-width: $break-large ) {
+				padding-bottom: 32px;
+			}
+		}
+	}
+
+
+	.domains .step-container__content {
+		flex-shrink: 0;
+		width: 100%;
+
+		@media (max-width: $break-medium ) {
+			min-height: auto;
+		}
+	}
+
+	.signup-header {
+		z-index: 1;
+
+		h1 {
+			display: none;
+		}
+	}
+
+	.domains__domain-info {
+		display: flex;
+		gap: 20px;
+		align-items: flex-end;
+		flex-wrap: nowrap;
+
+		@media (max-width: $break-medium ) {
+			align-items: normal;
+			flex-direction: column;
+			flex-wrap: wrap;
+		}
+
+		.form-fieldset {
+			margin-bottom: 0;
+		}
+
+		.form-setting-explanation {
+			margin-top: 0;
+		}
+	}
+
+	.domains__domain-validation {
+		&.is-mobile {
+			display: none;
+			margin-top: 5px;
+		}
+
+		&.is-desktop {
+			display: block;
+		}
+
+		button {
+			padding: 0 5px;
+			text-decoration: underline;
+		}
+
+		.validation-actions {
+			margin-left: 5px;
+			@media (max-width: $break-medium ) {
+				display: block;
+				margin-left: 0;
+			}
+			.components-button:has(.delete-label),
+			.components-button:has(.refresh-label),
+			.components-button:has(.unlock-label), {
+				color: var(--studio-gray-100, #101517);
+				text-decoration-color: var(--studio-gray-100, #101517);
+				@media (max-width: $break-medium ) {
+					&.is-first-row {
+						margin-left: 0;
+					}
+				}
+			}
+		}
+		.is-muted.is-checking-domain {
+			@keyframes animate-dots {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			span::after {
+				content: "..";
+				animation: animate-dots 1.5s infinite;
+			}
+		}
+
+		@media (max-width: $break-medium ) {
+			margin-top: 0;
+
+			&.is-mobile {
+				display: block;
+			}
+
+			&.is-desktop {
+				display: none;
+			}
+		}
+	}
+
+	.domains__domain-domain {
+		flex: 0 0 420px;
+	}
+
+	.domains__domain-key {
+		flex: 0 0 240px;
+
+		.info-popover,
+		.google-domains-transfer-instructions__button {
+			color: var(--color-text-subtle);
+			margin-left: 5px;
+			padding: 2px;
+
+			&:focus {
+				outline: 1px solid var(--studio-blue-50);
+			}
+		}
+	}
+
+	.domains__domain-domain,
+	.domains__domain-key {
+		@media (max-width: $break-medium ) {
+			flex: 1;
+		}
+
+		.form-text-input::placeholder {
+			color: var(--gray-gray-20, #a7aaad) !important;
+			font-size: 0.875rem;
+		}
+	}
+
+	.domains__domain-price {
+		flex: 1;
+
+		.domains__domain-price-number {
+			align-items: center;
+			font-weight: 500;
+			line-height: 24px;
+
+			@media (max-width: $break-medium ) {
+				align-items: flex-start;
+			}
+
+			&.raw-price {
+				color: var(--studio-gray-40);
+				font-size: 0.75rem;
+				font-weight: 400;
+				line-height: 20px;
+				margin-left: 4px;
+				text-decoration-line: line-through;
+			}
+
+			&.disabled {
+				color: var(--studio-gray-5);
+			}
+		}
+
+		.domains__domain-price-value {
+			align-items: flex-start;
+			flex-direction: column;
+			justify-content: center;
+
+			.domains__domain-price-text {
+				color: var(--studio-green-50);
+				font-size: 0.75rem;
+				font-weight: 500;
+				line-height: 16px;
+			}
+		}
+	}
+
+	.domains__domain-domain,
+	.domains__domain-key,
+	.domains__domain-price {
+
+		// Show the titles on mobile and hide on desktop (except for the first one)
+		.form-label,
+		.info-popover {
+			display: none;
+		}
+
+		.form-label {
+			font-size: 0.875rem;
+			font-weight: 400;
+
+
+			&.is-first-row {
+				display: inline-block;
+				white-space: nowrap;
+				line-height: 24px;
+			}
+
+			@media (max-width: $break-medium ) {
+				display: block;
+			}
+		}
+
+		.info-popover.is-first-row,
+		.google-domains-transfer-instructions__button.is-first-row {
+			display: inline-block;
+
+			@media (max-width: $break-mobile ) {
+				margin-left: 3px;
+			}
+
+			svg {
+				margin-bottom: -4px;
+			}
+		}
+
+		.form-fieldset {
+			position: relative;
+
+			div {
+				height: 40px;
+				display: flex;
+			}
+
+			input {
+				padding-right: 30px;
+				text-overflow: ellipsis;
+			}
+
+			.domains__domain-input-icon-container {
+				position: absolute;
+				right: 5px;
+				width: 24px;
+				height: 24px;
+				bottom: 8px;
+
+				.domains__domain-input-icon {
+					&.is-valid {
+						fill: #008a20;
+					}
+
+					&.is-not-valid {
+						fill: #d63638;
+					}
+				}
+			}
+		}
+
+		label {
+			color: var(--gray-gray-60, #50575e);
+			font-size: 1rem;
+			font-weight: 500;
+		}
+	}
+
+	.bulk-domain-transfer__container {
+
+		.bulk-domain-transfer__add-domain {
+			padding-left: 0;
+			font-size: 0.875rem;
+			font-weight: 500;
+			color: #0675c4;
+			margin-bottom: 22px;
+			margin-top: 2px;
+			overflow: hidden;
+
+			&:hover {
+				text-decoration: underline;
+			}
+
+			svg {
+				margin-left: -6px;
+				margin-right: 0;
+			}
+		}
+
+		.bulk-domain-transfer__faqs {
+			.foldable-faq__question {
+				padding: 16px 0;
+			}
+			.foldable-faq__question-text {
+				font-size: 1rem;
+			}
+			h2 {
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+				font-size: 2rem;
+				margin: 24px 0;
+				text-align: center;
+			}
+			li {
+				font-size: 1rem;
+			}
+			section {
+				margin-top: 120px;
+			}
+			ul {
+				list-style: none;
+				margin: 0 0 48px 0;
+			}
+		}
+
+		.bulk-domain-transfer__import-dns-records {
+			text-align: center;
+
+			.form-checkbox {
+				float: none;
+			}
+
+			.form-label {
+				display: inline;
+			}
+
+			.form-checkbox + span {
+				display: inline;
+				margin-left: 0.5rem;
+				vertical-align: middle;
+			}
+
+			@media (max-width: $break-medium ) {
+				margin-bottom: 50px;
+			}
+		}
+	}
+
+	.domains__domain-info-and-validation {
+		margin-bottom: 20px;
+
+		@media (max-width: $break-medium ) {
+			margin-bottom: 32px;
+
+			&:not(:first-of-type) {
+				border-top: solid 1px var(--studio-gray-5);
+				padding-top: 32px;
+			}
+		}
+
+		.form-input-validation {
+			margin-top: 5px;
+			padding: 0;
+
+			// remove icon
+			svg {
+				display: none;
+			}
+
+			a {
+				text-decoration: underline;
+			}
+
+			// Remove left-padding for first button to minimize padding when line wraps on mobile.
+			button:first-of-type {
+				padding-left: 0;
+			}
+		}
+
+		&.en,
+		&.en-gb {
+			.domains__domain-price-text {
+				white-space: nowrap;
+			}
+		}
+	}
+
+	p.loading-placeholder {
+		width: 300px;
+		@include placeholder();
+	}
+
+	button.loading-placeholder {
+		width: 150px;
+		@include placeholder();
+	}
+}

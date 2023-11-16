@@ -116,7 +116,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 
 	/**
 	 * Returns the localized duration of a task in given minutes.
-	 *
 	 * @param  minutes Number of minutes.
 	 * @returns Localized duration.
 	 */
@@ -346,27 +345,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							tourId: 'jetpackSiteAccelerator',
 						} ) }
 						title={ translate( 'Site Accelerator' ) }
-					/>
-
-					<Task
-						id={ CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES }
-						completed={ this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES ) }
-						completedButtonText={ translate( 'Upload images' ) }
-						completedTitle={ translate( 'Lazy load images is improving your site speed.' ) }
-						description={ translate(
-							"Improve your site's speed by only loading images when visible on the screen."
-						) }
-						duration={ this.getDuration( 1 ) }
-						href={
-							this.isComplete( CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES )
-								? `/media/${ siteSlug }`
-								: `/settings/performance/${ siteSlug }`
-						}
-						onClick={ this.handleTaskStart( {
-							taskId: CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES,
-							tourId: 'jetpackLazyImages',
-						} ) }
-						title={ translate( 'Lazy Load Images' ) }
 					/>
 
 					{ hasVideoHosting && (

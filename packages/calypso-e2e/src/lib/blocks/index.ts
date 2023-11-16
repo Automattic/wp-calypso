@@ -8,6 +8,8 @@ export * from './audio-block';
 export * from './file-block';
 export * from './logos-block';
 export * from './paragraph-block';
+export * from './videopress-block';
+export * from './story-block';
 
 export * from './block-flows';
 export * from './block-object-models';

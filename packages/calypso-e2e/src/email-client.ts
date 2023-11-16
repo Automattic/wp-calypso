@@ -1,5 +1,6 @@
 import MailosaurClient from 'mailosaur';
 import { SecretsManager } from './secrets';
+import { envVariables } from '.';
 import type { Message, Link } from 'mailosaur/lib/models';
 
 /**
@@ -15,6 +16,15 @@ export class EmailClient {
 	constructor() {
 		this.client = new MailosaurClient( SecretsManager.secrets.mailosaur.apiKey );
 		this.startTimestamp = new Date();
+	}
+
+	/**
+	 * Returns a test email address.
+	 *
+	 * @param {string} inboxId Inbox ID to use for the test email address.
+	 */
+	getTestEmailAddress( inboxId: string ) {
+		return this.client.servers.generateEmailAddress( inboxId );
 	}
 
 	/**
@@ -84,6 +94,62 @@ export class EmailClient {
 			}
 		}
 		return Array.from( results );
+	}
+
+	/**
+	 * Given an email message and a key, returns a URL if the link text
+	 * matches the key.
+	 *
+	 * If no matching links are found, this method returns `null`.
+	 *
+	 * If the email message is not valid HTML, this method throws.
+	 *
+	 * @param {Message} message Representing the message.
+	 * @param {string} key Link text.
+	 * @returns {string|null} If a link text matching the supplied key is found
+	 * 	the link URL is returned. Otherwise, returns null.
+	 * @throws {Error} If the message is not valid HTML.
+	 */
+	getLinkFromMessageByKey( message: Message, key: string ): string | null {
+		if ( ! message.html ) {
+			throw new Error( 'Message did not contain a body.' );
+		}
+
+		const links = message.html.links as Link[];
+
+		for ( const link of links ) {
+			if ( link.text && link.text.trim().includes( key.trim() ) ) {
+				return link.href as string;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Specialized method to return human-friendly magic login link.
+	 *
+	 * Also performs normalization of the link.
+	 * (eg. target calypso.live if run from that environment.)
+	 *
+	 * @param {Message} message Representing the message.
+	 * @returns {URL} URL object for the magic link.
+	 * @throws {Error} IF the message did not have any links.
+	 */
+	getMagicLink( message: Message ): URL {
+		const link = message.text?.links?.pop();
+
+		if ( ! link ) {
+			throw new Error( 'Message did not contain text links. ' );
+		}
+
+		const magicLinkURL = new URL( link?.href as string );
+		const baseURL = new URL( envVariables.CALYPSO_BASE_URL );
+
+		// Returns a new URL object with normalized magic link.
+		// Useful when running tests against environments other than the default
+		// CALYPSO_BASE_URL.
+		// Example: https://wordpress.com -> https://container-something.calypso.live.
+		return new URL( magicLinkURL.pathname + magicLinkURL.search, baseURL.origin );
 	}
 
 	/**

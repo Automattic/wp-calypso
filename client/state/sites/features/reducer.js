@@ -14,7 +14,6 @@ export const initialSiteState = {
 
 /**
  * Returns a new state with the given attributes updated for the specified site.
- *
  * @param {Object} state current state
  * @param {number} siteId identifier of the site
  * @param {Object} attributes list of attributes and their values
@@ -28,7 +27,6 @@ function updateSiteState( state, siteId, attributes ) {
 
 /**
  * Given an object of features keyed by siteId, updates all features at once.
- *
  * @param {Object} state The current features state
  * @param {Object} features An object containing feature arrays keyed by siteId
  * @returns The new state

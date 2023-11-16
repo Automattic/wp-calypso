@@ -5,7 +5,7 @@ const useRecordPostEmailsToggle = () => {
 	const recordPostEmailsToggle = (
 		enabled: boolean,
 		tracksProps: {
-			blog_id: string;
+			blog_id: string | null;
 		}
 	) => {
 		if ( enabled ) {

@@ -12,7 +12,6 @@ import { requestTheme, activate } from 'calypso/state/themes/actions';
  * user before activating).
  * Generally it's not needed if you're already on the theme showcase, but if you're
  * somewhere else on the site, the data might not be available.
- *
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'

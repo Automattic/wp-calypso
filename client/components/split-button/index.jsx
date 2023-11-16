@@ -86,6 +86,8 @@ class SplitButton extends PureComponent {
 			className,
 			popoverClassName,
 			whiteSeparator,
+			toggleIcon = 'chevron-down',
+			popoverContext,
 		} = this.props;
 		const { isMenuVisible } = this.state;
 		const toggleClasses = classNames( 'split-button__toggle', {
@@ -101,37 +103,41 @@ class SplitButton extends PureComponent {
 		const isEmptyOnClick = this.props.onClick === noop;
 		const onClick = isEmptyOnClick ? undefined : this.handleMainClick;
 
+		const popoverContextRef = popoverContext ?? this.popoverContext;
+
 		return (
 			<span className={ classes }>
+				{ ( icon || label ) && (
+					<Button
+						compact={ compact }
+						primary={ primary }
+						scary={ scary }
+						disabled={ disabled || disableMain }
+						className="split-button__main"
+						onClick={ onClick }
+						href={ this.props.href }
+					>
+						{ icon && <Gridicon icon={ icon } /> }
+						{ label }
+					</Button>
+				) }
 				<Button
 					compact={ compact }
 					primary={ primary }
 					scary={ scary }
-					disabled={ disabled || disableMain }
-					className="split-button__main"
-					onClick={ onClick }
-					href={ this.props.href }
-				>
-					{ icon && <Gridicon icon={ icon } /> }
-					{ label }
-				</Button>
-				<Button
-					compact={ compact }
-					primary={ primary }
-					scary={ scary }
-					ref={ this.popoverContext }
+					ref={ popoverContextRef }
 					onClick={ this.handleMenuClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					disabled={ disabled || disableMenu }
 					className={ toggleClasses }
 				>
-					<Gridicon icon="chevron-down" className="split-button__toggle-icon" />
+					<Gridicon icon={ toggleIcon } className="split-button__toggle-icon" />
 				</Button>
 				<PopoverMenu
 					isVisible={ isMenuVisible }
 					onClose={ this.hideMenu }
 					position={ position }
-					context={ this.popoverContext.current }
+					context={ popoverContextRef.current }
 					className={ popoverClasses }
 				>
 					{ children }

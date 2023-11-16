@@ -74,11 +74,20 @@ const makeSelectorFromArray =
  * @param getCacheKey   Function generating cache key
  * @returns Memoized selector
  */
-export default function createSelector< TState, TProps extends any[], TDerivedState >(
+export default function createSelector<
+	TState,
+	TProps extends any[],
+	// Note: TDepProps is only necessary because TS will attempt to infer TProps
+	// from getDependants instead of selector, which causes issues when getDependants
+	// only uses state, not props.
+	// See https://github.com/Automattic/wp-calypso/pull/74540#issuecomment-1650834391
+	TDepProps extends TProps,
+	TDerivedState,
+>(
 	selector: ( state: TState, ...props: TProps ) => TDerivedState,
 	getDependants:
-		| Dependant< TState, TProps, any >
-		| Dependant< TState, TProps, any >[] = DEFAULT_GET_DEPENDANTS,
+		| Dependant< TState, TDepProps, any >
+		| Dependant< TState, TDepProps, any >[] = DEFAULT_GET_DEPENDANTS,
 	getCacheKey: ( state: TState, ...props: TProps ) => string = DEFAULT_GET_CACHE_KEY
 ): ( state: TState, ...props: TProps ) => TDerivedState {
 	const memoizedSelector = memoize( selector, getCacheKey );
@@ -89,7 +98,7 @@ export default function createSelector< TState, TProps extends any[], TDerivedSt
 
 	return Object.assign(
 		function ( state: TState, ...args: TProps ) {
-			let currentDependants = getDependantsFn( state, ...args );
+			let currentDependants = getDependantsFn( state, ...( args as TDepProps ) );
 			if ( ! Array.isArray( currentDependants ) ) {
 				currentDependants = [ currentDependants ];
 			}

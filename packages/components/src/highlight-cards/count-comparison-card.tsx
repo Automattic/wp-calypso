@@ -11,6 +11,8 @@ type CountComparisonCardProps = {
 	onClick?: ( event: MouseEvent ) => void;
 	previousCount?: number | null;
 	showValueTooltip?: boolean | null;
+	note?: string;
+	compact?: boolean;
 };
 
 function subtract( a: number | null, b: number | null | undefined ): number | null {
@@ -36,6 +38,8 @@ export default function CountComparisonCard( {
 	icon,
 	heading,
 	showValueTooltip,
+	note = '',
+	compact = false,
 }: CountComparisonCardProps ) {
 	const difference = subtract( count, previousCount );
 	const differenceMagnitude = Math.abs( difference as number );
@@ -46,7 +50,7 @@ export default function CountComparisonCard( {
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 
 	return (
-		<Card className="highlight-card">
+		<Card className="highlight-card" compact={ compact }>
 			{ icon && <div className="highlight-card-icon">{ icon }</div> }
 			{ heading && <div className="highlight-card-heading">{ heading }</div> }
 			<div
@@ -100,6 +104,7 @@ export default function CountComparisonCard( {
 							</span>
 							<span>{ formattedNumber( count ) }</span>
 						</div>
+						{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
 					</Popover>
 				) }
 			</div>

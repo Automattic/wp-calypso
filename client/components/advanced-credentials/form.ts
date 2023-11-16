@@ -1,5 +1,6 @@
 import { TranslateResult, translate } from 'i18n-calypso';
 import { filePathValidator } from 'calypso/lib/validation';
+import { checkHostInput } from './utils';
 
 export enum FormMode {
 	Password,
@@ -26,6 +27,7 @@ export interface FormState {
 	path: string;
 	kpri: string;
 	role: string;
+	save_as_staging: boolean;
 }
 
 export const INITIAL_FORM_STATE: FormState = {
@@ -38,6 +40,7 @@ export const INITIAL_FORM_STATE: FormState = {
 	kpri: '',
 	site_url: '',
 	role: 'main',
+	save_as_staging: false,
 };
 
 export interface FormInteractions {
@@ -49,6 +52,7 @@ export interface FormInteractions {
 	kpri: boolean;
 	site_url: boolean;
 	role: boolean;
+	save_as_staging: boolean;
 }
 
 export const INITIAL_FORM_INTERACTION: FormInteractions = {
@@ -60,6 +64,7 @@ export const INITIAL_FORM_INTERACTION: FormInteractions = {
 	kpri: false,
 	site_url: false,
 	role: false,
+	save_as_staging: false,
 };
 
 interface Error {
@@ -104,7 +109,7 @@ export const validate = ( formState: FormState, mode: FormMode ): FormErrors => 
 		};
 	}
 	// host checking
-	if ( ! formState.host ) {
+	if ( ! formState.host || ! checkHostInput( formState.host ) ) {
 		formErrors.host = {
 			message: translate( 'Please enter a valid server address.' ),
 			waitForInteraction: true,

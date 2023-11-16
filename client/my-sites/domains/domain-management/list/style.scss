@@ -1,13 +1,15 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .breadcrumbs {
 	svg.options-domain-button__add.gridicon {
 		margin-left: 2px;
 		margin-right: 2px;
 
-		@include break-mobile {
+		@include break-large {
 			margin-left: 0;
 		}
 	}
@@ -21,304 +23,131 @@
 		height: 28px;
 		margin-left: 0;
 
-		@include break-mobile {
+		@include break-large {
 			width: 24px;
 			height: 24px;
 		}
 	}
 }
 
-.domain-management-list-item__link {
-	overflow: hidden;
-	text-align: inherit;
-	line-height: normal;
-}
-
-.domain-management-list-item__title {
-	display: block;
-	color: var(--color-neutral-70);
-	font-size: $font-body-small;
-	font-weight: 600;
-	white-space: pre;
-	text-align: inherit;
-	line-height: normal;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-title-small;
-		font-weight: 600;
-		max-width: none;
-		white-space: normal;
-	}
-}
-
-.domain-management-list-item__meta {
-	font-size: $font-body-extra-small;
-	color: var(--color-text-subtle);
-	min-height: 20px;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	line-height: normal;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		text-transform: uppercase;
-	}
-}
-
-.domain-management-list-item.is-placeholder {
-	.domain-management-list-item__link {
-		cursor: default;
-	}
-
-	.domain-management-list-item__title {
-		@include placeholder( --color-neutral-10 );
-		width: 60%;
-	}
-
-	.domain-management-list-item__type {
-		@include placeholder( --color-neutral-10 );
-		display: inline-block;
-		width: 40%;
-	}
-}
-
-.empty-domains-list-card:not(.has-non-wpcom-domains) {
-	box-shadow: none;
-}
-
-.domain-management-list__items + .empty-domains-list-card {
-	margin-top: 16px;
-	margin-bottom: 32px;
-
-	@include break-small {
-		margin-top: 0;
-	}
-}
-
-.domain-management-list__items + .empty-domains-list-card.has-non-wpcom-domains {
-	margin-top: 32px;
-	margin-bottom: 32px;
-}
-
-.domain-management-list__filter,
-.all-domains__filter {
-	padding: 0 16px;
-	> .domains-table-filter-button.is-mobile-version {
-		width: 100%;
-		.select-dropdown__container {
-			width: 100%;
-		}
-
-		@include break-mobile {
-			display: none;
-		}
-	}
-}
-
-.empty-domains-list-card__wrapper,
-.domain-only-upsell-carousel__card-wrapper {
+.domain-management__all-domains-section {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: 32px;
-	margin-bottom: 32px;
+	padding: 32px 16px;
+	width: fit-content;
+	margin: 0 auto;
 
-	h2 {
-		@extend .wp-brand-font;
-		color: var(--color-neutral-70);
-		font-size: $font-title-large;
-		margin-top: 24px;
+	&.separator {
+		border-top: 1px solid var(--studio-gray-5);
 	}
+}
 
-	h3 {
-		color: var(--color-neutral-50);
-		font-size: $font-body;
-	}
+.google-domain-owner-banner.card.banner {
+	border-radius: 2px;
+	border: 1px solid var(--gray-gray-5);
+	display: flex;
+	flex-direction: column;
+	padding: 29px 20px 20px 20px;
+	background:
+		radial-gradient(ellipse at top left, rgba(235, 206, 224, 0.9), transparent 60%),
+		linear-gradient(10deg, rgba(8, 117, 196, 0.6), transparent 60%),
+		linear-gradient(240deg, rgba(0, 126, 101, 0.5), transparent 60%);
 
-	.empty-domains-list-card__text,
-	.domain-only-upsell-carousel__card-text {
-		text-align: center;
-		margin-bottom: 10px;
-	}
+	background-repeat: no-repeat;
+	background-size: 100% 52px;
 
-	.empty-domains-list-card__content,
-	.domain-only-upsell-carousel__card-content {
-		display: flex;
-		flex-direction: column;
+	margin-top: 9px;
+	margin-left: 17px;
+	margin-right: 17px;
+
+	@include break-medium {
+		flex-direction: row;
+		gap: 20px;
 		align-items: center;
+		padding: 21px 40px 21px 43px;
+		background-size: 66px 100%;
+		margin-left: 0;
+		margin-right: 0;
 	}
 
-	.empty-domains-list-card__actions,
-	.domain-only-upsell-carousel__card-actions {
-		display: inline-flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		& > .button {
-			margin: 16px 8px 0;
+	.banner__icons,
+	.banner__content {
+		justify-content: flex-start;
+	}
+
+	.banner__icons {
+		.banner__icon,
+		.banner__icon-no-circle {
+			padding: 0;
+			margin: 0;
+			width: 46px;
+			height: 46px;
 		}
-		@include break-small {
-			justify-content: flex-start;
-			& > .button:first-child {
-				margin-left: 0;
+	}
+
+	.banner__content {
+		margin-top: 11px;
+		@include break-medium {
+			margin-top: 0;
+		}
+
+		.banner__info {
+			.banner__title {
+				color: var(--studio-gray-100);
+				font-size: $font-body;
+				line-height: 24px; /* 150% */
+			}
+			.banner__description {
+				color: var(--studio-gray-70);
+				font-size: $font-body-small;
+				line-height: 20px; /* 142.857% */
+
+				margin-top: 12px;
+				@include break-medium {
+					margin-top: 0;
+				}
 			}
 		}
-	}
 
-	@include break-small {
-		&.is-compact {
-			flex-direction: row-reverse;
-			margin-top: 0;
-			margin-bottom: 0;
-
-			h2 {
-				font-size: $font-title-medium;
+		.banner__action {
+			margin-top: 20px;
+			@include break-medium {
 				margin-top: 0;
 			}
 
-			> .empty-domains-list-card__illustration,
-			.domain-only-upsell-carousel__card-illustration {
-				margin-left: 40px;
-				margin-right: 24px;
-			}
+			.button.is-primary,
+			.button.is-primary:hover,
+			.button.is-primary:focus {
+				display: flex;
+				height: 40px;
+				padding: 10px 24px;
+				justify-content: center;
+				align-items: center;
+				gap: 8px;
 
-			.empty-domains-list-card__text,
-			.domain-only-upsell-carousel__card-text {
-				margin-bottom: 10px;
-				text-align: initial;
-			}
-
-			.empty-domains-list-card__actions,
-			.domain-only-upsell-carousel__card-actions {
-				text-align: initial;
-			}
-
-			.empty-domains-list-card__content,
-			.domain-only-upsell-carousel__card-content {
-				align-items: normal;
-				width: 100%;
+				border-radius: 4px;
+				background: var(--black-white-black, #000);
+				box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+				border-color: var(--black-white-black, #000);
 			}
 		}
 	}
 }
 
-.domain-table-header {
-	display: flex;
-	justify-content: space-between;
-	padding: 8px 0;
-	font-size: $font-body-small;
-	font-weight: 600;
-	color: var(--color-neutral-50);
-
-	border-bottom: 1px solid var(--color-neutral-5);
-	@include break-mobile {
-		border-bottom: 1px solid var(--color-neutral-20);
+// Custom layout width for the bulk domains pages
+.is-bulk-domains-page {
+	.layout__content {
+		overflow: unset;
 	}
 
-	.button-plain {
-		text-align: left;
+	main {
+		max-width: 1224px;
+	}
 
-		&:focus {
-			outline: thin dotted;
+	.empty-domains-list-card {
+		@include breakpoint-deprecated( "<480px" ) {
+			box-shadow: none;
 		}
 	}
-
-	.list__header-column {
-		display: flex;
-		align-items: center;
-		&.is-sortable {
-			cursor: pointer;
-		}
-		svg {
-			margin-left: 4px;
-			fill: transparent;
-		}
-		&.is-sorted-by > svg,
-		&.is-sorted-by:hover > svg {
-			fill: var(--color-neutral-50);
-		}
-		&:hover > svg {
-			fill: var(--color-neutral-30);
-		}
-	}
-
-	&.domain-table-header__desktop {
-		display: none;
-	}
-	&.domain-table-header__mobile {
-		display: flex;
-		padding: 16px;
-		.select-dropdown {
-			width: 100%;
-			.select-dropdown__container {
-				width: 100%;
-			}
-		}
-	}
-
-	&.domain-table-header__mobile.hide-when-one-domain {
-		display: none;
-	}
-
-	@include break-mobile {
-		&.domain-table-header__desktop {
-			display: flex;
-		}
-		&.domain-table-header__mobile {
-			display: none;
-		}
-	}
-}
-
-.list__select-domain-cell {
-	flex: 10 10 0;
-}
-.list__domain-cell {
-	flex: 83 83 0;
-}
-.list__site-cell {
-	flex: 70 70 0;
-}
-.list__status-cell {
-	flex: 40 40 0;
-	&__bubble {
-		display: flex;
-		width: 20px;
-		background: #d67709;
-		border-radius: 16px; /* stylelint-disable-line scales/radii */
-		justify-content: center;
-		align-items: center;
-		color: #fff;
-		font-size: $font-body-extra-small;
-		height: 18px;
-		margin: 0 4px;
-		line-height: 20px;
-	}
-}
-.list__registered-until-cell {
-	flex: 50 50 0;
-}
-.list__auto-renew-cell {
-	flex: 30 30 0;
-}
-.list__email-cell {
-	flex: 30 30 0;
-}
-.list__action-cell {
-	flex: 6 6 0;
-}
-
-.domain-only-upsell-carousel {
-	box-shadow: 0 0 0 1px var(--color-border-subtle);
-	padding: 24px;
-	margin-top: 32px;
-	.button.is-borderless .gridicon {
-		width: auto;
-		height: auto;
-		top: 3px;
-	}
-}
-
-.domain-only-upsell-carousel__card.card {
-	padding: 0;
-	margin: 0;
-	box-shadow: none;
 }

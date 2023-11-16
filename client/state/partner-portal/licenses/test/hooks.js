@@ -3,7 +3,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
@@ -270,11 +270,11 @@ describe( 'useProductsQuery', () => {
 			.get( '/wpcom/v2/jetpack-licensing/partner/product-families' )
 			.reply( 200, [ ...unexpected, ...expected ] );
 
-		const { result, waitFor } = renderHook( () => useProductsQuery(), {
+		const { result } = renderHook( () => useProductsQuery(), {
 			wrapper,
 		} );
 
-		await waitFor( () => result.current.isSuccess );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( expectedResults );
 	} );
@@ -301,13 +301,12 @@ describe( 'useProductsQuery', () => {
 		// Prevent console.error from being loud during testing because of the test 500 error.
 		const consoleError = global.console.error;
 		global.console.error = jest.fn();
-		const { result, waitFor } = renderHook( () => useProductsQuery(), {
+		const { result } = renderHook( () => useProductsQuery(), {
 			wrapper,
 		} );
 
 		// Wait for the response.
-		await waitFor( () => result.current.isError );
-		expect( result.current.isError ).toBe( true );
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 		global.console.error = consoleError;
 
 		// Test that the correct notification is being triggered.
@@ -336,7 +335,7 @@ describe( 'useIssueLicenseMutation', () => {
 			.post( '/wpcom/v2/jetpack-licensing/license', '{"product":"jetpack-scan"}' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useIssueLicenseMutation(), {
+		const { result } = renderHook( () => useIssueLicenseMutation(), {
 			wrapper,
 		} );
 
@@ -363,7 +362,7 @@ describe( 'useRevokeLicenseMutation', () => {
 			.delete( '/wpcom/v2/jetpack-licensing/license', '{"license_key":"jetpack-scan_foobarbaz"}' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useRevokeLicenseMutation(), {
+		const { result } = renderHook( () => useRevokeLicenseMutation(), {
 			wrapper,
 		} );
 
@@ -391,7 +390,7 @@ describe( 'useTOSConsentMutation', () => {
 			.put( '/wpcom/v2/jetpack-licensing/partner', '{"tos":"consented"}' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useTOSConsentMutation(), {
+		const { result } = renderHook( () => useTOSConsentMutation(), {
 			wrapper,
 		} );
 
@@ -476,11 +475,11 @@ describe( 'useBillingDashboardQuery', () => {
 			.get( '/wpcom/v2/jetpack-licensing/licenses/billing' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useBillingDashboardQuery(), {
+		const { result } = renderHook( () => useBillingDashboardQuery(), {
 			wrapper,
 		} );
 
-		await waitFor( () => result.current.isSuccess );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( formattedStub );
 	} );
@@ -500,13 +499,12 @@ describe( 'useBillingDashboardQuery', () => {
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result, waitFor } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {
+		const { result } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {
 			wrapper,
 		} );
 
 		// Wait for the response.
-		await waitFor( () => result.current.isError );
-		expect( result.current.isError ).toBe( true );
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 
 		// Test that the correct notification is being triggered.
 		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
@@ -529,13 +527,12 @@ describe( 'useBillingDashboardQuery', () => {
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result, waitFor } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {
+		const { result } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {
 			wrapper,
 		} );
 
-		await waitFor( () => result.current.isError );
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 
-		expect( result.current.isError ).toBe( true );
 		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
 		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
 			'partner-portal-billing-dashboard-failure'

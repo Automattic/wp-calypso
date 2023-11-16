@@ -4,7 +4,6 @@ import { getFileExtension } from 'calypso/lib/media/utils/get-file-extension';
 /**
  * Given a media string, File, or object, returns the MIME type if one can
  * be determined.
- *
  * @example
  * getMimeType( 'example.gif' );
  * getMimeType( { URL: 'https://wordpress.com/example.gif' } );

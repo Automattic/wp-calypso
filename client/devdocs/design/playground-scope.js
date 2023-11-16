@@ -1,6 +1,8 @@
 export {
+	Badge,
 	Button,
 	Card,
+	Count,
 	CompactCard,
 	FormInputValidation,
 	Gridicon,
@@ -9,6 +11,8 @@ export {
 	Ribbon,
 	ScreenReaderText,
 	Suggestions,
+	FoldableCard,
+	Tooltip,
 } from '@automattic/components';
 
 /**
@@ -17,7 +21,6 @@ export {
 export { default as ActionCard } from 'calypso/components/action-card';
 export { default as Animate } from 'calypso/components/animate';
 export { default as BackButton } from 'calypso/components/back-button';
-export { default as Badge } from 'calypso/components/badge';
 export { default as Banner } from 'calypso/components/banner';
 export { default as BulkSelect } from 'calypso/components/bulk-select';
 export { default as ButtonGroup } from 'calypso/components/button-group';
@@ -27,7 +30,6 @@ export { default as ClipboardButtonInput } from 'calypso/components/clipboard-bu
 export { default as ClipboardButton } from 'calypso/components/forms/clipboard-button';
 export { default as Collection } from 'calypso/devdocs/design/search-collection';
 export { default as Column } from 'calypso/components/layout/column';
-export { default as Count } from 'calypso/components/count';
 export { default as CountedTextarea } from 'calypso/components/forms/counted-textarea';
 export { default as DatePicker } from 'calypso/components/date-picker';
 export { default as DateRange } from 'calypso/components/date-range';
@@ -40,7 +42,6 @@ export { default as FAQ } from 'calypso/components/faq';
 export { default as FeatureGate } from 'calypso/components/feature-example';
 export { default as FilePickers } from 'calypso/components/file-picker';
 export { default as Focusable } from 'calypso/components/focusable';
-export { default as FoldableCard } from 'calypso/components/foldable-card';
 export { default as FormattedDate } from 'calypso/components/formatted-date';
 export { default as FormattedHeader } from 'calypso/components/formatted-header';
 export { default as FormButton } from 'calypso/components/forms/form-button';
@@ -109,7 +110,6 @@ export { default as Timeline } from 'calypso/components/timeline';
 export { default as TimeSince } from 'calypso/components/time-since';
 export { default as Timezone } from 'calypso/components/timezone';
 export { default as TokenFields } from 'calypso/components/token-field';
-export { default as Tooltip } from 'calypso/components/tooltip';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu';
 export { default as VerticalNav } from 'calypso/components/vertical-nav';
 export { default as VerticalNavItem } from 'calypso/components/vertical-nav/item';

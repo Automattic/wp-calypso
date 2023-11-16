@@ -4,7 +4,6 @@ const { Template } = webpack;
 
 /**
  * Plugin name.
- *
  * @type {string}
  */
 const PLUGIN_NAME = 'RequireChunkCallback';

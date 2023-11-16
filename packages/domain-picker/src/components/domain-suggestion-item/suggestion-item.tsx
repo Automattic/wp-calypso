@@ -252,7 +252,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 					<div className="domain-picker__action">
 						<Button
 							ref={ buttonRef }
-							isSecondary
+							variant="secondary"
 							className={ classnames( 'domain-picker__suggestion-select-button', {
 								'is-selected': selected && ! isUnavailable,
 							} ) }

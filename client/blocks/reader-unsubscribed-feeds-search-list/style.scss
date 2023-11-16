@@ -1,0 +1,35 @@
+@import "client/landing/subscriptions/components/site-subscriptions-list/styles/placeholders";
+
+.reader-unsubscribed-feeds-search-list {
+	margin: 0;
+
+	.reader-unsubscribed-feed-item {
+		@extend %site-subscriptions-list-site-row;
+
+		&__site-preview-h-stack {
+			flex: 1;
+			max-width: 250px;
+		}
+
+		&__title-with-url-v-stack {
+			flex: 1;
+		}
+
+		&__title {
+			@extend %site-subscriptions-list-site-title;
+		}
+
+		&__url {
+			@extend %site-subscriptions-list-site-url;
+		}
+
+		&__description {
+			@extend %site-subscriptions-list-default-text;
+			flex: 1;
+			width: 100%;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	}
+}

@@ -16,7 +16,7 @@ const getEmailAccountTypes = ( provider: EmailProvider ): string[] =>
 			EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL,
 		],
 		[ EmailProvider.Google ]: [ EMAIL_ACCOUNT_TYPE_GOOGLE_WORKSPACE, EMAIL_ACCOUNT_TYPE_GSUITE ],
-	}[ provider ] );
+	} )[ provider ];
 
 const useGetExistingMailboxNames = (
 	provider: EmailProvider,

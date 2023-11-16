@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
+import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
-import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
@@ -195,8 +195,12 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			? getManagePurchaseUrlFor( selectedSite.slug, purchase.id )
 			: '';
 
+		if ( ! hasSubscription || ! purchase ) {
+			return null;
+		}
+
 		return (
-			<VerticalNavItem path={ managePurchaseUrl } disabled={ ! hasSubscription || ! purchase }>
+			<VerticalNavItem path={ managePurchaseUrl }>
 				{ translate( 'View billing and payment settings' ) }
 			</VerticalNavItem>
 		);
@@ -242,7 +246,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		);
 	}
 
-	function renderAddNewMailboxesOrRenewNavItem() {
+	function renderAddNewMailboxesOrRenewNavItem( mailboxes ) {
 		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
 			if ( purchase && isExpired( purchase ) ) {
 				return (
@@ -259,9 +263,16 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			);
 		}
 
+		const emailForwardsLimit = 25;
+		const isAtEmailForwardsLimit = mailboxes.length >= emailForwardsLimit;
+
 		return (
-			<VerticalNavItem { ...getAddMailboxProps() }>
-				{ translate( 'Add new email forwards' ) }
+			<VerticalNavItem { ...getAddMailboxProps() } disabled={ isAtEmailForwardsLimit }>
+				{ isAtEmailForwardsLimit
+					? translate( 'Using %1$s of %1$s email forwards', {
+							args: [ emailForwardsLimit ],
+					  } )
+					: translate( 'Add new email forwards' ) }
 			</VerticalNavItem>
 		);
 	}
@@ -300,7 +311,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			/>
 			<div className="email-plan__actions">
 				<VerticalNav>
-					{ renderAddNewMailboxesOrRenewNavItem() }
+					{ renderAddNewMailboxesOrRenewNavItem( getMailboxes( emailAccounts ) ) }
 					<UpgradeNavItem
 						currentRoute={ currentRoute }
 						domain={ domain }

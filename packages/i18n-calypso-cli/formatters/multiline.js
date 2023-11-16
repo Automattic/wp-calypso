@@ -9,7 +9,6 @@ const SEPARATORS = [ ' ', '/', ',', ';' ];
  * '""
  * "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
  * "tempor incididunt ut labore et dolore magna aliqua."
- *
  * @param {string} literal      - A string literal
  * @param {string|number} startAt  - A prefix (or the negative length of the prefix) the literal will be printed at
  * @returns {string}             - A multiline string compatible with the POT format

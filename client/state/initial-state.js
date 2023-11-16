@@ -41,11 +41,10 @@ export function shouldPersist() {
  * browser state and loading without it
  *
  * Can be overridden on the command-line with two flags:
- *   - ENABLE_FEATURES=force-sympathy yarn start (always sympathize)
- *   - ENABLE_FEATURES=no-force-sympathy yarn start (always prevent sympathy)
+ * - ENABLE_FEATURES=force-sympathy yarn start (always sympathize)
+ * - ENABLE_FEATURES=no-force-sympathy yarn start (always prevent sympathy)
  *
  * If both of these flags are set, then `force-sympathy` takes precedence.
- *
  * @returns {boolean} Whether to clear persistent state on page load
  */
 function shouldAddSympathy() {

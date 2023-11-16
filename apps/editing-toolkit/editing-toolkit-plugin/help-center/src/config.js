@@ -43,8 +43,9 @@ window.configData = {
 		'help/gpt-response': true,
 	},
 	signup_url: '/',
-	discover_blog_id: 53424024,
-	discover_feed_id: 41325786,
+	wapuu: false,
+	wpcom_signup_id: '39911',
+	wpcom_signup_key: 'cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8',
 };
 window.process = {
 	env: {

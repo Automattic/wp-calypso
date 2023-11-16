@@ -4,10 +4,10 @@ import DotPager from 'calypso/components/dot-pager';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
-import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
+import { GALLERY_MAX_IMAGES, READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
-function PostGallery( { post, isDiscover, children } ) {
-	const imagesToDisplay = getImagesFromPostToDisplay( post, 10 );
+function PostGallery( { post, children } ) {
+	const imagesToDisplay = getImagesFromPostToDisplay( post, GALLERY_MAX_IMAGES );
 
 	function handleClick( event ) {
 		event.preventDefault();
@@ -42,9 +42,6 @@ function PostGallery( { post, isDiscover, children } ) {
 
 	return (
 		<div className="reader-post-card__post">
-			<div onClick={ handleClick } role="presentation">
-				<DotPager isClickEnabled={ true }>{ listItems }</DotPager>
-			</div>
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
@@ -53,9 +50,12 @@ function PostGallery( { post, isDiscover, children } ) {
 						</a>
 					</h2>
 				</AutoDirection>
-				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
-				{ children }
+				<ReaderExcerpt post={ post } />
 			</div>
+			<div onClick={ handleClick } role="presentation">
+				<DotPager isClickEnabled={ true }>{ listItems }</DotPager>
+			</div>
+			<div className="reader-post-card__post-details">{ children }</div>
 		</div>
 	);
 }

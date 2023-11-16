@@ -16,7 +16,10 @@ import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/ac
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
-import { PLUGIN_INSTALLATION_COMPLETED } from 'calypso/state/plugins/installed/status/constants';
+import {
+	PLUGIN_INSTALLATION_COMPLETED,
+	PLUGIN_INSTALLATION_UP_TO_DATE,
+} from 'calypso/state/plugins/installed/status/constants';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import WithItemsToUpdate from './to-update';
@@ -26,7 +29,6 @@ import './style.scss';
 
 /**
  * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
- *
  * @param {string} updateSlug  Plugin or theme slug, or 'wordpress' for core updates.
  * @param {Array}  updateQueue Collection of plugins or themes currently queued to be updated.
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
@@ -76,7 +78,6 @@ class ActivityLogTasklist extends Component {
 	 * Adds a single or multiple plugin or theme slugs to a list of dismissed items.
 	 * If it receives a string, it assumes it's a valid plugin or theme slug and adds it to the dismissed list.
 	 * When it doesn't receive a string, it adds all the plugin and theme slugs to the dismissed list.
-	 *
 	 * @param {Object} item Plugin or theme to dismiss.
 	 */
 	dismiss = ( item ) => {
@@ -99,7 +100,6 @@ class ActivityLogTasklist extends Component {
 
 	/**
 	 * Goes to general plugin management screen.
-	 *
 	 * @returns {Object} Action to redirect to plugins management.
 	 */
 	goManagePlugins = () =>
@@ -111,7 +111,6 @@ class ActivityLogTasklist extends Component {
 
 	/**
 	 * Goes to single theme or plugin management screen.
-	 *
 	 * @param {string} slug Plugin or theme slug, like "hello-dolly" or "dara".
 	 * @param {string} type Indicates if it's "plugin" or "theme".
 	 * @returns {Object} Action to redirect to plugin management.
@@ -130,7 +129,6 @@ class ActivityLogTasklist extends Component {
 
 	/**
 	 * Add a plugin, theme, or core update to the update queue. Insert a prop to track enqueue origin later.
-	 *
 	 * @param {Object} item Plugin, theme, or core update to enqueue.
 	 * @param {string} from Pass '_from_error' when calling from error notice. Otherwise it's empty.
 	 */
@@ -146,7 +144,6 @@ class ActivityLogTasklist extends Component {
 
 	/**
 	 * Remove a plugin from the update queue.
-	 *
 	 * @returns {undefined}
 	 */
 	finishUpdate = () =>
@@ -172,7 +169,6 @@ class ActivityLogTasklist extends Component {
 	};
 	/**
 	 * Expand the list of updates to show all of them
-	 *
 	 * @param {Object} event Synthetic event
 	 */
 	showAllUpdates = ( event ) => {
@@ -183,7 +179,6 @@ class ActivityLogTasklist extends Component {
 
 	/**
 	 * Starts the update process for a specified plugin/theme. Displays an informational notice.
-	 *
 	 * @param {Object} item Plugin/theme information that includes
 	 * {
 	 * 		{string} slug Plugin or theme slug, like "hello-dolly". Slug for core updates is "wordpress".
@@ -383,7 +378,11 @@ const updateSingle = ( item, siteId ) => ( dispatch, getState ) => {
 			} );
 		case 'plugin':
 			return dispatch( updatePlugin( siteId, item ) ).then( () => {
-				if ( getStatusForPlugin( getState(), siteId, item.id ) !== PLUGIN_INSTALLATION_COMPLETED ) {
+				const status = getStatusForPlugin( getState(), siteId, item.id );
+				if (
+					status !== PLUGIN_INSTALLATION_COMPLETED &&
+					status !== PLUGIN_INSTALLATION_UP_TO_DATE
+				) {
 					return Promise.reject( 'Plugin update failed' );
 				}
 			} );

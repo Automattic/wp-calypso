@@ -27,7 +27,7 @@ jobs:
      - name: Setup Node
        uses: actions/setup-node@v3
        with:
-         node-version: ^18.13.0
+         node-version-file: '.nvmrc'
 
      - name: Wait for prior instances of the workflow to finish
        uses: softprops/turnstyle@v1
@@ -44,4 +44,6 @@ jobs:
          slack_team_channel: ${{ secrets.SLACK_TEAM_CHANNEL }}
          slack_he_triage_channel: ${{ secrets.SLACK_HE_TRIAGE_CHANNEL }}
          slack_quality_channel: ${{ secrets.SLACK_QUALITY_CHANNEL }}
-         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageIssues,gatherSupportReferences,replyToCustomersReminder'
+         triage_projects_token: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
+         project_board_url: ${{ secrets.PROJECT_BOARD_URL }}
+         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageIssues,gatherSupportReferences,replyToCustomersReminder,updateBoard'

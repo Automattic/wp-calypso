@@ -9,7 +9,6 @@ const REGEXP_CAPTION_ALIGN = /align(\w+)/;
 
 /**
  * Given a caption shortcode object, returns an object of parsed attributes.
- *
  * @param  {Object} node    Caption shortcode object
  * @param  {Object} _parsed In recursion, the known values
  * @returns {Object}         Object of all detected values
@@ -57,7 +56,6 @@ function parseCaption( node, _parsed ) {
 /**
  * Given a media shortcode object, returns an object containing all detected
  * values.
- *
  * @param  {Object} node    Media shortcode object to parse
  * @param  {Object} _parsed In recursion, the known values
  * @returns {Object}         Object of all detected values

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { exec } from 'child_process';
-import { EventEmitter } from 'events';
+import { exec, spawnSync } from 'node:child_process';
+import { EventEmitter } from 'node:events';
+import { writeFile, copyFile } from 'node:fs/promises';
+import path from 'node:path';
 import chokidar from 'chokidar';
 import runAll from 'npm-run-all';
 import treeKill from 'tree-kill';
@@ -11,7 +13,7 @@ import { hideBin } from 'yargs/helpers';
 // When we run a build which has more than 10 build tasks in parallel (like ETK),
 // Node shows a warning. We just need to increase the number of allowed listeners
 // to handle larger numbers of parallel tasks.
-EventEmitter.setMaxListeners( 20 );
+EventEmitter.setMaxListeners( 30 );
 
 // Default NODE_ENV is development unless manually set to production.
 if ( process.env.NODE_ENV == null ) {
@@ -66,7 +68,7 @@ async function runBuilder( args ) {
 	await runAll( [ 'clean' ], runOpts );
 
 	console.log( 'Starting webpack...' );
-	return Promise.all( [
+	await Promise.all( [
 		runAll( [ `build:*${ watch ? ' --watch' : '' }` ], runOpts ).then( () => {
 			console.log( 'Build completed!' );
 			if ( ! watch && sync ) {
@@ -77,6 +79,15 @@ async function runBuilder( args ) {
 		// In watch + sync mode, we start watching to sync while the webpack build is happening.
 		watch && sync && setupRemoteSync( localPath, remotePath, true ),
 	] );
+
+	// Create build_meta.json and copy the README as needed for the production
+	// artifact. We do it here rather than in webpack, because several apps use
+	// multiple simultaneous webpack processes. As a result, some apps don't have
+	// one true config we could add this to. Thankfully, every calypso app does
+	// use this builder script, making it a good place to put it.
+	if ( ! watch ) {
+		await copyMetaFiles( localPath );
+	}
 }
 
 /**
@@ -167,4 +178,35 @@ function showTips( tasks ) {
 			console.log( tips[ name ] );
 		}
 	} );
+}
+
+function git( cmd ) {
+	return spawnSync( 'git', cmd.split( ' ' ), {
+		encoding: 'utf8',
+	} ).stdout.replace( '\n', '' );
+}
+
+async function copyMetaFiles( archiveDir ) {
+	const buildNumber = process.env.build_number;
+
+	// Use commit hash from the environment if available. In TeamCity, that reflects
+	// the GitHub data -- the local data may be different.
+	const commitHash = process.env.commit_sha ?? git( 'rev-parse HEAD' );
+	// Calypso repo short sha is currently at 11 characters.
+	const cacheBuster = commitHash.slice( 0, 11 );
+
+	const buildMeta = {
+		build_number: buildNumber ?? 'dev',
+		cache_buster: cacheBuster,
+		commit_hash: commitHash,
+		commit_url: `https://github.com/Automattic/wp-calypso/commit/${ commitHash }`,
+	};
+
+	await writeFile(
+		path.join( archiveDir, 'build_meta.json' ),
+		JSON.stringify( buildMeta, null, 2 )
+	);
+
+	// Copy README.md to the root of the archive.
+	await copyFile( path.join( process.cwd(), 'README.md' ), path.join( archiveDir, 'README.md' ) );
 }

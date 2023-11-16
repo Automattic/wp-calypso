@@ -6,6 +6,7 @@ import {
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
 	isTransferringHostedSiteCreationFlow,
+	HUNDRED_YEAR_PLAN_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -20,7 +21,7 @@ import { useInterval } from 'calypso/lib/interval';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
-import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
+import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -35,10 +36,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const { flow } = props;
 
 	const { __ } = useI18n();
-	const videoPressLoadingMessages = useVideoPressLoadingMessages();
-	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
-	const loadingMessages =
-		'videopress' === flow ? videoPressLoadingMessages : defaultLoadingMessages;
+	const loadingMessages = useProcessingLoadingMessages( flow );
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
@@ -46,9 +44,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const recordSignupComplete = useRecordSignupComplete( flow );
 
-	useInterval( () => {
-		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
-	}, loadingMessages[ currentMessageIndex ]?.duration );
+	useInterval(
+		() => {
+			setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
+		},
+		loadingMessages[ currentMessageIndex ]?.duration
+	);
 
 	const action = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPendingAction(),
@@ -123,6 +124,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		isUpdateDesignFlow( flowName )
 	) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
+	}
+
+	if ( HUNDRED_YEAR_PLAN_FLOW === flowName ) {
+		return <HundredYearPlanFlowProcessingScreen />;
 	}
 
 	const subtitle = getSubtitle();

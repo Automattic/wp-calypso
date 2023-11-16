@@ -57,7 +57,7 @@ const StyledItem = styled.div`
 `;
 
 const StyledGridicon = styled( Gridicon )`
-	margin: 0 12px;
+	margin: 0 16px;
 	color: var( --color-neutral-10 );
 `;
 
@@ -90,13 +90,17 @@ interface Props {
 	items: Item[];
 	mobileItem?: Item;
 	compact?: boolean;
+	hideWhenOnlyOneLevel?: boolean;
 }
 
 const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { items, mobileItem, compact = false } = props;
+	const { items, mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
 
 	if ( items.length === 1 ) {
+		if ( hideWhenOnlyOneLevel ) {
+			return null;
+		}
 		const [ item ] = items;
 		return (
 			<StyledItem>
@@ -110,7 +114,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		const urlBack = mobileItem?.href ?? items[ items.length - 2 ].href;
 		const label = mobileItem?.label ?? translate( 'Back' );
 		return (
-			<StyledBackLink href={ urlBack }>
+			<StyledBackLink className="breadcrumbs-back" href={ urlBack }>
 				<Gridicon icon="chevron-left" size={ 18 } />
 				{ label }
 			</StyledBackLink>
@@ -119,7 +123,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 
 	if ( items.length > 1 ) {
 		return (
-			<StyledUl>
+			<StyledUl className="breadcrumbs">
 				{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
 					<StyledLi key={ index }>
 						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }

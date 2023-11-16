@@ -7,6 +7,7 @@ type CommissionFeesProps = {
 	commission: number | null;
 	iconSize?: number;
 	siteSlug?: string | null;
+	isPlan100YearPlan?: boolean;
 };
 
 const CommissionFees = ( {
@@ -14,6 +15,7 @@ const CommissionFees = ( {
 	commission,
 	iconSize = 16,
 	siteSlug,
+	isPlan100YearPlan,
 }: CommissionFeesProps ) => {
 	const translate = useTranslate();
 
@@ -22,7 +24,7 @@ const CommissionFees = ( {
 	}
 
 	const upgradeLink =
-		commission === 0 ? null : (
+		commission === 0 || isPlan100YearPlan ? null : (
 			<>
 				{ ' ' }
 				<a href={ siteSlug ? `/plans/${ siteSlug }` : '/plans' }>

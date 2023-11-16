@@ -63,7 +63,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestDomainsSuggestions( exampleQuery )( spy );
-			expect( spy ).toBeCalledWith(
+			expect( spy ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					type: DOMAINS_SUGGESTIONS_REQUEST,
 					queryObject: exampleQuery,
@@ -73,7 +73,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return requestDomainsSuggestions( exampleQuery )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: DOMAINS_SUGGESTIONS_RECEIVE,
 					queryObject: exampleQuery,
 					suggestions: exampleSuggestions,
@@ -83,7 +83,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success action when request completes', () => {
 			return requestDomainsSuggestions( exampleQuery )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 					queryObject: exampleQuery,
 				} );
@@ -92,7 +92,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestDomainsSuggestions( failingQuery )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 					queryObject: failingQuery,
 					error: expect.objectContaining( {

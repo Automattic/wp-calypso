@@ -4,7 +4,6 @@ import { isEmpty, isEqual } from 'lodash';
 
 /**
  * DOM updater
- *
  * @param {string[]} options A list of option names to keep track of.
  * @param {Function} getOptionValue A function that given an option name as a string, returns the current option value.
  */
@@ -24,7 +23,6 @@ export default ( options, getOptionValue ) => {
 			 * Do nothing until the editor is ready. This is required when
 			 * working in wpcom iframe environment to avoid running code before
 			 * everything has loaded, which can cause bugs like the following.
-			 *
 			 * @see https://github.com/Automattic/wp-calypso/pull/40690
 			 */
 			const isEditorReady = select( 'core/editor' ).__unstableIsEditorReady;

@@ -42,7 +42,6 @@ const convertExcerptNewlinesToBreaks = ( excerpt ) => {
 
 /**
  * Removes double spaces and also &nbsp; characters which may be present in the excerpt.
- *
  * @param {string} str the string to normalize
  * @returns a string with single space characters.
  */
@@ -52,7 +51,6 @@ const normalizeWhitespace = ( str ) => {
 
 /**
  * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
- *
  * @param {Object} post the post object
  * @returns writing prompt text
  */
@@ -134,7 +132,6 @@ const ReaderExcerpt = ( { post } ) => {
 
 ReaderExcerpt.propTypes = {
 	post: PropTypes.object.isRequired,
-	isDiscover: PropTypes.bool,
 };
 
 export default ReaderExcerpt;

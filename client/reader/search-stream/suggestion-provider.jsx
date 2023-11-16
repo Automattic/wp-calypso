@@ -22,7 +22,6 @@ function createRandomId( randomBytesLength = 9 ) {
 
 /**
  * Build suggestions from subscribed tags
- *
  * @param  {number} count The number of suggestions required
  * @param  {Array} tags  An array of subscribed tags
  * @returns {Array}       An array of suggestions, or null if no tags where provided
@@ -43,7 +42,6 @@ function suggestionsFromTags( count, tags ) {
 
 /**
  * Maps trending tags to tags
- *
  * @param {Array} trendingTags Trending tag results from the API.
  * @returns {Array} An array of tag objects
  */

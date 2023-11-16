@@ -1,7 +1,7 @@
 import { isAkismetFreeProduct, isDomainTransfer } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isOneTimePurchase, isPaidWithCreditCard } from 'calypso/lib/purchases';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { canEditPaymentDetails } from '../utils';
 import PaymentInfoBlock from './payment-info-block';
 import type { SiteDetails } from '@automattic/data-stores';

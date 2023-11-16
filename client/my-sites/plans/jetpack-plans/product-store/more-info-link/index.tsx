@@ -4,14 +4,19 @@ import { MoreInfoLinkProps } from '../types';
 
 import './style.scss';
 
-export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick, isExternal } ) => {
+export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( {
+	item,
+	onClick,
+	isLinkExternal,
+} ) => {
 	const translate = useTranslate();
 
-	const isExternalLink = isExternal && item.externalUrl;
+	// Open the link with new tab for `externalUrl` and `moreAboutUrl`.
+	const isOpeningNewTab = isLinkExternal && ( item.externalUrl || item.moreAboutUrl );
 
-	const href = isExternalLink ? item.externalUrl : `#${ item.productSlug }`;
+	const href = isOpeningNewTab ? item.externalUrl || item.moreAboutUrl : `#${ item.productSlug }`;
 
-	const target = isExternalLink ? '_blank' : undefined;
+	const target = isOpeningNewTab ? '_blank' : undefined;
 
 	return (
 		<Button className="more-info-link" onClick={ onClick } href={ href } target={ target } plain>
@@ -19,7 +24,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick, is
 				components: { productName: <>{ item.shortName }</> },
 			} ) }
 
-			{ isExternalLink && <Gridicon icon="external" size={ 16 } /> }
+			{ isOpeningNewTab && <Gridicon icon="external" size={ 16 } /> }
 		</Button>
 	);
 };

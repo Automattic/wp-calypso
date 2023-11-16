@@ -1,0 +1,224 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "client/landing/subscriptions/components/settings/styles.scss";
+
+.site-subscription-page {
+	.loading-container {
+		text-align: center;
+	}
+
+	&__centered-content {
+		margin: 0 26px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	&__main-content {
+		box-sizing: content-box;
+		max-width: 602px;
+		width: 100%;
+	}
+
+	&__back-button.components-button.has-icon.has-text {
+		color: $studio-gray-100;
+		font-size: $font-body-small;
+		font-weight: 500;
+		padding: 0 0 0 0;
+
+		svg {
+			margin-right: 0;
+		}
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.formatted-header {
+			&__title a {
+				font-weight: 600;
+				color: $studio-gray-100;
+			}
+
+			&__subtitle .site-subscription-header {
+				font-family: "SF Pro Text", $sans;
+				font-weight: 400;
+				color: $studio-gray-40;
+
+				&__view-feed-button {
+					padding: 0;
+					height: auto;
+					min-width: unset;
+				}
+
+				.external-link {
+					color: $studio-gray-40;
+					white-space: nowrap;
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+
+	.site-subscription-settings {
+		width: 100%;
+		@extend .settings;
+
+		.email-me-new-comments-toggle {
+			margin-bottom: 40px;
+		}
+
+		.delivery-frequency-input {
+			&:not(.is-logged-in) {
+				margin-bottom: 40px;
+			}
+
+			&__control {
+				width: fit-content;
+
+				.segmented-control__link {
+					padding: 10px 25px;
+				}
+			}
+		}
+
+		&__heading {
+			margin: 0 0 24px;
+			color: $studio-gray-100;
+			font-family: "SF Pro Text", $sans;
+			font-size: $font-body;
+			line-height: rem(22px);
+			font-weight: 600;
+		}
+	}
+
+	.site-subscription-info {
+		width: 100%;
+		@extend .settings;
+
+		&__heading {
+			margin: 40px 0 24px;
+			color: $studio-gray-100;
+			font-family: "SF Pro Text", $sans;
+			font-size: $font-body;
+			line-height: rem(22px);
+			font-weight: 600;
+		}
+
+		&__list {
+			margin: 0;
+			padding: 10px 0;
+
+			dt,
+			dd {
+				font-family: "SF Pro Text", $sans;
+				font-size: rem(14px);
+				line-height: rem(20px);
+				letter-spacing: -0.15px;
+				color: $studio-gray-100;
+			}
+
+			dt {
+				font-weight: 500;
+				margin-bottom: 8px;
+			}
+
+			dd {
+				font-weight: 400;
+				margin: 0;
+
+				+ dt {
+					margin-top: 8px;
+				}
+			}
+		}
+
+		&__loading {
+			margin-bottom: 20px;
+		}
+	}
+
+	&__unsubscribe-button.components-button {
+		margin: 40px 0;
+	}
+
+	&__fetch-details-error {
+		margin: 64px 0 32px;
+		justify-content: center;
+	}
+
+	.site-subscription-page__manage-button {
+		margin-right: 10px;
+	}
+
+	.site-subscription-page__unsubscribe-button {
+		border: 1px solid $studio-gray-20;
+	}
+}
+
+// Mobile screens
+@media screen and (max-width: $break-small) {
+	$back-button-height: rem(64px);
+
+	.site-subscription-page {
+		padding-bottom: $back-button-height;
+
+		&__back-button.components-button.has-icon.has-text {
+			position: fixed;
+			height: $back-button-height;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			box-shadow: inset 0 1px 0 #e2e4e7;
+			background-color: $studio-white;
+			z-index: 999;
+			padding: 0 0 0 24px;
+		}
+
+		&__header {
+			margin-top: 48px;
+
+			.formatted-header {
+				&__title {
+					margin-top: 0;
+					font-size: $font-title-medium;
+					line-height: rem(30px);
+				}
+
+				&__subtitle {
+					font-size: $font-body-small;
+					line-height: $font-title-small;
+				}
+			}
+		}
+	}
+}
+
+// Large screens
+@media screen and (min-width: $break-small) {
+	.site-subscription-page {
+		&__back-button.components-button.has-icon.has-text {
+			box-shadow: none;
+		}
+
+		&__header {
+			margin-top: 36px;
+
+			.formatted-header {
+				&__title {
+					margin-top: 0;
+					font-size: rem(34px);
+					line-height: rem(38px);
+				}
+
+				&__subtitle {
+					font-size: $font-body-small;
+					line-height: $font-title-small;
+				}
+			}
+		}
+	}
+}

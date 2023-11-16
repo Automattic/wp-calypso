@@ -26,7 +26,13 @@ function addProvidedDependencies( step, providedDependencies ) {
 }
 
 // These properties are never recorded in the tracks event for security reasons.
-const EXCLUDED_DEPENDENCIES = [ 'bearer_token', 'token', 'password', 'password_confirm' ];
+const EXCLUDED_DEPENDENCIES = [
+	'bearer_token',
+	'token',
+	'password',
+	'password_confirm',
+	'domainCart',
+];
 
 function recordSubmitStep( flow, stepName, providedDependencies, optionalProps ) {
 	// Transform the keys since tracks events only accept snaked prop names.
@@ -44,7 +50,6 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 				/**
 				 * There's no need to include a resource ID in our event.
 				 * Just record that a preview was fetched
-				 *
 				 * @see the `sitePreviewImageBlob` dependency
 				 */
 				propName = 'site_preview_image_fetched';
@@ -76,7 +81,7 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 			}
 
 			if (
-				[ 'cart_item', 'domain_item', 'email_item' ].includes( propName ) &&
+				[ 'cart_items', 'domain_item', 'email_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
 				propValue = Object.entries( propValue || {} )
@@ -97,6 +102,7 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 	);
 
 	const device = resolveDeviceTypeByViewPort();
+
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
 		flow,

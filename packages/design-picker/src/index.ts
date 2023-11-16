@@ -1,6 +1,5 @@
 export { default } from './components';
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
-export { default as PremiumBadge } from './components/premium-badge';
 export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
 export { default as ThemeCard } from './components/theme-card';
@@ -9,17 +8,21 @@ export {
 	default as UnifiedDesignPicker,
 	DesignPreviewImage,
 } from './components/unified-design-picker';
-export { default as WooCommerceBundledBadge } from './components/woocommerce-bundled-badge';
-export { default as PatternAssemblerCta } from './components/pattern-assembler-cta';
+export {
+	default as PatternAssemblerCta,
+	usePatternAssemblerCtaData,
+} from './components/pattern-assembler-cta';
 export {
 	availableDesignsConfig,
 	getAvailableDesigns,
 	getFontTitle,
 	getDesignUrl,
 	getDesignPreviewUrl,
+	isAssemblerDesign,
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
+	isAssemblerSupported,
 } from './utils';
 export {
 	FONT_PAIRINGS,
@@ -29,7 +32,7 @@ export {
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
 	STICKY_OFFSET_TOP,
-	BLANK_CANVAS_DESIGN,
+	DEFAULT_ASSEMBLER_DESIGN,
 	FREE_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,

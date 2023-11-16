@@ -11,11 +11,12 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	max-width: none !important;
 	align-items: normal !important;
 	box-sizing: border-box;
-	padding: 20px 24px;
+	padding: 96px 24px 76px 24px;
 
 	p {
 		font-size: 1rem;
 		line-height: 24px;
+		margin-top: 4px;
 	}
 
 	h4 {
@@ -30,14 +31,15 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	}
 
 	.support-content-cta {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var(--studio-gray-0);
 		display: flex;
 		margin-bottom: 2rem;
 		font-size: 1.25rem;
 
 		.support-content-cta-left {
 			flex: 1;
-			padding: 40px 20px 20px 0;
+			padding: 28px 0 28px 0;
+			max-width: 535px;
 
 			h4 {
 				line-height: 32px;
@@ -45,21 +47,26 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 			p {
 				color: var(--studio-gray-60);
+				margin-top: 4px;
+				margin-bottom: 16px;
 			}
 		}
 
 		.support-content-cta-right {
-			flex: 1;
 			display: flex;
 			justify-content: flex-end;
+			flex: 1;
+
+			img {
+				height: 100%;
+				max-height: 202px;
+				// To prevent any white space around the image.
+				display: block;
+			}
 
 			figure {
 				margin-bottom: 0;
 				height: 100%;
-
-				img {
-					height: 100%;
-				}
 			}
 		}
 	}
@@ -74,13 +81,15 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			min-width: 0;
 			overflow-wrap: break-word;
 			word-break: break-word;
-			border-bottom: 1px solid var(--studio-gray-5);
-			padding: 32px 16px 32px 0;
+			border-bottom: 1px solid var(--studio-gray-0);
+			padding: 0 16px 32px 0;
 			font-size: 1.25rem;
 		}
 
 		p {
 			color: var(--studio-gray-60);
+			margin-top: 16px;
+			margin-bottom: 28px;
 		}
 
 		h4 {
@@ -117,10 +126,17 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		justify-content: space-between;
 		margin-top: 3rem;
 
+		p,
+		form {
+			margin-bottom: 10px;
+			margin-top: 0;
+		}
+
+
 		.support-content-subscribe-disclaimer {
 			color: var(--studio-gray-60);
 			font-size: 0.75rem;
-			line-height: 26px;
+			line-height: 20px;
 
 			a {
 				color: inherit;
@@ -173,21 +189,26 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 		h4 {
 			font-size: 1.25rem;
-			line-height: 26px;
+			line-height: 26px !important;
 		}
 
 		p {
-			font-size: 0.875rem;
 			margin-top: 4px;
-			margin-bottom: 8px;
-			line-height: 20px;
+			margin-bottom: 16px;
 		}
 
 		.support-content-cta {
 			margin-bottom: 0;
+			height: initial;
 
 			.support-content-cta-left {
-				padding: 0 48px 16px 0;
+				padding: 0 0 24px 0;
+				max-width: initial;
+
+				p {
+					margin-top: 4px;
+					margin-bottom: 16px;
+				}
 			}
 
 			.support-content-cta-right {
@@ -197,25 +218,38 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 		.support-content-resources {
 			flex-direction: column;
-			gap: 8px;
+			gap: 0;
 
 			.support-content-resource {
 				min-width: 317px;
-				padding: 16px 48px 16px 0;
+				padding: 24px 48px 24px 0;
 
 				.resource-link {
 					line-height: 20px;
 				}
+
+
+				p {
+					margin-top: 4px;
+					margin-bottom: 16px;
+				}
+			}
+		}
+
+		.support-content-links {
+			a {
+				display: inline-block;
+			}
+
+			p {
+				margin-bottom: 16px !important;
 			}
 		}
 
 		.support-content-links-subscribe {
 			flex-direction: column;
 			padding-bottom: 36px;
-
-			.support-content-subscribe {
-				margin-top: 32px;
-			}
+			margin-top: 48px;
 
 			.support-content-subscribe form {
 				.support-content-subscribe-email {

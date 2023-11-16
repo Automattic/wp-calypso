@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { InfiniteQueryObserverResult, useInfiniteQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
+import { PostQueryResult } from './types';
 
 type BlazablePostsQueryOptions = {
 	page?: number;
@@ -16,6 +17,9 @@ export const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 	if ( searchOptions.filter ) {
 		if ( searchOptions.filter.status && searchOptions.filter.status !== 'all' ) {
 			searchQueryParams += `&status=${ searchOptions.filter.status }`;
+		}
+		if ( searchOptions.filter.postType && searchOptions.filter.postType !== 'all' ) {
+			searchQueryParams += `&filter_post_type=${ searchOptions.filter.postType }`;
 		}
 	}
 	if ( searchOptions.order ) {
@@ -39,7 +43,7 @@ const usePostsQueryPaged = (
 	siteId: number,
 	searchOptions: SearchOptions,
 	queryOptions: BlazablePostsQueryOptions = {}
-) => {
+): InfiniteQueryObserverResult< PostQueryResult > => {
 	const searchQueryParams = getSearchOptionsQueryParams( searchOptions );
 	return useInfiniteQuery(
 		[ 'promote-post-posts', siteId, searchQueryParams ],

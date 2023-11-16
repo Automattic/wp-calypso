@@ -2,7 +2,6 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**
  * Returns a media item from the redux store
- *
  * @param {number} siteId site identifier
  * @param {number} mediaId media item identifier
  */

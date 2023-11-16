@@ -6,13 +6,20 @@ import './style.scss';
 
 export default function () {
 	// Load the partner for the current user.
-	page( `/partner-portal/partner`, controller.partnerContext, makeLayout, clientRender );
+	page(
+		`/partner-portal/partner`,
+		controller.partnerContext,
+		controller.allSitesContext,
+		makeLayout,
+		clientRender
+	);
 
 	// Display the ToS, if necessary.
 	page(
 		`/partner-portal/terms-of-service`,
 		controller.requireAccessContext,
 		controller.termsOfServiceContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
@@ -23,6 +30,7 @@ export default function () {
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.partnerKeyContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
@@ -34,6 +42,7 @@ export default function () {
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
 		controller.licensesContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
@@ -48,6 +57,7 @@ export default function () {
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
 		controller.issueLicenseContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
@@ -60,52 +70,68 @@ export default function () {
 		controller.requireSelectedPartnerKeyContext,
 		controller.requireValidPaymentMethod,
 		controller.assignLicenseContext,
+		controller.allSitesContext,
+		makeLayout,
+		clientRender
+	);
+
+	// Download 3rd party products after assigning
+	page(
+		`/partner-portal/download-products`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.requireValidPaymentMethod,
+		controller.downloadProductsContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
 
 	// Manage payment methods.
-	if ( config.isEnabled( 'jetpack/partner-portal-payment' ) ) {
-		page(
-			`/partner-portal/payment-methods`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.paymentMethodListContext,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/partner-portal/payment-methods`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.paymentMethodListContext,
+		controller.allSitesContext,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/partner-portal/payment-methods/add`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.paymentMethodAddContext,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/partner-portal/payment-methods/add`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.paymentMethodAddContext,
+		controller.allSitesContext,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/partner-portal/invoices`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.invoicesDashboardContext,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/partner-portal/invoices`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.invoicesDashboardContext,
+		controller.allSitesContext,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/partner-portal/company-details`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.companyDetailsDashboardContext,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		`/partner-portal/company-details`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.companyDetailsDashboardContext,
+		controller.allSitesContext,
+		makeLayout,
+		clientRender
+	);
 
 	// Pricing page
 	page(
@@ -114,6 +140,7 @@ export default function () {
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
 		controller.pricesContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
@@ -125,6 +152,7 @@ export default function () {
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
 		controller.billingDashboardContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
@@ -136,7 +164,22 @@ export default function () {
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
 		controller.landingPageContext,
+		controller.allSitesContext,
 		makeLayout,
 		clientRender
 	);
+
+	// WPCOM Atomic Hosting Page
+	if ( config.isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) ) {
+		page(
+			`/partner-portal/create-site`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.wpcomAtomicHostingContext,
+			controller.allSitesContext,
+			makeLayout,
+			clientRender
+		);
+	}
 }

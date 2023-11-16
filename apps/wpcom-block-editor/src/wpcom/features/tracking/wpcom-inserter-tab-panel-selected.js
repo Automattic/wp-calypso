@@ -9,7 +9,6 @@ const gutenbergTabPanelName = ( tabPanel ) =>
 
 /**
  * Return the event definition object to track `wpcom_block_picker_tab_panel_selected`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {

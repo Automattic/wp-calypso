@@ -1,9 +1,9 @@
 import { translate, useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
+import { BlazablePost } from 'calypso/data/promote-post/types';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { BlazablePost } from 'calypso/my-sites/promote-post-i2/components/post-item';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
 import './style.scss';
 import PostsTable from '../posts-table';
@@ -59,7 +59,7 @@ export default function PostsList( props: Props ) {
 	if ( isError && hasLocalUser ) {
 		return (
 			<Notice
-				className="promote-post-i2__aux-wrapper"
+				className="promote-post-notice promote-post-i2__aux-wrapper"
 				status="is-error"
 				icon="mention"
 				showDismiss={ false }

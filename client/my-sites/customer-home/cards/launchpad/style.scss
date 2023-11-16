@@ -1,25 +1,47 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-.launchpad-keep-building {
+.customer-home-launchpad {
 	padding: 24px;
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	margin-bottom: 16px;
 
-	.launchpad-keep-building__header {
-		display: flex;
+	@include break-mobile {
+		border-radius: 3px;
+	}
 
-		.launchpad-keep-building__progress-bar-container {
+	.customer-home-launchpad__header {
+		display: flex;
+		align-items: center;
+
+		.customer-home-launchpad__progress-bar-container {
 			margin: 5px;
 		}
 
-		.launchpad-keep-building__title {
+		.customer-home-launchpad__title {
 			flex: 1;
-			font-size: $font-title-small;
+			font-size: $font-body-large;
 			font-weight: 500;
 			font-family: $font-sf-pro-display;
+		}
+
+		.customer-home-launchpad__dismiss-button {
+			button {
+				align-items: center;
+				display: flex;
+				padding: 0;
+				height: 24px;
+
+				div {
+					padding-right: 4px;
+				}
+
+				svg {
+					top: 2px;
+				}
+			}
 		}
 	}
 }

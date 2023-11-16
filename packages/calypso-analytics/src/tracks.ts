@@ -22,6 +22,7 @@ declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
 const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_ok',
+	'a8c_cookie_banner_view',
 	'a8c_ccpa_optout',
 	// WooCommerce Onboarding / Connection Flow.
 	'wcadmin_storeprofiler_create_jetpack_account',
@@ -35,11 +36,12 @@ const EVENT_NAME_EXCEPTIONS = [
 	// Launch Bar
 	'wpcom_launchbar_button_click',
 ];
+
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?63' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?64' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -172,6 +174,16 @@ export function identifyUser( userData: any ): any {
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
+/**
+ * For tracking users between our products, generally passing the id via a request parameter.
+ *
+ * Use 'anon' for userIdType for anonymous users.
+ */
+export function signalUserFromAnotherProduct( userId: string, userIdType: string ): any {
+	debug( 'Tracks signalUserFromAnotherProduct.', userId, userIdType );
+	pushEventToTracksQueue( [ 'signalAliasUserGeneral', userId, userIdType ] );
+}
+
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
@@ -179,6 +191,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 		if (
 			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! /^jetpack(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
+			! /^wpcom_dsp_widget(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! EVENT_NAME_EXCEPTIONS.includes( eventName )
 		) {
 			// eslint-disable-next-line no-console
@@ -227,6 +240,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	if (
 		! eventName.startsWith( 'calypso_' ) &&
 		! eventName.startsWith( 'jetpack_' ) &&
+		! eventName.startsWith( 'wpcom_dsp_widget_' ) &&
 		! EVENT_NAME_EXCEPTIONS.includes( eventName )
 	) {
 		debug(
@@ -292,10 +306,21 @@ export function recordTracksPageViewWithPageParams( urlPath: string, params?: an
 }
 
 export function getGenericSuperPropsGetter( config: ( key: string ) => string ) {
-	return () => ( {
-		environment: process.env.NODE_ENV,
-		environment_id: config( 'env_id' ),
-		site_id_label: 'wpcom',
-		client: config( 'client_slug' ),
-	} );
+	return () => {
+		const superProps = {
+			environment: process.env.NODE_ENV,
+			environment_id: config( 'env_id' ),
+			site_id_label: 'wpcom',
+			client: config( 'client_slug' ),
+		};
+
+		if ( typeof window !== 'undefined' ) {
+			Object.assign( superProps, {
+				vph: window.innerHeight,
+				vpw: window.innerWidth,
+			} );
+		}
+
+		return superProps;
+	};
 }

@@ -7,6 +7,8 @@ import {
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
 	DOMAIN_UPSELL_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
+	isDomainUpsellFlow,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -30,13 +32,14 @@ import {
 	recordAddDomainButtonClickInTransferDomain,
 } from 'calypso/state/domains/actions';
 import { ONBOARD_STORE } from '../../../../stores';
+import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
 import type { Step } from '../../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
-	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
@@ -86,7 +89,19 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		suggestion: DomainSuggestion | undefined,
 		shouldHideFreePlan = false
 	) => {
-		if ( suggestion ) {
+		if ( ! suggestion ) {
+			setHideFreePlan( false );
+			setDomainCartItem( undefined );
+			setDomain( undefined );
+			return submit?.();
+		}
+
+		setDomain( suggestion );
+
+		if ( suggestion?.is_free ) {
+			setHideFreePlan( false );
+			setDomainCartItem( undefined );
+		} else {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
@@ -95,11 +110,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
-		} else {
-			setDomainCartItem( undefined );
 		}
 
-		submit?.();
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
 	const handleSkip = ( _googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
@@ -157,6 +170,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
 			case DOMAIN_UPSELL_FLOW:
 				return __( 'Enter some descriptive keywords to get started' );
+			case HUNDRED_YEAR_PLAN_FLOW:
+				return __( 'Secure your 100-Year domain and start building your legacy.' );
 			default:
 				return createInterpolateElement(
 					__(
@@ -174,6 +189,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		if ( flow === NEWSLETTER_FLOW ) {
 			return __( 'Your domain. Your identity.' );
+		}
+
+		if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
+			return __( 'Find the perfect domain' );
 		}
 
 		return __( 'Choose a domain' );
@@ -240,28 +259,30 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( isDomainUpsellFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );
 	};
 
+	const Container = flow === HUNDRED_YEAR_PLAN_FLOW ? HundredYearPlanStepWrapper : StepContainer;
+
 	return (
-		<StepContainer
+		<Container
 			stepName="domains"
 			isWideLayout={ true }
 			hideBack={ shouldHideBackButton() }
@@ -275,7 +296,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"
-					align="left"
+					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
+					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

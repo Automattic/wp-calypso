@@ -1,12 +1,7 @@
 import { Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
-import type {
-	ArticlePublishSchedule,
-	EditorSidebarTab,
-	ArticleSections,
-	ArticlePrivacyOptions,
-} from './types';
+import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
 
 const panel = '[aria-label="Editor settings"]';
 
@@ -17,7 +12,7 @@ const selectors = {
 		`${ panel } button.is-active:has-text("${ tabName }")`,
 
 	// General section-related
-	section: ( name: ArticleSections ) =>
+	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
 	showRevisionButton: '.edit-post-last-revision__panel', // Revision is a link, not a panel.
 
@@ -60,16 +55,53 @@ export class EditorSettingsSidebarComponent {
 		this.editor = editor;
 	}
 
+	//#region Generic methods
+
 	/**
-	 * Closes the sidebar only for Mobile viewport.
+	 * Clicks a button matching the accessible name.
+	 *
+	 * @param {string} name Accessible name of the button.
+	 */
+	async clickButton( name: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
+
+		await editorParent.getByRole( 'button', { name: name } ).click();
+	}
+
+	/**
+	 * Enters the specified text to an input field, specified by a label.
+	 *
+	 * In the future, this method may support other methods of locating a
+	 * text box.
+	 *
+	 * @param {string} text Text to enter.
+	 * @param param1 Keyed object parametr.
+	 * @param {string} param1.label Locate text field by label.
+	 */
+	async enterText( text: string, { label }: { label: string } ): Promise< void > {
+		const editorParent = await this.editor.parent();
+
+		if ( label ) {
+			return await editorParent.getByLabel( label ).fill( text );
+		}
+
+		throw new Error( `Must specify a method to locate the text field.` );
+	}
+
+	//#endregion
+
+	/**
+	 * Closes the sidebar for mobile viewport.
+	 *
+	 * This method can close both the post/page settings as well as the Jetpack
+	 * sidebar.
 	 */
 	async closeSidebarForMobile(): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			return;
 		}
 		const editorParent = await this.editor.parent();
-		const closeButton = editorParent.getByRole( 'button', { name: 'Close Settings' } );
-		await closeButton.click();
+		await editorParent.getByRole( 'button', { name: /Close Settings|Close plugin/ } ).click();
 	}
 
 	/**
@@ -94,20 +126,16 @@ export class EditorSettingsSidebarComponent {
 	 *
 	 * If the section is already open, this method will pass.
 	 *
-	 * @param {ArticleSections} name Name of section to be expanded.
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} name Name of section to be expanded.
 	 */
-	async expandSection( name: ArticleSections ): Promise< void > {
+	async expandSection( name: string ): Promise< void > {
 		if ( await this.targetIsOpen( selectors.section( name ) ) ) {
 			return;
 		}
 
-		// Avoid the wpcalypso/staging banner.
-		await this.scrollToBottomOfSidebar();
-
 		const editorParent = await this.editor.parent();
 		const sectionLocator = editorParent.locator( selectors.section( name ) );
-		await sectionLocator.click();
+		await sectionLocator.click( { position: { x: 5, y: 5 } } );
 
 		const expandedLocator = editorParent.locator(
 			`${ selectors.section( name ) }[aria-expanded="true"]`
@@ -353,16 +381,5 @@ export class EditorSettingsSidebarComponent {
 		await editorParent.getByRole( 'button', { name: /Change URL:/ } ).click();
 		await editorParent.getByLabel( 'Permalink' ).fill( slug );
 		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
-	}
-
-	/**
-	 * Scroll to the bottom of the sidebar.
-	 *
-	 * Useful to work around the wpcalypso/staging banner (for proxied users).
-	 */
-	private async scrollToBottomOfSidebar(): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.section( 'Discussion' ) );
-		await locator.scrollIntoViewIfNeeded();
 	}
 }

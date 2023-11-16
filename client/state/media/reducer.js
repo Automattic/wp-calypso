@@ -36,7 +36,6 @@ const isMediaError = ( action ) =>
  * Returns the updated media errors state after an action has been
  * dispatched. The state reflects a mapping of site ID, media ID pairing to
  * an array of errors that occurred for that corresponding media item.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -174,7 +173,6 @@ export const queries = ( state = {}, action ) => {
  * Returns the media library selected items state after an action has been
  * dispatched. The state reflects a mapping of site ID pairing to an array
  * that contains IDs of media items.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}       Updated state
@@ -277,7 +275,6 @@ export const selectedItems = ( state = {}, action ) => {
  * and the actual ID of the item. This mapping allows anything still
  * using the transient ID to reference an already saved item to get back
  * the saved item rather than the trasient item.
- *
  * @param {Object} state The previous state.
  * @param {Object} action The action.
  * @returns {Object} The next state.
@@ -388,7 +385,6 @@ export const transientItems = ( state = {}, action ) => {
  * Returns the updated site post requests state after an action has been
  * dispatched. The state reflects a mapping of site ID, media ID pairing to a
  * boolean reflecting whether a request for the media item is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

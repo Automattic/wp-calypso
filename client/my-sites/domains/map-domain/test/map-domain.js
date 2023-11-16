@@ -49,7 +49,7 @@ describe( 'MapDomain component', () => {
 
 	test( 'redirects if site cannot be upgraded at mounting', () => {
 		render( <MapDomain { ...defaultProps } isSiteUpgradeable={ false } /> );
-		expect( pageSpy.redirect ).toBeCalledWith( '/domains/add/mapping' );
+		expect( pageSpy.redirect ).toHaveBeenCalledWith( '/domains/add/mapping' );
 	} );
 
 	test( 'redirects if site cannot be upgraded at new props', () => {
@@ -57,7 +57,7 @@ describe( 'MapDomain component', () => {
 		rerender(
 			<MapDomain { ...defaultProps } isSiteUpgradeable={ false } selectedSiteId={ 501 } />
 		);
-		expect( pageSpy.redirect ).toBeCalledWith( '/domains/add/mapping' );
+		expect( pageSpy.redirect ).toHaveBeenCalledWith( '/domains/add/mapping' );
 	} );
 
 	test( 'renders a MapDomainStep', () => {
@@ -76,7 +76,7 @@ describe( 'MapDomain component', () => {
 		render( <MapDomain { ...defaultProps } selectedSite={ null } /> );
 		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
 		await userEvent.click( backBtn );
-		expect( pageSpy ).toBeCalledWith( '/domains/add' );
+		expect( pageSpy ).toHaveBeenCalledWith( '/domains/add' );
 	} );
 
 	test( 'goes back to domain management for VIP sites', async () => {
@@ -89,14 +89,14 @@ describe( 'MapDomain component', () => {
 		);
 		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
 		await userEvent.click( backBtn );
-		expect( pageSpy ).toBeCalledWith( domainManagementList( 'baba' ) );
+		expect( pageSpy ).toHaveBeenCalledWith( domainManagementList( 'baba' ) );
 	} );
 
 	test( 'goes back to domain add page if non-VIP site', async () => {
 		render( <MapDomain { ...defaultProps } selectedSiteSlug="baba" /> );
 		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
 		await userEvent.click( backBtn );
-		expect( pageSpy ).toBeCalledWith( '/domains/add/baba' );
+		expect( pageSpy ).toHaveBeenCalledWith( '/domains/add/baba' );
 	} );
 
 	test( 'does not render a notice by default', () => {

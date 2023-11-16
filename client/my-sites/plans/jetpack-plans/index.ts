@@ -1,5 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
+import page, { type Callback } from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
 import {
 	jetpackBoostWelcome,
@@ -9,7 +9,7 @@ import {
 	productSelect,
 } from './controller';
 
-export default function ( rootUrl: string, ...rest: PageJS.Callback[] ): void {
+export default function ( rootUrl: string, ...rest: Callback[] ): void {
 	const addBoostAndSocialRoutes = config.isEnabled( 'jetpack/pricing-add-boost-social' );
 
 	page( `${ rootUrl }/jetpack-free/welcome`, jetpackFreeWelcome, makeLayout, clientRender );

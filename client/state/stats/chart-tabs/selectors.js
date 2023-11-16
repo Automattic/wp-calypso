@@ -7,7 +7,6 @@ const EMPTY_RESULT = [];
 
 /**
  * Returns the count records for a given site and period
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  period   Type of duration to include in the query (such as daily)
@@ -19,7 +18,6 @@ export function getCountRecords( state, siteId, period ) {
 
 /**
  * Returns an array of strings denoting the query fields that are still loading
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {string}  period   Type of duration to include in the query (such as daily)

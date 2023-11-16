@@ -42,6 +42,10 @@ class Help_Center {
 			return;
 		}
 
+		if ( ! function_exists( 'wpcom_get_site_purchases' ) ) {
+			return;
+		}
+
 		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
 		$this->version    = $this->asset_file['version'];
 
@@ -57,7 +61,7 @@ class Help_Center {
 	 * @return \A8C\FSE\Help_Center
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -136,19 +140,21 @@ class Help_Center {
 			$site    = $user->primary_blog;
 			switch_to_blog( $site );
 		} else {
-			$site = \Jetpack_Options::get_option( 'id' );
+			/*
+			 * Atomic sites have the WP.com blog ID stored as a Jetpack option. This code deliberately
+			 * doesn't use `Jetpack_Options::get_option` so it works even when Jetpack has not been loaded.
+			 */
+			$jetpack_options = get_option( 'jetpack_options' );
+			if ( is_array( $jetpack_options ) && isset( $jetpack_options['id'] ) ) {
+				$site = (int) $jetpack_options['id'];
+			} else {
+				$site = get_current_blog_id();
+			}
 		}
 
-		$logo_id  = get_option( 'site_logo' );
-		$products = wpcom_get_site_purchases();
-		$plan     = array_pop(
-			array_filter(
-				$products,
-				function ( $product ) {
-					return 'bundle' === $product->product_type;
-				}
-			)
-		);
+		$logo_id = get_option( 'site_logo' );
+		$bundles = wp_list_filter( wpcom_get_site_purchases(), array( 'product_type' => 'bundle' ) );
+		$plan    = array_pop( $bundles );
 
 		$return_data = array(
 			'ID'               => $site,
@@ -162,7 +168,7 @@ class Help_Center {
 			'logo'             => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
-				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0] ?? '',
 			),
 			'launchpad_screen' => get_option( 'launchpad_screen' ),
 			'site_intent'      => get_option( 'site_intent' ),

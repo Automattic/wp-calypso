@@ -1,26 +1,26 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
 import {
+	Badge,
 	Button,
 	Dialog,
-	Gridicon,
 	HorizontalBarList,
 	HorizontalBarListItem,
 } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import Badge from 'calypso/components/badge';
 import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query-new';
+import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
+import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
@@ -36,6 +36,7 @@ import {
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
+import TargetLocations from './target-locations';
 
 interface Props {
 	isLoading?: boolean;
@@ -57,6 +58,17 @@ const getPostIdFromURN = ( targetUrn: string ) => {
 		return splitted[ 4 ];
 	}
 };
+
+const getExternalLinkIcon = ( fillColor?: string ) => (
+	<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			fillRule="evenodd"
+			clipRule="evenodd"
+			d="M9.93271 3.02436L12.4162 3.01314L8.1546 7.27477L8.8617 7.98188L13.1183 3.72526L13.0971 6.18673L14.0971 6.19534L14.1332 2.00537L9.92819 2.02437L9.93271 3.02436ZM4.66732 2.83349C3.6548 2.83349 2.83398 3.6543 2.83398 4.66682V11.3335C2.83398 12.346 3.6548 13.1668 4.66732 13.1668H11.334C12.3465 13.1668 13.1673 12.346 13.1673 11.3335V8.90756H12.1673V11.3335C12.1673 11.7937 11.7942 12.1668 11.334 12.1668H4.66732C4.20708 12.1668 3.83398 11.7937 3.83398 11.3335V4.66682C3.83398 4.20658 4.20708 3.83349 4.66732 3.83349H6.83398V2.83349H4.66732Z"
+			fill={ fillColor }
+		/>
+	</svg>
+);
 
 export default function CampaignItemDetails( props: Props ) {
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -88,6 +100,7 @@ export default function CampaignItemDetails( props: Props ) {
 		target_urn,
 		delivery_percent,
 		created_at,
+		format,
 	} = campaign || {};
 
 	const {
@@ -114,10 +127,11 @@ export default function CampaignItemDetails( props: Props ) {
 	} );
 
 	// Target block
-	const devicesList = audience_list ? audience_list[ 'devices' ] : '';
-	const countriesList = audience_list ? audience_list[ 'countries' ] : '';
-	const topicsList = audience_list ? audience_list[ 'topics' ] : '';
-	const languagesList = audience_list ? audience_list[ 'languages' ] : '';
+	const {
+		devices: devicesList,
+		topics: topicsList,
+		languages: languagesList,
+	} = audience_list || {};
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -129,7 +143,6 @@ export default function CampaignItemDetails( props: Props ) {
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
-	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
 	const languagesListFormatted = languagesList
 		? `${ languagesList }`
 		: translate( 'All languages' );
@@ -142,13 +155,25 @@ export default function CampaignItemDetails( props: Props ) {
 	const navigationItems = [
 		{
 			label: translate( 'Advertising' ),
-			href: getAdvertisingDashboardPath( `/${ selectedSiteSlug }/campaigns` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ),
 		},
 		{
 			label: campaignTitleFormatted || '',
-			href: getAdvertisingDashboardPath( `${ selectedSiteSlug }/campaigns/${ campaignId }` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ selectedSiteSlug }` ),
 		},
 	];
+
+	const adPreviewLabel =
+		// maybe we will need to edit this condition when we add more templates
+		format !== 'html5_v2' ? (
+			<div className="campaign-item-details__preview-header-dimensions">
+				<span>{ `${ width }x${ height }` }</span>
+			</div>
+		) : (
+			<div className="campaign-item-details__preview-header-preview-button">
+				<AdPreviewModal templateFormat={ format || '' } htmlCode={ creative_html || '' } />
+			</div>
+		);
 
 	const icon = (
 		<span className="campaign-item-details__support-buttons-icon">
@@ -220,7 +245,8 @@ export default function CampaignItemDetails( props: Props ) {
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
-				window.open( 'https://wordpress.com/support/', '_blank' );
+				const localizedUrl = localizeUrl( 'https://wordpress.com/support/' );
+				window.open( localizedUrl, '_blank' );
 			},
 		},
 		{
@@ -297,7 +323,7 @@ export default function CampaignItemDetails( props: Props ) {
 				</div>
 
 				<div>
-					{ ! isLoading && status === 'finished' && (
+					{ ! isLoading && ! isSmallScreen && (
 						<Button
 							className="campaign-item-promote-again-button"
 							primary
@@ -316,7 +342,7 @@ export default function CampaignItemDetails( props: Props ) {
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
-						className="campaign-item-details__notice"
+						className="promote-post-notice campaign-item-details__notice"
 					>
 						{ translate(
 							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
@@ -324,7 +350,7 @@ export default function CampaignItemDetails( props: Props ) {
 								components: {
 									wpcomTos: (
 										<a
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -494,8 +520,12 @@ export default function CampaignItemDetails( props: Props ) {
 										<span className="campaign-item-details__label">
 											{ translate( 'Location' ) }
 										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? countriesListFormatted : <FlexibleSkeleton /> }
+										<span className="campaign-item-details__details campaign-item-details__locations">
+											{ ! isLoading ? (
+												<TargetLocations audienceList={ audience_list } />
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</span>
 										<span className="campaign-item-details__label">
 											{ translate( 'Languages' ) }
@@ -526,7 +556,7 @@ export default function CampaignItemDetails( props: Props ) {
 													target="_blank"
 												>
 													{ clickUrl }
-													<Gridicon icon="external" size={ 16 } />
+													{ getExternalLinkIcon() }
 												</Button>
 											) : (
 												<FlexibleSkeleton />
@@ -597,20 +627,17 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__preview-header-title">
 									{ translate( 'Ad preview' ) }
 								</div>
-								<div className="campaign-item-details__preview-header-dimensions">
-									{ ! isLoading ? (
-										<>
-											<span>{ `${ width }x${ height }` }</span>
-										</>
-									) : (
-										<FlexibleSkeleton />
-									) }
+								<div className="campaign-item-details__preview-header-label">
+									{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
 								</div>
 							</div>
 							{ isSmallScreen && <hr className="campaign-item-ad-header-line" /> }
-							<div className="campaign-item-details__preview-content">
-								<AdPreview isLoading={ isLoading } htmlCode={ creative_html || '' } />
-							</div>
+							<AdPreview
+								isLoading={ isLoading }
+								htmlCode={ creative_html || '' }
+								templateFormat={ format || '' }
+								width={ format === 'html5_v2' ? '100%' : '300px' }
+							/>
 							<p className="campaign-item-details__preview-disclosure">
 								{ translate(
 									'Depending on the platform, the ad may seem differently from the preview.'
@@ -627,7 +654,11 @@ export default function CampaignItemDetails( props: Props ) {
 												{ cancelCampaignButtonText }
 											</Button>
 										) }
-										<Button href={ CALYPSO_CONTACT } target="_blank">
+										<Button
+											className="contact-support-button"
+											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+											target="_blank"
+										>
 											{ icon }
 											{ translate( 'Contact Support' ) }
 										</Button>
@@ -644,7 +675,7 @@ export default function CampaignItemDetails( props: Props ) {
 								commented out until we get the link
 								<Button className="is-link campaign-item-details__support-effective-ad-doc">
 									{ translate( 'What makes an effective ad?' ) }
-									<Gridicon icon="external" size={ 16 } />
+									{ getExternalLinkIcon() }
 								</Button>*/ }
 
 								<InlineSupportLink
@@ -654,7 +685,7 @@ export default function CampaignItemDetails( props: Props ) {
 									showSupportModal={ ! isRunningInJetpack }
 								>
 									{ translate( 'View documentation' ) }
-									<Gridicon icon="external" size={ 16 } />
+									{ getExternalLinkIcon() }
 								</InlineSupportLink>
 								<div className="campaign-item-details__powered-by">
 									<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>

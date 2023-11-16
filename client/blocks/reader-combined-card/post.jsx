@@ -76,7 +76,6 @@ class ReaderCombinedCardPost extends Component {
 			currentRoute,
 			post,
 			streamUrl,
-			isDiscover,
 			isSelected,
 			postKey,
 			hasOrganization,
@@ -143,7 +142,7 @@ class ReaderCombinedCardPost extends Component {
 							</a>
 						</h1>
 					</AutoDirection>
-					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
+					<ReaderExcerpt post={ post } />
 					<div className="reader-combined-card__post-author-and-time ignore-click">
 						<ReaderVisitLink href={ post.URL } iconSize={ 14 }>
 							{ this.props.translate( 'Visit' ) }

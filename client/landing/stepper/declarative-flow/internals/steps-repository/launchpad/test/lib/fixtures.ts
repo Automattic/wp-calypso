@@ -5,6 +5,7 @@ import { Task } from '../../types';
 export const defaultSiteDetails: SiteDetails = {
 	ID: 211078228,
 	name: 'testLinkInBio',
+	title: 'Site Title',
 	description: 'test link in bio',
 	URL: 'https://testlinkinbio.wordpress.com',
 	domain: '',
@@ -135,7 +136,6 @@ export const defaultSiteDetails: SiteDetails = {
 		is_wpforteams_site: false,
 		p2_hub_blog_id: null,
 		is_cloud_eligible: false,
-		anchor_podcast: false,
 		was_created_with_blank_canvas_design: false,
 		videopress_storage_used: 0,
 		is_difm_lite_in_progress: false,
@@ -258,6 +258,7 @@ export const defaultDomainResponse: ResponseDomain = {
 	isSubdomain: false,
 	isWPCOMDomain: false,
 	isWpcomStagingDomain: false,
+	lastTransferError: '',
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	name: '',

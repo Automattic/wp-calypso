@@ -12,7 +12,6 @@ import { itemsSchema } from './schema';
  * ActivePromotions `Reducer` function
  * root state -> state.activePromotions.items =>
  * [ '', '', '', ... '' ]
- *
  * @param {Object} state - current state
  * @param {Object} action - activePromotions action
  * @returns {Object} updated state
@@ -20,7 +19,11 @@ import { itemsSchema } from './schema';
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case ACTIVE_PROMOTIONS_RECEIVE:
-			return [ ...action.activePromotions ];
+			// Sometimes an empty PHP can be serialized as `{}` object, force to array in that case
+			if ( ! Array.isArray( action.activePromotions ) ) {
+				return [];
+			}
+			return action.activePromotions;
 	}
 
 	return state;
@@ -29,7 +32,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
 /**
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
- *
  * @param {Object} state - current state
  * @param {Object} action - activePromotions action
  * @returns {Object} updated state
@@ -49,7 +51,6 @@ export const requesting = ( state = false, action ) => {
 
 /**
  * `Reducer` function which handles ERROR REST-API response actions
- *
  * @param {Object} state - current state
  * @param {Object} action - activePromotions action
  * @returns {Object} updated state

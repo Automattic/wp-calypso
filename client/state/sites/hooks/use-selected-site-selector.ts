@@ -12,10 +12,8 @@ export type SelectedSiteSelector< Params extends any[], Result > = (
  * Wraps useSelector and closes over the getSelectedSiteId step when using selected site selectors.
  *
  * Usage:
- *
  *   useSelectedSiteSelector( isJetpackSite );
  *   useSelectedSiteSelector( getPlansForFeature, FEATURE_WP_SUBDOMAIN );
- *
  * @param selector A selector that takes state, a site id and any additional params.
  * @returns The result of the selector applied to application state.
  */

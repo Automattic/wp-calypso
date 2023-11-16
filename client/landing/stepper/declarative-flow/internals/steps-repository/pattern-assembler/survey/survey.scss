@@ -1,19 +1,8 @@
 .pattern-assembler__survey {
-	min-height: 76px;
 	border-radius: 4px;
 	background: #f0f7fc;
-	margin: 20px 0;
-
-	&.banner.card.is-dismissible {
-		cursor: default;
-		border: 0;
-		box-shadow: none;
-
-		// Overwrite .banner.card padding without !important
-		@media (min-width: 481px) {
-			padding-right: 52px;
-		}
-	}
+	margin: 40px 0;
+	text-wrap: pretty;
 
 	.banner__info .banner__title {
 		font-weight: 400;
@@ -33,8 +22,19 @@
 	.banner__close-icon {
 		fill: var(--studio-gray-60);
 		top: auto;
-		right: 18px;
+		right: 14px;
 		height: 15.4px;
 		width: 15.4px;
+	}
+
+	&.banner.card.is-dismissible {
+		cursor: default;
+		border: 0;
+		box-shadow: none;
+
+		// Overwrite .banner.card
+		@media (min-width: 481px) {
+			padding: 14px 42px 14px 16px;
+		}
 	}
 }

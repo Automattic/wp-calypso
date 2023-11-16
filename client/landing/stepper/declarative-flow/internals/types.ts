@@ -14,14 +14,12 @@ export type NavigationControls = {
 
 	/**
 	 * Call this function if you want to go to the proceed down the flow.
-	 *
 	 * @deprecated Avoid this method. Use submit() instead.
 	 */
 	goNext?: () => void;
 
 	/**
 	 * Call this function if you want to jump to a certain step.
-	 *
 	 * @deprecated Avoid this method. Use submit() instead.
 	 * If you need to skip forward several screens in
 	 * a stepper flow, handle that logic in submit().
@@ -86,7 +84,9 @@ export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	steps?: FlowSteps[ number ][ 'slug' ][]
 ) => NavigationControls;
 
-export type UseAssertConditionsHook = () => AssertConditionResult;
+export type UseAssertConditionsHook< FlowSteps extends StepperStep[] > = (
+	navigate?: Navigate< FlowSteps >
+) => AssertConditionResult;
 
 export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
@@ -103,7 +103,7 @@ export type Flow = {
 	classnames?: string | [ string ];
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
-	useAssertConditions?: UseAssertConditionsHook;
+	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */

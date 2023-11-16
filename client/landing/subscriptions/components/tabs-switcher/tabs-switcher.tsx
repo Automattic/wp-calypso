@@ -3,11 +3,16 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import DocumentHead from 'calypso/components/data/document-head';
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SiteSubscriptionsManager from 'calypso/landing/subscriptions/components/site-subscriptions-manager';
-import { Comments, Settings, Pending } from 'calypso/landing/subscriptions/components/tab-views';
+import {
+	Comments,
+	Pending,
+	Settings,
+	Sites,
+} from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
 type SubscriptionManagerTab = {
@@ -68,10 +73,18 @@ const useTabs = (): SubscriptionManagerTab[] => {
 };
 
 const TabsSwitcher = () => {
+	const translate = useTranslate();
 	const tabs = useTabs();
 	const { label: selectedText, count: selectedCount } = tabs.find( ( tab ) => tab.selected ) ?? {};
 	return (
 		<>
+			<DocumentHead
+				title={ translate( 'Subscriptions: %s', {
+					args: selectedText,
+					comment:
+						'%s is the selected tab. Example: "Subscriptions: Sites" or "Subscriptions: Comments"',
+				} ) }
+			/>
 			<Nav
 				className="subscription-manager-tab-switcher"
 				selectedText={ selectedText }
@@ -95,7 +108,7 @@ const TabsSwitcher = () => {
 
 			<Routes>
 				<Route index element={ <Navigate to="sites" /> } />
-				<Route path="sites/*" element={ <SiteSubscriptionsManager /> } />
+				<Route path="sites/*" element={ <Sites /> } />
 				<Route path="comments/*" element={ <Comments /> } />
 				<Route path="pending/*" element={ <Pending /> } />
 				<Route path="settings/*" element={ <Settings /> } />

@@ -4,7 +4,7 @@
 
 import { render } from '@testing-library/react';
 import React from 'react';
-import { useSubscriberListManager } from '../../subscriber-list-manager/subscriber-list-manager-context';
+import { useSubscribersPage } from '../../subscribers-page/subscribers-page-context';
 import SubscriberList from '../subscriber-list';
 import { SubscriberRow } from '../subscriber-row';
 
@@ -16,8 +16,8 @@ jest.mock( '../subscriber-row', () => ( {
 } ) );
 
 // We mock the useSubscriberListManager hook
-jest.mock( '../../subscriber-list-manager/subscriber-list-manager-context', () => ( {
-	useSubscriberListManager: jest.fn(),
+jest.mock( '../../subscribers-page/subscribers-page-context', () => ( {
+	useSubscribersPage: jest.fn(),
 } ) );
 
 describe( 'SubscriberList', () => {
@@ -33,7 +33,7 @@ describe( 'SubscriberList', () => {
 		jest.clearAllMocks();
 
 		// We set the return value of useSubscriberListManager
-		( useSubscriberListManager as jest.Mock ).mockReturnValue( {
+		( useSubscribersPage as jest.Mock ).mockReturnValue( {
 			subscribers: mockSubscribers,
 		} );
 	} );

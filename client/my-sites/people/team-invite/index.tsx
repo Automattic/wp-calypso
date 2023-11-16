@@ -13,7 +13,6 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { userCan } from 'calypso/lib/site/utils';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
-import PeopleSectionAddNav from 'calypso/my-sites/people/people-section-add-nav';
 import { InviteLinkForm } from 'calypso/my-sites/people/team-invite/invite-link-form';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -59,7 +58,6 @@ function TeamInvite( props: Props ) {
 						args: { sitename: site.name ?? translate( 'this site' ) },
 					} ) }
 				</HeaderCake>
-				<PeopleSectionAddNav selectedFilter="team" />
 				<EmptyContent
 					title={ translate( 'Oops, only administrators can invite other people' ) }
 					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
@@ -79,8 +77,6 @@ function TeamInvite( props: Props ) {
 					args: { sitename: site.name ?? translate( 'this site' ) },
 				} ) }
 			</HeaderCake>
-
-			<PeopleSectionAddNav selectedFilter="team" />
 
 			{ isSiteForTeams && <P2TeamBanner context="invite" site={ site } /> }
 

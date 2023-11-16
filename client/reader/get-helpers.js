@@ -7,7 +7,6 @@ import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-bl
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
- *
  * @param {*} options - an object containing a feed, site, and post. all optional.
  * @returns {string} the site url
  */
@@ -27,7 +26,6 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
  * Given a feed, site, or post: return the feed url. return false if one could not be found.
  * The feed url is different from the site url in that it is unique per feed. A single siteUrl may
  * be home to many feeds
- *
  * @param {*} options - an object containing a feed, site, and post. all optional.
  * @returns {string} the site url
  */
@@ -42,7 +40,6 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
 /**
  * getSiteDomain function extracts the domain of a website from the provided `site` and `feed` objects.
  * It returns the domain of the site if available, otherwise, it extracts the domain from the site URL.
- *
  * @param {Object} param0 - An object containing `feed` and `site` objects.
  * @param {Object|undefined} param0.feed - An object representing the feed data.
  * @param {Object} param0.site - An object representing the site data. If it has a `domain` property and it is a string, that will be returned directly.
@@ -63,7 +60,6 @@ export const getSiteDomain = ( { feed, site } = {} ) => {
 
 /**
  * Given a feed, site, or post: output the best title to use for the owning site.
- *
  * @param {*} options - an object containing a feed, site, and post. all optional
  * @returns {string} the site title
  */
@@ -111,7 +107,6 @@ export const getSiteAuthorName = ( site ) => {
 
 /**
  * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
- *
  * @param {Object} flags eligibility data
  * @param {string} flags.currentRoute current route
  * @param {boolean} flags.isWPForTeamsItem id if exists
@@ -144,7 +139,6 @@ export const isEligibleForUnseen = ( {
 
 /**
  * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
- *
  * @param {Object} params method params
  * @param {Object} params.post object
  * @param {Array} params.posts list
@@ -168,7 +162,6 @@ export const canBeMarkedAsSeen = ( { post = null, posts = [] } ) => {
 
 /**
  * Return Featured image alt text.
- *
  * @param {Object} post object containing post information
  * @returns {string} Featured image alt text
  */
@@ -188,4 +181,22 @@ export const getFeaturedImageAlt = ( post ) => {
 	}
 
 	return featuredImageAlt;
+};
+
+/**
+ * Get the follower count from a site/feed.
+ * @param {Object} feed Feed object.
+ * @param {Object} site Site object.
+ * @returns {number|null}
+ */
+export const getFollowerCount = ( feed, site ) => {
+	if ( site && site.subscribers_count ) {
+		return site.subscribers_count;
+	}
+
+	if ( feed && feed.subscribers_count > 0 ) {
+		return feed.subscribers_count;
+	}
+
+	return null;
 };

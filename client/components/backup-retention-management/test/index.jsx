@@ -74,7 +74,7 @@ jest.mock( 'calypso/state/sites/selectors/get-site-slug', () =>
 	jest.fn().mockImplementation( () => EXAMPLE_SITE_SLUG )
 );
 
-jest.mock( '../use-upsell-info', () =>
+jest.mock( 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug', () =>
 	jest.fn().mockImplementation( () => EXAMPLE_ADDON_STORAGE_INFO )
 );
 

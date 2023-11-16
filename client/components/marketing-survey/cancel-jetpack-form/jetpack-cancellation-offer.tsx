@@ -8,6 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import AkismetLogo from 'calypso/components/akismet-logo';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -26,10 +27,11 @@ interface Props {
 	offer: CancellationOffer;
 	percentDiscount: number;
 	onGetDiscount: () => void;
+	isAkismet?: boolean;
 }
 
 const JetpackCancellationOffer: FC< Props > = ( props ) => {
-	const { siteId, offer, purchase, percentDiscount, onGetDiscount } = props;
+	const { siteId, offer, purchase, percentDiscount, onGetDiscount, isAkismet } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isApplyingOffer = useSelector( ( state ) =>
@@ -176,15 +178,27 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 		<>
 			<FormattedHeader
 				headerText={ translate( 'Thanks for your feedback' ) }
-				subHeaderText={ translate(
-					'We’d love to help make Jetpack work for you. Would the special offer below interest you?'
-				) }
+				subHeaderText={
+					/* Translators: %(brand)s is either Akismet or Jetpack */
+					translate(
+						'We’d love to help make %(brand)s work for you. Would the special offer below interest you?',
+						{
+							args: {
+								brand: isAkismet ? 'Akismet' : 'Jetpack',
+							},
+						}
+					)
+				}
 				align="center"
 				isSecondary
 			/>
 
 			<div className="jetpack-cancellation-offer__card">
-				<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
+				{ isAkismet ? (
+					<AkismetLogo className="jetpack-cancellation-offer__logo" size={ { height: 36 } } />
+				) : (
+					<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
+				) }
 				<p className="jetpack-cancellation-offer__headline">{ offerHeadline }</p>
 				<p>
 					{

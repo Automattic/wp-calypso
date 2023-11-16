@@ -5,7 +5,6 @@ import './setup';
 
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
- *
  * @returns {string} - The Tracks anonymous user id
  */
 export function tracksAnonymousUserId() {

@@ -21,7 +21,6 @@ const getSupportSessionApiKey = () => config( 'wpcom_calypso_support_session_res
 
 /**
  * Requests the current user for user bootstrap.
- *
  * @param {Object} request An Express request.
  * @returns {Promise<Object>} A promise for a user object.
  */

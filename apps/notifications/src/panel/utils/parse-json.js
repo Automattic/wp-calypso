@@ -1,6 +1,5 @@
 /**
  * Attempts to parse a string as JSON
- *
  * @param {?string} input possible JSON string
  * @returns {*} parsed data or null on failure
  */

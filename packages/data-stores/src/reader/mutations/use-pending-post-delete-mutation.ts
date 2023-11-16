@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
+import { subscriptionsCountQueryKeyPrefix } from '../queries/use-subscriptions-count-query';
 import { PendingPostSubscriptionsResult, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type PendingPostDeleteParams = {
@@ -12,9 +13,10 @@ type PendingPostDeleteResponse = {
 };
 
 const usePendingPostDeleteMutation = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const countCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
+	const countCacheKey = useCacheKey( subscriptionsCountQueryKeyPrefix );
+
 	return useMutation( {
 		mutationFn: async ( params: PendingPostDeleteParams ) => {
 			if ( ! params.id ) {
@@ -25,8 +27,10 @@ const usePendingPostDeleteMutation = () => {
 			}
 
 			const response = await callApi< PendingPostDeleteResponse >( {
+				apiNamespace: 'wpcom/v2',
 				path: `/post-comment-subscriptions/${ params.id }/delete`,
 				method: 'POST',
+				isLoggedIn,
 				apiVersion: '2',
 			} );
 			if ( ! response.deleted ) {

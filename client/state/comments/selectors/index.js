@@ -16,3 +16,4 @@ export { getPostTotalCommentsCount } from 'calypso/state/comments/selectors/get-
 export { getSiteComment } from 'calypso/state/comments/selectors/get-site-comment';
 export { getSiteCommentCounts } from 'calypso/state/comments/selectors/get-site-comment-counts';
 export { getSiteComments } from 'calypso/state/comments/selectors/get-site-comments';
+export { getInlineCommentsExpandedState } from 'calypso/state/comments/selectors/get-inline-comments-expanded-state';

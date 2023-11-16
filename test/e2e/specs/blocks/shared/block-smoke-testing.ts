@@ -7,6 +7,7 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	DataHelper,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -19,7 +20,7 @@ declare const browser: Browser;
  * @param blockFlows A list of block flows to put under test.
  */
 export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): void {
-	describe( specName, function () {
+	describe( DataHelper.createSuiteTitle( specName ), function () {
 		const features = envToFeatureKey( envVariables );
 		// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
 		// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
@@ -47,17 +48,25 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 			await editorPage.visit( 'post' );
 		} );
 
+		it( 'Enter post title', async () => {
+			await editorPage.enterTitle( `${ specName } - ${ DataHelper.getDateString( 'ISO-8601' ) }` );
+		} );
+
 		describe( 'Add and configure blocks in the editor', function () {
 			for ( const blockFlow of blockFlows ) {
 				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
-					await editorPage.addBlockFromSidebar(
+					const blockHandle = await editorPage.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector,
 						{ noSearch: true }
 					);
+					const id = await blockHandle.getAttribute( 'id' );
+					const editorCanvas = await editorPage.getEditorCanvas();
+					const addedBlockLocator = editorCanvas.locator( `#${ id }` );
 					editorContext = {
 						page,
 						editorPage,
+						addedBlockLocator,
 					};
 				} );
 
@@ -75,8 +84,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Publishing the post', function () {
 			it( 'Publish and visit post', async function () {
-				await editorPage.publish( { visit: true } );
+				await editorPage.publish( { visit: true, timeout: 15 * 1000 } );
 				publishedPostContext = {
+					browser: browser,
 					page: page,
 				};
 			} );

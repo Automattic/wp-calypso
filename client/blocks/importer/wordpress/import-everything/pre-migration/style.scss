@@ -56,13 +56,6 @@
 				width: 240px;
 			}
 
-			@include break-xlarge {
-				margin-inline-end: 0;
-				position: absolute;
-				inset-inline-end: -85px;
-				width: 250px;
-			}
-
 			h3 {
 				font-weight: 500;
 				font-size: 1rem;

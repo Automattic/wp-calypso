@@ -4,8 +4,7 @@
 	margin-bottom: 64px;
 
 	&__header {
-		margin-top: 70px;
-		margin-bottom: 30px;
+		margin-bottom: 32px;
 		font-size: $font-title-small;
 		line-height: 26px;
 
@@ -22,5 +21,25 @@
 
 	.subscriber-list-container__pagination {
 		margin-top: 48px;
+	}
+
+	.loading-placeholder {
+		@include placeholder();
+		display: inline-block;
+		margin-bottom: 30px;
+
+		&.big {
+			width: 50%;
+		}
+
+		&.small {
+			width: 10%;
+			margin-left: 5%;
+		}
+
+		&.hidden {
+			background-color: transparent;
+			animation: none;
+		}
 	}
 }

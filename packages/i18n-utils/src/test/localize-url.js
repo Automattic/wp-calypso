@@ -1,6 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
-
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { localizeUrl, useLocalizeUrl } from '../';
 
 jest.mock( '../locale-context', () => {
@@ -477,6 +479,62 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', 'de' ) ).toEqual(
 			'https://de.wordpress.com/wp-login.php?action=lostpassword'
 		);
+	} );
+
+	test( 'WordPress.com plans URLs', () => {
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', false ) ).toEqual(
+			'https://wordpress.com/es/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Greek
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', false ) ).toEqual(
+			'https://wordpress.com/el/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Romanian
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', false ) ).toEqual(
+			'https://wordpress.com/ro/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Non Mag-16, Finnish
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Full path to a site plan
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
 	} );
 
 	test( 'WordPress.com new style support URLs', () => {

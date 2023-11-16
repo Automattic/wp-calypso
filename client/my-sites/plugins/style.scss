@@ -3,15 +3,32 @@
 @import "./grid-mixins.scss";
 @import "./woocommerce-box.scss";
 
-.is-section-plugins .main {
-	padding-top: 24px; // Compensate for the fixed header.
+.is-jetpack-new-navigation {
+	.plugins__top-container-jc {
+		border-block-end: none;
+	}
+}
 
-	@media ( max-width: 782px ) {
-		padding-top: 45px;
+.is-section-plugins .main {
+
+	&.is-logged-out:not(.is-plugin-details) {
+		.navigation-header {
+			visibility: hidden;
+			position: absolute;
+			top: 0;
+		}
+	}
+	&.is-logged-out.is-plugin-details {
+		.navigation-header {
+			margin-top: -47px;
+		}
 	}
 
-	@media ( max-width: 660px ) {
-		padding-top: 60px;
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding-bottom: 16px;
+			margin-bottom: 0;
+		}
 	}
 
 	.upsell-nudge {
@@ -102,19 +119,19 @@ $calypso-header-height: 31px;
 	}
 
 	@include display-grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 395px;
+	grid-template-columns: minmax(380px, auto) minmax(auto, 395px);
 	grid-column-gap: 60px;
 	grid-template-areas:
-		"header header actions"
-		"content content actions";
+		"header actions"
+		"content actions";
 	grid-auto-rows: auto 1fr;
 
-	@include breakpoint-deprecated( "<1280px" ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		grid-template-areas:
-			"header header header"
-			"actions actions actions"
-			"content content content";
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+			"header"
+			"actions"
+			"content";
+		grid-template-columns: minmax(0, 1fr);
 		padding-top: 20px;
 	}
 
@@ -130,12 +147,27 @@ $calypso-header-height: 31px;
 	.plugin-details__actions {
 		position: relative;
 		grid-area: actions;
-		background-color: var(--studio-gray-0);
-		padding: 40px;
 		height: fit-content;
 
-		@include breakpoint-deprecated( "<1280px" ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			margin-top: 40px;
+		}
+
+		.plugin-details__sidebar {
+			background-color: var(--studio-gray-0);
+			padding: 40px;
+
+			@include breakpoint-deprecated( "<1280px" ) {
+				padding: 30px;
+			}
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 40px;
+			}
+		}
+
+		.plugin-details-download-card {
+			margin-top: 50px;
 		}
 	}
 
@@ -150,6 +182,25 @@ $calypso-header-height: 31px;
 		position: relative;
 		@include breakpoint-deprecated( ">1040px" ) {
 			@include grid-column( 3, 1 );
+		}
+	}
+
+	.plugin-details__plugin-download {
+		margin-top: 20px;
+		gap: 5px;
+		display: flex;
+		font-size: $font-body-extra-small;
+
+		@include breakpoint-deprecated( "<1280px" ) {
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.plugin-details__plugin-download-cta {
+			a {
+				font-size: $font-body-extra-small;
+				padding: 6px 14px;
+			}
 		}
 	}
 }
@@ -399,22 +450,23 @@ body.is-section-plugins #primary {
 	}
 }
 .plugins__top-container {
-	margin: 0 -32px;
-	padding: 8px 48px 0;
-	@include breakpoint-deprecated( ">660px" ) {
-		padding: 16px 48px 0;
-		border-bottom: 1px solid var(--color-primary-5);
-	}
-	@include break-large() {
-		padding: 6px 48px 0;
+	padding: 0 16px;
+
+	@media (min-width: $break-small) {
+		padding: 0;
 	}
 }
 
-.plugins__top-container-wp {
-	padding-top: 4rem;
-	border-bottom: none;
-	@include break-large {
-		padding-top: 3rem;
+.plugins__top-container-jc {
+	margin: 0 -32px;
+	padding: 4px 48px 0;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		border-bottom: 1px solid var(--color-primary-5);
+	}
+
+	@include break-large() {
+		padding: 6px 48px 0;
 	}
 }
 
@@ -426,17 +478,28 @@ body.is-section-plugins #primary {
 	}
 }
 .plugins__main-content {
-	// We need these negative margin values because we want to make the container full-width,
-	// but our element is inside a limited-width parent.
-	margin: 0 -32px;
-	padding: 0 48px;
+	margin: 0;
+	padding: 0 16px;
 	flex: 1 1 100%;
-	@include breakpoint-deprecated( ">660px" ) {
-		padding: 16px 48px;
+	@media (min-width: $break-small) {
+		padding: 16px 0;
 		background: rgba(255, 255, 255, 0.5);
 		margin-bottom: -32px;
 	}
 }
+
+.plugins__main-content-jc {
+	// We need these negative margin values because we want to make the container full-width,
+	// but our element is inside a limited-width parent.
+	margin: 0 -32px;
+	padding: 0 48px;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding: 16px 48px;
+		margin-bottom: -32px;
+	}
+}
+
 .plugins__search {
 	height: 52px;
 	box-shadow: 0 0 0 1px var(--color-neutral-5);

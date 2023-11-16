@@ -8,7 +8,6 @@ import 'calypso/state/data-layer/wpcom/locale-guess';
 
 /**
  * Action creator function: I18N_LOCALE_SUGGESTIONS_ADD
- *
  * @param {Object} items - list of locale suggestions
  * @returns {Object} action object
  */
@@ -19,7 +18,6 @@ export const receiveLocaleSuggestions = ( items ) => ( {
 
 /**
  * Action creator to request locale suggestions: I18N_LOCALE_SUGGESTIONS_REQUEST
- *
  * @returns {Object} action object
  */
 export const requestLocaleSuggestions = () => ( {

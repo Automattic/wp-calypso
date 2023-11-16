@@ -1,8 +1,6 @@
 /**
  * Returns a serialized domains suggestions query, used as the key in the
  * `state.domains.suggestions` state object.
- *
- *
  * @param {Object} queryObject   DomainsSuggestions query
  * @returns {?string}              Serialized DomainsSuggestions query
  */

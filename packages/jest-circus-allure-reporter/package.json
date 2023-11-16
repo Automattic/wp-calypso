@@ -27,9 +27,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@types/jest": "^27.4.0",
-		"@types/node": "^18.11.18",
-		"typescript": "^4.7.4"
+		"@types/node": "^20.8.6",
+		"typescript": "^5.2.2"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",

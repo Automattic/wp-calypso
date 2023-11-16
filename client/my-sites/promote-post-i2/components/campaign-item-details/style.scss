@@ -1,5 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "../../style.scss";
 
 body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	margin: 0 64px;
@@ -106,14 +107,13 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__wrapper {
+
 			.campaign-item-details__label,
 			.campaign-item-details__text {
 				color: var(--studio-gray-100);
-			}
-			.campaign-item-details__text
-			.campaign-item-details__text {
 				line-height: 1.25;
 			}
+
 		}
 	}
 
@@ -157,7 +157,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			margin-bottom: 24px;
 
 			@media (max-width: 660px) {
-				border: 0;
 				border: 1px solid #ddd;
 				border-radius: 0;
 				margin-bottom: 0;
@@ -179,7 +178,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				&:last-child {
 					.horizontal-bar-list-item-bar {
 						&::before {
-							background-color: #f6f7f7;
+							background-color: $studio-gray-0;
 						}
 					}
 				}
@@ -238,11 +237,39 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			}
 		}
 
-		.campaign-item-details__preview-header-dimensions {
-			align-items: center;
+		.campaign-item-details__preview-header-label {
+			align-items: end;
 			display: flex;
+			min-width: 60px;
 		}
 
+		.campaign-item-details__preview-header-dimensions {
+			min-width: 60px;
+		}
+
+		.campaign-item-details__preview-header-preview-button {
+			min-width: 76px;
+
+			@media (max-width: $break-large) {
+				display: none;
+			}
+
+			svg {
+				margin-right: 6px;
+
+				path {
+					fill: var(--color-link);
+				}
+			}
+
+			> button {
+				align-items: center;
+				display: flex;
+				text-decoration: none;
+				cursor: pointer;
+				color: var(--color-link);
+			}
+		}
 
 		.campaign-item-details__secondary-stats-row,
 		.campaign-item-details__secondary-payment-row {
@@ -285,6 +312,16 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				margin-bottom: 24px;
 			}
 
+			.campaign-item-details__locations {
+				display: flex;
+				flex-direction: column;
+
+				i {
+					font-weight: 500;
+					font-style: normal;
+				}
+			}
+
 			.campaign-item-details__label .amount {
 				color: $studio-gray-60;
 				font-weight: 400;
@@ -324,11 +361,12 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__ad-destination-url-container a {
-			background-color: #f6f7f7;
+			background-color: $studio-gray-0;
 			border: none;
 		}
 
 		.campaign-item-details__ad-destination-url-link {
+			align-items: center;
 			color: var(--studio-gray-50);
 			display: flex;
 			flex-grow: 1;
@@ -339,6 +377,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			word-break: break-word;
 			text-align: left;
 			svg {
+				fill: var(--studio-gray-50);
 				min-width: 20px;
 			}
 		}
@@ -394,8 +433,8 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__preview-container {
-		border-radius: 2px;
-		background-color: #f6f7f7;
+		background-color: $studio-gray-0;
+		border-radius: 4px;
 		margin-bottom: 24px;
 		padding: 24px;
 
@@ -407,20 +446,37 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 	.campaign-item-details__preview-header {
 		display: flex;
-		justify-content: space-between;
-		margin-bottom: 24px;
 		font-size: 0.875rem;
 		font-weight: 400;
+		justify-content: space-between;
+		margin-bottom: 24px;
 	}
 
 	.campaign-item-details__preview-content {
 		margin: 0 auto;
-		max-width: 300px;
+		width: 300px;
+	}
+
+	.campaign-item-details__preview-content iframe {
+		height: 250px;
+		width: 300px;
+	}
+
+	.campaign-item-details__preview-content.v02 {
+		margin: 0 auto;
+		min-width: 300px;
+		width: 100%;
+	}
+
+	.campaign-item-details__preview-content.v02 iframe {
+		height: 200px;
+		width: 100%;
 	}
 
 	.campaign-item-details__preview-disclosure {
-		margin: 12px auto 0 auto;
+		margin: 20px auto 0 auto;
 		max-width: 300px;
+		text-align: center;
 	}
 
 	.campaign-item-details__preview-header-title {
@@ -483,8 +539,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 
 				.inline-support-link__nowrap {
+					align-items: center;
+					display: flex;
+
 					svg {
-						vertical-align: text-top;
 						width: 16px;
 					}
 				}
@@ -523,24 +581,21 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__flexible-skeleton {
-		display: inline-block;
-		position: relative;
-		overflow: hidden;
-		min-height: 16px;
-		width: 100%;
-		height: 100%;
-		max-width: 250px;
-		animation: skeleton-loading 1s linear infinite alternate;
 		border-radius: 4px;
+		display: inline-block;
+		overflow: hidden;
+		position: relative;
+		max-width: 250px;
+		height: 16px;
+		width: 100%;
 
-		@keyframes skeleton-loading {
-			0% {
-				background-color: hsl(200, 20%, 80%);
-			}
-			100% {
-				background-color: hsl(200, 20%, 95%);
-			}
-		}
+		@include blazepress-animated-skeleton;
+	}
+}
+
+.is-mobile-app-view {
+	.campaign-item__container .campaign-item-header {
+		padding-bottom: 0;
 	}
 }
 
@@ -596,5 +651,58 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 @media (min-width: $break-huge-collapsed-menu) {
 	body.is-section-promote-post-i2.is-sidebar-collapsed .layout__content .main.is-wide-layout {
 		@include blazepress-huge;
+	}
+}
+
+.ad-preview-modal {
+	border-radius: 4px;
+	padding: 48px 48px 0 48px;
+	width: 748px;
+
+	.components-modal__content {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		margin: 0;
+		padding: 0;
+	}
+
+	.ad-preview-modal__creatives {
+		align-items: center;
+		display: flex;
+		margin-top: 10px;
+		max-width: 820px;
+		min-height: 540px;
+
+		iframe {
+			width: 100%;
+		}
+	}
+
+	.ad-preview-modal__links {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 48px;
+		padding-top: 22px;
+
+		.active {
+			background-color: $studio-gray-0;
+			color: $studio-gray-80;
+			cursor: default;
+		}
+
+		button {
+			align-items: center;
+			border-radius: 4px;
+			color: var(--color-link);
+			cursor: pointer;
+			display: inline-flex;
+			padding: 8px 12px 8px 8px;
+			text-decoration: none;
+
+			svg {
+				margin-right: 5px;
+			}
+		}
 	}
 }

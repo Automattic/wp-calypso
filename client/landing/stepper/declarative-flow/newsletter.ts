@@ -1,9 +1,15 @@
+import {
+	LaunchpadNavigator,
+	updateLaunchpadSettings,
+	type UserSelect,
+} from '@automattic/data-stores';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -11,13 +17,13 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
@@ -38,6 +44,10 @@ const newsletter: Flow = {
 			{
 				slug: 'newsletterSetup',
 				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
+			},
+			{
+				slug: 'newsletterGoals',
+				asyncComponent: () => import( './internals/steps-repository/newsletter-goals' ),
 			},
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
@@ -72,6 +82,7 @@ const newsletter: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
@@ -85,10 +96,20 @@ const newsletter: Flow = {
 		} );
 		setStepProgress( flowProgress );
 		const logInUrl = useLoginUrl( {
-			flowName,
+			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/newsletterSetup`,
 			pageTitle: 'Newsletter',
 		} );
+
+		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
+
+		const completeSubscribersTask = async () => {
+			if ( siteSlug ) {
+				await updateLaunchpadSettings( siteSlug, {
+					checklist_statuses: { subscribers_added: true },
+				} );
+			}
+		};
 
 		// Unless showing intro step, send non-logged-in users to account screen.
 		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
@@ -109,6 +130,7 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
 				case 'intro':
@@ -118,6 +140,9 @@ const newsletter: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
+					return navigate( 'newsletterGoals' );
+
+				case 'newsletterGoals':
 					return navigate( 'domains' );
 
 				case 'domains':
@@ -132,36 +157,31 @@ const newsletter: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
+							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
 						);
 					}
 
-					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-						persistSignupDestination( destination );
+					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
+						persistSignupDestination( launchpadUrl );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
-						// Return to subscribers after checkout
-						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
-						);
-
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								( providedDependencies?.siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+								providedDependencies?.siteSlug as string
+							) }?redirect_to=${ launchpadUrl }&signup=1`
 						);
 					}
-					// If the user chooses a free plan, we need to redirect to the subscribers directly and not checkout.
+
 					return window.location.assign(
-						`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
+						`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`
 					);
 
 				case 'subscribers':
+					completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
 		}
@@ -170,10 +190,17 @@ const newsletter: Flow = {
 			return;
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'newsletter',
+						setActiveChecklist,
+						siteId,
+						siteSlug,
+					} );
+					return;
+
 				default:
 					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
 			}

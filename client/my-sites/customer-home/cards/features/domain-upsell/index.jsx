@@ -1,5 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
+import {
+	getPlan,
+	isFreePlanProduct,
+	getIntervalTypeForTerm,
+	is100YearPlan,
+	domainProductSlugs,
+} from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
@@ -11,6 +17,7 @@ import page from 'page';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import domainUpsellIllustration from 'calypso/assets/images/customer-home/illustration--feature-domain-upsell.svg';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -20,6 +27,7 @@ import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -59,6 +67,8 @@ export default function DomainUpsell() {
 
 	const searchTerm = selectedSiteSlug?.split( '.' )[ 0 ];
 
+	const is100YearPlanSite = is100YearPlan( currentPlan?.productSlug );
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainUpsell
@@ -67,6 +77,7 @@ export default function DomainUpsell() {
 				searchTerm={ searchTerm }
 				siteSlug={ selectedSiteSlug }
 				dismissPreference={ dismissPreference }
+				is100YearPlanSite={ is100YearPlanSite }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
@@ -83,6 +94,7 @@ export function RenderDomainUpsell( {
 	searchTerm,
 	siteSlug,
 	dismissPreference,
+	is100YearPlanSite,
 } ) {
 	const translate = useTranslate();
 
@@ -104,6 +116,11 @@ export function RenderDomainUpsell( {
 	const domainSuggestionName = domainSuggestion?.domain_name ?? '';
 
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
+
+	const domainRegistrationProduct = useSelector( ( state ) =>
+		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
+	);
+	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
 	const searchLink = addQueryArgs(
 		{
@@ -158,35 +175,40 @@ export function RenderDomainUpsell( {
 		page( purchaseLink );
 	};
 
+	const getCardSubtitle = () => {
+		const translateProps = {
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domainSuggestion: domainSuggestionName,
+			},
+		};
+		if ( is100YearPlanSite ) {
+			return translate(
+				"{{strong}}%(domainSuggestion)s{{/strong}} is included free with your plan. Claim it and start building a site that's easy to find, share and follow.",
+				translateProps
+			);
+		}
+		if ( ! isFreePlan && ! isMonthlyPlan ) {
+			return translate(
+				"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
+				translateProps
+			);
+		}
+
+		return translate(
+			"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
+			translateProps
+		);
+	};
+
 	const cardTitle =
 		! isFreePlan && ! isMonthlyPlan
 			? translate( 'That perfect domain is waiting' )
 			: translate( 'Own a domain. Build a site.' );
 
-	const cardSubtitle =
-		! isFreePlan && ! isMonthlyPlan
-			? translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							domainSuggestion: domainSuggestionName,
-						},
-					}
-			  )
-			: translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							domainSuggestion: domainSuggestionName,
-						},
-					}
-			  );
+	const cardSubtitle = getCardSubtitle();
 
 	const domainNameSVG = (
 		<svg viewBox="0 0 40 18" id="map">
@@ -207,6 +229,7 @@ export function RenderDomainUpsell( {
 
 	return (
 		<Card className="domain-upsell__card customer-home__card">
+			<QueryProductsList />
 			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
 			<div>
 				<div className="domain-upsell__card-dismiss">
@@ -218,7 +241,19 @@ export function RenderDomainUpsell( {
 					</button>
 				</div>
 				<h3>{ cardTitle }</h3>
-				<p>{ cardSubtitle }</p>
+				<p className="domain-upsell-subtitle">{ cardSubtitle }</p>
+				{ domainProductCost && (
+					<p className="domain-upsell-description">
+						{ translate(
+							'Don’t worry about expensive domain renewals—.com, .net, and .org start at just %(domainPrice)s.',
+							{
+								args: {
+									domainPrice: domainProductCost,
+								},
+							}
+						) }
+					</p>
+				) }
 				<div className="domain-upsell-illustration">
 					{ illustrationHeader && <> { illustrationHeader } </> }
 					<img src={ domainUpsellIllustration } alt="" />

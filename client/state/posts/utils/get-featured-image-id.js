@@ -4,7 +4,6 @@
  * of a post varies between the retrieve and update endpoints. When
  * retrieving a post, the thumbnail ID is assigned in `post_thumbnail`, but
  * in creating a post, the thumbnail ID is assigned to `featured_image`.
- *
  * @param  {Object} post Post object
  * @returns {undefined|number|string} featured image id or undefined
  */

@@ -7,6 +7,7 @@ import {
 	JETPACK_SITES_FEATURES_FETCH,
 	JETPACK_SITES_FEATURES_FETCH_FAILURE,
 	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+	SITE_PURCHASES_UPDATE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -14,6 +15,7 @@ import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_UPDATE,
 	SITES_RECEIVE,
+	ODYSSEY_SITE_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
@@ -21,7 +23,6 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
-	UPDATE_STATS_NOTICE_STATUS_DIRECT,
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
@@ -34,13 +35,17 @@ import { sitesSchema, hasAllSitesListSchema } from './schema';
 
 /**
  * Tracks all known site objects, indexed by site ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
-	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
+	if (
+		state === null &&
+		action.type !== SITE_RECEIVE &&
+		action.type !== SITES_RECEIVE &&
+		action.type !== ODYSSEY_SITE_RECEIVE
+	) {
 		return null;
 	}
 	switch ( action.type ) {
@@ -82,6 +87,35 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 					return memo;
 				},
 				initialNextState || {}
+			);
+		}
+
+		case ODYSSEY_SITE_RECEIVE: {
+			// Treat the site info from WPCOM as default values for the site, and the info from Odyssey as the source of truth.
+			// This is because the site info from WPCOM is more complete, but the info from Odyssey is more up-to-date.
+			// For example, `options.is_commercial` is not present in the Odyssey site info, but is a remote option value stored in WPCOM.
+			return reduce(
+				[ action.site ],
+				( memo, site ) => {
+					// Bypass if site object hasn't changed
+					if ( isEqual( memo[ site.ID ], site ) ) {
+						return memo;
+					}
+
+					// Avoid mutating state
+					if ( memo === state ) {
+						memo = { ...state };
+					}
+
+					memo[ site.ID ] = {
+						...site,
+						...memo[ site.ID ],
+						options: { ...site?.options, ...memo[ site.ID ]?.options },
+						capabilities: { ...site?.capabilities, ...memo[ site.ID ]?.capabilities },
+					};
+					return memo;
+				},
+				state
 			);
 		}
 
@@ -268,17 +302,15 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			};
 		}
 
-		case UPDATE_STATS_NOTICE_STATUS_DIRECT: {
-			const { id, status, siteId } = action;
+		// Partial updates for purchases of the site as `site.products`.
+		case SITE_PURCHASES_UPDATE: {
+			const { siteId, purchases } = action;
 
 			return {
 				...state,
 				[ siteId ]: {
 					...state[ siteId ],
-					stats_notices: {
-						...state[ siteId ].stats_notices,
-						[ id ]: ! [ 'dismissed', 'postponed' ].includes( status ),
-					},
+					products: purchases,
 				},
 			};
 		}
@@ -291,7 +323,6 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for all
  * sites.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -312,7 +343,6 @@ export const requestingAll = ( state = false, action ) => {
 /**
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -338,7 +368,6 @@ export const requesting = ( state = {}, action ) => {
 
 /**
  * Tracks whether all sites have been fetched.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state
@@ -358,7 +387,6 @@ export const hasAllSitesList = withSchemaValidation(
 /**
  * Returns the updated disconnected state after an action has been dispatched.
  * Tracks whether a network request is completed or not.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
  * @returns {Object}        Updated state

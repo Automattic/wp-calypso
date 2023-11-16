@@ -5,7 +5,6 @@ import LRU from 'lru';
  * We use a special token for the beginning and the end of the string.
  *
  * Example: trigrams("Hello") = [ "_BEGIN_He", "Hel", "ell", "llo", "lo_END_" ]
- *
  * @param {string} str A string to convert to trigrams.
  * @returns {Array} A List of trigrams.
  */
@@ -25,8 +24,7 @@ export function trigrams( str ) {
  *
  * Example: "mississippi"
  * gramsToLookup([ "_BEGIN_mi", "mis", "iss", "ssi", "sis", "iss", "ssi", "sip", "ipp", "ppi", "pi_END_" ]) =
- *     { "_BEGIN_mi": 1, "mis": 1, "iss": 2, "ssi": 2, "sis": 1, "sip": 1, "ipp": 1, "ppi": 1, "pi_END_": 1 }
- *
+ * { "_BEGIN_mi": 1, "mis": 1, "iss": 2, "ssi": 2, "sis": 1, "sip": 1, "ipp": 1, "ppi": 1, "pi_END_": 1 }
  * @param {string} gramList A list of trigrams, like [ "_BEGIN_He", "Hel", "ell", "llo", "lo_END_" ]
  * @returns {Object} A lookup table of trigram frequency.
  */
@@ -49,7 +47,6 @@ export function gramsToLookup( gramList ) {
  *
  * Example:
  * lookupToMagnitude( gramsToLookup( trigrams( 'hi' ) ) ) = 1.414215... (sqrt of 2)
- *
  * @param {Object} lookup A lookup table of trigram frequency.
  * @returns {number} Magnitude of the vector
  */
@@ -73,7 +70,6 @@ const stringToLookupCache = new LRU( {
  *
  * It's the same as calling gramsToLookup( trigrams( str ) ), but
  * it caches all calculations it does to find them again quickly.
- *
  * @param {string} str A string to convert to a lookup table of trigram frequency.
  * @returns {Object} lookup A lookup table of trigram frequency.
  */
@@ -90,7 +86,6 @@ function stringToLookup( str ) {
 
 /**
  * Finds the dot product of two lookup tables of trigram frequency.
- *
  * @param {Object} lookup1 Lookup table of trigram frequency.
  * @param {Object} lookup2 Lookup table of trigram frequency.
  * @returns {number} Dot product.
@@ -115,7 +110,6 @@ function dotProduct( lookup1, lookup2 ) {
  *
  * Note this does not do .toLowerCase to either string. You might want to if
  * you want case insensitive search.
- *
  * @param {str} str1 First string to compare
  * @param {str} str2 Second string to compare
  * @returns {number} Range 0-1. 1 = Exact same string, 0 = no similiarity.

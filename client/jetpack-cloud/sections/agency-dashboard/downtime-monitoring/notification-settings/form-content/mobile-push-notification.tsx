@@ -1,6 +1,5 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { mobileAppLink } from '../../../sites-overview/utils';
 
 interface Props {
 	recordEvent: ( action: string, params?: object ) => void;
@@ -19,11 +18,17 @@ export default function MobilePushNotification( {
 		<div className="notification-settings__toggle-container">
 			<div className="notification-settings__toggle">
 				<ToggleControl
+					label={
+						enableMobileNotification
+							? translate( 'Disable mobile notifications' )
+							: translate( 'Enable mobile notifications' )
+					}
 					onChange={ ( isEnabled ) => {
 						recordEvent( isEnabled ? 'mobile_notification_enable' : 'mobile_notification_disable' );
 						setEnableMobileNotification( isEnabled );
 					} }
 					checked={ enableMobileNotification }
+					className="notification-settings__toggle-control"
 				/>
 			</div>
 			<div className="notification-settings__toggle-content">
@@ -36,7 +41,7 @@ export default function MobilePushNotification( {
 									className="notification-settings__link"
 									target="_blank"
 									rel="noreferrer"
-									href={ mobileAppLink }
+									href="https://jetpack.com/mobile/"
 								/>
 							),
 						},

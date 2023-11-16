@@ -34,7 +34,7 @@
 		"@automattic/onboarding": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
 		"classnames": "^2.3.1",
-		"swiper": "^4.5.1",
+		"swiper": "^10.1.0",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "workspace:^"
@@ -46,17 +46,17 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1",
-		"typescript": "^4.7.4",
+		"typescript": "^5.2.2",
 		"webpack": "^5.68.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^8.0.0",
-		"@wordpress/element": "^5.0.0",
-		"@wordpress/i18n": "^4.22.0",
+		"@wordpress/data": "^9.14.0",
+		"@wordpress/element": "^5.21.0",
+		"@wordpress/i18n": "^4.44.0",
 		"debug": "^4.3.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.1.2"
+		"redux": "^4.2.1"
 	},
 	"private": true
 }

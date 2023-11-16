@@ -1,14 +1,29 @@
 @import "./global";
 @import "./videopress-constants.scss";
 
-body.is-videopress-stepper {
+
+body.is-videopress-tv-stepper,
+body.is-videopress-tv-purchase-stepper {
+	.step-container .step-container__header .formatted-header .formatted-header__title,
+	.signup-header h1 {
+		font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-weight: 700;
+	}
+}
+
+body.is-videopress-stepper,
+body.is-videopress-tv-stepper,
+body.is-videopress-tv-purchase-stepper {
 	background-color: #010101;
 	color: $videopress-theme-base-text-color;
 
 	.search-filters__checkbox-label {
 		color: #000;
 	}
-	.videopress {
+
+	.videopress,
+	.videopress-tv,
+	.videopress-tv-purchase {
 		input[type="text"]:focus,
 		textarea:focus {
 			box-shadow: none;
@@ -288,6 +303,7 @@ body.is-videopress-stepper {
 		.checklist-item__task.completed.enabled:hover .checklist-item__text,
 		.checklist-item__task.completed.enabled:hover .checklist-item__checkmark,
 		.button.checklist-item__task-content:hover:not([disabled]),
+		.components-button.checklist-item__task-content:focus:not([disabled]),
 		.button.checklist-item__task-content:focus:not([disabled]) {
 			color: $videopress-theme-yellow;
 			fill: $videopress-theme-yellow;

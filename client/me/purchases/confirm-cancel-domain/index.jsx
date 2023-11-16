@@ -242,7 +242,7 @@ class ConfirmCancelDomain extends Component {
 	};
 
 	render() {
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || ! this.props.purchase ) {
 			return (
 				<div>
 					<QueryUserPurchases />

@@ -3,7 +3,6 @@ const root = '/plans';
 export default class Plans {
 	/**
 	 * `Plans` constructor.
-	 *
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
@@ -16,7 +15,6 @@ export default class Plans {
 
 	/**
 	 * Get a list of active WordPress.com plans
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -27,7 +25,6 @@ export default class Plans {
 
 	/**
 	 * Get a list of features for active WordPress.com plans
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise

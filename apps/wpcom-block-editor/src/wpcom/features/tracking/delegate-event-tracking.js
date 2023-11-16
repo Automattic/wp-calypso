@@ -22,6 +22,13 @@ import {
 } from './wpcom-site-editor-document-actions-dropdown-click';
 import wpcomSiteEditorExitClick from './wpcom-site-editor-exit-click';
 import {
+	wpcomSiteEditorSidebarNavigationClick,
+	wpcomSiteEditorSidebarPagesClick,
+	wpcomSiteEditorSidebarPatternsClick,
+	wpcomSiteEditorSidebarStylesClick,
+	wpcomSiteEditorSidebarTemplatesClick,
+} from './wpcom-site-editor-sidebar-clicks';
+import {
 	wpcomTemplatePartChooseCapture,
 	wpcomTemplatePartChooseBubble,
 	wpcomTemplatePartReplaceBubble,
@@ -35,7 +42,6 @@ const subscribers = {};
  * Register a subscriber for a specific event.
  * We can specify when to call the subscriber, either 'before' or 'after'
  * the event handler is called.
- *
  * @param {string} id ID of the event
  * @param {import('./types').DelegateEventSubscriberType} type when to call the subscriber, 'before' or 'after'
  * @param {import('./types').DelegateEventSubscriberCallback} handler function to call
@@ -50,7 +56,6 @@ export const registerSubscriber = ( id, type, handler ) => {
 /**
  * Mapping of Events by DOM selector.
  * Events are matched by selector and their handlers called.
- *
  * @type {import('./types').DelegateEventHandler[]}
  */
 const EVENTS_MAPPING = [
@@ -70,11 +75,16 @@ const EVENTS_MAPPING = [
 	wpcomBlockEditorPostPublishAddNewClick(),
 	wpcomBlockEditorSaveClick(),
 	wpcomBlockEditorSaveDraftClick(),
-	wpcomSiteEditorExitClick(),
 	wpcomSiteEditorDocumentActionsDropdownOpen(),
-	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
 	wpcomSiteEditorDocumentActionsRevertClick(),
 	wpcomSiteEditorDocumentActionsShowAllClick(),
+	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
+	wpcomSiteEditorExitClick(),
+	wpcomSiteEditorSidebarNavigationClick(),
+	wpcomSiteEditorSidebarPagesClick(),
+	wpcomSiteEditorSidebarPatternsClick(),
+	wpcomSiteEditorSidebarStylesClick(),
+	wpcomSiteEditorSidebarTemplatesClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );
@@ -83,7 +93,6 @@ const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! c
  * Checks the event for a selector which matches
  * the desired target element. Accounts for event
  * bubbling.
- *
  * @param  {Object}          event          the DOM Event
  * @param  {string|Function} targetSelector the CSS selector for the target element
  * @returns {Object}                        the target Element if found
@@ -102,7 +111,6 @@ const getMatchingEventTarget = ( event, targetSelector ) => {
  * Handles delegation of click tracking events.
  * Matches an event against list of known events
  * and for each match fires an appropriate handler function.
- *
  * @param  {boolean} capture Value of capture flag of the event listener.
  * @param  {Object}  event   DOM event for the click event.
  * @returns {void}

@@ -3,7 +3,6 @@ import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -14,6 +13,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -21,6 +21,7 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 class NotificationSubscriptions extends Component {
 	handleClickEvent( action ) {
@@ -63,10 +64,11 @@ class NotificationSubscriptions extends Component {
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<FormattedHeader
-					brandFont
-					headerText={ this.props.translate( 'Notification Settings' ) }
-					align="left"
+				<SubscriptionManagementBackButton />
+
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ this.props.translate( 'Notification Settings' ) }
 				/>
 
 				<Navigation path={ this.props.path } />

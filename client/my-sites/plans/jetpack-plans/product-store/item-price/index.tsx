@@ -51,6 +51,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 				belowPriceText={ item.belowPriceText }
 				billingTerm={ item.displayTerm || item.term }
 				productName={ item.displayName }
+				displayPriceText={ item.displayPriceText }
 			/>
 		</div>
 	);

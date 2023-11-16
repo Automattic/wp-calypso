@@ -1,9 +1,16 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
-import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import { promoteWidget, promotedPosts, campaignDetails } from './controller';
+import { navigation, redirectToPrimary, sites, siteSelection } from 'calypso/my-sites/controller';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	promoteWidget,
+	promotedPosts,
+	campaignDetails,
+	checkValidTabInNavigation,
+} from './controller';
 import { getAdvertisingDashboardPath } from './utils';
 
 export const redirectToPrimarySite = ( context, next ) => {
@@ -13,37 +20,55 @@ export const redirectToPrimarySite = ( context, next ) => {
 		return next();
 	}
 
-	const state = context.store.getState();
-	const primarySiteSlug = getPrimarySiteSlug( state );
-	if ( primarySiteSlug !== null ) {
-		page( getAdvertisingDashboardPath( `/${ primarySiteSlug }` ) );
-	} else {
-		siteSelection( context, next );
-		page( getAdvertisingDashboardPath( '' ) );
+	const { getState, dispatch } = context.store;
+	const primarySiteId = getPrimarySiteId( getState() );
+	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+
+	if ( primarySiteSlug ) {
+		redirectToPrimary( context, primarySiteSlug );
+		return;
 	}
+
+	// Fetch the primary site by ID and then try to determine its slug again.
+	dispatch( requestSite( primarySiteId ) )
+		.catch( () => null )
+		.then( () => {
+			const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
+			if ( freshPrimarySiteSlug ) {
+				redirectToPrimary( context, freshPrimarySiteSlug );
+				return;
+			}
+
+			// no redirection happened, proceed to showing the sites list
+			next();
+		} );
+};
+
+const promotePage = ( url, controller ) => {
+	page(
+		url,
+		redirectToPrimarySite,
+		siteSelection,
+		navigation,
+		controller,
+		makeLayout,
+		clientRender
+	);
 };
 
 export default () => {
 	page(
 		getAdvertisingDashboardPath( '/' ),
 		redirectToPrimarySite,
+		siteSelection,
 		sites,
 		makeLayout,
 		clientRender
 	);
 
 	page(
-		getAdvertisingDashboardPath( '/:site?/promote/:item?' ),
-		redirectToPrimarySite,
-		siteSelection,
-		navigation,
-		promoteWidget,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		getAdvertisingDashboardPath( '/:site?/:tab?' ),
+		getAdvertisingDashboardPath( '/:tab?/:site?' ),
+		checkValidTabInNavigation,
 		redirectToPrimarySite,
 		siteSelection,
 		navigation,
@@ -52,22 +77,9 @@ export default () => {
 		clientRender
 	);
 
-	page(
-		getAdvertisingDashboardPath( '/:site?/campaigns/:campaignId' ),
-		redirectToPrimarySite,
-		campaignDetails,
-		navigation,
-		makeLayout,
-		clientRender
-	);
+	promotePage( getAdvertisingDashboardPath( '/campaigns/:campaignId/:site?' ), campaignDetails );
 
-	page(
-		getAdvertisingDashboardPath( '/:site?/:tab?/promote/:item?' ),
-		redirectToPrimarySite,
-		siteSelection,
-		navigation,
-		promoteWidget,
-		makeLayout,
-		clientRender
-	);
+	promotePage( getAdvertisingDashboardPath( '/promote/:item?/:site?' ), promoteWidget );
+
+	promotePage( getAdvertisingDashboardPath( '/:tab?/promote/:item?/:site?' ), promoteWidget );
 };

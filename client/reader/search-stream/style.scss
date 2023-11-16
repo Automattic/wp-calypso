@@ -1,3 +1,25 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.is-section-reader .search-stream__fixed-area {
+	// Main layout already has mx
+	.navigation-header {
+		margin: 0 auto;
+		padding: 16px 0 16px 0;
+	}
+}
+
+// .has-header-section only applies for logged out views
+.layout.has-header-section.is-section-reader .search-stream__fixed-area .navigation-header h1 {
+	@extend .wp-brand-font;
+	font-weight: 600;
+	font-size: 2.25rem;
+	line-height: 48px;
+	margin-bottom: 4px;
+}
+
+
 .is-reader-page .main.search-stream {
 	max-width: 905px;
 }
@@ -10,8 +32,7 @@
 
 .search-stream .search {
 	margin-bottom: 0;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
 	.search__icon-navigation {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
@@ -36,7 +57,7 @@
 }
 
 .is-reader-page .search-stream__fixed-area {
-	background-color: var(--color-surface);
+	background: var(--color-neutral-0);
 	position: fixed;
 	top: 0;
 	margin-top: var(--masterbar-height);
@@ -58,12 +79,20 @@
 	margin: 0;
 }
 
+.search-stream__fixed-area .formatted-header.is-left-align.has-screen-options {
+	@media only screen and (max-width: 660px) {
+		display: none;
+	}
+}
+
 .search-stream .search-stream__input-card.card {
 	margin-bottom: 0;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
+	border-radius: 4px;
 	@include breakpoint-deprecated( "<660px" ) {
-		border-radius: 0;
+
+		.search__icon-navigation {
+			border-radius: 4px;
+		}
 	}
 }
 
@@ -91,7 +120,7 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		flex-flow: row wrap;
-		padding-top: 15px;
+		padding-top: 30px;
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -118,6 +147,17 @@
 	margin: 0;
 	padding: 20px 0;
 	width: 100%;
+
+	&.is-placeholder {
+		padding: 0;
+		border-bottom: 1px solid #e9e9ea;
+		margin-bottom: 16px;
+
+		.reader-related-card.is-placeholder {
+			padding: 16px;
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
+		}
+	}
 
 
 	.reader-related-card__post {
@@ -202,6 +242,11 @@
 .search-stream__site-header {
 	border-bottom: 1px solid var(--color-neutral-10);
 	padding-bottom: 15px;
+}
+
+.search-stream__headers-logged-out .search-stream__post-header,
+.search-stream__headers-logged-out .search-stream__site-header {
+	border-bottom: none;
 }
 
 .search-stream .search-stream__post-header,

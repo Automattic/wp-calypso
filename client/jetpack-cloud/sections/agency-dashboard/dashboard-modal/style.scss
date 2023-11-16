@@ -6,6 +6,7 @@
 	width: 480px;
 	animation: components-modal__appear-animation 0.1s ease-out;
 	animation-fill-mode: forwards;
+	margin-block-start: 0;
 
 	.components-modal__content {
 		margin-block-start: 50px;
@@ -13,7 +14,7 @@
 
 		@include break-mobile {
 			margin-block-start: 76px;
-			padding-block-end: 32px;
+			padding-block-end: 76px;
 		}
 	}
 
@@ -29,6 +30,11 @@
 		@include break-mobile {
 			margin-block-start: 16px;
 		}
+	}
+
+	@include break-mobile {
+		max-height: 80%;
+		margin: auto;
 	}
 }
 

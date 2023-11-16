@@ -26,16 +26,8 @@ export default function useZendeskMessaging(
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 	const zendeskKey: string = config( keyConfigName );
 	const { data: authData } = useMessagingAuth( isMessagingScriptLoaded && tryAuthenticating );
-
 	useEffect( () => {
-		if ( ! enabled ) {
-			return;
-		}
-
-		if ( document.getElementById( ZENDESK_SCRIPT_ID ) ) {
-			if ( typeof window.zE === 'function' ) {
-				setMessagingScriptLoaded( true );
-			}
+		if ( ! enabled || isMessagingScriptLoaded ) {
 			return;
 		}
 
@@ -46,7 +38,7 @@ export default function useZendeskMessaging(
 				}
 				return;
 			}
-
+			window.zE( 'messenger', 'hide' );
 			setMessagingScriptLoaded( true );
 		}
 
@@ -55,7 +47,16 @@ export default function useZendeskMessaging(
 			setUpMessagingEventHandlers,
 			{ id: ZENDESK_SCRIPT_ID }
 		);
-	}, [ setMessagingScriptLoaded, enabled, zendeskKey ] );
+	}, [ setMessagingScriptLoaded, enabled, zendeskKey, isMessagingScriptLoaded ] );
+
+	if (
+		document.getElementById( ZENDESK_SCRIPT_ID ) &&
+		enabled &&
+		typeof window.zE === 'function' &&
+		isMessagingScriptLoaded === false
+	) {
+		setMessagingScriptLoaded( true );
+	}
 
 	return {
 		isLoggedIn: authData?.isLoggedIn,

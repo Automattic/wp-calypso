@@ -91,7 +91,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 	it.each( [
 		'WooCommerce',
-		'Yoast SEO',
 		'MailPoet – emails and newsletters in WordPress',
 		'Jetpack CRM – Clients, Invoices, Leads, & Billing for WordPress',
 	] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
@@ -103,6 +102,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			'Search Engine Optimization',
 			envVariables.VIEWPORT_NAME !== 'mobile' ? true : false
 		);
+		await page.waitForURL( new RegExp( `/plugins/browse/seo/${ siteUrl }$` ) );
 	} );
 
 	it.each( [ 'Yoast SEO' ] )(

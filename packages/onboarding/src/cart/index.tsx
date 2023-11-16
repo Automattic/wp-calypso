@@ -1,12 +1,17 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
+import { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
 import wpcomRequest from 'wpcom-proxy-request';
-import { setupSiteAfterCreation, isTailoredSignupFlow, isMigrationFlow } from '../';
+import {
+	setupSiteAfterCreation,
+	isTailoredSignupFlow,
+	isMigrationFlow,
+	HUNDRED_YEAR_PLAN_FLOW,
+} from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -32,7 +37,7 @@ type NewSiteParams = {
 	find_available_url: boolean;
 	options: {
 		designType: string;
-		theme: string;
+		theme?: string;
 		use_theme_annotation: boolean;
 		default_annotation_as_primary_fallback: boolean;
 		site_segment: undefined;
@@ -75,7 +80,6 @@ export const getNewSiteParams = ( {
 		public: siteVisibility,
 		options: {
 			designType: '',
-			theme: themeSlugWithRepo,
 			use_theme_annotation: useThemeHeadstart,
 			default_annotation_as_primary_fallback: true,
 			site_segment: undefined,
@@ -87,6 +91,7 @@ export const getNewSiteParams = ( {
 			wpcom_public_coming_soon: siteVisibility === 0 ? 1 : 0,
 			...( sourceSlug && { site_source_slug: sourceSlug } ),
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
+			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 		},
 		validate: false,
 	};
@@ -104,10 +109,11 @@ export const createSiteWithCart = async (
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	username: string,
-	domainItem?: MinimalRequestCartProduct,
+	domainItem?: DomainSuggestion,
+	domainCartItem?: MinimalRequestCartProduct,
 	sourceSlug?: string
 ) => {
-	const siteUrl = domainItem?.meta;
+	const siteUrl = domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 
 	const newSiteParams = getNewSiteParams( {
@@ -156,7 +162,7 @@ export const createSiteWithCart = async (
 		domainItem,
 	};
 
-	if ( isTailoredSignupFlow( flowName ) ) {
+	if ( isTailoredSignupFlow( flowName ) || HUNDRED_YEAR_PLAN_FLOW === flowName ) {
 		await setupSiteAfterCreation( { siteId, flowName } );
 	}
 
@@ -166,7 +172,7 @@ export const createSiteWithCart = async (
 		themeSlugWithRepo,
 		flowName,
 		userIsLoggedIn,
-		domainItem
+		domainCartItem
 	);
 
 	return providedDependencies;
@@ -276,7 +282,11 @@ export async function addProductsToCart(
 	}
 }
 
-export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: string ) {
+export async function setThemeOnSite(
+	siteSlug: string,
+	themeSlugWithRepo: string,
+	themeStyleVariation?: string
+) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		return;
 	}
@@ -290,6 +300,7 @@ export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: strin
 			apiVersion: '1.1',
 			body: {
 				theme,
+				...( themeStyleVariation && { style_variation_slug: themeStyleVariation } ),
 			},
 		} );
 	} catch ( error ) {

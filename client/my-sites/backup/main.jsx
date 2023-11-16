@@ -16,11 +16,11 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
@@ -86,9 +86,10 @@ const BackupPage = ( { queryDate } ) => {
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackCloud() && (
-					<FormattedHeader
-						headerText="Jetpack VaultPress Backup"
-						subHeaderText={ translate(
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ translate( 'Jetpack VaultPress Backup' ) }
+						subtitle={ translate(
 							'Restore or download a backup of your site from a specific moment in time. {{learnMoreLink/}}',
 							{
 								components: {
@@ -96,8 +97,6 @@ const BackupPage = ( { queryDate } ) => {
 								},
 							}
 						) }
-						align="left"
-						brandFont
 					/>
 				) }
 
@@ -223,7 +222,7 @@ function BackupStatus( {
 											dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) )
 										}
 									>
-										{ translate( 'Copy this site' ) }
+										{ translate( 'Copy site' ) }
 									</Button>
 								</Tooltip>
 							) }

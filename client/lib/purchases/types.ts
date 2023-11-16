@@ -28,6 +28,7 @@ export interface Purchase {
 	introductoryOffer: PurchaseIntroductoryOffer | null;
 	isAutoRenewEnabled: boolean;
 	isCancelable: boolean;
+	isDomain?: boolean;
 	isDomainRegistration?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
@@ -37,6 +38,7 @@ export interface Purchase {
 	isRenewal: boolean;
 	meta?: string;
 	mostRecentRenewDate?: string;
+	ownershipId?: number;
 	partnerName: string | undefined;
 	partnerSlug: string | undefined;
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
@@ -62,7 +64,6 @@ export interface Purchase {
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
-	 *
 	 * @deprecated use `refundInteger`.
 	 */
 	refundAmount: number;
@@ -85,7 +86,6 @@ export interface Purchase {
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
-	 *
 	 * @deprecated use `refundInteger`.
 	 */
 	refundText: string;
@@ -120,7 +120,6 @@ export interface Purchase {
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
-	 *
 	 * @deprecated use `totalRefundInteger`.
 	 */
 	totalRefundAmount: number;
@@ -135,7 +134,6 @@ export interface Purchase {
 	/**
 	 * The refund amount for the purchase, including bundled domains, as a
 	 * formatted string.
-	 *
 	 * @deprecated use `totalRefundInteger` and `formatCurrency()`.
 	 */
 	totalRefundText: string;
@@ -190,6 +188,7 @@ export interface RawPurchase {
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 	is_cancelable: boolean;
+	is_domain: boolean;
 	is_domain_registration: boolean;
 	is_locked: boolean;
 	is_iap_purchase: boolean;
@@ -198,6 +197,7 @@ export interface RawPurchase {
 	is_renewable: boolean;
 	is_renewal: boolean;
 	meta: string | undefined;
+	ownership_id: number | undefined;
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
 	partner_key_id: number | undefined;

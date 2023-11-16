@@ -1,25 +1,12 @@
+@import "@wordpress/base-styles/mixins";
+
 .licenses {
-	&__header {
-		display: flex;
-		align-items: center;
-
-		> * + * {
-			margin-left: 24px;
-		}
+	.search {
+		box-shadow: 0 0 0 1px var(--color-neutral-5);
+		margin-block-end: 8px;
 	}
-}
 
-@include breakpoint-deprecated( "<960px" ) {
-	.licenses__header {
-		flex-wrap: wrap;
-
-		> * {
-			width: 100%;
-			margin-bottom: 16px;
-		}
-
-		> * + * {
-			margin-left: 0;
-		}
+	.partner-portal-layout__body {
+		padding-block: 16px;
 	}
 }

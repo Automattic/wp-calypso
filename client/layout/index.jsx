@@ -6,7 +6,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useEffect, Component } from 'react';
+import { useCallback, useEffect, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -27,9 +27,12 @@ import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { OdieAssistantProvider } from 'calypso/odie/context';
 import { isOffline } from 'calypso/state/application/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -89,6 +92,9 @@ function SidebarScrollSynchronizer() {
 function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
+	const handleClose = useCallback( () => {
+		setShowHelpCenter( false );
+	}, [ setShowHelpCenter ] );
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -98,9 +104,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 		<AsyncLoad
 			require="@automattic/help-center"
 			placeholder={ null }
-			handleClose={ () => {
-				setShowHelpCenter( false );
-			} }
+			handleClose={ handleClose }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>
@@ -198,6 +202,10 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
+	shouldShowOdieAssistant() {
+		return false;
+	}
+
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -227,6 +235,8 @@ class Layout extends Component {
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
+			'is-logged-in': this.props.isLoggedIn,
+			'is-jetpack-new-navigation': this.props.isJetpackNewNavigation,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
@@ -305,7 +315,13 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.props.primary }
+						{ this.shouldShowOdieAssistant() ? (
+							<OdieAssistantProvider sectionName={ this.props.sectionName }>
+								{ this.props.primary }
+							</OdieAssistantProvider>
+						) : (
+							this.props.primary
+						) }
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
@@ -343,11 +359,15 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
+		const isJetpackNewNavigation = config.isEnabled( 'jetpack/new-navigation' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
 		const noMasterbarForRoute =
-			isJetpackLogin || currentRoute === '/me/account/closed' || isDomainAndPlanPackageFlow;
+			isJetpackLogin ||
+			currentRoute === '/me/account/closed' ||
+			isDomainAndPlanPackageFlow ||
+			isReaderTagEmbedPage( window?.location );
 		const noMasterbarForSection =
 			! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const masterbarIsHidden =
@@ -355,7 +375,8 @@ export default withCurrentRoute(
 			noMasterbarForSection ||
 			noMasterbarForRoute ||
 			isWpMobileApp() ||
-			isWcMobileApp();
+			isWcMobileApp() ||
+			isJetpackNewNavigation;
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -381,6 +402,7 @@ export default withCurrentRoute(
 			masterbarIsHidden,
 			sidebarIsHidden,
 			isJetpack,
+			isJetpackNewNavigation,
 			isJetpackLogin,
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
@@ -389,6 +411,7 @@ export default withCurrentRoute(
 			isEligibleForJITM,
 			oauth2Client,
 			wccomFrom,
+			isLoggedIn: isUserLoggedIn( state ),
 			isSupportSession: isSupportSession( state ),
 			sectionGroup,
 			sectionName,

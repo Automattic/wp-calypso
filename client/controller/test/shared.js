@@ -16,25 +16,25 @@ describe( 'setLocaleMiddleware', () => {
 
 	it( "doesn't dispatch locale event if no language params found", () => {
 		middleware( context, next );
-		expect( next ).toBeCalledTimes( 1 );
-		expect( context.store.dispatch ).toBeCalledTimes( 0 );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( context.store.dispatch ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	it( 'Dispatch locale event if language param is in URL', () => {
 		context.params.lang = 'fr';
 		middleware( context, next );
-		expect( next ).toBeCalledTimes( 1 );
-		expect( context.store.dispatch ).toBeCalledTimes( 1 );
-		expect( context.store.dispatch ).toBeCalledWith( setLocale( 'fr' ) );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( context.store.dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( context.store.dispatch ).toHaveBeenCalledWith( setLocale( 'fr' ) );
 		expect( context.lang ).toEqual( 'fr' );
 	} );
 
 	it( 'Dispatch locale event if language param is query param', () => {
 		context.query.lang = 'fr';
 		middleware( context, next );
-		expect( next ).toBeCalledTimes( 1 );
-		expect( context.store.dispatch ).toBeCalledTimes( 1 );
-		expect( context.store.dispatch ).toBeCalledWith( setLocale( 'fr' ) );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( context.store.dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( context.store.dispatch ).toHaveBeenCalledWith( setLocale( 'fr' ) );
 		expect( context.lang ).toEqual( 'fr' );
 	} );
 } );

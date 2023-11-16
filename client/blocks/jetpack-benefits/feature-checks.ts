@@ -26,6 +26,10 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_CLOUD_CRITICAL_CSS,
+	isJetpackStatsSlug,
+	isJetpackStatsPaidProductSlug,
+	FEATURE_STATS_PAID,
+	FEATURE_STATS_FREE,
 } from '@automattic/calypso-products';
 
 export const productHasBackups = ( productSlug: string ): boolean => {
@@ -77,6 +81,22 @@ export const productHasSearch = ( productSlug: string ): boolean => {
 	);
 };
 
+export const productHasStats = ( productSlug: string, onlyPaid = false ): boolean => {
+	// Check for standalone stats product
+	if ( isJetpackStatsSlug( productSlug ) ) {
+		return ! onlyPaid || isJetpackStatsPaidProductSlug( productSlug );
+	}
+	// Check for paid stats features in plans
+	if ( isJetpackPlanSlug( productSlug ) && onlyPaid ) {
+		return planHasAtLeastOneFeature( productSlug, [ FEATURE_STATS_PAID ] );
+	}
+	// Check for all stats features in plans
+	if ( isJetpackPlanSlug( productSlug ) && ! onlyPaid ) {
+		return planHasAtLeastOneFeature( productSlug, [ FEATURE_STATS_PAID, FEATURE_STATS_FREE ] );
+	}
+	return false;
+};
+
 export const productHasAntiSpam = ( productSlug: string ): boolean => {
 	const ANTISPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
 
@@ -98,7 +118,6 @@ export const productHasActivityLog = ( productSlug: string ): boolean => {
 
 /**
  * Checks if the product IS Jetpack VideoPress, or if it contains Jetpack VideoPress as a feature.
- *
  * @param productSlug The product slug
  * @returns whether or not the product has VideoPress.
  */

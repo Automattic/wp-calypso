@@ -140,30 +140,43 @@ export class AuthFormHeader extends Component {
 		}
 
 		if ( isWooCoreProfiler ) {
+			const pluginNames = {
+				'jetpack-ai': 'Jetpack AI',
+				'jetpack-boost': 'Jetpack Boost',
+				default: 'Jetpack',
+			};
+
+			const pluginName = pluginNames[ this.props.authQuery.plugin_name ] || pluginNames.default;
+			const translateParams = {
+				components: {
+					br: <br />,
+					a: (
+						<a
+							href={ login( {
+								isJetpack: true,
+								redirectTo: window.location.href,
+								from: this.props.authQuery.from,
+							} ) }
+						/>
+					),
+				},
+				args: { pluginName },
+				comment:
+					'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
+			};
+
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-						{
-							components: {
-								br: <br />,
-								a: (
-									<a
-										href={ login( {
-											isJetpack: true,
-											redirectTo: window.location.href,
-											from: this.props.authQuery.from,
-										} ) }
-									/>
-								),
-							},
-							comment:
-								'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
-						}
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+						translateParams
 					);
 				default:
 					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account."
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
+						{
+							args: { pluginName },
+						}
 					);
 			}
 		}
@@ -176,7 +189,7 @@ export class AuthFormHeader extends Component {
 				default:
 					if ( wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments' ) {
 						return translate(
-							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments'
 						);
 					}
 					return translate( 'Approve your connection' );
@@ -206,7 +219,11 @@ export class AuthFormHeader extends Component {
 	getSiteCard() {
 		const { isWpcomMigration, isWooCoreProfiler } = this.props;
 		const { jpVersion } = this.props.authQuery;
-		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
+		if (
+			// Always show the site card for Woo Core Profiler
+			! isWooCoreProfiler &&
+			! versionCompare( jpVersion, '4.0.3', '>' )
+		) {
 			return null;
 		}
 

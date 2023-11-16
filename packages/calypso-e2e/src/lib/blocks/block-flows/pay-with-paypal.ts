@@ -34,7 +34,7 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'Pay with Paypal';
+	blockSidebarName = 'Pay with PayPal';
 	blockEditorSelector = blockParentSelector;
 
 	// @todo the `configure` below should also support a target: SiteType option as it wraps the `EditorPage`

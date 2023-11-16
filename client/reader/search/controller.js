@@ -8,6 +8,7 @@ import {
 } from 'calypso/reader/controller-helper';
 import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 import { recordTrack } from 'calypso/reader/stats';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 
 const analyticsPageTitle = 'Reader';
@@ -26,6 +27,7 @@ const exported = {
 		const basePath = '/read/search';
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Search';
 		const mcKey = 'search';
+		const state = context.store.getState();
 
 		const { sort = 'relevance', q, show = SEARCH_TYPES.POSTS } = context.query;
 		const searchSlug = q;
@@ -44,7 +46,11 @@ const exported = {
 				sort,
 			} );
 		} else {
-			recordTrack( 'calypso_reader_search_loaded' );
+			recordTrack(
+				'calypso_reader_search_loaded',
+				{},
+				{ pathnameOverride: getCurrentRoute( state ) }
+			);
 		}
 
 		const autoFocusInput = ! searchSlug || context.query.focus === '1';
@@ -56,7 +62,7 @@ const exported = {
 		function reportSortChange( newSort ) {
 			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
 		}
-		context.headerSection = renderHeaderSection();
+		context.renderHeaderSection = renderHeaderSection;
 
 		context.primary = (
 			<AsyncLoad

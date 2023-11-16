@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import {
 	setDocumentHeadTitle as setTitle,
 	setDocumentHeadLink as setLink,
@@ -11,6 +12,7 @@ import {
 } from 'calypso/state/document-head/actions';
 import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selectors/get-document-head-formatted-title';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 
 const isServer = typeof document === 'undefined';
 
@@ -88,11 +90,18 @@ DocumentHead.propTypes = {
 };
 
 export default connect(
-	( state, props ) => ( {
-		formattedTitle: props.skipTitleFormatting
+	( state, props ) => {
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const formattedTitle = props.skipTitleFormatting
 			? getDocumentHeadTitle( state )
-			: getDocumentHeadFormattedTitle( state ),
-	} ),
+			: getDocumentHeadFormattedTitle( state );
+
+		return {
+			formattedTitle: isGravPoweredOAuth2Client( oauth2Client )
+				? oauth2Client.title
+				: formattedTitle,
+		};
+	},
 	{
 		setTitle,
 		setLink,

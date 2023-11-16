@@ -31,7 +31,14 @@ export * from './use-a-domain-i-own-page';
 export * from './woocommerce-landing-page';
 export * from './writing-settings-page';
 export * from './wp-admin-media-settings-page';
+export * from './advertising-page';
+export * from './blaze-campaign-page';
+export * from './feedback-inbox-page';
+export * from './subscribers-page';
+export * from './subscription-management-page';
+export * from './hosting-configuration-page';
 
 export * from './external';
 export * from './me';
 export * from './signup';
+export * from './wp-admin';

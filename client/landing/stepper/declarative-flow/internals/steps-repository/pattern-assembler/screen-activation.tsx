@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CheckboxControl } from '@wordpress/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import NavigatorHeader from './navigator-header';
+import { useScreen } from './hooks';
+import NavigatorTitle from './navigator-title';
 import './screen-activation.scss';
 
 interface Props {
@@ -12,21 +12,22 @@ interface Props {
 
 const ScreenActivation = ( { onActivate }: Props ) => {
 	const translate = useTranslate();
-	const [ isConfirmed, setIsConfirmed ] = useState( false );
-	const toggleConfirm = () => setIsConfirmed( ( value ) => ! value );
+	const { title, description, continueLabel } = useScreen( 'activation' );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Activate this theme' ) }
-				description={ translate( 'Activating this theme will result in the following changes.' ) }
+				title={ <NavigatorTitle title={ title } /> }
+				description={ description }
 				hideBack
 			/>
 			<div className="screen-container__body">
-				<strong className="screen-activation__heading">Content will be replaced</strong>
+				<strong className="screen-activation__heading">
+					{ translate( 'Content will be replaced' ) }
+				</strong>
 				<p className="screen-activation__description">
 					{ translate(
-						'After activation, this layout will replace your existing homepage. But you can still access your old content. {{a}}Learn more{{/a}}.',
+						'This will replace your homepage, but your content will remain accessible. {{a}}Learn more{{/a}}.',
 						{
 							components: {
 								a: (
@@ -42,20 +43,8 @@ const ScreenActivation = ( { onActivate }: Props ) => {
 				</p>
 			</div>
 			<div className="screen-container__footer">
-				<CheckboxControl
-					className="screen-activation__checkbox"
-					label={ translate( 'I understand that this layout will replace my existing homepage.' ) }
-					checked={ isConfirmed }
-					onChange={ toggleConfirm }
-				/>
-				<Button
-					className="pattern-assembler__button"
-					primary
-					disabled={ ! isConfirmed }
-					aria-disabled={ ! isConfirmed }
-					onClick={ onActivate }
-				>
-					{ translate( 'Activate' ) }
+				<Button className="pattern-assembler__button" primary onClick={ onActivate }>
+					{ continueLabel }
 				</Button>
 			</div>
 		</>

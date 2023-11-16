@@ -7,7 +7,6 @@ import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Returns admin section items with site-based urls.
- *
  * @param   {number} siteId   - The current site ID.
  * @param   {string} siteSlug - The current site slug.
  * @param   {Object} state    - Global state
@@ -35,7 +34,6 @@ export const getAdminSections = createSelector(
 
 /**
  * Returns a filtered site admin collection.
- *
  * @param   {string} searchTerm The search term
  * @param   {Array}  collection A collection of site admin objects
  * @param   {number} limit      The maximum number of filtered results to return

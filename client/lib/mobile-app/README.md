@@ -23,3 +23,12 @@ if ( isWcMobileApp() ) {
 	// Perform a mobile app-specific logic.
 }
 ```
+
+Utility methods:
+
+```js
+import { getMobileDeviceInfo } from 'calypso/lib/mobile-app';
+
+const { device, version } = getMobileDeviceInfo();
+// Perform app-specific logic depending on the device and version
+```

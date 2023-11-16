@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
-import billcomLogo from 'calypso/assets/images/illustrations/billcom-logo.svg';
 import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg';
 import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
 import quickbooksLogo from 'calypso/assets/images/illustrations/quickbooks-logo.svg';
@@ -61,10 +60,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 
 	const handleStreakClick = () => {
 		recordTracksEvent( 'calypso_marketing_business_streak_button_click' );
-	};
-
-	const handleBillcomClick = () => {
-		recordTracksEvent( 'calypso_marketing_business_billcom_button_click' );
 	};
 
 	return (
@@ -179,24 +174,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						target="_blank"
 					>
 						{ translate( 'Supercharge your Gmail' ) }
-					</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					category={ translate( 'Finance' ) }
-					title={ translate( 'Bill.com' ) }
-					description={ translate(
-						'Bill.com is the intelligent way to create and pay bills, send invoices, and get paid.'
-					) }
-					imagePath={ billcomLogo }
-					imageAlt=""
-				>
-					<Button
-						onClick={ handleBillcomClick }
-						href="https://billcom.grsm.io/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Manage bills and invoices' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 			</div>

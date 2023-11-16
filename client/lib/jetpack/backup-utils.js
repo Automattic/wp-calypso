@@ -51,7 +51,6 @@ export const BACKUP_ATTEMPT_ACTIVITIES = [
 
 /**
  * Check if the activity is the type of backup
- *
  * @param activity {object} Activity to check
  */
 export const isActivityBackup = ( activity ) => {
@@ -60,7 +59,6 @@ export const isActivityBackup = ( activity ) => {
 
 /**
  * Retrieve the backup error code from activity object.
- *
  * @typedef {import('calypso/state/data-layer/wpcom/sites/activity/from-api.js').processItem} ProcessItem
  * @param {Object} activity Activity to get the error code from.
  * @returns {'BAD_CREDENTIALS'|'NOT_ACCESSIBLE'} The error code as set in @see {ProcessItem}
@@ -71,7 +69,6 @@ export const getBackupErrorCode = ( activity ) => {
 
 /**
  * Retrieve any warnings from a backup activity object.
- *
  * @param backup {object} Backup to check
  */
 export const getBackupWarnings = ( backup ) => {
@@ -104,7 +101,6 @@ export const getBackupWarnings = ( backup ) => {
 
 /**
  * Check if the backup is completed
- *
  * @param backup {object} Backup to check
  */
 export const isSuccessfulDailyBackup = ( backup ) => {
@@ -113,7 +109,6 @@ export const isSuccessfulDailyBackup = ( backup ) => {
 
 /**
  * Check if a Realtime backup backup is completed
- *
  * @param backup {object} Backup to check
  */
 export const isSuccessfulRealtimeBackup = ( backup ) => {

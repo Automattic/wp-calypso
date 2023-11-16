@@ -1,14 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
-import {
-	GlobalStylesVariations,
-	ColorPaletteVariations,
-	FontPairingVariations,
-} from '@automattic/global-styles';
-import { useState } from '@wordpress/element';
+import { NavigatorScreens, useNavigatorButtons } from '@automattic/onboarding';
+import { useMemo } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
-import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
-import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { Category } from '@automattic/design-picker/src/types';
+import type { NavigatorScreenObject } from '@automattic/onboarding';
 
 interface CategoryBadgeProps {
 	category: Category;
@@ -37,18 +32,10 @@ interface SidebarProps {
 	description?: string;
 	shortDescription?: string;
 	pricingBadge?: React.ReactNode;
-	variations?: StyleVariation[];
-	selectedVariation?: StyleVariation;
-	onSelectVariation: ( variation: StyleVariation ) => void;
-	splitPremiumVariations: boolean;
-	onClickCategory?: ( category: Category ) => void;
+	screens: NavigatorScreenObject[];
 	actionButtons: React.ReactNode;
-	siteId: number;
-	stylesheet: string;
-	selectedColorVariation: GlobalStylesObject | null;
-	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
-	selectedFontVariation: GlobalStylesObject | null;
-	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
+	onClickCategory?: ( category: Category ) => void;
+	onNavigatorPathChange?: ( path?: string ) => void;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -58,109 +45,61 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	pricingBadge,
 	description,
 	shortDescription,
-	variations,
-	selectedVariation,
-	onSelectVariation,
-	splitPremiumVariations,
-	onClickCategory,
+	screens,
 	actionButtons,
-	siteId,
-	stylesheet,
-	selectedColorVariation,
-	onSelectColorVariation,
-	selectedFontVariation,
-	onSelectFontVariation,
+	onClickCategory,
+	onNavigatorPathChange,
 } ) => {
 	const translate = useTranslate();
-	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
-	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
+	const navigatorButtons = useNavigatorButtons( screens );
+
+	const decodedDescription = useMemo(
+		() => ( description ? decodeEntities( description ) : undefined ),
+		[ description ]
+	);
+
+	const decodedShortDescription = useMemo(
+		() => ( shortDescription ? decodeEntities( shortDescription ) : undefined ),
+		[ shortDescription ]
+	);
 
 	return (
 		<div className="design-preview__sidebar">
-			<div className="design-preview__sidebar-content">
-				<div className="design-preview__sidebar-title">
-					<h1>{ title }</h1>
-				</div>
-				{ author && (
-					<div className="design-preview__sidebar-author">
-						{ translate( 'By %(author)s', { args: { author } } ) }
-					</div>
-				) }
-				{ ( pricingBadge || categories.length > 0 ) && (
-					<div className="design-preview__sidebar-badges">
-						{ pricingBadge }
-						{ categories.map( ( category ) => (
-							<CategoryBadge
-								key={ category.slug }
-								category={ category }
-								onClick={ onClickCategory }
-							/>
-						) ) }
-					</div>
-				) }
-				{ ( description || shortDescription ) && (
-					<div className="design-preview__sidebar-description">
-						<p>
-							{ isShowDescriptionToggle ? (
-								<>
-									{ isShowFullDescription ? description : shortDescription }
-									<Button
-										borderless
-										onClick={ () => setIsShowFullDescription( ! isShowFullDescription ) }
-									>
-										{ isShowFullDescription ? translate( 'Read less' ) : translate( 'Read more' ) }
-									</Button>
-								</>
-							) : (
-								description ?? shortDescription
-							) }
-						</p>
-					</div>
-				) }
-				{ variations && variations.length > 0 && (
-					<div className="design-preview__sidebar-variations">
-						<div className="design-preview__sidebar-variations-grid">
-							<GlobalStylesVariations
-								globalStylesVariations={ variations as GlobalStylesObject[] }
-								selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
-								splitPremiumVariations={ splitPremiumVariations }
-								displayFreeLabel={ splitPremiumVariations }
-								showOnlyHoverViewDefaultVariation={ false }
-								onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
-									onSelectVariation( globalStyleVariation as StyleVariation )
-								}
-							/>
+			<NavigatorScreens screens={ screens } onNavigatorPathChange={ onNavigatorPathChange }>
+				<>
+					<div className="design-preview__sidebar-header">
+						<div className="design-preview__sidebar-title">
+							<h1>{ title }</h1>
 						</div>
+						{ author && (
+							<div className="design-preview__sidebar-author">
+								{ translate( 'By %(author)s', { args: { author } } ) }
+							</div>
+						) }
+						{ ( pricingBadge || categories.length > 0 ) && (
+							<div className="design-preview__sidebar-badges">
+								{ pricingBadge }
+								{ categories.map( ( category ) => (
+									<CategoryBadge
+										key={ category.slug }
+										category={ category }
+										onClick={ onClickCategory }
+									/>
+								) ) }
+							</div>
+						) }
+						{ ( decodedDescription || decodedShortDescription ) && (
+							<div className="design-preview__sidebar-description">
+								<p>{ screens.length !== 1 ? decodedDescription : decodedShortDescription }</p>
+							</div>
+						) }
 					</div>
-				) }
-				{ variations &&
-					variations.length === 0 &&
-					isEnabled( 'signup/design-picker-preview-colors' ) && (
-						<div className="design-preview__sidebar-variations">
-							<ColorPaletteVariations
-								siteId={ siteId }
-								stylesheet={ stylesheet }
-								selectedColorPaletteVariation={ selectedColorVariation }
-								onSelect={ onSelectColorVariation }
-							/>
-						</div>
+					{ navigatorButtons }
+					{ actionButtons && (
+						<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
 					) }
-				{ variations &&
-					variations.length === 0 &&
-					isEnabled( 'signup/design-picker-preview-fonts' ) && (
-						<div className="design-preview__sidebar-variations">
-							<FontPairingVariations
-								siteId={ siteId }
-								stylesheet={ stylesheet }
-								selectedFontPairingVariation={ selectedFontVariation }
-								onSelect={ onSelectFontVariation }
-							/>
-						</div>
-					) }
-			</div>
-			{ actionButtons && (
-				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
-			) }
+				</>
+			</NavigatorScreens>
 		</div>
 	);
 };

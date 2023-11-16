@@ -8,7 +8,7 @@ type WpcomProxyRequestOptions = Parameters< typeof wpcomProxyRequest >[ 0 ];
 export const wpcomRequest = (
 	request: WpcomProxyRequestOptions
 ): { type: 'WPCOM_REQUEST'; request: WpcomProxyRequestOptions } =>
-	( { type: 'WPCOM_REQUEST', request } as const );
+	( { type: 'WPCOM_REQUEST', request } ) as const;
 
 /**
  * Action for performing a fetching using `window.fetch()` and parsing the response body.
@@ -26,19 +26,19 @@ export const fetchAndParse = (
 		type: 'FETCH_AND_PARSE',
 		resource,
 		options,
-	} as const );
+	} ) as const;
 
 export const reloadProxy = () =>
 	( {
 		type: 'RELOAD_PROXY',
-	} as const );
+	} ) as const;
 
 export const requestAllBlogsAccess = () =>
 	( {
 		type: 'REQUEST_ALL_BLOGS_ACCESS',
-	} as const );
+	} ) as const;
 
-export const wait = ( ms: number ) => ( { type: 'WAIT', ms } as const );
+export const wait = ( ms: number ) => ( { type: 'WAIT', ms } ) as const;
 
 export const controls = {
 	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => wpcomProxyRequest( request ),

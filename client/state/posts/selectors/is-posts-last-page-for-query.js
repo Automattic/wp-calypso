@@ -6,7 +6,6 @@ import 'calypso/state/posts/init';
 /**
  * Returns true if the query has reached the last page of queryable pages, or
  * null if the total number of queryable posts if unknown.
- *
  * @param   {Object}   state  Global state tree
  * @param   {?number}  siteId Site ID, or `null` for all-sites queries
  * @param   {Object}   query  Post query object

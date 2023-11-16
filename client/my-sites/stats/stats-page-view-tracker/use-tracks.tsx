@@ -26,6 +26,7 @@ export default function useTracks( {
 
 	// These are the props from the useSelector calls in StatsPageViewTracker.
 	selectedSiteId,
+	...restProps
 }: useTracksProps ) {
 	const dispatch = useDispatch() as ThunkDispatch< Store, void, AnyAction >;
 
@@ -42,6 +43,7 @@ export default function useTracks( {
 			path,
 			properties,
 			title,
+			...restProps,
 		};
 
 		debug( `Recording: "${ title }" at "${ path }"` );

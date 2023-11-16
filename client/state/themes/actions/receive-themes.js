@@ -1,14 +1,13 @@
 import { filter } from 'lodash';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
-import { isThemeMatchingQuery } from 'calypso/state/themes/utils';
+import { isDelisted, isThemeMatchingQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 
 /**
  * Returns an action object to be used in signalling that theme objects from
  * a query have been received.
- *
  * @param {Array}  themes Themes received
  * @param {number} siteId ID of site for which themes have been received
  * @param {?Object} query Theme query used in the API request
@@ -28,6 +27,15 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 			filteredThemes = filter( themes, ( theme ) => isThemeMatchingQuery( query, theme ) );
 
 			// Jetpack API returns all themes in one response (no paging)
+			found = filteredThemes.length;
+		}
+
+		if ( 'wporg' === siteId ) {
+			/*
+			 * We need to do client-side filtering for wporg results
+			 * because we fetch them directly from the wporg API.
+			 */
+			filteredThemes = filter( themes, ( theme ) => ! isDelisted( theme ) );
 			found = filteredThemes.length;
 		}
 

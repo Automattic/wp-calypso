@@ -1,28 +1,40 @@
 @import "uplot/dist/uPlot.min.css";
 
-.u-legend {
-	color: var(--studio-gray-100);
+.uplot:not(.calypso-uplot-bar-chart) {
+	.u-legend {
+		color: var(--studio-gray-100);
 
-	// Disable rendering first u-marker, which is for "Date" and is empty.
-	> .u-series:first-child > th > .u-marker {
-		display: none;
+		// Disable rendering first u-marker, which is for "Date" and is empty.
+		> .u-series:first-child > th > .u-marker {
+			display: none;
+		}
+
+		// Use increased specificity to override original uPlot styles.
+		> tr.u-series > th {
+			cursor: initial;
+
+			&::after {
+				vertical-align: baseline;
+			}
+			> .u-marker {
+				// Nudge marker down to align with text.
+				margin-top: -2px;
+				// Make the marker round.
+				border-radius: 100%;
+			}
+			> .u-label {
+				vertical-align: baseline;
+			}
+		}
 	}
+}
 
-	// Use increased specificity to override original uPlot styles.
-	> tr.u-series > th {
-		cursor: initial;
+.calypso-uplot-chart-container {
+	position: relative;
 
-		&::after {
-			vertical-align: baseline;
-		}
-		> .u-marker {
-			// Nudge marker down to align with text.
-			margin-top: -2px;
-			// Make the marker round.
-			border-radius: 100%;
-		}
-		> .u-label {
-			vertical-align: baseline;
-		}
+	.components-spinner {
+		position: absolute;
+		top: calc(50% - 8px - 60px);
+		left: calc(50% - 8px);
 	}
 }

@@ -4,7 +4,6 @@ import { iframeIsAllowed } from './utils';
 
 /**
  * Given an iframe, is it okay to have it run without a sandbox?
- *
  * @param {Object} iframe - the iframe to check
  * @returns {boolean} true/false if we trust the source and we know they don't work in a sandbox
  */

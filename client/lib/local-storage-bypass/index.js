@@ -71,7 +71,6 @@ export const clear = ( memoryStore ) => {
  * This function replaces localStorage with an in-memory store and is useful in the following cases:
  * 1. Avoiding conflicts caused by shared localStorage across multiple support user sessions.
  * 2. Providing a working localStorage implementation for older Safari versions that throw errors in Private mode.
- *
  * @param {Object}   [args]            An arguments object
  * @param {Object}   [args.root]       Allow alternate "window" object to support tests in non-browser environments
  * @param {string[]} [args.allowedKeys] An array of localStorage keys that are proxied to the real localStorage

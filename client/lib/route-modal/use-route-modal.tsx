@@ -18,7 +18,6 @@ export interface RouteModalData {
 
 /**
  * React hook providing utils to control opening and closing modal via query string.
- *
  * @param queryKey The key from the query string to control the modal.
  * @param targetValue If specified, the modal shows only when the value from the query string equals to it.
  */

@@ -47,20 +47,20 @@ export const FilePath = ( { children } ) => (
 );
 
 export const Post = ( { content, children } ) => {
+	let titleContent = children;
+
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( isJetpackCloud() ) {
-		return content.isTrashed ? children : <em>{ children }</em>;
+	if ( ! isJetpackCloud() ) {
+		if ( content.isTrashed ) {
+			titleContent = <a href={ `/posts/${ content.siteId }/trash` }>{ children }</a>;
+		} else {
+			titleContent = (
+				<a href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }` }>{ children }</a>
+			);
+		}
 	}
 
-	if ( content.isTrashed ) {
-		return <a href={ `/posts/${ content.siteId }/trash` }>{ children }</a>;
-	}
-
-	return (
-		<a href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }` }>
-			<em>{ children }</em>
-		</a>
-	);
+	return titleContent;
 };
 
 export const Comment = ( { content, children } ) => {

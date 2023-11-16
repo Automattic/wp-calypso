@@ -12,7 +12,7 @@ interface Props {
 const PricingPlansHeader: FunctionComponent< Props > = ( { currentPlan, attributes } ) => {
 	const learnMoreLink = attributes.domain
 		? `https://wordpress.com/plans/${ attributes.domain }`
-		: `https://wordpress.com/pricing`;
+		: `https://wordpress.com/pricing/`;
 
 	return (
 		<section className="hb-pricing-plans-embed__header">

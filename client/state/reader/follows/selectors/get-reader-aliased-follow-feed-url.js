@@ -10,7 +10,6 @@ export const commonExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.x
  * If the feedUrl passed in is not in the follows reducer AND we can find an alias for it,
  * then return the feed_URL for the aliased feed.  This is specifically useful for cases where
  * example.com --> example.com/rss when users follow directly by url
- *
  * @param {Object} state - The Redux state tree
  * @param {string} feedUrl - the url for which we are searching for a potential alias
  * @returns {string} either the original feedUrl or an aliased one.

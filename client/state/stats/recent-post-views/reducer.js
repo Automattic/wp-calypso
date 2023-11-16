@@ -6,7 +6,6 @@ import { items as itemsSchemas } from './schema';
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the value of the stat.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

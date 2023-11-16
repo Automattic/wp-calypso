@@ -18,7 +18,6 @@ const infoNoticeId = 'email-verification-info-notice';
 
 /**
  * Creates an action for request for email verification
- *
  * @param 	{Object} action The action to dispatch next
  * @returns {Object} Redux action
  */
@@ -38,7 +37,6 @@ export const requestEmailVerification = ( action ) => [
 
 /**
  * Creates an action for handling email verification error
- *
  * @param 	{Object} action The action to dispatch next
  * @param   {Object} rawError The error object
  * @returns {Object} Redux action
@@ -61,7 +59,6 @@ export const handleError = ( action, rawError ) => [
 
 /**
  * Creates an action for email verification success
- *
  * @param 	{Object} action The action to dispatch next
  * @returns {Object} Redux action
  */

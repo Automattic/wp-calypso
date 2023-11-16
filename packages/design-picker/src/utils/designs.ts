@@ -1,3 +1,4 @@
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
@@ -26,13 +27,10 @@ export const getDesignPreviewUrl = (
 		footer_pattern_ids: recipe?.footer_pattern_ids
 			? recipe?.footer_pattern_ids.join( ',' )
 			: undefined,
-		vertical_id: options.vertical_id,
 		language: options.language,
-		...( options.viewport_width && { viewport_width: options.viewport_width } ),
 		viewport_height: ! options.disable_viewport_height
 			? options.viewport_height || DEFAULT_VIEWPORT_HEIGHT
 			: undefined,
-		source_site: 'patternboilerplates.wordpress.com',
 		...( options.use_screenshot_overrides && {
 			use_screenshot_overrides: options.use_screenshot_overrides,
 		} ),
@@ -41,6 +39,9 @@ export const getDesignPreviewUrl = (
 			options.style_variation.slug !== 'default' && {
 				style_variation: options.style_variation.title,
 			} ),
+		...( options.viewport_unit_to_px && {
+			viewport_unit_to_px: options.viewport_unit_to_px,
+		} ),
 	} );
 
 	// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped
@@ -62,3 +63,9 @@ export const getDesignPreviewUrl = (
 
 	return url;
 };
+
+export const isAssemblerDesign = ( design?: Design ) => design?.design_type === 'assembler';
+
+// Go to the assembler only when the viewport width >= 960px as the it doesn't support small
+// screen for now.
+export const isAssemblerSupported = () => isWithinBreakpoint( '>=960px' );

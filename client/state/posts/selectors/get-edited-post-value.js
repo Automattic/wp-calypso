@@ -5,7 +5,6 @@ import 'calypso/state/posts/init';
 
 /**
  * Returns the assigned value for the edited post by field key.
- *
  * @param   {Object} state  Global state tree
  * @param   {number} siteId Site ID
  * @param   {number} postId Post ID

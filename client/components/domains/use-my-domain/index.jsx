@@ -26,7 +26,6 @@ import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
-
 import './style.scss';
 
 function UseMyDomain( props ) {

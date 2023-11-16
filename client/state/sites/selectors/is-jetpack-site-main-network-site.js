@@ -8,7 +8,6 @@ import isJetpackSite from './is-jetpack-site';
  * True if it is either in a non multi-site configuration
  * or if its url matches the `main_network_site` url option.
  * Returns null if the site is not known or is not a Jetpack site.
- *
  * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {?boolean} true if the site is the main site

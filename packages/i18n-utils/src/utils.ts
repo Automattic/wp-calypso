@@ -5,13 +5,17 @@ import i18n, { getLocaleSlug } from 'i18n-calypso';
 import { find, map, pickBy, includes } from 'lodash';
 
 /**
+ * This regex is defined as a string so that it can be combined with other regexes.
+ *
  * a locale can consist of three component
  * aa: language code
  * -bb: regional code
  * _cc: variant suffix
  * while the language code is mandatory, the other two are optional.
  */
-const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
+export const localeRegexString = '[a-zA-Z]{2,3}(-[a-zA-Z]{2,3})?(_[a-zA-Z]{2,6})?';
+
+const localeOnlyRegex = new RegExp( '^' + localeRegexString + '$' );
 
 export function getPathParts( path: string ) {
 	// Remove trailing slash then split. If there is a trailing slash,
@@ -117,6 +121,16 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
 }
 
 /**
+ * Return a specifier for a route param to match anything that looks like a language code, whether it is valid or not.
+ * This is useful for routes that need to match any language, including unsupported ones.
+ *
+ * @returns {string} Router param specifier string
+ */
+export function getAnyLanguageRouteParam() {
+	return ':lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
+}
+
+/**
  * Matches and returns language from config.languages based on the given localeSlug
  *
  * @param   {string} langSlug locale slug of the language to match
@@ -124,9 +138,9 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
  */
 export function getLanguage( langSlug: string | undefined ): Language | undefined {
 	langSlug = getMappedLanguageSlug( langSlug );
-	if ( langSlug && localeRegex.test( langSlug ) ) {
+	if ( langSlug && localeOnlyRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
-		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
+		// Please see the comment above `localeOnlyRegex` to see why we can split by - or _ and find the parent slug.
 		return ( find( languages, { langSlug } ) ||
 			find( languages, { langSlug: langSlug.split( /[-_]/ )[ 0 ] } ) ) as Language | undefined;
 	}
@@ -225,6 +239,28 @@ export function isMagnificentLocale( locale: string ): boolean {
  */
 export function isTranslatedIncompletely( locale: string ) {
 	return getLanguage( locale )?.isTranslatedIncompletely === true;
+}
+
+/**
+ * Adds a locale slug infront of the current path.
+ *
+ * Will replace existing locale slug, if present.
+ *
+ * @param path - original path
+ * @param locale - the locale to add to the path (Optional)
+ *
+ * @returns original path with new locale slug
+ */
+export function addLocaleToPathLocaleInFront( path: string, locale?: string ) {
+	const localeOrDefault = locale || getLocaleSlug();
+	const urlParts = getUrlParts( path );
+	const queryString = urlParts.search || '';
+	if ( ! localeOrDefault || isDefaultLocale( localeOrDefault ) ) {
+		return path;
+	}
+	return (
+		`/${ localeOrDefault }` + removeLocaleFromPathLocaleInFront( urlParts.pathname ) + queryString
+	);
 }
 
 /**

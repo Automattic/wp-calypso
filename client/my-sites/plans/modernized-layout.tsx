@@ -8,31 +8,23 @@ import { css, Global } from '@emotion/react';
 import { memo } from '@wordpress/element';
 import './modernized-layout.scss';
 
-const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean } > = ( {
-	dropShadowOnHeader = true,
-} ) => {
+const ModernizedLayout: React.FunctionComponent = () => {
 	const backgroundColor = '#fdfdfd';
 	const sectionMaxWidth = '1224px';
-	const layoutContentPaddingTop = '79px';
-	const sidebarAppearanceBreakPoint = '783px';
 	const breakMedium = '782px';
 	const breakMobile = '480px';
 	// ----------------------------------------------
 	// from @automattic/components/src/highlight-cards/variables.scss:
 	// ----------------------------------------------
-	// If changed, also change @plans-section-custom-mobile-breakpoint in client/my-sites/plan-features-2023-grid/_media-queries.scss
+	// If changed, also change @plans-section-custom-mobile-breakpoint in client/my-sites/plans-grid/_media-queries.scss
 	const customBreakpointSmall = '780px';
 	const verticalMargin = '32px';
 	// ----------------------------------------------
 
 	const globalOverrides = css`
-		.plans__section-header,
-		.current-plan__section-header {
-			background-color: var( --studio-white );
-			${ dropShadowOnHeader && 'box-shadow: inset 0 -1px 0 #0000000d;' }
-
+		.navigation-header.plans__section-header {
 			@media ( min-width: ${ customBreakpointSmall } ) {
-				padding: 0 max( calc( 50% - ( ${ sectionMaxWidth } / 2 ) ), 32px );
+				padding: 0 max( calc( 50% - ( ${ sectionMaxWidth } / 2 ) ), 32px ) 24px;
 			}
 		}
 
@@ -131,16 +123,7 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 				background-color: ${ backgroundColor };
 			}
 
-			// this overrides the default .layout__content that adds unwanted padding
-			& .layout__content,
 			&.theme-default .focus-content .layout__content {
-				padding: 0;
-				padding-block-start: ${ layoutContentPaddingTop };
-
-				@media ( min-width: ${ sidebarAppearanceBreakPoint } ) {
-					padding-inline-start: calc( var( --sidebar-width-max ) + 1px );
-				}
-
 				.jetpack-colophon {
 					padding-top: ${ verticalMargin };
 					padding-bottom: ${ verticalMargin };

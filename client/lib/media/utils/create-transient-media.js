@@ -6,7 +6,6 @@ import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
 /**
  * Returns an object describing a transient media item which can be used in
  * optimistic rendering prior to media persistence to server.
- *
  * @param  {(string | Object | window.Blob | window.File)} file URL or File object
  * @returns {Object}                         Transient media object
  */

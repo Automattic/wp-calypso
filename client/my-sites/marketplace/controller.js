@@ -24,11 +24,19 @@ export function renderThemesInstallPage( context, next ) {
 }
 
 export function renderMarketplaceThankYou( context, next ) {
-	const { plugins, themes } = context.query;
+	const { plugins, themes, continueWithPluginBundle, onboarding, styleVariation } = context.query;
 	const pluginSlugs = plugins ? plugins.split( ',' ) : [];
 	const themeSlugs = themes ? themes.split( ',' ) : [];
 
-	context.primary = <MarketplaceThankYou pluginSlugs={ pluginSlugs } themeSlugs={ themeSlugs } />;
+	context.primary = (
+		<MarketplaceThankYou
+			pluginSlugs={ pluginSlugs }
+			themeSlugs={ themeSlugs }
+			isOnboardingFlow={ onboarding !== undefined }
+			styleVariationSlug={ styleVariation }
+			continueWithPluginBundle={ continueWithPluginBundle }
+		/>
+	);
 	next();
 }
 

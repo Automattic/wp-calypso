@@ -3,7 +3,6 @@ import { select, subscribe } from '@wordpress/data';
 /**
  * Checks self and top to determine if we are being loaded in an iframe.
  * Can't use window.frameElement because we are being embedded from a different origin.
- *
  * @returns {boolean} Whether this script is loaded in a iframe.
  */
 export function inIframe() {
@@ -17,7 +16,6 @@ export function inIframe() {
 /**
  * Sends a message object to the parent. The object is extended to include a type that
  * identifies the source as Gutenberg related.
- *
  * @param {Object} message object containing the action to be performed on the parent and any require options
  */
 export function sendMessage( message ) {
@@ -30,7 +28,6 @@ export function sendMessage( message ) {
 
 /**
  * Indicates if the block editor has been initialized.
- *
  * @returns {Promise} Promise that resolves when the editor has been initialized.
  */
 export const isEditorReady = async () =>
@@ -53,7 +50,6 @@ export const isEditorReady = async () =>
 
 /**
  * Indicates if the block editor has been initialized with blocks.
- *
  * @returns {Promise} Promise that resolves when the editor has been initialized with blocks.
  */
 export const isEditorReadyWithBlocks = async () =>

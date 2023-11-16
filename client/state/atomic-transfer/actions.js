@@ -5,7 +5,6 @@ import 'calypso/state/atomic-transfer/init';
 
 /**
  * Query the atomic transfer for a given site.
- *
  * @param {number} siteId The id of the site to query.
  * @returns {Object} An action object
  */

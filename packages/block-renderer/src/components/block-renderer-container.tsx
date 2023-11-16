@@ -2,9 +2,10 @@
 import {
 	__unstableIframe as Iframe,
 	__unstableEditorStyles as EditorStyles,
-	__unstablePresetDuotoneFilter as PresetDuotoneFilter,
+	privateApis as blockEditorPrivateApis,
 } from '@wordpress/block-editor';
-import { useResizeObserver, useRefEffect } from '@wordpress/compose';
+import { useResizeObserver, useRefEffect, useMergeRefs } from '@wordpress/compose';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import React, { useMemo, useState, useContext, ReactNode } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
@@ -14,17 +15,21 @@ import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
+	'@wordpress/block-editor'
+);
+
+const { getDuotoneFilter } = unlock( blockEditorPrivateApis );
+
 interface BlockRendererContainerProps {
 	children: ReactNode;
 	styles?: RenderedStyle[];
 	scripts?: string;
 	inlineCss?: string;
 	viewportWidth?: number;
-	viewportHeight?: number;
 	maxHeight?: 'none' | number;
 	minHeight?: number;
-	isMinHeight100vh?: boolean;
-	minHeightFor100vh?: number;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -37,15 +42,13 @@ const ScaledBlockRendererContainer = ( {
 	scripts: customScripts,
 	inlineCss = '',
 	viewportWidth = 1200,
-	viewportHeight,
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
-	isMinHeight100vh,
-	minHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
-	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
+	const [ contentResizeListener, sizes ] = useResizeObserver();
+	const contentHeight = sizes.height ?? 0;
 	const { settings } = useContext( BlockRendererContext );
 	const { styles, assets, duotone } = useMemo(
 		() => ( {
@@ -92,7 +95,9 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.boxSizing = 'border-box';
 		bodyElement.style.position = 'absolute';
 		bodyElement.style.width = '100%';
+	}, [] );
 
+	const contentAssetsRef = useRefEffect< HTMLBodyElement >( ( bodyElement ) => {
 		// Load scripts and styles manually to avoid a flash of unstyled content.
 		Promise.all( [
 			loadStyles( bodyElement, styleAssets ),
@@ -101,23 +106,7 @@ const ScaledBlockRendererContainer = ( {
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
-	const heightFor100vh = Math.max(
-		contentHeight || 0,
-		viewportHeight || 0,
-		minHeightFor100vh || 0
-	);
-
-	let scaledHeight = ( contentHeight as number ) * scale || minHeight;
-	if ( isMinHeight100vh ) {
-		// Handling container height of patterns with height 100vh
-		scaledHeight = heightFor100vh * scale;
-	}
-
-	let iframeHeight = contentHeight as number;
-	if ( isMinHeight100vh ) {
-		// Handling iframe height of patterns with height 100vh
-		iframeHeight = heightFor100vh;
-	}
+	const scaledHeight = contentHeight * scale || minHeight;
 
 	return (
 		<div
@@ -126,21 +115,20 @@ const ScaledBlockRendererContainer = ( {
 				transform: `scale(${ scale })`,
 				height: scaledHeight,
 				maxHeight:
-					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
-						? ( maxHeight as number ) * scale
+					maxHeight && maxHeight !== 'none' && contentHeight > maxHeight
+						? maxHeight * scale
 						: undefined,
 			} }
 		>
 			<Iframe
-				head={ <EditorStyles styles={ editorStyles } /> }
-				contentRef={ contentRef }
+				contentRef={ useMergeRefs( [ contentRef, contentAssetsRef ] ) }
 				aria-hidden
 				tabIndex={ -1 }
 				loading="lazy"
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
-					height: iframeHeight,
+					height: contentHeight,
 					pointerEvents: 'none',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
@@ -149,11 +137,17 @@ const ScaledBlockRendererContainer = ( {
 					opacity: isLoaded ? 1 : 0,
 				} }
 			>
+				<EditorStyles styles={ editorStyles } />
 				{ isLoaded ? contentResizeListener : null }
 				{
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */
 					svgFilters.map( ( preset ) => (
-						<PresetDuotoneFilter preset={ preset } key={ preset.slug } />
+						<div
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ {
+								__html: getDuotoneFilter( `wp-duotone-${ preset.slug }`, preset.colors ),
+							} }
+						/>
 					) )
 				}
 				{ children }

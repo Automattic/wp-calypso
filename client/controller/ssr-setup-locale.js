@@ -3,6 +3,7 @@ import { readFile } from 'fs/promises';
 import { defaultI18n } from '@wordpress/i18n';
 import { I18N } from 'i18n-calypso';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
+import { getLanguageFile } from 'calypso/lib/i18n-utils/switch-locale';
 import config from 'calypso/server/config';
 import { LOCALE_SET } from 'calypso/state/action-types';
 
@@ -44,14 +45,14 @@ export function ssrSetupLocaleMiddleware() {
 			setLocaleData( cachedTranslations );
 		} else {
 			readFile( getAssetFilePath( `languages/${ lang }-v1.1.json` ), 'utf-8' )
-				.then( ( data ) => {
-					const translations = JSON.parse( data );
+				.then( ( data ) => JSON.parse( data ) )
+				// Fall back to the remote one if the local translation file is not found.
+				.catch( () => getLanguageFile( lang ) )
+				.then( ( translations ) => {
 					translationsCache[ lang ] = translations;
 					setLocaleData( translations );
 				} )
-				.catch( () => {
-					setLocaleData( null );
-				} );
+				.catch( () => setLocaleData( null ) );
 		}
 	};
 }

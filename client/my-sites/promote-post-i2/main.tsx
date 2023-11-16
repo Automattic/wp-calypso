@@ -1,22 +1,27 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
-import { useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { Campaign } from 'calypso/data/promote-post/types';
+import {
+	BlazablePost,
+	BlazePagedItem,
+	Campaign,
+	CampaignQueryResult,
+	PostQueryResult,
+} from 'calypso/data/promote-post/types';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
-import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
 	getSearchOptionsQueryParams,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
@@ -24,17 +29,19 @@ import {
 	SORT_OPTIONS_DEFAULT,
 	SearchOptions,
 } from 'calypso/my-sites/promote-post-i2/components/search-bar';
-import { getPagedBlazeSearchData, unifyCampaigns } from 'calypso/my-sites/promote-post-i2/utils';
+import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
-import { BlazablePost } from './components/post-item';
 import PostsListBanner from './components/posts-list-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
-export type TabType = 'posts' | 'campaigns' | 'credits';
+export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
+
+export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
 	name: string;
@@ -55,7 +62,7 @@ export type DSPMessage = {
 export type PagedBlazeContentData = {
 	has_more_pages: boolean;
 	total_items?: number;
-	items?: Campaign[] | BlazablePost[];
+	items?: BlazePagedItem[];
 };
 
 export type PagedBlazeSearchResponse = {
@@ -105,15 +112,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		campaignsData
 	);
 
-	const { data: campaignsStatsData } = useCampaignsStatsQuery( selectedSiteId ?? 0 );
-	const campaigns = useMemo(
-		() => unifyCampaigns( pagedCampaigns as Campaign[], campaignsStatsData ),
-		[ pagedCampaigns, campaignsStatsData ]
-	);
-
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
 		'campaigns',
-		initialCampaignQueryState?.data as PagedBlazeSearchResponse
+		initialCampaignQueryState?.data as InfiniteData< CampaignQueryResult >
 	);
 
 	/* query for posts */
@@ -145,7 +146,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 	const { total_items: totalPostsUnfiltered } = getPagedBlazeSearchData(
 		'posts',
-		initialPostQueryState?.data as PagedBlazeSearchResponse
+		initialPostQueryState?.data as InfiniteData< PostQueryResult >
 	);
 
 	const tabs: TabOption[] = [
@@ -198,6 +199,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
 
+	// Add Hotjar script to the page.
+	addHotJarScript();
+
 	const headerSubtitle = ( isMobile: boolean ) => {
 		if ( ! isMobile && showBanner ) {
 			// Do not show subtitle for desktops where banner should be shown
@@ -241,7 +245,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						showIcon={ false }
 						showSupportModal={ ! isRunningInJetpack }
 					/>
-					<Button isPrimary onClick={ onClickPromote }>
+					<Button variant="primary" onClick={ onClickPromote }>
 						{ translate( 'Promote' ) }
 					</Button>
 				</div>
@@ -255,8 +259,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render campaigns tab */ }
 			{ selectedTab === 'campaigns' && (
 				<>
-					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/campaigns' ) }
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/campaigns/:site' ) }
 						title="Advertising > Campaigns"
 					/>
 					<CampaignsList
@@ -267,7 +271,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						handleSearchOptions={ setCampaignsSearchOptions }
 						totalCampaigns={ totalCampaignsUnfiltered || 0 }
 						hasMorePages={ campaignsHasMorePages }
-						campaigns={ campaigns as Campaign[] }
+						campaigns={ pagedCampaigns as Campaign[] }
 					/>
 				</>
 			) }
@@ -275,8 +279,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render credits tab */ }
 			{ selectedTab === 'credits' && (
 				<>
-					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/credits' ) }
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/credits/:site' ) }
 						title="Advertising > Credits"
 					/>
 					<CreditBalance balance={ creditBalance } />
@@ -286,8 +290,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render posts tab */ }
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
 				<>
-					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/posts' ) }
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/posts/:site' ) }
 						title="Advertising > Ready to Promote"
 					/>
 					<PostsList

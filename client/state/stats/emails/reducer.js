@@ -11,7 +11,6 @@ import { items as itemSchemas } from './schema';
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the request stats.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -67,7 +66,6 @@ export const requests = ( state = {}, action ) => {
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, email ID and stat keys to the value of the stat.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

@@ -1,6 +1,5 @@
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-import { compact } from 'lodash';
 import page from 'page';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import {
@@ -77,7 +76,7 @@ export const request = ( action ) => {
 };
 
 export const success = ( action, { rewind_state } ) =>
-	compact( [
+	[
 		{
 			type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 			siteId: action.siteId,
@@ -114,7 +113,7 @@ export const success = ( action, { rewind_state } ) =>
 		// The idea is to mark the credentials test as valid so
 		// it doesn't need to be tested again.
 		markCredentialsAsValid( action.siteId, action.credentials.role ),
-	] );
+	].filter( Boolean );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
 	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );

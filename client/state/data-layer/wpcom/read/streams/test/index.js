@@ -24,6 +24,7 @@ describe( 'streams', () => {
 			meta: QUERY_META,
 			number: INITIAL_FETCH,
 			content_width: 675,
+			lang: 'en',
 		};
 
 		it( 'should return an http request', () => {
@@ -74,13 +75,15 @@ describe( 'streams', () => {
 					stream: 'discover:recommended',
 					expected: {
 						method: 'GET',
-						path: '/read/tags/cards',
+						path: '/read/streams/discover',
 						apiNamespace: 'wpcom/v2',
 						query: {
 							...query,
 							tag_recs_per_card: 5,
 							site_recs_per_card: 5,
 							tags: [],
+							age_based_decay: 0.5,
+							orderBy: 'popular',
 						},
 					},
 				},
@@ -88,13 +91,14 @@ describe( 'streams', () => {
 					stream: 'discover:dailyprompt',
 					expected: {
 						method: 'GET',
-						path: `/read/tags/dailyprompt/posts`,
+						path: `/read/streams/discover?tags=dailyprompt`,
 						apiNamespace: 'wpcom/v2',
 						query: {
 							...query,
 							tag_recs_per_card: 5,
 							site_recs_per_card: 5,
 							tags: [],
+							age_based_decay: 0.5,
 						},
 					},
 				},
@@ -143,6 +147,7 @@ describe( 'streams', () => {
 						query: {
 							sort: 'date',
 							q: 'foo',
+							lang: 'en',
 							number: INITIAL_FETCH,
 							content_width: 675,
 						},
@@ -157,6 +162,7 @@ describe( 'streams', () => {
 						query: {
 							sort: 'relevance',
 							q: 'foo:bar',
+							lang: 'en',
 							number: INITIAL_FETCH,
 							content_width: 675,
 						},

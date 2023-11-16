@@ -11,6 +11,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import { preventWidows } from 'calypso/lib/formatting';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -23,11 +24,13 @@ import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType,
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 	getRequestNotice,
+	getRequestError,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 	isTwoFactorAuthTypeSupported,
@@ -40,6 +43,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
@@ -97,6 +102,11 @@ class Login extends Component {
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
+		isGravPoweredClient: PropTypes.bool,
+		isGravPoweredLoginPage: PropTypes.bool,
+		isSignupExistingAccount: PropTypes.bool,
+		emailRequested: PropTypes.bool,
+		isSendingEmail: PropTypes.bool,
 	};
 
 	state = {
@@ -129,9 +139,31 @@ class Login extends Component {
 
 		if ( ! prevProps.accountType && isPasswordlessAccount( this.props.accountType ) ) {
 			this.props.sendEmailLogin();
+		}
+		// Passwordless email link sent.
+		if ( prevProps.isSendingEmail && this.props.emailRequested ) {
 			this.handleTwoFactorRequested( 'link' );
 		}
+
+		if (
+			this.props.requestError?.field === 'usernameOrEmail' &&
+			this.props.requestError?.code === 'email_login_not_allowed'
+		) {
+			const magicLoginUrl = login( {
+				locale: this.props.locale,
+				twoFactorAuthType: 'link',
+				oauth2ClientId: this.props.currentQuery?.client_id,
+				redirectTo: this.props.currentQuery?.redirect_to,
+			} );
+
+			page( magicLoginUrl );
+		}
 	}
+
+	sendMagicLoginLink = () => {
+		this.props.sendEmailLogin();
+		this.handleTwoFactorRequested( 'link' );
+	};
 
 	showContinueAsUser = () => {
 		const {
@@ -168,7 +200,7 @@ class Login extends Component {
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
-		} else if ( this.props.isWoo ) {
+		} else if ( this.props.isWoo || this.props.isGravPoweredClient ) {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
@@ -290,8 +322,10 @@ class Login extends Component {
 			isWoo,
 			action,
 			currentQuery,
-			isGravatar,
+			isGravPoweredClient,
+			isGravPoweredLoginPage,
 			isWooCoreProfilerFlow,
+			isSignupExistingAccount,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -435,17 +469,20 @@ class Login extends Component {
 				} );
 			}
 
-			if ( isGravatar ) {
-				headerText = translate( 'Welcome back to %(clientTitle)s!', {
-					args: {
-						clientTitle: oauth2Client.title,
-					},
+			if ( isGravPoweredClient ) {
+				headerText = translate( 'Login to %(clientTitle)s', {
+					args: { clientTitle: oauth2Client.title },
 				} );
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate( 'Log in with your WordPress.com account' ) }
-					</p>
-				);
+
+				if ( isGravPoweredLoginPage ) {
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate(
+								'If you prefer logging in with a password, or a social media account, choose below:'
+							) }
+						</p>
+					);
+				}
 			}
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow;
@@ -532,6 +569,8 @@ class Login extends Component {
 					{ translate( 'Enter your details to log in to your account.' ) }
 				</p>
 			);
+		} else if ( isSignupExistingAccount ) {
+			headerText = preventWidows( translate( 'Log in to your existing account' ) );
 		}
 
 		if ( isWhiteLogin ) {
@@ -554,6 +593,9 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
+				{ isGravPoweredLoginPage && (
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				) }
 				{ preHeader }
 				<div className="login__form-header">{ headerText }</div>
 				{ postHeader }
@@ -598,6 +640,8 @@ class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			currentQuery,
+			isGravPoweredLoginPage,
+			isSignupExistingAccount,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -702,6 +746,7 @@ class Login extends Component {
 							handleUsernameChange={ handleUsernameChange }
 							signupUrl={ signupUrl }
 							showSocialLoginFormOnly={ true }
+							sendMagicLoginLink={ this.sendMagicLoginLink }
 						/>
 					</Fragment>
 				);
@@ -724,6 +769,10 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
+				hideSignupLink={ isGravPoweredLoginPage }
+				isSignupExistingAccount={ isSignupExistingAccount }
+				sendMagicLoginLink={ this.sendMagicLoginLink }
+				isSendingEmail={ this.props.isSendingEmail }
 			/>
 		);
 	}
@@ -787,9 +836,17 @@ export default connect(
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+		isSignupExistingAccount: !! (
+			getInitialQueryArguments( state )?.is_signup_existing_account ||
+			getCurrentQueryArguments( state )?.is_signup_existing_account
+		),
+		requestError: getRequestError( state ),
+		isSendingEmail: isFetchingMagicLoginEmail( state ),
+		emailRequested: isMagicLoginEmailRequested( state ),
 	} ),
 	{
 		rebootAfterLogin,
+		hideMagicLoginRequestForm,
 		sendEmailLogin,
 	},
 	( stateProps, dispatchProps, ownProps ) => ( {
@@ -800,8 +857,11 @@ export default connect(
 			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
-				showGlobalNotices: true,
-				flow: ownProps.isJetpack ? 'jetpack' : null,
+				showGlobalNotices: false,
+				flow:
+					( ownProps.isJetpack && 'jetpack' ) ||
+					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||
+					null,
 			} ),
 	} )
 )( localize( Login ) );

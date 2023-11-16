@@ -24,6 +24,7 @@ export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;
 
 export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'admin_url',
+	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
 	'launchpad_screen',
@@ -32,4 +33,5 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'updated_at',
 	'wpcom_production_blog_id',
 	'wpcom_staging_blog_ids',
+	'wpcom_admin_interface',
 ] as const;

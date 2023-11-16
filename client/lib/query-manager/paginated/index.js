@@ -38,7 +38,6 @@ export default class PaginatedQueryManager extends QueryManager {
 	/**
 	 * Returns true if the specified query is an object containing one or more
 	 * query pagination keys.
-	 *
 	 * @param  {Object}  query Query object to check
 	 * @returns {boolean}       Whether query contains pagination key
 	 */
@@ -49,7 +48,6 @@ export default class PaginatedQueryManager extends QueryManager {
 	/**
 	 * Returns items tracked by the instance. If a query is specified, returns
 	 * items specific to that query.
-	 *
 	 * @param  {?Object}  query Optional query object
 	 * @returns {Object[]}       Items tracked
 	 */
@@ -76,7 +74,6 @@ export default class PaginatedQueryManager extends QueryManager {
 	/**
 	 * Returns items tracked by the instance, ignoring pagination for the given
 	 * query.
-	 *
 	 * @param  {Object}   query         Query object
 	 * @param  {boolean}  includeFiller Whether page structure should be left
 	 *                                  intact to reflect found count, with
@@ -99,7 +96,6 @@ export default class PaginatedQueryManager extends QueryManager {
 	/**
 	 * Returns the number of pages for the specified query, or null if the
 	 * query is not known.
-	 *
 	 * @param  {Object}  query Query object
 	 * @returns {?number}       Pages for query
 	 */
@@ -119,7 +115,6 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * they are associated with a query. This function does not mutate the
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
-	 *
 	 * @param  {(Array | Object)} items              Item(s) to be received
 	 * @param  {Object}         options            Options for receive
 	 * @param  {boolean}        options.patch      Apply changes as partial

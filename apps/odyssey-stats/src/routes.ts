@@ -1,4 +1,6 @@
+import { SiteDetails } from '@automattic/data-stores';
 import page, { Callback, Context } from 'page';
+import wpcom from 'calypso/lib/wp';
 import {
 	follows,
 	insights,
@@ -10,16 +12,48 @@ import {
 	redirectToActivity,
 	redirectToDefaultModulePage,
 	redirectToDefaultWordAdsPeriod,
+	purchase,
 } from 'calypso/my-sites/stats/controller';
+import {
+	SITE_REQUEST,
+	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
+	ODYSSEY_SITE_RECEIVE,
+} from 'calypso/state/action-types';
+import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import config from './lib/config-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
-
 import 'calypso/my-sites/stats/style.scss';
 
 const siteSelection = ( context: Context, next: () => void ) => {
-	context.store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
-	next();
+	const siteId = config( 'blog_id' );
+	const dispatch = context.store.dispatch;
+	const state = context.store.getState();
+
+	dispatch( setSelectedSiteId( siteId ) );
+
+	const isRequesting = isRequestingSite( state, siteId );
+	const site = getSite( state, siteId );
+
+	// If options stored on WPCOM exists or it's already requesting, we do not need to fetch it again.
+	if ( ( site?.options && 'is_commercial' in site.options ) || isRequesting ) {
+		next();
+		return;
+	}
+
+	dispatch( { type: SITE_REQUEST, siteId: siteId } );
+	wpcom.req
+		.get( { path: '/site', apiNamespace: 'jetpack/v4' } )
+		.then( ( site: { data: string } ) => JSON.parse( site.data ) )
+		.then( ( site: SiteDetails ) => {
+			dispatch( { type: ODYSSEY_SITE_RECEIVE, site } );
+			dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );
+		} )
+		.catch( () => {
+			dispatch( { type: SITE_REQUEST_FAILURE, siteId } );
+		} )
+		.finally( next );
 };
 
 const statsPage = ( url: string, controller: Callback ) => {
@@ -84,6 +118,9 @@ export default function ( pageBase = '/' ) {
 	// Anything else should redirect to default WordAds stats page
 	statsPage( '/stats/wordads/(.*)', redirectToDefaultWordAdsPeriod );
 	statsPage( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
+
+	// Stat Purchase Page
+	statsPage( '/stats/purchase/:site', purchase );
 
 	// Anything else should redirect to default stats page
 	statsPage( '*', redirectToSiteTrafficPage );

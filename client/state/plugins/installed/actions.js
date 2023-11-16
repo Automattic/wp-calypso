@@ -54,7 +54,6 @@ import 'calypso/state/plugins/init';
 /**
  * Determines the truthiness of a site specific property regardless of whether it is on the plugin object
  * or on one of the plugin's site objects.
- *
  * @param {string} prop - The site property to check. One of 'active', 'autoupdate', 'update', or 'version'.
  * @param {Object} plugin - The plugin object
  * @param {number} siteId - The ID of the site
@@ -72,7 +71,6 @@ const pluginHasTruthySiteProp = ( prop, plugin, siteId ) => {
 
 /**
  * Return a SitePlugin instance used to handle the plugin
- *
  * @param {Object} siteId - site ID
  * @param {string} pluginId - plugin identifier
  * @returns {any} SitePlugin instance
@@ -85,7 +83,6 @@ const getPluginHandler = ( siteId, pluginId ) => {
 /**
  * Helper thunk for recording tracks events and bumping stats for plugin events.
  * Useful to record events and bump stats by following a certain naming pattern.
- *
  * @param {string} eventType The type of event
  * @param {Object} plugin    The plugin object
  * @param {number} siteId    ID of the site
@@ -121,7 +118,6 @@ const recordEvent = ( eventType, plugin, siteId, error ) => {
  * Next, dispatch the action to set the statusRecentlyChanged to false with delay(setTimeout).
  * Used to show the plugin status before the plugin is filtered based on the status.
  * The idea here is to filter the plugins also when statusRecentlyChanged is true.
- *
  * @param {Object} defaultAction The default action params
  * @param {Object} data   The API response
  * @returns {Function}    The dispatch actions
@@ -289,7 +285,7 @@ export function togglePluginActivation( siteId, plugin ) {
 }
 
 export function updatePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return async ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: UPDATE_PLUGIN,
@@ -301,31 +297,22 @@ export function updatePlugin( siteId, plugin ) {
 			! pluginHasTruthySiteProp( 'update', plugin, siteId ) ||
 			( siteId && plugin?.sites?.[ siteId ]?.update?.recentlyUpdated )
 		) {
-			return dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
+			dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
+			return;
 		}
 
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
 
-		const afterUpdateCallback = ( error ) => {
-			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId, error ) );
-		};
-
-		const successCallback = ( data ) => {
+		try {
+			const data = await getPluginHandler( siteId, pluginId ).updateVersion();
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
 			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
-			afterUpdateCallback( undefined );
+			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId ) );
 			dispatch( sitePluginUpdated( siteId ) );
-		};
-
-		const errorCallback = ( error ) => {
+		} catch ( error ) {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_FAILURE, error } );
-			afterUpdateCallback( error );
-		};
-
-		return getPluginHandler( siteId, pluginId )
-			.updateVersion()
-			.then( successCallback )
-			.catch( errorCallback );
+			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId, error ) );
+		}
 	};
 }
 

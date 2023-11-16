@@ -4,10 +4,10 @@ import page from 'page';
 import { useEffect, useState } from 'react';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import useRemoveViewer from 'calypso/data/viewers/use-remove-viewer-mutation';
 import useViewerQuery from 'calypso/data/viewers/use-viewer-query';
 import accept from 'calypso/lib/accept';
@@ -119,13 +119,10 @@ export default function ViewerDetails( props: Props ) {
 			<PageViewTracker path="/people/viewers/:site/:id" title="People > User Details" />
 			{ site?.ID && <QuerySiteInvites siteId={ site?.ID } /> }
 
-			<FormattedHeader
-				brandFont
-				className="people__page-heading"
-				headerText={ translate( 'Users' ) }
-				subHeaderText={ translate( 'People who have subscribed to your site and team members.' ) }
-				align="left"
-				hasScreenOptions
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Users' ) }
+				subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
 			/>
 
 			<HeaderCake isCompact onClick={ onBackClick }>

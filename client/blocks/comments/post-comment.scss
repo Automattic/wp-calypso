@@ -31,16 +31,17 @@
 	.comments__form {
 		margin-top: 10px;
 	}
+
+	&:not(.depth-0) .comments__comment-actions .comments__comment-actions-reply-label,
+	&:not(.depth-0) .comments__comment-actions .reader-share__label {
+		display: none;
+	}
 }
 
 // A list of comments
 .comments__list {
 	list-style: none;
 	margin: 0;
-
-	&.is-root {
-		margin-top: 20px;
-	}
 }
 
 .comments__view-replies-btn {
@@ -79,6 +80,10 @@
 	color: var(--color-text);
 	height: 21px;
 	margin-right: 7px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 }
 
 a.comments__comment-username {

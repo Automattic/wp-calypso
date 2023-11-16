@@ -1,9 +1,12 @@
+import { RangeControl } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
+import { search } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
 import FixedViewport, { useViewportScale } from './fixed-viewport';
 import DeviceSwitcherToolbar from './toolbar';
+import useZoomOut from './use-zoom-out';
 import type { Device } from './types';
 import './device-switcher.scss';
 
@@ -15,9 +18,12 @@ interface Props {
 	isShowFrameBorder?: boolean;
 	isShowFrameShadow?: boolean;
 	isFixedViewport?: boolean;
+	isFullscreen?: boolean;
+	isZoomable?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 	onViewportChange?: ( height?: number ) => void;
+	onZoomOutScaleChange?: ( value: number ) => void;
 }
 
 // Transition animation delay
@@ -31,57 +37,64 @@ const DeviceSwitcher = ( {
 	isShowFrameBorder,
 	isShowFrameShadow = true,
 	isFixedViewport,
+	isFullscreen,
+	isZoomable,
 	frameRef,
 	onDeviceChange,
 	onViewportChange,
+	onZoomOutScaleChange,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
 	const timerRef = useRef< null | ReturnType< typeof setTimeout > >( null );
 	const viewportElement = frameRef?.current?.parentElement;
 	const viewportWidth = viewportElement?.clientWidth as number;
-	const viewportHeight = viewportElement?.clientHeight as number;
 	const viewportScale = useViewportScale( device, viewportWidth );
+	const { zoomOutScale, zoomOutStyles, handleZoomOutScaleChange } =
+		useZoomOut( onZoomOutScaleChange );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
 		onDeviceChange?.( nextDevice );
 	};
 
-	const clearAnimationEndTimer = () => {
-		if ( timerRef.current ) {
-			clearTimeout( timerRef.current );
-		}
-	};
-
 	// Animate on viewport size update
 	useEffect( () => {
-		clearAnimationEndTimer();
+		const clearAnimationEndTimer = () => {
+			if ( timerRef.current ) {
+				clearTimeout( timerRef.current );
+			}
+		};
 
 		// Trigger animation end after the duration
 		timerRef.current = setTimeout( () => {
 			timerRef.current = null;
-
-			let height = frameRef?.current?.clientHeight;
-
-			// Scale height including the border from --device-switcher-border-width
-			if ( isFixedViewport ) {
-				const deviceSwitcherBorder = 20;
-				const borderScaled = deviceSwitcherBorder * viewportScale;
-				height = ( viewportHeight - borderScaled ) / viewportScale;
+			const frameHeight = frameRef?.current?.getBoundingClientRect()?.height;
+			if ( frameHeight ) {
+				onViewportChange?.( frameHeight );
 			}
-
-			onViewportChange?.( height );
 		}, ANIMATION_DURATION );
 
 		return clearAnimationEndTimer;
-	}, [ width, height, viewportScale ] );
+	}, [ width, height, viewportScale, isFixedViewport ] );
 
-	const frame = (
+	let frame = (
 		<div className="device-switcher__frame" ref={ frameRef }>
 			{ children }
 		</div>
 	);
+
+	if ( isZoomable ) {
+		frame = <div style={ zoomOutStyles }>{ frame }</div>;
+	}
+
+	if ( isFixedViewport ) {
+		frame = (
+			<FixedViewport device={ device } frameRef={ frameRef }>
+				{ frame }
+			</FixedViewport>
+		);
+	}
 
 	return (
 		<div
@@ -92,18 +105,28 @@ const DeviceSwitcher = ( {
 				'device-switcher__container--is-computer': device === 'computer',
 				'device-switcher__container--is-tablet': device === 'tablet',
 				'device-switcher__container--is-phone': device === 'phone',
+				'device-switcher__container--is-fullscreen': isFullscreen,
 			} ) }
 		>
-			{ isShowDeviceSwitcherToolbar && (
-				<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
-			) }
-			{ isFixedViewport ? (
-				<FixedViewport device={ device } frameRef={ frameRef }>
-					{ frame }
-				</FixedViewport>
-			) : (
-				frame
-			) }
+			<div className="device-switcher__header">
+				{ isShowDeviceSwitcherToolbar && (
+					<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
+				) }
+				{ isZoomable && (
+					<RangeControl
+						className="device-switcher__zoom-out"
+						beforeIcon={ search }
+						withInputField={ false }
+						showTooltip={ false }
+						__nextHasNoMarginBottom
+						value={ Math.round( zoomOutScale * 100 ) }
+						onChange={ ( value ) => value !== undefined && handleZoomOutScaleChange( value / 100 ) }
+						min={ 25 }
+						max={ 100 }
+					/>
+				) }
+			</div>
+			{ frame }
 			{ containerResizeListener }
 		</div>
 	);

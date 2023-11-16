@@ -4,7 +4,6 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
 /**
  * Return if it's the primary domainfrom state object and
  * the given site ID and domain.
- *
  * @param {Object} state - current state object
  * @param {?number} siteId - site ID
  * @param {string} domain - domian name

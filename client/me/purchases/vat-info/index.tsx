@@ -1,4 +1,5 @@
 import { CompactCard, Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -7,6 +8,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
@@ -14,7 +16,7 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useCountryList, {
 	isVatSupported,
 	useTaxName,
-} from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+} from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -32,6 +34,20 @@ export default function VatInfoPage() {
 	const taxName = useTaxName(
 		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
+
+	const reduxDispatch = useDispatch();
+
+	const clickSupport = () => {
+		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+	};
+
+	/* This is a call to action for contacting support */
+	const contactSupportLinkTitle = translate( 'Contact Happiness Engineers' );
+
+	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
+
+	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
+	const taxSupportPageLinkTitle = translate( 'VAT, GST, and other taxes' );
 
 	useRecordVatEvents( { fetchError } );
 
@@ -84,11 +100,57 @@ export default function VatInfoPage() {
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
-							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							"We currently only provide %(taxName)s invoices to users who are properly registered. %(taxName)s information saved on this page will be applied to all of your account's receipts.",
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+							'The %(taxName)s details saved on this page will be applied to all receipts in your account.',
 							{
-								textOnly: true,
-								args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
+								args: { taxName: taxName ?? fallbackTaxName },
+							}
+						) }
+						<br />
+						<br />
+						{ translate(
+							/* translators: This is a list of tax-related reasons a customer might need to contact support */
+							'If you:' +
+								'{{ul}}' +
+								/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+								'{{li}}Need to update existing %(taxName)s details{{/li}}' +
+								'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
+								'{{li}}Do not see your country listed in this form{{/li}}' +
+								'{{/ul}}' +
+								'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
+							{
+								args: { taxName: taxName ?? fallbackTaxName },
+								components: {
+									ul: <ul />,
+									li: <li />,
+									contactSupportLink: (
+										<a
+											target="_blank"
+											href={ CALYPSO_CONTACT }
+											rel="noreferrer"
+											onClick={ clickSupport }
+											title={ contactSupportLinkTitle }
+										/>
+									),
+								},
+							}
+						) }
+						<br />
+						<br />
+						{ translate(
+							'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink
+											supportLink={ taxSupportPageURL }
+											showText={ true }
+											showIcon={ false }
+											supportPostId={ 234670 } //This is what makes the document appear in a dialogue
+											linkTitle={ taxSupportPageLinkTitle }
+										/>
+									),
+								},
 							}
 						) }
 					</p>

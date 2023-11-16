@@ -1,5 +1,5 @@
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
-import Badge from 'calypso/components/badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
@@ -92,7 +91,8 @@ const ProfessionalEmailUpsell = ( {
 	} );
 
 	const selectedSite = useSelector( getSelectedSite );
-	const isDomainOnlySite = selectedSite?.options?.is_domain_only ?? false;
+	const isDomainOnlySite =
+		selectedSite === null ? true : selectedSite?.options?.is_domain_only ?? false;
 
 	const isMobileView = useBreakpoint( MOBILE_BREAKPOINT );
 

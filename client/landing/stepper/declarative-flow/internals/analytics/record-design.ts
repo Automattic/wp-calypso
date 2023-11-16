@@ -1,4 +1,9 @@
-import { Design, StyleVariation } from '@automattic/design-picker/src';
+import {
+	Design,
+	StyleVariation,
+	isAssemblerDesign,
+	isAssemblerSupported,
+} from '@automattic/design-picker';
 import { getVariationTitle, getVariationType } from '@automattic/global-styles';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -9,14 +14,25 @@ export function recordPreviewedDesign( {
 	intent,
 	design,
 	styleVariation,
+	colorVariation,
+	fontVariation,
 }: {
 	flow: string | null;
 	intent: string;
 	design: Design;
 	styleVariation?: StyleVariation;
+	colorVariation?: GlobalStylesObject | null;
+	fontVariation?: GlobalStylesObject | null;
 } ) {
 	recordTracksEvent( 'calypso_signup_design_preview_select', {
-		...getDesignEventProps( { flow, intent, design, styleVariation } ),
+		...getDesignEventProps( {
+			flow,
+			intent,
+			design,
+			styleVariation,
+			colorVariation,
+			fontVariation,
+		} ),
 		...getDesignTypeProps( design ),
 		...getVirtualDesignProps( design ),
 	} );
@@ -27,12 +43,16 @@ export function recordSelectedDesign( {
 	intent,
 	design,
 	styleVariation,
+	colorVariation,
+	fontVariation,
 	optionalProps,
 }: {
 	flow: string | null;
 	intent: string;
 	design?: Design;
 	styleVariation?: StyleVariation;
+	colorVariation?: GlobalStylesObject | null;
+	fontVariation?: GlobalStylesObject | null;
 	optionalProps?: object;
 } ) {
 	recordTracksEvent( 'calypso_signup_design_type_submit', {
@@ -44,7 +64,14 @@ export function recordSelectedDesign( {
 
 	if ( design ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
-			...getDesignEventProps( { flow, intent, design, styleVariation } ),
+			...getDesignEventProps( {
+				flow,
+				intent,
+				design,
+				styleVariation,
+				colorVariation,
+				fontVariation,
+			} ),
 			...getDesignTypeProps( design ),
 			...getVirtualDesignProps( design ),
 			...optionalProps,
@@ -54,7 +81,7 @@ export function recordSelectedDesign( {
 
 export function getDesignTypeProps( design?: Design ) {
 	return {
-		goes_to_assembler_step: design?.design_type === 'assembler',
+		goes_to_assembler_step: isAssemblerDesign( design ) && isAssemblerSupported(),
 		assembler_source: getAssemblerSource( design ),
 	};
 }
@@ -86,6 +113,7 @@ export function getDesignEventProps( {
 		theme_style: design.recipe?.stylesheet + variationSlugSuffix,
 		design_type: design.design_type,
 		is_premium: design.is_premium,
+		is_externally_managed: design?.is_externally_managed,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
 		is_style_variation: is_style_variation,
 		...( colorVariation && {

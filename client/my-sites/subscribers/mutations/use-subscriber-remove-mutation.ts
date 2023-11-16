@@ -1,12 +1,30 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { getSubscribersCacheKey } from '../helpers';
+import { DEFAULT_PER_PAGE } from '../constants';
+import {
+	getSubscriberDetailsCacheKey,
+	getSubscriberDetailsType,
+	getSubscribersCacheKey,
+} from '../helpers';
 import { useRecordSubscriberRemoved } from '../tracks';
-import type { SubscriberEndpointResponse, Subscriber } from '../types';
+import type { SubscriberEndpointResponse, Subscriber, SubscriberListArgs } from '../types';
 
-const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number ) => {
+const useSubscriberRemoveMutation = (
+	siteId: number | undefined | null,
+	args: SubscriberListArgs,
+	invalidateDetailsCache = false
+) => {
+	const { currentPage, perPage = DEFAULT_PER_PAGE, filterOption, searchTerm, sortTerm } = args;
 	const queryClient = useQueryClient();
 	const recordSubscriberRemoved = useRecordSubscriberRemoved();
+	const subscribersCacheKey = getSubscribersCacheKey(
+		siteId,
+		currentPage,
+		perPage,
+		filterOption,
+		searchTerm,
+		sortTerm
+	);
 
 	return useMutation( {
 		mutationFn: async ( subscriber: Subscriber ) => {
@@ -42,21 +60,19 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 			return true;
 		},
 		onMutate: async ( subscriber ) => {
-			await queryClient.cancelQueries( getSubscribersCacheKey( siteId ) );
+			await queryClient.cancelQueries( subscribersCacheKey );
 			let page = currentPage;
 
-			const previousData = queryClient.getQueryData< SubscriberEndpointResponse >(
-				getSubscribersCacheKey( siteId, currentPage )
-			);
+			const previousData =
+				queryClient.getQueryData< SubscriberEndpointResponse >( subscribersCacheKey );
 			const previousPages = [];
 
 			if ( previousData ) {
 				// This is some complicated logic to remove the subscriber from the list and shift the next page's first item into this page and so on
 				// This is done to avoid a flash of the next page's first item when the query is refetched
 				while ( page <= previousData?.pages ) {
-					const previousSubscribers = queryClient.getQueryData< SubscriberEndpointResponse >(
-						getSubscribersCacheKey( siteId, page )
-					);
+					const previousSubscribers =
+						queryClient.getQueryData< SubscriberEndpointResponse >( subscribersCacheKey );
 
 					if ( previousSubscribers ) {
 						// Save previous page data for when query fails and we have to restore
@@ -74,13 +90,20 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 						// Take the first subscriber of the next page (if we have it cached) and append it to this list.
 						// The next page will briefly show this item
 						const nextPageQueryData = queryClient.getQueryData< SubscriberEndpointResponse >(
-							getSubscribersCacheKey( siteId, page + 1 )
+							getSubscribersCacheKey(
+								siteId,
+								page + 1,
+								perPage,
+								filterOption,
+								searchTerm,
+								sortTerm
+							)
 						);
 						if ( nextPageQueryData && nextPageQueryData.subscribers.length ) {
 							subscribers.push( nextPageQueryData.subscribers[ 0 ] );
 						}
 
-						queryClient.setQueryData( getSubscribersCacheKey( siteId, page ), {
+						queryClient.setQueryData( subscribersCacheKey, {
 							...previousSubscribers,
 							subscribers,
 							total,
@@ -92,15 +115,45 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 				}
 			}
 
+			let previousDetailsData;
+
+			if ( invalidateDetailsCache ) {
+				const cacheKey = getSubscriberDetailsCacheKey(
+					siteId,
+					subscriber.subscription_id,
+					subscriber.user_id,
+					getSubscriberDetailsType( subscriber.user_id )
+				);
+
+				await queryClient.cancelQueries( cacheKey );
+
+				previousDetailsData = queryClient.getQueryData< Subscriber >( cacheKey );
+			}
+
 			return {
 				previousPages,
+				previousDetailsData,
 			};
 		},
 		onError: ( error, variables, context ) => {
 			if ( context?.previousPages ) {
 				context.previousPages?.forEach( ( previousSubscribers, page ) => {
-					queryClient.setQueryData( getSubscribersCacheKey( siteId, page ), previousSubscribers );
+					queryClient.setQueryData(
+						getSubscribersCacheKey( siteId, page, perPage, filterOption, searchTerm, sortTerm ),
+						previousSubscribers
+					);
 				} );
+			}
+
+			if ( context?.previousDetailsData ) {
+				const detailsCacheKey = getSubscriberDetailsCacheKey(
+					siteId,
+					context.previousDetailsData.subscription_id,
+					context.previousDetailsData.user_id,
+					getSubscriberDetailsType( context.previousDetailsData.user_id )
+				);
+
+				queryClient.setQueryData( detailsCacheKey, context.previousDetailsData );
 			}
 		},
 		onSuccess: ( data, subscriber ) => {
@@ -110,8 +163,19 @@ const useSubscriberRemoveMutation = ( siteId: number | null, currentPage: number
 				user_id: subscriber.user_id,
 			} );
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( getSubscribersCacheKey( siteId ) );
+		onSettled: ( data, error, subscriber ) => {
+			queryClient.invalidateQueries( subscribersCacheKey );
+
+			if ( invalidateDetailsCache ) {
+				const detailsCacheKey = getSubscriberDetailsCacheKey(
+					siteId,
+					subscriber.subscription_id,
+					subscriber.user_id,
+					getSubscriberDetailsType( subscriber.user_id )
+				);
+
+				queryClient.invalidateQueries( detailsCacheKey );
+			}
 		},
 	} );
 };

@@ -14,7 +14,6 @@ import taxonomies from './taxonomies/reducer';
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object of post type name to post type for all
  * supported post types on the site.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

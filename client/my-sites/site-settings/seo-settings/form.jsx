@@ -21,6 +21,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
 import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
+import SupportInfo from 'calypso/components/support-info';
 import WebPreview from 'calypso/components/web-preview';
 import { protectForm } from 'calypso/lib/protect-form';
 import { getFirstConflictingPlugin } from 'calypso/lib/seo';
@@ -348,6 +349,16 @@ export class SiteSettingsFormSEO extends Component {
 											'social media sites, and browser tabs.'
 									) }
 								</p>
+								{ siteIsJetpack && (
+									<SupportInfo
+										text={ translate(
+											'To help improve your search page ranking, you can customize how the content titles' +
+												' appear for your site. You can reorder items such as ‘Site Name’ and ‘Tagline’,' +
+												' and also add custom separators between the items.'
+										) }
+										link=" https://wordpress.com/support/seo-tools/#page-title-structure"
+									/>
+								) }
 							</Card>
 							<Card>
 								<MetaTitleEditor
@@ -401,9 +412,7 @@ export class SiteSettingsFormSEO extends Component {
 											{ translate( 'Show Previews' ) }
 										</Button>
 										<span className="seo-settings__preview-explanation">
-											{ translate(
-												'See how this will look on ' + 'Google, Facebook, and Twitter.'
-											) }
+											{ translate( 'See how this will look on Google, Facebook, and X.' ) }
 										</span>
 									</FormSettingExplanation>
 								</Card>

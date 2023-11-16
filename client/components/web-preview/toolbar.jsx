@@ -72,17 +72,6 @@ class PreviewToolbar extends Component {
 		window.location.href = this.props.customizeUrl;
 	};
 
-	constructor( props ) {
-		super();
-
-		this.devices = {
-			computer: { title: props.translate( 'Desktop' ), icon: 'computer' },
-			tablet: { title: props.translate( 'Tablet' ), icon: 'tablet' },
-			phone: { title: props.translate( 'Phone' ), icon: 'phone' },
-			seo: { title: props.translate( 'Search & Social' ), icon: 'globe' },
-		};
-	}
-
 	render() {
 		const {
 			canUserEditThemeOptions,
@@ -103,7 +92,14 @@ class PreviewToolbar extends Component {
 			translate,
 		} = this.props;
 
-		const selectedDevice = this.devices[ currentDevice ];
+		const devices = {
+			computer: { title: translate( 'Desktop' ), icon: 'computer' },
+			tablet: { title: translate( 'Tablet' ), icon: 'tablet' },
+			phone: { title: translate( 'Phone' ), icon: 'phone' },
+			seo: { title: translate( 'Search & Social' ), icon: 'globe' },
+		};
+
+		const selectedDevice = devices[ currentDevice ];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
 		return (
 			<div className="web-preview__toolbar">
@@ -131,10 +127,10 @@ class PreviewToolbar extends Component {
 								key={ device }
 								selected={ device === currentDevice }
 								onClick={ () => setDeviceViewport( device ) }
-								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
+								icon={ <Gridicon size={ 18 } icon={ devices[ device ].icon } /> }
 								e2eTitle={ device }
 							>
-								{ this.devices[ device ].title }
+								{ devices[ device ].title }
 							</SelectDropdown.Item>
 						) ) }
 					</SelectDropdown>

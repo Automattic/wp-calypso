@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/woo-commerce";
 @import "@wordpress/base-styles/breakpoints";
 
 .wooexpress-plans__interval-toggle-wrapper {
@@ -24,11 +25,87 @@
 }
 
 .wooexpress-plans__grid.is-2023-pricing-grid {
-	.plan-features-2023-grid__header-title {
+	.plans-grid__header-title {
 		font-family: $sans;
 	}
 
-	.plan-features-2023-grid__content .plan-features-2023-grid__table-item .plan-price {
+	.plans-grid__content .plans-grid__table-item .plan-price,
+	.plans-grid__plan-comparison-grid-container .plan-comparison-grid .plan-price {
 		font-family: $sans;
+	}
+
+	.plan-price .plan-price__currency-symbol {
+		font-size: $woo-font-title-medium;
+	}
+
+	.plans-grid__plan-comparison-grid-container .plan-comparison-grid .wp-brand-font {
+		display: none;
+	}
+
+	.plans-grid__table.has-2-cols {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 800px;
+	}
+}
+
+.enterprise-ecommerce__banner {
+	align-items: center;
+	border: 1px solid var(--color-border-subtle);
+	margin: 0.5em auto 2em;
+	max-width: calc(800px - 3em);
+	padding: 2em 1.25em;
+
+	@media ( max-width: $break-medium ) {
+		.is-ecommerce-trial-plan & {
+			margin-left: 1.25em;
+			margin-right: 1.25em;
+		}
+	}
+
+	.enterprise-ecommerce__content {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-between;
+
+		.enterprise-ecommerce__title {
+			flex: 3 100%;
+			font-size: $woo-font-title-medium;
+			margin-bottom: 0.5em;
+			margin-top: 0;
+		}
+
+		.enterprise-ecommerce__subtitle {
+			flex: 2 0 0;
+			font-size: $woo-font-body-extra-small;
+		}
+
+		.enterprise-ecommerce__cta {
+			flex: 1 0 0;
+			margin-left: 2em;
+			text-align: right;
+
+			@media ( max-width: $break-small ) {
+				flex: 1 100%;
+				margin-top: 2em;
+				margin-left: 0;
+				text-align: center;
+			}
+
+			.button {
+				border-color: #0675c4;
+				color: #0675c4;
+				width: 240px;
+
+				&:hover {
+					border-color: #044b7a;
+					color: #044b7a;
+				}
+
+				@media ( max-width: $break-small ) {
+					width: 100%;
+				}
+			}
+		}
 	}
 }

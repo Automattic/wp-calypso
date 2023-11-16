@@ -12,7 +12,6 @@ const STATIC_PATHS = [
 
 /**
  * Returns true if the request is to a static file, like JS bundles.
- *
  * @param req The express request object
  */
 export default function isStaticRequest( req: PartialReq ) {

@@ -28,3 +28,12 @@ export function getExternalBackUrl( source, sectionName = null ) {
 
 	return false;
 }
+
+/**
+ * Check if we should use multiple domains in domain flows.
+ */
+export function shouldUseMultipleDomainsInCart( flowName ) {
+	const enabledFlows = [ 'domain', 'onboarding' ];
+
+	return enabledFlows.includes( flowName );
+}

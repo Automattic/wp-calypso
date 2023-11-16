@@ -43,6 +43,7 @@ import {
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -237,6 +238,17 @@ class DomainSearch extends Component {
 		return strippedHostname ?? selectedSite.domain.split( '.' )[ 0 ];
 	}
 
+	getBackButtonHref() {
+		const { selectedSiteSlug, currentRoute, isFromMyHome } = this.props;
+
+		// If we have the from query param, we should use that as the back button href
+		if ( isFromMyHome ) {
+			return `/home/${ selectedSiteSlug }`;
+		}
+
+		return domainManagementList( selectedSiteSlug, currentRoute );
+	}
+
 	render() {
 		const {
 			selectedSite,
@@ -307,10 +319,7 @@ class DomainSearch extends Component {
 				<span>
 					<div className="domain-search__content">
 						{ ! isDomainAndPlanPackageFlow && (
-							<BackButton
-								className="domain-search__go-back"
-								href={ domainManagementList( selectedSiteSlug ) }
-							>
+							<BackButton className="domain-search__go-back" href={ this.getBackButtonHref() }>
 								<Gridicon icon="arrow-left" size={ 18 } />
 								{ translate( 'Back' ) }
 							</BackButton>
@@ -409,6 +418,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			currentRoute: getCurrentRoute( state ),
 			domains: getDomainsBySiteId( state, siteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId: siteId,
@@ -427,6 +437,7 @@ export default connect(
 				isSiteOnECommerceTrial( state, siteId ) ||
 				isSiteOnWooExpress( state, siteId ) ||
 				isSiteOnEcommerce( state, siteId ),
+			isFromMyHome: getCurrentQueryArguments( state )?.from === 'my-home',
 		};
 	},
 	{

@@ -1,4 +1,3 @@
-import { InitialEntry } from '@remix-run/router';
 import { apiFetch } from '@wordpress/data-controls';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
@@ -10,7 +9,7 @@ export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_SEEN_WHATS_NEW_MODAL',
 		value,
-	} as const );
+	} ) as const;
 
 export function* setHasSeenWhatsNewModal( value: boolean ) {
 	let response: {
@@ -41,37 +40,37 @@ export const setSite = ( site: HelpCenterSite | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_SITE',
 		site,
-	} as const );
+	} ) as const;
 
 export const setUnreadCount = ( count: number ) =>
 	( {
 		type: 'HELP_CENTER_SET_UNREAD_COUNT',
 		count,
-	} as const );
+	} ) as const;
 
-export const setInitialRoute = ( route?: InitialEntry ) =>
+export const setInitialRoute = ( route?: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
 		route,
-	} as const );
+	} ) as const;
 
 export const setIsMinimized = ( minimized: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
-	} as const );
+	} ) as const;
 
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
 		show,
-	} as const );
+	} ) as const;
 
 export const setShowMessagingWidget = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET',
 		show,
-	} as const );
+	} ) as const;
 
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
@@ -91,30 +90,30 @@ export const setSubject = ( subject: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_SUBJECT',
 		subject,
-	} as const );
+	} ) as const;
 
 export const setMessage = ( message: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_MESSAGE',
 		message,
-	} as const );
+	} ) as const;
 
 export const setUserDeclaredSiteUrl = ( url: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_USER_DECLARED_SITE_URL',
 		url,
-	} as const );
+	} ) as const;
 
 export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_USER_DECLARED_SITE',
 		site,
-	} as const );
+	} ) as const;
 
 export const resetStore = () =>
 	( {
 		type: 'HELP_CENTER_RESET_STORE',
-	} as const );
+	} ) as const;
 
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
 	yield setInitialRoute( '/contact-form?mode=CHAT' );
@@ -128,6 +127,16 @@ export const setShowMessagingChat = function* () {
 	yield setShowMessagingLauncher( true );
 	yield setShowMessagingWidget( true );
 	yield resetStore();
+};
+
+export const setShowSupportDoc = function* ( link: string, postId: number ) {
+	const params = new URLSearchParams( {
+		link,
+		postId: String( postId ),
+		cacheBuster: String( Date.now() ),
+	} );
+	yield setInitialRoute( `/post/?${ params }` );
+	yield setShowHelpCenter( true );
 };
 
 export type HelpCenterAction =

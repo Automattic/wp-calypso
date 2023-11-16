@@ -1,12 +1,14 @@
-import { Gridicon } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { Button, ToggleControl } from '@wordpress/components';
+import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import SegmentedControl from 'calypso/components/segmented-control';
+import SVGIcon from 'calypso/components/svg-icon';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -26,7 +28,15 @@ import './style.scss';
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
 	static propTypes = {
+		iconSize: PropTypes.number,
+		showLabel: PropTypes.bool,
 		siteId: PropTypes.number,
+		subscriptionId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		iconSize: 20,
+		showLabel: true,
 	};
 
 	state = { showPopover: false };
@@ -102,6 +112,7 @@ class ReaderSiteNotificationSettings extends Component {
 			sendNewPostsByEmail,
 			sendNewPostsByNotification,
 			isEmailBlocked,
+			subscriptionId,
 		} = this.props;
 
 		if ( ! this.props.siteId ) {
@@ -115,14 +126,23 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
 					ref={ this.spanRef }
+					aria-label={ translate( 'Notification settings' ) }
 				>
-					<Gridicon icon="cog" size={ 24 } ref={ this.iconRef } />
-					<span
-						className="reader-site-notification-settings__button-label"
-						title={ translate( 'Notification settings' ) }
-					>
-						{ translate( 'Settings' ) }
-					</span>
+					<SVGIcon
+						classes="reader-following-feed"
+						name="settings"
+						size={ this.props.iconSize }
+						icon={ Settings }
+						ref={ this.iconRef }
+					/>
+					{ this.props.showLabel && (
+						<span
+							className="reader-site-notification-settings__button-label"
+							title={ translate( 'Notification settings' ) }
+						>
+							{ translate( 'Settings' ) }
+						</span>
+					) }
 				</button>
 
 				<ReaderPopover
@@ -208,6 +228,22 @@ class ReaderSiteNotificationSettings extends Component {
 								label={ translate( 'Email me new comments' ) }
 							/>
 						</div>
+					) }
+
+					{ subscriptionId && (
+						<Button
+							className="reader-site-notification-settings__manage-subscription-button"
+							icon={
+								<Icon
+									className="subscriptions-ellipsis-menu__item-icon"
+									size={ 20 }
+									icon={ settings }
+								/>
+							}
+							href={ `/read/subscriptions/${ subscriptionId }` }
+						>
+							{ translate( 'Manage subscription' ) }
+						</Button>
 					) }
 				</ReaderPopover>
 			</div>

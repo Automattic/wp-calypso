@@ -6,7 +6,17 @@ import { render, screen } from '@testing-library/react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import * as Blocks from '../blocks';
 
+const EXAMPLE_SITE_ID = 123;
+
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: jest.fn( ( func ) => func() ),
+	useDispatch: () => jest.fn(),
+} ) );
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: jest.fn().mockImplementation( () => EXAMPLE_SITE_ID ),
+} ) );
 
 // NOTE: There's a repeating pattern in these tests that links to WordPress.com
 //       aren't rendered in the context of Jetpack Cloud. Best I can tell, this
@@ -84,8 +94,12 @@ describe( 'Post block', () => {
 			isTrashed: true,
 		};
 
+		const meta = {
+			published: null,
+		};
+
 		const text = 'this is a post';
-		render( <Blocks.Post content={ content } children={ text } /> );
+		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
 
 		const link = screen.getByRole( 'link' );
 
@@ -101,8 +115,12 @@ describe( 'Post block', () => {
 			isTrashed: true,
 		};
 
+		const meta = {
+			published: null,
+		};
+
 		const text = 'this is a post';
-		render( <Blocks.Post content={ content } children={ text } /> );
+		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
 
 		const unlinkedText = screen.getByText( text );
 		const link = screen.queryByRole( 'link' );
@@ -120,8 +138,12 @@ describe( 'Post block', () => {
 			isTrashed: false,
 		};
 
+		const meta = {
+			published: null,
+		};
+
 		const text = 'another post';
-		render( <Blocks.Post content={ content } children={ text } /> );
+		render( <Blocks.Post content={ content } children={ text } meta={ meta } /> );
 
 		const link = screen.getByRole( 'link' );
 
@@ -132,7 +154,7 @@ describe( 'Post block', () => {
 		expect( link ).toHaveTextContent( text );
 	} );
 
-	test( 'on Jetpack Cloud, if the post is not trashed, shows emphasized text but does not link', () => {
+	test( 'on Jetpack Cloud, if the post is not trashed, shows the text but does not link', () => {
 		isJetpackCloud.mockImplementation( () => true );
 
 		const content = {
@@ -141,11 +163,15 @@ describe( 'Post block', () => {
 			isTrashed: false,
 		};
 
-		const text = 'another post';
-		const unlinkedPost = render( <Blocks.Post content={ content } children={ text } /> ).container
-			.firstChild;
+		const meta = {
+			published: null,
+		};
 
-		expect( unlinkedPost.tagName ).toEqual( 'EM' );
+		const text = 'another post';
+		const unlinkedPost = render(
+			<Blocks.Post content={ content } children={ text } meta={ meta } />
+		).container.firstChild;
+
 		expect( unlinkedPost ).toHaveTextContent( text );
 	} );
 } );

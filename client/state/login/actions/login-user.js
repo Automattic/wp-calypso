@@ -1,3 +1,4 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
@@ -13,12 +14,10 @@ import {
 	getSMSMessageFromResponse,
 	postLoginRequest,
 } from 'calypso/state/login/utils';
-
 import 'calypso/state/login/init';
 
 /**
  * Logs a user in.
- *
  * @param  {string}   usernameOrEmail Username or email of the user
  * @param  {string}   password        Password of the user
  * @param  {string}   redirectTo      Url to redirect the user to upon successful login
@@ -39,6 +38,7 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => ( 
 		client_secret: config( 'wpcom_signup_key' ),
 		domain: domain,
 		tos: JSON.stringify( getToSAcceptancePayload() ),
+		anon_id: getTracksAnonymousUserId(),
 	} )
 		.then( ( response ) => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {

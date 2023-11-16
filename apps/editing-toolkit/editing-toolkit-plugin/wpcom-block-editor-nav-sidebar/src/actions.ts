@@ -1,13 +1,13 @@
 const toggleSidebar = () =>
 	( {
 		type: 'TOGGLE_SIDEBAR',
-	} as const );
+	} ) as const;
 
 const setSidebarClosing = ( isClosing: boolean ) =>
 	( {
 		type: 'SET_SIDEBAR_CLOSING',
 		isClosing,
-	} as const );
+	} ) as const;
 
 export const actions = {
 	toggleSidebar,

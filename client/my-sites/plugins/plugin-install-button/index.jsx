@@ -36,7 +36,7 @@ const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
 	const disabledInfoLabel = useRef();
 	const infoPopover = useRef();
 	const togglePopover = ( event ) => {
-		infoPopover.current._onClick( event );
+		infoPopover.current.handleClick( event );
 	};
 	return (
 		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>

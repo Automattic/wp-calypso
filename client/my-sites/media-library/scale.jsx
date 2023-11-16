@@ -15,14 +15,12 @@ import { setPreference, savePreference } from 'calypso/state/preferences/actions
 
 /**
  * Number of steps on the rendered input range
- *
  * @type {number}
  */
 const SLIDER_STEPS = 100;
 
 /**
  * Scale size for small viewports grid option (3 items per row).
- *
  * @type {number}
  */
 

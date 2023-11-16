@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import { Fragment, FunctionComponent } from 'react';
@@ -7,9 +8,7 @@ import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import builtByWp from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
-import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
-import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -61,14 +60,6 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_facebook_button_click' );
 	};
 
-	const handleCanvaClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_canva_button_click' );
-	};
-
-	const handleSendinblueClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_sendinblue_button_click' );
-	};
-
 	const handleVerblioClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_verblio_button_click' );
 	};
@@ -107,7 +98,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleBuiltByWpClick }
-						href="https://wordpress.com/website-design-service/?ref=tools-banner"
+						href={ localizeUrl( 'https://wordpress.com/website-design-service/?ref=tools-banner' ) }
 						target="_blank"
 					>
 						{ translate( 'Get started' ) }
@@ -130,24 +121,11 @@ export const MarketingTools: FunctionComponent = () => {
 					</Button>
 				</MarketingToolsFeature>
 
-				<MarketingToolsFeature
-					title={ translate( 'Create beautiful designs and graphics for your website' ) }
-					description={ translate(
-						"Everyone can create professional designs with Canva. It's a free and drag-and-drop tool for creating images, cover images, and more."
-					) }
-					imagePath={ canvaLogo }
-					imageAlt={ translate( 'Canva logo' ) }
-				>
-					<Button onClick={ handleCanvaClick } href="https://wp.me/design-tool" target="_blank">
-						{ translate( 'Create custom images with Canva' ) }
-					</Button>
-				</MarketingToolsFeature>
-
 				{ ! facebookPluginInstalled && (
 					<MarketingToolsFeature
 						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
 						description={ translate(
-							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and eCommerce plans{{/em}}.',
+							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and Commerce plans{{/em}}.',
 							{
 								components: {
 									em: <em />,
@@ -202,23 +180,6 @@ export const MarketingTools: FunctionComponent = () => {
 						target="_blank"
 					>
 						{ translate( 'Start texting' ) }
-					</Button>
-				</MarketingToolsFeature>
-
-				<MarketingToolsFeature
-					title={ translate( 'Turn your visitors into customers' ) }
-					description={ translate(
-						'Sendinblue is an all-in-one marketing and CRM platform to help you grow your business through building stronger customer relationships.'
-					) }
-					imagePath={ sendinblueLogo }
-					imageAlt={ translate( 'Sendinblue logo' ) }
-				>
-					<Button
-						onClick={ handleSendinblueClick }
-						href="https://sendinblue.grsm.io/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Start with CRM' ) }
 					</Button>
 				</MarketingToolsFeature>
 

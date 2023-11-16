@@ -34,8 +34,6 @@ export const StatsReach = ( props ) => {
 		0
 	);
 
-	let data = [];
-
 	const wpData = {
 		value: wpcomFollowCount,
 		label: translate( 'WordPress.com' ),
@@ -46,10 +44,7 @@ export const StatsReach = ( props ) => {
 		label: translate( 'Email' ),
 	};
 
-	const socialData = {
-		value: publicizeFollowCount,
-		label: translate( 'Social' ),
-	};
+	const data = [ wpData, emailData ];
 
 	if ( ! isOdysseyStats ) {
 		wpData.actions = [
@@ -69,10 +64,8 @@ export const StatsReach = ( props ) => {
 	}
 
 	if ( publicizeFollowCount > 0 ) {
-		socialData.children = publicizeData;
+		data.push( ...publicizeData ); // Spread the publicizeData into the data array if there are any publicize followers
 	}
-
-	data = [ wpData, emailData, socialData ];
 
 	// sort descending
 	data.sort( ( a, b ) => b.value - a.value );

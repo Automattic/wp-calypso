@@ -2,6 +2,14 @@
 	margin: 0 auto;
 	max-height: 105px;
 
+	.gridicons-globe {
+		fill: var(--color-neutral-100);
+
+		&:hover {
+			fill: var(--color-text-subtle);
+		}
+	}
+
 	&.has-site-and-author-icon {
 		.site-icon {
 			height: 96px;

@@ -9,7 +9,6 @@ const siteDescriptionBlocklist = new Set( [
 
 /**
  * Is the provided site description name blocked?
- *
  * @param {string} siteDescription Site description
  * @returns {boolean} True if blocked
  */

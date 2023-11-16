@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	AI_ASSEMBLER_FLOW,
 	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
@@ -7,16 +8,16 @@ import {
 	DESIGN_FIRST_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
-	BULK_DOMAIN_TRANSFER,
+	DOMAIN_TRANSFER,
+	VIDEOPRESS_TV_FLOW,
+	VIDEOPRESS_TV_PURCHASE_FLOW,
+	GOOGLE_TRANSFER,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
-
-	'anchor-fm-flow': () =>
-		import( /* webpackChunkName: "anchor-fm-flow" */ '../declarative-flow/anchor-fm-flow' ),
 
 	'copy-site': () =>
 		import( /* webpackChunkName: "copy-site-flow" */ '../declarative-flow/copy-site' ),
@@ -102,16 +103,45 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
+
+	[ DOMAIN_TRANSFER ]: () =>
+		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
+
+	[ GOOGLE_TRANSFER ]: () =>
+		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
+
+	[ 'plugin-bundle' ]: () =>
+		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
+
+	[ 'hundred-year-plan' ]: () =>
+		import( /* webpackChunkName: "hundred-year-plan" */ './hundred-year-plan' ),
+
+	'domain-user-transfer': () =>
+		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
 };
 
-availableFlows[ 'plugin-bundle' ] = () =>
-	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'videopress-tv'
+)
+	? {
+			[ VIDEOPRESS_TV_FLOW ]: () =>
+				import( /* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv` ),
 
-if ( config.isEnabled( 'bulk-domain-transfer-flow' ) ) {
-	availableFlows[ BULK_DOMAIN_TRANSFER ] = () =>
-		import(
-			/* webpackChunkName: "bulk-domain-transfer" */ '../declarative-flow/bulk-domain-transfer'
-		);
-}
+			[ VIDEOPRESS_TV_PURCHASE_FLOW ]: () =>
+				import(
+					/* webpackChunkName: "videopress-tv-flow" */
+					`../declarative-flow/videopress-tv-purchase`
+				),
+	  }
+	: {};
 
-export default availableFlows;
+const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'calypso/ai-assembler'
+)
+	? {
+			[ AI_ASSEMBLER_FLOW ]: () =>
+				import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+	  }
+	: {};
+
+export default { ...availableFlows, ...videoPressTvFlows, ...aiAsseblerFlows };

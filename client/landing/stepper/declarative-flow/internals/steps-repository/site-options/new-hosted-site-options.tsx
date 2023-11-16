@@ -1,14 +1,11 @@
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Spinner } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect } from '@wordpress/data';
 import { Icon, shuffle } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -17,7 +14,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useGetSiteSuggestionsQuery } from 'calypso/landing/stepper/hooks/use-get-site-suggestions-query';
-import { isInHostingFlow } from 'calypso/landing/stepper/utils/is-in-hosting-flow';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -26,17 +22,15 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
 	const { __ } = useI18n();
-	const { currentSiteTitle, currentSiteGeoAffinity, planCartItem } = useSelect(
+	const { currentSiteTitle, currentSiteGeoAffinity } = useSelect(
 		( select ) => ( {
 			currentSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 			currentSiteGeoAffinity: (
 				select( ONBOARD_STORE ) as OnboardSelect
 			 ).getSelectedSiteGeoAffinity(),
-			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		} ),
 		[]
 	);
-	const hostingFlow = useSelector( isInHostingFlow );
 	const { goBack, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
 	const [ siteGeoAffinity, setSiteGeoAffinity ] = React.useState( currentSiteGeoAffinity ?? '' );
@@ -46,6 +40,9 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 	const [ shouldOverrideSiteTitle, setShouldOverrideSiteTitle ] = useState( false );
 
 	const { refetch, isFetching } = useGetSiteSuggestionsQuery( {
+		params: {
+			dictionary: 'hosting',
+		},
 		enabled: shouldOverrideSiteTitle,
 		refetchOnWindowFocus: false,
 		onSuccess: ( response ) => {
@@ -54,12 +51,6 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 			}
 		},
 	} );
-
-	const pickedPlanSlug = planCartItem?.product_slug;
-
-	const shouldShowGeoAffinityPicker = pickedPlanSlug
-		? isBusinessPlan( pickedPlanSlug ) || isEcommercePlan( pickedPlanSlug )
-		: hostingFlow;
 
 	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
 	const isFormSubmitDisabled = isSiteTitleEmpty;
@@ -96,11 +87,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
-			<FormFieldset
-				className={ classNames( 'site-options__form-fieldset', {
-					'no-site-picker': ! shouldShowGeoAffinityPicker,
-				} ) }
-			>
+			<FormFieldset className="site-options__form-fieldset">
 				<FormLabel htmlFor="siteTitle">{ translate( 'Give your site a name' ) }</FormLabel>
 				<div css={ { position: 'relative' } }>
 					<FormInput
@@ -157,16 +144,14 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 					</FormSettingExplanation>
 				) }
 			</FormFieldset>
-			{ shouldShowGeoAffinityPicker && (
-				<DataCenterPicker
-					onChange={ ( value ) => {
-						hasChangedInput.current.geoAffinity = true;
-						setSiteGeoAffinity( value );
-					} }
-					value={ siteGeoAffinity }
-					compact
-				/>
-			) }
+			<DataCenterPicker
+				onChange={ ( value ) => {
+					hasChangedInput.current.geoAffinity = true;
+					setSiteGeoAffinity( value );
+				} }
+				value={ siteGeoAffinity }
+				compact
+			/>
 			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
@@ -180,11 +165,10 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 			<DocumentHead title={ headerText } />
 			<StepContainer
 				stepName="site-options"
-				shouldHideNavButtons
 				backLabelText={ __( 'Back' ) }
-				hideBack={ hostingFlow }
 				goBack={ goBack }
-				hideSkip={ true }
+				skipLabelText={ __( 'Migrate a site' ) }
+				goNext={ () => window.location.assign( '/setup/import-hosted-site' ) }
 				isHorizontalLayout
 				formattedHeader={
 					<FormattedHeader id="site-options-header" headerText={ headerText } align="left" />

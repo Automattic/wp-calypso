@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
+import page, { type Callback } from 'page';
 import { addQueryArgs } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { hideMasterbar } from 'calypso/state/ui/actions';
@@ -7,7 +7,7 @@ import Header from './header';
 import JetpackComFooter from './jpcom-footer';
 import JetpackComMasterbar from './jpcom-masterbar';
 
-export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
+export const jetpackPricingContext: Callback = ( context, next ) => {
 	const urlQueryArgs = context.query;
 	const { lang } = context.params;
 	const path = context.path;
@@ -36,4 +36,4 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 	context.header = <PricingHeader />;
 	context.footer = <JetpackComFooter />;
 	next();
-}
+};

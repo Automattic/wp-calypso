@@ -98,12 +98,13 @@ export const getPrices = ( _state: State, _locale: string ): Record< StorePlanSl
 	deprecate( 'getPrices', {
 		alternative: 'getPlanProduct().price',
 	} );
-	return ( select( STORE_KEY ) as PlansSelect )
-		.getPlansProducts()
-		.reduce( ( prices: Record< StorePlanSlug, string >, plan: PlanProduct ) => {
+	return ( select( STORE_KEY ) as PlansSelect ).getPlansProducts().reduce(
+		( prices: Record< StorePlanSlug, string >, plan: PlanProduct ) => {
 			prices[ plan.storeSlug ] = plan.price;
 			return prices;
-		}, {} as Record< StorePlanSlug, string > );
+		},
+		{} as Record< StorePlanSlug, string >
+	);
 };
 
 export const getPlanByPath = (

@@ -30,7 +30,8 @@ type UnpackPromisedValue< T > = T extends ( ...args: unknown[] ) => infer R
 
 export type DnsMenuOptionsButtonProps = {
 	domain: ResponseDomain | undefined;
-	pointsToWpcom: boolean;
+	hasDefaultARecords: boolean;
+	hasDefaultCnameRecord: boolean;
 	dns: Dns;
 	dispatchApplyDnsTemplate: UnpackPromisedValue< typeof applyDnsTemplate >;
 	dispatchUpdateDns: UnpackPromisedValue< typeof updateDns >;
@@ -53,6 +54,11 @@ export type RestoreEmailDnsDialogResult = {
 
 export type DndAddNewRecordButtonProps = {
 	site: string;
+	domain: string;
+	isMobile?: boolean;
+};
+
+export type DnsImportBindFileButtonProps = {
 	domain: string;
 	isMobile?: boolean;
 };

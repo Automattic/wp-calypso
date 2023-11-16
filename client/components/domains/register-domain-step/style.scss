@@ -15,9 +15,10 @@
 	}
 
 	.search-filters__dropdown-filters {
-		height: 50px;
+		height: 40px;
+
 		@include break-mobile {
-			min-width: 120px;
+			height: 48px;
 		}
 	}
 
@@ -66,7 +67,12 @@
 	.search-component.is-open {
 		border: 1px solid #a7aaad;
 		border-radius: 4px;
-		height: 48px;
+		box-sizing: border-box;
+		height: 40px;
+
+		@include break-mobile {
+			height: 48px;
+		}
 	}
 
 	.search-component.is-open.has-focus {

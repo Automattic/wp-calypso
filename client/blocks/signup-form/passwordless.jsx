@@ -1,7 +1,11 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,6 +16,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,17 +25,19 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
-		isDevAccount: PropTypes.bool,
+		inputPlaceholder: PropTypes.string,
+		submitButtonLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.string,
+		userEmail: PropTypes.string,
 	};
 
 	static defaultProps = {
 		locale: 'en',
-		isDevAccount: false,
 	};
 
 	state = {
 		isSubmitting: false,
-		email: this.props.step && this.props.step.form ? this.props.step.form.email : '',
+		email: this.props.userEmail,
 		errorMessages: null,
 	};
 
@@ -73,37 +80,61 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
+		const { flowName, queryArgs = {} } = this.props;
+		const { oauth2_client_id, oauth2_redirect } = queryArgs;
+
 		try {
 			const response = await wpcom.req.post( '/users/new', {
 				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 				is_passwordless: true,
-				signup_flow_name: this.props.flowName,
+				signup_flow_name: flowName,
 				validate: false,
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
-				is_dev_account: this.props.isDevAccount,
+				...( flowName === 'wpcc' && {
+					oauth2_client_id,
+					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
+				} ),
+				anon_id: getTracksAnonymousUserId(),
 			} );
-			this.createAccountCallback( null, response );
+			this.createAccountCallback( response );
 		} catch ( err ) {
-			this.createAccountCallback( err );
+			this.createAccountError( err );
 		}
 	};
 
-	createAccountCallback = ( error, response ) => {
-		if ( error ) {
-			const errorMessage = this.getErrorMessage( error );
-			this.setState( {
-				errorMessages: [ errorMessage ],
-				isSubmitting: false,
-			} );
-			this.submitTracksEvent( false, { action_message: error.message } );
+	createAccountError = async ( error ) => {
+		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
+
+		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: this.state.email,
+						is_signup_existing_account: true,
+					},
+					this.props.logInUrl
+				)
+			);
 			return;
 		}
 
 		this.setState( {
-			errorMessages: null,
+			errorMessages: [
+				this.props.translate(
+					'Sorry, something went wrong when trying to create your account. Please try again.'
+				),
+			],
 			isSubmitting: false,
+		} );
+
+		return;
+	};
+
+	createAccountCallback = ( response ) => {
+		this.setState( {
+			errorMessages: null,
 		} );
 
 		const username =
@@ -119,11 +150,12 @@ class PasswordlessSignupForm extends Component {
 		};
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
-		const redirect = this.props.queryArgs?.redirect_to;
+		const { flowName, queryArgs = {} } = this.props;
+		const { redirect_to, oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		recordRegistration( {
 			userData,
-			flow: this.props.flowName,
+			flow: flowName,
 			type: 'passwordless',
 		} );
 
@@ -131,40 +163,11 @@ class PasswordlessSignupForm extends Component {
 			username,
 			marketing_price_group,
 			bearer_token: response.bearer_token,
-			redirect,
+			...( flowName === 'wpcc'
+				? { oauth2_client_id, oauth2_redirect }
+				: { redirect: redirect_to } ),
 		} );
 	};
-
-	getErrorMessage( errorObj = { error: null, message: null } ) {
-		const { translate } = this.props;
-
-		switch ( errorObj.error ) {
-			case 'already_taken':
-			case 'already_active':
-			case 'email_exists':
-				return (
-					<>
-						{ translate( 'An account with this email address already exists.' ) }
-						&nbsp;
-						{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
-							components: {
-								a: (
-									<a
-										href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
-											this.state.email
-										) }` }
-									/>
-								),
-							},
-						} ) }
-					</>
-				);
-			default:
-				return translate(
-					'Sorry, something went wrong when trying to create your account. Please try again.'
-				);
-		}
-	}
 
 	submitStep = ( data ) => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
@@ -183,11 +186,61 @@ class PasswordlessSignupForm extends Component {
 		goToNextStep();
 	};
 
-	onInputChange = ( { target: { value } } ) =>
+	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {
+		this.setState( {
+			email: newEmail,
+			errorMessages: null,
+		} );
+		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_confirmation', {
+			original_domain: JSON.stringify( oldDomain ),
+			suggested_domain: JSON.stringify( newDomain ),
+		} );
+	};
+
+	handleEmailDomainSuggestionError = ( newEmail, oldEmail, newDomain, oldDomain ) => {
+		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_generated', {
+			original_domain: JSON.stringify( oldDomain ),
+			suggested_domain: JSON.stringify( newDomain ),
+		} );
+		this.setState( {
+			errorMessages: [
+				this.props.translate( 'Did you mean {{emailSuggestion/}}?', {
+					components: {
+						emailSuggestion: (
+							<Button
+								plain={ true }
+								className="signup-form__domain-suggestion-confirmation"
+								onClick={ () => {
+									this.handleAcceptDomainSuggestion( newEmail, newDomain, oldDomain );
+								} }
+							>
+								{ newEmail }
+							</Button>
+						),
+					},
+				} ),
+			],
+		} );
+	};
+
+	debouncedEmailSuggestion = debounce( ( email ) => {
+		if ( emailValidator.validate( email ) ) {
+			const { newEmail, oldEmail, newDomain, oldDomain, wasCorrected } =
+				suggestEmailCorrection( email );
+			if ( wasCorrected ) {
+				this.handleEmailDomainSuggestionError( newEmail, oldEmail, newDomain, oldDomain );
+				return;
+			}
+		}
+	}, 1000 );
+
+	onInputChange = ( { target: { value } } ) => {
+		this.debouncedEmailSuggestion( value );
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
+	};
 
 	renderNotice() {
 		return (
@@ -215,8 +268,9 @@ class PasswordlessSignupForm extends Component {
 			);
 		}
 		const submitButtonText = isSubmitting
-			? this.props.translate( 'Creating Your Account…' )
-			: this.props.translate( 'Create your account' );
+			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
+			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
+
 		return (
 			<LoggedOutFormFooter>
 				<Button
@@ -231,26 +285,34 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 
+	getLabelText() {
+		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
+	}
+
 	render() {
-		const { translate } = this.props;
 		const { errorMessages, isSubmitting } = this.state;
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="email">{ translate( 'Enter your email address' ) }</FormLabel>
+						<FormLabel htmlFor="signup-email">{ this.getLabelText() }</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
+							autoCorrect="off"
 							className="signup-form__passwordless-email"
 							type="email"
 							name="email"
+							id="signup-email"
 							value={ this.state.email }
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
+							placeholder={ this.props.inputPlaceholder }
+							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
+							autoFocus
 						/>
 					</ValidationFieldset>
-					{ this.props.renderTerms() }
+					{ this.props.renderTerms?.() }
 					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>
