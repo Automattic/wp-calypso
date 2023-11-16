@@ -114,7 +114,7 @@ const MigrateSubscribersModal = () => {
 			<div className="migrate-subscribers-modal__form--container">
 				<p className="migrate-subscribers-modal__form--disclaimer">
 					{ translate(
-						'This will move all of the subscribers from {{strong}}%(selectedSourceSiteName)s{{/strong}} to {{strong}}%(targetSiteName)s{{/strong}}. Are you sure?',
+						'This will {{strong}}move{{/strong}} all of the subscribers from {{strong}}%(selectedSourceSiteName)s{{/strong}} to {{strong}}%(targetSiteName)s{{/strong}}. Are you sure?',
 						{
 							args: { selectedSourceSiteName, targetSiteName },
 							components: { strong: <strong /> },
