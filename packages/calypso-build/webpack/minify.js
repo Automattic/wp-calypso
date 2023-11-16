@@ -125,7 +125,12 @@ module.exports = ( {
 	};
 
 	return [
-		new TerserPlugin( { parallel, extractComments, terserOptions } ),
+		new TerserPlugin( {
+			parallel,
+			extractComments,
+			terserOptions,
+			minify: TerserPlugin.swcMinify,
+		} ),
 		new CssMinimizerPlugin( { parallel, minimizerOptions: cssMinimizerOptions } ),
 	];
 };

@@ -4,6 +4,7 @@
 
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const {
@@ -19,7 +20,6 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
-const { SwcMinifyWebpackPlugin } = require( 'swc-minify-webpack-plugin' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
@@ -34,9 +34,7 @@ const { workerCount } = require( './webpack.common' );
  */
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
-const shouldMinify =
-	process.env.MINIFY_JS === 'true' ||
-	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
+const shouldMinify = true;
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForDuplicatePackages = process.env.CHECK_DUPLICATE_PACKAGES === 'true';
@@ -207,8 +205,15 @@ const webpackConfig = {
 		runtimeChunk: { name: 'runtime' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
-		minimize: true,
-		minimizer: [ new SwcMinifyWebpackPlugin() ],
+		minimize: shouldMinify,
+		minimizer: Minify( {
+			parallel: workerCount,
+			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
+			terserOptions: {
+				compress: true,
+				mangle: true,
+			},
+		} ),
 	},
 	module: {
 		strictExportPresence: true,
