@@ -8,6 +8,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import MobileSelectPortal from '../mobile-select-portal';
 
 export class TypeSelector extends Component {
+	static defaultProps = {
+		variant: 'default',
+	};
+
 	state = {
 		userHasSelected: false,
 		selectedCheckboxes: [],
@@ -106,7 +110,6 @@ export class TypeSelector extends Component {
 	 * It searches the provided `key` through all `types` and its potential children recursively.
 	 * If the key is found, the corresponding name is returned.
 	 * If the key is not found, it returns the key itself as a fallback.k.
-	 *
 	 * @param {string} key - Activity Type key
 	 * @returns {string} - The resolved display name or the key itself if not found.
 	 */
@@ -274,7 +277,11 @@ export class TypeSelector extends Component {
 	hasSelectedCheckboxes = () => this.getSelectedCheckboxes().length > 0;
 
 	renderTypeSelectorButton = () => {
-		const { isNested, isVisible, showAppliedFiltersCount, title, translate } = this.props;
+		const { isNested, isVisible, showAppliedFiltersCount, title, translate, variant } = this.props;
+
+		const isCompact = variant === 'compact';
+		const isMobile = ! isWithinBreakpoint( '>660px' );
+
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = this.hasSelectedCheckboxes();
 
@@ -283,12 +290,13 @@ export class TypeSelector extends Component {
 			'is-active': isVisible && ! hasSelectedCheckboxes,
 		} );
 
-		// If the type selector is nested, we don't want to display the title
-		// unless there are no selected checkboxes.
-		const shouldDisplayTitle = ! isNested || ( isNested && ! hasSelectedCheckboxes );
+		// Hide the title when is nested with no selected checkboxes, or not nested, has selected checkboxes, and is mobile.
+		const shouldDisplayTitle =
+			( ! isNested || ( isNested && ! hasSelectedCheckboxes ) ) &&
+			! ( isMobile && hasSelectedCheckboxes );
 
-		// If the type selector is not nested and has selected checkboxes, we want to display a delimiter.
-		const shouldDisplayDelimiter = ! isNested && hasSelectedCheckboxes;
+		// Hide the delimiter when is not nested and has selected checkboxes, or is mobile.
+		const shouldDisplayDelimiter = ! isNested && hasSelectedCheckboxes && ! isMobile;
 
 		const activitiesSelectedText = translate( '%(selectedCount)s selected', {
 			args: {
@@ -310,10 +318,12 @@ export class TypeSelector extends Component {
 				onClick={ this.props.onButtonClick }
 				ref={ this.typeButton }
 			>
-				{ shouldDisplayTitle && title }
-				{ shouldDisplayDelimiter && ': ' }
-				{ hasSelectedCheckboxes && selectedCheckboxesContent }
-				<Icon icon={ chevronDown } size="16" fill="currentColor" />
+				<span className="button-label">
+					{ shouldDisplayTitle && title }
+					{ shouldDisplayDelimiter && ': ' }
+					{ hasSelectedCheckboxes && selectedCheckboxesContent }
+				</span>
+				{ isCompact && <Icon icon={ chevronDown } size="16" fill="currentColor" /> }
 			</Button>
 		);
 	};
