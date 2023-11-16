@@ -18,7 +18,8 @@ import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { withoutHttp } from 'calypso/lib/url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
@@ -165,6 +166,7 @@ export function SitesDashboard( {
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
 		ref: 'topbar',
 	} );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
@@ -240,6 +242,7 @@ export function SitesDashboard( {
 			<PageBodyWrapper>
 				<SitesDashboardSitesList
 					sites={ allSites }
+					filtering={ { search, userId, isFilterByOwner } }
 					sorting={ sitesSorting }
 					grouping={ { status, showHidden: true } }
 				>
