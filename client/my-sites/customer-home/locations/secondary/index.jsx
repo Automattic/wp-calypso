@@ -13,7 +13,6 @@ import {
 	LAUNCHPAD_INTENT_PAID_NEWSLETTER,
 	LAUNCHPAD_PRE_LAUNCH,
 	NOTICE_READER_FIRST_POSTS,
-	FEATURE_DISCOVERY_FEE,
 	FEATURE_DISCOVERY_FEED,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
