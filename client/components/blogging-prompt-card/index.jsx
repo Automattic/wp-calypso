@@ -3,13 +3,11 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import {
 	useAIBloggingPrompts,
 	mergePromptStreams,
-	isAIBLoggingPrompt,
 } from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
@@ -17,7 +15,6 @@ import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/co
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import BellOffIcon from './bell-off-icon';
-import LightbulbIcon from './lightbulb-icon';
 import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
@@ -72,6 +69,9 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	};
 
 	const renderMenu = () => {
+		if ( ! showMenu ) {
+			return;
+		}
 		return (
 			<EllipsisMenu
 				className="blogging-prompt__menu"
@@ -89,29 +89,16 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 			</EllipsisMenu>
 		);
 	};
-	let promptLabel = translate( 'Daily writing prompt' );
-	if ( isAIBLoggingPrompt( prompts[ index ] ) ) {
-		promptLabel = translate( 'AI suggested post' );
-	} else if ( isBloganuary() ) {
-		promptLabel = translate( 'Bloganuary writing prompt' );
-	}
 
 	return (
 		<div className="blogging-prompt">
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
-				<CardHeading>
-					<LightbulbIcon />
-					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
-					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
-						{ promptLabel }
-					</span>
-					{ showMenu && renderMenu() }
-				</CardHeading>
 				<PromptsNavigation
 					siteId={ siteId }
 					prompts={ prompts }
 					tracksPrefix={ getTracksPrefix() }
 					index={ index }
+					menu={ renderMenu() }
 				/>
 			</Card>
 		</div>
