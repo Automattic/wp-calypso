@@ -2,8 +2,7 @@ const babelPlugins = require( '@babel/compat-data/plugins' );
 const browserslist = require( 'browserslist' );
 const CssMinimizerPlugin = require( 'css-minimizer-webpack-plugin' );
 const semver = require( 'semver' );
-const TerserPlugin = require( 'terser-webpack-plugin' );
-
+const { SwcMinifyWebpackPlugin } = require( 'swc-minify-webpack-plugin' );
 const supportedBrowsers = browserslist();
 
 // The list of browsers to check, that are supported by babel compat-data.
@@ -101,16 +100,10 @@ function chooseTerserEcmaVersion( browsers ) {
  * @param {Object} options Options
  * @param options.terserOptions Options for Terser plugin
  * @param options.cssMinimizerOptions Options for CSS Minimizer plugin
- * @param options.extractComments Whether to extract comments into a separate LICENSE file (defaults to true)
  * @param options.parallel Whether to run minifiers in parallel (defaults to true)
  * @returns {Object[]}     Terser plugin object to be used in Webpack minification.
  */
-module.exports = ( {
-	terserOptions = {},
-	cssMinimizerOptions = {},
-	parallel = true,
-	extractComments = true,
-} = {} ) => {
+module.exports = ( { terserOptions = {}, cssMinimizerOptions = {}, parallel = true } = {} ) => {
 	terserOptions = {
 		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
 		ie8: false,
@@ -125,7 +118,7 @@ module.exports = ( {
 	};
 
 	return [
-		new TerserPlugin( { parallel, extractComments, terserOptions } ),
+		new SwcMinifyWebpackPlugin( terserOptions ),
 		new CssMinimizerPlugin( { parallel, minimizerOptions: cssMinimizerOptions } ),
 	];
 };

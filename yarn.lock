@@ -7061,7 +7061,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.3.82":
+"@swc/core@npm:^1.3.82, @swc/core@npm:^1.3.96":
   version: 1.3.96
   resolution: "@swc/core@npm:1.3.96"
   dependencies:
@@ -29747,6 +29747,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"swc-minify-webpack-plugin@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "swc-minify-webpack-plugin@npm:2.1.1"
+  peerDependencies:
+    "@swc/core": ^1.0.0
+    webpack: ^5.0.0
+  checksum: a53c201758b02369ed417ee676c43084d6bb12d108dd7d5e86efc33628b686a154a12c23e7ba82d03f473fb73ba2a17e70290ea384cb3bad4fe9dfa54dc3224b
+  languageName: node
+  linkType: hard
+
 "swiper@npm:10.3.1, swiper@npm:^10.1.0":
   version: 10.3.1
   resolution: "swiper@npm:10.3.1"
@@ -32247,6 +32257,7 @@ __metadata:
     "@signal-noise/stylelint-scales": ^2.0.3
     "@storybook/cli": ^7.5.2
     "@storybook/react": ^7.5.2
+    "@swc/core": ^1.3.96
     "@tanstack/eslint-plugin-query": ^4.29.8
     "@testing-library/jest-dom": ^6.1.4
     "@types/cookie": ^0.4.1
@@ -32357,6 +32368,7 @@ __metadata:
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
     stylelint: ^14.16.1
+    swc-minify-webpack-plugin: ^2.1.1
     swiper: ^10.1.0
     tslib: ^2.3.0
     typescript: ^5.2.2
