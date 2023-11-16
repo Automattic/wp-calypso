@@ -7,11 +7,12 @@ import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
 import { useSubscribersQuery } from '../../queries';
+import { migrateSubscribers } from './migrate-subscribers-query';
 
 type SubscribersPageProviderProps = {
 	siteId: number | null;
@@ -43,9 +44,9 @@ type SubscribersPageContextProps = {
 	showAddSubscribersModal: boolean;
 	showMigrateSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
-	setShowMigrateSubscribersModal: ( show: boolean ) => void;
 	addSubscribersCallback: () => void;
-	migrateSubscribersCallback: () => void;
+	migrateSubscribersCallback: ( sourceSiteId: number, targetSiteId: number ) => void;
+	closeAllModals: typeof closeAllModals;
 	siteId: number | null;
 	isLoading: boolean;
 };
@@ -55,6 +56,10 @@ const SubscribersPageContext = createContext< SubscribersPageContextProps | unde
 );
 
 const DEFAULT_PER_PAGE = 10;
+
+function closeAllModals() {
+	window.location.hash = '';
+}
 
 export const SubscribersPageProvider = ( {
 	children,
@@ -73,6 +78,23 @@ export const SubscribersPageProvider = ( {
 	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
 	const { hasManySubscribers } = useManySubsSite( siteId );
+
+	useEffect( () => {
+		const handleHashChange = () => {
+			// Open "add subscribers" via URL hash
+			setShowMigrateSubscribersModal( window.location.hash === '#migrate-subscribers' );
+		};
+
+		// Listen to the hashchange event
+		window.addEventListener( 'hashchange', handleHashChange );
+
+		// Make it work on load as well
+		handleHashChange();
+
+		return () => {
+			window.removeEventListener( 'hashchange', handleHashChange );
+		};
+	}, [] );
 
 	const subscriberType =
 		filterOption === SubscribersFilterBy.All && hasManySubscribers
@@ -124,21 +146,36 @@ export const SubscribersPageProvider = ( {
 		);
 	};
 
-	const migrateSubscribersCallback = () => {
-		setShowMigrateSubscribersModal( false );
-		console.log( 'make api call' );
-		// completeImportSubscribersTask();
-
-		// dispatch(
-		// 	successNotice(
-		// 		translate(
-		// 			"Your subscriber list is being processed. We'll send you an email when it's finished importing."
-		// 		),
-		// 		{
-		// 			duration: 5000,
-		// 		}
-		// 	)
-		// );
+	const migrateSubscribersCallback = async ( sourceSiteId: number, targetSiteId: number ) => {
+		closeAllModals();
+		try {
+			const response = await migrateSubscribers( sourceSiteId, targetSiteId );
+			if ( response.success ) {
+				completeImportSubscribersTask();
+				dispatch(
+					successNotice(
+						translate(
+							'Your follower migration has been queued. You will receive an email to indicate when it starts and finishes.'
+						),
+						{
+							duration: 8000,
+						}
+					)
+				);
+			} else {
+				dispatch(
+					errorNotice( response.message, {
+						duration: 5000,
+					} )
+				);
+			}
+		} catch {
+			dispatch(
+				errorNotice( translate( 'An unknown error has occurred. Please try again in a second.' ), {
+					duration: 5000,
+				} )
+			);
+		}
 	};
 
 	const handleSearch = useCallback( ( term: string ) => {
@@ -178,7 +215,7 @@ export const SubscribersPageProvider = ( {
 				showAddSubscribersModal,
 				showMigrateSubscribersModal,
 				setShowAddSubscribersModal,
-				setShowMigrateSubscribersModal,
+				closeAllModals,
 				addSubscribersCallback,
 				migrateSubscribersCallback,
 				siteId,
