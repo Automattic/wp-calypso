@@ -19,11 +19,9 @@ function MyComponent() {
 	useQuery( {
 		queryKey,
 		queryFn,
-		{
-			meta: {
-				persist: false,
-			},
-		}
+		meta: {
+			persist: false,
+		},
 	} );
 
 	return null;
@@ -37,12 +35,10 @@ function MyComponent() {
 	useQuery( {
 		queryKey,
 		queryFn,
-		{
-			meta: {
-				persist: ( data: Theme[] ) => data.length > 0,
-			},
-		}
- 	} );
+		meta: {
+			persist: ( data: Theme[] ) => data.length > 0,
+		},
+	} );
 
 	return null;
 }
