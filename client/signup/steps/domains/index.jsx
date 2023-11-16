@@ -589,16 +589,16 @@ export class RenderDomainsStep extends Component {
 					( domainInCart ) => domainInCart.meta === suggestion.domain_name
 				)
 			) {
-				this.setState( {
+				this.setState( ( state ) => ( {
 					temporaryCart: [
-						...( this.state.temporaryCart || [] ),
+						...( state.temporaryCart || [] ),
 						{
 							meta: suggestion.domain_name,
 							item_subtotal_display: '...',
 							temporary: true,
 						},
 					],
-				} );
+				} ) );
 			}
 
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
@@ -654,9 +654,9 @@ export class RenderDomainsStep extends Component {
 
 	removeDomain( { domain_name, product_slug } ) {
 		if ( this.state.temporaryCart?.length > 0 ) {
-			this.setState( {
-				temporaryCart: this.state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
-			} );
+			this.setState( ( state ) => ( {
+				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
+			} ) );
 		}
 
 		const productToRemove = this.props.cart.products.find(
