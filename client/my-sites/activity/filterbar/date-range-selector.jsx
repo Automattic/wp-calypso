@@ -13,6 +13,10 @@ import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/action
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 export class DateRangeSelector extends Component {
+	static defaultProps = {
+		variant: 'default',
+	};
+
 	state = {
 		fromDate: null,
 		toDate: null,
@@ -123,7 +127,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { customLabel, isVisible } = this.props;
+		const { customLabel, isVisible, variant } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const now = new Date();
@@ -132,6 +136,8 @@ export class DateRangeSelector extends Component {
 			'is-selected': from,
 			'is-active': isVisible && ! from,
 		} );
+
+		const isCompact = variant === 'compact';
 
 		return (
 			<DateRangePicker
@@ -149,7 +155,7 @@ export class DateRangeSelector extends Component {
 							ref={ props.buttonRef }
 						>
 							{ customLabel ? customLabel : this.getFormattedDate( from, to ) }
-							<Icon icon={ chevronDown } size="16" fill="currentColor" />
+							{ isCompact && <Icon icon={ chevronDown } size="16" fill="currentColor" /> }
 						</Button>
 						{ ( from || to ) && (
 							<Button
