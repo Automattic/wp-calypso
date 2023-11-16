@@ -138,11 +138,12 @@ const MigrateSubscribersModal = () => {
 						type="submit"
 						className="migrate-subscriber__form-submit-btn"
 						disabled={ ! selectedSourceSiteId }
-						onClick={ () =>
+						onClick={ () => {
+							setModalState( 'selection' );
 							selectedSourceSiteId &&
-							targetSiteId &&
-							migrateSubscribersCallback( selectedSourceSiteId, targetSiteId )
-						}
+								targetSiteId &&
+								migrateSubscribersCallback( selectedSourceSiteId, targetSiteId );
+						} }
 					>
 						{ translate( 'Confirm subscriber move' ) }
 					</NextButton>
