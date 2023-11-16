@@ -75,7 +75,9 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 					className="videomaker-setup__light-button"
 					onClick={ () =>
 						onSelectTheme(
-							config.isEnabled( 'videomaker-trial' ) ? 'pub/videomaker' : 'premium/videomaker',
+							config.isEnabled( 'videomaker-trial' )
+								? 'pub/videomaker'
+								: 'premium/videomaker-white',
 							styles.find( ( style ) => 'white' === style.name )
 						)
 					}
