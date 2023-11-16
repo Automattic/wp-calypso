@@ -128,7 +128,7 @@ module.exports = ( {
 			parallel,
 			extractComments,
 			terserOptions,
-			minify: TerserPlugin.swcMinify,
+			minify: TerserPlugin.esbuildMinify,
 		} ),
 		new CssMinimizerPlugin( { parallel, minimizerOptions: cssMinimizerOptions } ),
 	];
