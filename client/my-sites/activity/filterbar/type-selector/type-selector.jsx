@@ -109,7 +109,7 @@ export class TypeSelector extends Component {
 	 *
 	 * It searches the provided `key` through all `types` and its potential children recursively.
 	 * If the key is found, the corresponding name is returned.
-	 * If the key is not found, it returns the key itself as a fallback.k.
+	 * If the key is not found, it returns the key itself as a fallback.
 	 * @param {string} key - Activity Type key
 	 * @returns {string} - The resolved display name or the key itself if not found.
 	 */
