@@ -11,6 +11,26 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
+.filterbar .filterbar__wrap.card {
+	display: flex;
+	flex-direction: row;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+		height: auto;
+		margin-bottom: 1.5rem;
+
+		.filterbar__text-control,
+		.filterbar__label {
+			margin: 0;
+		}
+
+		.filterbar__text-control {
+			margin-bottom: 5px;
+		}
+	}
+}
+
 .filterbar__wrap.card {
 	position: relative;
 	display: flex;
@@ -345,29 +365,68 @@
 	}
 }
 
-.atelier-filterbar .filterbar__wrap.card {
+.filterbar {
+	margin: 0 16px;
+
+	@include break-xlarge {
+		margin: 0;
+	}
+}
+
+.filterbar--compact .filterbar__wrap.card {
 	background-color: initial;
 	box-shadow: initial;
 	height: auto;
 
 	.filterbar__text-control {
 		flex-grow: initial;
-		margin: 0;
+		margin: 0 0 5px 0;
 
 		.search {
 			box-sizing: border-box;
-			width: 240px;
+			width: 100%;
 		}
 
 		.search.is-compact .search__open-icon {
 			margin: 0 4px;
 			width: 24px;
 		}
+
+		@include break-xlarge {
+			margin-bottom: 0;
+			width: 240px;
+		}
+	}
+
+	.filterbar__control-list {
+		display: flex;
+		margin: 0;
+		gap: 5px;
+
+		@include break-xlarge {
+			margin: 0 0 0 4px;
+			gap: 0;
+		}
 	}
 
 	.filterbar__control-list > li {
 		display: flex;
-		margin: 0 4px;
+		margin: 0;
+		width: calc(50% - 2.5px);
+
+		@include break-xlarge {
+			margin: 0 4px;
+			flex-grow: 0;
+			width: auto;
+		}
+	}
+
+	.filterbar__control-list li .date-range {
+		width: 100%;
+
+		@include break-xlarge {
+			width: auto;
+		}
 	}
 
 	.filterbar__selection {
@@ -376,6 +435,17 @@
 		display: flex;
 		height: 36px;
 		padding: 8px 8px 8px 12px;
+		width: 100%;
+
+		@include break-xlarge {
+			width: auto;
+		}
+
+		span.button-label {
+			max-width: 180px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 
 		&.is-active,
 		&.is-selected,
