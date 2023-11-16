@@ -12,6 +12,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,

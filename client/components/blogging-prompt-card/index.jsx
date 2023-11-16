@@ -34,7 +34,6 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const startDate = isBloganuary() ? januaryDate : today;
 
 	let { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
-	//TODO: Feature flag
 	const { data: aiPrompts } = useAIBloggingPrompts( siteId );
 
 	if ( prompts && aiPrompts ) {

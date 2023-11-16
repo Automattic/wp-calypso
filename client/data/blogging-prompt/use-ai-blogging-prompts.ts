@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
@@ -32,7 +33,7 @@ export const useAIBloggingPrompts = (
 				path: path,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		enabled: !! siteId,
+		enabled: isEnabled( 'calypso/ai-blogging-prompts' ) && !! siteId,
 		staleTime: 86400000,
 	} );
 };
