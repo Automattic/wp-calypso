@@ -17,7 +17,7 @@ const useDashboardShowLargeScreen = (
 
 		if ( siteTableEle ) {
 			if ( siteTableEle.clientWidth > containerRef?.current?.clientWidth ) {
-				// We will need to remember the breakpoint where we overflowed so that we can
+				// We will need to remember the breakpoint where it overflowed so that we can
 				// check if we are still overflowing when the window is resized to bigger size
 				setOverflowingBreakpoint( siteTableEle.clientWidth );
 				setIsOverflowing( true );
