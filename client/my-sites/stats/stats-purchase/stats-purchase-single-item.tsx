@@ -15,6 +15,7 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
+import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
@@ -118,11 +119,15 @@ Thanks\n\n`;
 
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
+	// TODO: Enable upgrade slider here too?
+	// const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	const isTierUpgradeSliderEnabled = false;
 
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+			{ isTierUpgradeSliderEnabled && <TierUpgradeSlider /> }
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 			<ButtonComponent
