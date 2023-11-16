@@ -6,6 +6,7 @@ type Response = {
 };
 function migrateSubscribers( sourceSiteId: number, targetSiteId: number ) {
 	return wpcomRequest< Response >( {
+		// This endpoint is pretty old and needs the old variant of the envelope param.
 		path: `/jetpack-blogs/${ encodeURIComponent( targetSiteId ) }/source/${ encodeURIComponent(
 			sourceSiteId
 		) }/migrate?http_envelope=1`,
