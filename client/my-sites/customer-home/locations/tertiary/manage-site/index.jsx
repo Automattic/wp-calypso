@@ -12,11 +12,13 @@ import {
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
 	FEATURE_SITE_PREVIEW,
+	FEATURE_STATS,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import AppPromo from 'calypso/my-sites/customer-home/cards/features/app-promo';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
+import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -28,6 +30,7 @@ const cardComponents = {
 	[ FEATURE_QUICK_START ]: QuickStart,
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
 	[ ACTION_QUICK_LINKS_FOR_HOSTED_SITES ]: QuickLinksForHostedSites,
+	[ FEATURE_STATS ]: Stats,
 };
 
 const ManageSite = () => {
