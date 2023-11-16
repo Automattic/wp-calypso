@@ -1,13 +1,17 @@
 
+
 .stats-tier-upgrade-slider {
+	--jp-white: #fff;
+	--jp-green-50: #008710;
+	--gray-gray-5: #dcdcde;
 	margin: 2px;
 	padding: 10px;
 
 	.jp-components-pricing-slider__thumb {
 		border-radius: 4px;
-		border-color: #008710;
-		background-color: #008710;
-		color: #fff;
+		border-color: var(--jp-green-50);
+		background-color: var(--jp-green-50);
+		color: var(--jp-white);
 	}
 
 	.jp-components-pricing-slider__track {
@@ -18,7 +22,7 @@
 		position: absolute;
 		height: 10px;
 		width: 10px;
-		background-color: #d3d3d3;
+		background-color: var(--gray-gray-5);
 		border-radius: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%);
@@ -27,7 +31,7 @@
 }
 
 .stats-tier-upgrade-slider__info-message {
-	color: #008710;
+	color: var(--jp-green-50);
 	margin: 12px 0;
 	text-align: center;
 }
@@ -49,3 +53,4 @@
 		text-align: right;
 	}
 }
+
