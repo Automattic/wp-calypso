@@ -585,8 +585,7 @@ class ActivityLog extends Component {
 					filter={ filter }
 					isLoading={ ! displayRulesLoaded || ! logsLoaded }
 					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
-					className="atelier-filterbar"
-					showFilterByLabel={ false }
+					variant="compact"
 				/>
 			</div>
 		);

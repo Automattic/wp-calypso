@@ -228,8 +228,7 @@ class ActivityCardList extends Component {
 					filter={ filter }
 					isLoading={ isLoading }
 					isVisible={ shouldShowFilter }
-					className="atelier-filterbar"
-					showFilterByLabel={ false }
+					variant="compact"
 				/>
 			</div>
 		);
