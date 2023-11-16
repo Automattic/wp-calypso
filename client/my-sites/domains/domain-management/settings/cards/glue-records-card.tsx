@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -145,10 +145,12 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				</div>
 				<div className="domain-forwarding-card__fields-column">
 					<Button
-						borderless
-						className="edit-redirect-button link-button"
+						scary
+						busy={ isSaving }
+						className="edit-redirect-button"
 						onClick={ () => handleDelete( child.record ) }
 					>
+						<Gridicon icon="trash" />
 						{ translate( 'Remove' ) }
 					</Button>
 				</div>
