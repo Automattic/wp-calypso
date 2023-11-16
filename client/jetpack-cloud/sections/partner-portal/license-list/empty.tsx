@@ -30,7 +30,9 @@ export default function LicenseListEmpty( { filter }: Props ) {
 	const licenseFilterStatusTitle = licenseFilterStatusTitleMap[ filter ] as string;
 
 	const onIssueNewLicense = () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_license_list_empty_issue_license_click' )
+		);
 	};
 
 	return (
