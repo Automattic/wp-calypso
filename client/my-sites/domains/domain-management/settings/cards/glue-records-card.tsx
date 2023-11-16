@@ -133,7 +133,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				<div className="domain-forwarding-card__fields-column glue-record-data">
 					<div className="domain-forwarding-card__fields-row addresses">
 						<div className="domain-forwarding-card__fields-column source">
-							{ translate( 'Record' ) }:
+							{ translate( 'Name server' ) }:
 						</div>
 						<div className="domain-forwarding-card__fields-column destination">
 							<strong>{ child.record }</strong>
@@ -167,7 +167,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const FormRowEditable = ( { child }: { child: GlueRecordObject } ) => (
 		<>
 			<FormFieldset className="domain-forwarding-card__fields" key={ `edit-${ child.record }` }>
-				<FormLabel>{ translate( 'Record' ) }</FormLabel>
+				<FormLabel>{ translate( 'Name server' ) }</FormLabel>
 				<div className="glue-record-input-wrapper">
 					<FormTextInputWithAffixes
 						placeholder={ translate( 'Enter subdomain (e.g. ns1)' ) }
@@ -179,7 +179,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
 					/>
 				</div>
-				<FormLabel>{ translate( 'IP Address' ) }</FormLabel>
+				<FormLabel>{ translate( 'IP address' ) }</FormLabel>
 				<div className="ip-address">
 					<FormTextInputWithAffixes
 						disabled={ isLoadingData || isSaving }
