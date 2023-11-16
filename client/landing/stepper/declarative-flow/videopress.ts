@@ -227,61 +227,15 @@ const videopress: Flow = {
 					blogdescription: siteDescription,
 				} );
 
-				if ( newSite.blogid ) {
-					updateSelectedTheme( newSite.blogid );
-				}
-
-				let planObject = supportedPlans.find( ( plan ) => 'premium' === plan.periodAgnosticSlug );
-				if ( ! planObject ) {
-					planObject = supportedPlans.find( ( plan ) => 'business' === plan.periodAgnosticSlug );
-				}
-
-				const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, 'MONTHLY' );
-
-				const cartKey = newSite.site_slug
-					? await cartManagerClient.getCartKeyForSiteSlug( newSite.site_slug )
-					: null;
-
-				if ( ! cartKey ) {
-					return;
-				}
-
-				const productsToAdd: MinimalRequestCartProduct[] = planProductObject
-					? [
-							{
-								product_slug: planProductObject.storeSlug,
-								extra: {
-									signup_flow: VIDEOPRESS_FLOW,
-								},
-							},
-					  ]
-					: [];
-
-				if ( selectedDomain && selectedDomain.product_slug ) {
-					const registration = domainRegistration( {
-						domain: selectedDomain.domain_name,
-						productSlug: selectedDomain.product_slug,
-						extra: { privacy_available: selectedDomain.supports_privacy },
-					} );
-
-					productsToAdd.push( registration );
-				}
-
 				setProgress( 0.75 );
 
-				cartManagerClient
-					.forCartKey( cartKey )
-					.actions.addProductsToCart( productsToAdd )
-					.then( () => {
-						setProgress( 1.0 );
-						const redirectTo = encodeURIComponent(
-							`/setup/videopress/launchpad?siteSlug=${ newSite.site_slug }&siteId=${ newSite.blogid }`
-						);
+				updateSelectedTheme( newSite.blogid );
 
-						window.location.replace(
-							`/checkout/${ newSite.site_slug }?signup=1&redirect_to=${ redirectTo }`
-						);
-					} );
+				setProgress( 1.0 );
+
+				window.location.replace(
+					`/setup/videopress/launchpad?siteSlug=${ newSite.site_slug }&siteId=${ newSite.blogid }`
+				);
 			} );
 		};
 
