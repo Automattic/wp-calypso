@@ -118,6 +118,7 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	align-content: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	overflow-wrap: anywhere;
 	gap: 2px 10px;
 `;
 
@@ -1114,12 +1115,16 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice
-					isDiscounted={ isDiscounted }
-					actualAmount={ actualAmountDisplay }
-					originalAmount={ originalAmountDisplay }
-					isSummary={ isSummary }
-				/>
+				{ hasCheckoutVersion( '2' ) ? (
+					<LineItemPrice actualAmount={ originalAmountDisplay } isSummary={ isSummary } />
+				) : (
+					<LineItemPrice
+						isDiscounted={ isDiscounted }
+						actualAmount={ actualAmountDisplay }
+						originalAmount={ originalAmountDisplay }
+						isSummary={ isSummary }
+					/>
+				) }
 			</span>
 
 			{ ! hasCheckoutVersion( '2' ) && product && ! containsPartnerCoupon && (

@@ -578,6 +578,7 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
+		'WC',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();
