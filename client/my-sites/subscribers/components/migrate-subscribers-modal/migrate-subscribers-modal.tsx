@@ -131,7 +131,7 @@ const MigrateSubscribersModal = () => {
 							setModalState( 'selection' );
 						} }
 					>
-						{ translate( 'Cancel' ) }
+						{ translate( 'Go back' ) }
 					</BackButton>
 
 					<NextButton

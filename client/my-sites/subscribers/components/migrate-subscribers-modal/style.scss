@@ -44,6 +44,10 @@
 		width: 100%;
 	}
 
+	.migrate-subscriber__form-cancel-btn {
+		box-shadow: unset;
+	}
+
 
 	.migrate-subscribers-modal__form--disclaimer {
 		font-size: $font-body-small;
