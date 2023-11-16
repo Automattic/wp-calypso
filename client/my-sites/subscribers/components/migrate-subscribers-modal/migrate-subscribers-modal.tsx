@@ -3,8 +3,9 @@ import { ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { Modal, Button, ButtonGroup } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -54,6 +55,12 @@ const MigrateSubscribersModal = () => {
 	const selectedSourceSite = useSelector( ( state ) => getSite( state, selectedSourceSiteId ) );
 	const selectedSourceSiteName = selectedSourceSite?.name || selectedSourceSite?.URL || '';
 
+	useEffect( () => {
+		if ( showMigrateSubscribersModal ) {
+			recordTracksEvent( 'calypso_subscribers_migrate_subscribers_selection' );
+		}
+	}, [ showMigrateSubscribersModal ] );
+
 	if ( ! showMigrateSubscribersModal ) {
 		return null;
 	}
@@ -99,10 +106,11 @@ const MigrateSubscribersModal = () => {
 			<NextButton
 				type="submit"
 				className="migrate-subscriber__form-submit-btn"
-				// isBusy={ inProgress }
-				// disabled={ ! submitBtnReady }
 				disabled={ ! selectedSourceSiteId }
-				onClick={ () => setModalState( 'confirmation' ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_subscribers_migrate_subscribers_confirmation' );
+					setModalState( 'confirmation' );
+				} }
 			>
 				{ translate( 'Migrate subscribers' ) }
 			</NextButton>
@@ -128,6 +136,7 @@ const MigrateSubscribersModal = () => {
 					<BackButton
 						className="migrate-subscriber__form-cancel-btn"
 						onClick={ () => {
+							recordTracksEvent( 'calypso_subscribers_migrate_subscribers_back_to_selection' );
 							setModalState( 'selection' );
 						} }
 					>
@@ -140,6 +149,10 @@ const MigrateSubscribersModal = () => {
 						disabled={ ! selectedSourceSiteId }
 						onClick={ () => {
 							setModalState( 'selection' );
+							recordTracksEvent( 'calypso_subscribers_migrate_subscribers_start_migration', {
+								source_site_id: sourceSiteId,
+								target_site_id: targetSiteId,
+							} );
 							selectedSourceSiteId &&
 								targetSiteId &&
 								migrateSubscribersCallback( selectedSourceSiteId, targetSiteId );
@@ -157,6 +170,7 @@ const MigrateSubscribersModal = () => {
 			title={ modalTitle as string }
 			onRequestClose={ () => {
 				closeAllModals();
+				recordTracksEvent( 'calypso_subscribers_migrate_subscribers_cancel' );
 				//Setting a delay to prevent a flicker.
 				setTimeout( setModalState, 50, 'selection' );
 			} }
