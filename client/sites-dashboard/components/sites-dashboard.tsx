@@ -149,7 +149,14 @@ const ManageAllDomainsButton = styled( Button )`
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
-	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteID },
+	queryParams: {
+		page = 1,
+		perPage = 96,
+		search,
+		status = 'all',
+		isFilterByOwner = false,
+		newSiteID,
+	},
 }: SitesDashboardProps ) {
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: TRACK_SOURCE_NAME,
@@ -233,7 +240,6 @@ export function SitesDashboard( {
 			<PageBodyWrapper>
 				<SitesDashboardSitesList
 					sites={ allSites }
-					filtering={ { search } }
 					sorting={ sitesSorting }
 					grouping={ { status, showHidden: true } }
 				>
@@ -255,6 +261,7 @@ export function SitesDashboard( {
 										sitesSorting={ sitesSorting }
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+										isFilterByOwner={ isFilterByOwner }
 									/>
 								) }
 								{ userPreferencesLoaded && (

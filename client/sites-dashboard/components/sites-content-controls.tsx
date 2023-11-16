@@ -18,6 +18,7 @@ export interface SitesDashboardQueryParams {
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
 	newSiteID?: number;
+	isFilterByOwner?: boolean;
 }
 
 const FilterBar = styled.div( {
@@ -67,8 +68,6 @@ const VisibilityControls = styled.div( {
 } );
 
 const ControlsSelectDropdown = styled( SelectDropdown )( {
-	width: '100%',
-
 	'.select-dropdown__container': {
 		minWidth: '100%',
 
@@ -84,6 +83,7 @@ type SitesContentControlsProps = {
 	initialSearch?: string;
 	onQueryParamChange?: ( params: Partial< SitesDashboardQueryParams > ) => void;
 	statuses: Statuses;
+	isFilterByOwner: boolean;
 	selectedStatus: Statuses[ number ];
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
 	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
@@ -118,6 +118,7 @@ export const SitesContentControls = ( {
 	sitesSorting,
 	onSitesSortingChange,
 	hasSitesSortingPreferenceLoaded,
+	isFilterByOwner = false,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 	const searchRef = useRef< SearchImperativeHandle >( null );
@@ -175,6 +176,38 @@ export const SitesContentControls = ( {
 							{ title }
 						</SelectDropdown.Item>
 					) ) }
+				</ControlsSelectDropdown>
+				<ControlsSelectDropdown
+					// Translators: `siteOwner` is one of the site statuses specified in the Sites page.
+					selectedText={ isFilterByOwner ? __( 'Owner: Me' ) : __( 'Owner: Everyone' ) }
+					ariaLabel={
+						isFilterByOwner ? __( 'Displaying my sites.' ) : __( 'Displaying all sites' )
+					}
+				>
+					<SelectDropdown.Item
+						selected={ ! isFilterByOwner }
+						// Translators: `siteStatus` is one of the site statuses specified in the Sites page. `count` is a number of sites of given status.
+						onClick={ () =>
+							onQueryParamChange( {
+								isFilterByOwner: undefined,
+								page: undefined,
+							} )
+						}
+					>
+						{ __( 'Everyone' ) }
+					</SelectDropdown.Item>
+					<SelectDropdown.Item
+						selected={ isFilterByOwner }
+						// Translators: `siteStatus` is one of the site statuses specified in the Sites page. `count` is a number of sites of given status.
+						onClick={ () =>
+							onQueryParamChange( {
+								isFilterByOwner: true,
+								page: undefined,
+							} )
+						}
+					>
+						{ __( 'Me' ) }
+					</SelectDropdown.Item>
 				</ControlsSelectDropdown>
 				<VisibilityControls>
 					<SitesSortingDropdown
