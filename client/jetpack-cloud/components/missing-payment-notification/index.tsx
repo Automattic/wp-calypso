@@ -58,7 +58,7 @@ export default function MissingPaymentNotification() {
 			key.latestInvoice &&
 			key.latestInvoice.created &&
 			isDateLowerThanToday( key.latestInvoice.created ) &&
-			key.latestInvoice.status === 'paid'
+			key.latestInvoice.status !== 'paid'
 		) {
 			const createdDate = new Date( Number( key.latestInvoice.created ) * 1000 );
 			if ( ! latestInvoice || createdDate > new Date( Number( latestInvoice.created ) * 1000 ) ) {
