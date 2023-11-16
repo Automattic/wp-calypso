@@ -20,13 +20,13 @@ export function useSitesListFiltering< T extends SiteForFiltering >(
 		sitesOwnedByMe = sites.filter( ( site ) => site.site_owner === userId );
 	}
 	const filteredSites = useFuzzySearch( {
-		data: sites,
+		data: isFilterByOwner ? sitesOwnedByMe : sites,
 		keys: SITES_SEARCH_INDEX_KEYS,
 		query: search,
 	} );
 
 	return {
-		sites: isFilterByOwner ? sitesOwnedByMe : filteredSites,
+		sites: filteredSites,
 		countOwner: {
 			me: sitesOwnedByMe.length,
 			all: sites.length,
