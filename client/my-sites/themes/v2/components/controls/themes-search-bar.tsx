@@ -9,16 +9,24 @@ import './themes-search-bar.scss';
 export default () => {
 	const { filter, search, setSearch } = useContext( ThemesShowcaseContext );
 	const isSearchV2 = config.isEnabled( 'themes/text-search-lots' );
-	const featureStringFilter = useSelector( ( state ) => prependThemeFilterKeys( state, filter ) );
-	const filterString = useSelector( ( state ) => prependThemeFilterKeys( state, filter ) );
+	let query;
+
+	if ( isSearchV2 ) {
+		const featureStringFilter = useSelector( ( state ) =>
+			prependThemeFilterKeys( state, filter, [ 'subject' ] )
+		);
+		query = featureStringFilter + search;
+	} else {
+		query = useSelector( ( state ) => prependThemeFilterKeys( state, filter ) );
+	}
 
 	return (
 		<div className="theme__search-input">
 			{ isSearchV2 ? (
-				<SearchThemesV2 query={ featureStringFilter + search } onSearch={ setSearch } />
+				<SearchThemesV2 query={ query } onSearch={ setSearch } />
 			) : (
 				<SearchThemes
-					query={ filterString + search }
+					query={ query }
 					onSearch={ setSearch }
 					recordTracksEvent={ () => {} /*this.recordSearchThemesTracksEvent*/ }
 				/>
