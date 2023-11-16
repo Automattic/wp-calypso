@@ -52,19 +52,27 @@
 		max-height: 40px;
 	}
 
-	&.is-with-split-button {
-		flex-direction: row;
-
-		.sites-overview__issue-license-button {
-			flex-grow: 1;
-		}
-	}
-
 	@include break-large {
 		flex-direction: row;
 	}
 }
 
+
+.sites-overview__add-site-issue-license-buttons.is-with-split-button {
+	flex-direction: column;
+
+	.split-button {
+		display: flex;
+	}
+
+	.split-button__main {
+		flex-grow: 1;
+	}
+
+	@include break-xlarge {
+		flex-direction: row;
+	}
+}
 .sites-overview__add-new-site {
 	white-space: nowrap;
 }
@@ -86,7 +94,12 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
+		flex-direction: column;
 		justify-content: space-between;
+	}
+
+	@include break-large {
+		flex-direction: row;
 	}
 
 	&.is-sticky {
