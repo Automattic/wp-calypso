@@ -7,9 +7,25 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
+
+function useSelectedOtherSimpleSiteIDs() {
+	const targetSiteId = useSelector( getSelectedSiteId );
+	const allSites = useSelector( getSites );
+	const currentUserId = useSelector( getCurrentUserId );
+
+	if ( ! allSites ) {
+		return [];
+	}
+
+	return allSites
+		.filter( ( site ) => site?.ID !== targetSiteId && site?.site_owner === currentUserId )
+		.map( ( site ) => site?.ID );
+}
 
 const MigrateSubscribersModal = () => {
 	const translate = useTranslate();
@@ -22,17 +38,18 @@ const MigrateSubscribersModal = () => {
 	const [ sourceSiteId, setSourceSiteId ] = useState();
 	const targetSiteName = targetSite?.name || targetSite?.URL || '';
 
-	const modalTitle = translate(
-		'Migrate subscribers to "{{strong}}%(targetSiteName)s{{/strong}}"',
-		{
-			args: { targetSiteName: targetSiteName },
-			components: { strong: <strong /> },
-		}
-	);
+	const eligibleSiteIDs = useSelectedOtherSimpleSiteIDs();
+
+	const modalTitle = translate( 'Migrate subscribers to {{strong}}%(targetSiteName)s{{/strong}}', {
+		args: { targetSiteName: targetSite?.name || targetSite?.URL || '' },
+		components: { strong: <strong /> },
+	} );
 
 	if ( ! showMigrateSubscribersModal ) {
 		return null;
 	}
+
+	const selectedSourceSiteId = sourceSiteId || eligibleSiteIDs[ 0 ];
 
 	return (
 		<Modal
@@ -57,8 +74,11 @@ const MigrateSubscribersModal = () => {
 					<SitesDropdown
 						key={ sourceSiteId }
 						isPlaceholder={ false }
-						selectedSiteId={ sourceSiteId }
+						selectedSiteId={ selectedSourceSiteId }
 						onSiteSelect={ setSourceSiteId }
+						filter={ ( siteId ) => {
+							return eligibleSiteIDs.includes( siteId );
+						} }
 					/>
 					<p className="migrate-subscribers-modal__form--disclaimer">
 						{ createInterpolateElement(
@@ -85,9 +105,11 @@ const MigrateSubscribersModal = () => {
 					className="migrate-subscriber__form-submit-btn"
 					// isBusy={ inProgress }
 					// disabled={ ! submitBtnReady }
-					disabled={ ! sourceSiteId || ! targetSiteId }
+					disabled={ ! selectedSourceSiteId }
 					onClick={ () =>
-						sourceSiteId && targetSiteId && migrateSubscribersCallback( sourceSiteId, targetSiteId )
+						selectedSourceSiteId &&
+						targetSiteId &&
+						migrateSubscribersCallback( selectedSourceSiteId, targetSiteId )
 					}
 				>
 					{ translate( 'Migrate subscribers' ) }
