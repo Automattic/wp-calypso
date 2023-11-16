@@ -18,15 +18,17 @@
 		height: 4px;
 	}
 
-	.jp-components-pricing-slider__control .mark {
-		position: absolute;
-		height: 10px;
-		width: 10px;
-		background-color: var(--gray-gray-5);
-		border-radius: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		z-index: 10;
+	.jp-components-pricing-slider__control {
+		.mark {
+			position: absolute;
+			height: 10px;
+			width: 10px;
+			background-color: var(--gray-gray-5);
+			border-radius: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 10;
+		}
 	}
 }
 
@@ -53,4 +55,3 @@
 		text-align: right;
 	}
 }
-
