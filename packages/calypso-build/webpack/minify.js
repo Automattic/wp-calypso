@@ -113,7 +113,6 @@ module.exports = ( {
 } = {} ) => {
 	terserOptions = {
 		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
-		ie8: false,
 		safari10: supportedBrowsers.some(
 			( browser ) => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
 		),
