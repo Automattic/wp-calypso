@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
@@ -19,7 +18,7 @@ import './style.scss';
 export class Filterbar extends Component {
 	static defaultProps = {
 		selectorTypes: { dateRange: true, actionType: true, text: true },
-		showFilterByLabel: true,
+		variant: 'default',
 	};
 
 	state = {
@@ -123,11 +122,20 @@ export class Filterbar extends Component {
 		return true;
 	};
 
-	render() {
-		const { translate, siteId, filter, isLoading, isVisible, selectorTypes, showFilterByLabel } =
-			this.props;
+	VARIANT_STYLES = {
+		default: 'filterbar filterbar--default',
+		compact: 'filterbar filterbar--compact',
+	};
 
-		const rootClassNames = classnames( 'filterbar', this.props.className );
+	getStylesForVariant = ( variant ) => {
+		return this.VARIANT_STYLES[ variant ] || this.VARIANT_STYLES.default;
+	};
+
+	render() {
+		const { translate, siteId, filter, isLoading, isVisible, selectorTypes, variant } = this.props;
+
+		const isCompact = variant === 'compact';
+		const rootClassNames = this.getStylesForVariant( variant );
 
 		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
 			return <div className={ `${ rootClassNames } is-loading` } />;
@@ -155,9 +163,7 @@ export class Filterbar extends Component {
 							<TextSelector filter={ filter } siteId={ siteId } />
 						</div>
 					) }
-					{ showFilterByLabel && (
-						<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-					) }
+					{ ! isCompact && <span className="filterbar__label">{ translate( 'Filter by:' ) }</span> }
 					<ul className="filterbar__control-list">
 						{ selectorTypes.dateRange && (
 							<li>
@@ -167,6 +173,7 @@ export class Filterbar extends Component {
 									onClose={ this.closeDateRangeSelector }
 									filter={ filter }
 									siteId={ siteId }
+									variant={ variant }
 								/>
 							</li>
 						) }
@@ -178,6 +185,7 @@ export class Filterbar extends Component {
 									isVisible={ this.state.showActivityTypes }
 									onButtonClick={ this.toggleActivityTypesSelector }
 									onClose={ this.closeActivityTypes }
+									variant={ variant }
 								/>
 							</li>
 						) }
@@ -192,7 +200,7 @@ export class Filterbar extends Component {
 								/>
 							</li>
 						) }
-						<li>{ this.renderCloseButton() }</li>
+						{ ! isCompact && <li>{ this.renderCloseButton() }</li> }
 					</ul>
 				</div>
 				<div className="filterbar__mobile-wrap" />
