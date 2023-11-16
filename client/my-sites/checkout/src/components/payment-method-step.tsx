@@ -80,11 +80,12 @@ const CheckoutTermsWrapper = styled.div< {
 	}
 `;
 
-const NonTotalPrices = styled.div`
+const NonTotalPrices = styled.div< { showToSFoldableCard: boolean } >`
 	font-size: 12px;
-	border-top: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
+	border-top: ${ ( props ) =>
+		props.showToSFoldableCard ? 'none' : '1px solid ' + props.theme.colors.borderColorLight };
 	border-bottom: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
-	padding: 16px 0;
+	padding: ${ ( showToSFoldableCard ) => ( showToSFoldableCard ? '0 0 16px' : '16px 0' ) };
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
@@ -114,16 +115,18 @@ export default function BeforeSubmitCheckoutHeader() {
 
 	return (
 		<>
-			<CheckoutTermsWrapper
-				shouldCollapseLastStep={ shouldCollapseLastStep }
-				showToSFoldableCard={ showToSFoldableCard }
-			>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsWrapper>
+			{ ! showToSFoldableCard && (
+				<CheckoutTermsWrapper
+					shouldCollapseLastStep={ shouldCollapseLastStep }
+					showToSFoldableCard={ showToSFoldableCard }
+				>
+					<CheckoutTerms cart={ responseCart } />
+				</CheckoutTermsWrapper>
+			) }
 
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>
-					<NonTotalPrices>
+					<NonTotalPrices showToSFoldableCard={ showToSFoldableCard }>
 						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
 						{ couponLineItem && <NonProductLineItem subtotal lineItem={ couponLineItem } /> }
 						{ taxLineItems.map( ( taxLineItem ) => (
@@ -136,6 +139,14 @@ export default function BeforeSubmitCheckoutHeader() {
 					<TotalPrice>
 						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 					</TotalPrice>
+					{ showToSFoldableCard && (
+						<CheckoutTermsWrapper
+							shouldCollapseLastStep={ shouldCollapseLastStep }
+							showToSFoldableCard={ showToSFoldableCard }
+						>
+							<CheckoutTerms cart={ responseCart } />
+						</CheckoutTermsWrapper>
+					) }
 				</WPOrderReviewSection>
 			) }
 		</>
