@@ -29,6 +29,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ isRemoving, setIsRemoving ] = useState( false );
 	const [ isEditing, setIsEditing ] = useState( false );
 	const [ record, setRecord ] = useState( '' );
 	const [ ipAddress, setIpAddress ] = useState( '' );
@@ -38,6 +39,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		setRecord( '' );
 		setIpAddress( '' );
 		setIsSaving( false );
+		setIsRemoving( false );
 	};
 
 	// Display success notices when the glue record is updated
@@ -48,6 +50,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		},
 		onError( error ) {
 			dispatch( errorNotice( error.message, noticeOptions ) );
+			clearState();
 		},
 	} );
 
@@ -55,6 +58,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const { deleteGlueRecord } = useDeleteGlueRecordMutation( domain.name, {
 		onSuccess() {
 			dispatch( successNotice( translate( 'Glue record deleted successfully.' ), noticeOptions ) );
+			clearState();
 		},
 		onError() {
 			dispatch(
@@ -63,6 +67,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					noticeOptions
 				)
 			);
+			clearState();
 		},
 	} );
 
@@ -110,6 +115,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	};
 
 	const handleDelete = ( record: string ) => {
+		setIsRemoving( true );
 		deleteGlueRecord( record );
 	};
 
@@ -146,7 +152,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				<div className="domain-forwarding-card__fields-column">
 					<Button
 						scary
-						busy={ isSaving }
+						disabled={ isSaving || isRemoving }
 						className="edit-redirect-button"
 						onClick={ () => handleDelete( child.record ) }
 					>
