@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
 import QuickLinksForHostedSites from 'calypso/my-sites/customer-home/cards/actions/quick-links-for-hosted-sites';
+import QuickPost from 'calypso/my-sites/customer-home/cards/actions/quick-post';
 import WpForTeamsQuickLinks from 'calypso/my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import {
 	ACTION_QUICK_LINKS,
 	ACTION_QUICK_LINKS_FOR_HOSTED_SITES,
+	ACTION_QUICK_POST,
 	ACTION_WP_FOR_TEAMS_QUICK_LINKS,
 	FEATURE_GO_MOBILE,
 	FEATURE_QUICK_START,
@@ -30,6 +32,7 @@ const cardComponents = {
 	[ FEATURE_QUICK_START ]: QuickStart,
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
 	[ ACTION_QUICK_LINKS_FOR_HOSTED_SITES ]: QuickLinksForHostedSites,
+	[ ACTION_QUICK_POST ]: QuickPost,
 	[ FEATURE_STATS ]: Stats,
 };
 
