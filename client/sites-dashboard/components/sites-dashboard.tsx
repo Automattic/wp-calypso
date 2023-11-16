@@ -246,7 +246,7 @@ export function SitesDashboard( {
 					sorting={ sitesSorting }
 					grouping={ { status, showHidden: true } }
 				>
-					{ ( { sites, statuses } ) => {
+					{ ( { sites, statuses, countOwner } ) => {
 						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
 
 						const selectedStatus =
@@ -265,6 +265,7 @@ export function SitesDashboard( {
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
 										isFilterByOwner={ isFilterByOwner }
+										countOwner={ countOwner }
 									/>
 								) }
 								{ userPreferencesLoaded && (

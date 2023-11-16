@@ -15,8 +15,9 @@ export function useSitesListFiltering< T extends SiteForFiltering >(
 	sites: T[],
 	{ search, userId, isFilterByOwner }: SitesFilterOptions
 ) {
-	if ( isFilterByOwner && userId ) {
-		sites = sites.filter( ( site ) => site.site_owner === userId );
+	let sitesOwnedByMe: T[] = [];
+	if ( userId ) {
+		sitesOwnedByMe = sites.filter( ( site ) => site.site_owner === userId );
 	}
 	const filteredSites = useFuzzySearch( {
 		data: sites,
@@ -24,5 +25,11 @@ export function useSitesListFiltering< T extends SiteForFiltering >(
 		query: search,
 	} );
 
-	return filteredSites;
+	return {
+		sites: isFilterByOwner ? sitesOwnedByMe : filteredSites,
+		countOwner: {
+			me: sitesOwnedByMe.length,
+			all: sites.length,
+		},
+	};
 }

@@ -1,5 +1,9 @@
 import { SearchIcon, type ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
-import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
+import {
+	GroupableSiteLaunchStatuses,
+	useSitesListFiltering,
+	useSitesListGrouping,
+} from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -78,6 +82,7 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 } );
 
 type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
+type CountOwner = ReturnType< typeof useSitesListFiltering >[ 'countOwner' ];
 
 type SitesContentControlsProps = {
 	initialSearch?: string;
@@ -85,6 +90,7 @@ type SitesContentControlsProps = {
 	statuses: Statuses;
 	isFilterByOwner: boolean;
 	selectedStatus: Statuses[ number ];
+	countOwner: CountOwner;
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
 	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
 
@@ -119,6 +125,7 @@ export const SitesContentControls = ( {
 	onSitesSortingChange,
 	hasSitesSortingPreferenceLoaded,
 	isFilterByOwner = false,
+	countOwner = { me: 0, all: 0 },
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 	const searchRef = useRef< SearchImperativeHandle >( null );
@@ -185,8 +192,8 @@ export const SitesContentControls = ( {
 					}
 				>
 					<SelectDropdown.Item
+						count={ countOwner.all }
 						selected={ ! isFilterByOwner }
-						// Translators: `siteStatus` is one of the site statuses specified in the Sites page. `count` is a number of sites of given status.
 						onClick={ () =>
 							onQueryParamChange( {
 								isFilterByOwner: undefined,
@@ -197,8 +204,8 @@ export const SitesContentControls = ( {
 						{ __( 'Everyone' ) }
 					</SelectDropdown.Item>
 					<SelectDropdown.Item
+						count={ countOwner.me }
 						selected={ isFilterByOwner }
-						// Translators: `siteStatus` is one of the site statuses specified in the Sites page. `count` is a number of sites of given status.
 						onClick={ () =>
 							onQueryParamChange( {
 								isFilterByOwner: true,

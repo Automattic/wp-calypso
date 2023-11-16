@@ -28,10 +28,11 @@ type FilteringProps = { filtering?: SitesFilterOptions };
 const addFiltering = < T extends BaseProps >( enabled: boolean, baseProps: T ) => {
 	if ( enabled ) {
 		const props = baseProps as T & FilteringProps;
-
+		const { sites, countOwner } = useSitesListFiltering( props.sites, props.filtering ?? {} );
 		return {
 			...props,
-			sites: useSitesListFiltering( props.sites, props.filtering ?? {} ),
+			sites,
+			countOwner,
 		};
 	}
 
@@ -87,7 +88,9 @@ type ComponentFilteringProp< T extends boolean > = T extends true
 	: {};
 
 type RenderProp< TSite, TGrouping > = TGrouping extends true
-	? BaseProps< TSite > & { statuses: Status[] }
+	? BaseProps< TSite > & { statuses: Status[] } & {
+			countOwner: ReturnType< typeof useSitesListFiltering >[ 'countOwner' ];
+	  }
 	: BaseProps< TSite >;
 
 type CreatedComponentProps<
@@ -114,7 +117,6 @@ export const createSitesListComponent = <
 		const grouped = addGrouping( grouping ?? true, props );
 		const sorted = addSorting( sorting ?? true, grouped );
 		const filtered = addFiltering( filtering ?? true, sorted );
-
 		return children( filtered as unknown as RenderProp< TSite, TGrouping > );
 	};
 };
