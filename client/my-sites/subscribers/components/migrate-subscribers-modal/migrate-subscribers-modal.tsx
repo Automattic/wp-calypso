@@ -14,7 +14,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-function useSelectedOtherSimpleSiteIDs() {
+function useOtherOwnedSiteIDs() {
 	const targetSiteId = useSelector( getSelectedSiteId );
 	const allSites = useSelector( getSites );
 	const currentUserId = useSelector( getCurrentUserId );
@@ -41,7 +41,7 @@ const MigrateSubscribersModal = () => {
 	const [ sourceSiteId, setSourceSiteId ] = useState();
 	const targetSiteName = targetSite?.name || targetSite?.URL || '';
 
-	const eligibleSiteIDs = useSelectedOtherSimpleSiteIDs();
+	const eligibleSiteIDs = useOtherOwnedSiteIDs();
 
 	const modalTitle = translate( 'Migrate subscribers to {{strong}}%(targetSiteName)s{{/strong}}', {
 		args: { targetSiteName: targetSite?.name || targetSite?.URL || '' },
