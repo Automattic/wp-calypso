@@ -10,6 +10,34 @@ async function scanDirectories( basePath, extensions ) {
 		.map( ( dirent ) => dirent.name );
 }
 
+async function copyMetaFiles( archiveDir ) {
+	const buildNumber = process.env.build_number;
+
+	// Use commit hash from the environment if available. In TeamCity, that reflects
+	// the GitHub data -- the local data may be different.
+	const commitHash = process.env.commit_sha ?? 'N/A';
+	// Calypso repo short sha is currently at 11 characters.
+	const cacheBuster = commitHash.slice( 0, 11 );
+
+	const buildMeta = {
+		build_number: buildNumber ?? 'dev',
+		cache_buster: cacheBuster,
+		commit_hash: commitHash,
+		commit_url: `https://github.com/Automattic/wp-calypso/commit/${ commitHash }`,
+	};
+
+	await fs.writeFile(
+		path.join( archiveDir, 'build_meta.json' ),
+		JSON.stringify( buildMeta, null, 2 )
+	);
+
+	// Copy README.md to the root of the archive.
+	await fs.copyFile(
+		path.join( process.cwd(), 'README.md' ),
+		path.join( archiveDir, 'README.md' )
+	);
+}
+
 const rtlCSSPlugin = {
 	name: 'RTLCSSPlugin',
 	setup( build ) {
@@ -120,3 +148,5 @@ const result = blocks.map( async ( block ) => {
 } );
 
 await Promise.all( result );
+
+await copyMetaFiles( process.cwd() );
