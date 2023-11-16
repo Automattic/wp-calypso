@@ -62,6 +62,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
+import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -327,6 +328,7 @@ export default function WPCheckout( {
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
 	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const showToSFoldableCard = useToSFoldableCard();
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
@@ -671,7 +673,7 @@ export default function WPCheckout( {
 							// eslint-disable-next-line no-nested-ternary
 							isJetpackCheckout() ? (
 								<JetpackCheckoutSeals />
-							) : hasCheckoutVersion( '2' ) ? (
+							) : hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
 								<CheckoutMoneyBackGuarantee cart={ responseCart } />
 							) : null
 						}

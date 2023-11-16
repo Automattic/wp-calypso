@@ -10,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice from './bundled-domain-notice';
 import DomainRegistrationAgreement from './domain-registration-agreement';
@@ -58,6 +59,8 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 		}
 	`;
 
+	const showToSFoldableCard = useToSFoldableCard();
+
 	return (
 		<Fragment>
 			<div className="checkout__terms" id="checkout-terms">
@@ -74,7 +77,7 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
 				is100YearPlanPurchase={ has100YearPlan( cart ) }
 			/>
-			{ hasCheckoutVersion( '2' ) ? (
+			{ hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
 				<>
 					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 					<TermsCollapsedContent>

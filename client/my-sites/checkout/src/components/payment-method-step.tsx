@@ -15,12 +15,17 @@ import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
+import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
-const CheckoutTermsWrapper = styled.div< { shouldCollapseLastStep: boolean } >`
+const CheckoutTermsWrapper = styled.div< {
+	shouldCollapseLastStep: boolean;
+	showToSFoldableCard: boolean;
+} >`
 	& > * {
 		margin: 16px 0;
-		padding-left: ${ hasCheckoutVersion( '2' ) ? null : '24px' };
+		padding-left: ${ ( { showToSFoldableCard } ) =>
+			hasCheckoutVersion( '2' ) || showToSFoldableCard ? null : '24px' };
 		position: relative;
 	}
 
@@ -105,9 +110,14 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
+	const showToSFoldableCard = useToSFoldableCard();
+
 	return (
 		<>
-			<CheckoutTermsWrapper shouldCollapseLastStep={ shouldCollapseLastStep }>
+			<CheckoutTermsWrapper
+				shouldCollapseLastStep={ shouldCollapseLastStep }
+				showToSFoldableCard={ showToSFoldableCard }
+			>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
