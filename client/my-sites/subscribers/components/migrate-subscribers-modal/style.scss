@@ -7,6 +7,7 @@
 		width: 560px;
 		// Allow site picker to expand beyond modal.
 		overflow: visible;
+		max-height: unset;
 
 		.components-modal__header {
 			padding: 0 24px;
