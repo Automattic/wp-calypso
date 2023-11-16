@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
@@ -634,6 +635,7 @@ const Settings = ( {
 
 	const renderDomainGlueRecordsSection = () => {
 		if (
+			! config.isEnabled( 'domains/glue-records' ) ||
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.transferStatus === transferStatus.PENDING_ASYNC ||
