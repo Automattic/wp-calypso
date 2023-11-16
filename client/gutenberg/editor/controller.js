@@ -227,10 +227,10 @@ export const redirect = async ( context, next ) => {
 };
 
 function getPressThisData( query ) {
-	const { url, text, title, comment_content, comment_author, answer_prompt } = query;
+	const { url, text, title, comment_content, comment_author, answer_prompt, new_prompt } = query;
 
-	return url || answer_prompt
-		? { url, text, title, comment_content, comment_author, answer_prompt }
+	return url || answer_prompt || new_prompt
+		? { url, text, title, comment_content, comment_author, answer_prompt, new_prompt }
 		: null;
 }
 
