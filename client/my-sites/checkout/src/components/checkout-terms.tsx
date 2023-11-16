@@ -79,7 +79,15 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			/>
 			{ hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
 				<>
-					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
+					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
+					{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
+					{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
+					{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
+					<EbanxTermsOfService />
+					{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
+					{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
+					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
+
 					<TermsCollapsedContent>
 						<FoldableCard
 							compact
@@ -87,16 +95,9 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 							header="Read more"
 							screenReaderText="Read more"
 						>
-							{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
-							{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
-							{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
+							{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 							{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
-							{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
-							{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
-							{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
-							<EbanxTermsOfService />
 							{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-							{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 							<JetpackSocialAdvancedPricingDisclaimer />{ ' ' }
 						</FoldableCard>
 					</TermsCollapsedContent>
