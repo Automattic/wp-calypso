@@ -13,6 +13,7 @@ import {
 	LineItem,
 	getPartnerCoupon,
 	hasCheckoutVersion,
+	doesPurchaseHaveFullCredits,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -128,11 +129,13 @@ function CostOverridesList( {
 	currency,
 	removeCoupon,
 	couponCode,
+	creditsInteger,
 }: {
 	costOverridesList: Array< CostOverrideForDisplay >;
 	currency: string;
 	removeCoupon: RemoveCouponFromCart;
 	couponCode: ResponseCart[ 'coupon' ];
+	creditsInteger: number;
 } ) {
 	const translate = useTranslate();
 	// Let's put the coupon code last because it will have its own "Remove" button.
@@ -158,6 +161,14 @@ function CostOverridesList( {
 					</div>
 				);
 			} ) }
+			{ creditsInteger > 0 && (
+				<div className="cost-overrides-list-item" key="credits-override">
+					<span className="cost-overrides-list-item__reason">{ translate( 'Credits' ) }</span>
+					<span className="cost-overrides-list-item__discount">
+						{ formatCurrency( -creditsInteger, currency, { isSmallestUnit: true } ) }
+					</span>
+				</div>
+			) }
 			{ couponOverrides.map( ( costOverride ) => {
 				return (
 					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
@@ -232,6 +243,11 @@ export function WPOrderReviewLineItems( {
 	const [ initialProducts ] = useState( () => responseCart.products );
 
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	// Clamp the credits display value to the total
+	const creditsForDisplay = isFullCredits
+		? responseCart.sub_total_with_taxes_integer
+		: responseCart.credits_integer;
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -287,6 +303,7 @@ export function WPOrderReviewLineItems( {
 						currency={ responseCart.currency }
 						removeCoupon={ removeCoupon }
 						couponCode={ responseCart.coupon }
+						creditsInteger={ creditsForDisplay }
 					/>
 				</CostOverridesListStyle>
 			) }
