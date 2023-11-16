@@ -1,5 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import config from '@automattic/calypso-config';
+import { StyleVariation } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,21 +13,44 @@ import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/ty
 
 import './styles.scss';
 
+type ThemeStyle = {
+	name: string;
+	title: string;
+};
+
+const styles: ThemeStyle[] = [
+	{ name: 'charcoal', title: 'Charcoal' },
+	{ name: 'rainforest', title: 'Rainforest' },
+	{ name: 'ruby-wine', title: 'Ruby Wine' },
+	{ name: 'blue-yellow', title: 'Blue/Yellow' },
+	{ name: 'grey-bordeaux', title: 'Light Grey/Bordeaux' },
+	{ name: 'grey-mint', title: 'Grey/Mint Green' },
+	{ name: 'olive-pink', title: 'Olive Green/Light Pink' },
+	{ name: 'white', title: 'White' },
+];
+
 const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
 
-	const onSelectTheme = ( slug: string ) => {
+	const onSelectTheme = ( slug: string, styleVariation?: ThemeStyle ) => {
 		setSelectedDesign( {
 			slug: 'videomaker',
 			theme: slug,
-			is_premium: true,
+			is_premium: config.isEnabled( 'videomaker-trial' ) ? false : true,
 			title: 'Videomaker',
 			categories: [],
 			features: [],
-			template: '',
+			template: styleVariation?.name ?? '',
 		} );
+
+		if ( config.isEnabled( 'videomaker-trial' ) && styleVariation ) {
+			setSelectedStyleVariation( {
+				slug: styleVariation.name,
+				title: styleVariation.title,
+			} as StyleVariation );
+		}
 
 		submit?.();
 	};
@@ -35,7 +60,7 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 			<div className="videomaker-setup__theme-picker">
 				<button
 					className="videomaker-setup__dark-button"
-					onClick={ () => onSelectTheme( 'premium/videomaker' ) }
+					onClick={ () => onSelectTheme( 'pub/videomaker' ) }
 				>
 					<img
 						src="https://videopress2.files.wordpress.com/2022/12/videomaker-dark.jpg"
@@ -44,7 +69,12 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 				</button>
 				<button
 					className="videomaker-setup__light-button"
-					onClick={ () => onSelectTheme( 'premium/videomaker-white' ) }
+					onClick={ () =>
+						onSelectTheme(
+							'pub/videomaker',
+							styles.find( ( style ) => 'white' === style.name )
+						)
+					}
 				>
 					<img
 						src="https://videopress2.files.wordpress.com/2022/12/videomaker-light.jpg"
