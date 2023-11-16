@@ -72,14 +72,28 @@ module.exports = {
 	module: {
 		strictExportPresence: true,
 		rules: [
-			TranspileConfig.loader( {
-				workerCount: 2,
-				configFile: path.resolve( '../../babel.config.js' ),
-				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-				cacheIdentifier,
-				cacheCompression: false,
+			{
+				test: /\.[jt]sx?$/,
 				exclude: /node_modules\//,
-			} ),
+				use: [
+					{
+						loader: require.resolve( 'thread-loader' ),
+						options: {
+							workers: 2,
+						},
+					},
+					{
+						loader: require.resolve( 'babel-loader' ),
+						options: {
+							configFile: path.resolve( '../../babel.config.js' ),
+							babelrc: false,
+							cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+							cacheIdentifier,
+							cacheCompression: false,
+						},
+					},
+				],
+			},
 			TranspileConfig.loader( {
 				workerCount: 2,
 				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
