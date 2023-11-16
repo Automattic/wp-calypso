@@ -4,7 +4,6 @@
 
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
-const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const {
@@ -20,6 +19,7 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
+const { SwcMinifyWebpackPlugin } = require( 'swc-minify-webpack-plugin' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
@@ -207,15 +207,8 @@ const webpackConfig = {
 		runtimeChunk: { name: 'runtime' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
-		minimize: shouldMinify,
-		minimizer: Minify( {
-			parallel: workerCount,
-			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
-			terserOptions: {
-				compress: true,
-				mangle: true,
-			},
-		} ),
+		minimize: true,
+		minimizer: [ new SwcMinifyWebpackPlugin() ],
 	},
 	module: {
 		strictExportPresence: true,
