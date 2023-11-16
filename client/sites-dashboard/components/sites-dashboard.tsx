@@ -150,14 +150,7 @@ const ManageAllDomainsButton = styled( Button )`
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
-	queryParams: {
-		page = 1,
-		perPage = 96,
-		search,
-		status = 'all',
-		isFilterByOwner = false,
-		newSiteID,
-	},
+	queryParams: { page = 1, perPage = 96, search, status = 'all', owner = '', newSiteID },
 }: SitesDashboardProps ) {
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: TRACK_SOURCE_NAME,
@@ -172,6 +165,7 @@ export function SitesDashboard( {
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
+	const isFilterByOwner = owner === 'me';
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;

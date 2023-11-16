@@ -129,7 +129,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 					search: context.query.search,
 					status: context.query.status,
 					newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
-					isFilterByOwner: context.query.isFilterByOwner === 'true',
+					owner: context.query.owner,
 				} }
 			/>
 		</>

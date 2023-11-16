@@ -22,7 +22,7 @@ export interface SitesDashboardQueryParams {
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
 	newSiteID?: number;
-	isFilterByOwner?: boolean;
+	owner?: string;
 }
 
 const FilterBar = styled.div( {
@@ -196,7 +196,7 @@ export const SitesContentControls = ( {
 						selected={ ! isFilterByOwner }
 						onClick={ () =>
 							onQueryParamChange( {
-								isFilterByOwner: undefined,
+								owner: undefined,
 								page: undefined,
 							} )
 						}
@@ -208,7 +208,7 @@ export const SitesContentControls = ( {
 						selected={ isFilterByOwner }
 						onClick={ () =>
 							onQueryParamChange( {
-								isFilterByOwner: true,
+								owner: 'me',
 								page: undefined,
 							} )
 						}
