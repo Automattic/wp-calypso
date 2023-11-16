@@ -49,7 +49,9 @@ const CheckoutTermsItem = ( {
 			onClick={ onClick }
 			showToSFoldableCard={ showToSFoldableCard }
 		>
-			{ ! hasCheckoutVersion( '2' ) && <Gridicon icon="info-outline" size={ 18 } /> }
+			{ hasCheckoutVersion( '2' ) || showToSFoldableCard ? null : (
+				<Gridicon icon="info-outline" size={ 18 } />
+			) }
 			{ isPrewrappedChildren ? children : <p>{ children }</p> }
 		</Wrapper>
 	);
