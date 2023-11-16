@@ -21,11 +21,12 @@
 		"build:support-content-links": "calypso-build --env block='support-content-links'",
 		"build-translations-manifest": "yarn run build-calypso-strings && node bin/build-translations-manifest.js",
 		"clean": "rm -r release-files block-library/*/build || true",
-		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks"
+		"dev": "node build.mjs"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/color-studio": "2.5.0",
@@ -46,7 +47,8 @@
 		"glob": "^7.1.6",
 		"i18n-calypso": "workspace:^",
 		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"react-dom": "^18.2.0",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -54,8 +56,11 @@
 		"@testing-library/react": "^14.0.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.21.0",
 		"copy-webpack-plugin": "^10.1.0",
+		"esbuild": "^0.19.5",
+		"esbuild-sass-plugin": "^2.16.0",
 		"glob": "^7.1.6",
 		"postcss": "^8.4.5",
+		"rtlcss": "^4.1.1",
 		"webpack": "^5.68.0"
 	}
 }

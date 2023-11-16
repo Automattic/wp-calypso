@@ -1,4 +1,4 @@
-@import "@automattic/calypso-color-schemes";
+@import '~@automattic/calypso-color-schemes';
 
 .pagination-control {
 	margin: 0;
@@ -27,10 +27,10 @@
 		border-radius: 50%;
 		cursor: pointer;
 		transition: all 0.2s ease-in-out;
-		background-color: var(--color-neutral-10);
+		background-color: var( --color-neutral-10 );
 
 		&:hover {
-			background-color: var(--color-neutral-40);
+			background-color: var( --color-neutral-40 );
 		}
 
 		&:disabled {
@@ -38,8 +38,7 @@
 		}
 
 		&.is-current {
-			background-color: var(--wp-admin-theme-color);
+			background-color: var( --wp-admin-theme-color );
 		}
 	}
-
 }
