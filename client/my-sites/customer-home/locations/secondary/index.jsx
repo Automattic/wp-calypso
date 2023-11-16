@@ -13,6 +13,8 @@ import {
 	LAUNCHPAD_INTENT_PAID_NEWSLETTER,
 	LAUNCHPAD_PRE_LAUNCH,
 	NOTICE_READER_FIRST_POSTS,
+	FEATURE_DISCOVERY_FEE,
+	FEATURE_DISCOVERY_FEED,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
@@ -30,6 +32,7 @@ import LearnGrow from './learn-grow';
 
 const cardComponents = {
 	[ FEATURE_DOMAIN_UPSELL ]: DomainUpsell,
+	[ FEATURE_DISCOVERY_FEED ]: DomainUpsell,
 	[ FEATURE_STATS ]: Stats,
 	[ SECTION_LEARN_GROW ]: LearnGrow,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
