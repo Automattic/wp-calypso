@@ -72,7 +72,6 @@ const PodcastFeed: Step = ( { navigation } ) => {
 							placeholder={ __( 'Your name' ) }
 						/>
 					</FormFieldset>
-					{ name } { podcastCategory1 } { podcastCategory2 } { podcastCategory3 }
 					<FormFieldset>
 						<FormLabel htmlFor="podcasting_category_1">{ __( 'Podcast topics' ) }</FormLabel>
 						<FormSettingExplanation>
