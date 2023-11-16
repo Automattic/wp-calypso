@@ -115,6 +115,7 @@ export interface SiteDetails {
 	is_private?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_favorite?: boolean;
 	is_wpcom_staging_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
@@ -207,7 +208,6 @@ export interface SiteDetailsOptions {
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_domain_only?: boolean;
-	is_favorite?: boolean;
 	is_mapped_domain?: boolean;
 	is_pending_plan?: boolean;
 	is_redirect?: boolean;
