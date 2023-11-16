@@ -39,8 +39,13 @@ if ( url ) {
 if ( answer_prompt ) {
 	( async () => {
 		await isEditorReady();
+
+		// If answer_prompt is strictly true, initiate the block with no promptId so it fetches the
+		// prompt for the day. Otherwise, if truthy we assume it as the promptId.
+		const blockProps = answer_prompt === true ? {} : { promptId: answer_prompt };
+
 		dispatch( 'core/editor' ).resetEditorBlocks( [
-			createBlock( 'jetpack/blogging-prompt', { promptId: answer_prompt } ),
+			createBlock( 'jetpack/blogging-prompt', blockProps ),
 		] );
 	} )();
 }
