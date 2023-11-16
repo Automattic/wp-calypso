@@ -12,7 +12,7 @@ const SiteFavoriteContainer = styled.tr( {
 } );
 
 const SitesFavorite = ( { site }: { site: SiteExcerptData } ) => {
-	const [ isFavorite, setIsFavorite ] = useState( site.is_favorite );
+	const [ isFavorite, setIsFavorite ] = useState( site.is_user_favorite );
 	const { addSiteFavorite } = useAddSiteFavorite( site.ID, {
 		onError: () => {
 			setIsFavorite( ! isFavorite );
