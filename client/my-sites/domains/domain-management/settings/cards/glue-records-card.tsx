@@ -170,7 +170,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				<FormLabel>{ translate( 'Record' ) }</FormLabel>
 				<div className="glue-record-input-wrapper">
 					<FormTextInputWithAffixes
-						placeholder={ translate( 'Ex: ns1' ) }
+						placeholder={ translate( 'Enter subdomain (e.g. ns1)' ) }
 						disabled={ isLoadingData || isSaving }
 						name="record"
 						onChange={ handleRecordChange }
@@ -183,6 +183,11 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				<div className="ip-address">
 					<FormTextInputWithAffixes
 						disabled={ isLoadingData || isSaving }
+						placeholder={ translate( 'e.g. %(example)s', {
+							args: {
+								example: '123.45.78.9',
+							},
+						} ) }
 						name="ip-address"
 						noWrap
 						onChange={ handleIpAddressChange }
