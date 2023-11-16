@@ -4349,6 +4349,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/create-cache-key-function@npm:^27.4.2":
+  version: 27.5.1
+  resolution: "@jest/create-cache-key-function@npm:27.5.1"
+  dependencies:
+    "@jest/types": ^27.5.1
+  checksum: 1890ac93fad852e0a98c31de1e5f2c548974aefd36e838d27b70834dda1654a153ed6a52258447ebacfd47463e9bdb83750631bee827797c7b9973c083998a96
+  languageName: node
+  linkType: hard
+
 "@jest/environment@npm:^29.7.0":
   version: 29.7.0
   resolution: "@jest/environment@npm:29.7.0"
@@ -4507,6 +4516,19 @@ __metadata:
     slash: ^3.0.0
     write-file-atomic: ^4.0.2
   checksum: 7f4a7f73dcf45dfdf280c7aa283cbac7b6e5a904813c3a93ead7e55873761fc20d5c4f0191d2019004fac6f55f061c82eb3249c2901164ad80e362e7a7ede5a6
+  languageName: node
+  linkType: hard
+
+"@jest/types@npm:^27.5.1":
+  version: 27.5.1
+  resolution: "@jest/types@npm:27.5.1"
+  dependencies:
+    "@types/istanbul-lib-coverage": ^2.0.0
+    "@types/istanbul-reports": ^3.0.0
+    "@types/node": "*"
+    "@types/yargs": ^16.0.0
+    chalk: ^4.0.0
+  checksum: 4598b302398db0eb77168b75a6c58148ea02cc9b9f21c5d1bbe985c1c9257110a5653cf7b901c3cab87fba231e3fed83633687f1c0903b4bc6939ab2a8452504
   languageName: node
   linkType: hard
 
@@ -7061,7 +7083,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.3.82":
+"@swc/core@npm:^1.3.82, @swc/core@npm:^1.3.96":
   version: 1.3.96
   resolution: "@swc/core@npm:1.3.96"
   dependencies:
@@ -7111,6 +7133,18 @@ __metadata:
   version: 0.1.2
   resolution: "@swc/counter@npm:0.1.2"
   checksum: 18be012107d4ba1f79776c48d83391ca2159103d7d31a59ff52fcc8024db51b71c5f46714a9fb73981739bc8a38dc6f385a046b71cc08f6043f3c47f5c409eab
+  languageName: node
+  linkType: hard
+
+"@swc/jest@npm:^0.2.29":
+  version: 0.2.29
+  resolution: "@swc/jest@npm:0.2.29"
+  dependencies:
+    "@jest/create-cache-key-function": ^27.4.2
+    jsonc-parser: ^3.2.0
+  peerDependencies:
+    "@swc/core": "*"
+  checksum: 10f34341f9bc8003cec44f91a88b531ba44094aad97b2f8410fb2f94db9eb3b8fc7f6d14ba867eb9c1dc6ba29cc46058244b8280d673a7c681062fe0dc73c3f0
   languageName: node
   linkType: hard
 
@@ -8353,6 +8387,15 @@ __metadata:
   version: 20.2.0
   resolution: "@types/yargs-parser@npm:20.2.0"
   checksum: 0464e5538340ef2541aa12ca2ccf0cbf2cd6f83edb964fdef61936885a7533b21189e6b9a31ad1aec2c81f8c9350707b2dd18697d88b752a20d2c731d968388d
+  languageName: node
+  linkType: hard
+
+"@types/yargs@npm:^16.0.0":
+  version: 16.0.8
+  resolution: "@types/yargs@npm:16.0.8"
+  dependencies:
+    "@types/yargs-parser": "*"
+  checksum: ba659eb5a48009ccaa8d6426ad63f2b8de09c153d02f70c911d86b421cfc29ad63e92e17c120d97e81f43cda306760fb3cb5a4137b083d5fafb38c174a6ddf01
   languageName: node
   linkType: hard
 
@@ -32247,6 +32290,8 @@ __metadata:
     "@signal-noise/stylelint-scales": ^2.0.3
     "@storybook/cli": ^7.5.2
     "@storybook/react": ^7.5.2
+    "@swc/core": ^1.3.96
+    "@swc/jest": ^0.2.29
     "@tanstack/eslint-plugin-query": ^4.29.8
     "@testing-library/jest-dom": ^6.1.4
     "@types/cookie": ^0.4.1

@@ -3,7 +3,7 @@
  */
 
 import { withStorageKey } from '@automattic/state-utils';
-import * as browserStorage from 'calypso/lib/browser-storage';
+import * as browserStorageMethods from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { createReduxStore } from 'calypso/state';
 import { addReducerToStore } from 'calypso/state/add-reducer';
@@ -26,6 +26,9 @@ const initialReducer = combineReducers( {
 	currentUser,
 	postTypes,
 } );
+
+// Needed to be able to mock browserStorage later
+const browserStorage = { ...browserStorageMethods };
 
 jest.mock( 'calypso/lib/user/support-user-interop', () => ( {
 	isSupportSession: jest.fn().mockReturnValue( false ),
@@ -1000,6 +1003,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load initial state and create Redux store with it
 		await loadPersistedState();
+
 		const userId = 123456789;
 		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
