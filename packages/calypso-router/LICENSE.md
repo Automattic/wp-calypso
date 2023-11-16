@@ -1,6 +1,6 @@
 Calypso Router is a fork of the [page.js](https://github.com/visionmedia/page.js) package originally released by TJ Holowaychuk under the MIT License (MIT):
 
-Copyright (c) 2012 TJ Holowaychuk <tj@vision-media.ca>
+Copyright (c) 2012 TJ Holowaychuk <mailto:tj@vision-media.ca>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
