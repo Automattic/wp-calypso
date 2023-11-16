@@ -370,14 +370,19 @@
 		margin: 0 4px;
 	}
 
-	.filterbar__selection.button {
-		display: flex;
-		align-items: center;
-		padding: 8px 8px 8px 12px;
-	}
-
 	.filterbar__selection {
+		align-items: center;
+		color: #000;
+		display: flex;
 		height: 36px;
+		padding: 8px 8px 8px 12px;
+
+		&.is-active,
+		&.is-selected,
+		&.is-selected:focus,
+		&.is-selected:hover {
+			color: var(--color-text-inverted);
+		}
 	}
 
 	.filterbar__selection-close {
