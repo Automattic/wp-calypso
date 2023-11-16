@@ -34,8 +34,10 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 
 				expect( code ).toBe(
 					'var _ref = function (callback) {\n  import( /*webpackChunkName: "async-load-foo"*/"foo").then(function load(mod) {\n' +
-						'    callback(mod.default);\n' +
-						'  });\n};\nexport default (() => <AsyncLoad require={_ref} />);'
+						'    callback(mod);\n' +
+						'  });\n' +
+						'};\n' +
+						'export default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
 		} );
@@ -77,7 +79,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 				const code = transform( 'asyncRequire( "foo/bar", cb );' );
 
 				expect( code ).toBe(
-					'import( /*webpackChunkName: "async-load-foo-bar"*/"foo/bar").then(function load(mod) {\n  cb(mod.default);\n});'
+					'import( /*webpackChunkName: "async-load-foo-bar"*/"foo/bar").then(function load(mod) {\n  cb(mod);\n});'
 				);
 			} );
 		} );
@@ -115,7 +117,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			[
 				'<AsyncLoad require={function (callback) {',
 				'  patchedImport( /*webpackChunkName: "async-load-foo"*/"foo").then(function load(mod) {',
-				'    callback(mod.default);',
+				'    callback(mod);',
 				'  });',
 				'}} />;',
 			].join( '\n' )

@@ -99,25 +99,19 @@ module.exports = ( { types: t } ) => {
 					`webpackChunkName: "${ chunkName }"`,
 					false
 				);
-				const importCall = t.callExpression( t.import(), [ argumentWithMagicComments ] );
 
-				let statement;
+				let statement = t.callExpression( t.import(), [ argumentWithMagicComments ] );
+
 				if ( callback ) {
-					statement = t.callExpression( t.memberExpression( importCall, t.identifier( 'then' ) ), [
+					statement = t.callExpression( t.memberExpression( statement, t.identifier( 'then' ) ), [
 						t.functionExpression(
 							t.identifier( 'load' ),
 							[ t.identifier( 'mod' ) ],
 							t.blockStatement( [
-								t.expressionStatement(
-									t.callExpression( callback, [
-										t.memberExpression( t.identifier( 'mod' ), t.identifier( 'default' ) ),
-									] )
-								),
+								t.expressionStatement( t.callExpression( callback, [ t.identifier( 'mod' ) ] ) ),
 							] )
 						),
 					] );
-				} else {
-					statement = importCall;
 				}
 
 				path.replaceWith( statement );
