@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
@@ -18,6 +19,7 @@ import './style.scss';
 export class Filterbar extends Component {
 	static defaultProps = {
 		selectorTypes: { dateRange: true, actionType: true, text: true },
+		showFilterByLabel: true,
 	};
 
 	state = {
@@ -122,10 +124,13 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter, isLoading, isVisible, selectorTypes } = this.props;
+		const { translate, siteId, filter, isLoading, isVisible, selectorTypes, showFilterByLabel } =
+			this.props;
+
+		const rootClassNames = classnames( 'filterbar', this.props.className );
 
 		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
-			return <div className="filterbar is-loading" />;
+			return <div className={ `${ rootClassNames } is-loading` } />;
 		}
 
 		if ( ! isVisible ) {
@@ -134,7 +139,7 @@ export class Filterbar extends Component {
 
 		if ( filter.backButton ) {
 			return (
-				<div className="filterbar" id="filterbar">
+				<div className={ rootClassNames } id="filterbar">
 					<div className="filterbar__wrap card">
 						<BackButton onClick={ this.goBack } />
 					</div>
@@ -143,14 +148,16 @@ export class Filterbar extends Component {
 		}
 
 		return (
-			<div className="filterbar" id="filterbar">
+			<div className={ rootClassNames } id="filterbar">
 				<div className="filterbar__wrap card">
 					{ selectorTypes.text && (
 						<div className="filterbar__text-control">
 							<TextSelector filter={ filter } siteId={ siteId } />
 						</div>
 					) }
-					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+					{ showFilterByLabel && (
+						<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+					) }
 					<ul className="filterbar__control-list">
 						{ selectorTypes.dateRange && (
 							<li>

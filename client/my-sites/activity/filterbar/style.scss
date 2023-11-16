@@ -60,6 +60,7 @@
 		border-radius: 2px;
 		overflow: hidden;
 		white-space: nowrap;
+		background: #fff;
 	}
 
 	.filterbar__selection.is-selected,
@@ -341,5 +342,51 @@
 	margin-left: 0;
 	li {
 		list-style: none;
+	}
+}
+
+.atelier-filterbar .filterbar__wrap.card {
+	background-color: initial;
+	box-shadow: initial;
+	height: auto;
+
+	.filterbar__text-control {
+		flex-grow: initial;
+		margin: 0;
+
+		.search {
+			box-sizing: border-box;
+			width: 240px;
+		}
+
+		.search.is-compact .search__open-icon {
+			margin: 0 4px;
+			width: 24px;
+		}
+	}
+
+	.filterbar__control-list > li {
+		display: flex;
+		margin: 0 4px;
+	}
+
+	.filterbar__selection.button {
+		display: flex;
+		align-items: center;
+		padding: 8px 8px 8px 12px;
+	}
+
+	.filterbar__selection {
+		height: 36px;
+	}
+
+	.filterbar__selection-close {
+		height: 36px;
+	}
+
+	.filterbar__selection-expand-icon {
+		margin-left: 4px;
+		fill: currentColor;
+		color: var(--color-text-subtle);
 	}
 }

@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight as compose } from 'lodash';
@@ -97,7 +98,7 @@ export class DateRangeSelector extends Component {
 			return `${ toFormated }`;
 		}
 
-		return translate( 'Date Range' );
+		return translate( 'Date range' );
 	};
 
 	getFromDate = () => {
@@ -148,6 +149,7 @@ export class DateRangeSelector extends Component {
 							ref={ props.buttonRef }
 						>
 							{ customLabel ? customLabel : this.getFormattedDate( from, to ) }
+							<Icon icon={ chevronDown } size="16" fill="currentColor" />
 						</Button>
 						{ ( from || to ) && (
 							<Button

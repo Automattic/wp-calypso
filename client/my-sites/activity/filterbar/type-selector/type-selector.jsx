@@ -1,5 +1,6 @@
 import { Button, Card, Popover, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { createRef, Component, Fragment } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -310,8 +311,9 @@ export class TypeSelector extends Component {
 				ref={ this.typeButton }
 			>
 				{ shouldDisplayTitle && title }
-				{ shouldDisplayDelimiter && <span>: </span> }
+				{ shouldDisplayDelimiter && ': ' }
 				{ hasSelectedCheckboxes && selectedCheckboxesContent }
+				<Icon icon={ chevronDown } size="16" fill="currentColor" />
 			</Button>
 		);
 	};
