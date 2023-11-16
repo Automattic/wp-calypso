@@ -1,4 +1,4 @@
-import { Badge, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -121,8 +121,24 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const FormViewRow = ( { child: child }: { child: GlueRecordObject } ) => (
 		<FormFieldset className="domain-forwarding-card__fields" key={ `view-${ child.record }` }>
 			<div className="domain-forwarding-card__fields-row">
-				<div className="domain-forwarding-card__fields-column">
-					<Badge type="info">{ translate( 'Glue record' ) }</Badge>
+				<div className="domain-forwarding-card__fields-column glue-record-data">
+					<div className="domain-forwarding-card__fields-row addresses">
+						<div className="domain-forwarding-card__fields-column source">
+							{ translate( 'Record' ) }:
+						</div>
+						<div className="domain-forwarding-card__fields-column destination">
+							<strong>{ child.record }</strong>
+						</div>
+					</div>
+
+					<div className="domain-forwarding-card__fields-row addresses">
+						<div className="domain-forwarding-card__fields-column source">
+							{ translate( 'IP address' ) }:
+						</div>
+						<div className="domain-forwarding-card__fields-column destination">
+							<strong>{ child.address }</strong>
+						</div>
+					</div>
 				</div>
 				<div className="domain-forwarding-card__fields-column">
 					<Button
@@ -134,24 +150,6 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					</Button>
 				</div>
 			</div>
-
-			<div className="domain-forwarding-card__fields-row addresses">
-				<div className="domain-forwarding-card__fields-column source">
-					{ translate( 'Record' ) }:
-				</div>
-				<div className="domain-forwarding-card__fields-column destination">
-					<strong>{ child.record }</strong>
-				</div>
-			</div>
-
-			<div className="domain-forwarding-card__fields-row addresses">
-				<div className="domain-forwarding-card__fields-column source">
-					{ translate( 'IP address' ) }:
-				</div>
-				<div className="domain-forwarding-card__fields-column destination">
-					<strong>{ child.address }</strong>
-				</div>
-			</div>
 		</FormFieldset>
 	);
 
@@ -161,7 +159,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				<FormLabel>{ translate( 'Record' ) }</FormLabel>
 				<div className="glue-record-input-wrapper">
 					<FormTextInputWithAffixes
-						placeholder="ns1"
+						placeholder={ translate( 'Ex: ns1' ) }
 						disabled={ isLoading }
 						name="record"
 						onChange={ handleRecordChange }
@@ -189,14 +187,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						} */
 					/>
 				</div>
-				{ /*// TODO: validate glue record*/ }
-				{ /*{ ! isValidUrl && (
-					<div className="domain-forwarding-card__error-field">
-						<FormInputValidation isError={ true } text={ errorMessage } />
-					</div>
-				) }*/ }
-
-				<div>
+				<div className="glue-records__action-buttons">
 					<FormButton onClick={ handleSubmit } disabled={ isLoading }>
 						{ translate( 'Save' ) }
 					</FormButton>
