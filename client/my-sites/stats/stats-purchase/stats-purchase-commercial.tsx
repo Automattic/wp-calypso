@@ -31,7 +31,8 @@ const CommercialPurchase = ( {
 	from,
 }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
-	// For the new purchase tier upgrade slider
+	// TODO: Confirm this belongs here.
+	// There are two commercial upgrade pages so will seek clarification.
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
