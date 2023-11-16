@@ -125,12 +125,10 @@ function CheckoutSummaryPriceList() {
 	return (
 		<>
 			<CheckoutSummaryAmountWrapper>
-				{ hasCheckoutVersion( '2' ) && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + subtotalLineItem.id }>
-						<span>{ subtotalLineItem.label }</span>
-						<span>{ subtotalLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
+				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + subtotalLineItem.id }>
+					<span>{ subtotalLineItem.label }</span>
+					<span>{ subtotalLineItem.formattedAmount }</span>
+				</CheckoutSummaryLineItem>
 				{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
 						<span>{ couponLineItem.label }</span>
