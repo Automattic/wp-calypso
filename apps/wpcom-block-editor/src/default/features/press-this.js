@@ -3,7 +3,9 @@ import { dispatch } from '@wordpress/data';
 import { getQueryArgs } from '@wordpress/url';
 import { isEditorReady } from '../../utils';
 
-const { url, title, text, comment_content, comment_author } = getQueryArgs( window.location.href );
+const { url, title, text, comment_content, comment_author, answer_prompt } = getQueryArgs(
+	window.location.href
+);
 
 if ( url ) {
 	( async () => {
@@ -27,8 +29,18 @@ if ( url ) {
 				createBlock( 'core/quote', { value: comment_content, citation: comment_author } )
 			);
 		}
+
 		blocks.push( createBlock( 'core/embed', { url, type: 'wp-embed' } ) );
 
 		dispatch( 'core/editor' ).resetEditorBlocks( blocks );
+	} )();
+}
+
+if ( answer_prompt ) {
+	( async () => {
+		await isEditorReady();
+		dispatch( 'core/editor' ).resetEditorBlocks( [
+			createBlock( 'jetpack/blogging-prompt', { promptId: answer_prompt } ),
+		] );
 	} )();
 }
