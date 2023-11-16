@@ -60,7 +60,11 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 			<div className="videomaker-setup__theme-picker">
 				<button
 					className="videomaker-setup__dark-button"
-					onClick={ () => onSelectTheme( 'pub/videomaker' ) }
+					onClick={ () =>
+						onSelectTheme(
+							config.isEnabled( 'videomaker-trial' ) ? 'pub/videomaker' : 'premium/videomaker'
+						)
+					}
 				>
 					<img
 						src="https://videopress2.files.wordpress.com/2022/12/videomaker-dark.jpg"
@@ -71,7 +75,7 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 					className="videomaker-setup__light-button"
 					onClick={ () =>
 						onSelectTheme(
-							'pub/videomaker',
+							config.isEnabled( 'videomaker-trial' ) ? 'pub/videomaker' : 'premium/videomaker',
 							styles.find( ( style ) => 'white' === style.name )
 						)
 					}
