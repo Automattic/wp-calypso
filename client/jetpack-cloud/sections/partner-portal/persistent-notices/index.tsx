@@ -13,13 +13,14 @@ import {
 	JetpackManagePersistentNoticeRemovalActionCreator,
 	JetpackManagePersistentNoticeActionCreator,
 	JetpackManagePersistentNoticeId,
+	JetpackManagePersistentNoticeOptions,
 } from './types';
 
 export interface JetpackPersistentNoticesProps {
 	storeJetpackManagePersistentNotices: JetpackManagePersistentNoticeActionOptions[];
 	removeJetpackManagePersistentNotice: JetpackManagePersistentNoticeRemovalActionCreator;
 	warningPartnerPortalPersistentNotice: JetpackManagePersistentNoticeActionCreator;
-	partner: Partner;
+	partner: Partner | null;
 }
 
 export class JetpackPersistentNotices extends Component< JetpackPersistentNoticesProps > {
@@ -86,7 +87,7 @@ export default connect(
 		warningPartnerPortalPersistentNotice: (
 			id: string,
 			message: string,
-			link: { linkText: string; linkUrl: string }
-		) => dispatch( warningPartnerPortalPersistentNotice( id, message, link ) ),
+			noticeOptions?: JetpackManagePersistentNoticeOptions
+		) => dispatch( warningPartnerPortalPersistentNotice( id, message, noticeOptions ) ),
 	} )
 )( JetpackPersistentNotices );
