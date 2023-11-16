@@ -41,8 +41,11 @@ type SubscribersPageContextProps = {
 	filterOption: SubscribersFilterBy;
 	setFilterOption: ( option: SubscribersFilterBy ) => void;
 	showAddSubscribersModal: boolean;
+	showMigrateSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
+	setShowMigrateSubscribersModal: ( show: boolean ) => void;
 	addSubscribersCallback: () => void;
+	migrateSubscribersCallback: () => void;
 	siteId: number | null;
 	isLoading: boolean;
 };
@@ -67,6 +70,7 @@ export const SubscribersPageProvider = ( {
 }: SubscribersPageProviderProps ) => {
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
+	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
 	const { hasManySubscribers } = useManySubsSite( siteId );
 
@@ -120,6 +124,23 @@ export const SubscribersPageProvider = ( {
 		);
 	};
 
+	const migrateSubscribersCallback = () => {
+		setShowMigrateSubscribersModal( false );
+		console.log( 'make api call' );
+		// completeImportSubscribersTask();
+
+		// dispatch(
+		// 	successNotice(
+		// 		translate(
+		// 			"Your subscriber list is being processed. We'll send you an email when it's finished importing."
+		// 		),
+		// 		{
+		// 			duration: 5000,
+		// 		}
+		// 	)
+		// );
+	};
+
 	const handleSearch = useCallback( ( term: string ) => {
 		searchTermChanged( term );
 		pageChangeCallback( 1 );
@@ -155,8 +176,11 @@ export const SubscribersPageProvider = ( {
 				filterOption,
 				setFilterOption: filterOptionChanged,
 				showAddSubscribersModal,
+				showMigrateSubscribersModal,
 				setShowAddSubscribersModal,
+				setShowMigrateSubscribersModal,
 				addSubscribersCallback,
+				migrateSubscribersCallback,
 				siteId,
 				isLoading: subscribersQueryResult.isLoading,
 			} }
