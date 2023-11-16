@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PricingSlider,
 	RenderThumbFunction,
@@ -10,8 +11,8 @@ import React, { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
-import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
+import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
@@ -61,6 +62,9 @@ const PersonalPurchase = ( {
 		uiImageCelebrationTier,
 	} = sliderSettings;
 
+	// For the new purchase tier upgrade slider
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
 
@@ -107,7 +111,7 @@ const PersonalPurchase = ( {
 					}
 				) }
 			</div>
-			<TierUpgradeSlider />
+			{ isTierUpgradeSliderEnabled && <TierUpgradeSlider /> }
 
 			<PricingSlider
 				className={ `${ COMPONENT_CLASS_NAME }__slider` }
