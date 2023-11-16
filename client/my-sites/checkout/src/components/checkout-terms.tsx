@@ -77,7 +77,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			{ hasCheckoutVersion( '2' ) ? (
 				<>
 					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-					{ ! isGiftPurchase && <RefundTerms100Year cart={ cart } /> }
 					<TermsCollapsedContent>
 						<FoldableCard
 							compact
@@ -109,7 +108,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 					{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 					{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
-					{ ! isGiftPurchase && <RefundTerms100Year cart={ cart } /> }
 					<EbanxTermsOfService />
 					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
