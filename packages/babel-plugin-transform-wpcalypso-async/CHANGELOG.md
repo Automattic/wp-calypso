@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Removed the `async` option and started transforming all usages to async loads by default
+### Changed
+
 - The `require` callback now gets the module object as a parameter, not just its default field (for compatibility with `React.lazy`)
+
+### Removed
+
+- Removed the `async` option and started transforming all usages to async loads by default
 
 ## 1.0.1
 
