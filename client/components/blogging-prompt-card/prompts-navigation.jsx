@@ -133,6 +133,9 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 
 	const renderResponses = () => {
 		const prompt = getPrompt();
+		if ( ! prompt.answered_link ) {
+			return null;
+		}
 		let responses = (
 			<div className="blogging-prompt__prompt-no-response">
 				<NoResponsesIcon />

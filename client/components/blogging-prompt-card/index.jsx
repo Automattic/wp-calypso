@@ -6,6 +6,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
+import {
+	useAIBloggingPrompts,
+	mapAIPromptToRegularPrompt,
+	isAIBLoggingPrompt,
+} from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
@@ -28,7 +33,15 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const januaryDate = '--01-01';
 	const startDate = isBloganuary() ? januaryDate : today;
 
-	const { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
+	let { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
+	//TODO: Feature flag
+	const { data: aiPrompts } = useAIBloggingPrompts( siteId );
+
+	if ( prompts && aiPrompts ) {
+		const mappedAIPrompts = aiPrompts.prompts.map( mapAIPromptToRegularPrompt );
+		prompts = [ ...prompts, ...mappedAIPrompts ];
+	}
+
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
 	if ( ! index && isBloganuary() ) {
@@ -78,6 +91,12 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 			</EllipsisMenu>
 		);
 	};
+	let promptLabel = translate( 'Daily writing prompt' );
+	if ( isAIBLoggingPrompt( prompts[ index ] ) ) {
+		promptLabel = translate( 'AI suggested post' );
+	} else if ( isBloganuary() ) {
+		promptLabel = translate( 'Bloganuary writing prompt' );
+	}
 
 	return (
 		<div className="blogging-prompt">
@@ -86,9 +105,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 					<LightbulbIcon />
 					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
 					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
-						{ isBloganuary()
-							? translate( 'Bloganuary writing prompt' )
-							: translate( 'Daily writing prompt' ) }
+						{ promptLabel }
 					</span>
 					{ showMenu && renderMenu() }
 				</CardHeading>
