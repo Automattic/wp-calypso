@@ -29,7 +29,7 @@ type TierUpgradeSliderProps = {
 };
 
 function TierUpgradeSlider( { className }: TierUpgradeSliderProps ) {
-	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className ? className : '' );
+	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
 
 	// Get the plan details.
 	const plans = useAvailableUpgradeTiers();
