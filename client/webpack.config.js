@@ -211,10 +211,6 @@ const webpackConfig = {
 		minimizer: Minify( {
 			parallel: workerCount,
 			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
-			terserOptions: {
-				compress: true,
-				mangle: true,
-			},
 		} ),
 	},
 	module: {
