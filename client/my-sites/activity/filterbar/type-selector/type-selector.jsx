@@ -46,17 +46,44 @@ export class TypeSelector extends Component {
 		if ( hasAllIssues && ! isParentType ) {
 			selectedCheckboxes.splice( parentTypeIndex, 1 );
 		}
+
 		if ( selectedCheckboxes.includes( type ) ) {
+			// Find the type object to see if it has children
+			const typeToUnselect = this.props.types.find( ( typeItem ) => typeItem.key === type );
+
+			// If the type has children, we'll need to remove them as well
+			let checkboxesToKeep = selectedCheckboxes;
+			if ( typeToUnselect && typeToUnselect.children ) {
+				const childrenKeys = typeToUnselect.children.map( ( child ) => child.key );
+				checkboxesToKeep = selectedCheckboxes.filter( ( ch ) => ! childrenKeys.includes( ch ) );
+			}
+
+			// Remove the type from the selection
+			const updatedSelection = checkboxesToKeep.filter( ( ch ) => ch !== type );
+
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: selectedCheckboxes.filter( ( ch ) => ch !== type ),
+				selectedCheckboxes: updatedSelection,
 			} );
 		} else {
+			let updatedSelection = [ ...selectedCheckboxes ];
+
+			// If it's a parent type, we simply use the parentTypeKey
+			if ( isParentType ) {
+				updatedSelection = [ parentTypeKey ];
+			} else {
+				// Find the type object and add its children if it has any
+				const currentType = this.props.types.find( ( typeItem ) => typeItem.key === type );
+				if ( currentType && currentType.children ) {
+					currentType.children.forEach( ( child ) => updatedSelection.push( child.key ) );
+				}
+				// Always add the type itself to the selection
+				updatedSelection.push( type );
+			}
+
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: isParentType
-					? [ parentTypeKey ]
-					: [ ...new Set( selectedCheckboxes ).add( type ) ],
+				selectedCheckboxes: updatedSelection,
 			} );
 		}
 	};
@@ -72,14 +99,41 @@ export class TypeSelector extends Component {
 		return [];
 	};
 
+	/**
+	 * Resolves a Activity Type key to its corresponding display name.
+	 *
+	 * It searches the provided `key` through all `types` and its potential children recursively.
+	 * If the key is found, the corresponding name is returned.
+	 * If the key is not found, it returns the key itself as a fallback.k.
+	 *
+	 * @param {string} key - Activity Type key
+	 * @returns {string} - The resolved display name or the key itself if not found.
+	 */
 	typeKeyToName = ( key ) => {
 		const { types, isNested, parentType } = this.props;
 		const allTypes = [ ...types ];
 		if ( isNested ) {
 			allTypes.push( parentType );
 		}
-		const match = allTypes.find( ( item ) => item.key === key );
-		return match?.name ?? key;
+
+		const findKeyInTypes = ( typesList, targetKey ) => {
+			for ( const item of typesList ) {
+				if ( item.key === targetKey ) {
+					return item.name;
+				}
+
+				if ( item.children ) {
+					const name = findKeyInTypes( item.children, targetKey );
+					if ( name ) {
+						// If the parent type has a name, we want to prepend it to the child type name.
+						return item.name ? item.name + ' ' + name : name;
+					}
+				}
+			}
+			return null;
+		};
+
+		return findKeyInTypes( allTypes, key ) ?? key;
 	};
 
 	handleClose = () => {
@@ -128,6 +182,26 @@ export class TypeSelector extends Component {
 		const { translate, types, isNested, parentType } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 
+		const selectorCheckboxes = (
+			<ul className="type-selector__nested-checkbox">
+				{ types.map( ( type ) => {
+					if ( type.children ) {
+						return (
+							<Fragment key={ type.key }>
+								<li>{ this.renderCheckbox( type ) }</li>
+								<ul>
+									<li className="type-selector__activity-types-selection-granular">
+										{ type.children.map( this.renderCheckbox ) }
+									</li>
+								</ul>
+							</Fragment>
+						);
+					}
+					return this.renderCheckbox( type );
+				} ) }
+			</ul>
+		);
+
 		return (
 			<div className="type-selector__activity-types-selection-wrap">
 				{ types && !! types.length && (
@@ -144,7 +218,7 @@ export class TypeSelector extends Component {
 								</ul>
 							) : (
 								<div className="type-selector__activity-types-selection-granular">
-									{ types.map( this.renderCheckbox ) }
+									{ selectorCheckboxes }
 								</div>
 							) }
 						</Fragment>

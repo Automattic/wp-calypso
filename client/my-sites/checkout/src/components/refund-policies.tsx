@@ -6,8 +6,10 @@ import {
 	isMonthlyProduct,
 	isPlan,
 	isTriennially,
+	isCentennially,
 	isYearly,
 } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -27,6 +29,7 @@ export enum RefundPolicy {
 	GiftDomainPurchase,
 	GenericBiennial,
 	GenericTriennial,
+	GenericCentennial,
 	GenericMonthly,
 	GenericYearly,
 	NonRefundable,
@@ -36,6 +39,7 @@ export enum RefundPolicy {
 	PlanMonthlyRenewal,
 	PlanTriennialBundle,
 	PlanTriennialRenewal,
+	PlanCentennialBundle,
 	PlanYearlyBundle,
 	PlanYearlyRenewal,
 	PremiumTheme,
@@ -102,6 +106,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 				if ( isTriennially( product ) ) {
 					return RefundPolicy.PlanTriennialBundle;
 				}
+
+				if ( isCentennially( product ) ) {
+					return RefundPolicy.PlanCentennialBundle;
+				}
 			}
 
 			if ( isRenewal( product ) ) {
@@ -139,6 +147,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			return RefundPolicy.GenericTriennial;
 		}
 
+		if ( isCentennially( product ) ) {
+			return RefundPolicy.GenericCentennial;
+		}
+
 		return RefundPolicy.NonRefundable;
 	} );
 
@@ -147,7 +159,8 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
 			refundPolicy === RefundPolicy.PlanYearlyBundle ||
 			refundPolicy === RefundPolicy.PlanBiennialBundle ||
-			refundPolicy === RefundPolicy.PlanTriennialBundle
+			refundPolicy === RefundPolicy.PlanTriennialBundle ||
+			refundPolicy === RefundPolicy.PlanCentennialBundle
 	);
 
 	const cartHasDomainBundleProduct = cart.products.some(
@@ -165,7 +178,7 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 	);
 }
 
-type RefundWindow = 4 | 7 | 14;
+type RefundWindow = 4 | 7 | 14 | 120;
 
 // Get the refund windows in days for the items in the cart
 export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow[] {
@@ -191,6 +204,10 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 			case RefundPolicy.GenericYearly:
 			case RefundPolicy.PremiumTheme:
 				return 14;
+
+			case RefundPolicy.GenericCentennial:
+			case RefundPolicy.PlanCentennialBundle:
+				return 120;
 		}
 	} );
 
@@ -199,7 +216,13 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 	);
 }
 
-function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
+function RefundPolicyItem( {
+	refundPolicy,
+	cart,
+}: {
+	refundPolicy: RefundPolicy;
+	cart: ResponseCart;
+} ) {
 	const translate = useTranslate();
 
 	const refundsSupportPage = (
@@ -271,7 +294,24 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 				{ components: { refundsSupportPage } }
 			);
 			break;
-
+		case RefundPolicy.GenericCentennial:
+		case RefundPolicy.PlanCentennialBundle:
+			text = translate(
+				'You will be charged %(cost)s and understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to %(refundPeriodDays)d days after purchase.',
+				{
+					components: {
+						refundsSupportPage,
+					},
+					args: {
+						cost: formatCurrency( cart.total_cost_integer, cart.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						refundPeriodDays: 120,
+					},
+				}
+			);
+			break;
 		case RefundPolicy.GenericMonthly:
 		case RefundPolicy.PlanMonthlyRenewal:
 			text = translate(
@@ -368,7 +408,7 @@ export default function RefundPolicies( { cart }: { cart: ResponseCart } ) {
 	return (
 		<>
 			{ refundPolicies.map( ( policy ) => (
-				<RefundPolicyItem key={ policy } refundPolicy={ policy } />
+				<RefundPolicyItem key={ policy } refundPolicy={ policy } cart={ cart } />
 			) ) }
 		</>
 	);

@@ -196,6 +196,7 @@
 		"subscription-management-comments-view": true,
 		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": true,
+		"subscription-management/migrate-subscribers": true,
 		"subscription-management-redirect-following": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/block-theme-previews": true,

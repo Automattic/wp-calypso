@@ -1,12 +1,12 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
+import page, { type Callback, type Context } from 'page';
 import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import Header from '../agency-dashboard/header';
 import DashboardSidebar from '../agency-dashboard/sidebar';
 import PluginsOverview from './plugins-overview';
 
-const redirectIfHasNoAccess = ( context: PageJS.Context ) => {
+const redirectIfHasNoAccess = ( context: Context ) => {
 	const state = context.store.getState();
 	const isAgency = isAgencyUser( state );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
@@ -18,7 +18,7 @@ const redirectIfHasNoAccess = ( context: PageJS.Context ) => {
 	}
 };
 
-const setSidebar = ( context: PageJS.Context ): void => {
+const setSidebar = ( context: Context ) => {
 	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
 		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
 	} else {
@@ -26,7 +26,7 @@ const setSidebar = ( context: PageJS.Context ): void => {
 	}
 };
 
-export function pluginManagementContext( context: PageJS.Context, next: VoidFunction ): void {
+export const pluginManagementContext: Callback = ( context, next ) => {
 	redirectIfHasNoAccess( context );
 	const { filter = 'all', site } = context.params;
 	const { s: search } = context.query;
@@ -43,9 +43,9 @@ export function pluginManagementContext( context: PageJS.Context, next: VoidFunc
 		/>
 	);
 	next();
-}
+};
 
-export function pluginDetailsContext( context: PageJS.Context, next: VoidFunction ): void {
+export const pluginDetailsContext: Callback = ( context, next ) => {
 	redirectIfHasNoAccess( context );
 	const { plugin, site } = context.params;
 	context.header = <Header />;
@@ -55,4 +55,4 @@ export function pluginDetailsContext( context: PageJS.Context, next: VoidFunctio
 	}
 	context.primary = <PluginsOverview pluginSlug={ plugin } site={ site } path={ context.path } />;
 	next();
-}
+};

@@ -1420,6 +1420,7 @@ class RegisterDomainStep extends Component {
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
+						this.props.onMappingError( domain, status );
 					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 						this.props.onAddDomain( suggestion, position );
 					}

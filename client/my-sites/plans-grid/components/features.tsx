@@ -1,9 +1,9 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
+import { LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
-import { LoadingPlaceHolder } from '../../plans-features-main/components/loading-placeholder';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
@@ -31,7 +31,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 	const isLoading = generatedWPComSubdomain.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
 	return (
 		<SubdomainSuggestion>
-			{ isLoading && <LoadingPlaceHolder /> }
+			{ isLoading && <LoadingPlaceholder /> }
 			{ ! isLoading &&
 				( isCustomDomainAllowedOnFreePlan.result ? (
 					<div>

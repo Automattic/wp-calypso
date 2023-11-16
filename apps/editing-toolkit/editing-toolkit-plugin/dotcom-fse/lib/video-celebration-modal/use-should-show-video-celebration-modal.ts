@@ -31,6 +31,8 @@ const useShouldShowVideoCelebrationModal = ( isEditorSaving: boolean ) => {
 
 		if ( 'videopress' === intent && ! hasSeenVideoCelebrationModal ) {
 			maybeRenderVideoCelebrationModal();
+		} else if ( hasSeenVideoCelebrationModal ) {
+			setShouldShowVideoCelebrationModal( false );
 		}
 	}, [
 		isEditorSaving, // included so that we check whether the video has been uploaded on save.
