@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Removed the `async` option and started transforming all usages to async loads by default
+
 ## 1.0.1
 
-Initial release
+- Initial release

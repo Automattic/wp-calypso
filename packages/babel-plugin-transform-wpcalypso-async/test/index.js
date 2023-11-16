@@ -1,7 +1,7 @@
 const babel = require( '@babel/core' );
 
 describe( 'babel-plugin-transform-wpcalypso-async', () => {
-	function transform( code, options = { async: true } ) {
+	function transform( code, options = {} ) {
 		return babel.transformSync( code, {
 			configFile: false,
 			parserOpts: { plugins: [ 'jsx' ] },
@@ -36,19 +36,6 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 					'var _ref = function (callback) {\n  import( /*webpackChunkName: "async-load-foo"*/"foo").then(function load(mod) {\n' +
 						'    callback(mod.default);\n' +
 						'  });\n};\nexport default (() => <AsyncLoad require={_ref} />);'
-				);
-			} );
-		} );
-
-		describe( 'sync', () => {
-			test( 'should replace a require string prop with hoisting', () => {
-				const code = transform( 'export default () => <AsyncLoad require="foo" />;', {
-					async: false,
-				} );
-
-				expect( code ).toBe(
-					'var _ref = function (callback) {\n  callback(require("foo").__esModule ? require("foo").default ' +
-						': require("foo"));\n};\nexport default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
 		} );
@@ -95,24 +82,6 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			} );
 		} );
 
-		describe( 'sync', () => {
-			test( 'should call require directly when no callback', () => {
-				const code = transform( 'asyncRequire( "foo" );', { async: false } );
-
-				expect( code ).toBe(
-					'require("foo").__esModule ? require("foo").default : require("foo");'
-				);
-			} );
-
-			test( 'should invoke callback with require', () => {
-				const code = transform( 'asyncRequire( "foo", cb );', { async: false } );
-
-				expect( code ).toBe(
-					'cb(require("foo").__esModule ? require("foo").default : require("foo"));'
-				);
-			} );
-		} );
-
 		describe( 'ignore', () => {
 			test( 'should simply ignore the asyncRequire call', () => {
 				const code = transform( 'asyncRequire( "foo" );', { ignore: true } );
@@ -138,7 +107,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 		const transformResult = babel.transformSync( code, {
 			configFile: false,
 			parserOpts: { plugins: [ 'jsx', 'dynamicImport' ] },
-			plugins: [ [ require( '..' ), { async: true } ], patchImportPlugin ],
+			plugins: [ [ require( '..' ) ], patchImportPlugin ],
 		} );
 
 		// Check that the transformed code has been further transformed with patchedImport
