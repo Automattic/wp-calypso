@@ -8,7 +8,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import {
 	useAIBloggingPrompts,
-	mapAIPromptToRegularPrompt,
+	mergePromptStreams,
 	isAIBLoggingPrompt,
 } from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
@@ -34,11 +34,10 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const startDate = isBloganuary() ? januaryDate : today;
 
 	let { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
+	// This will not do a request until we have the `isEnabled( 'calypso/ai-blogging-prompts' )` feature flag enabled.
 	const { data: aiPrompts } = useAIBloggingPrompts( siteId );
-
 	if ( prompts && aiPrompts ) {
-		const mappedAIPrompts = aiPrompts.prompts.map( mapAIPromptToRegularPrompt );
-		prompts = [ ...prompts, ...mappedAIPrompts ];
+		prompts = mergePromptStreams( prompts, aiPrompts );
 	}
 
 	const { skipCard } = useSkipCurrentViewMutation( siteId );

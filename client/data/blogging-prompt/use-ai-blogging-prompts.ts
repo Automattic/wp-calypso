@@ -7,7 +7,7 @@ export interface AIBloggingPrompt {
 	title: string;
 }
 
-export function mapAIPromptToRegularPrompt( aiPrompt: AIBloggingPrompt ) {
+function mapAIPromptToRegularPrompt( aiPrompt: AIBloggingPrompt ) {
 	return {
 		id: 0,
 		label: aiPrompt.title,
@@ -17,6 +17,21 @@ export function mapAIPromptToRegularPrompt( aiPrompt: AIBloggingPrompt ) {
 		answered_users_count: 0,
 		answered_users_sample: [],
 	};
+}
+
+export function mergePromptStreams( regularPrompts: any, aiPrompts: any ) {
+	const aiPromptRatio = 3; // 1 out of 3 prompts will be AI prompts.
+	const mappedAIPrompts = aiPrompts.prompts.map( mapAIPromptToRegularPrompt );
+	// Insert AI prompts into the prompts array every aiPromptRatio prompts.
+	const prompts = [];
+
+	for ( let i = 0; i < regularPrompts.length; i++ ) {
+		prompts.push( regularPrompts[ i ] );
+		if ( i % aiPromptRatio === 0 && mappedAIPrompts[ i / aiPromptRatio ] ) {
+			prompts.push( mappedAIPrompts[ i / aiPromptRatio ] );
+		}
+	}
+	return prompts;
 }
 
 export const isAIBLoggingPrompt = ( prompt: any ) => prompt.attribution === 'jetpack-ai';
