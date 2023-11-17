@@ -30,12 +30,11 @@ export const useViewportScale = ( device: string, viewportWidth: number ) => {
 
 interface Props {
 	children: React.ReactNode;
-	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
+	viewportWidth: number;
 	device: string;
 }
 
-const FixedViewport = ( { children, frameRef, device }: Props ) => {
-	const viewportWidth = frameRef?.current?.parentElement?.clientWidth as number;
+const FixedViewport = ( { children, viewportWidth, device }: Props ) => {
 	const viewportScale = useViewportScale( device, viewportWidth );
 
 	return (

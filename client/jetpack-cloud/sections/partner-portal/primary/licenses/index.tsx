@@ -24,7 +24,10 @@ import {
 	getLicenseCounts,
 	hasFetchedLicenseCounts,
 } from 'calypso/state/partner-portal/licenses/selectors';
-import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
+import {
+	getCurrentPartner,
+	showAgencyDashboard,
+} from 'calypso/state/partner-portal/partner/selectors';
 import Layout from '../../layout';
 import LayoutBody from '../../layout/body';
 import LayoutHeader from '../../layout/header';
@@ -56,6 +59,8 @@ export default function Licenses( {
 	const hasFetched = useSelector( hasFetchedLicenseCounts );
 	const allLicensesCount = counts[ 'all' ];
 	const provisioningSite = getQueryArg( window.location.href, 'provisioning' ) as string;
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	useEffect( () => {
 		if ( 'true' === provisioningSite ) {
@@ -111,7 +116,8 @@ export default function Licenses( {
 						<SelectPartnerKeyDropdown />
 
 						<Button
-							href="/partner-portal/issue-license"
+							disabled={ ! partnerCanIssueLicense }
+							href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 							onClick={ onIssueNewLicenseClick }
 							primary
 							style={ { marginLeft: 'auto' } }

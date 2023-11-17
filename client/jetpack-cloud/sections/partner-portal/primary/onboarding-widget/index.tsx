@@ -5,14 +5,16 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { UserData } from 'calypso/lib/user/user';
-
 import './style.scss';
 
 export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?: boolean } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const [ isIframeLoaded, setIsIframeLoaded ] = useState( false );
 
@@ -82,7 +84,8 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 				'https://video.wordpress.com/embed/nsqG1pBO?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
 			extraContent: (
 				<Button
-					href="/partner-portal/issue-license"
+					disabled={ ! partnerCanIssueLicense }
+					href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 					onClick={ onIssueNewLicenseClick }
 					primary
 					style={ { marginLeft: 'auto' } }

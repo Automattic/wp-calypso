@@ -815,9 +815,14 @@ function wpcomPages( app ) {
 			} );
 	} );
 
-	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res ) {
-		// For users on subkey or not logged in, redirect to the email login link page.
-		if ( req.cookies.subkey || ! req.context.isLoggedIn ) {
+	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
+		if ( ( req.cookies.subkey || calypsoEnv !== 'production' ) && ! req.context.isLoggedIn ) {
+			// If the user is not logged in but has a subkey cookie, they are authorized to view old portal
+			return next();
+		}
+
+		// For users not logged in, redirect to the email login link page.
+		if ( ! req.context.isLoggedIn ) {
 			return res.redirect( 'https://wordpress.com/email-subscriptions' );
 		}
 
