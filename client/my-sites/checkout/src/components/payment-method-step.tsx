@@ -8,6 +8,7 @@ import {
 	hasCheckoutVersion,
 	LineItemType,
 	getCouponLineItemFromCart,
+	getSubtotalWithoutCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -65,8 +66,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	const translate = useTranslate();
-	const subtotalWithoutCoupon =
-		responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
+	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',

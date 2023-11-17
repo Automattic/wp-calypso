@@ -31,6 +31,7 @@ import {
 	getTotalLineItemFromCart,
 	hasCheckoutVersion,
 	getCreditsLineItemFromCart,
+	getSubtotalWithoutCoupon,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -122,8 +123,7 @@ function CheckoutSummaryPriceList() {
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
-	const subtotalWithoutCoupon =
-		responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
+	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 
 	return (
 		<>
