@@ -43,6 +43,14 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 		},
 	} );
 
+	// Add dailyprompt to the front of interestTags if not present.
+	const hasDailyPrompt = interestTags.filter(
+		( tag: { slug: string } ) => tag.slug === 'dailyprompt'
+	).length;
+	if ( ! hasDailyPrompt ) {
+		interestTags.unshift( { title: translate( 'Daily prompts' ), slug: 'dailyprompt' } );
+	}
+
 	const queryParams = new URLSearchParams( window.location.search );
 	const selectedTab = queryParams.get( 'selectedTab' ) || DEFAULT_TAB;
 
