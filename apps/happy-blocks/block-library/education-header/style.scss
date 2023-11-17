@@ -1,4 +1,4 @@
-@import "@automattic/calypso-color-schemes";
+@import "~@automattic/calypso-color-schemes";
 @import "~@automattic/color-studio/dist/color-variables";
 @import "@automattic/onboarding/styles/mixins";
 
@@ -38,7 +38,6 @@ body.archive {
 	@media only screen and ( max-width: $breakpoint-mobile ) {
 		margin: 16px 0 !important;
 	}
-
 }
 
 .happy-blocks-search {
@@ -232,7 +231,6 @@ body.archive {
 				}
 			}
 		}
-
 
 		.happy-blocks-search__inside-wrapper {
 			input {

@@ -31,6 +31,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

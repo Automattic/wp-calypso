@@ -1,4 +1,4 @@
-@import "@automattic/calypso-color-schemes";
+@import "~@automattic/calypso-color-schemes";
 
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
@@ -24,7 +24,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		margin-bottom: 0;
 	}
 
-	>* {
+	> * {
 		margin-left: auto !important;
 		margin-right: auto !important;
 		max-width: var(--wp--style--global--wide-size);
@@ -102,7 +102,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		font-family: var(--wp--preset--font-family--system-font);
 	}
 
-	@media (min-width: $breakpoint-mobile) {
+	@media ( min-width: $breakpoint-mobile ) {
 		.support-content-resource {
 			flex-basis: 0;
 			flex-grow: 1;
@@ -131,7 +131,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			margin-bottom: 10px;
 			margin-top: 0;
 		}
-
 
 		.support-content-subscribe-disclaimer {
 			color: var(--studio-gray-60);
@@ -184,7 +183,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		}
 	}
 
-	@media (max-width: $breakpoint-mobile) {
+	@media ( max-width: $breakpoint-mobile ) {
 		padding: 12px 24px !important;
 
 		h4 {
@@ -227,7 +226,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 				.resource-link {
 					line-height: 20px;
 				}
-
 
 				p {
 					margin-top: 4px;

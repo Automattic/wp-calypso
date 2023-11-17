@@ -1,4 +1,4 @@
-@import "@automattic/calypso-color-schemes";
+@import "~@automattic/calypso-color-schemes";
 
 .pagination-control {
 	margin: 0;
@@ -41,5 +41,4 @@
 			background-color: var(--wp-admin-theme-color);
 		}
 	}
-
 }

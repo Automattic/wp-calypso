@@ -1,4 +1,4 @@
-@import "@automattic/calypso-color-schemes";
+@import "~@automattic/calypso-color-schemes";
 
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
@@ -333,7 +333,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 @media ( min-width: 768px ) {
-
 	.x-nav-link--menu {
 		padding: 0 9px 0 9px;
 		margin-right: 15px;
@@ -370,7 +369,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 @media ( min-width: 1056px ) {
-
 	.x-nav-link--primary {
 		padding: 9px 12px 10px;
 	}
