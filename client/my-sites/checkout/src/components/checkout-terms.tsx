@@ -18,7 +18,6 @@ import { InternationalFeeNotice } from './international-fee-notice';
 import JetpackSocialAdvancedPricingDisclaimer from './jetpack-social-advanced-pricing-disclaimer';
 import { PlanTerms100Year } from './plan-terms-100-year';
 import RefundPolicies from './refund-policies';
-import { RefundTerms100Year } from './refund-terms-100-year';
 import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
@@ -65,7 +64,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 			{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 			{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
-			{ ! isGiftPurchase && <RefundTerms100Year cart={ cart } /> }
 			<EbanxTermsOfService />
 			{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 			{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }

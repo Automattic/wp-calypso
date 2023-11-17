@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback, type Context } from 'page';
+import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
@@ -116,9 +117,13 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
 	setSidebar( context );
-	context.primary = (
-		<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-	);
+	if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
+		context.primary = <IssueLicenseV2 />;
+	} else {
+		context.primary = (
+			<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+		);
+	}
 	next();
 };
 
