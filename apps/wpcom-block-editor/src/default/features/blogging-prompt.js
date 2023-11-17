@@ -9,10 +9,8 @@ if ( answer_prompt ) {
 	( async () => {
 		await isEditorReady();
 
-		const blockProps = answer_prompt ? { promptId: answer_prompt } : {};
-
 		dispatch( 'core/editor' ).resetEditorBlocks( [
-			createBlock( 'jetpack/blogging-prompt', blockProps ),
+			createBlock( 'jetpack/blogging-prompt', { promptId: answer_prompt } ),
 		] );
 	} )();
 }

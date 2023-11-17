@@ -10,41 +10,39 @@ import { useEffect, useState } from 'react';
 
 import './style.scss';
 
-export const BloggingPromptsModal = () => {
+export const BloggingPromptsModalInner = () => {
 	const translate = useTranslate();
-	const shouldOpen = getQueryArg( window.location.href, 'new_prompt' );
-	const siteId = window._currentSiteId;
-	const [ isOpen, setIsOpen ] = useState( shouldOpen );
+	const [ isOpen, setIsOpen ] = useState( true );
 	const [ prompts, setPrompts ] = useState( [] );
-	const [ error, setError ] = useState( null );
 	const [ promptIndex, setPromptIndex ] = useState( 0 );
 
-	const path = addQueryArgs( `/wpcom/v3/sites/${ siteId }/blogging-prompts`, {
-		per_page: 10,
-		after: moment().format( '--MM-DD' ),
-		order: 'desc',
-		force_year: new Date().getFullYear(),
-	} );
-
-	function selectPrompt() {
-		dispatch( 'core/editor' ).resetEditorBlocks( [
-			createBlock( 'jetpack/blogging-prompt', { promptId: prompts[ promptIndex ]?.id } ),
-		] );
-		setIsOpen( false );
-	}
-
 	useEffect( () => {
+		const siteId = window._currentSiteId;
+		const path = addQueryArgs( `/wpcom/v3/sites/${ siteId }/blogging-prompts`, {
+			per_page: 10,
+			after: moment().format( '--MM-DD' ),
+			order: 'desc',
+			force_year: new Date().getFullYear(),
+		} );
 		apiFetch( {
 			path,
 		} )
 			.then( ( result ) => {
 				return setPrompts( result );
 			} )
-			.catch( ( err ) => setError( err ) );
+			// eslint-disable-next-line no-console
+			.catch( () => console.log( 'Unable to fetch writing prompts' ) );
 	}, [] );
 
 	if ( ! isOpen || ! prompts.length ) {
 		return null;
+	}
+
+	function selectPrompt() {
+		dispatch( 'core/editor' ).resetEditorBlocks( [
+			createBlock( 'jetpack/blogging-prompt', { promptId: prompts[ promptIndex ]?.id } ),
+		] );
+		setIsOpen( false );
 	}
 
 	return (
@@ -84,4 +82,12 @@ export const BloggingPromptsModal = () => {
 			</div>
 		</Modal>
 	);
+};
+
+export const BloggingPromptsModal = () => {
+	const shouldOpen = getQueryArg( window.location.href, 'new_prompt' );
+	if ( ! shouldOpen ) {
+		return null;
+	}
+	return <BloggingPromptsModalInner />;
 };
