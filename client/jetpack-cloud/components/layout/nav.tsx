@@ -9,7 +9,7 @@ type LayoutNavigationProps = {
 	className?: string;
 	children: ReactNode;
 	selectedText: string;
-	selectedCount: number;
+	selectedCount?: number;
 };
 
 type LayoutNavigationItemProps = {

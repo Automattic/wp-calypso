@@ -7,10 +7,16 @@ import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
+import LayoutNavigation, {
+	LayoutNavigationItem,
+} from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import { useProductBundleSize } from './hooks/use-product-bundle-size';
 
 export default function IssueLicenseV2() {
+	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize();
 	const translate = useTranslate();
+
 	return (
 		<Layout
 			className="issue-license-v2"
@@ -29,6 +35,26 @@ export default function IssueLicenseV2() {
 						<Button primary>Issue license </Button>
 					</LayoutHeaderActions>
 				</LayoutHeader>
+
+				<LayoutNavigation
+					selectedText={
+						selectedSize === 1
+							? translate( 'Single license' )
+							: ( translate( '%(size)d licenses', { args: { selectedSize } } ) as string )
+					}
+				>
+					{ availableSizes.map( ( size ) => (
+						<LayoutNavigationItem
+							label={
+								size === 1
+									? translate( 'Single license' )
+									: ( translate( '%(size)d licenses', { args: { size } } ) as string )
+							}
+							selected={ selectedSize === size }
+							onClick={ () => setSelectedSize( size ) }
+						/>
+					) ) }
+				</LayoutNavigation>
 			</LayoutTop>
 
 			<LayoutBody>
