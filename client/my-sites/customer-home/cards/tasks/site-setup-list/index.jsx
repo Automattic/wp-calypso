@@ -123,6 +123,8 @@ const SiteSetupList = ( {
 	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
 	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
+	const [ sortedTaskList, setSortedTaskList ] = useState( tasks );
+
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
@@ -132,8 +134,10 @@ const SiteSetupList = ( {
 		).length > 0;
 
 	useEffect( () => {
-		tasks.sort( ( task ) =>
-			isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0
+		setSortedTaskList(
+			[ ...tasks ].sort( ( task ) =>
+				isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0
+			)
 		);
 	}, [ isEmailUnverified, tasks ] );
 
@@ -143,13 +147,13 @@ const SiteSetupList = ( {
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
-		if ( ! currentTaskId && tasks.length ) {
-			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
+		if ( ! currentTaskId && sortedTaskList.length ) {
+			const initialTask = sortedTaskList.find( ( task ) => ! task.isCompleted );
 			if ( initialTask ) {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
-	}, [ currentTaskId, dispatch, tasks ] );
+	}, [ currentTaskId, dispatch, sortedTaskList ] );
 
 	// If specified, then automatically complete the current task when viewed
 	// if it is not already complete.
@@ -279,7 +283,7 @@ const SiteSetupList = ( {
 					aria-label="Site setup"
 					aria-orientation="vertical"
 				>
-					{ tasks.map( ( task ) => {
+					{ sortedTaskList.map( ( task ) => {
 						const enhancedTask = getTask( task, { isBlogger, isFSEActive, userEmail } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
