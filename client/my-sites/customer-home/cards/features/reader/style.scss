@@ -50,6 +50,15 @@
 		letter-spacing: -0.15px;
 	}
 
+	.discover-stream-navigation {
+		max-width: none;
+
+		.discover-stream-navigation__right-button-wrapper,
+		.discover-stream-navigation__left-button-wrapper {
+			background: none;
+		}
+	}
+
 	.following.main {
 		max-width: none !important;
 		padding-bottom: 0 !important;
