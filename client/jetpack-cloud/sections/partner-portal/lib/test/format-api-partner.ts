@@ -28,6 +28,8 @@ const TEST_API_PARTNER: APIPartner = {
 	tos: 'my tos',
 	partner_type: 'my partner_type value',
 	has_valid_payment_method: false,
+	company_type: '',
+	managed_sites: '',
 };
 
 describe( 'formatApiPartner', () => {
