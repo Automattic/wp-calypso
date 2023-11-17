@@ -2,16 +2,26 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { domainGlueRecordQueryKey } from './domain-glue-record-query-key';
 
-export type GlueRecordResponse = GlueRecordObject[] | null;
+export type Maybe< T > = T | null | undefined;
+export type GlueRecordResponse = GlueRecordObject[] | null | undefined;
 
 export type GlueRecordObject = {
 	record: string;
 	address: string;
 };
 
+export type GlueRecordQueryData = Maybe< GlueRecordApiObject[] >;
+
 export type GlueRecordApiObject = {
 	nameserver: string;
 	ip_addresses: string[];
+};
+
+export const mapGlueRecordObjectToApiObject = ( record: GlueRecordObject ): GlueRecordApiObject => {
+	return {
+		nameserver: record.record,
+		ip_addresses: [ record.address ],
+	};
 };
 
 const selectGlueRecords = ( response: GlueRecordApiObject[] | null ): GlueRecordResponse => {

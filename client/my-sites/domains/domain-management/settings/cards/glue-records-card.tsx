@@ -114,7 +114,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		setRecord( record );
 	};
 
-	const handleDelete = ( record: string ) => {
+	const handleDelete = ( record: GlueRecordObject ) => {
 		setIsRemoving( true );
 		deleteGlueRecord( record );
 	};
@@ -122,7 +122,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const handleSubmit = () => {
 		setIsSaving( true );
 		updateGlueRecord( {
-			record: record,
+			record: `${ record }.${ domain.domain }`,
 			address: ipAddress,
 		} );
 	};
@@ -154,7 +154,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						scary
 						disabled={ isSaving || isRemoving }
 						className="edit-redirect-button"
-						onClick={ () => handleDelete( child.record ) }
+						onClick={ () => handleDelete( child ) }
 					>
 						<Gridicon icon="trash" />
 						{ translate( 'Remove' ) }
