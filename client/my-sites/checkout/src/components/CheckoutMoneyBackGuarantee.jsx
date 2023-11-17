@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import MaterialIcon from 'calypso/components/material-icon';
+import { Icon, reusableBlock } from '@wordpress/icons';
 import { CheckoutSummaryRefundWindows } from './wp-checkout-order-summary';
 
 const CheckoutMoneyBackGuaranteeWrapper = styled.div`
@@ -26,20 +26,20 @@ const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 	}
 `;
 
-const StyledMaterialIcon = styled( MaterialIcon )`
+const StyledIcon = styled( Icon )`
 	fill: '#1E1E1E';
-	margin-right: 0.7em;
+	margin-right: 0.3em;
 
 	.rtl & {
 		margin-right: 0;
-		margin-left: 0.7em;
+		margin-left: 0.3em;
 	}
 `;
 
 export function CheckoutMoneyBackGuarantee( { cart } ) {
 	return (
 		<CheckoutMoneyBackGuaranteeWrapper>
-			<StyledMaterialIcon icon="credit_card" />
+			<StyledIcon icon={ reusableBlock } size={ 24 } />
 			<CheckoutSummaryRefundWindows cart={ cart } />
 		</CheckoutMoneyBackGuaranteeWrapper>
 	);
