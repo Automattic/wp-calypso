@@ -27,6 +27,9 @@ const ReaderCard = () => {
 				<Stream
 					streamKey="discover:recommended--dailyprompt"
 					trackScrollPage={ trackScrollPage.bind( null ) }
+					useCompactCards={ true }
+					isDiscoverStream={ true }
+					suppressSiteNameLink={ true }
 				/>
 			</div>
 		</>
