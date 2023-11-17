@@ -6,8 +6,15 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import DiscoverNavigation from 'calypso/reader/discover/discover-navigation';
-import { DEFAULT_TAB } from 'calypso/reader/discover/helper';
+import {
+	DEFAULT_TAB,
+	buildDiscoverStreamKey,
+	getDiscoverStreamTags,
+} from 'calypso/reader/discover/helper';
 import Stream from 'calypso/reader/stream';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
 
@@ -36,6 +43,18 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 		},
 	} );
 
+	const queryParams = new URLSearchParams( window.location.search );
+	const selectedTab = queryParams.get( 'selectedTab' ) || DEFAULT_TAB;
+
+	const followedTags = useSelector( getReaderFollowedTags );
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
+	const recommendedStreamTags = getDiscoverStreamTags(
+		followedTags && followedTags.map( ( tag ) => tag.slug ),
+		isLoggedIn
+	);
+	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
+
 	return (
 		<>
 			<div className="reader-card customer-home__card">
@@ -54,11 +73,11 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 				</div>
 				<DiscoverNavigation
 					width={ props.width }
-					selectedTab={ DEFAULT_TAB }
+					selectedTab={ selectedTab }
 					recommendedTags={ interestTags }
 				/>
 				<Stream
-					streamKey="discover:recommended--dailyprompt"
+					streamKey={ streamKey }
 					trackScrollPage={ trackScrollPage.bind( null ) }
 					useCompactCards={ true }
 					isDiscoverStream={ true }
