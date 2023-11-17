@@ -1,5 +1,5 @@
 import querystring from 'querystring';
-import config from '@automattic/calypso-config';
+import config from '../config';
 
 const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 	gcm_sender_id: '87234302238',

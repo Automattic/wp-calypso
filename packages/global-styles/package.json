@@ -41,7 +41,7 @@
 		"@wordpress/private-apis": "^0.26.0",
 		"classnames": "^2.3.1",
 		"deepmerge": "^4.3.0",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../i18n-calypso",
 		"is-plain-object": "^5.0.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

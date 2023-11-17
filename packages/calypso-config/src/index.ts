@@ -12,9 +12,9 @@ declare global {
 
 /**
  * Manages config flags for various deployment builds
- *
  * @module config/index
  */
+debugger;
 if ( 'undefined' === typeof window ) {
 	throw new Error( 'Trying to initialize the configuration outside of a browser context.' );
 }

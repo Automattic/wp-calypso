@@ -2,7 +2,6 @@ import { execSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import config from '@automattic/calypso-config';
 import {
 	filterLanguageRevisions,
 	isTranslatedIncompletely,
@@ -50,6 +49,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
 import { pathToRegExp } from 'calypso/utils';
+import config from '../config';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';

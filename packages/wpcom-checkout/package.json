@@ -48,7 +48,7 @@
 		"@wordpress/i18n": "^4.44.0",
 		"@wordpress/react-i18n": "^3.42.0",
 		"debug": "^4.3.3",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../i18n-calypso",
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {

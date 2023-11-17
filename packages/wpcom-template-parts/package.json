@@ -33,7 +33,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@wordpress/url": "^3.45.0",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../i18n-calypso",
 		"social-logos": "^2.5.2"
 	},
 	"devDependencies": {

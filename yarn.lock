@@ -322,6 +322,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-config@file:./server/config::locator=calypso%40workspace%3Aclient":
+  version: 1.0.0
+  resolution: "@automattic/calypso-config@file:./server/config#./server/config::hash=2b89d3&locator=calypso%40workspace%3Aclient"
+  checksum: dba856e7c08acaa3e573bbed783db66deefaf9c5cc8b2554e1e89cae7bcd01e03490f9401cd443c8eb6e3eee7c23d59964995901b2e9eb4e8903c3cc7ba00a09
+  languageName: node
+  linkType: hard
+
 "@automattic/calypso-config@workspace:^, @automattic/calypso-config@workspace:packages/calypso-config":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-config@workspace:packages/calypso-config"
@@ -439,7 +446,7 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     react-dom: ^18.2.0
     typescript: ^5.2.2
   peerDependencies:
@@ -550,7 +557,7 @@ __metadata:
     classnames: ^2.3.1
     framer-motion: 6.2.8
     gridicons: ^3.4.2
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     lodash: ^4.17.21
     prop-types: ^15.7.2
     qrcode.react: ^3.1.0
@@ -625,7 +632,7 @@ __metadata:
     "@wordpress/element": ^5.21.0
     "@wordpress/url": ^3.45.0
     fast-json-stable-stringify: ^2.1.0
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     jest-fetch-mock: ^3.0.3
     nock: ^13.3.8
     node-fetch: ^2.6.6
@@ -911,7 +918,7 @@ __metadata:
     "@wordpress/private-apis": ^0.26.0
     classnames: ^2.3.1
     deepmerge: ^4.3.0
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     is-plain-object: ^5.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -975,6 +982,7 @@ __metadata:
     "@types/react": ^18.2.6
     "@wordpress/compose": ^6.21.0
     "@wordpress/i18n": ^4.44.0
+    i18n-calypso: "file:../i18n-calypso"
     react: ^18.2.0
     react-dom: ^18.2.0
     react-test-renderer: ^18.2.0
@@ -1081,7 +1089,7 @@ __metadata:
     "@automattic/launchpad": "workspace:^"
     "@wordpress/components": ^25.10.0
     classnames: ^2.3.1
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1208,7 +1216,7 @@ __metadata:
     classnames: ^2.3.1
     debug: ^4.3.3
     html-webpack-plugin: ^5.0.0-beta.4
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../../packages/i18n-calypso"
     page: ^1.11.5
     postcss: ^8.4.5
     postcss-custom-properties: ^11.0.0
@@ -1792,7 +1800,7 @@ __metadata:
     commander: ^5.1.0
     gettext-parser: ^4.0.3
     glob: ^7.1.6
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     jest: ^29.7.0
     lodash.mergewith: ^4.6.2
     react: ^18.2.0
@@ -1865,7 +1873,7 @@ __metadata:
     "@wordpress/i18n": ^4.44.0
     "@wordpress/react-i18n": ^3.42.0
     debug: ^4.3.3
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     prop-types: ^15.7.2
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1981,7 +1989,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@types/social-logos": ^2.3.1
     "@wordpress/url": ^3.45.0
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../i18n-calypso"
     social-logos: ^2.5.2
     typescript: ^5.2.2
   peerDependencies:
@@ -12000,7 +12008,7 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
-    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-config": "file:./server/config"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
@@ -12136,7 +12144,7 @@ __metadata:
     he: ^1.2.0
     html-loader: ^0.5.5
     html-to-react: ^1.5.1
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../packages/i18n-calypso"
     ignore-loader: ^0.1.2
     immutability-helper: ^3.0.1
     inherits: ^2.0.4
@@ -18262,7 +18270,7 @@ __metadata:
     classnames: ^2.3.2
     copy-webpack-plugin: ^10.1.0
     glob: ^7.1.6
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:../../packages/i18n-calypso"
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -18908,7 +18916,280 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"i18n-calypso@workspace:^, i18n-calypso@workspace:packages/i18n-calypso":
+"i18n-calypso@file:../../packages/i18n-calypso::locator=%40automattic%2Fnotifications%40workspace%3Aapps%2Fnotifications":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../../packages/i18n-calypso#../../packages/i18n-calypso::hash=aeb56b&locator=%40automattic%2Fnotifications%40workspace%3Aapps%2Fnotifications"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../../packages/i18n-calypso::locator=happy-blocks%40workspace%3Aapps%2Fhappy-blocks":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../../packages/i18n-calypso#../../packages/i18n-calypso::hash=aeb56b&locator=happy-blocks%40workspace%3Aapps%2Fhappy-blocks"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fcalypso-products%40workspace%3Apackages%2Fcalypso-products":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fcalypso-products%40workspace%3Apackages%2Fcalypso-products"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fcomponents%40workspace%3Apackages%2Fcomponents":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fcomponents%40workspace%3Apackages%2Fcomponents"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fdata-stores%40workspace%3Apackages%2Fdata-stores":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fdata-stores%40workspace%3Apackages%2Fdata-stores"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fglobal-styles%40workspace%3Apackages%2Fglobal-styles":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fglobal-styles%40workspace%3Apackages%2Fglobal-styles"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fi18n-utils%40workspace%3Apackages%2Fi18n-utils":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fi18n-utils%40workspace%3Apackages%2Fi18n-utils"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Flaunchpad-navigator%40workspace%3Apackages%2Flaunchpad-navigator":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Flaunchpad-navigator%40workspace%3Apackages%2Flaunchpad-navigator"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fwp-babel-makepot%40workspace%3Apackages%2Fwp-babel-makepot":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fwp-babel-makepot%40workspace%3Apackages%2Fwp-babel-makepot"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fwpcom-checkout%40workspace%3Apackages%2Fwpcom-checkout":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fwpcom-checkout%40workspace%3Apackages%2Fwpcom-checkout"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../i18n-calypso::locator=%40automattic%2Fwpcom-template-parts%40workspace%3Apackages%2Fwpcom-template-parts":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../i18n-calypso#../i18n-calypso::hash=aeb56b&locator=%40automattic%2Fwpcom-template-parts%40workspace%3Apackages%2Fwpcom-template-parts"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:../packages/i18n-calypso::locator=calypso%40workspace%3Aclient":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:../packages/i18n-calypso#../packages/i18n-calypso::hash=aeb56b&locator=calypso%40workspace%3Aclient"
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@file:./packages/i18n-calypso::locator=wp-calypso%40workspace%3A.":
+  version: 6.0.1
+  resolution: "i18n-calypso@file:./packages/i18n-calypso#./packages/i18n-calypso::hash=aeb56b&locator=wp-calypso%40workspace%3A."
+  dependencies:
+    "@automattic/interpolate-components": "workspace:^"
+    "@babel/runtime": ^7.23.2
+    "@tannin/sprintf": ^1.1.0
+    "@wordpress/compose": ^6.21.0
+    debug: ^4.3.3
+    events: ^3.0.0
+    hash.js: ^1.1.5
+    lodash: ^4.17.21
+    lru: ^3.1.0
+    tannin: ^1.1.1
+    use-subscription: 1.6.0
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 5bd48409fdaa6734147158e6bfd15a391edd9dc48b9e5357b157896382d8f08954baff4ef97f1e44b197fe9749f453da640509bafe05140adf8199c34a12de52
+  languageName: node
+  linkType: hard
+
+"i18n-calypso@workspace:packages/i18n-calypso":
   version: 0.0.0-use.local
   resolution: "i18n-calypso@workspace:packages/i18n-calypso"
   dependencies:
@@ -32318,7 +32599,7 @@ __metadata:
     globby: ^10.0.2
     gzip-size: ^6.0.0
     husky: ^7.0.4
-    i18n-calypso: "workspace:^"
+    i18n-calypso: "file:./packages/i18n-calypso"
     i18n-calypso-cli: "workspace:^"
     jest: ^29.7.0
     jest-canvas-mock: ^2.5.2

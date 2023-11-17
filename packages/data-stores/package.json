@@ -41,7 +41,7 @@
 		"@wordpress/element": "^5.21.0",
 		"@wordpress/url": "^3.45.0",
 		"fast-json-stable-stringify": "^2.1.0",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../i18n-calypso",
 		"qs": "^6.9.1",
 		"redux": "^4.2.1",
 		"tslib": "^2.3.0",

@@ -1,20 +1,22 @@
 import path from 'path';
-import chalk from 'chalk';
-import cookieParser from 'cookie-parser';
-import express from 'express';
-import userAgent from 'express-useragent';
-import api from 'calypso/server/api';
-import config from 'calypso/server/config';
-import analytics from 'calypso/server/lib/analytics';
+//import chalk from 'chalk';
+//import cookieParser from 'cookie-parser';
+//import express from 'express';
+//import userAgent from 'express-useragent';
+//import api from 'calypso/server/api';
+//import config from 'calypso/server/config';
+//import analytics from 'calypso/server/lib/analytics';
 import loggerMiddleware from 'calypso/server/middleware/logger';
 import pages from 'calypso/server/pages';
 import pwa from 'calypso/server/pwa';
+
+export default function foo() {}
 
 /**
  * Returns the server HTTP request handler "app".
  * @returns {Object} The express app
  */
-export default function setup() {
+/*export default function setup() {
 	const app = express();
 
 	// for nginx
@@ -99,4 +101,4 @@ export default function setup() {
 	app.use( pages() );
 
 	return app;
-}
+}*/

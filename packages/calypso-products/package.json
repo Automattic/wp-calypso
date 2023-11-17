@@ -37,7 +37,7 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
-		"i18n-calypso": "workspace:^"
+		"i18n-calypso": "file:../i18n-calypso"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
