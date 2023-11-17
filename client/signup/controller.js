@@ -333,7 +333,6 @@ export default {
 			initialContext,
 			locale: context.params.lang,
 			flowName,
-			mainFlowName: query?.flow,
 			queryObject: query,
 			refParameter,
 			stepName,
