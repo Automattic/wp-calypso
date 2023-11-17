@@ -46,13 +46,6 @@ interface PathArgs {
 
 type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
 
-const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
-	display: flex;
-	align-content: space-between;
-	justify-content: center;
-	margin: 0 20px 24px;
-`;
-
 const StyledPopover = styled( Popover )`
 	&.popover {
 		display: none;
@@ -246,7 +239,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		usePricingMetaForGridPlans,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
-	const segmentClasses = classNames( 'plan-type-selector__interval-type', 'price-toggle', {
+	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
@@ -290,7 +283,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const intervalTabs = showBiennialToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
-		<IntervalTypeToggleWrapper showingMonthly={ intervalType === 'monthly' }>
+		<div className="plan-type-selector__interval-type">
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				{ intervalTabs.map( ( interval ) => (
 					<SegmentedControl.Item
@@ -329,7 +322,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					</SegmentedControl.Item>
 				) ) }
 			</SegmentedControl>
-		</IntervalTypeToggleWrapper>
+		</div>
 	);
 };
 
@@ -373,11 +366,19 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	}, [] );
 
 	if ( kind === 'interval' ) {
-		return <IntervalTypeToggle { ...props } />;
+		return (
+			<div className="plan-type-selector">
+				<IntervalTypeToggle { ...props } />
+			</div>
+		);
 	}
 
 	if ( kind === 'customer' ) {
-		return <CustomerTypeToggle { ...props } />;
+		return (
+			<div className="plan-type-selector">
+				<CustomerTypeToggle { ...props } />
+			</div>
+		);
 	}
 
 	return null;

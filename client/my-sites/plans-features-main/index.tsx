@@ -806,7 +806,11 @@ const PlansFeaturesMain = ( {
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
-						{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
+						{ ! hidePlanSelector && (
+							<div className="plans-features-main__plan-type-selector">
+								<PlanTypeSelector { ...planTypeSelectorProps } />
+							</div>
+						) }
 						<div
 							className={ classNames(
 								'plans-features-main__group',
@@ -877,7 +881,9 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<PlanTypeSelector { ...planTypeSelectorProps } />
+												<div className="plans-features-main__plan-type-selector">
+													<PlanTypeSelector { ...planTypeSelectorProps } />
+												</div>
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
