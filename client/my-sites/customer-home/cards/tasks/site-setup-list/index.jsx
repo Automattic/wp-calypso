@@ -131,6 +131,10 @@ const SiteSetupList = ( {
 			( task ) => task.id === CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED && ! task.isCompleted
 		).length > 0;
 
+	tasks = tasks.sort( ( task ) =>
+		isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0
+	);
+
 	const siteIntent = useSiteOption( 'site_intent' );
 	const isBlogger = siteIntent === 'write';
 	const isRtl = useRtl();
