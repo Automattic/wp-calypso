@@ -223,8 +223,16 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		</>
 	);
 
+	if ( ! data || isLoadingData ) {
+		return (
+			<>
+				<div className="domain-glue-records is-placeholder"></div>
+			</>
+		);
+	}
+
 	return (
-		<>
+		<div className="domain-glue-records">
 			<form
 				onSubmit={ ( e ) => {
 					e.preventDefault();
@@ -250,6 +258,6 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					{ translate( '+ Add Glue Record' ) }
 				</Button>
 			) }
-		</>
+		</div>
 	);
 }
