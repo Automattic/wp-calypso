@@ -87,7 +87,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	return (
 		<>
 			<DocumentHead title={ progress.title } />
-			<SenseiStepContainer stepName="sensei-setup" recordTracksEvent={ recordTracksEvent }>
+			<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
 				<SenseiStepProgress progress={ progress } />
 			</SenseiStepContainer>
 		</>

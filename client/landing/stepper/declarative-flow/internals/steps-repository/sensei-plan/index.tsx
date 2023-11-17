@@ -46,7 +46,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const businessPlan = useBusinessPlanPricing( billingPeriod );
 
 	const goToDomainStep = useCallback( () => {
-		submit?.( undefined, 'sensei-domain' );
+		submit?.( undefined, 'senseiDomain' );
 	}, [ submit ] );
 
 	const { createAndConfigureSite, progress } = useCreateSenseiSite();
@@ -82,7 +82,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 			await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
 			const redirectTo = encodeURIComponent(
-				`/setup/sensei/sensei-purpose?siteSlug=${ site?.site_slug }&siteId=${ site?.blogid }`
+				`/setup/sensei/senseiPurpose?siteSlug=${ site?.site_slug }&siteId=${ site?.blogid }`
 			);
 
 			return `/checkout/${ site?.site_slug }?signup=1&redirect_to=${ redirectTo }`;
@@ -137,7 +137,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 	return (
 		<SenseiStepContainer
-			stepName="sensei-plan"
+			stepName="senseiPlan"
 			recordTracksEvent={ recordTracksEvent }
 			formattedHeader={
 				status === Status.Initial && (

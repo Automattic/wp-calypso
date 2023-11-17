@@ -67,7 +67,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 
 	return (
 		<SenseiStepContainer
-			stepName="sensei-purpose"
+			stepName="senseiPurpose"
 			className="sensei-step-green"
 			recordTracksEvent={ recordTracksEvent }
 			formattedHeader={
