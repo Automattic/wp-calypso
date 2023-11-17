@@ -68,3 +68,18 @@ export function InfoIcon( { className }: { className?: string } ) {
 		</svg>
 	);
 }
+
+export function CloseIcon( { className }: { className?: string } ) {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			height="24"
+			viewBox="0 -960 960 960"
+			className={ className }
+			width="24"
+			aria-hidden="true"
+		>
+			<path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+		</svg>
+	);
+}
