@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
@@ -8,6 +8,7 @@ import { Invoice } from 'calypso/state/partner-portal/types';
 export default function MissingPaymentNotification() {
 	const partner = useSelector( getCurrentPartner );
 	const locale = useLocale();
+	const translate = useTranslate();
 
 	if ( ! partner || ! partner.keys ) {
 		return null;
