@@ -85,7 +85,7 @@ const NonTotalPrices = styled.div< { showToSFoldableCard: boolean } >`
 	border-top: ${ ( props ) =>
 		props.showToSFoldableCard ? 'none' : '1px solid ' + props.theme.colors.borderColorLight };
 	border-bottom: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
-	padding: ${ ( showToSFoldableCard ) => ( showToSFoldableCard ? '0 0 16px' : '16px 0' ) };
+	padding: ${ ( props ) => ( props.showToSFoldableCard ? '0 0 16px' : '16px 0' ) };
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
