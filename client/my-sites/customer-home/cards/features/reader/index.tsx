@@ -49,11 +49,11 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 						<div className="reader-card__title-icon">
 							<img src={ iconReaderLightbulb } alt="" />
 						</div>
-						<span>{ translate( 'Increase Views by Engaging with Others' ) }</span>
+						<span>{ translate( 'Increase views by engaging with others' ) }</span>
 					</h2>
 					<span className="reader-card__subtitle">
 						{ translate(
-							'You have more chances to pomp up your views when joining new conversations.'
+							'Thoughtfully commenting on other sites is a great way to grow your audience.'
 						) }
 					</span>
 				</div>

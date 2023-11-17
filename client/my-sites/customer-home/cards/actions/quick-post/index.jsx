@@ -24,7 +24,7 @@ export const QuickPost = () => {
 		<div className="quick-post customer-home__card">
 			<div className="quick-post__title">
 				{ translate(
-					'{{strong}}Hey there!{{/strong}}{{br}}{{/br}} Did you know people that post more get more traffic?',
+					'{{strong}}Hey there!{{/strong}}{{br}}{{/br}} Did you know sites with more posts get more traffic?',
 					{
 						args: [ currentUser.first_name ],
 						components: {
