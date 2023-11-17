@@ -66,24 +66,24 @@ export class TypeSelector extends Component {
 				selectedCheckboxes: updatedSelection,
 			} );
 		} else {
-			let updatedSelection = [ ...selectedCheckboxes ];
+			let updatedSelection = new Set( selectedCheckboxes );
 
 			// If it's a parent type, we simply use the parentTypeKey
 			if ( isParentType ) {
-				updatedSelection = [ parentTypeKey ];
+				updatedSelection = new Set( [ parentTypeKey ] );
 			} else {
 				// Find the type object and add its children if it has any
 				const currentType = this.props.types.find( ( typeItem ) => typeItem.key === type );
 				if ( currentType && currentType.children ) {
-					currentType.children.forEach( ( child ) => updatedSelection.push( child.key ) );
+					currentType.children.forEach( ( child ) => updatedSelection.add( child.key ) );
 				}
 				// Always add the type itself to the selection
-				updatedSelection.push( type );
+				updatedSelection.add( type );
 			}
 
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: updatedSelection,
+				selectedCheckboxes: [ ...updatedSelection ],
 			} );
 		}
 	};
