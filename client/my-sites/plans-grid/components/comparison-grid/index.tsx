@@ -488,6 +488,13 @@ const ComparisonGridHeaderCell = ( {
 	);
 };
 
+const PlanTypeSelectorWrapper = styled.div`
+	display: none;
+	${ plansBreakSmall( css`
+		display: block;
+	` ) }
+`;
+
 const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderProps >(
 	(
 		{
@@ -527,13 +534,13 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
 					key="feature-name"
-					className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
+					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
 				>
 					{ isStuck && planTypeSelectorProps && (
-						<>
+						<PlanTypeSelectorWrapper>
 							<p>{ translate( 'Billing Cycle' ) }</p>
-							<PlanTypeSelector { ...planTypeSelectorProps } />{ ' ' }
-						</>
+							<PlanTypeSelector { ...planTypeSelectorProps } hideDiscountLabel={ true } />
+						</PlanTypeSelectorWrapper>
 					) }
 				</RowTitleCell>
 				{ visibleGridPlans.map( ( { planSlug }, index ) => (
