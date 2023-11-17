@@ -140,6 +140,12 @@ export interface ReceiptCostOverride {
 	override_code: string;
 
 	/**
+	 * If this is true, the override is not a discount but a reset for the base
+	 * price of the product.
+	 */
+	does_override_original_cost: boolean;
+
+	/**
 	 * The price as it was before this price change was applied. It is a float
 	 * in the currency's standard unit (eg: dollars in USD).
 	 */

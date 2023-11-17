@@ -283,19 +283,20 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 function ReceiptItemDiscounts( { item }: { item: BillingTransactionItem } ) {
 	return (
 		<ul className="billing-history__receipt-item-discounts-list">
-			{ item.cost_overrides.map( ( discount ) => {
-				// TODO: filter out discounts we don't want to show, like domain transfer price assignments.
-				const discountAmount = discount.old_price - discount.new_price;
-				const formattedDiscountAmount = formatCurrency( discountAmount, item.currency, {
-					stripZeros: true,
-				} );
-				return (
-					<li key={ discount.id }>
-						<span>{ discount.human_readable_reason }</span>
-						<span>{ formattedDiscountAmount }</span>
-					</li>
-				);
-			} ) }
+			{ item.cost_overrides
+				.filter( ( discount ) => ! discount.does_override_original_cost )
+				.map( ( discount ) => {
+					const discountAmount = discount.old_price - discount.new_price;
+					const formattedDiscountAmount = formatCurrency( discountAmount, item.currency, {
+						stripZeros: true,
+					} );
+					return (
+						<li key={ discount.id }>
+							<span>{ discount.human_readable_reason }</span>
+							<span>{ formattedDiscountAmount }</span>
+						</li>
+					);
+				} ) }
 		</ul>
 	);
 }
