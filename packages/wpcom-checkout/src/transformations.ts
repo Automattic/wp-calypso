@@ -120,6 +120,17 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	};
 }
 
+/*
+ * Coupon discounts are applied (or not, as appropriate) to each line item's
+ * total, so the cart's subtotal includes them. However, because it's nice to
+ * be able to display the coupon discount as a discount separately from the
+ * subtotal, this function returns the cart's subtotal with the coupon savings
+ * removed.
+ */
+export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
+	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
+}
+
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
 	const credits = cart.credits_integer;
 	const subtotal = cart.sub_total_integer;
