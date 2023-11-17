@@ -86,7 +86,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		}
 	};
 
-	const isValidSiteTitle = useCallback( () => siteTitle && siteTitle.length > 2, [ siteTitle ] );
+	const isValidSiteTitle = useCallback( () => siteTitle && siteTitle.length >= 2, [ siteTitle ] );
 
 	const handleSubmit = useCallback( () => {
 		setHasSubmitted( true );
