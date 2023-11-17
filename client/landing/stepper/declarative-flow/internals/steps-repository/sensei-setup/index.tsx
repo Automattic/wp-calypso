@@ -86,7 +86,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		}
 	};
 
-	const isValidSiteTitle = () => siteTitle && siteTitle.length > 2;
+	const isValidSiteTitle = useCallback( () => siteTitle && siteTitle.length > 2, [ siteTitle ] );
 
 	const handleSubmit = useCallback( () => {
 		setHasSubmitted( true );
@@ -103,7 +103,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 			title: variation.title,
 		} as StyleVariation );
 		submit?.();
-	}, [ siteTitle, dispatch, submit, checked ] );
+	}, [ siteTitle, dispatch, submit, checked, isValidSiteTitle ] );
 
 	const preview = <ThemeStylePreviews styles={ styles } active={ checked } />;
 
