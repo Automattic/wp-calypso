@@ -19,16 +19,3 @@ export function hasCheckoutVersion( version: string ) {
 	}
 	return false;
 }
-
-/**
- * Use getQueryParam to check if a query string parameter exists and return its value
- * @param param - the query string parameter to check
- * @returns - string | null
- */
-
-export function getQueryParam( param: string ) {
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
-	return new URLSearchParams( window.location.search ).get( param );
-}
