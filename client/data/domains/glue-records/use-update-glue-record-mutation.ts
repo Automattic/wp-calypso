@@ -26,7 +26,7 @@ export default function useUpdateGlueRecordMutation(
 						apiNamespace: 'wpcom/v2',
 					},
 					{
-						name_server: glueRecord.record,
+						name_server: glueRecord.record.toLowerCase(),
 						ip_addresses: [ glueRecord.address ],
 					}
 				)

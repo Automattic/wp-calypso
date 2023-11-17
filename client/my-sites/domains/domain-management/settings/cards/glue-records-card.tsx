@@ -111,7 +111,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const handleRecordChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const record = event.target.value;
 
-		setRecord( record );
+		setRecord( record.toLowerCase() );
 	};
 
 	const handleDelete = ( record: GlueRecordObject ) => {

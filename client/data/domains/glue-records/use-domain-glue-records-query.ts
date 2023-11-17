@@ -19,7 +19,7 @@ export type GlueRecordApiObject = {
 
 export const mapGlueRecordObjectToApiObject = ( record: GlueRecordObject ): GlueRecordApiObject => {
 	return {
-		nameserver: record.record,
+		nameserver: record.record.toLowerCase(),
 		ip_addresses: [ record.address ],
 	};
 };
@@ -31,7 +31,7 @@ const selectGlueRecords = ( response: GlueRecordApiObject[] | null ): GlueRecord
 
 	return response?.map( ( record: GlueRecordApiObject ) => {
 		return {
-			record: record.nameserver,
+			record: record.nameserver.toLowerCase(),
 			address: record.ip_addresses[ 0 ],
 		};
 	} );
