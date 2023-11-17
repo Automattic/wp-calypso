@@ -119,15 +119,15 @@ Thanks\n\n`;
 
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
-	// TODO: Enable upgrade slider here too?
-	// const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
-	const isTierUpgradeSliderEnabled = false;
+
+	// TODO: Replace current pricing info with slider.
+	// Currently displaying below the flow to maintain existing behaviour.
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
-			{ isTierUpgradeSliderEnabled && <TierUpgradeSlider /> }
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 			<ButtonComponent
@@ -139,6 +139,7 @@ Thanks\n\n`;
 			>
 				{ translate( 'Get Stats' ) }
 			</ButtonComponent>
+			{ isTierUpgradeSliderEnabled && <TierUpgradeSlider /> }
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
