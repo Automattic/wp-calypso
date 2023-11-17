@@ -152,7 +152,13 @@ interface Props {
 	hideEnterprisePlan?: boolean;
 	isInSignup?: boolean;
 	// whether plan is upgradable from current plan (used in logged-in state)
-	usePlanUpgradeabilityCheck?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+	usePlanUpgradeabilityCheck?: ( {
+		planSlugs,
+		siteId,
+	}: {
+		planSlugs: PlanSlug[];
+		siteId?: number;
+	} ) => {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
@@ -162,6 +168,7 @@ interface Props {
 	 */
 	isSubdomainNotGenerated?: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
+	siteId?: number;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -283,6 +290,7 @@ const useGridPlans = ( {
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
+	siteId,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
@@ -310,7 +318,10 @@ const useGridPlans = ( {
 		term,
 		intent,
 	} );
-	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: availablePlanSlugs } );
+	const planUpgradeability = usePlanUpgradeabilityCheck?.( {
+		planSlugs: availablePlanSlugs,
+		siteId,
+	} );
 
 	// only fetch highlights for the plans that are available for the intent
 	const highlightLabels = useHighlightLabels( {

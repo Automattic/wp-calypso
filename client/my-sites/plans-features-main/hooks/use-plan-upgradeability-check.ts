@@ -5,14 +5,15 @@ import type { PlanSlug } from '@automattic/calypso-products';
 
 interface Props {
 	planSlugs: PlanSlug[];
+	siteId?: number;
 }
 
 type PlanUpgradeability = {
 	[ planSlug in PlanSlug ]: boolean;
 };
 
-const usePlanUpgradeabilityCheck = ( { planSlugs }: Props ): PlanUpgradeability => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
+const usePlanUpgradeabilityCheck = ( { planSlugs, siteId }: Props ): PlanUpgradeability => {
+	const selectedSiteId = useSelector( getSelectedSiteId ) || siteId;
 	const planUpgradeability = useSelector( ( state ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
 			return {
