@@ -67,7 +67,7 @@ class AccountPassword extends Component {
 						{
 							test_name: 'network_error',
 							explanation: this.props.translate(
-								'The password could not be vaiidated. Please check your network connection and try again.'
+								'The password could not be validated. Please check your network connection and try again.'
 							),
 						},
 					],
