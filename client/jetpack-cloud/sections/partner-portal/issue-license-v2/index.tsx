@@ -3,12 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
-	LayoutHeaderActions,
+	LayoutHeaderActions as Actions,
 	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutNavigation, {
-	LayoutNavigationItem,
+	LayoutNavigationItem as NavigationItem,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
@@ -31,20 +31,20 @@ export default function IssueLicenseV2() {
 						{ translate( 'Select single product licenses or save when you issue in bulk' ) }
 					</Subtitle>
 
-					<LayoutHeaderActions>
+					<Actions>
 						<Button primary>Issue license </Button>
-					</LayoutHeaderActions>
+					</Actions>
 				</LayoutHeader>
 
 				<LayoutNavigation
 					selectedText={
 						selectedSize === 1
 							? translate( 'Single license' )
-							: ( translate( '%(size)d licenses', { args: { selectedSize } } ) as string )
+							: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string )
 					}
 				>
 					{ availableSizes.map( ( size ) => (
-						<LayoutNavigationItem
+						<NavigationItem
 							label={
 								size === 1
 									? translate( 'Single license' )

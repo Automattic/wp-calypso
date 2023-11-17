@@ -101,14 +101,15 @@
 .jetpack-cloud-layout__header-subtitle {
 	font-size: 1rem;
 	color: var(--studio-gray-60);
-	margin-bottom: 8px;
+	margin: 0;
 	font-weight: 400;
 	line-height: 1.2;
 }
 
-.jetpack-cloud-layout__navigation {
+.section-nav.jetpack-cloud-layout__navigation {
+	margin-block-start: 32px;
 	.section-nav__mobile-header-text .count {
-		margin-left: 8px;
+		margin-inline-start: 8px;
 	}
 
 	.select-dropdown__item.is-selected .count {
