@@ -1,0 +1,107 @@
+.is-jetpack-new-navigation {
+	.jetpack-cloud-layout__header h1 {
+		font-weight: 600;
+	}
+}
+
+.main.jetpack-cloud-layout {
+	padding-inline: 0;
+
+	header.current-section {
+		padding: 0 16px;
+
+		button {
+			padding: 20px 8px;
+		}
+	}
+}
+
+.jetpack-cloud-layout__container {
+	max-width: 100%;
+	min-height: calc(100vh - 123px);
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	padding: 0;
+}
+
+.jetpack-cloud-layout__body {
+	margin-block-end: -32px;
+	flex: 1 1 100%;
+}
+
+.jetpack-cloud-layout__top,
+.jetpack-cloud-layout__body {
+	width: 100%;
+
+	&-wrapper {
+		margin-inline: 0;
+	}
+
+	&-wrapper > * {
+		max-width: 1500px;
+		margin-inline: auto !important;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		// We need these negative margin values because we want to make the container full-width,
+		// but our element is inside a limited-width parent.
+		margin-inline-start: -73px;
+		padding-inline: 73px;
+	}
+}
+
+.main.jetpack-cloud-layout.is-with-border {
+	.jetpack-cloud-layout__body {
+		padding-block: 16px;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		.jetpack-cloud-layout__top {
+			border-block-end: 1px solid var(--color-primary-5);
+		}
+
+		.jetpack-cloud-layout__body {
+			background: rgba(255, 255, 255, 0.5);
+		}
+	}
+}
+
+
+.jetpack-cloud-layout__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	> * + * {
+		margin-inline-start: 24px;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		flex-wrap: wrap;
+
+		> * {
+			width: 100%;
+			margin-block-end: 16px;
+		}
+
+		> * + * {
+			margin-inline-start: 0;
+		}
+	}
+}
+
+.jetpack-cloud-layout__header-title {
+	font-size: 2.25rem;
+	margin-block-end: 8px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.jetpack-cloud-layout__header-subtitle {
+	font-size: 1rem;
+	color: var(--studio-gray-60);
+	margin-bottom: 8px;
+	font-weight: 400;
+	line-height: 1.2;
+}
