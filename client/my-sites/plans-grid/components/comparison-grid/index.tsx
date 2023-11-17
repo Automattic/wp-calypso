@@ -339,7 +339,7 @@ type ComparisonGridProps = {
 	stickyRowOffset: number;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showRefundPeriod?: boolean;
-	planTypeSelectorProps: PlanTypeSelectorProps;
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 };
 
 type ComparisonGridHeaderProps = {
@@ -357,7 +357,7 @@ type ComparisonGridHeaderProps = {
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
 	isHiddenInMobile?: boolean;
-	planTypeSelectorProps: PlanTypeSelectorProps;
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 };
 
 type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
@@ -509,6 +509,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		},
 		ref
 	) => {
+		const translate = useTranslate();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 			gridPlans: displayedGridPlans,
@@ -528,7 +529,12 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 					key="feature-name"
 					className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
 				>
-					{ isStuck && <PlanTypeSelector { ...planTypeSelectorProps } /> }
+					{ isStuck && planTypeSelectorProps && (
+						<>
+							<p>{ translate( 'Billing Cycle' ) }</p>
+							<PlanTypeSelector { ...planTypeSelectorProps } />{ ' ' }
+						</>
+					) }
 				</RowTitleCell>
 				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell

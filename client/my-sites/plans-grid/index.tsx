@@ -59,7 +59,8 @@ export interface PlansGridProps {
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	showRefundPeriod?: boolean;
-	planTypeSelectorProps: PlanTypeSelectorProps;
+	// only used for comparison grid
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 }
 
 const WrappedComparisonGrid = ( {
