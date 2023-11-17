@@ -60,6 +60,9 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 	}
 };
 
+const unverifiedEmailTaskComparator = ( isEmailUnverified ) => ( task ) =>
+	isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0;
+
 const skipTask = (
 	dispatch,
 	skipCurrentView,
@@ -123,7 +126,6 @@ const SiteSetupList = ( {
 	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
 	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ sortedTaskList, setSortedTaskList ] = useState( tasks );
 
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
@@ -133,27 +135,19 @@ const SiteSetupList = ( {
 			( task ) => task.id === CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED && ! task.isCompleted
 		).length > 0;
 
-	useEffect( () => {
-		setSortedTaskList(
-			[ ...tasks ].sort( ( task ) =>
-				isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0
-			)
-		);
-	}, [ isEmailUnverified, tasks ] );
-
 	const siteIntent = useSiteOption( 'site_intent' );
 	const isBlogger = siteIntent === 'write';
 	const isRtl = useRtl();
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
-		if ( ! currentTaskId && sortedTaskList.length ) {
-			const initialTask = sortedTaskList.find( ( task ) => ! task.isCompleted );
+		if ( ! currentTaskId && tasks.length ) {
+			const initialTask = tasks.find( ( task ) => ! task.isCompleted );
 			if ( initialTask ) {
 				setCurrentTaskId( initialTask.id );
 			}
 		}
-	}, [ currentTaskId, dispatch, sortedTaskList ] );
+	}, [ currentTaskId, dispatch, tasks ] );
 
 	// If specified, then automatically complete the current task when viewed
 	// if it is not already complete.
@@ -283,7 +277,7 @@ const SiteSetupList = ( {
 					aria-label="Site setup"
 					aria-orientation="vertical"
 				>
-					{ sortedTaskList.map( ( task ) => {
+					{ tasks.map( ( task ) => {
 						const enhancedTask = getTask( task, { isBlogger, isFSEActive, userEmail } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
@@ -380,7 +374,9 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		tasks: taskList.getAll(),
+		tasks: taskList.getAllSorted(
+			unverifiedEmailTaskComparator( ! isCurrentUserEmailVerified( state ) )
+		),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
 		siteCount,
