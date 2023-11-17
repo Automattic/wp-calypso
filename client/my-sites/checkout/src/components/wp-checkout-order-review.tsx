@@ -43,6 +43,10 @@ const CouponLinkWrapper = styled.div`
 	font-size: 14px;
 `;
 
+const CouponAreaWrapper = styled.div`
+	padding-bottom: ${ hasCheckoutVersion( '2' ) ? '24px' : 'inherit' };
+`;
+
 const CouponField = styled( Coupon )``;
 
 const CouponEnableButton = styled.button`
@@ -64,6 +68,7 @@ const SitePreviewWrapper = styled.div`
 		aspect-ratio: 16 / 9;
 	}
 `;
+
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
@@ -217,25 +222,29 @@ function CouponFieldArea( {
 
 	if ( isCouponFieldVisible ) {
 		return (
-			<CouponField
-				id="order-review-coupon"
-				disabled={ formStatus !== FormStatus.READY }
-				couponStatus={ couponStatus }
-				couponFieldStateProps={ couponFieldStateProps }
-			/>
+			<CouponAreaWrapper>
+				<CouponField
+					id="order-review-coupon"
+					disabled={ formStatus !== FormStatus.READY }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			</CouponAreaWrapper>
 		);
 	}
 
 	return (
-		<CouponLinkWrapper>
-			{ translate( 'Have a coupon? ' ) }{ ' ' }
-			<CouponEnableButton
-				className="wp-checkout-order-review__show-coupon-field-button"
-				onClick={ () => setCouponFieldVisible( true ) }
-			>
-				{ translate( 'Add a coupon code' ) }
-			</CouponEnableButton>
-		</CouponLinkWrapper>
+		<CouponAreaWrapper>
+			<CouponLinkWrapper>
+				{ translate( 'Have a coupon? ' ) }{ ' ' }
+				<CouponEnableButton
+					className="wp-checkout-order-review__show-coupon-field-button"
+					onClick={ () => setCouponFieldVisible( true ) }
+				>
+					{ translate( 'Add a coupon code' ) }
+				</CouponEnableButton>
+			</CouponLinkWrapper>
+		</CouponAreaWrapper>
 	);
 }
 
