@@ -42,19 +42,6 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	};
 }
 
-export function getSubtotalLineItemFromCart( responseCart: ResponseCart ): LineItemType {
-	return {
-		id: 'subtotal',
-		type: 'subtotal',
-		// translators: The label of the subtotal line item in checkout
-		label: String( translate( 'Subtotal' ) ),
-		formattedAmount: formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} ),
-	};
-}
-
 export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemType | null {
 	if ( ! responseCart.tax.display_taxes ) {
 		return null;
