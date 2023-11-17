@@ -249,7 +249,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					} ) }
 			</form>
 
-			{ data && data.length < 3 && (
+			{ ! isEditing && data && data.length < 3 && (
 				<Button
 					borderless
 					className="add-forward-button  link-button"
