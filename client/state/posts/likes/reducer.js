@@ -1,5 +1,6 @@
 import { some } from 'lodash';
 import {
+	POST_LIKERS_RECEIVE,
 	POST_LIKES_ADD_LIKER,
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REMOVE_LIKER,
@@ -20,8 +21,9 @@ export const itemReducer = withSchemaValidation(
 	itemSchema,
 	( state = { likes: undefined, iLike: false, found: 0, lastUpdated: undefined }, action ) => {
 		switch ( action.type ) {
-			case POST_LIKES_RECEIVE: {
-				const { likes, iLike, found } = action;
+			case POST_LIKERS_RECEIVE: {
+				const { likes } = action;
+
 				return {
 					likes: Array.isArray( likes )
 						? likes.map( ( like ) => {
@@ -34,9 +36,19 @@ export const itemReducer = withSchemaValidation(
 									site_visible: like.site_visible,
 								};
 						  } )
-						: state.likes,
+						: undefined,
+					// Make sure we're keeping any existing values.
+					found: state.found,
+					iLike: state.iLike,
+					lastUpdated: state.lastUpdated,
+				};
+			}
+			case POST_LIKES_RECEIVE: {
+				const { iLike, found } = action;
+				return {
 					iLike,
 					found,
+					likes: state.likes,
 					lastUpdated: Date.now(),
 				};
 			}
@@ -68,7 +80,7 @@ export const itemReducer = withSchemaValidation(
 				const { likeCount, liker } = action;
 				const hasLiker = some( state.likes, ( like ) => like.ID === liker.ID );
 
-				if ( state.found === likeCount && hasLiker ) {
+				if ( state.found === likeCount && hasLiker && state.iLike ) {
 					// if the like count matches and we already have this liker, bail
 					return state;
 				}
@@ -80,7 +92,7 @@ export const itemReducer = withSchemaValidation(
 
 				return {
 					likes,
-					iLike: state.iLike,
+					iLike: true,
 					found: likeCount,
 					lastUpdated: state.lastUpdated,
 				};
