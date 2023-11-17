@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -28,6 +29,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const { data, isLoading: isLoadingData, isError } = useDomainGlueRecordsQuery( domain.name );
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
+	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ isRemoving, setIsRemoving ] = useState( false );
 	const [ isEditing, setIsEditing ] = useState( false );
@@ -96,7 +98,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		if ( data?.length === 0 ) {
 			handleAddGlueRecord();
 		}
-	}, [ isLoadingData, data ] );
+	}, [ isLoadingData, data, isExpanded ] );
 
 	const handleIpAddressChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const ipAddress = event.target.value;
@@ -125,6 +127,14 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 			record: `${ record }.${ domain.domain }`,
 			address: ipAddress,
 		} );
+	};
+
+	const handleCancel = () => {
+		clearState();
+
+		if ( data && data.length === 0 ) {
+			setIsExpanded( false );
+		}
 	};
 
 	const FormViewRow = ( { child: child }: { child: GlueRecordObject } ) => (
@@ -212,7 +222,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					</FormButton>
 					<FormButton
 						disabled={ isSaving }
-						onClick={ () => clearState() }
+						onClick={ handleCancel }
 						type="button"
 						isPrimary={ false }
 					>
@@ -232,32 +242,41 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	}
 
 	return (
-		<div className="domain-glue-records">
-			<form
-				onSubmit={ ( e ) => {
-					e.preventDefault();
-					return false;
-				} }
-			>
-				{ data?.map( ( item ) => FormViewRow( { child: item } ) ) }
-				{ isEditing &&
-					FormRowEditable( {
-						child: {
-							record: '',
-							address: '',
-						},
-					} ) }
-			</form>
-
-			{ ! isEditing && data && data.length < 3 && (
-				<Button
-					borderless
-					className="add-forward-button  link-button"
-					onClick={ () => handleAddGlueRecord() }
+		<Accordion
+			className="domain-forwarding-card__accordion"
+			title={ translate( 'Glue Records' ) }
+			subtitle={ translate( 'Edit your private name servers (glue records)' ) }
+			expanded={ isExpanded }
+			onOpen={ () => setIsExpanded( true ) }
+			onClose={ () => setIsExpanded( false ) }
+		>
+			<div className="domain-glue-records">
+				<form
+					onSubmit={ ( e ) => {
+						e.preventDefault();
+						return false;
+					} }
 				>
-					{ translate( '+ Add Glue Record' ) }
-				</Button>
-			) }
-		</div>
+					{ data?.map( ( item ) => FormViewRow( { child: item } ) ) }
+					{ isEditing &&
+						FormRowEditable( {
+							child: {
+								record: '',
+								address: '',
+							},
+						} ) }
+				</form>
+
+				{ ! isEditing && data && data.length < 3 && (
+					<Button
+						borderless
+						className="add-forward-button  link-button"
+						onClick={ () => handleAddGlueRecord() }
+					>
+						{ translate( '+ Add Glue Record' ) }
+					</Button>
+				) }
+			</div>
+		</Accordion>
 	);
 }

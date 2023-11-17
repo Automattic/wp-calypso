@@ -644,15 +644,7 @@ const Settings = ( {
 			return null;
 		}
 
-		return (
-			<Accordion
-				className="domain-forwarding-card__accordion"
-				title={ translate( 'Glue Records' ) }
-				subtitle={ translate( 'Edit your private name servers (glue records)' ) }
-			>
-				<GlueRecordsCard domain={ domain } />
-			</Accordion>
-		);
+		return <GlueRecordsCard domain={ domain } />;
 	};
 
 	const renderMainContent = () => {
