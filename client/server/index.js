@@ -1,20 +1,24 @@
+import fs from 'fs';
 import 'source-map-support/register';
 import '@automattic/calypso-polyfills';
-
-import fs from 'fs';
-import config from '@automattic/calypso-config';
 import boot from './boot';
 import { getLogger } from './lib/logger';
 
-const logger = getLogger();
+/*const logger = getLogger();
 const start = Date.now();
-const protocol = config( 'protocol' );
-const port = config( 'port' );
-const host = config( 'hostname' );
+const protocol = 'http';
+const port = 3000;
+const host = 'calypso.localhost';
 const app = boot();
 
+debugger;
+
+process.on( 'unhandledRejection', ( reason, promise ) => {
+	console.error( 'Unhandled Rejection at:', promise, 'reason:', reason );
+	// Application specific logging, throwing an error, or other logic here
+} );
+
 function sendBootStatus( status ) {
-	// don't send anything if we're not running in a fork
 	if ( ! process.send ) {
 		return;
 	}
@@ -52,26 +56,21 @@ function loadSslCert() {
 	};
 }
 
-// Start a development HTTPS server.
-function createServer() {
-	if ( protocol === 'https' ) {
-		return require( 'https' ).createServer( loadSslCert(), app );
-	}
-
-	return require( 'http' ).createServer( app );
-}
-
-const server = createServer();
-if ( process.env.NODE_ENV !== 'development' ) {
-	server.timeout = 50 * 1000; //50 seconds, in ms;
-}
-
 process.on( 'uncaughtExceptionMonitor', ( err ) => {
 	logger.error( err );
 } );
 
-// The desktop app runs Calypso in a fork. Let non-forks listen on any host.
-server.listen( { port, host: process.env.CALYPSO_IS_FORK ? host : null }, function () {
-	// Tell the parent process that Calypso has booted.
+// Bun.serve() integration
+Bun.serve( {
+	fetch( req ) {
+		// Your existing app logic to handle requests
+		// Ensure compatibility with Bun's fetch API
+		return app.handle( req );
+	},
+	port: port,
+	hostname: process.env.CALYPSO_IS_FORK ? host : null,
+	// SSL certification loading, if HTTPS is required
+	...( protocol === 'https' ? { cert: loadSslCert().cert, key: loadSslCert().key } : {} ),
+} ).then( () => {
 	sendBootStatus( 'ready' );
-} );
+} );*/

@@ -44,7 +44,7 @@
 		"@wordpress/i18n": "^4.44.0",
 		"classnames": "^2.3.2",
 		"glob": "^7.1.6",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../../packages/i18n-calypso",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

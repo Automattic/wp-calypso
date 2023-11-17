@@ -1,4 +1,6 @@
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', '..', 'config' );
+
+console.log( 'KAWABANGA' );
 const { default: createConfig } = require( '@automattic/create-calypso-config' );
 const parser = require( './parser' );
 
@@ -10,3 +12,5 @@ const { serverData, clientData } = parser( configPath, {
 
 module.exports = createConfig( serverData );
 module.exports.clientData = clientData;
+
+console.log( 'all good!' );

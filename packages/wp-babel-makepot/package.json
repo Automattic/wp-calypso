@@ -41,7 +41,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../i18n-calypso",
 		"jest": "^29.7.0",
 		"react": "^18.2.0",
 		"rimraf": "^3.0.2"

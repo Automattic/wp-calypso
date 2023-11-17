@@ -41,7 +41,7 @@
 		"classnames": "^2.3.1",
 		"framer-motion": "6.2.8",
 		"gridicons": "^3.4.2",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../i18n-calypso",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.16.1",

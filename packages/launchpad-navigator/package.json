@@ -35,7 +35,7 @@
 		"@automattic/launchpad": "workspace:^",
 		"@wordpress/components": "^25.10.0",
 		"classnames": "^2.3.1",
-		"i18n-calypso": "workspace:^",
+		"i18n-calypso": "file:../i18n-calypso",
 		"tslib": "^2.3.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
