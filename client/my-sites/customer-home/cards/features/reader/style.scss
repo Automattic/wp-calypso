@@ -6,6 +6,7 @@
 	border: 0 !important;
 	background: var(--studio-white) !important;
 	margin: 0 !important;
+	padding: 0 16px 0 !important;
 
 	@media (min-width: $break-small) {
 		padding: 0 !important;
@@ -51,6 +52,12 @@
 
 	.following.main {
 		max-width: none !important;
+		padding-bottom: 0 !important;
+
+		.list-end {
+			display: none;
+		}
+
 	}
 
 	.reader-post-card {

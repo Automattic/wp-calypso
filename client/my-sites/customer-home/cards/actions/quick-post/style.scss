@@ -7,9 +7,14 @@
 	background: var(--studio-white) !important;
 	display: flex;
 	gap: 17px;
-	margin: 0 !important;
 	padding: 0 !important;
 	align-items: center;
+
+	@media (max-width: $break-small) {
+		padding: 16px !important;
+		margin: 0 !important;
+	}
+
 
 	&__title {
 		color: var(--p-2-text, #00101c);
