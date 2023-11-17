@@ -57,6 +57,7 @@ export interface APIPartnerKey {
 	oauth2_token: string;
 	disabled_on: string | null;
 	has_licenses: boolean;
+	latest_invoice: APIInvoice | null;
 }
 
 export interface APIPartnerAddress {
@@ -123,6 +124,8 @@ export interface APIInvoice {
 	id: string;
 	number: string;
 	due_date: string | null;
+	created: string | null;
+	effective_at: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -141,6 +144,8 @@ export interface Invoice {
 	id: string;
 	number: string;
 	dueDate: string | null;
+	created: string | null;
+	effectiveAt: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -177,6 +182,7 @@ export interface PartnerKey {
 	oAuth2Token: string;
 	disabledOn: string | null;
 	hasLicenses: boolean;
+	latestInvoice: Invoice | null;
 }
 
 export interface PartnerAddress {
