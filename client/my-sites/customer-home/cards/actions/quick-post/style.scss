@@ -1,0 +1,42 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.quick-post {
+	box-shadow: none !important;
+	border: 0 !important;
+	background: var(--studio-white) !important;
+	display: flex;
+	gap: 17px;
+	padding: 0 !important;
+	align-items: center;
+
+	@media (max-width: $break-small) {
+		padding: 16px !important;
+		margin: 0 !important;
+	}
+
+
+	&__title {
+		color: var(--p-2-text, #00101c);
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 23px;
+		flex: 1;
+	}
+
+	&__action-button {
+		border-radius: 40px; /* stylelint-disable-line scales/radii */
+		display: inline-flex;
+		padding: 10px 24px;
+		justify-content: center;
+		align-items: center;
+		color: var(--p-2-white, #fff);
+		text-align: center;
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 21px;
+		letter-spacing: -0.09px;
+	}
+}

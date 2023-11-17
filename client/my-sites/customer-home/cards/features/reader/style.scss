@@ -1,0 +1,70 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.reader-card {
+	box-shadow: none !important;
+	border: 0 !important;
+	background: var(--studio-white) !important;
+	margin: 0 !important;
+	padding: 0 16px 0 !important;
+
+	@media (min-width: $break-small) {
+		padding: 0 !important;
+	}
+
+	&__header {
+		margin: 8px 0;
+		color: var(--p-2-text, #00101c);
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 23px;
+		flex: 1;
+	}
+
+	&__title {
+		gap: 14px;
+		display: flex;
+
+		div {
+			display: flex;
+		}
+
+		span {
+			color: var(--gray-gray-90, #1d2327);
+			font-family: "SF Pro Text", $sans;
+			font-size: $font-body;
+			font-style: normal;
+			font-weight: 600;
+			line-height: 40px;
+			align-items: center;
+		}
+	}
+	&__subtitle {
+		color: var(--gray-gray-50, #646970);
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
+	.following.main {
+		max-width: none !important;
+		padding-bottom: 0 !important;
+
+		.list-end {
+			display: none;
+		}
+
+	}
+
+	.reader-post-card {
+		padding: 24px 0 !important;
+	}
+
+	.reader__card.card.is-placeholder .reader__post-footer {
+		list-style: none;
+	}
+}

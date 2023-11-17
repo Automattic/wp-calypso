@@ -39,6 +39,7 @@
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/new-navigation": true,
+		"jetpack/bundle-licensing": false,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-retention-settings": true,
