@@ -90,15 +90,16 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 
 					<TermsCollapsedContent>
 						<FoldableCard
+							clickableHeader={ true }
 							compact
 							className="checkout__terms-foldable-card"
-							header="Read more"
-							screenReaderText="Read more"
+							header={ translate( 'Read more' ) }
+							screenReaderText={ translate( 'Read more' ) }
 						>
 							{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 							{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
-							{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-							<JetpackSocialAdvancedPricingDisclaimer />{ ' ' }
+							<InternationalFeeNotice />
+							<JetpackSocialAdvancedPricingDisclaimer />
 						</FoldableCard>
 					</TermsCollapsedContent>
 				</>
