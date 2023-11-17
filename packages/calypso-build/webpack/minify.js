@@ -125,7 +125,8 @@ module.exports = ( {
 
 	return [
 		new TerserPlugin( {
-			parallel,
+			// SWC handles parallelization internally.
+			parallel: false,
 			extractComments,
 			terserOptions,
 			minify: TerserPlugin.swcMinify,
