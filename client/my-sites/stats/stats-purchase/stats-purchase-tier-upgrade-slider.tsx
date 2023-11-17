@@ -6,6 +6,10 @@ import useAvailableUpgradeTiers from './stats-purchase-tier-upgrade-slider-utils
 
 import './stats-purchase-tier-upgrade-slider.scss';
 
+type TierUpgradeSliderProps = {
+	className?: string;
+};
+
 function getLocalizedStrings() {
 	const limits = translate( 'Monthly site views limit', {
 		comment: 'Heading for Stats Upgrade slider. The monthly views limit.',
@@ -23,10 +27,6 @@ function getLocalizedStrings() {
 		strategy,
 	};
 }
-
-type TierUpgradeSliderProps = {
-	className?: string;
-};
 
 function TierUpgradeSlider( { className }: TierUpgradeSliderProps ) {
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
