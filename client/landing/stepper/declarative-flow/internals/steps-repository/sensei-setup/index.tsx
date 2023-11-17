@@ -58,7 +58,7 @@ const ThemeStylePreviews = ( {
 const SenseiSetup: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const isDesktop = useDesktopBreakpoint();
-	const inputRef = useRef( null );
+	const inputRef = useRef< HTMLInputElement >( null );
 
 	const initialSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
