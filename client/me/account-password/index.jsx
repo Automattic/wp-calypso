@@ -58,13 +58,23 @@ class AccountPassword extends Component {
 			return;
 		}
 
-		try {
-			const validation = await wp.req.post( '/me/settings/password/validate', { password } );
+		const validation = await wp.req
+			.post( '/me/settings/password/validate', { password } )
+			.catch( () => ( {
+				passed: false,
+				test_results: {
+					failed: [
+						{
+							test_name: 'network_error',
+							explanation: this.props.translate(
+								'The password could not be vaiidated. Please check your network connection and try again.'
+							),
+						},
+					],
+				},
+			} ) );
 
-			this.setState( { pendingValidation: false, validation } );
-		} catch ( err ) {
-			this.setState( { pendingValidation: false } );
-		}
+		this.setState( { pendingValidation: false, validation } );
 	}, 300 );
 
 	handlePasswordChange = ( event ) => {
