@@ -1,93 +1,77 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useLocale } from '@automattic/i18n-utils';
+import { translate } from 'i18n-calypso';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
-import { Partner, PartnerPortalStore } from 'calypso/state/partner-portal/types';
-import {
-	removeJetpackManagePersistentNotice,
-	warningPartnerPortalPersistentNotice,
-} from './actions';
+import { Invoice } from 'calypso/state/partner-portal/types';
+import { warningPartnerPortalPersistentNotice } from './actions';
 import { getJetpackManagePersistentNotices } from './selectors';
-import {
-	JetpackManagePersistentNoticeActionOptions,
-	JetpackManagePersistentNoticeRemovalActionCreator,
-	JetpackManagePersistentNoticeActionCreator,
-	JetpackManagePersistentNoticeId,
-	JetpackManagePersistentNoticeOptions,
-} from './types';
 
-export interface JetpackPersistentNoticesProps {
-	storeJetpackManagePersistentNotices: JetpackManagePersistentNoticeActionOptions[];
-	removeJetpackManagePersistentNotice: JetpackManagePersistentNoticeRemovalActionCreator;
-	warningPartnerPortalPersistentNotice: JetpackManagePersistentNoticeActionCreator;
-	partner: Partner | null;
-}
+const JetpackPersistentNotices = () => {
+	const dispatch = useDispatch();
+	const storeJetpackManagePersistentNotices = useSelector( getJetpackManagePersistentNotices );
+	const partner = useSelector( getCurrentPartner );
+	const locale = useLocale();
 
-export class JetpackPersistentNotices extends Component< JetpackPersistentNoticesProps > {
-	componentWillMount() {
-		if ( this.props.partner ) {
-			this.props.warningPartnerPortalPersistentNotice(
-				'unpaid-invoice-notice',
-				"The payment for your [month] invoice didn't go through. Please take a moment to complete payment.",
-				{
-					linkText: 'View Invoice',
-					linkUrl: '/partner-portal/invoices',
+	useEffect( () => {
+		const handleWarningPartnerPortalPersistentNotice = () => {
+			if ( ! partner || ! partner.keys ) {
+				return null;
+			}
+
+			const latestUnpaidInvoice = partner.keys.reduce< Invoice | null >( ( latestInvoice, key ) => {
+				if ( key.latestInvoice && key.latestInvoice.status !== 'paid' ) {
+					return key.latestInvoice;
 				}
-			);
-		}
+				return latestInvoice;
+			}, null );
+
+			if ( latestUnpaidInvoice ) {
+				const warningText =
+					'' +
+					translate(
+						"The payment for your %s invoice didn't go through. Please take a moment to complete payment.",
+						{
+							args: new Date( Number( latestUnpaidInvoice.effectiveAt ) * 1000 ).toLocaleString(
+								locale,
+								{
+									month: 'long',
+								}
+							),
+						}
+					);
+
+				dispatch(
+					warningPartnerPortalPersistentNotice( 'unpaid-invoice-notice', warningText, {
+						linkText: translate( 'View Invoice' ),
+						linkUrl: '/partner-portal/invoices',
+					} )
+				);
+			}
+		};
+
+		handleWarningPartnerPortalPersistentNotice();
+	}, [ partner, dispatch, locale ] );
+
+	const noticesList = storeJetpackManagePersistentNotices.map( ( notice ) => (
+		<Notice
+			{ ...notice }
+			key={ `persistent-notice-${ notice.noticeId }` }
+			showDismiss={ false }
+			text={ notice.text }
+		>
+			<a href={ notice.linkUrl } className="notice__link">
+				{ notice.linkText }
+			</a>
+		</Notice>
+	) );
+
+	if ( ! noticesList.length ) {
+		return null;
 	}
 
-	componentDidMount() {
-		if ( this.props.partner ) {
-			this.props.warningPartnerPortalPersistentNotice(
-				'unpaid-invoice-notice',
-				"The payment for your [month] invoice didn't go through. Please take a moment to complete payment.",
-				{
-					linkText: 'View Invoice',
-					linkUrl: '/partner-portal/invoices',
-				}
-			);
-		}
-	}
+	return <div>{ noticesList }</div>;
+};
 
-	render() {
-		const noticesList = this.props.storeJetpackManagePersistentNotices.map( function ( notice ) {
-			return (
-				<Notice
-					{ ...notice }
-					key={ `persistent-notice-${ notice.noticeId }` }
-					showDismiss={ false }
-					text={ notice.text }
-				>
-					<a href={ notice.linkUrl } className="notice__link">
-						{ notice.linkText }
-					</a>
-				</Notice>
-			);
-		}, this );
-
-		if ( ! noticesList.length ) {
-			return null;
-		}
-
-		return <div>{ noticesList }</div>;
-	}
-}
-
-export default connect(
-	( state: PartnerPortalStore ) => ( {
-		storeJetpackManagePersistentNotices: getJetpackManagePersistentNotices( state ),
-		// Refreshes the component when the partner changes
-		// To avoid showing the notice when the partner is not loaded yet
-		partner: getCurrentPartner( state ),
-	} ),
-	( dispatch ) => ( {
-		removeJetpackManagePersistentNotice: ( id: JetpackManagePersistentNoticeId ) =>
-			dispatch( removeJetpackManagePersistentNotice( id ) ),
-		warningPartnerPortalPersistentNotice: (
-			id: string,
-			message: string,
-			noticeOptions?: JetpackManagePersistentNoticeOptions
-		) => dispatch( warningPartnerPortalPersistentNotice( id, message, noticeOptions ) ),
-	} )
-)( JetpackPersistentNotices );
+export default JetpackPersistentNotices;
