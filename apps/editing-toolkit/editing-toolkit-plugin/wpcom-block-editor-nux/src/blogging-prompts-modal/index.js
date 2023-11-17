@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import apiFetch from '@wordpress/api-fetch';
 import { createBlock } from '@wordpress/blocks';
@@ -28,6 +29,7 @@ export const BloggingPromptsModalInner = () => {
 			path,
 		} )
 			.then( ( result ) => {
+				recordTracksEvent( 'calypso_editor_writing_prompts_modal_viewed' );
 				return setPrompts( result );
 			} )
 			// eslint-disable-next-line no-console
@@ -39,15 +41,22 @@ export const BloggingPromptsModalInner = () => {
 	}
 
 	function selectPrompt() {
+		const promptId = prompts[ promptIndex ]?.id;
 		dispatch( 'core/editor' ).resetEditorBlocks( [
-			createBlock( 'jetpack/blogging-prompt', { promptId: prompts[ promptIndex ]?.id } ),
+			createBlock( 'jetpack/blogging-prompt', { promptId } ),
 		] );
+		recordTracksEvent( 'calypso_editor_writing_prompts_modal_prompt_selected', { promptId } );
 		setIsOpen( false );
 	}
 
+	const closeModal = () => {
+		recordTracksEvent( 'calypso_editor_writing_prompts_modal_closed' );
+		setIsOpen( false );
+	};
+
 	return (
 		<Modal
-			onRequestClose={ () => setIsOpen( false ) }
+			onRequestClose={ closeModal }
 			className="blogging-prompts-modal"
 			title={ translate( 'Some ideas for writing topics' ) }
 		>
