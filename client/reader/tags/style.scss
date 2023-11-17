@@ -130,8 +130,15 @@
 		}
 	}
 }
+
+.alphabetic-tags__header-wrap {
+	// Makes the bottom margin of the inner element contribute to its height
+	// so that the `StickyPanel` component can determine the height correctly.
+	display: flow-root;
+}
+
 .alphabetic-tags__header {
-	background: inherit;
+	background-color: var(--color-neutral-0);
 	padding-top: 20px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid var(--studio-gray-5);

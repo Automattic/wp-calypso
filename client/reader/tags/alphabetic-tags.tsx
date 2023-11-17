@@ -114,18 +114,20 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 		<>
 			<div className="sticky-container">
 				<StickyPanel minLimit={ 0 }>
-					<div className="alphabetic-tags__header">
-						<h2>{ translate( 'Tags from A — Z' ) }</h2>
-						<div className="alphabetic-tags__tag-links">
-							{ Object.keys( tagTables ).map( ( letter: string ) => (
-								<Button
-									variant="link"
-									key={ 'alphabetic-tags-link-' + letter }
-									onClick={ () => scrollToLetter( letter ) }
-								>
-									{ letter }
-								</Button>
-							) ) }
+					<div className="alphabetic-tags__header-wrap">
+						<div className="alphabetic-tags__header">
+							<h2>{ translate( 'Tags from A — Z' ) }</h2>
+							<div className="alphabetic-tags__tag-links">
+								{ Object.keys( tagTables ).map( ( letter: string ) => (
+									<Button
+										variant="link"
+										key={ 'alphabetic-tags-link-' + letter }
+										onClick={ () => scrollToLetter( letter ) }
+									>
+										{ letter }
+									</Button>
+								) ) }
+							</div>
 						</div>
 					</div>
 				</StickyPanel>
