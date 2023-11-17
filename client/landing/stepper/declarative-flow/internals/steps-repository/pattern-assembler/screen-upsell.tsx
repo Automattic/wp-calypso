@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Button, Gridicon, PremiumBadge } from '@automattic/components';
+import { Button, Gridicon, PremiumBadge, LoadingPlaceholder } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { NavigatorHeader } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -27,6 +27,8 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 	} );
 
 	const pricing = pricingMeta?.[ PLAN_PREMIUM ];
+	const isPricingLoaded =
+		pricing?.currencyCode && pricing?.originalPrice.monthly && pricing?.originalPrice.full;
 
 	return (
 		<>
@@ -37,38 +39,45 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 				hideBack
 			/>
 			<div className="screen-container__body">
-				{ pricing && pricing.originalPrice.full && (
-					<div className="screen-upsell__plan">
-						<div className="screen-upsell__plan-heading">
-							{ translate( '%(planTitle)s plan', {
-								args: { planTitle: translations.planTitle },
-							} ) }
-						</div>
+				<div className="screen-upsell__plan">
+					<div className="screen-upsell__plan-heading">
+						{ translate( '%(planTitle)s plan', {
+							args: { planTitle: translations.planTitle },
+						} ) }
+					</div>
+					{ isPricingLoaded ? (
 						<PlanPrice
 							className="screen-upsell__plan-price"
-							currencyCode={ pricing.currencyCode }
-							rawPrice={ pricing.originalPrice.monthly }
+							currencyCode={ pricing?.currencyCode }
+							rawPrice={ pricing?.originalPrice?.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency
 							isSmallestUnit
 						/>
-						<div className="screen-upsell__plan-billing-time-frame">
-							{ translate( 'per month, %(rawPrice)s billed annually, Excl. Taxes', {
-								args: {
-									rawPrice: formatCurrency(
-										pricing.originalPrice.full,
-										pricing.currencyCode ?? '',
-										{
+					) : (
+						<LoadingPlaceholder style={ { height: '48px' } } />
+					) }
+					<div className="screen-upsell__plan-billing-time-frame">
+						{ translate( 'per month, {{span}}%(rawPrice)s{{/span}} billed annually, Excl. Taxes', {
+							args: {
+								rawPrice: isPricingLoaded
+									? formatCurrency( pricing?.originalPrice.full ?? 0, pricing?.currencyCode ?? '', {
 											stripZeros: true,
 											isSmallestUnit: true,
-										}
-									),
-								},
-								comment: 'Excl. Taxes is short for excluding taxes',
-							} ) }
-						</div>
+									  } )
+									: '',
+							},
+							comment: 'Excl. Taxes is short for excluding taxes',
+							components: {
+								span: isPricingLoaded ? (
+									<span />
+								) : (
+									<LoadingPlaceholder style={ { display: 'inline-block', width: '30%' } } />
+								),
+							},
+						} ) }
 					</div>
-				) }
+				</div>
 				<strong className="screen-upsell__features-heading">
 					{ translate( 'Included with the plan:' ) }
 				</strong>
