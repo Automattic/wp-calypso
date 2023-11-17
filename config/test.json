@@ -30,7 +30,6 @@
 		"checkout/google-pay": true,
 		"checkout/vat-form": true,
 		"checkout/checkout-version": false,
-		"checkout/tos-foldable-update": false,
 		"cloudflare": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
