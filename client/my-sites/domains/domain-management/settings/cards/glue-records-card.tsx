@@ -26,8 +26,6 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const { data, isLoading: isLoadingData, isError } = useDomainGlueRecordsQuery( domain.name );
-
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
@@ -35,6 +33,12 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const [ isEditing, setIsEditing ] = useState( false );
 	const [ record, setRecord ] = useState( '' );
 	const [ ipAddress, setIpAddress ] = useState( '' );
+
+	const {
+		data,
+		isLoading: isLoadingData,
+		isError,
+	} = useDomainGlueRecordsQuery( domain.name, isExpanded );
 
 	const clearState = () => {
 		setIsEditing( false );

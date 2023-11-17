@@ -38,7 +38,8 @@ const selectGlueRecords = ( response: GlueRecordApiObject[] | null ): GlueRecord
 };
 
 export default function useDomainGlueRecordsQuery(
-	domainName: string
+	domainName: string,
+	enabled: boolean
 ): UseQueryResult< GlueRecordResponse > {
 	return useQuery( {
 		queryKey: domainGlueRecordQueryKey( domainName ),
@@ -49,5 +50,6 @@ export default function useDomainGlueRecordsQuery(
 			} ),
 		refetchOnWindowFocus: false,
 		select: selectGlueRecords,
+		enabled,
 	} );
 }
