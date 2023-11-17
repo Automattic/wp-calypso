@@ -18,7 +18,12 @@ const DEFAULT_CLASS = 'discover-stream-navigation';
 const showElement = ( element ) => element && element.classList.remove( 'display-none' );
 const hideElement = ( element ) => element && element.classList.add( 'display-none' );
 
-const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
+const DiscoverNavigation = ( {
+	recommendedTags,
+	selectedTab,
+	width,
+	onTabChange = ( tab ) => {},
+} ) => {
 	const scrollRef = useRef();
 
 	const recordTabClick = () => {
@@ -27,9 +32,14 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 	};
 
 	const menuTabClick = ( tab ) => {
-		page.replace(
-			addQueryArgs( { selectedTab: tab }, window.location.pathname + window.location.search )
-		);
+		if ( onTabChange ) {
+			onTabChange( tab ); // Invoke the onTabChange callback with the new tab value
+		} else {
+			// Fallback behavior if onTabChange is not provided
+			page.replace(
+				addQueryArgs( { selectedTab: tab }, window.location.pathname + window.location.search )
+			);
+		}
 		recordTabClick();
 	};
 
