@@ -6,15 +6,8 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import DiscoverNavigation from 'calypso/reader/discover/discover-navigation';
-import {
-	DEFAULT_TAB,
-	buildDiscoverStreamKey,
-	getDiscoverStreamTags,
-} from 'calypso/reader/discover/helper';
+import { DEFAULT_TAB, buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import Stream from 'calypso/reader/stream';
-import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
 
@@ -43,25 +36,10 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 		},
 	} );
 
-	// Add dailyprompt to the front of interestTags if not present.
-	const hasDailyPrompt = interestTags.filter(
-		( tag: { slug: string } ) => tag.slug === 'dailyprompt'
-	).length;
-	if ( ! hasDailyPrompt ) {
-		interestTags.unshift( { title: translate( 'Daily prompts' ), slug: 'dailyprompt' } );
-	}
-
 	const queryParams = new URLSearchParams( window.location.search );
 	const selectedTab = queryParams.get( 'selectedTab' ) || DEFAULT_TAB;
 
-	const followedTags = useSelector( getReaderFollowedTags );
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
-	const recommendedStreamTags = getDiscoverStreamTags(
-		followedTags && followedTags.map( ( tag ) => tag.slug ),
-		isLoggedIn
-	);
-	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
+	const streamKey = buildDiscoverStreamKey( selectedTab, [ 'dailyprompt' ] );
 
 	return (
 		<>
