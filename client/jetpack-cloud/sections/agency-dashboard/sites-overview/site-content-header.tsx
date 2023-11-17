@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import JetpackPersistentNotices from 'calypso/jetpack-cloud/sections/partner-portal/persistent-notices';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
-import MissingPaymentNotification from '../../partner-portal/missing-payment-notification';
 import type { ReactNode } from 'react';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
@@ -20,7 +20,7 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 
 	return (
 		<>
-			<MissingPaymentNotification />
+			<JetpackPersistentNotices />
 
 			<div className="sites-overview__viewport" { ...outerDivProps }>
 				<div
