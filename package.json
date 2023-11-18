@@ -54,13 +54,13 @@
 	},
 	"engines": {
 		"node": "^v20.8.1",
-		"yarn": "^3.1.1"
+		"yarn": "^4.0.0"
 	},
 	"scripts": {
 		"analyze-bundles": "yarn run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
 		"analyze-bundles:server": "yarn run build-server-stats && webpack-bundle-analyzer client/stats-server.json build -h 127.0.0.1 -p 9898 -s parsed",
 		"analyze-icfy": "yarn run build-client-stats && node --max-old-space-size=4096 bin/icfy-analyze.js",
-		"build": "yarn run build-static && yarn run build-css && run-p -s 'build-devdocs:*' && run-p -s build-server build-client-if-prod",
+		"build": "./bin/build-packages-if-needed.sh && yarn run build-static && yarn run build-css && run-p -s 'build-devdocs:*' && run-p -s build-server build-client-if-prod",
 		"build-client": "BROWSERSLIST_ENV=evergreen yarn webpack --config client/webpack.config.js --stats-preset errors-only",
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || { yarn run build-client && yarn run build-languages-if-enabled }",
 		"build-client-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true yarn run build-client",
@@ -387,7 +387,7 @@
 		"@wordpress/widgets": "3.21.0",
 		"@wordpress/wordcount": "3.44.0"
 	},
-	"packageManager": "yarn@3.2.3",
+	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false
