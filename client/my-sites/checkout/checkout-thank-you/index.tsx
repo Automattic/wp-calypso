@@ -699,13 +699,16 @@ export class CheckoutThankYou extends Component<
 			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
-					<ConfettiAnimation delay={ 1000 } />
-				) }
-				{ isRedesignV2( this.props ) && (
-					<CheckoutMasterbar
-						siteId={ this.props.selectedSite?.ID }
-						siteSlug={ this.props.selectedSiteSlug }
-					/>
+					<>
+						<ConfettiAnimation delay={ 1000 } />
+						<CheckoutMasterbar
+							siteId={ this.props.selectedSite?.ID }
+							siteSlug={ this.props.selectedSiteSlug }
+							backText={
+								this.props.selectedSiteSlug ? translate( 'Back to dashboard' ) : undefined
+							}
+						/>
+					</>
 				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
 				{ showHappinessSupport && (
