@@ -38,7 +38,7 @@
 		"@wordpress/icons": "^9.35.0",
 		"@wordpress/react-i18n": "^3.42.0",
 		"canvas-confetti": "^1.6.0",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"framer-motion": "6.2.8",
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",

@@ -34,7 +34,7 @@
 		"@wordpress/compose": "^6.21.0",
 		"@wordpress/icons": "^9.35.0",
 		"@wordpress/react-i18n": "^3.42.0",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"fuse.js": "^6.6.2",
 		"lodash": "^4.17.21",
 		"redux": "^4.2.1",

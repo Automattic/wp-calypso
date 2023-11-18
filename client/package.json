@@ -105,7 +105,7 @@
 		"chalk": "^4.1.2",
 		"chrono-node": "^2.3.5",
 		"circular-dependency-plugin": "^5.2.2",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"clipboard": "^2.0.6",
 		"cmdk": "^0.2.0",
 		"component-closest": "^1.0.1",
