@@ -4753,6 +4753,48 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@oven/bun-darwin-aarch64@npm:1.0.12":
+  version: 1.0.12
+  resolution: "@oven/bun-darwin-aarch64@npm:1.0.12"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@oven/bun-darwin-x64-baseline@npm:1.0.12":
+  version: 1.0.12
+  resolution: "@oven/bun-darwin-x64-baseline@npm:1.0.12"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@oven/bun-darwin-x64@npm:1.0.12":
+  version: 1.0.12
+  resolution: "@oven/bun-darwin-x64@npm:1.0.12"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@oven/bun-linux-aarch64@npm:1.0.12":
+  version: 1.0.12
+  resolution: "@oven/bun-linux-aarch64@npm:1.0.12"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@oven/bun-linux-x64-baseline@npm:1.0.12":
+  version: 1.0.12
+  resolution: "@oven/bun-linux-x64-baseline@npm:1.0.12"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@oven/bun-linux-x64@npm:1.0.12":
+  version: 1.0.12
+  resolution: "@oven/bun-linux-x64@npm:1.0.12"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -11790,6 +11832,37 @@ __metadata:
   dependencies:
     semver: ^7.0.0
   checksum: 9390a51a9abbc0233dac79c66715f927508b9d0c62cb7a42448fe8c52def60c707e6e9eb2cc4c9b7aba11601899935bca4e4064ae5e19c04c7e1bb9309e69134
+  languageName: node
+  linkType: hard
+
+"bun@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "bun@npm:1.0.12"
+  dependencies:
+    "@oven/bun-darwin-aarch64": 1.0.12
+    "@oven/bun-darwin-x64": 1.0.12
+    "@oven/bun-darwin-x64-baseline": 1.0.12
+    "@oven/bun-linux-aarch64": 1.0.12
+    "@oven/bun-linux-x64": 1.0.12
+    "@oven/bun-linux-x64-baseline": 1.0.12
+  dependenciesMeta:
+    "@oven/bun-darwin-aarch64":
+      optional: true
+    "@oven/bun-darwin-x64":
+      optional: true
+    "@oven/bun-darwin-x64-baseline":
+      optional: true
+    "@oven/bun-linux-aarch64":
+      optional: true
+    "@oven/bun-linux-x64":
+      optional: true
+    "@oven/bun-linux-x64-baseline":
+      optional: true
+  bin:
+    bun: bin/bun
+    bunx: bin/bun
+  checksum: ca460756251213da99b62c811aca4c854fc011a7f8be143973a448701afff8f4cfff733d165795cb8670f29d4125c0725854dd7d1eb6d407391884dd7309f111
+  conditions: (os=darwin | os=linux) & (cpu=arm64 | cpu=x64)
   languageName: node
   linkType: hard
 
@@ -32285,6 +32358,7 @@ __metadata:
     "@wordpress/url": ^3.45.0
     babel-loader: ^8.2.3
     browserslist: ^4.16.0
+    bun: ^1.0.12
     bunyan: ^1.8.15
     calypso: "workspace:^"
     calypso-codemods: "workspace:^"
