@@ -5,7 +5,7 @@ import './style.scss';
 
 interface ThankYouLayoutContainerProps {
 	children: React.ReactNode;
-	masterbarProps: CheckoutMasterbarProps;
+	masterbarProps?: CheckoutMasterbarProps;
 }
 
 const ThankYouLayout: React.FC< ThankYouLayoutContainerProps > = ( {
