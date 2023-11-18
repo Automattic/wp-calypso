@@ -7748,10 +7748,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/highlight-words-core@npm:1.2.1, @types/highlight-words-core@npm:^1.2.1":
+"@types/highlight-words-core@npm:1.2.1":
   version: 1.2.1
   resolution: "@types/highlight-words-core@npm:1.2.1"
   checksum: f3795656cbe4215e849faa2e53c74a9c6a7b2e148f54267c6a7f25a4f3cd55374f3e4d2e2618740c96fafabdb36b855f7cec27cab207957d566d0500a10e2312
+  languageName: node
+  linkType: hard
+
+"@types/highlight-words-core@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@types/highlight-words-core@npm:1.2.3"
+  checksum: bcd3de99ec74bb52f0aa44d2a5f8f29ca73b70b22c6b3e4251eb818937ed5036325d2f1a980d6d2b4945ddb793805cbcd9809d9cf1bbfd46f9f56cba24fe486a
   languageName: node
   linkType: hard
 
@@ -32254,7 +32261,7 @@ __metadata:
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
     "@types/gradient-parser": "npm:^0.1.5"
     "@types/gtag.js": "npm:^0.0.10"
-    "@types/highlight-words-core": "npm:^1.2.1"
+    "@types/highlight-words-core": "npm:^1.2.3"
     "@types/jest": "npm:^29.5.8"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^20.8.6"
