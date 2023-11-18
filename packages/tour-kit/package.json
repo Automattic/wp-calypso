@@ -42,7 +42,7 @@
 		"@wordpress/icons": "^9.35.0",
 		"@wordpress/primitives": "^3.42.0",
 		"@wordpress/react-i18n": "^3.42.0",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"debug": "^4.3.4",
 		"react-popper": "^2.3.0"
 	},

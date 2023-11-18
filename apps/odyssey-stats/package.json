@@ -38,7 +38,7 @@
 		"@wordpress/data": "^9.14.0",
 		"@wordpress/icons": "^9.35.0",
 		"calypso": "workspace:^",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"debug": "^4.3.4",
 		"moment": "^2.26.0",
 		"page": "^1.11.5",

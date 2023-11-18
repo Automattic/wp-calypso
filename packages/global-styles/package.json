@@ -39,7 +39,7 @@
 		"@wordpress/compose": "^6.21.0",
 		"@wordpress/keycodes": "^3.44.0",
 		"@wordpress/private-apis": "^0.26.0",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"deepmerge": "^4.3.0",
 		"i18n-calypso": "workspace:^",
 		"is-plain-object": "^5.0.0",
