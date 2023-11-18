@@ -115,6 +115,16 @@
 	}
 }
 
+.signup-form__domain-suggestion-confirmation {
+	color: var(--color-link);
+	cursor: pointer;
+
+	&:hover {
+		color: var(--color-link-dark);
+	}
+
+}
+
 // Replace recaptcha badge with ToS text and space
 // everything out a little more.
 @media (max-width: 660px) {

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import emailSpellChecker from '@zootools/email-spell-checker';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -165,6 +166,8 @@ class SignupForm extends Component {
 			},
 			form: stateWithFilledUsername,
 			validationInitialized: false,
+			suggestDomainTypoFix: true,
+			emailSuggestion: null,
 		};
 	}
 
@@ -266,6 +269,14 @@ class SignupForm extends Component {
 		);
 	};
 
+	extractDomainWithExtension( email ) {
+		const atIndex = email.indexOf( '@' );
+		if ( atIndex !== -1 ) {
+			return email.slice( atIndex + 1 );
+		}
+		return;
+	}
+
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
@@ -335,6 +346,22 @@ class SignupForm extends Component {
 				} );
 
 				if ( fields.email ) {
+					if ( ! messages?.email && this.state.suggestDomainTypoFix ) {
+						const emailSuggestion = emailSpellChecker.run( {
+							email: fields.email,
+						} );
+
+						if ( emailSuggestion ) {
+							// Error message handled in getErrorMessagesWithLogin()
+							messages = Object.assign( {}, messages, {
+								email: {
+									suggest_domain: '',
+								},
+							} );
+							this.setState( { emailSuggestion } );
+						}
+					}
+
 					if ( this.props.signupDependencies && this.props.signupDependencies.domainItem ) {
 						const domainInEmail = fields.email.split( '@' )[ 1 ];
 						if ( this.props.signupDependencies.domainItem.meta === domainInEmail ) {
@@ -598,6 +625,58 @@ class SignupForm extends Component {
 					</span>
 				);
 			}
+
+			// Handle scenario where the user has entered an email address with a typo in the domain
+			if ( error_code === 'suggest_domain' ) {
+				const emailInputValue = formState.getFieldValue( this.state.form, fieldName );
+				const handleEmailSuggestionOption = ( email ) => {
+					this.setState( {
+						suggestDomainTypoFix: false,
+					} );
+					this.formStateController.handleFieldChange( {
+						name: 'email',
+						hideError: true,
+						value: email,
+					} );
+				};
+
+				return (
+					<span key={ error_code }>
+						<p>
+							{ this.props.translate(
+								'Did you mean @{{emailSuggestion/}}? {{acceptEmailSuggestion/}}, {{ignoreEmailSuggestion/}}.',
+								{
+									components: {
+										emailSuggestion: <span>{ this.state.emailSuggestion?.domain }</span>,
+										acceptEmailSuggestion: (
+											<Button
+												plain={ true }
+												className="signup-form__domain-suggestion-confirmation"
+												onClick={ () => {
+													handleEmailSuggestionOption( this.state.emailSuggestion?.full );
+												} }
+											>
+												Yes
+											</Button>
+										),
+										ignoreEmailSuggestion: (
+											<Button
+												plain={ true }
+												className="signup-form__domain-suggestion-confirmation"
+												onClick={ () => {
+													handleEmailSuggestionOption( emailInputValue );
+												} }
+											>
+												Nope
+											</Button>
+										),
+									},
+								}
+							) }
+						</p>
+					</span>
+				);
+			}
 			return message;
 		} );
 	}
@@ -663,7 +742,12 @@ class SignupForm extends Component {
 					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
 					isValid={ this.state.validationInitialized && isEmailValid }
 					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
+					onChange={ ( event ) => {
+						this.setState( {
+							suggestDomainTypoFix: true,
+						} );
+						this.handleChangeEvent( event );
+					} }
 				/>
 				{ this.emailDisableExplanation() }
 
