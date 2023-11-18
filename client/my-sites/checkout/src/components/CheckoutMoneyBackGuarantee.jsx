@@ -37,10 +37,16 @@ const StyledIcon = styled( Icon )`
 `;
 
 export function CheckoutMoneyBackGuarantee( { cart } ) {
+	const allCartItemsAreDomains = cart.products.every(
+		( product ) => product.is_domain_registration === true
+	);
+
 	return (
-		<CheckoutMoneyBackGuaranteeWrapper>
-			<StyledIcon icon={ reusableBlock } size={ 24 } />
-			<CheckoutSummaryRefundWindows cart={ cart } />
-		</CheckoutMoneyBackGuaranteeWrapper>
+		! allCartItemsAreDomains && (
+			<CheckoutMoneyBackGuaranteeWrapper>
+				<StyledIcon icon={ reusableBlock } size={ 24 } />
+				<CheckoutSummaryRefundWindows cart={ cart } />
+			</CheckoutMoneyBackGuaranteeWrapper>
+		)
 	);
 }
