@@ -114,9 +114,7 @@ module.exports = ( {
 	terserOptions = {
 		compress: true,
 		mangle: {
-			properties: {
-				reserved: [ '__', '_n', '_nx', '_x' ],
-			},
+			reserved: [ '__', '_n', '_nx', '_x' ],
 		},
 		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
 		safari10: supportedBrowsers.some(
