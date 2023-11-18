@@ -87,15 +87,7 @@ function getWebpackConfig(
 		},
 		optimization: {
 			minimize: ! isDevelopment,
-			minimizer: Minify( {
-				parallel: workerCount,
-				extractComments: false,
-				terserOptions: {
-					ecma: 5,
-					safari10: true,
-					mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
-				},
-			} ),
+			minimizer: Minify(),
 		},
 		module: {
 			strictExportPresence: true,
