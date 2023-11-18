@@ -36,9 +36,11 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 
 	const {
 		data,
-		isLoading: isLoadingData,
+		isFetching: isLoadingData,
 		isError,
-	} = useDomainGlueRecordsQuery( domain.name, isExpanded );
+		isStale,
+		refetch: refetchGlueRecordsData,
+	} = useDomainGlueRecordsQuery( domain.name );
 
 	const clearState = () => {
 		setIsEditing( false );
@@ -92,6 +94,12 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const handleAddGlueRecord = () => {
 		setIsEditing( true );
 	};
+
+	useEffect( () => {
+		if ( isExpanded && isStale ) {
+			refetchGlueRecordsData();
+		}
+	}, [ isExpanded, isStale ] );
 
 	useEffect( () => {
 		if ( isLoadingData || ! data ) {
@@ -237,23 +245,16 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		</>
 	);
 
-	if ( ! data || isLoadingData ) {
-		return (
-			<>
-				<div className="domain-glue-records is-placeholder"></div>
-			</>
-		);
-	}
+	const renderGlueRecords = () => {
+		if ( isLoadingData || ! data ) {
+			return (
+				<div className="domain-glue-records">
+					<div className="domain-glue-records is-placeholder"></div>
+				</div>
+			);
+		}
 
-	return (
-		<Accordion
-			className="domain-forwarding-card__accordion"
-			title={ translate( 'Glue Records' ) }
-			subtitle={ translate( 'Edit your private name servers (glue records)' ) }
-			expanded={ isExpanded }
-			onOpen={ () => setIsExpanded( true ) }
-			onClose={ () => setIsExpanded( false ) }
-		>
+		return (
 			<div className="domain-glue-records">
 				<form
 					onSubmit={ ( e ) => {
@@ -281,6 +282,19 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					</Button>
 				) }
 			</div>
+		);
+	};
+
+	return (
+		<Accordion
+			className="domain-forwarding-card__accordion"
+			title={ translate( 'Glue Records' ) }
+			subtitle={ translate( 'Edit your private name servers (glue records)' ) }
+			expanded={ isExpanded }
+			onOpen={ () => setIsExpanded( true ) }
+			onClose={ () => setIsExpanded( false ) }
+		>
+			{ renderGlueRecords() }
 		</Accordion>
 	);
 }
