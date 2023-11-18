@@ -105,12 +105,13 @@ function chooseTerserEcmaVersion( browsers ) {
  */
 module.exports = ( { terserOptions = {}, cssMinimizerOptions = {}, parallel = true } = {} ) => {
 	terserOptions = {
+		mangle: {
+			reserved: [ '__', '_n', '_nx', '_x' ],
+		},
 		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
-		ie8: false,
 		safari10: supportedBrowsers.some(
 			( browser ) => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
 		),
-		...terserOptions,
 	};
 	cssMinimizerOptions = {
 		preset: 'default',
