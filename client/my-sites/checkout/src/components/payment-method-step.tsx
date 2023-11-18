@@ -59,13 +59,6 @@ const CheckoutTermsWrapper = styled.div< {
 			line-height: 1.5;
 			padding: 0;
 		}
-		& .checkout__terms-item {
-			margin-top: 0;
-
-			& p {
-				margin-bottom: 18px;
-			}
-		}
 		& .foldable-card.is-expanded,
 		.foldable-card__content {
 			display: block;
@@ -80,12 +73,11 @@ const CheckoutTermsWrapper = styled.div< {
 	}
 `;
 
-const NonTotalPrices = styled.div< { showToSFoldableCard: boolean } >`
+const NonTotalPrices = styled.div`
 	font-size: 12px;
-	border-top: ${ ( props ) =>
-		props.showToSFoldableCard ? 'none' : '1px solid ' + props.theme.colors.borderColorLight };
+	border-top: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
 	border-bottom: ${ ( props ) => '1px solid ' + props.theme.colors.borderColorLight };
-	padding: ${ ( props ) => ( props.showToSFoldableCard ? '0 0 16px' : '16px 0' ) };
+	padding: 16px 0;
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
@@ -115,7 +107,14 @@ export default function BeforeSubmitCheckoutHeader() {
 
 	return (
 		<>
-			{ ! showToSFoldableCard && (
+			{ ! showToSFoldableCard ? (
+				<CheckoutTermsWrapper
+					shouldCollapseLastStep={ shouldCollapseLastStep }
+					showToSFoldableCard={ showToSFoldableCard }
+				>
+					<CheckoutTerms cart={ responseCart } />
+				</CheckoutTermsWrapper>
+			) : (
 				<CheckoutTermsWrapper
 					shouldCollapseLastStep={ shouldCollapseLastStep }
 					showToSFoldableCard={ showToSFoldableCard }
@@ -126,7 +125,7 @@ export default function BeforeSubmitCheckoutHeader() {
 
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>
-					<NonTotalPrices showToSFoldableCard={ showToSFoldableCard }>
+					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
 						{ couponLineItem && <NonProductLineItem subtotal lineItem={ couponLineItem } /> }
 						{ taxLineItems.map( ( taxLineItem ) => (
@@ -139,14 +138,6 @@ export default function BeforeSubmitCheckoutHeader() {
 					<TotalPrice>
 						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 					</TotalPrice>
-					{ showToSFoldableCard && (
-						<CheckoutTermsWrapper
-							shouldCollapseLastStep={ shouldCollapseLastStep }
-							showToSFoldableCard={ showToSFoldableCard }
-						>
-							<CheckoutTerms cart={ responseCart } />
-						</CheckoutTermsWrapper>
-					) }
 				</WPOrderReviewSection>
 			) }
 		</>
