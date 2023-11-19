@@ -11,6 +11,7 @@ import {
 	isTailoredSignupFlow,
 	isMigrationFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
+	isAnyHostingFlow,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -78,6 +79,13 @@ const getBlogNameGenerationParams = ( {
 	if ( siteTitle ) {
 		return {
 			blog_name: siteTitle,
+			find_available_url: true,
+		};
+	}
+
+	if ( isAnyHostingFlow( flowToCheck ) ) {
+		return {
+			blog_name: '',
 			find_available_url: true,
 		};
 	}

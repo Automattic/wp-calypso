@@ -1,6 +1,6 @@
 import { Visibility } from '@automattic/data-stores';
 import { getNewSiteParams } from '..';
-import { MIGRATION_FLOW } from '../../utils/flows';
+import { HOSTING_LP_FLOW, MIGRATION_FLOW } from '../../utils/flows';
 
 describe( 'getNewSiteParams', () => {
 	function testParams( partialParams: Partial< Parameters< typeof getNewSiteParams >[ 0 ] > = {} ) {
@@ -85,6 +85,24 @@ describe( 'getNewSiteParams', () => {
 	} );
 
 	test( 'blog_name hint falls back to the username when no site URL or title is present', () => {
+		expect(
+			getNewSiteParams(
+				testParams( {
+					flowToCheck: HOSTING_LP_FLOW,
+					siteUrl: undefined,
+					siteTitle: '',
+					username: 'janedoe',
+				} )
+			)
+		).toEqual(
+			expect.objectContaining( {
+				blog_name: '',
+				find_available_url: true,
+			} )
+		);
+	} );
+
+	test( 'Hosting flow does not fall back to username when site title and URL are missing', () => {
 		expect(
 			getNewSiteParams(
 				testParams( {
