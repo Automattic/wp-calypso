@@ -61,6 +61,10 @@ const CostOverridesListStyle = styled.div`
 		margin-top: 16px;
 	}
 
+	& .cost-overrides-list-item:nth-of-type( 1 ) {
+		margin-top: 0;
+	}
+
 	& .cost-overrides-list-item__actions {
 		grid-column: 1 / span 2;
 		display: flex;
