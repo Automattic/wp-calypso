@@ -35,7 +35,7 @@ import type { PropsWithChildren } from 'react';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	box-sizing: border-box;
-	margin: 20px 0;
+	margin: 24px 0;
 	padding: 0;
 `;
 
@@ -52,12 +52,13 @@ const CostOverridesListStyle = styled.div`
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
+	margin-top: 10px;
 
 	& .cost-overrides-list-item {
 		display: grid;
 		justify-content: space-between;
 		grid-template-columns: auto auto;
-		padding: 2px 0px;
+		margin-top: 16px;
 	}
 
 	& .cost-overrides-list-item__actions {
