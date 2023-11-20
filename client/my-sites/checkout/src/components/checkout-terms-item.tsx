@@ -26,7 +26,6 @@ const Wrapper = styled.div< { showToSFoldableCard: boolean } >`
 
 	p {
 		font-size: 12px;
-		margin: 0;
 		word-break: break-word;
 	}
 `;
