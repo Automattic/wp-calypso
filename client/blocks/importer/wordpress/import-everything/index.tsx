@@ -8,7 +8,7 @@ import { get } from 'lodash';
 import { connect } from 'react-redux';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
+import { EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -178,26 +178,29 @@ export class ImportEverything extends SectionMigrate {
 		}
 
 		return (
-			<PreMigrationScreen
-				sourceSite={ sourceSite }
-				targetSite={ targetSite }
-				initImportRun={ this.props.initImportRun }
-				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
-				isMigrateFromWp={ isMigrateFromWp }
-				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-				startImport={ this.startMigration }
-				navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
-				onContentOnlyClick={ onContentOnlySelection }
-				onFreeTrialClick={ () => {
-					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
-				} }
-				onNotAuthorizedClick={ () => {
-					recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
-						from: 'pre-migration',
-					} );
-					stepNavigator?.goToDashboardPage();
-				} }
-			/>
+			<>
+				<Interval onTick={ this.updateSiteInfo } period={ EVERY_FIVE_SECONDS } />
+				<PreMigrationScreen
+					sourceSite={ sourceSite }
+					targetSite={ targetSite }
+					initImportRun={ this.props.initImportRun }
+					isTrial={ isMigrationTrialSite( this.props.targetSite ) }
+					isMigrateFromWp={ isMigrateFromWp }
+					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+					startImport={ this.startMigration }
+					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
+					onContentOnlyClick={ onContentOnlySelection }
+					onFreeTrialClick={ () => {
+						stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
+					} }
+					onNotAuthorizedClick={ () => {
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+							from: 'pre-migration',
+						} );
+						stepNavigator?.goToDashboardPage();
+					} }
+				/>
+			</>
 		);
 	}
 

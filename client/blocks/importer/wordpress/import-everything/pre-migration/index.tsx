@@ -109,8 +109,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		useSiteCredentialsInfo( sourceSiteId );
 
 	const onUpgradeAndMigrateClick = () => {
-		setContinueImport( true );
 		fetchMigrationEnabledStatus();
+		setContinueImport( true );
+		startImport( migrationTrackingProps );
 	};
 
 	/**
@@ -137,9 +138,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 */
 	useEffect( () => {
 		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
+			fetchMigrationEnabledStatus();
 			setQueryTargetSitePlanStatus( 'fetched' );
 			setContinueImport( true );
-			fetchMigrationEnabledStatus();
 		}
 	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
 
