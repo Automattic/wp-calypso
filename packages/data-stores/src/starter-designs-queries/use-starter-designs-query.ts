@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
+import { useQuery, QueryOptions } from '@tanstack/react-query';
 import { stringify } from 'qs';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { StarterDesigns } from './types';
@@ -46,7 +46,7 @@ interface StarterDesign {
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
 	{ select, ...queryOptions }: Options = {}
-): UseQueryResult< StarterDesigns > {
+) {
 	return useQuery( {
 		queryKey: [ 'starter-designs', queryParams ],
 		queryFn: () => fetchStarterDesigns( queryParams ),
