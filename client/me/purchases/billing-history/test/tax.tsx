@@ -68,6 +68,7 @@ const mockItem: BillingTransactionItem = {
 	variation_slug: '',
 	months_per_renewal_interval: 0,
 	wpcom_product_slug: '',
+	cost_overrides: [],
 };
 
 describe( 'transactionIncludesTax', () => {
@@ -211,38 +212,6 @@ test( 'tax includes', async () => {
 	expect( await screen.findByText( `(includes ${ transaction.tax } tax)` ) ).toBeInTheDocument();
 } );
 
-test( 'tax adding', async () => {
-	const transaction = {
-		...mockTransaction,
-		subtotal: '$36.00',
-		tax: '$2.48',
-		amount: '$38.48',
-		subtotal_integer: 3600,
-		tax_integer: 248,
-		amount_integer: 3848,
-		items: [
-			{
-				...mockItem,
-				raw_tax: 2.48,
-				tax_integer: 248,
-			},
-		],
-	};
-
-	const store = createTestReduxStore();
-	const queryClient = new QueryClient();
-	mockGetSupportedCountriesEndpoint( countryList );
-
-	render(
-		<ReduxProvider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<TransactionAmount transaction={ transaction } addingTax />
-			</QueryClientProvider>
-		</ReduxProvider>
-	);
-	expect( await screen.findByText( `(+${ transaction.tax } tax)` ) ).toBeInTheDocument();
-} );
-
 test( 'tax includes with localized tax name', async () => {
 	const transaction = {
 		...mockTransaction,
@@ -274,39 +243,6 @@ test( 'tax includes with localized tax name', async () => {
 		</ReduxProvider>
 	);
 	expect( await screen.findByText( `(includes ${ transaction.tax } VAT)` ) ).toBeInTheDocument();
-} );
-
-test( 'tax adding with localized tax name', async () => {
-	const transaction = {
-		...mockTransaction,
-		subtotal: '$36.00',
-		tax: '$2.48',
-		amount: '$38.48',
-		tax_country_code: 'GB',
-		subtotal_integer: 3600,
-		tax_integer: 248,
-		amount_integer: 3848,
-		items: [
-			{
-				...mockItem,
-				raw_tax: 2.48,
-				tax_integer: 248,
-			},
-		],
-	};
-
-	const store = createTestReduxStore();
-	const queryClient = new QueryClient();
-	mockGetSupportedCountriesEndpoint( countryList );
-
-	render(
-		<ReduxProvider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<TransactionAmount transaction={ transaction } addingTax />
-			</QueryClientProvider>
-		</ReduxProvider>
-	);
-	expect( await screen.findByText( `(+${ transaction.tax } VAT)` ) ).toBeInTheDocument();
 } );
 
 test( 'tax hidden if not available', async () => {

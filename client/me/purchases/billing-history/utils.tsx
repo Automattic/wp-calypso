@@ -83,10 +83,8 @@ export function transactionIncludesTax( transaction: BillingTransaction ) {
 
 export function TransactionAmount( {
 	transaction,
-	addingTax = false,
 }: {
 	transaction: BillingTransaction;
-	addingTax?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const taxName = useTaxName( transaction.tax_country_code );
@@ -101,28 +99,6 @@ export function TransactionAmount( {
 			</>
 		);
 	}
-
-	const addingTaxString = taxName
-		? translate( '(+%(taxAmount)s %(taxName)s)', {
-				args: {
-					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-					taxName,
-				},
-				comment:
-					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
-		  } )
-		: translate( '(+%(taxAmount)s tax)', {
-				args: {
-					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-				},
-				comment: 'taxAmount is a localized price, like $12.34',
-		  } );
 
 	const includesTaxString = taxName
 		? translate( '(includes %(taxAmount)s %(taxName)s)', {
@@ -146,8 +122,6 @@ export function TransactionAmount( {
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
 
-	const taxAmount = addingTax ? addingTaxString : includesTaxString;
-
 	return (
 		<Fragment>
 			<div>
@@ -156,7 +130,7 @@ export function TransactionAmount( {
 					stripZeros: true,
 				} ) }
 			</div>
-			<div className="billing-history__transaction-tax-amount">{ taxAmount }</div>
+			<div className="billing-history__transaction-tax-amount">{ includesTaxString }</div>
 		</Fragment>
 	);
 }
