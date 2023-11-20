@@ -42,7 +42,7 @@ function hasExceededPriceThreshold( displayPrices?: string[], isAddOn = false ) 
  */
 function hasExceededCombinedPriceThreshold( displayPrices?: string[] ) {
 	if ( ! displayPrices || displayPrices.length < 2 ) {
-		return;
+		return false;
 	}
 
 	for ( let i = 0; i < displayPrices.length - 1; i++ ) {
