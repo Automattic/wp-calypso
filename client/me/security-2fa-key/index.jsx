@@ -89,7 +89,7 @@ class Security2faKey extends Component {
 
 		return (
 			<div className="security-2fa-key">
-				<SectionHeader label={ translate( 'Security Key' ) }>
+				<SectionHeader label={ translate( 'Security key' ) }>
 					{ ! addingKey && isBrowserSupported && (
 						<Button
 							compact
