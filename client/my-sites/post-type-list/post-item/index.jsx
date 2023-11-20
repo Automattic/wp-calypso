@@ -137,11 +137,13 @@ class PostItem extends Component {
 								</a>
 							) }
 						</div>
-						<h1 // eslint-disable-line
+						{ /* eslint-disable jsx-a11y/mouse-events-have-key-events, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
+						<h1
 							className="post-item__title"
 							onClick={ this.clickHandler( 'title' ) }
 							onMouseOver={ preloadEditor }
 						>
+							{ /* eslint-enable jsx-a11y/mouse-events-have-key-events, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
 							{ ! externalPostLink && ! isTrashed && (
 								<a
 									href={ enabledPostLink }

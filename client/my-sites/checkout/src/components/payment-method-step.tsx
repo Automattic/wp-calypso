@@ -5,13 +5,15 @@ import {
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
 	NonProductLineItem,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
+import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
-const CheckoutTermsWrapper = styled.div`
+const CheckoutTermsWrapper = styled.div< { shouldCollapseLastStep: boolean } >`
 	& > * {
 		margin: 16px 0;
 		padding-left: 24px;
@@ -29,7 +31,7 @@ const CheckoutTermsWrapper = styled.div`
 		padding-left: 0;
 		margin-right: 0;
 		margin-left: 0;
-		margin-top: 32px;
+		margin-top: ${ ( { shouldCollapseLastStep } ) => ( shouldCollapseLastStep ? '0' : '32px' ) };
 	}
 
 	a {
@@ -52,31 +54,34 @@ const TotalPrice = styled.div`
 	padding: 16px 0;
 `;
 
-export default function PaymentMethodStep() {
+export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	return (
 		<>
-			<CheckoutTermsWrapper>
+			<CheckoutTermsWrapper shouldCollapseLastStep={ shouldCollapseLastStep }>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
-			<WPOrderReviewSection>
-				<NonTotalPrices>
-					<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
-					{ taxLineItems.map( ( taxLineItem ) => (
-						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-					) ) }
-					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-						<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-					) }
-				</NonTotalPrices>
-				<TotalPrice>
-					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-				</TotalPrice>
-			</WPOrderReviewSection>
+			{ ! hasCheckoutVersion( '2' ) && (
+				<WPOrderReviewSection>
+					<NonTotalPrices>
+						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
+						{ taxLineItems.map( ( taxLineItem ) => (
+							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+						) ) }
+						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+						) }
+					</NonTotalPrices>
+					<TotalPrice>
+						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+					</TotalPrice>
+				</WPOrderReviewSection>
+			) }
 		</>
 	);
 }

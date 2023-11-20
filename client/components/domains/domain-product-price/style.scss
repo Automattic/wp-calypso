@@ -13,7 +13,7 @@
 
 		.is-white-signup & {
 			align-items: flex-end;
-			min-width: 220px;
+			width: 180px;
 		}
 	}
 
@@ -26,12 +26,6 @@
 			display: flex;
 			flex-direction: column-reverse;
 			margin-top: 4px;
-		}
-	}
-
-	.is-section-signup &:not(.domain-product-price__domain-step-signup-flow) {
-		@include breakpoint-deprecated( ">660px" ) {
-			padding-right: 1em;
 		}
 	}
 

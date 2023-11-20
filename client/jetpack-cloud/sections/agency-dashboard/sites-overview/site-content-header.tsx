@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import type { ReactNode } from 'react';
 
@@ -18,21 +19,25 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 
 	const translate = useTranslate();
 	return (
-		<div className="sites-overview__viewport" { ...outerDivProps }>
-			<div
-				className={ classNames( 'sites-overview__page-title-container', {
-					'is-sticky': showStickyContent && hasCrossed,
-				} ) }
-			>
-				<div className="sites-overview__page-heading">
-					<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-					<div className="sites-overview__page-subtitle">
-						{ translate( 'Manage all your Jetpack sites from one location' ) }
-					</div>
-				</div>
+		<>
+			<MissingPaymentNotification />
 
-				{ content }
+			<div className="sites-overview__viewport" { ...outerDivProps }>
+				<div
+					className={ classNames( 'sites-overview__page-title-container', {
+						'is-sticky': showStickyContent && hasCrossed,
+					} ) }
+				>
+					<div className="sites-overview__page-heading">
+						<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+						<div className="sites-overview__page-subtitle">
+							{ translate( 'Manage all your Jetpack sites from one location' ) }
+						</div>
+					</div>
+
+					{ content }
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }

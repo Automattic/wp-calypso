@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlansGridContextProvider from './grid-context';
@@ -80,41 +79,13 @@ const WrappedComparisonGrid = ( {
 	onStorageAddOnClick,
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
+	stickyRowOffset,
 	...otherProps
 }: PlansGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
 	} );
-
-	if ( isInSignup ) {
-		return (
-			<PlansGridContextProvider
-				intent={ intent }
-				gridPlans={ gridPlans }
-				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-				allFeaturesList={ allFeaturesList }
-			>
-				<ComparisonGrid
-					intervalType={ intervalType }
-					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					currentPlanManageHref={ currentPlanManageHref }
-					canUserManageCurrentPlan={ canUserManageCurrentPlan }
-					onUpgradeClick={ handleUpgradeClick }
-					siteId={ siteId }
-					selectedPlan={ selectedPlan }
-					selectedFeature={ selectedFeature }
-					showLegacyStorageFeature={ showLegacyStorageFeature }
-					showUpgradeableStorage={ showUpgradeableStorage }
-					onStorageAddOnClick={ onStorageAddOnClick }
-					{ ...otherProps }
-				/>
-			</PlansGridContextProvider>
-		);
-	}
 
 	return (
 		<PlansGridContextProvider
@@ -123,25 +94,24 @@ const WrappedComparisonGrid = ( {
 			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 			allFeaturesList={ allFeaturesList }
 		>
-			<CalypsoShoppingCartProvider>
-				<ComparisonGrid
-					intervalType={ intervalType }
-					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					currentPlanManageHref={ currentPlanManageHref }
-					canUserManageCurrentPlan={ canUserManageCurrentPlan }
-					onUpgradeClick={ handleUpgradeClick }
-					siteId={ siteId }
-					selectedPlan={ selectedPlan }
-					selectedFeature={ selectedFeature }
-					showLegacyStorageFeature={ showLegacyStorageFeature }
-					showUpgradeableStorage={ showUpgradeableStorage }
-					onStorageAddOnClick={ onStorageAddOnClick }
-					{ ...otherProps }
-				/>
-			</CalypsoShoppingCartProvider>
+			<ComparisonGrid
+				intervalType={ intervalType }
+				isInSignup={ isInSignup }
+				isLaunchPage={ isLaunchPage }
+				flowName={ flowName }
+				currentSitePlanSlug={ currentSitePlanSlug }
+				currentPlanManageHref={ currentPlanManageHref }
+				canUserManageCurrentPlan={ canUserManageCurrentPlan }
+				onUpgradeClick={ handleUpgradeClick }
+				siteId={ siteId }
+				selectedPlan={ selectedPlan }
+				selectedFeature={ selectedFeature }
+				showLegacyStorageFeature={ showLegacyStorageFeature }
+				showUpgradeableStorage={ showUpgradeableStorage }
+				stickyRowOffset={ stickyRowOffset }
+				onStorageAddOnClick={ onStorageAddOnClick }
+				{ ...otherProps }
+			/>
 		</PlansGridContextProvider>
 	);
 };
@@ -175,27 +145,6 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		onUpgradeClick,
 	} );
 
-	if ( props.isInSignup ) {
-		return (
-			<PlansGridContextProvider
-				intent={ intent }
-				gridPlans={ gridPlans }
-				usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-				allFeaturesList={ allFeaturesList }
-			>
-				<FeaturesGrid
-					{ ...props }
-					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-					isLargeCurrency={ isLargeCurrency }
-					canUserManageCurrentPlan={ canUserManageCurrentPlan }
-					currentPlanManageHref={ currentPlanManageHref }
-					translate={ translate }
-					handleUpgradeClick={ handleUpgradeClick }
-				/>
-			</PlansGridContextProvider>
-		);
-	}
-
 	return (
 		<PlansGridContextProvider
 			intent={ intent }
@@ -203,17 +152,15 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 			usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 			allFeaturesList={ allFeaturesList }
 		>
-			<CalypsoShoppingCartProvider>
-				<FeaturesGrid
-					{ ...props }
-					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-					isLargeCurrency={ isLargeCurrency }
-					canUserManageCurrentPlan={ canUserManageCurrentPlan }
-					currentPlanManageHref={ currentPlanManageHref }
-					translate={ translate }
-					handleUpgradeClick={ handleUpgradeClick }
-				/>
-			</CalypsoShoppingCartProvider>
+			<FeaturesGrid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+				isLargeCurrency={ isLargeCurrency }
+				canUserManageCurrentPlan={ canUserManageCurrentPlan }
+				currentPlanManageHref={ currentPlanManageHref }
+				translate={ translate }
+				handleUpgradeClick={ handleUpgradeClick }
+			/>
 		</PlansGridContextProvider>
 	);
 };

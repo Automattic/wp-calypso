@@ -118,7 +118,7 @@ const Home = () => {
 	};
 
 	const getAnyPlanNames = () => {
-		const jetpackText = translate( 'Available with Jetpack Security and Jetpack Complete.' );
+		const jetpackText = translate( 'Available with Jetpack Creator, or a bundled plan.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack

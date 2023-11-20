@@ -36,6 +36,8 @@ function selectInvoices( api: APIInvoices ): Invoices {
 			id: apiInvoice.id,
 			number: apiInvoice.number,
 			dueDate: apiInvoice.due_date,
+			created: apiInvoice.created,
+			effectiveAt: apiInvoice.effective_at,
 			status: apiInvoice.status,
 			total: apiInvoice.total,
 			currency: apiInvoice.currency,

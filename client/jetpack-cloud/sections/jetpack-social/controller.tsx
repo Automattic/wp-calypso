@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import page from 'page';
+import page, { type Callback } from 'page';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -12,7 +12,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectionsPage from './connections';
 import PromoPage from './promo';
 
-export const connections: PageJS.Callback = ( context, next ) => {
+export const connections: Callback = ( context, next ) => {
 	const { store } = context;
 	const { dispatch } = store;
 	const state = store.getState();
@@ -42,7 +42,7 @@ export const connections: PageJS.Callback = ( context, next ) => {
 	next();
 };
 
-export const redirectIfNotJetpackCloud: PageJS.Callback = ( context, next ) => {
+export const redirectIfNotJetpackCloud: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 

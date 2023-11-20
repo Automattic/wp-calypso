@@ -38,7 +38,7 @@
 		"@wordpress/data": "^9.14.0",
 		"@wordpress/icons": "^9.35.0",
 		"calypso": "workspace:^",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"debug": "^4.3.4",
 		"moment": "^2.26.0",
 		"page": "^1.11.5",
@@ -60,8 +60,8 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@babel/core": "^7.22.20",
-		"@size-limit/file": "^8.2.4",
+		"@babel/core": "^7.23.2",
+		"@size-limit/file": "^8.2.6",
 		"@wordpress/dependency-extraction-webpack-plugin": "^4.21.0",
 		"autoprefixer": "^10.2.5",
 		"babel-jest": "^29.6.1",
@@ -73,7 +73,7 @@
 		"node-fetch": "^2.6.6",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
-		"size-limit": "^8.2.4",
+		"size-limit": "^8.2.6",
 		"webpack": "^5.68.0",
 		"webpack-bundle-analyzer": "^4.5.0"
 	}

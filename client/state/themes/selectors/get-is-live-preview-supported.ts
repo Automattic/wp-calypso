@@ -15,7 +15,6 @@ import {
 /**
  * Hardcoded list of themes that are NOT compatible with Block Theme Previews.
  * This list should be removed once they are retired.
- *
  * @see pekYwv-284-p2
  */
 const NOT_COMPATIBLE_THEMES = [
@@ -82,7 +81,6 @@ const isNotCompatibleThemes = ( themeId: string ) => {
  *   - If the theme is externally managed.
  *   - If the theme is a wporg theme.
  *   - If the theme is NOT included in a plan.
- *
  * @see pbxlJb-3Uv-p2
  */
 export const getIsLivePreviewSupported = ( state: AppState, themeId: string, siteId: number ) => {
@@ -113,7 +111,6 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 	/**
 	 * Block Theme Previews do NOT support themes with a static page as a homepage
 	 * as the Site Editor cannot control Reading Settings.
-	 *
 	 * @see pekYwv-284-p2#background
 	 */
 	if ( isNotCompatibleThemes( themeId ) ) {
@@ -156,7 +153,6 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 		 * Disable Live Preview for themes that are NOT included in a plan.
 		 * This should be updated as we implement the flow for them.
 		 * Note that BTP works on Atomic sites if a theme is installed.
-		 *
 		 * @see https://github.com/Automattic/wp-calypso/issues/79223
 		 */
 		if ( ! canUseTheme( state, siteId, themeId ) ) {

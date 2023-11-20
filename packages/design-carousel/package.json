@@ -33,7 +33,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"swiper": "^10.1.0",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",

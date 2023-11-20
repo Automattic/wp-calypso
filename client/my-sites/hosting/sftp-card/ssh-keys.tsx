@@ -138,7 +138,7 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 			{ showLinkToAddUserKey && (
 				<div>
 					{ createInterpolateElement(
-						__( '<a>Add an SSH key to your account</a> in order to use it with this site.' ),
+						__( '<a>Add an SSH key</a> and attach it to your site to enable passwordless login.' ),
 						{
 							a: (
 								<a

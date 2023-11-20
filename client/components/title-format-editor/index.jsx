@@ -83,7 +83,6 @@ export class TitleFormatEditor extends Component {
 	 * Returns a new editorState that forces
 	 * selection to hop over tokens, preventing
 	 * navigating the cursor into a token
-	 *
 	 * @param {EditorState} editorState new state of editor after changes
 	 * @returns {EditorState} maybe filtered state for editor
 	 */

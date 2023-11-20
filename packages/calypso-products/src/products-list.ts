@@ -107,6 +107,10 @@ import {
 	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
 	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
 	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
+	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+	PRODUCT_JETPACK_CREATOR_YEARLY,
+	PRODUCT_JETPACK_CREATOR_MONTHLY,
+	JETPACK_GROWTH_CATEGORY,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
 import type {
@@ -734,6 +738,36 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 		getProductId: () => 2117,
 		getStoreSlug: () => PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	},
+	[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: {
+		product_name: translate( 'Creator' ),
+		product_slug: PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+		type: PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+		term: TERM_BIENNIALLY,
+		bill_period: PLAN_BIENNIAL_PERIOD,
+		categories: [ JETPACK_GROWTH_CATEGORY ],
+		getProductId: () => 2612,
+		getStoreSlug: () => PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+	},
+	[ PRODUCT_JETPACK_CREATOR_YEARLY ]: {
+		product_name: translate( 'Creator' ),
+		product_slug: PRODUCT_JETPACK_CREATOR_YEARLY,
+		type: PRODUCT_JETPACK_CREATOR_YEARLY,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [ JETPACK_GROWTH_CATEGORY ],
+		getProductId: () => 2611,
+		getStoreSlug: () => PRODUCT_JETPACK_CREATOR_YEARLY,
+	},
+	[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: {
+		product_name: translate( 'Creator' ),
+		product_slug: PRODUCT_JETPACK_CREATOR_MONTHLY,
+		type: PRODUCT_JETPACK_CREATOR_MONTHLY,
+		term: TERM_MONTHLY,
+		bill_period: PLAN_MONTHLY_PERIOD,
+		categories: [ JETPACK_GROWTH_CATEGORY ],
+		getProductId: () => 2610,
+		getStoreSlug: () => PRODUCT_JETPACK_CREATOR_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: {
 		product_name: translate( 'Add-on Storage (10GB)' ),

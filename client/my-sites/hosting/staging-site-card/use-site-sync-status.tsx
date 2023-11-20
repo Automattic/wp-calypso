@@ -32,7 +32,7 @@ export const useCheckSyncStatus = ( siteId: number ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const intervalIdRef = useRef< NodeJS.Timer >();
+	const intervalIdRef = useRef< NodeJS.Timeout >();
 	const syncStatus = useSelector( ( state ) => getSyncStatus( state, siteId ) );
 	const syncProgress = useSelector( ( state ) => getSyncProgress( state, siteId ) );
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );

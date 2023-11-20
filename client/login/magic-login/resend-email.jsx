@@ -33,7 +33,7 @@ export const getResendEmailErrorMessages = ( translate ) => {
 		subscription_not_found: translate( 'There is no subscription with this email address.' ),
 		invalid_token: translate( 'The token is not valid for the provided email address.' ),
 		rest_invalid_param: translate(
-			'One of the parameters is not valid. Please checkc your inbox for a more recent email.'
+			'One of the parameters is not valid. Please check your inbox for a more recent email.'
 		),
 		rest_missing_callback_param: translate(
 			'One of the parameters is missing. Please check your inbox for a more recent email.'

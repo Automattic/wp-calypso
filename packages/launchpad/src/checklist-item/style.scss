@@ -226,12 +226,12 @@
 	margin-top: 12px;
 	background-color: var(--color-primary);
 	border-color: var(--color-primary);
+	border-radius: 4px;
 	color: var(--color-text-inverted);
 	justify-content: center;
 	font-size: $font-body-small;
 	height: auto;
 	line-height: 22px;
-	border: 1px solid var(--color-neutral-10);
 
 	&:hover:not([disabled]) {
 		background-color: var(--color-primary-60);

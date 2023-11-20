@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
-import Divider from '../divider';
+import { FormDivider } from 'calypso/blocks/authentication';
 import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
 
@@ -21,7 +21,7 @@ export default function WaitingTwoFactorNotificationApproval( { switchTwoFactorA
 				</p>
 				<PushNotificationIllustration />
 			</Card>
-			<Divider>{ translate( 'or' ) }</Divider>
+			<FormDivider />
 			<TwoFactorActions
 				twoFactorAuthType="push"
 				switchTwoFactorAuthType={ switchTwoFactorAuthType }

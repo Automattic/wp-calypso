@@ -18,13 +18,14 @@ import {
 	pick,
 	omitBy,
 	snakeCase,
+	isEmpty,
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import Divider from 'calypso/blocks/login/divider';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -72,11 +73,13 @@ const debug = debugModule( 'calypso:signup-form:form' );
 let usernamesSearched = [];
 let timesUsernameValidationFailed = 0;
 let timesPasswordValidationFailed = 0;
+let timesEmailValidationFailed = 0;
 
 const resetAnalyticsData = () => {
 	usernamesSearched = [];
 	timesUsernameValidationFailed = 0;
 	timesPasswordValidationFailed = 0;
+	timesEmailValidationFailed = 0;
 };
 
 class SignupForm extends Component {
@@ -320,6 +323,15 @@ class SignupForm extends Component {
 
 						timesPasswordValidationFailed++;
 					}
+
+					if ( field === 'email' ) {
+						recordTracksEvent( 'calypso_signup_email_validation_failed', {
+							error: keys( fieldError )[ 0 ],
+							email: fields.email,
+						} );
+
+						timesEmailValidationFailed++;
+					}
 				} );
 
 				if ( fields.email ) {
@@ -453,6 +465,7 @@ class SignupForm extends Component {
 				unique_usernames_searched: usernamesSearched.length,
 				times_username_validation_failed: timesUsernameValidationFailed,
 				times_password_validation_failed: timesPasswordValidationFailed,
+				times_email_validation_failed: timesEmailValidationFailed,
 			};
 
 			this.props.submitForm( this.state.form, this.getUserData(), analyticsData, () => {
@@ -646,7 +659,7 @@ class SignupForm extends Component {
 					id="email"
 					name="email"
 					type="email"
-					value={ formState.getFieldValue( this.state.form, 'email' ) }
+					value={ this.getEmailValue() }
 					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
 					isValid={ this.state.validationInitialized && isEmailValid }
 					onBlur={ this.handleBlur }
@@ -1069,6 +1082,12 @@ class SignupForm extends Component {
 		return this.props.horizontal || 'videopress-account' === this.props.flowName;
 	};
 
+	getEmailValue = () => {
+		return isEmpty( formState.getFieldValue( this.state.form, 'email' ) )
+			? this.props.queryArgs?.user_email
+			: formState.getFieldValue( this.state.form, 'email' );
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1178,6 +1197,7 @@ class SignupForm extends Component {
 					isReskinned={ this.props.isReskinned }
 					redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 					queryArgs={ this.props.queryArgs }
+					userEmail={ this.getEmailValue() }
 					notice={ this.getNotice( true ) }
 				/>
 			);
@@ -1213,18 +1233,13 @@ class SignupForm extends Component {
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
+						userEmail={ this.getEmailValue() }
 						{ ...gravatarProps }
 					/>
 
 					{ ! isGravatar && (
 						<>
-							{ showSeparator && (
-								<div className="signup-form__separator">
-									<div className="signup-form__separator-text">
-										{ this.props.translate( 'or' ) }
-									</div>
-								</div>
-							) }
+							{ showSeparator && <FormDivider /> }
 
 							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 								<SocialSignupForm
@@ -1260,15 +1275,11 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ showSeparator && (
-					<div className="signup-form__separator">
-						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-					</div>
-				) }
+				{ showSeparator && <FormDivider /> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>
-						{ this.props.isWoo && <Divider>{ this.props.translate( 'or' ) }</Divider> }
+						{ this.props.isWoo && <FormDivider /> }
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }

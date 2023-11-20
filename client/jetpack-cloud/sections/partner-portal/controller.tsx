@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
+import page, { type Callback, type Context } from 'page';
+import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
@@ -38,11 +39,10 @@ import getSites from 'calypso/state/selectors/get-sites';
 import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
-import type PageJS from 'page';
 
 const isNewNavigationEnabled = isEnabled( 'jetpack/new-navigation' );
 
-const setSidebar = ( context: PageJS.Context ): void => {
+const setSidebar = ( context: Context ) => {
 	if ( isNewNavigationEnabled ) {
 		context.secondary = <NewPurchasesSidebar path={ context.path } />;
 	} else {
@@ -50,38 +50,38 @@ const setSidebar = ( context: PageJS.Context ): void => {
 	}
 };
 
-export function allSitesContext( context: PageJS.Context, next: () => void ): void {
+export const allSitesContext: Callback = ( context, next ) => {
 	// Many (if not all) Partner Portal pages do not select any one specific site
 	context.store.dispatch( setAllSitesSelected() );
 	next();
-}
+};
 
-export function partnerContext( context: PageJS.Context, next: () => void ): void {
+export const partnerContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	context.primary = <PartnerAccess />;
 	next();
-}
+};
 
-export function termsOfServiceContext( context: PageJS.Context, next: () => void ): void {
+export const termsOfServiceContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	context.primary = <TermsOfServiceConsent />;
 	next();
-}
+};
 
-export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
+export const partnerKeyContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	context.primary = <LicenseSelectPartnerKey />;
 	next();
-}
+};
 
-export function billingDashboardContext( context: PageJS.Context, next: () => void ): void {
+export const billingDashboardContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	context.primary = <BillingDashboard />;
 	next();
-}
+};
 
-export function licensesContext( context: PageJS.Context, next: () => void ): void {
+export const licensesContext: Callback = ( context, next ) => {
 	const { s: search, sort_field, sort_direction, page } = context.query;
 	const filter = publicToInternalLicenseFilter( context.params.filter, LicenseFilter.NotRevoked );
 	const currentPage = parseInt( page ) || 1;
@@ -108,29 +108,33 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 		/>
 	);
 	next();
-}
+};
 
-export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
+export const issueLicenseContext: Callback = ( context, next ) => {
 	const { site_id: siteId, product_slug: suggestedProduct } = context.query;
 	const state = context.store.getState();
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
 	setSidebar( context );
-	context.primary = (
-		<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-	);
+	if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
+		context.primary = <IssueLicenseV2 />;
+	} else {
+		context.primary = (
+			<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+		);
+	}
 	next();
-}
+};
 
-export function downloadProductsContext( context: PageJS.Context, next: () => void ): void {
+export const downloadProductsContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	context.primary = <DownloadProducts />;
 	next();
-}
+};
 
-export function assignLicenseContext( context: PageJS.Context, next: () => void ): void {
+export const assignLicenseContext: Callback = ( context, next ) => {
 	const { page, search } = context.query;
 	const state = context.store.getState();
 	const sites = getSites( state );
@@ -142,16 +146,16 @@ export function assignLicenseContext( context: PageJS.Context, next: () => void 
 		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
 	);
 	next();
-}
+};
 
-export function paymentMethodListContext( context: PageJS.Context, next: () => void ): void {
+export const paymentMethodListContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	context.primary = <PaymentMethodList />;
 	next();
-}
+};
 
-export function paymentMethodAddContext( context: PageJS.Context, next: () => void ): void {
+export const paymentMethodAddContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 
@@ -161,47 +165,44 @@ export function paymentMethodAddContext( context: PageJS.Context, next: () => vo
 	const selectedSite = siteId ? sites?.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.primary = <PaymentMethodAdd selectedSite={ selectedSite } />;
 	next();
-}
+};
 
-export function invoicesDashboardContext( context: PageJS.Context, next: () => void ): void {
+export const invoicesDashboardContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	context.primary = <InvoicesDashboard />;
 	next();
-}
+};
 
-export function companyDetailsDashboardContext( context: PageJS.Context, next: () => void ): void {
+export const companyDetailsDashboardContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	context.primary = <CompanyDetailsDashboard />;
 	next();
-}
+};
 
-export function pricesContext( context: PageJS.Context, next: () => void ): void {
+export const pricesContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	context.primary = <Prices />;
 	next();
-}
+};
 
-export function landingPageContext() {
+export const landingPageContext: Callback = () => {
 	page.redirect( isNewNavigationEnabled ? '/partner-portal/billing' : '/partner-portal/licenses' );
-	return;
-}
+};
 
-export function wpcomAtomicHostingContext( context: PageJS.Context, next: () => void ): void {
+export const wpcomAtomicHostingContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	context.primary = <WPCOMAtomicHosting />;
 	next();
-}
+};
 
 /**
  * Require the user to have a partner with at least 1 active partner key.
- * @param {PageJS.Context} context PageJS context.
- * @param {() => void} next Next context callback.
  */
-export function requireAccessContext( context: PageJS.Context, next: () => void ): void {
+export const requireAccessContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const partner = getCurrentPartner( state );
 	const { pathname, search } = window.location;
@@ -219,17 +220,12 @@ export function requireAccessContext( context: PageJS.Context, next: () => void 
 			'/partner-portal/partner'
 		)
 	);
-}
+};
 
 /**
  * Require the user to have consented to the terms of service.
- * @param {PageJS.Context} context PageJS context.
- * @param {() => void} next Next context callback.
  */
-export function requireTermsOfServiceConsentContext(
-	context: PageJS.Context,
-	next: () => void
-): void {
+export const requireTermsOfServiceConsentContext: Callback = ( context, next ) => {
 	const { pathname, search } = window.location;
 	const state = context.store.getState();
 	const partner = getCurrentPartner( state );
@@ -249,17 +245,12 @@ export function requireTermsOfServiceConsentContext(
 			'/partner-portal/terms-of-service'
 		)
 	);
-}
+};
 
 /**
  * Require the user to have selected a partner key to use.
- * @param {PageJS.Context} context PageJS context.
- * @param {() => void} next Next context callback.
  */
-export function requireSelectedPartnerKeyContext(
-	context: PageJS.Context,
-	next: () => void
-): void {
+export const requireSelectedPartnerKeyContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const hasKey = hasActivePartnerKey( state );
 	const { pathname, search } = window.location;
@@ -279,14 +270,12 @@ export function requireSelectedPartnerKeyContext(
 			'/partner-portal/partner-key'
 		)
 	);
-}
+};
 
 /**
  * Require the user to have a valid payment method registered.
- * @param {PageJS.Context} context PageJS context.
- * @param {() => void} next Next context callback.
  */
-export function requireValidPaymentMethod( context: PageJS.Context, next: () => void ) {
+export const requireValidPaymentMethod: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const paymentMethodRequired = doesPartnerRequireAPaymentMethod( state );
 	const { pathname, search } = window.location;
@@ -306,4 +295,4 @@ export function requireValidPaymentMethod( context: PageJS.Context, next: () => 
 	}
 
 	next();
-}
+};

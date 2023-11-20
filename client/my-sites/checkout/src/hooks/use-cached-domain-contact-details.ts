@@ -12,6 +12,7 @@ import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-
 import { convertErrorToString } from '../lib/analytics';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import useCountryList from './use-country-list';
+import { useShouldCollapseLastStep } from './use-should-collapse-last-step';
 import type {
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
@@ -61,6 +62,8 @@ function useCachedContactDetailsForCheckoutForm(
 	}
 	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
 
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
+
 	const isMounted = useRef( true );
 	useEffect( () => {
 		isMounted.current = true;
@@ -98,6 +101,9 @@ function useCachedContactDetailsForCheckoutForm(
 				if ( cachedContactDetails.countryCode ) {
 					setShouldShowContactDetailsValidationErrors( false );
 					debug( 'Contact details are populated; attempting to skip to payment method step' );
+					if ( shouldCollapseLastStep ) {
+						return setStepCompleteStatus( 'payment-method-step' );
+					}
 					return setStepCompleteStatus( 'contact-form' );
 				}
 				return false;
@@ -129,6 +135,7 @@ function useCachedContactDetailsForCheckoutForm(
 				} );
 			} );
 	}, [
+		shouldCollapseLastStep,
 		setShouldShowContactDetailsValidationErrors,
 		reduxDispatch,
 		setStepCompleteStatus,

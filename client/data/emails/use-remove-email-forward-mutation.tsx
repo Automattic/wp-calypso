@@ -19,7 +19,6 @@ const MUTATION_KEY = 'removeEmailForward';
 
 /**
  * Deletes an email forward, including relevant optimistic data mutations.
- *
  * @param domainName The domain name of the mailbox
  * @param mutationOptions Mutation options passed on to `useMutation`
  * @returns Returns the result of the `useMutation` call

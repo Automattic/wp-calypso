@@ -1,20 +1,18 @@
 import type { StorageOption } from '@automattic/calypso-products';
 
+/**
+ * Don't show storage add-on-upsells for:
+ *  - the enterprise plan which has no storage options
+ * 	- plans that only have 1 default storage option ( and no upgrades )
+ *  - monthly or multi-year plans
+ *  - environments with a disabled feature flag
+ */
 export const isStorageUpgradeableForPlan = ( {
-	flowName,
 	intervalType,
-	isInSignup,
 	showUpgradeableStorage,
 	storageOptions,
 }: {
-	flowName: string;
 	intervalType: string;
-	isInSignup: boolean;
 	showUpgradeableStorage: boolean;
 	storageOptions: StorageOption[];
-} ) =>
-	// Don't show for the enterprise plan which has no storage options
-	storageOptions.length > 1 &&
-	intervalType === 'yearly' &&
-	showUpgradeableStorage &&
-	( flowName === 'onboarding' || ! isInSignup );
+} ) => storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;

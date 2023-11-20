@@ -38,7 +38,6 @@ export function redirectToLaunchpad(
 /**
  * The function calculates does the user fall into
  * the provided percentage of people for product sampling?
- *
  * @param userId Number
  * @param percentage Number
  * @returns {boolean}

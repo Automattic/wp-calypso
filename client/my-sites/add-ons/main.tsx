@@ -90,11 +90,7 @@ const NoAccess = () => {
 	);
 };
 
-interface Props {
-	context?: PageJS.Context;
-}
-
-const AddOnsMain: React.FunctionComponent< Props > = () => {
+const AddOnsMain = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const addOns = useAddOns( selectedSite?.ID );

@@ -56,7 +56,9 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				  ),
-			continueLabel: translate( 'Save and continue' ),
+			continueLabel: isAddPagesEnabled
+				? translate( 'Select pages' )
+				: translate( 'Save and continue' ),
 			backLabel: hasEnTranslation( 'styles' ) ? translate( 'styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.STYLES_COLORS,
 		},
@@ -64,7 +66,7 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			name: 'pages',
 			title: translate( 'Add more pages' ),
 			description: translate(
-				"We've included common pages in your website, but feel free to add more or change the current ones."
+				"We've pre-selected common pages for your site. You can add more pages or unselect the current ones."
 			),
 			continueLabel: translate( 'Save and continue' ),
 			backLabel: translate( 'pages' ),

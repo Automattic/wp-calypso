@@ -1,10 +1,9 @@
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
-import { JetpackLogo } from '@automattic/components';
+import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
-import FoldableCard from 'calypso/components/foldable-card';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

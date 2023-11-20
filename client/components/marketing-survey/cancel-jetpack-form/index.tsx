@@ -391,7 +391,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	/**
 	 * renderCurrentStep
 	 * Show the cancellation flow based on the current step the user is on
-	 *
 	 * @returns current step {string|null}
 	 */
 	const renderCurrentStep = () => {

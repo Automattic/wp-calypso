@@ -14,6 +14,8 @@
 	margin: auto;
 	padding: 1rem;
 	text-align: center;
+	// 60px is the height of .step-container__navigation.action-buttons
+	padding-bottom: calc(60px + 3rem);
 
 	.onboarding-title {
 		margin-bottom: 0.5rem;

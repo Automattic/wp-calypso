@@ -15,6 +15,10 @@
 		// The -76px is to undo the padding of layout.has-no-masterbar (32px), .layout__content (32px) and .sites-overview_container (6px + 6px)
 		min-height: calc(100vh - 76px);
 	}
+
+	.is-sticky .sites-overview__licenses-buttons {
+		margin-block: auto;
+	}
 }
 
 .sites-overview__large-screen {
@@ -229,7 +233,7 @@
 .sites-overview__stats-trend__down {
 	fill: var(--studio-red-50);
 }
-.sites-overview__stats-trend__same {
+.sites-overview__stats-trend__same .empty-icon {
 	vertical-align: middle;
 	height: 8px;
 	width: 8px;

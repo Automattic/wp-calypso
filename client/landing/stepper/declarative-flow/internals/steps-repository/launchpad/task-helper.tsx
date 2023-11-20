@@ -29,6 +29,7 @@ import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list'
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
@@ -58,6 +59,7 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
+	productCartItems?: MinimalRequestCartProduct[] | null,
 	stripeConnectUrl?: string,
 	setShowConfirmModal: () => void = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	isDomainEmailUnverified = false
@@ -409,7 +411,12 @@ export function getEnhancedTasks(
 					};
 					break;
 				case 'blog_launched': {
-					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
+					// If user selected products during onboarding, update cart and redirect to checkout
+					const onboardingCartItems = [
+						planCartItem,
+						domainCartItem,
+						...( productCartItems ?? [] ),
+					].filter( Boolean ) as MinimalRequestCartProduct[];
 					let title = task.title;
 					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
 						title = translate( 'Checkout and launch' );
@@ -440,10 +447,6 @@ export function getEnhancedTasks(
 								) as OnboardActions;
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Directing to checkout' ) );
-									// If user selected products during onboarding, update cart and redirect to checkout
-									const onboardingCartItems = [ planCartItem, domainCartItem ].filter(
-										Boolean
-									) as MinimalRequestCartProduct[];
 									if ( onboardingCartItems.length ) {
 										await replaceProductsInCart( siteSlug as string, onboardingCartItems );
 										const { goToCheckout } = useCheckout();
@@ -587,7 +590,7 @@ export function getEnhancedTasks(
 							site?.ID
 								? setShowPlansModal( true )
 								: window.location.assign(
-										`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+										`/earn/payments-plans/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
 								  );
 						},
 					};

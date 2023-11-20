@@ -54,7 +54,6 @@ export function checkoutJetpackSiteless( context, next ) {
 	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
 	 * site slug present when the site is in context (ie- when site is connected and user is
 	 * logged in).
-	 *
 	 * @type {string|undefined}
 	 */
 	const fromSiteSlug = context.query?.from_site_slug;
@@ -276,7 +275,6 @@ export function checkoutPending( context, next ) {
 	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
 	 * site slug present when the site is in context (ie- when site is connected and user is
 	 * logged in).
-	 *
 	 * @type {string|undefined}
 	 */
 	const fromSiteSlug = context.query?.from_site_slug;
@@ -580,6 +578,7 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
+		'WC',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

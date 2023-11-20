@@ -1,7 +1,6 @@
 package _self.projects
 
 import _self.bashNodeScript
-import _self.lib.wpcom.WPComPluginBuild
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -21,17 +20,9 @@ object WPComPlugins : Project({
 	// Default params for WPcom Plugins.
 	params {
 		param("docker_image", "registry.a8c.com/calypso/ci-wpcom:latest")
-		param("build.prefix", "1")
 	}
 
 	buildType(CalypsoApps)
-	buildType(EditingToolkit)
-	buildType(WpcomBlockEditor)
-	buildType(Notifications)
-	buildType(OdysseyStats)
-	buildType(BlazeDashboard)
-	buildType(O2Blocks)
-	buildType(HappyBlocks)
 	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
@@ -66,6 +57,7 @@ object CalypsoApps: BuildType({
 	name = "Build Calypso Apps"
 	description = "Builds all Calypso apps and saves release artifacts for each. This replaces the separate build configurations for each app."
 
+	buildNumberPattern = "%build.prefix%.%build.counter%"
 	params {
 		// Incremented to 4 to make sure ETK updates continue to work:
 		param("build.prefix", "4")
@@ -79,7 +71,6 @@ object CalypsoApps: BuildType({
 		)
 	}
 
-	buildNumberPattern = "%build.prefix%.%build.counter%"
 	features {
 		perfmon {
 		}
@@ -163,7 +154,7 @@ object CalypsoApps: BuildType({
 				export build_number="%build.number%"
 				export commit_sha="%build.vcs.number%"
 
-				yarn workspaces foreach --verbose --parallel --include "{${'$'}apps}" run teamcity:build-app
+				yarn workspaces foreach --all --verbose --parallel --include "{${'$'}apps}" run teamcity:build-app
 			"""
 		}
 
@@ -190,172 +181,6 @@ object CalypsoApps: BuildType({
 		}
 	}
 })
-
-
-private object EditingToolkit : WPComPluginBuild(
-	buildId = "WPComPlugins_EditorToolKit",
-	buildName = "Editing ToolKit",
-	releaseTag = "etk-release-build",
-	pluginSlug = "editing-toolkit",
-	archiveDir = "./editing-toolkit-plugin/",
-	docsLink = "PCYsg-mMA-p2",
-	normalizeFiles = "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" ./release-archive/full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" ./release-archive/readme.txt\n",
-	withSlackNotify = "false",
-	buildSteps = {
-		bashNodeScript {
-			name = "Update version"
-			scriptContent = """
-				cd apps/editing-toolkit
-				# Update plugin version in the plugin file and readme.txt.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
-			"""
-		}
-		// Note: We run the PHP lint after the build to verify that the newspack-blocks
-		// code is also formatted correctly.
-		bashNodeScript {
-			name = "Run PHP Lint"
-			scriptContent = """
-				cd apps/editing-toolkit
-				yarn lint:php
-
-				# Do some extra checks on the textdomain, since we're manually changing it for the newspack blocks.
-				./bin/verify-textdomain.sh
-			"""
-		}
-	},
-	buildParams = {
-		param("build.prefix", "3")
-	}
-)
-
-private object WpcomBlockEditor : WPComPluginBuild(
-	buildId = "WPComPlugins_WpcomBlockEditor",
-	buildName = "Wpcom Block Editor",
-	pluginSlug = "wpcom-block-editor",
-	archiveDir = "./dist/",
-	buildEnv = "development",
-	docsLink = "PCYsg-l4k-p2",
-)
-
-private object Notifications : WPComPluginBuild(
-	buildId = "WPComPlugins_Notifications",
-	buildName = "Notifications",
-	pluginSlug = "notifications",
-	archiveDir = "./dist/",
-	docsLink = "PCYsg-elI-p2",
-	// This param is executed in bash right before the build script compares
-	// the build with the previous release version. The purpose of this code
-	// is to remove sources of randomness so that the diff operation only
-	// compares legitimate changes.
-	normalizeFiles = """
-		function get_hash {
-				# If the stylesheet in the HTML file is pointing at "build.min.css?foobar123",
-				# this will just return the "foobar123" portion of the file. This
-				# is a source of randomness which needs to be eliminated.
-				echo `sed -nE 's~.*<link rel="stylesheet" href="build.min.css\?([a-zA-Z0-9]+)">.*~\1~p' ${'$'}1`
-		}
-		new_hash=`get_hash dist/index.html`
-		old_hash=`get_hash release-archive/index.html`
-
-		# All scripts and styles use the same "hash" version, so replace any
-		# instances of the hash in the *old* files with the newest version.
-		sed -i "s~${'$'}old_hash~${'$'}new_hash~g" release-archive/index.html release-archive/rtl.html
-
-		# Replace the old cache buster with the new one in the previous release html files.
-		if [ -f './release-archive/build_meta.json' ] ; then
-			old_cache_buster=`jq -r '.cache_buster' ./release-archive/build_meta.json`
-		else
-			old_cache_buster=`cat ./release-archive/cache-buster.txt`
-		fi
-
-		new_cache_buster=`jq -r '.cache_buster' ./dist/build_meta.json`
-		sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
-	""".trimIndent(),
-)
-
-private object OdysseyStats : WPComPluginBuild(
-	buildId = "WPComPlugins_OdysseyStats",
-	buildName = "Odyssey Stats",
-	pluginSlug = "odyssey-stats",
-	archiveDir = "./dist/",
-	withPRNotify = "false",
-	docsLink = "PejTkB-3N-p2",
-	buildSteps = {
-		bashNodeScript {
-			name = "Run Size Test"
-			scriptContent = """
-				cd apps/odyssey-stats
-
-				# run unit tests
-				yarn test:size
-			"""
-		}
-
-	}
-)
-
-private object BlazeDashboard : WPComPluginBuild(
-	buildId = "WPComPlugins_BlazeDashboard",
-	buildName = "Blaze Dashboard",
-	pluginSlug = "blaze-dashboard",
-	archiveDir = "./dist/",
-	withPRNotify = "false",
-	docsLink = "PCYsg-SuD-p2",
-	buildSteps = {
-		bashNodeScript {
-			name = "Translate Blaze Dashboard"
-			scriptContent = """
-				cd apps/blaze-dashboard
-
-				# generate language files
-				yarn translate
-			"""
-		}
-	}
-)
-
-private object O2Blocks : WPComPluginBuild(
-	buildId="WPComPlugins_O2Blocks",
-	buildName = "O2 Blocks",
-	pluginSlug = "o2-blocks",
-	archiveDir = "./release-files/",
-	docsLink = "PCYsg-r7r-p2",
-	buildSteps = {
-		bashNodeScript {
-			name = "Create release directory"
-			scriptContent = """
-				cd apps/o2-blocks
-
-				# Copy existing dist files to release directory
-				mkdir release-files
-				cp -r dist release-files/dist/
-
-				# Add index.php file
-				cp index.php release-files/
-			"""
-		}
-	}
-)
-
-private object HappyBlocks : WPComPluginBuild(
-	buildId="WPComPlugins_HappyBlocks",
-	buildName = "Happy Blocks",
-	pluginSlug = "happy-blocks",
-	archiveDir = "./release-files/",
-	docsLink = "PCYsg-r7r-p2",
-	buildSteps = {
-		bashNodeScript {
-			name = "Create release directory"
-			scriptContent = """
-				cd apps/happy-blocks
-
-				# Run build release script
-				yarn teamcity:build-app
-			"""
-		}
-	}
-)
 
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
 	init {

@@ -10,6 +10,9 @@
 
 .sticky-panel__content {
 	position: relative;
+	// Makes the bottom margin of the inner element contribute to its height
+	// so that the `StickyPanel` component can determine the height correctly.
+	display: flow-root;
 }
 
 .sticky-panel.is-sticky .sticky-panel__content {

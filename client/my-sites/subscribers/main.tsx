@@ -14,6 +14,7 @@ import {
 } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
+import { MigrateSubscribersModal } from './components/migrate-subscribers-modal';
 import { SubscribersHeaderPopover } from './components/subscribers-header-popover';
 import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { SubscribersFilterBy, SubscribersSortBy } from './constants';
@@ -122,6 +123,7 @@ const SubscribersPage = ( {
 				<SubscribersHeader selectedSiteId={ selectedSite?.ID } />
 
 				<SubscriberListContainer
+					siteId={ siteId }
 					onClickView={ onClickView }
 					onClickUnsubscribe={ onClickUnsubscribe }
 				/>
@@ -131,9 +133,8 @@ const SubscribersPage = ( {
 					onCancel={ resetSubscriber }
 					onConfirm={ onConfirmModal }
 				/>
-				{ selectedSite && (
-					<AddSubscribersModal siteId={ selectedSite.ID } siteTitle={ selectedSite.title } />
-				) }
+				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
+				{ selectedSite && <MigrateSubscribersModal /> }
 			</Main>
 		</SubscribersPageProvider>
 	);

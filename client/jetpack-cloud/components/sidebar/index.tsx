@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
-import SiteSelector from 'calypso/components/site-selector';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,
@@ -11,10 +10,10 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasJetpackPartnerAccess } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarHeader from './header';
+import JetpackCloudSiteSelector from './site-selector';
 
 import './style.scss';
 
@@ -56,8 +55,6 @@ const JetpackCloudSidebar = ( {
 	const jetpackAdminUrl = useSelector( ( state ) =>
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
 	);
-
-	const canAccessJetpackManage = useSelector( hasJetpackPartnerAccess );
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -124,15 +121,7 @@ const JetpackCloudSidebar = ( {
 				</ul>
 			</SidebarFooter>
 
-			<SiteSelector
-				showAddNewSite
-				showAllSites={ canAccessJetpackManage }
-				isJetpackAgencyDashboard={ isJetpackManage }
-				className="jetpack-cloud-sidebar__site-selector"
-				allSitesPath="/dashboard"
-				siteBasePath="/landing"
-				wpcomSiteBasePath="https://wordpress.com/home"
-			/>
+			<JetpackCloudSiteSelector />
 		</Sidebar>
 	);
 };

@@ -1,4 +1,4 @@
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { getPlan, PLAN_FREE, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	START_WRITING_FLOW,
@@ -38,7 +38,7 @@ import './style.scss';
 interface Props {
 	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
-	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
+	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
 }
 
@@ -74,16 +74,15 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	}, [] );
 	const { flowName } = props;
 
-	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
+		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
-	const isReskinned = true;
 	const customerType = 'personal';
-	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
 	const plansIntent = getPlansIntent( flowName );
@@ -91,7 +90,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onSelectPlan = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
 		const planCartItem = getPlanCartItem( cartItems );
 		if ( planCartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
@@ -104,6 +103,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			} );
 		}
 
+		const cartItemForStorageAddOn = cartItems?.find(
+			( items ) => items.product_slug === PRODUCT_1GB_SPACE
+		);
+
+		cartItemForStorageAddOn && setProductCartItems( [ cartItemForStorageAddOn ] );
 		setPlanCartItem( planCartItem );
 		props.onSubmit?.( planCartItem );
 	};
@@ -113,7 +117,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const handleFreePlanButtonClick = () => {
-		onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+		onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 		props.onSubmit( null );
 	};
 
@@ -148,12 +152,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
-					onUpgradeClick={ onSelectPlan }
+					onUpgradeClick={ onUpgradeClick }
 					paidDomainName={ getPaidDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
-					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
@@ -242,7 +245,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const classes = classNames( 'plans-step', {
-		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
 		'is-wide-layout': false,
 		'is-extra-wide-layout': true,

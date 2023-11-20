@@ -365,6 +365,9 @@ object RunAllUnitTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
+				echo -n "Node version: " && node --version
+				echo -n "Yarn version: " && yarn --version
+				echo -n "NPM version: " && npm --version
 
 				# Install modules
 				${_self.yarn_install_cmd}
@@ -851,10 +854,27 @@ object PreReleaseE2ETests : BuildType({
 				set -o errexit
 
 				# Retry failed tests only.
-				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures
+				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
+
+		bashNodeScript {
+				name = "Send TeamCity Message"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
+
+					export slack_oauth_token="%TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN%"
+					export tc_build_conf_name="%system.teamcity.buildConfName%"
+					export tc_project_name="%system.teamcity.projectName%"
+					export tc_build_number=%build.number%
+					export tc_build_branch=%teamcity.build.branch%
+
+					node ./bin/teamcity-e2e-slack-notify.mjs --file test/e2e/pre-release-test-results.json
+				"""
+				dockerImage = "%docker_image_e2e%"
+			}
 
 		bashNodeScript {
 			name = "Collect results"

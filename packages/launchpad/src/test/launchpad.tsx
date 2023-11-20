@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import Launchpad from '../launchpad';
+import LaunchpadInternal from '../launchpad-internal';
 import '@testing-library/jest-dom';
 import type { Task } from '../types';
 
@@ -25,7 +25,7 @@ jest.mock( '@automattic/data-stores', () => {
 describe( 'Launchpad', () => {
 	describe( 'when no taskFilter is provided', () => {
 		it( 'then all tasks from useLaunchpad are rendered', () => {
-			render( <Launchpad siteSlug="any site" /> );
+			render( <LaunchpadInternal siteSlug="any site" /> );
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 3 );
 		} );
@@ -38,7 +38,7 @@ describe( 'Launchpad', () => {
 				return [ tasks[ 0 ] ];
 			};
 
-			render( <Launchpad siteSlug="any site" taskFilter={ filter } /> );
+			render( <LaunchpadInternal siteSlug="any site" taskFilter={ filter } /> );
 			const checklistItems = screen.queryAllByRole( 'listitem' );
 			expect( checklistItems.length ).toBe( 1 );
 

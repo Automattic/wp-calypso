@@ -31,7 +31,7 @@ export function showSelectedPost( { postKey, comments } ) {
 		const isLoggedIn = isUserLoggedIn( getState() );
 
 		if ( ! isLoggedIn ) {
-			return window.open( post.URL, '_blank' );
+			return window.open( post.URL + ( comments ? '#comments' : '' ), '_blank' );
 		}
 
 		if ( isXPost( post ) ) {

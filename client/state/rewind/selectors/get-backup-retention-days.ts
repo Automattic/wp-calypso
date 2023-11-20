@@ -2,7 +2,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Retrieves the retention period (in days) set by the user.
- *
  * @param state The application state.
  * @param siteId The site ID for which to retrieve days of backups.
  * @returns The retention period if set.

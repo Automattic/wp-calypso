@@ -375,7 +375,6 @@ export function getStatusForPlugin(
 
 /**
  * Whether the plugin's status for one or more recent actions matches a specified status.
- *
  * @param  {Object}       state    Global state tree
  * @param  {number}       siteId   ID of the site
  * @param  {string}       pluginId ID of the plugin
@@ -402,7 +401,6 @@ export function isPluginActionStatus(
 
 /**
  * Whether the plugin's status for one or more recent actions is in progress.
- *
  * @param  {Object}       state    Global state tree
  * @param  {number}       siteId   ID of the site
  * @param  {string}       pluginId ID of the plugin
@@ -421,7 +419,6 @@ export function isPluginActionInProgress(
 
 /**
  * Retrieve all plugin statuses of a certain type.
- *
  * @param  {Object} state    Global state tree
  * @param  {string} status   Status of interest
  * @returns {Array}          Array of plugin status objects
@@ -453,7 +450,6 @@ export const getPluginStatusesByType = createSelector(
 /**
  * Returns true if a particular plugin is installed and active for a specified site.
  * This is useful for Jetpack connected sites.
- *
  * @param {Object} state - Global state tree
  * @param {number} siteId - Site ID
  * @param {string} pluginSlug - Plugin slug

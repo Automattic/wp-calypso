@@ -45,7 +45,7 @@ const VideoCelebrationModalInner = () => {
 			isEditorSaving: isSavingEntity,
 		};
 	} );
-	const shouldShowSellerCelebrationModal = useShouldShowVideoCelebrationModal( isEditorSaving );
+	const shouldShowVideoCelebrationModal = useShouldShowVideoCelebrationModal( isEditorSaving );
 
 	useEffect( () => {
 		// Conditions to show modal:
@@ -57,7 +57,7 @@ const VideoCelebrationModalInner = () => {
 			! isEditorSaving &&
 			previousIsEditorSaving.current &&
 			! hasDisplayedModal &&
-			shouldShowSellerCelebrationModal
+			shouldShowVideoCelebrationModal
 		) {
 			setIsModalOpen( true );
 			setHasDisplayedModal( true );
@@ -67,7 +67,7 @@ const VideoCelebrationModalInner = () => {
 	}, [
 		isEditorSaving,
 		hasDisplayedModal,
-		shouldShowSellerCelebrationModal,
+		shouldShowVideoCelebrationModal,
 		updateHasSeenVideoCelebrationModal,
 	] );
 

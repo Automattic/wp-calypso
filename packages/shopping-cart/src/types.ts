@@ -436,6 +436,14 @@ export interface ResponseCartProduct {
 	price_tier_maximum_units?: number | null;
 
 	/**
+	 * A cost override is a change to the price of a product. The new price and the old (original) price are both provided.
+	 *
+	 * The override_code is a string that identifies the reason for the override.
+	 * When displaying the reason to the customer, use the human_readable_reason.
+	 */
+	cost_overrides?: ResponseCartCostOverride[];
+
+	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
 	 * we want to bill the customer for, before applying the per unit cost.
 	 *
@@ -534,6 +542,15 @@ export interface ResponseCartProductVariant {
 		| Record< string, never >
 		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
 	volume?: number;
+}
+
+export interface ResponseCartCostOverride {
+	human_readable_reason: string;
+	new_price: number;
+	old_price: number;
+	override_code: string;
+	does_override_original_cost: boolean;
+	reason: string;
 }
 
 export interface IntroductoryOfferTerms {

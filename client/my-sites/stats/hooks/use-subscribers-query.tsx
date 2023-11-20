@@ -54,7 +54,8 @@ function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
 			return {
 				[ payload.fields[ 0 ] ]:
 					payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' ),
-				[ payload.fields[ 1 ] ]: dataSet[ 1 ],
+				// Exclude the site owner count to align with the `Total subscribers` count from querySubscribersTotals.
+				[ payload.fields[ 1 ] ]: dataSet[ 1 ] > 0 ? dataSet[ 1 ] - 1 : dataSet[ 1 ],
 				[ payload.fields[ 2 ] ]: dataSet[ 2 ],
 			};
 		} ),

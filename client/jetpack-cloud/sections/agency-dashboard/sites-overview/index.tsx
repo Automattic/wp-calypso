@@ -281,7 +281,7 @@ export default function SitesOverview() {
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={
-								// render content only on large screens, The buttons for small scren have their own section
+								// render content only on large screens, The buttons for small screen have their own section
 								isLargeScreen &&
 								( selectedLicensesCount > 0 ? (
 									renderIssueLicenseButton()

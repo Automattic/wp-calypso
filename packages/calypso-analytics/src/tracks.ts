@@ -41,7 +41,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?63' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?64' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -172,6 +172,16 @@ export function identifyUser( userData: any ): any {
 	// Tracks user identification.
 	debug( 'Tracks identifyUser.', currentUser );
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
+}
+
+/**
+ * For tracking users between our products, generally passing the id via a request parameter.
+ *
+ * Use 'anon' for userIdType for anonymous users.
+ */
+export function signalUserFromAnotherProduct( userId: string, userIdType: string ): any {
+	debug( 'Tracks signalUserFromAnotherProduct.', userId, userIdType );
+	pushEventToTracksQueue( [ 'signalAliasUserGeneral', userId, userIdType ] );
 }
 
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {

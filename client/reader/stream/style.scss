@@ -734,6 +734,20 @@
 		color: var(--color-neutral-100);
 	}
 
+	.reader-tag-sidebar__recent-prompts {
+		h2 {
+			font-size: $font-body;
+			margin-bottom: 14px;
+		}
+		.reader-tag-sidebar__recent-prompt-link {
+			display: block;
+			font-size: $font-body-small;
+			text-decoration: underline;
+			font-weight: 500;
+			color: var(--color-neutral-100);
+			margin-bottom: 12px;
+		}
+	}
 	.reader-tag-sidebar-stats {
 		display: flex;
 		flex-direction: row;
@@ -741,13 +755,14 @@
 		// compensate for line height so that visual margin is 36px;
 		margin-bottom: 29px;
 
+
 		.reader-tag-sidebar-stats__item {
 			display: flex;
 			flex-direction: column;
 		}
 
 		.reader-tag-sidebar-stats__count {
-			font-size: $font-title-medium;
+			font-size: $font-title-small;
 			font-weight: bold;
 			width: 90px;
 		}

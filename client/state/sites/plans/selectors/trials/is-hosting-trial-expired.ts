@@ -3,7 +3,6 @@ import getHostingTrialDaysLeft from './get-hosting-trial-days-left';
 
 /**
  * Returns true if the hosting trial has expired. If the trial is not active, returns null.
- *
  * @param {AppState} state - Global state tree
  * @param {number} siteId - Site ID
  * @returns {boolean|null}

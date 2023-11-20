@@ -128,7 +128,7 @@ function PluginDetails( props ) {
 		);
 
 	// Header Navigation and billing period switcher.
-	const isWide = useBreakpoint( '>1280px' );
+	const isWide = useBreakpoint( '>960px' );
 
 	// Determine if the plugin is WPcom or WPorg hosted
 	const productsList = useSelector( ( state ) => getProductsList( state ) );

@@ -9,10 +9,16 @@ import fromActivityTypeApi from 'calypso/state/data-layer/wpcom/sites/activity-t
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { TypeSelector } from './type-selector';
 
-const ActivityTypeSelector = ( props ) => {
-	const { translate } = props;
-
-	return <TypeSelector { ...props } title={ translate( 'Activity Type' ) } />;
+const ActivityTypeSelector = ( { translate, variant = 'default', ...otherProps } ) => {
+	return (
+		<TypeSelector
+			{ ...otherProps }
+			title={ translate( 'Activity type' ) }
+			showAppliedFiltersCount={ true }
+			variant={ variant }
+			translate={ translate }
+		/>
+	);
 };
 
 const activityCountsQueryKey = ( siteId, filter ) => [

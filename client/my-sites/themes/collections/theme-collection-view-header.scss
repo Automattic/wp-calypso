@@ -1,0 +1,108 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.theme-showcase.is-collection-view {
+	.theme-collection-view-header {
+		&.is-logged-in {
+			margin: 0;
+			padding: 0;
+
+			.navigation-header__main {
+				padding-bottom: 20px;
+			}
+
+			.theme-collection-view-header__info {
+				padding-left: 16px;
+
+				@include break-small {
+					padding-left: 0;
+				}
+			}
+
+			.formatted-header__title {
+				font-size: 1.25rem;
+				font-weight: 500;
+				line-height: 26px;
+				margin-bottom: 0;
+			}
+
+			.formatted-header__subtitle {
+				color: var(--color-neutral-60);
+				display: inline-block;
+				letter-spacing: -0.15px;
+				line-height: 20px;
+				margin: 0;
+				font-size: 0.875rem;
+			}
+
+			.breadcrumbs {
+				padding-bottom: 22px;
+				margin: 16px;
+
+				@include break-small {
+					margin: 0;
+				}
+			}
+		}
+
+		&:not(.is-logged-in) {
+			background-color: #e5f4ff;
+
+			.formatted-header__title {
+				color: var(--studio-blue-50);
+				font-family: $brand-serif;
+				font-size: rem(44px);
+				font-style: normal;
+				font-weight: 400;
+				margin-bottom: 16px;
+			}
+		}
+
+		padding: 32px 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 48px 32px;
+		}
+		@include break-xlarge {
+			margin-bottom: 48px;
+			padding: 48px;
+		}
+	}
+
+	.theme-collection-view-header__back {
+		color: var(--studio-blue-50);
+		font-size: 1rem;
+		font-family: "SF Pro Text", $sans;
+		font-style: normal;
+		font-weight: 400;
+		letter-spacing: -0.32px;
+		line-height: 1.5;
+		padding-left: 0;
+		text-decoration: none;
+
+		svg {
+			.rtl & {
+				transform: scaleX(-1);
+			}
+		}
+	}
+
+	.formatted-header__title {
+		font-size: rem(30px);
+		font-style: normal;
+		font-weight: 600;
+		line-height: 1.15;
+		margin-bottom: 8px;
+	}
+
+	.formatted-header__subtitle {
+		color: var(--studio-gray-80);
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-large;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 1.6;
+		margin-bottom: 0;
+		max-width: 680px;
+	}
+}

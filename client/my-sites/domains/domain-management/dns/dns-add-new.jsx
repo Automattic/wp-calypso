@@ -17,6 +17,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ARecord from './a-record';
+import AliasRecord from './alias-record';
 import CnameRecord from './cname-record';
 import MxRecord from './mx-record';
 import SrvRecord from './srv-record';
@@ -49,6 +50,18 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
+					data: '',
+				},
+			},
+			{
+				component: AliasRecord,
+				types: [ 'ALIAS' ],
+				description: translate(
+					'An ALIAS record is a non-standard DNS record that is used to direct your domain to the target domain. The IP address of the target is resolved on the DNS server.'
+				),
+				initialFields: {
+					name: '@',
 					ttl: 3600,
 					data: '',
 				},

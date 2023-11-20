@@ -1,8 +1,10 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -26,6 +28,7 @@ class PasswordlessSignupForm extends Component {
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
+		userEmail: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -34,7 +37,7 @@ class PasswordlessSignupForm extends Component {
 
 	state = {
 		isSubmitting: false,
-		email: this.props.step && this.props.step.form ? this.props.step.form.email : '',
+		email: this.props.userEmail,
 		errorMessages: null,
 	};
 
@@ -105,47 +108,15 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-			const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
-			const response = await wpcom.req.get(
-				`/users/${ encodeURIComponent( email ) }/auth-options`
+			page(
+				addQueryArgs(
+					{
+						email_address: this.state.email,
+						is_signup_existing_account: true,
+					},
+					this.props.logInUrl
+				)
 			);
-			// Just for https://github.com/Automattic/wp-calypso/pull/83249. Passwordless accounts will be changed to facilitate emailing the login link.
-			if ( ! response?.passwordless ) {
-				page(
-					addQueryArgs(
-						{
-							email_address: this.state.email,
-							is_signup_existing_account: true,
-						},
-						this.props.logInUrl
-					)
-				);
-				return;
-			}
-
-			const errorMessage = (
-				<>
-					{ this.props.translate( 'An account with this email address already exists.' ) }
-					&nbsp;
-					{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
-						components: {
-							a: (
-								<a
-									href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
-										this.state.email
-									) }` }
-								/>
-							),
-						},
-					} ) }
-				</>
-			);
-
-			this.setState( {
-				errorMessages: [ errorMessage ],
-				isSubmitting: false,
-			} );
-
 			return;
 		}
 
@@ -215,11 +186,61 @@ class PasswordlessSignupForm extends Component {
 		goToNextStep();
 	};
 
-	onInputChange = ( { target: { value } } ) =>
+	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {
+		this.setState( {
+			email: newEmail,
+			errorMessages: null,
+		} );
+		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_confirmation', {
+			original_domain: JSON.stringify( oldDomain ),
+			suggested_domain: JSON.stringify( newDomain ),
+		} );
+	};
+
+	handleEmailDomainSuggestionError = ( newEmail, oldEmail, newDomain, oldDomain ) => {
+		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_generated', {
+			original_domain: JSON.stringify( oldDomain ),
+			suggested_domain: JSON.stringify( newDomain ),
+		} );
+		this.setState( {
+			errorMessages: [
+				this.props.translate( 'Did you mean {{emailSuggestion/}}?', {
+					components: {
+						emailSuggestion: (
+							<Button
+								plain={ true }
+								className="signup-form__domain-suggestion-confirmation"
+								onClick={ () => {
+									this.handleAcceptDomainSuggestion( newEmail, newDomain, oldDomain );
+								} }
+							>
+								{ newEmail }
+							</Button>
+						),
+					},
+				} ),
+			],
+		} );
+	};
+
+	debouncedEmailSuggestion = debounce( ( email ) => {
+		if ( emailValidator.validate( email ) ) {
+			const { newEmail, oldEmail, newDomain, oldDomain, wasCorrected } =
+				suggestEmailCorrection( email );
+			if ( wasCorrected ) {
+				this.handleEmailDomainSuggestionError( newEmail, oldEmail, newDomain, oldDomain );
+				return;
+			}
+		}
+	}, 1000 );
+
+	onInputChange = ( { target: { value } } ) => {
+		this.debouncedEmailSuggestion( value );
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
+	};
 
 	renderNotice() {
 		return (
@@ -287,6 +308,8 @@ class PasswordlessSignupForm extends Component {
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
 							placeholder={ this.props.inputPlaceholder }
+							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
+							autoFocus
 						/>
 					</ValidationFieldset>
 					{ this.props.renderTerms?.() }

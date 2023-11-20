@@ -164,7 +164,7 @@ const connectComponent = connect(
 		const counts = getCountRecords( state, siteId, period );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
+		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 
 		// The end date of the chart depends on the customRange.

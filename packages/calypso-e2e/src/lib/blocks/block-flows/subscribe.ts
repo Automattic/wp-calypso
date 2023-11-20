@@ -19,7 +19,12 @@ export class SubscribeFlow implements BlockFlow {
 		const emailInputLocator = context.page
 			.getByRole( 'main' )
 			.getByRole( 'textbox', { name: 'Type your email' } );
-		await emailInputLocator.fill( 'foo@example.com' );
+
+		// The email input field only appears if not logged in, or if logged in user is not subscribed already.
+		if ( await emailInputLocator.isVisible() ) {
+			await emailInputLocator.fill( 'foo@example.com' );
+		}
+
 		// And a subscribe button?
 		const subscribeButtonLocator = context.page
 			.getByRole( 'main' )

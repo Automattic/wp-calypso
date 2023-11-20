@@ -124,7 +124,15 @@ const withAIAssemblerFlow: Flow = {
 			}
 		};
 
-		return { submit, goBack };
+		const goNext = () => {
+			switch ( _currentStep ) {
+				case 'site-prompt': {
+					return navigate( 'patternAssembler' );
+				}
+			}
+		};
+
+		return { submit, goBack, goNext };
 	},
 };
 

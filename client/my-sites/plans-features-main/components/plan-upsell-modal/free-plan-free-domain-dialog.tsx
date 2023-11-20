@@ -1,16 +1,16 @@
 import { domainProductSlugs, getPlan } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { LoadingPlaceHolder } from '../loading-placeholder';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { DialogContainer, Heading, StyledButton } from './components';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
@@ -60,12 +60,6 @@ const CrossIcon = styled( Gridicon )`
 	color: #e53e3e;
 `;
 
-const LoadingPlaceHolderText = styled( LoadingPlaceHolder )`
-	width: 80px;
-	display: inline-block;
-	border-radius: 0;
-`;
-
 function LazyDisplayText( {
 	displayText = '',
 	isLoading,
@@ -73,7 +67,11 @@ function LazyDisplayText( {
 	displayText?: TranslateResult;
 	isLoading: boolean;
 } ) {
-	return isLoading || ! displayText ? <LoadingPlaceHolderText /> : <>{ displayText }</>;
+	return isLoading || ! displayText ? (
+		<LoadingPlaceholder width="80px" minHeight="0px" height="8px" />
+	) : (
+		<>{ displayText }</>
+	);
 }
 
 /**
@@ -95,19 +93,24 @@ export function FreePlanFreeDomainDialog( {
 	);
 	const domainProductCost = domainRegistrationProduct?.cost;
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
-	const monthlyPlanPriceObject = usePlanPrices( {
-		planSlug: suggestedPlanSlug,
-		returnMonthly: true,
+	const planPriceMonthly = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? null;
+		const rawPlanPrices = getPlanPrices( state, {
+			planSlug: suggestedPlanSlug,
+			siteId,
+			returnMonthly: true,
+		} );
+		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
 	} );
-	const annualPlanPriceObject = usePlanPrices( {
-		planSlug: suggestedPlanSlug,
-		returnMonthly: false,
+	const planPriceFull = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? null;
+		const rawPlanPrices = getPlanPrices( state, {
+			planSlug: suggestedPlanSlug,
+			siteId,
+			returnMonthly: false,
+		} );
+		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
 	} );
-
-	const monthlyPlanPrice =
-		( monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice ) ?? 0;
-	const annualPlanPrice =
-		( annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice ) ?? 0;
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
@@ -191,7 +194,7 @@ export function FreePlanFreeDomainDialog( {
 						{
 							args: {
 								planTitle,
-								planPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
+								planPrice: formatCurrency( planPriceMonthly, currencyCode, {
 									stripZeros: true,
 								} ),
 							},
@@ -255,10 +258,10 @@ export function FreePlanFreeDomainDialog( {
 						{
 							args: {
 								planTitle,
-								monthlyPlanPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
+								monthlyPlanPrice: formatCurrency( planPriceMonthly, currencyCode, {
 									stripZeros: true,
 								} ),
-								annualPlanPrice: formatCurrency( annualPlanPrice, currencyCode, {
+								annualPlanPrice: formatCurrency( planPriceFull, currencyCode, {
 									stripZeros: true,
 								} ),
 							},
