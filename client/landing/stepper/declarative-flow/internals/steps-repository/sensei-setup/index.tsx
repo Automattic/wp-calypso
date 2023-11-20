@@ -86,12 +86,10 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		}
 	};
 
-	const isValidSiteTitle = useCallback( () => siteTitle && siteTitle.length >= 2, [ siteTitle ] );
-
 	const handleSubmit = useCallback( () => {
 		setHasSubmitted( true );
 
-		if ( ! isValidSiteTitle() ) {
+		if ( ! siteTitle ) {
 			focusOnSiteTitleInput();
 			return;
 		}
@@ -103,7 +101,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 			title: variation.title,
 		} as StyleVariation );
 		submit?.();
-	}, [ siteTitle, dispatch, submit, checked, isValidSiteTitle ] );
+	}, [ siteTitle, dispatch, submit, checked ] );
 
 	const preview = <ThemeStylePreviews styles={ styles } active={ checked } />;
 
@@ -128,7 +126,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						value={ siteTitle }
 						ref={ inputRef }
 					/>
-					{ hasSubmitted && ! isValidSiteTitle() && (
+					{ hasSubmitted && ! siteTitle && (
 						<FormInputValidation
 							isError={ true }
 							text={ __( `Oops. Looks like your course site doesn't have a name yet.` ) }
