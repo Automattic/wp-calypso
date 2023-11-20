@@ -77,11 +77,15 @@ export interface BillingTransactionItem {
 	site_id: string;
 
 	/**
+	 * The receipt item's total before taxes in a locale and currency formatted
+	 * string.
 	 * @deprecated use subtotal_integer
 	 */
 	subtotal: string;
 
 	/**
+	 * The receipt item's total before taxes in the currency's standard unit as
+	 * a decimal, floating point number.
 	 * @deprecated use subtotal_integer
 	 */
 	raw_subtotal: number;
@@ -107,11 +111,14 @@ export interface BillingTransactionItem {
 	tax_integer: number;
 
 	/**
+	 * The receipt item's total as a locale and currency formatted string.
 	 * @deprecated use amount_integer
 	 */
 	amount: string;
 
 	/**
+	 * The receipt item's total in the currency's standard unit as a decimal,
+	 * floating point number.
 	 * @deprecated use amount_integer
 	 */
 	raw_amount: number;
@@ -121,6 +128,10 @@ export interface BillingTransactionItem {
 	 */
 	amount_integer: number;
 
+	/**
+	 * Every price change that was made to this receipt item. Only exists for
+	 * receipt items made after October 2023.
+	 */
 	cost_overrides: ReceiptCostOverride[];
 
 	currency: string;
