@@ -12,9 +12,9 @@ import LayoutNavigation, {
 	LayoutNavigationItem as NavigationItem,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
-import IssueMultipleLicensesForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-multiple-licenses-form';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
+import LicensesForm from './licenses-form';
 import type { SelectedLicenseProp } from './types';
 import type { AssignLicenceProps } from '../types';
 
@@ -66,7 +66,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 
 			<LayoutBody>
 				<IssueLicenseContext.Provider value={ { setSelectedLicenses, selectedLicenses } }>
-					<IssueMultipleLicensesForm
+					<LicensesForm
 						selectedSite={ selectedSite }
 						suggestedProduct={ suggestedProduct }
 						quantity={ selectedSize }

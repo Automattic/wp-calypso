@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useContext } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import {
 	isJetpackBundle,
@@ -12,35 +12,34 @@ import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/lic
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
 import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import {
-	getAssignedPlanAndProductIDsForSite,
-	hasPurchasedProductsOnly,
-} from 'calypso/state/partner-portal/licenses/selectors';
+import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import {
 	addSelectedProductSlugs,
 	clearSelectedProductSlugs,
-	removeSelectedProductSlugs,
 } from 'calypso/state/partner-portal/products/actions';
-import {
-	getDisabledProductSlugs,
-	getSelectedProductSlugs,
-} from 'calypso/state/partner-portal/products/selectors';
-import { APIProductFamilyProduct, PartnerPortalStore } from 'calypso/state/partner-portal/types';
-import useSubmitForm from '../issue-license-v2/hooks/use-submit-form';
-import { AssignLicenceProps } from '../types';
+import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
+import IssueLicenseContext from '../context';
+import useSubmitForm from '../hooks/use-submit-form';
+import type { AssignLicenceProps } from '../../types';
+import type {
+	APIProductFamilyProduct,
+	PartnerPortalStore,
+} from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
-export default function IssueMultipleLicensesForm( {
+export default function LicensesForm( {
 	selectedSite,
 	suggestedProduct,
+	quantity = 1,
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
+
+	const { selectedLicenses, setSelectedLicenses } = useContext( IssueLicenseContext );
 
 	let allProducts = data;
 	const addedPlanAndProducts = useSelector( ( state ) =>
@@ -77,10 +76,6 @@ export default function IssueMultipleLicensesForm( {
 			isWooCommerceProduct( family_slug )
 		) || [];
 
-	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
-		selectedSite ? hasPurchasedProductsOnly( state, selectedSite.ID ) : false
-	);
-
 	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
 	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
 	const defaultProductSlugs = useMemo(
@@ -104,7 +99,6 @@ export default function IssueMultipleLicensesForm( {
 		};
 	}, [ dispatch, defaultProductSlugs ] );
 
-	const selectedProductSlugs = useSelector( getSelectedProductSlugs );
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
 		getDisabledProductSlugs( state, allProducts ?? [] )
 	);
@@ -115,53 +109,49 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
-	const onSelectProduct = useCallback(
+	const handleSelectBundleLicense = useCallback(
 		( product: APIProductFamilyProduct ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select_multiple', {
-					product: product.slug,
-				} )
+			const productBundle = {
+				...product,
+				quantity,
+			};
+			const index = selectedLicenses.findIndex(
+				( item ) => item.quantity === productBundle.quantity && item.slug === productBundle.slug
 			);
-
-			! selectedProductSlugs.includes( product.slug )
-				? dispatch( addSelectedProductSlugs( [ product.slug ] ) )
-				: dispatch( removeSelectedProductSlugs( [ product.slug ] ) );
+			if ( index === -1 ) {
+				// Item doesn't exist, add it
+				setSelectedLicenses( [ ...selectedLicenses, productBundle ] );
+			} else {
+				// Item exists, remove it
+				setSelectedLicenses( selectedLicenses.filter( ( _, i ) => i !== index ) );
+			}
 		},
-		[ dispatch, selectedProductSlugs ]
+		[ quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
-	const { submitForm, isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
+	const handleShowLicenseOverview = useCallback( () => {
+		// Handle showing the license overview modal here
+	}, [] );
 
-	const [ selectedBundle, setSelectedBundle ] = useState< APIProductFamilyProduct | null >( null );
+	const onSelectProduct = useCallback(
+		( product: APIProductFamilyProduct ) => {
+			handleSelectBundleLicense( product );
+		},
+		[ handleSelectBundleLicense ]
+	);
+
+	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
+
 	const onSelectBundle = useCallback(
 		( product: APIProductFamilyProduct ) => {
-			setSelectedBundle( product );
-
-			// People aren't allowed to select anything else after selecting a bundle;
-			// thus, after someone selects a bundle, we immediately clear any existing
-			// selections and issue a license for the bundle
-			// (as well as do any necessary page redirects on the front end).
-
-			dispatch( clearSelectedProductSlugs() );
-
-			if ( hasPurchasedProductsWithoutBundle ) {
-				// If this person already had an existing standalone product license
-				// before purchasing this bundle, let's make a note of it
-				dispatch(
-					recordTracksEvent(
-						'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
-					)
-				);
-			}
-
-			submitForm( [ product.slug ] );
+			handleSelectBundleLicense( product );
 		},
-		[ dispatch, submitForm, hasPurchasedProductsWithoutBundle ]
+		[ handleSelectBundleLicense ]
 	);
 
 	const onClickIssueLicenses = useCallback( () => {
-		submitForm( selectedProductSlugs );
-	}, [ submitForm, selectedProductSlugs ] );
+		handleShowLicenseOverview();
+	}, [ handleShowLicenseOverview ] );
 
 	if ( isLoadingProducts ) {
 		return (
@@ -172,7 +162,15 @@ export default function IssueMultipleLicensesForm( {
 	}
 
 	const selectedSiteDomain = selectedSite?.domain;
-	const selectedLicenseCount = selectedProductSlugs.length;
+
+	const selectedLicenseCount = selectedLicenses
+		.map( ( license ) => license.quantity )
+		.reduce( ( a, b ) => a + b, 0 );
+
+	const isSelected = ( slug: string ) =>
+		selectedLicenses.findIndex(
+			( license ) => license.slug === slug && license.quantity === quantity
+		) !== -1;
 
 	return (
 		<div className="issue-multiple-licenses-form">
@@ -219,7 +217,7 @@ export default function IssueMultipleLicensesForm( {
 							key={ productOption.slug }
 							product={ productOption }
 							onSelectProduct={ onSelectProduct }
-							isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+							isSelected={ isSelected( productOption.slug ) }
 							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 							tabIndex={ 100 + i }
 							suggestedProduct={ suggestedProduct }
@@ -239,8 +237,8 @@ export default function IssueMultipleLicensesForm( {
 							<LicenseBundleCard
 								key={ productOption.slug }
 								product={ productOption }
-								isBusy={ ! isReady && selectedBundle?.slug === productOption.slug }
-								isDisabled={ ! isReady && selectedBundle?.slug !== productOption.slug }
+								isBusy={ ! isReady }
+								isDisabled={ ! isReady }
 								onSelectProduct={ onSelectBundle }
 								tabIndex={ 100 + ( products?.length || 0 ) + i }
 							/>
@@ -261,7 +259,7 @@ export default function IssueMultipleLicensesForm( {
 								key={ productOption.slug }
 								product={ productOption }
 								onSelectProduct={ onSelectProduct }
-								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+								isSelected={ isSelected( productOption.slug ) }
 								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 								tabIndex={ 100 + i }
 								suggestedProduct={ suggestedProduct }
@@ -283,7 +281,7 @@ export default function IssueMultipleLicensesForm( {
 								key={ productOption.slug }
 								product={ productOption }
 								onSelectProduct={ onSelectProduct }
-								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+								isSelected={ isSelected( productOption.slug ) }
 								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 								tabIndex={ 100 + i }
 								suggestedProduct={ suggestedProduct }

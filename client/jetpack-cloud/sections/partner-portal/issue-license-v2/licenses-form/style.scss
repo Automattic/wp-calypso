@@ -1,0 +1,90 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../../mixins.scss";
+
+.issue-multiple-licenses-form {
+
+	p {
+		font-size: 1rem;
+	}
+
+	&__placeholder {
+		@include placeholder( --color-neutral-10 );
+
+		height: 43px;
+	}
+
+	.select-dropdown__container {
+		width: 100%;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		margin: 42px -10px 0;
+
+		> * {
+			margin: 0 10px;
+		}
+	}
+}
+
+.issue-multiple-licenses-form__controls {
+	@include licensing-portal-bottom-action-bar;
+
+	@include breakpoint-deprecated("<660px") {
+		display: flex;
+
+		.issue-multiple-licenses-form__select-license {
+			width: auto;
+			flex-grow: 1;
+		}
+
+		.total-cost {
+			margin-right: 8px;
+		}
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		.total-cost {
+			display: none;
+		}
+	}
+}
+
+.issue-multiple-licenses-form__top {
+	display: flex;
+	justify-content: space-between;
+}
+
+.issue-multiple-licenses-form__bottom {
+	display: flex;
+	flex-wrap: wrap;
+
+	@include break-xlarge {
+		margin-left: -0.5rem;
+		margin-right: -0.5rem;
+	}
+}
+
+p.issue-multiple-licenses-form__description {
+	flex: 1 1 auto;
+	align-self: flex-end;
+	margin: 1rem 0;
+	font-size: 0.875rem;
+	color: #333;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		margin-right: 1rem;
+	}
+}
+
+.issue-multiple-licenses-form__separator {
+	margin: 2rem 0;
+}
+
+.issue-multiple-licenses-form__select-license {
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
+}
