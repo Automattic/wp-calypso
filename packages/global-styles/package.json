@@ -32,7 +32,7 @@
 		"@automattic/calypso-sentry": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@tanstack/react-query": "^4.29.1",
+		"@tanstack/react-query": "^5.8.1",
 		"@wordpress/block-editor": "^12.12.0",
 		"@wordpress/block-library": "^8.21.0",
 		"@wordpress/components": "^25.10.0",

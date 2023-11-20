@@ -222,7 +222,7 @@
 		"@signal-noise/stylelint-scales": "^2.0.3",
 		"@storybook/cli": "^7.5.3",
 		"@storybook/react": "^7.5.3",
-		"@tanstack/eslint-plugin-query": "^4.29.8",
+		"@tanstack/eslint-plugin-query": "^5.6.0",
 		"@testing-library/jest-dom": "^6.1.4",
 		"@types/gradient-parser": "^0.1.5",
 		"@types/gtag.js": "^0.0.10",
