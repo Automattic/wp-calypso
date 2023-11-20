@@ -55,7 +55,7 @@ const PremiumBadge = ( {
 	// so that the label can be measured in its uncompacted state.
 	const [ mayRenderAsCompact, setMayRenderAsCompact ] = useState( false );
 
-	const labelText = customLabelText || __( 'Premium' );
+	const labelText = customLabelText || __( 'Upgrade' );
 
 	// Display the label as a tooltip if the tooltip is being hidden and the label is too long.
 	useLayoutEffect( () => {
