@@ -33,7 +33,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@wordpress/components": "^25.10.0",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "workspace:^"

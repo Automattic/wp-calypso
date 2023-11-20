@@ -31,7 +31,7 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
 		"calypso": "workspace:^",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"debug": "^4.3.4",
 		"moment": "^2.26.0",
 		"page": "^1.11.5",

@@ -29,15 +29,10 @@ const videopress: Flow = {
 		return translate( 'Video' );
 	},
 	useSteps() {
-		const isIntentEnabled = config.isEnabled( 'videopress-onboarding-user-intent' );
-
 		return [
 			{
 				slug: 'intro',
-				asyncComponent: () =>
-					isIntentEnabled
-						? import( './internals/steps-repository/videopress-onboarding-intent' )
-						: import( './internals/steps-repository/intro' ),
+				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
 			{ slug: 'options', component: SiteOptions },
