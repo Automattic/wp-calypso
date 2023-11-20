@@ -7,6 +7,11 @@
 	justify-content: space-between;
 	box-sizing: border-box;
 
+	&--with-background {
+		background-image: url(./gradient.svg);
+		background-size: 100% 100%;
+	}
+
 	width: 100%;
 
 	margin: 0.5rem 0;
