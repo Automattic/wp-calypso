@@ -7732,7 +7732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/highlight-words-core@npm:1.2.1, @types/highlight-words-core@npm:^1.2.1":
+"@types/highlight-words-core@npm:1.2.1":
   version: 1.2.1
   resolution: "@types/highlight-words-core@npm:1.2.1"
   checksum: f3795656cbe4215e849faa2e53c74a9c6a7b2e148f54267c6a7f25a4f3cd55374f3e4d2e2618740c96fafabdb36b855f7cec27cab207957d566d0500a10e2312
@@ -32275,7 +32275,6 @@ __metadata:
     "@types/debug": "npm:^4.1.7"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
     "@types/gtag.js": "npm:^0.0.10"
-    "@types/highlight-words-core": "npm:^1.2.1"
     "@types/jest": "npm:^29.5.8"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^20.8.6"
