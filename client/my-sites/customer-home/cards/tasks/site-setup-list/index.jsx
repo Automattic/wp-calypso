@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
@@ -366,19 +367,18 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	} );
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
+	const isEmailUnverified = ! isCurrentUserEmailVerified( state );
 
 	return {
 		emailVerificationStatus,
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
-		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isEmailUnverified,
 		isFSEActive,
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		tasks: taskList.getAllSorted(
-			unverifiedEmailTaskComparator( ! isCurrentUserEmailVerified( state ) )
-		),
+		tasks: taskList.getAllSorted( unverifiedEmailTaskComparator( isEmailUnverified ) ),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
 		siteCount,
