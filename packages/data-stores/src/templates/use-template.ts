@@ -1,23 +1,21 @@
-import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Template } from './types';
 
-interface Options extends QueryOptions< Template, unknown > {
+interface Options {
 	enabled?: boolean;
 }
 
-const useTemplate = (
-	siteId: string | number,
-	templateId: string,
-	queryOptions: Options = {}
-): UseQueryResult< Template > => {
-	return useQuery< Template >( {
+const fetchTemplates = ( siteId: string | number, templateId: string ): Promise< Template > =>
+	wpcomRequest( {
+		path: `/sites/${ siteId }/templates/${ templateId }`,
+		apiNamespace: 'wp/v2',
+	} );
+
+const useTemplate = ( siteId: string | number, templateId: string, queryOptions: Options = {} ) => {
+	return useQuery( {
 		queryKey: [ siteId, 'templates', templateId ],
-		queryFn: () =>
-			wpcomRequest( {
-				path: `/sites/${ siteId }/templates/${ templateId }`,
-				apiNamespace: 'wp/v2',
-			} ),
+		queryFn: () => fetchTemplates( siteId, templateId ),
 		refetchOnMount: 'always',
 		staleTime: Infinity,
 		...queryOptions,
