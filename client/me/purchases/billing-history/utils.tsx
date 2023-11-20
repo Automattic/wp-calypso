@@ -130,7 +130,7 @@ export function TransactionAmount( {
 					stripZeros: true,
 				} ) }
 			</div>
-			<div className="billing-history__transaction-tax-amount">{ includesTaxString }</div>
+			<div className="transaction-amount__tax-amount">{ includesTaxString }</div>
 		</Fragment>
 	);
 }

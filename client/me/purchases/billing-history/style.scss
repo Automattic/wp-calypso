@@ -79,10 +79,18 @@
 	}
 }
 
-.billing-history__transaction-tax-amount {
+.transaction-amount__tax-amount {
 	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	white-space: nowrap;
+}
+
+.billing-history__transaction-tax-amount {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	display: flex;
+	justify-content: space-between;
+	margin-left: 30px;
 }
 
 .billing-history__header-row {
@@ -349,7 +357,6 @@ textarea.billing-history__billing-details-editable {
 		tbody tr {
 			td {
 				color: var(--color-neutral);
-				border-bottom: 1px solid var(--color-border-subtle);
 			}
 
 			&:last-child td {

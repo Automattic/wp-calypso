@@ -18,6 +18,7 @@ import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
@@ -30,8 +31,8 @@ import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billi
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
-	TransactionAmount,
 	renderTransactionQuantitySummary,
+	transactionIncludesTax,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
 import type {
@@ -324,6 +325,27 @@ function getReceiptItemOriginalCost( item: BillingTransactionItem ): number {
 	return item.raw_subtotal;
 }
 
+function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } ) {
+	const translate = useTranslate();
+	const taxName = useTaxName( transaction.tax_country_code );
+
+	if ( ! transactionIncludesTax( transaction ) ) {
+		return null;
+	}
+
+	return (
+		<div className="billing-history__transaction-tax-amount">
+			<span>{ taxName ?? translate( 'Tax' ) }</span>
+			<span>
+				{ formatCurrency( transaction.tax_integer, transaction.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			</span>
+		</div>
+	);
+}
+
 function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
@@ -371,6 +393,14 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 						<th className="billing-history__receipt-amount">{ translate( 'Amount' ) }</th>
 					</tr>
 				</thead>
+				<tbody>
+					{ items }
+					<tr>
+						<td colSpan={ 2 }>
+							<ReceiptItemTaxes transaction={ transaction } />
+						</td>
+					</tr>
+				</tbody>
 				<tfoot>
 					<tr>
 						<td className="billing-history__receipt-desc">
@@ -384,11 +414,13 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 								transaction.credit
 							}
 						>
-							<TransactionAmount transaction={ transaction } />
+							{ formatCurrency( transaction.amount_integer, transaction.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
 						</td>
 					</tr>
 				</tfoot>
-				<tbody>{ items }</tbody>
 			</table>
 		</div>
 	);
