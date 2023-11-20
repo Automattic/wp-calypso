@@ -5,6 +5,7 @@ import {
 	QueryFunctionContext,
 } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -55,18 +56,25 @@ export default function useInvoicesQuery(
 	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	return useQuery< APIInvoices, QueryError, Invoices >( {
+	const query = useQuery< APIInvoices, QueryError, Invoices >( {
 		queryKey: [ 'partner-portal', 'invoices', activeKeyId, pagination ],
 		queryFn: queryInvoices,
 		refetchOnWindowFocus: false,
 		select: selectInvoices,
-		onError: () => {
+		...options,
+	} );
+
+	const { isError } = query;
+
+	useEffect( () => {
+		if ( isError ) {
 			dispatch(
 				errorNotice( translate( 'We were unable to retrieve your invoices.' ), {
 					id: 'partner-portal-invoices-failure',
 				} )
 			);
-		},
-		...options,
-	} );
+		}
+	}, [ dispatch, isError, translate ] );
+
+	return query;
 }
