@@ -114,8 +114,6 @@
 		"videomaker-trial": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true,
-		"yolo/wp-admin-site-default": true,
 		"yolo/command-pallette": true
 	}
 }
