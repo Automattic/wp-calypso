@@ -38,7 +38,7 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 		setSelectedDesign( {
 			slug: 'videomaker',
 			theme: slug,
-			is_premium: config.isEnabled( 'videomaker-trial' ) ? false : true,
+			is_premium: ! config.isEnabled( 'videomaker-trial' ),
 			title: 'Videomaker',
 			categories: [],
 			features: [],
