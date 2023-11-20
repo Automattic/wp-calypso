@@ -58,11 +58,10 @@ const CostOverridesListStyle = styled.div`
 		display: grid;
 		justify-content: space-between;
 		grid-template-columns: auto auto;
-		margin-top: 16px;
 	}
 
-	& .cost-overrides-list-item:nth-of-type( 1 ) {
-		margin-top: 0;
+	& .cost-overrides-list-item--coupon {
+		margin-top: 16px;
 	}
 
 	& .cost-overrides-list-item__actions {
@@ -176,7 +175,10 @@ function CostOverridesList( {
 			) }
 			{ couponOverrides.map( ( costOverride ) => {
 				return (
-					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+					<div
+						className="cost-overrides-list-item cost-overrides-list-item--coupon"
+						key={ costOverride.humanReadableReason }
+					>
 						<span className="cost-overrides-list-item__reason">
 							{ couponCode.length > 0
 								? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
