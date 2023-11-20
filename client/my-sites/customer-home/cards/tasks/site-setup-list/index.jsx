@@ -2,6 +2,7 @@ import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
+import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -25,7 +26,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
 import NavItem from './nav-item';
-
 /**
  * Import Styles
  */
@@ -60,8 +60,10 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 	}
 };
 
-const unverifiedEmailTaskComparator = ( isEmailUnverified ) => ( task ) =>
-	isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0;
+const unverifiedEmailTaskComparator = memoize(
+	( isEmailUnverified ) => ( task ) =>
+		isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0
+);
 
 const skipTask = (
 	dispatch,
