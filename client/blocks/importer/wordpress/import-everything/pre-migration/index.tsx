@@ -122,13 +122,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	}, [] );
 
 	/**
-	 * Fetch the initial migration enabled status
-	 */
-	useEffect( () => {
-		fetchMigrationEnabledStatus();
-	}, [] );
-
-	/**
 	 * Fetch the credentials if the site is eligible for migration
 	 */
 	useEffect( () => {
@@ -167,7 +160,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 * Decide the render state based on the current component state
 	 */
 	useEffect( () => {
-		if ( ! isInitFetchingDone ) {
+		if (
+			! isInitFetchingDone &&
+			( isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched' )
+		) {
 			setRenderState( 'loading' );
 		} else if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
