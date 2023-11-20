@@ -25,9 +25,7 @@ export const useAddSiteFavorite = (
 			} ),
 		...options,
 		mutationKey: [ ADD_SITE_FAVORITE, siteId ],
-		onSuccess: async ( ...args ) => {
-			options.onSuccess?.( ...args );
-		},
+		onSuccess: options.onSuccess,
 	} );
 
 	const { mutate } = mutation;
@@ -53,9 +51,7 @@ export const useDeleteSiteFavorite = (
 			} ),
 		...options,
 		mutationKey: [ DELETE_SITE_FAVORITE, siteId ],
-		onSuccess: async ( ...args ) => {
-			options.onSuccess?.( ...args );
-		},
+		onSuccess: options.onSuccess,
 	} );
 
 	const { mutate } = mutation;
