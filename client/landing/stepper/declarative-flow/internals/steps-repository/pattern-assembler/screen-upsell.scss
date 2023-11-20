@@ -1,19 +1,6 @@
 @import "@automattic/typography/styles/fonts";
 
 .screen-upsell {
-	.screen-upsell__heading {
-		margin-bottom: 4px;
-	}
-
-	.screen-upsell__description {
-		margin-bottom: 32px;
-		font-size: $font-body-small;
-
-		p {
-			margin-bottom: 16px;
-		}
-	}
-
 	.screen-upsell__plan {
 		margin: 10px 0 16px;
 

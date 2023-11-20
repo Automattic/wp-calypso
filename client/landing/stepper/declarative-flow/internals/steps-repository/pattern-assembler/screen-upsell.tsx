@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Button, Gridicon, PremiumBadge, LoadingPlaceholder } from '@automattic/components';
+import { Button, Gridicon, LoadingPlaceholder } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { NavigatorHeader } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -89,21 +89,6 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 						</li>
 					) ) }
 				</ul>
-				<strong className="screen-upsell__heading">
-					{ translate( 'Premium styles' ) }
-					<PremiumBadge
-						shouldHideTooltip
-						shouldCompactWithAnimation
-						labelText={ translate( 'Upgrade' ) }
-					/>
-				</strong>
-				<div className="screen-upsell__description">
-					<p>
-						{ translate(
-							'Your colors and fonts choices are exclusive to the Premium plan and above.'
-						) }
-					</p>
-				</div>
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" onClick={ onTryStyle }>
