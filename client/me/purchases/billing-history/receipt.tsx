@@ -287,7 +287,7 @@ function ReceiptItemDiscounts( { item }: { item: BillingTransactionItem } ) {
 				.filter( ( discount ) => ! discount.does_override_original_cost )
 				.map( ( discount ) => {
 					const discountAmount = discount.old_price - discount.new_price;
-					const formattedDiscountAmount = formatCurrency( discountAmount, item.currency, {
+					const formattedDiscountAmount = formatCurrency( -discountAmount, item.currency, {
 						stripZeros: true,
 					} );
 					return (
