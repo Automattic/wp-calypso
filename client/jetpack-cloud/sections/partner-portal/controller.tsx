@@ -118,7 +118,9 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	setSidebar( context );
 	if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
-		context.primary = <IssueLicenseV2 />;
+		context.primary = (
+			<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+		);
 	} else {
 		context.primary = (
 			<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
