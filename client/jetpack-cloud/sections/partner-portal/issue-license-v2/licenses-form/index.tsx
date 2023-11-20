@@ -155,8 +155,8 @@ export default function LicensesForm( {
 
 	if ( isLoadingProducts ) {
 		return (
-			<div className="issue-multiple-licenses-form">
-				<div className="issue-multiple-licenses-form__placeholder" />
+			<div className="licenses-form">
+				<div className="licenses-form__placeholder" />
 			</div>
 		);
 	}
@@ -173,10 +173,10 @@ export default function LicensesForm( {
 		) !== -1;
 
 	return (
-		<div className="issue-multiple-licenses-form">
+		<div className="licenses-form">
 			<QueryProductsList type="jetpack" currency="USD" />
-			<div className="issue-multiple-licenses-form__top">
-				<p className="issue-multiple-licenses-form__description">
+			<div className="licenses-form__top">
+				<p className="licenses-form__description">
 					{ selectedSiteDomain
 						? translate(
 								'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
@@ -189,12 +189,12 @@ export default function LicensesForm( {
 								'Select the Jetpack products you would like to issue a new license for:'
 						  ) }
 				</p>
-				<div className="issue-multiple-licenses-form__controls">
+				<div className="licenses-form__controls">
 					<TotalCost />
 					{ selectedLicenseCount > 0 && (
 						<Button
 							primary
-							className="issue-multiple-licenses-form__select-license"
+							className="licenses-form__select-license"
 							busy={ ! isReady }
 							onClick={ onClickIssueLicenses }
 						>
@@ -209,7 +209,7 @@ export default function LicensesForm( {
 					) }
 				</div>
 			</div>
-			<div className="issue-multiple-licenses-form__bottom">
+			<div className="licenses-form__bottom">
 				{ products &&
 					products.map( ( productOption, i ) => (
 						<LicenseProductCard
@@ -226,13 +226,13 @@ export default function LicensesForm( {
 			</div>
 			{ bundles && (
 				<>
-					<hr className="issue-multiple-licenses-form__separator" />
-					<p className="issue-multiple-licenses-form__description">
+					<hr className="licenses-form__separator" />
+					<p className="licenses-form__description">
 						{ translate( 'Or select any of our {{strong}}recommended bundles{{/strong}}:', {
 							components: { strong: <strong /> },
 						} ) }
 					</p>
-					<div className="issue-multiple-licenses-form__bottom">
+					<div className="licenses-form__bottom">
 						{ bundles.map( ( productOption, i ) => (
 							<LicenseBundleCard
 								key={ productOption.slug }
@@ -248,11 +248,9 @@ export default function LicensesForm( {
 			) }
 			{ wooExtensions.length > 0 && (
 				<>
-					<hr className="issue-multiple-licenses-form__separator" />
-					<p className="issue-multiple-licenses-form__description">
-						{ translate( 'WooCommerce Extensions:' ) }
-					</p>
-					<div className="issue-multiple-licenses-form__bottom">
+					<hr className="licenses-form__separator" />
+					<p className="licenses-form__description">{ translate( 'WooCommerce Extensions:' ) }</p>
+					<div className="licenses-form__bottom">
 						{ wooExtensions.map( ( productOption, i ) => (
 							<LicenseProductCard
 								isMultiSelect
@@ -270,11 +268,11 @@ export default function LicensesForm( {
 			) }
 			{ backupAddons.length > 0 && (
 				<>
-					<hr className="issue-multiple-licenses-form__separator" />
-					<p className="issue-multiple-licenses-form__description">
+					<hr className="licenses-form__separator" />
+					<p className="licenses-form__description">
 						{ translate( 'VaultPress Backup Add-on Storage:' ) }
 					</p>
-					<div className="issue-multiple-licenses-form__bottom">
+					<div className="licenses-form__bottom">
 						{ backupAddons.map( ( productOption, i ) => (
 							<LicenseProductCard
 								isMultiSelect
