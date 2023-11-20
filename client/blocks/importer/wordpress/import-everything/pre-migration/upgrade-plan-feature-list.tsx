@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import React, { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
+import { Plans2023Tooltip } from 'calypso/my-sites/plans-grid/components/plans-2023-tooltip';
 
 interface Props {
 	plan: Plan | JetpackPlan | WPComPlan | undefined;
@@ -15,22 +16,23 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 	const { __ } = useI18n();
 	const { plan } = props;
 	const [ showFeatures, setShowFeatures ] = useState( false );
+	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
 	const wpcomFeatures = plan
 		?.get2023PricingGridSignupWpcomFeatures?.()
-		.map( ( feature: string ) => getFeatureByKey( feature )?.getTitle() )
-		.filter( ( x ) => x );
+		.map( ( feature: string ) => getFeatureByKey( feature ) )
+		.filter( ( feature ) => feature?.getTitle() );
 
 	const jetpackFeatures = plan
 		?.get2023PricingGridSignupJetpackFeatures?.()
-		.map( ( feature: string ) => getFeatureByKey( feature )?.getTitle() )
-		.filter( ( x ) => x );
+		.map( ( feature: string ) => getFeatureByKey( feature ) )
+		.filter( ( feature ) => feature?.getTitle() );
 
 	const storageOptions = plan
 		?.get2023PricingGridSignupStorageOptions?.()
-		.filter( ( x ) => ! x.isAddOn )
-		.map( ( x ) => getFeatureByKey( x.slug )?.getTitle() )
-		.filter( ( x ) => x );
+		.filter( ( option ) => ! option.isAddOn )
+		.map( ( option ) => getFeatureByKey( option.slug ) )
+		.filter( ( option ) => option?.getTitle() );
 
 	return (
 		<ul className={ classnames( 'import__details-list' ) }>
@@ -47,8 +49,15 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 				<>
 					{ wpcomFeatures?.map( ( feature, i ) => (
 						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
-							{ ! i && <strong>{ feature }</strong> }
-							{ !! i && <span>{ feature }</span> }
+							<Plans2023Tooltip
+								id={ `feature-${ i }` }
+								text={ feature?.getDescription?.() }
+								setActiveTooltipId={ setActiveTooltipId }
+								activeTooltipId={ activeTooltipId }
+							>
+								{ i === 0 && <strong>{ feature?.getTitle() }</strong> }
+								{ i > 0 && <span>{ feature?.getTitle() }</span> }
+							</Plans2023Tooltip>
 						</li>
 					) ) }
 
@@ -57,7 +66,14 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 					</li>
 					{ jetpackFeatures?.map( ( feature, i ) => (
 						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
-							<span>{ feature }</span>
+							<Plans2023Tooltip
+								id={ `jetpack-feature-${ i }` }
+								text={ feature?.getDescription?.() }
+								setActiveTooltipId={ setActiveTooltipId }
+								activeTooltipId={ activeTooltipId }
+							>
+								<span>{ feature?.getTitle() }</span>
+							</Plans2023Tooltip>
 						</li>
 					) ) }
 
@@ -67,7 +83,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 					<li className={ classnames( 'import__upgrade-plan-feature' ) }>
 						{ storageOptions?.map( ( storage, i ) => (
 							<Badge type="info" key={ i }>
-								{ storage }
+								{ storage?.getTitle() }
 							</Badge>
 						) ) }
 					</li>
