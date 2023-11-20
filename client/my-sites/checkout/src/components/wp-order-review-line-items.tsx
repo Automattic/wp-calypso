@@ -58,10 +58,15 @@ const CostOverridesListStyle = styled.div`
 		display: grid;
 		justify-content: space-between;
 		grid-template-columns: auto auto;
+		margin-top: 4px;
 	}
 
 	& .cost-overrides-list-item--coupon {
 		margin-top: 16px;
+	}
+
+	& .cost-overrides-list-item:nth-of-type( 1 ) {
+		margin-top: 0;
 	}
 
 	& .cost-overrides-list-item__actions {
