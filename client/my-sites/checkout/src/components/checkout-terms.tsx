@@ -107,8 +107,8 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const shouldRenderFoldableCard =
 		shouldShowRefundPolicy ||
 		shouldShowInternationalFeeNotice ||
-		shouldShowBundledDomainNotice ||
-		shouldShowJetpackSocialAdvancedPricingDisclaimer;
+		shouldShowBundledDomainNotice() ||
+		shouldShowJetpackSocialAdvancedPricingDisclaimer( cart );
 
 	return (
 		<Fragment>
