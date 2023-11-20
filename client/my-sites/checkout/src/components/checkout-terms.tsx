@@ -1,10 +1,18 @@
-import { isDomainTransfer } from '@automattic/calypso-products';
+import { isDomainTransfer, JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
+import {
+	has100YearPlan,
+	hasRenewableSubscription,
+	hasMonthlyCartItem,
+	hasPlan,
+	hasJetpackPlan,
+	isNextDomainFree,
+	hasP2PlusPlan,
+} from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -33,10 +41,6 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const isJetpackNotAtomic = useSelector( ( state ) => {
 		return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	} );
-	const shouldShowRefundPolicy =
-		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
-	const shouldShowInternationalFeeNotice =
-		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
 
 	// Domain transfer is a one-time purchase, but it creates a renewable
 	// subscription behind the scenes so we need to show the full TOS including
@@ -58,6 +62,53 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	`;
 
 	const showToSFoldableCard = useToSFoldableCard();
+
+	const shouldShowRefundPolicy =
+		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
+	const shouldShowInternationalFeeNotice =
+		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
+
+	const shouldShowBundledDomainNotice = () => {
+		// A dotcom plan should exist.
+		if (
+			! hasPlan( cart ) ||
+			hasJetpackPlan( cart ) ||
+			hasMonthlyCartItem( cart ) ||
+			hasP2PlusPlan( cart ) ||
+			has100YearPlan( cart )
+		) {
+			return false;
+		}
+
+		// The plan should bundle a free domain
+		if ( ! isNextDomainFree( cart ) ) {
+			return false;
+		}
+
+		return true;
+	};
+
+	const shouldShowJetpackSocialAdvancedPricingDisclaimer = ( cart: ResponseCart ) => {
+		const product_slugs = cart.products.map( ( product ) => product.product_slug );
+		if ( product_slugs.length === 0 ) {
+			return null;
+		}
+		const showJetpackProductPricingDisclaimer = JETPACK_SOCIAL_ADVANCED_PRODUCTS.filter( ( slug ) =>
+			product_slugs.includes( slug )
+		);
+
+		if ( showJetpackProductPricingDisclaimer.length > 0 ) {
+			return true;
+		}
+
+		return false;
+	};
+
+	const shouldRenderFoldableCard =
+		shouldShowRefundPolicy ||
+		shouldShowInternationalFeeNotice ||
+		shouldShowBundledDomainNotice ||
+		shouldShowJetpackSocialAdvancedPricingDisclaimer;
 
 	return (
 		<Fragment>
@@ -87,18 +138,20 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 
 					<TermsCollapsedContent>
-						<FoldableCard
-							clickableHeader={ true }
-							compact
-							className="checkout__terms-foldable-card"
-							header={ translate( 'Read more' ) }
-							screenReaderText={ translate( 'Read more' ) }
-						>
-							{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-							{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
-							<InternationalFeeNotice />
-							<JetpackSocialAdvancedPricingDisclaimer />
-						</FoldableCard>
+						{ shouldRenderFoldableCard && (
+							<FoldableCard
+								clickableHeader={ true }
+								compact
+								className="checkout__terms-foldable-card"
+								header={ translate( 'Read more' ) }
+								screenReaderText={ translate( 'Read more' ) }
+							>
+								{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
+								{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
+								{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
+								<JetpackSocialAdvancedPricingDisclaimer />
+							</FoldableCard>
+						) }
 					</TermsCollapsedContent>
 				</>
 			) : (
