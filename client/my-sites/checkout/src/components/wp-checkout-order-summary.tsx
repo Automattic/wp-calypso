@@ -32,6 +32,7 @@ import {
 	hasCheckoutVersion,
 	getCreditsLineItemFromCart,
 	getSubtotalWithoutCoupon,
+	getSubtotalWithCredits,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -124,6 +125,7 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
+	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
 
 	return (
 		<>
@@ -131,10 +133,14 @@ function CheckoutSummaryPriceList() {
 				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 					<span>{ translate( 'Subtotal' ) }</span>
 					<span>
-						{ formatCurrency( subtotalWithoutCoupon, responseCart.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
+						{ formatCurrency(
+							hasCheckoutVersion( '2' ) ? subtotalWithCredits : subtotalWithoutCoupon,
+							responseCart.currency,
+							{
+								isSmallestUnit: true,
+								stripZeros: true,
+							}
+						) }
 					</span>
 				</CheckoutSummaryLineItem>
 				{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
