@@ -1840,7 +1840,6 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    tinymce: "npm:^5.0.0"
     webpack: "npm:^5.68.0"
   languageName: unknown
   linkType: soft
@@ -30076,13 +30075,6 @@ __metadata:
   version: 1.0.3
   resolution: "tiny-warning@npm:1.0.3"
   checksum: ef8531f581b30342f29670cb41ca248001c6fd7975ce22122bd59b8d62b4fc84ad4207ee7faa95cde982fa3357cd8f4be650142abc22805538c3b1392d7084fa
-  languageName: node
-  linkType: hard
-
-"tinymce@npm:^5.0.0":
-  version: 5.10.9
-  resolution: "tinymce@npm:5.10.9"
-  checksum: 8b0d8602259d54ab89ffbf7bc4ea08f1bb35fa1f523748358d22550fed1abbffda3a2168af7c7a562a6bb8828c1c9dedb41e8ed1cd63b21a00f31ef39e708443
   languageName: node
   linkType: hard
 
