@@ -615,7 +615,7 @@ export class RenderDomainsStep extends Component {
 			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
