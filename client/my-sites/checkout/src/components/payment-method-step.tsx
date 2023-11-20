@@ -1,13 +1,17 @@
+import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getTotalLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
-	getSubtotalLineItemFromCart,
 	NonProductLineItem,
 	hasCheckoutVersion,
+	LineItemType,
+	getCouponLineItemFromCart,
+	getSubtotalWithoutCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
@@ -59,7 +63,20 @@ export default function BeforeSubmitCheckoutHeader() {
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const translate = useTranslate();
+	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
+	const subTotalLineItemWithoutCoupon: LineItemType = {
+		id: 'subtotal-without-coupon',
+		type: 'subtotal',
+		label: translate( 'Subtotal' ),
+		formattedAmount: formatCurrency( subtotalWithoutCoupon, responseCart.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} ),
+	};
+
 	return (
 		<>
 			<CheckoutTermsWrapper shouldCollapseLastStep={ shouldCollapseLastStep }>
@@ -69,7 +86,8 @@ export default function BeforeSubmitCheckoutHeader() {
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>
-						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
+						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+						{ couponLineItem && <NonProductLineItem subtotal lineItem={ couponLineItem } /> }
 						{ taxLineItems.map( ( taxLineItem ) => (
 							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 						) ) }

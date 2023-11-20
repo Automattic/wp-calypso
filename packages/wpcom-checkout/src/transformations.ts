@@ -42,19 +42,6 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	};
 }
 
-export function getSubtotalLineItemFromCart( responseCart: ResponseCart ): LineItemType {
-	return {
-		id: 'subtotal',
-		type: 'subtotal',
-		// translators: The label of the subtotal line item in checkout
-		label: String( translate( 'Subtotal' ) ),
-		formattedAmount: formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} ),
-	};
-}
-
 export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemType | null {
 	if ( ! responseCart.tax.display_taxes ) {
 		return null;
@@ -131,6 +118,17 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 			} )
 		),
 	};
+}
+
+/*
+ * Coupon discounts are applied (or not, as appropriate) to each line item's
+ * total, so the cart's subtotal includes them. However, because it's nice to
+ * be able to display the coupon discount as a discount separately from the
+ * subtotal, this function returns the cart's subtotal with the coupon savings
+ * removed.
+ */
+export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
+	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
 }
 
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
