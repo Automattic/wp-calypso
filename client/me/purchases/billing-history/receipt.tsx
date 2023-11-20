@@ -301,6 +301,29 @@ function ReceiptItemDiscounts( { item }: { item: BillingTransactionItem } ) {
 	);
 }
 
+/**
+ * Calculate the original cost for a receipt item by looking at any cost
+ * overrides.
+ */
+function getReceiptItemOriginalCost( item: BillingTransactionItem ): number {
+	const originalCostOverrides = item.cost_overrides.filter(
+		( override ) => override.does_override_original_cost
+	);
+	if ( originalCostOverrides.length > 0 ) {
+		const lastOriginalCostOverride = originalCostOverrides.pop();
+		if ( lastOriginalCostOverride ) {
+			return lastOriginalCostOverride.new_price;
+		}
+	}
+	if ( item.cost_overrides.length > 0 ) {
+		const firstOverride = item.cost_overrides[ 0 ];
+		if ( firstOverride ) {
+			return firstOverride.old_price;
+		}
+	}
+	return item.raw_subtotal;
+}
+
 function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
@@ -321,8 +344,7 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 						) }
 					</td>
 					<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
-						{ formatCurrency( item.amount_integer, item.currency, {
-							isSmallestUnit: true,
+						{ formatCurrency( getReceiptItemOriginalCost( item ), item.currency, {
 							stripZeros: true,
 						} ) }
 						{ transaction.credit && (
