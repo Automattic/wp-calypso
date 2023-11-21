@@ -4,7 +4,6 @@
 .license-product-card {
 	display: flex;
 	justify-content: stretch;
-	width: 100%;
 
 	&.disabled {
 		opacity: 0.5;
@@ -13,19 +12,11 @@
 			cursor: not-allowed;
 		}
 	}
-
-	@include break-xlarge {
-		width: 50%;
-	}
-
-	@include break-wide {
-		width: 33.33%;
-	}
 }
 
 .license-product-card__inner {
 	flex-grow: 1;
-	margin: 0.5rem 0;
+	margin: 0;
 	padding: 1.5rem;
 	border: 1px solid var(--studio-gray-10);
 	border-radius: 4px;
@@ -33,7 +24,6 @@
 	cursor: pointer;
 
 	@include break-xlarge {
-		margin: 0.5rem;
 		padding: 1.75rem;
 	}
 }
