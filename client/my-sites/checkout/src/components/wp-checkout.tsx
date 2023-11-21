@@ -271,6 +271,9 @@ export default function WPCheckout( {
 	const reduxDispatch = useReduxDispatch();
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
 
+	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
 	const isGSuiteInCart = hasGoogleApps( responseCart );
@@ -671,7 +674,7 @@ export default function WPCheckout( {
 						submitButtonFooter={
 							// Temporarily disabling this lint rule until hasCheckoutVersion is removed
 							// eslint-disable-next-line no-nested-ternary
-							isJetpackCheckout() ? (
+							hasCartJetpackProductsOnly ? (
 								<JetpackCheckoutSeals />
 							) : hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
 								<CheckoutMoneyBackGuarantee cart={ responseCart } />
@@ -888,15 +891,6 @@ const JetpackCheckoutSeals = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
-
-	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
-
-	if ( ! hasCartJetpackProductsOnly ) {
-		return null;
-	}
-
 	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
 	const show14DayGuarantee = responseCart?.products?.every(
 		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
