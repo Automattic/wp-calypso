@@ -20,7 +20,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 	onBeforeChange,
 	onAfterChange,
 	renderThumb,
-	marks, // Add marks to the component props
+	marks = false,
 } ) => {
 	const [ isThumbHolding, setIsThumbHolding ] = React.useState( false );
 
@@ -57,7 +57,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 				thumbClassName="jp-components-pricing-slider__thumb"
 				thumbActiveClassName="jp-components-pricing-slider__thumb--is-active"
 				trackClassName="jp-components-pricing-slider__track"
-				marks={ marks } // Pass marks to ReactSlider
+				marks={ marks }
 				value={ value }
 				max={ maxValue }
 				min={ minValue }
