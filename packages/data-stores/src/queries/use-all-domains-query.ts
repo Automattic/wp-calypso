@@ -1,4 +1,4 @@
-import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { DomainData } from './use-site-domains-query';
@@ -31,23 +31,31 @@ export interface AllDomainsQueryArgs {
 	no_wpcom?: boolean;
 }
 
-export function useAllDomainsQuery< TError = unknown, TData = AllDomainsQueryFnData >(
+const fetchAllDomains = ( queryArgs: AllDomainsQueryArgs ): Promise< AllDomainsQueryFnData > =>
+	wpcomRequest( {
+		path: addQueryArgs( '/all-domains', queryArgs ),
+		apiVersion: '1.1',
+	} );
+
+type AllDomainsQueryOptions = {
+	queryFn?: ( queryArgs: AllDomainsQueryArgs ) => Promise< AllDomainsQueryFnData >;
+	refetchOnMount?: boolean;
+};
+
+export function useAllDomainsQuery(
 	queryArgs: AllDomainsQueryArgs = {},
-	options: UseQueryOptions< AllDomainsQueryFnData, TError, TData > = {}
+	options: AllDomainsQueryOptions = {}
 ) {
+	const { queryFn, ...rest } = options;
+
 	return useQuery( {
 		queryKey: [ 'all-domains', queryArgs ],
-		queryFn: () =>
-			wpcomRequest< AllDomainsQueryFnData >( {
-				path: addQueryArgs( '/all-domains', queryArgs ),
-				apiVersion: '1.1',
-			} ),
+		queryFn: () => queryFn?.( queryArgs ) ?? fetchAllDomains( queryArgs ),
 
 		// It's reasonable to assume that users won't register a domain in another tab
 		// and then expect the list to update automatically when they switch back.
 		// We expect users to refresh the page after making substantial domain changes.
 		refetchOnWindowFocus: false,
-
-		...options,
+		...rest,
 	} );
 }
