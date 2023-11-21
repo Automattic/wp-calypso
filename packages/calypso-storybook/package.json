@@ -30,12 +30,12 @@
 		"@storybook/addon-controls": "^7.5.3",
 		"@storybook/preset-scss": "^1.0.3",
 		"@storybook/react-webpack5": "^7.5.3",
-		"css-loader": "^6.5.1",
+		"css-loader": "^6.8.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"sass-loader": "^12.1.0",
-		"style-loader": "^1.2.1",
-		"webpack": "^5.68.0"
+		"style-loader": "^1.3.0",
+		"webpack": "^5.89.0"
 	},
 	"peerDependencies": {
 		"@storybook/react": "^7.5.3"
