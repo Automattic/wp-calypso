@@ -1,5 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
 
 body.is-section-earn.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
@@ -151,81 +153,152 @@ body.is-section-earn.theme-default.color-scheme {
 	}
 }
 
-.memberships__subscriber-profile {
-	position: relative;
-	@include clear-fix;
-	border-bottom: 1px solid var(--color-neutral-0);
-	box-shadow: none;
 
-	&.is-placeholder {
-		.memberships__subscriber-username,
-		.memberships__subscriber-email,
-		.gravatar.is-placeholder {
-			color: transparent;
-			background-color: var(--color-neutral-0);
-			animation: loading-fade 1.6s ease-in-out infinite;
+.supporters-list {
+	margin: 20px 0 0;
+
+	.row {
+		border-block-end: 1px solid $studio-gray-5;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		padding-top: 20px;
+		padding-bottom: 20px;
+
+		> * {
+			flex: 1;
 		}
 
-		.memberships__subscriber-username {
-			width: 36%;
+		.supporters-list__checkbox-column,
+		.supporters-list__profile-column,
+		.supporters-list__offer-type-column,
+		.supporters-list__total-column,
+		.supporters-list__since-column,
+		.supporters-list__menu-column {
+			font-weight: 400;
+			font-size: $font-body-small;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+			color: $studio-gray-60;
+		}
+
+		.supporters-list__profile-column {
+			display: flex;
+			align-items: center;
+			flex: 2;
+			min-width: 0;
+		}
+
+		.supporters-list__offer-type-column {
+			flex: 2;
+			.supporters-list__offer-type-title {
+				font-weight: 600;
+				/* stylelint-disable-next-line unit-allowed-list */
+				max-width: 28ch;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+			.supporters-list__offer-type-price {
+				font-size: $font-body-extra-small;
+				color: $studio-gray-40;
+			}
+		}
+
+		.supporters-list__menu-column {
+			flex-basis: 48px;
+			flex-grow: initial;
+
+			.gridicon {
+				fill: $studio-gray-50;
+			}
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&.header {
+			padding-bottom: $font-code;
+			padding-top: 8px;
+
+			span {
+				font-weight: 500;
+			}
+
+			@media (max-width: $break-small) {
+				display: none;
+			}
+		}
+	}
+
+	.supporters-list__user-profile {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+
+		.supporters-list__user-image {
+			height: 40px;
+			width: 40px;
+			border-radius: 50%;
+			margin-right: 12px;
+			flex: 0;
+		}
+
+		.supporters-list__user-details {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			max-width: 100%;
+			overflow: hidden;
+			min-width: 0;
+
+			.supporters-list__user-name {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				font-weight: 600;
+				font-size: $font-code;
+				min-width: 0;
+			}
+
+			.supporters-list__user-email {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				font-weight: 400;
+				font-size: $font-body-extra-small;
+				color: $studio-gray-40;
+				min-width: 0;
+			}
 		}
 	}
 }
 
-.memberships__subscriber-gravatar {
-	float: left;
-}
+@media ( max-width: $break-large ) {
+	.supporters-list {
+		padding-left: 16px;
+		padding-right: 16px;
 
-.memberships__subscriber-gravatar .gravatar {
-	width: 56px !important;
-	height: 56px !important;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		width: 72px !important;
-		height: 72px !important;
+		.supporters-list__since-column {
+			display: none;
+		}
 	}
 }
 
-.memberships__subscriber-detail {
-	margin-left: 80px;
+@media ( max-width: $break-medium ) {
+	.supporters-list {
+		padding-left: 16px;
+		padding-right: 16px;
 
-	@include breakpoint-deprecated( ">480px" ) {
-		margin-left: 96px;
+		.supporters-list__offer-type-column {
+			display: none;
+		}
 	}
-}
-
-.memberships__subscriber-username {
-	color: var(--color-neutral-70);
-	font-size: $font-body;
-	font-weight: 600;
-	white-space: pre;
-	text-overflow: clip;
-	overflow: hidden;
-	position: relative;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-title-small;
-	}
-
-	&::before {
-		@include long-content-fade();
-	}
-}
-
-.memberships__subscriber-email {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-body;
-		margin-top: -3px;
-	}
-}
-
-.memberships__subscriber-subscribed {
-	color: var(--color-text-subtle);
-	font-size: $font-body-extra-small;
-	margin-top: 4px;
 }
 
 .memberships__module-footer {
