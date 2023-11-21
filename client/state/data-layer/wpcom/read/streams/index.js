@@ -297,7 +297,8 @@ const streamApis = {
 			getQueryStringForPoll( extraFields, { ...extraQueryParams, number: 10 } ),
 	},
 	tag: {
-		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
+		path: ( { streamKey } ) => `/read/streams/tag/${ streamKeySuffix( streamKey ) }`,
+		apiNamespace: 'wpcom/v2',
 		dateProperty: 'date',
 	},
 	tag_popular: {
