@@ -69,16 +69,24 @@ interface CommandInputProps {
 function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const _value = useCommandState( ( state ) => state.value );
-	const selectedItemId = useMemo( () => {
-		const item = document.querySelector( `[cmdk-item=""][data-value="${ _value }"]` );
-		return item?.getAttribute( 'id' );
+	const sanitizedValue = useMemo( () => {
+		const trimmedValue = _value.trim();
+		const removedQuotesValue = trimmedValue.replace( /"/g, '' ); // Remove double quotes from any selected items before processing input
+		return removedQuotesValue;
 	}, [ _value ] );
+
+	const selectedItemId = useMemo( () => {
+		const item = document.querySelector( `[cmdk-item=""][data-value="${ sanitizedValue }"]` );
+		return item?.getAttribute( 'id' );
+	}, [ sanitizedValue ] );
+
 	useEffect( () => {
 		// Focus the command palette input when mounting the modal.
 		if ( isOpen ) {
 			commandMenuInput.current?.focus();
 		}
 	}, [ isOpen ] );
+
 	return (
 		<Command.Input
 			ref={ commandMenuInput }
