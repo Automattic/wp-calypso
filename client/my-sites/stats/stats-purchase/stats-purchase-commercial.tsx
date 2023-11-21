@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button as CalypsoButton } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -8,7 +7,6 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { StatsCommercialPriceDisplay } from './stats-purchase-shared';
-import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 interface CommercialPurchaseProps {
@@ -31,9 +29,6 @@ const CommercialPurchase = ( {
 	from,
 }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
-	// TODO: Confirm this belongs here.
-	// There are two commercial upgrade pages so will seek clarification.
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
@@ -44,31 +39,25 @@ const CommercialPurchase = ( {
 
 	return (
 		<div>
-			{ isTierUpgradeSliderEnabled ? (
-				<TierUpgradeSlider />
-			) : (
-				<>
-					<div
-						className={ classNames(
-							`${ COMPONENT_CLASS_NAME }__notice`,
-							`${ COMPONENT_CLASS_NAME }__notice--green`
-						) }
-					>
-						{ translate(
-							'Upgrade now to take advantage of the introductory flat rate. Starting in 2024, we will introduce metered billing. '
-						) }
-						<Button
-							variant="link"
-							href={ localizeUrl( learnMoreLink ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{ translate( 'Learn more' ) }
-						</Button>
-					</div>
-					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-				</>
-			) }
+			<div
+				className={ classNames(
+					`${ COMPONENT_CLASS_NAME }__notice`,
+					`${ COMPONENT_CLASS_NAME }__notice--green`
+				) }
+			>
+				{ translate(
+					'Upgrade now to take advantage of the introductory flat rate. Starting in 2024, we will introduce metered billing. '
+				) }
+				<Button
+					variant="link"
+					href={ localizeUrl( learnMoreLink ) }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Learn more' ) }
+				</Button>
+			</div>
+			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
