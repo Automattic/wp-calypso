@@ -153,209 +153,6 @@ body.is-section-earn.theme-default.color-scheme {
 	}
 }
 
-.memberships__subscriber-profile {
-	position: relative;
-	@include clear-fix;
-	border-bottom: 1px solid var(--color-neutral-0);
-	box-shadow: none;
-
-	&.is-placeholder {
-		.memberships__subscriber-username,
-		.memberships__subscriber-email,
-		.gravatar.is-placeholder {
-			color: transparent;
-			background-color: var(--color-neutral-0);
-			animation: loading-fade 1.6s ease-in-out infinite;
-		}
-
-		.memberships__subscriber-username {
-			width: 36%;
-		}
-	}
-}
-
-.memberships__subscriber-gravatar {
-	float: left;
-}
-
-.memberships__subscriber-gravatar .gravatar {
-	width: 56px !important;
-	height: 56px !important;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		width: 72px !important;
-		height: 72px !important;
-	}
-}
-
-.memberships__subscriber-detail {
-	margin-left: 80px;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		margin-left: 96px;
-	}
-}
-
-.memberships__subscriber-username {
-	color: var(--color-neutral-70);
-	font-size: $font-body;
-	font-weight: 600;
-	white-space: pre;
-	text-overflow: clip;
-	overflow: hidden;
-	position: relative;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-title-small;
-	}
-
-	&::before {
-		@include long-content-fade();
-	}
-}
-
-.memberships__subscriber-email {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-body;
-		margin-top: -3px;
-	}
-}
-
-.memberships__subscriber-subscribed {
-	color: var(--color-text-subtle);
-	font-size: $font-body-extra-small;
-	margin-top: 4px;
-}
-
-.memberships__module-footer {
-	margin-top: 20px;
-}
-
-.memberships__module-plans-title {
-	color: var(--color-neutral-100);
-}
-
-.memberships__module-settings-title {
-	color: var(--color-neutral-100);
-	display: flex;
-	align-items: center;
-}
-
-.memberships__loading {
-	text-align: center;
-	padding: 3em 0;
-}
-
-.memberships__module-settings-description {
-	color: var(--color-neutral-100);
-	font-size: $font-body-small;
-}
-
-.memberships__module-plans-description {
-	color: var(--color-neutral-100);
-	font-size: $font-body-small;
-}
-
-.memberships__module-plans-content {
-	display: flex;
-	flex-direction: row;
-}
-
-.memberships__module-plans-icon {
-	padding-right: 24px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--color-neutral-60);
-}
-
-.memberships__module-products-list-icon {
-	margin-right: 6px;
-}
-
-.memberships__products-product-card {
-	display: flex;
-}
-.memberships__products-product-details {
-	flex-grow: 1;
-}
-.memberships__products-product-price {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-	line-height: 1.5;
-}
-.memberships__products-product-title {
-	color: var(--color-text);
-	font-size: $font-body;
-	font-weight: bold;
-}
-.memberships__products-product-badge {
-	margin-top: 10px;
-	margin-left: -5px;
-}
-.memberships__earnings-breakdown-notes {
-	display: block;
-	clear: both;
-	color: var(--color-neutral-30);
-	padding-bottom: 12px;
-	padding-top: 24px;
-	font-size: $font-body-extra-small;
-	line-height: 1.6;
-	font-style: italic;
-	text-align: center;
-	em {
-		font-weight: 600;
-	}
-}
-.memberships__subscriber-actions {
-	float: right;
-}
-
-/**
- * Delete Site Options
- */
-
-.memberships__settings-section-title {
-	margin-bottom: 4px;
-	font-size: $font-body-small;
-	line-height: 18px;
-	color: var(--color-neutral-70);
-
-	&.is-warning {
-		color: var(--color-error);
-	}
-}
-
-.memberships__settings-section-desc {
-	margin-bottom: 0;
-	font-size: $font-body-small;
-	color: var(--color-text-subtle);
-	font-style: italic;
-}
-
-.memberships__settings-content {
-	flex: 0 1 auto;
-}
-
-.memberships__settings-link,
-.memberships__settings-link:hover,
-.memberships__settings-link:active,
-.memberships__settings-link:visited {
-	color: inherit;
-}
-
-.earn__payments-loading {
-	margin-top: 25px;
-
-	.wpcom__loading-ellipsis {
-		display: block;
-		margin: auto;
-	}
-}
-
 
 .supporters-list {
 	margin: 0;
@@ -501,5 +298,131 @@ body.is-section-earn.theme-default.color-scheme {
 		.supporters-list__offer-type-column {
 			display: none;
 		}
+	}
+}
+
+.memberships__module-footer {
+	margin-top: 20px;
+}
+
+.memberships__module-plans-title {
+	color: var(--color-neutral-100);
+}
+
+.memberships__module-settings-title {
+	color: var(--color-neutral-100);
+	display: flex;
+	align-items: center;
+}
+
+.memberships__loading {
+	text-align: center;
+	padding: 3em 0;
+}
+
+.memberships__module-settings-description {
+	color: var(--color-neutral-100);
+	font-size: $font-body-small;
+}
+
+.memberships__module-plans-description {
+	color: var(--color-neutral-100);
+	font-size: $font-body-small;
+}
+
+.memberships__module-plans-content {
+	display: flex;
+	flex-direction: row;
+}
+
+.memberships__module-plans-icon {
+	padding-right: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-neutral-60);
+}
+
+.memberships__module-products-list-icon {
+	margin-right: 6px;
+}
+
+.memberships__products-product-card {
+	display: flex;
+}
+.memberships__products-product-details {
+	flex-grow: 1;
+}
+.memberships__products-product-price {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	line-height: 1.5;
+}
+.memberships__products-product-title {
+	color: var(--color-text);
+	font-size: $font-body;
+	font-weight: bold;
+}
+.memberships__products-product-badge {
+	margin-top: 10px;
+	margin-left: -5px;
+}
+.memberships__earnings-breakdown-notes {
+	display: block;
+	clear: both;
+	color: var(--color-neutral-30);
+	padding-bottom: 12px;
+	padding-top: 24px;
+	font-size: $font-body-extra-small;
+	line-height: 1.6;
+	font-style: italic;
+	text-align: center;
+	em {
+		font-weight: 600;
+	}
+}
+.memberships__subscriber-actions {
+	float: right;
+}
+
+/**
+ * Delete Site Options
+ */
+
+.memberships__settings-section-title {
+	margin-bottom: 4px;
+	font-size: $font-body-small;
+	line-height: 18px;
+	color: var(--color-neutral-70);
+
+	&.is-warning {
+		color: var(--color-error);
+	}
+}
+
+.memberships__settings-section-desc {
+	margin-bottom: 0;
+	font-size: $font-body-small;
+	color: var(--color-text-subtle);
+	font-style: italic;
+}
+
+.memberships__settings-content {
+	flex: 0 1 auto;
+}
+
+.memberships__settings-link,
+.memberships__settings-link:hover,
+.memberships__settings-link:active,
+.memberships__settings-link:visited {
+	color: inherit;
+}
+
+.earn__payments-loading {
+	margin-top: 25px;
+
+	.wpcom__loading-ellipsis {
+		display: block;
+		margin: auto;
 	}
 }
