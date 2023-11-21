@@ -243,8 +243,9 @@ export class RenderDomainsStep extends Component {
 		const productToRemove = this.props.cart.products.find(
 			( product ) => product.meta === domain_name
 		);
-
-		this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+		if ( productToRemove ) {
+			this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+		}
 	};
 
 	isPurchasingTheme = () => {
