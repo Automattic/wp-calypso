@@ -90,7 +90,6 @@
 	font-size: $font-body-small;
 	display: flex;
 	justify-content: space-between;
-	margin-left: 30px;
 }
 
 .billing-history__header-row {
@@ -375,6 +374,10 @@ textarea.billing-history__billing-details-editable {
 			}
 		}
 	}
+}
+
+.billing-history__receipt tr td.billing-history__receipt-item-discounts {
+	padding: 4px 10px;
 }
 
 ul.billing-history__receipt-item-discounts-list {

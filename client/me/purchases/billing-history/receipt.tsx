@@ -359,7 +359,6 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 						<span>{ item.variation }</span>
 						<small>({ item.type_localized })</small>
 						{ termLabel && <em>{ termLabel }</em> }
-						<br />
 						{ item.domain && <em>{ item.domain }</em> }
 						{ item.licensed_quantity && (
 							<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
