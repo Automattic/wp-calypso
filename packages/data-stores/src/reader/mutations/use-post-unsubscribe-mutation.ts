@@ -58,7 +58,9 @@ const usePostUnsubscribeMutation = () => {
 		},
 		onMutate: async ( params ) => {
 			await queryClient.cancelQueries( postSubscriptionsCacheKey );
-			await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+			await queryClient.cancelQueries( {
+				queryKey: [ 'read', 'subscriptions-count', isLoggedIn ],
+			} );
 
 			const previousPostSubscriptions =
 				queryClient.getQueryData< PostSubscriptionsPages >( postSubscriptionsCacheKey );

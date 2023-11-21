@@ -155,12 +155,16 @@ const useSiteSubscribeMutation = () => {
 					userId
 				);
 				queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
-				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
+				queryClient.invalidateQueries( {
+					queryKey: [ 'read', 'sites', Number( params.blog_id ) ],
+				} );
 			}
 
 			if ( isValidId( params.feed_id ) ) {
 				const feedCacheKey = [ 'read', 'feeds', Number( params.feed_id ) ];
-				queryClient.invalidateQueries( feedCacheKey );
+				queryClient.invalidateQueries( {
+					queryKey: feedCacheKey,
+				} );
 			}
 
 			queryClient.invalidateQueries( subscriptionsCountCacheKey );

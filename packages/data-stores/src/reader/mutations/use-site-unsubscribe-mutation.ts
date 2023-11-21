@@ -209,11 +209,15 @@ const useSiteUnsubscribeMutation = () => {
 				queryClient.invalidateQueries( siteSubscriptionDetailsByBlogIdQueryKey, {
 					refetchType: 'none',
 				} );
-				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
+				queryClient.invalidateQueries( {
+					queryKey: [ 'read', 'sites', Number( params.blog_id ) ],
+				} );
 			}
 
 			queryClient.invalidateQueries( subscriptionsCountQueryKey );
-			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'feed', 'search' ],
+			} );
 			queryClient.invalidateQueries(
 				buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId )
 			);

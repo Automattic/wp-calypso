@@ -56,7 +56,9 @@ const useUserSettingsMutation = () => {
 		},
 		onSettled: () => {
 			// pass in a more minimal key, everything to the right will be invalidated
-			queryClient.invalidateQueries( [ 'read', 'email-settings' ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'email-settings' ],
+			} );
 		},
 	} );
 };

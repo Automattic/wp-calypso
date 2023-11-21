@@ -30,7 +30,9 @@ export default function useUpdateMonitorSettings(
 	const updateMonitorSettings = useUpdateMonitorSettingsMutation( {
 		onSuccess: async ( data, { siteId } ) => {
 			// Cancel any current refetches, so they don't overwrite our optimistic update
-			await queryClient.cancelQueries( queryKey );
+			await queryClient.cancelQueries( {
+				queryKey: queryKey,
+			} );
 
 			// Optimistically update to the new value
 			queryClient.setQueryData( queryKey, ( oldSites: any ) => {

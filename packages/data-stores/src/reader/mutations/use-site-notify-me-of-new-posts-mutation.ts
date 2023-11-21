@@ -135,7 +135,9 @@ const useSiteNotifyMeOfNewPostsMutation = () => {
 				isLoggedIn,
 				id,
 			} );
-			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ],
+			} );
 		},
 	} );
 };

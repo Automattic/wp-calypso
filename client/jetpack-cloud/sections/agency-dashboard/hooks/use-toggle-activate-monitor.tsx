@@ -27,7 +27,9 @@ export default function useToggleActivateMonitor(
 		},
 		onSuccess: async ( _data, { siteId, params } ) => {
 			// Cancel any current refetches, so they don't overwrite our update
-			await queryClient.cancelQueries( queryKey );
+			await queryClient.cancelQueries( {
+				queryKey: queryKey,
+			} );
 
 			// Update to the new value
 			queryClient.setQueryData( queryKey, ( oldSites: any ) => {

@@ -43,7 +43,9 @@ const usePendingPostDeleteMutation = () => {
 			return response;
 		},
 		onMutate: async ( params ) => {
-			await queryClient.cancelQueries( [ 'read', 'pending-post-subscriptions', isLoggedIn ] );
+			await queryClient.cancelQueries( {
+				queryKey: [ 'read', 'pending-post-subscriptions', isLoggedIn ],
+			} );
 			await queryClient.cancelQueries( countCacheKey );
 
 			const previousPendingPostSubscriptions =
@@ -96,7 +98,9 @@ const usePendingPostDeleteMutation = () => {
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries( [ 'read', 'pending-post-subscriptions', isLoggedIn ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'pending-post-subscriptions', isLoggedIn ],
+			} );
 			queryClient.invalidateQueries( countCacheKey );
 		},
 	} );
