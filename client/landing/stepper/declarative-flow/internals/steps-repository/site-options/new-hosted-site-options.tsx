@@ -15,6 +15,8 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useGetSiteSuggestionsQuery } from 'calypso/landing/stepper/hooks/use-get-site-suggestions-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getQueryArgs } from 'calypso/lib/query-args/index';
+import { addQueryArgs } from 'calypso/lib/url/index';
 import { tip } from 'calypso/signup/icons';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { StepProps } from '../../types';
@@ -168,7 +170,14 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				backLabelText={ __( 'Back' ) }
 				goBack={ goBack }
 				skipLabelText={ __( 'Migrate a site' ) }
-				goNext={ () => window.location.assign( '/setup/import-hosted-site' ) }
+				goNext={ () => {
+					const { coupon } = getQueryArgs();
+					const url =
+						typeof coupon === 'string'
+							? addQueryArgs( { coupon }, '/setup/import-hosted-site' )
+							: '/setup/import-hosted-site';
+					window.location.assign( url );
+				} }
 				isHorizontalLayout
 				formattedHeader={
 					<FormattedHeader id="site-options-header" headerText={ headerText } align="left" />

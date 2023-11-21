@@ -3,6 +3,7 @@ import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -135,12 +136,14 @@ const hosting: Flow = {
 					setSignupCompleteFlowName( flowName );
 
 					if ( providedDependencies.goToCheckout ) {
+						const { coupon } = getQueryArgs();
+
 						return window.location.assign(
 							addQueryArgs(
 								`/checkout/${ encodeURIComponent(
 									( providedDependencies?.siteSlug as string ) ?? ''
 								) }`,
-								{ redirect_to: destination }
+								{ redirect_to: destination, coupon }
 							)
 						);
 					}

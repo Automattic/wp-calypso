@@ -10,6 +10,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getQueryArgs } from 'calypso/lib/query-args/index';
+import { addQueryArgs } from 'calypso/lib/url/index';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';
@@ -38,8 +40,14 @@ export const ImportWrapper: Step = function ( props ) {
 	const getGoNext = () => {
 		switch ( flow ) {
 			case IMPORT_HOSTED_SITE_FLOW:
-				return () => window.location.assign( '/setup/new-hosted-site' );
-
+				return () => {
+					const { coupon } = getQueryArgs();
+					const url =
+						typeof coupon === 'string'
+							? addQueryArgs( { coupon }, '/setup/new-hosted-site' )
+							: '/setup/new-hosted-site';
+					window.location.assign( url );
+				};
 			default:
 				return navigation.goNext;
 		}
