@@ -22,13 +22,12 @@ export default function useProductAndPlans( { selectedSite }: Props ) {
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 	const dispatch = useDispatch();
 
-	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
-	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
-	const defaultProductSlugs = getQueryArg( window.location.href, 'products' )
-		?.toString()
-		.split( ',' );
-
 	useEffect( () => {
+		// If the user comes from the flow for adding a new payment method during an attempt to issue a license
+		// after the payment method is added, we will make an attempt to issue the chosen license automatically.
+		const defaultProductSlugs = getQueryArg( window.location.href, 'products' )
+			?.toString()
+			.split( ',' );
 		// Select the slugs included in the URL
 		defaultProductSlugs &&
 			dispatch(
@@ -42,21 +41,22 @@ export default function useProductAndPlans( { selectedSite }: Props ) {
 		return () => {
 			dispatch( clearSelectedProductSlugs() );
 		};
-	}, [ dispatch, defaultProductSlugs ] );
+	}, [ dispatch ] );
 
-	let allProductsAndBundles = data;
 	const addedPlanAndProducts = useSelector( ( state ) =>
 		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
 	);
 
-	// Filter products & plan that are already assigned to a site
-	if ( selectedSite && addedPlanAndProducts && allProductsAndBundles ) {
-		allProductsAndBundles = allProductsAndBundles.filter(
-			( product ) => ! addedPlanAndProducts.includes( product.product_id )
-		);
-	}
-
 	return useMemo( () => {
+		let allProductsAndBundles = data;
+
+		// Filter products & plan that are already assigned to a site
+		if ( selectedSite && addedPlanAndProducts && allProductsAndBundles ) {
+			allProductsAndBundles = allProductsAndBundles.filter(
+				( product ) => ! addedPlanAndProducts.includes( product.product_id )
+			);
+		}
+
 		const bundles =
 			allProductsAndBundles?.filter(
 				( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
@@ -95,5 +95,5 @@ export default function useProductAndPlans( { selectedSite }: Props ) {
 			wooExtensions,
 			suggestedProductSlugs,
 		};
-	}, [ allProductsAndBundles, isLoadingProducts ] );
+	}, [ addedPlanAndProducts, data, isLoadingProducts, selectedSite ] );
 }
