@@ -1,6 +1,8 @@
+import classNames from 'classnames';
 import { Children, ReactNode } from 'react';
 
 type Props = {
+	className?: string;
 	children: ReactNode;
 };
 
@@ -16,7 +18,7 @@ export function LayoutHeaderActions( { children }: Props ) {
 	return <h2 className="jetpack-cloud-layout__header-actions">{ children }</h2>;
 }
 
-export default function LayoutHeader( { children }: Props ) {
+export default function LayoutHeader( { className, children }: Props ) {
 	const headerTitle = Children.toArray( children ).find(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( child: any ) => child.type === LayoutHeaderTitle
@@ -33,7 +35,7 @@ export default function LayoutHeader( { children }: Props ) {
 	);
 
 	return (
-		<div className="jetpack-cloud-layout__header">
+		<div className={ classNames( 'jetpack-cloud-layout__header', className ) }>
 			<div className="jetpack-cloud-layout__header-main">
 				{ headerTitle }
 				{ headerSubtitle }

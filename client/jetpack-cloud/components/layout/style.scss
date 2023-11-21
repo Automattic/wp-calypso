@@ -26,28 +26,25 @@
 }
 
 .jetpack-cloud-layout__body {
+	width: 100%;
 	margin-block-end: -32px;
 	flex: 1 1 100%;
-}
-
-.jetpack-cloud-layout__top,
-.jetpack-cloud-layout__body {
-	width: 100%;
-
-	&-wrapper {
-		margin-inline: 0;
-	}
-
-	&-wrapper > * {
-		max-width: 1500px;
-		margin-inline: auto !important;
-	}
 
 	@include breakpoint-deprecated( ">660px" ) {
 		// We need these negative margin values because we want to make the container full-width,
 		// but our element is inside a limited-width parent.
 		margin-inline-start: -73px;
 		padding-inline: 73px;
+	}
+}
+
+.jetpack-cloud-layout__top-wrapper,
+.jetpack-cloud-layout__body-wrapper {
+	margin-inline: 0;
+
+	> * {
+		max-width: 1500px;
+		margin-inline: auto !important;
 	}
 }
 
@@ -66,7 +63,6 @@
 		}
 	}
 }
-
 
 .jetpack-cloud-layout__header {
 	display: flex;
