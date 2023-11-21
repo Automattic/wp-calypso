@@ -233,6 +233,17 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 		},
+		{
+			name: 'registerDomain',
+			label: __( 'Register domain' ),
+			searchLabel: __( 'register domain' ),
+			context: 'Registering domain',
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/start/domain/domain-only` );
+			},
+			icon: domainsIcon,
+		},
 	];
 
 	return commands;
