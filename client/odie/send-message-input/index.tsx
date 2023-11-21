@@ -73,10 +73,10 @@ export const OdieSendMessageButton = ( {
 		const { route, routeParams } = replaceRouteParamsWithPlaceholders( currentRoute );
 
 		return {
-			site_id: siteId,
+			blog_id: siteId,
 			route: route,
 			route_params: routeParams,
-			plan: currentPlan,
+			site_plan_id: currentPlan?.id ?? null,
 		};
 	};
 
