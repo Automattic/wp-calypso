@@ -2,8 +2,12 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { JumpToRecent } from '../message/jump-to-recent';
@@ -31,11 +35,34 @@ export const OdieSendMessageButton = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const currentSiteDomain = useSelector( ( state ) => {
+		return getSiteDomain( state, siteId );
+	} );
+	const currentRoute = useSelector( getCurrentRoute );
+	const currentPlan = useSelector( ( state ) => {
+		return getCurrentPlan( state, siteId );
+	} );
+
 	useEffect( () => {
 		if ( initialUserMessage && ! chat.chat_id ) {
 			setMessageString( initialUserMessage );
 		}
 	}, [ initialUserMessage, chat.chat_id ] );
+
+	const replaceRouteParams = ( route: string ) => {
+		route = route.replace( currentSiteDomain as string, ':site' );
+
+		return route;
+	};
+
+	const buildContext = () => {
+		return {
+			site_id: siteId,
+			route: replaceRouteParams( currentRoute ),
+			plan: currentPlan,
+		};
+	};
 
 	const sendMessage = async () => {
 		try {
@@ -47,10 +74,13 @@ export const OdieSendMessageButton = ( {
 				} )
 			);
 
+			const context = buildContext();
+
 			const message = {
 				content: messageString,
 				role: 'user',
 				type: 'message',
+				context,
 			} as Message;
 
 			addMessage( [
