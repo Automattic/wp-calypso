@@ -10133,7 +10133,7 @@ __metadata:
     archiver: "npm:^3.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
     cross-env: "npm:^7.0.3"
-    electron: "npm:26.2.1"
+    electron: "npm:26.2.4"
     electron-builder: "npm:23.0.3"
     electron-fetch: "npm:^1.7.4"
     electron-notarize: "npm:^0.1.1"
@@ -15286,16 +15286,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:26.2.1":
-  version: 26.2.1
-  resolution: "electron@npm:26.2.1"
+"electron@npm:26.2.4":
+  version: 26.2.4
+  resolution: "electron@npm:26.2.4"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^18.11.18"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 9eda7a995a9992f2185b3eb95720e5990ea70d8fc822bbff2ee35facde546e175fab4438b7355085e16464291c3afc9f99e3ed3f9fad6f0f37ffc13bb89dc474
+  checksum: eaa861c890709453793c8893552ef91aaddfea716bde3d8b5d1d1064d553fe600f00297d45182c493a582cc76cfe98855ae3ececb865c5bcce3932f0c12beaf9
   languageName: node
   linkType: hard
 
