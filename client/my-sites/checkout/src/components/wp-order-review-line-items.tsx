@@ -22,7 +22,9 @@ import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
+import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
@@ -219,6 +221,8 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
+	isAkPro500Cart,
+	onChangeAkProQuantity,
 }: {
 	className?: string;
 	isSummary?: boolean;
@@ -231,6 +235,8 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
+	isAkPro500Cart?: boolean;
+	onChangeAkProQuantity?: OnChangeAkProQuantity;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -273,6 +279,8 @@ export function WPOrderReviewLineItems( {
 							);
 						} )?.months_per_bill_period
 					}
+					isAkPro500Cart={ isAkPro500Cart }
+					onChangeAkProQuantity={ onChangeAkProQuantity }
 				/>
 			) ) }
 			{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
@@ -325,6 +333,8 @@ function LineItemWrapper( {
 	hasPartnerCoupon,
 	isDisabled,
 	initialVariantTerm,
+	isAkPro500Cart,
+	onChangeAkProQuantity,
 }: {
 	product: ResponseCartProduct;
 	isSummary?: boolean;
@@ -339,6 +349,8 @@ function LineItemWrapper( {
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
+	isAkPro500Cart?: boolean;
+	onChangeAkProQuantity?: OnChangeAkProQuantity;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -417,6 +429,12 @@ function LineItemWrapper( {
 						onChangeItemVariant={ onChangeSelection }
 						isDisabled={ isDisabled }
 						variants={ variants }
+					/>
+				) }
+				{ isAkPro500Cart && (
+					<AkismetProQuantityDropDown
+						responseCart={ responseCart }
+						onChangeAkProQuantity={ onChangeAkProQuantity }
 					/>
 				) }
 			</LineItem>

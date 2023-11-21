@@ -4,7 +4,7 @@ import type { LegacyRef, HTMLProps } from 'react';
 
 import './style.scss';
 
-interface FormSelectProps {
+export interface FormSelectProps {
 	inputRef?: LegacyRef< HTMLSelectElement >;
 	className?: string;
 	isError?: boolean;

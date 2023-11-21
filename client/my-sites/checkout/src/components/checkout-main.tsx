@@ -1,4 +1,4 @@
-import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
+import { JETPACK_SEARCH_PRODUCTS, AKISMET_PRO_500_PRODUCTS } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -59,6 +59,7 @@ import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import { OnChangeItemVariant } from './item-variation-picker';
 import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import WPCheckout from './wp-checkout';
+import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	CheckoutPageErrorCallback,
@@ -400,6 +401,37 @@ export default function CheckoutMain( {
 		checkoutFlow
 	);
 
+	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
+		( uuid, productSlug, productId, newQuantity ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_akismet_pro_quantity_change', {
+					product_slug: productSlug,
+					new_quantity: newQuantity,
+				} )
+			);
+			replaceProductInCart( uuid, {
+				product_slug: productSlug,
+				product_id: productId,
+				quantity: newQuantity,
+			} ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
+		},
+		[ replaceProductInCart, reduxDispatch ]
+	);
+
+	const isAkismetProMultipleLicensesCart = useMemo( () => {
+		if ( sitelessCheckoutType !== 'akismet' ) {
+			return false;
+		}
+
+		return responseCart.products.every( ( product ) =>
+			AKISMET_PRO_500_PRODUCTS.includes(
+				product.product_slug as ( typeof AKISMET_PRO_500_PRODUCTS )[ number ]
+			)
+		);
+	}, [ responseCart.products, sitelessCheckoutType ] );
+
 	const changeSelection = useCallback< OnChangeItemVariant >(
 		( uuidToReplace, newProductSlug, newProductId, newProductVolume ) => {
 			reduxDispatch(
@@ -417,7 +449,7 @@ export default function CheckoutMain( {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
-		[ replaceProductInCart, reduxDispatch ]
+		[ reduxDispatch, replaceProductInCart ]
 	);
 
 	const addItemAndLog: ( item: MinimalRequestCartProduct ) => void = useCallback(
@@ -771,6 +803,8 @@ export default function CheckoutMain( {
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
+					isAkPro500Cart={ isAkismetProMultipleLicensesCart }
+					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
 				/>
 				{
 					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans

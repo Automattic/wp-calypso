@@ -19,6 +19,7 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
+import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -77,6 +78,8 @@ export default function WPCheckoutOrderReview( {
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	isAkPro500Cart,
+	onChangeAkProQuantity,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -85,6 +88,8 @@ export default function WPCheckoutOrderReview( {
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
+	isAkPro500Cart?: boolean;
+	onChangeAkProQuantity?: OnChangeAkProQuantity;
 } ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -175,6 +180,8 @@ export default function WPCheckoutOrderReview( {
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveProductClick={ onRemoveProductClick }
 						onRemoveProductCancel={ onRemoveProductCancel }
+						isAkPro500Cart={ isAkPro500Cart }
+						onChangeAkProQuantity={ onChangeAkProQuantity }
 					/>
 				</WPOrderReviewSection>
 
