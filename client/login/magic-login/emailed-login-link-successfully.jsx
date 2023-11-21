@@ -42,12 +42,12 @@ class EmailedLoginLinkSuccessfully extends Component {
 	};
 
 	render() {
-		const { translate, emailAddress } = this.props;
+		const { translate, emailAddress, censoredEmailAddress } = this.props;
 		const line = [
-			emailAddress
+			emailAddress || censoredEmailAddress
 				? translate( 'We just emailed a link to %(emailAddress)s.', {
 						args: {
-							emailAddress,
+							emailAddress: emailAddress || censoredEmailAddress,
 						},
 				  } )
 				: translate( 'We just emailed you a link.' ),
@@ -91,6 +91,7 @@ const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 	isWhiteLogin: getCurrentRoute( state )?.startsWith( '/log-in/new/link' ),
+	censoredEmailAddress: state.login.magicLogin.censoredEmailAddress,
 } );
 
 const mapDispatch = {

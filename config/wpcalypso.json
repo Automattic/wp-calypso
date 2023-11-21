@@ -91,6 +91,7 @@
 		"legal-updates-banner": false,
 		"livechat_solution": true,
 		"login/magic-login": true,
+		"login/magic-login-by-site-url": true,
 		"logmein": true,
 		"mailchimp": true,
 		"marketplace-domain-bundle": true,

@@ -7,6 +7,7 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
+	MAGIC_LOGIN_REQUEST_LOGIN_BY_SITE_URL_SUCCESS,
 } from 'calypso/state/action-types';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -19,9 +20,13 @@ import {
 	removeNotice,
 } from 'calypso/state/notices/actions';
 
+function isEmail( email ) {
+	return email?.includes( '@' );
+}
+
 export const sendLoginEmail = ( action ) => {
 	const {
-		email,
+		emailOrSiteUrl,
 		lang_id,
 		locale,
 		redirect_to,
@@ -33,81 +38,118 @@ export const sendLoginEmail = ( action ) => {
 		flow,
 		createAccount,
 	} = action;
-	const noticeAction = showGlobalNotices
-		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
-		: null;
-	return [
-		...( showGlobalNotices ? [ noticeAction ] : [] ),
-		...( loginFormFlow || requestLoginEmailFormFlow
-			? [ { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } ]
-			: [] ),
-		...( requestLoginEmailFormFlow
-			? [ recordTracksEventWithClientId( 'calypso_login_email_link_submit' ) ]
-			: [] ),
-		...( loginFormFlow
-			? [ recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link' ) ]
-			: [] ),
-		...( createAccount
-			? [
-					recordTracksEventWithClientId(
-						'calypso_login_block_login_form_send_account_create_magic_link'
-					),
-			  ]
-			: [] ),
-		http(
-			{
-				path: `/auth/send-login-email`,
-				method: 'POST',
-				apiVersion: '1.3',
-				body: {
-					client_id: config( 'wpcom_signup_id' ),
-					client_secret: config( 'wpcom_signup_key' ),
-					...( isMobileAppLogin && { infer: true } ),
-					...( isMobileAppLogin && { scheme: 'wordpress' } ),
-					locale,
-					lang_id: lang_id,
-					email: email,
-					...( redirect_to && { redirect_to } ),
-					...( blog_id && { blog_id } ),
-					...( flow && { flow } ),
-					create_account: createAccount,
-					tos: getToSAcceptancePayload(),
-				},
+
+	const actions = [];
+
+	const isEmailLogin = isEmail( emailOrSiteUrl );
+
+	if ( showGlobalNotices ) {
+		const noticeAction = infoNotice( translate( 'Sending email' ), { duration: 4000 } );
+		actions.push( noticeAction );
+	}
+
+	if ( loginFormFlow || requestLoginEmailFormFlow ) {
+		actions.push( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } );
+	}
+
+	if ( requestLoginEmailFormFlow ) {
+		actions.push( recordTracksEventWithClientId( 'calypso_login_email_link_submit' ) );
+	}
+
+	if ( isEmailLogin ) {
+		actions.push( recordTracksEventWithClientId( 'calypso_login_email_link_submit' ) );
+	} else {
+		actions.push( recordTracksEventWithClientId( 'calypso_login_email_link_via_url_submit' ) );
+	}
+
+	if ( createAccount ) {
+		actions.push(
+			recordTracksEventWithClientId(
+				'calypso_login_block_login_form_send_account_create_magic_link'
+			)
+		);
+	}
+
+	const path = isEmailLogin ? `/auth/send-login-email` : `/auth/send-login-email-by-site-url`;
+	const param = isEmailLogin ? 'email' : 'site_url';
+
+	const httpAction = http(
+		{
+			path,
+			method: 'POST',
+			apiVersion: '1.3',
+			body: {
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+				locale,
+				lang_id,
+				[ param ]: emailOrSiteUrl,
+				...( isMobileAppLogin ? { infer: true, scheme: 'wordpress' } : {} ),
+				...( redirect_to ? { redirect_to } : {} ),
+				...( blog_id ? { blog_id } : {} ),
+				...( flow ? { flow } : {} ),
+				create_account: createAccount,
+				tos: getToSAcceptancePayload(),
 			},
-			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }
-		),
-	];
+		},
+		{
+			...action,
+			infoNoticeId: actions.find( ( a ) => a.type === 'NOTICE_CREATE' )?.noticeId || null,
+		}
+	);
+
+	actions.push( httpAction );
+
+	return actions;
 };
 
 export const onSuccess = ( {
-	email,
+	emailOrSiteUrl,
 	showGlobalNotices,
 	infoNoticeId = null,
 	loginFormFlow,
 	requestLoginEmailFormFlow,
-} ) => [
-	...( loginFormFlow || requestLoginEmailFormFlow
-		? [
-				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
-				{ type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE, email },
-		  ]
-		: [] ),
-	...( requestLoginEmailFormFlow
-		? [ recordTracksEventWithClientId( 'calypso_login_email_link_success' ) ]
-		: [] ),
-	...( loginFormFlow
-		? [ recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link_success' ) ]
-		: [] ),
-	// Default Global Notice Handling
-	...( showGlobalNotices
-		? [
-				removeNotice( infoNoticeId ),
-				successNotice( translate( 'Email Sent. Check your mail app!' ), {
-					duration: 4000,
-				} ),
-		  ]
-		: [] ),
-];
+	meta,
+} ) => {
+	const actions = [];
+
+	const isEmailLogin = isEmail( emailOrSiteUrl );
+	// In case of site URL login, the censored email comes from the backend.
+	const email = isEmailLogin ? emailOrSiteUrl : meta?.dataLayer?.data?.censored_email;
+
+	if ( ! isEmailLogin ) {
+		actions.push( recordTracksEventWithClientId( 'calypso_login_email_link_via_url_success' ) );
+	}
+
+	if ( isEmailLogin ) {
+		if ( loginFormFlow || requestLoginEmailFormFlow ) {
+			actions.push( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS } );
+			actions.push( { type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE, email } );
+		}
+		if ( requestLoginEmailFormFlow ) {
+			actions.push( recordTracksEventWithClientId( 'calypso_login_email_link_success' ) );
+		}
+	} else {
+		actions.push( { type: MAGIC_LOGIN_REQUEST_LOGIN_BY_SITE_URL_SUCCESS, email } );
+		actions.push( { type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE, email } );
+	}
+
+	if ( loginFormFlow ) {
+		actions.push(
+			recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link_success' )
+		);
+	}
+	if ( showGlobalNotices ) {
+		actions.push( removeNotice( infoNoticeId ) );
+		actions.push(
+			successNotice( translate( 'Email Sent. Check your mail app!' ), {
+				duration: 4000,
+			} )
+		);
+	}
+
+	return actions;
+};
 
 export const onError = (
 	{ showGlobalNotices, infoNoticeId = null, loginFormFlow, requestLoginEmailFormFlow },

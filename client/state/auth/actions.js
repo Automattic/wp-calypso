@@ -5,7 +5,7 @@ import 'calypso/state/data-layer/wpcom/auth/send-login-email';
 
 /**
  * Sends an email with a link that allows a user to login WordPress.com or the native apps
- * @param {string} email - email to send to
+ * @param {string} emailOrSiteUrl - email to send to or the site URL to login to.
  * @param {Object} options object:
  * @param {string} options.redirectTo - url to redirect to after login
  * @param {string} options.blogId - id of blog when in process of subscribing
@@ -18,7 +18,7 @@ import 'calypso/state/data-layer/wpcom/auth/send-login-email';
  * @returns {Object} action object
  */
 export const sendEmailLogin = (
-	email,
+	emailOrSiteUrl,
 	{
 		redirectTo,
 		blogId,
@@ -35,7 +35,7 @@ export const sendEmailLogin = (
 
 	return {
 		type: LOGIN_EMAIL_SEND,
-		email,
+		emailOrSiteUrl,
 		locale,
 		lang_id,
 		redirect_to: redirectTo,

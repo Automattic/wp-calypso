@@ -55,6 +55,7 @@ class RequestLoginEmailForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
+		bySiteUrl: PropTypes.bool,
 		blogId: PropTypes.string,
 	};
 
@@ -170,7 +171,7 @@ class RequestLoginEmailForm extends Component {
 			hideSubHeaderText,
 			inputPlaceholder,
 			submitButtonLabel,
-			locale,
+			bySiteUrl,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -194,14 +195,15 @@ class RequestLoginEmailForm extends Component {
 				? requestError
 				: translate( 'Unable to complete request' );
 
-		const buttonLabel =
-			englishLocales.includes( locale ) || hasTranslation( 'Send Link' )
-				? translate( 'Send link' )
-				: translate( 'Get Link' );
+		const buttonLabel = translate( 'Send link' );
 
-		const formLabel = hasTranslation( 'Email address or username' )
-			? this.props.translate( 'Email address or username' )
-			: this.props.translate( 'Email Address or Username' );
+		const formLabel = bySiteUrl
+			? translate( 'Your site URL' )
+			: translate( 'Email Address or Username' );
+
+		const defaultHeaderText = bySiteUrl
+			? translate( 'Email me a login link using site URL' )
+			: translate( 'Email me a login link' );
 
 		return (
 			<div className="magic-login__form">
@@ -215,9 +217,7 @@ class RequestLoginEmailForm extends Component {
 						/>
 					</div>
 				) }
-				<h1 className="magic-login__form-header">
-					{ headerText || translate( 'Email me a login link' ) }
-				</h1>
+				<h1 className="magic-login__form-header">{ headerText || defaultHeaderText }</h1>
 				{ requestError && (
 					<Notice
 						duration={ 10000 }

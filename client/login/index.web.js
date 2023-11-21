@@ -78,6 +78,16 @@ export default ( router ) => {
 			magicLogin,
 			makeLoggedOutLayout
 		);
+
+		if ( config.isEnabled( 'login/magic-login-by-site-url' ) ) {
+			router(
+				[ `/log-in/site-url/${ lang }` ],
+				setLocaleMiddleware(),
+				setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+				magicLogin,
+				makeLoggedOutLayout
+			);
+		}
 	}
 
 	router(

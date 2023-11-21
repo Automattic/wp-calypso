@@ -115,6 +115,7 @@
 		"legal-updates-banner": true,
 		"livechat_solution": true,
 		"login/magic-login": true,
+		"login/magic-login-by-site-url": true,
 		"login/react-lost-password-screen": true,
 		"logmein": true,
 		"mailchimp": true,

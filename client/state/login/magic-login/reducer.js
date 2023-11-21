@@ -10,6 +10,7 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+	MAGIC_LOGIN_REQUEST_LOGIN_BY_SITE_URL_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
@@ -49,6 +50,15 @@ export const isFetchingEmail = ( state = false, action ) => {
 			return true;
 		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS:
 			return false;
+	}
+
+	return state;
+};
+
+export const censoredEmailAddress = ( state = false, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_REQUEST_LOGIN_BY_SITE_URL_SUCCESS:
+			return action.email;
 	}
 
 	return state;
@@ -135,6 +145,7 @@ export const requestEmailSuccess = ( state = false, action ) => {
 
 export default combineReducers( {
 	isFetchingAuth,
+	censoredEmailAddress,
 	isFetchingEmail,
 	requestAuthError,
 	requestAuthSuccess,

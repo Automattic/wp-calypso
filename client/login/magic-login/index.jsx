@@ -452,7 +452,8 @@ class MagicLogin extends Component {
 	}
 
 	render() {
-		const { oauth2Client, showCheckYourEmail } = this.props;
+		const { oauth2Client, showCheckYourEmail, path } = this.props;
+		const bySiteUrl = path.includes( 'log-in/site-url' );
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return (
@@ -476,6 +477,7 @@ class MagicLogin extends Component {
 				? { isJetpackMagicLinkSignUpEnabled: true }
 				: {} ),
 			createAccountForNewUser: true,
+			bySiteUrl,
 		};
 
 		return (
