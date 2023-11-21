@@ -29,7 +29,7 @@ export function usePlanPricingInfoFromGridPlans( {
 						currencyCode: currencyCode ?? acc.currencyCode,
 					};
 				},
-				{ prices: [], currencyCode: 'USD' } as PricingInfo
+				{ prices: [], currencyCode: 'USD' }
 			),
 		[ gridPlans, returnMonthly ]
 	);
