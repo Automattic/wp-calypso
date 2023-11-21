@@ -601,8 +601,6 @@ export class RenderDomainsStep extends Component {
 				} ) );
 			}
 
-			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
-
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			const productsToAdd = ! hasPlan( this.props.cart )
 				? [ registration, this.props.multiDomainDefaultPlan ]
@@ -615,7 +613,7 @@ export class RenderDomainsStep extends Component {
 			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
