@@ -4,7 +4,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 export function useSiteQuery< TError = unknown, TData = SiteDetails >(
 	sourceSiteSlug: string | number | null | undefined,
-	options: UseQueryOptions< SiteDetails, TError, TData > = {}
+	options: Omit< UseQueryOptions< SiteDetails, TError, TData >, 'queryKey' > = {}
 ) {
 	return useQuery( {
 		queryKey: getSiteQueryKey( sourceSiteSlug ),

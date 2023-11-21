@@ -54,10 +54,9 @@ export interface BulkDomainUpdateStatusResult {
 
 export function useBulkDomainUpdateStatusQuery< TError = unknown >(
 	pollingInterval: number,
-	options: UseQueryOptions<
-		BulkDomainUpdateStatusQueryFnData,
-		TError,
-		BulkDomainUpdateStatusResult
+	options: Omit<
+		UseQueryOptions< BulkDomainUpdateStatusQueryFnData, TError, BulkDomainUpdateStatusResult >,
+		'queryKey'
 	> = {}
 ) {
 	return useQuery( {
