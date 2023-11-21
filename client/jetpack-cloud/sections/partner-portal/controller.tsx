@@ -20,14 +20,13 @@ import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
 import Prices from 'calypso/jetpack-cloud/sections/partner-portal/primary/prices';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
-import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
-import NewPurchasesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/purchases';
+import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import PurchasesSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/purchases';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
 	getCurrentPartner,
@@ -40,14 +39,12 @@ import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 
-const isNewNavigationEnabled = isEnabled( 'jetpack/new-navigation' );
-
-const setSidebar = ( context: Context ) => {
-	if ( isNewNavigationEnabled ) {
-		context.secondary = <NewPurchasesSidebar path={ context.path } />;
-	} else {
-		context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	}
+const setSidebar = ( context: Context, isLicenseContext: boolean = false ): void => {
+	context.secondary = isLicenseContext ? (
+		<JetpackManageSidebar path={ context.path } />
+	) : (
+		<PurchasesSidebar path={ context.path } />
+	);
 };
 
 export const allSitesContext: Callback = ( context, next ) => {
@@ -93,11 +90,7 @@ export const licensesContext: Callback = ( context, next ) => {
 	);
 
 	context.header = <Header />;
-	if ( isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
-	} else {
-		context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	}
+	setSidebar( context, true );
 	context.primary = (
 		<Licenses
 			filter={ filter }
@@ -116,9 +109,11 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
-	setSidebar( context );
+	setSidebar( context, true );
 	if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
-		context.primary = <IssueLicenseV2 />;
+		context.primary = (
+			<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+		);
 	} else {
 		context.primary = (
 			<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
@@ -141,7 +136,7 @@ export const assignLicenseContext: Callback = ( context, next ) => {
 	const currentPage = parseInt( page ) || 1;
 
 	context.header = <Header />;
-	setSidebar( context );
+	setSidebar( context, true );
 	context.primary = (
 		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
 	);
@@ -189,7 +184,7 @@ export const pricesContext: Callback = ( context, next ) => {
 };
 
 export const landingPageContext: Callback = () => {
-	page.redirect( isNewNavigationEnabled ? '/partner-portal/billing' : '/partner-portal/licenses' );
+	page.redirect( '/partner-portal/billing' );
 };
 
 export const wpcomAtomicHostingContext: Callback = ( context, next ) => {

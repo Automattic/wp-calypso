@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
 import page, { type Callback } from 'page';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import DashboardOverview from './dashboard-overview';
 import Header from './header';
-import DashboardSidebar from './sidebar';
 
 export const agencyDashboardContext: Callback = ( context, next ) => {
 	const { s: search, page: contextPage, issue_types, sort_field, sort_direction } = context.query;
@@ -26,13 +25,7 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 
 	const currentPage = parseInt( contextPage ) || 1;
 	context.header = <Header />;
-
-	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
-	} else {
-		context.secondary = <DashboardSidebar path={ context.path } />;
-	}
-
+	context.secondary = <JetpackManageSidebar path={ context.path } />;
 	context.primary = (
 		<DashboardOverview
 			search={ search }

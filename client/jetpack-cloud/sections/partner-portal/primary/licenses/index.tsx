@@ -1,10 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
+import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
@@ -88,15 +88,8 @@ export default function Licenses( {
 
 	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
 
-	const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
-
 	return (
-		<Layout
-			className="licenses"
-			title={ translate( 'Licenses' ) }
-			wide
-			withBorder={ ! isNewNavigation }
-		>
+		<Layout className="licenses" title={ translate( 'Licenses' ) } wide>
 			<PageViewTracker
 				title="Partner Portal > Licenses"
 				path="/partner-portal/licenses/:filter"
@@ -108,6 +101,8 @@ export default function Licenses( {
 				<LayoutTop>
 					{ isAgencyUser && <Banners /> }
 					<SiteAddLicenseNotification />
+
+					<MissingPaymentNotification />
 
 					<LayoutHeader>
 						<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>

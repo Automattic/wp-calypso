@@ -10,7 +10,7 @@ interface UseLoginWindowProps {
 interface UseLoginWindowReturn {
 	login: () => void;
 	createAccount: () => void;
-	loginWindow: Window | null;
+	close: () => void;
 }
 
 export default function useLoginWindow( {
@@ -19,6 +19,15 @@ export default function useLoginWindow( {
 }: UseLoginWindowProps ): UseLoginWindowReturn {
 	const [ loginWindow, setLoginWindow ] = useState< Window | null >( null );
 	const isBrowser: boolean = typeof window !== 'undefined';
+
+	if ( ! isBrowser ) {
+		return {
+			login: () => {},
+			createAccount: () => {},
+			close: () => {},
+		};
+	}
+
 	const environment = config( 'env_id' );
 	const args = {
 		action: 'verify',
@@ -51,10 +60,6 @@ export default function useLoginWindow( {
 	};
 
 	const openWindow = ( url: string ) => {
-		if ( ! isBrowser ) {
-			return;
-		}
-
 		const popupWindow = window.open( url, windowName, windowFeatures );
 
 		// Listen for logged in confirmation from the login window.
@@ -80,5 +85,9 @@ export default function useLoginWindow( {
 		openWindow( createAccountURL );
 	};
 
-	return { login, createAccount, loginWindow };
+	const close = () => {
+		loginWindow?.close();
+	};
+
+	return { login, createAccount, close };
 }

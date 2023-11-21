@@ -228,6 +228,7 @@ class ActivityCardList extends Component {
 					filter={ filter }
 					isLoading={ isLoading }
 					isVisible={ shouldShowFilter }
+					variant="compact"
 				/>
 			</div>
 		);

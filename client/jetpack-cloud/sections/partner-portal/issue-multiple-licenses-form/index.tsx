@@ -28,8 +28,8 @@ import {
 	getSelectedProductSlugs,
 } from 'calypso/state/partner-portal/products/selectors';
 import { APIProductFamilyProduct, PartnerPortalStore } from 'calypso/state/partner-portal/types';
+import useSubmitForm from '../issue-license-v2/hooks/use-submit-form';
 import { AssignLicenceProps } from '../types';
-import useSubmitForm from './use-submit-form';
 
 import './style.scss';
 

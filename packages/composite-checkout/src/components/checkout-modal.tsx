@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import joinClasses from '../lib/join-classes';
 import Button from './button';
+import { CloseIcon } from './shared-icons';
 import type { MouseEvent } from 'react';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -39,31 +40,40 @@ export default function CheckoutModal( {
 			onClick={ () => handleActionAndClose( cancelAction, closeModal ) }
 		>
 			<CheckoutModalContent className="checkout-modal__content" onClick={ preventClose }>
+				<Button
+					className="checkout-modal__button--close"
+					onClick={ () => {
+						handleActionAndClose( cancelAction, closeModal );
+					} }
+				>
+					<CloseIcon />
+				</Button>
 				<CheckoutModalTitle id={ titleId } className="checkout-modal__title">
 					{ title }
 				</CheckoutModalTitle>
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
-
-				<CheckoutModalActions>
-					{ secondaryAction && secondaryButtonCTA && (
-						<Button
-							onClick={ () => {
-								handleActionAndClose( secondaryAction, closeModal );
-							} }
-						>
-							{ secondaryButtonCTA }
-						</Button>
-					) }
+			</CheckoutModalContent>
+			<CheckoutModalActions>
+				{ secondaryAction && secondaryButtonCTA && (
 					<Button
-						buttonType="primary"
+						className="checkout-modal__button"
 						onClick={ () => {
-							handleActionAndClose( primaryAction, closeModal );
+							handleActionAndClose( secondaryAction, closeModal );
 						} }
 					>
-						{ primaryButtonCTA || __( 'Continue' ) }
+						{ secondaryButtonCTA }
 					</Button>
-				</CheckoutModalActions>
-			</CheckoutModalContent>
+				) }
+				<Button
+					className="checkout-modal__button"
+					buttonType="primary"
+					onClick={ () => {
+						handleActionAndClose( primaryAction, closeModal );
+					} }
+				>
+					{ primaryButtonCTA || __( 'Continue' ) }
+				</Button>
+			</CheckoutModalActions>
 		</CheckoutModalWrapper>
 	);
 }
@@ -117,6 +127,7 @@ const CheckoutModalWrapper = styled.div`
 	height: 100vh;
 	z-index: 999;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	animation: ${ fadeIn } 0.2s ease-out;
@@ -134,18 +145,31 @@ const CheckoutModalWrapper = styled.div`
 const CheckoutModalContent = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	display: block;
-	width: 100%;
-	max-width: 350px;
+	position: relative;
+	width: 530px;
+	max-width: 80%;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 32px;
+	border-bottom: none;
+	padding: 3em;
 	animation: ${ animateIn } 0.2s 0.1s ease-out;
 	animation-fill-mode: backwards;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+
+	& > .checkout-modal__button--close {
+		position: absolute;
+		right: 13px;
+		top: 13px;
+		cursor: pointer;
+		padding: 0;
+	}
+	}
 `;
 
 const CheckoutModalTitle = styled.h1`
 	margin: 0 0 16px;
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	font-size: 24px;
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	font-size: 20px;
 	color: ${ ( props ) => props.theme.colors.textColor };
 	line-height: 1.3;
 `;
@@ -158,8 +182,23 @@ const CheckoutModalCopy = styled.p`
 const CheckoutModalActions = styled.div`
 	display: flex;
 	justify-content: flex-end;
+	background: ${ ( props ) => props.theme.colors.surface };
 	gap: 8px;
-	margin-top: 24px;
+	width: 530px;
+	max-width: 80%;
+	padding: 1em 3em;
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px;
+
+	& > .checkout-modal__button {
+		font-size: 14px;
+		padding: 10px 24px;
+
+		&:not( .is-status-primary ) {
+			border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		}
+	}
 `;
 
 function handleActionAndClose( action: Callback, closeModal: Callback ) {

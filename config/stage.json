@@ -176,12 +176,9 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"videomaker-trial": false,
-		"videopress-onboarding-user-intent": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/hosting-metrics-i1": true,
-		"yolo/wp-admin-site-default": true,
 		"yolo/command-pallette": false
 	},
 	"siftscience_key": "e00e878351",
