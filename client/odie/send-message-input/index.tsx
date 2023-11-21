@@ -36,8 +36,8 @@ export const OdieSendMessageButton = ( {
 	const translate = useTranslate();
 
 	const { siteId, siteDomain, currentRoute, currentPlan } = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteDomain = getSiteDomain( state, siteId as number ) as string;
+		const siteId = getSelectedSiteId( state ) as number;
+		const siteDomain = getSiteDomain( state, siteId ) as string;
 		const currentRoute = getCurrentRoute( state );
 		const currentPlan = getCurrentPlan( state, siteId );
 
@@ -55,16 +55,27 @@ export const OdieSendMessageButton = ( {
 		}
 	}, [ initialUserMessage, chat.chat_id ] );
 
-	const replaceRouteParams = ( route: string ) => {
-		route = route.replace( siteDomain, ':site' );
+	/**
+	 * Replaces route param values with placeholders, and returns the modified route path and route params.
+	 * @param  {string}  route The route path
+	 * @returns {string, Object} Object containing the modified route path and route params
+	 */
+	const replaceRouteParamsWithPlaceholders = ( route: string ) => {
+		const routeParams = {} as Record< string, string >;
 
-		return route;
+		route = route.replace( siteDomain, ':site' );
+		routeParams.site = siteDomain;
+
+		return { route, routeParams };
 	};
 
 	const buildContext = () => {
+		const { route, routeParams } = replaceRouteParamsWithPlaceholders( currentRoute );
+
 		return {
 			site_id: siteId,
-			route: replaceRouteParams( currentRoute ),
+			route: route,
+			route_params: routeParams,
 			plan: currentPlan,
 		};
 	};
