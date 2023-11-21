@@ -288,7 +288,7 @@
 		"tslib": "^2.3.0",
 		"typescript": "^5.2.2",
 		"webpack": "^5.89.0",
-		"webpack-bundle-analyzer": "^4.9.1",
+		"webpack-bundle-analyzer": "^4.10.1",
 		"webpack-cli": "^4.10.0",
 		"webpack-dev-middleware": "^5.3.3",
 		"whybundled": "^2.0.0",

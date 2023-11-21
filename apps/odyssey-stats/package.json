@@ -75,6 +75,6 @@
 		"postcss": "^8.3.11",
 		"size-limit": "^8.2.6",
 		"webpack": "^5.89.0",
-		"webpack-bundle-analyzer": "^4.9.1"
+		"webpack-bundle-analyzer": "^4.10.1"
 	}
 }

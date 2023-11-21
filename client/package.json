@@ -207,7 +207,7 @@
 		"uuid": "^8.3.2",
 		"valid-url": "^1.0.9",
 		"webpack": "^5.89.0",
-		"webpack-bundle-analyzer": "^4.9.1",
+		"webpack-bundle-analyzer": "^4.10.1",
 		"webpack-dev-middleware": "^5.3.3",
 		"webpack-hot-middleware": "^2.25.4",
 		"webpack-node-externals": "^3.0.0",
