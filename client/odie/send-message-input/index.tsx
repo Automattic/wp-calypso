@@ -4,7 +4,7 @@ import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -35,13 +35,18 @@ export const OdieSendMessageButton = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const siteId = useSelector( getSelectedSiteId ) as number;
-	const currentSiteDomain = useSelector( ( state ) => {
-		return getSiteDomain( state, siteId );
-	} );
-	const currentRoute = useSelector( getCurrentRoute );
-	const currentPlan = useSelector( ( state ) => {
-		return getCurrentPlan( state, siteId );
+	const { siteId, siteDomain, currentRoute, currentPlan } = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteDomain = getSiteDomain( state, siteId as number ) as string;
+		const currentRoute = getCurrentRoute( state );
+		const currentPlan = getCurrentPlan( state, siteId );
+
+		return {
+			siteId,
+			siteDomain,
+			currentRoute,
+			currentPlan,
+		};
 	} );
 
 	useEffect( () => {
@@ -51,7 +56,7 @@ export const OdieSendMessageButton = ( {
 	}, [ initialUserMessage, chat.chat_id ] );
 
 	const replaceRouteParams = ( route: string ) => {
-		route = route.replace( currentSiteDomain as string, ':site' );
+		route = route.replace( siteDomain, ':site' );
 
 		return route;
 	};
