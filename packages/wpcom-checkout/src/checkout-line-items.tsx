@@ -1013,6 +1013,28 @@ const DesktopGiftWrapper = styled.div`
 	}
 `;
 
+/**
+ * Note that this function returns the cost in the currency's standard unit as
+ * a float (eg: dollars in USD).
+ */
+function getCostBeforeDiscounts( product: ResponseCartProduct ): number {
+	const originalCostOverrides =
+		product.cost_overrides?.filter( ( override ) => override.does_override_original_cost ) ?? [];
+	if ( originalCostOverrides.length > 0 ) {
+		const lastOriginalCostOverride = originalCostOverrides.pop();
+		if ( lastOriginalCostOverride ) {
+			return lastOriginalCostOverride.new_price;
+		}
+	}
+	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
+		const firstOverride = product.cost_overrides[ 0 ];
+		if ( firstOverride ) {
+			return firstOverride.old_price;
+		}
+	}
+	return product.cost;
+}
+
 function CheckoutLineItem( {
 	children,
 	product,
@@ -1077,6 +1099,9 @@ function CheckoutLineItem( {
 	);
 	const originalAmountInteger = product.item_original_subtotal_integer;
 
+	// Introductory offers have their renewal price returned as the original cost property, and we don't want to show that as the item's cost before discounts, so we calculate that separately here.
+	const costBeforeDiscounts = getCostBeforeDiscounts( product );
+
 	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
@@ -1116,7 +1141,12 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				{ hasCheckoutVersion( '2' ) ? (
-					<LineItemPrice actualAmount={ originalAmountDisplay } isSummary={ isSummary } />
+					<LineItemPrice
+						actualAmount={ formatCurrency( costBeforeDiscounts, product.currency, {
+							stripZeros: true,
+						} ) }
+						isSummary={ isSummary }
+					/>
 				) : (
 					<LineItemPrice
 						isDiscounted={ isDiscounted }
