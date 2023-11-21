@@ -43,12 +43,8 @@ export class StartImportFlow {
 	 * Constructs an instance of the flow.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param framework
 	 */
-	constructor(
-		private page: Page,
-		private framework: 'signup' | 'stepper'
-	) {}
+	constructor( private page: Page ) {}
 
 	/**
 	 * Given text, click on the button's first instance with the text.
@@ -198,7 +194,7 @@ export class StartImportFlow {
 	 * @param {string} siteSlug The site slug URL.
 	 */
 	async startImport( siteSlug: string ): Promise< void > {
-		const route = this.framework === 'signup' ? '/start/importer' : '/setup/setup-site';
+		const route = '/setup/setup-site';
 
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 	}
@@ -209,8 +205,7 @@ export class StartImportFlow {
 	 * @param {string} siteSlug The site slug URL.
 	 */
 	async startSetup( siteSlug: string ): Promise< void > {
-		const route =
-			this.framework === 'signup' ? '/start/setup-site/intent' : '/setup/site-setup/intent';
+		const route = '/setup/site-setup/intent';
 
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
