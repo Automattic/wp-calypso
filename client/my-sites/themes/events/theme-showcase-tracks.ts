@@ -51,7 +51,7 @@ const getThemeShowcaseEventRecorder = (
 				is_active_theme: isActiveTheme( themeId ),
 				style_variation: styleVariation,
 				results_rank: adjustedPosition,
-				results: themes.map( property( 'id' ) ).join(),
+				results: themes?.map( property( 'id' ) ).join() ?? [],
 				page_number: query?.page || null,
 				theme_on_page: Math.floor( adjustedPosition / query.number ),
 				action: snakeCase( action ),
