@@ -62,6 +62,10 @@ const HeaderPriceContainer = styled.div`
 		font-family: Recoleta, sans-serif;
 	}
 
+	.plan-price.is-placeholder-price {
+		visibility: hidden;
+	}
+
 	.plan-price__currency-symbol,
 	.plan-price.is-discounted .plan-price__currency-symbol {
 		font-size: 14px;
@@ -205,14 +209,38 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					{ isAnyVisibleGridPlanDiscounted && (
 						<Badge className="plan-features-2023-grid__badge" isHidden={ true }></Badge>
 					) }
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ originalPrice.monthly }
-						displayPerMonthNotation={ false }
-						isLargeCurrency={ isLargeCurrency }
-						isSmallestUnit={ true }
-						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
-					/>
+					{ isLargeCurrency ? (
+						<PricesGroup isLargeCurrency={ isLargeCurrency }>
+							<PlanPrice
+								currencyCode={ currencyCode }
+								rawPrice={ 0 }
+								displayPerMonthNotation={ false }
+								isLargeCurrency={ isLargeCurrency }
+								isSmallestUnit={ true }
+								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+								className="is-placeholder-price"
+								original
+							/>
+							<PlanPrice
+								currencyCode={ currencyCode }
+								rawPrice={ originalPrice.monthly }
+								displayPerMonthNotation={ false }
+								isLargeCurrency={ isLargeCurrency }
+								isSmallestUnit={ true }
+								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+								discounted
+							/>
+						</PricesGroup>
+					) : (
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ originalPrice.monthly }
+							displayPerMonthNotation={ false }
+							isLargeCurrency={ isLargeCurrency }
+							isSmallestUnit={ true }
+							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+						/>
+					) }
 				</>
 			) }
 		</HeaderPriceContainer>
