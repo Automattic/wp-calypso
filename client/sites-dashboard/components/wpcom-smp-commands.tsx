@@ -246,7 +246,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'openActivityLog',
-			label: __( 'Open activity log' ),
+			label: __( 'Open Activity Log' ),
 			searchLabel: __( 'open activity log' ),
 			context: 'Opening activity log',
 			callback: setStateCallback( 'openActivityLog' ),
@@ -254,6 +254,19 @@ export const useCommandsArrayWpcom = ( {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
 					navigate( `/activity-log/${ site.slug }` );
+				},
+			},
+		},
+		{
+			name: 'openBackups',
+			label: __( 'Open backups' ),
+			searchLabel: __( 'open backups' ),
+			context: 'Opening backups',
+			callback: setStateCallback( 'openBackups' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/backup/${ site.slug }` );
 				},
 			},
 		},
