@@ -89,15 +89,14 @@ export function activate(
 			);
 		}
 
-		/* Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
-		 * and redirect it to the Marketplace theme installation page
-		 */
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
-		if ( isDotOrgTheme && ! isDotComTheme ) {
+		if ( isDotOrgTheme ) {
 			dispatch( productToBeInstalled( themeId, siteSlug ) );
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
+		// Themes should only be either dotCom or dotOrg so this line should never be reached.
+		// Leaving it to prevent potential regression issues.
 		return dispatchActivateAction( dispatch, getState );
 	};
 }
