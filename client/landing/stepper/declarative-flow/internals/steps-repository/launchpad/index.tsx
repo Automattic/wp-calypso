@@ -35,10 +35,11 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const site = useSite();
 	const siteIntentOption = site?.options?.site_intent;
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
+	const launchpadData = useLaunchpad( siteSlug, siteIntentOption );
 	const {
 		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
-	} = useLaunchpad( siteSlug, siteIntentOption );
+	} = launchpadData;
 
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
