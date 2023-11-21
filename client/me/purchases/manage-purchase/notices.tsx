@@ -11,6 +11,8 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	is100Year,
+	PLAN_ECOMMERCE,
+	getPlanPath,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
@@ -43,6 +45,7 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	isMonthlyPurchase,
 } from 'calypso/lib/purchases';
+import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -1063,7 +1066,23 @@ class PurchaseNotice extends Component<
 	renderTrialNotice( productSlug: string ) {
 		const { moment, purchase, selectedSite, translate } = this.props;
 		const onClick = () => {
-			return page( `/plans/${ selectedSite?.slug }` );
+			const upgradePlanSlug =
+				productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
+					? getPlan( PLAN_ECOMMERCE )?.getStoreSlug()
+					: getPlan( PLAN_BUSINESS )?.getStoreSlug();
+
+			this.props.recordTracksEvent( 'calypso_business_expired_trial_upgrade_cta_clicked', {
+				location: 'purchases',
+				plan_slug: upgradePlanSlug,
+			} );
+
+			const planPath = getPlanPath( upgradePlanSlug ?? '' ) ?? '';
+			const checkoutUrl = getTrialCheckoutUrl( {
+				productSlug: planPath,
+				siteSlug: selectedSite?.slug ?? '',
+			} );
+
+			return page( checkoutUrl );
 		};
 		const expiry = moment.utc( purchase.expiryDate );
 		const daysToExpiry = isExpired( purchase )
