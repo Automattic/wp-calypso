@@ -27,7 +27,7 @@
 		"@wordpress/dom": "^3.44.0",
 		"@wordpress/i18n": "^4.44.0",
 		"@wordpress/icons": "^9.35.0",
-		"classnames": "^2.3.1"
+		"classnames": "^2.3.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.14.0",
@@ -38,7 +38,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^6.1.4",
-		"@testing-library/react": "^14.0.0",
+		"@testing-library/react": "^14.1.0",
 		"typescript": "^5.2.2"
 	},
 	"scripts": {

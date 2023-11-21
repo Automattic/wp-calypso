@@ -95,6 +95,8 @@ export default function InvoicesList() {
 						id={ invoice.id }
 						number={ invoice.number }
 						dueDate={ invoice.dueDate }
+						created={ invoice.created }
+						effectiveAt={ invoice.effectiveAt }
 						status={ invoice.status }
 						total={ invoice.total }
 						currency={ invoice.currency }

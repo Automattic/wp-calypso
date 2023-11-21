@@ -33,7 +33,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"swiper": "^10.1.0",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
@@ -47,7 +47,7 @@
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1",
 		"typescript": "^5.2.2",
-		"webpack": "^5.68.0"
+		"webpack": "^5.89.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.14.0",

@@ -41,7 +41,7 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 		}
 	}, [ isVisible ] );
 
-	const { login, createAccount, loginWindow } = useLoginWindow( {
+	const { login, createAccount, close } = useLoginWindow( {
 		onLoginSuccess: handleLoginSuccess,
 		onWindowClose: () => setIsLoginPopupOpen( false ),
 	} );
@@ -61,13 +61,13 @@ const ReaderJoinConversationDialog = ( { onClose, isVisible, loggedInAction, onL
 	const onCancelClick = () => {
 		setIsLoginPopupOpen( false );
 		trackEvent( 'calypso_reader_dialog_cancel_clicked' );
-		loginWindow?.close();
+		close();
 	};
 
 	const onCloseClick = () => {
 		setIsLoginPopupOpen( false );
 		trackEvent( 'calypso_reader_dialog_close_clicked' );
-		loginWindow?.close();
+		close();
 		onClose();
 	};
 

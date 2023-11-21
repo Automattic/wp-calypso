@@ -22,15 +22,17 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
 import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
-	getCreditsLineItemFromCart,
-	getSubtotalLineItemFromCart,
 	hasCheckoutVersion,
+	getCreditsLineItemFromCart,
+	getSubtotalWithoutCoupon,
+	getSubtotalWithCredits,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -117,23 +119,31 @@ export default function WPCheckoutOrderSummary( {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const subtotalLineItem = getSubtotalLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
+	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
+	const subtotalWithCredits = getSubtotalWithCredits( responseCart );
 
 	return (
 		<>
 			<CheckoutSummaryAmountWrapper>
-				{ hasCheckoutVersion( '2' ) && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + subtotalLineItem.id }>
-						<span>{ subtotalLineItem.label }</span>
-						<span>{ subtotalLineItem.formattedAmount }</span>
-					</CheckoutSummaryLineItem>
-				) }
-				{ couponLineItem && (
+				<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
+					<span>{ translate( 'Subtotal' ) }</span>
+					<span>
+						{ formatCurrency(
+							hasCheckoutVersion( '2' ) ? subtotalWithCredits : subtotalWithoutCoupon,
+							responseCart.currency,
+							{
+								isSmallestUnit: true,
+								stripZeros: true,
+							}
+						) }
+					</span>
+				</CheckoutSummaryLineItem>
+				{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
 						<span>{ couponLineItem.label }</span>
 						<span>{ couponLineItem.formattedAmount }</span>
@@ -145,13 +155,13 @@ function CheckoutSummaryPriceList() {
 						<span>{ taxLineItem.formattedAmount }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
-
-				{ hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
+				{ ! hasCheckoutVersion( '2' ) && creditsLineItem && responseCart.sub_total_integer > 0 && (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
-						<span>{ creditsLineItem?.label }</span>
+						<span>{ creditsLineItem.label }</span>
 						<span>{ creditsLineItem.formattedAmount }</span>
 					</CheckoutSummaryLineItem>
 				) }
+
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">

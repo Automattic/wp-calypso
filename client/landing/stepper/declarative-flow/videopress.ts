@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { LaunchpadNavigator, PlansSelect, SiteSelect } from '@automattic/data-stores';
+import { StyleVariation } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -9,6 +10,7 @@ import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -29,15 +31,10 @@ const videopress: Flow = {
 		return translate( 'Video' );
 	},
 	useSteps() {
-		const isIntentEnabled = config.isEnabled( 'videopress-onboarding-user-intent' );
-
 		return [
 			{
 				slug: 'intro',
-				asyncComponent: () =>
-					isIntentEnabled
-						? import( './internals/steps-repository/videopress-onboarding-intent' )
-						: import( './internals/steps-repository/intro' ),
+				asyncComponent: () => import( './internals/steps-repository/intro' ),
 			},
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
 			{ slug: 'options', component: SiteOptions },
@@ -67,6 +64,10 @@ const videopress: Flow = {
 		}
 
 		const name = this.name;
+		const { getSelectedStyleVariation } = useSelect(
+			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+			[]
+		);
 		const { setDomain, setSelectedDesign, setSiteDescription, setSiteTitle, setStepProgress } =
 			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
@@ -139,6 +140,53 @@ const videopress: Flow = {
 			return true;
 		};
 
+		const updateSelectedTheme = async ( siteId: number ) => {
+			const getStyleVariations = (): Promise< StyleVariation[] > => {
+				return wpcom.req.get( {
+					path: `/sites/${ siteId }/global-styles/themes/pub/videomaker/variations`,
+					apiNamespace: 'wp/v2',
+				} );
+			};
+
+			type Theme = {
+				_links: {
+					'wp:user-global-styles': { href: string }[];
+				};
+			};
+
+			const getSiteTheme = (): Promise< Theme > => {
+				return wpcom.req.get( {
+					path: `/sites/${ siteId }/themes/pub/videomaker`,
+					apiNamespace: 'wp/v2',
+				} );
+			};
+
+			const updateGlobalStyles = ( globalStylesId: number, styleVariation: StyleVariation ) => {
+				return wpcom.req.post( {
+					path: `/sites/${ siteId }/global-styles/${ globalStylesId }`,
+					apiNamespace: 'wp/v2',
+					body: styleVariation,
+				} );
+			};
+
+			const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
+			const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
+				getStyleVariations(),
+				getSiteTheme(),
+			] );
+
+			const userGlobalStylesLink: string =
+				theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
+			const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
+			const styleVariation = styleVariations.find(
+				( variation ) => variation.title === selectedStyleVariationTitle
+			);
+
+			if ( styleVariation && userGlobalStylesId ) {
+				await updateGlobalStyles( userGlobalStylesId, styleVariation );
+			}
+		};
+
 		const addVideoPressPendingAction = () => {
 			// if the supported plans haven't been received yet, wait for next rerender to try again.
 			if ( 0 === supportedPlans.length ) {
@@ -177,6 +225,13 @@ const videopress: Flow = {
 						launchpad_screen: 'off',
 						blogdescription: siteDescription,
 					} );
+
+					setProgress( 0.75 );
+
+					await updateSelectedTheme( newSite.blogid );
+
+					setProgress( 1.0 );
+
 					clearOnboardingSiteOptions();
 					return window.location.assign( `/site-editor/${ newSite.site_slug }` );
 				}
