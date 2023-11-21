@@ -15,7 +15,7 @@ export default function MissingPaymentNotification() {
 	}
 
 	const latestUnpaidInvoice = partner.keys.reduce< Invoice | null >( ( latestInvoice, key ) => {
-		if ( key.latestInvoice && key.latestInvoice.status !== 'paid' ) {
+		if ( key.latestInvoice && key.latestInvoice.status === 'open' ) {
 			return key.latestInvoice;
 		}
 		return latestInvoice;
