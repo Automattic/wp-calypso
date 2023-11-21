@@ -220,6 +220,19 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 		},
+		{
+			name: 'openSiteStats',
+			label: __( 'Open site stats' ),
+			searchLabel: __( 'open site stats' ),
+			context: 'Opening site stats',
+			callback: setStateCallback( 'openSiteStats' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/stats/${ site.slug }` );
+				},
+			},
+		},
 	];
 
 	return commands;
