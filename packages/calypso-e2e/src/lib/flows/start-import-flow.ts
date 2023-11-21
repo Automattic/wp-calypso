@@ -95,7 +95,7 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Validates that we've landed on the upgarde plan page.
+	 * Validates that we've landed on the upgrade plan page.
 	 */
 	async validateUpgradePlanPage(): Promise< void > {
 		await this.page.waitForSelector( selectors.startBuildingHeader( 'Upgrade your plan' ) );
