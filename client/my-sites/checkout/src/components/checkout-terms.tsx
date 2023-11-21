@@ -1,32 +1,28 @@
-import { isDomainTransfer, JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
+import { isDomainTransfer } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import {
-	has100YearPlan,
-	hasRenewableSubscription,
-	hasMonthlyCartItem,
-	hasPlan,
-	hasJetpackPlan,
-	isNextDomainFree,
-	hasP2PlusPlan,
-} from 'calypso/lib/cart-values/cart-items';
+import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
-import BundledDomainNotice from './bundled-domain-notice';
+import BundledDomainNotice, { showBundledDomainNotice } from './bundled-domain-notice';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationDotGay from './domain-registration-dot-gay';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import { EbanxTermsOfService } from './ebanx-terms-of-service';
-import { InternationalFeeNotice } from './international-fee-notice';
-import JetpackSocialAdvancedPricingDisclaimer from './jetpack-social-advanced-pricing-disclaimer';
+import { showInternationalFeeNotice, InternationalFeeNotice } from './international-fee-notice';
+import JetpackSocialAdvancedPricingDisclaimer, {
+	showJetpackSocialAdvancedPricingDisclaimer,
+} from './jetpack-social-advanced-pricing-disclaimer';
 import { PlanTerms100Year } from './plan-terms-100-year';
 import RefundPolicies from './refund-policies';
 import { TermsOfService } from './terms-of-service';
@@ -41,6 +37,9 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	const isJetpackNotAtomic = useSelector( ( state ) => {
 		return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 	} );
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const isNotJetpackOrAkismetCheckout =
+		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
 
 	// Domain transfer is a one-time purchase, but it creates a renewable
 	// subscription behind the scenes so we need to show the full TOS including
@@ -63,52 +62,18 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 
 	const showToSFoldableCard = useToSFoldableCard();
 
-	const shouldShowRefundPolicy =
-		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
+	const shouldShowBundledDomainNotice = showBundledDomainNotice( cart );
+	const shouldShowRefundPolicy = isNotJetpackOrAkismetCheckout;
 	const shouldShowInternationalFeeNotice =
-		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();
-
-	const shouldShowBundledDomainNotice = () => {
-		// A dotcom plan should exist.
-		if (
-			! hasPlan( cart ) ||
-			hasJetpackPlan( cart ) ||
-			hasMonthlyCartItem( cart ) ||
-			hasP2PlusPlan( cart ) ||
-			has100YearPlan( cart )
-		) {
-			return false;
-		}
-
-		// The plan should bundle a free domain
-		if ( ! isNextDomainFree( cart ) ) {
-			return false;
-		}
-
-		return true;
-	};
-
-	const shouldShowJetpackSocialAdvancedPricingDisclaimer = ( cart: ResponseCart ) => {
-		const product_slugs = cart.products.map( ( product ) => product.product_slug );
-		if ( product_slugs.length === 0 ) {
-			return null;
-		}
-		const showJetpackProductPricingDisclaimer = JETPACK_SOCIAL_ADVANCED_PRODUCTS.filter( ( slug ) =>
-			product_slugs.includes( slug )
-		);
-
-		if ( showJetpackProductPricingDisclaimer.length > 0 ) {
-			return true;
-		}
-
-		return false;
-	};
+		showInternationalFeeNotice( contactInfo ) && isNotJetpackOrAkismetCheckout;
+	const shouldShowJetpackSocialAdvancedPricingDisclaimer =
+		showJetpackSocialAdvancedPricingDisclaimer( cart );
 
 	const shouldRenderFoldableCard =
 		shouldShowRefundPolicy ||
 		shouldShowInternationalFeeNotice ||
-		shouldShowBundledDomainNotice() ||
-		shouldShowJetpackSocialAdvancedPricingDisclaimer( cart );
+		shouldShowBundledDomainNotice ||
+		shouldShowJetpackSocialAdvancedPricingDisclaimer;
 
 	return (
 		<Fragment>
@@ -128,12 +93,12 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			/>
 			{ hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
 				<>
-					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 					{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 					{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
 					{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
 					<EbanxTermsOfService />
 					{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
+					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 					{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 
@@ -147,9 +112,11 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 								screenReaderText={ translate( 'Read more' ) }
 							>
 								{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-								{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
+								{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
 								{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-								<JetpackSocialAdvancedPricingDisclaimer />
+								{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
+									<JetpackSocialAdvancedPricingDisclaimer />
+								) }
 							</FoldableCard>
 						) }
 					</TermsCollapsedContent>
@@ -160,14 +127,16 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 					{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
 					{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
 					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-					{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
+					{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
 					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 					{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 					{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
 					<EbanxTermsOfService />
 					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
-					<JetpackSocialAdvancedPricingDisclaimer />
+					{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
+						<JetpackSocialAdvancedPricingDisclaimer />
+					) }
 				</>
 			) }
 		</Fragment>
