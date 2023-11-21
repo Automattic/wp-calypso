@@ -67,7 +67,8 @@ class AllSites extends Component {
 		if ( ! this.props.icon ) {
 			return null;
 		}
-		return <IconContainer>{ this.props.icon }</IconContainer>;
+
+		return <IconContainer className="all-sites__icon-container">{ this.props.icon }</IconContainer>;
 	}
 
 	renderSiteCount() {
