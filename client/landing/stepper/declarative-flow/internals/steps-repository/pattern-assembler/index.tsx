@@ -668,6 +668,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
+			hideBack={ isSiteAssemblerFlow( flow ) && isNewSite }
 			hideSkip={ true }
 			stepContent={
 				<PatternAssemblerContainer
