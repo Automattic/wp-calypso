@@ -47,7 +47,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 		addPageArgs( pageNumber );
 	};
 
-	const siteColumns = useDefaultSiteColumns();
+	const siteColumns = useDefaultSiteColumns( isLargeScreen );
 	const firstColumn = siteColumns[ 0 ];
 
 	return (
