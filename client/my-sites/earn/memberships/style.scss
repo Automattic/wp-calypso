@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+body.is-section-earn.theme-default.color-scheme {
+	--color-surface-backdrop: var(--studio-white);
+}
+
 .memberships__module-header {
 	background: var(--color-surface);
 	height: 40px;
