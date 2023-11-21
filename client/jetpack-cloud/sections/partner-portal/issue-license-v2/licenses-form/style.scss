@@ -2,62 +2,51 @@
 @import "@wordpress/base-styles/mixins";
 @import "../../mixins.scss";
 
-.licenses-form {
-
-	p {
-		font-size: 1rem;
-	}
-
-	.select-dropdown__container {
-		width: 100%;
-	}
-}
-
 .licenses-form__placeholder {
 	@include placeholder( --color-neutral-10 );
 	height: 43px;
 }
 
-.licenses-form__actions {
-	display: flex;
-	justify-content: flex-end;
-	margin: 42px -10px 0;
+.licenses-form__section {
+	margin-block-end: 32px;
+}
 
-	> * {
-		margin: 0 10px;
+h2.licenses-form__section-title {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 18px;
+	margin-block-end: 10px;
+	font-size: rem(20px);
+	font-weight: 600;
+	line-height: 1.2;
+
+	hr {
+		color: var(--color-gray-5);
+		width: 1px;
+		flex-grow: 1;
+		margin: 0;
 	}
 }
 
-.licenses-form__controls {
-	@include licensing-portal-bottom-action-bar;
-
-	@include breakpoint-deprecated("<660px") {
-		display: flex;
-
-		.total-cost {
-			margin-right: 8px;
-		}
-	}
-
-	@include breakpoint-deprecated( ">660px" ) {
-		.total-cost {
-			display: none;
-		}
-	}
+p.licenses-form__section-description {
+	font-size: rem(14px);
+	font-weight: 400;
+	line-height: 1.2;
+	margin-block-end: 32px;
 }
 
-.licenses-form__top {
-	display: flex;
-	justify-content: space-between;
-}
-
-.licenses-form__bottom {
-	display: flex;
-	flex-wrap: wrap;
+.licenses-form__section-content {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: 1fr;
 
 	@include break-xlarge {
-		margin-left: -0.5rem;
-		margin-right: -0.5rem;
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-wide {
+		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
@@ -73,6 +62,8 @@ p.licenses-form__description {
 	}
 }
 
-.licenses-form__separator {
-	margin: 2rem 0;
+.licenses-form__select-license {
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
 }
