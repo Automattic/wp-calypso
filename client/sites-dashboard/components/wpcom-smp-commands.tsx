@@ -207,6 +207,19 @@ export const useCommandsArrayWpcom = ( {
 			},
 			icon: <MaterialIcon icon="key" />,
 		},
+		{
+			name: 'openSiteDashboard',
+			label: __( 'Open site dashboard' ),
+			searchLabel: __( 'open site dashboard' ),
+			context: 'Opening site dashboard',
+			callback: setStateCallback( 'openSiteDashboard' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/home/${ site.slug }` );
+				},
+			},
+		},
 	];
 
 	return commands;
