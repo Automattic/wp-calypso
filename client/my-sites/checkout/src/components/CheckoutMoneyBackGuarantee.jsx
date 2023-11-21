@@ -20,10 +20,6 @@ const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 			display: none;
 		}
 	}
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		justify-content: flex-start;
-	}
 `;
 
 const StyledIcon = styled( Icon )`
