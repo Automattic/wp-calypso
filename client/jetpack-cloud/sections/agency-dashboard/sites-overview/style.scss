@@ -59,7 +59,11 @@
 
 
 .sites-overview__add-site-issue-license-buttons.is-with-split-button {
-	flex-direction: column;
+	flex-direction: row;
+
+	> a {
+		flex-grow: 1;
+	}
 
 	.split-button {
 		display: flex;
@@ -69,8 +73,10 @@
 		flex-grow: 1;
 	}
 
-	@include break-xlarge {
-		flex-direction: row;
+	@include break-small {
+		> a {
+			flex-grow: 0;
+		}
 	}
 }
 .sites-overview__add-new-site {
@@ -94,11 +100,11 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
-		flex-direction: column;
 		justify-content: space-between;
+		flex-direction: column;
 	}
 
-	@include break-large {
+	@include break-xlarge {
 		flex-direction: row;
 	}
 
