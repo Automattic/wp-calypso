@@ -33,6 +33,7 @@ export enum LicenseType {
 export interface AssignLicenceProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
+	quantity?: number;
 }
 
 export interface LicenseAction {
