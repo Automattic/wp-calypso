@@ -12,6 +12,7 @@ import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
+import { useMarketplaceReviews } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPluginsList } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
@@ -84,6 +85,9 @@ export default function MarketplaceTest() {
 		getPluginOnSite( state, selectedSiteId, 'contact-form-7' )
 	);
 
+	const { data: marketplaceReviews, isLoading: isLoadingReviews } =
+		useMarketplaceReviews( 'woocommerce-bookings' );
+
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
@@ -132,6 +136,10 @@ export default function MarketplaceTest() {
 		<Container>
 			<button onClick={ fetchNextPage }>Fetch next page</button>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
+			<Card key="marketplace-reviews">
+				<h1>Reviews for WooCommerce Bookings</h1>
+				<pre>{ isLoadingReviews ? 'Loading...' : JSON.stringify( marketplaceReviews ) }</pre>
+			</Card>
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList
 					plugins={ data }
