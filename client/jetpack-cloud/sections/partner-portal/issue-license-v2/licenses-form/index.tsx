@@ -84,6 +84,8 @@ export default function LicensesForm( {
 		[ quantity, selectedLicenses ]
 	);
 
+	const isSingleLicenseView = quantity === 1;
+
 	if ( isLoadingProducts ) {
 		return (
 			<div className="licenses-form">
@@ -138,7 +140,7 @@ export default function LicensesForm( {
 				</LicensesFormSection>
 			) }
 
-			{ wooExtensions.length > 0 && (
+			{ isSingleLicenseView && wooExtensions.length > 0 && (
 				<LicensesFormSection
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
@@ -160,7 +162,7 @@ export default function LicensesForm( {
 				</LicensesFormSection>
 			) }
 
-			{ backupAddons.length > 0 && (
+			{ isSingleLicenseView && backupAddons.length > 0 && (
 				<LicensesFormSection
 					title={ translate( 'VaultPress Backup Add-ons' ) }
 					description={ translate(
