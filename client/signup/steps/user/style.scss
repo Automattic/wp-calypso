@@ -1,7 +1,7 @@
 body.is-section-signup.is-white-signup .signup {
 	.signup-form.is-horizontal {
 		.signup-form__terms-of-service-link,
-		.signup-form__social-buttons-tos,
+		.auth-form__social-buttons-tos,
 		.signup-form__social p,
 		.signup-form__recaptcha-tos,
 		.logged-out-form__links .logged-out-form__link-item {
@@ -18,7 +18,7 @@ body.is-section-signup.is-white-signup .signup {
 		}
 
 		.signup-form__terms-of-service-link a,
-		.signup-form__social-buttons-tos a,
+		.auth-form__social-buttons-tos a,
 		.signup-form__recaptcha-tos a {
 			text-decoration: underline;
 		}

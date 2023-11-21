@@ -12,8 +12,6 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import SocialToS from './social-tos';
 import type { IAppState } from 'calypso/state/types';
 
-import './styles.scss';
-
 interface SocialAuthenticationFormProps {
 	compact?: boolean;
 	handleGoogleResponse: ( response: any ) => void;
@@ -76,10 +74,10 @@ const SocialAuthenticationForm = ( {
 		// are many places in which the social signup form is rendered based only on the presence of the
 		// `signup/social` config flag.
 		! config.isEnabled( 'desktop' ) && (
-			<div className="signup-form__social">
+			<div className="auth-form__social">
 				{ ! compact && <p>{ preventWidows( translate( 'Or create an account using:' ) ) }</p> }
 
-				<div className="signup-form__social-buttons">
+				<div className="auth-form__social-buttons">
 					<GoogleSocialButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ handleGoogleResponse }
