@@ -11,7 +11,9 @@ function useUpdateNameserversMutation( domainName, queryOptions = {} ) {
 			} ),
 		...queryOptions,
 		onSuccess( ...args ) {
-			queryClient.invalidateQueries( [ 'domain-nameservers', domainName ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'domain-nameservers', domainName ],
+			} );
 			queryOptions.onSuccess?.( ...args );
 		},
 	} );

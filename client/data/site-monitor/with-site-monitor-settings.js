@@ -25,7 +25,9 @@ const withSiteMonitorSettings = createHigherOrderComponent( ( Wrapped ) => {
 					const queryKey = [ 'site-monitor-settings', siteId ];
 
 					// Cancel any current refetches, so they don't overwrite our optimistic update
-					await queryClient.cancelQueries( queryKey );
+					await queryClient.cancelQueries( {
+						queryKey: queryKey,
+					} );
 
 					// Snapshot the previous value
 					const previousSettings = queryClient.getQueryData( queryKey );
@@ -54,7 +56,9 @@ const withSiteMonitorSettings = createHigherOrderComponent( ( Wrapped ) => {
 				},
 				onSettled: () => {
 					// Refetch settings regardless
-					queryClient.invalidateQueries( [ 'site-monitor-settings', siteId ] );
+					queryClient.invalidateQueries( {
+						queryKey: [ 'site-monitor-settings', siteId ],
+					} );
 				},
 			} );
 
