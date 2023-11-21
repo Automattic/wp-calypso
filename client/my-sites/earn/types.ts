@@ -1,5 +1,3 @@
-import { SubscribersFilterBy, SubscribersSortBy } from '../subscribers/constants';
-
 export type Product = {
 	ID?: number;
 	currency?: string;
@@ -14,11 +12,8 @@ export type Product = {
 	type?: string;
 	is_editable?: boolean;
 	tier?: number;
-	f?: SubscribersFilterBy;
 };
 
 export type Query = {
-	f: SubscribersFilterBy | undefined;
-	sort: SubscribersSortBy | undefined;
-	[ key: string ]: string | undefined;
+	[ key: string ]: string;
 };
