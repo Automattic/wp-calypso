@@ -179,7 +179,7 @@ class VideoEditor extends Component {
 							/>
 						) }
 						<span className="video-editor__text">
-							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
+							{ translate( 'Select a frame to use as the poster image or upload your own.' ) }
 						</span>
 						<VideoEditorControls
 							isPosterUpdating={ isSelectingFrame || ( uploadProgress && ! error ) }

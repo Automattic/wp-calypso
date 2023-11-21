@@ -23,7 +23,6 @@ type MutationContext = {
 
 /**
  * Deletes a mailbox from a Professional Email (Titan) account
- *
  * @param domainName The domain name of the mailbox
  * @param mailboxName The mailbox name
  * @param mutationOptions Mutation options passed on to `useMutation`

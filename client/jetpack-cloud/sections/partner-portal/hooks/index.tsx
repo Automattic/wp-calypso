@@ -8,7 +8,6 @@ import ensurePartnerPortalReturnUrl from '../lib/ensure-partner-portal-return-ur
 
 /**
  * Redirect to the partner portal or a present "return" GET parameter given a certain condition.
- *
  * @param {boolean} redirect Whether to execute the redirect.
  * @returns {void}
  */
@@ -50,7 +49,6 @@ export function useRecentPaymentMethodsQuery( { enabled = true }: UseQueryOption
  * Useful to determine if pagination should be shown based on whether flag is or has been true at some point.
  * For example, Stripe responses include a boolean `has_more` pagination value which you can pass as the
  * argument and use the return value to conditionally render your pagination.
- *
  * @param {boolean} flag
  * @returns {boolean}
  */
@@ -68,7 +66,6 @@ export function usePermanentFlag( flag: boolean ): boolean {
 
 /**
  * Handle cursor-based pagination.
- *
  * @todo use this in payment method pagination.
  */
 export function useCursorPagination(
@@ -108,7 +105,6 @@ export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-lic
 
 /**
  * Returns product description and features with given product slug.
- *
  * @param productSlug
  * @returns
  */

@@ -1,11 +1,12 @@
 import config from '@automattic/calypso-config';
+import page, { type Callback } from 'page';
 import { GoldenTokenDialog } from './golden-token-dialog';
 
-export function goldenTokenContext( context: PageJS.Context, next: () => void ): void {
+export const goldenTokenContext: Callback = ( context, next ) => {
 	if ( ! config.isEnabled( 'jetpack/golden-token' ) ) {
 		page.redirect( '/' );
 	}
 
 	context.primary = <GoldenTokenDialog />;
 	next();
-}
+};

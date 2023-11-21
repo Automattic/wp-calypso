@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugModule from 'debug';
-import page from 'page';
+import page, { type Callback, type Context } from 'page';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -12,14 +12,14 @@ import { isSiteEligibleForJetpackCloud, getLandingPath } from './selectors';
 
 const debug = debugModule( 'calypso:jetpack-cloud:landing:controller' );
 
-const landForSiteId = ( siteId: number | null, context: PageJS.Context, next: () => void ) => {
+const landForSiteId = ( siteId: number | null, context: Context, next: () => void ) => {
 	debug( '[landForSiteId]: function entry', { siteId, context } );
 
 	// Landing requires a site ID;
 	// if we don't have one, redirect to the site selection page
 	if ( ! Number.isInteger( siteId ) ) {
 		debug( '[landForSiteId]: site ID not specified; redirecting to site selection' );
-		return '/landing';
+		return page.redirect( '/landing' );
 	}
 
 	const state = context.store.getState();
@@ -34,9 +34,7 @@ const landForSiteId = ( siteId: number | null, context: PageJS.Context, next: ()
 		debug( '[landForSiteId]: rendering interstitial Landing page' );
 
 		// To make the UI feel seamless transition, we want to have the sidebar appear on the interstitial page
-		if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-			context.secondary = <ManageSelectedSiteSidebar path={ context.path } />;
-		}
+		context.secondary = <ManageSelectedSiteSidebar path={ context.path } />;
 		context.primary = <Landing siteId={ siteId as number } />;
 		next();
 		return;
@@ -47,7 +45,7 @@ const landForSiteId = ( siteId: number | null, context: PageJS.Context, next: ()
 	page.redirect( landingPath );
 };
 
-export const landForPrimarySite = ( context: PageJS.Context, next: () => void ) => {
+export const landForPrimarySite: Callback = ( context, next ) => {
 	debug( '[landForPrimarySite]: function entry', context );
 
 	const state = context.store.getState();
@@ -66,7 +64,7 @@ export const landForPrimarySite = ( context: PageJS.Context, next: () => void ) 
 	landForSiteId( primarySiteId, context, next );
 };
 
-export const landForSelectedSite = ( context: PageJS.Context, next: () => void ) => {
+export const landForSelectedSite: Callback = ( context, next ) => {
 	debug( '[landForSelectedSite]: function entry', context );
 
 	const state = context.store.getState();

@@ -86,7 +86,6 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
-		"reader/discover-stream": true,
 		"reader/first-posts-stream": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
@@ -113,11 +112,8 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"videomaker-trial": false,
-		"videopress-onboarding-user-intent": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true,
-		"yolo/wp-admin-site-default": true,
 		"yolo/command-pallette": true
 	}
 }

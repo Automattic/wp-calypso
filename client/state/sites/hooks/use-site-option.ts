@@ -4,7 +4,6 @@ import getSiteOption from '../selectors/get-site-option';
 
 /**
  * Returns a site option for a site
- *
  * @param optionName The option you want to query
  * @returns The value of that option or null
  */

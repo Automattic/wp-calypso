@@ -1,8 +1,8 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { LoadingPlaceHolder } from '../loading-placeholder';
 import {
 	ButtonContainer,
 	DialogContainer,
@@ -78,7 +78,7 @@ export function FreePlanPaidDomainDialog( {
 				</RowWithBorder>
 				<Row>
 					<DomainName>
-						{ generatedWPComSubdomain.isLoading && <LoadingPlaceHolder /> }
+						{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
 						{ generatedWPComSubdomain.result &&
 							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
 								args: {

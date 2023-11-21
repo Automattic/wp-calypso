@@ -279,7 +279,7 @@ const ChatMessage = (
 				<FoldableCard
 					className="odie-sources-foldable-card"
 					clickableHeader
-					header={ translate( 'Sources', {
+					header={ translate( 'Related Guides', {
 						context:
 							'Below this text are links to sources for the current message received from the bot.',
 						textOnly: true,

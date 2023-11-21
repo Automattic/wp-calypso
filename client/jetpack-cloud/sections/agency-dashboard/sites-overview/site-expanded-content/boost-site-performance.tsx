@@ -36,7 +36,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		has_pending_boost_one_time_score: hasPendingScore,
 	} = site;
 
-	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
+	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData ?? {};
 
 	const components = {
 		strong: <strong></strong>,

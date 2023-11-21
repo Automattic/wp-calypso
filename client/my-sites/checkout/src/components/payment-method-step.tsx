@@ -1,18 +1,23 @@
+import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getTotalLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
-	getSubtotalLineItemFromCart,
 	NonProductLineItem,
 	hasCheckoutVersion,
+	LineItemType,
+	getCouponLineItemFromCart,
+	getSubtotalWithoutCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
+import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
-const CheckoutTermsWrapper = styled.div`
+const CheckoutTermsWrapper = styled.div< { shouldCollapseLastStep: boolean } >`
 	& > * {
 		margin: 16px 0;
 		padding-left: 24px;
@@ -30,7 +35,7 @@ const CheckoutTermsWrapper = styled.div`
 		padding-left: 0;
 		margin-right: 0;
 		margin-left: 0;
-		margin-top: 32px;
+		margin-top: ${ ( { shouldCollapseLastStep } ) => ( shouldCollapseLastStep ? '0' : '32px' ) };
 	}
 
 	a {
@@ -53,21 +58,36 @@ const TotalPrice = styled.div`
 	padding: 16px 0;
 `;
 
-export default function PaymentMethodStep() {
+export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const translate = useTranslate();
+	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
+	const subTotalLineItemWithoutCoupon: LineItemType = {
+		id: 'subtotal-without-coupon',
+		type: 'subtotal',
+		label: translate( 'Subtotal' ),
+		formattedAmount: formatCurrency( subtotalWithoutCoupon, responseCart.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} ),
+	};
+
 	return (
 		<>
-			<CheckoutTermsWrapper>
+			<CheckoutTermsWrapper shouldCollapseLastStep={ shouldCollapseLastStep }>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
 
 			{ ! hasCheckoutVersion( '2' ) && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>
-						<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
+						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+						{ couponLineItem && <NonProductLineItem subtotal lineItem={ couponLineItem } /> }
 						{ taxLineItems.map( ( taxLineItem ) => (
 							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 						) ) }

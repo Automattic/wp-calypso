@@ -397,7 +397,6 @@ export async function pendingSubscriptionsManager( context, next ) {
 /**
  * Middleware to redirect logged out users to /discover.
  * Intended for reader pages that do not support logged out users such as /read.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}

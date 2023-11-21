@@ -140,6 +140,25 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 		{ strong: <strong /> }
 	);
 
+	const yearOnePrice = isComparisonWithIntroOffer
+		? currentVariant.priceInteger
+		: currentVariant.priceBeforeDiscounts;
+
+	const yearTwoPrice = currentVariant.priceBeforeDiscounts;
+
+	const twoYearTotal =
+		currentVariant.priceBeforeDiscounts +
+		( isComparisonWithIntroOffer
+			? currentVariant.priceInteger
+			: currentVariant.priceBeforeDiscounts );
+
+	const twoYearTotalBiennial = biennialVariant.priceInteger;
+
+	// We don't want to call out the two year plan if it doesn't save them money
+	if ( twoYearTotal <= twoYearTotalBiennial ) {
+		return null;
+	}
+
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell jetpack">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
@@ -147,34 +166,17 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 
 				<UpsellLine
 					label={ __( 'Year One' ) }
-					value={ formatCurrency(
-						isComparisonWithIntroOffer
-							? currentVariant.priceInteger
-							: currentVariant.priceBeforeDiscounts,
-						currentVariant.currency,
-						currencyConfig
-					) }
+					value={ formatCurrency( yearOnePrice, currentVariant.currency, currencyConfig ) }
 				/>
 
 				<UpsellLine
 					label={ __( 'Year Two' ) }
-					value={ formatCurrency(
-						currentVariant.priceBeforeDiscounts,
-						currentVariant.currency,
-						currencyConfig
-					) }
+					value={ formatCurrency( yearTwoPrice, currentVariant.currency, currencyConfig ) }
 				/>
 
 				<UpsellLine
 					label={ __( 'Total' ) }
-					value={ formatCurrency(
-						currentVariant.priceBeforeDiscounts +
-							( isComparisonWithIntroOffer
-								? currentVariant.priceInteger
-								: currentVariant.priceBeforeDiscounts ),
-						currentVariant.currency,
-						currencyConfig
-					) }
+					value={ formatCurrency( twoYearTotal, currentVariant.currency, currencyConfig ) }
 					boldValue
 				/>
 
@@ -182,11 +184,7 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 
 				<UpsellLine
 					label={ __( 'Two-year total' ) }
-					value={ formatCurrency(
-						biennialVariant.priceInteger,
-						biennialVariant.currency,
-						currencyConfig
-					) }
+					value={ formatCurrency( twoYearTotalBiennial, biennialVariant.currency, currencyConfig ) }
 					boldValue
 				/>
 			</div>

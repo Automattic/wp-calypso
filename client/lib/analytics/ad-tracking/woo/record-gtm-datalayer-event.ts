@@ -4,7 +4,6 @@ import { initGTMContainer, loadGTMContainer } from '../gtm-container';
 
 /**
  * Sends a step event to Google Tag Manager for the woo express stepper flow.
- *
  * @param {string} stepName
  * @returns {void}
  */

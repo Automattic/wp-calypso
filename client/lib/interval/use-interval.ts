@@ -11,7 +11,6 @@ import type { TimeoutMS } from 'calypso/types';
 
 /**
  * Invoke a function on an interval.
- *
  * @param callback Function to invoke
  * @param delay    Interval timout in MS. `null` or `false` to stop the interval.
  */

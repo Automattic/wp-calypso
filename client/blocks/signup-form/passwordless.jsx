@@ -232,7 +232,7 @@ class PasswordlessSignupForm extends Component {
 				return;
 			}
 		}
-	}, 500 );
+	}, 1000 );
 
 	onInputChange = ( { target: { value } } ) => {
 		this.debouncedEmailSuggestion( value );

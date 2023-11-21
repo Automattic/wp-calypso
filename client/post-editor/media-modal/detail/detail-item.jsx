@@ -110,7 +110,7 @@ export class EditorMediaModalDetailItem extends Component {
 		}
 
 		const isVideoMime = 'video' === mimePrefix;
-		const editText = isVideoMime ? translate( 'Edit Thumbnail' ) : translate( 'Edit Image' );
+		const editText = isVideoMime ? translate( 'Edit Poster' ) : translate( 'Edit Image' );
 
 		return (
 			<Button

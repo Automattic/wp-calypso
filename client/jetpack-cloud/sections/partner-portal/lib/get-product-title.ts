@@ -1,6 +1,5 @@
 /**
  * Format the string by removing Jetpack, (, ) from the product name
- *
  * @param product Product name
  * @returns Product title
  */

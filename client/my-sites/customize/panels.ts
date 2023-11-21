@@ -16,7 +16,6 @@ export const PANEL_MAPPINGS: Record< string, [ string, string ] > = {
  * Given the name of a Calypso customizer panel, returns an object containing
  * the section or panel to be used in autofocus. Returns null if the panel is
  * not recognized.
- *
  * @param  {string}  panel Calypso panel slug
  * @returns {?Object}       WordPress autofocus argument object
  */

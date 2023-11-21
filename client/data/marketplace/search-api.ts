@@ -11,7 +11,6 @@ const SORT_QUERY_MAP = new Map( [
 ] );
 /**
  * Map sort values to ones compatible with the API.
- *
  * @param {string} sort - Sort value.
  * @returns {string} Mapped sort value.
  */
@@ -30,7 +29,6 @@ function mapSortToApiValue( sort: string ) {
 
 /**
  * Generate the query string for an API request
- *
  * @returns {string} The generated query string.
  */
 function generateApiQueryString( {
@@ -99,7 +97,6 @@ const apiVersion = '1.3';
 
 /**
  * Perform a search.
- *
  * @param {Object} options - Search options
  * @returns {Promise} A promise to the JSON response object
  */

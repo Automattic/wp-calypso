@@ -9,7 +9,6 @@ const canvasContext = textSizingCanvas.getContext( '2d' ) as CanvasRenderingCont
 
 /**
  * Gets the font info from an input field then measures the width of the text within.
- *
  * @param text the string
  * @param element The input element
  */

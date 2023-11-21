@@ -42,19 +42,6 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	};
 }
 
-export function getSubtotalLineItemFromCart( responseCart: ResponseCart ): LineItemType {
-	return {
-		id: 'subtotal',
-		type: 'subtotal',
-		// translators: The label of the subtotal line item in checkout
-		label: String( translate( 'Subtotal' ) ),
-		formattedAmount: formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} ),
-	};
-}
-
 export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItemType | null {
 	if ( ! responseCart.tax.display_taxes ) {
 		return null;
@@ -106,10 +93,10 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 }
 
 export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineItemType | null {
-	if ( responseCart.credits_integer <= 0 ) {
+	const credits = getCreditsUsedByCart( responseCart );
+	if ( credits === 0 ) {
 		return null;
 	}
-	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 	return {
 		id: 'credits',
 		// translators: The label of the credits line item in checkout
@@ -119,18 +106,50 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 		formattedAmount: String(
 			translate( '- %(discountAmount)s', {
 				args: {
-					// Clamp the credits display value to the total
-					discountAmount: formatCurrency(
-						isFullCredits
-							? responseCart.sub_total_with_taxes_integer
-							: responseCart.credits_integer,
-						responseCart.currency,
-						{ isSmallestUnit: true, stripZeros: true }
-					),
+					discountAmount: formatCurrency( credits, responseCart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 				},
 			} )
 		),
 	};
+}
+
+/**
+ * Even though a user might have a number of credits available, that number may
+ * be greater than the cart's total. This function returns the number of
+ * credits actually being used by a cart.
+ */
+function getCreditsUsedByCart( responseCart: ResponseCart ): number {
+	if ( responseCart.credits_integer <= 0 ) {
+		return 0;
+	}
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	return isFullCredits ? responseCart.sub_total_with_taxes_integer : responseCart.credits_integer;
+}
+
+/*
+ * Coupon discounts are applied (or not, as appropriate) to each line item's
+ * total, so the cart's subtotal includes them. However, because it's nice to
+ * be able to display the coupon discount as a discount separately from the
+ * subtotal, this function returns the cart's subtotal with the coupon savings
+ * removed.
+ */
+export function getSubtotalWithoutCoupon( responseCart: ResponseCart ): number {
+	return responseCart.sub_total_integer + responseCart.coupon_savings_total_integer;
+}
+
+/**
+ * Credits are the only type of cart discount that is applied to the cart as a
+ * whole and not to individual line items. The subtotal is only a subtotal of
+ * line items and does not have credits applied. Therefore, if we want to
+ * display credits as a discount along with other discounts before the
+ * subtotal, we probably want to display the subtotal as having credits already
+ * applied, which this function returns.
+ */
+export function getSubtotalWithCredits( responseCart: ResponseCart ): number {
+	return responseCart.sub_total_integer - getCreditsUsedByCart( responseCart );
 }
 
 export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {

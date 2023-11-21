@@ -39,7 +39,6 @@ import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stor
  * 1. It renders a react-router route for every step in the flow.
  * 2. It gives every step the ability to navigate back and forth within the flow
  * 3. It's responsive to the dynamic changes in side the flow's hooks (useSteps and useStepsNavigation)
- *
  * @param props
  * @param props.flow the flow you want to render
  * @returns A React router switch will all the routes

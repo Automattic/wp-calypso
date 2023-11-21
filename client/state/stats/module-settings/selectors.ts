@@ -6,7 +6,6 @@ const EMPTY_RESULT = {};
 
 /**
  * Returns module settings for a given site
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @returns {Object}           Highlights object; see schema.
@@ -17,7 +16,6 @@ export function getModuleSettings( state: object, siteId: number, pageName: stri
 
 /**
  * Returns whether or not the module settings are being loaded
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @returns {boolean}          	 Array of stat types as strings

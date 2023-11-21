@@ -7,7 +7,6 @@ const VERSION = 2;
 
 /**
  * Irreversibly hash the auth code to avoid storing it as query key.
- *
  * @param code The domain auth code.
  * @returns the hash.
  */

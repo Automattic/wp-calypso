@@ -3,7 +3,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Returns the get_domain query param if present or null.
- *
  * @param {Object}   state Global state tree
  * @returns {?string}       The domain as a string or null
  */
