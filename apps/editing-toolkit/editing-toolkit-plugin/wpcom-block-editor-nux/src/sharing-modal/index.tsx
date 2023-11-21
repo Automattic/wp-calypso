@@ -195,7 +195,7 @@ const SharingModalInner: React.FC = () => {
 					<p>
 						{ createInterpolateElement(
 							__(
-								'TEST: Your post is now live and was delivered to each of <a>your subscribers</a>.',
+								'Your post is now live and was delivered to each of <a>your subscribers</a>.',
 								'full-site-editing'
 							),
 							{
@@ -286,8 +286,9 @@ const SharingModalInner: React.FC = () => {
 					</div>
 				</div>
 				<div className="wpcom-block-editor-post-published-sharing-modal__right">
-					{ shouldShowSuggestedTags && <SuggestedTags /> }
-					{ ! shouldShowSuggestedTags && (
+					{ shouldShowSuggestedTags ? (
+						<SuggestedTags />
+					) : (
 						<img
 							className="wpcom-block-editor-post-published-sharing-modal__image"
 							src={ postPublishedImage }

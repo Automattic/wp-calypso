@@ -121,6 +121,20 @@
 				height: 1.3125rem;
 			}
 		}
+		.wpcom-block-editor-post-published-sharing-modal__suggest-tags {
+			width: 250px;
+			flex: fit-content;
+		}
+		.wpcom-block-editor-post-published-sharing-modal__save-tags {
+			display: flex;
+			p {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 14px;
+				font-weight: 500;
+				margin: 8px;
+				color: var(--studio-green-50);
+			}
+		}
 	}
 }
 
