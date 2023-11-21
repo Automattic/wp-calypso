@@ -68,6 +68,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	margin: auto;
+	height: 100%;
 
 	> * + * {
 		margin-inline-start: 24px;
@@ -85,6 +87,18 @@
 			margin-inline-start: 0;
 		}
 	}
+}
+
+.jetpack-cloud-layout__sticky-header {
+	position: fixed;
+	width: calc(100% - var(--sidebar-width-max));
+	left: var(--sidebar-width-max);
+	top: var(--masterbar-height);
+	background-color: rgba(246, 247, 247, 0.95);
+	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
+	z-index: 1001;
+	height: 74px;
+
 }
 
 .jetpack-cloud-layout__header-title {
@@ -147,4 +161,8 @@
 		// we need to make sure the dropdown is above it
 		z-index: 23;
 	}
+}
+
+.jetpack-cloud-layout__viewport {
+	margin-inline-start: 0;
 }

@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { Children, ReactNode } from 'react';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 
 type Props = {
-	className?: string;
+	showStickyContent?: boolean;
 	children: ReactNode;
 };
 
@@ -18,7 +19,7 @@ export function LayoutHeaderActions( { children }: Props ) {
 	return <h2 className="jetpack-cloud-layout__header-actions">{ children }</h2>;
 }
 
-export default function LayoutHeader( { className, children }: Props ) {
+export default function LayoutHeader( { showStickyContent, children }: Props ) {
 	const headerTitle = Children.toArray( children ).find(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( child: any ) => child.type === LayoutHeaderTitle
@@ -34,14 +35,26 @@ export default function LayoutHeader( { className, children }: Props ) {
 		( child: any ) => child.type === LayoutHeaderActions
 	);
 
-	return (
-		<div className={ classNames( 'jetpack-cloud-layout__header', className ) }>
-			<div className="jetpack-cloud-layout__header-main">
-				{ headerTitle }
-				{ headerSubtitle }
-			</div>
+	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
-			{ headerActions }
+	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
+
+	return (
+		<div className="jetpack-cloud-layout__viewport" { ...outerDivProps }>
+			<div
+				className={ classNames( {
+					'jetpack-cloud-layout__sticky-header': showStickyContent && hasCrossed,
+				} ) }
+			>
+				<div className={ classNames( 'jetpack-cloud-layout__header' ) }>
+					<div className="jetpack-cloud-layout__header-main">
+						{ headerTitle }
+						{ headerSubtitle }
+					</div>
+
+					{ headerActions }
+				</div>
+			</div>
 		</div>
 	);
 }

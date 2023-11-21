@@ -1,31 +1,20 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-issue-license-v2__viewport {
-	margin-inline-start: 0;
-}
-
-.issue-license-v2__sticky-header {
-	position: fixed;
-	width: calc(100% - var(--sidebar-width-max));
-	left: var(--sidebar-width-max);
-	top: var(--masterbar-height);
-	background-color: rgba(246, 247, 247, 0.95);
-	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
-	z-index: 1001;
-	height: 74px;
+.jetpack-cloud-layout__sticky-header {
 
 	.jetpack-cloud-layout__header-subtitle {
 		display: none;
 	}
 
 	.jetpack-cloud-layout__header-title {
-		margin-left: 73px;
+		margin-inline-start: 48px;
 		font-size: rem(24px);
+		margin-block-end: 0;
 	}
 
 	.jetpack-cloud-layout__header-actions {
-		margin-right: 73px;
+		margin-inline-end: 48px;
 	}
 }
 

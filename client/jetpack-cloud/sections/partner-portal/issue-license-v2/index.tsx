@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import Layout from 'calypso/jetpack-cloud/components/layout';
@@ -15,7 +14,6 @@ import LayoutNavigation, {
 	LayoutNavigationItem as NavigationItem,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
-import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
@@ -40,10 +38,6 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 
 	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
 
-	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
-
-	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
-
 	const selectedLicenseCount = selectedLicenses
 		.map( ( license ) => license.quantity )
 		.reduce( ( a, b ) => a + b, 0 );
@@ -56,8 +50,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		handleShowLicenseOverview();
 	}, [ handleShowLicenseOverview ] );
 
-	const showStickyContent =
-		isWithinBreakpoint( '>960px' ) && selectedLicenses.length > 0 && hasCrossed;
+	const showStickyContent = isWithinBreakpoint( '>960px' ) && selectedLicenses.length > 0;
 
 	return (
 		<Layout
@@ -67,36 +60,30 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			withBorder
 		>
 			<LayoutTop>
-				<div className="issue-license-v2__viewport" { ...outerDivProps }>
-					<LayoutHeader
-						className={ classNames( {
-							'issue-license-v2__sticky-header': showStickyContent,
-						} ) }
-					>
-						<Title>{ translate( 'Issue product licenses' ) } </Title>
-						<Subtitle>
-							{ translate( 'Select single product licenses or save when you issue in bulk' ) }
-						</Subtitle>
-						<Actions>
-							{ selectedLicenses.length > 0 && (
-								<Button
-									primary
-									className="issue-license-v2__select-license"
-									busy={ ! isReady }
-									onClick={ onClickIssueLicenses }
-								>
-									{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-										context: 'button label',
-										count: selectedLicenseCount,
-										args: {
-											numLicenses: selectedLicenseCount,
-										},
-									} ) }
-								</Button>
-							) }
-						</Actions>
-					</LayoutHeader>
-				</div>
+				<LayoutHeader showStickyContent={ showStickyContent }>
+					<Title>{ translate( 'Issue product licenses' ) } </Title>
+					<Subtitle>
+						{ translate( 'Select single product licenses or save when you issue in bulk' ) }
+					</Subtitle>
+					<Actions>
+						{ selectedLicenses.length > 0 && (
+							<Button
+								primary
+								className="issue-license-v2__select-license"
+								busy={ ! isReady }
+								onClick={ onClickIssueLicenses }
+							>
+								{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+									context: 'button label',
+									count: selectedLicenseCount,
+									args: {
+										numLicenses: selectedLicenseCount,
+									},
+								} ) }
+							</Button>
+						) }
+					</Actions>
+				</LayoutHeader>
 
 				<LayoutNavigation
 					selectedText={
