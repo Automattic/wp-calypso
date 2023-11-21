@@ -55,7 +55,7 @@ export default function LayoutNavigation( {
 			selectedText={
 				<span>
 					{ selectedText }
-					<Count count={ selectedCount } compact={ true } />
+					{ selectedCount !== undefined && <Count count={ selectedCount } compact={ true } /> }
 				</span>
 			}
 		>

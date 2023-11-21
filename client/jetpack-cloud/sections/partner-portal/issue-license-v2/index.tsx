@@ -94,7 +94,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 				>
 					{ availableSizes.map( ( size ) => (
 						<NavigationItem
-							key={ size }
+							key={ `bundle-size-${ size }` }
 							label={
 								size === 1
 									? translate( 'Single license' )
