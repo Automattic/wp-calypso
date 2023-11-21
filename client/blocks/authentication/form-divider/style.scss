@@ -10,6 +10,7 @@ $breakpoint-mobile: 660px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	width: 100%;
 
 	&::before {
 		position: absolute;
@@ -26,16 +27,14 @@ $breakpoint-mobile: 660px;
 		background-color: #fdfdfd;
 		text-transform: uppercase;
 		text-align: center;
-		padding: 24px 0;
+		padding: 0 24px;
+
 		font-size: 0.75rem;
 		z-index: 1;
 		color: var(--studio-gray-50);
 	}
-}
 
-
-.is-section-signup {
-	.auth-form__separator {
+	&.is-vertical {
 		width: calc(100% - 32px);
 		margin: 20px 0;
 
@@ -51,21 +50,12 @@ $breakpoint-mobile: 660px;
 				height: 100%;
 			}
 		}
-	}
 
-	.auth-form__separator-text {
-		@media screen and (max-width: $breakpoint-mobile ) {
-			padding: 0 24px;
+		.auth-form__separator-text {
+			padding: 24px 0;
+			@media screen and (max-width: $breakpoint-mobile ) {
+				padding: 0 24px;
+			}
 		}
-	}
-}
-
-.is-section-login {
-	.auth-form__separator {
-		width: 100%;
-	}
-
-	.auth-form__separator-text {
-		padding: 0 24px;
 	}
 }

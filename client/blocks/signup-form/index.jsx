@@ -1276,7 +1276,7 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ showSeparator && <FormDivider /> }
+				{ showSeparator && <FormDivider isVertical={ true } /> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>

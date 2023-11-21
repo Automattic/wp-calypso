@@ -380,6 +380,7 @@ export class Login extends Component {
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const mainClassNames = classNames( 'wp-login__main', {
 			'is-wpcom-migration': isFromMigrationPlugin,
+			'is-social-first': config.isEnabled( 'login/social-first' ),
 		} );
 
 		return (

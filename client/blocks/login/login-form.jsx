@@ -719,8 +719,14 @@ export class LoginForm extends Component {
 			return this.renderWooCommerce( { socialToS } );
 		}
 
+		const isSocialFirst = config.isEnabled( 'login/social-first' );
+
 		return (
-			<form onSubmit={ this.onSubmitForm } method="post">
+			<form
+				className={ classNames( { 'is-social-first': isSocialFirst } ) }
+				onSubmit={ this.onSubmitForm }
+				method="post"
+			>
 				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
 					<p className="login__form-subheader">
 						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
@@ -848,7 +854,7 @@ export class LoginForm extends Component {
 
 				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
 					<Fragment>
-						<FormDivider />
+						<FormDivider isVertical={ isSocialFirst } />
 						<SocialLoginForm
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
