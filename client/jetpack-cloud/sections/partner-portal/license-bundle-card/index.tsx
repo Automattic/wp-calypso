@@ -17,7 +17,7 @@ import './style.scss';
 type Props = {
 	isBusy: boolean;
 	isDisabled: boolean;
-	withBackground: boolean;
+	withBackground?: boolean;
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	onSelectProduct?: ( value: APIProductFamilyProduct ) => void;
