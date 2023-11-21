@@ -1,0 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+issue-license-v2__viewport {
+	margin-inline-start: 0;
+}
+
+.issue-license-v2__sticky-header {
+	position: fixed;
+	width: calc(100% - var(--sidebar-width-max));
+	left: var(--sidebar-width-max);
+	top: var(--masterbar-height);
+	background-color: rgba(246, 247, 247, 0.95);
+	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
+	z-index: 1001;
+	height: 74px;
+
+	.jetpack-cloud-layout__header-subtitle {
+		display: none;
+	}
+
+	.jetpack-cloud-layout__header-title {
+		margin-left: 73px;
+		font-size: rem(24px);
+	}
+
+	.jetpack-cloud-layout__header-actions {
+		margin-right: 73px;
+	}
+}
+
+.issue-license-v2__select-license {
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
+
+	@include breakpoint-deprecated("<660px") {
+		width: auto;
+		flex-grow: 1;
+	}
+}

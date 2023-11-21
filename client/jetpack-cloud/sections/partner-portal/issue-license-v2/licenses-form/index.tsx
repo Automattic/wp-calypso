@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useContext } from 'react';
@@ -129,10 +128,6 @@ export default function LicensesForm( {
 		[ quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
-	const handleShowLicenseOverview = useCallback( () => {
-		// Handle showing the license overview modal here
-	}, [] );
-
 	const onSelectProduct = useCallback(
 		( product: APIProductFamilyProduct ) => {
 			handleSelectBundleLicense( product );
@@ -149,10 +144,6 @@ export default function LicensesForm( {
 		[ handleSelectBundleLicense ]
 	);
 
-	const onClickIssueLicenses = useCallback( () => {
-		handleShowLicenseOverview();
-	}, [ handleShowLicenseOverview ] );
-
 	if ( isLoadingProducts ) {
 		return (
 			<div className="licenses-form">
@@ -162,10 +153,6 @@ export default function LicensesForm( {
 	}
 
 	const selectedSiteDomain = selectedSite?.domain;
-
-	const selectedLicenseCount = selectedLicenses
-		.map( ( license ) => license.quantity )
-		.reduce( ( a, b ) => a + b, 0 );
 
 	const isSelected = ( slug: string ) =>
 		selectedLicenses.findIndex(
@@ -191,22 +178,6 @@ export default function LicensesForm( {
 				</p>
 				<div className="licenses-form__controls">
 					<TotalCost />
-					{ selectedLicenseCount > 0 && (
-						<Button
-							primary
-							className="licenses-form__select-license"
-							busy={ ! isReady }
-							onClick={ onClickIssueLicenses }
-						>
-							{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-								context: 'button label',
-								count: selectedLicenseCount,
-								args: {
-									numLicenses: selectedLicenseCount,
-								},
-							} ) }
-						</Button>
-					) }
 				</div>
 			</div>
 			<div className="licenses-form__bottom">

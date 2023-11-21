@@ -34,11 +34,6 @@
 	@include breakpoint-deprecated("<660px") {
 		display: flex;
 
-		.licenses-form__select-license {
-			width: auto;
-			flex-grow: 1;
-		}
-
 		.total-cost {
 			margin-right: 8px;
 		}
@@ -80,10 +75,4 @@ p.licenses-form__description {
 
 .licenses-form__separator {
 	margin: 2rem 0;
-}
-
-.licenses-form__select-license {
-	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
-	border-width: 1.5px !important;
-	border-color: transparent;
 }

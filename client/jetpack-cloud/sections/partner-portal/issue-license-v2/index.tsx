@@ -1,6 +1,9 @@
 import { Button } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
+import { getQueryArg } from '@wordpress/url';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
@@ -12,17 +15,49 @@ import LayoutNavigation, {
 	LayoutNavigationItem as NavigationItem,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
+import useSubmitForm from './hooks/use-submit-form';
 import LicensesForm from './licenses-form';
 import type { SelectedLicenseProp } from './types';
 import type { AssignLicenceProps } from '../types';
+
+import './style.scss';
 
 export default function IssueLicenseV2( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 
 	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize();
+
+	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
+	// track if the user purchases a different set of products.
+	const suggestedProductSlugs = getQueryArg( window.location.href, 'product_slug' )
+		?.toString()
+		.split( ',' );
+
+	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
+
 	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
+
+	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
+
+	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
+
+	const selectedLicenseCount = selectedLicenses
+		.map( ( license ) => license.quantity )
+		.reduce( ( a, b ) => a + b, 0 );
+
+	const handleShowLicenseOverview = useCallback( () => {
+		// Handle showing the license overview modal here
+	}, [] );
+
+	const onClickIssueLicenses = useCallback( () => {
+		handleShowLicenseOverview();
+	}, [ handleShowLicenseOverview ] );
+
+	const showStickyContent =
+		isWithinBreakpoint( '>960px' ) && selectedLicenses.length > 0 && hasCrossed;
 
 	return (
 		<Layout
@@ -32,16 +67,36 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			withBorder
 		>
 			<LayoutTop>
-				<LayoutHeader>
-					<Title>{ translate( 'Issue product licenses' ) } </Title>
-					<Subtitle>
-						{ translate( 'Select single product licenses or save when you issue in bulk' ) }
-					</Subtitle>
-
-					<Actions>
-						<Button primary>Issue license </Button>
-					</Actions>
-				</LayoutHeader>
+				<div className="issue-license-v2__viewport" { ...outerDivProps }>
+					<LayoutHeader
+						className={ classNames( {
+							'issue-license-v2__sticky-header': showStickyContent,
+						} ) }
+					>
+						<Title>{ translate( 'Issue product licenses' ) } </Title>
+						<Subtitle>
+							{ translate( 'Select single product licenses or save when you issue in bulk' ) }
+						</Subtitle>
+						<Actions>
+							{ selectedLicenses.length > 0 && (
+								<Button
+									primary
+									className="issue-license-v2__select-license"
+									busy={ ! isReady }
+									onClick={ onClickIssueLicenses }
+								>
+									{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+										context: 'button label',
+										count: selectedLicenseCount,
+										args: {
+											numLicenses: selectedLicenseCount,
+										},
+									} ) }
+								</Button>
+							) }
+						</Actions>
+					</LayoutHeader>
+				</div>
 
 				<LayoutNavigation
 					selectedText={
@@ -52,6 +107,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 				>
 					{ availableSizes.map( ( size ) => (
 						<NavigationItem
+							key={ size }
 							label={
 								size === 1
 									? translate( 'Single license' )
