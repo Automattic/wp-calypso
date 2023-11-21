@@ -15,7 +15,6 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import SectionHeader from 'calypso/components/section-header';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
@@ -149,7 +148,6 @@ function CustomerSection() {
 		const wording = getIntervalDependantWording( cancelledSubscriber );
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Customers and Subscribers' ) } />
 				{ Object.values( subscribers ).length === 0 && (
 					<Card>
 						{ translate( "You haven't added any customers. {{a}}Learn more{{/a}} about payments.", {
@@ -168,7 +166,7 @@ function CustomerSection() {
 					</Card>
 				) }
 				{ Object.values( subscribers ).length > 0 && (
-					<Card>
+					<>
 						<ul className="supporters-list" role="table">
 							<li className="row header" role="row">
 								<span className="supporters-list__profile-column" role="columnheader">
@@ -214,7 +212,7 @@ function CustomerSection() {
 								{ translate( 'Download list as CSV' ) }
 							</Button>
 						</div>
-					</Card>
+					</>
 				) }
 			</div>
 		);
