@@ -244,6 +244,19 @@ export const useCommandsArrayWpcom = ( {
 			},
 			icon: domainsIcon,
 		},
+		{
+			name: 'openActivityLog',
+			label: __( 'Open activity log' ),
+			searchLabel: __( 'open activity log' ),
+			context: 'Opening activity log',
+			callback: setStateCallback( 'openActivityLog' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/activity-log/${ site.slug }` );
+				},
+			},
+		},
 	];
 
 	return commands;
