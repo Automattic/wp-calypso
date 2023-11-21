@@ -396,6 +396,11 @@ body.is-section-earn.theme-default.color-scheme {
 			flex: 2;
 			.supporters-list__offer-type-title {
 				font-weight: 600;
+				/* stylelint-disable-next-line unit-allowed-list */
+				max-width: 28ch;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
 			}
 			.supporters-list__offer-type-price {
 				font-size: $font-body-extra-small;

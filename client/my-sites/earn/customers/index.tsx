@@ -252,33 +252,19 @@ function CustomerSection() {
 
 	function renderSubscriberSubscriptionSummary( subscriber: Subscriber ) {
 		if ( subscriber.plan.renew_interval === PLAN_ONE_TIME_FREQUENCY ) {
-			/* translators: Information about a one-time payment made by a subscriber to a site owner.
-				%(amount)s - the amount paid,
-				%(formattedDate) - the date it was paid
-				%(title) - description of the payment plan, or a blank space if no description available. */
-			return translate( '%(amount)s once', {
+			return translate( 'One Time (%(amount)s)', {
 				args: {
 					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === PLAN_YEARLY_FREQUENCY ) {
-			/* translators: Information about a recurring yearly payment made by a subscriber to a site owner.
-				%(amount)s - the amount paid,
-				%(formattedDate)s - the date it was first paid
-				%(title)s - description of the payment plan, or a blank space if no description available
-				%(total)s - the total amount subscriber has paid thus far */
-			return translate( '%(amount)s/year%', {
+			return translate( 'Yearly (%(amount)s)', {
 				args: {
 					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === PLAN_MONTHLY_FREQUENCY ) {
-			/* translators: Information about a recurring monthly payment made by a subscriber to a site owner.
-				%(amount)s - the amount paid,
-				%(formattedDate)s - the date it was first paid
-				%(title)s - description of the payment plan, or a blank space if no description available
-				%(total)s - the total amount subscriber has paid thus far */
-			return translate( '%(amount)s/month', {
+			return translate( 'Monthly (%(amount)s)', {
 				args: {
 					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 				},
