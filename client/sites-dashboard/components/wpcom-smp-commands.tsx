@@ -292,8 +292,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }` );
 				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
 		{
 			name: 'openPHPLogs',
@@ -306,8 +306,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/php` );
 				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
 		{
 			name: 'openWebServerLogs',
@@ -320,8 +320,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/web` );
 				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
 		{
 			name: 'openHostingConfiguration',
@@ -334,8 +334,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }` );
 				},
+				filter: ( site: SiteExcerptData ) => ! isNotAtomicJetpack( site ),
 			},
-			filter: ( site: SiteExcerptData ) => ! isNotAtomicJetpack( site ),
 		},
 		{
 			name: 'openPHPmyAdmin',
@@ -362,8 +362,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#staging-site` );
 				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
 		{
 			name: 'managePHPVersion',
@@ -376,8 +376,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
 				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
 		{
 			name: 'manageCacheSettings',
@@ -390,8 +390,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#cache` );
 				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
 		{
 			name: 'manageAdminInterfaceStyle',
@@ -404,8 +404,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#sitewpadmin-card` );
 				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
 	];
 
