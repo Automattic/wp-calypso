@@ -45,8 +45,8 @@ import {
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
-import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
 import ReaderCard from 'calypso/my-sites/customer-home/cards/features/reader';
+import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
 import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
 import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
 import {
@@ -82,7 +82,6 @@ import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
 import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import LearnGrow from 'calypso/my-sites/customer-home/locations/secondary/learn-grow';
-
 import type { ReactNode } from 'react';
 
 type CardComponentMap = Record< string, ( props: any ) => React.JSX.Element | ReactNode >;
