@@ -16,7 +16,6 @@ import {
 	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
 import 'calypso/state/themes/init';
-import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -66,14 +65,8 @@ export function activate(
 		}
 
 		/**
-		 * Check if its a free or premium dotcom theme, if so, dispatch the activate action
+		 * Check if its a dotcom theme, if so, dispatch the activate action
 		 * and redirect to the Marketplace Thank You Page.
-		 *
-		 * A theme is considered free or premium when it is not:
-		 * - ExternallyManaged
-		 * - A software bundle (like woo-on-plans)
-		 *
-		 * Currently a feature flag check is also being applied.
 		 */
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const siteSlug = getSiteSlug( getState(), siteId );
@@ -85,7 +78,7 @@ export function activate(
 			keepCurrentHomepage
 		);
 
-		if ( shouldRedirectToThankYouPage( getState(), themeId ) ) {
+		if ( isDotComTheme ) {
 			dispatchActivateAction( dispatch, getState );
 
 			const continueWithPluginBundle =
@@ -96,15 +89,14 @@ export function activate(
 			);
 		}
 
-		/* Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
-		 * and redirect it to the Marketplace theme installation page
-		 */
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
-		if ( isDotOrgTheme && ! isDotComTheme ) {
+		if ( isDotOrgTheme ) {
 			dispatch( productToBeInstalled( themeId, siteSlug ) );
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
+		// Themes should only be either dotCom or dotOrg so this line should never be reached.
+		// Leaving it to prevent potential regression issues.
 		return dispatchActivateAction( dispatch, getState );
 	};
 }
