@@ -31,7 +31,7 @@ export default function useValidateVerificationCode(): {
 
 		// Cancel any current refetches, so they don't overwrite our optimistic update
 		await queryClient.cancelQueries( {
-			queryKey: queryKey,
+			queryKey,
 		} );
 
 		// Optimistically update the contacts

@@ -26,7 +26,7 @@ const withSiteMonitorSettings = createHigherOrderComponent( ( Wrapped ) => {
 
 					// Cancel any current refetches, so they don't overwrite our optimistic update
 					await queryClient.cancelQueries( {
-						queryKey: queryKey,
+						queryKey,
 					} );
 
 					// Snapshot the previous value

@@ -79,7 +79,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			onMutate: async ( { siteId, isFavorite }: { siteId: number; isFavorite: boolean } ) => {
 				// Cancel any current refetches, so they don't overwrite our optimistic update
 				await queryClient.cancelQueries( {
-					queryKey: queryKey,
+					queryKey,
 				} );
 
 				// Snapshot the previous value
@@ -126,7 +126,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			},
 			onSettled: () => {
 				queryClient.invalidateQueries( {
-					queryKey: queryKey,
+					queryKey,
 				} );
 			},
 		};

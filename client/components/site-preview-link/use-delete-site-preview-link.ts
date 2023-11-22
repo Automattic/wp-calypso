@@ -29,7 +29,7 @@ export const useDeleteSitePreviewLink = ( options: UseDeleteSitePreviewLinkOptio
 		},
 		onMutate: async ( code: string ) => {
 			await queryClient.cancelQueries( {
-				queryKey: queryKey,
+				queryKey,
 			} );
 			const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
 			queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => {
@@ -59,7 +59,7 @@ export const useDeleteSitePreviewLink = ( options: UseDeleteSitePreviewLinkOptio
 				);
 			}
 			queryClient.invalidateQueries( {
-				queryKey: queryKey,
+				queryKey,
 			} );
 		},
 	} );

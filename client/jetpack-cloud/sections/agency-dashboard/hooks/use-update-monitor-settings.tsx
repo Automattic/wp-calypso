@@ -31,7 +31,7 @@ export default function useUpdateMonitorSettings(
 		onSuccess: async ( data, { siteId } ) => {
 			// Cancel any current refetches, so they don't overwrite our optimistic update
 			await queryClient.cancelQueries( {
-				queryKey: queryKey,
+				queryKey,
 			} );
 
 			// Optimistically update to the new value
