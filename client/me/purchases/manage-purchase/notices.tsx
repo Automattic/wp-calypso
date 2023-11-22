@@ -1069,13 +1069,20 @@ class PurchaseNotice extends Component<
 			const isEcommerceTrialMonthly = productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 			if ( isEcommerceTrialMonthly ) {
+				this.props.recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
+					current_plan_slug: productSlug,
+					to_checkout: false,
+				} );
+
 				return page( `/plans/${ selectedSiteSlug }` );
 			}
 
 			const upgradePlanSlug = getPlan( PLAN_BUSINESS )?.getStoreSlug();
 
 			this.props.recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
-				plan_slug: upgradePlanSlug,
+				current_plan_slug: productSlug,
+				to_checkout: true,
+				upgrade_plan_slug: upgradePlanSlug,
 			} );
 
 			const planPath = getPlanPath( upgradePlanSlug ?? '' ) ?? '';
