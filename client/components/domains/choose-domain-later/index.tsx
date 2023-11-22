@@ -61,7 +61,7 @@ export default function ChooseDomainLater( props: Props ) {
 	}
 
 	if (
-		[ 'treatment_search', 'treatment_type' ].includes( escapeHatchVariant ) &&
+		[ 'treatment_search', 'treatment_type' ].includes( escapeHatchVariant ?? '' ) &&
 		( domainForm.loadingResults ||
 			! Array.isArray( domainForm?.searchResults ) ||
 			domainForm?.searchResults?.length === 0 )

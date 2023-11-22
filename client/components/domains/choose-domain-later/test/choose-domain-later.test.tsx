@@ -6,6 +6,7 @@ import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ChooseDomainLater from '../index';
 
+const useExperimentMock = useExperiment as jest.MockedFunction< any >;
 const render = ( el, options? ) => renderWithProvider( el, { ...options, reducers: { ui } } );
 
 jest.mock( 'calypso/lib/explat', () => ( {
@@ -14,7 +15,7 @@ jest.mock( 'calypso/lib/explat', () => ( {
 
 describe( 'ChooseDomainLater', () => {
 	test( 'Renders treatment_search when that treatment is active', () => {
-		useExperiment.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
 
 		const { getByText } = render(
 			<ChooseDomainLater
@@ -33,7 +34,7 @@ describe( 'ChooseDomainLater', () => {
 	} );
 
 	test( 'Renders treatment_type when that treatment is active', () => {
-		useExperiment.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
 
 		const { getByText } = render(
 			<ChooseDomainLater
@@ -52,7 +53,7 @@ describe( 'ChooseDomainLater', () => {
 	} );
 
 	test( 'Renders control when that control is active', () => {
-		useExperiment.mockImplementation( () => [ false, { variationName: 'control' } ] );
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'control' } ] );
 
 		const { container } = render(
 			<ChooseDomainLater
@@ -73,7 +74,7 @@ describe( 'ChooseDomainLater', () => {
 	} );
 
 	test( 'Does not render if treatment_type and domain results not loaded', () => {
-		useExperiment.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
 
 		const { queryByText } = render(
 			<ChooseDomainLater
@@ -92,7 +93,7 @@ describe( 'ChooseDomainLater', () => {
 	} );
 
 	test( 'Does not render if treatment_search and domain results not loaded', () => {
-		useExperiment.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
 
 		const { queryByText } = render(
 			<ChooseDomainLater
@@ -111,7 +112,7 @@ describe( 'ChooseDomainLater', () => {
 	} );
 
 	test( 'Does not render anything if experiment is still loading', () => {
-		useExperiment.mockImplementation( () => [ true, null ] );
+		useExperimentMock.mockImplementation( () => [ true, null ] );
 		const { container } = render(
 			<ChooseDomainLater
 				flowName="onboarding"
