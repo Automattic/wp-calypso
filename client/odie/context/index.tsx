@@ -43,7 +43,7 @@ interface OdieAssistantContextInterface {
 const defaultContextInterfaceValues = {
 	addMessage: noop,
 	botName: 'Wapuu',
-	botNameSlug: null,
+	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	clearChat: noop,
 	initialUserMessage: null,
@@ -74,7 +74,7 @@ const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 // Create a provider component for the context
 const OdieAssistantProvider = ( {
 	botName = 'Wapuu assistant',
-	botNameSlug = null,
+	botNameSlug = 'wpcom-support-chat',
 	botSetting = 'wapuu',
 	initialUserMessage,
 	extraContactOptions,
