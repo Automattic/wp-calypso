@@ -46,7 +46,7 @@ export const JumpToRecent = ( {
 		};
 	}, [] );
 
-	if ( isMinimized && botNameSlug === 'wpcom-support-chat' ) {
+	if ( isMinimized && botNameSlug === 'wpcom-support-assistant' ) {
 		return null;
 	}
 

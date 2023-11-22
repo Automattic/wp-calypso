@@ -92,4 +92,4 @@ export type OdieAllowedSectionNames =
 	| 'checkout'
 	| 'help-center';
 
-export type OdieAllowedBots = 'wpcom-support-chat' | null;
+export type OdieAllowedBots = 'wpcom-support-assistant' | null;

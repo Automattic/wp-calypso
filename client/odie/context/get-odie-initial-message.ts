@@ -16,7 +16,7 @@ const getOdieInitialPrompt = ( botNameSlug: OdieAllowedBots = 'wpcom-support-cha
 };
 
 export const getOdieInitialMessage = (
-	botNameSlug: OdieAllowedBots = 'wpcom-support-chat'
+	botNameSlug: OdieAllowedBots = 'wpcom-support-assistant'
 ): Message => {
 	return {
 		content: getOdieInitialPrompt( botNameSlug ),
