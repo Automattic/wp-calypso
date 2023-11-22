@@ -1,6 +1,5 @@
 import {
 	useQuery,
-	UseQueryResult,
 	UseQueryOptions,
 	QueryKey,
 	useMutation,
@@ -33,7 +32,43 @@ type DeleteMarketplaceReviewProps = {
 	reviewId: number;
 } & ProductProps;
 
-const fetchMarketplaceReviews = ( productType: ProductType, productSlug: string ) => {
+type MarketplaceReviewResponse = {
+	id: number;
+	post: number;
+	parent: number;
+	author: number;
+	author_name: string;
+	author_url: string;
+	date: string;
+	date_gmt: string;
+	content: {
+		rendered: string;
+	};
+	link: string;
+	status: string;
+	type: string;
+	meta: {
+		wpcom_marketplace_rating: number;
+	};
+};
+
+type ErrorResponse = {
+	code: string;
+	message: string;
+	data: {
+		status: number;
+	};
+};
+
+type MarketplaceReviewsQueryOptions = Pick<
+	UseQueryOptions< MarketplaceReviewResponse[] | ErrorResponse >,
+	'enabled' | 'staleTime' | 'refetchOnMount'
+>;
+
+const fetchMarketplaceReviews = (
+	productType: ProductType,
+	productSlug: string
+): Promise< MarketplaceReviewResponse[] | ErrorResponse > => {
 	return wpcom.req.get(
 		{
 			path: reviewsApiBase,
@@ -46,7 +81,12 @@ const fetchMarketplaceReviews = ( productType: ProductType, productSlug: string 
 	);
 };
 
-const createReview = ( { productType, pluginSlug, content, rating }: MarketplaceReviewBody ) => {
+const createReview = ( {
+	productType,
+	pluginSlug,
+	content,
+	rating,
+}: MarketplaceReviewBody ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
 	return wpcom.req.post(
 		reviewsApiBase,
 		{
@@ -67,7 +107,7 @@ const updateReview = ( {
 	pluginSlug,
 	content,
 	rating,
-}: UpdateMarketplaceReviewProps ) => {
+}: UpdateMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
 	return wpcom.req.post(
 		`${ reviewsApiBase }/${ reviewId }`,
 		{
@@ -82,7 +122,9 @@ const updateReview = ( {
 	);
 };
 
-const deleteReview = ( { reviewId }: DeleteMarketplaceReviewProps ) => {
+const deleteReview = ( {
+	reviewId,
+}: DeleteMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
 	return wpcom.req.del( `${ reviewsApiBase }/${ reviewId }`, {
 		apiNamespace: reviewsApiNamespace,
 	} );
@@ -90,8 +132,12 @@ const deleteReview = ( { reviewId }: DeleteMarketplaceReviewProps ) => {
 
 export const useMarketplaceReviews = (
 	{ productType, pluginSlug }: ProductProps,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
-): UseQueryResult< any > => {
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: MarketplaceReviewsQueryOptions = {}
+) => {
 	const queryKey: QueryKey = [ queryKeyBase, pluginSlug ];
 	const queryFn = () => fetchMarketplaceReviews( productType, pluginSlug );
 	return useQuery( {
@@ -108,7 +154,7 @@ export const useCreateMarketplaceReview = () => {
 	return useMutation( {
 		mutationFn: createReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( queryKeyBase );
+			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
 		},
 	} );
 };
@@ -118,7 +164,7 @@ export const useUpdateMarketplaceReview = () => {
 	return useMutation( {
 		mutationFn: updateReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( queryKeyBase );
+			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
 		},
 	} );
 };
@@ -128,7 +174,7 @@ export const useDeleteMarketplaceReview = () => {
 	return useMutation( {
 		mutationFn: deleteReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( queryKeyBase );
+			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
 		},
 	} );
 };
