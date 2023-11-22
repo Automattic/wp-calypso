@@ -244,8 +244,6 @@ export default function MarketplaceTest() {
 							e.preventDefault();
 							deleteReview.mutate( {
 								reviewId: e.target[ 0 ].value,
-								productType: e.target[ 1 ].value,
-								pluginSlug: e.target[ 2 ].value,
 							} );
 						} }
 					>

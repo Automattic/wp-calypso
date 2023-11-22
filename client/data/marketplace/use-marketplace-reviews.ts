@@ -125,7 +125,9 @@ const updateReview = ( {
 const deleteReview = ( {
 	reviewId,
 }: DeleteMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
-	return wpcom.req.del( `${ reviewsApiBase }/${ reviewId }`, {
+	return wpcom.req.post( {
+		method: 'DELETE',
+		path: `${ reviewsApiBase }/${ reviewId }`,
 		apiNamespace: reviewsApiNamespace,
 	} );
 };
