@@ -1,9 +1,10 @@
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
+import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
-import { useCommandState, Command } from 'cmdk';
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { Command, useCommandState } from 'cmdk';
+import { useEffect, useState, useRef } from 'react';
 import { useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -34,12 +35,13 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
+				const itemValue = command.searchLabel ?? command.label;
 				return (
 					<Command.Item
 						key={ command.name }
-						value={ command.searchLabel ?? command.label }
+						value={ itemValue }
 						onSelect={ () => command.callback( { close, setSearch } ) }
-						id={ command.name }
+						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
 							alignment="left"
@@ -68,16 +70,8 @@ interface CommandInputProps {
 
 function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
-	const _value = useCommandState( ( state ) => state.value );
-	const sanitizedValue = useMemo( () => {
-		const removedQuotesValue = _value.replace( /"/g, '' ); // Remove double quotes from any selected items before processing input
-		return removedQuotesValue;
-	}, [ _value ] );
-
-	const selectedItemId = useMemo( () => {
-		const item = document.querySelector( `[cmdk-item=""][data-value="${ sanitizedValue }"]` );
-		return item?.getAttribute( 'id' );
-	}, [ sanitizedValue ] );
+	const itemValue = useCommandState( ( state ) => state.value );
+	const itemId = cleanForSlug( itemValue );
 
 	useEffect( () => {
 		// Focus the command palette input when mounting the modal.
@@ -92,7 +86,7 @@ function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 			value={ search }
 			onValueChange={ setSearch }
 			placeholder={ __( 'Search for commands' ) }
-			aria-activedescendant={ `${ selectedItemId }` }
+			aria-activedescendant={ itemId }
 		/>
 	);
 }
