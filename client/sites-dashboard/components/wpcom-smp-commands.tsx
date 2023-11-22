@@ -368,6 +368,20 @@ export const useCommandsArrayWpcom = ( {
 			},
 			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
+		{
+			name: 'manageAdminInterfaceStyle',
+			label: __( 'Manage admin interface style' ),
+			searchLabel: __( 'manage admin interface style' ),
+			context: 'Managing admin interface style',
+			callback: setStateCallback( 'manageAdminInterfaceStyle' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#sitewpadmin-card` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+		},
 	];
 
 	return commands;
