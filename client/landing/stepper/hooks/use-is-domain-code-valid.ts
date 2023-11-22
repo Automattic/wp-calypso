@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -100,7 +100,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 		},
 		staleTime: 5 * 60 * 1000,
 		cacheTime: 5 * 60 * 1000,
-		keepPreviousData: true,
+		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
 		...queryOptions,

@@ -46,7 +46,6 @@ export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
 						}&query=${ encodeURIComponent( config.query ) }&stop_at=${ config.stopAt }`,
 				  } as APIFetchOptions ),
 		refetchOnWindowFocus: false,
-		keepPreviousData: false,
 		enabled: config.enabled && !! config.query,
 		retry: false,
 		select: ( data ) => {

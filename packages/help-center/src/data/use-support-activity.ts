@@ -20,7 +20,6 @@ export function useSupportActivity( enabled = true ) {
 						global: true,
 				  } as APIFetchOptions ),
 		refetchOnWindowFocus: false,
-		keepPreviousData: false,
 		refetchOnMount: true,
 		enabled,
 		select: ( activities ) => {
