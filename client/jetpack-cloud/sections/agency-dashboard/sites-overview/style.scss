@@ -285,8 +285,8 @@
 	}
 }
 
-.fixed-host-column {
-	display: none;
+.site-host-info {
+	display: inline-block;
 	margin-inline-end: 10px;
 	min-width: 40px;
 	text-align: center;
@@ -300,10 +300,6 @@
 		&.is-visible {
 			visibility: visible;
 		}
-	}
-
-	@include break-wide {
-		display: inline-block;
 	}
 }
 

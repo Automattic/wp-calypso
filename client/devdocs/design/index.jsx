@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import {
 	HappinessEngineersTray,
 	Gravatar,
@@ -22,7 +23,6 @@ import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';

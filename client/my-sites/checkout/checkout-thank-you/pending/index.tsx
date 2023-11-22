@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { useState, useEffect, useRef } from 'react';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';

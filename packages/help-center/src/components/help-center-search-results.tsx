@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
 	getContextResults,
@@ -18,7 +19,6 @@ import {
 	external as externalIcon,
 } from '@wordpress/icons';
 import { debounce } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

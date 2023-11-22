@@ -1,0 +1,30 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-cloud-layout__sticky-header {
+
+	.jetpack-cloud-layout__header-subtitle {
+		display: none;
+	}
+
+	.jetpack-cloud-layout__header-title {
+		margin-inline-start: 48px;
+		font-size: rem(24px);
+		margin-block-end: 0;
+	}
+
+	.jetpack-cloud-layout__header-actions {
+		margin-inline-end: 48px;
+	}
+}
+
+.issue-license-v2__select-license {
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
+
+	@include breakpoint-deprecated("<660px") {
+		width: auto;
+		flex-grow: 1;
+	}
+}

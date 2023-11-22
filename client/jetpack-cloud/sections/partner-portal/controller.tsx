@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page, { type Callback, type Context } from 'page';
+import page, { type Callback, type Context } from '@automattic/calypso-router';
 import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2';
 import {
 	publicToInternalLicenseFilter,
@@ -39,8 +39,12 @@ import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 
-const setSidebar = ( context: Context ): void => {
-	context.secondary = <PurchasesSidebar path={ context.path } />;
+const setSidebar = ( context: Context, isLicenseContext: boolean = false ): void => {
+	context.secondary = isLicenseContext ? (
+		<JetpackManageSidebar path={ context.path } />
+	) : (
+		<PurchasesSidebar path={ context.path } />
+	);
 };
 
 export const allSitesContext: Callback = ( context, next ) => {
@@ -86,7 +90,7 @@ export const licensesContext: Callback = ( context, next ) => {
 	);
 
 	context.header = <Header />;
-	context.secondary = <JetpackManageSidebar path={ context.path } />;
+	setSidebar( context, true );
 	context.primary = (
 		<Licenses
 			filter={ filter }
@@ -105,7 +109,7 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
-	setSidebar( context );
+	setSidebar( context, true );
 	if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
 		context.primary = (
 			<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
@@ -132,7 +136,7 @@ export const assignLicenseContext: Callback = ( context, next ) => {
 	const currentPage = parseInt( page ) || 1;
 
 	context.header = <Header />;
-	setSidebar( context );
+	setSidebar( context, true );
 	context.primary = (
 		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
 	);

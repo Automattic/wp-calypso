@@ -15,7 +15,7 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
-import type { Context } from 'page';
+import type { Context } from '@automattic/calypso-router';
 
 type HeaderProps = {
 	context: Context;

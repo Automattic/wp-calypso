@@ -5,7 +5,7 @@ import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
 import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import TagsPage from './main';
-import type { Context as PageJSContext } from 'page';
+import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const debug = debugFactory( 'calypso:reader:tags' );
 

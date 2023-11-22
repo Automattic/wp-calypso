@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import page from 'page';
 import Notice from 'calypso/components/notice';
 
 const WooInstallExtSuccessNotice = ( { translate }: LocalizeProps ) => {

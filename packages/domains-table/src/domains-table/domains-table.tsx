@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	DomainData,
 	getSiteDomainsQueryObject,
@@ -18,7 +19,6 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useLayoutEffect, useMemo, useState, createContext, useContext } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
 import {

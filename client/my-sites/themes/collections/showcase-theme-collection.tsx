@@ -1,4 +1,4 @@
-import { default as pageRouter } from 'page';
+import { default as pageRouter } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
