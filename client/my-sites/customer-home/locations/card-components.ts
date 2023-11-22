@@ -84,7 +84,10 @@ import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import LearnGrow from 'calypso/my-sites/customer-home/locations/secondary/learn-grow';
 import type { ReactNode } from 'react';
 
-type CardComponentMap = Record< string, ( props: any ) => React.JSX.Element | ReactNode >;
+type CardComponentMap = Record<
+	string,
+	( ( props: any ) => React.JSX.Element | ReactNode ) | typeof ReaderCard
+>;
 
 const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
