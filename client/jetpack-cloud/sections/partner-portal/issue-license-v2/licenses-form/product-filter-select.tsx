@@ -72,6 +72,7 @@ export default function ProductFilterSelect( {
 		components: {
 			b: <b />,
 		},
+		comment: 'productFilter is the selected filter type.',
 	} );
 
 	useEffect( () => {
