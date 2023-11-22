@@ -561,6 +561,7 @@ __metadata:
     prop-types: "npm:^15.7.2"
     qrcode.react: "npm:^3.1.0"
     react-modal: "npm:^3.16.1"
+    react-router-dom: "npm:^6.10.0"
     react-slider: "npm:^2.0.5"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.2.2"
