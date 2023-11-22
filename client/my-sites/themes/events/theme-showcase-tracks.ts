@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { property, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 
 type ThemeSearchQuery = {
 	search: string;
@@ -51,7 +51,7 @@ const getThemeShowcaseEventRecorder = (
 				is_active_theme: isActiveTheme( themeId ),
 				style_variation: styleVariation,
 				results_rank: adjustedPosition,
-				results: themes?.map( property( 'id' ) ).join() ?? [],
+				results: themes?.map( ( theme ) => theme.id ).join() ?? [],
 				page_number: query?.page || null,
 				theme_on_page: Math.floor( adjustedPosition / query.number ),
 				action: snakeCase( action ),
