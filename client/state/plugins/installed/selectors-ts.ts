@@ -12,7 +12,6 @@ import type {
 	Plugin,
 	PluginFilter,
 	PluginSite,
-	PluginSites,
 	PluginStatus,
 } from './types';
 import type { AppState } from 'calypso/types';
@@ -181,40 +180,32 @@ export const getFilteredAndSortedPlugins = createSelector(
 	( state: AppState, siteIds: number[], pluginFilter?: PluginFilter ) => {
 		const allPluginsIndexedBySiteId = getAllPluginsIndexedBySiteId( state );
 
-		// Properties on the objects in allPluginsIndexedBySiteId will be modified and the
-		// selector memoization always returns the same object, so use `structuredClone` to avoid
-		// altering it for everyone.
-		const allPluginsForSites: { [ pluginSlug: string ]: Plugin } = structuredClone(
-			siteIds
-				.map( ( siteId: number ) => allPluginsIndexedBySiteId[ siteId ] )
-				.filter( Boolean )
-				.reduce( ( accumulator, current ) => ( { ...accumulator, ...current } ), {} )
-		);
+		const allPluginsForSites: { [ pluginSlug: string ]: Plugin } = siteIds
+			.map( ( siteId: number ) => allPluginsIndexedBySiteId[ siteId ] )
+			.filter( Boolean )
+			.reduce( ( accumulator, current ) => ( { ...accumulator, ...current } ), {} );
 
 		// Filter the sites object on the plugins so that only data for the requested siteIds is present
 		for ( const pluginSlug of Object.keys( allPluginsForSites ) ) {
-			allPluginsForSites[ pluginSlug ].sites = Object.entries(
-				allPluginsForSites[ pluginSlug ].sites
-			)
-				.filter( ( [ siteId ] ) => siteIds.includes( Number( siteId ) ) )
-				.reduce( ( obj, [ siteId, site ] ) => {
-					obj[ siteId ] = site;
-					return obj;
-				}, {} as PluginSites );
+			const plugin = allPluginsForSites[ pluginSlug ];
+			const filteredSites = Object.fromEntries(
+				Object.entries( plugin.sites ).filter( ( [ siteId ] ) =>
+					siteIds.includes( Number( siteId ) )
+				)
+			);
+			// Mutates the existing `appPluginsForSites` object, which is a local variable, but creates
+			// a shallow copy of the values, which are immutable values coming from `getAllPluginsIndexedBySiteId`.
+			allPluginsForSites[ pluginSlug ] = { ...plugin, sites: filteredSites };
 		}
 
 		// Filter the plugins using the pluginFilter if it is set
 		const pluginList =
 			pluginFilter && _filters[ pluginFilter ]
-				? Object.values( allPluginsForSites )
-						.filter( ( plugin ) => _filters[ pluginFilter ]( plugin ) )
-						.reduce(
-							( obj, plugin ) => {
-								obj[ plugin.slug ] = plugin;
-								return obj;
-							},
-							{} as { [ pluginSlug: string ]: Plugin }
+				? Object.fromEntries(
+						Object.entries( allPluginsForSites ).filter( ( [ , plugin ] ) =>
+							_filters[ pluginFilter ]( plugin )
 						)
+				  )
 				: allPluginsForSites;
 
 		// Sort the plugins alphabetically by slug
