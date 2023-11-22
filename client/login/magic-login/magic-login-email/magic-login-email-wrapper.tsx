@@ -1,5 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { extractDomainWithExtension } from '@automattic/onboarding';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MagicLoginEmail } from '.';
 import './style.scss';
 
