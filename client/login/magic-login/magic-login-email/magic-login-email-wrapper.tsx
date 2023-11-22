@@ -47,7 +47,7 @@ export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapper
 						rel="noreferrer noopener"
 					>
 						<MagicLoginEmail.Icon icon={ item.name.toLocaleLowerCase() } />
-						<MagicLoginEmail.Content name={ item.name } />
+						<MagicLoginEmail.Content mailProviderName={ item.name } />
 					</a>
 				</li>
 			) ) }
