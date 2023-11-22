@@ -99,7 +99,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 			}
 		},
 		staleTime: 5 * 60 * 1000,
-		cacheTime: 5 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
 		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
