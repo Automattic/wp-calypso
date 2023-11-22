@@ -115,6 +115,7 @@ export interface SiteDetails {
 	is_private?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_favorite?: boolean;
 	is_wpcom_staging_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
