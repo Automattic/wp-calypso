@@ -352,11 +352,6 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const setSiteGeoAffinity = ( siteGeoAffinity: string ) => ( {
-	type: 'SET_SITE_GEO_AFFINITY' as const,
-	siteGeoAffinity,
-} );
-
 export const setSiteDescription = ( siteDescription: string ) => ( {
 	type: 'SET_SITE_DESCRIPTION' as const,
 	siteDescription,
@@ -570,7 +565,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
-	| typeof setSiteGeoAffinity
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
 	| typeof setAnchorSpotifyUrl
