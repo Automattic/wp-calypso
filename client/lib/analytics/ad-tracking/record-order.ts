@@ -732,8 +732,11 @@ function recordOrderInParsely( cart: ResponseCart, orderId: number | null | unde
 				return;
 			}
 
+			// Get all the products in the cart.
+			const cartProducts = cart.products.map( ( product ) => product.product_name ).join( ', ' );
+
 			// Record Parsely purchase
-			window.PARSELY.conversions.trackPurchase( `Order Id ${ orderId }` );
+			window.PARSELY.conversions.trackPurchase( cartProducts );
 
 			debug( `recordOrderInParsely: Record Parsely purchase`, orderId );
 		} )
