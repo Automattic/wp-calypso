@@ -4,7 +4,7 @@ import { Icon, search as inputIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -71,7 +71,7 @@ interface CommandInputProps {
 function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
-	const itemId = cleanForSlug( itemValue );
+	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
 
 	useEffect( () => {
 		// Focus the command palette input when mounting the modal.
