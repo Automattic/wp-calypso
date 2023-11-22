@@ -89,6 +89,17 @@ export const useCommandsArrayWpcom = ( {
 		displaySuccessNotice( __( 'Copied new password' ) );
 	};
 
+	const openPHPmyAdmin = async ( siteId: number ) => {
+		const { token } = await wpcom.req.post( {
+			path: `/sites/${ siteId }/hosting/pma/token`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		if ( token ) {
+			window.open( `https://wordpress.com/pma-login?token=${ token }` );
+		}
+	};
+
 	const commands = [
 		{
 			name: 'addNewSite',
@@ -325,6 +336,20 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			filter: ( site: SiteExcerptData ) => ! isNotAtomicJetpack( site ),
+		},
+		{
+			name: 'openPHPmyAdmin',
+			label: __( 'Open phpMyAdmin' ),
+			searchLabel: __( 'open phpMyAdmin' ),
+			context: 'Opening phpMyAdmin',
+			callback: setStateCallback( 'openPHPmyAdmin' ),
+			siteFunctions: {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					await openPHPmyAdmin( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
 		},
 		{
 			name: 'manageStagingSites',
