@@ -326,6 +326,20 @@ export const useCommandsArrayWpcom = ( {
 			},
 			filter: ( site: SiteExcerptData ) => ! isNotAtomicJetpack( site ),
 		},
+		{
+			name: 'manageStagingSites',
+			label: __( 'Manage staging sites' ),
+			searchLabel: __( 'manage staging sites' ),
+			context: 'Managing staging sites',
+			callback: setStateCallback( 'manageStagingSites' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#staging-site` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+		},
 	];
 
 	return commands;
