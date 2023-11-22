@@ -97,6 +97,13 @@
 .magic-login__form {
 	margin-bottom: 0;
 
+	.magic-login__form-text {
+		text-align: center;
+		b {
+			font-weight: 700;
+		}
+	}
+
 	p {
 		margin-bottom: 0;
 	}
@@ -150,14 +157,14 @@
 	a {
 		border-bottom: 1px solid #c8d7e1;
 		color: var(--studio-gray-90);
-		display: block;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 4em;
 		font-size: $font-body-small;
 		font-weight: 600;
-		padding: 0 24px;
 		text-align: center;
 		text-decoration: underline;
+		display: inline;
+		padding: 0;
+		line-height: 0;
+		padding-left: 4px;
 
 		&:hover {
 			color: var(--color-primary);
@@ -172,6 +179,10 @@
 	}
 	.gridicon {
 		vertical-align: text-bottom;
+	}
+
+	p {
+		font-size: $font-body-small;
 	}
 }
 

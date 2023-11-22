@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -15,7 +15,7 @@ import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actio
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { withEnhancers } from 'calypso/state/utils';
-
+import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
 class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
@@ -41,18 +41,17 @@ class EmailedLoginLinkSuccessfully extends Component {
 		);
 	};
 
+	openEmail = ( url ) => {
+		event.preventDefault();
+		window.open( url, '_blank' );
+	};
+
 	render() {
 		const { translate, emailAddress } = this.props;
 		const line = [
 			emailAddress
-				? translate( 'We just emailed a link to %(emailAddress)s.', {
-						args: {
-							emailAddress,
-						},
-				  } )
+				? translate( "We've sent a login link to " )
 				: translate( 'We just emailed you a link.' ),
-			' ',
-			translate( 'Please check your inbox and click the link to log in.' ),
 		];
 
 		return (
@@ -63,24 +62,34 @@ class EmailedLoginLinkSuccessfully extends Component {
 					waitForEmailAddress={ emailAddress }
 				/>
 
-				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
+				<h1 className="magic-login__form-header">{ translate( 'Check your email' ) }</h1>
 
 				<Card className="magic-login__form">
-					<p>{ preventWidows( line ) }</p>
+					<div className="magic-login__form-text">
+						<p>{ preventWidows( line ) }</p>
+						<b>{ emailAddress }</b>
+					</div>
 				</Card>
+				<div className="magic-login__emails-list">
+					<MagicLoginEmailWrapper emailAddress={ emailAddress } />
+				</div>
 
 				<div className="magic-login__footer">
-					<a
-						href={ login( {
-							isJetpack: this.props.isJetpackLogin,
-							isWhiteLogin: this.props.isWhiteLogin,
-							locale: this.props.locale,
-						} ) }
-						onClick={ this.onClickBackLink }
-					>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ translate( 'Back to login' ) }
-					</a>
+					<p>
+						Didn't get the email? You might want to double check if the email address is associated
+						with your account,
+						<a
+							href={ login( {
+								isJetpack: this.props.isJetpackLogin,
+								isWhiteLogin: this.props.isWhiteLogin,
+								locale: this.props.locale,
+							} ) }
+							onClick={ this.onClickBackLink }
+						>
+							{ /* <Gridicon icon="arrow-left" size={ 18 } /> */ }
+							{ translate( 'or login with a password instead.' ) }
+						</a>
+					</p>
 				</div>
 			</div>
 		);
