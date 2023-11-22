@@ -23,7 +23,7 @@ const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) =>
 			);
 		},
 		onMutate: async ( categorySubscriptions: NewsletterCategorySubscription[] ) => {
-			await queryClient.cancelQueries( subscribedCategoriesCacheKey );
+			await queryClient.cancelQueries( { queryKey: subscribedCategoriesCacheKey } );
 
 			const previousData = queryClient.getQueryData< NewsletterCategories >(
 				subscribedCategoriesCacheKey

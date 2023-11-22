@@ -49,7 +49,7 @@ const alterSiteSubscriptionDetails = async (
 	keys.push( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 
 	for ( const key of keys ) {
-		await queryClient.cancelQueries( key );
+		await queryClient.cancelQueries( { queryKey: key } );
 
 		const previousDataForKey = queryClient.getQueryData< SiteSubscriptionDetails >( key );
 		if ( previousDataForKey ) {

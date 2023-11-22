@@ -60,7 +60,7 @@ const useSubscriberRemoveMutation = (
 			return true;
 		},
 		onMutate: async ( subscriber ) => {
-			await queryClient.cancelQueries( subscribersCacheKey );
+			await queryClient.cancelQueries( { queryKey: subscribersCacheKey } );
 			let page = currentPage;
 
 			const previousData =
@@ -125,7 +125,7 @@ const useSubscriberRemoveMutation = (
 					getSubscriberDetailsType( subscriber.user_id )
 				);
 
-				await queryClient.cancelQueries( cacheKey );
+				await queryClient.cancelQueries( { queryKey: cacheKey } );
 
 				previousDetailsData = queryClient.getQueryData< Subscriber >( cacheKey );
 			}

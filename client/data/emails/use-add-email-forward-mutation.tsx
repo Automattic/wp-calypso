@@ -68,8 +68,8 @@ export default function useAddEmailForwardMutation(
 		const { mailbox, destination } = variables;
 		suppliedOnMutate?.( variables );
 
-		await queryClient.cancelQueries( emailAccountsQueryKey );
-		await queryClient.cancelQueries( domainsQueryKey );
+		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
+		await queryClient.cancelQueries( { queryKey: domainsQueryKey } );
 
 		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
 		const emailForwards = previousEmailAccountsQueryData?.accounts?.[ 0 ]?.emails;

@@ -46,7 +46,7 @@ const usePendingSiteDeleteMutation = () => {
 			await queryClient.cancelQueries( {
 				queryKey: [ 'read', 'pending-site-subscriptions', isLoggedIn ],
 			} );
-			await queryClient.cancelQueries( countCacheKey );
+			await queryClient.cancelQueries( { queryKey: countCacheKey } );
 
 			const previousPendingSiteSubscriptions =
 				queryClient.getQueryData< PendingSiteSubscriptionsResult >( [

@@ -31,7 +31,7 @@ const useUnmarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 			return response;
 		},
 		onMutate: async ( categoryId: number ) => {
-			await queryClient.cancelQueries( cacheKey );
+			await queryClient.cancelQueries( { queryKey: cacheKey } );
 
 			const previousData = queryClient.getQueryData< NewsletterCategories >( cacheKey );
 

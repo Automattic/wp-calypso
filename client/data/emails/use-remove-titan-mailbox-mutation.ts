@@ -47,7 +47,7 @@ export function useRemoveTitanMailboxMutation(
 
 	// Setup actions to happen before the mutation
 	mutationOptions.onMutate = async () => {
-		await queryClient.cancelQueries( queryKey );
+		await queryClient.cancelQueries( { queryKey } );
 
 		const previousNumberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 

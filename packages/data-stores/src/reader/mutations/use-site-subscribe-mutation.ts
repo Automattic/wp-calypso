@@ -83,7 +83,7 @@ const useSiteSubscribeMutation = () => {
 					isLoggedIn,
 					userId
 				);
-				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+				await queryClient.cancelQueries( { queryKey: siteSubscriptionDetailsCacheKey } );
 
 				previousSiteSubscriptionDetailsByBlogId =
 					queryClient.getQueryData< SiteSubscriptionDetails >( siteSubscriptionDetailsCacheKey );

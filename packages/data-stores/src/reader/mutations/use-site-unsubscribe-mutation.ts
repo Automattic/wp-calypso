@@ -85,9 +85,9 @@ const useSiteUnsubscribeMutation = () => {
 				userId
 			);
 
-			await queryClient.cancelQueries( siteSubscriptionsQueryKey );
-			await queryClient.cancelQueries( subscriptionsCountQueryKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsQueryKey );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionsQueryKey } );
+			await queryClient.cancelQueries( { queryKey: subscriptionsCountQueryKey } );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionDetailsQueryKey } );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
@@ -146,7 +146,7 @@ const useSiteUnsubscribeMutation = () => {
 					userId
 				);
 
-				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+				await queryClient.cancelQueries( { queryKey: siteSubscriptionDetailsCacheKey } );
 
 				previousSiteSubscriptionDetailsByBlogId = queryClient.getQueryData(
 					siteSubscriptionDetailsCacheKey
