@@ -1,11 +1,11 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
+import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, Gridicon, Spinner } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';

@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import MasterbarStyled from '../masterbar-styled';
 

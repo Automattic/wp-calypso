@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
-import page from 'page';
 import * as React from 'react';
 
 const debug = debugFactory( 'calypso:url-search' );

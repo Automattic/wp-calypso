@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import page from '@automattic/calypso-router';
 import {
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
@@ -11,7 +12,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import { mockCartEndpoint } from 'calypso/my-sites/checkout/src/test/util';
 import { createReduxStore } from 'calypso/state';
@@ -26,7 +26,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { BUSINESS_PLAN_UPGRADE_UPSELL, PROFESSIONAL_EMAIL_UPSELL } from '../index';
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
 
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 const mockCountries = [ { code: 'US', has_postal_codes: true, name: 'United States' } ];
 

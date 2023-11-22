@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { find } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';

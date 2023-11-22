@@ -2,11 +2,11 @@
 
 This module determines when a page has been rendered via the history event (back or forward buttons, or via the history methods) versus being a newly navigated page (e.g., via clicking a link to a page).
 
-This can be used alongside the [page.js module](https://www.npmjs.com/package/page) by calling the `start()` method of this module _prior_ to the `start()` method of `page.js`.
+This can be used alongside the [Calypso Router module](../../../packages/calypso-router) by calling the `start()` method of this module _prior_ to the `start()` method of `page.js`.
 
 ```js
+import page from '@automattic/calypso-router';
 import detectHistoryNavigation from 'detect-history-navigation';
-import page from 'page';
 
 detectHistoryNavigation.start();
 page.start();

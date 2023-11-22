@@ -4,7 +4,7 @@ import {
 	getPlanPath,
 	isBusinessPlan,
 } from '@automattic/calypso-products';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useCallback } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';

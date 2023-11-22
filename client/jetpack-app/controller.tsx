@@ -1,4 +1,4 @@
-import page, { type Callback } from 'page';
+import page, { type Callback } from '@automattic/calypso-router';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import JetpackAppEmptyContent from './empty';
 import JetpackAppPlans from './plans/main';

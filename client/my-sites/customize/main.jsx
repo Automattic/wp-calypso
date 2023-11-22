@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { cloneDeep, get, startsWith } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';

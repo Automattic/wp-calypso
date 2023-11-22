@@ -10,12 +10,12 @@
  */
 
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

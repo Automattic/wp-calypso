@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useContext, useMemo } from 'react';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import { addQueryArgs } from 'calypso/lib/url';

@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { once, defer } from 'lodash';
-import page from 'page';
 import {
 	ROUTE_SET,
 	SELECTED_SITE_SET,

@@ -8,6 +8,7 @@ import {
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
@@ -19,7 +20,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import page from 'page';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';

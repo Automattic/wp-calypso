@@ -140,6 +140,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-doctor": "workspace:^",
+		"@automattic/calypso-router": "workspace:^",
 		"@automattic/color-studio": "2.5.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",

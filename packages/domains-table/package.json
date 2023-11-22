@@ -55,6 +55,7 @@
 		"webpack": "^5.89.0"
 	},
 	"peerDependencies": {
+		"@automattic/calypso-router": "workspace:^",
 		"@wordpress/data": "^9.14.0",
 		"@wordpress/i18n": "^4.44.0",
 		"react": "^18.2.0",

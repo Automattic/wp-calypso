@@ -13,7 +13,7 @@ const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { invites, siteSettings, ui } } );
 
 const mockGoBack = jest.fn();
-jest.mock( 'page', () => ( { back: mockGoBack } ) );
+jest.mock( '@automattic/calypso-router', () => ( { back: mockGoBack } ) );
 jest.mock( 'calypso/data/external-contributors/use-external-contributors', () => () => false );
 
 describe( 'PeopleInviteDetails', () => {
