@@ -1,3 +1,4 @@
+import { extractDomainWithExtension } from '@automattic/onboarding';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MagicLoginEmail } from '.';
 import './style.scss';
@@ -24,10 +25,8 @@ const knownDomains: MagicEmailDomainInfo[] = [
 
 export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapperProps ) {
 	const getEmailDomain = ( email: string ): MagicEmailDomainInfo[] => {
-		const domainMatch = email.match( /@(.+)$/ );
-		const domain = domainMatch ? domainMatch[ 1 ].toLowerCase() : null;
-
-		const filteredDomains = knownDomains.filter( ( e ) => e.domain.toLowerCase() === domain );
+		const domainMatch = extractDomainWithExtension( email );
+		const filteredDomains = knownDomains.filter( ( e ) => e.domain.toLowerCase() === domainMatch );
 
 		// If no matches, we return the known domains.
 		return filteredDomains.length > 0 ? filteredDomains : knownDomains;
