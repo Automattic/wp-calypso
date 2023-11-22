@@ -73,7 +73,7 @@ class ReskinSideExplainer extends Component {
 					<span>{ translate( 'Choose my domain later' ) }</span>
 				);
 				break;
-			case 'free-domain-explainer-treatment-search':
+			case 'free-domain-explainer-treatment-type':
 				title = translate( 'Not ready to choose a domain just yet?' );
 				subtitle = translate(
 					'Select any annual paid plan and we’ll pay the first year’s domain registration fees for you.'
@@ -82,7 +82,7 @@ class ReskinSideExplainer extends Component {
 				ctaText = translate( 'Check paid plans »' );
 				break;
 
-			case 'free-domain-explainer-treatment-type':
+			case 'free-domain-explainer-treatment-search':
 				title = translate( 'Get a free domain with select paid plans' );
 				subtitle = translate(
 					'Select any annual paid plan and we’ll pay the first year’s domain registration fees for you.'
