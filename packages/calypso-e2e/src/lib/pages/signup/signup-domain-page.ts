@@ -20,9 +20,10 @@ export class SignupDomainPage {
 	 * Skips the domain selection screen.
 	 */
 	async skipDomainSelection(): Promise< void > {
-		await Promise.race( [
-			this.page.getByRole( 'button', { name: 'Skip Purchase', exact: true } ).click(),
-			this.page.getByRole( 'button', { name: 'Choose my domain later', exact: true } ).click(),
-		] );
+		console.log( 'async skipDomainSelection(): Promise< void > {' );
+		console.log( this.page.getByRole( 'button', { name: 'Choose my domain later', exact: true } ) );
+		console.log( this.page.getByRole( 'button', { name: 'Skip Purchase', exact: true } ) );
+		// await this.page.getByRole( 'button', { name: 'Skip Purchase', exact: true } ).click();
+		await this.page.getByRole( 'button', { name: 'Choose my domain later', exact: true } ).click();
 	}
 }

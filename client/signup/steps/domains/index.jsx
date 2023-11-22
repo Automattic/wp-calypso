@@ -984,7 +984,7 @@ export class RenderDomainsStep extends Component {
 							<ChooseDomainLater
 								step={ this.props.step }
 								flowName={ this.props.flowName }
-								handleDomainExplainerClick={ this.props.handleDomainExplainerClick }
+								handleDomainExplainerClick={ this.handleDomainExplainerClick }
 							/>
 					  ) }
 				{ useYourDomain }
