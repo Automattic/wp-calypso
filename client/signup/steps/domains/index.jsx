@@ -15,6 +15,7 @@ import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import ChooseDomainLater from 'calypso/components/domains/choose-domain-later';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -980,13 +981,11 @@ export class RenderDomainsStep extends Component {
 					? DomainsInCart()
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
-							<div className="domains__domain-side-content domains__free-domain">
-								<ReskinSideExplainer
-									onClick={ this.handleDomainExplainerClick }
-									type="free-domain-explainer"
-									flowName={ this.props.flowName }
-								/>
-							</div>
+							<ChooseDomainLater
+								step={ this.props.step }
+								flowName={ this.props.flowName }
+								handleDomainExplainerClick={ this.props.handleDomainExplainerClick }
+							/>
 					  ) }
 				{ useYourDomain }
 				{ this.shouldDisplayDomainOnlyExplainer() && (
