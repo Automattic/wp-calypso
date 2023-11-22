@@ -28,7 +28,7 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 
 	return (
 		<>
-			<TrackComponentView eventName="calypso_live_preview_button_impression" />
+			<TrackComponentView eventName="calypso_block_theme_live_preview_impression" />
 			<Button onClick={ () => dispatch( livePreview( themeId, siteId, 'detail' ) ) }>
 				{ translate( 'Preview & Customize' ) }
 			</Button>
