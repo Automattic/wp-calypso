@@ -45,7 +45,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 		const { translate, emailAddress } = this.props;
 		const line = [
 			emailAddress
-				? translate( "We've sent a login link to " )
+				? translate( "We've sent a login link to" )
 				: translate( 'We just emailed you a link.' ),
 		];
 
@@ -72,8 +72,9 @@ class EmailedLoginLinkSuccessfully extends Component {
 				<div className="magic-login__footer">
 					<p>
 						{ translate(
-							" Didn't get the email? You might want to double check if the email address is associated with your account,"
+							"Didn't get the email? You might want to double check if the email address is associated with your account"
 						) }
+						,
 						<a
 							href={ login( {
 								isJetpack: this.props.isJetpackLogin,
