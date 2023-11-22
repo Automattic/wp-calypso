@@ -15,7 +15,7 @@ export const noop = () => {};
  * available to the components that are wrapped in the provider.
  *
  */
-interface OdieAssistantContextInterface {
+export interface OdieAssistantContextInterface {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
