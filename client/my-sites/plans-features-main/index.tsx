@@ -529,6 +529,8 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+		currentSitePlanSlug: sitePlanSlug,
+		usePricingMetaForGridPlans,
 	};
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized

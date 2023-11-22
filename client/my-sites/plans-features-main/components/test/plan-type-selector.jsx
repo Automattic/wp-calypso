@@ -27,6 +27,7 @@ describe( '<PlanTypeSelector />', () => {
 		selectedPlan: PLAN_FREE,
 		hideFreePlan: true,
 		withWPPlanTabs: true,
+		usePricingMetaForGridPlans: () => null,
 	};
 
 	test( 'Should show CustomerTypeToggle when kind is set to `customer`', () => {

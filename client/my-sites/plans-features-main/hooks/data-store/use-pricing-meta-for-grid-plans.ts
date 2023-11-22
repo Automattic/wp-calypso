@@ -61,7 +61,6 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		getCurrentPlan( state, selectedSiteId )
 	);
 	const currentSitePlanSlug = currentPlan?.productSlug;
-
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
 	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const selectedStorageOptions = useSelect( ( select ) => {
