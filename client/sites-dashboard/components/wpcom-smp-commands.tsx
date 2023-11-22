@@ -197,11 +197,11 @@ export const useCommandsArrayWpcom = ( {
 			icon: keyIcon,
 		},
 		{
-			name: 'openSshDetails',
-			label: __( 'Open SSH details' ),
-			searchLabel: __( 'open SSH details' ),
-			context: 'Opening SSH details',
-			callback: setStateCallback( 'openSshDetails' ),
+			name: 'openSshCredentials',
+			label: __( 'Open SFTP/SSH credentials' ),
+			searchLabel: __( 'open SFTP/SSH credentials' ),
+			context: 'Opening SFTP/SSH credentials',
+			callback: setStateCallback( 'openSshCredentials' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
