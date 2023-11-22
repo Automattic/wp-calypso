@@ -115,7 +115,7 @@ const Home = ( {
 
 	useEffect( () => {
 		if ( ! isSiteLaunching && launchedSiteId === siteId ) {
-			queryClient.invalidateQueries( getCacheKey( siteId ) );
+			queryClient.invalidateQueries( { queryKey: getCacheKey( siteId ) } );
 			setLaunchedSiteId( null );
 		}
 	}, [ isSiteLaunching, launchedSiteId, queryClient, siteId ] );

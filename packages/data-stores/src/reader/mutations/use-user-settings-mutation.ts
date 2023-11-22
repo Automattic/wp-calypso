@@ -34,7 +34,7 @@ const useUserSettingsMutation = () => {
 			return settings;
 		},
 		onMutate: async ( data ) => {
-			await queryClient.cancelQueries( emailSettingsCacheKey );
+			await queryClient.cancelQueries( { queryKey: emailSettingsCacheKey } );
 			const previousSettings =
 				queryClient.getQueryData< SubscriptionManagerUserSettings >( emailSettingsCacheKey );
 

@@ -57,7 +57,7 @@ const useSiteNotifyMeOfNewPostsMutation = () => {
 				id
 			);
 
-			await queryClient.cancelQueries( siteSubscriptionsQueryKey );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionsQueryKey } );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );

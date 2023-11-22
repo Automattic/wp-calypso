@@ -49,8 +49,8 @@ const usePendingSiteConfirmMutation = () => {
 			await queryClient.cancelQueries( {
 				queryKey: [ 'read', 'pending-site-subscriptions', isLoggedIn ],
 			} );
-			await queryClient.cancelQueries( subscriptionsCacheKey );
-			await queryClient.cancelQueries( countCacheKey );
+			await queryClient.cancelQueries( { queryKey: subscriptionsCacheKey } );
+			await queryClient.cancelQueries( { queryKey: countCacheKey } );
 
 			const previousPendingSiteSubscriptions =
 				queryClient.getQueryData< PendingSiteSubscriptionsResult >( [
@@ -106,8 +106,8 @@ const usePendingSiteConfirmMutation = () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'read', 'pending-site-subscriptions', isLoggedIn ],
 			} );
-			queryClient.invalidateQueries( subscriptionsCacheKey );
-			queryClient.invalidateQueries( countCacheKey );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCacheKey } );
+			queryClient.invalidateQueries( { queryKey: countCacheKey } );
 		},
 	} );
 };

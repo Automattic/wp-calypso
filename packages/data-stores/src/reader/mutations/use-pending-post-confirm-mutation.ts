@@ -48,8 +48,8 @@ const usePendingPostConfirmMutation = () => {
 			await queryClient.cancelQueries( {
 				queryKey: [ 'read', 'pending-post-subscriptions', isLoggedIn ],
 			} );
-			await queryClient.cancelQueries( subscriptionsCacheKey );
-			await queryClient.cancelQueries( countCacheKey );
+			await queryClient.cancelQueries( { queryKey: subscriptionsCacheKey } );
+			await queryClient.cancelQueries( { queryKey: countCacheKey } );
 
 			const previousPendingPostSubscriptions =
 				queryClient.getQueryData< PendingPostSubscriptionsResult >( [
@@ -107,8 +107,8 @@ const usePendingPostConfirmMutation = () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'read', 'pending-post-subscriptions', isLoggedIn ],
 			} );
-			queryClient.invalidateQueries( subscriptionsCacheKey );
-			queryClient.invalidateQueries( countCacheKey );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCacheKey } );
+			queryClient.invalidateQueries( { queryKey: countCacheKey } );
 		},
 	} );
 };

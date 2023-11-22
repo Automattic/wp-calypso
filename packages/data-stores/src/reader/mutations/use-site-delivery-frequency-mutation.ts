@@ -69,7 +69,7 @@ const useSiteDeliveryFrequencyMutation = () => {
 				id
 			);
 
-			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionsCacheKey } );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData<
