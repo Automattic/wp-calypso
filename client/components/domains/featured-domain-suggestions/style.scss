@@ -124,10 +124,6 @@
 		font-size: $font-body-extra-small;
 		order: 2;
 
-		@include break-mobile {
-			align-self: center;
-		}
-
 		.progress-bar {
 			width: 25%;
 			margin-right: 1em;

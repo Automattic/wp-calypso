@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';

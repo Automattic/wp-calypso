@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import classnames from 'classnames';
 import { trim } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
 import AnnouncementModalExample from 'calypso/blocks/announcement-modal/docs/example';

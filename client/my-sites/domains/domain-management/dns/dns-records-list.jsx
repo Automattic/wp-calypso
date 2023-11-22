@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { edit, Icon, info, redo, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

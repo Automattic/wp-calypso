@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, redirectLoggedOutToSignup, render as clientRender } from 'calypso/controller';
 import { updateLastRoute, unmountSidebar, blogDiscoveryByFeedId } from 'calypso/reader/controller';
 import { blogPost, feedPost } from './controller';

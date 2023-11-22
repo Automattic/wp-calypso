@@ -1,8 +1,8 @@
 // File used only for development and testing.
+import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';

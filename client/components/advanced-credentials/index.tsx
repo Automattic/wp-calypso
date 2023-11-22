@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import StepProgress from 'calypso/components/step-progress';

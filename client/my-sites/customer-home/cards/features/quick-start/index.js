@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, HappinessEngineersTray } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';

@@ -4,9 +4,9 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { stringify } from 'qs';
 import { useEffect, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';

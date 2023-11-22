@@ -4,8 +4,6 @@ import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import type { ReactNode } from 'react';
 
-const CALYPSO_MASTERBAR_HEIGHT = 47;
-
 interface Props {
 	pageTitle: string;
 	showStickyContent: boolean;
@@ -13,7 +11,7 @@ interface Props {
 }
 
 export default function SiteContentHeader( { content, pageTitle, showStickyContent }: Props ) {
-	const [ divRef, hasCrossed ] = useDetectWindowBoundary( CALYPSO_MASTERBAR_HEIGHT );
+	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
 

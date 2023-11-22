@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { QueryClient } from '@tanstack/react-query';
 import debugFactory from 'debug';
-import page from 'page';
 import { Store } from 'redux';
 
 const debug = debugFactory( 'calypso' );

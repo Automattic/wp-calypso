@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
