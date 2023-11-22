@@ -11,7 +11,7 @@ import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import { isCustomDomain, isNotAtomicJetpack } from '../utils';
+import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
@@ -279,6 +279,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/backup/${ site.slug }` );
 				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
 		},
 		{
@@ -334,7 +335,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => ! isNotAtomicJetpack( site ),
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
 		},
 		{
