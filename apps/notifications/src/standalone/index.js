@@ -138,4 +138,23 @@ const init = ( wpcom ) => {
 	);
 };
 
-createClient().then( init );
+function setupErrorRethrowingToParentFrame() {
+	const rethrowErrorInParent = ( { error } ) => {
+		if ( ! error ) {
+			return;
+		}
+
+		const errorData = {
+			type: error.constructor.name,
+			message: error.message,
+			trace: error.stack,
+			url: document.location.href,
+		};
+
+		sendMessage( { action: 'rethrowUnhandledException', data: errorData } );
+	};
+
+	window.addEventListener( 'error', rethrowErrorInParent );
+}
+
+createClient().then( setupErrorRethrowingToParentFrame ).then( init );
