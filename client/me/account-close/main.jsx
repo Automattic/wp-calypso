@@ -204,7 +204,7 @@ class AccountSettingsClose extends Component {
 								</p>
 								<p className="account-close__body-copy">
 									{ translate(
-										'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com and Gravatar.com. Once your WordPress.com account is closed, these services will also be closed and you will lose access to any orders or support history you may have.'
+										'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com, Gravatar.com, the Jetpack mobile app and the WordPress mobile app. Once your WordPress.com account is closed, these services will also be closed and you will lose access to any orders or support history you may have.'
 									) }
 								</p>
 								<p className="account-close__body-copy">
