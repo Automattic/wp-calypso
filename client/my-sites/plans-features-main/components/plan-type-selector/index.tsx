@@ -156,7 +156,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		storageAddOns: null,
 	} );
 	const currentPlanBillingPeriod = currentSitePlanSlug
-		? pricingMeta?.[ currentSitePlanSlug ].billingPeriod
+		? pricingMeta?.[ currentSitePlanSlug ]?.billingPeriod
 		: null;
 
 	if ( showBiennialToggle ) {
