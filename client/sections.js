@@ -598,6 +598,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'jetpack-cloud-overview',
+		paths: [ '/overview' ],
+		module: 'calypso/jetpack-cloud/sections/overview',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-partner-portal',
 		paths: [ '/partner-portal' ],
 		module: 'calypso/jetpack-cloud/sections/partner-portal',

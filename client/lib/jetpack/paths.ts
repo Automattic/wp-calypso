@@ -41,6 +41,8 @@ export const partnerPortalBasePath = ( path = '' ) => `/partner-portal${ path }`
 export const agencySignupBasePath = () => '/manage/signup';
 export const agencySignupLegacyPath = () => '/agency/signup';
 
+export const overviewPath = () => '/overview';
+
 const pluginsBasePath = '/plugins/manage';
 
 export const pluginsPath = ( siteSlug?: string | null, query = {} ): string => {

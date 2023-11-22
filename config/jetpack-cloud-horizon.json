@@ -70,6 +70,7 @@
 		"activity": true,
 		"backup": true,
 		"jetpack-cloud": true,
+		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": true,
 		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": false,
