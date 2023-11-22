@@ -1,10 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
+import { SiteRolesResponseSchema } from './schema';
 
-function useSiteRolesQuery( siteId, queryOptions = {} ) {
+function useSiteRolesQuery( siteId: string | number, queryOptions = {} ) {
 	return useQuery( {
 		queryKey: [ 'site-roles', siteId ],
-		queryFn: () => wp.req.get( `/sites/${ siteId }/roles` ),
+		queryFn: async () => {
+			const response = await wp.req.get( `/sites/${ siteId }/roles` );
+			return SiteRolesResponseSchema.parse( response );
+		},
 		...queryOptions,
 		select: ( { roles } ) => {
 			return roles.map( ( role ) =>
@@ -12,6 +16,7 @@ function useSiteRolesQuery( siteId, queryOptions = {} ) {
 			);
 		},
 		enabled: !! siteId,
+		staleTime: 60 * 1000,
 	} );
 }
 
