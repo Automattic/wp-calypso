@@ -172,6 +172,7 @@
 		"themes/block-theme-previews": true,
 		"themes/discovery": true,
 		"themes/display-thank-you-page-for-woo": true,
+		"themes/new-theme-card": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/text-search-lots": true,

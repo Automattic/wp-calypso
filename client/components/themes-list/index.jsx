@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -13,6 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import ThemeNew from 'calypso/components/themenew';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -115,15 +117,19 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 
 	return (
 		<div className="themes-list" ref={ themesListRef }>
-			{ props.themes.map( ( theme, index ) => (
-				<ThemeBlock
-					key={ 'theme-block' + index }
-					theme={ theme }
-					index={ index }
-					tabFilter={ tabFilter }
-					{ ...props }
-				/>
-			) ) }
+			{ props.themes.map( ( theme, index ) =>
+				isEnabled( 'themes/new-theme-card' ) ? (
+					<ThemeNew key={ 'theme-block' + index } themeId={ theme.id } themePosition={ index } />
+				) : (
+					<ThemeBlock
+						key={ 'theme-block' + index }
+						theme={ theme }
+						index={ index }
+						tabFilter={ tabFilter }
+						{ ...props }
+					/>
+				)
+			) }
 			{ /* Don't show second upsell nudge when less than 6 rows are present.
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }

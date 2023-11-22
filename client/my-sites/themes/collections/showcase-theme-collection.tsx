@@ -1,9 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { default as pageRouter } from 'page';
 import { ReactElement } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
 import ThemeCollectionItem from 'calypso/components/theme-collection/theme-collection-item';
 import ThemeCollectionPlaceholder from 'calypso/components/theme-collection/theme-collection-placeholder';
+import ThemeNew from 'calypso/components/themenew';
+import { ThemeCollectionContextProvider } from 'calypso/components/themenew/theme-collection-context';
 import { ThemeBlock } from 'calypso/components/themes-list';
 import {
 	ThemesQuery,
@@ -82,7 +85,10 @@ export default function ShowcaseThemeCollection( {
 	};
 
 	return (
-		<>
+		<ThemeCollectionContextProvider
+			collectionId={ collectionSlug }
+			collectionPosition={ collectionIndex }
+		>
 			<ThemeCollection
 				collectionSlug={ collectionSlug }
 				title={ title }
@@ -93,27 +99,31 @@ export default function ShowcaseThemeCollection( {
 				{ themes.length > 0 ? (
 					themes.map( ( theme: Theme, index: number ) => (
 						<ThemeCollectionItem key={ theme.id }>
-							<ThemeBlock
-								getActionLabel={ getActionLabel }
-								getButtonOptions={ getOptions }
-								getPrice={ getPrice }
-								getScreenshotUrl={ getScreenshotUrl }
-								index={ index }
-								isActive={ isActive }
-								isInstalling={ isInstalling }
-								siteId={ siteId }
-								theme={ theme }
-								onMoreButtonClick={ recordThemeClick }
-								onMoreButtonItemClick={ recordThemeClick }
-								onScreenshotClick={ onScreenshotClick }
-								onStyleVariationClick={ onStyleVariationClick }
-							/>
+							{ isEnabled( 'themes/new-theme-card' ) ? (
+								<ThemeNew themeId={ theme.id } themePosition={ index } />
+							) : (
+								<ThemeBlock
+									getActionLabel={ getActionLabel }
+									getButtonOptions={ getOptions }
+									getPrice={ getPrice }
+									getScreenshotUrl={ getScreenshotUrl }
+									index={ index }
+									isActive={ isActive }
+									isInstalling={ isInstalling }
+									siteId={ siteId }
+									theme={ theme }
+									onMoreButtonClick={ recordThemeClick }
+									onMoreButtonItemClick={ recordThemeClick }
+									onScreenshotClick={ onScreenshotClick }
+									onStyleVariationClick={ onStyleVariationClick }
+								/>
+							) }
 						</ThemeCollectionItem>
 					) )
 				) : (
 					<ThemeCollectionPlaceholder items={ 3 } />
 				) }
 			</ThemeCollection>
-		</>
+		</ThemeCollectionContextProvider>
 	);
 }
