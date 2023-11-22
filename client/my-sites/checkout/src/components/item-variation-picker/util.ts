@@ -1,3 +1,4 @@
+import { isJetpackPlan, isJetpackProduct, isAkismetProduct } from '@automattic/calypso-products';
 import type { WPCOMProductVariant } from './types';
 
 export function getItemVariantCompareToPrice(
@@ -23,12 +24,11 @@ export function getItemVariantCompareToPrice(
 		return compareTo.priceBeforeDiscounts * 2;
 	}
 
-	// CompareTo price with introductory offers (For Jetpack)
+	// CompareTo price with introductory offers and wihtout (For Jetpack and Akismet)
 	if (
-		compareTo.introductoryInterval === 1 &&
-		compareTo.introductoryTerm === 'year' &&
-		variant.introductoryInterval === 2 &&
-		variant.introductoryTerm === 'year'
+		isJetpackPlan( { product_slug: compareTo.productSlug } ) ||
+		isJetpackProduct( { product_slug: compareTo.productSlug } ) ||
+		isAkismetProduct( { product_slug: compareTo.productSlug } )
 	) {
 		return compareTo.priceInteger + compareTo.priceBeforeDiscounts;
 	}
