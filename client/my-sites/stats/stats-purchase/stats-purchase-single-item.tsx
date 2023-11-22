@@ -15,6 +15,7 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
+import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
@@ -119,6 +120,10 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
+	// TODO: Replace current pricing info with slider.
+	// Currently displaying below the flow to maintain existing behaviour.
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
@@ -134,6 +139,7 @@ Thanks\n\n`;
 			>
 				{ translate( 'Get Stats' ) }
 			</ButtonComponent>
+			{ isTierUpgradeSliderEnabled && <TierUpgradeSlider /> }
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
