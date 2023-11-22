@@ -312,6 +312,20 @@ export const useCommandsArrayWpcom = ( {
 			},
 			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
+		{
+			name: 'openHostingConfiguration',
+			label: __( 'Open hosting configuration' ),
+			searchLabel: __( 'open hosting configuration' ),
+			context: 'Opening hosting configuration',
+			callback: setStateCallback( 'openHostingConfiguration' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => ! isNotAtomicJetpack( site ),
+		},
 	];
 
 	return commands;
