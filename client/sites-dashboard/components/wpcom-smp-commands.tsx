@@ -1,11 +1,19 @@
-import { Gridicon } from '@automattic/components';
 import {
 	plus as addNewSiteIcon,
 	globe as domainsIcon,
 	commentAuthorAvatar as profileIcon,
+	settings as accountSettingsIcon,
+	payment as creditCardIcon,
+	home as dashboardIcon,
+	chartBar as statsIcon,
+	alignJustify as acitvityLogIcon,
+	backup as backupIcon,
+	cog as hostingConfigIcon,
+	tool as toolIcon,
+	page as pageIcon,
+	key as keyIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -122,7 +130,6 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/me` );
 			},
-
 			icon: profileIcon,
 		},
 		{
@@ -134,7 +141,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/me/account` );
 			},
-			icon: <MaterialIcon icon="settings" />,
+			icon: accountSettingsIcon,
 		},
 		{
 			name: 'acessPurchases',
@@ -145,7 +152,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `me/purchases` );
 			},
-			icon: <MaterialIcon icon="credit_card" />,
+			icon: creditCardIcon,
 		},
 		{
 			name: 'manageDomains',
@@ -187,7 +194,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="key" />,
+			icon: keyIcon,
 		},
 		{
 			name: 'openSshDetails',
@@ -202,7 +209,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="key" />,
+			icon: keyIcon,
 		},
 		{
 			name: 'resetSshSftpPassword',
@@ -217,7 +224,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="key" />,
+			icon: keyIcon,
 		},
 		{
 			name: 'openSiteDashboard',
@@ -231,7 +238,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/home/${ site.slug }` );
 				},
 			},
-			icon: <Gridicon icon="house" />,
+			icon: dashboardIcon,
 		},
 		{
 			name: 'openSiteStats',
@@ -245,7 +252,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/stats/${ site.slug }` );
 				},
 			},
-			icon: <Gridicon icon="stats-up-alt" />,
+			icon: statsIcon,
 		},
 		{
 			name: 'registerDomain',
@@ -270,7 +277,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/activity-log/${ site.slug }` );
 				},
 			},
-			icon: <Gridicon icon="history" />,
+			icon: acitvityLogIcon,
 		},
 		{
 			name: 'openBackups',
@@ -285,7 +292,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
-			icon: <Gridicon icon="cloud-outline" />,
+			icon: backupIcon,
 		},
 		{
 			name: 'viewSiteMetrics',
@@ -300,7 +307,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="build" />,
+			icon: statsIcon,
 		},
 		{
 			name: 'openPHPLogs',
@@ -315,7 +322,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="build" />,
+			icon: acitvityLogIcon,
 		},
 		{
 			name: 'openWebServerLogs',
@@ -330,7 +337,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="build" />,
+			icon: acitvityLogIcon,
 		},
 		{
 			name: 'openHostingConfiguration',
@@ -345,6 +352,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
+			icon: hostingConfigIcon,
 		},
 		{
 			name: 'openPHPmyAdmin',
@@ -359,6 +367,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: pageIcon,
 		},
 		{
 			name: 'manageStagingSites',
@@ -373,6 +382,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: toolIcon,
 		},
 		{
 			name: 'managePHPVersion',
@@ -387,6 +397,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: toolIcon,
 		},
 		{
 			name: 'manageCacheSettings',
@@ -401,6 +412,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: toolIcon,
 		},
 		{
 			name: 'manageAdminInterfaceStyle',
@@ -415,6 +427,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: pageIcon,
 		},
 	];
 
