@@ -213,7 +213,8 @@
 		"webpack-node-externals": "^3.0.0",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^",
-		"wpcom-xhr-request": "workspace:^"
+		"wpcom-xhr-request": "workspace:^",
+		"zod": "^3.22.4"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
