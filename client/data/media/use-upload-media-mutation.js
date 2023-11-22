@@ -23,7 +23,9 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
-			queryClient.invalidateQueries( [ 'media-storage', siteId ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'media-storage', siteId ],
+			} );
 		},
 		onError( error, { siteId, transientMedia } ) {
 			dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
