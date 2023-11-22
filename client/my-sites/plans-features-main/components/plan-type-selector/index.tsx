@@ -28,6 +28,7 @@ import {
 } from 'calypso/state/plans/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { IntervalType } from '../../types';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
@@ -48,6 +49,7 @@ export type PlanTypeSelectorProps = {
 	hideDiscountLabel?: boolean;
 	redirectTo?: string | null;
 	isStepperUpgradeFlow: boolean;
+	onToggleChange: ( interval: IntervalType ) => void;
 };
 
 interface PathArgs {
@@ -134,6 +136,7 @@ export type IntervalTypeProps = Pick<
 	| 'showBiennialToggle'
 	| 'selectedPlan'
 	| 'selectedFeature'
+	| 'onToggleChange'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -144,6 +147,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
 		showBiennialToggle,
+		onToggleChange,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
@@ -169,20 +173,6 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		}
 	}
 
-	const additionalPathProps = {
-		...( props.redirectTo ? { redirect_to: props.redirectTo } : {} ),
-		...( props.selectedPlan ? { plan: props.selectedPlan } : {} ),
-		...( props.selectedFeature ? { feature: props.selectedFeature } : {} ),
-	};
-
-	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-
-	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-		'domainAndPlanPackage'
-	);
-
-	const isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
-
 	const intervalTabs = showBiennialToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
@@ -195,13 +185,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					<SegmentedControl.Item
 						key={ interval }
 						selected={ intervalType === interval }
-						path={ generatePath( props, {
-							intervalType: interval,
-							domain: isDomainUpsellFlow,
-							domainAndPlanPackage: isDomainAndPlanPackageFlow,
-							jetpackAppPlans: isJetpackAppFlow,
-							...additionalPathProps,
-						} ) }
+						onClick={ () => onToggleChange( interval as IntervalType ) }
 						isPlansInsideStepper={ props.isPlansInsideStepper }
 					>
 						<span

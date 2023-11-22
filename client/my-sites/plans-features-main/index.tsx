@@ -227,7 +227,7 @@ const PlansFeaturesMain = ( {
 	showBiennialToggle,
 	customerType = 'personal',
 	planTypeSelector = 'interval',
-	intervalType = 'yearly',
+	intervalType: intervalTypeFromProps = 'yearly',
 	hidePlansFeatureComparison = false,
 	hideUnavailableFeatures = false,
 	isInSignup = false,
@@ -366,6 +366,8 @@ const PlansFeaturesMain = ( {
 		},
 		[ onUpgradeClick, resolveModal, siteSlug, withDiscount ]
 	);
+
+	const [ intervalType, setIntervalType ] = useState< IntervalType >( intervalTypeFromProps );
 
 	const term = usePlanBillingPeriod( {
 		intervalType,
@@ -529,6 +531,7 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+		onToggleChange: ( interval: IntervalType ) => setIntervalType( interval ),
 	};
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
