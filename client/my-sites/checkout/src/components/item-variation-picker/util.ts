@@ -24,13 +24,15 @@ export function getItemVariantCompareToPrice(
 		return compareTo.priceBeforeDiscounts * 2;
 	}
 
-	// CompareTo price with introductory offers and wihtout (For Jetpack and Akismet)
+	// CompareTo price with introductory offers and without (For Jetpack and Akismet)
 	if (
 		isJetpackPlan( { product_slug: compareTo.productSlug } ) ||
 		isJetpackProduct( { product_slug: compareTo.productSlug } ) ||
 		isAkismetProduct( { product_slug: compareTo.productSlug } )
 	) {
-		return compareTo.priceInteger + compareTo.priceBeforeDiscounts;
+		if ( compareTo.termIntervalInMonths === 12 && variant.termIntervalInMonths === 24 ) {
+			return compareTo.priceInteger + compareTo.priceBeforeDiscounts;
+		}
 	}
 
 	// CompareTo price without intro offers (For WPCOM)
