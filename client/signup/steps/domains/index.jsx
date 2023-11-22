@@ -1,6 +1,6 @@
 import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, FoldableCard } from '@automattic/components';
+import { Button, FoldableCard, Spinner } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
@@ -40,7 +40,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { ProvideExperimentData } from 'calypso/lib/explat';
+import { ProvideExperimentData, useExperiment } from 'calypso/lib/explat';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -1302,8 +1302,14 @@ export class RenderDomainsStep extends Component {
 				key={ this.props.step + this.props.stepSectionName }
 				className="domains__step-content domains__step-content-domain-step"
 			>
-				{ content }
-				{ sideContent }
+				{ this.props.isSideContentExperimentLoading ? (
+					<Spinner width="100" />
+				) : (
+					<>
+						{ content }
+						{ sideContent }
+					</>
+				) }
 			</div>
 		);
 	}
@@ -1523,9 +1529,18 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props ) {
+	const [ isSideContentExperimentLoading ] = useExperiment(
+		'calypso_gf_signup_onboarding_escape_hatch',
+		{
+			isEligible: props.flowName === 'onboarding',
+		}
+	);
 	return (
 		<CalypsoShoppingCartProvider>
-			<RenderDomainsStepConnect { ...props } />
+			<RenderDomainsStepConnect
+				{ ...props }
+				isSideContentExperimentLoading={ isSideContentExperimentLoading }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 }
