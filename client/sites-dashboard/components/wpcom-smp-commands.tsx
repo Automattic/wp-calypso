@@ -354,6 +354,20 @@ export const useCommandsArrayWpcom = ( {
 			},
 			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
+		{
+			name: 'manageCacheSettings',
+			label: __( 'Manage cache settings' ),
+			searchLabel: __( 'manage cache settings' ),
+			context: 'Managing cache settings',
+			callback: setStateCallback( 'manageCacheSettings' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#cache` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+		},
 	];
 
 	return commands;
