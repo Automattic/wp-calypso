@@ -9,7 +9,9 @@ const useDeleteAppPasswordMutation = ( queryOptions = {} ) => {
 			wp.req.post( `/me/two-step/application-passwords/${ appPasswordId }/delete` ),
 		...queryOptions,
 		onSuccess( ...args ) {
-			queryClient.invalidateQueries( [ 'application-passwords' ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'application-passwords' ],
+			} );
 			queryOptions.onSuccess?.( ...args );
 		},
 	} );

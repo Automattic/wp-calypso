@@ -9,7 +9,9 @@ export const useCancelCampaignMutation = ( onError: () => void ) => {
 		mutationFn: async ( { siteId, campaignId }: { siteId: number; campaignId: number } ) =>
 			await requestDSP< { results: Campaign[] } >( siteId, `/campaigns/${ campaignId }/stop` ),
 		onSuccess( data, { siteId } ) {
-			queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'promote-post-campaigns', siteId ],
+			} );
 		},
 		onError,
 	} );

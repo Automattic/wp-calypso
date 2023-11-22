@@ -30,7 +30,9 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 	const dispatch = useDispatch();
 	const [ isDeletingInitiated, setIsDeletingInitiated ] = useState( false );
 	const onReverted = useCallback( () => {
-		queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY ] );
+		queryClient.invalidateQueries( {
+			queryKey: [ USE_STAGING_SITE_QUERY_KEY ],
+		} );
 		setIsDeletingInitiated( false );
 		onSuccess?.();
 	}, [ onSuccess, queryClient ] );
@@ -42,7 +44,9 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		if ( isDeletingInitiated ) {
 			if ( stagingSiteId ) {
 				timeoutId = setInterval( () => {
-					queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY ] );
+					queryClient.invalidateQueries( {
+						queryKey: [ USE_STAGING_SITE_QUERY_KEY ],
+					} );
 				}, 3000 );
 			} else {
 				onReverted();

@@ -69,7 +69,7 @@ const useSiteDeliveryFrequencyMutation = () => {
 				id
 			);
 
-			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionsCacheKey } );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData<
@@ -138,7 +138,9 @@ const useSiteDeliveryFrequencyMutation = () => {
 				isLoggedIn,
 				id,
 			} );
-			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ],
+			} );
 		},
 	} );
 };

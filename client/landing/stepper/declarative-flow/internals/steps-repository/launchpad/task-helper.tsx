@@ -122,7 +122,7 @@ export function getEnhancedTasks(
 			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { newsletter_plan_created: true },
 			} );
-			queryClient?.invalidateQueries( [ 'launchpad' ] );
+			queryClient?.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 		}
 	};
 

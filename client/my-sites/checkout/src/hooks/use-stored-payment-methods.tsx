@@ -94,7 +94,9 @@ export function useStoredPaymentMethods( {
 	>( {
 		mutationFn: ( id ) => requestPaymentMethodDeletion( id ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ storedPaymentMethodsQueryKey ],
+			} );
 		},
 	} );
 
