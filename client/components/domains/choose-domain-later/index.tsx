@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import ReskinSideExplainer from '../reskin-side-explainer';
 
@@ -14,6 +14,7 @@ type Props = {
 };
 
 export default function ChooseDomainLater( props: Props ) {
+	const [ isEscapeHatchShownOnce, setisEscapeHatchShownOnce ] = useState( false );
 	const [ isLoading, experimentAssignment ] = useExperiment(
 		'calypso_gf_signup_onboarding_escape_hatch',
 		{
@@ -25,15 +26,21 @@ export default function ChooseDomainLater( props: Props ) {
 		return null;
 	}
 	const escapeHatchVariant = experimentAssignment?.variationName;
-
 	const { step, handleDomainExplainerClick, flowName } = props;
 	const domainForm = step?.domainForm ?? {};
-	if (
-		escapeHatchVariant === 'treatment_search' &&
+
+	const isDomainResultsLoaded =
 		! domainForm.loadingResults &&
 		Array.isArray( domainForm?.searchResults ) &&
-		domainForm?.searchResults?.length > 0
+		domainForm?.searchResults?.length > 0;
+
+	if (
+		escapeHatchVariant === 'treatment_search' &&
+		( isEscapeHatchShownOnce || isDomainResultsLoaded )
 	) {
+		if ( ! isEscapeHatchShownOnce ) {
+			setisEscapeHatchShownOnce( true );
+		}
 		return (
 			<div className="domains__domain-side-content domains__free-domain">
 				<ReskinSideExplainer
@@ -45,10 +52,11 @@ export default function ChooseDomainLater( props: Props ) {
 		);
 	} else if (
 		escapeHatchVariant === 'treatment_type' &&
-		! domainForm.loadingResults &&
-		Array.isArray( domainForm?.searchResults ) &&
-		domainForm?.searchResults?.length > 0
+		( isEscapeHatchShownOnce || isDomainResultsLoaded )
 	) {
+		if ( ! isEscapeHatchShownOnce ) {
+			setisEscapeHatchShownOnce( true );
+		}
 		return (
 			<div className="domains__domain-side-content domains__free-domain">
 				<ReskinSideExplainer
