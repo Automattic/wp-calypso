@@ -1,3 +1,4 @@
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MagicLoginEmail } from '.';
 import './style.scss';
 
@@ -32,13 +33,20 @@ export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapper
 		return filteredDomains.length > 0 ? filteredDomains : knownDomains;
 	};
 
-	const userDomainEmail = getEmailDomain( emailAddress );
+	const logEvent = ( domain: string ) => {
+		recordTracksEvent( 'calypso_magic_login_email_click', { domain } );
+	};
 
 	return (
 		<ul>
-			{ userDomainEmail.map( ( item: MagicEmailDomainInfo, key: number ) => (
+			{ getEmailDomain( emailAddress ).map( ( item: MagicEmailDomainInfo, key: number ) => (
 				<li key={ key }>
-					<a target="_blank" href={ item.url } rel="noreferrer">
+					<a
+						onClick={ () => logEvent( item.name ) }
+						target="_blank"
+						href={ item.url }
+						rel="noreferrer"
+					>
 						<MagicLoginEmail.Icon icon={ item.name.toLocaleLowerCase() } />
 						<MagicLoginEmail.Content name={ item.name } />
 					</a>
