@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useState } from 'react';
 import SimplifiedSegmentedControl from './simplified';
 import SegmentedControl from './';

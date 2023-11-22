@@ -13,8 +13,8 @@ The children technique is appropriate when you'd like to define the "selection" 
 A good example for this case is navigation. Sometimes the option that is selected is defined by the route, other times it's a state value, external prop, etc.
 
 ```jsx
-import { Component } from 'react';
 import { SegmentedControl } from '@automattic/components';
+import { Component } from 'react';
 
 export default class extends Component {
 	// ...
