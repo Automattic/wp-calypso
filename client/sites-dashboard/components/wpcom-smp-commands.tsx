@@ -340,6 +340,20 @@ export const useCommandsArrayWpcom = ( {
 			},
 			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
+		{
+			name: 'managePHPVersion',
+			label: __( 'Manage PHP version' ),
+			searchLabel: __( 'manage PHP issue' ),
+			context: 'Managing PHP version',
+			callback: setStateCallback( 'managePHPVersion' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+		},
 	];
 
 	return commands;
