@@ -63,7 +63,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 
 	return (
 		<div className="akismet-sites-select">
-			<AkismetSitesSelectHeading>Number of licenses</AkismetSitesSelectHeading>
+			<AkismetSitesSelectHeading>{ translate( 'Number of licenses' ) }</AkismetSitesSelectHeading>
 			<FormLabel htmlFor="number-of-akismet-sites">
 				<AkismetSitesSelectLabel>
 					{ translate( 'On how many sites do you plan to use Akismet?' ) }
@@ -76,16 +76,16 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 				onChange={ onSitesQuantityChange }
 			>
 				<option key="quantity-1" value="1">
-					1 Site
+					{ translate( '1 Site' ) }
 				</option>
 				<option key="quantity-2" value="2">
-					2 Sites
+					{ translate( '2 Sites' ) }
 				</option>
 				<option key="quantity-3" value="3">
-					3 Sites
+					{ translate( '3 Sites' ) }
 				</option>
 				<option key="quantity-4" value="4">
-					4 Sites
+					{ translate( '4 Sites' ) }
 				</option>
 			</StyledFormSelect>
 		</div>
