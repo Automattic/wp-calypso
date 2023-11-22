@@ -1,5 +1,6 @@
-import usePatternInlineCss from '../hooks/use-pattern-inline-css';
-import usePatternMinHeightVh from '../hooks/use-pattern-min-height-vh';
+import { memo } from 'react';
+import { normalizeMinHeight } from '../html-transformers';
+import shufflePosts from '../styles-transformers/shuffle-posts';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
 
@@ -9,8 +10,7 @@ interface Props {
 	viewportHeight?: number;
 	minHeight?: number;
 	maxHeight?: 'none' | number;
-	placeholder?: JSX.Element;
-	prependHtml?: string;
+	transformHtml?: ( patternHtml: string ) => string;
 	shouldShufflePosts: boolean;
 }
 
@@ -20,19 +20,32 @@ const PatternRenderer = ( {
 	viewportHeight,
 	minHeight,
 	maxHeight,
-	prependHtml = '',
+	transformHtml,
 	shouldShufflePosts,
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
-	const patternHtml = usePatternMinHeightVh( prependHtml + pattern?.html, viewportHeight );
-	const inlineCss = usePatternInlineCss( patternId, patternHtml, shouldShufflePosts );
+
+	if ( ! pattern ) {
+		return null;
+	}
+
+	let patternHtml = pattern.html;
+	if ( viewportHeight ) {
+		patternHtml = normalizeMinHeight( patternHtml, viewportHeight );
+	}
+	if ( transformHtml ) {
+		patternHtml = transformHtml( patternHtml );
+	}
+
+	// TODO(fushar): refactor this similar to how we refactor html transformations above.
+	const inlineCss = shufflePosts( patternId, pattern.html, shouldShufflePosts );
 
 	return (
 		<BlockRendererContainer
-			key={ pattern?.ID }
-			styles={ pattern?.styles ?? [] }
-			scripts={ pattern?.scripts ?? '' }
+			key={ pattern.ID }
+			styles={ pattern.styles ?? [] }
+			scripts={ pattern.scripts ?? '' }
 			viewportWidth={ viewportWidth }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }
@@ -46,4 +59,4 @@ const PatternRenderer = ( {
 	);
 };
 
-export default PatternRenderer;
+export default memo( PatternRenderer );

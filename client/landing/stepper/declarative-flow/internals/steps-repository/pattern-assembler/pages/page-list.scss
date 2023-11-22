@@ -1,4 +1,4 @@
-.pattern-page-list {
+.page-list {
 	button {
 		border-radius: 2px;
 
@@ -9,7 +9,7 @@
 	}
 }
 
-.pattern-page-list-item {
+.page-list-item {
 	cursor: pointer;
 	padding: 10px 8px;
 	transition: background-color 0.2s;
@@ -56,4 +56,3 @@
 		text-transform: capitalize;
 	}
 }
-
