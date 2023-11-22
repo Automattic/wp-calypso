@@ -1,25 +1,37 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 import wp from 'calypso/lib/wp';
-import { SiteId, URL } from 'calypso/types';
+import { SiteId } from 'calypso/types';
 
-interface Tag {
-	id: number;
-	count: number;
-	description: string;
-	link: URL;
-	name: string;
-	slug: string;
-	taxonomy: 'post_tag';
-	meta: Array< unknown >;
-}
+const TagSchema = z.object( {
+	id: z.number(),
+	count: z.number(),
+	description: z.string(),
+	link: z.string().url(),
+	name: z.string(),
+	slug: z.string(),
+	taxonomy: z.literal( 'post_tag' ),
+	meta: z.array( z.unknown() ),
+} );
 
-export const useSiteTags = ( siteId: SiteId ): UseQueryResult< Tag[] | null > =>
+const SiteTagsResponseSchema = z.array( TagSchema );
+
+export const useSiteTags = ( siteId: SiteId ) =>
 	useQuery( {
 		enabled: !! siteId,
 		queryKey: [ 'site-tags', siteId ],
-		queryFn: () =>
-			wp.req.get( `/sites/${ siteId }/tags?order=desc&orderby=count&per_page=10`, {
-				apiNamespace: 'wp/v2',
-			} ),
-		staleTime: 3600000, // 1 hour
+		queryFn: async () => {
+			const response = await wp.req.get(
+				`/sites/${ siteId }/tags?order=desc&orderby=count&per_page=10`,
+				{
+					apiNamespace: 'wp/v2',
+				}
+			);
+			const result = SiteTagsResponseSchema.safeParse( response );
+			// @TODO this seems bad, think more about error handling
+			// as we're using a `staleTime` of 10 minutes, we may end
+			// up with an empty array for a while if the request fails
+			return result.success ? result.data : [];
+		},
+		staleTime: 10 * 60 * 1000, // 10 minutes
 	} );
