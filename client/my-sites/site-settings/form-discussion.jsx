@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { flowRight, pick } from 'lodash';
 import { Component } from 'react';
@@ -166,12 +167,20 @@ class SiteSettingsFormDiscussion extends Component {
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
 				/>
+				{ ! this.props.isJetpack && (
+					<ToggleControl
+						checked={ !! fields.verbum_subscription_modal }
+						disabled={ isRequestingSettings || isSavingSettings }
+						onChange={ handleAutosavingToggle( 'verbum_subscription_modal' ) }
+						label={ translate( 'Display subscription suggestion after comment.' ) }
+					/>
+				) }
 				<SupportInfo
 					text={ translate( 'Allow readers to use markdown in comments.' ) }
 					link={
 						isJetpack && ! isAtomic
 							? 'https://jetpack.com/support/markdown/'
-							: 'https://wordpress.com/support/markdown-quick-reference/'
+							: localizeUrl( 'https://wordpress.com/support/markdown-quick-reference/' )
 					}
 				/>
 				<ToggleControl
@@ -651,6 +660,7 @@ export const getFormSettings = ( settings ) => {
 		'stb_enabled',
 		'stc_enabled',
 		'wpcom_publish_comments_with_markdown',
+		'verbum_subscription_modal',
 	] );
 };
 
