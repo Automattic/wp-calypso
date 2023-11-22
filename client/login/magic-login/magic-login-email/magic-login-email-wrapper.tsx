@@ -4,23 +4,21 @@ import './style.scss';
 interface MagicEmailDomainInfo {
 	domain: string;
 	name: string;
-	iconElement: string;
 	url: string;
 }
 interface MagicLoginEmailWrapperProps {
 	emailAddress: string;
 }
 const knownDomains: MagicEmailDomainInfo[] = [
-	{ domain: 'apple.com', name: 'Apple', iconElement: 'AppleIcon', url: 'https://www.icloud.com' },
-	{ domain: 'gmail.com', name: 'Gmail', iconElement: 'GmailIcon', url: 'https://mail.google.com' },
+	{ domain: 'apple.com', name: 'Apple', url: 'https://www.icloud.com' },
+	{ domain: 'gmail.com', name: 'Gmail', url: 'https://mail.google.com' },
 	{
 		domain: 'outlook.com',
 		name: 'Outlook',
-		iconElement: 'OutlookIcon',
 		url: 'https://outlook.live.com',
 	},
-	{ domain: 'yahoo.com', name: 'Yahoo', iconElement: 'YahooIcon', url: 'https://mail.yahoo.com' },
-	{ domain: 'aol.com', name: 'AOL', iconElement: 'AOLIcon', url: 'https://mail.aol.com' },
+	{ domain: 'yahoo.com', name: 'Yahoo', url: 'https://mail.yahoo.com' },
+	{ domain: 'aol.com', name: 'AOL', url: 'https://mail.aol.com' },
 ];
 
 export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapperProps ) {
@@ -41,7 +39,7 @@ export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapper
 				{ userDomainEmail.map( ( item: MagicEmailDomainInfo, key: number ) => (
 					<li key={ key }>
 						<a target="_blank" href={ item.url } rel="noreferrer">
-							<MagicLoginEmail.Icon icon={ item.iconElement } />
+							<MagicLoginEmail.Icon icon={ item.name.toLocaleLowerCase() } />
 							<MagicLoginEmail.Content name={ item.name } />
 						</a>
 					</li>

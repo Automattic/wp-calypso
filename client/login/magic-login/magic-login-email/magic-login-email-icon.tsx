@@ -1,25 +1,26 @@
-import AOLIcon from 'calypso/components/social-icons/aol';
-import AppleIcon from 'calypso/components/social-icons/apple';
-import GmailIcon from 'calypso/components/social-icons/gmail';
-import OutlookIcon from 'calypso/components/social-icons/outlook';
-import YahooIcon from 'calypso/components/social-icons/yahoo';
+import React, { useState, useEffect } from 'react';
 
 interface MagicLoginEmailIconProps {
 	icon: string;
 }
+
 export function MagicLoginEmailIcon( { icon }: MagicLoginEmailIconProps ) {
-	switch ( icon ) {
-		case 'GmailIcon':
-			return <GmailIcon />;
-		case 'AppleIcon':
-			return <AppleIcon />;
-		case 'AOLIcon':
-			return <AOLIcon />;
-		case 'OutlookIcon':
-			return <OutlookIcon />;
-		case 'YahooIcon':
-			return <YahooIcon />;
-		default:
-			return null;
-	}
+	const [ IconComponent, setIconComponent ] = useState< React.ReactNode | null >( null );
+
+	useEffect( () => {
+		const getIconComponent = async ( iconName: string ) => {
+			try {
+				// Use dynamic import to load the icons.
+				const module = await import( `calypso/components/social-icons/${ iconName }` );
+				const IconComponent = module.default;
+				setIconComponent( <IconComponent /> );
+			} catch ( error ) {
+				setIconComponent( null );
+			}
+		};
+
+		getIconComponent( icon );
+	}, [ icon ] );
+
+	return <>{ IconComponent }</>;
 }
