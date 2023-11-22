@@ -48,7 +48,6 @@ export type Context = {
 	};
 	route?: string;
 	route_params?: Record< string, string >;
-	site_plan_id?: number;
 };
 
 export type Nudge = {

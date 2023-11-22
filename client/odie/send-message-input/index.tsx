@@ -5,7 +5,6 @@ import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WAPUU_ERROR_MESSAGE } from '..';
@@ -35,17 +34,15 @@ export const OdieSendMessageButton = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const { siteId, siteDomain, currentRoute, currentPlan } = useSelector( ( state ) => {
+	const { siteId, siteDomain, currentRoute } = useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) as number;
 		const siteDomain = getSiteDomain( state, siteId ) as string;
 		const currentRoute = getCurrentRoute( state );
-		const currentPlan = getCurrentPlan( state, siteId );
 
 		return {
 			siteId,
 			siteDomain,
 			currentRoute,
-			currentPlan,
 		};
 	} );
 
@@ -76,7 +73,6 @@ export const OdieSendMessageButton = ( {
 			blog_id: siteId,
 			route: route,
 			route_params: routeParams,
-			site_plan_id: currentPlan?.id ?? null,
 		};
 	};
 
