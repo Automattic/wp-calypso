@@ -10,9 +10,10 @@ const DEFAULT_PER_PAGE = 100;
 const useViewersQuery = ( siteId, { number = DEFAULT_PER_PAGE } = {}, queryOptions = {} ) => {
 	return useInfiniteQuery( {
 		queryKey: [ 'viewers', siteId ],
-		queryFn: ( { pageParam = 1 } ) =>
+		queryFn: ( { pageParam } ) =>
 			wpcom.req.get( `/sites/${ siteId }/viewers`, { number, page: pageParam } ),
 		...queryOptions,
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage, allPages ) => {
 			if ( lastPage.found <= allPages.length * number ) {
 				return;
