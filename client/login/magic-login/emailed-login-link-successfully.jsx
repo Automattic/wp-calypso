@@ -41,11 +41,6 @@ class EmailedLoginLinkSuccessfully extends Component {
 		);
 	};
 
-	openEmail = ( url ) => {
-		event.preventDefault();
-		window.open( url, '_blank' );
-	};
-
 	render() {
 		const { translate, emailAddress } = this.props;
 		const line = [
@@ -76,8 +71,9 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 				<div className="magic-login__footer">
 					<p>
-						Didn't get the email? You might want to double check if the email address is associated
-						with your account,
+						{ translate(
+							" Didn't get the email? You might want to double check if the email address is associated with your account,"
+						) }
 						<a
 							href={ login( {
 								isJetpack: this.props.isJetpackLogin,
@@ -86,7 +82,6 @@ class EmailedLoginLinkSuccessfully extends Component {
 							} ) }
 							onClick={ this.onClickBackLink }
 						>
-							{ /* <Gridicon icon="arrow-left" size={ 18 } /> */ }
 							{ translate( 'or login with a password instead.' ) }
 						</a>
 					</p>

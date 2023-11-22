@@ -1,7 +1,14 @@
+import { useTranslate } from 'i18n-calypso';
+
 interface MagicLoginEmailContentProps {
 	name: string;
 }
 
 export function MagicLoginEmailContent( { name }: MagicLoginEmailContentProps ) {
-	return <p>Open in { name }</p>;
+	const translate = useTranslate();
+	return (
+		<p>
+			{ translate( 'Open in ' ) } { name }
+		</p>
+	);
 }
