@@ -31,6 +31,7 @@ import {
 } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -178,6 +179,7 @@ export interface PlansFeaturesMainProps {
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
+	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -236,6 +238,7 @@ const PlansFeaturesMain = ( {
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
 	isSpotlightOnCurrentPlan,
+	renderSiblingWhenLoaded,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -887,6 +890,7 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
+						{ renderSiblingWhenLoaded?.() }
 					</>
 				) }
 		</div>
