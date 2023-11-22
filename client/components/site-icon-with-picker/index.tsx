@@ -18,6 +18,7 @@ export type SiteIconWithPickerProps = {
 	uploadFieldClassName?: string;
 	disabled?: boolean;
 	placeholderText?: string;
+	isCircle?: boolean;
 };
 export function SiteIconWithPicker( {
 	selectedFile,
@@ -27,6 +28,7 @@ export function SiteIconWithPicker( {
 	uploadFieldClassName,
 	disabled,
 	placeholderText,
+	isCircle = true,
 }: SiteIconWithPickerProps ) {
 	const { __ } = useI18n();
 
@@ -107,6 +109,7 @@ export function SiteIconWithPicker( {
 				<FormFileUpload
 					className={ classNames( 'site-icon-with-picker__upload-button', {
 						'has-icon-or-image': selectedFile || siteIconUrl,
+						'is-circle': isCircle,
 					} ) }
 					accept=".jpg,.jpeg,.gif,.png"
 					onChange={ ( event ) => {

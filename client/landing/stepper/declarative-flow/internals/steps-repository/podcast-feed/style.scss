@@ -1,5 +1,62 @@
-@import "../../style";
+@import "../style";
 
+.podcast-feed {
+
+	.step-container {
+		padding-top: 20px;
+		@include break-medium {
+			padding-top: 0;
+		}
+	}
+
+	.step-container__content {
+		display: flex;
+		justify-content: center;
+
+		input,
+		form-textarea {
+			&::placeholder {
+				color: var(--studio-gray-30);
+			}
+		}
+	}
+
+	.step-container__header {
+		margin-bottom: 40px;
+		@include break-medium {
+			margin-top: 36px;
+			margin-bottom: 58px;
+		}
+
+		.formatted-header p.formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+
+	.podcast-feed__submit {
+		border: none;
+		width: 100%;
+		// adds +2 px of padding to the button to match the input field height
+		height: 40px;
+		margin-top: 16px;
+		&.disabled,
+		&.disabled:focus,
+		&.disabled:hover,
+		&:disabled {
+			background: var(--studio-blue-20);
+			cursor: default;
+		}
+		&:focus {
+			box-shadow: none;
+			outline: 2px solid var(--studio-blue-60);
+			outline-offset: 1px;
+			background: var(--studio-blue-60);
+		}
+	}
+}
+
+
+/* TODO: componentize form wrapper from setup-form */
 .setup-form__form {
 	display: flex;
 	flex-direction: column;
@@ -58,6 +115,12 @@
 		padding-bottom: 0;
 	}
 
+	.form-setting-explanation {
+		color: var(--studio-gray-60);
+		margin-top: 0;
+		margin-bottom: 20px;
+	}
+
 	.form-label {
 		color: var(--studio-gray-60);
 		margin-bottom: 8px;
@@ -68,6 +131,7 @@
 		font-size: $font-body;
 	}
 
+	select,
 	input[type="text"] {
 		border-color: var(--studio-gray-10);
 		border-radius: 4px;
@@ -81,6 +145,12 @@
 			box-shadow: 0 0 0 2px var(--color-primary-10);
 			outline: none;
 		}
+	}
+
+	select {
+		// Match font size to center text in select
+		// stylelint-disable-next-line declaration-property-unit-allowed-list
+		line-height: 0.875rem;
 	}
 
 	.setup-form__submit {
@@ -102,17 +172,5 @@
 			outline-offset: 1px;
 			background: var(--studio-blue-60);
 		}
-	}
-}
-
-.components-form-file-upload {
-	span {
-		text-decoration: underline;
-	}
-	.add {
-		color: var(--studio-black);
-	}
-	.replace {
-		color: var(--studio-gray-100);
 	}
 }
