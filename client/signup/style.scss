@@ -354,11 +354,11 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 	}
 
 	.signup-form__terms-of-service-link a,
-	.signup-form__social-buttons-tos a {
+	.auth-form__social-buttons-tos a {
 		text-decoration: underline;
 	}
 
-	.signup-form__social {
+	.auth-form__social {
 		padding-bottom: 0;
 		margin-top: 16px;
 
@@ -590,7 +590,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			}
 		}
 
-		.signup-form__social-buttons {
+		.auth-form__social-buttons {
 			display: flex;
 			flex-direction: column;
 			height: 100%;
@@ -641,7 +641,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			}
 
 			.logged-out-form,
-			.signup-form__social {
+			.auth-form__social {
 				background-color: #fdfdfd;
 				width: unset;
 				max-width: var(--signup-form-column-max-width);
@@ -714,11 +714,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				max-width: 408px;
 			}
 
-			.signup-form__social p {
+			.auth-form__social p {
 				text-align: start;
 			}
 
-			.signup-form__social > p {
+			.auth-form__social > p {
 				display: none;
 			}
 
@@ -726,7 +726,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				margin-inline-start: 12px;
 			}
 
-			p.signup-form__social-buttons-tos {
+			p.auth-form__social-buttons-tos {
 				font-size: 0.75rem;
 				text-align: start;
 				padding-inline-start: 0;
@@ -792,7 +792,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			}
 		}
 
-		.signup-form__social-buttons {
+		.auth-form__social-buttons {
 			gap: 16px;
 		}
 
