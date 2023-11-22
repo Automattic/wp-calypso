@@ -42,9 +42,9 @@ const useReadFeedSearchQuery = ( {
 	excludeFollowed = false,
 	sort = FeedSort.Relevance,
 }: ReadFeedSearchQueryProps ) => {
-	return useInfiniteQuery(
-		[ 'read', 'feed', 'search', query, excludeFollowed, sort ],
-		async ( { pageParam: pageParamQueryString } ) => {
+	return useInfiniteQuery( {
+		queryKey: [ 'read', 'feed', 'search', query, excludeFollowed, sort ],
+		queryFn: async ( { pageParam: pageParamQueryString } ) => {
 			if ( query === undefined ) {
 				return;
 			}
@@ -62,12 +62,10 @@ const useReadFeedSearchQuery = ( {
 				query: urlQuery,
 			} );
 		},
-		{
-			enabled: Boolean( query ),
-			getNextPageParam: ( lastPage ) => lastPage?.next_page,
-			refetchOnWindowFocus: false,
-		}
-	);
+		enabled: Boolean( query ),
+		getNextPageParam: ( lastPage ) => lastPage?.next_page,
+		refetchOnWindowFocus: false,
+	} );
 };
 
 export default useReadFeedSearchQuery;
