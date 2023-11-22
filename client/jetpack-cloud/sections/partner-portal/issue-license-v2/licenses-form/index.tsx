@@ -78,9 +78,9 @@ export default function LicensesForm( {
 
 	const isSelected = useCallback(
 		( slug: string ) =>
-			selectedLicenses.findIndex(
+			selectedLicenses.some(
 				( license ) => license.slug === slug && license.quantity === quantity
-			) !== -1,
+			),
 		[ quantity, selectedLicenses ]
 	);
 
