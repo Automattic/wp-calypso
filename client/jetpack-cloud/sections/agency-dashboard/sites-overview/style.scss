@@ -52,19 +52,33 @@
 		max-height: 40px;
 	}
 
-	&.is-with-split-button {
-		flex-direction: row;
-
-		.sites-overview__issue-license-button {
-			flex-grow: 1;
-		}
-	}
-
 	@include break-large {
 		flex-direction: row;
 	}
 }
 
+
+.sites-overview__add-site-issue-license-buttons.is-with-split-button {
+	flex-direction: row;
+
+	> a {
+		flex-grow: 1;
+	}
+
+	.split-button {
+		display: flex;
+	}
+
+	.split-button__main {
+		flex-grow: 1;
+	}
+
+	@include break-small {
+		> a {
+			flex-grow: 0;
+		}
+	}
+}
 .sites-overview__add-new-site {
 	white-space: nowrap;
 }
@@ -87,6 +101,11 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		justify-content: space-between;
+		flex-direction: column;
+	}
+
+	@include break-xlarge {
+		flex-direction: row;
 	}
 
 	&.is-sticky {
@@ -266,8 +285,8 @@
 	}
 }
 
-.fixed-host-column {
-	display: none;
+.site-host-info {
+	display: inline-block;
 	margin-inline-end: 10px;
 	min-width: 40px;
 	text-align: center;
@@ -281,10 +300,6 @@
 		&.is-visible {
 			visibility: visible;
 		}
-	}
-
-	@include break-wide {
-		display: inline-block;
 	}
 }
 

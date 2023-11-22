@@ -1,14 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Button, Popover } from '@automattic/components';
+import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
+import React, { useEffect } from 'react';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import UpgradePlanDetails from './upgrade-plan-details';
 import type { URL } from 'calypso/types';
 
@@ -16,6 +17,7 @@ interface Props {
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
 	startImport: () => void;
+	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	isBusy: boolean;
@@ -27,10 +29,9 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
-		sourceSiteUrl,
 		targetSite,
 		startImport,
-		onFreeTrialClick,
+		navigateToVerifyEmailStep,
 		onContentOnlyClick,
 		isBusy,
 		migrationTrackingProps,
@@ -42,8 +43,21 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		migrationTrialEligibility?.eligible ||
 		// If the user's email is unverified, we still want to show the trial plan option
 		migrationTrialEligibility?.error_code === 'email-unverified';
-	const [ popoverVisible, setPopoverVisible ] = useState( false );
-	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
+
+	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+		onSuccess: () => {
+			// After the trial is added, we need to request the site again to get the updated plan
+			targetSite && dispatch( requestSite( targetSite.ID ) );
+		},
+	} );
+
+	const onFreeTrialClick = () => {
+		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
+			navigateToVerifyEmailStep();
+		} else {
+			addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
+		}
+	};
 
 	useEffect( () => {
 		dispatch(
@@ -56,65 +70,48 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 			<div className="import__heading-title">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
-					{ translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan', {
+					{ translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan.', {
 						args: {
 							plan: plan?.getTitle() ?? '',
 						},
 					} ) }
+					<br />
+					{ ! isEligibleForTrialPlan &&
+						translate(
+							'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
+							{
+								components: {
+									link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
+								},
+							}
+						) }
 				</SubTitle>
 			</div>
-			<p>
-				{ translate(
-					'Your entire site %(from)s will be migrated to %(to)s, overriding the content in your destination site',
-					{
-						args: {
-							from: convertToFriendlyWebsiteName( sourceSiteUrl ),
-							to: convertToFriendlyWebsiteName( targetSite.URL ),
-						},
-					}
-				) }
-			</p>
-			<UpgradePlanDetails />
-			<div className="import__footer-button-container">
-				<NextButton isBusy={ isBusy } onClick={ () => startImport() }>
+
+			<UpgradePlanDetails>
+				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ () => startImport() }>
 					{ translate( 'Upgrade and migrate' ) }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
-					<Button
-						ref={ trialBtnRef }
-						busy={ isBusy }
-						borderless={ true }
-						className="action-buttons__borderless"
-						onClick={ () => isEligibleForTrialPlan && onFreeTrialClick() }
-						onFocus={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
-						onBlur={ () => setPopoverVisible( false ) }
-						onMouseEnter={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
-						onMouseLeave={ () => setPopoverVisible( false ) }
-					>
-						{ translate( 'Try it for free' ) }
-					</Button>
+					<>
+						<Button
+							busy={ isAddingTrial }
+							disabled={ ! isEligibleForTrialPlan }
+							transparent={ ! isAddingTrial }
+							onClick={ onFreeTrialClick }
+						>
+							{ translate( 'Try 7-days for free' ) }
+						</Button>
+						{ ! isEligibleForTrialPlan && (
+							<small>
+								{ translate(
+									'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
+								) }
+							</small>
+						) }
+					</>
 				) }
-				{ ! isEligibleForTrialPlan && (
-					<Button
-						borderless={ true }
-						className="action-buttons__borderless"
-						onClick={ onContentOnlyClick }
-					>
-						{ translate( 'Use the content-only import option' ) }
-					</Button>
-				) }
-			</div>
-
-			<Popover
-				className="info-popover__tooltip info-popover__tooltip--trial-plan"
-				focusOnShow={ false }
-				context={ trialBtnRef.current }
-				isVisible={ popoverVisible }
-			>
-				{ translate(
-					'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
-				) }
-			</Popover>
+			</UpgradePlanDetails>
 		</div>
 	);
 };

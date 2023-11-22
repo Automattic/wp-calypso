@@ -140,6 +140,7 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
@@ -157,7 +158,6 @@ __metadata:
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
     node-fetch: "npm:^2.6.6"
-    page: "npm:^1.11.5"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.3.11"
     prop-types: "npm:^15.8.1"
@@ -447,6 +447,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-router@workspace:^, @automattic/calypso-router@workspace:packages/calypso-router":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-router@workspace:packages/calypso-router"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-sentry@workspace:^, @automattic/calypso-sentry@workspace:packages/calypso-sentry":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-sentry@workspace:packages/calypso-sentry"
@@ -555,6 +561,7 @@ __metadata:
     prop-types: "npm:^15.7.2"
     qrcode.react: "npm:^3.1.0"
     react-modal: "npm:^3.16.1"
+    react-router-dom: "npm:^6.10.0"
     react-slider: "npm:^2.0.5"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.2.2"
@@ -812,6 +819,7 @@ __metadata:
     typescript: "npm:^5.2.2"
     webpack: "npm:^5.89.0"
   peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^9.14.0
     "@wordpress/i18n": ^4.44.0
     react: ^18.2.0
@@ -955,6 +963,7 @@ __metadata:
     react-draggable: "npm:^4.4.4"
     typescript: "npm:^5.2.2"
   peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^9.14.0
     "@wordpress/element": ^5.21.0
     react: ^18.2.0
@@ -1201,6 +1210,7 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/calypso-router": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     autoprefixer: "npm:^10.2.5"
@@ -1209,7 +1219,6 @@ __metadata:
     debug: "npm:^4.3.3"
     html-webpack-plugin: "npm:^5.5.3"
     i18n-calypso: "workspace:^"
-    page: "npm:^1.11.5"
     postcss: "npm:^8.4.5"
     postcss-custom-properties: "npm:^11.0.0"
     prop-types: "npm:^15.7.2"
@@ -1271,6 +1280,7 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/languages": "workspace:^"
@@ -1296,7 +1306,6 @@ __metadata:
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
     node-fetch: "npm:^2.6.6"
-    page: "npm:^1.11.5"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.3.11"
     prop-types: "npm:^15.8.1"
@@ -1885,6 +1894,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/calypso-router": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
@@ -7716,13 +7726,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gradient-parser@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "@types/gradient-parser@npm:0.1.5"
-  checksum: 8347fb24885aeb133421baec58d0eab4e8ec43d17f337bc4f1d23bde99ca5e87b82b44834eb00d71fd820503c530d4c75e4d9a98652e09b2f04b08fbc1057762
-  languageName: node
-  linkType: hard
-
 "@types/gtag.js@npm:^0.0.10":
   version: 0.0.10
   resolution: "@types/gtag.js@npm:0.0.10"
@@ -7739,7 +7742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/highlight-words-core@npm:1.2.1, @types/highlight-words-core@npm:^1.2.1":
+"@types/highlight-words-core@npm:1.2.1":
   version: 1.2.1
   resolution: "@types/highlight-words-core@npm:1.2.1"
   checksum: f3795656cbe4215e849faa2e53c74a9c6a7b2e148f54267c6a7f25a4f3cd55374f3e4d2e2618740c96fafabdb36b855f7cec27cab207957d566d0500a10e2312
@@ -10140,7 +10143,7 @@ __metadata:
     archiver: "npm:^3.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
     cross-env: "npm:^7.0.3"
-    electron: "npm:26.2.1"
+    electron: "npm:26.2.4"
     electron-builder: "npm:23.0.3"
     electron-fetch: "npm:^1.7.4"
     electron-notarize: "npm:^0.1.1"
@@ -12019,6 +12022,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
+    "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
@@ -12171,7 +12175,6 @@ __metadata:
     moment-timezone: "npm:^0.5.40"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
     nock: "npm:^13.3.8"
-    page: "npm:^1.11.5"
     path-browserify: "npm:^1.0.1"
     percentage-regex: "npm:^3.0.0"
     phone: "npm:^3.1.17"
@@ -15293,16 +15296,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:26.2.1":
-  version: 26.2.1
-  resolution: "electron@npm:26.2.1"
+"electron@npm:26.2.4":
+  version: 26.2.4
+  resolution: "electron@npm:26.2.4"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^18.11.18"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 9eda7a995a9992f2185b3eb95720e5990ea70d8fc822bbff2ee35facde546e175fab4438b7355085e16464291c3afc9f99e3ed3f9fad6f0f37ffc13bb89dc474
+  checksum: eaa861c890709453793c8893552ef91aaddfea716bde3d8b5d1d1064d553fe600f00297d45182c493a582cc76cfe98855ae3ececb865c5bcce3932f0c12beaf9
   languageName: node
   linkType: hard
 
@@ -24176,15 +24179,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"page@npm:^1.11.5":
-  version: 1.11.5
-  resolution: "page@npm:1.11.5"
-  dependencies:
-    path-to-regexp: "npm:~1.2.1"
-  checksum: 242617a422d2eb61ac8330ef7a2e70d64a371add078b6384697b0d02b6030e9fb00de596636f6417e8c82358ef0f783735e6c2c20361145f13cea2458ffd1490
-  languageName: node
-  linkType: hard
-
 "pako@npm:~0.2.0":
   version: 0.2.9
   resolution: "pako@npm:0.2.9"
@@ -24460,15 +24454,6 @@ __metadata:
   version: 6.2.1
   resolution: "path-to-regexp@npm:6.2.1"
   checksum: 7a73811ca703e5c199e5b50b9649ab8f6f7b458a37f7dff9ea338815203f5b1f95fe8cb24d4fdfe2eab5d67ce43562d92534330babca35cdf3231f966adb9360
-  languageName: node
-  linkType: hard
-
-"path-to-regexp@npm:~1.2.1":
-  version: 1.2.1
-  resolution: "path-to-regexp@npm:1.2.1"
-  dependencies:
-    isarray: "npm:0.0.1"
-  checksum: ce48ff0a7434a8725239497c7f8ac1ea567eeccd818929ba59ef32ac49eab675c893d1b36a2870594238e0f8dbba70551dbfffcf358f8f43139b84cdaa56c308
   languageName: node
   linkType: hard
 
@@ -32251,6 +32236,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-jest": "workspace:^"
     "@automattic/calypso-package-generator": "workspace:^"
+    "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/color-studio": "npm:2.5.0"
     "@automattic/components": "workspace:^"
@@ -32281,9 +32267,7 @@ __metadata:
     "@types/cookie": "npm:^0.4.1"
     "@types/debug": "npm:^4.1.7"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
-    "@types/gradient-parser": "npm:^0.1.5"
     "@types/gtag.js": "npm:^0.0.10"
-    "@types/highlight-words-core": "npm:^1.2.1"
     "@types/jest": "npm:^29.5.8"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^20.8.6"

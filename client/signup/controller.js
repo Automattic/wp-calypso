@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { isEmpty } from 'lodash';
-import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';

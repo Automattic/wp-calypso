@@ -1,8 +1,8 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { createElement, FC } from 'react';
 import Main from './main';
 import { Query } from './types';
-import type { Context as PageJSContext } from 'page';
+import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export default {
 	redirectToAdsEarnings: function ( context: PageJSContext ) {

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import page, { type Callback } from '@automattic/calypso-router';
 import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
-import page, { type Callback } from 'page';
 import { ChangeEvent } from 'react';
 import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';

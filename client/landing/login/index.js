@@ -3,7 +3,7 @@
  */
 import 'calypso/boot/polyfills';
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { setupLocale } from 'calypso/boot/locale';
 import { render } from 'calypso/controller/web-util';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';

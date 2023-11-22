@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { createElement } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import { makeLayout, render as clientRender } from 'calypso/controller';

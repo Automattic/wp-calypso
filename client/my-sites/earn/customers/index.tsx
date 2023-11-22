@@ -15,7 +15,6 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import SectionHeader from 'calypso/components/section-header';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
@@ -149,7 +148,6 @@ function CustomerSection() {
 		const wording = getIntervalDependantWording( cancelledSubscriber );
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Customers and Subscribers' ) } />
 				{ Object.values( subscribers ).length === 0 && (
 					<Card>
 						{ translate( "You haven't added any customers. {{a}}Learn more{{/a}} about payments.", {
@@ -168,15 +166,28 @@ function CustomerSection() {
 					</Card>
 				) }
 				{ Object.values( subscribers ).length > 0 && (
-					<Card>
-						<div className="memberships__module-content module-content">
-							<div>
-								{ orderBy( Object.values( subscribers ), [ 'id' ], [ 'desc' ] ).map( ( sub ) =>
-									renderSubscriber( sub )
-								) }
-							</div>
+					<>
+						<ul className="supporters-list" role="table">
+							<li className="row header" role="row">
+								<span className="supporters-list__profile-column" role="columnheader">
+									{ translate( 'Name' ) }
+								</span>
+								<span className="supporters-list__offer-type-column" role="columnheader">
+									{ translate( 'Offer Type' ) }
+								</span>
+								<span className="supporters-list__total-column" role="columnheader">
+									{ translate( 'Total' ) }
+								</span>
+								<span className="supporters-list__since-column" role="columnheader">
+									{ translate( 'Since' ) }
+								</span>
+								<span className="supporters-list__menu-column" role="columnheader"></span>
+							</li>
+							{ orderBy( Object.values( subscribers ), [ 'id' ], [ 'desc' ] ).map( ( sub ) =>
+								renderSubscriber( sub )
+							) }
 							<InfiniteScroll nextPageMethod={ () => fetchNextSubscriberPage( false ) } />
-						</div>
+						</ul>
 						<Dialog
 							isVisible={ !! cancelledSubscriber }
 							buttons={ [
@@ -201,7 +212,7 @@ function CustomerSection() {
 								{ translate( 'Download list as CSV' ) }
 							</Button>
 						</div>
-					</Card>
+					</>
 				) }
 			</div>
 		);
@@ -238,53 +249,24 @@ function CustomerSection() {
 	}
 
 	function renderSubscriberSubscriptionSummary( subscriber: Subscriber ) {
-		const title = subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : ' ';
 		if ( subscriber.plan.renew_interval === PLAN_ONE_TIME_FREQUENCY ) {
-			/* translators: Information about a one-time payment made by a subscriber to a site owner.
-				%(amount)s - the amount paid,
-				%(formattedDate) - the date it was paid
-				%(title) - description of the payment plan, or a blank space if no description available. */
-			return translate( 'Paid %(amount)s once on %(formattedDate)s%(title)s', {
+			return translate( 'One Time (%(amount)s)', {
 				args: {
 					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-					formattedDate: moment( subscriber.start_date ).format( 'll' ),
-					title,
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === PLAN_YEARLY_FREQUENCY ) {
-			/* translators: Information about a recurring yearly payment made by a subscriber to a site owner.
-				%(amount)s - the amount paid,
-				%(formattedDate)s - the date it was first paid
-				%(title)s - description of the payment plan, or a blank space if no description available
-				%(total)s - the total amount subscriber has paid thus far */
-			return translate(
-				'Paying %(amount)s/year%(title)ssince %(formattedDate)s. Total of %(total)s.',
-				{
-					args: {
-						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-						formattedDate: moment( subscriber.start_date ).format( 'll' ),
-						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
-						title,
-					},
-				}
-			);
+			return translate( 'Yearly (%(amount)s)', {
+				args: {
+					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+				},
+			} );
 		} else if ( subscriber.plan.renew_interval === PLAN_MONTHLY_FREQUENCY ) {
-			/* translators: Information about a recurring monthly payment made by a subscriber to a site owner.
-				%(amount)s - the amount paid,
-				%(formattedDate)s - the date it was first paid
-				%(title)s - description of the payment plan, or a blank space if no description available
-				%(total)s - the total amount subscriber has paid thus far */
-			return translate(
-				'Paying %(amount)s/month%(title)ssince %(formattedDate)s. Total of %(total)s.',
-				{
-					args: {
-						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
-						formattedDate: moment( subscriber.start_date ).format( 'll' ),
-						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
-						title,
-					},
-				}
-			);
+			return translate( 'Monthly (%(amount)s)', {
+				args: {
+					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+				},
+			} );
 		}
 	}
 
@@ -309,23 +291,40 @@ function CustomerSection() {
 
 	function renderSubscriber( subscriber: Subscriber ) {
 		return (
-			<Card className="memberships__subscriber-profile is-compact" key={ subscriber.id }>
-				{ renderSubscriberActions( subscriber ) }
-				<div className="memberships__subscriber-gravatar">
-					<Gravatar user={ subscriber.user } size={ 72 } />
-				</div>
-				<div className="memberships__subscriber-detail">
-					<div className="memberships__subscriber-username">
-						{ decodeEntities( subscriber.user.name ) }
+			<li className="supporter-row row" role="row">
+				<span className="supporters-list__profile-column" role="cell">
+					<div className="supporters-list__user-profile">
+						<Gravatar
+							user={ subscriber.user }
+							size={ 40 }
+							className="supporters-list__user-image"
+						/>
+						<div className="supporters-list__user-details">
+							<span className="supporters-list__user-name">
+								{ decodeEntities( subscriber.user.name ) }
+							</span>
+							<span className="supporters-list__user-email">{ subscriber.user.user_email }</span>
+						</div>
 					</div>
-					<div className="memberships__subscriber-email" data-e2e-login={ subscriber.user_email }>
-						<span>{ subscriber.user.user_email }</span>
+				</span>
+				<span className="supporters-list__offer-type-column" role="cell">
+					<div className="supporters-list__offer-type-title">
+						{ subscriber.plan.title ? `${ subscriber.plan.title }` : ' ' }
 					</div>
-					<div className="memberships__subscriber-subscribed">
+					<div className="supporters-list__offer-type-price">
 						{ renderSubscriberSubscriptionSummary( subscriber ) }
 					</div>
-				</div>
-			</Card>
+				</span>
+				<span className="supporters-list__total-column" role="cell">
+					{ formatCurrency( subscriber.all_time_total, subscriber.plan.currency ) }
+				</span>
+				<span className="supporters-list__since-column" role="cell">
+					{ moment( subscriber.start_date ).format( 'll' ) }
+				</span>
+				<span className="supporters-list__menu-column" role="cell">
+					{ renderSubscriberActions( subscriber ) }
+				</span>
+			</li>
 		);
 	}
 

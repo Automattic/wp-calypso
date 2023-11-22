@@ -4,11 +4,11 @@ import {
 	FEATURE_UPLOAD_PLUGINS,
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, find, isEmpty, flowRight } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
