@@ -284,6 +284,34 @@ export const useCommandsArrayWpcom = ( {
 			},
 			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 		},
+		{
+			name: 'openPHPLogs',
+			label: __( 'Open PHP logs' ),
+			searchLabel: __( 'open PHP logs' ),
+			context: 'Opening PHP logs',
+			callback: setStateCallback( 'openPHPLogs' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/site-monitoring/${ site.slug }/php` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+		},
+		{
+			name: 'openWebServerLogs',
+			label: __( 'Open web server logs' ),
+			searchLabel: __( 'open web server logs' ),
+			context: 'Opening web server logs',
+			callback: setStateCallback( 'openWebServerLogs' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/site-monitoring/${ site.slug }/web` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+		},
 	];
 
 	return commands;
