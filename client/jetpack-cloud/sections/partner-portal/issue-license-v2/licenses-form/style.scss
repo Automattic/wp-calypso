@@ -67,3 +67,19 @@ p.licenses-form__description {
 	border-width: 1.5px !important;
 	border-color: transparent;
 }
+
+.licenses-form__actions {
+	margin: 16px 0 32px;
+}
+
+.licenses-form__product-filter-select {
+	.select-dropdown__header-text {
+		font-size: rem(13px);
+		font-weight: 400;
+		color: var(--studio-grey-5);
+	}
+
+	.select-dropdown__header-text b {
+		color: var(--studio-black);
+	}
+}
