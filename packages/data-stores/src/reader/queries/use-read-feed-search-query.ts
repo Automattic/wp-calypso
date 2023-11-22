@@ -63,6 +63,7 @@ const useReadFeedSearchQuery = ( {
 			} );
 		},
 		enabled: Boolean( query ),
+		initialPageParam: '',
 		getNextPageParam: ( lastPage ) => lastPage?.next_page,
 		refetchOnWindowFocus: false,
 	} );

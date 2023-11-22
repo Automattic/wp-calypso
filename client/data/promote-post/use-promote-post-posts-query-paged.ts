@@ -51,7 +51,7 @@ const usePostsQueryPaged = (
 	const searchQueryParams = getSearchOptionsQueryParams( searchOptions );
 	return useInfiniteQuery( {
 		queryKey: [ 'promote-post-posts', siteId, searchQueryParams ],
-		queryFn: async ( { pageParam = 1 } ) => {
+		queryFn: async ( { pageParam } ) => {
 			// Fetch blazable posts
 			const postsResponse = await queryPosts( siteId, `page=${ pageParam }${ searchQueryParams }` );
 
@@ -74,6 +74,7 @@ const usePostsQueryPaged = (
 		meta: {
 			persist: false,
 		},
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage ) => {
 			if ( lastPage.has_more_pages ) {
 				return lastPage.page + 1;
