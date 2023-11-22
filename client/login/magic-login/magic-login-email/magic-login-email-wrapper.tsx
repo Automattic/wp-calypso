@@ -28,23 +28,22 @@ export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapper
 
 		const filteredDomains = knownDomains.filter( ( e ) => e.domain.toLowerCase() === domain );
 
+		// If no matches, we return the known domains.
 		return filteredDomains.length > 0 ? filteredDomains : knownDomains;
 	};
 
 	const userDomainEmail = getEmailDomain( emailAddress );
 
 	return (
-		userDomainEmail && (
-			<ul>
-				{ userDomainEmail.map( ( item: MagicEmailDomainInfo, key: number ) => (
-					<li key={ key }>
-						<a target="_blank" href={ item.url } rel="noreferrer">
-							<MagicLoginEmail.Icon icon={ item.name.toLocaleLowerCase() } />
-							<MagicLoginEmail.Content name={ item.name } />
-						</a>
-					</li>
-				) ) }
-			</ul>
-		)
+		<ul>
+			{ userDomainEmail.map( ( item: MagicEmailDomainInfo, key: number ) => (
+				<li key={ key }>
+					<a target="_blank" href={ item.url } rel="noreferrer">
+						<MagicLoginEmail.Icon icon={ item.name.toLocaleLowerCase() } />
+						<MagicLoginEmail.Content name={ item.name } />
+					</a>
+				</li>
+			) ) }
+		</ul>
 	);
 }
