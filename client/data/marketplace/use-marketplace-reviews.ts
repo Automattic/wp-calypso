@@ -132,7 +132,7 @@ const deleteReview = ( {
 	} );
 };
 
-export const useMarketplaceReviews = (
+export const useMarketplaceReviewsQuery = (
 	{ productType, pluginSlug }: ProductProps,
 	{
 		enabled = true,
@@ -151,7 +151,7 @@ export const useMarketplaceReviews = (
 	} );
 };
 
-export const useCreateMarketplaceReview = () => {
+export const useCreateMarketplaceReviewMutation = () => {
 	const queryClient = useQueryClient();
 	return useMutation( {
 		mutationFn: createReview,
@@ -161,7 +161,7 @@ export const useCreateMarketplaceReview = () => {
 	} );
 };
 
-export const useUpdateMarketplaceReview = () => {
+export const useUpdateMarketplaceReviewMutation = () => {
 	const queryClient = useQueryClient();
 	return useMutation( {
 		mutationFn: updateReview,
@@ -171,7 +171,7 @@ export const useUpdateMarketplaceReview = () => {
 	} );
 };
 
-export const useDeleteMarketplaceReview = () => {
+export const useDeleteMarketplaceReviewMutation = () => {
 	const queryClient = useQueryClient();
 	return useMutation( {
 		mutationFn: deleteReview,

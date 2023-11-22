@@ -13,10 +13,10 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
-	useMarketplaceReviews,
-	useCreateMarketplaceReview,
-	useUpdateMarketplaceReview,
-	useDeleteMarketplaceReview,
+	useMarketplaceReviewsQuery,
+	useCreateMarketplaceReviewMutation,
+	useUpdateMarketplaceReviewMutation,
+	useDeleteMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPluginsList } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
@@ -90,14 +90,14 @@ export default function MarketplaceTest() {
 		getPluginOnSite( state, selectedSiteId, 'contact-form-7' )
 	);
 
-	const { data: marketplaceReviews, isLoading: isLoadingReviews } = useMarketplaceReviews( {
+	const { data: marketplaceReviews, isLoading: isLoadingReviews } = useMarketplaceReviewsQuery( {
 		productType: 'plugin',
 		pluginSlug: 'woocommerce-bookings',
 	} );
 
-	const createReview = useCreateMarketplaceReview();
-	const updateReview = useUpdateMarketplaceReview();
-	const deleteReview = useDeleteMarketplaceReview();
+	const createReview = useCreateMarketplaceReviewMutation();
+	const updateReview = useUpdateMarketplaceReviewMutation();
+	const deleteReview = useDeleteMarketplaceReviewMutation();
 
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
