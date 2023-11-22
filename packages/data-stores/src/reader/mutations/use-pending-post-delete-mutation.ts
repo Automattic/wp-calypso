@@ -101,7 +101,7 @@ const usePendingPostDeleteMutation = () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'read', 'pending-post-subscriptions', isLoggedIn ],
 			} );
-			queryClient.invalidateQueries( countCacheKey );
+			queryClient.invalidateQueries( { queryKey: countCacheKey } );
 		},
 	} );
 };

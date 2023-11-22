@@ -106,8 +106,8 @@ const usePendingSiteConfirmMutation = () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'read', 'pending-site-subscriptions', isLoggedIn ],
 			} );
-			queryClient.invalidateQueries( subscriptionsCacheKey );
-			queryClient.invalidateQueries( countCacheKey );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCacheKey } );
+			queryClient.invalidateQueries( { queryKey: countCacheKey } );
 		},
 	} );
 };

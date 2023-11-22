@@ -61,7 +61,7 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 			queryClient.setQueryData( cacheKey, context?.previousData );
 		},
 		onSettled: async () => {
-			await queryClient.invalidateQueries( cacheKey );
+			await queryClient.invalidateQueries( { queryKey: cacheKey } );
 		},
 	} );
 };

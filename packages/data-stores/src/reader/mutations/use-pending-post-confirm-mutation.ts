@@ -107,8 +107,8 @@ const usePendingPostConfirmMutation = () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'read', 'pending-post-subscriptions', isLoggedIn ],
 			} );
-			queryClient.invalidateQueries( subscriptionsCacheKey );
-			queryClient.invalidateQueries( countCacheKey );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCacheKey } );
+			queryClient.invalidateQueries( { queryKey: countCacheKey } );
 		},
 	} );
 };

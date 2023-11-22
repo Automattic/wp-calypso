@@ -145,7 +145,7 @@ const useSiteSubscribeMutation = () => {
 		},
 		onSettled: ( _data, _error, params: SubscribeParams ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
-				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+				queryClient.invalidateQueries( { queryKey: siteSubscriptionsCacheKey } );
 			}
 
 			if ( isValidId( params.blog_id ) ) {
@@ -154,7 +154,7 @@ const useSiteSubscribeMutation = () => {
 					isLoggedIn,
 					userId
 				);
-				queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
+				queryClient.invalidateQueries( { queryKey: siteSubscriptionDetailsCacheKey } );
 				queryClient.invalidateQueries( {
 					queryKey: [ 'read', 'sites', Number( params.blog_id ) ],
 				} );
@@ -167,7 +167,7 @@ const useSiteSubscribeMutation = () => {
 				} );
 			}
 
-			queryClient.invalidateQueries( subscriptionsCountCacheKey );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCountCacheKey } );
 		},
 		onSuccess: ( data, params ) => {
 			params.onSuccess?.();

@@ -114,8 +114,8 @@ const usePostUnsubscribeMutation = () => {
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries( postSubscriptionsCacheKey );
-			queryClient.invalidateQueries( subscriptionsCountCacheKey );
+			queryClient.invalidateQueries( { queryKey: postSubscriptionsCacheKey } );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCountCacheKey } );
 		},
 	} );
 };

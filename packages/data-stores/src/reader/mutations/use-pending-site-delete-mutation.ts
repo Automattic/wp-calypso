@@ -101,7 +101,7 @@ const usePendingSiteDeleteMutation = () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'read', 'pending-site-subscriptions', isLoggedIn ],
 			} );
-			queryClient.invalidateQueries( countCacheKey );
+			queryClient.invalidateQueries( { queryKey: countCacheKey } );
 		},
 	} );
 };

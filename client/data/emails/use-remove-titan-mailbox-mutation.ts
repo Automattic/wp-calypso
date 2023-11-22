@@ -61,7 +61,7 @@ export function useRemoveTitanMailboxMutation(
 		suppliedOnSettled?.( data, error, variables, context );
 
 		// Always invalidate attendant queries
-		queryClient.invalidateQueries( queryKey ).then( () => {
+		queryClient.invalidateQueries( { queryKey } ).then( () => {
 			const numberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
 			// Determine if we already have updated data, since the removal job is not synchronous
@@ -70,7 +70,7 @@ export function useRemoveTitanMailboxMutation(
 			}
 
 			setTimeout( () => {
-				queryClient.invalidateQueries( queryKey );
+				queryClient.invalidateQueries( { queryKey } );
 			}, invalidationDelayTimeout );
 		} );
 	};

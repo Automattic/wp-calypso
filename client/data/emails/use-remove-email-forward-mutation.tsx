@@ -48,8 +48,8 @@ export default function useRemoveEmailForwardMutation(
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
 
-		queryClient.invalidateQueries( emailAccountsQueryKey );
-		queryClient.invalidateQueries( domainsQueryKey );
+		queryClient.invalidateQueries( { queryKey: emailAccountsQueryKey } );
+		queryClient.invalidateQueries( { queryKey: domainsQueryKey } );
 	};
 
 	mutationOptions.onMutate = async ( emailForward ) => {

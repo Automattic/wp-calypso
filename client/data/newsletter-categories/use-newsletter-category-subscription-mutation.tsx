@@ -64,7 +64,7 @@ const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) =>
 			queryClient.setQueryData( subscribedCategoriesCacheKey, context?.previousData );
 		},
 		onSettled: async () => {
-			await queryClient.invalidateQueries( subscribedCategoriesCacheKey );
+			await queryClient.invalidateQueries( { queryKey: subscribedCategoriesCacheKey } );
 		},
 	} );
 };

@@ -200,7 +200,7 @@ const useSiteUnsubscribeMutation = () => {
 		},
 		onSettled: ( _data, _error, params ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
-				queryClient.invalidateQueries( siteSubscriptionsQueryKey );
+				queryClient.invalidateQueries( { queryKey: siteSubscriptionsQueryKey } );
 			}
 
 			if ( isValidId( params.blog_id ) ) {
@@ -214,7 +214,7 @@ const useSiteUnsubscribeMutation = () => {
 				} );
 			}
 
-			queryClient.invalidateQueries( subscriptionsCountQueryKey );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCountQueryKey } );
 			queryClient.invalidateQueries( {
 				queryKey: [ 'read', 'feed', 'search' ],
 			} );

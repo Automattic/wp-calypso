@@ -164,7 +164,7 @@ const useSubscriberRemoveMutation = (
 			} );
 		},
 		onSettled: ( data, error, subscriber ) => {
-			queryClient.invalidateQueries( subscribersCacheKey );
+			queryClient.invalidateQueries( { queryKey: subscribersCacheKey } );
 
 			if ( invalidateDetailsCache ) {
 				const detailsCacheKey = getSubscriberDetailsCacheKey(
@@ -174,7 +174,7 @@ const useSubscriberRemoveMutation = (
 					getSubscriberDetailsType( subscriber.user_id )
 				);
 
-				queryClient.invalidateQueries( detailsCacheKey );
+				queryClient.invalidateQueries( { queryKey: detailsCacheKey } );
 			}
 		},
 	} );

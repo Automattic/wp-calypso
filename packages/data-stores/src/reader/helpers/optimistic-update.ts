@@ -66,7 +66,7 @@ const invalidateSiteSubscriptionDetails = (
 	queryClient: QueryClient,
 	{ blogId, subscriptionId, isLoggedIn, id }: SiteSubScriptionDetailsParameters
 ) => {
-	queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
+	queryClient.invalidateQueries( { queryKey: [ 'read', 'site-subscriptions' ] } );
 	queryClient.invalidateQueries(
 		buildQueryKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, id )
 	);
