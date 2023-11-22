@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import {
 	plus as addNewSiteIcon,
 	globe as domainsIcon,
@@ -230,6 +231,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/home/${ site.slug }` );
 				},
 			},
+			icon: <Gridicon icon="house" />,
 		},
 		{
 			name: 'openSiteStats',
@@ -243,6 +245,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/stats/${ site.slug }` );
 				},
 			},
+			icon: <Gridicon icon="stats-up-alt" />,
 		},
 		{
 			name: 'registerDomain',
@@ -267,6 +270,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/activity-log/${ site.slug }` );
 				},
 			},
+			icon: <Gridicon icon="history" />,
 		},
 		{
 			name: 'openBackups',
@@ -281,6 +285,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
+			icon: <Gridicon icon="cloud-outline" />,
 		},
 		{
 			name: 'viewSiteMetrics',
@@ -295,6 +300,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: <MaterialIcon icon="build" />,
 		},
 		{
 			name: 'openPHPLogs',
@@ -309,6 +315,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: <MaterialIcon icon="build" />,
 		},
 		{
 			name: 'openWebServerLogs',
@@ -323,6 +330,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
+			icon: <MaterialIcon icon="build" />,
 		},
 		{
 			name: 'openHostingConfiguration',
