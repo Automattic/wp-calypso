@@ -20,7 +20,7 @@ export default function useInstallBoost(
 
 	const handleUpdateSites = useCallback( async () => {
 		// Cancel any current refetches, so they don't overwrite our update
-		await queryClient.cancelQueries( { queryKey: queryKey } );
+		await queryClient.cancelQueries( { queryKey } );
 
 		// Update to the new value
 		queryClient.setQueryData( queryKey, ( oldSites: any ) => {
