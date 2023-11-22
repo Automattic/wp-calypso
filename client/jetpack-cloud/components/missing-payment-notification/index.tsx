@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
-import { Invoice } from 'calypso/state/partner-portal/types';
 
 export default function MissingPaymentNotification() {
 	const partner = useSelector( getCurrentPartner );
@@ -14,18 +13,15 @@ export default function MissingPaymentNotification() {
 		return null;
 	}
 
-	const latestUnpaidInvoice = partner.keys.reduce< Invoice | null >( ( latestInvoice, key ) => {
-		if ( key.latestInvoice && key.latestInvoice.status === 'open' ) {
-			return key.latestInvoice;
-		}
-		return latestInvoice;
-	}, null );
+	const firstUnpaidInvoice = partner.keys.find(
+		( key ) => key.latestInvoice && key.latestInvoice.status === 'open'
+	)?.latestInvoice;
 
-	if ( latestUnpaidInvoice ) {
+	if ( firstUnpaidInvoice ) {
 		const warningText = translate(
 			"The payment for your %s invoice didn't go through. Please take a moment to complete payment.",
 			{
-				args: new Date( Number( latestUnpaidInvoice.effectiveAt ) * 1000 ).toLocaleString( locale, {
+				args: new Date( Number( firstUnpaidInvoice.effectiveAt ) * 1000 ).toLocaleString( locale, {
 					month: 'long',
 				} ),
 			}
