@@ -163,7 +163,7 @@ body.is-section-signup .videopress-step-wrapper {
 		align-items: center;
 	}
 
-	.signup-form__social-buttons button {
+	.auth-form__social-buttons button {
 		background: none !important;
 		border: none !important;
 		border-radius: 0;
@@ -214,11 +214,11 @@ body.is-section-signup .videopress-step-wrapper {
 		}
 	}
 
-	& .signup-form__social p {
+	& .auth-form__social p {
 		font-size: 0.75rem;
 	}
 
-	.signup-form__social > p {
+	.auth-form__social > p {
 		display: none;
 	}
 
@@ -285,7 +285,7 @@ body.is-section-signup .videopress-step-wrapper {
 			padding: 24px 0;
 		}
 
-		.signup-form__social-buttons button {
+		.auth-form__social-buttons button {
 			text-align: start;
 		}
 	}
