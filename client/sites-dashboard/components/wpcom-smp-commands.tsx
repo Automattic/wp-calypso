@@ -270,6 +270,20 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 		},
+		{
+			name: 'viewSiteMetrics',
+			label: __( 'View site metrics' ),
+			searchLabel: __( 'view site metrics' ),
+			context: 'Viewing site metrics',
+			callback: setStateCallback( 'viewSiteMetrics' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/site-monitoring/${ site.slug }` );
+				},
+			},
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+		},
 	];
 
 	return commands;
