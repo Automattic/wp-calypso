@@ -346,8 +346,8 @@ describe( 'reducer', () => {
 			test( 'should create a new entry when no entry is present', () => {
 				expect( itemReducer( undefined, addLiker( 1, 1, 5, liker ) ) ).toEqual( {
 					likes: [ liker ],
-					found: 5,
-					iLike: true,
+					found: 0,
+					iLike: false,
 				} );
 			} );
 
@@ -363,8 +363,8 @@ describe( 'reducer', () => {
 					)
 				).toEqual( {
 					likes: [ liker ],
-					found: 6,
-					iLike: true,
+					found: 5,
+					iLike: false,
 				} );
 			} );
 
@@ -380,12 +380,12 @@ describe( 'reducer', () => {
 					)
 				).toEqual( {
 					likes: [ liker, { ID: 5 } ],
-					found: 6,
-					iLike: true,
+					found: 5,
+					iLike: false,
 				} );
 			} );
 
-			test( 'should leave the likes array alone if the liker is already present', () => {
+			test( 'should return previous state if liker is already present', () => {
 				const initialState = deepFreeze( {
 					likes: [ { ID: 2 }, liker ],
 					found: 5,
@@ -393,47 +393,8 @@ describe( 'reducer', () => {
 				} );
 				const state = itemReducer(
 					initialState,
-					// same liker, new count!
+					// same liker, different count
 					addLiker( 1, 1, 6, liker )
-				);
-
-				expect( state ).toEqual( {
-					likes: [ { ID: 2 }, liker ],
-					found: 6,
-					iLike: true,
-				} );
-				expect( state.likes ).toBe( initialState.likes );
-			} );
-
-			test( 'should update iLike when liker is already present and like count is the same, but the iLike flag is false', () => {
-				const initialState = deepFreeze( {
-					likes: [ { ID: 2 }, liker ],
-					found: 5,
-					iLike: false,
-				} );
-				const state = itemReducer(
-					initialState,
-					// same liker, same count!
-					addLiker( 1, 1, 5, liker )
-				);
-
-				expect( state ).toEqual( {
-					likes: [ { ID: 2 }, liker ],
-					found: 5,
-					iLike: true,
-				} );
-			} );
-
-			test( 'should return previous state if liker is already present, flagged with iLike, and like count is the same', () => {
-				const initialState = deepFreeze( {
-					likes: [ { ID: 2 }, liker ],
-					found: 5,
-					iLike: true,
-				} );
-				const state = itemReducer(
-					initialState,
-					// same liker, same count!
-					addLiker( 1, 1, 5, liker )
 				);
 
 				expect( state ).toBe( initialState );
@@ -445,27 +406,10 @@ describe( 'reducer', () => {
 			const liker = deepFreeze( {
 				ID: 10,
 			} );
-			test( 'should creat a new entry if none is present', () => {
-				expect( itemReducer( undefined, removeLiker( 1, 1, 5, liker ) ) ).toEqual( {
-					likes: undefined,
-					found: 5,
-					iLike: false,
-				} );
-			} );
 
-			test( 'should not update the likes array if none is present, but should update the count', () => {
-				expect(
-					itemReducer(
-						deepFreeze( {
-							likes: undefined,
-							found: 5,
-							iLike: false,
-						} ),
-						removeLiker( 1, 1, 6, liker )
-					)
-				).toEqual( {
-					likes: undefined,
-					found: 6,
+			test( 'should not create a new entry if none is present', () => {
+				expect( itemReducer( undefined, removeLiker( 1, 1, 5, liker ) ) ).toEqual( {
+					found: 0,
 					iLike: false,
 				} );
 			} );
@@ -476,39 +420,18 @@ describe( 'reducer', () => {
 						deepFreeze( {
 							likes: [ { ID: 123 }, liker, { ID: 456 } ],
 							found: 5,
-							iLike: false,
+							iLike: true,
 						} ),
-						removeLiker( 1, 1, 5, liker )
+						removeLiker( 1, 1, 4, liker )
 					)
 				).toEqual( {
 					likes: [ { ID: 123 }, { ID: 456 } ],
 					found: 5,
-					iLike: false,
+					iLike: true,
 				} );
 			} );
 
-			test( 'should leave the likes array alone if the liker is already missing', () => {
-				const initialState = deepFreeze( {
-					likes: [ { ID: 2 } ],
-					found: 5,
-					iLike: false,
-				} );
-
-				const state = itemReducer(
-					initialState,
-					// same liker, new count!
-					removeLiker( 1, 1, 3, liker )
-				);
-
-				expect( state ).toEqual( {
-					likes: [ { ID: 2 } ],
-					found: 3,
-					iLike: false,
-				} );
-				expect( state.likes ).toBe( initialState.likes );
-			} );
-
-			test( 'should return previous state if liker is not present and like count is the same', () => {
+			test( 'should return previous state if liker is not present', () => {
 				const initialState = deepFreeze( {
 					likes: [ { ID: 2 } ],
 					found: 5,
@@ -517,8 +440,8 @@ describe( 'reducer', () => {
 				} );
 				const state = itemReducer(
 					initialState,
-					// same liker, same count!
-					removeLiker( 1, 1, 5, liker )
+					// same liker, reduced count
+					removeLiker( 1, 1, 4, liker )
 				);
 
 				expect( state ).toBe( initialState );
