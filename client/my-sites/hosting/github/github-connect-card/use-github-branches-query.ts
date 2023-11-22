@@ -32,6 +32,6 @@ export const useGithubBranchesQuery = (
 			persist: false,
 		},
 		...options,
-		cacheTime: CACHE_TIME,
+		gcTime: CACHE_TIME,
 	} );
 };

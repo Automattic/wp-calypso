@@ -12,7 +12,7 @@ import { shouldDehydrateQuery } from './should-dehydrate-query';
 export async function createQueryClient( userId?: number ): Promise< QueryClient > {
 	await loadPersistedState();
 	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { cacheTime: MAX_AGE } },
+		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
 	await hydrateBrowserState( queryClient, userId );
 	return queryClient;
