@@ -14,8 +14,8 @@ jest.mock( 'calypso/lib/explat', () => ( {
 } ) );
 
 describe( 'ChooseDomainLater', () => {
-	test( 'Renders treatment_search when that treatment is active', () => {
-		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
+	test( 'Renders treatment_type when that treatment is active', () => {
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
 
 		const { getByText } = render(
 			<ChooseDomainLater
@@ -33,8 +33,8 @@ describe( 'ChooseDomainLater', () => {
 		expect( getByText( 'Not ready to choose a domain just yet?' ) ).toBeTruthy();
 	} );
 
-	test( 'Renders treatment_type when that treatment is active', () => {
-		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
+	test( 'Renders treatment_search when that treatment is active', () => {
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
 
 		const { getByText } = render(
 			<ChooseDomainLater
@@ -73,8 +73,8 @@ describe( 'ChooseDomainLater', () => {
 		);
 	} );
 
-	test( 'Does not render if treatment_type and domain results not loaded', () => {
-		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
+	test( 'Does not render if treatment_search and domain results not loaded', () => {
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
 
 		const { queryByText } = render(
 			<ChooseDomainLater
@@ -92,8 +92,8 @@ describe( 'ChooseDomainLater', () => {
 		expect( queryByText( 'Get a free domain with select paid plans' ) ).toBeFalsy();
 	} );
 
-	test( 'Does not render if treatment_search and domain results not loaded', () => {
-		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_search' } ] );
+	test( 'Does not render if treatment_type and domain results not loaded', () => {
+		useExperimentMock.mockImplementation( () => [ false, { variationName: 'treatment_type' } ] );
 
 		const { queryByText } = render(
 			<ChooseDomainLater
