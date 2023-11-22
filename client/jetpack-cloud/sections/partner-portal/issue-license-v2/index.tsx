@@ -18,6 +18,7 @@ import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
 import LicensesForm from './licenses-form';
+import ReviewLicenses from './review-licenses';
 import type { SelectedLicenseProp } from './types';
 import type { AssignLicenceProps } from '../types';
 
@@ -37,13 +38,14 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
+	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
 
 	const selectedLicenseCount = selectedLicenses
 		.map( ( license ) => license.quantity )
 		.reduce( ( a, b ) => a + b, 0 );
 
 	const handleShowLicenseOverview = useCallback( () => {
-		// Handle showing the license overview modal here
+		setShowReviewLicenses( true );
 	}, [] );
 
 	const onClickIssueLicenses = useCallback( () => {
@@ -53,69 +55,81 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 	const showStickyContent = isWithinBreakpoint( '>960px' ) && selectedLicenses.length > 0;
 
 	return (
-		<Layout
-			className="issue-license-v2"
-			title={ translate( 'Issue a new License' ) }
-			wide
-			withBorder
-		>
-			<LayoutTop>
-				<LayoutHeader showStickyContent={ showStickyContent }>
-					<Title>{ translate( 'Issue product licenses' ) } </Title>
-					<Subtitle>
-						{ translate( 'Select single product licenses or save when you issue in bulk' ) }
-					</Subtitle>
-					<Actions>
-						{ selectedLicenses.length > 0 && (
-							<Button
-								primary
-								className="issue-license-v2__select-license"
-								busy={ ! isReady }
-								onClick={ onClickIssueLicenses }
-							>
-								{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-									context: 'button label',
-									count: selectedLicenseCount,
-									args: {
-										numLicenses: selectedLicenseCount,
-									},
-								} ) }
-							</Button>
-						) }
-					</Actions>
-				</LayoutHeader>
+		<>
+			<Layout
+				className="issue-license-v2"
+				title={ translate( 'Issue a new License' ) }
+				wide
+				withBorder
+			>
+				<LayoutTop>
+					<LayoutHeader showStickyContent={ showStickyContent }>
+						<Title>{ translate( 'Issue product licenses' ) } </Title>
+						<Subtitle>
+							{ translate( 'Select single product licenses or save when you issue in bulk' ) }
+						</Subtitle>
+						<Actions>
+							{ selectedLicenses.length > 0 && (
+								<Button
+									primary
+									className="issue-license-v2__select-license"
+									busy={ ! isReady }
+									onClick={ onClickIssueLicenses }
+								>
+									{ translate(
+										'Review %(numLicenses)d license',
+										'Review %(numLicenses)d licenses',
+										{
+											context: 'button label',
+											count: selectedLicenseCount,
+											args: {
+												numLicenses: selectedLicenseCount,
+											},
+										}
+									) }
+								</Button>
+							) }
+						</Actions>
+					</LayoutHeader>
 
-				<LayoutNavigation
-					selectedText={
-						selectedSize === 1
-							? translate( 'Single license' )
-							: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string )
-					}
-				>
-					{ availableSizes.map( ( size ) => (
-						<NavigationItem
-							key={ `bundle-size-${ size }` }
-							label={
-								size === 1
-									? translate( 'Single license' )
-									: ( translate( '%(size)d licenses', { args: { size } } ) as string )
-							}
-							selected={ selectedSize === size }
-							onClick={ () => setSelectedSize( size ) }
+					<LayoutNavigation
+						selectedText={
+							selectedSize === 1
+								? translate( 'Single license' )
+								: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string )
+						}
+					>
+						{ availableSizes.map( ( size ) => (
+							<NavigationItem
+								key={ `bundle-size-${ size }` }
+								label={
+									size === 1
+										? translate( 'Single license' )
+										: ( translate( '%(size)d licenses', { args: { size } } ) as string )
+								}
+								selected={ selectedSize === size }
+								onClick={ () => setSelectedSize( size ) }
+							/>
+						) ) }
+					</LayoutNavigation>
+				</LayoutTop>
+
+				<LayoutBody>
+					<IssueLicenseContext.Provider value={ { setSelectedLicenses, selectedLicenses } }>
+						<LicensesForm
+							selectedSite={ selectedSite }
+							suggestedProduct={ suggestedProduct }
+							quantity={ selectedSize }
 						/>
-					) ) }
-				</LayoutNavigation>
-			</LayoutTop>
-
-			<LayoutBody>
-				<IssueLicenseContext.Provider value={ { setSelectedLicenses, selectedLicenses } }>
-					<LicensesForm
-						selectedSite={ selectedSite }
-						suggestedProduct={ suggestedProduct }
-						quantity={ selectedSize }
-					/>
-				</IssueLicenseContext.Provider>
-			</LayoutBody>
-		</Layout>
+					</IssueLicenseContext.Provider>
+				</LayoutBody>
+			</Layout>
+			{ showReviewLicenses && (
+				<ReviewLicenses
+					onClose={ () => setShowReviewLicenses( false ) }
+					selectedLicenses={ selectedLicenses }
+				/>
+			) }
+		</>
 	);
 }
