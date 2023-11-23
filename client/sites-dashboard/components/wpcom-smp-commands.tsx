@@ -276,6 +276,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/activity-log/${ site.slug }` );
 				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
 			icon: acitvityLogIcon,
 		},
