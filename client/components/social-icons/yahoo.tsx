@@ -1,9 +1,12 @@
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { FC } from 'react';
 import './style.scss';
 
-const YahooIcon = ( { isEnabled, ...rest } ) => {
+interface YahooIconProps {
+	isEnabled?: boolean;
+}
+
+const YahooIcon: FC< YahooIconProps > = ( { isEnabled = true, ...rest } ) => {
 	return (
 		<svg
 			className={ classNames( 'social-icons social-icons__yahoo', {
@@ -22,14 +25,6 @@ const YahooIcon = ( { isEnabled, ...rest } ) => {
 			/>
 		</svg>
 	);
-};
-
-YahooIcon.propTypes = {
-	isEnabled: PropTypes.bool,
-};
-
-YahooIcon.defaultProps = {
-	isEnabled: true,
 };
 
 export default YahooIcon;

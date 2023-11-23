@@ -1,9 +1,12 @@
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { FC } from 'react';
 import './style.scss';
 
-const OutlookIcon = ( { isEnabled, ...rest } ) => {
+interface OutlookIconProps {
+	isEnabled?: boolean;
+}
+
+const OutlookIcon: FC< OutlookIconProps > = ( { isEnabled = true, ...rest } ) => {
 	return (
 		<svg
 			className={ classNames( 'social-icons social-icons__outlook', {
@@ -122,13 +125,4 @@ const OutlookIcon = ( { isEnabled, ...rest } ) => {
 		</svg>
 	);
 };
-
-OutlookIcon.propTypes = {
-	isEnabled: PropTypes.bool,
-};
-
-OutlookIcon.defaultProps = {
-	isEnabled: true,
-};
-
 export default OutlookIcon;

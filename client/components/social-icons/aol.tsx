@@ -1,8 +1,12 @@
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import { FC } from 'react';
 import './style.scss';
 
-const AOLIcon = ( { isEnabled, ...rest } ) => {
+interface AOLIconProps {
+	isEnabled?: boolean;
+}
+
+const AOLIcon: FC< AOLIconProps > = ( { isEnabled = true, ...rest } ) => {
 	return (
 		<svg
 			className={ classNames( 'social-icons social-icons__aol', {
@@ -21,14 +25,6 @@ const AOLIcon = ( { isEnabled, ...rest } ) => {
 			/>
 		</svg>
 	);
-};
-
-AOLIcon.propTypes = {
-	isEnabled: PropTypes.bool,
-};
-
-AOLIcon.defaultProps = {
-	isEnabled: true,
 };
 
 export default AOLIcon;

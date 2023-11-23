@@ -1,9 +1,12 @@
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { FC } from 'react';
 import './style.scss';
 
-const GmailIcon = ( { isEnabled, ...rest } ) => {
+interface GmailIconProps {
+	isEnabled?: boolean;
+}
+
+const GmailIcon: FC< GmailIconProps > = ( { isEnabled = true, ...rest } ) => {
 	return (
 		<svg
 			className={ classNames( 'social-icons social-icons__gmail', {
@@ -45,14 +48,6 @@ const GmailIcon = ( { isEnabled, ...rest } ) => {
 			</defs>
 		</svg>
 	);
-};
-
-GmailIcon.propTypes = {
-	isEnabled: PropTypes.bool,
-};
-
-GmailIcon.defaultProps = {
-	isEnabled: true,
 };
 
 export default GmailIcon;
