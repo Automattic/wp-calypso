@@ -45,6 +45,7 @@
 		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.16.1",
+		"react-router-dom": "^6.10.0",
 		"react-slider": "^2.0.5",
 		"utility-types": "^3.10.0",
 		"uuid": "^8.3.2",

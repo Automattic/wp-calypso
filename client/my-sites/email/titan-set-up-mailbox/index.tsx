@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useEffect } from 'react';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';

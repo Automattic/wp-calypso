@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
 import { globe, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';

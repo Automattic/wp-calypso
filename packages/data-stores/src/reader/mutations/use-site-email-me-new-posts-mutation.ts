@@ -56,7 +56,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 				id
 			);
 
-			await queryClient.cancelQueries( siteSubscriptionsQueryKey );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionsQueryKey } );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
@@ -133,7 +133,9 @@ const useSiteEmailMeNewPostsMutation = () => {
 				isLoggedIn,
 				id,
 			} );
-			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ],
+			} );
 		},
 	} );
 };

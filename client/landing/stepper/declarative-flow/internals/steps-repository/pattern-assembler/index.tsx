@@ -116,6 +116,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		hasFont: !! fontVariation,
 	} );
 
+	const { pages, setPages } = usePatternPages();
+
 	const currentScreen = useCurrentScreen( { isNewSite, shouldUnlockGlobalStyles } );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
@@ -133,16 +135,24 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
 				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
+				page_slugs: ( pages || [] ).join( ',' ),
 			} ),
-		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation, numOfSelectedGlobalStyles ]
+		[
+			flow,
+			stepName,
+			intent,
+			stylesheet,
+			colorVariation,
+			fontVariation,
+			numOfSelectedGlobalStyles,
+			pages,
+		]
 	);
 
 	const selectedVariations = useMemo(
 		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ colorVariation, fontVariation ]
 	);
-
-	const { pages, setPages } = usePatternPages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
@@ -658,6 +668,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
+			hideBack={ isSiteAssemblerFlow( flow ) && isNewSite }
 			hideSkip={ true }
 			stepContent={
 				<PatternAssemblerContainer

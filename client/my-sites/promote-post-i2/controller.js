@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import CampaignItemPage from 'calypso/my-sites/promote-post-i2/components/campaign-item-page';
 import PromotedPostsRedesignI2, { TAB_OPTIONS } from 'calypso/my-sites/promote-post-i2/main';

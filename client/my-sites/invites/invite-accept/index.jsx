@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import Debug from 'debug';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';

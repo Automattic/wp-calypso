@@ -38,6 +38,9 @@
 
 	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
+		.spinner {
+			width: 100%;
+		}
 	}
 
 	.search-component .search-component__icon-navigation {
