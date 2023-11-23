@@ -1,6 +1,5 @@
-import { memo } from 'react';
-import { normalizeMinHeight } from '../html-transformers';
-import shufflePosts from '../styles-transformers/shuffle-posts';
+import usePatternInlineCss from '../hooks/use-pattern-inline-css';
+import usePatternMinHeightVh from '../hooks/use-pattern-min-height-vh';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
 
@@ -10,7 +9,8 @@ interface Props {
 	viewportHeight?: number;
 	minHeight?: number;
 	maxHeight?: 'none' | number;
-	transformHtml?: ( patternHtml: string ) => string;
+	placeholder?: JSX.Element;
+	prependHtml?: string;
 	shouldShufflePosts: boolean;
 }
 
@@ -20,22 +20,13 @@ const PatternRenderer = ( {
 	viewportHeight,
 	minHeight,
 	maxHeight,
-	transformHtml,
+	prependHtml = '',
 	shouldShufflePosts,
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
-
-	let patternHtml = pattern?.html ?? '';
-	if ( viewportHeight ) {
-		patternHtml = normalizeMinHeight( patternHtml, viewportHeight );
-	}
-	if ( transformHtml ) {
-		patternHtml = transformHtml( patternHtml );
-	}
-
-	// TODO(fushar): refactor this similar to how we refactor html transformations above.
-	const inlineCss = shufflePosts( patternId, pattern.html, shouldShufflePosts );
+	const patternHtml = usePatternMinHeightVh( prependHtml + pattern?.html, viewportHeight );
+	const inlineCss = usePatternInlineCss( patternId, patternHtml, shouldShufflePosts );
 
 	return (
 		<BlockRendererContainer
@@ -49,10 +40,10 @@ const PatternRenderer = ( {
 		>
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: patternHtml } }
+				dangerouslySetInnerHTML={ { __html: patternHtml ?? '' } }
 			/>
 		</BlockRendererContainer>
 	);
 };
 
-export default memo( PatternRenderer );
+export default PatternRenderer;

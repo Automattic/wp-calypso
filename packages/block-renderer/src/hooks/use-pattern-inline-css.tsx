@@ -4,7 +4,11 @@ const inlineCssByPatternId: { [ key: string ]: string } = {};
 // Memoize last offset
 let lastOffset = 0;
 
-const shufflePosts = ( patternId: string, patternHtml: string, shouldShufflePosts: boolean ) => {
+const usePatternInlineCss = (
+	patternId: string,
+	patternHtml: string,
+	shouldShufflePosts: boolean
+) => {
 	const hasGrid = patternHtml?.includes( 'is-layout-grid' );
 	const blogPostCount = patternHtml?.match( /wp-block-post /g )?.length ?? 0;
 
@@ -35,4 +39,4 @@ const shufflePosts = ( patternId: string, patternHtml: string, shouldShufflePost
 	return inlineCss;
 };
 
-export default shufflePosts;
+export default usePatternInlineCss;

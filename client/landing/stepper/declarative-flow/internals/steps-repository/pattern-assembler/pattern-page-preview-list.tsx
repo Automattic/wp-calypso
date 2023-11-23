@@ -4,29 +4,28 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { CSSProperties, useCallback, useMemo, useState } from 'react';
+import { CSSProperties, useMemo, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { PATTERN_ASSEMBLER_EVENTS } from '../events';
-import { injectTitlesToPageListBlock } from '../html-transformers';
-import PagePreview, { PagePreviewModal } from './page-preview';
-import type { Pattern } from '../types';
-import './page-preview-list.scss';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import PatternPagePreview, { PatternPagePreviewModal } from './pattern-page-preview';
+import type { Pattern } from './types';
+import './pattern-page-preview-list.scss';
 
 interface Props {
 	selectedHeader: Pattern | null;
 	selectedSections: Pattern[];
 	selectedFooter: Pattern | null;
-	selectedPages: Pattern[];
-	selectedPageSlugs: string[];
+	selectedPages: string[];
+	pagesMapByCategory: { [ key: string ]: Pattern[] };
 	isNewSite: boolean;
 }
 
-const PagePreviewList = ( {
+const PatternPagePreviewList = ( {
 	selectedHeader,
 	selectedSections,
 	selectedFooter,
 	selectedPages,
-	selectedPageSlugs,
+	pagesMapByCategory,
 	isNewSite,
 }: Props ) => {
 	const translate = useTranslate();
@@ -39,24 +38,19 @@ const PagePreviewList = ( {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
-	const pagePreviewStyle = useMemo(
-		() => ( { '--page-preview-background': backgroundColor } ) as CSSProperties,
+	const patternPagePreviewStyle = useMemo(
+		() => ( { '--pattern-page-preview-background': backgroundColor } ) as CSSProperties,
 		[ backgroundColor ]
+	);
+
+	const pages = useMemo(
+		() => selectedPages.map( ( slug ) => pagesMapByCategory[ slug ]?.[ 0 ] ).filter( Boolean ),
+		[ selectedPages, pagesMapByCategory ]
 	);
 
 	const homepage = useMemo(
 		() => [ selectedHeader, ...selectedSections, selectedFooter ].filter( Boolean ) as Pattern[],
 		[ selectedHeader, selectedSections, selectedFooter ]
-	);
-
-	const transformPatternHtml = useCallback(
-		( patternHtml: string ) => {
-			const pageTitles = selectedPages.map( ( page ) => page.title );
-			return injectTitlesToPageListBlock( patternHtml, pageTitles, {
-				replaceCurrentPages: isNewSite,
-			} );
-		},
-		[ isNewSite, selectedPages ]
 	);
 
 	const handleClick = ( patterns: Pattern[], pageSlug: string ) => {
@@ -72,36 +66,33 @@ const PagePreviewList = ( {
 	return (
 		<>
 			<Composite { ...composite } role="listbox" className="pattern-assembler__preview-list">
-				<PagePreview
+				<PatternPagePreview
 					composite={ composite }
 					title={ translate( 'Homepage' ) }
-					style={ pagePreviewStyle }
+					style={ patternPagePreviewStyle }
 					patterns={ homepage }
-					transformPatternHtml={ transformPatternHtml }
 					shouldShufflePosts={ isNewSite }
 					onClick={ ( patterns ) => handleClick( patterns, 'homepage' ) }
 				/>
-				{ selectedPages.map( ( page, index ) => (
-					<PagePreview
+				{ pages.map( ( page, index ) => (
+					<PatternPagePreview
 						key={ page.ID }
 						composite={ composite }
-						style={ pagePreviewStyle }
+						style={ patternPagePreviewStyle }
 						title={ page.title }
 						patterns={ [
 							...( selectedHeader ? [ selectedHeader ] : [] ),
 							page,
 							...( selectedFooter ? [ selectedFooter ] : [] ),
 						] }
-						transformPatternHtml={ transformPatternHtml }
 						shouldShufflePosts={ isNewSite }
-						onClick={ ( patterns ) => handleClick( patterns, selectedPageSlugs[ index ] ) }
+						onClick={ ( patterns ) => handleClick( patterns, selectedPages[ index ] ) }
 					/>
 				) ) }
 			</Composite>
-			<PagePreviewModal
-				style={ pagePreviewStyle }
+			<PatternPagePreviewModal
+				style={ patternPagePreviewStyle }
 				patterns={ zoomedPage }
-				transformPatternHtml={ transformPatternHtml }
 				shouldShufflePosts={ isNewSite }
 				isOpen={ isModalOpen }
 				onClose={ () => setIsModalOpen( false ) }
@@ -110,4 +101,4 @@ const PagePreviewList = ( {
 	);
 };
 
-export default PagePreviewList;
+export default PatternPagePreviewList;

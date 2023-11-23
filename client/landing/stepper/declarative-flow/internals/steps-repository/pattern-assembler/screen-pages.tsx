@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
-import PageList from './pages/page-list';
+import PatternPageList from './pattern-page-list';
 import type { Category, Pattern } from './types';
 
 interface Props {
 	categories: Category[];
 	pagesMapByCategory: Record< string, Pattern[] >;
-	selectedPageSlugs: string[];
+	selectedPages: string[];
 	onSelect: ( page: string ) => void;
 	onContinueClick: () => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
@@ -19,7 +19,7 @@ interface Props {
 const ScreenPages = ( {
 	categories,
 	pagesMapByCategory,
-	selectedPageSlugs,
+	selectedPages,
 	onSelect,
 	onContinueClick,
 	recordTracksEvent,
@@ -58,10 +58,10 @@ const ScreenPages = ( {
 			/>
 			<div className="screen-container__body">
 				<VStack spacing="4">
-					<PageList
+					<PatternPageList
 						categories={ categories }
 						pagesMapByCategory={ pagesMapByCategory }
-						selectedPageSlugs={ selectedPageSlugs }
+						selectedPages={ selectedPages }
 						onSelectPage={ onSelect }
 					/>
 				</VStack>
