@@ -38,6 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: Tailored VideoPress' ), () => {
 
 		it( 'Click Get Started', async function () {
 			// Return a button "key" for the button that is found on page.
+			// See diff in https://github.com/Automattic/wp-calypso/pull/84189 for what to revert in case we disable trial.
 			const startButtonText = 'Start a free trial';
 			await page.getByText( startButtonText ).click();
 		} );
