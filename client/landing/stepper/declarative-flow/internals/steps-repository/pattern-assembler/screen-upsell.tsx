@@ -58,7 +58,7 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 						<LoadingPlaceholder style={ { height: '48px' } } />
 					) }
 					<div className="screen-upsell__plan-billing-time-frame">
-						{ translate( 'per month, {{span}}%(rawPrice)s{{/span}} billed annually, Excl. Taxes', {
+						{ translate( 'per month, {{span}}%(rawPrice)s{{/span}} billed annually, excl. taxes', {
 							args: {
 								rawPrice: isPricingLoaded
 									? formatCurrency( pricing?.originalPrice.full ?? 0, pricing?.currencyCode ?? '', {
@@ -67,7 +67,7 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 									  } )
 									: '',
 							},
-							comment: 'Excl. Taxes is short for excluding taxes',
+							comment: 'excl. taxes is short for excluding taxes',
 							components: {
 								span: isPricingLoaded ? (
 									<span />
