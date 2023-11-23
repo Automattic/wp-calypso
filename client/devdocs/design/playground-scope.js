@@ -10,6 +10,7 @@ export {
 	ProgressBar,
 	Ribbon,
 	ScreenReaderText,
+	SegmentedControl,
 	Suggestions,
 	FoldableCard,
 	Tooltip,
@@ -96,7 +97,6 @@ export { default as SectionNav } from 'calypso/components/section-nav';
 export { default as NavTabs } from 'calypso/components/section-nav/tabs';
 export { default as NavSegmented } from 'calypso/components/section-nav/segmented';
 export { default as NavItem } from 'calypso/components/section-nav/item';
-export { default as SegmentedControl } from 'calypso/components/segmented-control';
 export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';

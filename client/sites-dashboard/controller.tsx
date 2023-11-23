@@ -12,7 +12,7 @@ import { hideMasterbar } from 'calypso/state/ui/actions';
 import { HostingFlowForkingPage } from './components/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
-import type { Context as PageJSContext } from 'page';
+import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );

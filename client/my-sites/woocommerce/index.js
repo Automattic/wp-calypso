@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { createElement } from 'react';
 import { makeLayout } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';

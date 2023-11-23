@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 
 const getUrlwithStatsPurchaseSuccessParamRemoved = ( url: string, isOdysseyStats: boolean ) => {
 	// Delete param in GET params.

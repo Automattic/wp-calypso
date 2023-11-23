@@ -1,4 +1,5 @@
 import { isMonthly, getPlanByPathSlug, TERM_MONTHLY, Product } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
@@ -7,7 +8,6 @@ import classnames from 'classnames';
 import debugFactory from 'debug';
 import { localize, useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';

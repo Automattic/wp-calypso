@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { CompactCard as Card } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useSelector } from 'react-redux';

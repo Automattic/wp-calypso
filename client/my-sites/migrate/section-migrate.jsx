@@ -1,9 +1,9 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';

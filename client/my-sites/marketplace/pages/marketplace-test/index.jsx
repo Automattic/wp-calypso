@@ -1,8 +1,8 @@
 // File used only for development and testing.
+import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
@@ -12,6 +12,12 @@ import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
+import {
+	useMarketplaceReviewsQuery,
+	useCreateMarketplaceReviewMutation,
+	useUpdateMarketplaceReviewMutation,
+	useDeleteMarketplaceReviewMutation,
+} from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPluginsList } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
@@ -84,6 +90,15 @@ export default function MarketplaceTest() {
 		getPluginOnSite( state, selectedSiteId, 'contact-form-7' )
 	);
 
+	const { data: marketplaceReviews, isLoading: isLoadingReviews } = useMarketplaceReviewsQuery( {
+		productType: 'plugin',
+		pluginSlug: 'woocommerce-bookings',
+	} );
+
+	const createReview = useCreateMarketplaceReviewMutation();
+	const updateReview = useUpdateMarketplaceReviewMutation();
+	const deleteReview = useDeleteMarketplaceReviewMutation();
+
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
@@ -132,6 +147,115 @@ export default function MarketplaceTest() {
 		<Container>
 			<button onClick={ fetchNextPage }>Fetch next page</button>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
+			<Card key="marketplace-reviews">
+				<CardHeading tagName="h1" size={ 21 }>
+					Reviews for WooCommerce Bookings
+				</CardHeading>
+				<p>Creating/updating/deleting a review below should also refetch this query:</p>
+				<pre>{ isLoadingReviews ? 'Loading...' : JSON.stringify( marketplaceReviews ) }</pre>
+				<CardHeading tagName="h1">Add new review</CardHeading>
+				{ createReview.isError || createReview.isSuccess ? (
+					<pre>{ JSON.stringify( createReview.data || createReview.error ) }</pre>
+				) : (
+					<form
+						onSubmit={ ( e ) => {
+							e.preventDefault();
+							createReview.mutate( {
+								productType: e.target[ 0 ].value,
+								pluginSlug: e.target[ 1 ].value,
+								content: e.target[ 2 ].value,
+								rating: e.target[ 3 ].value,
+							} );
+						} }
+					>
+						<label>
+							Product type
+							<input type="text" value="plugin" />
+						</label>
+						<br />
+						<label>
+							Product slug
+							<input type="text" value="woocommerce-bookings" />
+						</label>
+						<br />
+						<label>
+							Comment
+							<input type="text" value="I like it" />
+						</label>
+						<br />
+						<label>
+							Rating
+							<input type="text" value="5" />
+						</label>
+						<br />
+						<Button type="submit">Add new review</Button>
+					</form>
+				) }
+				<CardHeading tagName="h1">Update review</CardHeading>
+				{ updateReview.isError || updateReview.isSuccess ? (
+					<pre>{ JSON.stringify( updateReview.data || updateReview.error ) }</pre>
+				) : (
+					<form
+						onSubmit={ ( e ) => {
+							e.preventDefault();
+							updateReview.mutate( {
+								reviewId: e.target[ 0 ].value,
+								productType: e.target[ 1 ].value,
+								pluginSlug: e.target[ 2 ].value,
+								content: e.target[ 3 ].value,
+								rating: e.target[ 4 ].value,
+							} );
+						} }
+					>
+						<label>
+							Review ID
+							<input type="text" />
+						</label>
+						<br />
+						<label>
+							Product type
+							<input type="text" value="plugin" />
+						</label>
+						<br />
+						<label>
+							Product slug
+							<input type="text" value="woocommerce-bookings" />
+						</label>
+						<br />
+						<label>
+							Comment
+							<input type="text" value="Updated review" />
+						</label>
+						<br />
+						<label>
+							Rating
+							<input type="text" value="3" />
+						</label>
+						<br />
+						<Button type="submit">Update review</Button>
+					</form>
+				) }
+				<CardHeading tagName="h1">Delete review</CardHeading>
+				{ deleteReview.isError || deleteReview.isSuccess ? (
+					<pre>{ JSON.stringify( deleteReview.data || deleteReview.error ) }</pre>
+				) : (
+					<form
+						onSubmit={ ( e ) => {
+							e.preventDefault();
+							deleteReview.mutate( {
+								reviewId: e.target[ 0 ].value,
+							} );
+						} }
+					>
+						<label>
+							Review ID
+							<input type="text" />
+						</label>
+						<br />
+						<Button type="submit">Delete review</Button>
+					</form>
+				) }
+			</Card>
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList
 					plugins={ data }

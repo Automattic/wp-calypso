@@ -58,12 +58,16 @@
 }
 
 .issue-multiple-licenses-form__bottom {
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	gap: 16px;
+	grid-template-columns: 1fr;
 
 	@include break-xlarge {
-		margin-left: -0.5rem;
-		margin-right: -0.5rem;
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-wide {
+		grid-template-columns: repeat(3, 1fr);
 	}
 }
 

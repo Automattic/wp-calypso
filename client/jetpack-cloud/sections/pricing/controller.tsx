@@ -1,5 +1,5 @@
+import page, { type Callback } from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page, { type Callback } from 'page';
 import { addQueryArgs } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { hideMasterbar } from 'calypso/state/ui/actions';

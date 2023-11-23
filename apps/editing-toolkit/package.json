@@ -50,6 +50,7 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-polyfills": "workspace:^",
+		"@automattic/calypso-router": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",

@@ -140,7 +140,6 @@ export default function LicenseProductCard( props: Props ) {
 					</div>
 				</div>
 			</div>
-
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ product }

@@ -56,9 +56,9 @@ const useSiteSubscriptionsQuery = ( {
 	const { searchTerm, filterOption, sortTerm } = useSiteSubscriptionsQueryProps();
 
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =
-		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >(
-			cacheKey,
-			async ( { pageParam = 1 } ) => {
+		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >( {
+			queryKey: cacheKey,
+			queryFn: async ( { pageParam = 1 } ) => {
 				const data = await callApi< SubscriptionManagerSiteSubscriptions >( {
 					path: `/read/following/mine?number=${ number }&page=${ pageParam }`,
 					isLoggedIn,
@@ -76,16 +76,12 @@ const useSiteSubscriptionsQuery = ( {
 						: [],
 				};
 			},
-			{
-				enabled,
-				getNextPageParam: ( lastPage, pages ) => {
-					return lastPage.page * number < lastPage.total_subscriptions
-						? pages.length + 1
-						: undefined;
-				},
-				refetchOnWindowFocus: false,
-			}
-		);
+			enabled,
+			getNextPageParam: ( lastPage, pages ) => {
+				return lastPage.page * number < lastPage.total_subscriptions ? pages.length + 1 : undefined;
+			},
+			refetchOnWindowFocus: false,
+		} );
 
 	const nextPage = hasNextPage && ! isFetching && data ? data.pages.length + 1 : null;
 

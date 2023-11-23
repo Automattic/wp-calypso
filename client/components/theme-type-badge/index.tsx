@@ -62,8 +62,10 @@ const ThemeTypeBadge = ( {
 	};
 
 	let badgeContent;
-	if ( isLockedStyleVariation ) {
-		badgeContent = <PremiumBadge { ...badgeContentProps } labelText={ translate( 'Upgrade' ) } />;
+	if ( type === WOOCOMMERCE_THEME ) {
+		badgeContent = <WooCommerceBundledBadge { ...badgeContentProps } />;
+	} else if ( isLockedStyleVariation ) {
+		badgeContent = <PremiumBadge { ...badgeContentProps } />;
 	} else if ( type === FREE_THEME ) {
 		badgeContent = <>{ translate( 'Free' ) }</>;
 	} else if ( type === DOT_ORG_THEME ) {
@@ -89,8 +91,6 @@ const ThemeTypeBadge = ( {
 				} ) }
 			/>
 		);
-	} else if ( type === WOOCOMMERCE_THEME ) {
-		badgeContent = <WooCommerceBundledBadge { ...badgeContentProps } />;
 	} else if ( type === PREMIUM_THEME ) {
 		badgeContent = <PremiumBadge { ...badgeContentProps } />;
 	}

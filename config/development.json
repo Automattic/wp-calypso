@@ -185,6 +185,7 @@
 		"site-profiler": true,
 		"ssr/prefetch-timebox": false,
 		"stats/date-control": true,
+		"stats/tier-upgrade-slider": false,
 		"stats/new-video-summary": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/type-detection": true,

@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 
-function SocialSignupToS( props ) {
+function SocialAuthToS( props ) {
 	if ( isWooOAuth2Client( props.oauth2Client ) ) {
 		return (
-			<p className="signup-form__social-buttons-tos">
+			<p className="auth-form__social-buttons-tos">
 				{ props.translate(
 					"If you continue with Google or Apple and don't already have a WordPress.com account, you are creating an account and you agree to our {{tosLink}}Terms of Service{{/tosLink}}.",
 					{
@@ -27,7 +27,7 @@ function SocialSignupToS( props ) {
 	}
 
 	return (
-		<p className="signup-form__social-buttons-tos">
+		<p className="auth-form__social-buttons-tos">
 			{ props.translate(
 				'If you continue with Google or Apple, you agree to our' +
 					' {{tosLink}}Terms of Service{{/tosLink}}, and have' +
@@ -57,4 +57,4 @@ function SocialSignupToS( props ) {
 
 export default connect( ( state ) => ( {
 	oauth2Client: getCurrentOAuth2Client( state ),
-} ) )( localize( SocialSignupToS ) );
+} ) )( localize( SocialAuthToS ) );

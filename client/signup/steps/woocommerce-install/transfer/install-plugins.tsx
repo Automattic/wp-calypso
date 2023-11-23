@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useEffect, useState } from 'react';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import { useSelector, useDispatch } from 'calypso/state';

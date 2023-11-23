@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import moment from 'moment';
-import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	isRemovable,
@@ -28,7 +28,7 @@ const {
 } = data;
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 describe( 'index', () => {
 	beforeEach( () => {

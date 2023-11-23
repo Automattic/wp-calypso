@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .site-card__card-toggle-icon {
 	vertical-align: middle;
@@ -58,6 +60,28 @@
 	top: 50%;
 	transform: translateY(-50%);
 	display: flex;
+
+	.site-host-info {
+		display: inline-flex;
+		justify-content: end;
+		margin-inline-end: 0;
+	}
+
+	.site-host-info__plan-name {
+		font-size: 0.875rem;
+		text-wrap: nowrap;
+		margin-inline-start: 8px;
+		display: none;
+
+		@include break-mobile {
+			display: inline-block;
+			max-width: 250px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+
 }
 
 .site-card__actions-small-screen {

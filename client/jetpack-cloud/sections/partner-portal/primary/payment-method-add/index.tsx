@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	ReloadSetupIntentId,
 	StripeHookProvider,
@@ -12,7 +13,6 @@ import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';

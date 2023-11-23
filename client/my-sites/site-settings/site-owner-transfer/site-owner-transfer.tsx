@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ResponseDomain } from 'calypso/lib/domains/types';

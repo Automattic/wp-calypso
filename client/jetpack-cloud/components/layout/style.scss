@@ -26,28 +26,25 @@
 }
 
 .jetpack-cloud-layout__body {
+	width: 100%;
 	margin-block-end: -32px;
 	flex: 1 1 100%;
-}
-
-.jetpack-cloud-layout__top,
-.jetpack-cloud-layout__body {
-	width: 100%;
-
-	&-wrapper {
-		margin-inline: 0;
-	}
-
-	&-wrapper > * {
-		max-width: 1500px;
-		margin-inline: auto !important;
-	}
 
 	@include breakpoint-deprecated( ">660px" ) {
 		// We need these negative margin values because we want to make the container full-width,
 		// but our element is inside a limited-width parent.
 		margin-inline-start: -73px;
 		padding-inline: 73px;
+	}
+}
+
+.jetpack-cloud-layout__top-wrapper,
+.jetpack-cloud-layout__body-wrapper {
+	margin-inline: 0;
+
+	> * {
+		max-width: 1500px;
+		margin-inline: auto !important;
 	}
 }
 
@@ -67,11 +64,12 @@
 	}
 }
 
-
 .jetpack-cloud-layout__header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	margin: auto;
+	height: 100%;
 
 	> * + * {
 		margin-inline-start: 24px;
@@ -89,6 +87,18 @@
 			margin-inline-start: 0;
 		}
 	}
+}
+
+.jetpack-cloud-layout__sticky-header {
+	position: fixed;
+	width: calc(100% - var(--sidebar-width-max));
+	left: var(--sidebar-width-max);
+	top: var(--masterbar-height);
+	background-color: rgba(246, 247, 247, 0.95);
+	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
+	z-index: 1001;
+	height: 74px;
+
 }
 
 .jetpack-cloud-layout__header-title {
@@ -151,4 +161,8 @@
 		// we need to make sure the dropdown is above it
 		z-index: 23;
 	}
+}
+
+.jetpack-cloud-layout__viewport {
+	margin-inline-start: 0;
 }

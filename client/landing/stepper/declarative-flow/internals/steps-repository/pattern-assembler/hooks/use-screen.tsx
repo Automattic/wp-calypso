@@ -75,7 +75,9 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		upsell: {
 			name: 'upsell',
 			title: translate( 'Premium styles' ),
-			description: translate( "You've chosen a premium style and action is required." ),
+			description: translate(
+				"You've chosen premium styles which are exclusive to the Premium plan or higher."
+			),
 			continueLabel: translate( 'Continue' ),
 			backLabel: hasEnTranslation( 'premium styles' ) ? translate( 'premium styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.UPSELL,

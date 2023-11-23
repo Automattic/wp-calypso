@@ -4,11 +4,11 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';

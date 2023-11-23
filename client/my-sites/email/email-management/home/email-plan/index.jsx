@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import titleCase from 'to-title-case';

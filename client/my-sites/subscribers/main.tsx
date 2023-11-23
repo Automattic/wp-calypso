@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
