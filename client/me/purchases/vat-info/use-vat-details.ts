@@ -88,7 +88,7 @@ export default function useVatDetails(): VatDetailsManager {
 		() => ( {
 			vatDetails: query.data ?? emptyVatDetails,
 			isLoading: query.isLoading,
-			isUpdating: mutation.isLoading,
+			isUpdating: mutation.isPending,
 			isUpdateSuccessful: mutation.isSuccess,
 			fetchError: query.error,
 			updateError: mutation.error,

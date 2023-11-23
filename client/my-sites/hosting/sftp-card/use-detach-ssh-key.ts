@@ -38,9 +38,9 @@ export const useDetachSshKeyMutation = (
 			options.onSuccess?.( ...args );
 		},
 	} );
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const detachSshKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { detachSshKey, isLoading };
+	return { detachSshKey, isPending };
 };
