@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { ShoppingCartManagerActions } from '@automattic/shopping-cart';
-import page from 'page';
 import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';

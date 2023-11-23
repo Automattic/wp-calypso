@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useLayoutEffect } from 'react';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Main from 'calypso/components/main';

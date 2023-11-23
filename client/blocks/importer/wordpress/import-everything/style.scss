@@ -3,6 +3,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+$business-plan-color: #7f54b3;
+
 [dir="rtl"] {
 	.import__import-everything {
 		.import_site-mapper-name .site-icon {
@@ -34,6 +36,14 @@
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.5rem;
 		margin-bottom: 3rem;
+
+		button.is-borderless {
+			padding: 0;
+			text-decoration: underline;
+			display: inline;
+			font-size: inherit;
+			line-height: inherit;
+		}
 	}
 
 	.action_buttons__button {
@@ -155,11 +165,6 @@
 		font-size: 1rem;
 	}
 
-	.import__note {
-		text-align: center;
-		margin-bottom: 2.5rem;
-	}
-
 	.import__footer-button-container {
 		display: flex;
 		flex-direction: column;
@@ -181,6 +186,12 @@
 			text-decoration: underline;
 		}
 	}
+
+	.import__note {
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+
 	.select-items-wrapper {
 		display: flex;
 		justify-content: center;
@@ -217,16 +228,55 @@
 	}
 
 	.import__upgrade-plan-container {
+		background: #fff;
 		border: solid var(--studio-gray-5) 1px;
 		border-radius: 4px;
 		padding: 1.75em;
+		margin-left: auto;
+		margin-right: auto;
 		margin-bottom: 2em;
 		display: flex;
 		gap: 1.5rem;
 		flex-direction: column;
+		max-width: 425px;
 
 		@include break-medium {
-			flex-direction: row;
+			flex-direction: column;
+		}
+	}
+
+	.import__upgrade-plan-header {
+		.plan-title {
+			font-size: 2.25rem;
+			line-height: 1;
+			margin: 0;
+		}
+	}
+
+	.import__upgrade-plan-period-switcher {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 3rem;
+
+		.button-group {
+			background: #f2f2f2;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 7px;
+			padding: 2px;
+		}
+
+		.button {
+			font-weight: 500;
+			color: var(--studio-gray-90);
+			padding: 6px 20px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 5px;
+		}
+
+		.button.selected {
+			background: #fff;
+			box-shadow: 0 3px 1px 0 #0000000a;
+
 		}
 	}
 
@@ -239,52 +289,103 @@
 		min-width: 150px;
 		flex-direction: column;
 
-		.plan-title {
-			font-weight: 500;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 1.25em;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25em;
-			color: var(--studio-gray-60);
-		}
-
 		.plan-price {
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 			font-weight: 500;
 		}
 
 		.plan-price__currency-symbol {
-			font-size: inherit;
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-size: 0.875rem;
 			color: inherit;
-			vertical-align: unset;
+			vertical-align: top;
 		}
 
 		.plan-price__integer {
+			line-height: 1;
+			font-size: 2.75rem;
 			font-weight: inherit;
 		}
 
 		.plan-time-frame {
-			font-size: 0.75em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			color: var(--studio-gray-40);
+			color: var(--studio-gray-50);
+
+			small {
+				display: block;
+			}
+		}
+	}
+
+	.import__upgrade-plan-cta {
+		display: flex;
+		flex-direction: column;
+
+		small {
+			text-align: center;
+			color: var(--studio-gray-50);
+			max-width: 250px;
+			margin: 1rem auto 0 auto;
+		}
+
+		button.button {
+			border-radius: 4px;
+
+			&.is-primary {
+				background-color: $business-plan-color !important;
+				color: var(--studio-purple-0);
+			}
+
+			&.is-busy {
+				background-image: linear-gradient(-45deg, $business-plan-color 28%, var(--studio-purple-70) 28%, var(--studio-purple-70) 72%, $business-plan-color 72%);
+				color: #fff;
+			}
+
+			&.is-transparent {
+				border-color: $business-plan-color;
+				color: $business-plan-color;
+
+				&.isBusy {
+					color: #fff;
+				}
+			}
+
+			&:hover {
+				opacity: 0.85;
+				transition: 0.7s;
+			}
+
+			&:focus {
+				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px $business-plan-color !important;
+			}
+
+			&[disabled] {
+				opacity: 0.5;
+			}
 		}
 	}
 
 	.import__upgrade-plan-details {
+		flex-direction: column;
+
 		ul {
 			margin: 0;
 		}
 
+		.import__upgrade-plan-feature.logo {
+			margin-top: 22px;
+
+			svg {
+				position: relative;
+			}
+		}
+
 		.import__upgrade-plan-feature,
 		.import__upgrade-plan-feature-more {
-			padding-left: 25px;
-			color: var(--studio-gray-40);
+			color: var(--studio-gray-80);
 			flex-basis: 100%;
-
-			@include break-small {
-				flex-basis: 50%;
-			}
+			padding: 0;
 
 			button {
-				color: var(--studio-gray-40);
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.5em;
 				cursor: pointer;
@@ -294,15 +395,29 @@
 				margin: 0;
 			}
 
-			svg {
-				fill: var(--color-success);
+			.badge {
+				font-size: 0.75rem;
+				border-radius: 4px;
+				padding: 3px 15px;
+			}
+
+			.badge--info {
+				background: #f2f2f2;
+				color: var(--studio-gray-90);
 			}
 		}
+		.import__upgrade-plan-feature-more button {
+			width: 100%;
+			font-weight: 600;
+			color: $business-plan-color;
+			text-align: start;
+		}
 
-		.import__upgrade-plan-feature-more {
-			svg {
-				fill: var(--studio-gray-60);
-			}
+		.import__upgrade-plan-feature-more svg {
+			top: 0;
+			inset-inline-start: auto;
+			inset-inline-end: 0;
+			fill: $business-plan-color;
 		}
 	}
 }

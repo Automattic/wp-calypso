@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
-import page from 'page';
 import { sanitizeInt } from './helpers';
 import SubscribersPage from './main';
 import SubscriberDetailsPage from './subscriber-details-page';

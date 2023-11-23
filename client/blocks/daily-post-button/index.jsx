@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, defer } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { createRef, createElement, Component } from 'react';

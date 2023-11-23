@@ -1,11 +1,11 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

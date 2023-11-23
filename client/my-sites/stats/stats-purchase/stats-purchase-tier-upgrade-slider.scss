@@ -1,0 +1,56 @@
+
+
+.stats-tier-upgrade-slider {
+	--jp-white: #fff;
+	--jp-green-50: #008710;
+	--gray-gray-5: #dcdcde;
+	margin-top: 42px;
+
+	.jp-components-pricing-slider__thumb {
+		border-radius: 4px;
+		border-color: var(--jp-green-50);
+		background-color: var(--jp-green-50);
+		color: var(--jp-white);
+	}
+
+	.jp-components-pricing-slider__track {
+		height: 4px;
+	}
+
+	.jp-components-pricing-slider__control {
+		.mark {
+			position: absolute;
+			height: 10px;
+			width: 10px;
+			background-color: var(--gray-gray-5);
+			border-radius: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 10;
+		}
+	}
+}
+
+.stats-tier-upgrade-slider__info-message {
+	color: var(--jp-green-50);
+	margin: 12px 0;
+	text-align: center;
+}
+
+.stats-tier-upgrade-slider__plan-callouts {
+	display: flex;
+	justify-content: space-between;
+
+	h2 {
+		font-weight: 500;
+	}
+	p {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 2em;
+		font-weight: 500;
+		margin: 0;
+	}
+	.right-aligned {
+		text-align: right;
+	}
+}

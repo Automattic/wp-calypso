@@ -1,4 +1,4 @@
-import page, { type Callback } from 'page';
+import page, { type Callback } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from './controller';

@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { trim, flatMap } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';

@@ -4,9 +4,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	numberFormat: ( x ) => x,
 	translate: ( x ) => x,
 	useTranslate: jest.fn( () => ( x ) => x ),
-} ) );
-jest.mock( '@automattic/components', () => ( {
-	Popover: () => <div />,
+	useRtl: jest.fn( () => false ),
 } ) );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	...jest.requireActual( 'calypso/state/ui/selectors' ),
@@ -27,6 +25,7 @@ describe( '<PlanTypeSelector />', () => {
 		selectedPlan: PLAN_FREE,
 		hideFreePlan: true,
 		withWPPlanTabs: true,
+		usePricingMetaForGridPlans: () => null,
 	};
 
 	test( 'Should show CustomerTypeToggle when kind is set to `customer`', () => {

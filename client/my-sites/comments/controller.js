@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { startsWith } from 'lodash';
-import page from 'page';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import CommentView from 'calypso/my-sites/comment/main';
 import { removeNotice } from 'calypso/state/notices/actions';

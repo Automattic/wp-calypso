@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Icon, currencyDollar } from '@wordpress/icons';
 import classNames from 'classnames';
 import { findIndex, find } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ElementChart from 'calypso/components/chart';

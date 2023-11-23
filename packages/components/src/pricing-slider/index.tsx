@@ -7,7 +7,6 @@ import './style.scss';
 /**
  * Generate Pricing Slider
  * More support from the original ReactSlider component: https://zillow.github.io/react-slider/
- *
  * @param {PricingSliderProps} props - Props
  * @returns {React.ReactElement} - JSX element
  */
@@ -21,6 +20,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 	onBeforeChange,
 	onAfterChange,
 	renderThumb,
+	marks = false,
 } ) => {
 	const [ isThumbHolding, setIsThumbHolding ] = React.useState( false );
 
@@ -57,6 +57,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 				thumbClassName="jp-components-pricing-slider__thumb"
 				thumbActiveClassName="jp-components-pricing-slider__thumb--is-active"
 				trackClassName="jp-components-pricing-slider__track"
+				marks={ marks }
 				value={ value }
 				max={ maxValue }
 				min={ minValue }

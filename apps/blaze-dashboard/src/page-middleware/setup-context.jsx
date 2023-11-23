@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
-import page from 'page';
 
 const debug = debugFactory( 'calypso' );
 

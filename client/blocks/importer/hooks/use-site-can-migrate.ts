@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMigrationEnabledInfoQuery } from 'calypso/data/site-migration/use-migration-enabled';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSites } from 'calypso/state/sites/actions';
@@ -20,6 +20,7 @@ export function useSiteMigrateInfo(
 	const isRequestingAllSites = useSelector( ( state ) => isRequestingSites( state ) );
 	const sourceSite = useSelector( ( state ) => getSite( state, data?.source_blog_id ) );
 	const dispatch = useDispatch();
+	const [ isInitFetchingDone, setIsInitFetchingDone ] = useState( false );
 
 	useEffect( () => {
 		// If has source site id and we do not have the source site, it means the data is not up to date, so we request the site
@@ -30,6 +31,8 @@ export function useSiteMigrateInfo(
 
 	// use an effect that sets `siteCanMigrate` depending on whether the request ran to `true` or `false`, it should stay undefined until it's fetched the first time
 	const [ siteCanMigrate, setSiteCanMigrate ] = useState< boolean | undefined >( undefined );
+	const isFetchingData = isMigrationEnabledFetching || isRequestingAllSites;
+	const prevIsFetchingData = useRef( isFetchingData );
 
 	useEffect( () => {
 		if ( status === 'success' ) {
@@ -39,11 +42,19 @@ export function useSiteMigrateInfo(
 		}
 	}, [ status, data?.can_migrate ] );
 
+	useEffect( () => {
+		if ( prevIsFetchingData.current === true && isFetchingData === false ) {
+			setIsInitFetchingDone( true );
+		}
+		prevIsFetchingData.current = isFetchingData;
+	}, [ isFetchingData ] );
+
 	return {
 		sourceSiteId: data?.source_blog_id,
 		sourceSite,
 		siteCanMigrate,
 		fetchMigrationEnabledStatus: refetch,
 		isFetchingData: isMigrationEnabledFetching || isRequestingAllSites,
+		isInitFetchingDone: isInitFetchingDone,
 	};
 }

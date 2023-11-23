@@ -1,4 +1,4 @@
-import page, { type Callback } from 'page';
+import page, { type Callback } from '@automattic/calypso-router';
 import untrailingslashit from './untrailingslashit';
 
 const appendQueryString = ( basepath: string, querystring: string ): string =>

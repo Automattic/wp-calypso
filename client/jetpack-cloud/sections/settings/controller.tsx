@@ -18,7 +18,7 @@ import HasRetentionCapabilitiesSwitch from './has-retention-capabilities-switch'
 import HasSiteCredentialsSwitch from './has-site-credentials-switch';
 import AdvancedCredentialsLoadingPlaceholder from './loading';
 import SettingsPage from './main';
-import type { Callback } from 'page';
+import type { Callback } from '@automattic/calypso-router';
 
 export const settings: Callback = ( context, next ) => {
 	context.primary = <SettingsPage />;
