@@ -424,7 +424,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/hosting-config/${ site.slug }#sitewpadmin-card` );
+					navigate( `/hosting-config/${ site.slug }#admin-interface-style` );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
