@@ -26,11 +26,7 @@ const PatternRenderer = ( {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 
-	if ( ! pattern ) {
-		return null;
-	}
-
-	let patternHtml = pattern.html;
+	let patternHtml = pattern?.html;
 	if ( viewportHeight ) {
 		patternHtml = normalizeMinHeight( patternHtml, viewportHeight );
 	}
@@ -43,9 +39,9 @@ const PatternRenderer = ( {
 
 	return (
 		<BlockRendererContainer
-			key={ pattern.ID }
-			styles={ pattern.styles ?? [] }
-			scripts={ pattern.scripts ?? '' }
+			key={ pattern?.ID }
+			styles={ pattern?.styles ?? [] }
+			scripts={ pattern?.scripts ?? '' }
 			viewportWidth={ viewportWidth }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }
