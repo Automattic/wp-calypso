@@ -4,7 +4,7 @@
 import { fireEvent } from '@testing-library/react';
 import React from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { renderWithOdieContext } from '../.././test-utils/mock-odie';
+import { renderWithOdieContext } from '../../test-utils/mock-odie';
 import CustomALink from './../custom-a-link';
 
 jest.mock( 'calypso/state/analytics/actions', () => ( {
