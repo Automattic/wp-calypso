@@ -72,6 +72,7 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 
 	it( 'Select WordPress.com Free plan', async function () {
 		await page.getByRole( 'button', { name: 'Choose a plan' } ).click();
+		// See https://github.com/Automattic/wp-calypso/pull/84468
 		await ElementHelper.reloadAndRetry( page, async function () {
 			await page.getByRole( 'button', { name: 'Start with Free' } ).click();
 		} );
