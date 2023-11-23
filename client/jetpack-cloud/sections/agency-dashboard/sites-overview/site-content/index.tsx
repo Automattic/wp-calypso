@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import page from 'page';
 import { useContext, forwardRef } from 'react';
 import Pagination from 'calypso/components/pagination';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -47,7 +47,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 		addPageArgs( pageNumber );
 	};
 
-	const siteColumns = useDefaultSiteColumns();
+	const siteColumns = useDefaultSiteColumns( isLargeScreen );
 	const firstColumn = siteColumns[ 0 ];
 
 	return (

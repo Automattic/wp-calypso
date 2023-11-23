@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { v4 as uuid } from 'uuid';

@@ -1,5 +1,6 @@
 import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
-import { Button, FoldableCard } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Button, FoldableCard, Spinner } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
@@ -9,12 +10,12 @@ import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import ChooseDomainLater from 'calypso/components/domains/choose-domain-later';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -39,7 +40,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { ProvideExperimentData } from 'calypso/lib/explat';
+import { ProvideExperimentData, useExperiment } from 'calypso/lib/explat';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -243,8 +244,9 @@ export class RenderDomainsStep extends Component {
 		const productToRemove = this.props.cart.products.find(
 			( product ) => product.meta === domain_name
 		);
-
-		this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+		if ( productToRemove ) {
+			this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+		}
 	};
 
 	isPurchasingTheme = () => {
@@ -979,13 +981,11 @@ export class RenderDomainsStep extends Component {
 					? DomainsInCart()
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
-							<div className="domains__domain-side-content domains__free-domain">
-								<ReskinSideExplainer
-									onClick={ this.handleDomainExplainerClick }
-									type="free-domain-explainer"
-									flowName={ this.props.flowName }
-								/>
-							</div>
+							<ChooseDomainLater
+								step={ this.props.step }
+								flowName={ this.props.flowName }
+								handleDomainExplainerClick={ this.handleDomainExplainerClick }
+							/>
 					  ) }
 				{ useYourDomain }
 				{ this.shouldDisplayDomainOnlyExplainer() && (
@@ -1302,8 +1302,14 @@ export class RenderDomainsStep extends Component {
 				key={ this.props.step + this.props.stepSectionName }
 				className="domains__step-content domains__step-content-domain-step"
 			>
-				{ content }
-				{ sideContent }
+				{ this.props.isSideContentExperimentLoading ? (
+					<Spinner width="100" />
+				) : (
+					<>
+						{ content }
+						{ sideContent }
+					</>
+				) }
 			</div>
 		);
 	}
@@ -1523,9 +1529,18 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props ) {
+	const [ isSideContentExperimentLoading ] = useExperiment(
+		'calypso_gf_signup_onboarding_escape_hatch',
+		{
+			isEligible: props.flowName === 'onboarding',
+		}
+	);
 	return (
 		<CalypsoShoppingCartProvider>
-			<RenderDomainsStepConnect { ...props } />
+			<RenderDomainsStepConnect
+				{ ...props }
+				isSideContentExperimentLoading={ isSideContentExperimentLoading }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 }

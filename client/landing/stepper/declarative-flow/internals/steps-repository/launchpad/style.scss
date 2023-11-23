@@ -365,6 +365,14 @@
 	}
 }
 
+// Link in Bio flow
+.link-in-bio-tld.launchpad {
+	padding: 0;
+	.signup-header {
+		display: none;
+	}
+}
+
 // Write and Build flow
 .write.launchpad,
 .build.launchpad {

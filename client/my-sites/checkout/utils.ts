@@ -2,7 +2,7 @@ import { doesStringResembleDomain } from '@automattic/onboarding';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Context } from 'page';
+import type { Context } from '@automattic/calypso-router';
 
 /**
  * Return the product slug or product alias from a checkout route.

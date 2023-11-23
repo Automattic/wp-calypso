@@ -2,17 +2,43 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 import { site } from '../../test/test-utils/constants';
 import BoostSitePerformance from '../boost-site-performance';
 
 describe( 'BoostSitePerformance', () => {
 	const trackEventMock = jest.fn();
 
+	const initialState = {
+		partnerPortal: {
+			partner: {
+				current: {
+					can_issue_licenses: true,
+				},
+			},
+		},
+	};
+
+	const mockStore = configureStore();
+	const store = mockStore( initialState );
+	const queryClient = new QueryClient();
+
+	const Wrapper = ( { children } ) => (
+		<Provider store={ store }>
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		</Provider>
+	);
+
 	test( 'renders the overall score and tooltip', () => {
 		render(
-			<BoostSitePerformance site={ site } trackEvent={ trackEventMock } hasError={ false } />
+			<BoostSitePerformance site={ site } trackEvent={ trackEventMock } hasError={ false } />,
+			{
+				wrapper: Wrapper,
+			}
 		);
 
 		const overallRating = screen.getByText( 'B' );
@@ -35,7 +61,9 @@ describe( 'BoostSitePerformance', () => {
 			trackEvent: trackEventMock,
 			hasError: false,
 		};
-		render( <BoostSitePerformance { ...props } /> );
+		render( <BoostSitePerformance { ...props } />, {
+			wrapper: Wrapper,
+		} );
 
 		const emptyContent = screen.getByText( /see your site performance scores/i );
 		expect( emptyContent ).toBeInTheDocument();
@@ -54,7 +82,9 @@ describe( 'BoostSitePerformance', () => {
 			hasError: false,
 		};
 
-		render( <BoostSitePerformance { ...props } /> );
+		render( <BoostSitePerformance { ...props } />, {
+			wrapper: Wrapper,
+		} );
 
 		const autoOptimizeButton = screen.getByText( /Auto-optimize/i );
 		expect( autoOptimizeButton ).toBeInTheDocument();
@@ -80,7 +110,9 @@ describe( 'BoostSitePerformance', () => {
 			trackEvent: trackEventMock,
 			hasError: false,
 		};
-		render( <BoostSitePerformance { ...props } /> );
+		render( <BoostSitePerformance { ...props } />, {
+			wrapper: Wrapper,
+		} );
 
 		const button = screen.getByRole( 'link', { name: /boost settings/i } );
 		expect( button ).toBeInTheDocument();
@@ -103,7 +135,9 @@ describe( 'BoostSitePerformance', () => {
 			trackEvent: trackEventMock,
 			hasError: false,
 		};
-		render( <BoostSitePerformance { ...props } /> );
+		render( <BoostSitePerformance { ...props } />, {
+			wrapper: Wrapper,
+		} );
 
 		const button = screen.getByRole( 'link', { name: /optimize performance/i } );
 		expect( button ).toBeInTheDocument();

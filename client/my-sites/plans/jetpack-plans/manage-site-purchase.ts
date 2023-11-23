@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { managePurchase } from 'calypso/me/purchases/paths';
 

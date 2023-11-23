@@ -55,7 +55,7 @@ export default function LayoutNavigation( {
 			selectedText={
 				<span>
 					{ selectedText }
-					<Count count={ selectedCount } compact={ true } />
+					{ Number.isInteger( selectedCount ) && <Count count={ selectedCount } compact /> }
 				</span>
 			}
 		>

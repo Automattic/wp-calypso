@@ -1,32 +1,14 @@
 /** @jest-environment jsdom */
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Component ) => ( props ) => <Component { ...props } translate={ ( x ) => x } />,
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-	useTranslate: jest.fn( () => ( x ) => x ),
-} ) );
-jest.mock( '@automattic/components', () => ( {
-	Popover: () => <div />,
-} ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/ui/selectors' ),
-	getSelectedSiteId: jest.fn( () => null ),
-} ) );
-
 import { PLAN_FREE } from '@automattic/calypso-products';
-import { screen } from '@testing-library/react';
-import PlanTypeSelector, {
-	CustomerTypeToggle,
-} from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-
-const render = ( el, options ) => renderWithProvider( el, { ...options } );
+import { screen, render } from '@testing-library/react';
+import PlanTypeSelector, { CustomerTypeToggle } from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {
 	const myProps = {
 		selectedPlan: PLAN_FREE,
 		hideFreePlan: true,
 		withWPPlanTabs: true,
+		usePricingMetaForGridPlans: () => null,
 	};
 
 	test( 'Should show CustomerTypeToggle when kind is set to `customer`', () => {
@@ -69,8 +51,6 @@ describe( '<CustomerTypeToggle />', () => {
 		hideFreePlan: true,
 		withWPPlanTabs: true,
 	};
-
-	afterEach( () => {} );
 
 	test( "Should select personal tab when it's requested", () => {
 		const props = { ...myProps, customerType: 'personal' };

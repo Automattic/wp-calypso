@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { render as clientRender } from 'calypso/controller';
 import { jetpackAppPlans, pageNotFound, redirectIfNotJetpackApp } from './controller';
 import { makeJetpackAppLayout } from './page-middleware/layout';

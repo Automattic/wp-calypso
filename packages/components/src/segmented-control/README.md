@@ -13,8 +13,8 @@ The children technique is appropriate when you'd like to define the "selection" 
 A good example for this case is navigation. Sometimes the option that is selected is defined by the route, other times it's a state value, external prop, etc.
 
 ```jsx
+import { SegmentedControl } from '@automattic/components';
 import { Component } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 
 export default class extends Component {
 	// ...
@@ -103,7 +103,7 @@ A good example for this case is a form element. You don't want to have to write 
 **NOTE**: _there is still more work here in order to be fully functional as a form element. This is currently experimental._
 
 ```jsx
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import SimplifiedSegmentedControl from '@automattic/components/segmented-control/simplified';
 
 const options = [
 	{ value: 'all', label: 'All' },
@@ -158,6 +158,6 @@ const options = [
 
 ## Related components
 
-- To group buttons together, use the [ButtonGroup](./button-group) component.
-- To navigate between multiple pages of items, use the [Pagination](./pagination) component.
-- To alternate among related views within the same context with _tabs_, use the [SectionNav](./section-nav) component.
+- To group buttons together, use the `ButtonGroup` component.
+- To navigate between multiple pages of items, use the `Pagination` component.
+- To alternate among related views within the same context with _tabs_, use the `SectionNav` component.

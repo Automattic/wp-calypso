@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page, { type Callback } from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import page, { type Callback } from 'page';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsMain from './main';
 

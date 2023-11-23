@@ -9,49 +9,49 @@ import {
 } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ORDERED_PATTERN_PAGES_CATEGORIES } from './constants';
-import { useCategoriesOrder } from './hooks';
-import type { Category, Pattern } from './types';
-import './pattern-page-list.scss';
+import { ORDERED_PATTERN_PAGES_CATEGORIES } from '../constants';
+import { useCategoriesOrder } from '../hooks';
+import type { Category, Pattern } from '../types';
+import './page-list.scss';
 
-interface PatternPageListItemProps {
+interface PageListItemProps {
 	label?: string;
 	isSelected?: boolean;
 	isDisabled?: boolean;
 }
 
-const PatternPageListItem = ( { label, isSelected, isDisabled }: PatternPageListItemProps ) => {
+const PageListItem = ( { label, isSelected, isDisabled }: PageListItemProps ) => {
 	return (
 		<HStack
-			className={ classnames( 'pattern-page-list-item', {
-				'pattern-page-list-item--selected': isSelected,
-				'pattern-page-list-item--disabled': isDisabled,
+			className={ classnames( 'page-list-item', {
+				'page-list-item--selected': isSelected,
+				'page-list-item--disabled': isDisabled,
 			} ) }
 			justify="flex-start"
 			spacing={ 3 }
 		>
-			<FlexItem className="pattern-page-list-item__icon" display="flex">
+			<FlexItem className="page-list-item__icon" display="flex">
 				{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 				<Gridicon icon="checkmark" size={ 10 } />
 			</FlexItem>
-			<FlexItem className="pattern-page-list-item__label">{ label }</FlexItem>
+			<FlexItem className="page-list-item__label">{ label }</FlexItem>
 		</HStack>
 	);
 };
 
-interface PatternPageListProps {
+interface PageListProps {
 	categories: Category[];
 	pagesMapByCategory: Record< string, Pattern[] >;
-	selectedPages: string[];
+	selectedPageSlugs: string[];
 	onSelectPage: ( selectedPage: string ) => void;
 }
 
-const PatternPageList = ( {
+const PageList = ( {
 	categories,
 	pagesMapByCategory,
-	selectedPages,
+	selectedPageSlugs,
 	onSelectPage,
-}: PatternPageListProps ) => {
+}: PageListProps ) => {
 	const translate = useTranslate();
 	const categoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
 	const composite = useCompositeState( { orientation: 'vertical' } );
@@ -60,7 +60,7 @@ const PatternPageList = ( {
 		<Composite
 			{ ...composite }
 			role="listbox"
-			className="pattern-page-list"
+			className="page-list"
 			aria-label={ translate( 'Pages' ) }
 		>
 			<VStack spacing={ 0 }>
@@ -72,11 +72,11 @@ const PatternPageList = ( {
 					focusable={ true }
 					aria-checked="true"
 				>
-					<PatternPageListItem label={ translate( 'Homepage' ) } isDisabled />
+					<PageListItem label={ translate( 'Homepage' ) } isDisabled />
 				</CompositeItem>
 				{ categoriesInOrder.map( ( category: Category ) => {
 					const { name } = category;
-					const isSelected = name ? selectedPages.includes( name ) : false;
+					const isSelected = name ? selectedPageSlugs.includes( name ) : false;
 					const hasPages = name && pagesMapByCategory[ name ]?.length;
 
 					if ( ! hasPages ) {
@@ -92,7 +92,7 @@ const PatternPageList = ( {
 							aria-checked={ isSelected }
 							onClick={ () => onSelectPage( name ) }
 						>
-							<PatternPageListItem
+							<PageListItem
 								label={ pagesMapByCategory[ name ][ 0 ].title }
 								isSelected={ isSelected }
 							/>
@@ -104,4 +104,4 @@ const PatternPageList = ( {
 	);
 };
 
-export default PatternPageList;
+export default PageList;

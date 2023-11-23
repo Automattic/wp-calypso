@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { UrlData } from 'calypso/blocks/import/types';
 import { HostingProvider } from 'calypso/data/site-profiler/types';
 import StatusCtaInfo from '../heading-information/status-cta-info';

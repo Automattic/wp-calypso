@@ -1,4 +1,4 @@
-import { default as pageRouter } from 'page';
+import page from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import ThemeCollection from 'calypso/components/theme-collection';
@@ -77,7 +77,7 @@ export default function ShowcaseThemeCollection( {
 		} else {
 			recordThemesStyleVariationMoreClick( themeId, resultsRank );
 			const themeDetailsUrl = getThemeDetailsUrl( themeId );
-			themeDetailsUrl && pageRouter( themeDetailsUrl );
+			themeDetailsUrl && page( themeDetailsUrl );
 		}
 	};
 

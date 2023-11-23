@@ -1,10 +1,10 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -66,11 +66,16 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	};
 
 	const onClose = ( goToCampaigns?: boolean ) => {
-		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
+		queryClient.invalidateQueries( {
+			queryKey: [ 'promote-post-campaigns', siteId ],
+		} );
 		if ( goToCampaigns ) {
 			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
-			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
+			queryClient &&
+				queryClient.invalidateQueries( {
+					queryKey: [ 'promote-post-campaigns', siteId ],
+				} );
 			if ( previousRoute ) {
 				closeModal();
 			} else {

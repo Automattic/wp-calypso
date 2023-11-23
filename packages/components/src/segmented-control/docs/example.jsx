@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import { PureComponent } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import SegmentedControl from '../';
+import SimplifiedSegmentedControl from '../simplified';
 
 class SegmentedControlDemo extends PureComponent {
 	static displayName = 'SegmentedControl';
