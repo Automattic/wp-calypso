@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
@@ -12,6 +13,8 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import SocialToS from './social-tos';
 import type { IAppState } from 'calypso/state/types';
 
+import './style.scss';
+
 interface SocialAuthenticationFormProps {
 	compact?: boolean;
 	handleGoogleResponse: ( response: any ) => void;
@@ -23,6 +26,7 @@ interface SocialAuthenticationFormProps {
 	children: JSX.Element;
 	disableTosText?: boolean;
 	flowName: string;
+	isSocialFirst?: boolean;
 }
 
 const SocialAuthenticationForm = ( {
@@ -36,6 +40,7 @@ const SocialAuthenticationForm = ( {
 	children,
 	disableTosText,
 	flowName,
+	isSocialFirst,
 }: SocialAuthenticationFormProps ) => {
 	const translate = useTranslate();
 
@@ -74,7 +79,7 @@ const SocialAuthenticationForm = ( {
 		// are many places in which the social signup form is rendered based only on the presence of the
 		// `signup/social` config flag.
 		! config.isEnabled( 'desktop' ) && (
-			<div className="auth-form__social">
+			<div className={ classNames( 'auth-form__social', { 'is-social-first': isSocialFirst } ) }>
 				{ ! compact && <p>{ preventWidows( translate( 'Or create an account using:' ) ) }</p> }
 
 				<div className="auth-form__social-buttons">
