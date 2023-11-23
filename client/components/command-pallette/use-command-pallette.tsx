@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import React from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
@@ -49,7 +48,7 @@ interface useCommandPalletteOptions {
 const siteToAction =
 	( onClickSite: OnClickSiteFunction ) =>
 	( site: SiteExcerptData ): Command => {
-		const siteName = site.name || site.URL; // Use site.name if present, otherwise default to "Site Title"
+		const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
 
 		return {
 			name: `${ site.ID }`,
