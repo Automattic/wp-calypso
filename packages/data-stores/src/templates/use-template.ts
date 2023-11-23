@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Template } from './types';
 
-interface Options extends QueryOptions< Template, unknown > {
+interface Options extends QueryOptions< Template > {
 	enabled?: boolean;
 }
 
