@@ -17,11 +17,11 @@
 .review-licenses__selected-license {
 	margin-block-end: 24px;
 
-	.review-licenses__details {
+	.review-licenses__license-details {
 		display: flex;
 		gap: 14px;
 
-		.review-licenses__icon {
+		.review-licenses__license-icon {
 			display: none;
 			box-sizing: border-box;
 			width: 48px;
@@ -36,28 +36,28 @@
 			}
 		}
 
-		.review-licenses__icon > img {
+		.review-licenses__license-icon > img {
 			width: 22px;
 			height: auto;
 		}
 
 
-		.review-licenses__text-content {
+		.review-licenses__license-text-content {
 			width: 100%;
 		}
 
-		.review-licenses__header {
+		.review-licenses__license-header {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
 		}
 
-		.review-licenses__label {
+		.review-licenses__license-label {
 			font-size: rem(16px);
 			font-weight: 700;
 		}
 
-		.review-licenses__count {
+		.review-licenses__license-count {
 			background-color: var(--studio-gray-0);
 			padding: 5px 15px;
 			border-radius: 4px;
@@ -65,7 +65,7 @@
 
 		}
 
-		.review-licenses__info {
+		.review-licenses__license-description {
 			color: var(--studio-gray-70);
 			font-size: rem(16px);
 			font-weight: 400;

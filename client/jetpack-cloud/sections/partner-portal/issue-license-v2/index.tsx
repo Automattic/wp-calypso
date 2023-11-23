@@ -54,6 +54,20 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 
 	const showStickyContent = isWithinBreakpoint( '>960px' ) && selectedLicenses.length > 0;
 
+	// Group licenses by slug and sort them by quantity
+	const getGroupedLicenses = useCallback( () => {
+		return Object.values(
+			selectedLicenses.reduce(
+				( acc: Record< string, SelectedLicenseProp[] >, license ) => (
+					( acc[ license.slug ] = ( acc[ license.slug ] || [] ).concat( license ) ), acc
+				),
+				{}
+			)
+		)
+			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
+			.flat();
+	}, [ selectedLicenses ] );
+
 	return (
 		<>
 			<Layout
@@ -127,7 +141,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			{ showReviewLicenses && (
 				<ReviewLicenses
 					onClose={ () => setShowReviewLicenses( false ) }
-					selectedLicenses={ selectedLicenses }
+					selectedLicenses={ getGroupedLicenses() }
 				/>
 			) }
 		</>

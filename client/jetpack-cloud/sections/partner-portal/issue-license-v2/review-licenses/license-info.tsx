@@ -14,16 +14,16 @@ export default function LicenseInfo( { product }: { product: SelectedLicenseProp
 
 	return (
 		<div className="review-licenses__selected-license">
-			<div className="review-licenses__details">
-				<div className="review-licenses__icon">
+			<div className="review-licenses__license-details">
+				<div className="review-licenses__license-icon">
 					<img src={ getProductIcon( { productSlug: productInfo.productSlug } ) } alt={ title } />
 				</div>
-				<div className="review-licenses__text-content">
-					<div className="review-licenses__header">
-						<label htmlFor={ title } className="review-licenses__label">
+				<div className="review-licenses__license-text-content">
+					<div className="review-licenses__license-header">
+						<label htmlFor={ title } className="review-licenses__license-label">
 							{ title }
 						</label>
-						<span className="review-licenses__count">
+						<span className="review-licenses__license-count">
 							{ translate( '%(numLicenses)d license', '%(numLicenses)d licenses', {
 								context: 'button label',
 								count: product.quantity,
@@ -33,7 +33,9 @@ export default function LicenseInfo( { product }: { product: SelectedLicenseProp
 							} ) }
 						</span>
 					</div>
-					<p className="review-licenses__info">{ productInfo.lightboxDescription }</p>
+					<p className="review-licenses__license-description">
+						{ productInfo.lightboxDescription }
+					</p>
 				</div>
 			</div>
 		</div>
