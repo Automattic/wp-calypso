@@ -4,72 +4,43 @@ import classnames from 'classnames';
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
-import { PATTERN_ASSEMBLER_EVENTS } from '../events';
-import prependTitleBlockToPagePattern from '../html-transformers/prepend-title-block-to-page-pattern';
-import { encodePatternId, isPagePattern } from '../utils';
-import type { Pattern } from '../types';
-import './page-preview.scss';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { encodePatternId, isPagePattern } from './utils';
+import type { Pattern } from './types';
+import './pattern-page-preview.scss';
 
-interface BasePageProps {
-	style: CSSProperties;
-	patterns: Pattern[];
-	transformPatternHtml: ( patternHtml: string ) => string;
-	shouldShufflePosts: boolean;
-}
-
-interface PageProps extends BasePageProps {
-	className: string;
-}
-
-interface PagePreviewProps extends BasePageProps {
+interface PatternPagePreviewProps {
 	composite: Record< string, unknown >;
 	slug: string;
 	title: string;
-	onClick: ( patterns: Pattern[] ) => void;
+	style: CSSProperties;
+	patterns: Pattern[];
+	shouldShufflePosts: boolean;
 }
 
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH = 1080;
 
-const Page = ( {
-	className,
+// A copy of the title block in Creatio 2's page.html.
+const getPageTitlePattern = ( title: string ) => `
+	<div
+		class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained"
+		style="margin-top:var(--wp--preset--spacing--60);margin-bottom:var(--wp--preset--spacing--60)"
+	>
+		<h2 class="has-text-align-left alignwide wp-block-post-title has-xxxx-large-font-size">
+			${ title }
+		</h2>
+	</div>`;
+
+const PatternPagePreview = ( {
+	composite,
+	slug,
+	title,
 	style,
 	patterns,
-	transformPatternHtml,
 	shouldShufflePosts,
-}: PageProps ) => {
-	const pageTitle = useMemo( () => {
-		return patterns.find( isPagePattern )?.title ?? '';
-	}, [ patterns ] );
-
-	const transformPagePatternHtml = useCallback(
-		( patternHtml: string ) => {
-			const transformedPatternHtml = transformPatternHtml( patternHtml );
-			return prependTitleBlockToPagePattern( transformedPatternHtml, pageTitle );
-		},
-		[ transformPatternHtml, pageTitle ]
-	);
-
-	return (
-		<div className={ className } style={ style }>
-			{ patterns.map( ( pattern ) => (
-				<PatternRenderer
-					key={ pattern.ID }
-					patternId={ encodePatternId( pattern.ID ) }
-					viewportWidth={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH }
-					viewportHeight={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT }
-					transformHtml={
-						isPagePattern( pattern ) ? transformPagePatternHtml : transformPatternHtml
-					}
-					shouldShufflePosts={ shouldShufflePosts }
-				/>
-			) ) }
-		</div>
-	);
-};
-
-const PatternPagePreview = ( { composite, onClick, ...pageProps }: PagePreviewProps ) => {
-	const { slug, title, patterns } = pageProps;
+}: PatternPagePreviewProps ) => {
+	const validPatterns = useMemo( () => patterns.filter( Boolean ) as Pattern[], [ patterns ] );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ frameStyles, setFrameStyles ] = useState( {} );
 	const ref = useRef< HTMLButtonElement >( null );
@@ -131,7 +102,18 @@ const PatternPagePreview = ( { composite, onClick, ...pageProps }: PagePreviewPr
 				aria-label={ title }
 				onClick={ onClick }
 			>
-				<Page className="pattern-assembler__preview-frame-content" { ...pageProps } />
+				<div className="pattern-assembler__preview-frame-content" style={ style }>
+					{ validPatterns.map( ( pattern ) => (
+						<PatternRenderer
+							key={ pattern.ID }
+							patternId={ encodePatternId( pattern.ID ) }
+							viewportWidth={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH }
+							viewportHeight={ PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT }
+							prependHtml={ isPagePattern( pattern ) ? getPageTitlePattern( pattern.title ) : '' }
+							shouldShufflePosts={ shouldShufflePosts }
+						/>
+					) ) }
+				</div>
 			</CompositeItem>
 			<div className="pattern-assembler__preview-title">{ title }</div>
 		</div>

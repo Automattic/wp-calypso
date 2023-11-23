@@ -4,9 +4,7 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { CSSProperties, useCallback, useMemo, useState } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { PATTERN_ASSEMBLER_EVENTS } from '../events';
+import { CSSProperties, useCallback, useMemo } from 'react';
 import { injectTitlesToPageListBlock } from '../html-transformers';
 import PagePreview, { PagePreviewModal } from './page-preview';
 import type { Pattern } from '../types';
@@ -31,12 +29,6 @@ const PagePreviewList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const composite = useCompositeState( { orientation: 'horizontal' } );
-	const [ zoomedPage, setZoomedPage ] = useState< Pattern[] >( [] );
-
-	// Using zoomedPage to control whether the modal is opened or not causes a flash of empty content.
-	// To prevent this, we use another separate state.
-	// See: https://github.com/Automattic/wp-calypso/pull/83902#discussion_r1383357522.
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const pagePreviewStyle = useMemo(
@@ -59,34 +51,25 @@ const PagePreviewList = ( {
 		[ isNewSite, selectedPages ]
 	);
 
-	const handleClick = ( patterns: Pattern[], pageSlug: string ) => {
-		setZoomedPage( patterns );
-		setIsModalOpen( true );
-
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
-			pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
-			page_slug: pageSlug,
-		} );
-	};
-
 	return (
 		<>
 			<Composite { ...composite } role="listbox" className="pattern-assembler__preview-list">
 				<PagePreview
 					composite={ composite }
+					slug="homepage"
 					title={ translate( 'Homepage' ) }
 					style={ pagePreviewStyle }
 					patterns={ homepage }
 					transformPatternHtml={ transformPatternHtml }
 					shouldShufflePosts={ isNewSite }
-					onClick={ ( patterns ) => handleClick( patterns, 'homepage' ) }
 				/>
 				{ selectedPages.map( ( page, index ) => (
 					<PagePreview
 						key={ page.ID }
 						composite={ composite }
-						style={ pagePreviewStyle }
+						slug={ selectedPages[ index ] }
 						title={ page.title }
+						style={ patternPagePreviewStyle }
 						patterns={ [
 							...( selectedHeader ? [ selectedHeader ] : [] ),
 							page,
@@ -94,18 +77,9 @@ const PagePreviewList = ( {
 						] }
 						transformPatternHtml={ transformPatternHtml }
 						shouldShufflePosts={ isNewSite }
-						onClick={ ( patterns ) => handleClick( patterns, selectedPageSlugs[ index ] ) }
 					/>
 				) ) }
 			</Composite>
-			<PagePreviewModal
-				style={ pagePreviewStyle }
-				patterns={ zoomedPage }
-				transformPatternHtml={ transformPatternHtml }
-				shouldShufflePosts={ isNewSite }
-				isOpen={ isModalOpen }
-				onClose={ () => setIsModalOpen( false ) }
-			/>
 		</>
 	);
 };
