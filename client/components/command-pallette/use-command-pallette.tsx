@@ -47,17 +47,19 @@ interface useCommandPalletteOptions {
 const siteToAction =
 	( onClickSite: OnClickSiteFunction ) =>
 	( site: SiteExcerptData ): Command => {
+		const siteName = site.name || 'Site Title'; // Use site.name if present, otherwise default to "Site Title"
+
 		return {
 			name: `${ site.ID }`,
-			label: `${ site.name }: ${ site.URL }`,
-			searchLabel: `${ site.ID } ${ site.name } ${ site.URL }`,
+			label: `${ siteName }: ${ site.URL }`,
+			searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
 			callback: ( { close }: { close: CloseFunction } ) => {
 				onClickSite( { site, close } );
 			},
 			image: (
 				<SiteImage
 					src={ site.icon?.img ?? '/calypso/images/favicons/favicon-development.ico' }
-					alt={ site.name }
+					alt={ siteName }
 				/>
 			),
 		};
