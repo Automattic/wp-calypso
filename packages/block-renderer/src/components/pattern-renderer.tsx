@@ -35,7 +35,7 @@ const PatternRenderer = ( {
 	}
 
 	// TODO(fushar): refactor this similar to how we refactor html transformations above.
-	const inlineCss = shufflePosts( patternId, pattern.html, shouldShufflePosts );
+	const inlineCss = shufflePosts( patternId, patternHtml, shouldShufflePosts );
 
 	return (
 		<BlockRendererContainer
