@@ -30,7 +30,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 	render() {
 		const { translate, emailAddress } = this.props;
-		const line = emailAddress
+		const successMessage = emailAddress
 			? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}", {
 					args: { emailAddress },
 					components: { strong: <strong /> },
@@ -49,7 +49,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 				<Card className="magic-login__form">
 					<div className="magic-login__form-text">
-						<p>{ preventWidows( line ) }</p>
+						<p>{ preventWidows( successMessage ) }</p>
 					</div>
 				</Card>
 				<div className="magic-login__emails-list">
