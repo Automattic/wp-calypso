@@ -115,7 +115,11 @@ function filterAndGroupCostOverridesForDisplay(
 				return;
 			}
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
+			// Cost overrides do not account for volume; they are always for the
+			// single volume amount. Therefore they must be multiplied by volume the
+			// same way we do for the cost.
+			const newDiscountAmount =
+				costOverride.old_price * product.volume - costOverride.new_price * product.volume;
 			grouped[ costOverride.override_code ] = {
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
