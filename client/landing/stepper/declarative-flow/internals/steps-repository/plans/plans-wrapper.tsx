@@ -18,7 +18,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -30,6 +30,8 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
@@ -40,6 +42,8 @@ interface Props {
 	flowName: string | null;
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
+	selectedSiteId: number | null;
+	setSelectedSiteId: ( siteId: number ) => void;
 }
 
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
@@ -72,12 +76,20 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName } = props;
+	const { flowName, selectedSiteId, setSelectedSiteId } = props;
 
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
+	const siteId = site?.ID;
+
+	useEffect( () => {
+		if ( ! selectedSiteId && siteId ) {
+			setSelectedSiteId( siteId );
+		}
+	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
+
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -258,8 +270,14 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	);
 };
 
-export default connect( ( state ) => {
-	return {
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-	};
-} )( localize( PlansWrapper ) );
+export default connect(
+	( state ) => {
+		return {
+			plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+			selectedSiteId: getSelectedSiteId( state ),
+		};
+	},
+	{
+		setSelectedSiteId: setSelectedSiteId,
+	}
+)( localize( PlansWrapper ) );

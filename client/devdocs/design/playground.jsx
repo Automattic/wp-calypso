@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import classnames from 'classnames';
 import { keys } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import DocumentHead from 'calypso/components/data/document-head';

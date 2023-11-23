@@ -9,7 +9,7 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
-import { useAddOnCheckoutLink } from '@automattic/data-stores';
+import { useAddOnCheckoutLink, useAddOnFeatureSlugs } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
@@ -29,7 +29,6 @@ import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
-import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta, SiteDetails } from '@automattic/data-stores';
 

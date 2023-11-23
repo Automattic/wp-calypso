@@ -30,6 +30,7 @@ interface PreMigrationProps {
 	isMigrateFromWp: boolean;
 	isTargetSitePlanCompatible: boolean;
 	startImport: ( props?: StartImportTrackingProps ) => void;
+	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	onNotAuthorizedClick: () => void;
@@ -46,6 +47,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isMigrateFromWp,
 		isTrial,
 		startImport,
+		navigateToVerifyEmailStep,
 		onFreeTrialClick,
 		onContentOnlyClick,
 		onNotAuthorizedClick,
@@ -65,6 +67,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		sourceSiteId,
 		fetchMigrationEnabledStatus,
 		isFetchingData: isFetchingMigrationData,
+		isInitFetchingDone,
 		siteCanMigrate,
 	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
 
@@ -106,8 +109,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		useSiteCredentialsInfo( sourceSiteId );
 
 	const onUpgradeAndMigrateClick = () => {
-		setContinueImport( true );
 		fetchMigrationEnabledStatus();
+		setContinueImport( true );
+		startImport( migrationTrackingProps );
 	};
 
 	/**
@@ -134,9 +138,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 */
 	useEffect( () => {
 		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
+			fetchMigrationEnabledStatus();
 			setQueryTargetSitePlanStatus( 'fetched' );
 			setContinueImport( true );
-			fetchMigrationEnabledStatus();
 		}
 	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
 
@@ -157,7 +161,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 * Decide the render state based on the current component state
 	 */
 	useEffect( () => {
-		if ( requiresPluginUpdate ) {
+		if (
+			! isInitFetchingDone &&
+			( isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched' )
+		) {
+			setRenderState( 'loading' );
+		} else if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
 		} else if ( ! isTargetSitePlanCompatible ) {
 			setRenderState( 'upgrade-plan' );
@@ -174,6 +183,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		sourceSiteId,
 		showCredentials,
 		requiresPluginUpdate,
+		isInitFetchingDone,
 		isFetchingCredentials,
 		isFetchingMigrationData,
 		isTargetSitePlanCompatible,
@@ -221,6 +231,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						sourceSiteUrl={ sourceSiteUrl }
 						targetSite={ targetSite }
 						startImport={ onUpgradeAndMigrateClick }
+						navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
 						onFreeTrialClick={ onFreeTrialClick }
 						onContentOnlyClick={ onContentOnlyClick }
 						isBusy={

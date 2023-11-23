@@ -57,6 +57,7 @@ export interface APIPartnerKey {
 	oauth2_token: string;
 	disabled_on: string | null;
 	has_licenses: boolean;
+	latest_invoice: APIInvoice | null;
 }
 
 export interface APIPartnerAddress {
@@ -86,7 +87,10 @@ export interface APIPartner {
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
 export interface APILicense {
+	license_id: number;
 	license_key: string;
+	quantity: number | null;
+	parent_jetpack_license_id: string | null;
 	issued_at: string;
 	revoked_at: string | null;
 }
@@ -123,6 +127,8 @@ export interface APIInvoice {
 	id: string;
 	number: string;
 	due_date: string | null;
+	created: string | null;
+	effective_at: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -141,6 +147,8 @@ export interface Invoice {
 	id: string;
 	number: string;
 	dueDate: string | null;
+	created: string | null;
+	effectiveAt: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -177,6 +185,7 @@ export interface PartnerKey {
 	oAuth2Token: string;
 	disabledOn: string | null;
 	hasLicenses: boolean;
+	latestInvoice: Invoice | null;
 }
 
 export interface PartnerAddress {

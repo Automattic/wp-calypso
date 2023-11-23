@@ -1,11 +1,8 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import GoogleSocialButton from 'calypso/components/social-buttons/google';
-import { preventWidows } from 'calypso/lib/formatting';
+import { SocialAuthenticationForm } from 'calypso/blocks/authentication';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/utils';
@@ -13,7 +10,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
-import SocialSignupToS from './social-signup-tos';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -101,65 +97,20 @@ class SocialSignupForm extends Component {
 	};
 
 	render() {
-		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
-
 		return (
-			// Note: we allow social sign-in on the Desktop app, but not social sign-up. Existing config flags do
-			// not distinguish between sign-in and sign-up but instead use the catch-all `signup/social` flag.
-			// Therefore we need to make an exception for the desktop app directly in this component because there
-			// are many places in which the social signup form is rendered based only on the presence of the
-			// `signup/social` config flag.
-			! config.isEnabled( 'desktop' ) && (
-				<div className="signup-form__social">
-					{ ! this.props.compact && (
-						<p>{ preventWidows( this.props.translate( 'Or create an account using:' ) ) }</p>
-					) }
-
-					<div className="signup-form__social-buttons">
-						<GoogleSocialButton
-							clientId={ config( 'google_oauth_client_id' ) }
-							responseHandler={ this.handleGoogleResponse }
-							uxMode={ uxMode }
-							redirectUri={ this.getRedirectUri( 'google' ) }
-							onClick={ () => {
-								this.trackLoginAndRememberRedirect( 'google' );
-							} }
-							socialServiceResponse={
-								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-							}
-							startingPoint="signup"
-							isReskinned={ this.props.isReskinned }
-						/>
-
-						<AppleLoginButton
-							clientId={ config( 'apple_oauth_client_id' ) }
-							responseHandler={ this.handleAppleResponse }
-							uxMode={ uxModeApple }
-							redirectUri={ this.getRedirectUri( 'apple' ) }
-							onClick={ () => {
-								this.trackLoginAndRememberRedirect( 'apple' );
-							} }
-							socialServiceResponse={
-								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-							}
-							originalUrlPath={
-								// Since the signup form is only ever called from the user step, currently, we can rely on window.location.pathname
-								// to return back to the user step, which then allows us to continue on with the flow once the submitSignupStep action is called within the user step.
-								window?.location?.pathname
-							}
-							// Attach the query string to the state so we can pass it back to the server to show the correct UI.
-							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
-							queryString={
-								isWpccFlow( this.props.flowName ) ? window.location.search.slice( 1 ) : null
-							}
-						/>
-						{ this.props.children }
-						{ ! this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
-					</div>
-					{ this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
-				</div>
-			)
+			<SocialAuthenticationForm
+				compact={ this.props.compact }
+				handleGoogleResponse={ this.handleGoogleResponse }
+				handleAppleResponse={ this.handleAppleResponse }
+				getRedirectUri={ this.getRedirectUri }
+				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
+				socialService={ this.props.socialService }
+				socialServiceResponse={ this.props.socialServiceResponse }
+				disableTosText={ this.props.disableTosText }
+				flowName={ this.props.flowName }
+			>
+				{ this.props.children }
+			</SocialAuthenticationForm>
 		);
 	}
 }

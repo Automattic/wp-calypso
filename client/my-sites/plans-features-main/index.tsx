@@ -15,6 +15,7 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
@@ -30,7 +31,6 @@ import {
 } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -529,6 +529,8 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+		currentSitePlanSlug: sitePlanSlug,
+		usePricingMetaForGridPlans,
 	};
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized

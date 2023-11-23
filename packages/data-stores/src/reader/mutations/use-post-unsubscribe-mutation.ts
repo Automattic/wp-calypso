@@ -57,8 +57,10 @@ const usePostUnsubscribeMutation = () => {
 			return response;
 		},
 		onMutate: async ( params ) => {
-			await queryClient.cancelQueries( postSubscriptionsCacheKey );
-			await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+			await queryClient.cancelQueries( { queryKey: postSubscriptionsCacheKey } );
+			await queryClient.cancelQueries( {
+				queryKey: [ 'read', 'subscriptions-count', isLoggedIn ],
+			} );
 
 			const previousPostSubscriptions =
 				queryClient.getQueryData< PostSubscriptionsPages >( postSubscriptionsCacheKey );
@@ -112,8 +114,8 @@ const usePostUnsubscribeMutation = () => {
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries( postSubscriptionsCacheKey );
-			queryClient.invalidateQueries( subscriptionsCountCacheKey );
+			queryClient.invalidateQueries( { queryKey: postSubscriptionsCacheKey } );
+			queryClient.invalidateQueries( { queryKey: subscriptionsCountCacheKey } );
 		},
 	} );
 };

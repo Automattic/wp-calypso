@@ -1,16 +1,14 @@
-import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import MasterbarStyled from '../masterbar-styled';
 
-type HeaderProps = {
-	siteId?: number;
+export type CheckoutMasterbarProps = {
+	siteId?: number | null;
 	siteSlug?: string | null;
+	backText?: string;
 };
 
-const CheckoutMasterbar = ( { siteId, siteSlug }: HeaderProps ) => {
-	const { __ } = useI18n();
-
+const CheckoutMasterbar = ( { siteId, siteSlug, backText }: CheckoutMasterbarProps ) => {
 	if ( ! siteId ) {
 		return (
 			<MasterbarStyled
@@ -27,7 +25,7 @@ const CheckoutMasterbar = ( { siteId, siteSlug }: HeaderProps ) => {
 			<QuerySitePurchases siteId={ siteId } />
 			<MasterbarStyled
 				onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
-				backText={ __( 'Back to dashboard' ) }
+				backText={ backText ?? '' }
 				canGoBack={ true }
 				showContact={ true }
 			/>

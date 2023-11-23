@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';

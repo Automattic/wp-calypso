@@ -125,7 +125,9 @@ export const StagingSiteCard = ( {
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
-			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ],
+			} );
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);

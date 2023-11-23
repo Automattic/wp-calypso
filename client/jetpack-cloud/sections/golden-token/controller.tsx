@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page, { type Callback } from 'page';
+import page, { type Callback } from '@automattic/calypso-router';
 import { GoldenTokenDialog } from './golden-token-dialog';
 
 export const goldenTokenContext: Callback = ( context, next ) => {

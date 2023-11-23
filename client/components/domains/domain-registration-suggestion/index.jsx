@@ -200,11 +200,8 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if (
-			shouldUseMultipleDomainsInCart( flowName ) &&
-			( getDomainRegistrations( cart ).length > 0 || temporaryCart?.length > 0 )
-		) {
-			buttonStyles = { ...buttonStyles, primary: false, disabled: false, busy: false };
+		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
+			buttonStyles = { ...buttonStyles, primary: false };
 		}
 
 		return {
