@@ -43,55 +43,55 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 	render() {
 		const { translate, emailAddress } = this.props;
-		const line = [
-			emailAddress
-				? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}", {
-						args: { emailAddress },
-						components: { strong: <strong /> },
-				  } )
-				: translate( 'We just emailed you a link.' ),
-		];
+		const line = emailAddress
+			? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}", {
+					args: { emailAddress },
+					components: { strong: <strong /> },
+			  } )
+			: translate( 'We just emailed you a link.' );
 
 		return (
-			emailAddress && (
-				<div>
-					<RedirectWhenLoggedIn
-						redirectTo="/help"
-						replaceCurrentLocation={ true }
-						waitForEmailAddress={ emailAddress }
-					/>
+			<div>
+				<RedirectWhenLoggedIn
+					redirectTo="/help"
+					replaceCurrentLocation={ true }
+					waitForEmailAddress={ emailAddress }
+				/>
 
-					<h1 className="magic-login__form-header">{ translate( 'Check your email' ) }</h1>
+				<h1 className="magic-login__form-header">{ translate( 'Check your email' ) }</h1>
 
-					<Card className="magic-login__form">
-						<div className="magic-login__form-text">
-							<p>{ preventWidows( line ) }</p>
-						</div>
-					</Card>
-					<div className="magic-login__emails-list">
-						<MagicLoginEmailWrapper emailAddress={ emailAddress } />
+				<Card className="magic-login__form">
+					<div className="magic-login__form-text">
+						<p>{ preventWidows( line ) }</p>
 					</div>
-
-					<div className="magic-login__footer">
-						<p>
-							{ translate(
-								"Didn't get the email? You might want to double check if the email address is associated with your account"
-							) }
-							,
-							<a
-								href={ login( {
-									isJetpack: this.props.isJetpackLogin,
-									isWhiteLogin: this.props.isWhiteLogin,
-									locale: this.props.locale,
-								} ) }
-								onClick={ this.onClickBackLink }
-							>
-								{ translate( 'or login with a password instead.' ) }
-							</a>
-						</p>
-					</div>
+				</Card>
+				<div className="magic-login__emails-list">
+					<MagicLoginEmailWrapper emailAddress={ emailAddress } />
 				</div>
-			)
+
+				<div className="magic-login__footer">
+					<p>
+						{ translate(
+							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or login with a password instead.{{/a}}",
+							{
+								components: {
+									a: (
+										<a
+											href={ login( {
+												isJetpack: this.props.isJetpackLogin,
+												isWhiteLogin: this.props.isWhiteLogin,
+												locale: this.props.locale,
+											} ) }
+											onClick={ this.onClickBackLink }
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				</div>
+			</div>
 		);
 	}
 }
