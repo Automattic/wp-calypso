@@ -105,6 +105,20 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the checkout page.
+	 */
+	async validateCheckoutPage(): Promise< void > {
+		await this.page.waitForURL( /.*checkout*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the site picker page.
+	 */
+	async validateSitePickerPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.startBuildingHeader( 'Pick your destination' ) );
+	}
+
+	/**
 	 * Validates that we've landed on the building page.
 	 *
 	 * @param {string} reason The reason shown in main header.
@@ -210,6 +224,24 @@ export class StartImportFlow {
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
 		await this.page.click( selectors.startImportButton );
+	}
+
+	/**
+	 * Import focused flow, go to first import step
+	 */
+	async startImportFocused( step: string, siteSlug: string, from: string ): Promise< void > {
+		const route = step ? `/setup/import-focused/${ step }` : '/setup/import-focused';
+
+		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug, from } ) );
+	}
+
+	/**
+	 * Import hosted site flow, go to first import step
+	 */
+	async startImportHostedSite( step: string, siteSlug: string, from: string ): Promise< void > {
+		const route = step ? `/setup/import-hosted-site/${ step }` : '/setup/import-hosted-site';
+
+		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug, from } ) );
 	}
 
 	/**
