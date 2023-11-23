@@ -442,10 +442,15 @@ export interface ResponseCartProduct {
 	price_tier_maximum_units?: number | null;
 
 	/**
-	 * A cost override is a change to the price of a product. The new price and the old (original) price are both provided.
+	 * A cost override is a change to the price of a product. The new price and
+	 * the old (original) price are both provided.
 	 *
 	 * The override_code is a string that identifies the reason for the override.
 	 * When displaying the reason to the customer, use the human_readable_reason.
+	 *
+	 * Note that cost overrides do not include volume! You should always
+	 * multiply the numbers by volume if you want to know what prices are being
+	 * used.
 	 */
 	cost_overrides?: ResponseCartCostOverride[];
 
@@ -551,11 +556,42 @@ export interface ResponseCartProductVariant {
 }
 
 export interface ResponseCartCostOverride {
+	/**
+	 * The reason for this cost override, translated to the user's locale.
+	 */
 	human_readable_reason: string;
+
+	/**
+	 * This is the price after this override was applied. It is in the
+	 * currency's standard unit as a floating point number.
+	 */
 	new_price: number;
+
+	/**
+	 * This is the price before this override was applied. It is in the
+	 * currency's standard unit as a floating point number.
+	 */
 	old_price: number;
+
+	/**
+	 * A code to identify the override. Even if the translated
+	 * `human_readable_reason` changes, this will remain the same. While it
+	 * should be unique for a collection of overrides in a product, there's
+	 * nothing that requires that so don't rely on it being true.
+	 */
 	override_code: string;
+
+	/**
+	 * If true, the override changes the product's original price and is not a
+	 * discount. This is used by products which have dynamic pricing like
+	 * Domain Transfers.
+	 */
 	does_override_original_cost: boolean;
+
+	/**
+	 * The reason for this discount.
+	 * @deprecated use human_readable_reason instead
+	 */
 	reason: string;
 }
 
