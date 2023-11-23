@@ -22,7 +22,7 @@ import { useFeatures, Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
 import type { Step } from '../../types';
-import type { NewSiteBlogDetails, OnboardSelect } from '@automattic/data-stores';
+import type { Plans, NewSiteBlogDetails, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
@@ -90,6 +90,14 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 		[ businessPlan.productSlug, domain, flow, senseiProPlan.productSlug ]
 	);
 
+	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
+
+	const onBillingPeriodChange = ( value: Plans.PlanBillingPeriod ) => {
+		if ( ! isLoading ) {
+			setBillingPeriod( value );
+		}
+	};
+
 	const onPlanSelect = async () => {
 		try {
 			setStatus( Status.Bundling );
@@ -107,7 +115,6 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	};
 
 	const currencyCode = senseiProPlan.currencyCode;
-	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
 	const price = businessPlan.price + senseiProPlan.price;
 	const monthlyPrice = businessPlan.monthlyPrice + senseiProPlan.monthlyPrice;
 	const annualPrice = businessPlan.yearlyPrice + senseiProPlan.yearlyPrice;
@@ -155,7 +162,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 				<>
 					<PlansIntervalToggle
 						intervalType={ billingPeriod }
-						onChange={ setBillingPeriod }
+						onChange={ onBillingPeriodChange }
 						maxMonthlyDiscountPercentage={ annualDiscount }
 					/>
 
