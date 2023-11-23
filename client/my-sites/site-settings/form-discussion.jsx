@@ -169,9 +169,9 @@ class SiteSettingsFormDiscussion extends Component {
 				/>
 				{ ! this.props.isJetpack && 1 === fields.lang_id && (
 					<ToggleControl
-						checked={ !! fields.verbum_subscription_modal }
+						checked={ !! fields.jetpack_verbum_subscription_modal }
 						disabled={ isRequestingSettings || isSavingSettings }
-						onChange={ handleAutosavingToggle( 'verbum_subscription_modal' ) }
+						onChange={ handleAutosavingToggle( 'jetpack_verbum_subscription_modal' ) }
 						label={ translate( 'Display subscription suggestion after comment' ) }
 					/>
 				) }
@@ -660,7 +660,7 @@ export const getFormSettings = ( settings ) => {
 		'stb_enabled',
 		'stc_enabled',
 		'wpcom_publish_comments_with_markdown',
-		'verbum_subscription_modal',
+		'jetpack_verbum_subscription_modal',
 		'lang_id',
 	] );
 };
