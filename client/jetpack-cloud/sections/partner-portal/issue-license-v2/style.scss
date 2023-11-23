@@ -28,3 +28,14 @@
 		flex-grow: 1;
 	}
 }
+
+.issue-license-v2 .assign-license-step-progress {
+	margin-block-start: 16px;
+	margin-block-end: 32px;
+
+	.step-current .assign-license-step-progress__step-circle {
+		background-color: var(--studio-jetpack-green-50);
+		border: 2px solid var(--studio-jetpack-green-50);
+		color: var(--studio-white);
+	}
+}

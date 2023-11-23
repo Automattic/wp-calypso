@@ -14,6 +14,7 @@ import LayoutNavigation, {
 	LayoutNavigationItem as NavigationItem,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
@@ -68,6 +69,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			.flat();
 	}, [ selectedLicenses ] );
 
+	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
+
 	return (
 		<>
 			<Layout
@@ -77,6 +80,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 				withBorder
 			>
 				<LayoutTop>
+					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
+
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>
 						<Subtitle>
