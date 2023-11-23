@@ -22,9 +22,9 @@ export interface UseThemeDesignsQueryOptions {
 
 export function useThemeDesignsQuery(
 	{ filter = 'auto-loading-homepage', tier = 'all' }: UseThemeDesignsQueryOptions = {},
-	queryOptions: UseQueryOptions< unknown, unknown, Design[] > = {}
-): UseQueryResult< Design[] > {
-	return useQuery< any, unknown, Design[] >( {
+	queryOptions: UseQueryOptions< unknown, Error, Design[] > = {}
+): UseQueryResult< Design[], Error > {
+	return useQuery< any, Error, Design[] >( {
 		queryKey: [ 'themes', filter, tier ],
 		queryFn: () =>
 			wpcom.req.get( '/themes', {
