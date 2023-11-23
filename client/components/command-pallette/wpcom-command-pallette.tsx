@@ -13,6 +13,8 @@ interface CommandMenuGroupProps
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
 	isContextual?: boolean;
 	search: string;
+	selectedCommandName: string;
+	setSelectedCommandName: ( name: string ) => void;
 }
 
 export function CommandMenuGroup( {
@@ -21,8 +23,9 @@ export function CommandMenuGroup( {
 	close,
 	setSearch,
 	setPlaceholderOverride,
+	selectedCommandName,
+	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
-	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const { commands: smpDefaultCommands } = useCommandPallette( {
 		selectedCommandName,
 		setSelectedCommandName,
@@ -95,6 +98,7 @@ function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputP
 export const WpcomCommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
+	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { close, toggle } = {
 		close: () => setIsOpen( false ),
@@ -117,6 +121,7 @@ export const WpcomCommandPalette = () => {
 	const reset = () => {
 		setPlaceholderOverride( '' );
 		setSearch( '' );
+		setSelectedCommandName( '' );
 	};
 	const closeAndReset = () => {
 		reset();
@@ -137,6 +142,10 @@ export const WpcomCommandPalette = () => {
 			event.keyCode === 229
 		) {
 			event.preventDefault();
+		}
+		if ( event.key === 'Escape' && selectedCommandName ) {
+			event.preventDefault();
+			reset();
 		}
 	};
 
@@ -170,6 +179,8 @@ export const WpcomCommandPalette = () => {
 							isContextual
 							setSearch={ setSearch }
 							setPlaceholderOverride={ setPlaceholderOverride }
+							selectedCommandName={ selectedCommandName }
+							setSelectedCommandName={ setSelectedCommandName }
 						/>
 						{ search && (
 							<CommandMenuGroup
@@ -177,6 +188,8 @@ export const WpcomCommandPalette = () => {
 								close={ closeAndReset }
 								setSearch={ setSearch }
 								setPlaceholderOverride={ setPlaceholderOverride }
+								selectedCommandName={ selectedCommandName }
+								setSelectedCommandName={ setSelectedCommandName }
 							/>
 						) }
 					</Command.List>
