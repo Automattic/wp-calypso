@@ -564,12 +564,18 @@ export interface ResponseCartCostOverride {
 	/**
 	 * This is the price after this override was applied. It is in the
 	 * currency's standard unit as a floating point number.
+	 *
+	 * Note that this does not account for volume! Make sure to multiply this
+	 * value by the volume before displaying it.
 	 */
 	new_price: number;
 
 	/**
 	 * This is the price before this override was applied. It is in the
 	 * currency's standard unit as a floating point number.
+	 *
+	 * Note that this does not account for volume! Make sure to multiply this
+	 * value by the volume before displaying it.
 	 */
 	old_price: number;
 
