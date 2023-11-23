@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
@@ -16,6 +17,18 @@ interface CommandMenuGroupProps
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 }
+
+const BadgeCrumb = styled.div( {
+	height: 20,
+	background: 'var( --studio-gray-5 )',
+	color: 'var( --studio-gray-100 )',
+	display: 'inline-flex',
+	padding: '0 8px',
+	fontSize: 12,
+	borderRadius: 4,
+	margin: '12px 12px 0',
+	textTransform: 'capitalize',
+} );
 
 export function CommandMenuGroup( {
 	isContextual,
@@ -160,6 +173,7 @@ export const WpcomCommandPalette = () => {
 		>
 			<div className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
+					<div>{ selectedCommandName && <BadgeCrumb>{ selectedCommandName }</BadgeCrumb> }</div>
 					<div className="commands-command-menu__header">
 						<Icon icon={ inputIcon } />
 						<CommandInput
