@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { CSSProperties, useCallback, useMemo, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
-import { injectTitlesToPageListBlock } from '../html-transformers';
+import { injectTitlesToPageListBlock, injectTitlesToNavigationBlock } from '../html-transformers';
 import PagePreview, { PagePreviewModal } from './page-preview';
 import type { Pattern } from '../types';
 import './page-preview-list.scss';
@@ -52,9 +52,18 @@ const PagePreviewList = ( {
 	const transformPatternHtml = useCallback(
 		( patternHtml: string ) => {
 			const pageTitles = selectedPages.map( ( page ) => page.title );
-			return injectTitlesToPageListBlock( patternHtml, pageTitles, {
-				replaceCurrentPages: isNewSite,
-			} );
+			return [ injectTitlesToPageListBlock, injectTitlesToNavigationBlock ].reduce(
+				( result, transformer ) => {
+					return transformer( {
+						patternHtml: result,
+						pageTitles,
+						options: {
+							replaceCurrentPages: isNewSite,
+						},
+					} );
+				},
+				patternHtml
+			);
 		},
 		[ isNewSite, selectedPages ]
 	);

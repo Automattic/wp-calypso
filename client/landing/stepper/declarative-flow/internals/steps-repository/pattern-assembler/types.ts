@@ -41,3 +41,9 @@ export type Tag = {
 	title: string;
 	description: string;
 };
+
+export type HtmlTransformer = {
+	patternHtml: string;
+	pageTitles: string[];
+	options: { replaceCurrentPages: boolean };
+};

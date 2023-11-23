@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import { injectTitlesToPageListBlock } from './html-transformers';
+import { injectTitlesToPageListBlock, injectTitlesToNavigationBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -100,13 +100,19 @@ const PatternLargePreview = ( {
 
 	const transformPatternHtml = useCallback(
 		( patternHtml: string ) => {
-			const pageTitles = pages?.map( ( page ) => page.title );
-			if ( pageTitles ) {
-				return injectTitlesToPageListBlock( patternHtml, pageTitles, {
-					replaceCurrentPages: isNewSite,
-				} );
-			}
-			return patternHtml;
+			const pageTitles = pages?.map( ( page ) => page.title ) ?? [];
+			return [ injectTitlesToPageListBlock, injectTitlesToNavigationBlock ].reduce(
+				( result, transformer ) => {
+					return transformer( {
+						patternHtml: result,
+						pageTitles,
+						options: {
+							replaceCurrentPages: isNewSite,
+						},
+					} );
+				},
+				patternHtml
+			);
 		},
 		[ isNewSite, pages ]
 	);
