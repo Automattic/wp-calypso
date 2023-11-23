@@ -4,6 +4,8 @@ import {
 	commentAuthorAvatar as profileIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
+import { CommandCallBackParams } from 'calypso/components/command-pallette/use-command-pallette';
 import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
@@ -13,16 +15,20 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { isCustomDomain, isNotAtomicJetpack } from '../utils';
 
+interface useCommandsArrayWpcomOptions {
+	setSelectedCommandName: ( name: string ) => void;
+}
+
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
-}: {
-	setSelectedCommandName: ( actionName: string ) => void;
-} ) => {
+}: useCommandsArrayWpcomOptions ) => {
+	const translate = useTranslate();
 	const setStateCallback =
 		( actionName: string ) =>
-		( { setSearch }: { setSearch: ( search: string ) => void } ) => {
+		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
+			setPlaceholderOverride( translate( 'Search for a site' ) );
 		};
 
 	const { __ } = useI18n();

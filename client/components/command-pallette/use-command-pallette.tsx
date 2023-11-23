@@ -22,17 +22,17 @@ interface SiteFunctions {
 	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
 }
+export interface CommandCallBackParams {
+	close: CloseFunction;
+	setSearch: ( search: string ) => void;
+	setPlaceholderOverride: ( placeholder: string ) => void;
+}
+
 interface Command {
 	name: string;
 	label: string;
 	searchLabel: string;
-	callback: ( {
-		close,
-		setSearch,
-	}: {
-		close: CloseFunction;
-		setSearch: ( search: string ) => void;
-	} ) => void;
+	callback: ( params: CommandCallBackParams ) => void;
 	context?: string;
 	icon?: JSX.Element;
 	image?: JSX.Element;

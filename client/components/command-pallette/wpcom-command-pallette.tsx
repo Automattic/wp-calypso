@@ -5,15 +5,14 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { useCommandPallette } from './use-command-pallette';
+import { CommandCallBackParams, useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
 
-interface CommandMenuGroupProps {
+interface CommandMenuGroupProps
+	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
 	isContextual?: boolean;
 	search: string;
-	close: () => void;
-	setSearch: ( search: string ) => void;
 }
 
 export function CommandMenuGroup( {
@@ -21,6 +20,7 @@ export function CommandMenuGroup( {
 	search,
 	close,
 	setSearch,
+	setPlaceholderOverride,
 }: CommandMenuGroupProps ) {
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const { commands: smpDefaultCommands } = useCommandPallette( {
@@ -40,7 +40,7 @@ export function CommandMenuGroup( {
 					<Command.Item
 						key={ command.name }
 						value={ itemValue }
-						onSelect={ () => command.callback( { close, setSearch } ) }
+						onSelect={ () => command.callback( { close, setSearch, setPlaceholderOverride } ) }
 						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
@@ -66,9 +66,10 @@ interface CommandInputProps {
 	isOpen: boolean;
 	search: string;
 	setSearch: ( search: string ) => void;
+	placeholder?: string;
 }
 
-function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
+function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
@@ -85,13 +86,14 @@ function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 			ref={ commandMenuInput }
 			value={ search }
 			onValueChange={ setSearch }
-			placeholder={ __( 'Search for commands' ) }
+			placeholder={ placeholder || __( 'Search for commands' ) }
 			aria-activedescendant={ itemId }
 		/>
 	);
 }
 
 export const WpcomCommandPalette = () => {
+	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { close, toggle } = {
@@ -112,8 +114,12 @@ export const WpcomCommandPalette = () => {
 		return () => document.removeEventListener( 'keydown', down );
 	}, [ toggle ] );
 
-	const closeAndReset = () => {
+	const reset = () => {
+		setPlaceholderOverride( '' );
 		setSearch( '' );
+	};
+	const closeAndReset = () => {
+		reset();
 		close();
 	};
 
@@ -147,7 +153,12 @@ export const WpcomCommandPalette = () => {
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
 						<Icon icon={ inputIcon } />
-						<CommandInput search={ search } setSearch={ setSearch } isOpen={ isOpen } />
+						<CommandInput
+							search={ search }
+							setSearch={ setSearch }
+							isOpen={ isOpen }
+							placeholder={ placeHolderOverride }
+						/>
 					</div>
 					<Command.List>
 						{ search && ! isLoading && (
@@ -158,9 +169,15 @@ export const WpcomCommandPalette = () => {
 							close={ closeAndReset }
 							isContextual
 							setSearch={ setSearch }
+							setPlaceholderOverride={ setPlaceholderOverride }
 						/>
 						{ search && (
-							<CommandMenuGroup search={ search } close={ closeAndReset } setSearch={ setSearch } />
+							<CommandMenuGroup
+								search={ search }
+								close={ closeAndReset }
+								setSearch={ setSearch }
+								setPlaceholderOverride={ setPlaceholderOverride }
+							/>
 						) }
 					</Command.List>
 				</Command>
