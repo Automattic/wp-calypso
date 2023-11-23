@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useEffect, useState } from 'react';
 import { getSiteSlugFromDomain } from 'calypso/lib/domains/get-site-slug-domain';
 import { domainManagementAllRoot, domainManagementEdit } from '../paths';

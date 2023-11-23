@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

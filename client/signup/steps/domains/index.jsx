@@ -1,5 +1,6 @@
 import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
-import { Button, FoldableCard } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Button, FoldableCard, Spinner } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
@@ -9,12 +10,12 @@ import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import ChooseDomainLater from 'calypso/components/domains/choose-domain-later';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -39,7 +40,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { ProvideExperimentData } from 'calypso/lib/explat';
+import { ProvideExperimentData, useExperiment } from 'calypso/lib/explat';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -164,6 +165,7 @@ export class RenderDomainsStep extends Component {
 			wpcomSubdomainSelected: false,
 			isRemovingDomain: null,
 			isGoingToNextStep: false,
+			temporaryCart: [],
 		};
 	}
 
@@ -205,7 +207,7 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	handleAddDomain = ( suggestion, position ) => {
+	handleAddDomain = async ( suggestion, position ) => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -223,18 +225,28 @@ export class RenderDomainsStep extends Component {
 		const signupDomainOrigin = suggestion?.is_free
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
-		this.setState( { isCartPendingUpdateDomain: suggestion } );
+
+		if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			this.setState( { isCartPendingUpdateDomain: suggestion } );
+		}
+
 		this.props.recordAddDomainButtonClick(
 			suggestion.domain_name,
 			this.getAnalyticsSection(),
 			position,
 			suggestion?.is_premium
 		);
-		this.props.saveSignupStep( stepData );
+		await this.props.saveSignupStep( stepData );
+		await this.submitWithDomain( { signupDomainOrigin, position } );
+	};
 
-		defer( () => {
-			this.submitWithDomain( { signupDomainOrigin, position } );
-		} );
+	handleDomainMappingError = ( domain_name ) => {
+		const productToRemove = this.props.cart.products.find(
+			( product ) => product.meta === domain_name
+		);
+		if ( productToRemove ) {
+			this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+		}
 	};
 
 	isPurchasingTheme = () => {
@@ -316,7 +328,7 @@ export class RenderDomainsStep extends Component {
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 	};
 
-	handleDomainToDomainCart = () => {
+	handleDomainToDomainCart = async () => {
 		const { step } = this.props;
 
 		const { suggestion } = step;
@@ -330,7 +342,7 @@ export class RenderDomainsStep extends Component {
 		if ( hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.removeDomain( suggestion );
 		} else {
-			this.addDomain( suggestion );
+			await this.addDomain( suggestion );
 			this.props.setDesignType( this.getDesignType() );
 			// Start the username suggestion process.
 			siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
@@ -342,11 +354,7 @@ export class RenderDomainsStep extends Component {
 		const { suggestion } = step;
 
 		if ( shouldUseMultipleDomainsInCart( flowName ) && suggestion ) {
-			return this.handleDomainToDomainCart( {
-				googleAppsCartItem,
-				shouldHideFreePlan,
-				signupDomainOrigin,
-			} );
+			return this.handleDomainToDomainCart();
 		}
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
@@ -577,6 +585,24 @@ export class RenderDomainsStep extends Component {
 		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			if (
+				! this.state.temporaryCart ||
+				! this.state.temporaryCart.some(
+					( domainInCart ) => domainInCart.meta === suggestion.domain_name
+				)
+			) {
+				this.setState( ( state ) => ( {
+					temporaryCart: [
+						...( state.temporaryCart || [] ),
+						{
+							meta: suggestion.domain_name,
+							item_subtotal_display: '...',
+							temporary: true,
+						},
+					],
+				} ) );
+			}
+
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			const productsToAdd = ! hasPlan( this.props.cart )
 				? [ registration, this.props.multiDomainDefaultPlan ]
@@ -622,10 +648,19 @@ export class RenderDomainsStep extends Component {
 
 	removeDomainClickHandler = ( domain ) => () => {
 		this.setState( { isRemovingDomain: domain.meta } );
-		this.removeDomain( { domain_name: domain.meta, product_slug: domain.product_slug } );
+		this.removeDomain( {
+			domain_name: domain.meta,
+			product_slug: domain.product_slug,
+		} );
 	};
 
 	removeDomain( { domain_name, product_slug } ) {
+		if ( this.state.temporaryCart?.length > 0 ) {
+			this.setState( ( state ) => ( {
+				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
+			} ) );
+		}
+
 		const productToRemove = this.props.cart.products.find(
 			( product ) => product.meta === domain_name && product.product_slug === product_slug
 		);
@@ -728,9 +763,20 @@ export class RenderDomainsStep extends Component {
 
 	getSideContent = () => {
 		const { translate, flowName } = this.props;
-		const domainsInCart = shouldUseMultipleDomainsInCart( flowName )
-			? getDomainRegistrations( this.props.cart )
-			: [];
+		const domainsInCart = getDomainRegistrations( this.props.cart );
+
+		const additionalDomains = this.state.temporaryCart
+			.map( ( cartDomain ) => {
+				return domainsInCart.find( ( domain ) => domain.meta === cartDomain.meta )
+					? null
+					: cartDomain;
+			} )
+			.filter( Boolean );
+
+		if ( additionalDomains.length > 0 ) {
+			domainsInCart.push( ...additionalDomains );
+		}
+
 		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
@@ -896,10 +942,12 @@ export class RenderDomainsStep extends Component {
 						</div>
 						<div key="rowtotalprice" className="domains__domain-cart-total-price">
 							<strong>
-								{ formatCurrency(
-									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
-								) }
+								{ domainsInCart.some( ( domain ) => domain.temporary )
+									? '...'
+									: formatCurrency(
+											domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
+											domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
+									  ) }
 							</strong>
 						</div>
 					</div>
@@ -933,13 +981,11 @@ export class RenderDomainsStep extends Component {
 					? DomainsInCart()
 					: ! this.shouldHideDomainExplainer() &&
 					  this.props.isPlanSelectionAvailableLaterInFlow && (
-							<div className="domains__domain-side-content domains__free-domain">
-								<ReskinSideExplainer
-									onClick={ this.handleDomainExplainerClick }
-									type="free-domain-explainer"
-									flowName={ this.props.flowName }
-								/>
-							</div>
+							<ChooseDomainLater
+								step={ this.props.step }
+								flowName={ this.props.flowName }
+								handleDomainExplainerClick={ this.handleDomainExplainerClick }
+							/>
 					  ) }
 				{ useYourDomain }
 				{ this.shouldDisplayDomainOnlyExplainer() && (
@@ -1002,7 +1048,7 @@ export class RenderDomainsStep extends Component {
 						key="domainForm"
 						path={ this.props.path }
 						initialState={ initialState }
-						onAddDomain={ ( suggestion, position ) => {
+						onAddDomain={ async ( suggestion, position ) => {
 							if (
 								experimentAssignment?.variationName === 'treatment' &&
 								isFreeWordPressComDomain( suggestion )
@@ -1014,8 +1060,9 @@ export class RenderDomainsStep extends Component {
 									severity: 'error',
 								} );
 							}
-							this.handleAddDomain( suggestion, position );
+							await this.handleAddDomain( suggestion, position );
 						} }
+						onMappingError={ this.handleDomainMappingError }
 						isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 						isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
 						products={ this.props.productsList }
@@ -1064,6 +1111,7 @@ export class RenderDomainsStep extends Component {
 						}
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 						hasPendingRequests={ isLoadingExperiment }
+						temporaryCart={ this.state.temporaryCart }
 					/>
 				) }
 			</ProvideExperimentData>
@@ -1254,8 +1302,14 @@ export class RenderDomainsStep extends Component {
 				key={ this.props.step + this.props.stepSectionName }
 				className="domains__step-content domains__step-content-domain-step"
 			>
-				{ content }
-				{ sideContent }
+				{ this.props.isSideContentExperimentLoading ? (
+					<Spinner width="100" />
+				) : (
+					<>
+						{ content }
+						{ sideContent }
+					</>
+				) }
 			</div>
 		);
 	}
@@ -1475,9 +1529,18 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props ) {
+	const [ isSideContentExperimentLoading ] = useExperiment(
+		'calypso_gf_signup_onboarding_escape_hatch',
+		{
+			isEligible: props.flowName === 'onboarding',
+		}
+	);
 	return (
 		<CalypsoShoppingCartProvider>
-			<RenderDomainsStepConnect { ...props } />
+			<RenderDomainsStepConnect
+				{ ...props }
+				isSideContentExperimentLoading={ isSideContentExperimentLoading }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 }

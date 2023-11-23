@@ -585,6 +585,7 @@ class ActivityLog extends Component {
 					filter={ filter }
 					isLoading={ ! displayRulesLoaded || ! logsLoaded }
 					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
+					variant="compact"
 				/>
 			</div>
 		);

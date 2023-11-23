@@ -15,7 +15,8 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { Button, Spinner } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
@@ -30,7 +31,6 @@ import {
 } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -49,9 +49,8 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
-import { FeaturesGrid, ComparisonGrid } from 'calypso/my-sites/plans-grid';
+import { FeaturesGrid, ComparisonGrid, PlanTypeSelector } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
@@ -65,7 +64,6 @@ import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-us
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
-import { LoadingPlaceHolder } from './components/loading-placeholder';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
@@ -530,6 +528,9 @@ const PlansFeaturesMain = ( {
 		showBiennialToggle,
 		kind: planTypeSelector,
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+		currentSitePlanSlug: sitePlanSlug,
+		usePricingMetaForGridPlans,
+		recordTracksEvent,
 	};
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
@@ -735,9 +736,10 @@ const PlansFeaturesMain = ( {
 						{ translate( `Unlock a powerful bundle of features. Or {{loader}}{{/loader}}`, {
 							components: {
 								loader: (
-									<LoadingPlaceHolder
+									<LoadingPlaceholder
 										display="inline-block"
 										width="155px"
+										minHeight="0px"
 										height="15px"
 										borderRadius="2px"
 									/>

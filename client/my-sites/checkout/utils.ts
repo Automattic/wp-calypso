@@ -2,6 +2,7 @@ import { doesStringResembleDomain } from '@automattic/onboarding';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { Context } from '@automattic/calypso-router';
 
 /**
  * Return the product slug or product alias from a checkout route.
@@ -26,17 +27,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * 5. `/checkout/example.com::blog/pro` (path contains a domain followed by a product)
  * 6. `/checkout/pro/example.com::blog` (path contains a product followed by a domain)
  */
-export function getProductSlugFromContext( context: PageJS.Context ): string | undefined {
+export function getProductSlugFromContext( context: Context ): string | undefined {
 	const { params, store, pathname } = context;
-	const {
-		domainOrProduct,
-		product,
-		productSlug,
-	}: {
-		domainOrProduct: string | undefined;
-		product: string | undefined;
-		productSlug: string | undefined;
-	} = params;
+	const { domainOrProduct, product, productSlug } = params;
 	const state = store.getState();
 	const selectedSite = getSelectedSite( state );
 	const isGiftPurchase = pathname.includes( '/gift/' );
@@ -111,7 +104,7 @@ export function addHttpIfMissing( inputUrl: string, httpsIsDefault = true ): str
 	return untrailingslashit( url );
 }
 
-export function isContextJetpackSitelessCheckout( context: PageJS.Context ): boolean {
+export function isContextJetpackSitelessCheckout( context: Context ): boolean {
 	const hasJetpackPurchaseToken = Boolean( context.query.purchasetoken );
 	const hasJetpackPurchaseNonce = Boolean( context.query.purchaseNonce );
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';

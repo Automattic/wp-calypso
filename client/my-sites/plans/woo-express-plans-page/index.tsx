@@ -9,11 +9,11 @@ import {
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';

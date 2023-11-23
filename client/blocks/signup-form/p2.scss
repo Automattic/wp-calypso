@@ -55,20 +55,20 @@
 		align-items: center;
 	}
 
-	.signup-form__social {
+	.auth-form__social {
 		width: 100%;
 		padding: 0;
 		max-width: none;
 	}
 
-	.signup-form__social-buttons {
+	.auth-form__social-buttons {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 0;
 	}
 
-	.signup-form__social-buttons-tos {
+	.auth-form__social-buttons-tos {
 		display: none;
 	}
 

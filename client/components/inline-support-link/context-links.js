@@ -286,6 +286,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/traffic/',
 		post_id: 155209,
 	},
+	'two-step-authentication-security-key': {
+		link: 'https://wordpress.com/support/security/two-step-authentication/security-key-authentication/',
+		post_id: 263616,
+	},
 	'webmaster-tools': {
 		link: 'https://wordpress.com/support/webmaster-tools/',
 		post_id: 5022,

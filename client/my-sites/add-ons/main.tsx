@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { useAddOnCheckoutLink } from '@automattic/data-stores';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -90,11 +90,7 @@ const NoAccess = () => {
 	);
 };
 
-interface Props {
-	context?: PageJS.Context;
-}
-
-const AddOnsMain: React.FunctionComponent< Props > = () => {
+const AddOnsMain = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const addOns = useAddOns( selectedSite?.ID );

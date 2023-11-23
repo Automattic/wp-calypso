@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JetpackColophon from 'calypso/components/jetpack-colophon';

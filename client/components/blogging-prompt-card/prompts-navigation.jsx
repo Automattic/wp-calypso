@@ -4,22 +4,29 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
+import { isAIBLoggingPrompt } from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import LightbulbIcon from './lightbulb-icon';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
+const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
 
 	const initialIndex = index ? index % prompts.length : 0;
 	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
+	const thisIsAIPrompt = isAIBLoggingPrompt( prompts[ promptIndex ] );
 
 	const getPrompt = () => {
 		return prompts ? prompts[ promptIndex ] : null;
@@ -85,6 +92,20 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		navigate( getNewPostLink() );
 	};
 
+	const handleAIPromptClick = ( e ) => {
+		// Prevent navigating away so we have time to record the click.
+		e.preventDefault();
+
+		dispatch(
+			recordTracksEvent( tracksPrefix + 'answer_ai_prompt', {
+				site_id: siteId,
+			} )
+		);
+
+		navigate( e.target.href );
+		// Navigate to the editor.
+	};
+
 	const trackClickViewAllResponses = () => {
 		dispatch(
 			recordTracksEvent( tracksPrefix + 'view_all_responses', {
@@ -105,29 +126,45 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 
 	const renderPromptNavigation = () => {
 		const buttonClasses = classnames( 'navigation-link' );
+		let promptLabel = translate( 'Daily writing prompt' );
+		if ( thisIsAIPrompt ) {
+			promptLabel = translate( 'A prompt for you from Jetpack AI' );
+		} else if ( isBloganuary() ) {
+			promptLabel = translate( 'Bloganuary writing prompt' );
+		}
 
 		return (
-			<div className="blogging-prompt__prompt-navigation">
-				<Button
-					aria-label={ translate( 'Show previous prompt' ) }
-					borderless={ false }
-					className={ buttonClasses }
-					onClick={ () => navigatePrompts( 'back' ) }
-					disabled={ promptIndex === 0 }
-				>
-					<Gridicon icon={ backIcon } size={ 18 } />
-				</Button>
-				<div className="blogging-prompt__prompt-text">{ getPrompt()?.text }</div>
-				<Button
-					aria-label={ translate( 'Show next prompt' ) }
-					borderless={ false }
-					className={ buttonClasses }
-					onClick={ () => navigatePrompts( 'forward' ) }
-					disabled={ promptIndex >= prompts?.length - 1 }
-				>
-					<Gridicon icon={ forwardIcon } size={ 18 } />
-				</Button>
-			</div>
+			<>
+				<CardHeading>
+					<LightbulbIcon />
+					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
+					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
+						{ promptLabel }
+					</span>
+					{ menu }
+				</CardHeading>
+				<div className="blogging-prompt__prompt-navigation">
+					<Button
+						aria-label={ translate( 'Show previous prompt' ) }
+						borderless={ false }
+						className={ buttonClasses }
+						onClick={ () => navigatePrompts( 'back' ) }
+						disabled={ promptIndex === 0 }
+					>
+						<Gridicon icon={ backIcon } size={ 18 } />
+					</Button>
+					<div className="blogging-prompt__prompt-text">{ getPrompt()?.text }</div>
+					<Button
+						aria-label={ translate( 'Show next prompt' ) }
+						borderless={ false }
+						className={ buttonClasses }
+						onClick={ () => navigatePrompts( 'forward' ) }
+						disabled={ promptIndex >= prompts?.length - 1 }
+					>
+						<Gridicon icon={ forwardIcon } size={ 18 } />
+					</Button>
+				</div>
+			</>
 		);
 	};
 
@@ -206,10 +243,31 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		);
 	};
 
+	const renderAIPromptAnswer = () => {
+		const answerURL =
+			`${ siteAdminUrl }post-new.php?post_title=` + encodeURIComponent( getPrompt()?.text );
+
+		return (
+			<div className="blogging-prompt__prompt-answers">
+				<div className="blogging-prompt__prompt-no-response"></div>
+				<Button
+					href={ answerURL }
+					onClick={ handleAIPromptClick }
+					className="blogging-prompt__new-post-link"
+				>
+					{ translate( 'Post Answer', {
+						comment:
+							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
+					} ) }
+				</Button>
+			</div>
+		);
+	};
+
 	return (
 		<div className="blogging-prompt__prompt-container">
 			{ renderPromptNavigation() }
-			{ renderPromptAnswer() }
+			{ thisIsAIPrompt ? renderAIPromptAnswer() : renderPromptAnswer() }
 		</div>
 	);
 };

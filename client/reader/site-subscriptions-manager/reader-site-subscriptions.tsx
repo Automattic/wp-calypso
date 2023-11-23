@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';

@@ -1,8 +1,8 @@
 import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { WordPressWordmark, Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';

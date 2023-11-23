@@ -36,7 +36,7 @@
 		"@wordpress/icons": "^9.35.0",
 		"@wordpress/is-shallow-equal": "^4.44.0",
 		"@wordpress/primitives": "^3.42.0",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
 		"new-github-issue-url": "^0.2.1",
@@ -47,8 +47,8 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@wordpress/readable-js-assets-webpack-plugin": "^2.21.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^2.29.0",
 		"postcss": "^8.4.5",
-		"webpack": "^5.68.0"
+		"webpack": "^5.89.0"
 	}
 }

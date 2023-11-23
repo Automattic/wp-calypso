@@ -1,10 +1,10 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';

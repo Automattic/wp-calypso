@@ -1,6 +1,5 @@
-/* eslint-disable jsdoc/no-undefined-types */
-
 import { Duration } from './types';
+import type { Context } from '@automattic/calypso-router';
 
 type Params = {
 	duration: Duration | undefined;
@@ -17,11 +16,11 @@ type Params = {
  * /pricing/example.com        > { duration: undefined, site: 'example.com' }
  * /pricing/annual/example.com > { duration: 'annual', site: 'example.com' }
  * /pricing/weekly/example.com > { duration: undefined, site: 'example.com' }
- * @param {PageJS.Context} context Page context
+ * @param {Context} context Page context
  * @returns {Params} Parameters
  */
-export default function getParamsFromContext( { params }: PageJS.Context ): Params {
-	const { duration: rawDuration, site: rawSite } = params;
+export default function getParamsFromContext( context: Context ): Params {
+	const { duration: rawDuration, site: rawSite } = context.params;
 	const duration = [ 'annual', 'monthly' ].includes( rawDuration ) ? rawDuration : undefined;
 	const site = ( rawSite || ( duration ? undefined : rawDuration ) ) ?? undefined;
 

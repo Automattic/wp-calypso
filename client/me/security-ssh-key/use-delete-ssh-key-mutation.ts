@@ -29,7 +29,7 @@ export const useDeleteSSHKeyMutation = (
 			} ),
 		...options,
 		onSuccess: async ( ...args ) => {
-			await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
+			await queryClient.invalidateQueries( { queryKey: SSH_KEY_QUERY_KEY } );
 			options.onSuccess?.( ...args );
 		},
 	} );
