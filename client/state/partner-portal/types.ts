@@ -87,7 +87,10 @@ export interface APIPartner {
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
 export interface APILicense {
+	license_id: number;
 	license_key: string;
+	quantity: number | null;
+	parent_jetpack_license_id: string | null;
 	issued_at: string;
 	revoked_at: string | null;
 }
