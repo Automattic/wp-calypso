@@ -349,7 +349,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/hosting-config/${ site.slug }` );
+					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
