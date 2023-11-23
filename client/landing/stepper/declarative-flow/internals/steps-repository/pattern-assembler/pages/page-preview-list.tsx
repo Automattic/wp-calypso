@@ -44,11 +44,6 @@ const PagePreviewList = ( {
 		[ backgroundColor ]
 	);
 
-	const pageTitles = useMemo(
-		() => selectedPages.map( ( page ) => page.title ),
-		[ selectedPages ]
-	);
-
 	const homepage = useMemo(
 		() => [ selectedHeader, ...selectedSections, selectedFooter ].filter( Boolean ) as Pattern[],
 		[ selectedHeader, selectedSections, selectedFooter ]
@@ -56,11 +51,12 @@ const PagePreviewList = ( {
 
 	const transformPatternHtml = useCallback(
 		( patternHtml: string ) => {
+			const pageTitles = selectedPages.map( ( page ) => page.title );
 			return injectTitlesToPageListBlock( patternHtml, pageTitles, {
 				replaceCurrentPages: isNewSite,
 			} );
 		},
-		[ isNewSite, pageTitles ]
+		[ isNewSite, selectedPages ]
 	);
 
 	const handleClick = ( patterns: Pattern[], pageSlug: string ) => {

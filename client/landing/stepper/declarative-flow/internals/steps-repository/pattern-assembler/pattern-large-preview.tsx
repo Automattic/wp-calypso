@@ -98,10 +98,9 @@ const PatternLargePreview = ( {
 		};
 	}, [ activeElement ] );
 
-	const pageTitles = useMemo( () => pages?.map( ( page ) => page.title ), [ pages ] );
-
 	const transformPatternHtml = useCallback(
 		( patternHtml: string ) => {
+			const pageTitles = pages?.map( ( page ) => page.title );
 			if ( pageTitles ) {
 				return injectTitlesToPageListBlock( patternHtml, pageTitles, {
 					replaceCurrentPages: isNewSite,
@@ -109,7 +108,7 @@ const PatternLargePreview = ( {
 			}
 			return patternHtml;
 		},
-		[ isNewSite, pageTitles ]
+		[ isNewSite, pages ]
 	);
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
