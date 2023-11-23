@@ -95,6 +95,7 @@ import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
+import { AddReviewsModal } from '../themes/reviews-modal';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
@@ -629,6 +630,19 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderReviews = () => {
+		const { themeId } = this.props;
+
+		return (
+			<>
+				<AddReviewsModal themeSlug={ themeId } />
+				<div className="theme__sheet-reviews">
+					<Button onClick={ this.handleAddReview }>Add Review</Button>
+				</div>
+			</>
+		);
+	};
+
 	renderStyleVariations = () => {
 		const { styleVariations } = this.props;
 
@@ -1140,6 +1154,13 @@ class ThemeSheet extends Component {
 		return translate( 'Additional styles require the Business plan or higher.' );
 	};
 
+	handleAddReview = () => {
+		this.setState( { showReviewModal: true } );
+	};
+	handleCloseReviewModal = () => {
+		this.setState( { showReviewModal: false } );
+	};
+
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
 		const {
@@ -1343,6 +1364,10 @@ class ThemeSheet extends Component {
 				}
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
+				<AddReviewsModal
+					isVisible={ this.state.showReviewModal }
+					onClose={ this.handleCloseReviewModal }
+				/>
 				<div className="theme__sheet-action-bar-container">
 					<HeaderCake
 						className="theme__sheet-action-bar"
@@ -1356,6 +1381,7 @@ class ThemeSheet extends Component {
 						{ pageUpsellBanner }
 						{ this.renderStagingPaidThemeNotice() }
 						{ this.renderHeader() }
+						{ this.renderReviews() }
 					</div>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }

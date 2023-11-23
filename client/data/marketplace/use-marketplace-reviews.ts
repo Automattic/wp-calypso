@@ -12,7 +12,7 @@ const reviewsApiBase = '/sites/marketplace.wordpress.com/comments';
 const reviewsApiNamespace = 'wp/v2';
 const queryKeyBase: QueryKey = [ 'marketplace-reviews' ];
 
-type ProductType = 'plugin' | 'theme';
+export type ProductType = 'plugin' | 'theme';
 
 type ProductProps = {
 	productType: ProductType;
