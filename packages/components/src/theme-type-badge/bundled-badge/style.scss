@@ -1,4 +1,4 @@
-.woocommerce-bundled-badge {
+.bundled-badge {
 	--woocommerce-purple-50: #7f54b3;
 
 	display: inline-flex;
@@ -38,13 +38,13 @@
 		min-height: 0;
 	}
 
-	.woocommerce-bundled-badge__logo {
+	.bundled-badge__logo {
 		margin-top: -1px;
 		margin-right: 3px;
 		fill: currentcolor;
 	}
 }
-.woocommerce-bundled-badge__popover {
+.bundled-badge__popover {
 	max-width: 300px;
 	outline: none;
 	.popover__inner {
