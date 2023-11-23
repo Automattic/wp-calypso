@@ -1,4 +1,4 @@
-import page from '@automattic/calypso-router';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,19 +6,16 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
-import { login } from 'calypso/lib/paths';
+import { lostPassword } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { withEnhancers } from 'calypso/state/utils';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
 class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
-		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		locale: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 	};
@@ -27,18 +24,8 @@ class EmailedLoginLinkSuccessfully extends Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 	}
 
-	onClickBackLink = ( event ) => {
-		event.preventDefault();
-
-		this.props.hideMagicLoginRequestForm();
-
-		page(
-			login( {
-				isJetpack: this.props.isJetpackLogin,
-				isWhiteLogin: this.props.isWhiteLogin,
-				locale: this.props.locale,
-			} )
-		);
+	onLostPasswordClick = () => {
+		recordTracksEvent( 'calypso_magic_login_lost_password_click' );
 	};
 
 	render() {
@@ -72,17 +59,13 @@ class EmailedLoginLinkSuccessfully extends Component {
 				<div className="magic-login__footer">
 					<p>
 						{ translate(
-							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or login with a password instead.{{/a}}",
+							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or reset your password.{{/a}}",
 							{
 								components: {
 									a: (
 										<a
-											href={ login( {
-												isJetpack: this.props.isJetpackLogin,
-												isWhiteLogin: this.props.isWhiteLogin,
-												locale: this.props.locale,
-											} ) }
-											onClick={ this.onClickBackLink }
+											href={ lostPassword( { locale: this.props.locale } ) }
+											onClick={ this.onLostPasswordClick }
 											rel="noopener noreferrer"
 										/>
 									),
@@ -98,12 +81,9 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
-	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isWhiteLogin: getCurrentRoute( state )?.startsWith( '/log-in/new/link' ),
 } );
 
 const mapDispatch = {
-	hideMagicLoginRequestForm,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
