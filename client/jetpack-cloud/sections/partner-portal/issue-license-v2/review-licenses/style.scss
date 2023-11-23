@@ -1,0 +1,75 @@
+.review-licenses__title {
+	color: var(--studio-gray-100);
+	font-size: rem(24px);
+	font-weight: 700;
+}
+
+.review-licenses__subtitle {
+	color: var(--studio-gray-80);
+	font-size: rem(16px);
+	font-weight: 400;
+}
+
+.review-licenses__selected-licenses {
+	margin-block-start: 24px;
+}
+
+.review-licenses__selected-license {
+	margin-block-end: 24px;
+
+	.review-licenses__details {
+		display: flex;
+		gap: 14px;
+
+		.review-licenses__icon {
+			display: none;
+			box-sizing: border-box;
+			width: 48px;
+			height: 48px;
+			background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
+			border-radius: 4px;
+
+			@media only screen and ( min-width: 821px ) {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+
+		.review-licenses__icon > img {
+			width: 22px;
+			height: auto;
+		}
+
+
+		.review-licenses__text-content {
+			width: 100%;
+		}
+
+		.review-licenses__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.review-licenses__label {
+			font-size: rem(16px);
+			font-weight: 700;
+		}
+
+		.review-licenses__count {
+			background-color: var(--studio-gray-0);
+			padding: 5px 15px;
+			border-radius: 4px;
+			font-weight: 500;
+
+		}
+
+		.review-licenses__info {
+			color: var(--studio-gray-70);
+			font-size: rem(16px);
+			font-weight: 400;
+			margin-block: 4px 0;
+		}
+	}
+}
