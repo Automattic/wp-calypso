@@ -54,7 +54,7 @@ const siteToAction =
 			name: `${ site.ID }`,
 			label: (
 				<React.Fragment>
-					<span>{ siteName }:</span>
+					<span>{ siteName }</span>
 					<span style={ { display: 'block' } }>{ site.URL }</span>
 				</React.Fragment>
 			),
