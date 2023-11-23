@@ -26,7 +26,7 @@ const PatternRenderer = ( {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 
-	let patternHtml = pattern?.html;
+	let patternHtml = pattern?.html ?? '';
 	if ( viewportHeight ) {
 		patternHtml = normalizeMinHeight( patternHtml, viewportHeight );
 	}
@@ -49,7 +49,7 @@ const PatternRenderer = ( {
 		>
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: patternHtml ?? '' } }
+				dangerouslySetInnerHTML={ { __html: patternHtml } }
 			/>
 		</BlockRendererContainer>
 	);
