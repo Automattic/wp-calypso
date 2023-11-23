@@ -1,18 +1,21 @@
 import apiFetch from '@wordpress/api-fetch';
-import { useState } from '@wordpress/element';
 
-const useAddTagsToPost = ( postId, tags ) => {
-	const [ tagsAddedToPost, setTagsAddedToPost ] = useState( false );
+type HasAddedTagsResult = {
+	added_tags: number;
+	success: boolean;
+};
+
+const useAddTagsToPost = ( postId, tags, onSaveTags ) => {
 	function saveTags() {
 		apiFetch( {
 			method: 'POST',
 			path: `/wpcom/v2/read/sites/${ window._currentSiteId }/posts/${ postId }/tags/add`,
 			data: { tags },
-		} ).finally( () => {
-			setTagsAddedToPost( true );
+		} ).then( ( result: HasAddedTagsResult ) => {
+			onSaveTags( result.added_tags );
 		} );
 	}
-	return { tagsAddedToPost, setTagsAddedToPost, saveTags };
+	return { saveTags };
 };
 
 export default useAddTagsToPost;
