@@ -71,7 +71,9 @@ const SharingModalInner: React.FC = () => {
 	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
 	const { createNotice } = useDispatch( noticesStore );
-	const shouldShowSuggestedTags = postMeta?.reader_suggested_tags?.length > 0;
+	const [ shouldShowSuggestedTags, setShouldShowSuggestedTags ] = React.useState(
+		postMeta?.reader_suggested_tags?.length > 0
+	);
 
 	useEffect( () => {
 		// The first post will show a different modal.
@@ -287,7 +289,7 @@ const SharingModalInner: React.FC = () => {
 				</div>
 				<div className="wpcom-block-editor-post-published-sharing-modal__right">
 					{ shouldShowSuggestedTags ? (
-						<SuggestedTags />
+						<SuggestedTags setShouldShowSuggestedTags={ setShouldShowSuggestedTags } />
 					) : (
 						<img
 							className="wpcom-block-editor-post-published-sharing-modal__image"
