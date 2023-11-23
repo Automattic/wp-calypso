@@ -25,7 +25,8 @@ interface SiteFunctions {
 }
 interface Command {
 	name: string;
-	label: string | JSX.Element;
+	label: string;
+	subLabel?: string;
 	searchLabel: string;
 	callback: ( {
 		close,
@@ -52,12 +53,8 @@ const siteToAction =
 
 		return {
 			name: `${ site.ID }`,
-			label: (
-				<React.Fragment>
-					<span>{ siteName }</span>
-					<span style={ { display: 'block' } }>{ site.URL }</span>
-				</React.Fragment>
-			),
+			label: `${ siteName }`,
+			subLabel: `${ site.URL }`,
 			searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
 			callback: ( { close }: { close: CloseFunction } ) => {
 				onClickSite( { site, close } );

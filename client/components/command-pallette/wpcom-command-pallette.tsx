@@ -22,6 +22,12 @@ const StyledCommandsMenuContainer = styled.div( {
 	},
 } );
 
+const StyledTextHighlightDiv = styled.div( {
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+	overflow: 'hidden',
+} );
+
 export function CommandMenuGroup( {
 	isContextual,
 	search,
@@ -56,9 +62,16 @@ export function CommandMenuGroup( {
 						>
 							{ command.icon && <Icon icon={ command.icon } /> }
 							{ command.image }
-							<span>
-								<TextHighlight text={ command.label } highlight={ search } />
-							</span>
+							<div>
+								<StyledTextHighlightDiv>
+									<TextHighlight text={ command.label } highlight={ search } />
+								</StyledTextHighlightDiv>
+								{ command.subLabel && (
+									<StyledTextHighlightDiv>
+										<TextHighlight text={ command.subLabel } highlight={ search } />
+									</StyledTextHighlightDiv>
+								) }
+							</div>
 						</HStack>
 					</Command.Item>
 				);
