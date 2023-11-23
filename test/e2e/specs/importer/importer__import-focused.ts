@@ -77,6 +77,23 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 	} );
 
+	describe( 'Scenario: from `self-hosted` (JP connected) to `atomic` site', () => {
+		const user = 'jetpackRemoteSiteUser';
+		const sourceSiteUrl = credentials[ user ]?.testSites?.primary?.url as string;
+		const targetSiteUrl = 'e2eimportflowatomictesting.wordpress.com';
+
+		loginAsUser( user );
+		navigateToImportFocusedFlow( 'import', targetSiteUrl );
+
+		it( `Enter jetpack connected source site: ${ sourceSiteUrl }`, async () => {
+			await startImportFlow.enterURL( sourceSiteUrl );
+		} );
+
+		it( 'Should render "Upgrade Plan" screen', async () => {
+			await startImportFlow.validateMigrationReadyPage();
+		} );
+	} );
+
 	describe( 'Scenario: Move to WPCOM plugin: from `self-hosted` to `simple` site', () => {
 		const user = 'jetpackRemoteSiteUser';
 		const sourceSiteUrl = credentials[ user ]?.testSites?.primary?.url as string;
@@ -95,6 +112,32 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 
 		it( 'Should render "Upgrade Plan" screen', async () => {
 			await startImportFlow.validateUpgradePlanPage();
+		} );
+
+		it( 'Should redirect to "Checkout" page', async () => {
+			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await startImportFlow.validateCheckoutPage();
+		} );
+	} );
+
+	describe( 'Scenario: Move to WPCOM plugin: from `self-hosted` to `atomic` site', () => {
+		const user = 'jetpackRemoteSiteUser';
+		const sourceSiteUrl = credentials[ user ]?.testSites?.primary?.url as string;
+
+		loginAsUser( user );
+		navigateToImportFocusedFlow( 'migrationHandler', '', sourceSiteUrl );
+
+		it( 'Should render "Site Picker" screen', async () => {
+			await startImportFlow.validateSitePickerPage();
+		} );
+
+		it( 'Should select the second site and press `Continue` on modal prompt', async () => {
+			await page.locator( 'button:text("Select this site")' ).nth( 0 ).click();
+			await startImportFlow.clickButton( 'Continue' );
+		} );
+
+		it( 'Should render "Upgrade Plan" screen', async () => {
+			await startImportFlow.validateMigrationReadyPage();
 		} );
 	} );
 } );
