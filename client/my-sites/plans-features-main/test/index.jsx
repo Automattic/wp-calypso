@@ -11,10 +11,8 @@ jest.mock( 'calypso/my-sites/plans-grid', () => ( {
 			</div>
 		</div>
 	),
+	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
-	<div>PlanTypeSelector</div>
-) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
 jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
 	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
