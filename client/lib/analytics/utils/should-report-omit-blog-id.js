@@ -1,5 +1,5 @@
+import { withScope, captureMessage } from '@automattic/calypso-sentry';
 import { getSiteFragment } from 'calypso/lib/route';
-
 const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslug)(\/|$|\?)/i;
 
 /**
@@ -19,8 +19,15 @@ export default ( path ) => {
 		return false;
 	}
 
+	if ( typeof path !== 'string' ) {
+		withScope( ( scope ) => {
+			scope.setTag( 'path', path );
+			captureMessage( 'Path is not a string' );
+		} );
+	}
+
 	// Stepper routes start with /setup/, and might contain site slug or ID via URL parameters.
-	if ( path?.startsWith( '/setup/' ) ) {
+	if ( path.startsWith( '/setup/' ) ) {
 		return false;
 	}
 
