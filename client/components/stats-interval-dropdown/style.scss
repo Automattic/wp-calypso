@@ -19,14 +19,20 @@
 	}
 
 	>.components-button {
-
-		border-radius: 2px;
+		border-radius: 4px;
 		border: 1px solid var(--gray-gray-10);
 		width: 146px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 
+	}
+}
+
+.is-section-stats {
+	.components-popover__content {
+		border-radius: 4px;
+		padding: 16px;
 	}
 }
 
@@ -49,6 +55,10 @@
 	}
 	&:hover {
 		background-color: var(--color-primary-0);
+	}
+	& + & {
+		// Prevent overlap between outline and hover.
+		margin-top: 2px;
 	}
 	&.is-selected {
 		background-color: var(--color-accent-5);

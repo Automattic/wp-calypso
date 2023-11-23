@@ -31,6 +31,7 @@ import {
 	hasDomainInCart,
 	planItem,
 	hasPlan,
+	hasDomainRegistration,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -181,8 +182,12 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart
-		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
+		if (
+			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
+			hasDomainRegistration( this.props.cart )
+		) {
+			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
 	}
@@ -664,7 +669,7 @@ export class RenderDomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		const { step } = this.props;
+		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
 		const domainCart = getDomainRegistrations( this.props.cart );
@@ -708,14 +713,17 @@ export class RenderDomainsStep extends Component {
 			)
 		);
 
-		const productToRemove = this.props.cart.products.find(
-			( product ) => product.product_slug === this.props.multiDomainDefaultPlan.product_slug
+		const productToRemove = cart.products.find(
+			( product ) => product.product_slug === multiDomainDefaultPlan.product_slug
 		);
-		const uuidToRemove = productToRemove.uuid;
 
-		this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).then( () => {
-			this.props.goToNextStep();
-		} );
+		if ( productToRemove && productToRemove.uuid ) {
+			shoppingCartManager.removeProductFromCart( productToRemove.uuid ).then( () => {
+				goToNextStep();
+			} );
+		} else {
+			goToNextStep();
+		}
 	};
 
 	getSideContent = () => {

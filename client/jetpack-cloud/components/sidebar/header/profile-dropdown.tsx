@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import useOutsideClickCallback from './use-outside-click-callback';
+import useOutsideClickCallback from '../use-outside-click-callback';
 
 import './style.scss';
 

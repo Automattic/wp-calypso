@@ -178,10 +178,15 @@ body.is-section-accept-invite {
 				padding-left: 0;
 				padding-right: 0;
 
-				button:not(.is-borderless) {
+				button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
 					display: block;
 					max-width: 327px;
 					margin: 0 auto;
+				}
+
+				button.signup-form__domain-suggestion-confirmation {
+					text-decoration: underline;
+					cursor: pointer;
 				}
 
 				button.is-borderless {

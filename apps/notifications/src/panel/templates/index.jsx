@@ -397,7 +397,7 @@ class Layout extends Component {
 					this.filterController.selectFilter( 'comments' );
 				}
 				break;
-			case KEY_F: // Follows filter
+			case KEY_F: // Subscriptions (previously "follows") filter
 				if ( ! this.props.selectedNoteId ) {
 					this.filterController.selectFilter( 'follows' );
 				}

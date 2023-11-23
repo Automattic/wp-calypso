@@ -18,6 +18,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
+import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -268,7 +269,12 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					{ showPlansModal && site?.ID && (
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ () => setShowPlansModal( false ) }
-							product={ { subscribe_as_site_subscriber: true, price: 5 } }
+							product={ {
+								price: 5,
+								subscribe_as_site_subscriber: true,
+								title: translate( 'Paid newsletter' ),
+								type: TYPE_TIER,
+							} }
 							annualProduct={ { subscribe_as_site_subscriber: true, price: 5 * 12 } }
 							siteId={ site.ID }
 						/>

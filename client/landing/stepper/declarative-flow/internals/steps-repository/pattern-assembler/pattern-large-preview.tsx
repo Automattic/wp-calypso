@@ -1,4 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
+import { isEnabled } from '@automattic/calypso-config';
 import { DeviceSwitcher } from '@automattic/components';
 import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
@@ -266,9 +267,14 @@ const PatternLargePreview = ( {
 			) : (
 				<div className="pattern-large-preview__placeholder">
 					<h2>{ translate( 'Welcome to your homepage.' ) }</h2>
-					<span>
-						{ translate( "It's time to get creative. Add your first pattern to get started." ) }
-					</span>
+					<ul>
+						<li>{ translate( 'Select patterns for your homepage.' ) }</li>
+						<li>{ translate( 'Choose your colors and fonts.' ) } </li>
+						{ isEnabled( 'pattern-assembler/add-pages' ) && (
+							<li>{ translate( 'Pick additional site pages.' ) } </li>
+						) }
+						<li>{ translate( 'Add your own content in the Editor.' ) } </li>
+					</ul>
 				</div>
 			) }
 		</DeviceSwitcher>
