@@ -81,3 +81,4 @@ export {
 } from 'calypso/state/themes/selectors/theme-activation-modal';
 export { themePreviewVisibility } from 'calypso/state/themes/selectors/theme-preview-visibility';
 export { getThemeFiltersRequestError } from 'calypso/state/themes/selectors/get-theme-filters-request-error';
+export { canPublishThemeReview } from 'calypso/state/themes/selectors/can-publish-theme-review';

@@ -9,7 +9,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * @param {{}} plugin the given plugin with its variations
  * @returns {boolean} true if the user is logged in and has purchased the plugin.
  */
-export function useCanUserPostReviews( plugin ) {
+export function useCanPublishPluginReview( plugin = {} ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const selectedSite = useSelector( getSelectedSite );
