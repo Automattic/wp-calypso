@@ -58,7 +58,11 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		await page.getByRole( 'button', { name: 'Choose a domain' } ).click();
 		const domainSearchComponent = new DomainSearchComponent( page );
 		await domainSearchComponent.search( 'test' );
-		await page.locator( '.domain-suggestion' ).first().waitFor();
+		await page
+			.locator( '.domain-search-results' )
+			.getByRole( 'button', { name: 'Select' } )
+			.first()
+			.waitFor();
 	} );
 
 	it( 'Skip the domain selection step', async function () {
