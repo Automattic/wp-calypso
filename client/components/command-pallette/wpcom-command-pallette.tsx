@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
@@ -14,6 +15,12 @@ interface CommandMenuGroupProps {
 	close: () => void;
 	setSearch: ( search: string ) => void;
 }
+
+const StyledCommandsMenuContainer = styled.div( {
+	'[cmdk-root] > [cmdk-list]': {
+		overflowX: 'hidden',
+	},
+} );
 
 export function CommandMenuGroup( {
 	isContextual,
@@ -142,7 +149,7 @@ export const WpcomCommandPalette = () => {
 			onRequestClose={ closeAndReset }
 			__experimentalHideHeader
 		>
-			<div className="commands-command-menu__container">
+			<StyledCommandsMenuContainer className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
 						<Icon icon={ inputIcon } />
@@ -163,7 +170,7 @@ export const WpcomCommandPalette = () => {
 						) }
 					</Command.List>
 				</Command>
-			</div>
+			</StyledCommandsMenuContainer>
 		</Modal>
 	);
 };
