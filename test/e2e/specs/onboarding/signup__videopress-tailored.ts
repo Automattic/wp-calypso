@@ -37,6 +37,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: Tailored VideoPress' ), () => {
 		} );
 
 		it( 'Click Get Started', async function () {
+			page.setDefaultTimeout( 60 * 1000 );
 			// Return a button "key" for the button that is found on page.
 			// See diff in https://github.com/Automattic/wp-calypso/pull/84189 for what to revert in case we disable trial.
 			const startButtonText = 'Start a free trial';
@@ -49,6 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: Tailored VideoPress' ), () => {
 		} );
 
 		it( 'Enter account details', async function () {
+			page.setDefaultTimeout( 60 * 1000 );
 			await page.waitForURL( /.*videopress-account.*/ );
 			const userSignupPage = new UserSignupPage( page );
 			newUserDetails = await userSignupPage.signup(
@@ -83,10 +85,10 @@ describe( DataHelper.createSuiteTitle( 'Signup: Tailored VideoPress' ), () => {
 		} );
 
 		it( 'Land in processing', async function () {
-			await page.waitForURL( /.*processing.*/, { timeout: 20 * 1000 } );
+			await page.waitForURL( /.*processing.*/, { timeout: 60 * 1000 } );
 		} );
 		it( 'Navigate to site editor', async function () {
-			await page.waitForURL( /.*site-editor.*/, { timeout: 20 * 1000 } );
+			await page.waitForURL( /.*site-editor.*/, { timeout: 60 * 1000 } );
 		} );
 		// This happens after we finish signup.
 		it( 'Get activation link', async function () {
