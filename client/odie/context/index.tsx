@@ -44,7 +44,7 @@ const defaultContextInterfaceValues = {
 	addMessage: noop,
 	botName: 'Wapuu',
 	botNameSlug: null,
-	chat: { context: { section_name: '', site_id: null }, messages: [] },
+	chat: { context: { section_name: '', blog_id: null }, messages: [] },
 	clearChat: noop,
 	initialUserMessage: null,
 	isLoadingChat: false,

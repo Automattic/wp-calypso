@@ -63,6 +63,10 @@ declare module 'calypso/state/purchases/selectors' {
 	export const getUserPurchases: ( state: unknown ) => { productSlug: string }[];
 }
 
+declare module 'calypso/state/selectors/get-current-route' {
+	export const getCurrentRoute: ( state: unknown ) => string;
+}
+
 declare module 'calypso/state/ui/selectors' {
 	export const getSelectedSiteId: ( state: unknown ) => number;
 	export const getSectionName: ( state: unknown ) => SectionName;
@@ -70,8 +74,13 @@ declare module 'calypso/state/ui/selectors' {
 
 declare module 'calypso/state/sites/selectors' {
 	export const getSite: ( state: unknown, siteId: number ) => { is_wpcom_atomic: boolean };
+	export const getSiteDomain: ( state: unknown, siteId: number ) => string;
 	export const getIsSimpleSite: ( state: unknown ) => boolean;
 	export const isJetpackSite: ( state: unknown, siteId: number ) => boolean | null;
+}
+
+declare module 'calypso/state/sites/selectors/get-site-domain' {
+	export const getSiteDomain: ( state: unknown, siteId: number ) => string;
 }
 
 declare module 'calypso/state/sites/selectors/is-simple-site' {
@@ -82,6 +91,13 @@ declare module 'calypso/state/sites/selectors/is-simple-site' {
 declare module 'calypso/state/sites/selectors/is-jetpack-site' {
 	const isJetpackSite: ( state: unknown, siteId?: number ) => boolean;
 	export default isJetpackSite;
+}
+
+declare module 'calypso/state/sites/plans/selectors' {
+	export const getCurrentPlan: (
+		state: unknown,
+		siteId: number | null
+	) => Record< string, unknown >;
 }
 
 declare module 'calypso/state/sites/hooks' {

@@ -33,7 +33,7 @@ export type Context = {
 	nudge_id?: string | undefined;
 	section_name?: string;
 	session_id?: string;
-	site_id: number | null;
+	blog_id?: number;
 	user_tracking?: OdieUserTracking[];
 	sources?: Source[];
 	prompt_tags?: {
@@ -46,6 +46,8 @@ export type Context = {
 		forward_to_human_support?: boolean;
 		canned_response?: boolean;
 	};
+	route?: string;
+	route_params?: Record< string, string >;
 };
 
 export type Nudge = {

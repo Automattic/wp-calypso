@@ -2,8 +2,11 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { JumpToRecent } from '../message/jump-to-recent';
@@ -31,11 +34,47 @@ export const OdieSendMessageButton = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const { siteId, siteDomain, currentRoute } = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) as number;
+		const siteDomain = getSiteDomain( state, siteId ) as string;
+		const currentRoute = getCurrentRoute( state );
+
+		return {
+			siteId,
+			siteDomain,
+			currentRoute,
+		};
+	} );
+
 	useEffect( () => {
 		if ( initialUserMessage && ! chat.chat_id ) {
 			setMessageString( initialUserMessage );
 		}
 	}, [ initialUserMessage, chat.chat_id ] );
+
+	/**
+	 * Replaces route param values with placeholders, and returns the modified route path and route params.
+	 * @param  {string}  route The route path
+	 * @returns {string, Object} Object containing the modified route path and route params
+	 */
+	const replaceRouteParamsWithPlaceholders = ( route: string ) => {
+		const routeParams = {} as Record< string, string >;
+
+		route = route.replace( siteDomain, ':site' );
+		routeParams.site = siteDomain;
+
+		return { route, routeParams };
+	};
+
+	const buildContext = () => {
+		const { route, routeParams } = replaceRouteParamsWithPlaceholders( currentRoute );
+
+		return {
+			blog_id: siteId,
+			route: route,
+			route_params: routeParams,
+		};
+	};
 
 	const sendMessage = async () => {
 		try {
@@ -47,10 +86,13 @@ export const OdieSendMessageButton = ( {
 				} )
 			);
 
+			const context = buildContext();
+
 			const message = {
 				content: messageString,
 				role: 'user',
 				type: 'message',
+				context,
 			} as Message;
 
 			addMessage( [
