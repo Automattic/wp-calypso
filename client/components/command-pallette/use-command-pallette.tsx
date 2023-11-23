@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import React from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
@@ -24,7 +25,7 @@ interface SiteFunctions {
 }
 interface Command {
 	name: string;
-	label: string;
+	label: string | JSX.Element;
 	searchLabel: string;
 	callback: ( {
 		close,
@@ -47,11 +48,16 @@ interface useCommandPalletteOptions {
 const siteToAction =
 	( onClickSite: OnClickSiteFunction ) =>
 	( site: SiteExcerptData ): Command => {
-		const siteName = site.name || 'Site Title'; // Use site.name if present, otherwise default to "Site Title"
+		const siteName = site.name || site.URL; // Use site.name if present, otherwise default to "Site Title"
 
 		return {
 			name: `${ site.ID }`,
-			label: `${ siteName }: ${ site.URL }`,
+			label: (
+				<React.Fragment>
+					<span>{ siteName }:</span>
+					<span style={ { display: 'block' } }>{ site.URL }</span>
+				</React.Fragment>
+			),
 			searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
 			callback: ( { close }: { close: CloseFunction } ) => {
 				onClickSite( { site, close } );
