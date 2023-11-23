@@ -2,9 +2,10 @@ import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
+import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
-import { useCommandState, Command } from 'cmdk';
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { Command, useCommandState } from 'cmdk';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -47,12 +48,13 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
+				const itemValue = command.searchLabel ?? command.label;
 				return (
 					<Command.Item
 						key={ command.name }
-						value={ command.searchLabel ?? command.label }
+						value={ itemValue }
 						onSelect={ () => command.callback( { close, setSearch } ) }
-						id={ command.name }
+						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
 							alignment="left"
@@ -88,24 +90,23 @@ interface CommandInputProps {
 
 function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
-	const _value = useCommandState( ( state ) => state.value );
-	const selectedItemId = useMemo( () => {
-		const item = document.querySelector( `[cmdk-item=""][data-value="${ _value }"]` );
-		return item?.getAttribute( 'id' );
-	}, [ _value ] );
+	const itemValue = useCommandState( ( state ) => state.value );
+	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
+
 	useEffect( () => {
 		// Focus the command palette input when mounting the modal.
 		if ( isOpen ) {
 			commandMenuInput.current?.focus();
 		}
 	}, [ isOpen ] );
+
 	return (
 		<Command.Input
 			ref={ commandMenuInput }
 			value={ search }
 			onValueChange={ setSearch }
 			placeholder={ __( 'Search for commands' ) }
-			aria-activedescendant={ `${ selectedItemId }` }
+			aria-activedescendant={ itemId }
 		/>
 	);
 }

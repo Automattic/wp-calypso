@@ -1162,13 +1162,7 @@ function Route( path, options, pageInstance ) {
  */
 Route.prototype.middleware = function ( fn ) {
 	const handler = ( ctx, next ) => fn( ctx, next );
-	handler.match = ( ctx ) => {
-		if ( this.match( ctx.path, ctx.params ) ) {
-			ctx.routePath = this.path;
-			return true;
-		}
-		return false;
-	};
+	handler.match = ( ctx ) => this.match( ctx.path, ctx.params );
 	return handler;
 };
 

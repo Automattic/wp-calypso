@@ -33,7 +33,7 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		&-content {
-			background: var(--pattern-page-preview-background, #f8f8f8);
+			background: var(--page-preview-background, #f8f8f8);
 			border-radius: 8.758px;  /* stylelint-disable-line scales/radii */
 			bottom: 0;
 			left: 0;
@@ -96,7 +96,7 @@ $font-family: "SF Pro Text", $sans;
 	}
 
 	&__content {
-		background: var(--pattern-page-preview-background, #f8f8f8);
+		background: var(--page-preview-background, #f8f8f8);
 		height: 80vh;
 		user-select: none;
 		width: 60vw;
