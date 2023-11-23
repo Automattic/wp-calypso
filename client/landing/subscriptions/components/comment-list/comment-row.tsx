@@ -32,10 +32,10 @@ const CommentRow = ( {
 	const translate = useTranslate();
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
 
-	const { mutate: notifyMeOfNewComments, isLoading: notifyingMeOfNewComments } =
+	const { mutate: notifyMeOfNewComments, isPending: notifyingMeOfNewComments } =
 		SubscriptionManager.usePostNotifyMeOfNewCommentsMutation();
 
-	const { mutate: unsubscribe, isLoading: unsubscribing } =
+	const { mutate: unsubscribe, isPending: unsubscribing } =
 		SubscriptionManager.usePostUnsubscribeMutation();
 
 	const recordCommentNotificationsToggle = useRecordCommentNotificationsToggle();

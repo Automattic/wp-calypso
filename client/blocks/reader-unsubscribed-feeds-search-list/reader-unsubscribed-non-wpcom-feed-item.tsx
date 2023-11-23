@@ -75,7 +75,7 @@ const ReaderUnsubscribedNonWpcomFeedItem = ( {
 			isExternalLink
 			hasSubscribed={ feedQuery.data?.is_following || subscribe.isSuccess }
 			iconUrl={ feedQuery.data?.image }
-			isSubscribing={ subscribe.isLoading }
+			isSubscribing={ subscribe.isPending }
 			onSubscribeClick={ () => {
 				subscribe.mutate( {
 					feed_id: feedId,
@@ -108,7 +108,7 @@ const ReaderUnsubscribedNonWpcomFeedItem = ( {
 				}
 			} }
 			subscribeDisabled={
-				feedQuery.data?.is_following || subscribe.isLoading || subscribe.isSuccess
+				feedQuery.data?.is_following || subscribe.isPending || subscribe.isSuccess
 			}
 			title={ feedQuery.data?.name ?? filterURLForDisplay( subscribeUrl ) }
 			onTitleClick={ () => {
