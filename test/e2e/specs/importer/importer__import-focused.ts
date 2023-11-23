@@ -2,13 +2,7 @@
  * @group calypso-pr
  */
 
-import {
-	DataHelper,
-	StartImportFlow,
-	TestAccount,
-	SecretsManager,
-	envVariables,
-} from '@automattic/calypso-e2e';
+import { DataHelper, StartImportFlow, TestAccount, SecretsManager } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 import type { TestAccountName } from '@automattic/calypso-e2e';
 
@@ -22,8 +16,6 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 
 	let page: Page;
 	let startImportFlow: StartImportFlow;
-
-	console.log( 'envVariables', envVariables );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -92,14 +84,14 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		loginAsUser( user );
 		navigateToImportFocusedFlow( 'migrationHandler', '', sourceSiteUrl );
 
-		// it( 'Should render "Site Picker" screen', async () => {
-		// 	await startImportFlow.validateSitePickerPage();
-		// } );
-		//
-		// it( 'Should select the second site and press `Continue` on modal prompt', async () => {
-		// 	await page.locator( 'button:text("Select this site")' ).nth( 0 ).click();
-		// 	await startImportFlow.clickButton( 'Continue' );
-		// } );
+		it( 'Should render "Site Picker" screen', async () => {
+			await startImportFlow.validateSitePickerPage();
+		} );
+
+		it( 'Should select the second site and press `Continue` on modal prompt', async () => {
+			await page.locator( 'button:text("Select this site")' ).nth( 1 ).click();
+			await startImportFlow.clickButton( 'Continue' );
+		} );
 
 		it( 'Should render "Upgrade Plan" screen', async () => {
 			await startImportFlow.validateUpgradePlanPage();

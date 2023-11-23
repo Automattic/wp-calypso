@@ -232,7 +232,9 @@ export class StartImportFlow {
 	async startImportFocused( step: string, siteSlug: string, from: string ): Promise< void > {
 		const route = step ? `/setup/import-focused/${ step }` : '/setup/import-focused';
 
-		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug, from } ) );
+		await this.page.goto(
+			DataHelper.getCalypsoURL( route, { siteSlug, from, skipStoringTempTargetSite: 'true' } )
+		);
 	}
 
 	/**
