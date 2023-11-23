@@ -169,26 +169,21 @@
 	}
 
 	&.plans-interval-toggle__popover--mobile {
+		display: block !important;
 		margin-top: 10px;
 	}
 	&.plans-interval-toggle__popover--desktop {
-		margin-left: 15px;
-	}
-
-	&.plans-interval-toggle__popover--mobile,
-	&.plans-interval-toggle__popover--desktop {
 		display: none !important;
+		margin-left: 15px;
 	}
 
 	@media ( min-width: 782px ) {
 		&.plans-interval-toggle__popover--desktop {
 			display: block !important;
 		}
-	}
 
-	@media ( max-width: 782px ) {
 		&.plans-interval-toggle__popover--mobile {
-			display: block !important;
+			display: none !important;
 		}
 	}
 }
@@ -199,4 +194,3 @@
 		margin-bottom: 0;
 	}
 }
-
