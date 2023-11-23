@@ -14,12 +14,13 @@ import {
 	key as keyIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { translate } from 'i18n-calypso';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 export const useCommandsArrayWpcom = ( {
@@ -99,13 +100,17 @@ export const useCommandsArrayWpcom = ( {
 	};
 
 	const openPHPmyAdmin = async ( siteId: number ) => {
-		const { token } = await wpcom.req.post( {
-			path: `/sites/${ siteId }/hosting/pma/token`,
-			apiNamespace: 'wpcom/v2',
-		} );
+		try {
+			const { token } = await wpcom.req.post( {
+				path: `/sites/${ siteId }/hosting/pma/token`,
+				apiNamespace: 'wpcom/v2',
+			} );
 
-		if ( token ) {
-			window.open( `https://wordpress.com/pma-login?token=${ token }` );
+			if ( token ) {
+				window.open( `https://wordpress.com/pma-login?token=${ token }` );
+			}
+		} catch {
+			dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
 		}
 	};
 
