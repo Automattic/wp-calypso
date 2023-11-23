@@ -99,8 +99,10 @@
 
 	.magic-login__form-text {
 		text-align: center;
-		b {
+		strong {
 			font-weight: 700;
+			display: flex;
+			flex-direction: column;
 		}
 	}
 
