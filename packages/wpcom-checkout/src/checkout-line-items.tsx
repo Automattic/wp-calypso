@@ -1055,16 +1055,16 @@ function getCostBeforeDiscounts( product: ResponseCartProduct ): number {
 	if ( originalCostOverrides.length > 0 ) {
 		const lastOriginalCostOverride = originalCostOverrides.pop();
 		if ( lastOriginalCostOverride ) {
-			return lastOriginalCostOverride.new_price;
+			return lastOriginalCostOverride.new_price * product.volume;
 		}
 	}
 	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
 		const firstOverride = product.cost_overrides[ 0 ];
 		if ( firstOverride ) {
-			return firstOverride.old_price;
+			return firstOverride.old_price * product.volume;
 		}
 	}
-	return product.cost;
+	return product.cost * product.volume;
 }
 
 function CheckoutLineItem( {
