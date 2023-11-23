@@ -31,7 +31,9 @@ export const useCreateSitePreviewLink = ( options: UseCreateSitePreviewLinkOptio
 			onError?.();
 		},
 		onMutate: async () => {
-			await queryClient.cancelQueries( queryKey );
+			await queryClient.cancelQueries( {
+				queryKey,
+			} );
 			const cachedData = queryClient.getQueryData( queryKey );
 			queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => [
 				...( old ?? [] ),
@@ -47,7 +49,9 @@ export const useCreateSitePreviewLink = ( options: UseCreateSitePreviewLinkOptio
 			if ( data?.code ) {
 				queryClient.setQueryData( queryKey, () => [ data ] );
 			}
-			queryClient.invalidateQueries( queryKey );
+			queryClient.invalidateQueries( {
+				queryKey,
+			} );
 		},
 	} );
 

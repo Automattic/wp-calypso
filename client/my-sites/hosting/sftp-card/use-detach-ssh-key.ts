@@ -32,7 +32,9 @@ export const useDetachSshKeyMutation = (
 		},
 		...options,
 		onSuccess: async ( ...args ) => {
-			await queryClient.invalidateQueries( [ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ] );
+			await queryClient.invalidateQueries( {
+				queryKey: [ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ],
+			} );
 			options.onSuccess?.( ...args );
 		},
 	} );

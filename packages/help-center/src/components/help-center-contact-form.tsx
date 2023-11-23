@@ -360,14 +360,16 @@ export const HelpCenterContactForm = () => {
 								section: sectionName,
 							} );
 							navigate( '/success' );
-							if ( ! wapuuFlow ) {
-								resetStore();
-							}
+
+							resetStore();
+
 							// reset support-history cache
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
-								queryClient.invalidateQueries( [ 'help-support-history', 'ticket', email ] );
+								queryClient.invalidateQueries( {
+									queryKey: [ 'help-support-history', 'ticket', email ],
+								} );
 							}, 30000 );
 						} )
 						.catch( () => {
@@ -475,7 +477,7 @@ export const HelpCenterContactForm = () => {
 
 		// We're prefetching the GPT response,
 		// so only disabling the button while fetching if we're on the response screen
-		if ( showingGPTResponse && isFetchingGPTResponse && ! wapuuFlow ) {
+		if ( showingGPTResponse && isFetchingGPTResponse ) {
 			return true;
 		}
 

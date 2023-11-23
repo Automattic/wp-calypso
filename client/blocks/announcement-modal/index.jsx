@@ -1,4 +1,4 @@
-import { default as pageRouter } from '@automattic/calypso-router';
+import pageRouter from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Guide } from '@wordpress/components';
 import { useSelector, useDispatch } from 'react-redux';

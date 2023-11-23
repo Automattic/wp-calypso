@@ -18,7 +18,9 @@ export default function useDomainTransferRequestDelete(
 			wp.req.post( `/sites/${ siteSlug }/domains/${ domainName }/transfer-to-any-user/delete` ),
 		...queryOptions,
 		onSuccess() {
-			queryClient.removeQueries( domainTransferRequestQueryKey( siteSlug, domainName ) );
+			queryClient.removeQueries( {
+				queryKey: domainTransferRequestQueryKey( siteSlug, domainName ),
+			} );
 			queryOptions.onSuccess?.();
 		},
 	} );

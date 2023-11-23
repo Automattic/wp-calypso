@@ -94,7 +94,7 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		} );
 
 		it( 'Select WordPress.com Free plan', async function () {
-			await page.getByRole( 'button', { name: 'Start with Free' } ).click();
+			await page.getByRole( 'button', { name: 'Start with Free' } ).click( { timeout: 60_000 } );
 		} );
 
 		it( 'Launch site', async function () {

@@ -27,33 +27,31 @@ const compareUnique = ( a, b ) => a.ID === b.ID;
 const useFollowersQuery = ( siteId, type = 'wpcom', fetchOptions = {}, queryOptions = {} ) => {
 	const { search } = fetchOptions;
 
-	return useInfiniteQuery(
-		[ 'followers', siteId, type, search ],
-		async ( { pageParam = 1 } ) =>
+	return useInfiniteQuery( {
+		queryKey: [ 'followers', siteId, type, search ],
+		queryFn: async ( { pageParam = 1 } ) =>
 			wpcom.req.get( `/sites/${ siteId }/followers`, {
 				...defaults,
 				...fetchOptions,
 				type,
 				page: pageParam,
 			} ),
-		{
-			...queryOptions,
-			getNextPageParam: ( lastPage, allPages ) => {
-				if ( lastPage.pages <= allPages.length || allPages.length >= MAX_FOLLOWERS ) {
-					return;
-				}
-				return allPages.length + 1;
-			},
-			select: ( data ) => {
-				return {
-					/* @TODO: `uniqueBy` is necessary, because the API can return duplicates */
-					followers: uniqueBy( extractPages( data.pages ), compareUnique ),
-					total: data.pages[ 0 ].total,
-					...data,
-				};
-			},
-		}
-	);
+		...queryOptions,
+		getNextPageParam: ( lastPage, allPages ) => {
+			if ( lastPage.pages <= allPages.length || allPages.length >= MAX_FOLLOWERS ) {
+				return;
+			}
+			return allPages.length + 1;
+		},
+		select: ( data ) => {
+			return {
+				/* @TODO: `uniqueBy` is necessary, because the API can return duplicates */
+				followers: uniqueBy( extractPages( data.pages ), compareUnique ),
+				total: data.pages[ 0 ].total,
+				...data,
+			};
+		},
+	} );
 };
 
 export default useFollowersQuery;
