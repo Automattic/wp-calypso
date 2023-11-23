@@ -199,17 +199,13 @@ export const getFilteredAndSortedPlugins = createSelector(
 		}
 
 		// Filter the plugins using the pluginFilter if it is set
-		const pluginList =
-			pluginFilter && _filters[ pluginFilter ]
-				? Object.fromEntries(
-						Object.entries( allPluginsForSites ).filter( ( [ , plugin ] ) =>
-							_filters[ pluginFilter ]( plugin )
-						)
-				  )
-				: allPluginsForSites;
+		let pluginList = Object.values( allPluginsForSites );
+		if ( pluginFilter && _filters[ pluginFilter ] ) {
+			pluginList = pluginList.filter( ( plugin ) => _filters[ pluginFilter ]( plugin ) );
+		}
 
 		// Sort the plugins alphabetically by slug
-		const sortedPluginListEntries = Object.values( pluginList ).sort( ( pluginA, pluginB ) => {
+		const sortedPluginListEntries = pluginList.sort( ( pluginA, pluginB ) => {
 			const pluginSlugALower = pluginA.slug.toLowerCase();
 			const pluginSlugBLower = pluginB.slug.toLowerCase();
 			return getSortCompareNumber( pluginSlugALower, pluginSlugBLower );
