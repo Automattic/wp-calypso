@@ -82,7 +82,7 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		await page.getByRole( 'button', { name: 'Launch your blog' } ).click();
 	} );
 
-	it( 'Ensure "Connect to social" navigates to Mareting page', async function () {
+	it( 'Ensure "Connect to social" navigates to Marketing page', async function () {
 		await page.getByRole( 'button', { name: 'Connect to social' } ).click();
 		await page.getByText( 'Marketing and Integrations' ).waitFor();
 	} );
