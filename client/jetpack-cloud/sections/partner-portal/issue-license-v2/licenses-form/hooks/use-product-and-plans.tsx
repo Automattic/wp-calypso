@@ -12,13 +12,62 @@ import {
 	addSelectedProductSlugs,
 	clearSelectedProductSlugs,
 } from 'calypso/state/partner-portal/products/actions';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import {
+	PRODUCT_FILTER_ALL,
+	PRODUCT_FILTER_PLANS,
+	PRODUCT_FILTER_PRODUCTS,
+	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
+	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+} from '../../constants';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {
 	selectedSite?: SiteDetails | null;
+	selectedProductFilter?: string | null;
 };
 
-export default function useProductAndPlans( { selectedSite }: Props ) {
+const getProductsAndPlansByFilter = (
+	filter: string | null,
+	allProductsAndPlans?: APIProductFamilyProduct[]
+) => {
+	switch ( filter ) {
+		case PRODUCT_FILTER_PRODUCTS:
+			return (
+				allProductsAndPlans?.filter(
+					( { family_slug } ) =>
+						family_slug !== 'jetpack-packs' &&
+						family_slug !== 'jetpack-backup-storage' &&
+						! isWooCommerceProduct( family_slug ) &&
+						! isWpcomHostingProduct( family_slug )
+				) || []
+			);
+		case PRODUCT_FILTER_PLANS:
+			return (
+				allProductsAndPlans?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || []
+			);
+
+		case PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS:
+			return (
+				allProductsAndPlans
+					?.filter( ( { family_slug } ) => family_slug === 'jetpack-backup-storage' )
+					.sort( ( a, b ) => a.product_id - b.product_id ) || []
+			);
+
+		case PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS:
+			return (
+				allProductsAndPlans?.filter( ( { family_slug } ) => isWooCommerceProduct( family_slug ) ) ||
+				[]
+			);
+	}
+
+	return allProductsAndPlans || [];
+};
+
+export default function useProductAndPlans( {
+	selectedSite,
+	selectedProductFilter = PRODUCT_FILTER_ALL,
+}: Props ) {
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 	const dispatch = useDispatch();
 
@@ -48,37 +97,15 @@ export default function useProductAndPlans( { selectedSite }: Props ) {
 	);
 
 	return useMemo( () => {
-		let allProductsAndBundles = data;
+		// We pre-filter the list by current selected filter
+		let filteredProductsAndBundles = getProductsAndPlansByFilter( selectedProductFilter, data );
 
 		// Filter products & plan that are already assigned to a site
-		if ( selectedSite && addedPlanAndProducts && allProductsAndBundles ) {
-			allProductsAndBundles = allProductsAndBundles.filter(
+		if ( selectedSite && addedPlanAndProducts && filteredProductsAndBundles ) {
+			filteredProductsAndBundles = filteredProductsAndBundles.filter(
 				( product ) => ! addedPlanAndProducts.includes( product.product_id )
 			);
 		}
-
-		const bundles =
-			allProductsAndBundles?.filter(
-				( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
-			) || [];
-		const backupAddons =
-			allProductsAndBundles
-				?.filter(
-					( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-backup-storage'
-				)
-				.sort( ( a, b ) => a.product_id - b.product_id ) || [];
-		const products =
-			allProductsAndBundles?.filter(
-				( { family_slug }: { family_slug: string } ) =>
-					family_slug !== 'jetpack-packs' &&
-					family_slug !== 'jetpack-backup-storage' &&
-					! isWooCommerceProduct( family_slug ) &&
-					! isWpcomHostingProduct( family_slug )
-			) || [];
-		const wooExtensions =
-			allProductsAndBundles?.filter( ( { family_slug }: { family_slug: string } ) =>
-				isWooCommerceProduct( family_slug )
-			) || [];
 
 		// We need the suggested products (i.e., the products chosen from the dashboard) to properly
 		// track if the user purchases a different set of products.
@@ -88,12 +115,18 @@ export default function useProductAndPlans( { selectedSite }: Props ) {
 
 		return {
 			isLoadingProducts,
-			allProductsAndBundles,
-			bundles,
-			backupAddons,
-			products,
-			wooExtensions,
+			filteredProductsAndBundles,
+			plans: getProductsAndPlansByFilter( PRODUCT_FILTER_PLANS, filteredProductsAndBundles ),
+			products: getProductsAndPlansByFilter( PRODUCT_FILTER_PRODUCTS, filteredProductsAndBundles ),
+			backupAddons: getProductsAndPlansByFilter(
+				PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
+				filteredProductsAndBundles
+			),
+			wooExtensions: getProductsAndPlansByFilter(
+				PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+				filteredProductsAndBundles
+			),
 			suggestedProductSlugs,
 		};
-	}, [ addedPlanAndProducts, data, isLoadingProducts, selectedSite ] );
+	}, [ addedPlanAndProducts, data, isLoadingProducts, selectedProductFilter, selectedSite ] );
 }
