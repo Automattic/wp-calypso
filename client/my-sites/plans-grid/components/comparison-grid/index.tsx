@@ -326,7 +326,6 @@ type ComparisonGridProps = {
 	intervalType: string;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
-	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
@@ -346,7 +345,6 @@ type ComparisonGridHeaderProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
-	flowName?: string | null;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
@@ -382,7 +380,6 @@ const ComparisonGridHeaderCell = ( {
 	displayedGridPlans,
 	currentSitePlanSlug,
 	isLaunchPage,
-	flowName,
 	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
@@ -478,7 +475,6 @@ const ComparisonGridHeaderCell = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				flowName={ flowName }
 				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
@@ -495,7 +491,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			visibleGridPlans,
 			isInSignup,
 			isLaunchPage,
-			flowName,
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
@@ -541,7 +536,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						flowName={ flowName }
 						onUpgradeClick={ onUpgradeClick }
 						isLaunchPage={ isLaunchPage }
 						isLargeCurrency={ isLargeCurrency }
@@ -952,7 +946,6 @@ const ComparisonGrid = ( {
 	intervalType,
 	isInSignup,
 	isLaunchPage,
-	flowName,
 	currentSitePlanSlug,
 	onUpgradeClick,
 	siteId,
@@ -1101,7 +1094,6 @@ const ComparisonGrid = ( {
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
-							flowName={ flowName }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							onUpgradeClick={ onUpgradeClick }
@@ -1132,7 +1124,6 @@ const ComparisonGrid = ( {
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }

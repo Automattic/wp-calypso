@@ -406,7 +406,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 								handleUpgradeClick( overridePlanSlug ?? planSlug )
 							}
 							planSlug={ planSlug }
-							flowName={ flowName }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							buttonText={ buttonText }
 							planActionOverrides={ planActionOverrides }

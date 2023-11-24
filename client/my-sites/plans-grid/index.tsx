@@ -42,7 +42,6 @@ export interface PlansGridProps {
 		clickedPlanSlug?: PlanSlug
 	) => void;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	flowName?: string | null;
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType: string;
@@ -72,7 +71,6 @@ const WrappedComparisonGrid = ( {
 	intervalType,
 	isInSignup,
 	isLaunchPage,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -98,7 +96,6 @@ const WrappedComparisonGrid = ( {
 				intervalType={ intervalType }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
-				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				onUpgradeClick={ handleUpgradeClick }
 				siteId={ siteId }
