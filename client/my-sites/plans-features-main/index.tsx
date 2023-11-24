@@ -552,25 +552,34 @@ const PlansFeaturesMain = ( {
 			};
 		}
 
-		if ( sitePlanSlug && isFreePlan( sitePlanSlug ) && intentFromProps !== 'plans-p2' ) {
-			actionOverrides = {
-				loggedInFreePlan: {
-					status:
-						isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
-							? 'blocked'
-							: 'enabled',
-					callback: () => {
-						page.redirect( `/add-ons/${ siteSlug }` );
+		if ( sitePlanSlug && intentFromProps !== 'plans-p2' ) {
+			if ( isFreePlan( sitePlanSlug ) ) {
+				actionOverrides = {
+					loggedInFreePlan: {
+						status:
+							isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
+								? 'blocked'
+								: 'enabled',
+						callback: () => {
+							page.redirect( `/add-ons/${ siteSlug }` );
+						},
+						text: translate( 'Manage add-ons', { context: 'verb' } ),
 					},
-					text: translate( 'Manage add-ons', { context: 'verb' } ),
-				},
-			};
+				};
 
-			if ( domainFromHomeUpsellFlow ) {
-				actionOverrides.loggedInFreePlan = {
-					...actionOverrides.loggedInFreePlan,
-					callback: showDomainUpsellDialog,
-					text: translate( 'Keep my plan', { context: 'verb' } ),
+				if ( domainFromHomeUpsellFlow ) {
+					actionOverrides.loggedInFreePlan = {
+						...actionOverrides.loggedInFreePlan,
+						callback: showDomainUpsellDialog,
+						text: translate( 'Keep my plan', { context: 'verb' } ),
+					};
+				}
+			} else {
+				actionOverrides = {
+					currentPlan: {
+						text: canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ),
+						callback: () => page( currentPlanManageHref ),
+					},
 				};
 			}
 		}
@@ -579,12 +588,15 @@ const PlansFeaturesMain = ( {
 	}, [
 		isInSignup,
 		sitePlanSlug,
+		intentFromProps,
 		isPlanUpsellEnabledOnFreeDomain.isLoading,
 		resolvedSubdomainName.isLoading,
 		translate,
 		domainFromHomeUpsellFlow,
 		siteSlug,
 		showDomainUpsellDialog,
+		canUserManageCurrentPlan,
+		currentPlanManageHref,
 	] );
 
 	/**
@@ -812,8 +824,6 @@ const PlansFeaturesMain = ( {
 									usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 									allFeaturesList={ FEATURES_LIST }
 									onStorageAddOnClick={ handleStorageAddOnClick }
-									currentPlanManageHref={ currentPlanManageHref }
-									canUserManageCurrentPlan={ canUserManageCurrentPlan }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -875,8 +885,6 @@ const PlansFeaturesMain = ( {
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
-												currentPlanManageHref={ currentPlanManageHref }
-												canUserManageCurrentPlan={ canUserManageCurrentPlan }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
 											/>
 											<ComparisonGridToggle
