@@ -1,0 +1,65 @@
+import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
+import { useSelector } from 'calypso/state';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getTotalInvoiceValue } from '../lib/pricing';
+import type { SelectedLicenseProp } from '../types';
+
+export default function PricingSummary( {
+	selectedLicenses,
+}: {
+	selectedLicenses: SelectedLicenseProp[];
+} ) {
+	const translate = useTranslate();
+
+	const userProducts = useSelector( getProductsList );
+	const { discountedCost, actualCost } = getTotalInvoiceValue( userProducts, selectedLicenses );
+
+	const selectedLicenseCount = selectedLicenses
+		.map( ( license ) => license.quantity )
+		.reduce( ( a, b ) => a + b, 0 );
+
+	const handleCTAClick = useCallback( () => {
+		// TODO: Add tracking
+		// TODO: Handle onclick
+	}, [] );
+
+	const link = '#link'; // TODO: Add link
+
+	const currency = selectedLicenses[ 0 ].currency; // FIXME: Fix if multiple currencies are supported
+
+	return (
+		<>
+			<div className="review-licenses__pricing">
+				<span className="review-licenses__price">
+					{ formatCurrency( discountedCost, currency ) }
+				</span>
+				<span className="review-licenses__price-old">
+					{ formatCurrency( actualCost, currency ) }
+				</span>
+				<div className="review-licenses__price-interval">{ translate( '/per month' ) }</div>
+			</div>
+			<Button primary className="review-licenses__cta-button" onClick={ handleCTAClick }>
+				{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+					context: 'button label',
+					count: selectedLicenseCount,
+					args: {
+						numLicenses: selectedLicenseCount,
+					},
+				} ) }
+			</Button>
+			<div className="review-licenses__notice">
+				{ translate(
+					'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
+					{
+						components: {
+							a: <a href={ link } target="_blank" rel="noopener noreferrer" />,
+						},
+					}
+				) }
+			</div>
+		</>
+	);
+}
