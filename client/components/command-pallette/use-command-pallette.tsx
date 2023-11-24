@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 
-const SiteImage = styled.img( {
-	height: 24,
-	width: 24,
-	minWidth: 24,
-	objectFit: 'cover',
+const FillDefaultIconWhite = styled.div( {
+	flexShrink: 0,
+	'.commands-command-menu__container [cmdk-item] & svg': {
+		fill: '#fff',
+	},
 } );
 
 type CloseFunction = () => void;
@@ -59,10 +60,9 @@ const siteToAction =
 				onClickSite( { site, close } );
 			},
 			image: (
-				<SiteImage
-					src={ site.icon?.img ?? '/calypso/images/favicons/favicon-development.ico' }
-					alt={ siteName }
-				/>
+				<FillDefaultIconWhite>
+					<SiteIcon site={ site } size={ 32 } />
+				</FillDefaultIconWhite>
 			),
 		};
 	};
