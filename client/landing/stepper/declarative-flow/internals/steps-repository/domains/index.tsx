@@ -6,6 +6,7 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
+	DESIGN_FIRST_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
@@ -90,10 +91,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		shouldHideFreePlan = false
 	) => {
 		if ( ! suggestion ) {
+			// No domain was selected, 'decide later' button was clicked
 			setHideFreePlan( false );
 			setDomainCartItem( undefined );
 			setDomain( undefined );
-			return submit?.();
+			return submit?.( { freeDomain: true } );
 		}
 
 		setDomain( suggestion );
@@ -187,7 +189,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === NEWSLETTER_FLOW ) {
+		if ( flow === NEWSLETTER_FLOW || DESIGN_FIRST_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
@@ -297,7 +299,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				<FormattedHeader
 					id="domains-header"
 					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
-					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
+					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : null }
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>
