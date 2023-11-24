@@ -8,7 +8,7 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 function SocialAuthToS( props ) {
 	if ( props.isWooCoreProfilerFlow ) {
 		return (
-			<p className="login-form__social-buttons-tos">
+			<p className="auth-form__social-buttons-tos">
 				{ props.translate(
 					'If you continue with Google or Apple, you agree to our' +
 						' {{tosLink}}Terms of Service{{/tosLink}}, and have' +

@@ -28,7 +28,7 @@
 }
 
 .auth-form__social.is-login {
-	p {
+	p:first-of-type {
 		display: none;
 	}
 
