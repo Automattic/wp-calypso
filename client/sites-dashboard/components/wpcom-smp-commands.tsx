@@ -362,8 +362,8 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'openPHPmyAdmin',
-			label: __( 'Open phpMyAdmin' ),
-			searchLabel: __( 'open phpMyAdmin' ),
+			label: __( 'Open database in phpMyAdmin' ),
+			searchLabel: __( 'open database in phpMyAdmin' ),
 			context: 'Opening phpMyAdmin',
 			callback: setStateCallback( 'openPHPmyAdmin' ),
 			siteFunctions: {
