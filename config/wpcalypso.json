@@ -93,6 +93,7 @@
 		"login/magic-login": true,
 		"logmein": true,
 		"mailchimp": true,
+		"marketplace-add-review": true,
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
