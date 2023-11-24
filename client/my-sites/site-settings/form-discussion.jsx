@@ -167,14 +167,6 @@ class SiteSettingsFormDiscussion extends Component {
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
 				/>
-				{ ! this.props.isJetpack && 1 === fields.lang_id && (
-					<ToggleControl
-						checked={ !! fields.jetpack_verbum_subscription_modal }
-						disabled={ isRequestingSettings || isSavingSettings }
-						onChange={ handleAutosavingToggle( 'jetpack_verbum_subscription_modal' ) }
-						label={ translate( 'Display subscription suggestion after comment' ) }
-					/>
-				) }
 				<SupportInfo
 					text={ translate( 'Allow readers to use markdown in comments' ) }
 					link={
@@ -660,8 +652,6 @@ export const getFormSettings = ( settings ) => {
 		'stb_enabled',
 		'stc_enabled',
 		'wpcom_publish_comments_with_markdown',
-		'jetpack_verbum_subscription_modal',
-		'lang_id',
 	] );
 };
 
