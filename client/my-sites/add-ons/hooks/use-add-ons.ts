@@ -221,6 +221,11 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 		() =>
 			activeAddOns
 				.filter( ( addOn ) => {
+					// if we don't have prices we can't render the addon.
+					if ( addOn.prices === null ) {
+						return false;
+					}
+
 					// remove the Jetpack AI add-on if the site already supports the feature
 					if (
 						addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
