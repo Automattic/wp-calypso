@@ -2,11 +2,10 @@ import {
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
 	chartBar as statsIcon,
-	cog as hostingConfigIcon,
+	cog as settingsIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	download as downloadIcon,
-	upload as uploadIcon,
 	globe as domainsIcon,
 	home as dashboardIcon,
 	key as keyIcon,
@@ -16,6 +15,7 @@ import {
 	postComments as postCommentsIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
+	upload as uploadIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -45,7 +45,7 @@ export const useCommandsArrayWpcom = ( {
 			setPlaceholderOverride( translate( 'Select a site' ) );
 		};
 
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 	const dispatch = useDispatch();
 	const displaySuccessNotice = ( message: string ) =>
 		dispatch( successNotice( message, { duration: 5000 } ) );
@@ -137,7 +137,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
-			icon: hostingConfigIcon,
+			icon: settingsIcon,
 		},
 		{
 			name: 'openPHPmyAdmin',
@@ -474,6 +474,76 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: uploadIcon,
+		},
+		{
+			name: 'manageSettingsWriting',
+			label: __( 'Manage writing settings' ),
+			searchLabel: _x( 'Manage blog writing settings', 'search label for command palette' ),
+			context: 'Managing settings for writing the blog',
+			callback: setStateCallback( 'manageSettingsWriting' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/writing/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsReading',
+			label: __( 'Manage reading settings' ),
+			searchLabel: _x( 'Manage blog reading settings', 'search label for command palette' ),
+			context: 'Managing settings for reading the blog',
+			callback: setStateCallback( 'manageSettingsReading' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/reading/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsDiscussion',
+			label: __( 'Manage discussion settings' ),
+			searchLabel: _x( 'Manage blog discussion settings', 'search label for command palette' ),
+			context: 'Managing settings for discussions on the blog',
+			callback: setStateCallback( 'manageSettingsDiscussion' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/discussion/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsNewsletter',
+			label: __( 'Manage newsletter settings' ),
+			searchLabel: _x( 'Manage newsletter settings', 'search label for command palette' ),
+			context: 'Managing settings for the built-in newsletter',
+			callback: setStateCallback( 'manageSettingsNewsletter' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/newsletter/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsPodcast',
+			label: __( 'Manage podcast settings' ),
+			searchLabel: _x( 'Manage podcast settings', 'search label for command palette' ),
+			context: 'Managing settings for the built-in podcast',
+			callback: setStateCallback( 'manageSettingsPodcast' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/podcasting/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
 		},
 	];
 
