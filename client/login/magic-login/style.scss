@@ -156,12 +156,12 @@
 }
 
 .magic-login__footer {
+	margin: 4px 0 48px 0;
+
 	a {
 		border-bottom: 1px solid #c8d7e1;
 		color: var(--studio-gray-90);
 		display: block;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 4em;
 		font-size: $font-body-small;
 		font-weight: 600;
 		padding: 0 24px;
