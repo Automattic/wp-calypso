@@ -1,8 +1,7 @@
 import { useSelector } from 'react-redux';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 /**
  * Checks if the current user can post reviews for a given plugin.
@@ -13,9 +12,8 @@ export function useCanPublishPluginReview( plugin = { isMarketplaceProduct: fals
 	const { isMarketplaceProduct } = plugin;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const selectedSite = useSelector( getSelectedSite );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-	const purchasedPlugin = getPluginPurchased( plugin, purchases );
+	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+	const purchasedPlugin = getPluginPurchased( plugin, purchases || [] );
 	const hasActiveSubscription = !! purchasedPlugin;
 
 	return isLoggedIn && ( ! isMarketplaceProduct || hasActiveSubscription );
