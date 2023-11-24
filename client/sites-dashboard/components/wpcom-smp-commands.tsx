@@ -121,15 +121,48 @@ export const useCommandsArrayWpcom = ( {
 
 	const commands = [
 		{
-			name: 'addNewSite',
-			label: __( 'Add new site' ),
-			searchLabel: __( 'add new site' ),
+			name: 'openSiteDashboard',
+			label: __( 'Open site dashboard' ),
+			searchLabel: __( 'open site dashboard' ),
 			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( createSiteUrl );
+			callback: setStateCallback( 'openSiteDashboard' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/home/${ site.slug }` );
+				},
 			},
-			icon: addNewSiteIcon,
+			icon: dashboardIcon,
+		},
+		{
+			name: 'openHostingConfiguration',
+			label: __( 'Open hosting configuration' ),
+			searchLabel: __( 'open hosting configuration' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'openHostingConfiguration' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+			},
+			icon: hostingConfigIcon,
+		},
+		{
+			name: 'openPHPmyAdmin',
+			label: __( 'Open database in phpMyAdmin' ),
+			searchLabel: __( 'open database in phpMyAdmin' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'openPHPmyAdmin' ),
+			siteFunctions: {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					await openPHPmyAdmin( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: pageIcon,
 		},
 		{
 			name: 'openProfile',
@@ -234,20 +267,6 @@ export const useCommandsArrayWpcom = ( {
 			icon: keyIcon,
 		},
 		{
-			name: 'openSiteDashboard',
-			label: __( 'Open site dashboard' ),
-			searchLabel: __( 'open site dashboard' ),
-			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/home/${ site.slug }` );
-				},
-			},
-			icon: dashboardIcon,
-		},
-		{
 			name: 'openSiteStats',
 			label: __( 'Open site stats' ),
 			searchLabel: __( 'open site stats' ),
@@ -342,36 +361,6 @@ export const useCommandsArrayWpcom = ( {
 			icon: acitvityLogIcon,
 		},
 		{
-			name: 'openHostingConfiguration',
-			label: __( 'Open hosting configuration' ),
-			searchLabel: __( 'open hosting configuration' ),
-			context: [ '/sites' ],
-			callback: setStateCallback( 'openHostingConfiguration' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
-				},
-				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
-			},
-			icon: hostingConfigIcon,
-		},
-		{
-			name: 'openPHPmyAdmin',
-			label: __( 'Open database in phpMyAdmin' ),
-			searchLabel: __( 'open database in phpMyAdmin' ),
-			context: [ '/sites' ],
-			callback: setStateCallback( 'openPHPmyAdmin' ),
-			siteFunctions: {
-				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					await openPHPmyAdmin( site.ID );
-				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
-			},
-			icon: pageIcon,
-		},
-		{
 			name: 'manageStagingSites',
 			label: __( 'Manage staging sites' ),
 			searchLabel: __( 'manage staging sites' ),
@@ -426,6 +415,17 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
 			icon: pageIcon,
+		},
+		{
+			name: 'addNewSite',
+			label: __( 'Add new site' ),
+			searchLabel: __( 'add new site' ),
+			context: [ '/sites' ],
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( createSiteUrl );
+			},
+			icon: addNewSiteIcon,
 		},
 	];
 
