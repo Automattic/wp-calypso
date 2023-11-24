@@ -5,7 +5,7 @@ import type { Task } from './types';
 import type { UseLaunchpadOptions } from '@automattic/data-stores';
 
 export interface LaunchpadInternalProps {
-	siteSlug: string | null;
+	siteId: number;
 	checklistSlug?: string | 0 | null | undefined;
 	makeLastTaskPrimaryAction?: boolean;
 	taskFilter?: ( tasks: Task[] ) => Task[];
@@ -17,13 +17,13 @@ export interface LaunchpadInternalProps {
  * Please use the main Launchpad component whenever possible.
  */
 const LaunchpadInternal = ( {
-	siteSlug,
+	siteId,
 	checklistSlug,
 	taskFilter,
 	makeLastTaskPrimaryAction,
 	useLaunchpadOptions = {},
 }: LaunchpadInternalProps ) => {
-	const launchpadData = useLaunchpad( siteSlug || '', checklistSlug, useLaunchpadOptions );
+	const launchpadData = useLaunchpad( siteId, checklistSlug, useLaunchpadOptions );
 	const { isFetchedAfterMount, data } = launchpadData;
 	const tasks = useRef< Task[] >( [] );
 

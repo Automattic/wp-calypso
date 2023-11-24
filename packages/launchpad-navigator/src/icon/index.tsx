@@ -5,17 +5,17 @@ import type { Task } from '@automattic/launchpad';
 import './style.scss';
 
 type LaunchpadNavigatorIconProps = {
-	siteSlug: string | null;
+	siteId: number;
 };
 
-const LaunchpadNavigatorIcon = ( { siteSlug }: LaunchpadNavigatorIconProps ) => {
+const LaunchpadNavigatorIcon = ( { siteId }: LaunchpadNavigatorIconProps ) => {
 	const {
 		data: { current_checklist: currentNavigatorChecklist },
-	} = useLaunchpadNavigator( siteSlug, null );
+	} = useLaunchpadNavigator( siteId, null );
 
 	const {
 		data: { checklist },
-	} = useSortedLaunchpadTasks( siteSlug, currentNavigatorChecklist );
+	} = useSortedLaunchpadTasks( siteId, currentNavigatorChecklist );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;

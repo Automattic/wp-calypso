@@ -56,14 +56,13 @@ export type UseLaunchpadOptions = {
 };
 
 export const fetchLaunchpad = (
-	siteSlug: string | null,
+	siteId: number,
 	checklist_slug?: string | 0 | null | undefined
 ): Promise< LaunchpadResponse > => {
-	const slug = encodeURIComponent( siteSlug as string );
 	const checklistSlug = checklist_slug ? encodeURIComponent( checklist_slug ) : null;
 	const requestUrl = checklistSlug
-		? `/sites/${ slug }/launchpad?_locale=user&checklist_slug=${ checklistSlug }`
-		: `/sites/${ slug }/launchpad?_locale=user`;
+		? `/sites/${ siteId }/launchpad?_locale=user&checklist_slug=${ checklistSlug }`
+		: `/sites/${ siteId }/launchpad?_locale=user`;
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
@@ -97,16 +96,16 @@ const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
 };
 
 export const useLaunchpad = (
-	siteSlug: string | null,
+	siteId: number,
 	checklist_slug?: string | 0 | null | undefined,
 	options?: UseLaunchpadOptions
 ) => {
-	const key = [ 'launchpad', siteSlug, checklist_slug ];
 	const onSuccessCallback = options?.onSuccess || defaultSuccessCallback;
+	const key = [ 'launchpad', siteId, checklist_slug, onSuccessCallback ];
 
 	return useQuery( {
 		queryKey: key,
-		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ).then( onSuccessCallback ),
+		queryFn: () => fetchLaunchpad( siteId, checklist_slug ).then( onSuccessCallback ),
 		retry: 3,
 		initialData: {
 			site_intent: '',
@@ -120,21 +119,20 @@ export const useLaunchpad = (
 };
 
 export const useSortedLaunchpadTasks = (
-	siteSlug: string | null,
+	siteId: number,
 	checklist_slug?: string | 0 | null | undefined
 ) => {
 	const launchpadOptions = {
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
 	};
-	return useLaunchpad( siteSlug, checklist_slug, launchpadOptions );
+	return useLaunchpad( siteId, checklist_slug, launchpadOptions );
 };
 
 export const updateLaunchpadSettings = (
-	siteSlug: string | number,
+	siteId: number,
 	settings: LaunchpadUpdateSettings = {}
 ) => {
-	const slug = encodeURIComponent( siteSlug as string );
-	const requestUrl = `/sites/${ slug }/launchpad`;
+	const requestUrl = `/sites/${ siteId }/launchpad`;
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {

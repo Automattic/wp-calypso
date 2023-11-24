@@ -22,16 +22,15 @@ const defaultResponse: LaunchpadNavigatorResponse = {
 };
 
 export const fetchLaunchpadNavigator = (
-	siteSlug: string | null
+	siteId: number | null
 ): Promise< LaunchpadNavigatorResponse > => {
-	if ( ! siteSlug ) {
+	if ( ! siteId ) {
 		return Promise.resolve( defaultResponse );
 	}
-	const slug = encodeURIComponent( siteSlug );
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
-				path: `/sites/${ slug }/launchpad/navigator`,
+				path: `/sites/${ siteId }/launchpad/navigator`,
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 		  } )
@@ -42,14 +41,14 @@ export const fetchLaunchpadNavigator = (
 };
 
 export const useLaunchpadNavigator = (
-	siteSlug: string | null,
+	siteId: number | null,
 	current_checklist: string | null
 ) => {
-	const key = [ 'launchpad-navigator', siteSlug, current_checklist ];
+	const key = [ 'launchpad-navigator', siteId, current_checklist ];
 
 	return useQuery( {
 		queryKey: key,
-		queryFn: () => fetchLaunchpadNavigator( siteSlug ),
+		queryFn: () => fetchLaunchpadNavigator( siteId ),
 		retry: 3,
 		initialData: defaultResponse,
 	} );

@@ -9,11 +9,11 @@ import './style.scss';
 type ToggleLaunchpadIsVisible = ( shouldBeVisible: boolean ) => void;
 
 export type FloatingNavigatorProps = {
-	siteSlug: string | null;
+	siteId: number;
 	toggleLaunchpadIsVisible?: ToggleLaunchpadIsVisible;
 };
 
-const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavigatorProps ) => {
+const FloatingNavigator = ( { siteId, toggleLaunchpadIsVisible }: FloatingNavigatorProps ) => {
 	const launchpadContext = 'launchpad-navigator';
 	const translate = useTranslate();
 	const checklistSlug = select( LaunchpadNavigator.store ).getActiveChecklistSlug() || null;
@@ -37,7 +37,7 @@ const FloatingNavigator = ( { siteSlug, toggleLaunchpadIsVisible }: FloatingNavi
 			onRequestClose={ () => setLaunchpadIsVisible( false ) }
 		>
 			<Launchpad
-				siteSlug={ siteSlug }
+				siteId={ siteId }
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
 				onTaskClick={ onTaskClick }

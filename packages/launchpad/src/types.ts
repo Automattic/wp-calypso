@@ -58,7 +58,7 @@ export interface LaunchpadResponse {
 
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
-	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;
+	setActiveChecklist: ( siteId: number, activeChecklistSlug: string ) => void;
 }
 
 export type EventHandlers = {
@@ -67,7 +67,7 @@ export type EventHandlers = {
 };
 
 export interface LaunchpadTaskActionsProps {
-	siteSlug: string | null;
+	siteId: number;
 	tasks: Task[];
 	tracksData: LaunchpadTracksData;
 	extraActions: PermittedActions;

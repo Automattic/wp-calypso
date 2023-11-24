@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 
 const MasterbarLaunchpadNavigator = () => {
@@ -13,8 +13,12 @@ const MasterbarLaunchpadNavigator = () => {
 		setLaunchpadIsVisible( ! launchpadIsVisible );
 	};
 
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
+
+	if ( ! siteId ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -24,14 +28,11 @@ const MasterbarLaunchpadNavigator = () => {
 					'is-active': launchpadIsVisible,
 				} ) }
 				tooltip={ translate( 'My tasks' ) }
-				icon={ <LaunchpadNavigatorIcon siteSlug={ siteSlug } /> }
+				icon={ <LaunchpadNavigatorIcon siteId={ siteId } /> }
 			/>
 			{ launchpadIsVisible && (
 				<div className="masterbar__launchpad-navigator">
-					<FloatingNavigator
-						siteSlug={ siteSlug }
-						toggleLaunchpadIsVisible={ setLaunchpadIsVisible }
-					/>
+					<FloatingNavigator siteId={ siteId } toggleLaunchpadIsVisible={ setLaunchpadIsVisible } />
 				</div>
 			) }
 		</>

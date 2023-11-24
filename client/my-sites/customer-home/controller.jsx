@@ -57,7 +57,7 @@ export async function maybeRedirect( context, next ) {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
 			checklist: launchpadChecklist,
-		} = await fetchLaunchpad( slug );
+		} = await fetchLaunchpad( siteId );
 
 		if (
 			launchpadScreenOption === 'full' &&

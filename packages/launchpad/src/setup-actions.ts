@@ -16,7 +16,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 ];
 
 export const setUpActionsForTasks = ( {
-	siteSlug,
+	siteId,
 	tasks,
 	tracksData,
 	extraActions,
@@ -57,8 +57,8 @@ export const setUpActionsForTasks = ( {
 			}
 
 			action = () => {
-				if ( siteSlug && TASKS_TO_COMPLETE_ON_CLICK.includes( task.id ) ) {
-					updateLaunchpadSettings( siteSlug, {
+				if ( TASKS_TO_COMPLETE_ON_CLICK.includes( task.id ) ) {
+					updateLaunchpadSettings( siteId, {
 						checklist_statuses: { [ task.id ]: true },
 					} );
 				}
@@ -74,48 +74,48 @@ export const setUpActionsForTasks = ( {
 
 				case 'site_title':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/settings/general/${ siteSlug }`;
+					task.calypso_path = `/settings/general/${ siteId }`;
 					break;
 
 				case 'domain_claim':
 				case 'domain_upsell':
 				case 'domain_customize':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/domains/add/${ siteSlug }`;
+					task.calypso_path = `/domains/add/${ siteId }`;
 					break;
 
 				case 'drive_traffic':
 					logMissingCalypsoPath = true;
 					task.calypso_path = isMobile()
-						? `/marketing/connections/${ siteSlug }`
-						: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`;
+						? `/marketing/connections/${ siteId }`
+						: `/marketing/connections/${ siteId }?tour=marketingConnectionsTour`;
 					break;
 
 				case 'add_new_page':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/page/${ siteSlug }`;
+					task.calypso_path = `/page/${ siteId }`;
 					break;
 
 				case 'edit_page':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/pages/${ siteSlug }`;
+					task.calypso_path = `/pages/${ siteId }`;
 					break;
 
 				case 'update_about_page':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/page/${ siteSlug }/${ task?.extra_data?.about_page_id }`;
+					task.calypso_path = `/page/${ siteId }/${ task?.extra_data?.about_page_id }`;
 					break;
 
 				case 'customize_welcome_message':
 					logMissingCalypsoPath = true;
 					task.calypso_path = config.isEnabled( 'settings/newsletter-settings-page' )
-						? `/settings/newsletter/${ siteSlug }`
-						: `/settings/reading/${ siteSlug }#newsletter-settings`;
+						? `/settings/newsletter/${ siteId }`
+						: `/settings/reading/${ siteId }#newsletter-settings`;
 					break;
 
 				case 'manage_subscribers':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/subscribers/${ siteSlug }`;
+					task.calypso_path = `/subscribers/${ siteId }`;
 					break;
 
 				case 'site_launched':
@@ -124,7 +124,7 @@ export const setUpActionsForTasks = ( {
 				case 'link_in_bio_launched':
 					action = async () => {
 						await wpcomRequest( {
-							path: `/sites/${ siteSlug }/launch`,
+							path: `/sites/${ siteId }/launch`,
 							apiVersion: '1.1',
 							method: 'post',
 						} );
@@ -151,8 +151,8 @@ export const setUpActionsForTasks = ( {
 
 		const actionDispatch = () => {
 			recordTaskClickTracksEvent( task );
-			if ( siteSlug && setActiveChecklist && config.isEnabled( 'launchpad/navigator' ) ) {
-				setActiveChecklist( siteSlug, checklistSlug );
+			if ( setActiveChecklist && config.isEnabled( 'launchpad/navigator' ) ) {
+				setActiveChecklist( siteId, checklistSlug );
 			}
 			onTaskClick?.( task );
 			action?.();

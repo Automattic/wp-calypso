@@ -47,7 +47,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 
 			// Check if site_title task is completed
-			fetchLaunchpad( this.props.siteSlug, 'intent-build' ).then( ( { checklist_statuses } ) => {
+			fetchLaunchpad( this.props.siteId, 'intent-build' ).then( ( { checklist_statuses } ) => {
 				this.setState( {
 					...this.state,
 					isSiteTitleTaskCompleted: !! checklist_statuses?.site_title,

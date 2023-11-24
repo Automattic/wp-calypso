@@ -16,7 +16,7 @@ import type { EventHandlers, Task } from './types';
 export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
 type LaunchpadProps = {
-	siteSlug: string | null;
+	siteId: number;
 	checklistSlug: string;
 	launchpadContext: string;
 	onSiteLaunched?: () => void;
@@ -25,7 +25,7 @@ type LaunchpadProps = {
 };
 
 const Launchpad = ( {
-	siteSlug,
+	siteId,
 	checklistSlug,
 	launchpadContext,
 	onSiteLaunched,
@@ -34,7 +34,7 @@ const Launchpad = ( {
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
+	} = useSortedLaunchpadTasks( siteId, checklistSlug );
 
 	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
@@ -47,9 +47,9 @@ const Launchpad = ( {
 
 	const site = useSelect(
 		( select ) => {
-			return siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug );
+			return siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId );
 		},
-		[ siteSlug ]
+		[ siteId ]
 	);
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 
@@ -86,7 +86,7 @@ const Launchpad = ( {
 	const taskFilter = ( tasks: Task[] ) => {
 		const baseTasks = setUpActionsForTasks( {
 			tasks,
-			siteSlug,
+			siteId,
 			tracksData,
 			extraActions: {
 				setActiveChecklist,
@@ -115,7 +115,7 @@ const Launchpad = ( {
 				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
 			) }
 			<LaunchpadInternal
-				siteSlug={ siteSlug }
+				siteId={ siteId }
 				checklistSlug={ checklistSlug }
 				taskFilter={ taskFilter }
 				useLaunchpadOptions={ launchpadOptions }
