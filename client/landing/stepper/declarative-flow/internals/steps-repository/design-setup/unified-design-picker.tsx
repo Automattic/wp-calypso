@@ -811,7 +811,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					previewUrl={ previewUrl }
 					splitDefaultVariation={
 						! selectedDesign.is_premium &&
-						! isBundledWithWooCommerce &&
+						! isBundled &&
 						! isPremiumThemeAvailable &&
 						! didPurchaseSelectedTheme &&
 						! isPluginBundleEligible &&
