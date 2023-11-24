@@ -142,7 +142,7 @@ function PurchaseMetaExpiration( {
 				return false;
 			}
 
-			if ( purchase.renewDate !== purchase.expiryDate ) {
+			if ( purchase.renewDate !== purchase.expiryDate && purchase.canDisableAutoRenew ) {
 				return true;
 			}
 
