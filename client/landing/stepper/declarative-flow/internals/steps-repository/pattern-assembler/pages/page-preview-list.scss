@@ -22,10 +22,6 @@
 		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 	}
 
-	@include break-wide {
-		gap: 48px 36px;
-	}
-
 	@include break-huge {
 		gap: 48px;
 		grid-template-columns: repeat(3, 1fr);
