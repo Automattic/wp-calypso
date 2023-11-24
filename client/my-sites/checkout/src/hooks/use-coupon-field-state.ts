@@ -67,14 +67,8 @@ export default function useCouponFieldState(
 }
 
 function isCouponValid( coupon: string ) {
-	// Quick fix for Yoast coupon code. See: https://a8c.slack.com/archives/CFFF01Q4V/p1700817298317919?thread_ts=1700816348.184029&cid=CFFF01Q4V
-	// Will follow up with proper fix OR remove this code after the coupon code is expired.
-	if ( coupon === '30YOAST2023' ) {
-		return true;
-	}
-
-	// Coupon code is case-insensitive and started with an alphabet.
+	// Coupon code is case-insensitive and starts with an alphanumeric.
 	// Underscores and hyphens can be included in the coupon code.
 	// Per-user coupons can have a dot followed by 5-6 letter checksum for verification.
-	return coupon.match( /^[a-z][a-z\d_-]+(\.[a-z\d]+)?$/i );
+	return coupon.match( /^[a-z\d][a-z\d_-]+(\.[a-z\d]+)?$/i );
 }
