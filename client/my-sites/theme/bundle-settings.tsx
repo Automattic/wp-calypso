@@ -1,7 +1,15 @@
-import { WOOCOMMERCE_THEME } from '@automattic/design-picker';
+import type { ReactElement } from 'react';
 
-const settings = {
-	[ WOOCOMMERCE_THEME ]: {
+interface BundleSettings {
+	[ key: string ]: {
+		name: string;
+		badgeIcon: ReactElement;
+	};
+}
+
+const bundleSettings: BundleSettings = {
+	// TODO: Move to a constant.
+	'woo-on-plans': {
 		name: 'WooCommerce',
 		badgeIcon: (
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -14,4 +22,4 @@ const settings = {
 	},
 };
 
-export default settings;
+export default bundleSettings;

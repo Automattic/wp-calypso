@@ -8,7 +8,7 @@ import {
 	FREE_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -38,7 +38,7 @@ export function canUseTheme( state, siteId, themeId ) {
 		return siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 	}
 
-	if ( type === WOOCOMMERCE_THEME ) {
+	if ( type === BUNDLED_THEME ) {
 		return (
 			siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ) &&
 			siteHasFeature( state, siteId, FEATURE_WOOP ) &&

@@ -1,6 +1,5 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
-import { WOOCOMMERCE_THEME } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
 import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
 import { useSite } from '../../../../hooks/use-site';
@@ -35,7 +34,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 
 	let badge: React.ReactNode = null;
 	if ( showBundledBadge ) {
-		const settings = bundleSettings[ WOOCOMMERCE_THEME ];
+		const settings = bundleSettings[ 'woo-on-plans' ];
 		badge = <BundledBadge icon={ settings.badgeIcon }>{ settings.name }</BundledBadge>;
 	} else if ( selectedDesign.is_premium ) {
 		badge = <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />;

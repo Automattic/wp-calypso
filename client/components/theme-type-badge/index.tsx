@@ -4,7 +4,7 @@ import {
 	FREE_THEME,
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	PREMIUM_THEME,
 } from '@automattic/design-picker';
 import classNames from 'classnames';
@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
 import { useSelector } from 'calypso/state';
-import { getThemeType } from 'calypso/state/themes/selectors';
+import { getThemeType, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
 
 import './style.scss';
@@ -34,6 +34,7 @@ const ThemeTypeBadge = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
 
 	useEffect( () => {
 		if ( type === FREE_THEME && ! isLockedStyleVariation ) {
@@ -44,6 +45,9 @@ const ThemeTypeBadge = ( {
 			theme: themeId,
 		} );
 	}, [ type, themeId, isLockedStyleVariation ] );
+
+	// TODO: Support multiple software sets.
+	const themeSoftware = themeSoftwareSet[ 0 ];
 
 	const badgeContentProps = {
 		className: 'theme-type-badge__content',
@@ -63,13 +67,15 @@ const ThemeTypeBadge = ( {
 	};
 
 	let badgeContent;
-	if ( type === WOOCOMMERCE_THEME ) {
-		const settings = bundleSettings[ WOOCOMMERCE_THEME ];
-		badgeContent = (
-			<BundledBadge { ...badgeContentProps } icon={ settings.badgeIcon }>
-				{ settings.name }
-			</BundledBadge>
-		);
+	if ( type === BUNDLED_THEME ) {
+		if ( bundleSettings[ themeSoftware ] ) {
+			const settings = bundleSettings[ themeSoftware ];
+			badgeContent = (
+				<BundledBadge { ...badgeContentProps } icon={ settings.badgeIcon }>
+					{ settings.name }
+				</BundledBadge>
+			);
+		}
 	} else if ( isLockedStyleVariation ) {
 		badgeContent = <PremiumBadge { ...badgeContentProps } />;
 	} else if ( type === FREE_THEME ) {
