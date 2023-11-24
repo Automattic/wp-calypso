@@ -95,7 +95,7 @@ import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
-import { AddReviewsModal } from '../themes/reviews-modal';
+import { AddReviewsModal } from '../themes/marketplace-reviews-modal';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
@@ -631,11 +631,16 @@ class ThemeSheet extends Component {
 	};
 
 	renderReviews = () => {
-		const { themeId } = this.props;
+		const { name, themeId } = this.props;
 
 		return (
 			<>
-				<AddReviewsModal themeSlug={ themeId } />
+				<AddReviewsModal
+					isVisible={ this.state.showReviewModal }
+					onClose={ this.handleCloseReviewModal }
+					themeName={ name }
+					themeSlug={ themeId }
+				/>
 				<div className="theme__sheet-reviews">
 					<Button onClick={ this.handleAddReview }>Add Review</Button>
 				</div>
@@ -1364,10 +1369,6 @@ class ThemeSheet extends Component {
 				}
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
-				<AddReviewsModal
-					isVisible={ this.state.showReviewModal }
-					onClose={ this.handleCloseReviewModal }
-				/>
 				<div className="theme__sheet-action-bar-container">
 					<HeaderCake
 						className="theme__sheet-action-bar"
