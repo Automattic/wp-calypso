@@ -1,5 +1,6 @@
 import { withScope, captureMessage } from '@automattic/calypso-sentry';
 import { getSiteFragment } from 'calypso/lib/route';
+
 const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslug)(\/|$|\?)/i;
 
 /**
