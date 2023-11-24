@@ -122,7 +122,7 @@ export const useCommandsArrayWpcom = ( {
 	const commands = [
 		{
 			name: 'addNewSite',
-			label: __( 'Add New Site' ),
+			label: __( 'Add new site' ),
 			searchLabel: __( 'add new site' ),
 			context: 'Adding a new website',
 			callback: ( { close }: { close: () => void } ) => {
