@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 
-const SiteImage = styled.img( {
-	height: 24,
-	width: 24,
-	minWidth: 24,
-	objectFit: 'cover',
+const FillDefaultIconWhite = styled.div( {
+	flexShrink: 0,
+	'.commands-command-menu__container [cmdk-item] & svg': {
+		fill: '#fff',
+	},
 } );
 
 type CloseFunction = () => void;
@@ -25,6 +26,7 @@ interface SiteFunctions {
 interface Command {
 	name: string;
 	label: string;
+	subLabel?: string;
 	searchLabel: string;
 	callback: ( {
 		close,
@@ -47,18 +49,20 @@ interface useCommandPalletteOptions {
 const siteToAction =
 	( onClickSite: OnClickSiteFunction ) =>
 	( site: SiteExcerptData ): Command => {
+		const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
+
 		return {
 			name: `${ site.ID }`,
-			label: `${ site.name }: ${ site.URL }`,
-			searchLabel: `${ site.ID } ${ site.name } ${ site.URL }`,
+			label: `${ siteName }`,
+			subLabel: `${ site.URL }`,
+			searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
 			callback: ( { close }: { close: CloseFunction } ) => {
 				onClickSite( { site, close } );
 			},
 			image: (
-				<SiteImage
-					src={ site.icon?.img ?? '/calypso/images/favicons/favicon-development.ico' }
-					alt={ site.name }
-				/>
+				<FillDefaultIconWhite>
+					<SiteIcon site={ site } size={ 32 } />
+				</FillDefaultIconWhite>
 			),
 		};
 	};

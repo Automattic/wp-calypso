@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
@@ -15,6 +16,44 @@ interface CommandMenuGroupProps {
 	close: () => void;
 	setSearch: ( search: string ) => void;
 }
+
+const StyledCommandsMenuContainer = styled.div( {
+	'[cmdk-root] > [cmdk-list]': {
+		overflowX: 'hidden',
+	},
+} );
+
+const LabelWrapper = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	flex: 1,
+	maxWidth: 'calc(100% - 56px)',
+	justifyContent: 'center',
+} );
+
+const Label = styled.div( {
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+	overflow: 'hidden',
+	fontSize: '1em',
+	'.commands-command-menu__container [cmdk-item] &': {
+		color: 'var(--studio-gray-100)',
+	},
+	'.commands-command-menu__container [cmdk-item][aria-selected=true] &': {
+		color: 'var(--studio-white)',
+	},
+	'.commands-command-menu__container & mark': {
+		fontWeight: 700,
+	},
+} );
+
+const SubLabel = styled( Label )( {
+	opacity: 0.7,
+	fontSize: '0.9em',
+	'.commands-command-menu__container [cmdk-item] &': {
+		color: 'var(--studio-gray-60)',
+	},
+} );
 
 export function CommandMenuGroup( {
 	isContextual,
@@ -51,9 +90,16 @@ export function CommandMenuGroup( {
 						>
 							{ command.icon && <Icon icon={ command.icon } /> }
 							{ command.image }
-							<span>
-								<TextHighlight text={ command.label } highlight={ search } />
-							</span>
+							<LabelWrapper>
+								<Label>
+									<TextHighlight text={ command.label } highlight={ search } />
+								</Label>
+								{ command.subLabel && (
+									<SubLabel>
+										<TextHighlight text={ command.subLabel } highlight={ search } />
+									</SubLabel>
+								) }
+							</LabelWrapper>
 						</HStack>
 					</Command.Item>
 				);
@@ -143,7 +189,7 @@ export const WpcomCommandPalette = () => {
 			onRequestClose={ closeAndReset }
 			__experimentalHideHeader
 		>
-			<div className="commands-command-menu__container">
+			<StyledCommandsMenuContainer className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
 						<Icon icon={ inputIcon } />
@@ -164,7 +210,7 @@ export const WpcomCommandPalette = () => {
 						) }
 					</Command.List>
 				</Command>
-			</div>
+			</StyledCommandsMenuContainer>
 		</Modal>
 	);
 };
