@@ -35,7 +35,7 @@ const getProductsAndPlansByFilter = (
 		case PRODUCT_FILTER_PRODUCTS:
 			return (
 				allProductsAndPlans?.filter(
-					( { family_slug }: { family_slug: string } ) =>
+					( { family_slug } ) =>
 						family_slug !== 'jetpack-packs' &&
 						family_slug !== 'jetpack-backup-storage' &&
 						! isWooCommerceProduct( family_slug ) &&
@@ -44,25 +44,20 @@ const getProductsAndPlansByFilter = (
 			);
 		case PRODUCT_FILTER_PLANS:
 			return (
-				allProductsAndPlans?.filter(
-					( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
-				) || []
+				allProductsAndPlans?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || []
 			);
 
 		case PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS:
 			return (
 				allProductsAndPlans
-					?.filter(
-						( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-backup-storage'
-					)
+					?.filter( ( { family_slug } ) => family_slug === 'jetpack-backup-storage' )
 					.sort( ( a, b ) => a.product_id - b.product_id ) || []
 			);
 
 		case PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS:
 			return (
-				allProductsAndPlans?.filter( ( { family_slug }: { family_slug: string } ) =>
-					isWooCommerceProduct( family_slug )
-				) || []
+				allProductsAndPlans?.filter( ( { family_slug } ) => isWooCommerceProduct( family_slug ) ) ||
+				[]
 			);
 	}
 
