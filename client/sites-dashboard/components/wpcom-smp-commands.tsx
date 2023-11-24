@@ -6,6 +6,7 @@ import {
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	download as downloadIcon,
+	upload as uploadIcon,
 	globe as domainsIcon,
 	home as dashboardIcon,
 	key as keyIcon,
@@ -498,6 +499,19 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: downloadIcon,
+		},
+		{
+			name: 'import',
+			label: __( 'Import content to the site' ),
+			searchLabel: __( 'import content to the site' ),
+			callback: setStateCallback( 'import' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/import/${ site.slug }` );
+				},
+			},
+			icon: uploadIcon,
 		},
 	];
 
