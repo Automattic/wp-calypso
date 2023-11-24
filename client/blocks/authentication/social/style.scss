@@ -32,17 +32,23 @@
 		display: none;
 	}
 
-	padding: 24px 0;
+	padding: 16px 0;
 
 	.auth-form__social-buttons {
-		align-items: center;
 		gap: 10px;
+		@include break-small {
+			align-items: center;
+		}
 	}
 
 	.social-buttons__button.button {
 		height: unset;
 		border: 0;
-		width: fit-content;
+		width: 194px;
+	}
+
+	@include break-small {
+		padding: 24px 0;
 	}
 }
 
