@@ -1,12 +1,8 @@
-import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import GoogleSocialButton from 'calypso/components/social-buttons/google';
+import { SocialAuthenticationForm } from 'calypso/blocks/authentication';
 import { login } from 'calypso/lib/paths';
-import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { loginSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
 import {
@@ -14,7 +10,6 @@ import {
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
 } from 'calypso/state/login/selectors';
-import SocialLoginToS from './social-login-tos';
 
 import './social.scss';
 
@@ -133,53 +128,28 @@ class SocialLoginForm extends Component {
 		}
 	};
 
-	getRedirectUrl = ( service ) => {
+	getRedirectUri = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
 		return `https://${ host + login( { socialService: service } ) }`;
 	};
 
 	render() {
-		const { redirectTo, uxMode } = this.props;
-		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
-
 		return (
-			<Card className="login__social">
-				<div className="login__social-buttons">
-					<div className=" login__social-buttons-container">
-						<GoogleSocialButton
-							clientId={ config( 'google_oauth_client_id' ) }
-							responseHandler={ this.handleGoogleResponse }
-							uxMode={ uxMode }
-							redirectUri={ this.getRedirectUrl( 'google' ) }
-							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
-							socialServiceResponse={
-								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-							}
-							startingPoint="login"
-						/>
-
-						<AppleLoginButton
-							clientId={ config( 'apple_oauth_client_id' ) }
-							responseHandler={ this.handleAppleResponse }
-							uxMode={ uxModeApple }
-							redirectUri={ this.getRedirectUrl( 'apple' ) }
-							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
-							socialServiceResponse={
-								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-							}
-						/>
-					</div>
-					{ this.props.shouldRenderToS && <SocialLoginToS /> }
-				</div>
-
-				{ this.props.bearerToken && (
-					<WpcomLoginForm
-						log={ this.props.username }
-						authorization={ 'Bearer ' + this.props.bearerToken }
-						redirectTo={ redirectTo || '/start' }
-					/>
-				) }
-			</Card>
+			<SocialAuthenticationForm
+				compact={ this.props.compact }
+				handleGoogleResponse={ this.handleGoogleResponse }
+				handleAppleResponse={ this.handleAppleResponse }
+				getRedirectUri={ this.getRedirectUri }
+				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
+				socialService={ this.props.socialService }
+				socialServiceResponse={ this.props.socialServiceResponse }
+				disableTosText={ ! this.props.shouldRenderToS }
+				flowName={ this.props.flowName }
+				isSocialFirst={ this.props.isSocialFirst }
+				isLogin={ true }
+			>
+				{ this.props.children }
+			</SocialAuthenticationForm>
 		);
 	}
 }

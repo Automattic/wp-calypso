@@ -27,6 +27,7 @@ interface SocialAuthenticationFormProps {
 	disableTosText?: boolean;
 	flowName: string;
 	isSocialFirst?: boolean;
+	isLogin?: boolean;
 }
 
 const SocialAuthenticationForm = ( {
@@ -41,6 +42,7 @@ const SocialAuthenticationForm = ( {
 	disableTosText,
 	flowName,
 	isSocialFirst,
+	isLogin,
 }: SocialAuthenticationFormProps ) => {
 	const translate = useTranslate();
 
@@ -79,7 +81,12 @@ const SocialAuthenticationForm = ( {
 		// are many places in which the social signup form is rendered based only on the presence of the
 		// `signup/social` config flag.
 		! config.isEnabled( 'desktop' ) && (
-			<div className={ classNames( 'auth-form__social', { 'is-social-first': isSocialFirst } ) }>
+			<div
+				className={ classNames( 'auth-form__social', {
+					'is-social-first': isSocialFirst,
+					'is-login': isLogin,
+				} ) }
+			>
 				{ ! compact && <p>{ preventWidows( translate( 'Or create an account using:' ) ) }</p> }
 
 				<div className="auth-form__social-buttons">
@@ -92,7 +99,7 @@ const SocialAuthenticationForm = ( {
 							trackLoginAndRememberRedirect( 'google' );
 						} }
 						socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
-						startingPoint="signup"
+						startingPoint={ isLogin ? 'login' : 'signup' }
 					/>
 
 					<AppleLoginButton

@@ -27,6 +27,25 @@
 	}
 }
 
+.auth-form__social.is-login {
+	p {
+		display: none;
+	}
+
+	padding: 24px 0;
+
+	.auth-form__social-buttons {
+		align-items: center;
+		gap: 10px;
+	}
+
+	.social-buttons__button.button {
+		height: unset;
+		border: 0;
+		width: fit-content;
+	}
+}
+
 .auth-form__social.is-social-first {
 	.auth-form__social-buttons {
 		gap: 16px;
