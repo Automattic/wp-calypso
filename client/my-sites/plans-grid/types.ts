@@ -9,13 +9,9 @@ export type TransformedFeatureObject = FeatureObject & {
 
 export interface PlanActionOverrides {
 	loggedInFreePlan?: {
+		callback?: () => void;
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
-		callback?: () => void;
-	};
-	currentPlan?: {
-		text?: TranslateResult;
-		callback?: () => void;
 	};
 }
 
