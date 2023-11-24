@@ -67,6 +67,7 @@ function FormCurrencyInput( {
 			className={ classes }
 			prefix={ prefix }
 			suffix={ suffix }
+			type="number"
 			placeholder={ placeholder }
 		/>
 	);
