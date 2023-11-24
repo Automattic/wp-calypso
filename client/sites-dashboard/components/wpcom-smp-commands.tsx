@@ -179,7 +179,6 @@ export const useCommandsArrayWpcom = ( {
 			name: 'openAccountSettings',
 			label: __( 'Open account settings' ),
 			searchLabel: __( 'open account settings' ),
-			context: 'Openining account settings',
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigate( `/me/account` );

@@ -35,7 +35,7 @@ interface Command {
 	subLabel?: string;
 	searchLabel: string;
 	callback: ( params: CommandCallBackParams ) => void;
-	context?: string | string[];
+	context?: string[];
 	icon?: JSX.Element;
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
