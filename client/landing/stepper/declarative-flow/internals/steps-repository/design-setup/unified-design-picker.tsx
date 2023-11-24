@@ -154,7 +154,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! (
 							design.is_premium ||
 							design.is_externally_managed ||
-							design.is_bundled_with_woo_commerce
+							( design.software_sets && design.software_sets.length > 0 )
 						)
 				)
 				.map( ( design ) => {
@@ -387,13 +387,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
+	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
-		( ! isPluginBundleEligible && isBundledWithWooCommerce );
+		( ! isPluginBundleEligible && isBundled );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -439,12 +439,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setShowUpgradeModal( false );
 	}
 	function navigateToCheckout() {
-		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
-			( set ) => set.slug === 'woo-on-plans'
-		);
+		const themeHasBundle = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 		let plan;
-		if ( themeHasWooCommerce ) {
+		if ( themeHasBundle ) {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';

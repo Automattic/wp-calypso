@@ -30,11 +30,10 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 		)
 	);
 
-	const showBundledBadge = selectedDesign.is_bundled_with_woo_commerce;
-
 	let badge: React.ReactNode = null;
-	if ( showBundledBadge ) {
-		const settings = bundleSettings[ 'woo-on-plans' ];
+	if ( selectedDesign.software_sets && selectedDesign.software_sets.length > 0 ) {
+		const themeSoftware = selectedDesign.software_sets[ 0 ].slug;
+		const settings = bundleSettings[ themeSoftware ];
 		badge = <BundledBadge icon={ settings.badgeIcon }>{ settings.name }</BundledBadge>;
 	} else if ( selectedDesign.is_premium ) {
 		badge = <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />;
