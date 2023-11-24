@@ -6,6 +6,8 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
+import { useSelector } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { CommandCallBackParams, useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -65,11 +67,13 @@ export function CommandMenuGroup( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
-	const { commands: smpDefaultCommands } = useCommandPallette( {
+	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
+	const { commands } = useCommandPallette( {
 		selectedCommandName,
 		setSelectedCommandName,
+		filter: isContextual ? ( command ) => command.context?.includes( currentPath ) : undefined,
 	} );
-	const commands = isContextual ? smpDefaultCommands : [];
+
 	if ( ! commands.length ) {
 		return null;
 	}
@@ -223,24 +227,14 @@ export const WpcomCommandPalette = () => {
 							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
 						) }
 						<CommandMenuGroup
+							isContextual={ ! search && ! selectedCommandName }
 							search={ search }
 							close={ closeAndReset }
-							isContextual
 							setSearch={ setSearch }
 							setPlaceholderOverride={ setPlaceholderOverride }
 							selectedCommandName={ selectedCommandName }
 							setSelectedCommandName={ setSelectedCommandName }
 						/>
-						{ search && (
-							<CommandMenuGroup
-								search={ search }
-								close={ closeAndReset }
-								setSearch={ setSearch }
-								setPlaceholderOverride={ setPlaceholderOverride }
-								selectedCommandName={ selectedCommandName }
-								setSelectedCommandName={ setSelectedCommandName }
-							/>
-						) }
 					</Command.List>
 				</Command>
 			</StyledCommandsMenuContainer>
