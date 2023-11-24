@@ -166,7 +166,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'manageDomains',
-			label: __( 'Manage Domains' ),
+			label: __( 'Manage domains' ),
 			searchLabel: __( 'manage domains' ),
 			context: 'Managing domains',
 			callback: ( { close }: { close: () => void } ) => {
@@ -277,7 +277,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'openActivityLog',
-			label: __( 'Open Activity Log' ),
+			label: __( 'Open activity log' ),
 			searchLabel: __( 'open activity log' ),
 			context: 'Opening activity log',
 			callback: setStateCallback( 'openActivityLog' ),
