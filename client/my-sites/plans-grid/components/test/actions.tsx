@@ -68,6 +68,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 		const contactSupport = 'Contact support';
 		const defaultProps = {
 			availableForPurchase: true,
+			canUserManageCurrentPlan: true,
 			className: '',
 			current: false,
 			freePlan: false,
