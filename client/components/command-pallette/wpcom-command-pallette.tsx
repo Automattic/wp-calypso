@@ -189,7 +189,10 @@ export const WpcomCommandPalette = () => {
 		) {
 			event.preventDefault();
 		}
-		if ( event.key === 'Escape' && selectedCommandName ) {
+		if (
+			( event.key === 'Escape' && selectedCommandName ) ||
+			( event.key === 'Backspace' && ! search )
+		) {
 			event.preventDefault();
 			reset();
 		}
