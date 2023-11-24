@@ -40,6 +40,7 @@ export { getThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors/ge
 export { getThemesFoundForQuery } from 'calypso/state/themes/selectors/get-themes-found-for-query';
 export { getThemeSignupUrl } from 'calypso/state/themes/selectors/get-theme-signup-url';
 export { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
+export { getThemeSoftwareSet } from 'calypso/state/themes/selectors/get-theme-software-set';
 export { getThemeSupportUrl } from 'calypso/state/themes/selectors/get-theme-support-url';
 export { getThemeType } from 'calypso/state/themes/selectors/get-theme-type';
 export { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
