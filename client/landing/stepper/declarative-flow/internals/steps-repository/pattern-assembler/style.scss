@@ -2,7 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables";
 @import "./keyframes";
-@import "./variables";
 
 @font-face {
 	font-family: Inter;
@@ -53,7 +52,7 @@ $font-family: "SF Pro Text", $sans;
 	.pattern-assembler__sidebar {
 		display: flex;
 		flex-direction: column;
-		width: $sidebar-width;
+		width: 300px;
 		height: 100vh;
 		box-sizing: border-box;
 		padding: 110px 32px 32px;
@@ -63,7 +62,7 @@ $font-family: "SF Pro Text", $sans;
 		overflow-x: visible;
 
 		@include break-wide {
-			width: $sidebar-width-wide;
+			width: 348px;
 		}
 	}
 

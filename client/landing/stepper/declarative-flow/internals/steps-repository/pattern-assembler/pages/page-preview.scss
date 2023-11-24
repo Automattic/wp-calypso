@@ -30,7 +30,7 @@ $font-family: "SF Pro Text", $sans;
 		.pattern-assembler__preview-frame {
 			--fullscreen-x: calc(50vw - calc(var(--fullscreen-offset-x, 0) * 1px));
 			--fullscreen-y: calc(50vh - calc(var(--fullscreen-offset-y, 0) * 1px));
-			--scale: 1.5;
+			--scale: 1.6;
 
 			box-shadow:
 				0 9.95778px 9.95778px 0 rgba(0, 0, 0, 0.02),
@@ -42,14 +42,10 @@ $font-family: "SF Pro Text", $sans;
 				background-color: #f8f8f8;
 				border-color: #f8f8f8;
 			}
-
-			@include break-wide {
-				--scale: 1.8;
-			}
 		}
 
 		.pattern-assembler__preview-title {
-			display: none;
+			opacity: 0;
 		}
 	}
 

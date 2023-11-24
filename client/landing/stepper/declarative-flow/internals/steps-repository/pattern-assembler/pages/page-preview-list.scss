@@ -1,6 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "../variables";
 
 .pattern-assembler__preview-list {
 	box-sizing: border-box;
@@ -10,14 +9,13 @@
 	grid-template-columns: 1fr;
 	grid-template-rows: min-content;
 	height: 100vh;
-	left: 0;
 	overflow-y: scroll;
-	padding: 100px 12px 100px calc($sidebar-width + 12px);
-	pointer-events: none;
-	position: absolute;
-	top: 0;
-	width: 100vw;
+	padding: 100px 12px;
 	z-index: 2;
+
+	&--fullscreen-preview {
+		overflow-y: clip;
+	}
 
 	@include break-medium {
 		gap: 48px 24px;
@@ -26,7 +24,6 @@
 
 	@include break-wide {
 		gap: 48px 36px;
-		padding: 100px 12px 100px calc($sidebar-width-wide + 12px);
 	}
 
 	@include break-huge {

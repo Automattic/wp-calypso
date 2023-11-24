@@ -3,8 +3,9 @@ import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
 } from '@wordpress/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { CSSProperties, useCallback, useMemo } from 'react';
+import { CSSProperties, useCallback, useMemo, useState } from 'react';
 import { injectTitlesToPageListBlock } from '../html-transformers';
 import PagePreview from './page-preview';
 import type { Pattern } from '../types';
@@ -29,6 +30,7 @@ const PagePreviewList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const composite = useCompositeState( { orientation: 'horizontal' } );
+	const [ isFullscreenPreview, setIsFullscreenPreview ] = useState( false );
 
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const pagePreviewStyle = useMemo(
@@ -51,9 +53,23 @@ const PagePreviewList = ( {
 		[ isNewSite, selectedPages ]
 	);
 
+	const handleFullscreenEnter = () => {
+		setIsFullscreenPreview( true );
+	};
+
+	const handleFullscreenLeave = () => {
+		setTimeout( () => setIsFullscreenPreview( false ), 200 );
+	};
+
 	return (
 		<>
-			<Composite { ...composite } role="listbox" className="pattern-assembler__preview-list">
+			<Composite
+				{ ...composite }
+				role="listbox"
+				className={ classnames( 'pattern-assembler__preview-list', {
+					'pattern-assembler__preview-list--fullscreen-preview': isFullscreenPreview,
+				} ) }
+			>
 				<PagePreview
 					composite={ composite }
 					slug="homepage"
@@ -62,6 +78,8 @@ const PagePreviewList = ( {
 					patterns={ homepage }
 					transformPatternHtml={ transformPatternHtml }
 					shouldShufflePosts={ isNewSite }
+					onFullscreenEnter={ handleFullscreenEnter }
+					onFullscreenLeave={ handleFullscreenLeave }
 				/>
 				{ selectedPages.map( ( page, index ) => (
 					<PagePreview
@@ -77,6 +95,8 @@ const PagePreviewList = ( {
 						] }
 						transformPatternHtml={ transformPatternHtml }
 						shouldShufflePosts={ isNewSite }
+						onFullscreenEnter={ handleFullscreenEnter }
+						onFullscreenLeave={ handleFullscreenLeave }
 					/>
 				) ) }
 			</Composite>

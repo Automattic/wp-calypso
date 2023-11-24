@@ -25,6 +25,8 @@ interface PagePreviewProps extends BasePageProps {
 	composite: Record< string, unknown >;
 	slug: string;
 	title: string;
+	onFullscreenEnter: () => void;
+	onFullscreenLeave: () => void;
 }
 
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
@@ -67,7 +69,12 @@ const Page = ( {
 	);
 };
 
-const PatternPagePreview = ( { composite, ...pageProps }: PagePreviewProps ) => {
+const PatternPagePreview = ( {
+	composite,
+	onFullscreenEnter,
+	onFullscreenLeave,
+	...pageProps
+}: PagePreviewProps ) => {
 	const { slug, title, patterns } = pageProps;
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ frameStyles, setFrameStyles ] = useState( {} );
@@ -85,12 +92,23 @@ const PatternPagePreview = ( { composite, ...pageProps }: PagePreviewProps ) => 
 		} );
 	}, [ ref ] );
 
-	const onClick = () => {
-		if ( isFullscreen ) {
-			return;
+	const handleFullscreenEnter = () => {
+		if ( ! isFullscreen ) {
+			setIsFullscreen( true );
+			onFullscreenEnter();
 		}
+	};
 
-		setIsFullscreen( true );
+	// Use useCallback since useOutsideClickCallback memoizes the callback function.
+	const handleFullscreenLeave = useCallback( () => {
+		if ( isFullscreen ) {
+			setIsFullscreen( false );
+			onFullscreenLeave();
+		}
+	}, [ isFullscreen, onFullscreenLeave ] );
+
+	const handleClick = () => {
+		handleFullscreenEnter();
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
 			pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
 			page_slug: slug,
@@ -104,15 +122,13 @@ const PatternPagePreview = ( { composite, ...pageProps }: PagePreviewProps ) => 
 	}, [ isFullscreen, calculateFrameStyles ] );
 
 	useEffect( () => {
-		const onResize = () => setIsFullscreen( false );
-		window.addEventListener( 'resize', onResize );
-
+		window.addEventListener( 'resize', handleFullscreenLeave );
 		return () => {
-			window.removeEventListener( 'resize', onResize );
+			window.removeEventListener( 'resize', handleFullscreenLeave );
 		};
-	}, [] );
+	}, [ handleFullscreenLeave ] );
 
-	useOutsideClickCallback( ref, () => setIsFullscreen( false ) );
+	useOutsideClickCallback( ref, handleFullscreenLeave );
 
 	return (
 		<div
@@ -128,7 +144,7 @@ const PatternPagePreview = ( { composite, ...pageProps }: PagePreviewProps ) => 
 				className="pattern-assembler__preview-frame"
 				style={ frameStyles }
 				aria-label={ title }
-				onClick={ onClick }
+				onClick={ handleClick }
 			>
 				<Page className="pattern-assembler__preview-frame-content" { ...pageProps } />
 			</CompositeItem>
