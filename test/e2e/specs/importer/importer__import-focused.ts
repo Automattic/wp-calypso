@@ -30,7 +30,9 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 	};
 
 	const navigateToImportFocusedFlow = ( step: string, siteSlug?: string, from?: string ) => {
-		it( `Navigate to page setup/import-focused?from=${ from }`, async () => {
+		it( `Navigate to page setup/import-focused?siteSlug=${ siteSlug ?? '' }&from=${
+			from ?? ''
+		}`, async () => {
 			await startImportFlow.startImportFocused( step, siteSlug ?? '', from ?? '' );
 		} );
 	};

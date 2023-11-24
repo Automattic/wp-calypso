@@ -24,7 +24,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-hosted-site' ), ()
 	};
 
 	const navigateToImportHostedSiteFlow = ( step: string, siteSlug?: string, from?: string ) => {
-		it( `Navigate to page setup/import-focused?from=${ from }`, async () => {
+		it( `Navigate to page setup/import-hosted`, async () => {
 			await startImportFlow.startImportHostedSite( step, siteSlug ?? '', from ?? '' );
 		} );
 	};
