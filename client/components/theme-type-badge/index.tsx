@@ -46,7 +46,6 @@ const ThemeTypeBadge = ( {
 		} );
 	}, [ type, themeId, isLockedStyleVariation ] );
 
-	// TODO: Support multiple software sets.
 	const themeSoftware = themeSoftwareSet[ 0 ];
 
 	const badgeContentProps = {

@@ -101,7 +101,6 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
-	// TODO: Support multiple software sets.
 	const themeSoftware = themeSoftwareSet[ 0 ];
 
 	const getHeader = (): string | ReactElement | null => {
