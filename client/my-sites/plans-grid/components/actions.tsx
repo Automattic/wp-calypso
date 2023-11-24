@@ -399,6 +399,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				setActiveTooltipId={ setActiveTooltipId }
 				activeTooltipId={ activeTooltipId }
 				showOnMobile={ false }
+				display="block"
 				id="downgrade"
 			>
 				<Button className={ classes } onClick={ handleDowngradeButtonClick }>

@@ -4,8 +4,14 @@ import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { hasTouch } from '../lib/touch-detect';
 
-const HoverAreaContainer = styled.span`
-	max-width: 220px;
+// TODO:
+// The hover area container should ideally fit the dimensions of the child components
+// However, it's not easy to find a configuration that fits all possible display,
+// e.g. the feature copies in the plans table is an `inline` element, the downgrade button
+// is a `inline-block` element having 100% width. Looking into @wordpress/tooltip, I think
+// there is a way, but this intermediate solution seems to provide a less intrusive solution for the current needs.
+const HoverAreaContainer = styled.div< { display?: 'block' | 'inline-block' } >`
+	display: ${ ( { display = 'block' } ) => display };
 `;
 
 const StyledTooltip = styled( Tooltip )`
@@ -27,6 +33,7 @@ const StyledTooltip = styled( Tooltip )`
 
 export const Plans2023Tooltip = ( {
 	showOnMobile = true,
+	display = 'inline-block',
 	...props
 }: PropsWithChildren< {
 	text?: TranslateResult;
@@ -34,10 +41,12 @@ export const Plans2023Tooltip = ( {
 	activeTooltipId: string;
 	id: string;
 	showOnMobile?: boolean;
+	display?: 'block' | 'inline-block';
 } > ) => {
 	const { activeTooltipId, setActiveTooltipId, id } = props;
 	const tooltipRef = useRef< HTMLDivElement >( null );
 	const isTouch = hasTouch();
+	const isVisible = activeTooltipId === id;
 
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
@@ -52,8 +61,6 @@ export const Plans2023Tooltip = ( {
 		return id;
 	};
 
-	const isVisible = activeTooltipId === id;
-
 	return (
 		<>
 			<HoverAreaContainer
@@ -63,6 +70,7 @@ export const Plans2023Tooltip = ( {
 				onMouseLeave={ () => ! isTouch && setActiveTooltipId( '' ) }
 				onTouchStart={ () => isTouch && setActiveTooltipId( getMobileActiveTooltip() ) }
 				id={ props.id }
+				display={ display }
 			>
 				{ props.children }
 			</HoverAreaContainer>
