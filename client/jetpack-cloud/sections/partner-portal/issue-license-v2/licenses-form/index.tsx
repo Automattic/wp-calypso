@@ -113,6 +113,7 @@ export default function LicensesForm( {
 							isDisabled={ ! isReady }
 							onSelectProduct={ onSelectBundle }
 							tabIndex={ 100 + ( products?.length || 0 ) + i }
+							hideDiscount={ isSingleLicenseView }
 						/>
 					) ) }
 				</LicensesFormSection>
@@ -135,6 +136,7 @@ export default function LicensesForm( {
 							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 							tabIndex={ 100 + i }
 							suggestedProduct={ suggestedProduct }
+							hideDiscount={ isSingleLicenseView }
 						/>
 					) ) }
 				</LicensesFormSection>
