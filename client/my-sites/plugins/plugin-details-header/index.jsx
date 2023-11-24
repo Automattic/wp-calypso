@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Badge } from '@automattic/components';
+import { Badge, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -76,14 +76,14 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 						<div className="plugin-details-header__info-value">
 							<PluginRatings rating={ plugin.rating } />
 							{ isEnabled( 'marketplace-reviews-show' ) && numberOfReviews > 0 && (
-								<div>
+								<Button borderless className="is-link">
 									{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 										count: numberOfReviews,
 										args: {
 											numberOfReviews,
 										},
 									} ) }
-								</div>
+								</Button>
 							) }
 						</div>
 					</div>
