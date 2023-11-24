@@ -73,7 +73,7 @@ const BundledBadge: FunctionComponent< Props > = ( {
 			} }
 			{ ...isClickableProps }
 		>
-			{ icon }
+			{ icon && <span className="bundled-badge__icon">{ icon }</span> }
 			<span>{ children }</span>
 			<Popover
 				className={ classNames( 'bundled-badge__popover', tooltipClassName ) }

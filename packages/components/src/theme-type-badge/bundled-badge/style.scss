@@ -21,9 +21,15 @@
 		}
 	}
 
-	svg {
+	&__icon {
+		display: inline-flex;
+		align-items: center;
 		height: 20px;
 		margin-right: 5px;
+
+		svg {
+			height: 20px;
+		}
 	}
 
 	.design-picker .design-picker__option-meta & {
