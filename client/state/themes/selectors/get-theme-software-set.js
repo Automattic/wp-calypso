@@ -28,7 +28,7 @@ export const getThemeSoftwareSet = createSelector(
 			return [];
 		}
 
-		return themeSoftwareSetTaxonomy.map( ( item ) => item.name );
+		return themeSoftwareSetTaxonomy.map( ( item ) => item.slug );
 	},
 	( state, themeId ) => [ getThemeSoftwareSetTaxonomy( state, themeId ) ]
 );
