@@ -15,5 +15,5 @@ export function canPublishThemeReview(
 	const isMarketplaceThemeSubscribed =
 		siteId && isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, themeId, siteId );
 
-	return isLoggedIn && isMarketplaceThemeSubscribed;
+	return isLoggedIn && ( ! isExternallyManagedTheme || isMarketplaceThemeSubscribed );
 }

@@ -9,12 +9,14 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * @param {{}} plugin the given plugin with its variations
  * @returns {boolean} true if the user is logged in and has purchased the plugin.
  */
-export function useCanPublishPluginReview( plugin = {} ) {
+export function useCanPublishPluginReview( plugin = { isMarketplaceProduct: false } ) {
+	const { isMarketplaceProduct } = plugin;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchasedPlugin = getPluginPurchased( plugin, purchases );
+	const hasActiveSubscription = !! purchasedPlugin;
 
-	return isLoggedIn && !! purchasedPlugin;
+	return isLoggedIn && ( ! isMarketplaceProduct || hasActiveSubscription );
 }
