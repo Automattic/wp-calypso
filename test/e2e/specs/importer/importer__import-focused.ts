@@ -91,7 +91,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 			await startImportFlow.enterURL( sourceSiteUrl );
 		} );
 
-		it( 'Should render "Upgrade Plan" screen', async () => {
+		it( 'Should render "Migration Ready" screen', async () => {
 			await startImportFlow.validateMigrationReadyPage();
 		} );
 	} );
@@ -138,7 +138,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 			await startImportFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Should render "Upgrade Plan" screen', async () => {
+		it( 'Should render "Migration Ready" screen', async () => {
 			await startImportFlow.validateMigrationReadyPage();
 		} );
 	} );
