@@ -184,7 +184,7 @@
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"videomaker-trial": false,
+		"videomaker-trial": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,

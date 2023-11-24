@@ -21,6 +21,7 @@ type Props = {
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	onSelectProduct?: ( value: APIProductFamilyProduct ) => void;
+	hideDiscount?: boolean;
 };
 
 const LicenseBundleCard = ( {
@@ -30,6 +31,7 @@ const LicenseBundleCard = ( {
 	tabIndex,
 	product,
 	onSelectProduct,
+	hideDiscount,
 }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -87,7 +89,7 @@ const LicenseBundleCard = ( {
 
 				<div className="license-bundle-card__footer">
 					<div className="license-bundle-card__pricing">
-						<ProductPriceWithDiscount product={ product } />
+						<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
 					</div>
 					<Button
 						primary

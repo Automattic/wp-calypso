@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -14,6 +13,7 @@ import LayoutNavigation, {
 	LayoutNavigationItem as NavigationItem,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
@@ -52,7 +52,23 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		handleShowLicenseOverview();
 	}, [ handleShowLicenseOverview ] );
 
-	const showStickyContent = isWithinBreakpoint( '>960px' ) && selectedLicenses.length > 0;
+	const showStickyContent = selectedLicenses.length > 0;
+
+	// Group licenses by slug and sort them by quantity
+	const getGroupedLicenses = useCallback( () => {
+		return Object.values(
+			selectedLicenses.reduce(
+				( acc: Record< string, SelectedLicenseProp[] >, license ) => (
+					( acc[ license.slug ] = ( acc[ license.slug ] || [] ).concat( license ) ), acc
+				),
+				{}
+			)
+		)
+			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
+			.flat();
+	}, [ selectedLicenses ] );
+
+	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
 
 	return (
 		<>
@@ -63,6 +79,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 				withBorder
 			>
 				<LayoutTop>
+					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
+
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>
 						<Subtitle>
@@ -127,7 +145,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			{ showReviewLicenses && (
 				<ReviewLicenses
 					onClose={ () => setShowReviewLicenses( false ) }
-					selectedLicenses={ selectedLicenses }
+					selectedLicenses={ getGroupedLicenses() }
 				/>
 			) }
 		</>

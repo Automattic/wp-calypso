@@ -3,6 +3,7 @@
  */
 import {
 	DataHelper,
+	ElementHelper,
 	UserSignupPage,
 	BrowserManager,
 	NewUserResponse,
@@ -20,7 +21,6 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		usernamePrefix: 'start_writing',
 	} );
 	let page: Page;
-	let domainSearchComponent: DomainSearchComponent;
 	let newUserDetails: NewUserResponse;
 
 	beforeAll( async () => {
@@ -28,89 +28,63 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 		await BrowserManager.setStoreCookie( page, { currency: 'EUR' } );
 	} );
 
-	describe( 'Signup via /setup/start-writing', function () {
-		let editorPage: EditorPage;
-		const postTitle = 'my first post title';
+	it( 'Navigate to /setup/start-writing', async function () {
+		await page.goto( DataHelper.getCalypsoURL( '/setup/start-writing' ) );
+	} );
 
-		it( 'Navigate to /setup/start-writing', async function () {
-			await page.goto( DataHelper.getCalypsoURL( '/setup/start-writing' ) );
+	it( 'Sign up with email', async function () {
+		const userSignupPage = new UserSignupPage( page );
+		newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+	} );
+
+	it( 'Publish first post', async function () {
+		const editorPage = new EditorPage( page );
+		await editorPage.enterTitle( 'my first post title' );
+		await editorPage.publish();
+		await page.getByText( "Your blog's almost ready!" ).waitFor();
+	} );
+
+	it( 'Add blog name and description', async function () {
+		await page.getByRole( 'button', { name: 'Name your blog' } ).click();
+
+		await page.locator( 'input[name="setup-form-input-name"]' ).fill( 'The Land of Foo' );
+		await page
+			.locator( 'textarea[name="setup-form-input-description"]' )
+			.fill( 'A blog about Foo' );
+
+		await page.locator( 'button.setup-form__submit' ).click();
+	} );
+
+	it( 'Ensure domain search is working', async function () {
+		await page.getByRole( 'button', { name: 'Choose a domain' } ).click();
+		const domainSearchComponent = new DomainSearchComponent( page );
+		await domainSearchComponent.search( 'test' );
+		await page
+			.locator( '.domain-search-results' )
+			.getByRole( 'button', { name: 'Select' } )
+			.first()
+			.waitFor();
+	} );
+
+	it( 'Skip the domain selection step', async function () {
+		await page.getByText( 'Decide later' ).click();
+	} );
+
+	it( 'Select WordPress.com Free plan', async function () {
+		await page.getByRole( 'button', { name: 'Choose a plan' } ).click();
+		// See https://github.com/Automattic/wp-calypso/pull/84468
+		await ElementHelper.reloadAndRetry( page, async function () {
+			await page.getByRole( 'button', { name: 'Start with Free' } ).click();
 		} );
+	} );
 
-		it( 'Enter account details', async function () {
-			await page.waitForURL( /.*start-writing.*/ );
-			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
-		} );
+	it( 'Launch the blog', async function () {
+		await page.getByRole( 'button', { name: 'Launch your blog' } ).click();
+	} );
 
-		it( "Start user's first post", async function () {
-			await page.waitForURL( /.*post-new.php\?start-writing=true.*/ );
-			editorPage = new EditorPage( page );
-		} );
-
-		it( 'Enter blog title', async function () {
-			await editorPage.enterTitle( postTitle );
-		} );
-
-		it( 'Publish post and open Launchpad', async function () {
-			await editorPage.publish();
-			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.locator( ':text("Your blog\'s almost ready!")' ).waitFor();
-		} );
-
-		it( 'Add blog name and description', async function () {
-			await page.getByRole( 'button', { name: 'Name your blog' } ).click();
-			await page.getByPlaceholder( 'A catchy name to make your blog memorable' );
-
-			await page
-				.locator( 'input[name="setup-form-input-name"]' )
-				.fill( `Start writing site ${ testUser.username }` );
-			await page
-				.locator( 'textarea[name="setup-form-input-description"]' )
-				.fill( `The place of ${ testUser.username }` );
-
-			await page.locator( 'button.setup-form__submit' ).click();
-		} );
-
-		it( 'Navigate choose a domain', async function () {
-			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.getByRole( 'button', { name: 'Choose a domain' } ).click();
-		} );
-
-		it( 'Search for a domain', async function () {
-			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( testUser.username );
-		} );
-
-		it( 'Skip selecting a domain', async function () {
-			await Promise.all( [
-				page.waitForURL( /.*start-writing\/domains.*/ ),
-				page.click( 'text=Decide later' ),
-			] );
-		} );
-
-		it( 'Navigate choose a plan', async function () {
-			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.getByRole( 'button', { name: 'Choose a plan' } ).click();
-		} );
-
-		it( 'Select WordPress.com Free plan', async function () {
-			await page.getByRole( 'button', { name: 'Start with Free' } ).click( { timeout: 60_000 } );
-		} );
-
-		it( 'Launch site', async function () {
-			await page.waitForURL( /.*start-writing\/launchpad.*/ );
-			await page.getByRole( 'button', { name: 'Launch your blog' } ).click();
-		} );
-
-		it( "Ensure we're redirected to celebration screen", async function () {
-			await page.waitForURL( /.*start-writing\/celebration-step.*/ );
-		} );
-
-		it( 'Navigate to connect to social', async function () {
-			await page.waitForURL( /.*start-writing\/celebration-step.*/ );
-			await page.getByRole( 'button', { name: 'Connect to social' } ).click();
-			await page.waitForURL( /.*marketing\/connections.*/ );
-		} );
+	it( 'Ensure "Connect to social" navigates to Marketing page', async function () {
+		await page.getByRole( 'button', { name: 'Connect to social' } ).click();
+		await page.getByText( 'Marketing and Integrations' ).waitFor();
 	} );
 
 	afterAll( async function () {
