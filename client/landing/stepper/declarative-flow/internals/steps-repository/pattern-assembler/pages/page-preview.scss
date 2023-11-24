@@ -42,6 +42,10 @@ $font-family: "SF Pro Text", $sans;
 				background-color: #f8f8f8;
 				border-color: #f8f8f8;
 			}
+
+			&-content {
+				overflow-y: scroll;
+			}
 		}
 
 		.pattern-assembler__preview-title {
