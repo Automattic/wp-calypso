@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
@@ -20,6 +22,12 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const { currentVersionsRange } = usePluginVersionInfo( plugin, selectedSite?.ID );
+
+	const { data: marketplaceReviews } = useMarketplaceReviewsQuery( {
+		productType: 'plugin',
+		pluginSlug: plugin.slug,
+	} );
+	const numberOfReviews = marketplaceReviews?.length || 0;
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
@@ -67,6 +75,16 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 						<div className="plugin-details-header__info-title">{ translate( 'Ratings' ) }</div>
 						<div className="plugin-details-header__info-value">
 							<PluginRatings rating={ plugin.rating } />
+							{ isEnabled( 'marketplace-reviews-show' ) && numberOfReviews > 0 && (
+								<div>
+									{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
+										count: numberOfReviews,
+										args: {
+											numberOfReviews,
+										},
+									} ) }
+								</div>
+							) }
 						</div>
 					</div>
 				) }
