@@ -129,7 +129,8 @@ $mobile-card-max-width: 440px;
 				}
 			}
 
-			&.is-current-plan {
+			&.is-current-plan,
+			&.is-downgrade {
 				background-color: var(--studio-white);
 				color: var(--studio-gray-100);
 				box-shadow: inset 0 0 0 1px var(--studio-gray-10);

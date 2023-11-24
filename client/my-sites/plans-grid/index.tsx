@@ -38,6 +38,7 @@ export interface PlansGridProps {
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	onDowngradeClick?: () => void;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	flowName?: string | null;
 	paidDomainName?: string;
@@ -68,6 +69,7 @@ const WrappedComparisonGrid = ( {
 	usePricingMetaForGridPlans,
 	allFeaturesList,
 	onUpgradeClick,
+	onDowngradeClick,
 	intervalType,
 	isInSignup,
 	isLaunchPage,
@@ -104,6 +106,7 @@ const WrappedComparisonGrid = ( {
 				currentPlanManageHref={ currentPlanManageHref }
 				canUserManageCurrentPlan={ canUserManageCurrentPlan }
 				onUpgradeClick={ handleUpgradeClick }
+				onDowngradeClick={ () => onDowngradeClick?.() }
 				siteId={ siteId }
 				selectedPlan={ selectedPlan }
 				selectedFeature={ selectedFeature }
@@ -125,6 +128,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 		usePricingMetaForGridPlans,
 		allFeaturesList,
 		onUpgradeClick,
+		onDowngradeClick,
 		currentPlanManageHref,
 		canUserManageCurrentPlan,
 	} = props;
@@ -161,6 +165,7 @@ const WrappedFeaturesGrid = ( props: PlansGridProps ) => {
 				currentPlanManageHref={ currentPlanManageHref }
 				translate={ translate }
 				handleUpgradeClick={ handleUpgradeClick }
+				handleDowngradeClick={ () => onDowngradeClick?.() }
 			/>
 		</PlansGridContextProvider>
 	);

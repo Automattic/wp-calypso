@@ -18,6 +18,8 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -257,6 +259,8 @@ const PlansFeaturesMain = ( {
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
+	const { setShowHelpCenter, setInitialRoute } = useDispatch( HELP_CENTER_STORE );
+	const { url: stillNeedHelpUrl } = useStillNeedHelpURL();
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const observableForOdieRef = useObservableForOdie();
@@ -368,6 +372,11 @@ const PlansFeaturesMain = ( {
 		},
 		[ onUpgradeClick, resolveModal, siteSlug, withDiscount ]
 	);
+
+	const handleDowngradeClick = useCallback( () => {
+		setInitialRoute( stillNeedHelpUrl );
+		setShowHelpCenter( true );
+	}, [ siteSlug ] );
 
 	const term = usePlanBillingPeriod( {
 		intervalType,
@@ -797,6 +806,7 @@ const PlansFeaturesMain = ( {
 									isInSignup={ isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
+									onDowngradeClick={ handleDowngradeClick }
 									flowName={ flowName }
 									selectedFeature={ selectedFeature }
 									selectedPlan={ selectedPlan }
@@ -860,6 +870,7 @@ const PlansFeaturesMain = ( {
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
+												onDowngradeClick={ handleDowngradeClick }
 												flowName={ flowName }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }

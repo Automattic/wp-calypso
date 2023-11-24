@@ -16,7 +16,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
-import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
@@ -41,6 +40,7 @@ type PlanFeaturesActionsButtonProps = {
 	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
 	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
+	onDowngradeClick: () => void;
 	planSlug: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
@@ -53,18 +53,6 @@ type PlanFeaturesActionsButtonProps = {
 	isLargeCurrency?: boolean;
 	storageOptions?: StorageOption[];
 };
-
-const DummyDisabledButton = styled.div`
-	background-color: var( --studio-white );
-	color: var( --studio-gray-5 );
-	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
-	font-weight: 500;
-	line-height: 20px;
-	border-radius: 4px;
-	padding: 10px 14px;
-	border: unset;
-	text-align: center;
-`;
 
 const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
@@ -216,6 +204,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isMonthlyPlan,
 	planTitle,
 	handleUpgradeButtonClick,
+	handleDowngradeButtonClick,
 	planSlug,
 	currentPlanManageHref,
 	canUserManageCurrentPlan,
@@ -233,6 +222,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
+	handleDowngradeButtonClick: () => void;
 	planSlug: PlanSlug;
 	currentPlanManageHref?: string;
 	canUserManageCurrentPlan?: boolean | null;
@@ -288,12 +278,6 @@ const LoggedInPlansFeatureActionButton = ( {
 		if ( isP2FreePlan( planSlug ) && current ) {
 			return null;
 		}
-
-		return (
-			<Button className={ classes } disabled={ true }>
-				{ translate( 'Contact support', { context: 'verb' } ) }
-			</Button>
-		);
 	}
 
 	if ( current && planSlug !== PLAN_P2_FREE ) {
@@ -415,9 +399,12 @@ const LoggedInPlansFeatureActionButton = ( {
 				setActiveTooltipId={ setActiveTooltipId }
 				activeTooltipId={ activeTooltipId }
 				showOnMobile={ false }
+				display="block"
 				id="downgrade"
 			>
-				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
+				<Button className={ classes } onClick={ handleDowngradeButtonClick }>
+					{ translate( 'Downgrade', { context: 'verb' } ) }
+				</Button>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
 						{ translate( 'Please contact support to downgrade your plan.' ) }
@@ -440,6 +427,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
+	onDowngradeClick,
 	planSlug,
 	flowName,
 	buttonText,
@@ -464,6 +452,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		'is-current-plan': current,
 		'is-stuck': isStuck,
 		'is-large-currency': isLargeCurrency,
+		'is-downgrade': ! availableForPurchase && ! isWpcomEnterpriseGridPlan,
 	} );
 
 	const handleUpgradeButtonClick = useCallback(
@@ -481,6 +470,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		},
 		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
 	);
+
+	const handleDowngradeButtonClick = useCallback( () => {
+		onDowngradeClick?.();
+	}, [ onDowngradeClick ] );
 
 	if ( isWpcomEnterpriseGridPlan ) {
 		const vipLandingPageUrlWithUtmCampaign = addQueryArgs(
@@ -566,6 +559,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
+			handleDowngradeButtonClick={ handleDowngradeButtonClick }
 			currentPlanManageHref={ currentPlanManageHref }
 			canUserManageCurrentPlan={ canUserManageCurrentPlan }
 			currentSitePlanSlug={ currentSitePlanSlug }

@@ -51,6 +51,7 @@ interface FeaturesGridType extends PlansGridProps {
 	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
 	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
+	handleDowngradeClick: () => void;
 }
 
 class FeaturesGrid extends Component< FeaturesGridType > {
@@ -63,6 +64,11 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ gridPlansWithoutSpotlight.length }-cols`
+		);
+		// when all the plans are non-purchasable, we want to disable the sticky bar
+		// since all the CTAs will be just "Downgrade" leading to support. That'd defeat the purpose of the sticky bar.
+		const disableSticky = gridPlansWithoutSpotlight.every(
+			( { availableForPurchase } ) => ! availableForPurchase
 		);
 
 		return (
@@ -82,6 +88,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
+						disabled={ disableSticky }
 					>
 						{ ( isStuck: boolean ) =>
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
@@ -367,6 +374,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			siteId,
 			isLargeCurrency,
 			handleUpgradeClick,
+			handleDowngradeClick,
 		} = this.props;
 
 		return renderedGridPlans.map(
@@ -410,6 +418,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 							onUpgradeClick={ ( overridePlanSlug ) =>
 								handleUpgradeClick( overridePlanSlug ?? planSlug )
 							}
+							onDowngradeClick={ handleDowngradeClick }
 							planSlug={ planSlug }
 							flowName={ flowName }
 							currentSitePlanSlug={ currentSitePlanSlug }
