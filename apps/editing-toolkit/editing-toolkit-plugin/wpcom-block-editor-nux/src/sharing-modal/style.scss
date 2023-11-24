@@ -36,6 +36,7 @@
 				border-left: 1px solid var(--studio-gray-5);
 				display: flex;
 				justify-content: center;
+				min-width: 300px;
 			}
 
 			@media only screen and (max-width: 600px) {

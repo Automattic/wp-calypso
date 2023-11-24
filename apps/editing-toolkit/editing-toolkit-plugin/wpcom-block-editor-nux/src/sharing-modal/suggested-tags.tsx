@@ -59,7 +59,6 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 
 	const onChangeSelectedTags = ( newTags: string[] ) => {
 		setSelectedTags( newTags );
-		setTagsAddedToPost( false );
 	};
 
 	const tokenField = (
