@@ -2,18 +2,27 @@ import {
 	plus as addNewSiteIcon,
 	globe as domainsIcon,
 	commentAuthorAvatar as profileIcon,
+	settings as accountSettingsIcon,
+	payment as creditCardIcon,
+	home as dashboardIcon,
+	chartBar as statsIcon,
+	alignJustify as acitvityLogIcon,
+	backup as backupIcon,
+	cog as hostingConfigIcon,
+	tool as toolIcon,
+	page as pageIcon,
+	key as keyIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { CommandCallBackParams } from 'calypso/components/command-pallette/use-command-pallette';
-import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
-import { isCustomDomain, isNotAtomicJetpack } from '../utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
 	setSelectedCommandName: ( name: string ) => void;
@@ -95,6 +104,21 @@ export const useCommandsArrayWpcom = ( {
 		displaySuccessNotice( __( 'Copied new password' ) );
 	};
 
+	const openPHPmyAdmin = async ( siteId: number ) => {
+		try {
+			const { token } = await wpcom.req.post( {
+				path: `/sites/${ siteId }/hosting/pma/token`,
+				apiNamespace: 'wpcom/v2',
+			} );
+
+			if ( token ) {
+				window.open( `https://wordpress.com/pma-login?token=${ token }` );
+			}
+		} catch {
+			dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
+		}
+	};
+
 	const commands = [
 		{
 			name: 'addNewSite',
@@ -116,7 +140,6 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/me` );
 			},
-
 			icon: profileIcon,
 		},
 		{
@@ -128,7 +151,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/me/account` );
 			},
-			icon: <MaterialIcon icon="settings" />,
+			icon: accountSettingsIcon,
 		},
 		{
 			name: 'acessPurchases',
@@ -139,7 +162,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `me/purchases` );
 			},
-			icon: <MaterialIcon icon="credit_card" />,
+			icon: creditCardIcon,
 		},
 		{
 			name: 'manageDomains',
@@ -181,14 +204,14 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="key" />,
+			icon: keyIcon,
 		},
 		{
-			name: 'openSshDetails',
-			label: __( 'Open SSH details' ),
-			searchLabel: __( 'open SSH details' ),
-			context: 'Opening SSH details',
-			callback: setStateCallback( 'openSshDetails' ),
+			name: 'openSshCredentials',
+			label: __( 'Open SFTP/SSH credentials' ),
+			searchLabel: __( 'open SFTP/SSH credentials' ),
+			context: 'Opening SFTP/SSH credentials',
+			callback: setStateCallback( 'openSshCredentials' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -196,7 +219,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="key" />,
+			icon: keyIcon,
 		},
 		{
 			name: 'resetSshSftpPassword',
@@ -211,7 +234,211 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="key" />,
+			icon: keyIcon,
+		},
+		{
+			name: 'openSiteDashboard',
+			label: __( 'Open site dashboard' ),
+			searchLabel: __( 'open site dashboard' ),
+			context: 'Opening site dashboard',
+			callback: setStateCallback( 'openSiteDashboard' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/home/${ site.slug }` );
+				},
+			},
+			icon: dashboardIcon,
+		},
+		{
+			name: 'openSiteStats',
+			label: __( 'Open site stats' ),
+			searchLabel: __( 'open site stats' ),
+			context: 'Opening site stats',
+			callback: setStateCallback( 'openSiteStats' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/stats/${ site.slug }` );
+				},
+			},
+			icon: statsIcon,
+		},
+		{
+			name: 'registerDomain',
+			label: __( 'Register domain' ),
+			searchLabel: __( 'register domain' ),
+			context: 'Registering domain',
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/start/domain/domain-only` );
+			},
+			icon: domainsIcon,
+		},
+		{
+			name: 'openActivityLog',
+			label: __( 'Open Activity Log' ),
+			searchLabel: __( 'open activity log' ),
+			context: 'Opening activity log',
+			callback: setStateCallback( 'openActivityLog' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/activity-log/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+			},
+			icon: acitvityLogIcon,
+		},
+		{
+			name: 'openBackups',
+			label: __( 'Open backups' ),
+			searchLabel: __( 'open backups' ),
+			context: 'Opening backups',
+			callback: setStateCallback( 'openBackups' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/backup/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+			},
+			icon: backupIcon,
+		},
+		{
+			name: 'viewSiteMetrics',
+			label: __( 'View site metrics' ),
+			searchLabel: __( 'view site metrics' ),
+			context: 'Viewing site metrics',
+			callback: setStateCallback( 'viewSiteMetrics' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/site-monitoring/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: statsIcon,
+		},
+		{
+			name: 'openPHPLogs',
+			label: __( 'Open PHP logs' ),
+			searchLabel: __( 'open PHP logs' ),
+			context: 'Opening PHP logs',
+			callback: setStateCallback( 'openPHPLogs' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/site-monitoring/${ site.slug }/php` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: acitvityLogIcon,
+		},
+		{
+			name: 'openWebServerLogs',
+			label: __( 'Open web server logs' ),
+			searchLabel: __( 'open web server logs' ),
+			context: 'Opening web server logs',
+			callback: setStateCallback( 'openWebServerLogs' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/site-monitoring/${ site.slug }/web` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: acitvityLogIcon,
+		},
+		{
+			name: 'openHostingConfiguration',
+			label: __( 'Open hosting configuration' ),
+			searchLabel: __( 'open hosting configuration' ),
+			context: 'Opening hosting configuration',
+			callback: setStateCallback( 'openHostingConfiguration' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+			},
+			icon: hostingConfigIcon,
+		},
+		{
+			name: 'openPHPmyAdmin',
+			label: __( 'Open database in phpMyAdmin' ),
+			searchLabel: __( 'open database in phpMyAdmin' ),
+			context: 'Opening phpMyAdmin',
+			callback: setStateCallback( 'openPHPmyAdmin' ),
+			siteFunctions: {
+				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					await openPHPmyAdmin( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: pageIcon,
+		},
+		{
+			name: 'manageStagingSites',
+			label: __( 'Manage staging sites' ),
+			searchLabel: __( 'manage staging sites' ),
+			context: 'Managing staging sites',
+			callback: setStateCallback( 'manageStagingSites' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#staging-site` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: toolIcon,
+		},
+		{
+			name: 'managePHPVersion',
+			label: __( 'Manage PHP version' ),
+			searchLabel: __( 'manage PHP issue' ),
+			context: 'Managing PHP version',
+			callback: setStateCallback( 'managePHPVersion' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: toolIcon,
+		},
+		{
+			name: 'manageCacheSettings',
+			label: __( 'Manage cache settings' ),
+			searchLabel: __( 'manage cache settings' ),
+			context: 'Managing cache settings',
+			callback: setStateCallback( 'manageCacheSettings' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#cache` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: toolIcon,
+		},
+		{
+			name: 'manageAdminInterfaceStyle',
+			label: __( 'Manage admin interface style' ),
+			searchLabel: __( 'manage admin interface style' ),
+			context: 'Managing admin interface style',
+			callback: setStateCallback( 'manageAdminInterfaceStyle' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#admin-interface-style` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: pageIcon,
 		},
 	];
 
