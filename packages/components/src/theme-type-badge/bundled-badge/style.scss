@@ -30,38 +30,39 @@
 		min-height: 0;
 	}
 
-	.bundled-badge__logo {
+	& &__logo {
 		margin-top: -1px;
 		margin-right: 3px;
 		fill: currentcolor;
 	}
-}
-.bundled-badge__popover {
-	max-width: 300px;
-	outline: none;
-	.popover__inner {
-		background-color: #000;
-		color: #eee;
-		padding: 0.25rem 0.5rem;
-		border-radius: 4px;
-		border: 0;
-	}
-	&.is-bottom-left,
-	&.is-bottom-right {
-		.popover__arrow {
-			&::before {
-				border-bottom-color: #000 !important;
+
+	&__popover {
+		max-width: 300px;
+		outline: none;
+		.popover__inner {
+			background-color: #000;
+			color: #eee;
+			padding: 0.25rem 0.5rem;
+			border-radius: 4px;
+			border: 0;
+		}
+		&.is-bottom-left,
+		&.is-bottom-right {
+			.popover__arrow {
+				&::before {
+					border-bottom-color: #000 !important;
+				}
 			}
 		}
-	}
-	&.is-top-left {
-		.popover__arrow {
-			&::before {
-				border-top-color: #000 !important;
+		&.is-top-left {
+			.popover__arrow {
+				&::before {
+					border-top-color: #000 !important;
+				}
 			}
 		}
-	}
-	.popover__arrow {
-		border: 10px dashed transparent;
+		.popover__arrow {
+			border: 10px dashed transparent;
+		}
 	}
 }
