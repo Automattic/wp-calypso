@@ -67,7 +67,13 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	const onClickWithValidation: ProcessPayment = async (
 		processorData: PaymentProcessorSubmitData
 	) => {
-		if ( ! isActive ) {
+		if ( formStatus === FormStatus.SUBMITTING ) {
+			return Promise.resolve(
+				makeErrorResponse( __( 'A transaction is currently pending. Please wait.' ) )
+			);
+		}
+
+		if ( isDisabled ) {
 			return Promise.resolve(
 				makeErrorResponse( __( 'This payment method is not currently available.' ) )
 			);
