@@ -44,6 +44,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -70,6 +71,7 @@ import {
 } from 'calypso/state/themes/actions';
 import {
 	doesThemeBundleSoftwareSet,
+	getThemeSoftwareSet,
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
@@ -1016,6 +1018,7 @@ class ThemeSheet extends Component {
 	getBannerUpsellTitle = () => {
 		const {
 			isBundledSoftwareSet,
+			themeSoftwareSet,
 			isExternallyManagedTheme,
 			translate,
 			isSiteEligibleForManagedExternalThemes,
@@ -1023,7 +1026,17 @@ class ThemeSheet extends Component {
 		} = this.props;
 
 		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
-			return translate( 'Access this WooCommerce theme with a Business plan!' );
+			const themeSoftware = themeSoftwareSet[ 0 ];
+
+			if ( ! bundleSettings[ themeSoftware ] ) {
+				return translate( 'Access this theme with a Business plan!' );
+			}
+
+			const bundleName = bundleSettings[ themeSoftware ].name;
+
+			return translate( 'Access this %(bundleName)s theme with a Business plan!', {
+				args: { bundleName },
+			} );
 		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
@@ -1037,6 +1050,7 @@ class ThemeSheet extends Component {
 	getBannerUpsellDescription = () => {
 		const {
 			isBundledSoftwareSet,
+			themeSoftwareSet,
 			isExternallyManagedTheme,
 			translate,
 			isSiteEligibleForManagedExternalThemes,
@@ -1044,8 +1058,19 @@ class ThemeSheet extends Component {
 		} = this.props;
 
 		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
+			const themeSoftware = themeSoftwareSet[ 0 ];
+
+			if ( ! bundleSettings[ themeSoftware ] ) {
+				return translate(
+					'This theme comes bundled with a plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+				);
+			}
+
+			const bundleName = bundleSettings[ themeSoftware ].name;
+
 			return translate(
-				'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+				'This theme comes bundled with the %(bundleName)s plugin. Upgrade to a Business plan to select this theme and unlock all its features.',
+				{ args: { bundleName } }
 			);
 		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 			if ( ! isSiteEligibleForManagedExternalThemes ) {
@@ -1530,6 +1555,7 @@ export default connect(
 			isThemeInstalled: !! getTheme( state, siteId, themeId ),
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
+			themeSoftwareSet: getThemeSoftwareSet( state, themeId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
