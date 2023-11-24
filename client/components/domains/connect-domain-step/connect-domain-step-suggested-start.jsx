@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button, FoldableCard } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';

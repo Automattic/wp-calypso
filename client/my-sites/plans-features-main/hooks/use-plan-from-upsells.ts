@@ -3,7 +3,6 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 
 /**
  * Returns the plan slug from the current query arguments `?plan=` that is normally used in upsells.
- *
  * @returns {string|null|undefined} The plan slug.
  */
 const usePlanFromUpsells = (): string | null | undefined => {

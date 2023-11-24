@@ -14,7 +14,7 @@ const selectors = {
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
 		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
-	wpPreMigrationContentOnlyOptionButton: 'button:has-text("Use the content-only import option")',
+	wpPreMigrationContentOnlyOptionButton: 'button:has-text("free content-only import option")',
 	// ImporterDrag page
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
@@ -95,10 +95,17 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Validates that we've landed on the import (migration) ready page.
+	 * Validates that we've landed on the upgrade plan page.
 	 */
 	async validateUpgradePlanPage(): Promise< void > {
 		await this.page.waitForSelector( selectors.startBuildingHeader( 'Upgrade your plan' ) );
+	}
+
+	/**
+	 * Validates that we've landed on the "Install Jetpack" page.
+	 */
+	async validateInstallJetpackPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.startBuildingHeader( 'Install Jetpack' ) );
 	}
 
 	/**

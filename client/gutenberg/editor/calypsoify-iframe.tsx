@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map, pickBy, flowRight } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -204,7 +204,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	 * this.
 	 *
 	 * Some historical work which has been combined into this timer:
-	 *
 	 * @see https://github.com/Automattic/wp-calypso/pull/43248
 	 * @see https://github.com/Automattic/wp-calypso/pull/36977
 	 * @see https://github.com/Automattic/wp-calypso/pull/41006

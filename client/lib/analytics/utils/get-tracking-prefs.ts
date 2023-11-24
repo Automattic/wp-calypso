@@ -61,7 +61,6 @@ export const parseTrackingPrefs = (
  * Returns consents for every Cookie Jar bucket based on privacy driven approach
  *
  * WARNING: this function only works on the client side.
- *
  * @returns Whether we may track the current user
  */
 export default function getTrackingPrefs(): TrackingPrefs {

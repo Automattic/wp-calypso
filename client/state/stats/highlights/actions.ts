@@ -5,7 +5,6 @@ import 'calypso/state/stats/init';
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve stats highlights data.
- *
  * @param  {number}  siteId Site ID
  * @returns {Object}  Action object
  */
@@ -20,7 +19,6 @@ export function requestHighlights( siteId: number ) {
 /**
  * Returns an action object to be used in signalling that a visitor count object has
  * been received.
- *
  * @param {number} siteId Site ID
  * @param {Object} data   API response
  * @returns {Object}  Action object

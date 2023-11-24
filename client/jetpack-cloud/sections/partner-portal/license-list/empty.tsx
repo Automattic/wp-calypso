@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import './style.scss';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 
 interface Props {
 	filter: LicenseFilter;
@@ -15,6 +16,8 @@ export default function LicenseListEmpty( { filter }: Props ) {
 	const translate = useTranslate();
 	const counts = useSelector( getLicenseCounts );
 	const hasAssignedLicenses = counts[ LicenseFilter.Attached ] > 0;
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const licenseFilterStatusTitleMap = {
 		[ LicenseFilter.NotRevoked ]: translate( 'No active licenses' ),
@@ -60,7 +63,11 @@ export default function LicenseListEmpty( { filter }: Props ) {
 				<p>{ translate( 'Every license you own is currently attached to a site.' ) }</p>
 			) }
 
-			<Button href="/partner-portal/issue-license" onClick={ onIssueNewLicense }>
+			<Button
+				disabled={ ! partnerCanIssueLicense }
+				href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
+				onClick={ onIssueNewLicense }
+			>
 				{ translate( 'Issue New License' ) }
 			</Button>
 		</div>

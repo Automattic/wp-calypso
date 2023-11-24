@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	HorizontalBarList,
 	HorizontalBarListItem,
@@ -7,7 +8,6 @@ import {
 import { Icon, tag, file } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import page from 'page';
 import { useState, useCallback } from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

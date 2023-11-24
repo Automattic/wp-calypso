@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import { useEffect } from 'react';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';

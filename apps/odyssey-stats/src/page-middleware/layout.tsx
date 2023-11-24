@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Context } from 'page';
 import { FunctionComponent } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Store } from 'redux';
@@ -7,6 +6,7 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import Layout from '../components/layout';
+import type { Context } from '@automattic/calypso-router';
 
 export { render, hydrate } from 'calypso/controller/web-util';
 

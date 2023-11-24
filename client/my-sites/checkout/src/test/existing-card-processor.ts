@@ -72,7 +72,7 @@ describe( 'existingCardProcessor', () => {
 
 	it( 'throws an error if there is no storedDetailsId passed', async () => {
 		const submitData = {};
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrow(
 			/requires saved card information and none was provided/
 		);
 	} );
@@ -82,7 +82,7 @@ describe( 'existingCardProcessor', () => {
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 		};
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrow(
 			/requires a Stripe token and none was provided/
 		);
 	} );
@@ -93,7 +93,7 @@ describe( 'existingCardProcessor', () => {
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
 		};
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrow(
 			/requires a processor id and none was provided/
 		);
 	} );

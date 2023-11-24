@@ -38,13 +38,13 @@
 		"@wordpress/html-entities": "^3.44.0",
 		"@wordpress/icons": "^9.35.0",
 		"@wordpress/react-i18n": "^3.42.0",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^6.1.4",
-		"@testing-library/react": "^14.0.0",
+		"@testing-library/react": "^14.1.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"typescript": "^5.2.2"

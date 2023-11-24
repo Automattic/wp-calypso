@@ -35,7 +35,6 @@ export interface InitiateTransfer {
 
 /**
  * Initiate Atomic transfer, optionally with software set install.
- *
  * @param {string} siteId Site ID.
  * @param {InitiateTransfer} initiateTransfer The InitiateTransfer parameters.
  * @returns {Object} An action object.
@@ -49,7 +48,6 @@ export const initiateAtomicTransfer = ( siteId: number, initiateTransfer: Initia
 
 /**
  * Fetch transfer.
- *
  * @param {string} siteId Site ID.
  * @returns {Object} An action object.
  */
@@ -61,7 +59,6 @@ export const requestLatestAtomicTransfer = ( siteId: number ) =>
 
 /**
  * Set the transfer.
- *
  * @param {number} siteId The site id to which the status belongs.
  * @param {Object} transfer The new status of the transfer.
  * @returns {Object} An action object

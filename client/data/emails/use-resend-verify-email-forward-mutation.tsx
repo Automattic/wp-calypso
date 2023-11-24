@@ -12,7 +12,6 @@ const MUTATION_KEY = 'reverifyEmailForward';
 
 /**
  * Manually trigger a new verification email to an email forward receiver
- *
  * @param domainName The domain name of the mailbox
  * @param mutationOptions Mutation options passed on to `useMutation`
  * @returns Returns the result of the `useMutation` call

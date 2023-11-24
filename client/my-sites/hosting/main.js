@@ -95,7 +95,6 @@ const MainCards = ( {
 	isWpcomStagingSite,
 	isMigrationTrial,
 	siteId,
-	isYoloWpAdminFeatureDevelopment,
 } ) => {
 	const mainCards = [
 		{
@@ -146,13 +145,11 @@ const MainCards = ( {
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
 			type: 'basic',
 		},
-		isYoloWpAdminFeatureDevelopment
-			? {
-					feature: 'wp-admin',
-					content: <SiteAdminInterfaceCard />,
-					type: 'basic',
-			  }
-			: null,
+		{
+			feature: 'wp-admin',
+			content: <SiteAdminInterfaceCard />,
+			type: 'basic',
+		},
 	].filter( ( card ) => card !== null );
 
 	const availableTypes = [
@@ -318,8 +315,6 @@ class Hosting extends Component {
 			const isGithubIntegrationEnabled =
 				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 
-			const isYoloWpAdminFeatureDevelopment = isEnabled( 'yolo/wp-admin-site-default' );
-
 			return (
 				<>
 					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
@@ -339,7 +334,6 @@ class Hosting extends Component {
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isMigrationTrial={ isMigrationTrial }
 								siteId={ siteId }
-								isYoloWpAdminFeatureDevelopment={ isYoloWpAdminFeatureDevelopment }
 							/>
 						</Column>
 						<Column type="sidebar">

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import * as pageView from 'calypso/lib/analytics/page-view';

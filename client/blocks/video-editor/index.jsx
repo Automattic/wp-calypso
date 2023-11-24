@@ -64,7 +64,6 @@ class VideoEditor extends Component {
 
 	/**
 	 * Updates the poster by selecting a particular frame of the video.
-	 *
 	 * @param {number} currentTime - Time at which to capture the frame
 	 * @param {boolean} isMillisec - Whether the time is in milliseconds
 	 */
@@ -108,7 +107,6 @@ class VideoEditor extends Component {
 
 	/**
 	 * Uploads an image to use as the poster for the video.
-	 *
 	 * @param {Object} file - Uploaded image
 	 */
 	uploadImage = ( file ) => {
@@ -181,7 +179,7 @@ class VideoEditor extends Component {
 							/>
 						) }
 						<span className="video-editor__text">
-							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
+							{ translate( 'Select a frame to use as the poster image or upload your own.' ) }
 						</span>
 						<VideoEditorControls
 							isPosterUpdating={ isSelectingFrame || ( uploadProgress && ! error ) }

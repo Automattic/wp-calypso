@@ -1,26 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.is-jetpack-new-navigation {
-	.sites-overview__page-title {
-		margin-block-end: 8px;
-		font-weight: 600;
-	}
-
-	.sites-overview__tabs {
-		border-block-end: none;
-	}
-
-	.sites-overview__container {
-		// The -76px is to undo the padding of layout.has-no-masterbar (32px), .layout__content (32px) and .sites-overview_container (6px + 6px)
-		min-height: calc(100vh - 76px);
-	}
-
-	.is-sticky .sites-overview__licenses-buttons {
-		margin-block: auto;
-	}
-}
-
 .sites-overview__large-screen {
 	.site-search-filter-container__search .search.is-open .search__open-icon {
 		width: 60px;
@@ -36,8 +16,8 @@
 .sites-overview__container {
 	display: flex;
 	flex-direction: column;
-	// The -123px is to undo the padding of .layout__content (79px + 32px) and .sites-overview_container ( 8px + 8px )
-	min-height: calc(100vh - 123px);
+	// The -76px is to undo the padding of layout.has-no-masterbar (32px), .layout__content (32px) and .sites-overview_container (6px + 6px)
+	min-height: calc(100vh - 76px);
 	padding: 6px 0;
 }
 
@@ -53,9 +33,6 @@
 	// but our element is inside a limited-width parent.
 	margin: 0 -32px;
 	padding: 0 48px;
-	@include breakpoint-deprecated( ">660px" ) {
-		border-bottom: 1px solid var(--color-primary-5);
-	}
 }
 
 .sites-overview__add-site-issue-license-buttons {
@@ -75,19 +52,33 @@
 		max-height: 40px;
 	}
 
-	&.is-with-split-button {
-		flex-direction: row;
-
-		.sites-overview__issue-license-button {
-			flex-grow: 1;
-		}
-	}
-
 	@include break-large {
 		flex-direction: row;
 	}
 }
 
+
+.sites-overview__add-site-issue-license-buttons.is-with-split-button {
+	flex-direction: row;
+
+	> a {
+		flex-grow: 1;
+	}
+
+	.split-button {
+		display: flex;
+	}
+
+	.split-button__main {
+		flex-grow: 1;
+	}
+
+	@include break-small {
+		> a {
+			flex-grow: 0;
+		}
+	}
+}
 .sites-overview__add-new-site {
 	white-space: nowrap;
 }
@@ -110,6 +101,11 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		justify-content: space-between;
+		flex-direction: column;
+	}
+
+	@include break-xlarge {
+		flex-direction: row;
 	}
 
 	&.is-sticky {
@@ -128,21 +124,27 @@
 
 		.sites-overview__licenses-buttons {
 			margin-right: 48px;
+			margin-block: auto;
 		}
 	}
 }
+
 .sites-overview__page-title {
 	color: var(--studio-gray-80);
-	font-weight: 400;
+	margin-block-end: 8px;
+	font-weight: 600;
 }
+
 .sites-overview__page-subtitle {
 	font-size: 0.875rem;
 	color: var(--studio-gray-60);
 	margin-bottom: 8px;
 }
+
 .sites-overview__viewport {
 	margin-left: auto;
 }
+
 .sites-overview__licenses-buttons {
 	margin-left: auto;
 
@@ -283,8 +285,8 @@
 	}
 }
 
-.fixed-host-column {
-	display: none;
+.site-host-info {
+	display: inline-block;
 	margin-inline-end: 10px;
 	min-width: 40px;
 	text-align: center;
@@ -298,10 +300,6 @@
 		&.is-visible {
 			visibility: visible;
 		}
-	}
-
-	@include break-wide {
-		display: inline-block;
 	}
 }
 

@@ -102,10 +102,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem, getDomainCartItem } = useSelect(
+	const { planCartItem, domainCartItem, productCartItems } = useSelect(
 		( select ) => ( {
-			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
 		} ),
 		[]
 	);
@@ -125,8 +126,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem(),
-			getDomainCartItem(),
+			planCartItem,
+			domainCartItem,
+			productCartItems,
 			stripeConnectUrl,
 			() => {
 				recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
@@ -275,7 +277,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 								title: translate( 'Paid newsletter' ),
 								type: TYPE_TIER,
 							} }
-							annualProduct={ { subscribe_as_site_subscriber: true, price: 5 * 12 } }
+							annualProduct={ {
+								price: 5 * 12,
+								subscribe_as_site_subscriber: true,
+								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+							} }
 							siteId={ site.ID }
 						/>
 					) }

@@ -131,6 +131,6 @@ describe( 'RestAPIClient: createInvite', function () {
 				email: testSuccessfulEmails.concat( testFailedEmails ),
 				role: role,
 			} )
-		).rejects.toThrowError();
+		).rejects.toThrow();
 	} );
 } );

@@ -187,14 +187,10 @@ export const HelpCenterContactForm = () => {
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
-	// if the user was chatting with Wapuu, we need to disable GPT (no more AI)
-	if ( wapuuFlow ) {
-		params.set( 'disable-gpt', 'true' );
-		params.set( 'show-gpt', 'false' );
-	}
-
 	const enableGPTResponse =
-		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
+		config.isEnabled( 'help/gpt-response' ) &&
+		! ( params.get( 'disable-gpt' ) === 'true' ) &&
+		! wapuuFlow;
 
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
@@ -268,7 +264,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	function handleCTA() {
-		if ( ! enableGPTResponse && ! showingSearchResults ) {
+		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -277,13 +273,19 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 
-		if ( ! showingGPTResponse && enableGPTResponse ) {
+		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow ) {
 			params.set( 'show-gpt', 'true' );
 			navigate( {
 				pathname: '/contact-form',
 				search: params.toString(),
 			} );
 			return;
+		}
+
+		// if the user was chatting with Wapuu, we need to disable GPT (no more AI)
+		if ( wapuuFlow ) {
+			params.set( 'disable-gpt', 'true' );
+			params.set( 'show-gpt', 'false' );
 		}
 
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
@@ -358,12 +360,16 @@ export const HelpCenterContactForm = () => {
 								section: sectionName,
 							} );
 							navigate( '/success' );
+
 							resetStore();
+
 							// reset support-history cache
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
-								queryClient.invalidateQueries( [ 'help-support-history', 'ticket', email ] );
+								queryClient.invalidateQueries( {
+									queryKey: [ 'help-support-history', 'ticket', email ],
+								} );
 							}, 30000 );
 						} )
 						.catch( () => {

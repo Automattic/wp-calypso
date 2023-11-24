@@ -197,14 +197,14 @@ describe( 'multiPartnerCardProcessor', () => {
 
 	it( 'throws an error if there is no paymentPartner', async () => {
 		const submitData = {};
-		await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrow(
 			/paymentPartner/
 		);
 	} );
 
 	it( 'throws an error if there is an unknown paymentPartner', async () => {
 		const submitData = { paymentPartner: 'unknown' };
-		await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
+		await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrow(
 			/Unrecognized card payment partner/
 		);
 	} );
@@ -212,7 +212,7 @@ describe( 'multiPartnerCardProcessor', () => {
 	describe( 'for a stripe paymentPartner', () => {
 		it( 'throws an error if there is no stripe object', async () => {
 			const submitData = { paymentPartner: 'stripe' };
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
+			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrow(
 				/requires stripe and none was provided/
 			);
 		} );
@@ -222,7 +222,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				paymentPartner: 'stripe',
 				stripe,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
+			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrow(
 				/requires stripeConfiguration and none was provided/
 			);
 		} );
@@ -233,7 +233,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
+			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrow(
 				/requires credit card field and none was provided/
 			);
 		} );

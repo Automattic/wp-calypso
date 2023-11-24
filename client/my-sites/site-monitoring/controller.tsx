@@ -3,8 +3,9 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMetrics } from './main';
+import type { Callback } from '@automattic/calypso-router';
 
-export const siteMetrics: PageJS.Callback = ( context, next ) => {
+export const siteMetrics: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker path="/site-monitoring/:site" title="Site Monitoring" delay={ 500 } />
@@ -14,7 +15,7 @@ export const siteMetrics: PageJS.Callback = ( context, next ) => {
 	next();
 };
 
-export const redirectHomeIfIneligible: PageJS.Callback = ( context, next ) => {
+export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 

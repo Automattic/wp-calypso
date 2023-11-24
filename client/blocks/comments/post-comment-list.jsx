@@ -495,7 +495,6 @@ class PostCommentList extends Component {
 
 	/**
 	 * Gets comments for display
-	 *
 	 * @param {Array<number>} commentIds The top level commentIds to take from
 	 * @param {number} numberToTake How many top level comments to take
 	 * @returns {Object} that has the displayed comments + total displayed count including children

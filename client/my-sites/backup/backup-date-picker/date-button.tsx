@@ -25,7 +25,6 @@ const DateButton: React.FC< Props > = ( {
 
 	/**
 	 * A date has been picked from the calendar.
-	 *
 	 * @param date { Moment } - a moment date object that has been selected on the calendar
 	 */
 	const handleDatePicked = ( date: Moment ) => {

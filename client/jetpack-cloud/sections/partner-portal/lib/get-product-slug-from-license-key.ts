@@ -1,7 +1,6 @@
 /**
  * Given a license key, returns the product slug associated with it. If the key
  * is empty or incorrectly formatted, returns null.
- *
  * @param key A full license key string
  * @returns The product slug that corresponds to the given key string
  */

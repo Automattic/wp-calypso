@@ -143,6 +143,7 @@ const ScaledBlockRendererContainer = ( {
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */
 					svgFilters.map( ( preset ) => (
 						<div
+							key={ preset.slug }
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={ {
 								__html: getDuotoneFilter( `wp-duotone-${ preset.slug }`, preset.colors ),

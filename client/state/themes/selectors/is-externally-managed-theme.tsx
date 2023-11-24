@@ -15,7 +15,6 @@ type GetThemeFunction = (
 /**
  * Check if a theme is externally managed. If true, this means that the theme is not
  * managed by Automattic, but by a third party.
- *
  * @param {Object} state Global state tree
  * @param {string} themeId Theme ID
  * @returns {boolean} True if the theme is externally managed.
@@ -38,7 +37,6 @@ export function isExternallyManagedTheme( state = {}, themeId: string ): boolean
 
 /**
  * Check if any of a list of themes is externally managed.
- *
  * @param {Object} state Global state tree
  * @param {string} themeIds list of theme ids
  * @returns {boolean} True if the theme is externally managed.

@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button, Dialog } from '@automattic/components';
 import { BaseButton } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import page from 'page';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as React from 'react';
 import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
@@ -391,7 +391,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	/**
 	 * renderCurrentStep
 	 * Show the cancellation flow based on the current step the user is on
-	 *
 	 * @returns current step {string|null}
 	 */
 	const renderCurrentStep = () => {

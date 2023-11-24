@@ -82,6 +82,7 @@ export function createWeChatMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'wechat',
+		hasRequiredFields: true,
 		paymentProcessorId: 'wechat',
 		label: <WeChatLabel />,
 		activeContent: <WeChatFields />,

@@ -5,6 +5,7 @@ import {
 	isDomainMapping,
 	isPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import debugModule from 'debug';
@@ -21,7 +22,6 @@ import {
 	omit,
 	startsWith,
 } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -330,7 +330,9 @@ class Signup extends Component {
 	};
 
 	getRecordProps() {
-		const { signupDependencies, hostingFlow } = this.props;
+		const { signupDependencies, hostingFlow, queryObject } = this.props;
+		const flow = queryObject?.flow;
+
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
 
 		if ( ! theme && signupDependencies.themeParameter ) {
@@ -345,6 +347,7 @@ class Signup extends Component {
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 			is_in_hosting_flow: hostingFlow,
+			...( flow ? { flow } : {} ),
 		};
 	}
 

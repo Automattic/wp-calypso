@@ -116,7 +116,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 
 	/**
 	 * Returns the localized duration of a task in given minutes.
-	 *
 	 * @param  minutes Number of minutes.
 	 * @returns Localized duration.
 	 */

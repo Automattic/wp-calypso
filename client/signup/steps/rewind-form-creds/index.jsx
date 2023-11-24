@@ -35,7 +35,6 @@ class RewindFormCreds extends Component {
 
 	/**
 	 * Don't update the component if the Rewind state is the same.
-	 *
 	 * @param {Object} nextProps Props received by component for next update.
 	 * @returns {boolean} False if the Rewind state is the same.
 	 */

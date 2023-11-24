@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';

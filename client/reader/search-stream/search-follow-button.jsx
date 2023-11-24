@@ -18,7 +18,6 @@ class SearchFollowButton extends Component {
 
 	/**
 	 * Check if the query looks like a feed URL
-	 *
 	 * @param url
 	 * @returns {boolean}
 	 */

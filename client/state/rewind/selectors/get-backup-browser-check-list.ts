@@ -102,7 +102,6 @@ const addChildrenToList = (
 
 /**
  * Retrieve the list of checked items and totals from the Backup Browser
- *
  * @param state The application state.
  * @param siteId The site ID we're retrieving for.
  * @returns A list of items to include and exclude from a restore or download.

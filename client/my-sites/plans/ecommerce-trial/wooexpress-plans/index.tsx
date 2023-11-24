@@ -6,11 +6,11 @@ import {
 	getPlans,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';

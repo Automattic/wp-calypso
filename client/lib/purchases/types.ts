@@ -64,7 +64,6 @@ export interface Purchase {
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
-	 *
 	 * @deprecated use `refundInteger`.
 	 */
 	refundAmount: number;
@@ -87,7 +86,6 @@ export interface Purchase {
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
-	 *
 	 * @deprecated use `refundInteger`.
 	 */
 	refundText: string;
@@ -122,7 +120,6 @@ export interface Purchase {
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
-	 *
 	 * @deprecated use `totalRefundInteger`.
 	 */
 	totalRefundAmount: number;
@@ -137,7 +134,6 @@ export interface Purchase {
 	/**
 	 * The refund amount for the purchase, including bundled domains, as a
 	 * formatted string.
-	 *
 	 * @deprecated use `totalRefundInteger` and `formatCurrency()`.
 	 */
 	totalRefundText: string;

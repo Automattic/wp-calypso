@@ -321,8 +321,12 @@ function InstalledInOrPricing( {
 					if ( price ) {
 						return (
 							<>
-								{ price + ' ' }
-								<span className="plugins-browser-item__period">{ period }</span>
+								{ translate( '%(price)s {{span}}%(period)s{{/span}}', {
+									args: { price, period },
+									components: { span: <span className="plugins-browser-item__period" /> },
+									comment:
+										'Price and period for a plugin, using a span to style the period differently',
+								} ) }
 								{ shouldUpgrade && (
 									<div className="plugins-browser-item__period">
 										{ translate( 'Requires a plan upgrade' ) }

@@ -97,7 +97,7 @@ describe( '<SitesOverview>', () => {
 		setData();
 
 		const { getAllByText } = render( <Wrapper context={ context } /> );
-		const [ dashboardHeading ] = getAllByText( 'Dashboard' );
+		const [ dashboardHeading ] = getAllByText( 'Sites' );
 		expect( dashboardHeading ).toBeInTheDocument();
 
 		const [ dashboardSubHeading ] = getAllByText(

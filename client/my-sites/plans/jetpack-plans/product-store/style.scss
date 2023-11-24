@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -6,8 +7,25 @@
 	flex-direction: column;
 
 	.header {
+		$sale-banner-height: 3.5rem;
+
 		margin-bottom: 36px;
 		margin-top: 8.5rem;
+
+		&.has-sale-banner {
+			$mobile-offset: 6rem;
+
+			margin-top: 8.5rem + $sale-banner-height;
+
+			// tablets
+			@media ( max-width: 900px ) {
+				margin-top: 8.5rem + $sale-banner-height + math.div($mobile-offset, 3);
+			}
+			// mobiles
+			@media ( max-width: 560px ) {
+				margin-top: 8.5rem + $sale-banner-height + $mobile-offset;
+			}
+		}
 	}
 
 	.header .formatted-header {
