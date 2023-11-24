@@ -68,13 +68,12 @@ export function CommandMenuGroup( {
 	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
 	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
-	const { commands: smpDefaultCommands } = useCommandPallette( {
+	const { commands } = useCommandPallette( {
 		selectedCommandName,
 		setSelectedCommandName,
+		filter: isContextual ? ( command ) => command.context?.includes( currentPath ) : undefined,
 	} );
-	const commands = isContextual
-		? smpDefaultCommands.filter( ( command ) => command.context?.includes( currentPath ) )
-		: smpDefaultCommands;
+
 	if ( ! commands.length ) {
 		return null;
 	}

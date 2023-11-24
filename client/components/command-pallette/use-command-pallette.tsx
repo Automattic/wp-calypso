@@ -44,6 +44,7 @@ interface Command {
 interface useCommandPalletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	filter?: ( command: Command ) => boolean | undefined;
 }
 
 const siteToAction =
@@ -70,6 +71,7 @@ const siteToAction =
 export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
+	filter,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -77,7 +79,11 @@ export const useCommandPallette = ( {
 	);
 
 	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommandsArrayWpcom( { setSelectedCommandName } );
+	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
+
+	if ( 'function' === typeof filter ) {
+		commands = commands.filter( filter );
+	}
 
 	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
