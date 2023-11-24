@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -53,7 +52,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		handleShowLicenseOverview();
 	}, [ handleShowLicenseOverview ] );
 
-	const showStickyContent = isWithinBreakpoint( '>960px' ) && selectedLicenses.length > 0;
+	const showStickyContent = selectedLicenses.length > 0;
 
 	// Group licenses by slug and sort them by quantity
 	const getGroupedLicenses = useCallback( () => {

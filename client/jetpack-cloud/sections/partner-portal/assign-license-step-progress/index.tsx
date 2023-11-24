@@ -83,7 +83,7 @@ const AssignLicenseStepProgress = ( {
 	if ( sites > 0 && ! selectedSite ) {
 		steps.push( {
 			key: 'assignLicense',
-			label: isBundleLicensing ? translate( 'Assign licenses' ) : translate( 'Assign license' ),
+			label: translate( 'Assign licenses' ),
 		} );
 	}
 
