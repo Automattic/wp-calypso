@@ -2,7 +2,8 @@ import { createContext, useContext } from '@wordpress/element';
 import type { RenderedPattern } from '../types';
 
 export interface PatternsRendererContextValue {
-	[ key: string ]: RenderedPattern;
+	renderedPatterns: { [ key: string ]: RenderedPattern };
+	isNewSite: boolean;
 }
 
 const PatternsRendererContext = createContext< PatternsRendererContextValue >(
