@@ -43,7 +43,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 				) }
 				meshColor="blue"
 				icon={ emailImage }
-				href={ emailManagement( firstDomain, firstDomain ) }
+				href={ emailManagement( siteSlug ?? firstDomain, firstDomain ) }
 				buttonText={ translate( 'Add email' ) }
 				trackEvent="calypso_domain_only_thank_you_professional_email_click"
 			/>
