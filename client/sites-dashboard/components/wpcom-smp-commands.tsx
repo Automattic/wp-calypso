@@ -122,7 +122,7 @@ export const useCommandsArrayWpcom = ( {
 	const commands = [
 		{
 			name: 'addNewSite',
-			label: __( 'Add New Site' ),
+			label: __( 'Add new site' ),
 			searchLabel: __( 'add new site' ),
 			context: 'Adding a new website',
 			callback: ( { close }: { close: () => void } ) => {
@@ -166,7 +166,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'manageDomains',
-			label: __( 'Manage Domains' ),
+			label: __( 'Manage domains' ),
 			searchLabel: __( 'manage domains' ),
 			context: 'Managing domains',
 			callback: ( { close }: { close: () => void } ) => {
@@ -277,7 +277,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'openActivityLog',
-			label: __( 'Open Activity Log' ),
+			label: __( 'Open activity log' ),
 			searchLabel: __( 'open activity log' ),
 			context: 'Opening activity log',
 			callback: setStateCallback( 'openActivityLog' ),
