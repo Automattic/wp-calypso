@@ -32,7 +32,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 				) }
 			</DefaultSubHeader>
 			{ domains.map( ( domain ) => (
-				<ProductDomain shareSite key={ domain } domain={ domain } />
+				<ProductDomain shareSite key={ domain } domain={ domain } siteSlug={ siteSlug } />
 			) ) }
 			<DomainOnlyFooter />
 			<DefaultUpsell

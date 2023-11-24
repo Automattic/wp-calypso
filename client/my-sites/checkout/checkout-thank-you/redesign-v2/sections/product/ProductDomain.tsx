@@ -1,16 +1,17 @@
 import { Button, ClipboardButton } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
-import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 import './style.scss';
 
 type ProductDomainProps = {
 	domain: string;
 	shareSite?: boolean;
+	siteSlug?: string;
 };
 
-const ProductDomain = ( { domain, shareSite }: ProductDomainProps ) => {
+const ProductDomain = ( { domain, shareSite, siteSlug }: ProductDomainProps ) => {
 	const [ isCopying, setIsCopying ] = useState( false );
 	const handleShareSite = ( processing: boolean ) => () => {
 		setIsCopying( processing );
@@ -34,7 +35,10 @@ const ProductDomain = ( { domain, shareSite }: ProductDomainProps ) => {
 						{ isCopying ? translate( 'Site copied' ) : translate( 'Share site' ) }
 					</ClipboardButton>
 				) }
-				<Button variant={ shareSite ? 'secondary' : 'primary' } href={ domainManagementRoot() }>
+				<Button
+					variant={ shareSite ? 'secondary' : 'primary' }
+					href={ siteSlug ? domainManagementList( siteSlug ) : domainManagementRoot() }
+				>
 					{ translate( 'Manage domains' ) }
 				</Button>
 			</div>
