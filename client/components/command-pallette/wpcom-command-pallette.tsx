@@ -23,10 +23,36 @@ const StyledCommandsMenuContainer = styled.div( {
 	},
 } );
 
-const StyledTextHighlightDiv = styled.div( {
+const LabelWrapper = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	flex: 1,
+	maxWidth: 'calc(100% - 56px)',
+	justifyContent: 'center',
+} );
+
+const Label = styled.div( {
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',
 	overflow: 'hidden',
+	fontSize: '1em',
+	'.commands-command-menu__container [cmdk-item] &': {
+		color: 'var(--studio-gray-100)',
+	},
+	'.commands-command-menu__container [cmdk-item][aria-selected=true] &': {
+		color: 'var(--studio-white)',
+	},
+	'.commands-command-menu__container & mark': {
+		fontWeight: 700,
+	},
+} );
+
+const SubLabel = styled( Label )( {
+	opacity: 0.7,
+	fontSize: '0.9em',
+	'.commands-command-menu__container [cmdk-item] &': {
+		color: 'var(--studio-gray-60)',
+	},
 } );
 
 export function CommandMenuGroup( {
@@ -64,16 +90,16 @@ export function CommandMenuGroup( {
 						>
 							{ command.icon && <Icon icon={ command.icon } /> }
 							{ command.image }
-							<div>
-								<StyledTextHighlightDiv>
+							<LabelWrapper>
+								<Label>
 									<TextHighlight text={ command.label } highlight={ search } />
-								</StyledTextHighlightDiv>
+								</Label>
 								{ command.subLabel && (
-									<StyledTextHighlightDiv>
+									<SubLabel>
 										<TextHighlight text={ command.subLabel } highlight={ search } />
-									</StyledTextHighlightDiv>
+									</SubLabel>
 								) }
-							</div>
+							</LabelWrapper>
 						</HStack>
 					</Command.Item>
 				);
