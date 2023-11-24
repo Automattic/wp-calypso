@@ -262,7 +262,7 @@ const LoggedInPlansFeatureActionButton = ( {
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
 	const nonDefaultStorageOptionSelected =
-		selectedStorageOptionForPlan !== undefined ||
+		selectedStorageOptionForPlan !== undefined &&
 		selectedStorageOptionForPlan !== defaultStorageOption;
 
 	if (
