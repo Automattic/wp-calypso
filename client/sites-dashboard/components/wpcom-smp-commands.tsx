@@ -1,17 +1,21 @@
 import {
-	plus as addNewSiteIcon,
-	globe as domainsIcon,
-	commentAuthorAvatar as profileIcon,
-	settings as accountSettingsIcon,
-	payment as creditCardIcon,
-	home as dashboardIcon,
-	chartBar as statsIcon,
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
+	chartBar as statsIcon,
 	cog as hostingConfigIcon,
-	tool as toolIcon,
-	page as pageIcon,
+	commentAuthorAvatar as profileIcon,
+	commentAuthorName as subscriberIcon,
+	download as downloadIcon,
+	globe as domainsIcon,
+	home as dashboardIcon,
 	key as keyIcon,
+	page as pageIcon,
+	payment as creditCardIcon,
+	plus as addNewSiteIcon,
+	post as postIcon,
+	postComments as postCommentsIcon,
+	settings as accountSettingsIcon,
+	tool as toolIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -106,6 +110,19 @@ export const useCommandsArrayWpcom = ( {
 	};
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
+
+	const downloadSubscribersForSite = async ( slug: string, siteId: number ) => {
+		const url = `https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=${ siteId }&blog_subscribers=csv&type=all`;
+		window.open( url );
+		const link = document.createElement( 'a' );
+		link.href = url;
+		link.setAttribute(
+			'download',
+			`subscribers-${ slug.replace( '.', '-' ) }-${ new Date().toJSON().slice( 0, 10 ) }.csv`
+		);
+		link.click();
+		window.URL.revokeObjectURL( url );
+	};
 
 	const commands = [
 		{
@@ -390,6 +407,97 @@ export const useCommandsArrayWpcom = ( {
 				navigate( createSiteUrl );
 			},
 			icon: addNewSiteIcon,
+		},
+		{
+			name: 'addNewPost',
+			label: __( 'Add new post' ),
+			searchLabel: __( 'add new post' ),
+			callback: setStateCallback( 'addNewPost' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/post/${ site.slug }` );
+				},
+			},
+			icon: postIcon,
+		},
+		{
+			name: 'addNewPostAccessSubscribers',
+			label: __( 'Add new subscribers-only post' ),
+			searchLabel: __( 'add new subscribers-only post' ),
+			callback: setStateCallback( 'addNewPostAccessSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/post/${ site.slug }?jetpack_access=subscribers` ); // @TODO: `?jetpack_access=` requires Jetpack PR
+				},
+			},
+			icon: postIcon,
+		},
+		{
+			name: 'addNewPostAccessPaidSubscribers',
+			label: __( 'Add new paid subscribers-only post' ),
+			searchLabel: __( 'add new paid subscribers-only post' ),
+			callback: setStateCallback( 'addNewPostAccessPaidSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/post/${ site.slug }?jetpack_access=paid-subscribers` ); // @TODO: `?jetpack_access=` requires Jetpack PR
+				},
+			},
+			icon: postIcon, // TODO: paywall icon
+		},
+		{
+			name: 'manageComments',
+			label: __( 'Manage comments' ),
+			searchLabel: __( 'manage comments' ),
+			callback: setStateCallback( 'manageComments' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/comments/${ site.slug }` );
+				},
+			},
+			icon: postCommentsIcon,
+		},
+		{
+			name: 'addSubscribers',
+			label: __( 'Add subscribers' ),
+			searchLabel: __( 'add subscribers' ),
+			callback: setStateCallback( 'addSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/subscribers/${ site.slug }#add-subscribers` );
+				},
+			},
+			icon: subscriberIcon, // TODO: subscribers icon, currently using icon for comments
+		},
+		{
+			name: 'manageSubscribers',
+			label: __( 'Manage subscribers' ),
+			searchLabel: __( 'manage subscribers' ),
+			callback: setStateCallback( 'manageSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/subscribers/${ site.slug }` );
+				},
+			},
+			icon: subscriberIcon, // TODO: subscribers icon, currently using icon for comments
+		},
+		{
+			name: 'downloadSubscribers',
+			label: __( 'Download subscribers as CSV' ),
+			searchLabel: __( 'download subscribers as csv' ),
+			callback: setStateCallback( 'downloadSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					downloadSubscribersForSite( site.slug, site.ID );
+				},
+			},
+			icon: downloadIcon,
 		},
 	];
 
