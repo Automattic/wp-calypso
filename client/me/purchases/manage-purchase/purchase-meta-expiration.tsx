@@ -142,7 +142,10 @@ function PurchaseMetaExpiration( {
 				return false;
 			}
 
-			if ( purchase.renewDate !== purchase.expiryDate && purchase.canDisableAutoRenew ) {
+			if (
+				purchase.renewDate !== purchase.expiryDate &&
+				( purchase.expiryStatus === 'active' || purchase.expiryStatus === 'auto-renewing' )
+			) {
 				return true;
 			}
 
