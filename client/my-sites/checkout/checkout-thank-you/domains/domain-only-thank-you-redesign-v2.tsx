@@ -19,6 +19,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const backText = translate( 'Back to Home' );
 	const firstDomain = domains[ 0 ];
+
 	return (
 		<ThankYouLayout masterbarProps={ { siteId, siteSlug, backText } }>
 			<DefaultThankYouHeader>{ translate( 'Your own corner of the web' ) }</DefaultThankYouHeader>

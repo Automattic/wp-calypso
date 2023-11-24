@@ -8,7 +8,7 @@ import './style.scss';
 type ProductDomainProps = {
 	domain: string;
 	shareSite?: boolean;
-	siteSlug?: string;
+	siteSlug?: string | null;
 };
 
 const ProductDomain = ( { domain, shareSite, siteSlug }: ProductDomainProps ) => {
