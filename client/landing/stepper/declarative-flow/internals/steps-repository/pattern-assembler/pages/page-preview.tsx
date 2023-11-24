@@ -25,7 +25,6 @@ interface PagePreviewProps extends BasePageProps {
 	composite: Record< string, unknown >;
 	slug: string;
 	title: string;
-	onClick: ( patterns: Pattern[] ) => void;
 }
 
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
@@ -68,7 +67,7 @@ const Page = ( {
 	);
 };
 
-const PatternPagePreview = ( { composite, onClick, ...pageProps }: PagePreviewProps ) => {
+const PatternPagePreview = ( { composite, ...pageProps }: PagePreviewProps ) => {
 	const { slug, title, patterns } = pageProps;
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ frameStyles, setFrameStyles ] = useState( {} );

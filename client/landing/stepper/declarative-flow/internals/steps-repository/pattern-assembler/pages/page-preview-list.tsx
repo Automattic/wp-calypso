@@ -6,7 +6,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { CSSProperties, useCallback, useMemo } from 'react';
 import { injectTitlesToPageListBlock } from '../html-transformers';
-import PagePreview, { PagePreviewModal } from './page-preview';
+import PagePreview from './page-preview';
 import type { Pattern } from '../types';
 import './page-preview-list.scss';
 
@@ -67,9 +67,9 @@ const PagePreviewList = ( {
 					<PagePreview
 						key={ page.ID }
 						composite={ composite }
-						slug={ selectedPages[ index ] }
+						slug={ selectedPageSlugs[ index ] }
 						title={ page.title }
-						style={ patternPagePreviewStyle }
+						style={ pagePreviewStyle }
 						patterns={ [
 							...( selectedHeader ? [ selectedHeader ] : [] ),
 							page,
