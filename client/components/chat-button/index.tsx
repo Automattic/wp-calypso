@@ -71,6 +71,16 @@ function getMessagingGroupForIntent( chatIntent: ChatIntent, keyType: KeyType ):
 	}
 }
 
+/**
+ * ChatButton - A button that opens a chat widget when clicked.
+ * If the user is not eligible for chat, it will open the help center instead.
+ *
+ * This component currently needs to be wrapped in a ShoppingCartProvider to work
+ * properly. See client/my-sites/checkout/calypso-shopping-cart-provider.tsx
+ */
+
+// TODO - decouple this component from the shopping cart
+
 const ChatButton: FC< Props > = ( {
 	borderless = true,
 	chatIntent = 'SUPPORT',
