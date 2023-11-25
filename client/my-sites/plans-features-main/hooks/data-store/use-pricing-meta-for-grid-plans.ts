@@ -11,7 +11,6 @@ import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { PlanPrices } from 'calypso/state/plans/types';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
-	getCurrentPlan,
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
 } from 'calypso/state/sites/plans/selectors';
@@ -56,14 +55,11 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	storageAddOns,
 }: Props ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	const currentPlan = useSelector( ( state: IAppState ) =>
-		getCurrentPlan( state, selectedSiteId )
-	);
-	const currentSitePlanSlug = currentPlan?.productSlug;
 	// pricedAPIPlans - should have a definition for all plans, being the main source of API data
 	const pricedAPIPlans = Plans.usePlans();
 	// pricedAPISitePlans - unclear if all plans are included
 	const pricedAPISitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
 	const selectedStorageOptions = useSelect( ( select ) => {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
@@ -76,7 +72,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		return planSlugs.reduce(
 			( acc, planSlug ) => {
 				const availableForPurchase =
-					! currentSitePlanSlug ||
+					! currentPlan?.planSlug ||
 					( selectedSiteId
 						? isPlanAvailableForPurchase( state, selectedSiteId, planSlug )
 						: false );
@@ -107,7 +103,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
 
 				// raw prices for current site's plan
-				if ( selectedSiteId && currentSitePlanSlug === planSlug ) {
+				if ( selectedSiteId && currentPlan?.planSlug === planSlug ) {
 					let monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 						returnMonthly: true,
 						returnSmallestUnit: true,

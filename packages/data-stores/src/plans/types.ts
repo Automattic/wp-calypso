@@ -60,11 +60,15 @@ export interface PlanIntroductoryOffer {
 }
 
 export interface SitePlan {
+	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;
+	productSlug: PlanSlugFromProducts;
 	productId: number;
+	/* END: Same SitePlan/PlanNext props */
 	introOffer?: PlanIntroductoryOffer | null;
 	/* This value is only returned for the current plan on the site. */
 	expiry?: string;
+	currentPlan?: boolean;
 }
 
 /*
@@ -72,8 +76,11 @@ export interface SitePlan {
  * The existing Plan interface will be removed once this interface is fully implemented.
  */
 export interface PlanNext {
+	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;
+	productSlug: PlanSlugFromProducts;
 	productId: number;
+	/* END: Same SitePlan/PlanNext props */
 	productNameShort: string;
 	billPeriod: -1 | ( typeof PERIOD_LIST )[ number ];
 	currencyCode: string;
