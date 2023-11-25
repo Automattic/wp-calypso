@@ -77,6 +77,7 @@ const PatternPagePreview = ( {
 }: PagePreviewProps ) => {
 	const { slug, title, patterns } = pageProps;
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
+	const [ isFullscreenLeave, setIsFullscreenLeave ] = useState( false );
 	const [ frameStyles, setFrameStyles ] = useState( {} );
 	const ref = useRef< HTMLButtonElement >( null );
 
@@ -104,6 +105,10 @@ const PatternPagePreview = ( {
 		if ( isFullscreen ) {
 			setIsFullscreen( false );
 			onFullscreenLeave();
+
+			// The timeout delay should match the CSS transition timing of the element.
+			setIsFullscreenLeave( true );
+			setTimeout( () => setIsFullscreenLeave( false ), 200 );
 		}
 	}, [ isFullscreen, onFullscreenLeave ] );
 
@@ -134,6 +139,7 @@ const PatternPagePreview = ( {
 		<div
 			className={ classnames( 'pattern-assembler__preview', {
 				'pattern-assembler__preview--fullscreen': isFullscreen,
+				'pattern-assembler__preview--fullscreen-leave': isFullscreenLeave,
 			} ) }
 		>
 			<CompositeItem

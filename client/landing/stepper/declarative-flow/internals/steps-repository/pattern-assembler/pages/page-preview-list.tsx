@@ -58,6 +58,7 @@ const PagePreviewList = ( {
 	};
 
 	const handleFullscreenLeave = () => {
+		// The timeout delay should match the CSS transition timing of the element.
 		setTimeout( () => setIsFullscreenPreview( false ), 200 );
 	};
 

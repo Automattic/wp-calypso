@@ -15,6 +15,10 @@
 
 	&--fullscreen-preview {
 		overflow-y: clip;
+
+		.pattern-assembler__preview--fullscreen-leave {
+			z-index: 2;
+		}
 	}
 
 	@include break-medium {
