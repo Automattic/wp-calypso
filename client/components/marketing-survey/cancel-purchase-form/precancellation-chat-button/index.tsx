@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import ChatButton from 'calypso/components/chat-button';
 import MaterialIcon from 'calypso/components/material-icon';
 import { hasIncludedDomain } from 'calypso/lib/purchases';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { useSelector } from 'calypso/state';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -51,16 +52,18 @@ const PrecancellationChatButton: FC< Props > = ( {
 		`${ purchase.productName } (slug: ${ purchase.productSlug }, ${ purchaseDomain })`;
 
 	return (
-		<ChatButton
-			chatIntent="PRECANCELLATION"
-			initialMessage={ initialMessage }
-			siteUrl={ siteUrl }
-			className={ classNames( 'precancellation-chat-button__main-button', className ) }
-			onClick={ handleClick }
-		>
-			{ icon && <MaterialIcon icon={ icon } /> }
-			{ __( 'Need help? Chat with us' ) }
-		</ChatButton>
+		<CalypsoShoppingCartProvider>
+			<ChatButton
+				chatIntent="PRECANCELLATION"
+				initialMessage={ initialMessage }
+				siteUrl={ siteUrl }
+				className={ classNames( 'precancellation-chat-button__main-button', className ) }
+				onClick={ handleClick }
+			>
+				{ icon && <MaterialIcon icon={ icon } /> }
+				{ __( 'Need help? Chat with us' ) }
+			</ChatButton>
+		</CalypsoShoppingCartProvider>
 	);
 };
 
