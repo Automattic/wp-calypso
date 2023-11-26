@@ -35,7 +35,11 @@
 		grid-template-columns: repeat(4, 1fr);
 	}
 
-	@media (min-width: 2560px) {
+	@media (min-width: 1920px) {
 		grid-template-columns: repeat(5, 1fr);
+
+	}
+	@media (min-width: 2560px) {
+		grid-template-columns: repeat(6, 1fr);
 	}
 }

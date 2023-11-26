@@ -88,8 +88,9 @@ const PatternPagePreview = ( {
 
 		const { height, width, x, y } = ref.current.getBoundingClientRect();
 		setFrameStyles( {
-			'--fullscreen-offset-x': x + width / 2,
-			'--fullscreen-offset-y': y + height / 2,
+			'--fullscreen-scale': ( window.innerHeight * 0.8 ) / height,
+			'--fullscreen-x': x + width / 2,
+			'--fullscreen-y': y + height / 2,
 		} );
 	}, [ ref ] );
 
