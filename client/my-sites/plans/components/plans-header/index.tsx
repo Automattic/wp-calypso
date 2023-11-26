@@ -11,7 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state/index';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
 
 import './style.scss';
 
@@ -71,7 +71,8 @@ const PlansHeader: React.FunctionComponent< {
 		translate( 'See and compare the features available on each WordPress.com plan.' );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const cart = useShoppingCart( selectedSiteId as number );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const cart = useShoppingCart( selectedSiteId! );
 
 	if ( domainFromHomeUpsellFlow ) {
 		return <DomainUpsellHeader />;
@@ -87,6 +88,8 @@ const PlansHeader: React.FunctionComponent< {
 				quantity: 50,
 			},
 		] );
+
+		window.location.href = `/checkout/${ selectedSiteSlug }`;
 	}
 
 	return (
@@ -102,7 +105,6 @@ const PlansHeader: React.FunctionComponent< {
 					title="Bespoke $5/month annual agency Business plan with 100GB storage"
 					primaryButton
 					callToAction="Buy now"
-					href={ '/checkout/' + selectedSiteId }
 					onClick={ handleAddCart }
 				/>
 			</div>
