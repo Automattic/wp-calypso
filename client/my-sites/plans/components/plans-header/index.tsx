@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -82,10 +82,12 @@ const PlansHeader: React.FunctionComponent< {
 		await cart.addProductsToCart( [
 			{
 				product_slug: PLAN_BUSINESS,
+				meta: 'agency-offer',
 			},
 			{
-				product_slug: 'wordpress_com_1gb_space_addon_yearly',
+				product_slug: PRODUCT_1GB_SPACE,
 				quantity: 50,
+				meta: 'agency-offer',
 			},
 		] );
 
