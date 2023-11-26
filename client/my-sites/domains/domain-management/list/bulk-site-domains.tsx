@@ -53,6 +53,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const hasDomainCredit = useSelector( ( state ) => hasDomainCreditSelector( state, site?.ID ) );
 	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID, {
 		queryFn: () => fetchSiteDomains( site?.ID ),
+		enabled: !! site?.ID,
 	} );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
