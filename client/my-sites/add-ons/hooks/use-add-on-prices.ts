@@ -9,7 +9,7 @@ const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
 
 	return useMemo( () => {
 		let cost = product?.cost_smallest_unit;
-		if ( ! cost || ! currencyCode ) {
+		if ( cost == null || ! currencyCode ) {
 			return null;
 		}
 
