@@ -38,7 +38,7 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 
 		const flowProgress = useSiteSetupFlowProgress( _currentStepSlug, 'host' );
 
@@ -64,10 +64,6 @@ const hosting: Flow = {
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
-
-					setPlanCartItem( {
-						product_slug: productSlug,
-					} );
 
 					if ( isFreeHostingTrial( productSlug ) ) {
 						return navigate( 'trialAcknowledge' );
