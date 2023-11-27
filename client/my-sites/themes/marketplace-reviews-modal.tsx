@@ -26,21 +26,25 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 	const createReview = useCreateMarketplaceReviewMutation();
 
 	if ( createReview.isSuccess ) {
-		<Card>
-			<Dialog
-				className="marketplace-reviews-modal"
-				isVisible={ isVisible }
-				buttons={ buttons }
-				onClose={ onClose }
-				showCloseIcon
-			>
-				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'Review submitted for' ) }
-					{ themeName }
-				</CardHeading>
-				<CardHeading tagName="h2">{ translate( 'Thank you for your contribution.' ) }</CardHeading>
-			</Dialog>
-		</Card>;
+		return (
+			<Card>
+				<Dialog
+					className="marketplace-reviews-modal"
+					isVisible={ isVisible }
+					buttons={ buttons }
+					onClose={ onClose }
+					showCloseIcon
+				>
+					<CardHeading tagName="h1" size={ 21 }>
+						{ translate( 'Review submitted for' ) }
+						{ themeName }
+					</CardHeading>
+					<CardHeading tagName="h2">
+						{ translate( 'Thank you for your contribution.' ) }
+					</CardHeading>
+				</Dialog>
+			</Card>
+		);
 	}
 
 	return (
