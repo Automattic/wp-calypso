@@ -118,7 +118,7 @@ const OdieAssistantProvider = ( {
 			chat_id: null,
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
-		recordTracksEvent( 'calypso_odie_chat_cleared' );
+		recordTracksEvent( 'calypso_odie_chat_cleared', {} );
 	}, [ botNameSlug ] );
 
 	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
