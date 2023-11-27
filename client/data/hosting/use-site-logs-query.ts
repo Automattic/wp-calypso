@@ -32,7 +32,10 @@ export interface SiteLogsParams {
 export function useSiteLogsQuery(
 	siteId: number | null | undefined,
 	params: SiteLogsParams,
-	queryOptions: UseQueryOptions< SiteLogsAPIResponse, unknown, SiteLogsData > = {}
+	queryOptions: Omit<
+		UseQueryOptions< SiteLogsAPIResponse, unknown, SiteLogsData >,
+		'queryKey'
+	> = {}
 ) {
 	const queryClient = useQueryClient();
 	const [ scrollId, setScrollId ] = useState< string | undefined >();
