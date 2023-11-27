@@ -30,7 +30,8 @@ const ReaderFeaturedImage = ( {
 	}
 	let resizedImageWidth = imageWidth;
 	if ( resizedImageWidth === undefined ) {
-		resizedImageWidth = isCompactPost ? READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH : 'auto';
+		resizedImageWidth =
+			isCompactPost && hasExcerpt ? READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH : 'auto';
 	}
 	// Don't resize image if it was already fetched.
 	const resizedUrl = fetched

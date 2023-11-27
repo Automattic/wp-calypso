@@ -25,6 +25,7 @@ const FeaturedAsset = ( {
 				onThumbnailClick={ onVideoThumbnailClick }
 				isExpanded={ isVideoExpanded }
 				isCompactPost={ isCompactPost }
+				hasExcerpt={ hasExcerpt }
 			/>
 		);
 	}
