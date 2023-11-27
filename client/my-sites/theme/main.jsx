@@ -1066,12 +1066,7 @@ class ThemeSheet extends Component {
 				);
 			}
 
-			const bundleName = bundleSettings[ themeSoftware ].name;
-
-			return translate(
-				'This theme comes bundled with the %(bundleName)s plugin. Upgrade to a Business plan to select this theme and unlock all its features.',
-				{ args: { bundleName } }
-			);
+			return bundleSettings[ themeSoftware ].bannerUpsellDescription;
 		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate(

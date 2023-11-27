@@ -5,6 +5,7 @@ interface BundleSettings {
 		name: string;
 		BadgeIcon: React.ComponentType;
 		designPickerBadgeTooltip: string;
+		bannerUpsellDescription: string;
 	};
 }
 
@@ -21,6 +22,9 @@ const bundleSettings: BundleSettings = {
 		),
 		designPickerBadgeTooltip: translate(
 			'This theme comes bundled with WooCommerce, the best way to sell online.'
+		),
+		bannerUpsellDescription: translate(
+			'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 		),
 	},
 };
