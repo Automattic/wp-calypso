@@ -168,6 +168,10 @@ class Plans extends Component {
 		intervalType: 'yearly',
 	};
 
+	state = {
+		specialOfferBannerBusy: false,
+	};
+
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
 
@@ -227,8 +231,14 @@ class Plans extends Component {
 	};
 
 	handleSpecialOfferClick = async ( cartItems ) => {
-		await this.props.shoppingCartManager.addProductsToCart( cartItems );
-		page( `/checkout/${ this.props.selectedSite.slug }` );
+		try {
+			this.setState( { specialOfferBannerBusy: true } );
+			await this.props.shoppingCartManager.addProductsToCart( cartItems );
+			page( `/checkout/${ this.props.selectedSite.slug }` );
+		} catch {
+			// Only shop spinning on errors, that way the banner will stay busy while we redirect.
+			this.setState( { specialOfferBannerBusy: false } );
+		}
 	};
 
 	renderPlaceholder = () => {
@@ -439,6 +449,7 @@ class Plans extends Component {
 									blogId={ selectedSite.ID }
 									className="plans__special-offer-banner"
 									onClick={ this.handleSpecialOfferClick }
+									busy={ this.state.specialOfferBannerBusy }
 								/>
 							</>
 						) }

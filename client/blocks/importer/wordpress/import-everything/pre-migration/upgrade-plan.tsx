@@ -5,7 +5,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PlansSpecialOfferBanner from 'calypso/components/plans-special-offer-banner';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
@@ -70,9 +70,16 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		);
 	}, [] );
 
+	const [ agencyPromoBannerBusy, setAgencyPromoBannerBusy ] = useState( false );
+
 	async function handleAgencyPromoClicked( products: MinimalRequestCartProduct[] ) {
-		await cart.replaceProductsInCart( products );
-		startImport( true );
+		try {
+			setAgencyPromoBannerBusy( true );
+			await cart.replaceProductsInCart( products );
+			startImport( true );
+		} finally {
+			setAgencyPromoBannerBusy( false );
+		}
 	}
 
 	return (
@@ -102,6 +109,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				blogId={ targetSite.ID }
 				className="new-hosting-site-agency-promo-banner"
 				onClick={ handleAgencyPromoClicked }
+				busy={ agencyPromoBannerBusy }
 			/>
 
 			<UpgradePlanDetails>
