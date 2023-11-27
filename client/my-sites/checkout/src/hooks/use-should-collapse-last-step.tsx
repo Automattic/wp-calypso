@@ -19,7 +19,7 @@ export function useShouldCollapseLastStep(): boolean {
 		{ isEligible: isWPcomCheckout }
 	);
 
-	if ( ! isLoadingExperimentAssignment ) {
+	if ( isLoadingExperimentAssignment ) {
 		return false;
 	}
 
