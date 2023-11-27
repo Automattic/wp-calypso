@@ -11,6 +11,7 @@ import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/impor
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -20,7 +21,6 @@ import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import NotAuthorized from '../../../components/not-authorized';
 import { Credentials } from './credentials';
 import type { PreMigrationState, StartImportTrackingProps } from './types';
-
 import './style.scss';
 
 interface PreMigrationProps {
@@ -30,7 +30,7 @@ interface PreMigrationProps {
 	isTrial?: boolean;
 	isMigrateFromWp: boolean;
 	isTargetSitePlanCompatible: boolean;
-	startImport: ( props?: StartImportTrackingProps, customCheckoutUrl?: string ) => void;
+	startImport: ( props?: StartImportTrackingProps ) => void;
 	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
@@ -106,13 +106,21 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		},
 	} );
 
+	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
+
 	const { hasCredentials, isRequesting: isFetchingCredentials } =
 		useSiteCredentialsInfo( sourceSiteId );
 
-	const onUpgradeAndMigrateClick = ( customCheckoutUrl?: string ) => {
+	const onUpgradeAndMigrateClick = ( plan?: string ) => {
 		fetchMigrationEnabledStatus();
 		setContinueImport( true );
-		startImport( migrationTrackingProps, customCheckoutUrl );
+
+		if ( plan ) {
+			setSelectedPlanSlug( plan );
+			return;
+		}
+
+		startImport( migrationTrackingProps );
 	};
 
 	/**

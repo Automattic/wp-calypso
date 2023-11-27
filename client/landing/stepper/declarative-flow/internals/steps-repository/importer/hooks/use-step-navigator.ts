@@ -1,7 +1,10 @@
 import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { buildCheckoutUrl } from 'calypso/blocks/importer/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
-import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
+import {
+	AGENCY_OFFER,
+	useSelectedPlanUpgradeQuery,
+} from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { addQueryArgs } from 'calypso/lib/route';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
 import { removeLeadingSlash } from '../../import/util';
@@ -81,7 +84,10 @@ export function useStepNavigator(
 	}
 
 	function getCheckoutUrl( extraArgs = {} ) {
-		const path = buildCheckoutUrl( siteSlug, selectedPlan );
+		const path =
+			selectedPlan === AGENCY_OFFER
+				? `/checkout/${ siteSlug }` // Go to checkout directly, the cart has been defined elsewhere
+				: buildCheckoutUrl( siteSlug, selectedPlan );
 
 		const queryParams = {
 			redirect_to: getWordpressImportEverythingUrl( extraArgs ),

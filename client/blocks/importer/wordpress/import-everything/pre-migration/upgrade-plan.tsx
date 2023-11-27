@@ -13,6 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import PlansSpecialOfferBanner from 'calypso/components/plans-special-offer-banner';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import { AGENCY_OFFER } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -24,7 +25,7 @@ interface Props {
 	sourceSiteSlug: string;
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
-	startImport: ( customCheckoutUrl?: string ) => void;
+	startImport: ( plan?: string ) => void;
 	onWillBuyPlan: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
@@ -38,7 +39,6 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
-		sourceSiteSlug,
 		targetSite,
 		startImport,
 		navigateToVerifyEmailStep,
@@ -89,10 +89,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				meta: 'agency-offer',
 			},
 		] );
-		const targetSiteSlug = targetSite.slug;
-		startImport(
-			`/checkout/${ targetSiteSlug }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
-		);
+		startImport( AGENCY_OFFER );
 	}
 
 	return (
