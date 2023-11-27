@@ -164,7 +164,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			return (
 				! siteHasPlans && (
 					<Notice status="is-success" showDismiss={ false } text={ congratsText }>
-						<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
+						<NoticeAction href={ `/earn/payments/${ site?.slug }` } icon="create">
 							{ translate( 'Add a payment plan' ) }
 						</NoticeAction>
 					</Notice>
@@ -184,7 +184,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 					<NoticeAction
 						external
 						icon="create"
-						href={ `/earn/payments-plans/${ site?.slug }${ ADD_TIER_PLAN_HASH }` }
+						href={ `/earn/payments/${ site?.slug }${ ADD_TIER_PLAN_HASH }` }
 					>
 						{ translate( 'Add tiers' ) }
 					</NoticeAction>
