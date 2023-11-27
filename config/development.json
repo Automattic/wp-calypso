@@ -122,6 +122,7 @@
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
+		"marketplace-reviews-show": true,
 		"marketplace-test": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,

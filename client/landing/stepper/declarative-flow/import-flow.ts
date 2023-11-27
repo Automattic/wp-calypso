@@ -241,10 +241,12 @@ const importFlow: Flow = {
 
 						case 'select-site': {
 							const selectedSite = providedDependencies.site as SiteExcerptData;
+							const skipStoringTempTargetSite = urlQueryParams.get( 'skipStoringTempTargetSite' );
 
 							if ( selectedSite && migrationStatus ) {
 								// Store temporary target blog id to source site option
-								selectedSite &&
+								! skipStoringTempTargetSite &&
+									selectedSite &&
 									migrationStatus?.source_blog_id &&
 									addTempSiteToSourceOption( selectedSite.ID, migrationStatus.source_blog_id );
 
