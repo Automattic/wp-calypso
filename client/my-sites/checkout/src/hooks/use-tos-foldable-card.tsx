@@ -6,7 +6,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export function useToSFoldableCard(): boolean {
+export function useToSFoldableCard(): 'loading' | 'treatment' | 'control' {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	const isJetpackNotAtomic = useSelector(
@@ -14,17 +14,20 @@ export function useToSFoldableCard(): boolean {
 	);
 
 	const isWPcomCheckout = ! isJetpackCheckout() && ! isAkismetCheckout() && ! isJetpackNotAtomic;
+
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'wp_web_checkout_tos_foldable_card_v1',
 		{ isEligible: isWPcomCheckout }
 	);
 
-	if ( ! isLoadingExperimentAssignment ) {
-		return false;
+	// Is loading experiment assignment
+	if ( isLoadingExperimentAssignment ) {
+		return 'loading';
 	}
-
+	// Done loading experiment assignment, and treatment assignment found
 	if ( experimentAssignment?.variationName === 'treatment' ) {
-		return true;
+		return 'treatment';
 	}
-	return false;
+	// Done loading experiment assignment, and control or null assignment found
+	return 'control';
 }
