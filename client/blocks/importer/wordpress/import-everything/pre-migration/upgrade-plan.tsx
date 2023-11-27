@@ -1,19 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	getPlan,
-	PLAN_BUSINESS,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
-	PRODUCT_1GB_SPACE,
-} from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import PlansSpecialOfferBanner from 'calypso/components/plans-special-offer-banner';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { AGENCY_OFFER } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -25,7 +19,7 @@ interface Props {
 	sourceSiteSlug: string;
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
-	startImport: ( plan?: string ) => void;
+	startImport: ( skipCartCreation?: boolean ) => void;
 	onWillBuyPlan: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
@@ -77,19 +71,9 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		);
 	}, [] );
 
-	async function handleAgencyPromoClicked() {
-		await cart.replaceProductsInCart( [
-			{
-				product_slug: PLAN_BUSINESS,
-				meta: 'agency-offer',
-			},
-			{
-				product_slug: PRODUCT_1GB_SPACE,
-				quantity: 50,
-				meta: 'agency-offer',
-			},
-		] );
-		startImport( AGENCY_OFFER );
+	async function handleAgencyPromoClicked( products: MinimalRequestCartProduct[] ) {
+		await cart.replaceProductsInCart( products );
+		startImport( true );
 	}
 
 	return (
@@ -116,7 +100,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 			</div>
 
 			<PlansSpecialOfferBanner
-				blogId={ null }
+				blogId={ targetSite.ID }
 				className="new-hosting-site-agency-promo-banner"
 				onClick={ handleAgencyPromoClicked }
 			/>

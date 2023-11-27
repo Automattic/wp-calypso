@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 const DEFAULT_PLAN = 'business';
 const SELECTED_PLAN_QUERY_KEY = 'selected-plan-for-upgrade';
 
-export const AGENCY_OFFER = 'agency-offer';
+export const DONT_ADD_PLAN_TO_CART = 'dont-add-plan-to-cart';
 
 /**
  * Use this query/mutation to set/get the chosen plan

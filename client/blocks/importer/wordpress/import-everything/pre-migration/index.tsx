@@ -11,7 +11,10 @@ import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/impor
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
+import {
+	DONT_ADD_PLAN_TO_CART,
+	useSelectedPlanUpgradeMutation,
+} from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -111,12 +114,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const { hasCredentials, isRequesting: isFetchingCredentials } =
 		useSiteCredentialsInfo( sourceSiteId );
 
-	const onUpgradeAndMigrateClick = ( plan?: string ) => {
+	const onUpgradeAndMigrateClick = ( skipCartCreation?: boolean ) => {
 		fetchMigrationEnabledStatus();
 		setContinueImport( true );
 
-		if ( plan ) {
-			setSelectedPlanSlug( plan );
+		if ( skipCartCreation ) {
+			setSelectedPlanSlug( DONT_ADD_PLAN_TO_CART );
 			return;
 		}
 

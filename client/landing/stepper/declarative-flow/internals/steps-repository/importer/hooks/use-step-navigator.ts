@@ -2,7 +2,7 @@ import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { buildCheckoutUrl } from 'calypso/blocks/importer/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import {
-	AGENCY_OFFER,
+	DONT_ADD_PLAN_TO_CART,
 	useSelectedPlanUpgradeQuery,
 } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -85,7 +85,7 @@ export function useStepNavigator(
 
 	function getCheckoutUrl( extraArgs = {} ) {
 		const path =
-			selectedPlan === AGENCY_OFFER
+			selectedPlan === DONT_ADD_PLAN_TO_CART
 				? `/checkout/${ siteSlug }` // Go to checkout directly, the cart has been defined elsewhere
 				: buildCheckoutUrl( siteSlug, selectedPlan );
 
