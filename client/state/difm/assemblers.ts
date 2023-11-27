@@ -1,11 +1,16 @@
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
+import { addQueryArgs } from 'calypso/lib/url';
 import type {
 	DIFMDependencies,
 	WebsiteContent,
 	WebsiteContentRequestDTO,
 } from 'calypso/state/signup/steps/website-content/types';
+import type { SiteSlug } from 'calypso/types';
 
-export function buildDIFMCartExtrasObject( dependencies: Partial< DIFMDependencies > ) {
+export function buildDIFMCartExtrasObject(
+	dependencies: Partial< DIFMDependencies >,
+	siteSlug: SiteSlug
+) {
 	const {
 		newOrExistingSiteChoice,
 		siteTitle,
@@ -43,6 +48,7 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< DIFMDependenci
 		display_address: displayAddress,
 		selected_page_titles: selectedPageTitles,
 		is_store_flow: isStoreFlow,
+		afterPurchaseUrl: addQueryArgs( { siteSlug }, '/start/site-content-collection' ),
 	};
 }
 
