@@ -30,17 +30,13 @@ function getToSComponent( content ) {
 
 function SocialAuthToS( props ) {
 	let content = props.translate(
-		'If you continue with Google or Apple, you agree to our' +
-			' {{tosLink}}Terms of Service{{/tosLink}}, and have' +
-			' read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+		'If you continue with Google or Apple, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 		toSLinks
 	);
 
 	if ( props.isWooCoreProfilerFlow ) {
 		content = props.translate(
-			'If you continue with Google or Apple, you agree to our' +
-				' {{tosLink}}Terms of Service{{/tosLink}}, and have' +
-				' read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			'If you continue with Google or Apple, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			toSLinks
 		);
 	}
