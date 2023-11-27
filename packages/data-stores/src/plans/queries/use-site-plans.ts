@@ -62,6 +62,7 @@ function useSitePlans( { siteId }: Props ) {
 						introOffer: unpackIntroOffer( plan ),
 						expiry: plan.expiry,
 						currentPlan: plan.current_plan,
+						purchaseId: plan.id ? Number( plan.id ) : undefined,
 					},
 				};
 			}, {} );
