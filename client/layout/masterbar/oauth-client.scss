@@ -133,7 +133,6 @@
 		.card:not(.gdpr-banner) {
 			background: none;
 			box-shadow: none;
-			border: 0;
 			margin: 0 auto;
 			max-width: 320px;
 			padding: 0;
@@ -242,9 +241,16 @@
 		.auth-form__separator {
 			margin: 10px auto;
 
+			&::before,
+			&::after {
+				width: 0;
+			}
+
 			.auth-form__separator-text {
 				text-transform: lowercase;
 				color: var(--color-text);
+				font-size: $font-title-small;
+				font-weight: 600;
 			}
 		}
 

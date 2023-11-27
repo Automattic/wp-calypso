@@ -550,11 +550,6 @@
 }
 
 .layout.is-jetpack-login {
-	.auth-form__separator {
-		margin-bottom: -10px;
-		margin-top: -10px;
-	}
-
 	.card.login__form {
 		box-shadow: none;
 		border: 1px solid var(--color-border-subtle);

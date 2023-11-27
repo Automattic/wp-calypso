@@ -21,10 +21,13 @@ $breakpoint-mobile: 660px;
 		inset-inline-start: 0;
 		height: 0;
 		width: 42%;
+		z-index: 1;
 	}
+
 	&::after {
 		left: 58%;
 	}
+
 	.auth-form__separator-text {
 		text-transform: uppercase;
 		text-align: center;
@@ -53,6 +56,7 @@ $breakpoint-mobile: 660px;
 				inset-inline-start: 50%;
 				height: 40%;
 			}
+
 			&::after {
 				top: 60%;
 			}
@@ -74,4 +78,17 @@ $breakpoint-mobile: 660px;
 	.auth-form__separator-text {
 		padding: 0 24px;
 	}
+}
+
+// If the separator is between two cards, pull them together.
+.card ~ .auth-form__separator {
+	margin-bottom: -10px;
+	margin-top: -10px;
+}
+
+.auth-form__separator ~ .card {
+	// Remove the top box shadow if any.
+	clip-path: polygon(0% 1px, 102% 1px, 102% 102%, -1% 102%);
+	// Compensate for the clipped 1px to keep the contents unclipped.
+	border-top: 1px solid transparent;
 }
