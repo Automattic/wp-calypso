@@ -112,18 +112,21 @@ const OdieAssistantProvider = ( {
 		}
 	}, [ existingChat, existingChat.chat_id ] );
 
+	const trackEvent = useCallback(
+		( event: string, properties?: Record< string, unknown > ) => {
+			dispatch( recordTracksEvent( event, properties ) );
+		},
+		[ dispatch ]
+	);
+
 	const clearChat = useCallback( () => {
 		clearOdieStorage( 'chat_id' );
 		setChat( {
 			chat_id: null,
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
-		recordTracksEvent( 'calypso_odie_chat_cleared', {} );
-	}, [ botNameSlug ] );
-
-	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
-		dispatch( recordTracksEvent( event, properties ) );
-	};
+		trackEvent( 'calypso_odie_chat_cleared', {} );
+	}, [ botNameSlug, trackEvent ] );
 
 	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {
