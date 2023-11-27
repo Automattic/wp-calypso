@@ -20,6 +20,9 @@ function mapAIPromptToRegularPrompt( aiPrompt: AIBloggingPrompt ) {
 }
 
 export function mergePromptStreams( regularPrompts: any, aiPrompts: any ) {
+	if ( ! aiPrompts || ! Array.isArray( aiPrompts.prompts ) ) {
+		return regularPrompts;
+	}
 	const aiPromptRatio = 3; // 1 out of 3 prompts will be AI prompts.
 	const mappedAIPrompts = aiPrompts.prompts.map( mapAIPromptToRegularPrompt );
 	// Insert AI prompts into the prompts array every aiPromptRatio prompts.
@@ -50,5 +53,6 @@ export const useAIBloggingPrompts = (
 			} ),
 		enabled: isEnabled( 'calypso/ai-blogging-prompts' ) && !! siteId,
 		staleTime: 86400000,
+		retry: false,
 	} );
 };
