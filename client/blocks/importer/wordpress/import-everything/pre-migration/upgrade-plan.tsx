@@ -20,7 +20,6 @@ interface Props {
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
 	startImport: ( skipCartCreation?: boolean ) => void;
-	onWillBuyPlan: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
