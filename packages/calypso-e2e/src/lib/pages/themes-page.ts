@@ -154,6 +154,5 @@ export class ThemesPage {
 			} );
 		} );
 		await this.page.goto( getCalypsoURL( targetUrl ) );
-		await this.page.waitForLoadState( 'networkidle' );
 	}
 }

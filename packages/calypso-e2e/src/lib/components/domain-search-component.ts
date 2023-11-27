@@ -82,7 +82,11 @@ export class DomainSearchComponent {
 
 		await target.click();
 
-		await this.page.getByRole( 'button' ).filter( { hasText: 'Continue' } ).waitFor();
+		try {
+			await this.page.getByRole( 'button' ).filter( { hasText: 'Continue' } ).waitFor();
+		} catch ( exception ) {
+			// Don't do anything since the button might never appear in some cases (e.g. with-theme flow)
+		}
 
 		// If multiple domain selections are enabled, the Continue button appears
 		// on the right hand sidebar.

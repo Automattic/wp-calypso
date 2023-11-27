@@ -62,7 +62,9 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 		it( 'Selects a Premium theme', async function () {
 			await page
-				.locator( 'div.theme-card:has(div.premium-badge):not(div.is-marketplace)' )
+				.locator(
+					'div.theme-card:has(div.premium-badge):not(div.theme-card:has(div.is-marketplace))'
+				)
 				.first()
 				.click();
 		} );
@@ -115,24 +117,16 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 		it( 'Skip business plan upsell', async function () {
 			const selector = 'button[data-e2e-button="decline"]';
-			await page.waitForSelector( selector );
 
 			const locator = page.locator( selector );
 
-			try {
-				await locator.click( { timeout: 2 * 1000 } );
-			} catch {
-				// noop
-			}
+			await locator.click( { timeout: 30 * 1000 } );
 		} );
 
 		it( 'Installs theme in Marketplace thank you page', async () => {
-			await Promise.all( [
-				page.waitForURL( /.*marketplace\/thank-you.*/ ),
-				page.waitForLoadState(),
-			] );
+			await page.waitForURL( /.*marketplace\/thank-you.*/ );
 
-			await page.waitForSelector( 'text="Customize this design"' );
+			await page.locator( 'text="Customize this design"' ).waitFor();
 		} );
 
 		it( 'Checks the active theme', async function () {
