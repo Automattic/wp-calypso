@@ -90,10 +90,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		);
 	};
 
-	const submitWithDomain = (
-		suggestion: DomainSuggestion | undefined,
-		shouldHideFreePlan = false
-	) => {
+	const submitWithDomain = ( suggestion: DomainSuggestion, shouldHideFreePlan = false ) => {
 		if ( ! suggestion ) {
 			// No domain was selected, 'decide later' button was clicked
 			setHideFreePlan( false );
