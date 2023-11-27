@@ -91,6 +91,7 @@ export default function DropdownGroup( {
 		if ( containGroupedIndexes || always ) {
 			return (
 				<SlotFillProvider>
+					{ /* @ts-expect-error-ignore  */ }
 					<Popover.Slot />
 					<Dropdown
 						renderToggle={ ( { onToggle } ) => (
