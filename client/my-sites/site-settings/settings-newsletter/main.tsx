@@ -112,12 +112,12 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		);
 	} );
 
-	const isSubscriptionOnCommentModuleInactive = useSelector( ( state ) => {
+	const shouldShowSubscriptionOnCommentModule = useSelector( ( state ) => {
 		const isJetpackSite = isJetpackSiteSelector( state, siteId, {
 			treatAtomicAsJetpackSite: true,
 		} );
 
-		return Boolean( isJetpackSite );
+		return ! isJetpackSite && 1 === lang_id;
 	} );
 
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
@@ -151,7 +151,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					value={ sm_enabled }
 				/>
 			</Card>
-			{ ! isSubscriptionOnCommentModuleInactive && 1 === lang_id && (
+			{ shouldShowSubscriptionOnCommentModule && (
 				<Card className="site-settings__card">
 					<SubscribeModalOnCommentSetting
 						disabled={ disabled }
