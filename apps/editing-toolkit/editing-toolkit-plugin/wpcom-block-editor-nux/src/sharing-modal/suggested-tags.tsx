@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormTokenField } from '@wordpress/components';
+import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { useI18n } from '@wordpress/react-i18n';
@@ -43,7 +44,9 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 		// Compare origSuggestedTags and selectedTags and determine the number of tags that are different
 		const numSuggestedTags = origSuggestedTags.length;
 		const numSelectedTags = selectedTags.length;
-		const numSameTags = origSuggestedTags.filter( ( tag ) => selectedTags.includes( tag ) ).length;
+		const numSameTags = origSuggestedTags.filter( ( tag: string ) =>
+			selectedTags.includes( tag )
+		).length;
 		const eventProps: SuggestedTagsEventProps = {
 			number_of_original_suggested_tags: numSuggestedTags,
 			number_of_selected_tags: numSelectedTags,
@@ -61,7 +64,7 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 		return null;
 	}
 
-	const onChangeSelectedTags = ( newTags: string[] ) => {
+	const onChangeSelectedTags = ( newTags: ( string | TokenItem )[] ) => {
 		setSelectedTags( newTags );
 	};
 
@@ -87,7 +90,7 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 			<Button
 				className="wpcom-block-editor-post-published-sharing-modal__save-tags"
 				onClick={ saveTags }
-				isPrimary={ true }
+				variant="primary"
 			>
 				{ __( 'Add these tags', 'full-site-editing' ) }
 			</Button>
