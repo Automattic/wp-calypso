@@ -82,17 +82,16 @@ export class DomainSearchComponent {
 
 		await target.click();
 
-		try {
-			await this.page.getByRole( 'button' ).filter( { hasText: 'Continue' } ).waitFor();
-		} catch ( exception ) {
-			// Don't do anything since the button might never appear in some cases (e.g. with-theme flow)
-		}
-
 		// If multiple domain selections are enabled, the Continue button appears
 		// on the right hand sidebar.
 		// See: 21483-explat-experiment
 		// Note: this page object does not currently support multiple domain selection.
-		await Promise.race( [ this.clickButton( 'Continue' ), this.page.waitForURL( plansPageUrl ) ] );
+		await Promise.race( [
+			this.page
+				.getByRole( 'button', { name: 'Continue', exact: true } )
+				.click( { timeout: 30 * 1000 } ),
+			this.page.waitForURL( plansPageUrl ),
+		] );
 
 		return selectedDomain;
 	}
