@@ -327,7 +327,7 @@ const PlansFeaturesMain = ( {
 		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
 			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-				window.open( 'https://woocommerce.com/get-in-touch/', '_blank' );
+				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
 				return;
 			} else if ( isWooExpressPlusPlan( clickedPlanSlug ?? '' ) ) {
 				recordTracksEvent( 'calypso_plan_step_woo_express_plus_click', { flow: flowName } );
@@ -337,7 +337,7 @@ const PlansFeaturesMain = ( {
 						utm_medium: 'automattic_referral',
 						utm_campaign: 'calypso_signup',
 					},
-					'https://wpvip.com/wordpress-vip-agile-content-platform'
+					'https://woocommerce.com/get-in-touch/'
 				);
 				window.open( vipLandingPageUrlWithUtmCampaign, '_blank' );
 				return;
