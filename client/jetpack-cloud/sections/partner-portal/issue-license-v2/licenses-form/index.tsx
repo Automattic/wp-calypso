@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { useSelector } from 'calypso/state';
 import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
@@ -75,13 +74,6 @@ export default function LicensesForm( {
 
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
-	const onSelectBundle = useCallback(
-		( product: APIProductFamilyProduct ) => {
-			handleSelectBundleLicense( product );
-		},
-		[ handleSelectBundleLicense ]
-	);
-
 	const isSelected = useCallback(
 		( slug: string ) =>
 			selectedLicenses.some(
@@ -127,14 +119,16 @@ export default function LicensesForm( {
 					) }
 				>
 					{ plans.map( ( productOption, i ) => (
-						<LicenseBundleCard
+						<LicenseProductCard
+							isMultiSelect
 							key={ productOption.slug }
 							product={ productOption }
-							isBusy={ ! isReady }
+							onSelectProduct={ onSelectProduct }
+							isSelected={ isSelected( productOption.slug ) }
 							isDisabled={ ! isReady }
-							onSelectProduct={ onSelectBundle }
-							tabIndex={ 100 + ( products?.length || 0 ) + i }
+							tabIndex={ 100 + i }
 							hideDiscount={ isSingleLicenseView }
+							withBackground
 						/>
 					) ) }
 				</LicensesFormSection>

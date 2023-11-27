@@ -231,3 +231,10 @@
 		@include license-product-card-block__pricing;
 	}
 }
+
+.license-product-card--with-background {
+	.license-product-card__inner {
+		background-image: url(../license-bundle-card/gradient.svg);
+		background-size: 100% 100%;
+	}
+}
