@@ -30,6 +30,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import PlansSpecialOfferBanner from 'calypso/components/plans-special-offer-banner';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -56,7 +57,6 @@ import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
 import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
-import PlansSpecialOfferBanner from './components/plans-special-offer-banner';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
@@ -224,6 +224,11 @@ class Plans extends Component {
 				  } )
 				: checkoutPath
 		);
+	};
+
+	handleSpecialOfferClick = async ( cartItems ) => {
+		await this.props.shoppingCartManager.addProductsToCart( cartItems );
+		page( `/checkout/${ this.props.selectedSite.slug }` );
 	};
 
 	renderPlaceholder = () => {
@@ -430,7 +435,10 @@ class Plans extends Component {
 									domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
 									subHeaderText={ subHeaderText }
 								/>
-								<PlansSpecialOfferBanner />
+								<PlansSpecialOfferBanner
+									blogId={ selectedSite.ID }
+									onClick={ this.handleSpecialOfferClick }
+								/>
 							</>
 						) }
 						{ isDomainAndPlanPackageFlow && (
