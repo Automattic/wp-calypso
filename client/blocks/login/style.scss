@@ -398,7 +398,6 @@
 
 	.login button {
 		@extend %p2-form-button;
-		margin-bottom: 0;
 
 		&.login__form-change-username {
 			background: none;
@@ -416,6 +415,10 @@
 
 	.auth-form__social-buttons {
 		gap: 1em;
+
+		.social-buttons__button {
+			margin-bottom: 0;
+		}
 	}
 
 	.wp-login__links {
