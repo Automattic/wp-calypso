@@ -144,7 +144,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<div>
 				{ isNewHostedSiteCreationFlow( flowName ) && (
 					<PlansSpecialOfferBanner
-						blogId={ null }
+						blogId={ selectedSiteId }
 						className="new-hosting-site-agency-promo-banner"
 						onClick={ onUpgradeClick }
 					/>
