@@ -8,9 +8,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -22,6 +22,7 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
+// Offloads whether to use siteSlug or siteId to useSite() enabling the launchpad to use either query param
 const LaunchpadSiteWrapper: Step = ( {
 	navigation,
 	flow,
@@ -30,17 +31,16 @@ const LaunchpadSiteWrapper: Step = ( {
 	flow: string | null;
 } ) => {
 	const site = useSite();
+
 	if ( ! site || ! flow ) {
 		return null;
 	}
 
-	const siteSlug = site.URL.replace( /^https?:\/\//i, '' );
-	const siteId = site.ID;
 	return (
 		<Launchpad
 			site={ site }
-			siteId={ siteId }
-			siteSlug={ siteSlug }
+			siteId={ site.ID }
+			siteSlug={ urlToSlug( site.URL ) }
 			navigation={ navigation }
 			flow={ flow }
 		/>
