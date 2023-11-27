@@ -5,6 +5,7 @@ import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import {
 	ProductType,
+	ErrorResponse,
 	useCreateMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 
@@ -24,6 +25,24 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeName }: Pro
 
 	const createReview = useCreateMarketplaceReviewMutation();
 
+	if ( createReview.isSuccess ) {
+		<Card>
+			<Dialog
+				className="marketplace-reviews-modal"
+				isVisible={ isVisible }
+				buttons={ buttons }
+				onClose={ onClose }
+				showCloseIcon
+			>
+				<CardHeading tagName="h1" size={ 21 }>
+					{ translate( 'Review submitted for' ) }
+					{ themeName }
+				</CardHeading>
+				<CardHeading tagName="h2">{ translate( 'Thank you for your contribution.' ) }</CardHeading>
+			</Dialog>
+		</Card>;
+	}
+
 	return (
 		<Card>
 			<Dialog
@@ -42,8 +61,8 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeName }: Pro
 					onSubmit={ ( e ) => {
 						e.preventDefault();
 						const requestData = {
-							productType: 'plugin' as ProductType,
-							productSlug: 'woocommerce-bookings',
+							productType: 'theme' as ProductType,
+							productSlug: themeName,
 							content: content,
 							rating: Number( rating ),
 						};
@@ -65,8 +84,13 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeName }: Pro
 						value={ rating }
 						onChange={ setRating }
 					/>
-					<Button type="submit">Add new review</Button>
+					<Button type="submit">{ translate( 'Add new review' ) }</Button>
 				</form>
+				{ createReview.isError && (
+					<span className="marketplace-reviews-modal__error">
+						{ ( createReview.error as ErrorResponse ).message }
+					</span>
+				) }
 			</Dialog>
 		</Card>
 	);
