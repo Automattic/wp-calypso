@@ -20,8 +20,9 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
+import { useOpenPmaLink } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -104,20 +105,7 @@ export const useCommandsArrayWpcom = ( {
 		displaySuccessNotice( __( 'Copied new password' ) );
 	};
 
-	const openPHPmyAdmin = async ( siteId: number ) => {
-		try {
-			const { token } = await wpcom.req.post( {
-				path: `/sites/${ siteId }/hosting/pma/token`,
-				apiNamespace: 'wpcom/v2',
-			} );
-
-			if ( token ) {
-				window.open( `https://wordpress.com/pma-login?token=${ token }` );
-			}
-		} catch {
-			dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
-		}
-	};
+	const { openPmaLink } = useOpenPmaLink();
 
 	const commands = [
 		{
@@ -158,7 +146,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					await openPHPmyAdmin( site.ID );
+					await openPmaLink( site.ID );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
