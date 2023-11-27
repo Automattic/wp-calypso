@@ -45,6 +45,7 @@ import {
 	getSelectedSiteId,
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
+	getSectionName,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
@@ -350,7 +351,7 @@ class Layout extends Component {
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
 		const sectionGroup = currentSection?.group ?? null;
-		const sectionName = currentSection?.name ?? null;
+		const sectionName = getSectionName( state );
 		const siteId = getSelectedSiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );

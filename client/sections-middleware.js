@@ -5,6 +5,7 @@ import { performanceTrackerStart } from 'calypso/lib/performance-tracking';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { setSectionLoading } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setSectionName } from 'calypso/state/ui/section/actions';
 import * as controller from './controller/index.web';
 import { composeHandlers } from './controller/shared';
 import sections from './sections';
@@ -17,6 +18,10 @@ receiveSections( sections );
 function activateSection( section, context ) {
 	controller.setSectionMiddleware( section )( context );
 	context.store.dispatch( activateNextLayoutFocus() );
+}
+
+function setInitialSectionName( context, sectionName ) {
+	context.store.dispatch( setSectionName( sectionName ) );
 }
 
 async function loadSection( context, sectionDefinition ) {
@@ -40,6 +45,12 @@ async function loadSection( context, sectionDefinition ) {
 	}
 }
 
+function loadSectionNameHandler( sectionDefinition ) {
+	return ( context, next ) => {
+		setInitialSectionName( context, sectionDefinition.name );
+		next();
+	};
+}
 /**
  * Cache of already loaded or loading section modules. Every section module is in one of
  * three states regarding the cache:
@@ -94,7 +105,11 @@ function createPageDefinition( path, sectionDefinition ) {
 	}
 
 	const pathRegex = pathToRegExp( path );
-	let handler = loadSectionHandler( sectionDefinition );
+
+	let handler = composeHandlers(
+		loadSectionNameHandler( sectionDefinition ),
+		loadSectionHandler( sectionDefinition )
+	);
 
 	// Install navigation performance tracking.
 	if ( sectionDefinition.trackLoadPerformance ) {

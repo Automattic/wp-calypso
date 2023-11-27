@@ -1,4 +1,4 @@
-import { SECTION_SET, SECTION_LOADING_SET } from 'calypso/state/action-types';
+import { SECTION_SET, SECTION_LOADING_SET, SECTION_NAME_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';
 
@@ -10,6 +10,15 @@ export function setSection( section, options = {} ) {
 	if ( section ) {
 		action.section = section;
 	}
+
+	return action;
+}
+
+export function setSectionName( sectionName ) {
+	const action = {
+		type: SECTION_NAME_SET,
+		sectionName,
+	};
 
 	return action;
 }
