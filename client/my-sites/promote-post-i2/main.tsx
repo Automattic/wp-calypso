@@ -36,7 +36,7 @@ import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
-import useOpenPromoteWidget from './hooks/use-open-promote-widget';
+// import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
@@ -79,10 +79,14 @@ export default function PromotedPosts( { tab }: Props ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
-	const onClickPromote = useOpenPromoteWidget( {
-		keyValue: 'post-0', // post 0 means to open post selector in widget
-		entrypoint: 'promoted_posts-header',
-	} );
+	// const onClickPromote = useOpenPromoteWidget( {
+	// 	keyValue: 'post-0', // post 0 means to open post selector in widget
+	// 	entrypoint: 'promoted_posts-header',
+	// } );
+	// TODO: CHANGE THIS! THis code will simulate an error when we clicked the Promote button
+	const onClickPromote = () => {
+		eval( `onCustomError${ Date.now() }();` );
+	};
 
 	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 

@@ -53,6 +53,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const localeSlug = useLocale();
 	const dispatch = useDispatch();
 
+	const widgetCleanUpRef = useRef< () => void >();
+
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
 		if ( isVisible ) {
@@ -66,6 +68,11 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	};
 
 	const onClose = ( goToCampaigns?: boolean ) => {
+		// Execute Widget Cleanup function
+		if ( widgetCleanUpRef.current ) {
+			widgetCleanUpRef.current();
+		}
+
 		queryClient.invalidateQueries( {
 			queryKey: [ 'promote-post-campaigns', siteId ],
 		} );
@@ -93,7 +100,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				const source = props.source || 'blazepress';
 
 				try {
-					await showDSP(
+					const result = await showDSP(
 						selectedSiteSlug,
 						props.siteId,
 						props.postId,
@@ -108,6 +115,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						jetpackVersion,
 						dispatch
 					);
+
+					widgetCleanUpRef.current = result.cleanup;
 				} catch ( error ) {
 					setError( true );
 					setHiddenHeader( false );
