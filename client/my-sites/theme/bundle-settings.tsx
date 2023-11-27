@@ -6,7 +6,6 @@ interface BundleSettings {
 }
 
 const bundleSettings: BundleSettings = {
-	// TODO: Move to a constant.
 	'woo-on-plans': {
 		name: 'WooCommerce',
 		BadgeIcon: () => (
