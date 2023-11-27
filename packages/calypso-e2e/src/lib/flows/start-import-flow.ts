@@ -54,8 +54,7 @@ export class StartImportFlow {
 	async clickButton( text: string ): Promise< void > {
 		const selector = selectors.button( text );
 
-		await this.page.locator( selector ).waitFor();
-		await this.page.click( selector );
+		await this.page.locator( selector ).click();
 	}
 
 	/**
