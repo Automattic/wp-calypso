@@ -43,12 +43,12 @@ type PlanRowOptions = {
 	isStuck?: boolean;
 };
 
-interface FeaturesGridType extends PlansGridProps {
+interface FeaturesGridType extends Omit< PlansGridProps, 'onUpgradeClick' > {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
 	currentPlanManageHref?: string;
 	isPlanUpgradeCreditEligible: boolean;
-	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 }
 
 class FeaturesGrid extends Component< FeaturesGridType > {
@@ -354,7 +354,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			planActionOverrides,
 			siteId,
 			isLargeCurrency,
-			handleUpgradeClick,
+			onUpgradeClick,
 		} = this.props;
 
 		return renderedGridPlans.map(
@@ -393,7 +393,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 							isLaunchPage={ isLaunchPage }
 							isMonthlyPlan={ isMonthlyPlan }
 							onUpgradeClick={ ( overridePlanSlug ) =>
-								handleUpgradeClick( overridePlanSlug ?? planSlug )
+								onUpgradeClick( overridePlanSlug ?? planSlug )
 							}
 							planSlug={ planSlug }
 							currentSitePlanSlug={ currentSitePlanSlug }

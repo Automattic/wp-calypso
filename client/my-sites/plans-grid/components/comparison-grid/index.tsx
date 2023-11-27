@@ -45,6 +45,7 @@ import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
+import type { PlansGridProps } from '../..';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
@@ -324,23 +325,9 @@ const FeatureFootnote = styled.span`
 	}
 `;
 
-type ComparisonGridProps = {
-	intervalType: string;
-	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
-	currentSitePlanSlug?: string | null;
+interface ComparisonGridProps extends Omit< PlansGridProps, 'onUpgradeClick' > {
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-	siteId?: number | null;
-	planActionOverrides?: PlanActionOverrides;
-	selectedPlan?: string;
-	selectedFeature?: string;
-	showLegacyStorageFeature?: boolean;
-	showUpgradeableStorage: boolean;
-	stickyRowOffset: number;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	showRefundPeriod?: boolean;
-	planTypeSelectorProps?: PlanTypeSelectorProps;
-};
+}
 
 type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
