@@ -34,6 +34,7 @@ const noop = () => {};
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
+		callToActionBusy: PropTypes.bool,
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
@@ -84,6 +85,7 @@ export class Banner extends Component {
 		disableCircle: false,
 		disableHref: false,
 		dismissTemporary: false,
+		callToActionBusy: false,
 		compact: false,
 		compactButton: true,
 		horizontal: false,
@@ -209,6 +211,7 @@ export class Banner extends Component {
 	getContent() {
 		const {
 			callToAction,
+			callToActionBusy,
 			forceHref,
 			description,
 			event,
@@ -271,7 +274,12 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact={ compactButton } primary={ primaryButton } target={ target }>
+								<Button
+									compact={ compactButton }
+									primary={ primaryButton }
+									target={ target }
+									busy={ callToActionBusy }
+								>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
@@ -281,6 +289,7 @@ export class Banner extends Component {
 									onClick={ this.handleClick }
 									primary={ primaryButton }
 									target={ target }
+									busy={ callToActionBusy }
 								>
 									{ preventWidows( callToAction ) }
 								</Button>

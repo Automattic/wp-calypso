@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Banner } from 'calypso/components/banner/index';
+import { Banner } from 'calypso/components/banner';
 import wpcom from 'calypso/lib/wp';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -16,12 +16,14 @@ interface PlansSpecialOfferBannerProps {
 	blogId: number | null;
 	className?: string;
 	onClick?: ( products: MinimalRequestCartProduct[] ) => void;
+	busy?: boolean;
 }
 
 export default function PlansSpecialOfferBanner( {
 	blogId,
 	className,
 	onClick,
+	busy = false,
 }: PlansSpecialOfferBannerProps ) {
 	const { data } = useQuery< SpecialOffersResponse >( {
 		queryKey: [ 'special-offers', blogId ],
@@ -57,6 +59,7 @@ export default function PlansSpecialOfferBanner( {
 				title={ data.offer.banner_text }
 				primaryButton
 				callToAction={ data.offer.cta_text }
+				callToActionBusy={ busy }
 				onClick={ handleAddCart }
 			/>
 		</div>
