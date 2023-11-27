@@ -83,6 +83,8 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 						label="Rating"
 						name="rating"
 						type="number"
+						min={ 1 }
+						max={ 5 }
 						value={ rating }
 						onChange={ setRating }
 					/>
