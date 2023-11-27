@@ -14,7 +14,9 @@
 	}
 
 	.jp-components-pricing-slider__track {
+		// Assuming 40px tall container.
 		height: 4px;
+		top: 18px;
 	}
 
 	.jp-components-pricing-slider__control {
