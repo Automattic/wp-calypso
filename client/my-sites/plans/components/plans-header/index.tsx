@@ -1,17 +1,12 @@
-import { PLAN_BUSINESS, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { Banner } from 'calypso/components/banner/index';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSelector } from 'calypso/state/index';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
 
 import './style.scss';
 
@@ -70,47 +65,17 @@ const PlansHeader: React.FunctionComponent< {
 		subHeaderText ??
 		translate( 'See and compare the features available on each WordPress.com plan.' );
 
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const cart = useShoppingCart( selectedSiteId! );
-
 	if ( domainFromHomeUpsellFlow ) {
 		return <DomainUpsellHeader />;
 	}
 
-	async function handleAddCart() {
-		await cart.addProductsToCart( [
-			{
-				product_slug: PLAN_BUSINESS,
-				meta: 'agency-offer',
-			},
-			{
-				product_slug: PRODUCT_1GB_SPACE,
-				quantity: 50,
-				meta: 'agency-offer',
-			},
-		] );
-
-		window.location.href = `/checkout/${ selectedSiteSlug }`;
-	}
-
 	return (
-		<>
-			<NavigationHeader
-				className="plans__section-header"
-				navigationItems={ [] }
-				title={ translate( 'Plans' ) }
-				subtitle={ plansDescription }
-			/>
-			<div style={ { paddingLeft: 32 } }>
-				<Banner
-					title="Bespoke $5/month annual agency Business plan with 100GB storage"
-					primaryButton
-					callToAction="Buy now"
-					onClick={ handleAddCart }
-				/>
-			</div>
-		</>
+		<NavigationHeader
+			className="plans__section-header"
+			navigationItems={ [] }
+			title={ translate( 'Plans' ) }
+			subtitle={ plansDescription }
+		/>
 	);
 };
 

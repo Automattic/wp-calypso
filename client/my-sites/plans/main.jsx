@@ -56,6 +56,7 @@ import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
 import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
+import PlansSpecialOfferBanner from './components/plans-special-offer-banner';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
@@ -424,10 +425,13 @@ class Plans extends Component {
 				{ canAccessPlans && (
 					<div>
 						{ ! isDomainAndPlanPackageFlow && (
-							<PlansHeader
-								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
-								subHeaderText={ subHeaderText }
-							/>
+							<>
+								<PlansHeader
+									domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
+									subHeaderText={ subHeaderText }
+								/>
+								<PlansSpecialOfferBanner />
+							</>
 						) }
 						{ isDomainAndPlanPackageFlow && (
 							<>
