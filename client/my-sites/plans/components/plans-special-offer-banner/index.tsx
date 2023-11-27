@@ -35,13 +35,13 @@ export default function PlansSpecialOfferBanner() {
 		},
 	} );
 
-	if ( ! selectedSiteId || ! data?.offer ) {
+	if ( ! selectedSiteId || ! selectedSiteSlug || ! data?.offer ) {
 		return null;
 	}
 
 	async function handleAddCart() {
 		if ( data?.offer ) {
-			await cart.addProductsToCart( data?.offer?.products );
+			await cart.addProductsToCart( data?.offer.products );
 			page( `/checkout/${ selectedSiteSlug }` );
 		}
 	}
