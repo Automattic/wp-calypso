@@ -3,6 +3,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .auth-form__social {
+	box-shadow: none;
+
 	.auth-form__social-buttons {
 		display: flex;
 		flex-direction: column;

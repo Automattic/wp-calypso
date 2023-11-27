@@ -414,6 +414,10 @@
 		}
 	}
 
+	.auth-form__social-buttons {
+		gap: 1em;
+	}
+
 	.wp-login__links {
 		display: flex;
 		flex-direction: column;
