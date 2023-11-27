@@ -38,7 +38,7 @@ interface DomainFormControlProps {
 	onUseYourDomainClick: () => void;
 	showUseYourDomain: boolean;
 	isCartPendingUpdate: boolean;
-	isCartPendingUpdateDomain: DomainSuggestion;
+	isCartPendingUpdateDomain: DomainSuggestion | undefined;
 }
 
 export function DomainFormControl( {
