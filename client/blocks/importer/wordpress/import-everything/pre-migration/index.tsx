@@ -13,6 +13,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -29,7 +30,7 @@ interface PreMigrationProps {
 	isTrial?: boolean;
 	isMigrateFromWp: boolean;
 	isTargetSitePlanCompatible: boolean;
-	startImport: ( props?: StartImportTrackingProps ) => void;
+	startImport: ( props?: StartImportTrackingProps, customCheckoutUrl?: string ) => void;
 	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
@@ -108,10 +109,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const { hasCredentials, isRequesting: isFetchingCredentials } =
 		useSiteCredentialsInfo( sourceSiteId );
 
-	const onUpgradeAndMigrateClick = () => {
+	const onUpgradeAndMigrateClick = ( customCheckoutUrl?: string ) => {
 		fetchMigrationEnabledStatus();
 		setContinueImport( true );
-		startImport( migrationTrackingProps );
+		startImport( migrationTrackingProps, customCheckoutUrl );
 	};
 
 	/**
@@ -227,18 +228,21 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return (
 				<>
 					{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
-					<PreMigrationUpgradePlan
-						sourceSiteUrl={ sourceSiteUrl }
-						targetSite={ targetSite }
-						startImport={ onUpgradeAndMigrateClick }
-						navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
-						onFreeTrialClick={ onFreeTrialClick }
-						onContentOnlyClick={ onContentOnlyClick }
-						isBusy={
-							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
-						}
-						migrationTrackingProps={ migrationTrackingProps }
-					/>
+					<CalypsoShoppingCartProvider>
+						<PreMigrationUpgradePlan
+							sourceSiteSlug={ sourceSite?.slug as string }
+							sourceSiteUrl={ sourceSiteUrl }
+							targetSite={ targetSite }
+							startImport={ onUpgradeAndMigrateClick }
+							navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
+							onFreeTrialClick={ onFreeTrialClick }
+							onContentOnlyClick={ onContentOnlyClick }
+							isBusy={
+								isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
+							}
+							migrationTrackingProps={ migrationTrackingProps }
+						/>
+					</CalypsoShoppingCartProvider>
 				</>
 			);
 

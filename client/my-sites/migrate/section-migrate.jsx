@@ -243,7 +243,7 @@ export class SectionMigrate extends Component {
 
 	setUrl = ( event ) => this.setState( { url: event.target.value } );
 
-	startMigration = ( trackingProps = {} ) => {
+	startMigration = ( trackingProps = {}, customCheckoutUrl ) => {
 		const { sourceSiteId, targetSiteId, targetSite, isMigrateFromWp } = this.props;
 
 		if ( ! sourceSiteId || ! targetSiteId ) {
@@ -256,7 +256,7 @@ export class SectionMigrate extends Component {
 			! this._startedMigrationFromCart &&
 			! planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS )
 		) {
-			this.goToCart();
+			this.goToCart( customCheckoutUrl );
 			return;
 		}
 
@@ -288,13 +288,14 @@ export class SectionMigrate extends Component {
 			} );
 	};
 
-	goToCart = () => {
+	goToCart = ( customCheckoutUrl = undefined ) => {
 		const { sourceSite, targetSiteSlug } = this.props;
 		const sourceSiteSlug = get( sourceSite, 'slug' );
 		const plan = 'business';
 
 		page(
-			`/checkout/${ targetSiteSlug }/${ plan }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
+			customCheckoutUrl ||
+				`/checkout/${ targetSiteSlug }/${ plan }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
 		);
 	};
 

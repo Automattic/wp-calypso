@@ -1,10 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_BUSINESS,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PRODUCT_1GB_SPACE,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
+import PlansSpecialOfferBanner from 'calypso/components/plans-special-offer-banner';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useDispatch } from 'calypso/state';
@@ -14,9 +21,11 @@ import UpgradePlanDetails from './upgrade-plan-details';
 import type { URL } from 'calypso/types';
 
 interface Props {
+	sourceSiteSlug: string;
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
-	startImport: () => void;
+	startImport: ( customCheckoutUrl?: string ) => void;
+	onWillBuyPlan: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
@@ -29,6 +38,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
+		sourceSiteSlug,
 		targetSite,
 		startImport,
 		navigateToVerifyEmailStep,
@@ -39,6 +49,8 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
 		targetSite.ID
 	);
+	const cart = useShoppingCart( targetSite.ID );
+
 	const isEligibleForTrialPlan =
 		migrationTrialEligibility?.eligible ||
 		// If the user's email is unverified, we still want to show the trial plan option
@@ -65,6 +77,24 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		);
 	}, [] );
 
+	async function handleAgencyPromoClicked() {
+		await cart.replaceProductsInCart( [
+			{
+				product_slug: PLAN_BUSINESS,
+				meta: 'agency-offer',
+			},
+			{
+				product_slug: PRODUCT_1GB_SPACE,
+				quantity: 50,
+				meta: 'agency-offer',
+			},
+		] );
+		const targetSiteSlug = targetSite.slug;
+		startImport(
+			`/checkout/${ targetSiteSlug }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
+		);
+	}
+
 	return (
 		<div className="import__import-everything import__import-everything--redesign">
 			<div className="import__heading-title">
@@ -87,6 +117,12 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 						) }
 				</SubTitle>
 			</div>
+
+			<PlansSpecialOfferBanner
+				blogId={ null }
+				className="new-hosting-site-agency-promo-banner"
+				onClick={ handleAgencyPromoClicked }
+			/>
 
 			<UpgradePlanDetails>
 				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ () => startImport() }>
