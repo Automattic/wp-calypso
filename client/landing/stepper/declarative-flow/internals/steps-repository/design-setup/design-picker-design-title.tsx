@@ -34,9 +34,15 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 	if ( selectedDesign.software_sets && selectedDesign.software_sets.length > 0 ) {
 		const themeSoftware = selectedDesign.software_sets[ 0 ].slug;
 		const settings = bundleSettings[ themeSoftware ];
+
 		const BadgeIcon = settings.BadgeIcon;
 		const icon = <BadgeIcon />;
-		badge = <BundledBadge icon={ icon }>{ settings.name }</BundledBadge>;
+		const tooltipContent = <>{ settings.designPickerBadgeTooltip }</>;
+		badge = (
+			<BundledBadge icon={ icon } tooltipContent={ tooltipContent }>
+				{ settings.name }
+			</BundledBadge>
+		);
 	} else if ( selectedDesign.is_premium ) {
 		badge = <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />;
 	}
