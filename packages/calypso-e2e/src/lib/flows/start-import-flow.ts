@@ -11,6 +11,9 @@ const selectors = {
 	urlInput: 'input.capture__input',
 	goalsCaptureUrlInput: 'input.form-text-input[value]',
 
+	// Navigation
+	masterBarText: ( text: string ) => `.masterbar span:text("${ text }")`,
+
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
 		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
@@ -108,7 +111,7 @@ export class StartImportFlow {
 	 * Validates that we've landed on the checkout page.
 	 */
 	async validateCheckoutPage(): Promise< void > {
-		await this.page.waitForURL( /.*checkout*/ );
+		await this.page.locator( selectors.masterBarText( 'Secure checkout' ) ).waitFor();
 	}
 
 	/**
