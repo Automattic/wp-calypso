@@ -186,7 +186,6 @@ export interface SiteDetailsOptions {
 	default_post_format?: string;
 	default_sharing_status?: boolean;
 	design_type?: string | null;
-	difm_lite_site_options?: DifmLiteSiteOptions | Record< string, never >;
 	editing_toolkit_is_active?: boolean;
 	featured_images_enabled?: boolean;
 	frame_nonce?: string;
