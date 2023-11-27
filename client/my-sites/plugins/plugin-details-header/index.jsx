@@ -76,7 +76,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 						<div className="plugin-details-header__info-value">
 							<PluginRatings rating={ plugin.rating } />
 							{ isEnabled( 'marketplace-reviews-show' ) && numberOfReviews > 0 && (
-								<Button borderless className="is-link">
+								<Button borderless className="plugin-details-header__number-reviews-link is-link">
 									{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 										count: numberOfReviews,
 										args: {
