@@ -65,7 +65,7 @@ export default function ProductFilterSelect( {
 
 	const currentSelectedOption = getOptionByFuction( productFilterOptions, selectedProductFilter );
 
-	const selectedText = translate( '{{b}}Products{{/b}} : %(productFilter)s', {
+	const selectedText = translate( '{{b}}Products{{/b}}: %(productFilter)s', {
 		args: {
 			productFilter: currentSelectedOption.label as string,
 		},
