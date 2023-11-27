@@ -62,6 +62,23 @@ class DomainProductPrice extends Component {
 		return this.renderReskinDomainPrice();
 	}
 
+	renderRenewalPrice() {
+		const { price, renewPrice, translate } = this.props;
+		const isRenewCostDifferent = price !== renewPrice;
+
+		if ( isRenewCostDifferent ) {
+			return (
+				<div className="domain-product-price__renewal-price">
+					{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
+						args: { cost: renewPrice },
+						components: { small: <small /> },
+						comment: '%(cost)s is the annual renewal price of the domain',
+					} ) }
+				</div>
+			);
+		}
+	}
+
 	renderReskinFreeWithPlanText() {
 		const { isMappingProduct, translate, isCurrentPlan100YearPlan } = this.props;
 
@@ -139,13 +156,11 @@ class DomainProductPrice extends Component {
 	}
 
 	renderSalePrice() {
-		const { price, salePrice, renewPrice, translate } = this.props;
+		const { price, salePrice, translate } = this.props;
 
 		const className = classnames( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
-
-		const isRenewCostDifferent = price !== renewPrice;
 
 		return (
 			<div className={ className }>
@@ -162,21 +177,13 @@ class DomainProductPrice extends Component {
 						comment: '%(cost)s is the annual renewal price of a domain currently on sale',
 					} ) }
 				</div>
-				{ isRenewCostDifferent && (
-					<div className="domain-product-price__renewal-price">
-						{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
-							args: { cost: renewPrice },
-							components: { small: <small /> },
-							comment: '%(cost)s is the annual renewal price of the domain',
-						} ) }
-					</div>
-				) }
+				{ this.renderRenewalPrice() }
 			</div>
 		);
 	}
 
 	renderPrice() {
-		const { salePrice, showStrikedOutPrice, price, renewPrice, translate } = this.props;
+		const { salePrice, showStrikedOutPrice, price, translate } = this.props;
 		if ( salePrice ) {
 			return this.renderSalePrice();
 		}
@@ -186,7 +193,6 @@ class DomainProductPrice extends Component {
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
 		const productPriceClassName = showStrikedOutPrice ? '' : 'domain-product-price__price';
-		const isRenewCostDifferent = price !== renewPrice;
 
 		return (
 			<div className={ className }>
@@ -196,15 +202,7 @@ class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</span>
-				{ isRenewCostDifferent && (
-					<div className="domain-product-price__renewal-price">
-						{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
-							args: { cost: renewPrice },
-							components: { small: <small /> },
-							comment: '%(cost)s is the annual renewal price of the domain',
-						} ) }
-					</div>
-				) }
+				{ this.renderRenewalPrice() }
 			</div>
 		);
 	}
