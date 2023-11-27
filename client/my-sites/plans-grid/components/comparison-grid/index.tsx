@@ -328,8 +328,6 @@ type ComparisonGridProps = {
 	isLaunchPage?: boolean | null;
 	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
-	currentPlanManageHref?: string;
-	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
@@ -351,8 +349,6 @@ type ComparisonGridHeaderProps = {
 	flowName?: string | null;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
-	currentPlanManageHref?: string;
-	canUserManageCurrentPlan?: boolean | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
 	planActionOverrides?: PlanActionOverrides;
@@ -385,8 +381,6 @@ const ComparisonGridHeaderCell = ( {
 	onPlanChange,
 	displayedGridPlans,
 	currentSitePlanSlug,
-	currentPlanManageHref,
-	canUserManageCurrentPlan,
 	isLaunchPage,
 	flowName,
 	isLargeCurrency,
@@ -477,8 +471,6 @@ const ComparisonGridHeaderCell = ( {
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
-				currentPlanManageHref={ currentPlanManageHref }
-				canUserManageCurrentPlan={ canUserManageCurrentPlan }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
@@ -507,8 +499,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
-			currentPlanManageHref,
-			canUserManageCurrentPlan,
 			onUpgradeClick,
 			siteId,
 			planActionOverrides,
@@ -551,8 +541,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						currentPlanManageHref={ currentPlanManageHref }
-						canUserManageCurrentPlan={ canUserManageCurrentPlan }
 						flowName={ flowName }
 						onUpgradeClick={ onUpgradeClick }
 						isLaunchPage={ isLaunchPage }
@@ -966,8 +954,6 @@ const ComparisonGrid = ( {
 	isLaunchPage,
 	flowName,
 	currentSitePlanSlug,
-	currentPlanManageHref,
-	canUserManageCurrentPlan,
 	onUpgradeClick,
 	siteId,
 	planActionOverrides,
@@ -1118,8 +1104,6 @@ const ComparisonGrid = ( {
 							flowName={ flowName }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							currentPlanManageHref={ currentPlanManageHref }
-							canUserManageCurrentPlan={ canUserManageCurrentPlan }
 							onUpgradeClick={ onUpgradeClick }
 							planActionOverrides={ planActionOverrides }
 							selectedPlan={ selectedPlan }
@@ -1152,8 +1136,6 @@ const ComparisonGrid = ( {
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					currentPlanManageHref={ currentPlanManageHref }
-					canUserManageCurrentPlan={ canUserManageCurrentPlan }
 					onUpgradeClick={ onUpgradeClick }
 					siteId={ siteId }
 					planActionOverrides={ planActionOverrides }

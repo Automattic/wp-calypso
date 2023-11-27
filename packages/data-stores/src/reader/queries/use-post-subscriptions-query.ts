@@ -93,7 +93,7 @@ const usePostSubscriptionsQuery = ( {
 
 		// TODO: Temporary fix for https://github.com/Automattic/wp-calypso/issues/76678, remove once fixed
 		const filteredData = flattenedData?.filter(
-			( comment_subscription ) => typeof comment_subscription.post_url === 'string'
+			( comment_subscription ) => typeof comment_subscription?.post_url === 'string'
 		);
 
 		// Transform the dates into Date objects
