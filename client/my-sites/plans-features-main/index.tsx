@@ -67,7 +67,6 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
-import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
@@ -414,7 +413,6 @@ const PlansFeaturesMain = ( {
 
 	const gridPlans = useGridPlans( {
 		allFeaturesList: FEATURES_LIST,
-		usePricedAPIPlans,
 		usePricingMetaForGridPlans,
 		useFreeTrialPlanSlugs,
 		selectedFeature,
