@@ -11,7 +11,6 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import HeaderCake from 'calypso/components/header-cake';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
@@ -23,7 +22,7 @@ import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
-import { Product, Query } from '../types';
+import { Product } from '../types';
 import {
 	ADD_NEW_PAYMENT_PLAN_HASH,
 	ADD_TIER_PLAN_HASH,
@@ -34,19 +33,14 @@ import {
 	TYPE_TIER,
 } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
-import MembershipsSection from './section';
 import './style.scss';
-
-type MembersProductsSectionProps = {
-	query?: Query;
-};
 
 const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
 	window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
 	window.location.hash === ADD_TIER_PLAN_HASH;
 
-function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
+function ProductsList() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
@@ -140,13 +134,9 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	}
 
 	return (
-		<div>
+		<div className="memberships__products-list">
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
-			<HeaderCake backHref={ '/earn/payments/' + site?.slug }>
-				{ translate( 'Payment plans' ) }
-			</HeaderCake>
-
 			{ hasLoadedFeatures && ! hasStripeFeature && (
 				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
 				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
@@ -164,9 +154,8 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 				/>
 			) }
 
-			{ hasLoadedFeatures && ! connectedAccountId && <MembershipsSection query={ query } /> }
 			{ hasLoadedFeatures && hasStripeFeature && connectedAccountId && (
-				<SectionHeader>
+				<SectionHeader label={ translate( 'Manage plans' ) }>
 					<Button primary compact onClick={ () => openAddEditDialog() }>
 						{ translate( 'Add a new payment plan' ) }
 					</Button>
@@ -246,4 +235,4 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	);
 }
 
-export default MembershipsProductsSection;
+export default ProductsList;

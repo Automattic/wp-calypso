@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, ReactNode } from 'react';
 import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
-import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
@@ -29,6 +28,7 @@ import {
 	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
 	LAUNCHPAD_HASH,
 } from './constants';
+import ProductList from './products';
 import './style.scss';
 
 type MembershipsSectionProps = {
@@ -78,36 +78,6 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			);
 		}
 		setDisconnectedConnectedAccountId( null );
-	}
-
-	function renderManagePlans() {
-		if ( ! site ) {
-			return <LoadingEllipsis />;
-		}
-
-		return (
-			<div>
-				<SectionHeader label={ translate( 'Manage plans' ) } />
-				<Card href={ '/earn/payments-plans/' + site?.slug }>
-					<QueryMembershipProducts siteId={ site.ID } />
-					<div className="memberships__module-plans-content">
-						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon="credit-card" />
-						</div>
-						<div>
-							<div className="memberships__module-plans-title">
-								{ translate( 'Payment plans' ) }
-							</div>
-							<div className="memberships__module-plans-description">
-								{ translate(
-									'Single and recurring payments for goods, services, and subscriptions'
-								) }
-							</div>
-						</div>
-					</div>
-				</Card>
-			</div>
-		);
 	}
 
 	function renderSettings() {
@@ -170,7 +140,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		return (
 			<div>
 				{ renderNotices() }
-				{ renderManagePlans() }
+				<ProductList />
 				{ renderSettings() }
 			</div>
 		);
