@@ -190,12 +190,7 @@ const startWriting: Flow = {
 								false
 							)( dispatch, state );
 						}
-
-						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
-
-						return window.location.assign(
-							`/setup/start-writing/launchpad?siteSlug=${ currentSiteSlug }`
-						);
+						return window.location.assign( `/setup/start-writing/launchpad?siteId=${ site?.ID }` );
 					}
 
 					return navigate( 'plans' );
