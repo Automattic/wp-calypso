@@ -1,11 +1,13 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import InvoicesListCard from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-card';
 import InvoicesListRow from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-row';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-invoices-query';
 
 import './style.scss';
@@ -38,8 +40,21 @@ const InvoicePlaceholderCard = memo( () => {
 
 export default function InvoicesList() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ pagination, setPagination ] = useState( { starting_after: '', ending_before: '' } );
 	const invoices = useInvoicesQuery( pagination );
+
+	useEffect( () => {
+		if ( invoices.isError ) {
+			dispatch(
+				errorNotice( translate( 'We were unable to retrieve your invoices.' ), {
+					id: 'partner-portal-invoices-failure',
+					duration: 5000,
+				} )
+			);
+		}
+	}, [ dispatch, translate, invoices.isError ] );
+
 	const hasMore = invoices.isSuccess ? invoices.data.hasMore : false;
 	const onNavigateCallback = useCallback(
 		( page: number, direction: 'next' | 'prev' ) => {
