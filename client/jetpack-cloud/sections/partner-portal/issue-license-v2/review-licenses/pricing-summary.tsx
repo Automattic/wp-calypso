@@ -33,13 +33,13 @@ export default function PricingSummary( {
 	return (
 		<>
 			<div className="review-licenses__pricing">
-				<span className="review-licenses__price">
+				<span className="review-licenses__pricing-discounted">
 					{ formatCurrency( discountedCost, currency ) }
 				</span>
-				<span className="review-licenses__price-old">
+				<span className="review-licenses__pricing-original">
 					{ formatCurrency( actualCost, currency ) }
 				</span>
-				<div className="review-licenses__price-interval">{ translate( '/per month' ) }</div>
+				<div className="review-licenses__pricing-interval">{ translate( '/per month' ) }</div>
 			</div>
 			<Button primary className="review-licenses__cta-button" onClick={ handleCTAClick }>
 				{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {

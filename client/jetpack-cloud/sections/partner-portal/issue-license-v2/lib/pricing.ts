@@ -37,9 +37,9 @@ export const getProductPricingInfo = (
 		if ( monthlyProduct ) {
 			const actualCost = isDailyPricing ? monthlyProduct.cost / 365 : monthlyProduct.cost;
 			const discountedCost = actualCost - productCost;
-			discountInfo.discountPercentage = ! productCost
-				? 100
-				: Math.round( ( discountedCost / actualCost ) * 100 );
+			discountInfo.discountPercentage = productCost
+				? Math.round( ( discountedCost / actualCost ) * 100 )
+				: 100;
 			discountInfo.actualCost = actualCost * product.quantity;
 		}
 	}

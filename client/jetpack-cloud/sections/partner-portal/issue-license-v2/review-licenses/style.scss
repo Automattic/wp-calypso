@@ -87,7 +87,15 @@
 	border: 1px solid var(--studio-jetpack-green-50);
 	padding: 1rem;
 
-	.review-licenses__price {
+	@media only screen and ( min-width: 782px ) {
+		margin-block-start: 24px;
+	}
+
+	@include break-large {
+		margin-block-start: 8px;
+	}
+
+	.review-licenses__pricing-discounted {
 		font-size: 1.25rem;
 		font-weight: 600;
 		color: var(--studio-gray-80);
@@ -100,22 +108,14 @@
 		}
 	}
 
-	@media only screen and ( min-width: 782px ) {
-		margin-block-start: 24px;
-	}
-
-	@include break-large {
-		margin-block-start: 8px;
-	}
-
-	.review-licenses__price-old {
+	.review-licenses__pricing-original {
 		text-decoration: line-through;
 		font-weight: 400;
 		font-size: 1rem;
 		margin-inline-start: 8px;
 	}
 
-	.review-licenses__price-interval {
+	.review-licenses__pricing-interval {
 		font-size: 0.75rem;
 		font-weight: 400;
 		color: var(--studio-gray-60);
