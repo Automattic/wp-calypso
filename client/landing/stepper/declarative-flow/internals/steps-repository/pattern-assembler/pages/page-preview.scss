@@ -18,7 +18,7 @@ $font-family: "SF Pro Text", $sans;
 		z-index: 1;
 
 		&::before {
-			background-color: rgba(0, 0, 0, 0.18);
+			background-color: rgba(var(--color-neutral-70-rgb), 0.8);
 			bottom: 0;
 			content: "";
 			left: 0;
