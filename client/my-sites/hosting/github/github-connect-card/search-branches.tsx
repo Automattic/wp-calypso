@@ -1,6 +1,6 @@
 import { Spinner } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useGithubBranchesQuery } from './use-github-branches-query';
@@ -26,17 +26,18 @@ export const SearchBranches = ( {
 }: SearchBranchesProps ) => {
 	const { __ } = useI18n();
 
-	const { data: branches, isFetching } = useGithubBranchesQuery( siteId, repoName, connectionId, {
-		onSuccess( branches ) {
-			if (
-				branches.length > 0 &&
-				branches.length < SEARCH_BRANCHES_LIMIT &&
-				( ! selectedBranch || ! branches.includes( selectedBranch ) )
-			) {
-				onSelect( branches[ 0 ] );
-			}
-		},
-	} );
+	const { data: branches, isFetching } = useGithubBranchesQuery( siteId, repoName, connectionId );
+
+	useEffect( () => {
+		if (
+			branches &&
+			branches.length > 0 &&
+			branches.length < SEARCH_BRANCHES_LIMIT &&
+			( ! selectedBranch || ! branches.includes( selectedBranch ) )
+		) {
+			onSelect( branches[ 0 ] );
+		}
+	}, [ branches, onSelect, selectedBranch ] );
 
 	if ( ! repoName || ! branches ) {
 		return (
