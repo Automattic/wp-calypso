@@ -60,6 +60,7 @@ function TierUpgradeSlider( { className }: TierUpgradeSliderProps ) {
 			</div>
 			<PricingSlider
 				className="stats-tier-upgrade-slider__slider"
+				thumbClassName="upgrade-thumb"
 				value={ currentPlanIndex }
 				minValue={ sliderMin }
 				maxValue={ sliderMax }
