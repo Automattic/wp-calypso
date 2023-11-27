@@ -6,7 +6,7 @@ const useBlockRendererSettings = (
 	siteId: number | string,
 	stylesheet: string,
 	useInlineStyles = false,
-	queryOptions: UseQueryOptions< unknown, Error, BlockRendererSettings > = {}
+	queryOptions: Omit< UseQueryOptions< unknown, Error, BlockRendererSettings >, 'queryKey' > = {}
 ): UseQueryResult< BlockRendererSettings > => {
 	const params = new URLSearchParams( {
 		stylesheet,

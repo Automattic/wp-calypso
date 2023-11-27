@@ -33,9 +33,9 @@ export interface AllDomainsQueryArgs {
 
 export function useAllDomainsQuery< TError = unknown, TData = AllDomainsQueryFnData >(
 	queryArgs: AllDomainsQueryArgs = {},
-	options: UseQueryOptions< AllDomainsQueryFnData, TError, TData > = {}
+	options: Omit< UseQueryOptions< AllDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ) {
-	return useQuery( {
+	return useQuery< AllDomainsQueryFnData, TError, TData >( {
 		queryKey: [ 'all-domains', queryArgs ],
 		queryFn: () =>
 			wpcomRequest< AllDomainsQueryFnData >( {

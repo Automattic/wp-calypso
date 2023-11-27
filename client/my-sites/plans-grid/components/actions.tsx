@@ -31,11 +31,9 @@ import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
-	canUserManageCurrentPlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
 	freePlan: boolean;
-	currentPlanManageHref?: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
@@ -217,8 +215,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
-	currentPlanManageHref,
-	canUserManageCurrentPlan,
 	currentSitePlanSlug,
 	buttonText,
 	planActionOverrides,
@@ -234,8 +230,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: PlanSlug;
-	currentPlanManageHref?: string;
-	canUserManageCurrentPlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -275,11 +269,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planActionOverrides?.loggedInFreePlan ) {
 			return (
-				<Button
-					className={ classes }
-					onClick={ planActionOverrides.loggedInFreePlan.callback }
-					disabled={ ! currentPlanManageHref } // not sure why this is here
-				>
+				<Button className={ classes } onClick={ planActionOverrides.loggedInFreePlan.callback }>
 					{ planActionOverrides.loggedInFreePlan.text }
 				</Button>
 			);
@@ -306,15 +296,17 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</Button>
 			);
+		} else if ( planActionOverrides?.currentPlan ) {
+			const { callback, text } = planActionOverrides.currentPlan;
+			return (
+				<Button className={ classes } disabled={ ! callback } onClick={ callback }>
+					{ text }
+				</Button>
+			);
 		}
-
 		return (
-			<Button
-				className={ classes }
-				href={ currentPlanManageHref }
-				disabled={ ! currentPlanManageHref }
-			>
-				{ canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
+			<Button className={ classes } disabled>
+				{ translate( 'Active Plan' ) }
 			</Button>
 		);
 	}
@@ -432,11 +424,9 @@ const LoggedInPlansFeatureActionButton = ( {
 
 const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
 	availableForPurchase = true,
-	canUserManageCurrentPlan,
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
-	currentPlanManageHref,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
@@ -566,8 +556,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			currentPlanManageHref={ currentPlanManageHref }
-			canUserManageCurrentPlan={ canUserManageCurrentPlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			planActionOverrides={ planActionOverrides }

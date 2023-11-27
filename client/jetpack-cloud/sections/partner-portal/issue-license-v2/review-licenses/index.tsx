@@ -5,6 +5,7 @@ import JetpackLightbox, {
 } from 'calypso/components/jetpack/jetpack-lightbox';
 import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/use-mobile-sidebar';
 import LicenseInfo from './license-info';
+import PricingSummary from './pricing-summary';
 import type { SelectedLicenseProp } from '../types';
 
 import './style.scss';
@@ -20,7 +21,12 @@ export default function ReviewLicenses( { onClose, selectedLicenses }: Props ) {
 	const { sidebarRef, mainRef, initMobileSidebar } = useMobileSidebar();
 
 	return (
-		<JetpackLightbox isOpen={ true } onClose={ onClose } onAfterOpen={ initMobileSidebar }>
+		<JetpackLightbox
+			className="review-licenses__lightbox"
+			isOpen={ true }
+			onClose={ onClose }
+			onAfterOpen={ initMobileSidebar }
+		>
 			<JetpackLightboxMain ref={ mainRef }>
 				<div className="review-licenses__header">
 					<div className="review-licenses__title">{ translate( 'Review license selection' ) }</div>
@@ -35,7 +41,9 @@ export default function ReviewLicenses( { onClose, selectedLicenses }: Props ) {
 				</div>
 			</JetpackLightboxMain>
 
-			<JetpackLightboxAside ref={ sidebarRef }>Content</JetpackLightboxAside>
+			<JetpackLightboxAside ref={ sidebarRef }>
+				<PricingSummary selectedLicenses={ selectedLicenses } />
+			</JetpackLightboxAside>
 		</JetpackLightbox>
 	);
 }

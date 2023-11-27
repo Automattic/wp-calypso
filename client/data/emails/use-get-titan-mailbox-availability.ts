@@ -23,7 +23,7 @@ const finalErrorStatuses = [ 400, 401, 403, 409 ];
 export const useGetTitanMailboxAvailability = (
 	domainName: string,
 	mailboxName: string,
-	queryOptions: UseQueryOptions< any, any > = {}
+	queryOptions: Omit< UseQueryOptions< any, any >, 'queryKey' > = {}
 ) => {
 	return useQuery< any, any >( {
 		queryKey: getCacheKey( domainName, mailboxName ),

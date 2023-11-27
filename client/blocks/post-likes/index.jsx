@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import QueryPostLikers from 'calypso/components/data/query-post-likers';
 import Gravatar from 'calypso/components/gravatar';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
@@ -91,7 +91,7 @@ class PostLikes extends PureComponent {
 
 		return (
 			<div className={ classes } { ...extraProps }>
-				{ !! postId && <QueryPostLikes siteId={ siteId } postId={ postId } needsLikers={ true } /> }
+				{ !! postId && <QueryPostLikers siteId={ siteId } postId={ postId } /> }
 				{ isLoading && (
 					<span key="placeholder" className="post-likes__count is-loading">
 						…

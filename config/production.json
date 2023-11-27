@@ -105,7 +105,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/add-pages": false,
+		"pattern-assembler/add-pages": true,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
