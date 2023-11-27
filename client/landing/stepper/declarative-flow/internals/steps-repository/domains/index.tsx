@@ -43,6 +43,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
+	const [ isCartPendingUpdate, setIsCartPendingUpdate ] = useState( false );
+	const [ isCartPendingUpdateDomain, setIsCartPendingUpdateDomain ] =
+		useState< DomainSuggestion >();
+
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
@@ -97,6 +101,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			setDomain( undefined );
 			return submit?.( { freeDomain: true } );
 		}
+		// this is used mainly to change the button state to busy to show a loading indicator.
+		setIsCartPendingUpdate( true );
+		setIsCartPendingUpdateDomain( suggestion );
 
 		setDomain( suggestion );
 
@@ -253,6 +260,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			onSkip={ handleSkip }
 			onUseYourDomainClick={ () => setShowUseYourDomain( true ) }
 			showUseYourDomain={ showUseYourDomain }
+			isCartPendingUpdate={ isCartPendingUpdate }
+			isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 		/>
 	);
 

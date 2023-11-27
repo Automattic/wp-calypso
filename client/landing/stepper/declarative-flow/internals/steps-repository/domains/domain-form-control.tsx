@@ -37,6 +37,8 @@ interface DomainFormControlProps {
 	onSkip: ( _googleAppsCartItem?: any, shouldHideFreePlan?: boolean ) => void;
 	onUseYourDomainClick: () => void;
 	showUseYourDomain: boolean;
+	isCartPendingUpdate: boolean;
+	isCartPendingUpdateDomain: DomainSuggestion;
 }
 
 export function DomainFormControl( {
@@ -48,6 +50,8 @@ export function DomainFormControl( {
 	onSkip,
 	onUseYourDomainClick,
 	showUseYourDomain,
+	isCartPendingUpdate,
+	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
 	const { selectedSite, productsList } = useSelector( ( state ) => {
 		return {
@@ -242,6 +246,8 @@ export function DomainFormControl( {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 					analyticsSection={ analyticsSection }
 					basePath={ path }
 					deemphasiseTlds={ flow === 'ecommerce' ? [ 'blog' ] : [] }
