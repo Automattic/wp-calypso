@@ -82,7 +82,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 	describe( 'Scenario: from `self-hosted` (JP connected) to `atomic` site', () => {
 		const user = 'jetpackRemoteSiteUser';
 		const sourceSiteUrl = credentials[ user ]?.testSites?.primary?.url as string;
-		const targetSiteUrl = 'e2eimportflowatomictesting.wordpress.com';
+		const targetSiteUrl = credentials[ user ]?.otherSites?.[ 0 ] as string;
 
 		loginAsUser( user );
 		navigateToImportFocusedFlow( 'import', targetSiteUrl );
