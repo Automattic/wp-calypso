@@ -357,7 +357,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		const {
 			isInSignup,
 			isLaunchPage,
-			flowName,
 			currentSitePlanSlug,
 			translate,
 			planActionOverrides,
