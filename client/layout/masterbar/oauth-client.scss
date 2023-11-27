@@ -242,10 +242,6 @@
 		.auth-form__separator {
 			margin: 10px auto;
 
-			&::before {
-				width: 0;
-			}
-
 			.auth-form__separator-text {
 				text-transform: lowercase;
 				color: var(--color-text);

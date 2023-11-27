@@ -231,15 +231,9 @@ body.is-section-signup .videopress-step-wrapper {
 		width: 100%;
 	}
 
-	.auth-form__separator::before {
-		position: absolute;
-		content: "";
-		border-inline-start: 0;
+	.auth-form__separator::before,
+	.auth-form__separator::after {
 		border-block-start: 1px solid var(--videopress-color-separator-light);
-		inset-block-start: 50%;
-		inset-inline-start: 0;
-		height: 0;
-		width: 100%;
 	}
 
 	.auth-form__separator-text {
@@ -266,15 +260,9 @@ body.is-section-signup .videopress-step-wrapper {
 			margin-top: 0;
 		}
 
-		.auth-form__separator::before {
-			width: 100%;
-			height: 100%;
+		.auth-form__separator::before,
+		.auth-form__separator::after {
 			border-inline-start: 1px solid var(--videopress-color-separator-light);
-			border-block-start: 0;
-			inset-block-start: 0;
-			inset-inline-start: 50%;
-			position: absolute;
-			content: "";
 		}
 
 		.auth-form__social-buttons button {
