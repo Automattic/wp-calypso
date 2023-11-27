@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import ReactSlider from 'react-slider';
+import ReactSlider from './react-slider';
 import { RenderThumbFunction, PricingSliderProps } from './types';
 import './style.scss';
 
