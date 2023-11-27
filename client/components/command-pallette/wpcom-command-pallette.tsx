@@ -50,6 +50,18 @@ const Label = styled.div( {
 	},
 } );
 
+const PaletteBreadCrumb = styled.div( {
+	height: 20,
+	background: 'var( --studio-gray-5 )',
+	color: 'var( --studio-gray-100 )',
+	display: 'inline-flex',
+	padding: '0 8px',
+	fontSize: 12,
+	borderRadius: 4,
+	margin: '12px 12px 0',
+	textTransform: 'capitalize',
+} );
+
 const SubLabel = styled( Label )( {
 	opacity: 0.7,
 	fontSize: '0.9em',
@@ -213,6 +225,11 @@ export const WpcomCommandPalette = () => {
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
+					<div>
+						{ selectedCommandName && (
+							<PaletteBreadCrumb>{ selectedCommandName }</PaletteBreadCrumb>
+						) }
+					</div>
 					<div className="commands-command-menu__header">
 						<Icon icon={ inputIcon } />
 						<CommandInput
