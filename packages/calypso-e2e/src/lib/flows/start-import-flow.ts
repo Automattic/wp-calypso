@@ -57,7 +57,7 @@ export class StartImportFlow {
 	async clickButton( text: string ): Promise< void > {
 		const selector = selectors.button( text );
 
-		await this.page.waitForSelector( selector );
+		await this.page.locator( selector ).waitFor();
 		await this.page.click( selector );
 	}
 
@@ -81,30 +81,30 @@ export class StartImportFlow {
 	 * Validates that we've landed on the URL capture page with 'typo' error.
 	 */
 	async validateErrorCapturePage( error: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.analyzeError( error ) );
+		await this.page.locator( selectors.analyzeError( error ) ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the import page.
 	 */
 	async validateImportPage(): Promise< void > {
-		await this.page.waitForSelector(
-			selectors.startBuildingHeader( 'Your content is ready for its brand new home' )
-		);
+		await this.page
+			.locator( selectors.startBuildingHeader( 'Your content is ready for its brand new home' ) )
+			.waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the upgrade plan page.
 	 */
 	async validateUpgradePlanPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startBuildingHeader( 'Upgrade your plan' ) );
+		await this.page.locator( selectors.startBuildingHeader( 'Upgrade your plan' ) ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the "Install Jetpack" page.
 	 */
 	async validateInstallJetpackPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startBuildingHeader( 'Install Jetpack' ) );
+		await this.page.locator( selectors.startBuildingHeader( 'Install Jetpack' ) ).waitFor();
 	}
 
 	/**
@@ -118,14 +118,16 @@ export class StartImportFlow {
 	 * Validates that we've landed on the site picker page.
 	 */
 	async validateSitePickerPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startBuildingHeader( 'Pick your destination' ) );
+		await this.page.locator( selectors.startBuildingHeader( 'Pick your destination' ) ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the migration ready page.
 	 */
 	async validateMigrationReadyPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startBuildingHeader( 'You are ready to migrate' ) );
+		await this.page
+			.locator( selectors.startBuildingHeader( 'You are ready to migrate' ) )
+			.waitFor();
 	}
 
 	/**
@@ -134,28 +136,28 @@ export class StartImportFlow {
 	 * @param {string} reason The reason shown in main header.
 	 */
 	async validateBuildingPage( reason: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.startBuildingHeader( reason ) );
+		await this.page.locator( selectors.startBuildingHeader( reason ) ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the design setup page.
 	 */
 	async validateDesignPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.setupHeader );
+		await this.page.locator( selectors.setupHeader ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the WordPress migration page.
 	 */
 	async validateWordPressPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.wpContentOnlyContinueButton );
+		await this.page.locator( selectors.wpContentOnlyContinueButton ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the importer drag page.
 	 */
 	async validateImporterDragPage( importer: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.importerDrag( importer ) );
+		await this.page.locator( selectors.importerDrag( importer ) ).waitFor();
 	}
 
 	/**
@@ -176,9 +178,9 @@ export class StartImportFlow {
 	 * Validates that we've landed on the importer list page.
 	 */
 	async validateImporterListPage(): Promise< void > {
-		await this.page.waitForSelector(
-			selectors.startBuildingHeader( 'Import your content from another platform' )
-		);
+		await this.page
+			.locator( selectors.startBuildingHeader( 'Import your content from another platform' ) )
+			.waitFor();
 	}
 
 	/**
@@ -277,9 +279,9 @@ export class StartImportFlow {
 	 */
 	async selectImporterFromList( index: number ): Promise< void > {
 		await this.page.click( selectors.importerListButton( index ) );
-		await this.page.waitForSelector(
-			selectors.startBuildingHeader( 'Your content is ready for its new home' )
-		);
+		await this.page
+			.locator( selectors.startBuildingHeader( 'Your content is ready for its new home' ) )
+			.waitFor();
 	}
 
 	/**
