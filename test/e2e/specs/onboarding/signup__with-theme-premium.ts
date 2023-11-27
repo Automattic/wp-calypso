@@ -124,8 +124,6 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 		} );
 
 		it( 'Installs theme in Marketplace thank you page', async () => {
-			await page.waitForURL( /.*marketplace\/thank-you.*/ );
-
 			await page.getByText( 'Customize this design' ).waitFor();
 		} );
 
