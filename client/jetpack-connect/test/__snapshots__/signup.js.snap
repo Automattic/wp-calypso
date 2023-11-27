@@ -222,7 +222,7 @@ exports[`JetpackSignup should render 1`] = `
           </form>
         </div>
         <div
-          class="auth-form__social"
+          class="card auth-form__social is-signup"
         >
           <p>
             Or create an account using:
@@ -513,7 +513,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           </form>
         </div>
         <div
-          class="auth-form__social"
+          class="card auth-form__social is-signup"
         >
           <p>
             Or create an account using:
