@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Children, ReactNode, useEffect, useState } from 'react';
+import { Children, ReactNode, useLayoutEffect, useState } from 'react';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 
 type Props = {
@@ -43,7 +43,7 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 
 	// To avoid shifting the layout when displaying sticky content,  we will need to
 	// keep track of our Header height and set it as the minimum viewport height.
-	useEffect(
+	useLayoutEffect(
 		() => {
 			const headerRef = outerDivProps?.ref?.current;
 
