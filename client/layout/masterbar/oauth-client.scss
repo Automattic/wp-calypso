@@ -239,8 +239,7 @@
 		}
 
 		.auth-form__separator {
-			margin: 10px auto;
-
+			padding: 10px 0;
 			&::before,
 			&::after {
 				width: 0;
@@ -572,9 +571,6 @@
 		.card.login__form,
 		.card.login__social {
 			box-shadow: none;
-		}
-		.card.login__form {
-			border-bottom: unset;
 		}
 
 		.wp-login__container {
