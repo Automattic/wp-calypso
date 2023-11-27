@@ -244,11 +244,7 @@ body.is-section-signup .videopress-step-wrapper {
 
 	.auth-form__separator-text {
 		font-size: 0.75rem;
-		padding: 0 24px;
-		z-index: 1;
-		text-transform: uppercase;
 		color: var(--videopress-color-text);
-		background-color: var(--videopress-color-background-dark);
 	}
 
 	.form-text-input {
@@ -279,10 +275,6 @@ body.is-section-signup .videopress-step-wrapper {
 			inset-inline-start: 50%;
 			position: absolute;
 			content: "";
-		}
-
-		.auth-form__separator-text {
-			padding: 24px 0;
 		}
 
 		.auth-form__social-buttons button {
