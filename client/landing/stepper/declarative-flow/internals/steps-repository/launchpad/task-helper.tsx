@@ -493,7 +493,7 @@ export function getEnhancedTasks(
 							if ( isBlogOnboardingFlow( flow ) ) {
 								window.location.assign(
 									addQueryArgs( `/setup/${ flow }/domains`, {
-										siteSlug,
+										siteId: site?.ID,
 										flowToReturnTo: flow,
 										new: site?.name,
 										domainAndPlanPackage: true,
