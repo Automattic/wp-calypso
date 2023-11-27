@@ -66,7 +66,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	}, [] );
 
 	const purchasedPlan = useSelector(
-		( state: IAppState ) => currentPlan && getByPurchaseId( state, currentPlan.id || 0 )
+		( state: IAppState ) => currentPlan && getByPurchaseId( state, currentPlan.purchaseId || 0 )
 	);
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce(
