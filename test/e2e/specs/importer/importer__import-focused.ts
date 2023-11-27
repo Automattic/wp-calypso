@@ -108,7 +108,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should select the second site and press `Continue` on modal prompt', async () => {
-			await page.locator( 'button:text("Select this site")' ).nth( 1 ).click();
+			await page.getByRole( 'button', { name: 'Select this site' } ).nth( 1 ).click();
 			await startImportFlow.clickButton( 'Continue' );
 		} );
 
@@ -134,7 +134,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should select the first site and press `Continue` on modal prompt', async () => {
-			await page.locator( 'button:text("Select this site")' ).nth( 0 ).click();
+			await page.getByRole( 'button', { name: 'Select this site' } ).first().click();
 			await startImportFlow.clickButton( 'Continue' );
 		} );
 

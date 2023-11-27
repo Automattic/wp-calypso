@@ -42,7 +42,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-hosted-site' ), ()
 		} );
 
 		it( 'Should select the first site', async () => {
-			await page.locator( 'button:text("Select this site")' ).nth( 0 ).click();
+			await page.getByRole( 'button', { name: 'Select this site' } ).first().click();
 			await startImportFlow.clickButton( 'Continue' );
 		} );
 

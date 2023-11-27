@@ -11,9 +11,6 @@ const selectors = {
 	urlInput: 'input.capture__input',
 	goalsCaptureUrlInput: 'input.form-text-input[value]',
 
-	// Navigation
-	masterBarText: ( text: string ) => `.masterbar span:text("${ text }")`,
-
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
 		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
@@ -111,23 +108,21 @@ export class StartImportFlow {
 	 * Validates that we've landed on the checkout page.
 	 */
 	async validateCheckoutPage(): Promise< void > {
-		await this.page.locator( selectors.masterBarText( 'Secure checkout' ) ).waitFor();
+		await this.page.getByText( 'Secure checkout' ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the site picker page.
 	 */
 	async validateSitePickerPage(): Promise< void > {
-		await this.page.locator( selectors.startBuildingHeader( 'Pick your destination' ) ).waitFor();
+		await this.page.getByText( 'Pick your destination' ).waitFor();
 	}
 
 	/**
 	 * Validates that we've landed on the migration ready page.
 	 */
 	async validateMigrationReadyPage(): Promise< void > {
-		await this.page
-			.locator( selectors.startBuildingHeader( 'You are ready to migrate' ) )
-			.waitFor();
+		await this.page.getByText( 'You are ready to migrate' ).waitFor();
 	}
 
 	/**
@@ -242,7 +237,7 @@ export class StartImportFlow {
 	 * Import focused flow, go to first import step
 	 */
 	async startImportFocused( step: string, siteSlug: string, from: string ): Promise< void > {
-		const route = step ? `/setup/import-focused/${ step }` : '/setup/import-focused';
+		const route = `/setup/import-focused/${ step }`;
 
 		await this.page.goto(
 			DataHelper.getCalypsoURL( route, { siteSlug, from, skipStoringTempTargetSite: 'true' } )
@@ -253,7 +248,7 @@ export class StartImportFlow {
 	 * Import hosted site flow, go to first import step
 	 */
 	async startImportHostedSite( step: string, siteSlug: string, from: string ): Promise< void > {
-		const route = step ? `/setup/import-hosted-site/${ step }` : '/setup/import-hosted-site';
+		const route = `/setup/import-hosted-site/${ step }`;
 
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug, from } ) );
 	}
