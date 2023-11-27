@@ -57,9 +57,7 @@ const PaletteBreadCrumb = styled.div( {
 	display: 'inline-flex',
 	padding: '0 8px',
 	fontSize: 12,
-	borderRadius: 4,
 	margin: '12px 12px 0',
-	textTransform: 'capitalize',
 } );
 
 const StyledCommandsTitle = styled.div( {
