@@ -1,4 +1,4 @@
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad, SiteDetails } from '@automattic/data-stores';
 import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -22,23 +22,55 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-type LaunchpadProps = {
+const LaunchpadSiteWrapper: Step = ( {
+	navigation,
+	flow,
+}: {
 	navigation: NavigationControls;
 	flow: string | null;
+} ) => {
+	const site = useSite();
+	if ( ! site || ! flow ) {
+		return null;
+	}
+
+	const siteSlug = site.URL.replace( /^https?:\/\//i, '' );
+	const siteId = site.ID;
+	return (
+		<Launchpad
+			site={ site }
+			siteId={ siteId }
+			siteSlug={ siteSlug }
+			navigation={ navigation }
+			flow={ flow }
+		/>
+	);
 };
 
-const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
+function Launchpad( {
+	siteSlug,
+	siteId,
+	site,
+	navigation,
+	flow,
+}: {
+	navigation: NavigationControls;
+	flow: string;
+	siteSlug: string;
+	siteId: number;
+	site: SiteDetails;
+} ) {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
-	const siteSlug = useSiteSlugParam();
+
 	const verifiedParam = useQuery().get( 'verified' );
-	const site = useSite();
-	const siteIntentOption = site?.options?.site_intent;
-	const isSiteLaunched = site?.launch_status === 'launched' || false;
+
+	const siteIntentOption = site.options?.site_intent;
+	const isSiteLaunched = site.launch_status === 'launched' || false;
 	const {
 		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
-	} = useLaunchpad( siteSlug, siteIntentOption );
+	} = useLaunchpad( siteId.toString(), siteIntentOption );
 
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
@@ -65,7 +97,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	}
 
 	if ( areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched ) ) {
-		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
+		saveSiteSettings( siteId, { launchpad_screen: 'off' } );
 		redirectToSiteHome( siteSlug, flow );
 	}
 
@@ -116,6 +148,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 			/>
 		</>
 	);
-};
+}
 
-export default Launchpad;
+export default LaunchpadSiteWrapper;
