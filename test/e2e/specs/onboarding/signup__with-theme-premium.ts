@@ -74,7 +74,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 			const pageMatch = new URL( page.url() ).pathname.match( 'theme/(.*)/?' );
 
-			themeSlug = Array.isArray( pageMatch ) ? pageMatch[ 1 ] : null;
+			themeSlug = pageMatch?.[ 1 ] || null;
 
 			await themeDetailsPage.pickThisDesign();
 		} );
