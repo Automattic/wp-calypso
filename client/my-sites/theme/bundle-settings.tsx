@@ -1,9 +1,7 @@
-import type { ReactElement } from 'react';
-
 interface BundleSettings {
 	[ key: string ]: {
 		name: string;
-		badgeIcon: ReactElement;
+		BadgeIcon: React.ComponentType;
 	};
 }
 
@@ -11,7 +9,7 @@ const bundleSettings: BundleSettings = {
 	// TODO: Move to a constant.
 	'woo-on-plans': {
 		name: 'WooCommerce',
-		badgeIcon: (
+		BadgeIcon: () => (
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 				<path
 					fill="currentColor"
