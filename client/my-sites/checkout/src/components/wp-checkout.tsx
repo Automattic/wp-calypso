@@ -330,7 +330,6 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
@@ -841,7 +840,7 @@ function CheckoutTermsAndCheckboxes( {
 	} );
 
 	const translate = useTranslate();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
 	if ( ! shouldCollapseLastStep ) {
 		return null;

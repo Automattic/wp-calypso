@@ -6,7 +6,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export function useShouldCollapseLastStep(): boolean {
+export function useShouldCollapseLastStep(): 'loading' | 'collapse' | 'no-collapse' {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	const isJetpackNotAtomic = useSelector(
@@ -20,11 +20,11 @@ export function useShouldCollapseLastStep(): boolean {
 	);
 
 	if ( isLoadingExperimentAssignment ) {
-		return false;
+		return 'loading';
 	}
 
 	if ( experimentAssignment?.variationName === 'treatment' ) {
-		return true;
+		return 'collapse';
 	}
-	return false;
+	return 'no-collapse';
 }

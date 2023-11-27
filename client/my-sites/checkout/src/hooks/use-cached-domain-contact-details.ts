@@ -62,7 +62,7 @@ function useCachedContactDetailsForCheckoutForm(
 	}
 	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
 
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
 	const isMounted = useRef( true );
 	useEffect( () => {
