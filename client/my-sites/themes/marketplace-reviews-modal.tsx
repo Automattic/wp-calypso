@@ -36,8 +36,7 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 					showCloseIcon
 				>
 					<CardHeading tagName="h1" size={ 21 }>
-						{ translate( 'Review submitted for' ) }
-						{ themeName }
+						{ translate( 'Review submitted for %(themeName)s', { args: { themeName } } ) }
 					</CardHeading>
 					<CardHeading tagName="h2">
 						{ translate( 'Thank you for your contribution.' ) }
@@ -57,8 +56,7 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 				showCloseIcon
 			>
 				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'Reviews for ' ) }
-					{ themeName }
+					{ translate( 'Reviews for %(themeName)s', { args: { themeName } } ) }
 				</CardHeading>
 				<CardHeading tagName="h2">{ translate( 'Add new review' ) }</CardHeading>
 				<form
