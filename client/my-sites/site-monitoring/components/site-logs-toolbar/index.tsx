@@ -134,7 +134,7 @@ export const SiteLogsToolbar = ( {
 					min={ startDateTime }
 				/>
 				{ logType === 'php' && (
-					<>
+					<div className="site-logs-toolbar-filter-element">
 						<label htmlFor="site-logs-severity">{ translate( 'Severity' ) }</label>
 						<SelectDropdown
 							id="site-logs-severity"
@@ -153,46 +153,50 @@ export const SiteLogsToolbar = ( {
 								</SelectDropdown.Item>
 							) ) }
 						</SelectDropdown>
-					</>
+					</div>
 				) }
 				{ logType === 'web' && (
 					<>
-						<label htmlFor="site-logs-request-type">{ translate( 'Request Type' ) }</label>
-						<SelectDropdown
-							id="site-logs-request-type"
-							className="site-logs-toolbar-filter-request-type"
-							selectedText={ selectedRequestType.label }
-							initialSelected={ requestType }
-						>
-							{ requestTypes.map( ( option ) => (
-								<SelectDropdown.Item
-									key={ option.value }
-									onClick={ () => onRequestTypeChange( option.value ) }
-								>
-									<span>
-										<strong>{ option.label }</strong>
-									</span>
-								</SelectDropdown.Item>
-							) ) }
-						</SelectDropdown>
-						<label htmlFor="site-logs-request-status">{ translate( 'Status' ) }</label>
-						<SelectDropdown
-							id="site-logs-request-status"
-							className="site-logs-toolbar-filter-request-status"
-							selectedText={ selectedRequestStatus.label }
-							initialSelected={ requestStatus }
-						>
-							{ requestStatuses.map( ( option ) => (
-								<SelectDropdown.Item
-									key={ option.value }
-									onClick={ () => onRequestStatusChange( option.value ) }
-								>
-									<span>
-										<strong>{ option.label }</strong>
-									</span>
-								</SelectDropdown.Item>
-							) ) }
-						</SelectDropdown>
+						<div className="site-logs-toolbar-filter-element">
+							<label htmlFor="site-logs-request-type">{ translate( 'Request Type' ) }</label>
+							<SelectDropdown
+								id="site-logs-request-type"
+								className="site-logs-toolbar-filter-request-type"
+								selectedText={ selectedRequestType.label }
+								initialSelected={ requestType }
+							>
+								{ requestTypes.map( ( option ) => (
+									<SelectDropdown.Item
+										key={ option.value }
+										onClick={ () => onRequestTypeChange( option.value ) }
+									>
+										<span>
+											<strong>{ option.label }</strong>
+										</span>
+									</SelectDropdown.Item>
+								) ) }
+							</SelectDropdown>
+						</div>
+						<div className="site-logs-toolbar-filter-element">
+							<label htmlFor="site-logs-request-status">{ translate( 'Status' ) }</label>
+							<SelectDropdown
+								id="site-logs-request-status"
+								className="site-logs-toolbar-filter-request-status"
+								selectedText={ selectedRequestStatus.label }
+								initialSelected={ requestStatus }
+							>
+								{ requestStatuses.map( ( option ) => (
+									<SelectDropdown.Item
+										key={ option.value }
+										onClick={ () => onRequestStatusChange( option.value ) }
+									>
+										<span>
+											<strong>{ option.label }</strong>
+										</span>
+									</SelectDropdown.Item>
+								) ) }
+							</SelectDropdown>
+						</div>
 					</>
 				) }
 

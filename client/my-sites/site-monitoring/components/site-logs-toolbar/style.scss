@@ -6,12 +6,17 @@
 		display: flex;
 		gap: 16px;
 		flex-direction: row;
-		align-items: center;
+		align-items: top;
 		justify-content: space-between;
 	}
 
 	.components-toggle-control {
 		display: inline-block;
+		margin-top: 12px;
+
+		.components-toggle-control__label {
+			text-wrap: nowrap;
+		}
 	}
 
 	.site-logs-toolbar__top-row {
@@ -21,6 +26,12 @@
 		justify-content: flex-start;
 		gap: 16px;
 		padding-bottom: 16px;
+
+		.site-logs-toolbar-filter-element {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+		}
 	}
 
 	.site-logs-toolbar-filter-severity {
@@ -39,6 +50,11 @@
 		.site-logs-toolbar__top-row {
 			flex-direction: column;
 			align-items: stretch;
+
+			.site-logs-toolbar-filter-element {
+				flex-direction: column;
+				align-items: stretch;
+			}
 		}
 
 		.select-dropdown .select-dropdown__container {
