@@ -231,13 +231,7 @@ body.is-section-signup .videopress-step-wrapper {
 		width: 100%;
 	}
 
-	.auth-form__separator::before,
-	.auth-form__separator::after {
-		border-block-start: 1px solid var(--videopress-color-separator-light);
-	}
-
 	.auth-form__separator-text {
-		font-size: 0.75rem;
 		color: var(--videopress-color-text);
 	}
 
@@ -258,11 +252,6 @@ body.is-section-signup .videopress-step-wrapper {
 		.auth-form__separator {
 			width: 60px;
 			margin-top: 0;
-		}
-
-		.auth-form__separator::before,
-		.auth-form__separator::after {
-			border-inline-start: 1px solid var(--videopress-color-separator-light);
 		}
 
 		.auth-form__social-buttons button {

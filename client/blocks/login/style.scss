@@ -551,29 +551,18 @@
 
 .layout.is-jetpack-login {
 	.auth-form__separator {
-		background: var(--color-surface);
 		margin-bottom: -10px;
 		margin-top: -10px;
-
-		.auth-form__separator-text {
-			font-size: 0.875rem;
-		}
 	}
-}
 
-.layout.jetpack-cloud {
-	.auth-form__separator {
-		width: 100%;
-
-		&::before {
-			background: var(--color-neutral-5);
-			content: "";
-			height: 1px;
-			left: 0;
-			position: absolute;
-			top: 50%;
-			width: 100%;
-			z-index: 1;
-		}
+	.card.login__form {
+		box-shadow: none;
+		border: 1px solid var(--color-border-subtle);
+		border-bottom: none;
+	}
+	.card.login__social {
+		box-shadow: none;
+		border: 1px solid var(--color-border-subtle);
+		border-top: none;
 	}
 }

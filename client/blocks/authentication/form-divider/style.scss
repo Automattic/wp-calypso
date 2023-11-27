@@ -20,10 +20,10 @@ $breakpoint-mobile: 660px;
 		inset-block-start: 50%;
 		inset-inline-start: 0;
 		height: 0;
-		width: 45%;
+		width: 42%;
 	}
 	&::after {
-		left: 55%;
+		left: 58%;
 	}
 	.auth-form__separator-text {
 		text-transform: uppercase;
@@ -51,10 +51,10 @@ $breakpoint-mobile: 660px;
 				border-block-start: 0;
 				inset-block-start: 0;
 				inset-inline-start: 50%;
-				height: 45%;
+				height: 40%;
 			}
 			&::after {
-				top: 55%;
+				top: 60%;
 			}
 		}
 	}
