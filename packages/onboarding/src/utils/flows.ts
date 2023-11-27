@@ -2,6 +2,7 @@ export const AI_ASSEMBLER_FLOW = 'ai-assembler';
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting';
+export const AGENCY_HOSTED_SITE_FLOW = 'agency-hosted-site';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';

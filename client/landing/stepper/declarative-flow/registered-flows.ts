@@ -12,6 +12,7 @@ import {
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
+	AGENCY_HOSTED_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -93,6 +94,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ CONNECT_DOMAIN_FLOW ]: () =>
 		import( /* webpackChunkName: "connect-domain" */ '../declarative-flow/connect-domain' ),
+
+	[ AGENCY_HOSTED_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "agency-hosted-site-flow" */ './agency-hosted-site-flow' ),
 
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),

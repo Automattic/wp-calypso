@@ -1,6 +1,6 @@
-import { PLAN_BUSINESS, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { AGENCY_OFFER_BUNDLE } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -79,17 +79,7 @@ const PlansHeader: React.FunctionComponent< {
 	}
 
 	async function handleAddCart() {
-		await cart.addProductsToCart( [
-			{
-				product_slug: PLAN_BUSINESS,
-				meta: 'agency-offer',
-			},
-			{
-				product_slug: PRODUCT_1GB_SPACE,
-				quantity: 50,
-				meta: 'agency-offer',
-			},
-		] );
+		await cart.addProductsToCart( AGENCY_OFFER_BUNDLE );
 
 		window.location.href = `/checkout/${ selectedSiteSlug }`;
 	}
