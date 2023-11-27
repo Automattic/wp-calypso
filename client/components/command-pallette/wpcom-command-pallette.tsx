@@ -6,6 +6,7 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
+import { commandNameDisplayLabel } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { CommandCallBackParams, useCommandPallette } from './use-command-pallette';
@@ -234,7 +235,7 @@ export const WpcomCommandPalette = () => {
 								<StyledCommandsTitle>Commands / </StyledCommandsTitle>
 								<div>
 									{ '\u00A0' }
-									{ selectedCommandName }
+									{ commandNameDisplayLabel[ selectedCommandName ] || selectedCommandName }
 								</div>
 							</PaletteBreadCrumb>
 						) }

@@ -28,6 +28,10 @@ interface useCommandsArrayWpcomOptions {
 	setSelectedCommandName: ( name: string ) => void;
 }
 
+type CommandNameDisplayLabel = {
+	[ key: string ]: string;
+};
+
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 }: useCommandsArrayWpcomOptions ) => {
@@ -429,4 +433,24 @@ export const useCommandsArrayWpcom = ( {
 	];
 
 	return commands;
+};
+
+export const commandNameDisplayLabel: CommandNameDisplayLabel = {
+	openSiteDashboard: 'Open site dashboard',
+	openHostingConfiguration: 'Open hosting configuration',
+	openPHPmyAdmin: 'Open database in phpMyAdmin',
+	manageDns: 'Manage DNS records',
+	copySshConnectionString: 'Copy SSH connection string',
+	openSshCredentials: 'Open SFTP/SSH credentials',
+	resetSshSftpPassword: 'Reset SSH/SFTP password',
+	openSiteStats: 'Open site stats',
+	openActivityLog: 'Open activity log',
+	openBackups: 'Open backups',
+	viewSiteMetrics: 'View site metrics',
+	openPHPLogs: 'Open PHP logs',
+	openWebServerLogs: 'Open web server logs',
+	manageStagingSites: 'Manage staging sites',
+	managePHPVersion: 'Manage PHP version',
+	manageCacheSettings: 'Manage cache settings',
+	manageAdminInterfaceStyle: 'Manage admin interface style',
 };
