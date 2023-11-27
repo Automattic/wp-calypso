@@ -437,6 +437,7 @@ class Plans extends Component {
 								/>
 								<PlansSpecialOfferBanner
 									blogId={ selectedSite.ID }
+									className="plans__special-offer-banner"
 									onClick={ this.handleSpecialOfferClick }
 								/>
 							</>

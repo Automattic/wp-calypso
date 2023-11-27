@@ -22,7 +22,8 @@ const ModernizedLayout: React.FunctionComponent = () => {
 	// ----------------------------------------------
 
 	const globalOverrides = css`
-		.navigation-header.plans__section-header {
+		.navigation-header.plans__section-header,
+		.plans__special-offer-banner {
 			@media ( min-width: ${ customBreakpointSmall } ) {
 				padding: 0 max( calc( 50% - ( ${ sectionMaxWidth } / 2 ) ), 32px ) 24px;
 			}

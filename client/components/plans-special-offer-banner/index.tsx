@@ -52,13 +52,12 @@ export default function PlansSpecialOfferBanner( {
 	}
 
 	return (
-		<div style={ { paddingLeft: 32 } }>
+		<div className={ className }>
 			<Banner
 				title={ data.offer.banner_text }
 				primaryButton
 				callToAction={ data.offer.cta_text }
 				onClick={ handleAddCart }
-				className={ className }
 			/>
 		</div>
 	);
