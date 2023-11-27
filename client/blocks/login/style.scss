@@ -385,7 +385,7 @@
 		}
 	}
 
-	.login__social {
+	.auth-form__social {
 		padding: 0;
 		box-shadow: none;
 		margin-bottom: 2em;
@@ -398,6 +398,7 @@
 
 	.login button {
 		@extend %p2-form-button;
+		margin-bottom: 0;
 
 		&.login__form-change-username {
 			background: none;
@@ -469,7 +470,7 @@
 		}
 
 		.login__form,
-		.login__social {
+		.auth-form__social {
 			border: none;
 			background: none;
 			box-shadow: none;
@@ -480,24 +481,12 @@
 			margin-bottom: 1.5rem;
 		}
 
-		.login__social {
+		.auth-form__social {
 			padding-top: 2rem;
 			padding-bottom: 2rem;
 
-			.login__social-button {
-				display: flex;
+			.auth-form__social-buttons {
 				align-items: center;
-				justify-content: center;
-				flex-direction: column;
-			}
-
-			.login__social-buttons {
-				align-items: center;
-			}
-
-			.login__social-buttons-container {
-				display: flex;
-				flex-direction: column;
 			}
 
 			.social-buttons__button {

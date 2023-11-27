@@ -82,9 +82,8 @@ const SocialAuthenticationForm = ( {
 		// `signup/social` config flag.
 		! config.isEnabled( 'desktop' ) && (
 			<div
-				className={ classNames( 'auth-form__social', {
+				className={ classNames( 'card', 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
 					'is-social-first': isSocialFirst,
-					'is-login': isLogin,
 				} ) }
 			>
 				{ ! compact && <p>{ preventWidows( translate( 'Or create an account using:' ) ) }</p> }

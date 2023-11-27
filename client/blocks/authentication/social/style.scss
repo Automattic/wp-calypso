@@ -12,8 +12,6 @@
 
 	.social-buttons__button {
 		text-align: start;
-		padding-left: 0;
-		padding-bottom: 0;
 		box-shadow: none;
 		background-color: transparent;
 
@@ -27,28 +25,29 @@
 	}
 }
 
+.auth-form__social.is-signup {
+	.social-buttons__button {
+		padding-left: 0;
+		padding-bottom: 0;
+	}
+}
+
 .auth-form__social.is-login {
 	p:first-of-type {
 		display: none;
 	}
 
-	padding: 16px 0;
-
 	.auth-form__social-buttons {
 		gap: 10px;
+
 		@include break-small {
 			align-items: center;
 		}
 	}
 
 	.social-buttons__button.button {
-		height: unset;
-		border: 0;
-		width: 194px;
-	}
-
-	@include break-small {
-		padding: 24px 0;
+		text-align: center;
+		width: 100%;
 	}
 }
 
