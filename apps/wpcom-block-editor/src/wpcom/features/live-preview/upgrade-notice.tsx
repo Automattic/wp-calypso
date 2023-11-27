@@ -1,10 +1,8 @@
-import { PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { getCalypsoUrl } from '@automattic/calypso-url';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
-import { WOOCOMMERCE_THEME, getUnlock, isPreviewingTheme } from './utils';
+import { getUnlock, isPreviewingTheme } from './utils';
 
 declare global {
 	interface Window {
@@ -19,7 +17,8 @@ const unlock = getUnlock();
 export const LivePreviewUpgradeNotice: FC< {
 	canPreviewButNeedUpgrade: boolean;
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
-} > = ( { canPreviewButNeedUpgrade, previewingTheme } ) => {
+	upgradePlan: () => void;
+} > = ( { canPreviewButNeedUpgrade, previewingTheme, upgradePlan } ) => {
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 
@@ -27,23 +26,6 @@ export const LivePreviewUpgradeNotice: FC< {
 		unlock &&
 		siteEditorStore &&
 		unlock( siteEditorStore ).getSettings().__experimentalDashboardLink;
-
-	const upgradePlan = useCallback( () => {
-		const generateCheckoutUrl = ( plan: string ) => {
-			return `${ getCalypsoUrl() }/checkout/${
-				window._currentSiteId
-			}/${ plan }?redirect_to=${ encodeURIComponent(
-				window.location.href
-			) }&checkoutBackUrl=${ encodeURIComponent( window.location.href ) }`;
-		};
-		const link =
-			previewingTheme.type === WOOCOMMERCE_THEME
-				? generateCheckoutUrl( PLAN_BUSINESS ) // For a Woo Commerce theme, the users should have the Business plan or higher.
-				: generateCheckoutUrl( PLAN_PREMIUM ); // For a Premium theme, the users should have the Premium plan or higher.
-		window.location.href = link;
-
-		// TODO: Add the track event.
-	}, [ previewingTheme.type ] );
 
 	useEffect( () => {
 		// Do nothing in the Post Editor context.

@@ -77,15 +77,15 @@ const LivePreviewNotice: FC< {
 
 const LivePreviewNoticePlugin = () => {
 	const previewingTheme = usePreviewingTheme();
-	const { canPreviewButNeedUpgrade } = useCanPreviewButNeedUpgrade( {
-		previewingThemeType: previewingTheme?.type,
+	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( {
+		previewingTheme,
 	} );
 	return (
 		<>
 			<LivePreviewNotice
 				{ ...{ canPreviewButNeedUpgrade, previewingThemeName: previewingTheme.name } }
 			/>
-			<LivePreviewUpgradeNotice { ...{ canPreviewButNeedUpgrade, previewingTheme } } />
+			<LivePreviewUpgradeNotice { ...{ canPreviewButNeedUpgrade, previewingTheme, upgradePlan } } />
 		</>
 	);
 };
