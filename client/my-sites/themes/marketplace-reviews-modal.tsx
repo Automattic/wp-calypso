@@ -1,4 +1,4 @@
-import { Dialog, Button, Card } from '@automattic/components';
+import { Dialog, Button, Card, Spinner } from '@automattic/components';
 import { TextControl, TextareaControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -84,7 +84,18 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 						value={ rating }
 						onChange={ setRating }
 					/>
-					<Button type="submit">{ translate( 'Add new review' ) }</Button>
+					<div className="marketplace-reviews-modal__buttons-container">
+						<Button
+							className="marketplace-reviews-modal__button-submit"
+							primary
+							type="submit"
+							disabled={ createReview.isLoading }
+						>
+							{ createReview.isLoading && <Spinner className="card__icon" /> }
+							<span>{ translate( 'Submit' ) }</span>
+						</Button>
+						<Button>{ translate( 'Cancel' ) }</Button>
+					</div>
 				</form>
 				{ createReview.isError && (
 					<span className="marketplace-reviews-modal__error">
