@@ -113,12 +113,12 @@ export default function CardContent( {
 			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
 			interval: 'month',
 			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			jetpackFeatures: jetpackFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			storage: '50GB',
 			logo: getLogo( planSlug ),
