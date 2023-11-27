@@ -49,6 +49,7 @@ export default function InvoicesList() {
 			dispatch(
 				errorNotice( translate( 'We were unable to retrieve your invoices.' ), {
 					id: 'partner-portal-invoices-failure',
+					duration: 5000,
 				} )
 			);
 		}
