@@ -11,7 +11,8 @@ $breakpoint-mobile: 660px;
 	align-items: center;
 	justify-content: center;
 
-	&::before {
+	&::before,
+	&::after {
 		position: absolute;
 		content: "";
 		border-inline-start: 0;
@@ -19,11 +20,12 @@ $breakpoint-mobile: 660px;
 		inset-block-start: 50%;
 		inset-inline-start: 0;
 		height: 0;
-		width: 100%;
+		width: 45%;
 	}
-
+	&::after {
+		left: 55%;
+	}
 	.auth-form__separator-text {
-		background-color: #fdfdfd;
 		text-transform: uppercase;
 		text-align: center;
 		padding: 24px 0;
