@@ -6,10 +6,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import useAddTagsToPost from './use-add-tags-to-post';
 
+type PostMeta = {
+	reader_suggested_tags: string;
+};
+
 type CoreEditorPlaceholder = {
 	getCurrentPost: ( ...args: unknown[] ) => {
 		id: number;
-		meta: object;
+		meta: PostMeta;
 	};
 };
 
@@ -35,7 +39,7 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 		? JSON.parse( postMeta.reader_suggested_tags )
 		: [];
 	const [ selectedTags, setSelectedTags ] = React.useState( origSuggestedTags );
-	const onAddTagsButtonClick = ( numAddedTags ) => {
+	const onAddTagsButtonClick = ( numAddedTags: number ) => {
 		// Compare origSuggestedTags and selectedTags and determine the number of tags that are different
 		const numSuggestedTags = origSuggestedTags.length;
 		const numSelectedTags = selectedTags.length;

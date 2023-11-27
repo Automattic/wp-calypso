@@ -23,13 +23,16 @@ import useSharingModalDismissed from './use-sharing-modal-dismissed';
 
 import './style.scss';
 
+type PostMeta = {
+	reader_suggested_tags: string;
+};
 type CoreEditorPlaceholder = {
 	getCurrentPost: ( ...args: unknown[] ) => {
 		link: string;
 		title: string;
 		status: string;
 		password: string;
-		meta: object;
+		meta: PostMeta;
 	};
 	getCurrentPostType: ( ...args: unknown[] ) => string;
 	isCurrentPostPublished: ( ...args: unknown[] ) => boolean;
