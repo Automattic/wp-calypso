@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { isMobile } from '@automattic/viewport';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
@@ -64,11 +65,17 @@ class ReaderLikeButton extends Component {
 	};
 
 	showLikesPopover = () => {
+		if ( isMobile() ) {
+			return;
+		}
 		clearTimeout( this.hidePopoverTimeout );
 		this.setState( { showLikesPopover: true } );
 	};
 
 	hideLikesPopover = () => {
+		if ( isMobile() ) {
+			return;
+		}
 		this.hidePopoverTimeout = setTimeout( () => {
 			this.setState( { showLikesPopover: false } );
 		}, 200 );
