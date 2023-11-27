@@ -29,6 +29,7 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
 		useSitePlans: jest.fn(),
+		useIntroOffers: jest.fn(),
 	},
 } ) );
 

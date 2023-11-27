@@ -11,10 +11,8 @@ jest.mock( 'calypso/my-sites/plans-grid', () => ( {
 			</div>
 		</div>
 	),
+	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
-	<div>PlanTypeSelector</div>
-) );
 jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
 jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
 	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
@@ -45,6 +43,14 @@ jest.mock(
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans', () =>
 	jest.fn()
 );
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	Plans: {
+		...jest.requireActual( '@automattic/data-stores' ).Plans,
+		usePlans: jest.fn(),
+	},
+} ) );
+
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-hosting-trial-assignment', () => ( {
@@ -70,6 +76,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
@@ -105,6 +112,10 @@ describe( 'PlansFeaturesMain', () => {
 		} ) );
 		getSelectedSiteId.mockImplementation( () => 123 );
 		usePricedAPIPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
+		Plans.usePlans.mockImplementation( () => ( {
+			isFetching: false,
+			data: emptyPlansIndexForMockedFeatures,
+		} ) );
 		usePricingMetaForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
 		usePlanFeaturesForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
 		useRestructuredPlanFeaturesForComparisonGrid.mockImplementation(

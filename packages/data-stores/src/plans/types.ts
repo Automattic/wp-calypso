@@ -67,6 +67,18 @@ export interface SitePlan {
 	expiry?: string;
 }
 
+/*
+ * This is the new interface for API Plans that will replace the existing Plan interface above.
+ * The existing Plan interface will be removed once this interface is fully implemented.
+ */
+export interface PlanNext {
+	planSlug: PlanSlugFromProducts;
+	productId: number;
+	productNameShort: string;
+	billPeriod: -1 | ( typeof PERIOD_LIST )[ number ];
+	currencyCode: string;
+}
+
 export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_formatted_price?: string;
 	introductory_offer_raw_price?: number;
@@ -95,7 +107,6 @@ export interface PricedAPIPlan {
 
 	/**
 	 * The product price as a float.
-	 *
 	 * @deprecated use raw_price_integer as using floats for currency is not safe.
 	 */
 	raw_price: number;
@@ -109,7 +120,6 @@ export interface PricedAPIPlan {
 
 	/**
 	 * The orig cost as a float.
-	 *
 	 * @deprecated use orig_cost_integer as using floats for currency is not safe.
 	 */
 	orig_cost?: number | null;

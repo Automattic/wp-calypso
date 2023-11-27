@@ -4,7 +4,7 @@ import type { Category } from '../types';
 
 const usePatternCategories = (
 	siteId: undefined | number = 0,
-	queryOptions: UseQueryOptions< any, unknown, Category[] > = {}
+	queryOptions: Omit< UseQueryOptions< any, unknown, Category[] >, 'queryKey' > = {}
 ): Category[] => {
 	const { data } = useQuery< any, unknown, Category[] >( {
 		queryKey: [ siteId, 'block-patterns', 'categories' ],

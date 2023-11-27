@@ -1,32 +1,79 @@
+import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon } from '@wordpress/icons';
+import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
-import { useCommandState, Command } from 'cmdk';
-import { useEffect, useMemo, useState, useRef } from 'react';
-import { useCommandPallette } from './use-command-pallette';
+import { Command, useCommandState } from 'cmdk';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { useSelector } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { CommandCallBackParams, useCommandPallette } from './use-command-pallette';
 
 import '@wordpress/commands/build-style/style.css';
 
-interface CommandMenuGroupProps {
+interface CommandMenuGroupProps
+	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
 	isContextual?: boolean;
 	search: string;
-	close: () => void;
-	setSearch: ( search: string ) => void;
+	selectedCommandName: string;
+	setSelectedCommandName: ( name: string ) => void;
 }
+
+const StyledCommandsMenuContainer = styled.div( {
+	'[cmdk-root] > [cmdk-list]': {
+		overflowX: 'hidden',
+	},
+} );
+
+const LabelWrapper = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	flex: 1,
+	maxWidth: 'calc(100% - 56px)',
+	justifyContent: 'center',
+} );
+
+const Label = styled.div( {
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+	overflow: 'hidden',
+	fontSize: '1em',
+	'.commands-command-menu__container [cmdk-item] &': {
+		color: 'var(--studio-gray-100)',
+	},
+	'.commands-command-menu__container [cmdk-item][aria-selected=true] &': {
+		color: 'var(--studio-white)',
+	},
+	'.commands-command-menu__container & mark': {
+		fontWeight: 700,
+	},
+} );
+
+const SubLabel = styled( Label )( {
+	opacity: 0.7,
+	fontSize: '0.9em',
+	'.commands-command-menu__container [cmdk-item] &': {
+		color: 'var(--studio-gray-60)',
+	},
+} );
 
 export function CommandMenuGroup( {
 	isContextual,
 	search,
 	close,
 	setSearch,
+	setPlaceholderOverride,
+	selectedCommandName,
+	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
-	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
-	const { commands: smpDefaultCommands } = useCommandPallette( {
+	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
+	const { commands } = useCommandPallette( {
 		selectedCommandName,
 		setSelectedCommandName,
+		filter: isContextual ? ( command ) => command.context?.includes( currentPath ) : undefined,
 	} );
-	const commands = isContextual ? smpDefaultCommands : [];
+
 	if ( ! commands.length ) {
 		return null;
 	}
@@ -34,12 +81,13 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
+				const itemValue = command.searchLabel ?? command.label;
 				return (
 					<Command.Item
 						key={ command.name }
-						value={ command.searchLabel ?? command.label }
-						onSelect={ () => command.callback( { close, setSearch } ) }
-						id={ command.name }
+						value={ itemValue }
+						onSelect={ () => command.callback( { close, setSearch, setPlaceholderOverride } ) }
+						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
 							alignment="left"
@@ -49,9 +97,16 @@ export function CommandMenuGroup( {
 						>
 							{ command.icon && <Icon icon={ command.icon } /> }
 							{ command.image }
-							<span>
-								<TextHighlight text={ command.label } highlight={ search } />
-							</span>
+							<LabelWrapper>
+								<Label>
+									<TextHighlight text={ command.label } highlight={ search } />
+								</Label>
+								{ command.subLabel && (
+									<SubLabel>
+										<TextHighlight text={ command.subLabel } highlight={ search } />
+									</SubLabel>
+								) }
+							</LabelWrapper>
 						</HStack>
 					</Command.Item>
 				);
@@ -64,34 +119,36 @@ interface CommandInputProps {
 	isOpen: boolean;
 	search: string;
 	setSearch: ( search: string ) => void;
+	placeholder?: string;
 }
 
-function CommandInput( { isOpen, search, setSearch }: CommandInputProps ) {
+function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
-	const _value = useCommandState( ( state ) => state.value );
-	const selectedItemId = useMemo( () => {
-		const item = document.querySelector( `[cmdk-item=""][data-value="${ _value }"]` );
-		return item?.getAttribute( 'id' );
-	}, [ _value ] );
+	const itemValue = useCommandState( ( state ) => state.value );
+	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
+
 	useEffect( () => {
 		// Focus the command palette input when mounting the modal.
 		if ( isOpen ) {
 			commandMenuInput.current?.focus();
 		}
 	}, [ isOpen ] );
+
 	return (
 		<Command.Input
 			ref={ commandMenuInput }
 			value={ search }
 			onValueChange={ setSearch }
-			placeholder={ __( 'Search for commands' ) }
-			aria-activedescendant={ `${ selectedItemId }` }
+			placeholder={ placeholder || __( 'Search for commands' ) }
+			aria-activedescendant={ itemId }
 		/>
 	);
 }
 
 export const WpcomCommandPalette = () => {
+	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
+	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { close, toggle } = {
 		close: () => setIsOpen( false ),
@@ -111,8 +168,13 @@ export const WpcomCommandPalette = () => {
 		return () => document.removeEventListener( 'keydown', down );
 	}, [ toggle ] );
 
-	const closeAndReset = () => {
+	const reset = () => {
+		setPlaceholderOverride( '' );
 		setSearch( '' );
+		setSelectedCommandName( '' );
+	};
+	const closeAndReset = () => {
+		reset();
 		close();
 	};
 
@@ -131,6 +193,13 @@ export const WpcomCommandPalette = () => {
 		) {
 			event.preventDefault();
 		}
+		if (
+			( event.key === 'Escape' && selectedCommandName ) ||
+			( event.key === 'Backspace' && ! search )
+		) {
+			event.preventDefault();
+			reset();
+		}
 	};
 
 	const isLoading = false;
@@ -142,28 +211,33 @@ export const WpcomCommandPalette = () => {
 			onRequestClose={ closeAndReset }
 			__experimentalHideHeader
 		>
-			<div className="commands-command-menu__container">
+			<StyledCommandsMenuContainer className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
 						<Icon icon={ inputIcon } />
-						<CommandInput search={ search } setSearch={ setSearch } isOpen={ isOpen } />
+						<CommandInput
+							search={ search }
+							setSearch={ setSearch }
+							isOpen={ isOpen }
+							placeholder={ placeHolderOverride }
+						/>
 					</div>
 					<Command.List>
 						{ search && ! isLoading && (
 							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
 						) }
 						<CommandMenuGroup
+							isContextual={ ! search && ! selectedCommandName }
 							search={ search }
 							close={ closeAndReset }
-							isContextual
 							setSearch={ setSearch }
+							setPlaceholderOverride={ setPlaceholderOverride }
+							selectedCommandName={ selectedCommandName }
+							setSelectedCommandName={ setSelectedCommandName }
 						/>
-						{ search && (
-							<CommandMenuGroup search={ search } close={ closeAndReset } setSearch={ setSearch } />
-						) }
 					</Command.List>
 				</Command>
-			</div>
+			</StyledCommandsMenuContainer>
 		</Modal>
 	);
 };
