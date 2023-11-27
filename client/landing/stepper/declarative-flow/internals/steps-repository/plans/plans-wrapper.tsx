@@ -1,4 +1,4 @@
-import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	START_WRITING_FLOW,
@@ -20,6 +20,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Banner } from 'calypso/components/banner/index';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -32,6 +33,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+
 import './style.scss';
 
 interface Props {
@@ -138,8 +140,31 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesList = () => {
+		function handleBuyAgencyPromo() {
+			onUpgradeClick( [
+				{
+					product_slug: PLAN_BUSINESS,
+					meta: 'agency-offer',
+				},
+				{
+					product_slug: PRODUCT_1GB_SPACE,
+					quantity: 50,
+					meta: 'agency-offer',
+				},
+			] );
+		}
+
 		return (
 			<div>
+				<Banner
+					title={ translate(
+						'Bespoke $5/month annual agency Business plan with free 50GB storage add-on'
+					) }
+					primaryButton
+					callToAction={ translate( 'Buy now' ) }
+					onClick={ handleBuyAgencyPromo }
+					className="new-hosting-site-agency-promo-banner"
+				/>
 				<PlansFeaturesMain
 					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
@@ -224,19 +249,17 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		const fallbackSubHeaderText = subHeaderText;
 
 		return (
-			<>
-				<StepWrapper
-					flowName={ flowName }
-					stepName={ stepName }
-					shouldHideNavButtons={ true }
-					fallbackHeaderText={ fallbackHeaderText }
-					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ false }
-					isExtraWideLayout={ true }
-					stepContent={ plansFeaturesList() }
-					allowBackFirstStep={ false }
-				/>
-			</>
+			<StepWrapper
+				flowName={ flowName }
+				stepName={ stepName }
+				shouldHideNavButtons={ true }
+				fallbackHeaderText={ fallbackHeaderText }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
+				isWideLayout={ false }
+				isExtraWideLayout={ true }
+				stepContent={ plansFeaturesList() }
+				allowBackFirstStep={ false }
+			/>
 		);
 	};
 
