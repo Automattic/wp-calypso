@@ -1,4 +1,6 @@
 import {
+	POST_LIKERS_RECEIVE,
+	POST_LIKERS_REQUEST,
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REQUEST,
 	POST_LIKE,
@@ -21,6 +23,21 @@ import 'calypso/state/posts/init';
 export function requestPostLikes( siteId, postId ) {
 	return {
 		type: POST_LIKES_REQUEST,
+		siteId,
+		postId,
+	};
+}
+
+/**
+ * Returns an action thunk which, when invoked, triggers a network request to
+ * retrieve post likes for a post.
+ * @param  {number}   siteId Site ID
+ * @param  {number}   postId Post ID
+ * @returns {import('redux').AnyAction}        Action
+ */
+export function requestPostLikers( siteId, postId ) {
+	return {
+		type: POST_LIKERS_REQUEST,
 		siteId,
 		postId,
 	};
@@ -50,6 +67,14 @@ export const unlike = ( siteId, postId, { source } = {} ) => ( {
 	siteId,
 	postId,
 	source,
+} );
+
+export const receivePostLikers = ( siteId, postId, { likes, found } ) => ( {
+	type: POST_LIKERS_RECEIVE,
+	siteId,
+	postId,
+	likes,
+	found,
 } );
 
 export const receiveLikes = ( siteId, postId, { likes, iLike, found } ) => ( {
