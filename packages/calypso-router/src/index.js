@@ -421,7 +421,6 @@ function Page() {
 	this.len = 0;
 
 	// private things
-	this._decodeURLComponents = true;
 	this._base = '';
 	this._strict = false;
 	this._running = false;
@@ -441,7 +440,6 @@ Page.prototype.configure = function ( options ) {
 	const opts = options || {};
 
 	this._window = opts.window || ( hasWindow && window );
-	this._decodeURLComponents = opts.decodeURLComponents !== false;
 	this._popstate = opts.popstate !== false && hasWindow;
 	this._click = opts.click !== false && hasDocument;
 	this._hashbang = !! opts.hashbang;
@@ -923,19 +921,6 @@ Page.prototype._samePath = function ( url ) {
 };
 
 /**
- * Remove URL encoding from the given `str`.
- * Accommodates whitespace in both x-www-form-urlencoded
- * and regular percent-encoded form.
- * @param {string} val URL component to decode
- */
-Page.prototype._decodeURLEncodedURIComponent = function ( val ) {
-	if ( typeof val !== 'string' ) {
-		return val;
-	}
-	return this._decodeURLComponents ? decodeURIComponent( val.replace( /\+/g, ' ' ) ) : val;
-};
-
-/**
  * Create a new `page` instance and function
  */
 function createPage() {
@@ -1088,8 +1073,8 @@ function Context( path, state, pageInstance ) {
 	this.title = hasDocument && window.document.title;
 	this.state = state || {};
 	this.state.path = path;
-	this.querystring = i !== -1 ? this.page._decodeURLEncodedURIComponent( path.slice( i + 1 ) ) : '';
-	this.pathname = this.page._decodeURLEncodedURIComponent( i !== -1 ? path.slice( 0, i ) : path );
+	this.querystring = i !== -1 ? path.slice( i + 1 ) : '';
+	this.pathname = i !== -1 ? path.slice( 0, i ) : path;
 	this.params = {};
 
 	// fragment
@@ -1100,7 +1085,7 @@ function Context( path, state, pageInstance ) {
 		}
 		const parts = this.path.split( '#' );
 		this.path = this.pathname = parts[ 0 ];
-		this.hash = this.page._decodeURLEncodedURIComponent( parts[ 1 ] ) || '';
+		this.hash = parts[ 1 ] || '';
 		this.querystring = this.querystring.split( '#' )[ 0 ];
 	}
 }
@@ -1185,7 +1170,7 @@ Route.prototype.match = function ( path, params ) {
 
 	for ( let i = 1, len = m.length; i < len; ++i ) {
 		const key = keys[ i - 1 ];
-		const val = this.page._decodeURLEncodedURIComponent( m[ i ] );
+		const val = m[ i ];
 		if ( val !== undefined || ! hasOwnProperty.call( params, key.name ) ) {
 			params[ key.name ] = val;
 		}

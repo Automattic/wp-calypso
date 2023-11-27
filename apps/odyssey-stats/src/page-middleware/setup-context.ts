@@ -8,7 +8,6 @@ const debug = debugFactory( 'calypso' );
 
 export const setupContextMiddleware = ( reduxStore: Store, reactQueryClient: QueryClient ) => {
 	page( '*', ( context, next ) => {
-		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.path );
 		const path = parsed.pathname + parsed.search || null;
 
