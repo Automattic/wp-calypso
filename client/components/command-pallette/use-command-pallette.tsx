@@ -39,7 +39,6 @@ interface Command {
 	icon?: JSX.Element;
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
-	separator?: boolean;
 }
 interface useCommandPalletteOptions {
 	selectedCommandName: string;
