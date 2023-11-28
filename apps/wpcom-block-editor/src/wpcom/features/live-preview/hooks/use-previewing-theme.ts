@@ -30,7 +30,7 @@ export const usePreviewingTheme = () => {
 	);
 	const [ previewingThemeType, setPreviewingThemeType ] = useState< string >();
 	const previewingThemeTypeDisplay =
-		previewingThemeType === WOOCOMMERCE_THEME ? 'Woo Commerce' : 'Premium';
+		previewingThemeType === WOOCOMMERCE_THEME ? 'WooCommerce' : 'Premium';
 	const requiredPlan = previewingThemeType === WOOCOMMERCE_THEME ? 'Business' : 'Premium';
 
 	useEffect( () => {

@@ -58,7 +58,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 	 */
 	useEffect( () => {
 		/**
-		 * Currently, Live Preview only supports upgrades for Woo Commerce and Premium themes.
+		 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
 		 */
 		if ( previewingTheme.type !== WOOCOMMERCE_THEME && previewingTheme.type !== PREMIUM_THEME ) {
 			setCanPreviewButNeedUpgrade( false );
@@ -117,7 +117,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 		};
 		const link =
 			previewingTheme.type === WOOCOMMERCE_THEME
-				? generateCheckoutUrl( PLAN_BUSINESS ) // For a Woo Commerce theme, the users should have the Business plan or higher.
+				? generateCheckoutUrl( PLAN_BUSINESS ) // For a WooCommerce theme, the users should have the Business plan or higher.
 				: generateCheckoutUrl( PLAN_PREMIUM ); // For a Premium theme, the users should have the Premium plan or higher.
 		window.location.href = link;
 
