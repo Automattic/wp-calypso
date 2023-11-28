@@ -241,7 +241,7 @@ export const WpcomCommandPalette = () => {
 					<div>
 						{ selectedCommandName && (
 							<PaletteBreadCrumb>
-								<StyledCommandsTitle>{ __( 'Commands /' ) }</StyledCommandsTitle>
+								<StyledCommandsTitle onClick={ reset }>{ __( 'Commands /' ) }</StyledCommandsTitle>{ ' ' }
 								<div>
 									&nbsp;
 									{ commandDisplayName }
