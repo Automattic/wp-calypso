@@ -36,7 +36,6 @@ type Fields = {
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
-	lang_id?: number;
 };
 
 const getFormSettings = ( settings?: Fields ) => {
@@ -52,7 +51,6 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
 		jetpack_verbum_subscription_modal,
-		lang_id,
 	} = settings;
 
 	return {
@@ -63,7 +61,6 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
 		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
-		lang_id: lang_id || 1,
 	};
 };
 
@@ -95,7 +92,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		subscription_options,
 		sm_enabled,
 		jetpack_verbum_subscription_modal,
-		lang_id,
 	} = fields;
 
 	const isSubscriptionModuleInactive = useSelector( ( state ) => {
