@@ -3,6 +3,7 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+	LOGIN_AUTH_ACCOUNT_ENCRYPTED_USERNAME_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -23,16 +24,40 @@ export const getAuthAccountType = ( action ) =>
 
 export const receiveSuccess = ( action, data ) => {
 	const isPasswordless = get( data, 'passwordless' );
+	const isSiteLogin = get( data, 'login_by_site' );
+	let type = 'regular';
 
-	return [
+	// Passwordless + login by site never mix.
+	if ( isPasswordless ) {
+		type = 'passwordless';
+	} else if ( isSiteLogin ) {
+		type = 'login_by_site';
+	}
+
+	const actions = [
 		{
 			type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 			data: {
-				type: isPasswordless ? 'passwordless' : 'regular',
+				type,
 			},
 		},
 		recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' ),
 	];
+
+	if ( isSiteLogin ) {
+		actions.push( {
+			type: LOGIN_AUTH_ACCOUNT_ENCRYPTED_USERNAME_REQUEST_SUCCESS,
+			username: get( data, 'key' ),
+		} );
+	} else {
+		// Reset the value if the user changes their mind.
+		actions.push( {
+			type: LOGIN_AUTH_ACCOUNT_ENCRYPTED_USERNAME_REQUEST_SUCCESS,
+			username: null,
+		} );
+	}
+
+	return actions;
 };
 
 export const receiveError = ( action, { error: code, message } ) => [

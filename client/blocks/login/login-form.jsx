@@ -40,6 +40,7 @@ import {
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
+	getAuthEncryptedUsername,
 	getRedirectToOriginal,
 	getRequestError,
 	getSocialAccountIsLinking,
@@ -51,6 +52,7 @@ import {
 	isPartnerSignupQuery,
 	isPasswordlessAccount,
 	isRegularAccount,
+	isSiteLoginAccount,
 } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -62,6 +64,7 @@ import SocialLoginForm from './social';
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
+		encryptedUserName: PropTypes.string,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
@@ -176,7 +179,8 @@ export class LoginForm extends Component {
 
 		return (
 			socialAccountIsLinking ||
-			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
+			( hasAccountTypeLoaded &&
+				( isSiteLoginAccount( accountType ) || isRegularAccount( accountType ) ) ) ||
 			( this.props.isWoo && ! this.props.isPartnerSignup )
 		);
 	}
@@ -187,7 +191,7 @@ export class LoginForm extends Component {
 		return (
 			! socialAccountIsLinking &&
 			hasAccountTypeLoaded &&
-			isRegularAccount( accountType ) &&
+			( isSiteLoginAccount( accountType ) || isRegularAccount( accountType ) ) &&
 			! ( this.props.isWoo && ! this.props.isPartnerSignup )
 		);
 	}
@@ -212,12 +216,12 @@ export class LoginForm extends Component {
 
 	loginUser() {
 		const { password, usernameOrEmail } = this.state;
-		const { onSuccess, redirectTo, domain } = this.props;
+		const { onSuccess, redirectTo, domain, encryptedUserName } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
 		this.props
-			.loginUser( usernameOrEmail, password, redirectTo, domain )
+			.loginUser( encryptedUserName || usernameOrEmail, password, redirectTo, domain )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 				onSuccess( redirectTo );
@@ -393,6 +397,15 @@ export class LoginForm extends Component {
 		);
 	};
 
+	getBackButtonLabel() {
+		if ( this.props.accountType === 'login_by_site' ) {
+			return this.props.translate( 'Change site address' );
+		} else if ( includes( this.state.usernameOrEmail, '@' ) ) {
+			return this.props.translate( 'Change Email Address' );
+		}
+		return this.props.translate( 'Change Username' );
+	}
+
 	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
@@ -427,9 +440,7 @@ export class LoginForm extends Component {
 								>
 									<Gridicon icon="arrow-left" size={ 18 } />
 
-									{ includes( this.state.usernameOrEmail, '@' )
-										? this.props.translate( 'Change Email Address' )
-										: this.props.translate( 'Change Username' ) }
+									{ this.getBackButtonLabel() }
 								</Button>
 							) : null }
 						</FormLabel>
@@ -438,7 +449,7 @@ export class LoginForm extends Component {
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
-							label={ this.props.translate( 'Email Address or Username' ) }
+							label={ this.props.translate( 'Username, email address, or site address' ) }
 							disabled={ isFormDisabled || this.isPasswordView() }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
@@ -520,9 +531,7 @@ export class LoginForm extends Component {
 		return (
 			<button type="button" className="login__form-change-username" onClick={ this.resetView }>
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{ includes( this.state.usernameOrEmail, '@' )
-					? this.props.translate( 'Change Email Address' )
-					: this.props.translate( 'Change Username' ) }
+				{ this.getBackButtonLabel() }
 			</button>
 		);
 	}
@@ -537,7 +546,7 @@ export class LoginForm extends Component {
 
 		return this.isPasswordView()
 			? this.renderChangeUsername()
-			: this.props.translate( 'Email Address or Username' );
+			: this.props.translate( 'Username, email address, or site address' );
 	}
 
 	renderLostPasswordLink() {
@@ -877,9 +886,11 @@ export class LoginForm extends Component {
 export default connect(
 	( state, props ) => {
 		const accountType = getAuthAccountTypeSelector( state );
+		const encryptedUserName = getAuthEncryptedUsername( state );
 
 		return {
 			accountType,
+			encryptedUserName,
 			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),

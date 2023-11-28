@@ -31,6 +31,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	CURRENT_USER_RECEIVE,
+	LOGIN_AUTH_ACCOUNT_ENCRYPTED_USERNAME_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import magicLogin from './magic-login/reducer';
@@ -425,6 +426,15 @@ export const authAccountType = ( state = null, action ) => {
 	return state;
 };
 
+export const authEncryptedUsername = ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_AUTH_ACCOUNT_ENCRYPTED_USERNAME_REQUEST_SUCCESS:
+			return action.username;
+	}
+
+	return state;
+};
+
 export const lastCheckedUsernameOrEmail = ( state = null, action ) => {
 	switch ( action.type ) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
@@ -436,6 +446,7 @@ export const lastCheckedUsernameOrEmail = ( state = null, action ) => {
 
 const combinedReducer = combineReducers( {
 	authAccountType,
+	authEncryptedUsername,
 	isFormDisabled,
 	isRequesting,
 	lastCheckedUsernameOrEmail,

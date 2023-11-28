@@ -122,6 +122,13 @@ export const isFormDisabled = ( state ) => state.login.isFormDisabled;
 export const getAuthAccountType = ( state ) => state.login.authAccountType;
 
 /**
+ * Retrieves the authentication encrypted username. It is the response from auth-options endpoint when provided by a site URL for login.
+ * @param  {Object}   state  Global state tree
+ * @returns {?string}        An encrypted username that can used against WPCOM auth endpoint.
+ */
+export const getAuthEncryptedUsername = ( state ) => state.login.authEncryptedUsername;
+
+/**
  * Gets Username of the created social account
  * @param  {Object}   state  Global state tree
  * @returns {?string}         Username of the created social account

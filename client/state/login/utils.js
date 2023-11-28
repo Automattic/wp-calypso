@@ -142,6 +142,13 @@ export const getErrorFromWPCOMError = ( wpcomError ) => ( {
 export const isRegularAccount = ( authAccountType ) => authAccountType === 'regular';
 
 /**
+ * Is site login account type.
+ * @param {string} authAccountType - authentication account type
+ * @returns {boolean} true if the account is regular, false otherwise
+ */
+export const isSiteLoginAccount = ( authAccountType ) => authAccountType === 'login_by_site';
+
+/**
  * Determines whether the user account uses authentication without password.
  * @param {string} authAccountType - authentication account type
  * @returns {boolean} true if the account is passwordless, false otherwise

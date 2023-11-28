@@ -199,9 +199,7 @@ class RequestLoginEmailForm extends Component {
 				? translate( 'Send link' )
 				: translate( 'Get Link' );
 
-		const formLabel = hasTranslation( 'Email address or username' )
-			? this.props.translate( 'Email address or username' )
-			: this.props.translate( 'Email Address or Username' );
+		const formLabel = this.props.translate( 'Email address or username' );
 
 		return (
 			<div className="magic-login__form">
