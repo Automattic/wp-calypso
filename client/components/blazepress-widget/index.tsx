@@ -9,7 +9,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import {
+	showDSP,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+	cleanupDSP,
+} from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
@@ -53,8 +58,6 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const localeSlug = useLocale();
 	const dispatch = useDispatch();
 
-	const widgetCleanUpRef = useRef< () => void >();
-
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
 		if ( isVisible ) {
@@ -62,17 +65,19 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 		}
 	}, [ isVisible ] );
 
+	useEffect( () => {
+		return () => {
+			// Execute Widget Cleanup function
+			cleanupDSP();
+		};
+	}, [] );
+
 	const handleShowCancel = ( show: boolean ) => setShowCancelButton( show );
 	const handleShowTopBar = ( show: boolean ) => {
 		setHiddenHeader( ! show );
 	};
 
 	const onClose = ( goToCampaigns?: boolean ) => {
-		// Execute Widget Cleanup function
-		if ( widgetCleanUpRef.current ) {
-			widgetCleanUpRef.current();
-		}
-
 		queryClient.invalidateQueries( {
 			queryKey: [ 'promote-post-campaigns', siteId ],
 		} );
@@ -100,7 +105,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				const source = props.source || 'blazepress';
 
 				try {
-					const result = await showDSP(
+					await showDSP(
 						selectedSiteSlug,
 						props.siteId,
 						props.postId,
@@ -115,8 +120,6 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						jetpackVersion,
 						dispatch
 					);
-
-					widgetCleanUpRef.current = result.cleanup;
 				} catch ( error ) {
 					setError( true );
 					setHiddenHeader( false );

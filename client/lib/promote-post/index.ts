@@ -45,7 +45,7 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
-				onLoaded?: ( cleanup?: () => void ) => void;
+				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: typeof translate;
 				localizeUrlFn?: ( fullUrl: string ) => string;
@@ -67,6 +67,7 @@ declare global {
 				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
 			} ) => void;
+			cleanup: () => void;
 			strings: any;
 		};
 	}
@@ -143,7 +144,7 @@ export async function showDSP(
 ) {
 	await loadDSPWidgetJS();
 
-	return new Promise< { loaded: boolean; cleanup?: () => void } >( ( resolve, reject ) => {
+	return new Promise( ( resolve, reject ) => {
 		if ( ! window.BlazePress ) {
 			dispatch?.(
 				recordTracksEvent( 'calypso_dsp_widget_failed_to_load', { origin: getDSPOrigin() } )
@@ -166,10 +167,10 @@ export async function showDSP(
 				// todo fetch rlt somehow
 				authToken: 'wpcom-proxy-request',
 				template: 'article',
-				onLoaded: ( cleanup ) => {
+				onLoaded: () => {
 					debug( 'showDSP: [Widget loaded]' );
 
-					resolve( { loaded: true, cleanup } );
+					resolve( true );
 				},
 				onClose: onClose,
 				translateFn: translateFn,
@@ -204,6 +205,14 @@ export async function showDSP(
 			reject( false );
 		}
 	} );
+}
+
+export async function cleanupDSP() {
+	if ( ! window.BlazePress ) {
+		return;
+	}
+
+	window.BlazePress.cleanup?.();
 }
 
 /**
