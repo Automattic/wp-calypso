@@ -330,9 +330,7 @@ class Signup extends Component {
 	};
 
 	getRecordProps() {
-		const { signupDependencies, hostingFlow, queryObject } = this.props;
-		const flow = queryObject?.flow;
-
+		const { signupDependencies, hostingFlow } = this.props;
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
 
 		if ( ! theme && signupDependencies.themeParameter ) {
@@ -347,7 +345,6 @@ class Signup extends Component {
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 			is_in_hosting_flow: hostingFlow,
-			...( flow ? { flow } : {} ),
 		};
 	}
 
