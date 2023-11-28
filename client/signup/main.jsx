@@ -347,7 +347,7 @@ class Signup extends Component {
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 			is_in_hosting_flow: hostingFlow,
-			...( flow ? { flow } : {} ),
+			...( flow && flow !== 'new-hosted-site' ? { flow } : {} ),
 		};
 	}
 
