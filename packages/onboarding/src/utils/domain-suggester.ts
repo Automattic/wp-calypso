@@ -13,6 +13,9 @@ const validDomains = [
 	'sbcglobal.net',
 ];
 
+// Skip suggestions for these domains
+const avoidList = [ 'mail.com', 'ymail.com', 'email.com' ];
+
 // This function extracts the domain from an email address.
 const extractDomainWithExtension = ( email: string ) => {
 	if ( email ) {
@@ -91,7 +94,11 @@ export const suggestEmailCorrection = ( inputDomain: string, maxDistance: number
 	let bestMatch = null;
 	let bestMatchDistance = Infinity;
 
-	if ( extractedInputEmailDomain && ! validDomains.includes( extractedInputEmailDomain ) ) {
+	if (
+		extractedInputEmailDomain &&
+		! validDomains.includes( extractedInputEmailDomain ) &&
+		! avoidList.includes( extractedInputEmailDomain )
+	) {
 		// Iterate through each valid domain and calculate the Levenshtein distance
 		for ( let i = 0; i < validDomains.length; i++ ) {
 			const validDomain = validDomains[ i ];
