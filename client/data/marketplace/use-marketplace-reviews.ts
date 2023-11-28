@@ -83,7 +83,7 @@ const fetchMarketplaceReviews = (
 
 const createReview = ( {
 	productType,
-	slug: productSlug,
+	slug,
 	content,
 	rating,
 }: MarketplaceReviewBody ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
@@ -94,7 +94,7 @@ const createReview = ( {
 		},
 		{
 			product_type: productType,
-			product_slug: productSlug,
+			product_slug: slug,
 			content,
 			meta: { wpcom_marketplace_rating: rating },
 		}
@@ -104,7 +104,7 @@ const createReview = ( {
 const updateReview = ( {
 	reviewId,
 	productType,
-	slug: productSlug,
+	slug,
 	content,
 	rating,
 }: UpdateMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
@@ -115,7 +115,7 @@ const updateReview = ( {
 		},
 		{
 			product_type: productType,
-			product_slug: productSlug,
+			product_slug: slug,
 			content,
 			meta: { wpcom_marketplace_rating: rating },
 		}
