@@ -21,6 +21,8 @@ interface Props {
 	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
 	suggestedProduct?: string | null;
 	isMultiSelect?: boolean;
+	hideDiscount?: boolean;
+	withBackground?: boolean;
 }
 
 export default function LicenseProductCard( props: Props ) {
@@ -32,6 +34,8 @@ export default function LicenseProductCard( props: Props ) {
 		onSelectProduct,
 		suggestedProduct,
 		isMultiSelect,
+		hideDiscount,
+		withBackground,
 	} = props;
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
 	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
@@ -110,6 +114,7 @@ export default function LicenseProductCard( props: Props ) {
 					'license-product-card': true,
 					selected: isSelected,
 					disabled: isDisabled,
+					'license-product-card--with-background': withBackground,
 				} ) }
 			>
 				<div className="license-product-card__inner">
@@ -135,7 +140,7 @@ export default function LicenseProductCard( props: Props ) {
 						</div>
 
 						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount product={ product } />
+							<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
 						</div>
 					</div>
 				</div>
