@@ -850,6 +850,10 @@ export function purchaseType( purchase: Purchase ) {
 		return null;
 	}
 
+	if ( isTieredVolumeSpaceAddon( purchase ) ) {
+		return null;
+	}
+
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
 			args: {
