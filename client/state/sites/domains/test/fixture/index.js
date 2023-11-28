@@ -84,6 +84,7 @@ export const DOMAIN_PRIMARY = {
 	owner: 'John Doe',
 	partnerDomain: false,
 	pendingRegistration: false,
+	pendingRegistrationAtRegistry: false,
 	pendingRegistrationTime: '',
 	pendingTransfer: false,
 	privateDomain: false,
