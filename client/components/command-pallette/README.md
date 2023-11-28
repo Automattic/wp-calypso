@@ -6,7 +6,7 @@ The command palette is inspired by [Core](https://github.com/WordPress/gutenberg
 
 ## Add a command
 
-In order to add a new command to the palette, you can add them in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPallette` hooks.
+In order to add a new command to the palette, you can add it in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPallette` hooks.
 
 ## Command properties
 
