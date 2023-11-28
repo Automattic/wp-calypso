@@ -64,7 +64,7 @@ class DomainProductPrice extends Component {
 
 	renderRenewalPrice() {
 		const { price, renewPrice, translate } = this.props;
-		const isRenewCostDifferent = price !== renewPrice;
+		const isRenewCostDifferent = renewPrice && price !== renewPrice;
 
 		if ( isRenewCostDifferent ) {
 			return (

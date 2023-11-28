@@ -757,18 +757,72 @@ class RegisterDomainStep extends Component {
 		this.props.onSave( this.state );
 	};
 
+	removeUnavailablePremiumDomain = ( domainName ) => {
+		this.setState( ( state ) => {
+			const newPremiumDomains = { ...state.premiumDomains };
+			delete newPremiumDomains[ domainName ];
+			return {
+				premiumDomains: newPremiumDomains,
+				searchResults: state.searchResults.filter(
+					( suggestion ) => suggestion.domain_name !== domainName
+				),
+			};
+		} );
+	};
+
 	saveAndGetPremiumPrices = () => {
 		this.save();
 
-		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
-			this.fetchDomainPrice( premiumDomain ).then( ( domainPrice ) => {
-				this.setState( ( state ) => {
-					const newPremiumDomains = { ...state.premiumDomains };
-					newPremiumDomains[ premiumDomain ] = domainPrice;
-					return {
-						premiumDomains: newPremiumDomains,
-					};
-				} );
+		const premiumDomainsFetched = [];
+
+		Object.keys( this.state.premiumDomains ).forEach( ( domainName ) => {
+			premiumDomainsFetched.push(
+				new Promise( ( resolve ) => {
+					checkDomainAvailability(
+						{
+							domainName,
+							blogId: get( this.props, 'selectedSite.ID', null ),
+						},
+						( err, availabilityResult ) => {
+							if ( err ) {
+								// if any error occurs, removes the domain from both premium domains and
+								// search results state.
+								this.removeUnavailablePremiumDomain( domainName );
+								return resolve( null );
+							}
+
+							const status = availabilityResult?.status ?? err;
+
+							const isAvailablePremiumDomain = domainAvailability.AVAILABLE_PREMIUM === status;
+							const isAvailableSupportedPremiumDomain =
+								config.isEnabled( 'domains/premium-domain-purchases' ) &&
+								domainAvailability.AVAILABLE_PREMIUM === status &&
+								availabilityResult?.is_supported_premium_domain;
+
+							if ( ! isAvailablePremiumDomain || ! isAvailableSupportedPremiumDomain ) {
+								this.removeUnavailablePremiumDomain( domainName );
+								return resolve( null );
+							}
+
+							this.setState(
+								( state ) => {
+									const newPremiumDomains = { ...state.premiumDomains };
+									newPremiumDomains[ domainName ] = availabilityResult;
+									return {
+										premiumDomains: newPremiumDomains,
+									};
+								},
+								() => resolve( domainName )
+							);
+						}
+					);
+				} )
+			);
+		} );
+
+		Promise.all( premiumDomainsFetched ).then( () => {
+			this.setState( {
+				loadingResults: false,
 			} );
 		} );
 	};
@@ -1183,7 +1237,6 @@ class RegisterDomainStep extends Component {
 				premiumDomains,
 				pageSize: hasAvailableFQDNSearch ? EXACT_MATCH_PAGE_SIZE : PAGE_SIZE,
 				searchResults: markedSuggestions,
-				loadingResults: false,
 			},
 			this.saveAndGetPremiumPrices
 		);
