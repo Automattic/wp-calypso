@@ -156,7 +156,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent, currentRoute } = props;
+	const { selectedDomainName, canManageConsent, currentRoute, readOnly } = props;
 
 	return (
 		<div>
@@ -165,9 +165,9 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
 						<Button
-							disabled={ disableEdit }
+							disabled={ disableEdit || readOnly }
 							href={
-								disableEdit
+								disableEdit || readOnly
 									? ''
 									: domainManagementEditContactInfo(
 											props.selectedSite.slug,
@@ -191,7 +191,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 							</Button>
 						) }
 					</div>
-					{ disableEdit && (
+					{ disableEdit && ! readOnly && (
 						<p className="contact-information__transfer-warn">
 							{ translate(
 								'Contact modifications are disabled while domain transfers are pending.'

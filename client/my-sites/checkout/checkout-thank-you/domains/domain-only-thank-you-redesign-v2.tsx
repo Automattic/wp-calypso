@@ -19,6 +19,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const backText = translate( 'Back to Home' );
 	const firstDomain = domains[ 0 ];
+
 	return (
 		<ThankYouLayout masterbarProps={ { siteId, siteSlug, backText } }>
 			<DefaultThankYouHeader>{ translate( 'Your own corner of the web' ) }</DefaultThankYouHeader>
@@ -32,7 +33,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 				) }
 			</DefaultSubHeader>
 			{ domains.map( ( domain ) => (
-				<ProductDomain shareSite key={ domain } domain={ domain } />
+				<ProductDomain shareSite key={ domain } domain={ domain } siteSlug={ siteSlug } />
 			) ) }
 			<DomainOnlyFooter />
 			<DefaultUpsell
@@ -42,7 +43,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 				) }
 				meshColor="blue"
 				icon={ emailImage }
-				href={ emailManagement( firstDomain, firstDomain ) }
+				href={ emailManagement( siteSlug ?? firstDomain, firstDomain ) }
 				buttonText={ translate( 'Add email' ) }
 				trackEvent="calypso_domain_only_thank_you_professional_email_click"
 			/>

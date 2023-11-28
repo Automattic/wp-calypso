@@ -9,7 +9,7 @@ interface Options extends QueryOptions< Template > {
 const useTemplate = (
 	siteId: string | number,
 	templateId: string,
-	queryOptions: Options = {}
+	queryOptions: Omit< Options, 'queryKey' > = {}
 ): UseQueryResult< Template > => {
 	return useQuery< Template >( {
 		queryKey: [ siteId, 'templates', templateId ],

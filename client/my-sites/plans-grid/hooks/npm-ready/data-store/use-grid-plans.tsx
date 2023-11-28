@@ -25,6 +25,7 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { isSamePlan } from '../../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
@@ -139,8 +140,6 @@ export type PlansIntent =
 interface Props {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
-	// API plans will be ported to data store and be queried from there
-	usePricedAPIPlans: UsePricedAPIPlans;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
 	eligibleForFreeHostingTrial: boolean;
@@ -270,7 +269,6 @@ const usePlanTypesWithIntent = ( {
 
 // TODO clk: move to plans data store
 const useGridPlans = ( {
-	usePricedAPIPlans,
 	usePricingMetaForGridPlans,
 	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
@@ -322,20 +320,20 @@ const useGridPlans = ( {
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
-	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
+	const pricedAPIPlans = Plans.usePlans();
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
-	if ( ! pricingMeta || ! pricedAPIPlans ) {
+	if ( ! pricingMeta || pricedAPIPlans.isFetching ) {
 		return null;
 	}
 
 	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
-		const planObject = pricedAPIPlans[ planSlug ];
+		const planObject = pricedAPIPlans.data?.[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
 		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
@@ -354,7 +352,7 @@ const useGridPlans = ( {
 		const productNameShort =
 			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
 				? planConstantObj.getPathSlug()
-				: planObject?.product_name_short ?? null;
+				: planObject?.productNameShort ?? null;
 
 		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
 		const cartItemForPlan =
