@@ -24,10 +24,28 @@ Every command has a set of properties that can be used to customize its behavior
 
 ## Usage
 
-```jsx
+Embed the command example:
+
+```tsx
 import { WpcomCommandPalette } from 'calypso/components/command-pallette/wpcom-command-pallette';
 
 export default function MyComponent() {
 	return <WpcomCommandPalette />;
 }
+```
+
+Command example:
+
+```tsx
+{
+	name: 'addNewSite',
+	label: __( 'Add new site' ),
+	context: [ '/sites' ],
+	callback: ( { close }: { close: () => void } ) => {
+		close();
+		navigate( createSiteUrl );
+	},
+	icon: addNewSiteIcon,
+},
+
 ```
