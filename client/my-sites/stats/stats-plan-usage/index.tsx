@@ -8,6 +8,7 @@ interface PlanUsageProps {
 	limit?: number;
 	usage?: number;
 	daysToReset?: number;
+	overLimitMonths?: number;
 }
 interface StatsPlanUsageProps {
 	siteId: number;
@@ -17,13 +18,51 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	limit = 10000,
 	usage = 0,
 	daysToReset = 30,
+	overLimitMonths = 0,
 } ) => {
 	const translate = useTranslate();
 
+	// TODO: Replace with real upgrade link.
 	const upgradeLink = '#';
+
+	const isOverLimit = usage >= limit;
 	const progressClassNames = classNames( 'plan-usage-progress', {
-		'is-over-limit': usage >= limit,
+		'is-over-limit': isOverLimit,
 	} );
+
+	// 0, 1, 2, or greater than 2
+	let overLimitMonthsText = '';
+
+	if ( overLimitMonths === 1 ) {
+		overLimitMonthsText = translate(
+			"{{bold}}You've surpassed your limit the past month.{{/bold}} ",
+			{
+				components: {
+					bold: <b />,
+				},
+			}
+		) as string;
+	}
+
+	if ( overLimitMonths >= 2 ) {
+		overLimitMonthsText = translate(
+			"{{bold}}You've surpassed your limit for two consecutive months already.{{/bold}} ",
+			{
+				components: {
+					bold: <b />,
+				},
+			}
+		) as string;
+	}
+
+	const upgradeNote = translate(
+		'Do you want to increase your monthly views limit? {{link}}Upgrade now{{/link}}',
+		{
+			components: {
+				link: <a href={ upgradeLink } />,
+			},
+		}
+	);
 
 	return (
 		<div className="plan-usage">
@@ -48,15 +87,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 			</div>
 			<div className="plan-usage-note">
 				<span>
-					{ translate(
-						"{{bold}}You've surpassed your limit the past month.{{/bold}} Do you want to increase your monthly views limit? {{link}}Upgrade now{{/link}}",
-						{
-							components: {
-								bold: <b />,
-								link: <a href={ upgradeLink } />,
-							},
-						}
-					) }
+					{ overLimitMonthsText } { upgradeNote }
 				</span>
 			</div>
 		</div>
