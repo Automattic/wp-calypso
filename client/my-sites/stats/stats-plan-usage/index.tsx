@@ -1,11 +1,21 @@
+import { formattedNumber } from '@automattic/components';
 import React from 'react';
 import './style.scss';
 
+interface PlanUsageProps {
+	limit?: number;
+	usage?: number;
+	daysToReset?: number;
+}
 interface StatsPlanUsageProps {
-	limit: number;
+	siteId: number;
 }
 
-const StatsPlanUsage: React.FC< StatsPlanUsageProps > = () => {
+const PlanUsage: React.FC< PlanUsageProps > = ( {
+	limit = 10000,
+	usage = 0,
+	daysToReset = 30,
+} ) => {
 	const upgradeLink = '#';
 
 	return (
@@ -13,8 +23,10 @@ const StatsPlanUsage: React.FC< StatsPlanUsageProps > = () => {
 			<div className="stats__plan-usage">
 				<h3 className="stats__plan-usage-heading">Your Stats plan usage</h3>
 				<div className="stats__plan-usage-progress">
-					<div>9,000 / 10,000 views this month</div>
-					<div>Restarts in 10 days</div>
+					<div>
+						{ usage } / { formattedNumber( limit ) } views this month
+					</div>
+					<div>Restarts in { daysToReset } days</div>
 				</div>
 				<div className="stats__plan-usage-note">
 					<span>
@@ -25,6 +37,10 @@ const StatsPlanUsage: React.FC< StatsPlanUsageProps > = () => {
 			</div>
 		</div>
 	);
+};
+
+const StatsPlanUsage: React.FC< StatsPlanUsageProps > = () => {
+	return <PlanUsage />;
 };
 
 export default StatsPlanUsage;
