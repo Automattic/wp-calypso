@@ -9,7 +9,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	isJetpackSiteMultiSite,
 	isJetpackSite,
-	getSiteAdminUrl,
+	getSiteThemeInstallUrl,
 	getSiteSlug,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -25,7 +25,7 @@ function getInstallThemeUrl( state, siteId ) {
 	const atomicSite = isAtomicSite( state, siteId );
 	const siteCanInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 	if ( atomicSite && siteCanInstallThemes ) {
-		return getSiteAdminUrl( state, siteId, 'theme-install.php' );
+		return getSiteThemeInstallUrl( state, siteId );
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );

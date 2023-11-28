@@ -45,6 +45,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteAdminUrl,
+	getSiteThemeInstallUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
@@ -129,7 +130,7 @@ class Upload extends Component {
 	}
 
 	redirectToWpAdmin() {
-		window.location = `${ this.props.siteAdminUrl }theme-install.php`;
+		window.location = this.props.siteThemeInstallUrl;
 	}
 
 	successMessage() {
@@ -417,6 +418,7 @@ const mapStateToProps = ( state ) => {
 		backPath: getBackPath( state ),
 		showEligibility,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		siteThemeInstallUrl: getSiteThemeInstallUrl( state, siteId ),
 		canUploadThemesOrPlugins,
 		isFetchingPurchases:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
