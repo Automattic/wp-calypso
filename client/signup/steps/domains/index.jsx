@@ -697,22 +697,6 @@ export class RenderDomainsStep extends Component {
 		}
 	}
 
-	removeAllDomains() {
-		const cartProducts = this.props.cart.products;
-		const domainsToRemove = cartProducts.filter( ( product ) =>
-			product.product_slug.includes( 'domain' )
-		);
-
-		if ( domainsToRemove.length ) {
-			domainsToRemove.forEach( ( domain ) => {
-				this.removeDomain( {
-					domain_name: domain.meta,
-					product_slug: domain.product_slug,
-				} );
-			} );
-		}
-	}
-
 	goToNext = () => {
 		this.setState( { isGoingToNextStep: true } );
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -980,7 +964,6 @@ export class RenderDomainsStep extends Component {
 							borderless
 							className="domains__domain-cart-choose-later"
 							onClick={ () => {
-								this.removeAllDomains();
 								this.handleSkip( undefined, false );
 							} }
 						>
