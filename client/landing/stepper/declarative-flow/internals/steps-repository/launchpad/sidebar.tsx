@@ -186,21 +186,21 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		);
 	}
 
-	if ( ! site ) {
-		return null;
-	}
-
+	// If there is no site yet then we set 1 as numberOfSteps so the CircularProgressBar gets rendered in
+	// an empty state. If site is here then we default to the previous behaviour: show it if enhancedTasks.length > 0.
+	const numberOfSteps = site === null ? 1 : enhancedTasks?.length || null;
 	return (
 		<>
-			<QueryMembershipsSettings siteId={ site.ID } source="launchpad" />
+			{ site && <QueryMembershipsSettings siteId={ site.ID } source="launchpad" /> }
 			<div className="launchpad__sidebar">
 				<div className="launchpad__sidebar-content-container">
 					<div className="launchpad__progress-bar-container">
 						<CircularProgressBar
 							size={ 40 }
 							enableDesktopScaling
-							currentStep={ currentTask || null }
-							numberOfSteps={ enhancedTasks?.length || null }
+							currentStep={ currentTask || 0 }
+							numberOfSteps={ numberOfSteps }
+							showProgressText={ site !== null }
 						/>
 					</div>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }

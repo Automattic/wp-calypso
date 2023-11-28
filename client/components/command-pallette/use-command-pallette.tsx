@@ -33,7 +33,7 @@ interface Command {
 	name: string;
 	label: string;
 	subLabel?: string;
-	searchLabel: string;
+	searchLabel?: string;
 	callback: ( params: CommandCallBackParams ) => void;
 	context?: string[];
 	icon?: JSX.Element;

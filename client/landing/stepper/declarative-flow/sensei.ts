@@ -20,7 +20,7 @@ import './internals/sensei.scss';
 function getStartUrl( step: string, locale: string ) {
 	const localeUrlPart = locale && locale !== 'en' ? `/${ locale }` : '';
 
-	return `/start/account/user${ localeUrlPart }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }&flow=${ SENSEI_FLOW }`;
+	return `/start/account/user${ localeUrlPart }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }&main_flow=${ SENSEI_FLOW }`;
 }
 
 const sensei: Flow = {

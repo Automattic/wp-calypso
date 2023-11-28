@@ -19,6 +19,7 @@ import { useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
 import LicensesForm from './licenses-form';
 import ReviewLicenses from './review-licenses';
+import TotalCost from './total-cost';
 import type { SelectedLicenseProp } from './types';
 import type { AssignLicenceProps } from '../types';
 
@@ -88,24 +89,27 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						</Subtitle>
 						<Actions>
 							{ selectedLicenses.length > 0 && (
-								<Button
-									primary
-									className="issue-license-v2__select-license"
-									busy={ ! isReady }
-									onClick={ onClickIssueLicenses }
-								>
-									{ translate(
-										'Review %(numLicenses)d license',
-										'Review %(numLicenses)d licenses',
-										{
-											context: 'button label',
-											count: selectedLicenseCount,
-											args: {
-												numLicenses: selectedLicenseCount,
-											},
-										}
-									) }
-								</Button>
+								<div className="issue-license-v2__actions">
+									<TotalCost selectedLicenses={ selectedLicenses } />
+									<Button
+										primary
+										className="issue-license-v2__select-license"
+										busy={ ! isReady }
+										onClick={ onClickIssueLicenses }
+									>
+										{ translate(
+											'Review %(numLicenses)d license',
+											'Review %(numLicenses)d licenses',
+											{
+												context: 'button label',
+												count: selectedLicenseCount,
+												args: {
+													numLicenses: selectedLicenseCount,
+												},
+											}
+										) }
+									</Button>
+								</div>
 							) }
 						</Actions>
 					</LayoutHeader>
