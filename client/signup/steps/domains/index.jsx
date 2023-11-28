@@ -163,7 +163,7 @@ export class RenderDomainsStep extends Component {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
 			wpcomSubdomainSelected: false,
-			isRemovingDomain: null,
+			domainRemovalQueue: [],
 			isGoingToNextStep: false,
 			temporaryCart: [],
 		};
@@ -647,7 +647,12 @@ export class RenderDomainsStep extends Component {
 	}
 
 	removeDomainClickHandler = ( domain ) => () => {
-		this.setState( { isRemovingDomain: domain.meta } );
+		this.setState( ( prevState ) => ( {
+			domainRemovalQueue: [
+				...prevState.domainRemovalQueue,
+				{ meta: domain.meta, productSlug: domain.product_slug },
+			],
+		} ) );
 		this.removeDomain( {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,
@@ -661,14 +666,21 @@ export class RenderDomainsStep extends Component {
 			} ) );
 		}
 
-		const productToRemove = this.props.cart.products.find(
-			( product ) => product.meta === domain_name && product.product_slug === product_slug
-		);
-		if ( productToRemove ) {
+		const productsToKeep = this.props.cart.products.filter( ( product ) => {
+			// check current item
+			if ( product.meta === domain_name && product.product_slug === product_slug ) {
+				// this is to be removed
+				return false;
+			}
+			// check removal queue
+			return ! this.state.domainRemovalQueue.find(
+				( domain ) => product.meta === domain.meta && product.product_slug === domain.productSlug
+			);
+		} );
+		if ( productsToKeep ) {
 			this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
-			const uuidToRemove = productToRemove.uuid;
 			this.props.shoppingCartManager
-				.removeProductFromCart( uuidToRemove )
+				.replaceProductsInCart( productsToKeep )
 				.then( () => {
 					this.setState( { isCartPendingUpdateDomain: null } );
 				} )
@@ -676,7 +688,11 @@ export class RenderDomainsStep extends Component {
 					this.setState( { isCartPendingUpdateDomain: null } );
 				} )
 				.finally( () => {
-					this.setState( { isRemovingDomain: null } );
+					this.setState( ( prevState ) => ( {
+						domainRemovalQueue: prevState.domainRemovalQueue.filter(
+							( domainName ) => domainName !== domain_name
+						),
+					} ) );
 				} );
 		}
 	}
@@ -824,7 +840,7 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ domain.meta === this.state.isRemovingDomain
+							{ this.state.domainRemovalQueue.includes( domain.meta )
 								? this.props.translate( 'Removing' )
 								: this.props.translate( 'Remove' ) }
 						</Button>
