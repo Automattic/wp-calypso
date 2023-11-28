@@ -34,15 +34,15 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 	if ( selectedDesign.software_sets && selectedDesign.software_sets.length > 0 ) {
 		const themeSoftware = selectedDesign.software_sets[ 0 ].slug;
 		const settings = bundleSettings[ themeSoftware ];
-
 		const BadgeIcon = settings.BadgeIcon;
-		const icon = <BadgeIcon />;
-		const tooltipContent = <>{ settings.designPickerBadgeTooltip }</>;
-		badge = (
-			<BundledBadge icon={ icon } tooltipContent={ tooltipContent }>
-				{ settings.name }
-			</BundledBadge>
-		);
+
+		const bundleBadgeProps = {
+			color: settings.badgeColor,
+			icon: <BadgeIcon />,
+			tooltipContent: <>{ settings.designPickerBadgeTooltip }</>,
+		};
+
+		badge = <BundledBadge { ...bundleBadgeProps }>{ settings.name }</BundledBadge>;
 	} else if ( selectedDesign.is_premium ) {
 		badge = <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />;
 	}

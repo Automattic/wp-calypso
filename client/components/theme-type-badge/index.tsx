@@ -70,9 +70,14 @@ const ThemeTypeBadge = ( {
 		if ( bundleSettings[ themeSoftware ] ) {
 			const settings = bundleSettings[ themeSoftware ];
 			const BadgeIcon = settings.BadgeIcon;
-			const icon = <BadgeIcon />;
+
+			const bundleBadgeProps = {
+				color: settings.badgeColor,
+				icon: <BadgeIcon />,
+			};
+
 			badgeContent = (
-				<BundledBadge { ...badgeContentProps } icon={ icon }>
+				<BundledBadge { ...badgeContentProps } { ...bundleBadgeProps }>
 					{ settings.name }
 				</BundledBadge>
 			);

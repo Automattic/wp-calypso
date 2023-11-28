@@ -1,6 +1,4 @@
 .bundled-badge {
-	--woocommerce-purple-50: #7f54b3;
-
 	display: inline-flex;
 	align-items: center;
 	height: 20px;
@@ -10,7 +8,6 @@
 	box-sizing: border-box;
 	font-size: 0.75rem;
 	color: var(--studio-white);
-	background: var(--woocommerce-purple-50);
 	z-index: 1;
 
 	&--is-clickable {

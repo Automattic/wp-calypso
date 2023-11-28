@@ -4,6 +4,7 @@ interface BundleSettings {
 	[ key: string ]: {
 		name: string;
 		BadgeIcon: React.ComponentType;
+		badgeColor: string;
 		designPickerBadgeTooltip: string;
 		bannerUpsellDescription: string;
 	};
@@ -20,6 +21,7 @@ const bundleSettings: BundleSettings = {
 				/>
 			</svg>
 		),
+		badgeColor: '#7f54b3',
 		designPickerBadgeTooltip: translate(
 			'This theme comes bundled with WooCommerce, the best way to sell online.'
 		),

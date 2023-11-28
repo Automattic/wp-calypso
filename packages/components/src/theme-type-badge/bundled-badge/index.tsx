@@ -6,6 +6,7 @@ import './style.scss';
 
 interface Props {
 	className?: string;
+	color: string;
 	icon?: React.ReactElement;
 	tooltipContent?: React.ReactElement;
 	tooltipClassName?: string;
@@ -17,6 +18,7 @@ interface Props {
 
 const BundledBadge: FunctionComponent< Props > = ( {
 	className,
+	color,
 	icon,
 	tooltipContent,
 	tooltipClassName,
@@ -60,6 +62,7 @@ const BundledBadge: FunctionComponent< Props > = ( {
 			className={ classNames( 'bundled-badge', className, {
 				'bundled-badge--is-clickable': isClickable,
 			} ) }
+			style={ { backgroundColor: color } }
 			ref={ divRef }
 			onMouseEnter={ () => {
 				if ( ! isPressed ) {
