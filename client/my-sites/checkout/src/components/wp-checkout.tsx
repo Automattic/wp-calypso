@@ -86,7 +86,6 @@ import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
-import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type {
 	CheckoutPageErrorCallback,
@@ -240,8 +239,6 @@ export default function WPCheckout( {
 	customizedPreviousPath,
 	loadingHeader,
 	onStepChanged,
-	isAkPro500Cart,
-	onChangeAkProQuantity,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
@@ -260,8 +257,6 @@ export default function WPCheckout( {
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
-	isAkPro500Cart?: boolean;
-	onChangeAkProQuantity?: OnChangeAkProQuantity;
 } ) {
 	const locale = useLocale();
 	const cartKey = useCartKey();
@@ -269,6 +264,7 @@ export default function WPCheckout( {
 		responseCart,
 		applyCoupon,
 		updateLocation,
+		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -509,12 +505,11 @@ export default function WPCheckout( {
 							completeStepContent={
 								<WPCheckoutOrderReview
 									removeProductFromCart={ removeProductFromCart }
+									replaceProductInCart={ replaceProductInCart }
 									couponFieldStateProps={ couponFieldStateProps }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }
 									createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-									isAkPro500Cart={ isAkPro500Cart }
-									onChangeAkProQuantity={ onChangeAkProQuantity }
 								/>
 							}
 							formStatus={ formStatus }

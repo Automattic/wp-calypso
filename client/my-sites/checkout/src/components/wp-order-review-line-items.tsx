@@ -1,4 +1,8 @@
-import { isAkismetProduct, isJetpackPurchasableItem } from '@automattic/calypso-products';
+import {
+	isAkismetProduct,
+	isJetpackPurchasableItem,
+	AKISMET_PRO_500_PRODUCTS,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { isCopySiteFlow } from '@automattic/onboarding';
@@ -17,11 +21,13 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
@@ -30,6 +36,7 @@ import type { Theme } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
+	ReplaceProductInCart,
 	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
@@ -213,6 +220,7 @@ export function WPOrderReviewLineItems( {
 	className,
 	isSummary,
 	removeProductFromCart,
+	replaceProductInCart,
 	removeCoupon,
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
@@ -221,12 +229,11 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
-	isAkPro500Cart,
-	onChangeAkProQuantity,
 }: {
 	className?: string;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
+	replaceProductInCart?: ReplaceProductInCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -235,9 +242,8 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
-	isAkPro500Cart?: boolean;
-	onChangeAkProQuantity?: OnChangeAkProQuantity;
 } ) {
+	const reduxDispatch = useDispatch();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const { formStatus } = useFormStatus();
@@ -254,6 +260,39 @@ export function WPOrderReviewLineItems( {
 	const creditsForDisplay = isFullCredits
 		? responseCart.sub_total_with_taxes_integer
 		: responseCart.credits_integer;
+
+	const isAkismetProMultipleLicensesCart = useMemo( () => {
+		if ( ! window.location.pathname.startsWith( '/checkout/akismet/' ) ) {
+			return false;
+		}
+
+		return responseCart.products.every( ( product ) =>
+			AKISMET_PRO_500_PRODUCTS.includes(
+				product.product_slug as ( typeof AKISMET_PRO_500_PRODUCTS )[ number ]
+			)
+		);
+	}, [ responseCart.products ] );
+
+	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
+		( uuid, productSlug, productId, prevQuantity, newQuantity ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_akismet_pro_quantity_change', {
+					product_slug: productSlug,
+					prev_quantity: prevQuantity,
+					new_quantity: newQuantity,
+				} )
+			);
+			replaceProductInCart &&
+				replaceProductInCart( uuid, {
+					product_slug: productSlug,
+					product_id: productId,
+					quantity: newQuantity,
+				} ).catch( () => {
+					// Nothing needs to be done here. CartMessages will display the error to the user.
+				} );
+		},
+		[ replaceProductInCart, reduxDispatch ]
+	);
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -279,8 +318,8 @@ export function WPOrderReviewLineItems( {
 							);
 						} )?.months_per_bill_period
 					}
-					isAkPro500Cart={ isAkPro500Cart }
-					onChangeAkProQuantity={ onChangeAkProQuantity }
+					isAkPro500Cart={ isAkismetProMultipleLicensesCart }
+					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
 				/>
 			) ) }
 			{ ! hasCheckoutVersion( '2' ) && couponLineItem && (

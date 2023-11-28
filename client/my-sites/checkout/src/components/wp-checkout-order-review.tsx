@@ -19,11 +19,15 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ResponseCart, RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	RemoveProductFromCart,
+	ReplaceProductInCart,
+	CouponStatus,
+} from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
@@ -73,23 +77,21 @@ const SitePreviewWrapper = styled.div`
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
+	replaceProductInCart,
 	couponFieldStateProps,
 	onChangeSelection,
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
-	isAkPro500Cart,
-	onChangeAkProQuantity,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
+	replaceProductInCart?: ReplaceProductInCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
-	isAkPro500Cart?: boolean;
-	onChangeAkProQuantity?: OnChangeAkProQuantity;
 } ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -171,6 +173,7 @@ export default function WPCheckoutOrderReview( {
 				<WPOrderReviewSection>
 					<WPOrderReviewLineItems
 						removeProductFromCart={ removeProductFromCart }
+						replaceProductInCart={ replaceProductInCart }
 						removeCoupon={ removeCouponAndClearField }
 						onChangeSelection={ onChangeSelection }
 						isSummary={ isSummary }
@@ -180,8 +183,6 @@ export default function WPCheckoutOrderReview( {
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveProductClick={ onRemoveProductClick }
 						onRemoveProductCancel={ onRemoveProductCancel }
-						isAkPro500Cart={ isAkPro500Cart }
-						onChangeAkProQuantity={ onChangeAkProQuantity }
 					/>
 				</WPOrderReviewSection>
 
