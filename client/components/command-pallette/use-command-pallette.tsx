@@ -27,6 +27,7 @@ export interface CommandCallBackParams {
 	close: CloseFunction;
 	setSearch: ( search: string ) => void;
 	setPlaceholderOverride: ( placeholder: string ) => void;
+	setCommandDisplayName: ( displayLabel: string ) => void;
 }
 
 interface Command {

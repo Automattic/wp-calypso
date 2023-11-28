@@ -6,7 +6,6 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { commandNameDisplayLabel } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { CommandCallBackParams, useCommandPallette } from './use-command-pallette';
@@ -19,6 +18,8 @@ interface CommandMenuGroupProps
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	commandDisplayName: string;
+	setCommandDisplayName: ( name: string ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -80,6 +81,7 @@ export function CommandMenuGroup( {
 	setPlaceholderOverride,
 	selectedCommandName,
 	setSelectedCommandName,
+	setCommandDisplayName,
 }: CommandMenuGroupProps ) {
 	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
 	const { commands } = useCommandPallette( {
@@ -100,7 +102,14 @@ export function CommandMenuGroup( {
 					<Command.Item
 						key={ command.name }
 						value={ itemValue }
-						onSelect={ () => command.callback( { close, setSearch, setPlaceholderOverride } ) }
+						onSelect={ () =>
+							command.callback( {
+								close,
+								setSearch,
+								setPlaceholderOverride,
+								setCommandDisplayName,
+							} )
+						}
 						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
@@ -163,6 +172,7 @@ export const WpcomCommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
+	const [ commandDisplayName, setCommandDisplayName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { close, toggle } = {
 		close: () => setIsOpen( false ),
@@ -186,6 +196,7 @@ export const WpcomCommandPalette = () => {
 		setPlaceholderOverride( '' );
 		setSearch( '' );
 		setSelectedCommandName( '' );
+		setCommandDisplayName( '' );
 	};
 	const closeAndReset = () => {
 		reset();
@@ -233,7 +244,7 @@ export const WpcomCommandPalette = () => {
 								<StyledCommandsTitle>{ __( 'Commands /' ) }</StyledCommandsTitle>
 								<div>
 									&nbsp;
-									{ commandNameDisplayLabel[ selectedCommandName ] || selectedCommandName }
+									{ commandDisplayName }
 								</div>
 							</PaletteBreadCrumb>
 						) }
@@ -259,6 +270,8 @@ export const WpcomCommandPalette = () => {
 							setPlaceholderOverride={ setPlaceholderOverride }
 							selectedCommandName={ selectedCommandName }
 							setSelectedCommandName={ setSelectedCommandName }
+							commandDisplayName={ commandDisplayName }
+							setCommandDisplayName={ setCommandDisplayName }
 						/>
 					</Command.List>
 				</Command>
