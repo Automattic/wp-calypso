@@ -117,14 +117,14 @@ export interface SiteDomainsQueryFnData {
 
 export function useSiteDomainsQuery< TError = unknown, TData = SiteDomainsQueryFnData >(
 	siteIdOrSlug: number | string | null | undefined,
-	options: UseQueryOptions< SiteDomainsQueryFnData, TError, TData > = {}
+	options: Omit< UseQueryOptions< SiteDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ) {
 	return useQuery( getSiteDomainsQueryObject( siteIdOrSlug, options ) );
 }
 
 export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomainsQueryFnData >(
 	siteIdOrSlug: number | string | null | undefined,
-	options: UseQueryOptions< SiteDomainsQueryFnData, TError, TData > = {}
+	options: Omit< UseQueryOptions< SiteDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ): UseQueryOptions< SiteDomainsQueryFnData, TError, TData > {
 	return {
 		queryKey: [ 'site-domains', siteIdOrSlug ],
