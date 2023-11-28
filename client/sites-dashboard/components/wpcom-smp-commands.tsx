@@ -278,9 +278,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: acitvityLogIcon,
 		},
 		{
-			name: 'openBackups',
-			label: __( 'Open backups' ),
-			callback: setStateCallback( 'openBackups' ),
+			name: 'openJetpackBackups',
+			label: __( 'Open Jetpack backups' ),
+			callback: setStateCallback( 'openJetpackBackups' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
