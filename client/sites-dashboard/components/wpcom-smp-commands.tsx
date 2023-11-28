@@ -12,6 +12,7 @@ import {
 	tool as toolIcon,
 	page as pageIcon,
 	key as keyIcon,
+	preformatted as sitesIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -402,6 +403,16 @@ export const useCommandsArrayWpcom = ( {
 				navigate( createSiteUrl );
 			},
 			icon: addNewSiteIcon,
+		},
+		{
+			name: 'manageSites',
+			label: __( 'Manage sites' ),
+			context: [ '/sites' ],
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/sites` );
+			},
+			icon: sitesIcon,
 		},
 	];
 
