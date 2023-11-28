@@ -1,11 +1,11 @@
 @import "@automattic/components/src/styles/typography.scss";
 
-.stats__plan-usage-wrapper {
+.stats__plan-usage {
 	margin-bottom: 32px;
 	border-top: 1px solid var(--studio-gray-5);
 }
 
-.stats__plan-usage {
+.plan-usage {
 	font-family: $font-sf-pro-text;
 	margin-top: 48px;
 	border-radius: 4px;
@@ -16,13 +16,13 @@
 	color: var(--studio-gray-100);
 }
 
-.stats__plan-usage-heading {
+.plan-usage-heading {
 	font-family: $font-sf-pro-display;
 	font-size: $font-title-small;
 	line-height: 26px;
 }
 
-.stats__plan-usage-progress {
+.plan-usage-progress {
 	box-sizing: border-box;
 	margin-top: 16px;
 	background-color: rgba(var(--studio-jetpack-green-40-rgb), 0.15);
@@ -33,9 +33,13 @@
 	border-radius: 2px;
 	display: flex;
 	justify-content: space-between;
+
+	&.is-over-limit {
+		background-color: rgba(var(--studio-red-40-rgb), 0.15);
+	}
 }
 
-.stats__plan-usage-note {
+.plan-usage-note {
 	margin-top: 16px;
 	color: var(--studio-gray-60);
 	font-weight: 400;

@@ -1,4 +1,5 @@
 import { formattedNumber } from '@automattic/components';
+import classNames from 'classnames';
 import React from 'react';
 import './style.scss';
 
@@ -17,30 +18,35 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	daysToReset = 30,
 } ) => {
 	const upgradeLink = '#';
+	const progressClassNames = classNames( 'plan-usage-progress', {
+		'is-over-limit': usage >= limit,
+	} );
 
 	return (
-		<div className="stats__plan-usage-wrapper">
-			<div className="stats__plan-usage">
-				<h3 className="stats__plan-usage-heading">Your Stats plan usage</h3>
-				<div className="stats__plan-usage-progress">
-					<div>
-						{ usage } / { formattedNumber( limit ) } views this month
-					</div>
-					<div>Restarts in { daysToReset } days</div>
+		<div className="plan-usage">
+			<h3 className="plan-usage-heading">Your Stats plan usage</h3>
+			<div className={ progressClassNames }>
+				<div>
+					{ formattedNumber( usage ) } / { formattedNumber( limit ) } views this month
 				</div>
-				<div className="stats__plan-usage-note">
-					<span>
-						<b>You've surpassed your limit the past month.</b> Do you want to increase your monthly
-						views limit? <a href={ upgradeLink }>Upgrade now</a>
-					</span>
-				</div>
+				<div>Restarts in { daysToReset } days</div>
+			</div>
+			<div className="plan-usage-note">
+				<span>
+					<b>You've surpassed your limit the past month.</b> Do you want to increase your monthly
+					views limit? <a href={ upgradeLink }>Upgrade now</a>
+				</span>
 			</div>
 		</div>
 	);
 };
 
 const StatsPlanUsage: React.FC< StatsPlanUsageProps > = () => {
-	return <PlanUsage />;
+	return (
+		<div className="stats__plan-usage">
+			<PlanUsage />
+		</div>
+	);
 };
 
 export default StatsPlanUsage;
