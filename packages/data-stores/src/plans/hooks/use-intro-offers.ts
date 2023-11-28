@@ -13,9 +13,8 @@ interface Props {
 
 /**
  * Get introductory offers for plans that have these defined
- * - Returns a union of the introductory offers from `/plans` and `/sites/[siteId]/plans` endpoints
- * - `/sites/[siteId]/plans` takes precedence over `/plans` (if both are defined for a plan)
- * - See respective `usePlans` and `useSitePlans` hooks for more details
+ * - Returns a union of the introductory offers from `/plans` and `/sites/[id]/plans` endpoints
+ * - `/sites/[id]/plans` takes precedence over `/plans` (if both are defined for a plan)
  * @returns {IntroOffersIndex | undefined} - an object `{ [ planSlug: string ]: PlanIntroductoryOffer | null }`,
  * or `undefined` if we haven't observed any metadata yet
  */
