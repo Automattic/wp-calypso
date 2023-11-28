@@ -690,7 +690,7 @@ export class RenderDomainsStep extends Component {
 				.finally( () => {
 					this.setState( ( prevState ) => ( {
 						domainRemovalQueue: prevState.domainRemovalQueue.filter(
-							( domainName ) => domainName !== domain_name
+							( item ) => item.meta !== domain_name
 						),
 					} ) );
 				} );
@@ -840,7 +840,7 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ this.state.domainRemovalQueue.includes( domain.meta )
+							{ this.state.domainRemovalQueue.some( ( item ) => item.meta === domain.meta )
 								? this.props.translate( 'Removing' )
 								: this.props.translate( 'Remove' ) }
 						</Button>
