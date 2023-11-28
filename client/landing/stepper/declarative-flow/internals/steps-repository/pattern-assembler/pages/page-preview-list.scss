@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "../variables";
 
 .pattern-assembler__preview-list {
 	box-sizing: border-box;
@@ -14,7 +15,14 @@
 	z-index: 2;
 
 	&--fullscreen-preview {
-		overflow-y: clip;
+		margin-left: -$pattern-assembler-sidebar-width;
+		overflow: hidden;
+		padding-left: calc($pattern-assembler-sidebar-width + 12px);
+
+		@include break-wide {
+			margin-left: -$pattern-assembler-sidebar-width-wide;
+			padding-left: calc($pattern-assembler-sidebar-width-wide + 12px);
+		}
 
 		.pattern-assembler__preview--fullscreen-leave {
 			z-index: 2;
