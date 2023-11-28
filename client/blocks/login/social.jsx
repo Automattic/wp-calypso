@@ -130,7 +130,7 @@ class SocialLoginForm extends Component {
 
 	getRedirectUri = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
-		return `https://${ host + login( { socialService: service } ) }`;
+		return `https://${ host }${ login( { socialService: service } ) }`;
 	};
 
 	render() {
