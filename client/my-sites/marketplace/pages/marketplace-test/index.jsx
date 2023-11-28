@@ -92,7 +92,7 @@ export default function MarketplaceTest() {
 
 	const { data: marketplaceReviews, isLoading: isLoadingReviews } = useMarketplaceReviewsQuery( {
 		productType: 'plugin',
-		productSlug: 'woocommerce-bookings',
+		slug: 'woocommerce-bookings',
 	} );
 
 	const createReview = useCreateMarketplaceReviewMutation();
@@ -162,7 +162,7 @@ export default function MarketplaceTest() {
 							e.preventDefault();
 							createReview.mutate( {
 								productType: e.target[ 0 ].value,
-								productSlug: e.target[ 1 ].value,
+								slug: e.target[ 1 ].value,
 								content: e.target[ 2 ].value,
 								rating: e.target[ 3 ].value,
 							} );
@@ -201,7 +201,7 @@ export default function MarketplaceTest() {
 							updateReview.mutate( {
 								reviewId: e.target[ 0 ].value,
 								productType: e.target[ 1 ].value,
-								productSlug: e.target[ 2 ].value,
+								slug: e.target[ 2 ].value,
 								content: e.target[ 3 ].value,
 								rating: e.target[ 4 ].value,
 							} );

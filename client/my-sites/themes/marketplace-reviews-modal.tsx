@@ -64,7 +64,7 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 						e.preventDefault();
 						const requestData = {
 							productType: 'theme' as ProductType,
-							productSlug: themeSlug,
+							slug: themeSlug,
 							content: content,
 							rating: Number( rating ),
 						};

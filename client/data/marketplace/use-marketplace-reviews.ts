@@ -16,7 +16,7 @@ export type ProductType = 'plugin' | 'theme';
 
 type ProductProps = {
 	productType: ProductType;
-	productSlug: string;
+	slug: string;
 };
 
 export type MarketplaceReviewBody = {
@@ -83,7 +83,7 @@ const fetchMarketplaceReviews = (
 
 const createReview = ( {
 	productType,
-	productSlug,
+	slug: productSlug,
 	content,
 	rating,
 }: MarketplaceReviewBody ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
@@ -104,7 +104,7 @@ const createReview = ( {
 const updateReview = ( {
 	reviewId,
 	productType,
-	productSlug,
+	slug: productSlug,
 	content,
 	rating,
 }: UpdateMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
@@ -133,7 +133,7 @@ const deleteReview = ( {
 };
 
 export const useMarketplaceReviewsQuery = (
-	{ productType, productSlug }: ProductProps,
+	{ productType, slug: productSlug }: ProductProps,
 	{
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
