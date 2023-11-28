@@ -5,7 +5,9 @@ import { translate } from 'i18n-calypso';
 const noop = () => {};
 
 const getUserSocialStepOrFallback = () =>
-	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
+	isEnabled( 'signup/social-first' )
+		? { userSocialStep: 'user-social', senseiSocialStep: 'user-social-sensei' }
+		: { userSocialStep: 'user', senseiSocialStep: 'user-sensei' };
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -22,7 +24,7 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
 } = {} ) {
-	const userSocialStep = getUserSocialStepOrFallback();
+	const { userSocialStep, senseiSocialStep } = getUserSocialStepOrFallback();
 
 	const flows = [
 		{
@@ -39,6 +41,20 @@ export function generateFlows( {
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2023-10-11',
+			get pageTitle() {
+				return translate( 'Create an account' );
+			},
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'sensei',
+			steps: [ senseiSocialStep ],
+			destination: getRedirectDestination,
+			description: 'A clone of the account creation flow for Sensei.',
+			lastModified: '2023-11-28',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
