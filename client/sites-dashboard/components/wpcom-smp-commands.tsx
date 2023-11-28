@@ -112,19 +112,6 @@ export const useCommandsArrayWpcom = ( {
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
-	const downloadSubscribersForSite = async ( slug: string, siteId: number ) => {
-		const url = `https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=${ siteId }&blog_subscribers=csv&type=all`;
-		window.open( url );
-		const link = document.createElement( 'a' );
-		link.href = url;
-		link.setAttribute(
-			'download',
-			`subscribers-${ slug.replace( '.', '-' ) }-${ new Date().toJSON().slice( 0, 10 ) }.csv`
-		);
-		link.click();
-		window.URL.revokeObjectURL( url );
-	};
-
 	const commands = [
 		{
 			name: 'openSiteDashboard',
@@ -412,7 +399,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewPost',
 			label: __( 'Add new post' ),
-			searchLabel: __( 'add new post' ),
+			context: [ '/posts' ],
 			callback: setStateCallback( 'addNewPost' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -423,35 +410,8 @@ export const useCommandsArrayWpcom = ( {
 			icon: postIcon,
 		},
 		{
-			name: 'addNewPostAccessSubscribers',
-			label: __( 'Add new subscribers-only post' ),
-			searchLabel: __( 'add new subscribers-only post' ),
-			callback: setStateCallback( 'addNewPostAccessSubscribers' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/post/${ site.slug }?jetpack_access=subscribers` ); // @TODO: `?jetpack_access=` requires Jetpack PR
-				},
-			},
-			icon: postIcon,
-		},
-		{
-			name: 'addNewPostAccessPaidSubscribers',
-			label: __( 'Add new paid subscribers-only post' ),
-			searchLabel: __( 'add new paid subscribers-only post' ),
-			callback: setStateCallback( 'addNewPostAccessPaidSubscribers' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/post/${ site.slug }?jetpack_access=paid-subscribers` ); // @TODO: `?jetpack_access=` requires Jetpack PR
-				},
-			},
-			icon: postIcon, // TODO: paywall icon
-		},
-		{
 			name: 'manageComments',
 			label: __( 'Manage comments' ),
-			searchLabel: __( 'manage comments' ),
 			callback: setStateCallback( 'manageComments' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -464,7 +424,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addSubscribers',
 			label: __( 'Add subscribers' ),
-			searchLabel: __( 'add subscribers' ),
+			context: [ '/subscribers' ],
 			callback: setStateCallback( 'addSubscribers' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -472,12 +432,11 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/subscribers/${ site.slug }#add-subscribers` );
 				},
 			},
-			icon: subscriberIcon, // TODO: subscribers icon, currently using icon for comments
+			icon: subscriberIcon,
 		},
 		{
 			name: 'manageSubscribers',
 			label: __( 'Manage subscribers' ),
-			searchLabel: __( 'manage subscribers' ),
 			callback: setStateCallback( 'manageSubscribers' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -485,17 +444,19 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/subscribers/${ site.slug }` );
 				},
 			},
-			icon: subscriberIcon, // TODO: subscribers icon, currently using icon for comments
+			icon: subscriberIcon,
 		},
 		{
 			name: 'downloadSubscribers',
 			label: __( 'Download subscribers as CSV' ),
-			searchLabel: __( 'download subscribers as csv' ),
+			context: [ '/subscribers' ],
 			callback: setStateCallback( 'downloadSubscribers' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					downloadSubscribersForSite( site.slug, site.ID );
+					window.location.assign(
+						`https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=${ site.ID }&blog_subscribers=csv&type=all`
+					);
 				},
 			},
 			icon: downloadIcon,
@@ -503,7 +464,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'import',
 			label: __( 'Import content to the site' ),
-			searchLabel: __( 'import content to the site' ),
+			context: [ '/posts' ],
 			callback: setStateCallback( 'import' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
