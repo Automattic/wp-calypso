@@ -157,6 +157,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 						intervalType={ billingPeriod }
 						onChange={ setBillingPeriod }
 						maxMonthlyDiscountPercentage={ annualDiscount }
+						loading={ isLoading }
 					/>
 
 					<div className="plan-item-wrapper">
