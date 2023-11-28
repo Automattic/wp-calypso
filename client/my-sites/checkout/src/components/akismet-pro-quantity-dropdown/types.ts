@@ -4,7 +4,8 @@ export type OnChangeAkProQuantity = (
 	uuid: Readonly< string >,
 	productSlug: Readonly< string >,
 	productId: Readonly< number >,
-	quantity: number
+	prevQuantity: Readonly< number | null >,
+	newQuantity: number
 ) => void;
 
 export interface AkismetProQuantityDropDownProps {

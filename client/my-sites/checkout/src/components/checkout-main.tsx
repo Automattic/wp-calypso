@@ -402,10 +402,11 @@ export default function CheckoutMain( {
 	);
 
 	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
-		( uuid, productSlug, productId, newQuantity ) => {
+		( uuid, productSlug, productId, prevQuantity, newQuantity ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_akismet_pro_quantity_change', {
 					product_slug: productSlug,
+					prev_quantity: prevQuantity,
 					new_quantity: newQuantity,
 				} )
 			);

@@ -36,11 +36,16 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 
 	const onSitesQuantityChange = useCallback(
 		( event: React.ChangeEvent< HTMLSelectElement > ) => {
-			const quantity = parseInt( event.target?.value, 10 ) || 1;
-			setQuantityState( quantity );
-			const { uuid, product_slug: productSlug, product_id: productId } = responseCart.products[ 0 ];
+			const newQuantity = parseInt( event.target?.value, 10 ) || 1;
+			const {
+				uuid,
+				product_slug: productSlug,
+				product_id: productId,
+				quantity: prevQuantity,
+			} = responseCart.products[ 0 ];
+			setQuantityState( newQuantity );
 			onChangeAkProQuantity &&
-				onChangeAkProQuantity( uuid, productSlug, productId, Number( quantity ) );
+				onChangeAkProQuantity( uuid, productSlug, productId, prevQuantity, newQuantity );
 		},
 		[ onChangeAkProQuantity, responseCart.products ]
 	);
