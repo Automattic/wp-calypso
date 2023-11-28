@@ -9,17 +9,25 @@ import {
 	useCreateMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 
-import './marketplace-reviews-modal.scss';
+import './styles.scss';
 
 type Props = {
 	isVisible: boolean;
 	buttons: React.ReactElement[];
 	onClose: () => void;
-	themeSlug: string;
-	themeName: string;
+	slug: string;
+	productName: string;
+	productType: ProductType;
 };
 
-export const ReviewsModal = ( { isVisible, buttons, onClose, themeSlug, themeName }: Props ) => {
+export const ReviewsModal = ( {
+	isVisible,
+	buttons,
+	onClose,
+	slug,
+	productName,
+	productType,
+}: Props ) => {
 	const [ content, setContent ] = useState< string >( '' );
 	const [ rating, setRating ] = useState< string >( '5' );
 
@@ -36,7 +44,7 @@ export const ReviewsModal = ( { isVisible, buttons, onClose, themeSlug, themeNam
 			>
 				<Card className="marketplace-reviews-modal__card">
 					<CardHeading tagName="h1" size={ 21 }>
-						{ translate( 'Review submitted for %(themeName)s', { args: { themeName } } ) }
+						{ translate( 'Review submitted for %(productName)s', { args: { productName } } ) }
 					</CardHeading>
 					<CardHeading tagName="h2">
 						{ translate( 'Thank you for your contribution.' ) }
@@ -56,15 +64,15 @@ export const ReviewsModal = ( { isVisible, buttons, onClose, themeSlug, themeNam
 		>
 			<Card className="marketplace-reviews-modal__card">
 				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'Reviews for %(themeName)s', { args: { themeName } } ) }
+					{ translate( 'Reviews for %(productName)s', { args: { productName } } ) }
 				</CardHeading>
 				<CardHeading tagName="h2">{ translate( 'Add new review' ) }</CardHeading>
 				<form
 					onSubmit={ ( e ) => {
 						e.preventDefault();
 						const requestData = {
-							productType: 'theme' as ProductType,
-							slug: themeSlug,
+							productType: productType,
+							slug: slug,
 							content: content,
 							rating: Number( rating ),
 						};

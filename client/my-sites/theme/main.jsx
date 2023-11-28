@@ -44,6 +44,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -95,7 +96,6 @@ import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
-import { ReviewsModal } from '../themes/marketplace-reviews-modal';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
@@ -641,8 +641,9 @@ class ThemeSheet extends Component {
 				<ReviewsModal
 					isVisible={ this.state.showReviewModal }
 					onClose={ this.handleCloseReviewModal }
-					themeName={ name }
-					themeSlug={ themeId }
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
 				/>
 				<div className="theme__sheet-reviews">
 					<Button onClick={ this.handleAddReview }>Add Review</Button>
