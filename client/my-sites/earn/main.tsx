@@ -18,7 +18,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import CustomerSection from './customers';
 import Home from './home';
-import MembershipsProductsSection from './memberships/products';
 import MembershipsSection from './memberships/section';
 import ReferAFriendSection from './refer-a-friend';
 import { Query } from './types';
@@ -42,7 +41,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
 		supporters: translate( 'Supporters' ),
-		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -136,8 +134,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				);
 			case 'payments':
 				return <MembershipsSection query={ query } />;
-			case 'payments-plans':
-				return <MembershipsProductsSection />;
 
 			case 'supporters':
 				return <CustomerSection />;
