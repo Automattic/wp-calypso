@@ -5,7 +5,7 @@ import type { UserLicenseApi, UserLicense } from './types';
 
 const useUserLicenseByReceiptQuery = ( receiptId: number ): UseQueryResult< UserLicense[] > => {
 	const queryKey = [ 'user-license', receiptId ];
-	return useQuery< UserLicenseApi[], unknown, UserLicense[] >( {
+	return useQuery< UserLicenseApi[], Error, UserLicense[] >( {
 		queryKey,
 		queryFn: async () =>
 			wpcom.req.get( {
