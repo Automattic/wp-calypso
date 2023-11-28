@@ -19,6 +19,14 @@
 		}
 	}
 
+	.plans-interval-toggle--is-loading {
+		@include onboarding-placeholder();
+
+		& > .segmented-control {
+			visibility: hidden;
+		}
+	}
+
 	.plan-item-wrapper {
 		margin-top: 40px;
 		padding: 36px 20px 32px;

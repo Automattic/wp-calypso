@@ -154,6 +154,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			{ status === Status.Initial && (
 				<>
 					<PlansIntervalToggle
+						className={ classnames( { 'plans-interval-toggle--is-loading': isLoading } ) }
 						intervalType={ billingPeriod }
 						onChange={ setBillingPeriod }
 						maxMonthlyDiscountPercentage={ annualDiscount }
