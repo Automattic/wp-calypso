@@ -81,6 +81,7 @@ export function useStoredPaymentMethods( {
 		queryKey,
 		queryFn: () => fetchPaymentMethods( type, expired ),
 		enabled: ! isLoggedOut,
+		staleTime: 5 * 60 * 1000, // 5 minutes
 	} );
 
 	const translate = useTranslate();
