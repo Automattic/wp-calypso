@@ -33,6 +33,7 @@ const allowedKeys = [
 	'use_fallback_for_incomplete_languages',
 	'is_google_domain_owner',
 	'had_hosting_trial',
+	'wpcom_plan_name_change_experiment',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];
