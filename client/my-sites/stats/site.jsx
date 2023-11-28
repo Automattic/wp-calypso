@@ -462,7 +462,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				<StatsPlanUsage />
+				{ config.isEnabled( 'stats/plan-usage' ) && <StatsPlanUsage /> }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
