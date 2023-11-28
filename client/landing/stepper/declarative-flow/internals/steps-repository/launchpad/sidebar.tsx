@@ -12,11 +12,11 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
-import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { type NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ResponseDomain } from 'calypso/lib/domains/types';
+import { type ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
@@ -25,7 +25,7 @@ import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selec
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
-import { Task } from './types';
+import { type Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
