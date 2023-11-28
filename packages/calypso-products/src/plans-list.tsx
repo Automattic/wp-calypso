@@ -456,6 +456,11 @@ import type {
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
+const experiments: { [ key: string ]: string } = {};
+export const setPlanExperiment = ( exp: string, variation: string ) => {
+	experiments[ exp ] = variation;
+};
+
 function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined | false | 0 | '' > {
 	return !! value;
 }
@@ -780,7 +785,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
-	getTitle: () => i18n.translate( 'Personal' ),
+	getTitle: () =>
+		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+			? i18n.translate( 'Starter' )
+			: i18n.translate( 'Personal' ),
 	getAudience: () => i18n.translate( 'Best for personal use' ),
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
@@ -953,7 +961,10 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
-	getTitle: () => i18n.translate( 'Commerce' ),
+	getTitle: () =>
+		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+			? i18n.translate( 'Entrepreneur' )
+			: i18n.translate( 'Commerce' ),
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -1334,7 +1345,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
-	getTitle: () => i18n.translate( 'Premium' ),
+	getTitle: () =>
+		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+			? i18n.translate( 'Explorer' )
+			: i18n.translate( 'Premium' ),
 	getAudience: () => i18n.translate( 'Best for freelancers' ),
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
@@ -1550,7 +1564,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
-	getTitle: () => i18n.translate( 'Business' ),
+	getTitle: () =>
+		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+			? i18n.translate( 'Creator' )
+			: i18n.translate( 'Business' ),
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
