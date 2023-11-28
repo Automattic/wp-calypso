@@ -45,7 +45,7 @@ export const useCommandsArrayWpcom = ( {
 			setPlaceholderOverride( translate( 'Select a site' ) );
 		};
 
-	const { __, _x } = useI18n();
+	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const displaySuccessNotice = ( message: string ) =>
 		dispatch( successNotice( message, { duration: 5000 } ) );
@@ -478,7 +478,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings' ),
-			searchLabel: _x( 'Manage blog writing settings', 'search label for command palette' ),
 			context: 'Managing settings for writing the blog',
 			callback: setStateCallback( 'manageSettingsWriting' ),
 			siteFunctions: {
@@ -492,7 +491,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsReading',
 			label: __( 'Manage reading settings' ),
-			searchLabel: _x( 'Manage blog reading settings', 'search label for command palette' ),
 			context: 'Managing settings for reading the blog',
 			callback: setStateCallback( 'manageSettingsReading' ),
 			siteFunctions: {
@@ -506,7 +504,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsDiscussion',
 			label: __( 'Manage discussion settings' ),
-			searchLabel: _x( 'Manage blog discussion settings', 'search label for command palette' ),
 			context: 'Managing settings for discussions on the blog',
 			callback: setStateCallback( 'manageSettingsDiscussion' ),
 			siteFunctions: {
@@ -520,7 +517,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsNewsletter',
 			label: __( 'Manage newsletter settings' ),
-			searchLabel: _x( 'Manage newsletter settings', 'search label for command palette' ),
 			context: 'Managing settings for the built-in newsletter',
 			callback: setStateCallback( 'manageSettingsNewsletter' ),
 			siteFunctions: {
@@ -534,7 +530,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsPodcast',
 			label: __( 'Manage podcast settings' ),
-			searchLabel: _x( 'Manage podcast settings', 'search label for command palette' ),
 			context: 'Managing settings for the built-in podcast',
 			callback: setStateCallback( 'manageSettingsPodcast' ),
 			siteFunctions: {
