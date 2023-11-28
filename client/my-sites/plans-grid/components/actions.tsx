@@ -464,6 +464,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 					current_plan: currentSitePlanSlug,
 					upgrading_to: upgradePlan,
+					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
 			}
 

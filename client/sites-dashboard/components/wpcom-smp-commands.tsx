@@ -20,8 +20,9 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
+import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -104,26 +105,12 @@ export const useCommandsArrayWpcom = ( {
 		displaySuccessNotice( __( 'Copied new password' ) );
 	};
 
-	const openPHPmyAdmin = async ( siteId: number ) => {
-		try {
-			const { token } = await wpcom.req.post( {
-				path: `/sites/${ siteId }/hosting/pma/token`,
-				apiNamespace: 'wpcom/v2',
-			} );
-
-			if ( token ) {
-				window.open( `https://wordpress.com/pma-login?token=${ token }` );
-			}
-		} catch {
-			dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
-		}
-	};
+	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	const commands = [
 		{
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
-			searchLabel: __( 'open site dashboard' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'openSiteDashboard' ),
 			siteFunctions: {
@@ -137,7 +124,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openHostingConfiguration',
 			label: __( 'Open hosting configuration' ),
-			searchLabel: __( 'open hosting configuration' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'openHostingConfiguration' ),
 			siteFunctions: {
@@ -152,13 +138,12 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openPHPmyAdmin',
 			label: __( 'Open database in phpMyAdmin' ),
-			searchLabel: __( 'open database in phpMyAdmin' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'openPHPmyAdmin' ),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					await openPHPmyAdmin( site.ID );
+					await openPhpMyAdmin( site.ID );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
@@ -167,7 +152,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openProfile',
 			label: __( 'Open my profile' ),
-			searchLabel: __( 'open my profile' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -178,7 +162,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openAccountSettings',
 			label: __( 'Open account settings' ),
-			searchLabel: __( 'open account settings' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigate( `/me/account` );
@@ -188,7 +171,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'acessPurchases',
 			label: __( 'Open my purchases' ),
-			searchLabel: __( 'open my purchases' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -199,7 +181,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageDomains',
 			label: __( 'Manage domains' ),
-			searchLabel: __( 'manage domains' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -210,7 +191,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageDns',
 			label: __( 'Manage DNS records' ),
-			searchLabel: __( 'manage dns records' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'manageDns' ),
 			siteFunctions: {
@@ -226,7 +206,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'copySshConnectionString',
 			label: __( 'Copy SSH connection string' ),
-			searchLabel: __( 'copy ssh connection string' ),
 			callback: setStateCallback( 'copySshConnectionString' ),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -240,7 +219,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openSshCredentials',
 			label: __( 'Open SFTP/SSH credentials' ),
-			searchLabel: __( 'open SFTP/SSH credentials' ),
 			callback: setStateCallback( 'openSshCredentials' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -254,7 +232,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'resetSshSftpPassword',
 			label: __( 'Reset SSH/SFTP password' ),
-			searchLabel: __( 'reset ssh/sftp password' ),
 			callback: setStateCallback( 'resetSshSftpPassword' ),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -268,7 +245,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openSiteStats',
 			label: __( 'Open site stats' ),
-			searchLabel: __( 'open site stats' ),
 			callback: setStateCallback( 'openSiteStats' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -281,7 +257,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'registerDomain',
 			label: __( 'Register domain' ),
-			searchLabel: __( 'register domain' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -292,7 +267,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openActivityLog',
 			label: __( 'Open activity log' ),
-			searchLabel: __( 'open activity log' ),
 			callback: setStateCallback( 'openActivityLog' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -306,7 +280,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openBackups',
 			label: __( 'Open backups' ),
-			searchLabel: __( 'open backups' ),
 			callback: setStateCallback( 'openBackups' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -320,7 +293,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'viewSiteMetrics',
 			label: __( 'View site metrics' ),
-			searchLabel: __( 'view site metrics' ),
 			callback: setStateCallback( 'viewSiteMetrics' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -334,7 +306,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openPHPLogs',
 			label: __( 'Open PHP logs' ),
-			searchLabel: __( 'open PHP logs' ),
 			callback: setStateCallback( 'openPHPLogs' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -348,7 +319,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openWebServerLogs',
 			label: __( 'Open web server logs' ),
-			searchLabel: __( 'open web server logs' ),
 			callback: setStateCallback( 'openWebServerLogs' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -362,7 +332,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageStagingSites',
 			label: __( 'Manage staging sites' ),
-			searchLabel: __( 'manage staging sites' ),
 			callback: setStateCallback( 'manageStagingSites' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -376,7 +345,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'managePHPVersion',
 			label: __( 'Manage PHP version' ),
-			searchLabel: __( 'manage PHP issue' ),
 			callback: setStateCallback( 'managePHPVersion' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -390,7 +358,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageCacheSettings',
 			label: __( 'Manage cache settings' ),
-			searchLabel: __( 'manage cache settings' ),
 			callback: setStateCallback( 'manageCacheSettings' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -404,7 +371,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageAdminInterfaceStyle',
 			label: __( 'Manage admin interface style' ),
-			searchLabel: __( 'manage admin interface style' ),
 			callback: setStateCallback( 'manageAdminInterfaceStyle' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -418,7 +384,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewSite',
 			label: __( 'Add new site' ),
-			searchLabel: __( 'add new site' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();

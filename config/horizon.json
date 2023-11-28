@@ -78,6 +78,7 @@
 		"marketplace-domain-bundle": false,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
+		"marketplace-reviews-show": false,
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,

@@ -1,8 +1,22 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.review-licenses__lightbox {
+.review-licenses__lightbox.jetpack-lightbox__modal {
 	min-height: 300px;
+	width: 95%;
+
+	.jetpack-lightbox__content-main,
+	.jetpack-lightbox__content-aside {
+		padding: 24px;
+
+		@media only screen and ( min-width: 782px ) {
+			padding: 16px;
+		}
+
+		@include break-xlarge {
+			padding: 32px;
+		}
+	}
 }
 
 .review-licenses__title {
@@ -88,11 +102,11 @@
 	padding: 1rem;
 
 	@media only screen and ( min-width: 782px ) {
-		margin-block-start: 24px;
+		margin-block-start: 32px;
 	}
 
-	@include break-large {
-		margin-block-start: 8px;
+	@include break-xlarge {
+		margin-block-start: 24px;
 	}
 
 	.review-licenses__pricing-discounted {
@@ -138,3 +152,47 @@
 		color: var(--studio-black);
 	}
 }
+
+.review-licenses__pricing-breakdown {
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	max-height: 55vh;
+
+	.review-licenses__license-item {
+		display: flex;
+		gap: 12px;
+		align-items: center;
+		font-size: rem(14px);
+		color: var(--studio-gray-70);
+		justify-content: space-between;
+		margin-block-end: 4px;
+
+		.review-licenses__license-item-column {
+			display: flex;
+			align-items: center;
+
+			svg {
+				min-width: 22px;
+			}
+		}
+
+		.review-licenses__license-item-actual-cost {
+			text-decoration: line-through;
+			margin-inline-start: 8px;
+		}
+	}
+}
+
+
+.review-licenses__pricing-breakdown-total {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-block-start: 20px;
+	padding-block-start: 20px;
+	color: var(--studio-gray-70);
+	font-weight: 500;
+	border-block-start: 1px solid var(--studio-gray-10);
+}
+
