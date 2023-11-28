@@ -478,7 +478,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings' ),
-			context: 'Managing settings for writing the blog',
+			context: [ '/settings' ],
 			callback: setStateCallback( 'manageSettingsWriting' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -491,7 +491,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsReading',
 			label: __( 'Manage reading settings' ),
-			context: 'Managing settings for reading the blog',
+			context: [ '/settings' ],
 			callback: setStateCallback( 'manageSettingsReading' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -504,7 +504,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsDiscussion',
 			label: __( 'Manage discussion settings' ),
-			context: 'Managing settings for discussions on the blog',
+			context: [ '/settings' ],
 			callback: setStateCallback( 'manageSettingsDiscussion' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -517,7 +517,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsNewsletter',
 			label: __( 'Manage newsletter settings' ),
-			context: 'Managing settings for the built-in newsletter',
+			context: [ '/settings' ],
 			callback: setStateCallback( 'manageSettingsNewsletter' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -530,7 +530,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSettingsPodcast',
 			label: __( 'Manage podcast settings' ),
-			context: 'Managing settings for the built-in podcast',
+			context: [ '/settings' ],
 			callback: setStateCallback( 'manageSettingsPodcast' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
