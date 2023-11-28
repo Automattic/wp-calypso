@@ -234,6 +234,13 @@ const startWriting: Flow = {
 			}
 		}
 
+		const goBack = async () => {
+			switch ( currentStep ) {
+				case 'domains':
+					return navigate( 'launchpad' );
+			}
+		};
+
 		const goNext = async () => {
 			switch ( currentStep ) {
 				case 'launchpad':
@@ -247,7 +254,7 @@ const startWriting: Flow = {
 			}
 		};
 
-		return { goNext, submit };
+		return { goNext, goBack, submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {
