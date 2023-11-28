@@ -60,7 +60,7 @@ const useInvalidateSiteSubscriptionsCache = ( isSubscribeLoading: boolean ) => {
 	const queryClient = useQueryClient();
 	useEffect( () => {
 		if ( wasSubscribeLoading && ! isSubscribeLoading ) {
-			queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			queryClient.invalidateQueries( { queryKey: siteSubscriptionsCacheKey } );
 		}
 	}, [ isSubscribeLoading, wasSubscribeLoading, queryClient, siteSubscriptionsCacheKey ] );
 };

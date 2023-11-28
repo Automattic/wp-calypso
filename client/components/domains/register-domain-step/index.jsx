@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -21,7 +22,6 @@ import {
 	reject,
 	snakeCase,
 } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';
@@ -73,8 +73,10 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -117,6 +119,7 @@ class RegisterDomainStep extends Component {
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
+		onMappingError: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
 		deemphasiseTlds: PropTypes.array,
@@ -155,6 +158,7 @@ class RegisterDomainStep extends Component {
 		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
+		onMappingError: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
@@ -1372,7 +1376,7 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = ( suggestion, position ) => {
+	onAddDomain = async ( suggestion, position ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 
@@ -1390,7 +1394,10 @@ class RegisterDomainStep extends Component {
 
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
-			this.setState( { pendingCheckSuggestion: suggestion } );
+			// For Multi-domain flows, add the domain first, than check availability
+			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+				await this.props.onAddDomain( suggestion, position );
+			}
 
 			this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
@@ -1406,13 +1413,15 @@ class RegisterDomainStep extends Component {
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
 						} );
+						this.props.onMappingError( domain, status );
 					} else if ( trademarkClaimsNoticeInfo ) {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
-					} else {
+						this.props.onMappingError( domain, status );
+					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 						this.props.onAddDomain( suggestion, position );
 					}
 				} );
@@ -1502,6 +1511,7 @@ class RegisterDomainStep extends Component {
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
+				temporaryCart={ this.props.temporaryCart }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&
@@ -1655,6 +1665,7 @@ export default connect(
 		return {
 			currentUser: getCurrentUser( state ),
 			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
+			flowName: getCurrentFlowName( state ),
 		};
 	},
 	{

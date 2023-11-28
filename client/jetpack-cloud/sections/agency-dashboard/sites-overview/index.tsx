@@ -1,11 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -128,8 +127,7 @@ export default function SitesOverview() {
 		}
 	}, [ refetch, jetpackSiteDisconnected ] );
 
-	const isNewNavigation = isEnabled( 'jetpack/new-navigation' );
-	const pageTitle = isNewNavigation ? translate( 'Sites' ) : translate( 'Dashboard' );
+	const pageTitle = translate( 'Sites' );
 
 	const basePath = '/dashboard';
 
@@ -281,7 +279,7 @@ export default function SitesOverview() {
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={
-								// render content only on large screens, The buttons for small scren have their own section
+								// render content only on large screens, The buttons for small screen have their own section
 								isLargeScreen &&
 								( selectedLicensesCount > 0 ? (
 									renderIssueLicenseButton()

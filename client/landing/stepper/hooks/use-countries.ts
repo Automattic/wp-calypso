@@ -4,7 +4,7 @@ import wpcom from 'calypso/lib/wp';
 type WooCountries = Record< string, string >;
 
 export function useCountries(
-	queryOptions: UseQueryOptions< any, unknown, WooCountries > = {}
+	queryOptions: Omit< UseQueryOptions< any, unknown, WooCountries >, 'queryKey' > = {}
 ): UseQueryResult< WooCountries > {
 	return useQuery< any, unknown, WooCountries >( {
 		queryKey: [ 'countries' ],

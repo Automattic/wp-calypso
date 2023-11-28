@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { chevronLeft } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import React from 'react';
 
 type BackButtonProps = {

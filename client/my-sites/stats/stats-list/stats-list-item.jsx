@@ -1,10 +1,10 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Icon, moreHorizontalMobile, tag, file, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import titlecase from 'to-title-case';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

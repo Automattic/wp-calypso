@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';

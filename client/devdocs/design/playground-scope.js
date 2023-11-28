@@ -10,8 +10,10 @@ export {
 	ProgressBar,
 	Ribbon,
 	ScreenReaderText,
+	SegmentedControl,
 	Suggestions,
 	FoldableCard,
+	Tooltip,
 } from '@automattic/components';
 
 /**
@@ -95,7 +97,6 @@ export { default as SectionNav } from 'calypso/components/section-nav';
 export { default as NavTabs } from 'calypso/components/section-nav/tabs';
 export { default as NavSegmented } from 'calypso/components/section-nav/segmented';
 export { default as NavItem } from 'calypso/components/section-nav/item';
-export { default as SegmentedControl } from 'calypso/components/segmented-control';
 export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';
@@ -109,7 +110,6 @@ export { default as Timeline } from 'calypso/components/timeline';
 export { default as TimeSince } from 'calypso/components/time-since';
 export { default as Timezone } from 'calypso/components/timezone';
 export { default as TokenFields } from 'calypso/components/token-field';
-export { default as Tooltip } from 'calypso/components/tooltip';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu';
 export { default as VerticalNav } from 'calypso/components/vertical-nav';
 export { default as VerticalNavItem } from 'calypso/components/vertical-nav/item';

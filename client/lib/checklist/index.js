@@ -9,6 +9,8 @@ class WpcomTaskList {
 		return this.tasks;
 	}
 
+	getAllSorted = memoize( ( comparator ) => [ ...this.tasks ].sort( comparator ) );
+
 	get( taskId ) {
 		return this.tasks.find( ( task ) => task.id === taskId );
 	}

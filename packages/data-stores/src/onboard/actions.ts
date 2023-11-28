@@ -53,10 +53,11 @@ export function* createVideoPressSite( {
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const defaultTheme = selectedDesign?.theme || 'premium/videomaker';
-	const siteVertical = 'premium/videomaker' === defaultTheme ? 'videomaker' : 'videomaker-white';
-	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 	const isVideomakerTrial = config.isEnabled( 'videomaker-trial' );
+	const defaultTheme = selectedDesign?.theme || 'premium/videomaker';
+	const legacyVertical = 'premium/videomaker' === defaultTheme ? 'videomaker' : 'videomaker-white';
+	const siteVertical = isVideomakerTrial ? 'videomaker' : legacyVertical;
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 	const themeSlug = isVideomakerTrial ? 'pub/videomaker' : 'pub/twentytwentytwo'; // NOTE: keep this a consistent, free theme so post ids during headstart re-run after premium theme switch remain consistent
 
 	const params: CreateSiteParams = {
@@ -351,11 +352,6 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const setSiteGeoAffinity = ( siteGeoAffinity: string ) => ( {
-	type: 'SET_SITE_GEO_AFFINITY' as const,
-	siteGeoAffinity,
-} );
-
 export const setSiteDescription = ( siteDescription: string ) => ( {
 	type: 'SET_SITE_DESCRIPTION' as const,
 	siteDescription,
@@ -569,7 +565,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
-	| typeof setSiteGeoAffinity
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
 	| typeof setAnchorSpotifyUrl

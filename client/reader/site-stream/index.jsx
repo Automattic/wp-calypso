@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import DocumentHead from 'calypso/components/data/document-head';

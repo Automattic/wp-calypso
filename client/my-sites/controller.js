@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
-import page from 'page';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';

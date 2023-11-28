@@ -61,9 +61,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		getCurrentPlan( state, selectedSiteId )
 	);
 	const currentSitePlanSlug = currentPlan?.productSlug;
-
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
-	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	const pricedAPISitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
 	const selectedStorageOptions = useSelect( ( select ) => {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
@@ -195,7 +195,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	 * - For now a simple loader is shown until these are resolved
 	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
 	 */
-	if ( sitePlans.isFetching || ! pricedAPIPlans ) {
+	if ( pricedAPISitePlans.isFetching || ! pricedAPIPlans ) {
 		return null;
 	}
 
@@ -204,7 +204,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 			// pricedAPIPlans - should have a definition for all plans, being the main source of API data
 			const pricedAPIPlan = pricedAPIPlans[ planSlug ];
 			// pricedAPISitePlans - unclear if all plans are included
-			const sitePlan = sitePlans.data?.[ planSlug ];
+			const pricedAPISitePlan = pricedAPISitePlans.data?.[ planSlug ];
 
 			return {
 				...acc,
@@ -213,8 +213,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					discountedPrice: planPrices[ planSlug ]?.discountedPrice,
 					billingPeriod: pricedAPIPlan?.bill_period,
 					currencyCode: pricedAPIPlan?.currency_code,
-					introOffer: sitePlan?.introOffer,
-					expiry: sitePlan?.expiry,
+					introOffer: introOffers?.[ planSlug ],
+					expiry: pricedAPISitePlan?.expiry,
 				},
 			};
 		},

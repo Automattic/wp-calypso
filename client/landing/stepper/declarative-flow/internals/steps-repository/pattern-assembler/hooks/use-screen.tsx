@@ -66,7 +66,7 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			name: 'pages',
 			title: translate( 'Add more pages' ),
 			description: translate(
-				"We've included common pages in your website, but feel free to add more or change the current ones."
+				"We've pre-selected common pages for your site. You can add more pages or unselect the current ones."
 			),
 			continueLabel: translate( 'Save and continue' ),
 			backLabel: translate( 'pages' ),
@@ -75,7 +75,9 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		upsell: {
 			name: 'upsell',
 			title: translate( 'Premium styles' ),
-			description: translate( "You've chosen a premium style and action is required." ),
+			description: translate(
+				"You've chosen premium styles which are exclusive to the Premium plan or higher."
+			),
 			continueLabel: translate( 'Continue' ),
 			backLabel: hasEnTranslation( 'premium styles' ) ? translate( 'premium styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.UPSELL,

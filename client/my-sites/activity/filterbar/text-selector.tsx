@@ -1,4 +1,3 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch } from 'react-redux';
@@ -16,13 +15,7 @@ interface Props {
 
 const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 	const translate = useTranslate();
-	const isMobile = useMobileBreakpoint();
-
 	const dispatch = useDispatch() as CalypsoDispatch;
-
-	const placeholder = isMobile
-		? translate( 'Search posts' )
-		: translate( 'Search posts by ID, title or author' );
 
 	const handleSearchActivities = ( query: string ) => {
 		dispatch( updateFilter( siteId, { textSearch: query } ) );
@@ -37,7 +30,7 @@ const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 			initialValue={ filter.textSearch || null }
 			isOpen={ false }
 			onSearch={ handleSearchActivities }
-			placeholder={ placeholder }
+			placeholder={ translate( 'Search posts by ID, title or author' ) }
 		/>
 	);
 };

@@ -8,9 +8,10 @@ import './style.scss';
 
 interface Props {
 	product: APIProductFamilyProduct;
+	hideDiscount?: boolean;
 }
 
-export default function ProductPriceWithDiscount( { product }: Props ) {
+export default function ProductPriceWithDiscount( { product, hideDiscount }: Props ) {
 	const translate = useTranslate();
 
 	const userProducts = useSelector( ( state ) => getProductsList( state ) );
@@ -54,7 +55,7 @@ export default function ProductPriceWithDiscount( { product }: Props ) {
 				{ discountInfo.discountedCost }
 				{
 					// Display discount info only if there is a discount
-					discountInfo.discountPercentage > 0 && (
+					discountInfo.discountPercentage > 0 && ! hideDiscount && (
 						<>
 							<span className="product-price-with-discount__price-discount">
 								{ translate( 'Save %(discountPercentage)s%', {

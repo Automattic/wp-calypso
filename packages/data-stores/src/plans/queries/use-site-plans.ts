@@ -15,26 +15,23 @@ interface Props {
 	siteId?: string | number | null;
 }
 
-const unpackIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer | null => {
+const unpackIntroOffer = ( plan: PricedAPISitePlan ): PlanIntroductoryOffer | null => {
 	// these aren't grouped or separated. so no introductory offer if no cost or interval
-	if (
-		! sitePlan.introductory_offer_interval_unit &&
-		! sitePlan.introductory_offer_interval_count
-	) {
+	if ( ! plan.introductory_offer_interval_unit && ! plan.introductory_offer_interval_count ) {
 		return null;
 	}
 
 	const isOfferComplete = Boolean(
-		sitePlan.expiry &&
-			sitePlan.introductory_offer_end_date &&
-			new Date( sitePlan.expiry ) > new Date( sitePlan.introductory_offer_end_date )
+		plan.expiry &&
+			plan.introductory_offer_end_date &&
+			new Date( plan.expiry ) > new Date( plan.introductory_offer_end_date )
 	);
 
 	return {
-		formattedPrice: sitePlan.introductory_offer_formatted_price as string,
-		rawPrice: sitePlan.introductory_offer_raw_price as number,
-		intervalUnit: sitePlan.introductory_offer_interval_unit as string,
-		intervalCount: sitePlan.introductory_offer_interval_count as number,
+		formattedPrice: plan.introductory_offer_formatted_price as string,
+		rawPrice: plan.introductory_offer_raw_price as number,
+		intervalUnit: plan.introductory_offer_interval_unit as string,
+		intervalCount: plan.introductory_offer_interval_count as number,
 		isOfferComplete,
 	};
 };

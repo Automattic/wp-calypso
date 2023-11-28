@@ -3,8 +3,8 @@
  */
 import './load-config';
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import page from 'page';
 import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';

@@ -2,6 +2,15 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
 
+#earn-navigation {
+	margin-bottom: 30px;
+}
+
+// Small override for card component headers
+.is-section-earn .section-header__label {
+	font-weight: 600;
+}
+
 .earn__launchpad {
 	padding: 4px 20px;
 	box-shadow: 0 0 0 1px var(--color-border-subtle);

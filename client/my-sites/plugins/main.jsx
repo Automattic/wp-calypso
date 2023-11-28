@@ -3,13 +3,13 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products/src';
+import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -22,6 +22,7 @@ import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -505,6 +506,8 @@ export class PluginsMain extends Component {
 					} ) }
 				>
 					<div className="plugins__content-wrapper">
+						<MissingPaymentNotification />
+
 						{ isJetpackCloud && (
 							<div className="plugins__page-title-container">
 								<div className="plugins__header-left-content">

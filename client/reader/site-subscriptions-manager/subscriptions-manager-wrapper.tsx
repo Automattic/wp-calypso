@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';

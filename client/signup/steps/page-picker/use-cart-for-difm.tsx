@@ -280,16 +280,19 @@ export function useCartForDIFM(
 		if ( difmLiteProduct ) {
 			return {
 				...difmLiteProduct,
-				extra: buildDIFMCartExtrasObject( {
-					...signupDependencies,
-					selectedPageTitles: selectedPages,
-					isStoreFlow,
-				} ),
+				extra: buildDIFMCartExtrasObject(
+					{
+						...signupDependencies,
+						selectedPageTitles: selectedPages,
+						isStoreFlow,
+					},
+					siteSlug
+				),
 				quantity: selectedPages.length,
 			};
 		}
 		return null;
-	}, [ difmLiteProduct, signupDependencies, selectedPages, isStoreFlow ] );
+	}, [ difmLiteProduct, signupDependencies, selectedPages, isStoreFlow, siteSlug ] );
 
 	// [Effect] Loads required initial data
 	useEffect( () => {
