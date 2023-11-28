@@ -1,19 +1,33 @@
+$slider-height: 40px;
+$slider-bg-color: var(--studio-white);
+$thumb-width: 40px;
+$mark-diameter: 8px;
+$mark-border-width: 2px;
+$track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2;
 
+// The trick is to cover the extra slider track with blocks with the same background color as the slider.
+@mixin slider-track-extra-cover() {
+	content: "";
+	position: absolute;
+	width: $track-extra-width;
+	height: $slider-height;
+	background-color: $slider-bg-color;
+}
 
 .stats-tier-upgrade-slider {
 	--jp-white: #fff;
 	--jp-green-50: #008710;
 	--gray-gray-5: #dcdcde;
 	margin-top: 42px;
+	background-color: $slider-bg-color;
 
 	.jp-components-pricing-slider__thumb.upgrade-thumb {
-		width: 40px;
-		height: 40px;
+		width: $thumb-width;
+		height: $slider-height;
 		border-radius: 50%;
 		border-color: var(--jp-green-50);
 		background-color: var(--jp-green-50);
 		color: var(--jp-white);
-		transform: translate(-50%, 0);
 	}
 
 	.jp-components-pricing-slider__track {
@@ -23,14 +37,29 @@
 	}
 
 	.jp-components-pricing-slider__control {
+		width: calc(100% + $track-extra-width * 2);
+		margin-left: -($track-extra-width);
+
+		&::before {
+			@include slider-track-extra-cover();
+			left: 0;
+			z-index: 1;
+		}
+
+		&::after {
+			@include slider-track-extra-cover();
+			right: 0;
+		}
+
 		.mark {
-			position: absolute;
-			height: 10px;
-			width: 10px;
+			height: $mark-diameter;
+			width: $mark-diameter;
+			border: $mark-border-width solid var(--gray-gray-5);
 			background-color: var(--gray-gray-5);
 			border-radius: 50%;
-			top: 50%;
-			transform: translate(-50%, -50%);
+			cursor: pointer;
+			margin: 0 $track-extra-width;
+			bottom: calc(50% - ($mark-diameter / 2 + $mark-border-width));
 		}
 	}
 }
