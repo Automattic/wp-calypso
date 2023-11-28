@@ -4,8 +4,8 @@ import type { FC } from 'react';
 interface BundleSettings {
 	[ key: string ]: {
 		name: string;
-		badgeIconComponent: FC;
-		badgeColor: string;
+		iconComponent: FC;
+		color: string;
 		designPickerBadgeTooltip: string;
 		bannerUpsellDescription: string;
 	};
@@ -14,7 +14,7 @@ interface BundleSettings {
 const bundleSettings: BundleSettings = {
 	'woo-on-plans': {
 		name: 'WooCommerce',
-		badgeIconComponent: () => (
+		iconComponent: () => (
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 				<path
 					fill="currentColor"
@@ -22,7 +22,7 @@ const bundleSettings: BundleSettings = {
 				/>
 			</svg>
 		),
-		badgeColor: '#7f54b3',
+		color: '#7f54b3',
 		designPickerBadgeTooltip: translate(
 			'This theme comes bundled with WooCommerce, the best way to sell online.'
 		),

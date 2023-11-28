@@ -69,10 +69,10 @@ const ThemeTypeBadge = ( {
 
 		if ( bundleSettings[ themeSoftware ] ) {
 			const settings = bundleSettings[ themeSoftware ];
-			const BadgeIcon = settings.badgeIconComponent;
+			const BadgeIcon = settings.iconComponent;
 
 			const bundleBadgeProps = {
-				color: settings.badgeColor,
+				color: settings.color,
 				icon: <BadgeIcon />,
 			};
 

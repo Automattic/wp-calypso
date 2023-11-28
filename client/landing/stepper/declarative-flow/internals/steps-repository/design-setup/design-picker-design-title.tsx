@@ -34,10 +34,10 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 	if ( selectedDesign.software_sets && selectedDesign.software_sets.length > 0 ) {
 		const themeSoftware = selectedDesign.software_sets[ 0 ].slug;
 		const settings = bundleSettings[ themeSoftware ];
-		const BadgeIcon = settings.badgeIconComponent;
+		const BadgeIcon = settings.iconComponent;
 
 		const bundleBadgeProps = {
-			color: settings.badgeColor,
+			color: settings.color,
 			icon: <BadgeIcon />,
 			tooltipContent: <>{ settings.designPickerBadgeTooltip }</>,
 		};
