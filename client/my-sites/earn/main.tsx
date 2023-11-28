@@ -28,6 +28,12 @@ type EarningsMainProps = {
 	path: string;
 };
 
+type Tab = {
+	title: string;
+	path: string;
+	id: string;
+};
+
 const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
@@ -164,9 +170,17 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return currentPath;
 	};
 
-	const getEarnSectionNav = () => {
+	const isEarnTabSelected = ( tabItem: Tab ) => {
 		const currentPath = getCurrentPath();
 
+		if ( 'ads-earnings' === tabItem.id ) {
+			return isAdSection( section );
+		}
+
+		return tabItem.path === currentPath;
+	};
+
+	const getEarnSectionNav = () => {
 		return (
 			<div id="earn-navigation">
 				<SectionNav selectedText={ getEarnSelectedText() }>
@@ -176,7 +190,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 								<NavItem
 									key={ tabItem.id }
 									path={ tabItem.path }
-									selected={ tabItem.path === currentPath }
+									selected={ isEarnTabSelected( tabItem ) }
 								>
 									{ tabItem.title }
 								</NavItem>
