@@ -117,7 +117,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 			treatAtomicAsJetpackSite: true,
 		} );
 
-		return ! isJetpackSite && 1 === lang_id;
+		return ! isJetpackSite;
 	} );
 
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
