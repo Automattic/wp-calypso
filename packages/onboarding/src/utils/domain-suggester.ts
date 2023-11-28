@@ -85,7 +85,7 @@ const calculateLevenshteinDistance = ( str1: string, str2: string ) => {
  * @param {string} inputDomain - The email address to be corrected.
  * @param {number} maxDistance - The maximum Levenshtein distance between the input and the suggestion.
  */
-export const suggestEmailCorrection = ( inputDomain: string, maxDistance: number = 2 ) => {
+export const suggestEmailCorrection = ( inputDomain: string, maxDistance: number = 1 ) => {
 	const extractedInputEmailDomain = extractDomainWithExtension( inputDomain );
 
 	let bestMatch = null;
