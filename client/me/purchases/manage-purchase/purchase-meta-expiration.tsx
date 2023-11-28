@@ -6,6 +6,7 @@ import {
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
 } from '@automattic/calypso-products';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
@@ -51,6 +52,7 @@ function PurchaseMetaExpiration( {
 	renderRenewsOrExpiresOnLabel,
 }: ExpirationProps ) {
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
 	const moment = useLocalizedMoment();
 
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
@@ -152,6 +154,11 @@ function PurchaseMetaExpiration( {
 			return false;
 		};
 
+		// TODO - remove this once the translation is available in all languages - see https://translate.wordpress.com/deliverables/overview/9768580/
+		const hasToolTipTextBeenTranslated = hasTranslation(
+			'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}'
+		);
+
 		return (
 			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
@@ -168,7 +175,7 @@ function PurchaseMetaExpiration( {
 					} ) }
 				>
 					{ subsBillingText }
-					{ shouldShowTooltip() && (
+					{ shouldShowTooltip() && hasToolTipTextBeenTranslated && (
 						<InfoPopover position="bottom right">
 							{ translate(
 								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}',
