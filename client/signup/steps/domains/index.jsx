@@ -797,8 +797,11 @@ export class RenderDomainsStep extends Component {
 			} );
 			const costDifference = domain.item_original_cost - domain.cost;
 			const hasPromotion = costDifference > 0;
+			const isRemoving = this.state.domainRemovalQueue.some(
+				( item ) => item.meta === domain.meta
+			);
 
-			return (
+			return isRemoving ? null : (
 				<>
 					<div>
 						<div
@@ -824,9 +827,7 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ this.state.domainRemovalQueue.some( ( item ) => item.meta === domain.meta )
-								? this.props.translate( 'Removing' )
-								: this.props.translate( 'Remove' ) }
+							{ translate( 'Remove' ) }
 						</Button>
 					</div>
 				</>
