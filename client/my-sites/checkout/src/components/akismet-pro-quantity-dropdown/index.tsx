@@ -77,18 +77,16 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 				value={ quantityState }
 				onChange={ onSitesQuantityChange }
 			>
-				<option key="quantity-1" value="1">
-					{ translate( '1 Site' ) }
-				</option>
-				<option key="quantity-2" value="2">
-					{ translate( '2 Sites' ) }
-				</option>
-				<option key="quantity-3" value="3">
-					{ translate( '3 Sites' ) }
-				</option>
-				<option key="quantity-4" value="4">
-					{ translate( '4 Sites' ) }
-				</option>
+				{ [ 1, 2, 3, 4 ].map( ( value ) => (
+					<option key={ `quantity-${ value }` } value={ value }>
+						{ translate( '%(count)d Site', '%(count)d Sites', {
+							count: value,
+							args: {
+								count: value,
+							},
+						} ) }
+					</option>
+				) ) }
 			</StyledFormSelect>
 		</div>
 	);
