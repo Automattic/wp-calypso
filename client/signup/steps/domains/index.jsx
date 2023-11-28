@@ -1112,6 +1112,7 @@ export class RenderDomainsStep extends Component {
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 						hasPendingRequests={ isLoadingExperiment }
 						temporaryCart={ this.state.temporaryCart }
+						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 					/>
 				) }
 			</ProvideExperimentData>
