@@ -110,6 +110,53 @@ export function getIntroductoryOfferIntervalDisplay(
 	return text;
 }
 
+export function getPremiumDomainIntroductoryOfferDisplay(
+	translate: typeof i18n.translate,
+	product: ResponseCartProduct
+): string | null {
+	if (
+		! isDomainRegistration( product ) ||
+		! product.extra.premium ||
+		! product.introductory_offer_terms?.enabled
+	) {
+		return null;
+	}
+
+	const { interval_unit: intervalUnit, interval_count: intervalCount } =
+		product.introductory_offer_terms;
+
+	// Monthly introductory offers are covered, but they shouldn't normally happen.
+	if ( intervalUnit === 'month' ) {
+		return null;
+	}
+
+	if ( intervalUnit === 'year' ) {
+		const renewalPrice = formatCurrency( product.item_original_cost_integer, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
+		if ( intervalCount === 1 ) {
+			return String(
+				translate( 'Renews for %(renewalPrice)s/year', {
+					args: {
+						renewalPrice,
+					},
+				} )
+			);
+		} else if ( intervalCount >= 1 ) {
+			return String(
+				translate( 'Renews for %(renewalPrice)s/year after %(numberOfYears)d years', {
+					args: {
+						renewalPrice,
+						numberOfYears: intervalCount,
+					},
+				} )
+			);
+		}
+	}
+	return null;
+}
+
 export function getItemIntroductoryOfferDisplay(
 	translate: typeof i18n.translate,
 	product: ResponseCartProduct
@@ -123,8 +170,14 @@ export function getItemIntroductoryOfferDisplay(
 		return null;
 	}
 
+	const premiumDomainText = getPremiumDomainIntroductoryOfferDisplay( translate, product );
+
+	if ( premiumDomainText ) {
+		return { enabled: true, text: premiumDomainText };
+	}
+
 	const isFreeTrial = product.item_subtotal_integer === 0;
-	let text = getIntroductoryOfferIntervalDisplay(
+	const text = getIntroductoryOfferIntervalDisplay(
 		translate,
 		product.introductory_offer_terms.interval_unit,
 		product.introductory_offer_terms.interval_count,
@@ -132,22 +185,6 @@ export function getItemIntroductoryOfferDisplay(
 		'checkout',
 		product.introductory_offer_terms.transition_after_renewal_count
 	);
-
-	if (
-		isDomainRegistration( product ) &&
-		product.item_original_cost_integer < product.item_subtotal_integer
-	) {
-		text = String(
-			translate( 'Renews for %(renewalPrice)s/year', {
-				args: {
-					renewalPrice: formatCurrency( product.item_original_cost_integer, product.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-				},
-			} )
-		);
-	}
 
 	return { enabled: true, text };
 }
