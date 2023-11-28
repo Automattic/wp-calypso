@@ -60,4 +60,16 @@ describe( 'suggestEmailCorrection', () => {
 			wasCorrected: false,
 		} );
 	} );
+
+	test( 'should not suggest a correction for a domain included in the domain avoid list', () => {
+		const result = suggestEmailCorrection( 'example@mail.com' );
+		expect( result ).toEqual( {
+			oldEmail: 'example@mail.com',
+			oldDomain: 'mail.com',
+			newDomain: null,
+			newEmail: null,
+			distance: Infinity,
+			wasCorrected: false,
+		} );
+	} );
 } );
