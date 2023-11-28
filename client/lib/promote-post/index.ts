@@ -149,7 +149,7 @@ export async function showDSP(
 			dispatch?.(
 				recordTracksEvent( 'calypso_dsp_widget_failed_to_load', { origin: getDSPOrigin() } )
 			);
-			reject( { loaded: false, cleanup: () => {} } );
+			reject( false );
 			return;
 		}
 
@@ -169,7 +169,6 @@ export async function showDSP(
 				template: 'article',
 				onLoaded: () => {
 					debug( 'showDSP: [Widget loaded]' );
-
 					resolve( true );
 				},
 				onClose: onClose,
@@ -211,7 +210,6 @@ export async function cleanupDSP() {
 	if ( ! window.BlazePress ) {
 		return;
 	}
-
 	window.BlazePress.cleanup?.();
 }
 
