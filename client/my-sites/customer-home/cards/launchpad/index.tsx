@@ -45,7 +45,9 @@ const CustomerHomeLaunchpad = ( {
 	return (
 		<div className="customer-home-launchpad">
 			<div className="customer-home-launchpad__header">
-				<h2 className="customer-home-launchpad__title">{ title }</h2>
+				<h2 className="customer-home-launchpad__title">
+					{ title ?? translate( 'Next steps for your site' ) }
+				</h2>
 				{ numberOfSteps > completedSteps ? (
 					<div className="customer-home-launchpad__progress-bar-container">
 						<CircularProgressBar
