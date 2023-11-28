@@ -1,0 +1,47 @@
+.marketplace-reviews-list__container {
+	padding: 0 16px;
+
+	@include breakpoint-deprecated( ">1040px" ) {
+		padding: 0;
+	}
+
+	.marketplace-reviews-list__title {
+		font-family: $brand-serif;
+		font-size: $font-title-large;
+		overflow-wrap: anywhere;
+		color: var(--studio-gray-100);
+	}
+
+	.marketplace-reviews-list__customer-reviews {
+		margin-top: 10px;
+
+		.marketplace-reviews-list__review-container {
+			display: grid;
+			grid-template-columns: 200px 1fr 150px;
+			border-top: 1px solid var(--studio-gray-5);
+			padding-top: 20px;
+
+			&:first-of-type {
+				border-top: none;
+			}
+		}
+
+		.marketplace-reviews-list__author {
+			font-weight: bold;
+			padding-right: 20px;
+			font-size: $font-body-small;
+		}
+
+		.marketplace-reviews-list__content {
+			margin-top: 10px;
+			margin-left: 3px;
+		}
+
+		.marketplace-reviews-list__date {
+			font-weight: bold;
+			font-size: $font-body-extra-small;
+			text-align: right;
+		}
+
+	}
+}

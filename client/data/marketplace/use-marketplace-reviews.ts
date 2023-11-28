@@ -14,7 +14,7 @@ const queryKeyBase: QueryKey = [ 'marketplace-reviews' ];
 
 type ProductType = 'plugin' | 'theme';
 
-type ProductProps = {
+export type ProductProps = {
 	productType: ProductType;
 	pluginSlug: string;
 };
@@ -32,7 +32,7 @@ type DeleteMarketplaceReviewProps = {
 	reviewId: number;
 } & ProductProps;
 
-type MarketplaceReviewResponse = {
+export type MarketplaceReviewResponse = {
 	id: number;
 	post: number;
 	parent: number;
@@ -52,7 +52,7 @@ type MarketplaceReviewResponse = {
 	};
 };
 
-type ErrorResponse = {
+export type ErrorResponse = {
 	code: string;
 	message: string;
 	data: {
