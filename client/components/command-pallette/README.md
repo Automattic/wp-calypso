@@ -12,7 +12,7 @@ In order to add a new command to the palette, you can add it in `useCommandsArra
 
 Every command has a set of properties that can be used to customize its behavior. The following properties are available:
 
-- `name`: Type `string`, used as identifier for the command. It's ex
+- `name`: Type `string`, used as identifier for the command. It's expected to be unique and `camelCase`. It's not visible for the user.
 - `label`: Type `string`, used as the label for the command. Visible in the command palette.
 - `subLabel`?: Type `string`, used as a second line for the command. Visible in the command palette.
 - `searchLabel`?: Type `string`, used to match the user search. It's not visible for the user. We recommend to use `_x()` to add context to the translators.
@@ -20,7 +20,7 @@ Every command has a set of properties that can be used to customize its behavior
 - `context`?: Type `string[]`, a list of URL paths for which the command will have priority when displayed.
 - `icon`?: Type `JSX.Element`, used to display an icon for the command. It's visible in the command palette.
 - `image`?: Type `JSX.Element`, used to display an image for the command, instead of an icon. It's visible in the command palette.
-- `siteFunctions`?: Type `SiteFunctions`, used for nested commands that need to execute a function when a site is selected in the command palette as a second step.
+- `siteFunctions`?: Type `object`, used for nested commands that need to execute a function when a site is selected in the command palette as a second step.
 
 ## Usage
 
