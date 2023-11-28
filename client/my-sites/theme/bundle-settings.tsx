@@ -4,6 +4,7 @@ import type { FC } from 'react';
 
 interface BundleSettings {
 	[ key: string ]: {
+		/** Name field is a label for the bundle name, which can be used isolated or in the middle of a sentence. Many times used as "{name} theme". */
 		name: string;
 		iconComponent: FC;
 		color: string;
