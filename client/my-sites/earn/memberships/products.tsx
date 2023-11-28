@@ -6,7 +6,7 @@ import {
 import { Badge, Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -35,15 +35,10 @@ import {
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import './style.scss';
 
-const showAddEditDialogInitially =
-	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
-	window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
-	window.location.hash === ADD_TIER_PLAN_HASH;
-
 function ProductsList() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
+	const [ showAddEditDialog, setShowAddEditDialog ] = useState( false );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
 	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
@@ -132,6 +127,17 @@ function ProductsList() {
 				return price;
 		}
 	}
+
+	useEffect( () => {
+		const showAddEditDialogInitially =
+			window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
+			window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
+			window.location.hash === ADD_TIER_PLAN_HASH;
+
+		if ( showAddEditDialogInitially ) {
+			setShowAddEditDialog( true );
+		}
+	}, [] );
 
 	return (
 		<div className="memberships__products-list">
