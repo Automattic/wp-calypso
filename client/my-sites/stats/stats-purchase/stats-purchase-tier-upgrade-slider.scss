@@ -19,6 +19,10 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 	--jp-green-50: #008710;
 	--gray-gray-5: #dcdcde;
 	--studio-gray-40: #787c82;
+	// TODO: Determine correct colors.
+	// Theme or Jetpack? The following are theme colors.
+	--color-accent: #008763;
+	--color-primary: #0675c4;
 	margin-top: 42px;
 	background-color: $slider-bg-color;
 
@@ -30,8 +34,8 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 		width: $thumb-width;
 		height: $slider-height;
 		border-radius: 50%;
-		border-color: var(--jp-green-50);
-		background-color: var(--jp-green-50);
+		border-color: var(--color-primary);
+		background-color: var(--color-primary);
 		color: var(--jp-white);
 	}
 
