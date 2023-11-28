@@ -41,8 +41,8 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 	}
 
 	.jp-components-pricing-slider__control {
-		width: calc(100% + $track-extra-width * 2);
-		margin-left: -($track-extra-width);
+		// width: calc(100% + $track-extra-width * 2);
+		// margin-left: -($track-extra-width);
 
 		&::before {
 			@include slider-track-extra-cover();
