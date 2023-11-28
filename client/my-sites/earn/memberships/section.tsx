@@ -28,7 +28,7 @@ import {
 	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
 	LAUNCHPAD_HASH,
 } from './constants';
-import ProductList from './products';
+import ProductList from './products-list';
 import './style.scss';
 
 type MembershipsSectionProps = {
