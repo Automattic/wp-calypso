@@ -23,17 +23,17 @@ import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/componen
 import { ProductsList } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { ExternalLink, Tooltip } from '@wordpress/components';
+import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
-import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
 import { useSelector } from 'calypso/state';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
-import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import { isExternallyManagedTheme, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 import './style.scss';
 
 interface UpgradeModalProps {
@@ -48,10 +48,10 @@ interface UpgradeModalProps {
 }
 
 interface UpgradeModalContent {
-	header: JSX.Element;
-	text: JSX.Element;
+	header: JSX.Element | null;
+	text: JSX.Element | null;
 	price: JSX.Element | null;
-	action: JSX.Element;
+	action: JSX.Element | null;
 }
 
 export const ThemeUpgradeModal = ( {
@@ -72,6 +72,10 @@ export const ThemeUpgradeModal = ( {
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
 	const showBundleVersion = theme_software_set;
 	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
+
+	const themeSoftwareSet = useSelector( ( state ) =>
+		getThemeSoftwareSet( state, theme?.data?.id )
+	);
 
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
@@ -131,27 +135,40 @@ export const ThemeUpgradeModal = ( {
 
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
 		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		const themeSoftware = themeSoftwareSet[ 0 ];
+
+		if ( ! bundleSettings[ themeSoftware ] ) {
+			return {
+				header: null,
+				text: null,
+				price: null,
+				action: null,
+			};
+		}
+
+		const settings = bundleSettings[ themeSoftware ];
+		const bundleName = settings.name;
+		const bundledPluginMessage = settings.bundledPluginMessage;
+		const color = settings.color;
+		const Icon = settings.iconComponent;
+
 		return {
 			header: (
 				<>
-					<img
-						src={ wooCommerceImage }
-						alt="WooCommerce"
-						className="theme-upgrade-modal__woo-logo"
-					/>
+					<div className="theme-upgrade-modal__logo" style={ { backgroundColor: color } }>
+						<Icon />
+					</div>
 					<h1 className="theme-upgrade-modal__heading bundle">
-						{ translate( 'Unlock this WooCommerce theme' ) }
+						{ translate( 'Unlock this %(bundleName)s theme', { args: { bundleName } } ) }
 					</h1>
 				</>
 			),
 			text: (
 				<p>
+					{ bundledPluginMessage }{ ' ' }
 					{ translate(
-						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
+						'Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
 						{
-							components: {
-								link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
-							},
 							args: businessPlanPrice,
 						}
 					) }

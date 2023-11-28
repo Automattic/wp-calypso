@@ -1,4 +1,5 @@
-import { translate } from 'i18n-calypso';
+import { ExternalLink } from '@wordpress/components';
+import { translate, TranslateResult } from 'i18n-calypso';
 import type { FC } from 'react';
 
 interface BundleSettings {
@@ -8,6 +9,7 @@ interface BundleSettings {
 		color: string;
 		designPickerBadgeTooltip: string;
 		bannerUpsellDescription: string;
+		bundledPluginMessage: TranslateResult;
 	};
 }
 
@@ -28,6 +30,14 @@ const bundleSettings: BundleSettings = {
 		),
 		bannerUpsellDescription: translate(
 			'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+		),
+		bundledPluginMessage: translate(
+			'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin.',
+			{
+				components: {
+					link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
+				},
+			}
 		),
 	},
 };
