@@ -407,7 +407,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSites',
 			label: __( 'Manage sites' ),
-			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigate( `/sites` );
