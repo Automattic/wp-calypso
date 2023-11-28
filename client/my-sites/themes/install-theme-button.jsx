@@ -32,12 +32,12 @@ function getInstallThemeUrl( state, siteId ) {
 	return `/themes/upload/${ siteSlug }`;
 }
 
-function getSiteType( atomicSite, jetpackSite, selectedSiteId ) {
-	if ( atomicSite ) {
+function getSiteType( state, siteId ) {
+	if ( isAtomicSite( state, siteId ) ) {
 		return 'atomic';
-	} else if ( jetpackSite ) {
+	} else if ( isJetpackSite( state, siteId ) ) {
 		return 'jetpack';
-	} else if ( selectedSiteId ) {
+	} else if ( siteId ) {
 		return 'simple';
 	}
 
@@ -46,10 +46,8 @@ function getSiteType( atomicSite, jetpackSite, selectedSiteId ) {
 
 const InstallThemeButton = ( {
 	isLoggedIn,
-	selectedSiteId,
 	isMultisite,
-	atomicSite,
-	jetpackSite,
+	siteType,
 	installThemeUrl,
 	dispatchTracksEvent,
 } ) => {
@@ -59,11 +57,7 @@ const InstallThemeButton = ( {
 
 	const clickHandler = () => {
 		trackClick( 'upload theme' );
-		dispatchTracksEvent( {
-			tracksEventProps: {
-				site_type: getSiteType( atomicSite, jetpackSite, selectedSiteId ),
-			},
-		} );
+		dispatchTracksEvent( { tracksEventProps: { site_type: siteType } } );
 	};
 
 	return (
@@ -77,10 +71,8 @@ const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
-		selectedSiteId,
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
-		atomicSite: isAtomicSite( state, selectedSiteId ),
-		jetpackSite: isJetpackSite( state, selectedSiteId ),
+		siteType: getSiteType( state, selectedSiteId ),
 		installThemeUrl: getInstallThemeUrl( state, selectedSiteId ),
 	};
 };
