@@ -342,6 +342,12 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'legal-updates-banner' ) && (
+					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'yolo/command-pallette' ) && (
+					<AsyncLoad require="calypso/components/command-pallette" placeholder={ null } />
+				) }
 			</div>
 		);
 	}

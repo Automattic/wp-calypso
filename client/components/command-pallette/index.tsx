@@ -145,7 +145,7 @@ function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputP
 	);
 }
 
-export const WpcomCommandPalette = () => {
+const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -241,3 +241,5 @@ export const WpcomCommandPalette = () => {
 		</Modal>
 	);
 };
+
+export default CommandPalette;
