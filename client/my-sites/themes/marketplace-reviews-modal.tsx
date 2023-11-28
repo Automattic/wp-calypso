@@ -27,27 +27,6 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 
 	if ( createReview.isSuccess ) {
 		return (
-			<Card>
-				<Dialog
-					className="marketplace-reviews-modal"
-					isVisible={ isVisible }
-					buttons={ buttons }
-					onClose={ onClose }
-					showCloseIcon
-				>
-					<CardHeading tagName="h1" size={ 21 }>
-						{ translate( 'Review submitted for %(themeName)s', { args: { themeName } } ) }
-					</CardHeading>
-					<CardHeading tagName="h2">
-						{ translate( 'Thank you for your contribution.' ) }
-					</CardHeading>
-				</Dialog>
-			</Card>
-		);
-	}
-
-	return (
-		<Card>
 			<Dialog
 				className="marketplace-reviews-modal"
 				isVisible={ isVisible }
@@ -55,6 +34,27 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 				onClose={ onClose }
 				showCloseIcon
 			>
+				<Card className="marketplace-reviews-modal__card">
+					<CardHeading tagName="h1" size={ 21 }>
+						{ translate( 'Review submitted for %(themeName)s', { args: { themeName } } ) }
+					</CardHeading>
+					<CardHeading tagName="h2">
+						{ translate( 'Thank you for your contribution.' ) }
+					</CardHeading>
+				</Card>
+			</Dialog>
+		);
+	}
+
+	return (
+		<Dialog
+			className="marketplace-reviews-modal"
+			isVisible={ isVisible }
+			buttons={ buttons }
+			onClose={ onClose }
+			showCloseIcon
+		>
+			<Card className="marketplace-reviews-modal__card">
 				<CardHeading tagName="h1" size={ 21 }>
 					{ translate( 'Reviews for %(themeName)s', { args: { themeName } } ) }
 				</CardHeading>
@@ -98,7 +98,7 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 							{ createReview.isLoading && <Spinner className="card__icon" /> }
 							<span>{ translate( 'Submit' ) }</span>
 						</Button>
-						<Button>{ translate( 'Cancel' ) }</Button>
+						<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
 					</div>
 				</form>
 				{ createReview.isError && (
@@ -106,7 +106,7 @@ export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, theme
 						{ ( createReview.error as ErrorResponse ).message }
 					</span>
 				) }
-			</Dialog>
-		</Card>
+			</Card>
+		</Dialog>
 	);
 };
