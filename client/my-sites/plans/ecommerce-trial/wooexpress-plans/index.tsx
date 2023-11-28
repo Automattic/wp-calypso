@@ -51,14 +51,13 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
 	const mediumPlanMonthly = getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ];
-	const mediumPlanPrices = useSelector( ( state ) => ( {
-		annualPlanMonthlyPrice: getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0,
-		monthlyPlanPrice: getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0,
-	} ) );
-
-	const percentageSavings = Math.floor(
-		( 1 - mediumPlanPrices.annualPlanMonthlyPrice / mediumPlanPrices.monthlyPlanPrice ) * 100
+	const annualPlanMonthlyPrice = useSelector(
+		( state ) => getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0
 	);
+	const monthlyPlanPrice = useSelector(
+		( state ) => getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0
+	);
+	const percentageSavings = Math.floor( ( 1 - annualPlanMonthlyPrice / monthlyPlanPrice ) * 100 );
 
 	const planIntervals = useMemo( () => {
 		return [
