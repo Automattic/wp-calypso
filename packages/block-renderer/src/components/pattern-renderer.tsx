@@ -22,7 +22,7 @@ const PatternRenderer = ( {
 	maxHeight,
 	transformHtml,
 }: Props ) => {
-	const { renderedPatterns, isNewSite } = usePatternsRendererContext();
+	const { renderedPatterns, shouldShufflePosts } = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 
 	let patternHtml = pattern?.html ?? '';
@@ -34,8 +34,8 @@ const PatternRenderer = ( {
 	}
 
 	let patternStyles = pattern?.styles ?? [];
-	if ( isNewSite ) {
-		const css = shufflePosts( patternId, pattern.html );
+	if ( shouldShufflePosts ) {
+		const css = shufflePosts( patternId, patternHtml );
 		patternStyles = [ ...patternStyles, { css } as RenderedStyle ];
 	}
 

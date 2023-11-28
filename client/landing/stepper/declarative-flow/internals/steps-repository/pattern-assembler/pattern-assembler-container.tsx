@@ -51,7 +51,7 @@ const PatternAssemblerContainer = ( {
 				patternIdsByCategory={ patternIdsByCategory }
 				// Use siteInfo to overwrite site-related things such as title, and tagline.
 				siteInfo={ siteInfo }
-				isNewSite={ isNewSite }
+				shouldShufflePosts={ isNewSite }
 			>
 				{ children }
 			</PatternsRendererProvider>

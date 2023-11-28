@@ -9,7 +9,7 @@ interface Props {
 	patternIdsByCategory: Record< string, string[] >;
 	children: JSX.Element;
 	siteInfo: SiteInfo;
-	isNewSite: boolean;
+	shouldShufflePosts: boolean;
 }
 
 const PatternsRendererProvider = ( {
@@ -18,7 +18,7 @@ const PatternsRendererProvider = ( {
 	patternIdsByCategory,
 	children,
 	siteInfo = {},
-	isNewSite,
+	shouldShufflePosts,
 }: Props ) => {
 	const renderedPatterns = useRenderedPatterns(
 		siteId,
@@ -28,7 +28,7 @@ const PatternsRendererProvider = ( {
 	);
 
 	return (
-		<PatternsRendererContext.Provider value={ { renderedPatterns, isNewSite } }>
+		<PatternsRendererContext.Provider value={ { renderedPatterns, shouldShufflePosts } }>
 			{ children }
 		</PatternsRendererContext.Provider>
 	);
