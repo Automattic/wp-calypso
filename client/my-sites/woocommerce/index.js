@@ -32,7 +32,7 @@ function setup( context, next ) {
 	// instead of passive redirect.
 	if ( getSiteOption( state, siteId, 'is_wpcom_store' ) ) {
 		const redirectUrl = getSiteWooCommerceUrl( state, siteId );
-		window.location = redirectUrl;
+		window.location.assign( redirectUrl );
 		return;
 	}
 
