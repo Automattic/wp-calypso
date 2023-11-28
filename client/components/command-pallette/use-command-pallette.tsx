@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 
-const SiteImage = styled.img( {
-	height: 24,
-	width: 24,
-	minWidth: 24,
-	objectFit: 'cover',
+const FillDefaultIconWhite = styled.div( {
+	flexShrink: 0,
+	'.commands-command-menu__container [cmdk-item] & svg': {
+		fill: '#fff',
+	},
 } );
 
 type CloseFunction = () => void;
@@ -22,18 +23,19 @@ interface SiteFunctions {
 	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
 }
+export interface CommandCallBackParams {
+	close: CloseFunction;
+	setSearch: ( search: string ) => void;
+	setPlaceholderOverride: ( placeholder: string ) => void;
+}
+
 interface Command {
 	name: string;
 	label: string;
-	searchLabel: string;
-	callback: ( {
-		close,
-		setSearch,
-	}: {
-		close: CloseFunction;
-		setSearch: ( search: string ) => void;
-	} ) => void;
-	context?: string;
+	subLabel?: string;
+	searchLabel?: string;
+	callback: ( params: CommandCallBackParams ) => void;
+	context?: string[];
 	icon?: JSX.Element;
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
@@ -42,23 +44,26 @@ interface Command {
 interface useCommandPalletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	filter?: ( command: Command ) => boolean | undefined;
 }
 
 const siteToAction =
 	( onClickSite: OnClickSiteFunction ) =>
 	( site: SiteExcerptData ): Command => {
+		const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
+
 		return {
 			name: `${ site.ID }`,
-			label: `${ site.name }: ${ site.URL }`,
-			searchLabel: `${ site.ID } ${ site.name } ${ site.URL }`,
+			label: `${ siteName }`,
+			subLabel: `${ site.URL }`,
+			searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
 			callback: ( { close }: { close: CloseFunction } ) => {
 				onClickSite( { site, close } );
 			},
 			image: (
-				<SiteImage
-					src={ site.icon?.img ?? '/calypso/images/favicons/favicon-development.ico' }
-					alt={ site.name }
-				/>
+				<FillDefaultIconWhite>
+					<SiteIcon site={ site } size={ 32 } />
+				</FillDefaultIconWhite>
 			),
 		};
 	};
@@ -66,6 +71,7 @@ const siteToAction =
 export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
+	filter,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -73,7 +79,11 @@ export const useCommandPallette = ( {
 	);
 
 	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommandsArrayWpcom( { setSelectedCommandName } );
+	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
+
+	if ( 'function' === typeof filter ) {
+		commands = commands.filter( filter );
+	}
 
 	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;

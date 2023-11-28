@@ -25,6 +25,7 @@ interface OdieAssistantContextInterface {
 	initialUserMessage: string | null | undefined;
 	isLoadingChat: boolean;
 	isLoading: boolean;
+	isMinimized?: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
@@ -49,6 +50,7 @@ const defaultContextInterfaceValues = {
 	initialUserMessage: null,
 	isLoadingChat: false,
 	isLoading: false,
+	isMinimized: false,
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
@@ -77,6 +79,7 @@ const OdieAssistantProvider = ( {
 	botNameSlug = 'wpcom-support-chat',
 	botSetting = 'wapuu',
 	initialUserMessage,
+	isMinimized = false,
 	extraContactOptions,
 	enabled = true,
 	children,
@@ -86,6 +89,7 @@ const OdieAssistantProvider = ( {
 	botSetting?: string;
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
+	isMinimized?: boolean;
 	extraContactOptions?: ReactNode;
 	children?: ReactNode;
 } ) => {
@@ -108,17 +112,21 @@ const OdieAssistantProvider = ( {
 		}
 	}, [ existingChat, existingChat.chat_id ] );
 
+	const trackEvent = useCallback(
+		( event: string, properties?: Record< string, unknown > ) => {
+			dispatch( recordTracksEvent( event, properties ) );
+		},
+		[ dispatch ]
+	);
+
 	const clearChat = useCallback( () => {
 		clearOdieStorage( 'chat_id' );
 		setChat( {
 			chat_id: null,
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
-	}, [ botNameSlug ] );
-
-	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
-		dispatch( recordTracksEvent( event, properties ) );
-	};
+		trackEvent( 'calypso_odie_chat_cleared', {} );
+	}, [ botNameSlug, trackEvent ] );
 
 	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {
@@ -196,6 +204,7 @@ const OdieAssistantProvider = ( {
 				initialUserMessage,
 				isLoadingChat: false,
 				isLoading: isLoading,
+				isMinimized,
 				isNudging,
 				isVisible,
 				lastNudge,

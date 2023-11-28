@@ -1,7 +1,7 @@
 import { Card, Button } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { translate } from 'i18n-calypso';
+import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -29,31 +29,41 @@ const trackOpenPhpmyadmin = () =>
 		bumpStat( 'hosting-config', 'open-phpmyadmin' )
 	);
 
-export default function PhpMyAdminCard( { disabled } ) {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
-
+export function useOpenPhpMyAdmin() {
 	const [ loading, setLoading ] = useState( false );
-	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
+	const dispatch = useDispatch();
 
-	async function openPmaLink() {
-		setLoading( true );
-		try {
-			const { token } = await wpcom.req.post( {
-				path: `/sites/${ siteId }/hosting/pma/token`,
-				apiNamespace: 'wpcom/v2',
-			} );
+	const openPhpMyAdmin = useCallback(
+		async function openPhpMyAdmin( siteId ) {
+			setLoading( true );
+			try {
+				const { token } = await wpcom.req.post( {
+					path: `/sites/${ siteId }/hosting/pma/token`,
+					apiNamespace: 'wpcom/v2',
+				} );
 
-			if ( token ) {
-				dispatch( trackOpenPhpmyadmin() );
-				window.open( `https://wordpress.com/pma-login?token=${ token }` );
+				if ( token ) {
+					dispatch( trackOpenPhpmyadmin() );
+					window.open( `https://wordpress.com/pma-login?token=${ token }` );
+				}
+			} catch {
+				dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
 			}
-		} catch {
-			dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
-		}
-		setLoading( false );
-	}
+			setLoading( false );
+		},
+		[ dispatch ]
+	);
+
+	return {
+		openPhpMyAdmin,
+		loading,
+	};
+}
+
+export default function PhpMyAdminCard( { disabled } ) {
+	const siteId = useSelector( getSelectedSiteId );
+	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
+	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
 
 	return (
 		<Card className="phpmyadmin-card">
@@ -81,7 +91,11 @@ export default function PhpMyAdminCard( { disabled } ) {
 					'Managing a database can be tricky and it’s not necessary for your site to function.'
 				) }
 			</p>
-			<Button onClick={ openPmaLink } busy={ ! disabled && loading } disabled={ disabled }>
+			<Button
+				onClick={ () => openPhpMyAdmin( siteId ) }
+				busy={ ! disabled && loading }
+				disabled={ disabled }
+			>
 				<span>{ translate( 'Open phpMyAdmin' ) }</span>
 				<MaterialIcon icon="launch" size={ 16 } />
 			</Button>

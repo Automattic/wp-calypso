@@ -6,14 +6,14 @@ const useBlockRendererSettings = (
 	siteId: number | string,
 	stylesheet: string,
 	useInlineStyles = false,
-	queryOptions: UseQueryOptions< unknown, unknown, BlockRendererSettings > = {}
+	queryOptions: Omit< UseQueryOptions< unknown, Error, BlockRendererSettings >, 'queryKey' > = {}
 ): UseQueryResult< BlockRendererSettings > => {
 	const params = new URLSearchParams( {
 		stylesheet,
 		use_inline_styles: useInlineStyles.toString(),
 	} );
 
-	return useQuery< any, unknown, BlockRendererSettings >( {
+	return useQuery< any, Error, BlockRendererSettings >( {
 		queryKey: [ siteId, 'block-renderer', stylesheet, useInlineStyles ],
 		queryFn: () =>
 			wpcomRequest( {

@@ -1,13 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { useSelector } from 'calypso/state';
 import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
+import { PRODUCT_FILTER_ALL } from '../constants';
 import IssueLicenseContext from '../context';
 import useSubmitForm from '../hooks/use-submit-form';
 import useProductAndPlans from './hooks/use-product-and-plans';
+import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
 import type { AssignLicenceProps } from '../../types';
 import type {
@@ -26,18 +27,22 @@ export default function LicensesForm( {
 
 	const { selectedLicenses, setSelectedLicenses } = useContext( IssueLicenseContext );
 
+	const [ selectedProductFilter, setSelectedProductFilter ] = useState< string | null >(
+		PRODUCT_FILTER_ALL
+	);
+
 	const {
-		allProductsAndBundles,
+		filteredProductsAndBundles,
 		isLoadingProducts,
-		bundles,
+		plans,
 		backupAddons,
 		products,
 		wooExtensions,
 		suggestedProductSlugs,
-	} = useProductAndPlans( { selectedSite } );
+	} = useProductAndPlans( { selectedSite, selectedProductFilter } );
 
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
-		getDisabledProductSlugs( state, allProductsAndBundles ?? [] )
+		getDisabledProductSlugs( state, filteredProductsAndBundles ?? [] )
 	);
 
 	const handleSelectBundleLicense = useCallback(
@@ -69,19 +74,19 @@ export default function LicensesForm( {
 
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
-	const onSelectBundle = useCallback(
-		( product: APIProductFamilyProduct ) => {
-			handleSelectBundleLicense( product );
-		},
-		[ handleSelectBundleLicense ]
-	);
-
 	const isSelected = useCallback(
 		( slug: string ) =>
 			selectedLicenses.some(
 				( license ) => license.slug === slug && license.quantity === quantity
 			),
 		[ quantity, selectedLicenses ]
+	);
+
+	const onProductFilterSelect = useCallback(
+		( value: string | null ) => {
+			setSelectedProductFilter( value );
+		},
+		[ setSelectedProductFilter ]
 	);
 
 	const isSingleLicenseView = quantity === 1;
@@ -98,27 +103,38 @@ export default function LicensesForm( {
 		<div className="licenses-form">
 			<QueryProductsList type="jetpack" currency="USD" />
 
-			{ bundles && (
+			<div className="licenses-form__actions">
+				<ProductFilterSelect
+					selectedProductFilter={ selectedProductFilter }
+					onProductFilterSelect={ onProductFilterSelect }
+					isSingleLicense={ isSingleLicenseView }
+				/>
+			</div>
+
+			{ plans.length > 0 && (
 				<LicensesFormSection
 					title={ translate( 'Plans' ) }
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) }
 				>
-					{ bundles.map( ( productOption, i ) => (
-						<LicenseBundleCard
+					{ plans.map( ( productOption, i ) => (
+						<LicenseProductCard
+							isMultiSelect
 							key={ productOption.slug }
 							product={ productOption }
-							isBusy={ ! isReady }
+							onSelectProduct={ onSelectProduct }
+							isSelected={ isSelected( productOption.slug ) }
 							isDisabled={ ! isReady }
-							onSelectProduct={ onSelectBundle }
-							tabIndex={ 100 + ( products?.length || 0 ) + i }
+							tabIndex={ 100 + i }
+							hideDiscount={ isSingleLicenseView }
+							withBackground
 						/>
 					) ) }
 				</LicensesFormSection>
 			) }
 
-			{ products && (
+			{ products.length > 0 && (
 				<LicensesFormSection
 					title={ translate( 'Products' ) }
 					description={ translate(
@@ -135,6 +151,7 @@ export default function LicensesForm( {
 							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 							tabIndex={ 100 + i }
 							suggestedProduct={ suggestedProduct }
+							hideDiscount={ isSingleLicenseView }
 						/>
 					) ) }
 				</LicensesFormSection>

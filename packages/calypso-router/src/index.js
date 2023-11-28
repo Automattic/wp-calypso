@@ -421,7 +421,6 @@ function Page() {
 	this.len = 0;
 
 	// private things
-	this._decodeURLComponents = true;
 	this._base = '';
 	this._strict = false;
 	this._running = false;
@@ -441,7 +440,6 @@ Page.prototype.configure = function ( options ) {
 	const opts = options || {};
 
 	this._window = opts.window || ( hasWindow && window );
-	this._decodeURLComponents = opts.decodeURLComponents !== false;
 	this._popstate = opts.popstate !== false && hasWindow;
 	this._click = opts.click !== false && hasDocument;
 	this._hashbang = !! opts.hashbang;
@@ -532,7 +530,7 @@ Page.prototype.start = function ( options ) {
 		const window = this._window;
 		const loc = window.location;
 
-		if ( this._hashbang && ~loc.hash.indexOf( '#!' ) ) {
+		if ( this._hashbang && loc.hash.indexOf( '#!' ) !== -1 ) {
 			url = loc.hash.substr( 2 ) + loc.search;
 		} else if ( this._hashbang ) {
 			url = loc.search + loc.hash;
@@ -923,19 +921,6 @@ Page.prototype._samePath = function ( url ) {
 };
 
 /**
- * Remove URL encoding from the given `str`.
- * Accommodates whitespace in both x-www-form-urlencoded
- * and regular percent-encoded form.
- * @param {string} val URL component to decode
- */
-Page.prototype._decodeURLEncodedURIComponent = function ( val ) {
-	if ( typeof val !== 'string' ) {
-		return val;
-	}
-	return this._decodeURLComponents ? decodeURIComponent( val.replace( /\+/g, ' ' ) ) : val;
-};
-
-/**
  * Create a new `page` instance and function
  */
 function createPage() {
@@ -1088,19 +1073,19 @@ function Context( path, state, pageInstance ) {
 	this.title = hasDocument && window.document.title;
 	this.state = state || {};
 	this.state.path = path;
-	this.querystring = ~i ? this.page._decodeURLEncodedURIComponent( path.slice( i + 1 ) ) : '';
-	this.pathname = this.page._decodeURLEncodedURIComponent( ~i ? path.slice( 0, i ) : path );
+	this.querystring = i !== -1 ? path.slice( i + 1 ) : '';
+	this.pathname = i !== -1 ? path.slice( 0, i ) : path;
 	this.params = {};
 
 	// fragment
 	this.hash = '';
 	if ( ! hashbang ) {
-		if ( ! ~this.path.indexOf( '#' ) ) {
+		if ( this.path.indexOf( '#' ) === -1 ) {
 			return;
 		}
 		const parts = this.path.split( '#' );
 		this.path = this.pathname = parts[ 0 ];
-		this.hash = this.page._decodeURLEncodedURIComponent( parts[ 1 ] ) || '';
+		this.hash = parts[ 1 ] || '';
 		this.querystring = this.querystring.split( '#' )[ 0 ];
 	}
 }
@@ -1176,7 +1161,7 @@ Route.prototype.middleware = function ( fn ) {
 Route.prototype.match = function ( path, params ) {
 	const keys = this.keys;
 	const qsIndex = path.indexOf( '?' );
-	const pathname = ~qsIndex ? path.slice( 0, qsIndex ) : path;
+	const pathname = qsIndex !== -1 ? path.slice( 0, qsIndex ) : path;
 	const m = this.regexp.exec( decodeURIComponent( pathname ) );
 
 	if ( ! m ) {
@@ -1185,7 +1170,7 @@ Route.prototype.match = function ( path, params ) {
 
 	for ( let i = 1, len = m.length; i < len; ++i ) {
 		const key = keys[ i - 1 ];
-		const val = this.page._decodeURLEncodedURIComponent( m[ i ] );
+		const val = m[ i ];
 		if ( val !== undefined || ! hasOwnProperty.call( params, key.name ) ) {
 			params[ key.name ] = val;
 		}
