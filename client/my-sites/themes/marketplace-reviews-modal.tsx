@@ -19,7 +19,7 @@ type Props = {
 	themeName: string;
 };
 
-export const AddReviewsModal = ( { isVisible, buttons, onClose, themeSlug, themeName }: Props ) => {
+export const ReviewsModal = ( { isVisible, buttons, onClose, themeSlug, themeName }: Props ) => {
 	const [ content, setContent ] = useState< string >( '' );
 	const [ rating, setRating ] = useState< string >( '5' );
 

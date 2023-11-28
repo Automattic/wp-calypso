@@ -95,7 +95,7 @@ import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
-import { AddReviewsModal } from '../themes/marketplace-reviews-modal';
+import { ReviewsModal } from '../themes/marketplace-reviews-modal';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
@@ -638,7 +638,7 @@ class ThemeSheet extends Component {
 
 		return (
 			<>
-				<AddReviewsModal
+				<ReviewsModal
 					isVisible={ this.state.showReviewModal }
 					onClose={ this.handleCloseReviewModal }
 					themeName={ name }
