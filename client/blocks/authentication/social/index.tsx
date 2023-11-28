@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -81,12 +82,16 @@ const SocialAuthenticationForm = ( {
 		// are many places in which the social signup form is rendered based only on the presence of the
 		// `signup/social` config flag.
 		! config.isEnabled( 'desktop' ) && (
-			<div
-				className={ classNames( 'card', 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
+			<Card
+				className={ classNames( 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
 					'is-social-first': isSocialFirst,
 				} ) }
 			>
-				{ ! compact && <p>{ preventWidows( translate( 'Or create an account using:' ) ) }</p> }
+				{ ! compact && (
+					<p className="auth-form__social-text">
+						{ preventWidows( translate( 'Or create an account using:' ) ) }
+					</p>
+				) }
 
 				<div className="auth-form__social-buttons">
 					<GoogleSocialButton
@@ -123,7 +128,7 @@ const SocialAuthenticationForm = ( {
 					{ ! isWoo && ! disableTosText && <SocialToS /> }
 				</div>
 				{ isWoo && ! disableTosText && <SocialToS /> }
-			</div>
+			</Card>
 		)
 	);
 };
