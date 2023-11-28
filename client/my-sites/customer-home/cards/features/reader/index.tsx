@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import iconReaderLightbulb from 'calypso/assets/images/customer-home/reader-lightbulb.svg';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
@@ -8,6 +9,8 @@ import { trackScrollPage } from 'calypso/reader/controller-helper';
 import DiscoverNavigation from 'calypso/reader/discover/discover-navigation';
 import { DEFAULT_TAB, buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import Stream from 'calypso/reader/stream';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 import './style.scss';
 
@@ -40,6 +43,11 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 	const selectedTab = queryParams.get( 'selectedTab' ) || DEFAULT_TAB;
 
 	const streamKey = buildDiscoverStreamKey( selectedTab, [ 'dailyprompt' ] );
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_viewed' ) );
+	}, [ dispatch ] );
 
 	return (
 		<>
