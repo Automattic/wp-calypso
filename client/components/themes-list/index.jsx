@@ -325,7 +325,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 					destination: 'upload-theme',
 				} ),
 			url: isAtomic
-				? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
+				? `${ selectedSite.options.admin_url }theme-install.php`
 				: `/themes/upload/${ selectedSite.slug }`,
 			buttonText: translate( 'Upload theme' ),
 		} );
