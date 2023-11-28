@@ -232,7 +232,7 @@ export const WpcomCommandPalette = () => {
 							<PaletteBreadCrumb>
 								<StyledCommandsTitle>Commands / </StyledCommandsTitle>
 								<div>
-									{ '\u00A0' }
+									&nbsp;
 									{ commandNameDisplayLabel[ selectedCommandName ] || selectedCommandName }
 								</div>
 							</PaletteBreadCrumb>
