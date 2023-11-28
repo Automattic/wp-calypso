@@ -424,6 +424,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addSubscribers',
 			label: __( 'Add subscribers' ),
+			searchLabel: __( 'Import subscribers' ),
 			context: [ '/subscribers' ],
 			callback: setStateCallback( 'addSubscribers' ),
 			siteFunctions: {
