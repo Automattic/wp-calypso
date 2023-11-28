@@ -53,9 +53,9 @@ function TierUpgradeSlider( { className }: TierUpgradeSliderProps ) {
 					<h2>{ translatedStrings.limits }</h2>
 					<p>{ plans[ currentPlanIndex ].views }</p>
 				</div>
-				<div className="stats-tier-upgrade-slider__plan-callout">
+				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
 					<h2>{ translatedStrings.price }</h2>
-					<p className="right-aligned">{ plans[ currentPlanIndex ].price }</p>
+					<p>{ plans[ currentPlanIndex ].price }</p>
 				</div>
 			</div>
 			<PricingSlider
