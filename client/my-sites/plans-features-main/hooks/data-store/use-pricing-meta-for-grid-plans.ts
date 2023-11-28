@@ -7,7 +7,6 @@ import {
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
-import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { PlanPrices } from 'calypso/state/plans/types';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -61,7 +60,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		getCurrentPlan( state, selectedSiteId )
 	);
 	const currentSitePlanSlug = currentPlan?.productSlug;
-	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
+	// pricedAPIPlans - should have a definition for all plans, being the main source of API data
+	const pricedAPIPlans = Plans.usePlans();
+	// pricedAPISitePlans - unclear if all plans are included
 	const pricedAPISitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
 	const selectedStorageOptions = useSelect( ( select ) => {
@@ -195,29 +196,22 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	 * - For now a simple loader is shown until these are resolved
 	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
 	 */
-	if ( pricedAPISitePlans.isFetching || ! pricedAPIPlans ) {
+	if ( pricedAPISitePlans.isFetching || pricedAPIPlans.isFetching ) {
 		return null;
 	}
 
 	return planSlugs.reduce(
-		( acc, planSlug ) => {
-			// pricedAPIPlans - should have a definition for all plans, being the main source of API data
-			const pricedAPIPlan = pricedAPIPlans[ planSlug ];
-			// pricedAPISitePlans - unclear if all plans are included
-			const pricedAPISitePlan = pricedAPISitePlans.data?.[ planSlug ];
-
-			return {
-				...acc,
-				[ planSlug ]: {
-					originalPrice: planPrices[ planSlug ]?.originalPrice,
-					discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-					billingPeriod: pricedAPIPlan?.bill_period,
-					currencyCode: pricedAPIPlan?.currency_code,
-					introOffer: introOffers?.[ planSlug ],
-					expiry: pricedAPISitePlan?.expiry,
-				},
-			};
-		},
+		( acc, planSlug ) => ( {
+			...acc,
+			[ planSlug ]: {
+				originalPrice: planPrices[ planSlug ]?.originalPrice,
+				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
+				billingPeriod: pricedAPIPlans.data?.[ planSlug ]?.billPeriod,
+				currencyCode: pricedAPIPlans.data?.[ planSlug ]?.currencyCode,
+				expiry: pricedAPISitePlans.data?.[ planSlug ]?.expiry,
+				introOffer: introOffers?.[ planSlug ],
+			},
+		} ),
 		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
 	);
 };
