@@ -19,8 +19,8 @@ import './internals/sensei.scss';
 
 function getStartUrl( step: string, locale: string ) {
 	return locale && locale !== 'en'
-		? `/start/account/user/${ locale }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`
-		: `/start/account/user?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`;
+		? `/start/sensei/sensei-user/${ locale }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`
+		: `/start/sensei/sensei-user?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`;
 }
 
 const sensei: Flow = {
