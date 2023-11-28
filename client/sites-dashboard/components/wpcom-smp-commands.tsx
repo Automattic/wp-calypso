@@ -393,8 +393,8 @@ export const useCommandsArrayWpcom = ( {
 			icon: addNewSiteIcon,
 		},
 		{
-			name: 'manageSites',
-			label: __( 'Manage sites' ),
+			name: 'viewMySites',
+			label: __( 'View my sites' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigate( `/sites` );
