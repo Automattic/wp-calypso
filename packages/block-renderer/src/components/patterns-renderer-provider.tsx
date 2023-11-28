@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import useRenderedPatterns from '../hooks/use-rendered-patterns';
 import PatternsRendererContext from './patterns-renderer-context';
 import type { SiteInfo } from '../types';
@@ -27,8 +27,16 @@ const PatternsRendererProvider = ( {
 		siteInfo
 	);
 
+	const contextValue = useMemo(
+		() => ( {
+			renderedPatterns,
+			shouldShufflePosts,
+		} ),
+		[ renderedPatterns, shouldShufflePosts ]
+	);
+
 	return (
-		<PatternsRendererContext.Provider value={ { renderedPatterns, shouldShufflePosts } }>
+		<PatternsRendererContext.Provider value={ contextValue }>
 			{ children }
 		</PatternsRendererContext.Provider>
 	);
