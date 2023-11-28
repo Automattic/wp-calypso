@@ -40,21 +40,17 @@ export const LivePreviewUpgradeNotice: FC< {
 		}
 
 		if ( canPreviewButNeedUpgrade ) {
-			const noticeTextUpgrade = sprintf(
+			const noticeText = sprintf(
 				// translators: %1$s: The previewing theme name, %2$s: The theme type ('Woo Commerce' or 'Premium'), %3$s: The required plan name ('Business' or 'Premium')
 				__(
-					'You are previewing %1$s, a %2$s theme. To unlock this theme upgrade to the %3$s plan.',
+					'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
 					'wpcom-live-preview'
 				),
 				previewingTheme.name,
 				previewingTheme.typeDisplay,
 				previewingTheme.requiredPlan
 			);
-			const noticeTextCustomize = __(
-				'You can try out your own style customizations, which will only be saved if you activate this theme.',
-				'wpcom-live-preview'
-			);
-			createWarningNotice( noticeTextUpgrade + '<br/>' + noticeTextCustomize, {
+			createWarningNotice( noticeText, {
 				id: UPGRADE_NOTICE_ID,
 				isDismissible: false,
 				__unstableHTML: true,
