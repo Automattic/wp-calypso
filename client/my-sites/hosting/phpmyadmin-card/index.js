@@ -29,12 +29,12 @@ const trackOpenPhpmyadmin = () =>
 		bumpStat( 'hosting-config', 'open-phpmyadmin' )
 	);
 
-export function useOpenPmaLink() {
+export function useOpenPhpMyAdmin() {
 	const [ loading, setLoading ] = useState( false );
 	const dispatch = useDispatch();
 
-	const openPmaLink = useCallback(
-		async function openPmaLink( siteId ) {
+	const openPhpMyAdmin = useCallback(
+		async function openPhpMyAdmin( siteId ) {
 			setLoading( true );
 			try {
 				const { token } = await wpcom.req.post( {
@@ -55,7 +55,7 @@ export function useOpenPmaLink() {
 	);
 
 	return {
-		openPmaLink,
+		openPhpMyAdmin,
 		loading,
 	};
 }
@@ -63,7 +63,7 @@ export function useOpenPmaLink() {
 export default function PhpMyAdminCard( { disabled } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
-	const { openPmaLink, loading } = useOpenPmaLink();
+	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
 
 	return (
 		<Card className="phpmyadmin-card">
@@ -92,7 +92,7 @@ export default function PhpMyAdminCard( { disabled } ) {
 				) }
 			</p>
 			<Button
-				onClick={ () => openPmaLink( siteId ) }
+				onClick={ () => openPhpMyAdmin( siteId ) }
 				busy={ ! disabled && loading }
 				disabled={ disabled }
 			>
