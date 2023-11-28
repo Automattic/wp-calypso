@@ -233,7 +233,7 @@ class Plans extends Component {
 	handleSpecialOfferClick = async ( cartItems ) => {
 		try {
 			this.setState( { specialOfferBannerBusy: true } );
-			await this.props.shoppingCartManager.addProductsToCart( cartItems );
+			await this.props.shoppingCartManager.replaceProductsInCart( cartItems );
 			page( `/checkout/${ this.props.selectedSite.slug }` );
 		} catch {
 			// Only shop spinning on errors, that way the banner will stay busy while we redirect.
