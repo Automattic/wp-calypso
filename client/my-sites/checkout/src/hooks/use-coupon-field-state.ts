@@ -35,25 +35,17 @@ export default function useCouponFieldState(
 	const handleCouponSubmit = useCallback( () => {
 		const trimmedValue = couponFieldValue.trim();
 
-		if ( isCouponValid( trimmedValue ) ) {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_coupon_add_submit', {
-					coupon: trimmedValue,
-				} )
-			);
-
-			applyCoupon( trimmedValue ).catch( () => {
-				// Nothing needs to be done here. CartMessages will display the error to the user.
-			} );
-
-			return;
-		}
-
 		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_composite_coupon_add_error', {
-				error_type: 'Invalid code',
+			recordTracksEvent( 'calypso_checkout_composite_coupon_add_submit', {
+				coupon: trimmedValue,
 			} )
 		);
+
+		applyCoupon( trimmedValue ).catch( () => {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+		} );
+
+		return;
 	}, [ couponFieldValue, reduxDispatch, applyCoupon ] );
 
 	return {
@@ -64,11 +56,4 @@ export default function useCouponFieldState(
 		setIsFreshOrEdited,
 		handleCouponSubmit,
 	};
-}
-
-function isCouponValid( coupon: string ) {
-	// Coupon code is case-insensitive and starts with an alphanumeric.
-	// Underscores and hyphens can be included in the coupon code.
-	// Per-user coupons can have a dot followed by 5-6 letter checksum for verification.
-	return coupon.match( /^[a-z\d][a-z\d_-]+(\.[a-z\d]+)?$/i );
 }
