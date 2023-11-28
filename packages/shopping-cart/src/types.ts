@@ -552,11 +552,10 @@ export interface ResponseCartProductVariant {
 
 export interface ResponseCartCostOverride {
 	human_readable_reason: string;
-	new_price: number;
-	old_price: number;
+	new_subtotal_integer: number;
+	old_subtotal_integer: number;
 	override_code: string;
 	does_override_original_cost: boolean;
-	reason: string;
 }
 
 export interface IntroductoryOfferTerms {
