@@ -46,8 +46,6 @@ const ThemeTypeBadge = ( {
 		} );
 	}, [ type, themeId, isLockedStyleVariation ] );
 
-	const themeSoftware = themeSoftwareSet[ 0 ];
-
 	const badgeContentProps = {
 		className: 'theme-type-badge__content',
 		tooltipClassName: 'theme-type-badge-tooltip',
@@ -67,6 +65,8 @@ const ThemeTypeBadge = ( {
 
 	let badgeContent;
 	if ( type === BUNDLED_THEME ) {
+		const themeSoftware = themeSoftwareSet[ 0 ];
+
 		if ( bundleSettings[ themeSoftware ] ) {
 			const settings = bundleSettings[ themeSoftware ];
 			const BadgeIcon = settings.badgeIconComponent;
