@@ -46,7 +46,7 @@ const ReaderCard = ( props: ReaderCardProps ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_view' ) );
+		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_viewed' ) );
 	}, [] );
 
 	return (
