@@ -230,7 +230,7 @@ export const WpcomCommandPalette = () => {
 					<div>
 						{ selectedCommandName && (
 							<PaletteBreadCrumb>
-								<StyledCommandsTitle>Commands / </StyledCommandsTitle>
+								<StyledCommandsTitle>{ __( 'Commands /' ) }</StyledCommandsTitle>
 								<div>
 									&nbsp;
 									{ commandNameDisplayLabel[ selectedCommandName ] || selectedCommandName }
