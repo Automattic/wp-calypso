@@ -1,9 +1,10 @@
 import { translate } from 'i18n-calypso';
+import type { FC } from 'react';
 
 interface BundleSettings {
 	[ key: string ]: {
 		name: string;
-		BadgeIcon: React.ComponentType;
+		badgeIconComponent: FC;
 		badgeColor: string;
 		designPickerBadgeTooltip: string;
 		bannerUpsellDescription: string;
@@ -13,7 +14,7 @@ interface BundleSettings {
 const bundleSettings: BundleSettings = {
 	'woo-on-plans': {
 		name: 'WooCommerce',
-		BadgeIcon: () => (
+		badgeIconComponent: () => (
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 				<path
 					fill="currentColor"
