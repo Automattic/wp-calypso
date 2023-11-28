@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormSelect, { FormSelectProps } from 'calypso/components/forms/form-select';
+import FormSelect from 'calypso/components/forms/form-select';
 import type { AkismetProQuantityDropDownProps } from './types';
+import type { FormSelectProps } from 'calypso/components/forms/form-select';
+import type { FunctionComponent } from 'react';
 
 const AkismetSitesSelectHeading = styled.div`
 	font-size: 1.1em;
