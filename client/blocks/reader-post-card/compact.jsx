@@ -24,7 +24,7 @@ const CompactPost = ( {
 			: null;
 
 	const isSmallScreen = useBreakpoint( '<660px' );
-	const [ hasExcerpt, setHasExcerpt ] = useState( false );
+	const [ hasExcerpt, setHasExcerpt ] = useState( true );
 	const imagePostWithoutExcerpt = post.canonical_media && ! hasExcerpt;
 
 	return (

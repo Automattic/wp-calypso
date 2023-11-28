@@ -121,7 +121,7 @@ const ReaderExcerpt = ( { post, setHasExcerpt } ) => {
 	const excerpt = chooseExcerpt( post );
 
 	useEffect( () => {
-		setHasExcerpt( !! excerpt );
+		setHasExcerpt?.( excerpt !== '' && excerpt !== null );
 	}, [ excerpt ] );
 
 	return (
