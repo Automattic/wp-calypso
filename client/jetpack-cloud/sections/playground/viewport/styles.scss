@@ -1,0 +1,10 @@
+.jetpack-manage-playground-viewport {
+	border-radius: 4px;
+	overflow: hidden;
+	border: 1px solid #e2e4e7;
+
+	&__iframe {
+		width: 100%;
+		height: calc(100vh - 68px);
+	}
+}

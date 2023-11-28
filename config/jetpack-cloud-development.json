@@ -86,6 +86,7 @@
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-golden-token": true,
+		"jetpack-cloud-playground": true,
 		"jetpack-search": true,
 		"jetpack-social": true,
 		"scan": true,

@@ -10089,6 +10089,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wp-playground/client@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "@wp-playground/client@npm:0.3.1"
+  checksum: e8ef1d97b95cc73a65dfe9046f89da66d089d469257ca377e4bfb8f6fc6cc65ee70a6cc1ec41c6c062dafa579efba96d84c9b0ca44c08c42a46aaae8f537edf4
+  languageName: node
+  linkType: hard
+
 "@xtuc/ieee754@npm:^1.2.0":
   version: 1.2.0
   resolution: "@xtuc/ieee754@npm:1.2.0"
@@ -32296,6 +32303,7 @@ __metadata:
     "@wordpress/primitives": "npm:^3.42.0"
     "@wordpress/stylelint-config": "npm:^21.27.0"
     "@wordpress/url": "npm:^3.45.0"
+    "@wp-playground/client": "npm:^0.3.1"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.16.0"
     bunyan: "npm:^1.8.15"

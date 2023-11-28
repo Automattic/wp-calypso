@@ -1,0 +1,10 @@
+.jetpack-manage-playground {
+	display: flex;
+	flex-direction: column;
+
+	&__iframe-wrapper {
+		border-radius: 4px;
+		overflow: hidden;
+		border: 1px solid #e2e4e7;
+	}
+}

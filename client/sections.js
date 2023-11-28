@@ -584,6 +584,13 @@ const sections = [
 		],
 	},
 	{
+		name: 'jetpack-cloud-playground',
+		paths: [ '/playground' ],
+		module: 'calypso/jetpack-cloud/sections/playground',
+		group: 'jetpack-cloud',
+		enableLoggedOut: false,
+	},
+	{
 		name: 'jetpack-cloud-features-comparison',
 		paths: [ '/features/comparison', '/[^\\/]+/features/comparison' ],
 		module: 'calypso/jetpack-cloud/sections/comparison',
