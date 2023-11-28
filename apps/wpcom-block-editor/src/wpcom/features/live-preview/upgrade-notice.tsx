@@ -15,10 +15,9 @@ const UPGRADE_NOTICE_ID = 'wpcom-live-preview/notice/upgrade';
 const unlock = getUnlock();
 
 export const LivePreviewUpgradeNotice: FC< {
-	canPreviewButNeedUpgrade: boolean;
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
 	upgradePlan: () => void;
-} > = ( { canPreviewButNeedUpgrade, previewingTheme, upgradePlan } ) => {
+} > = ( { previewingTheme, upgradePlan } ) => {
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 
@@ -39,42 +38,39 @@ export const LivePreviewUpgradeNotice: FC< {
 			return;
 		}
 
-		if ( canPreviewButNeedUpgrade ) {
-			const noticeText = sprintf(
-				// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium'), %3$s: The required plan name ('Business' or 'Premium')
-				__(
-					'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
-					'wpcom-live-preview'
-				),
-				previewingTheme.name,
-				previewingTheme.typeDisplay,
-				previewingTheme.requiredPlan
-			);
-			createWarningNotice( noticeText, {
-				id: UPGRADE_NOTICE_ID,
-				isDismissible: false,
-				__unstableHTML: true,
-				actions: [
-					{
-						label: __( 'Upgrade now', 'wpcom-live-preview' ),
-						onClick: upgradePlan,
-						variant: 'primary',
-					},
-					...( dashboardLink
-						? [
-								{
-									label: __( 'Back to themes', 'wpcom-live-preview' ),
-									url: dashboardLink,
-									variant: 'secondary',
-								},
-						  ]
-						: [] ),
-				],
-			} );
-		}
+		const noticeText = sprintf(
+			// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium'), %3$s: The required plan name ('Business' or 'Premium')
+			__(
+				'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
+				'wpcom-live-preview'
+			),
+			previewingTheme.name,
+			previewingTheme.typeDisplay,
+			previewingTheme.requiredPlan
+		);
+		createWarningNotice( noticeText, {
+			id: UPGRADE_NOTICE_ID,
+			isDismissible: false,
+			__unstableHTML: true,
+			actions: [
+				{
+					label: __( 'Upgrade now', 'wpcom-live-preview' ),
+					onClick: upgradePlan,
+					variant: 'primary',
+				},
+				...( dashboardLink
+					? [
+							{
+								label: __( 'Back to themes', 'wpcom-live-preview' ),
+								url: dashboardLink,
+								variant: 'secondary',
+							},
+					  ]
+					: [] ),
+			],
+		} );
 		return () => removeNotice( UPGRADE_NOTICE_ID );
 	}, [
-		canPreviewButNeedUpgrade,
 		createWarningNotice,
 		removeNotice,
 		siteEditorStore,

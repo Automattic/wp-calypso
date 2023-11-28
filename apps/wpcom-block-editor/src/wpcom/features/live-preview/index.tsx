@@ -18,9 +18,8 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  * @see https://github.com/Automattic/wp-calypso/issues/82218
  */
 const LivePreviewNotice: FC< {
-	canPreviewButNeedUpgrade: boolean;
 	previewingThemeName: string;
-} > = ( { canPreviewButNeedUpgrade, previewingThemeName } ) => {
+} > = ( { previewingThemeName } ) => {
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
@@ -36,10 +35,6 @@ const LivePreviewNotice: FC< {
 		}
 		if ( ! isPreviewingTheme() ) {
 			removeNotice( NOTICE_ID );
-			return;
-		}
-		// Avoid showing the redundant notice.
-		if ( canPreviewButNeedUpgrade ) {
 			return;
 		}
 		createWarningNotice(
@@ -64,14 +59,7 @@ const LivePreviewNotice: FC< {
 			}
 		);
 		return () => removeNotice( NOTICE_ID );
-	}, [
-		siteEditorStore,
-		dashboardLink,
-		createWarningNotice,
-		removeNotice,
-		previewingThemeName,
-		canPreviewButNeedUpgrade,
-	] );
+	}, [ siteEditorStore, dashboardLink, createWarningNotice, removeNotice, previewingThemeName ] );
 	return null;
 };
 
@@ -80,14 +68,10 @@ const LivePreviewNoticePlugin = () => {
 	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( {
 		previewingTheme,
 	} );
-	return (
-		<>
-			<LivePreviewNotice
-				{ ...{ canPreviewButNeedUpgrade, previewingThemeName: previewingTheme.name } }
-			/>
-			<LivePreviewUpgradeNotice { ...{ canPreviewButNeedUpgrade, previewingTheme, upgradePlan } } />
-		</>
-	);
+	if ( canPreviewButNeedUpgrade ) {
+		return <LivePreviewUpgradeNotice { ...{ previewingTheme, upgradePlan } } />;
+	}
+	return <LivePreviewNotice { ...{ previewingThemeName: previewingTheme.name } } />;
 };
 
 const registerLivePreviewPlugin = () => {
