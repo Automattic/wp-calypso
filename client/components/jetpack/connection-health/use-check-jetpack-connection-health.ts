@@ -34,19 +34,21 @@ export const useCheckJetpackConnectionHealth = ( siteId: number ) => {
 		staleTime: 10 * 1000,
 	} );
 
-	const data = query.data;
+	const { data, isSuccess } = query;
+	const isHealthy = data?.is_healthy;
+	const error = data?.error;
 
 	useEffect( () => {
-		if ( ! data ) {
+		if ( ! isSuccess ) {
 			return;
 		}
-		if ( data.is_healthy && reduxIsUnhealthy ) {
+		if ( isHealthy && reduxIsUnhealthy ) {
 			dispatch( setJetpackConnectionHealthy( siteId ) );
 		}
-		if ( ! data.is_healthy && ! reduxIsUnhealthy ) {
-			dispatch( setJetpackConnectionUnhealthy( siteId, data.error ?? '' ) );
+		if ( ! isHealthy && ! reduxIsUnhealthy ) {
+			dispatch( setJetpackConnectionUnhealthy( siteId, error ?? '' ) );
 		}
-	}, [ dispatch, reduxIsUnhealthy, data, siteId ] );
+	}, [ dispatch, reduxIsUnhealthy, isSuccess, isHealthy, error, siteId ] );
 
 	return query;
 };
