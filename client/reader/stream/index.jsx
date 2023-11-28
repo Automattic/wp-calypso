@@ -420,18 +420,22 @@ class ReaderStream extends Component {
 	};
 
 	renderAppPromo = ( index ) => {
+		const { isDiscoverStream } = this.props;
 		// Only show it once in the 4th position.
 		if ( index !== 3 ) {
 			return;
 		}
+
 		return (
-			<AppPromo
-				iconSize={ 40 }
-				campaign="reader-stream"
-				title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
-				hasQRCode={ true }
-				hasGetAppButton={ false }
-			/>
+			isDiscoverStream && (
+				<AppPromo
+					iconSize={ 40 }
+					campaign="reader-stream"
+					title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
+					hasQRCode={ true }
+					hasGetAppButton={ false }
+				/>
+			)
 		);
 	};
 
