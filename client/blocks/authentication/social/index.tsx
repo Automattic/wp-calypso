@@ -47,15 +47,12 @@ const SocialAuthenticationForm = ( {
 }: SocialAuthenticationFormProps ) => {
 	const translate = useTranslate();
 
-	const { currentRoute, oauth2Client, isWoo } = useSelector( ( state: IAppState ) => {
-		return {
-			currentRoute: getCurrentRoute( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
-			isWoo:
-				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-				isWooCommerceCoreProfilerFlow( state ),
-		};
-	} );
+	const currentRoute = useSelector( getCurrentRoute );
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWoo = useSelector(
+		( state: IAppState ) =>
+			isWooOAuth2Client( oauth2Client ) || isWooCommerceCoreProfilerFlow( state )
+	);
 
 	const shouldUseRedirectFlow = () => {
 		// If calypso is loaded in a popup, we don't want to open a second popup for social signup or login

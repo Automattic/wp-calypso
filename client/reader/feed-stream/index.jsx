@@ -27,24 +27,21 @@ const emptyContent = () => <EmptyContent />;
 const FeedStream = ( props ) => {
 	const { className = 'is-site-stream', feedId, showBack = true } = props;
 	const translate = useTranslate();
+	const feed = useSelector( ( state ) => getFeed( state, feedId ) );
+	const siteId = getReaderSiteId( feed );
+	const followForFeed = useSelector( ( state ) =>
+		getReaderFollowForFeed( state, parseInt( feedId ) )
+	);
+	const isBlocked = useSelector( ( state ) => siteId && isSiteBlocked( state, siteId ) );
+	const postCount = useSelector(
+		( state ) => siteId && getAllPostCount( state, siteId, 'post', 'publish' )
+	);
+	const site = useSelector( ( state ) => siteId && getSite( state, siteId ) );
 
-	const { feed, isBlocked, postCount, site, siteId } = useSelector( ( state ) => {
-		const _feed = getFeed( state, feedId );
-		const _siteId = getReaderSiteId( _feed );
-
-		if ( _feed ) {
-			// Add site icon to feed object so have icon for external feeds
-			_feed.site_icon = getReaderFollowForFeed( state, parseInt( feedId ) )?.site_icon;
-		}
-
-		return {
-			feed: _feed,
-			isBlocked: _siteId && isSiteBlocked( state, _siteId ),
-			postCount: _siteId && getAllPostCount( state, _siteId, 'post', 'publish' ),
-			site: _siteId && getSite( state, _siteId ),
-			siteId: _siteId,
-		};
-	} );
+	if ( feed ) {
+		// Add site icon to feed object so have icon for external feeds
+		feed.site_icon = followForFeed?.site_icon;
+	}
 
 	const siteTags = useSiteTags( siteId );
 	const title = getSiteName( { feed, site } ) || translate( 'Loading Feed' );
