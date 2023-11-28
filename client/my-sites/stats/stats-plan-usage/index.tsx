@@ -1,5 +1,6 @@
 import { formattedNumber } from '@automattic/components';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
 
@@ -17,6 +18,8 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	usage = 0,
 	daysToReset = 30,
 } ) => {
+	const translate = useTranslate();
+
 	const upgradeLink = '#';
 	const progressClassNames = classNames( 'plan-usage-progress', {
 		'is-over-limit': usage >= limit,
@@ -24,17 +27,36 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 
 	return (
 		<div className="plan-usage">
-			<h3 className="plan-usage-heading">Your Stats plan usage</h3>
+			<h3 className="plan-usage-heading">{ translate( 'Your Stats plan usage' ) }</h3>
 			<div className={ progressClassNames }>
 				<div>
-					{ formattedNumber( usage ) } / { formattedNumber( limit ) } views this month
+					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views this month', {
+						args: {
+							numberOfUsage: formattedNumber( usage ),
+							numberOfLimit: formattedNumber( limit ),
+						},
+					} ) }
 				</div>
-				<div>Restarts in { daysToReset } days</div>
+				<div>
+					{ translate( 'Restarts in %(numberOfDays)d day', 'Restarts in %(numberOfDays)d days', {
+						count: daysToReset,
+						args: {
+							numberOfDays: daysToReset,
+						},
+					} ) }
+				</div>
 			</div>
 			<div className="plan-usage-note">
 				<span>
-					<b>You've surpassed your limit the past month.</b> Do you want to increase your monthly
-					views limit? <a href={ upgradeLink }>Upgrade now</a>
+					{ translate(
+						"{{bold}}You've surpassed your limit the past month.{{/bold}} Do you want to increase your monthly views limit? {{link}}Upgrade now{{/link}}",
+						{
+							components: {
+								bold: <b />,
+								link: <a href={ upgradeLink } />,
+							},
+						}
+					) }
 				</span>
 			</div>
 		</div>
