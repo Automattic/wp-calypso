@@ -430,7 +430,7 @@ class ReaderStream extends Component {
 			isDiscoverStream && (
 				<AppPromo
 					iconSize={ 40 }
-					campaign="reader-stream"
+					campaign="calypso-reader-stream"
 					title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
 					hasQRCode={ true }
 					hasGetAppButton={ false }
