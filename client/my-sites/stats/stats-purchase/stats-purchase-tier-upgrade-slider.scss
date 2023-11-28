@@ -18,6 +18,7 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 	--jp-white: #fff;
 	--jp-green-50: #008710;
 	--gray-gray-5: #dcdcde;
+	--studio-gray-40: #787c82;
 	margin-top: 42px;
 	background-color: $slider-bg-color;
 
@@ -69,7 +70,7 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 }
 
 .stats-tier-upgrade-slider__info-message {
-	color: var(--jp-green-50);
+	color: var(--studio-gray-40);
 	margin: 12px 0;
 	text-align: center;
 }
