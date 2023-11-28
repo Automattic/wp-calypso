@@ -1,10 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { ProductsList } from '@automattic/data-stores';
+import { Gridicon } from '@automattic/components';
+import { ProductsList, useLaunchpad } from '@automattic/data-stores';
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -14,7 +16,9 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -59,6 +63,19 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} else {
 			onAddDomain( null );
 		}
+	};
+
+	const flowName = useQuery().get( 'flowToReturnTo' );
+	const siteSlug = useSiteSlug();
+	const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
+
+	const returnUrl =
+		launchpadScreenOption === 'skipped'
+			? `/home/${ siteSlug }`
+			: `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
+
+	const onBack = () => {
+		return window.location.assign( returnUrl );
 	};
 
 	const onClickUseYourDomain = function () {
@@ -122,6 +139,12 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					isCartPendingUpdate={ isCartPendingUpdate }
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 				/>
+				<div>
+					<Button variant="tertiary" onClick={ onBack }>
+						<Gridicon icon="chevron-left" />
+						{ __( 'Back' ) }
+					</Button>
+				</div>
 			</CalypsoShoppingCartProvider>
 		);
 	};
