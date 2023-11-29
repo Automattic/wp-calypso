@@ -1,12 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Gridicon } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -61,10 +59,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} else {
 			onAddDomain( null );
 		}
-	};
-
-	const handleGoBack = async ( goBack: ( () => void ) | undefined ) => {
-		return goBack?.();
 	};
 
 	const onClickUseYourDomain = function () {
@@ -128,12 +122,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					isCartPendingUpdate={ isCartPendingUpdate }
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 				/>
-				<div>
-					<Button variant="tertiary" onClick={ () => handleGoBack( goBack ) }>
-						<Gridicon icon="chevron-left" />
-						{ __( 'Back' ) }
-					</Button>
-				</div>
 			</CalypsoShoppingCartProvider>
 		);
 	};
@@ -249,7 +237,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={ isVideoPressFlow || isBlogOnboardingFlow( flow ) }
+				shouldHideNavButtons={ isVideoPressFlow }
+				hideSkip={ isBlogOnboardingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
