@@ -4,7 +4,7 @@ The Command Palette is a React component used to display a text input used to se
 
 The command palette is inspired by [Core](https://github.com/WordPress/gutenberg/blob/trunk/packages/commands/README.md) implementation used in the Gutenberg editor. We use the same CSS and similar markup, the commands share the same basic props that we extended to support the following differences:
 
-- The Calypso version supports multisite commands with nested commands.
+- The Calypso version supports multisite commands with the sites as second step commands.
 - Users can go back to root commands with the `esc` and `backspace` keys, or the back button.
 - We change the search placeholder to inform the user about the current command.
 - Besides of icons, we also support images for the commands.
@@ -27,6 +27,13 @@ Every command has a set of properties that can be used to customize its behavior
 - `icon`?: Type `JSX.Element`, used to display an icon for the command. It's visible in the command palette.
 - `image`?: Type `JSX.Element`, used to display an image for the command, instead of an icon. It's visible in the command palette.
 - `siteFunctions`?: Type `object`, used for nested commands that need to execute a function when a site is selected in the command palette as a second step.
+
+## Best practices for defining a command
+
+- Command labels should be short and descriptive and use sentence case. For example, "Add new site" instead of "Add New Site".
+- Commands should start with a verb. For example, "Add new site" instead of "New site".
+- Most commands navigate to other pages. `Open` is the more generic verb, if the page has a list of elements, we can use `View`, if the user is expected to take an action we can use `Manage` or `Change`. We prefer specific verbs over generic ones.
+- We prefer to use [Gutenberg icons](https://wordpress.github.io/gutenberg/?path=/story/icons-icon--library) for root commands.
 
 ## Usage
 
