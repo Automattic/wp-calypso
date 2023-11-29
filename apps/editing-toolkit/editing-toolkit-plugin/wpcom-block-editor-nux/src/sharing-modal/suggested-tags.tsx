@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button, FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -32,6 +33,7 @@ type SuggestedTagsProps = {
 
 function SuggestedTags( props: SuggestedTagsProps ) {
 	const { __, _n } = useI18n();
+	const localeSlug = useLocale();
 	const { id: postId, meta: postMeta } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
@@ -74,6 +76,10 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 
 	useEffect( () => {
 		if ( origSuggestedTags?.length === 0 ) {
+			// Check if localeSlug begins with 'en'
+			if ( localeSlug && localeSlug.startsWith( 'en' ) ) {
+				recordTracksEvent( 'calypso_reader_post_publish_no_suggested_tags' );
+			}
 			props.setShouldShowSuggestedTags( false );
 		} else {
 			recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags', {
