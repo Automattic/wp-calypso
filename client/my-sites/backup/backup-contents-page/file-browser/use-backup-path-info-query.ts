@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from '@wordpress/element';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { onRetrievingFileInfoError } from './notices';
@@ -12,7 +13,7 @@ export const useBackupPathInfoQuery = (
 ) => {
 	const dispatch = useDispatch();
 
-	return useQuery( {
+	const query = useQuery( {
 		queryKey: [ 'jetpack-backup-path-info', siteId, rewindId, manifestPath, extensionType ],
 		queryFn: async () => {
 			return wp.req.post(
@@ -32,8 +33,13 @@ export const useBackupPathInfoQuery = (
 		select: parseBackupPathInfo,
 		staleTime: Infinity,
 		retry: 2,
-		onError: () => {
-			dispatch( onRetrievingFileInfoError() );
-		},
 	} );
+
+	useEffect( () => {
+		if ( query.isError ) {
+			dispatch( onRetrievingFileInfoError() );
+		}
+	}, [ dispatch, query.isError ] );
+
+	return query;
 };
