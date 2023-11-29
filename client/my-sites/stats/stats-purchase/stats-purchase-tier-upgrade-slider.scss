@@ -4,6 +4,7 @@ $thumb-width: 40px;
 $mark-diameter: 8px;
 $mark-border-width: 2px;
 $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2;
+$track-height: 4px;
 
 // The trick is to cover the extra slider track with blocks with the same background color as the slider.
 @mixin slider-track-extra-cover() {
@@ -35,9 +36,9 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 	}
 
 	.jp-components-pricing-slider__track {
-		// Assuming 40px tall container.
-		height: 4px;
-		top: 18px;
+		// Based on slider height of 40px & track height of 4px.
+		height: $track-height;
+		top: $slider-height / 2 - $track-height / 2;
 	}
 
 	.jp-components-pricing-slider__control {
