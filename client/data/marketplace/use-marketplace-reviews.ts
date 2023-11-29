@@ -133,15 +133,15 @@ const deleteReview = ( {
 };
 
 export const useMarketplaceReviewsQuery = (
-	{ productType, slug: productSlug }: ProductProps,
+	{ productType, slug }: ProductProps,
 	{
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
 	}: MarketplaceReviewsQueryOptions = {}
 ) => {
-	const queryKey: QueryKey = [ queryKeyBase, productSlug ];
-	const queryFn = () => fetchMarketplaceReviews( productType, productSlug );
+	const queryKey: QueryKey = [ queryKeyBase, slug ];
+	const queryFn = () => fetchMarketplaceReviews( productType, slug );
 	return useQuery( {
 		queryKey,
 		queryFn,
