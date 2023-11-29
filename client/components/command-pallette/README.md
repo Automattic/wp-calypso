@@ -55,7 +55,7 @@ export default function MyComponent() {
 
 Command example:
 
-```tsx
+```
 {
 	name: 'addNewSite',
 	label: __( 'Add new site' ),
@@ -65,6 +65,5 @@ Command example:
 		navigate( createSiteUrl );
 	},
 	icon: addNewSiteIcon,
-},
-
+}
 ```
