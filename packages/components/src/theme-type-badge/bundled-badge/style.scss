@@ -10,15 +10,7 @@
 	color: var(--studio-white);
 	z-index: 1;
 
-	&--is-clickable {
-		cursor: pointer;
-
-		.accessible-focus &:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
-	}
-
-	&__icon {
+	.bundled-badge__icon {
 		display: inline-flex;
 		align-items: center;
 		height: 20px;
@@ -33,39 +25,47 @@
 		min-height: 0;
 	}
 
-	& &__logo {
+	.bundled-badge__logo {
 		margin-top: -1px;
 		margin-right: 3px;
 		fill: currentcolor;
 	}
+}
 
-	&__popover {
-		max-width: 300px;
-		outline: none;
-		.popover__inner {
-			background-color: #000;
-			color: #eee;
-			padding: 0.25rem 0.5rem;
-			border-radius: 4px;
-			border: 0;
-		}
-		&.is-bottom-left,
-		&.is-bottom-right {
-			.popover__arrow {
-				&::before {
-					border-bottom-color: #000 !important;
-				}
-			}
-		}
-		&.is-top-left {
-			.popover__arrow {
-				&::before {
-					border-top-color: #000 !important;
-				}
-			}
-		}
+.bundled-badge--is-clickable {
+	cursor: pointer;
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+}
+
+.bundled-badge__popover {
+	max-width: 300px;
+	outline: none;
+	.popover__inner {
+		background-color: #000;
+		color: #eee;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		border: 0;
+	}
+	&.is-bottom-left,
+	&.is-bottom-right {
 		.popover__arrow {
-			border: 10px dashed transparent;
+			&::before {
+				border-bottom-color: #000 !important;
+			}
 		}
+	}
+	&.is-top-left {
+		.popover__arrow {
+			&::before {
+				border-top-color: #000 !important;
+			}
+		}
+	}
+	.popover__arrow {
+		border: 10px dashed transparent;
 	}
 }
