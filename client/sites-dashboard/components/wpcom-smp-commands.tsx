@@ -2,11 +2,10 @@ import {
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
 	chartBar as statsIcon,
-	cog as hostingConfigIcon,
+	cog as settingsIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	download as downloadIcon,
-	upload as uploadIcon,
 	globe as domainsIcon,
 	home as dashboardIcon,
 	key as keyIcon,
@@ -17,9 +16,9 @@ import {
 	postComments as postCommentsIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
+	upload as uploadIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
@@ -37,16 +36,15 @@ interface useCommandsArrayWpcomOptions {
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 }: useCommandsArrayWpcomOptions ) => {
-	const translate = useTranslate();
+	const { __ } = useI18n();
 	const setStateCallback =
-		( actionName: string ) =>
+		( actionName: string, placeholder: string = __( 'Select a site' ) ) =>
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
-			setPlaceholderOverride( translate( 'Select a site' ) );
+			setPlaceholderOverride( placeholder );
 		};
 
-	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const displaySuccessNotice = ( message: string ) =>
 		dispatch( successNotice( message, { duration: 5000 } ) );
@@ -117,7 +115,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard' ),
+			callback: setStateCallback( 'openSiteDashboard', __( 'Select dashboard to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -138,7 +136,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 			},
-			icon: hostingConfigIcon,
+			icon: settingsIcon,
 		},
 		{
 			name: 'openPHPmyAdmin',
@@ -484,6 +482,71 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: sitesIcon,
+		},
+		{
+			name: 'manageSettingsWriting',
+			label: __( 'Manage writing settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback( 'manageSettingsWriting' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/writing/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsReading',
+			label: __( 'Manage reading settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback( 'manageSettingsReading' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/reading/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsDiscussion',
+			label: __( 'Manage discussion settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback( 'manageSettingsDiscussion' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/discussion/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsNewsletter',
+			label: __( 'Manage newsletter settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback( 'manageSettingsNewsletter' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/newsletter/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
+			name: 'manageSettingsPodcast',
+			label: __( 'Manage podcast settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback( 'manageSettingsPodcast' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/settings/podcasting/${ site.slug }` );
+				},
+			},
+			icon: settingsIcon,
 		},
 	];
 
