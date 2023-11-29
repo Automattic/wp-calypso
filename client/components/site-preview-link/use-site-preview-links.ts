@@ -23,13 +23,15 @@ export function useSitePreviewLinks( options: UseSitePreviewLinksOptions ) {
 	const { siteId, onSuccess, isEnabled = false } = options;
 	return useQuery< PreviewLinksResponse, unknown, PreviewLink[] >( {
 		queryKey: [ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ],
-		queryFn: () =>
-			wpcom.req.get( {
+		queryFn: async () => {
+			const response = await wpcom.req.get( {
 				path: `/sites/${ siteId }/preview-links`,
 				apiNamespace: 'wpcom/v2',
-			} ),
+			} );
+			onSuccess?.( response );
+			return response;
+		},
 		enabled: isEnabled && !! siteId,
 		meta: { persist: false },
-		onSuccess,
 	} );
 }
