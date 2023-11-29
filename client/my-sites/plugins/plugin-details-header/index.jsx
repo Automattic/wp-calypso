@@ -16,7 +16,12 @@ import usePluginVersionInfo from '../plugin-management-v2/hooks/use-plugin-versi
 
 import './style.scss';
 
-const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud, reviewsListRef } ) => {
+const PluginDetailsHeader = ( {
+	plugin,
+	isPlaceholder,
+	isJetpackCloud,
+	reviewsListRef = null,
+} ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { localizePath } = useLocalizedPlugins();
