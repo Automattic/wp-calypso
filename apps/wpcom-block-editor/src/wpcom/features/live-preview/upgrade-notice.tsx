@@ -39,7 +39,7 @@ export const LivePreviewUpgradeNotice: FC< {
 		}
 
 		const noticeText = sprintf(
-			// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium'), %3$s: The required plan name ('Business' or 'Premium')
+			// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium')
 			__(
 				'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
 				'wpcom-live-preview'
