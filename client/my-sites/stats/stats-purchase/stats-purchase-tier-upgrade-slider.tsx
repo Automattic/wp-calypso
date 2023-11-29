@@ -43,7 +43,7 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
-	const EXTENSION_TRESHOLD = 2; // in millions
+	const EXTENSION_THRESHOLD = 2; // in millions
 
 	// Transform plan details to dusplay.
 	const plans = priceTiers?.map( ( plan ): StatsPlanTierUI => {
@@ -117,7 +117,7 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 							'This is the base price for %(views_extension_limit)s million monthlt views; beyone that, you will be charged additional +%(extension_value)s per million views.',
 							{
 								args: {
-									views_extension_limit: EXTENSION_TRESHOLD,
+									views_extension_limit: EXTENSION_THRESHOLD,
 									extension_value: formatCurrency(
 										plans[ currentPlanIndex ].per_unit_fee as number,
 										currencyCode,
