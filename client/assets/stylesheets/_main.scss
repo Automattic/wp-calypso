@@ -145,6 +145,7 @@ h4,
 h5,
 h6 {
 	clear: both;
+	text-wrap: balance;
 }
 hr {
 	background: var(--color-neutral-10);
@@ -154,6 +155,12 @@ hr {
 }
 
 /* Text elements */
+p,
+ul,
+ol,
+blockquote {
+	text-wrap: pretty;
+}
 p {
 	margin-bottom: 1.5em;
 }
