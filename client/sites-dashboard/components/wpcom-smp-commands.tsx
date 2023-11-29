@@ -246,7 +246,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'openJetpackStats',
-			label: __( 'Open Jetpack stats' ),
+			label: __( 'Open Jetpack Stats' ),
 			callback: setStateCallback( 'openJetpackStats' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -280,9 +280,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: acitvityLogIcon,
 		},
 		{
-			name: 'openJetpackBackups',
-			label: __( 'Open Jetpack backups' ),
-			callback: setStateCallback( 'openJetpackBackups' ),
+			name: 'openJetpackBackup',
+			label: __( 'Open Jetpack Backup' ),
+			callback: setStateCallback( 'openJetpackBackup' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
