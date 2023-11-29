@@ -343,7 +343,7 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'yolo/command-pallette' ) && ! isJetpackCloud() && (
-					<AsyncLoad require="calypso/components/command-pallette" placeholder={ null } />
+					<AsyncLoad require="calypso/components/command-palette" placeholder={ null } />
 				) }
 			</div>
 		);
