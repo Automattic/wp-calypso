@@ -412,7 +412,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
 				<PurchaseModal
-					cart={ this.props.cart }
 					productToAdd={ this.props.product }
 					onClose={ onCloseModal }
 					siteSlug={ this.props.siteSlug }

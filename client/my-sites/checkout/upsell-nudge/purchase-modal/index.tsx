@@ -25,7 +25,6 @@ import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/src/type
 import './style.scss';
 
 type PurchaseModalProps = {
-	cart: ResponseCart;
 	onClose: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
@@ -37,7 +36,13 @@ export function PurchaseModal( {
 	isCartUpdating,
 	onClose,
 	siteSlug,
-}: PurchaseModalProps & { cards: StoredPaymentMethodCard[]; isCartUpdating: boolean } ) {
+}: {
+	cards: StoredPaymentMethodCard[];
+	isCartUpdating: boolean;
+	cart: ResponseCart;
+	onClose: () => void;
+	siteSlug: string;
+} ) {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
 		setStep,
@@ -69,9 +74,11 @@ export function wrapValueInManagedValue( value: string | undefined ): ManagedVal
 }
 
 export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
+	const { onClose, productToAdd, siteSlug } = props;
+
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
-		siteSlug: props.siteSlug,
+		siteSlug: siteSlug,
 	} );
 	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
@@ -85,7 +92,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const countries = useSelector( ( state ) => getCountries( state, 'payments' ) );
 
 	const cards = paymentMethodsState.paymentMethods.filter( isCreditCard );
-	const contactDetailsType = getContactDetailsType( props.cart );
+	const contactDetailsType = getContactDetailsType( responseCart );
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const storedCard = cards.length > 0 ? cards[ 0 ] : undefined;
@@ -141,25 +148,24 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				contactInfo,
 				vatDetails
 			);
-			replaceProductsInCart( [ props.productToAdd ] );
+			replaceProductsInCart( [ productToAdd ] );
 		}
 
 		return () => {
 			isUpdatingCart = true;
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ replaceProductsInCart, updateLocation, storedCard, props.productToAdd, countries ] );
+	}, [ replaceProductsInCart, updateLocation, storedCard, productToAdd, countries ] );
 
-	useEffect( () => {
-		return () => {
-			try {
-				updateLocation( { countryCode: '' } );
-				replaceProductsInCart( [] );
-			} catch {
-				// No need to do anything if this fails.
-			}
-		};
-	}, [ replaceProductsInCart, updateLocation ] );
+	const handleOnClose = () => {
+		try {
+			updateLocation( { countryCode: '' } );
+			replaceProductsInCart( [] );
+		} catch {
+			// No need to do anything if this fails.
+		}
+		onClose();
+	};
 
 	return (
 		<CheckoutProvider
@@ -174,7 +180,9 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			<PurchaseModal
 				cards={ cards }
 				isCartUpdating={ isPendingUpdate || ! countries?.length }
-				{ ...props }
+				cart={ responseCart }
+				onClose={ handleOnClose }
+				siteSlug={ siteSlug }
 			/>
 		</CheckoutProvider>
 	);
