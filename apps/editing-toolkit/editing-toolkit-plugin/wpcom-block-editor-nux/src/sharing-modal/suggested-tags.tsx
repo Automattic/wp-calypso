@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { store as noticesStore } from '@wordpress/notices';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
@@ -70,7 +71,17 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 		props.setShouldShowSuggestedTags( false );
 	};
 	const { saveTags } = useAddTagsToPost( postId, selectedTags, onAddTagsButtonClick );
-	if ( ! selectedTags ) {
+
+	useEffect( () => {
+		if ( origSuggestedTags?.length > 0 ) {
+			recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags', {
+				number_of_original_suggested_tags: origSuggestedTags.length,
+			} );
+		}
+	}, [] );
+
+	if ( origSuggestedTags?.length === 0 ) {
+		props.setShouldShowSuggestedTags( false );
 		return null;
 	}
 
@@ -86,10 +97,6 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 			label={ __( 'Tags', 'full-site-editing' ) }
 		/>
 	);
-
-	recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags', {
-		number_of_original_suggested_tags: origSuggestedTags?.length ?? 0,
-	} );
 
 	return (
 		<div className="wpcom-block-editor-post-published-sharing-modal__suggest-tags">
