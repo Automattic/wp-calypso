@@ -26,6 +26,7 @@ interface SignupFormSocialFirst {
 	queryArgs: object;
 	userEmail: string;
 	notice: JSX.Element | false;
+	isSocialFirst: boolean;
 }
 
 const SignupFormSocialFirst = ( {
@@ -42,6 +43,7 @@ const SignupFormSocialFirst = ( {
 	queryArgs,
 	userEmail,
 	notice,
+	isSocialFirst,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
@@ -69,6 +71,7 @@ const SignupFormSocialFirst = ( {
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						disableTosText={ true }
 						compact={ true }
+						isSocialFirst={ isSocialFirst }
 					>
 						<Button
 							className="social-buttons__button button"

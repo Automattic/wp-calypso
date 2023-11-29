@@ -14,7 +14,7 @@ const validDomains = [
 ];
 
 // This function extracts the domain from an email address.
-const extractDomainWithExtension = ( email: string ) => {
+export const extractDomainWithExtension = ( email: string ) => {
 	if ( email ) {
 		email = email.toLowerCase();
 		const atIndex = email.indexOf( '@' );
