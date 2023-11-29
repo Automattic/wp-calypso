@@ -158,7 +158,6 @@ const PatternLargePreview = ( {
 						// Disable default max-height
 						maxHeight="none"
 						transformHtml={ transformPatternHtml }
-						shouldShufflePosts={ isNewSite }
 					/>
 				) }
 				{ isActive && (

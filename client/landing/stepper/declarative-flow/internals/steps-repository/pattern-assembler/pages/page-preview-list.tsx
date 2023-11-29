@@ -78,7 +78,6 @@ const PagePreviewList = ( {
 					style={ pagePreviewStyle }
 					patterns={ homepage }
 					transformPatternHtml={ transformPatternHtml }
-					shouldShufflePosts={ isNewSite }
 					onFullscreenEnter={ handleFullscreenEnter }
 					onFullscreenLeave={ handleFullscreenLeave }
 				/>
@@ -95,7 +94,6 @@ const PagePreviewList = ( {
 							...( selectedFooter ? [ selectedFooter ] : [] ),
 						] }
 						transformPatternHtml={ transformPatternHtml }
-						shouldShufflePosts={ isNewSite }
 						onFullscreenEnter={ handleFullscreenEnter }
 						onFullscreenLeave={ handleFullscreenLeave }
 					/>

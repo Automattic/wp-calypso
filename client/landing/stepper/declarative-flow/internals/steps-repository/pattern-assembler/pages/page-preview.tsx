@@ -14,7 +14,6 @@ interface BasePageProps {
 	style: CSSProperties;
 	patterns: Pattern[];
 	transformPatternHtml: ( patternHtml: string ) => string;
-	shouldShufflePosts: boolean;
 }
 
 interface PageProps extends BasePageProps {
@@ -32,13 +31,7 @@ interface PagePreviewProps extends BasePageProps {
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_WIDTH = 1080;
 
-const Page = ( {
-	className,
-	style,
-	patterns,
-	transformPatternHtml,
-	shouldShufflePosts,
-}: PageProps ) => {
+const Page = ( { className, style, patterns, transformPatternHtml }: PageProps ) => {
 	const pageTitle = useMemo( () => {
 		return patterns.find( isPagePattern )?.title ?? '';
 	}, [ patterns ] );
@@ -62,7 +55,6 @@ const Page = ( {
 					transformHtml={
 						isPagePattern( pattern ) ? transformPagePatternHtml : transformPatternHtml
 					}
-					shouldShufflePosts={ shouldShufflePosts }
 				/>
 			) ) }
 		</div>
