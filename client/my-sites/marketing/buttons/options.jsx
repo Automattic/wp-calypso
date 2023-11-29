@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { filter, flowRight, get, some, values, xor } from 'lodash';
 import PropTypes from 'prop-types';
@@ -147,18 +148,28 @@ class SharingButtonsOptions extends Component {
 		return some( this.props.buttons, { ID: 'twitter', enabled: true } );
 	}
 
+	isXButtonEnabled() {
+		return some( this.props.buttons, { ID: 'x', enabled: true } );
+	}
+
 	getTwitterViaOptionElement() {
 		const { isJetpack, initialized, settings, translate } = this.props;
-		if ( ! this.isTwitterButtonEnabled() ) {
+
+		const isTwitterButtonEnabled = this.isTwitterButtonEnabled();
+		const isXButtonEnabled = this.isXButtonEnabled();
+		if ( ! isTwitterButtonEnabled && ! isXButtonEnabled ) {
 			return;
 		}
 
 		const option = isJetpack ? 'jetpack-twitter-cards-site-tag' : 'twitter_via';
+		const serviceName = isTwitterButtonEnabled ? 'Twitter' : 'X';
 
 		return (
 			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ translate( 'Twitter username' ) }
+					{ translate( '%(service)s username', {
+						args: { service: serviceName },
+					} ) }
 				</legend>
 				<FormTextInput
 					name={ option }
@@ -170,7 +181,10 @@ class SharingButtonsOptions extends Component {
 				/>
 				<p className="sharing-buttons__fieldset-detail">
 					{ translate(
-						'This will be included in tweets when people share using the Twitter button.'
+						'This will be included in tweets when people share using the %(service)s button.',
+						{
+							args: { service: serviceName },
+						}
 					) }
 				</p>
 			</FormFieldset>
@@ -205,7 +219,7 @@ class SharingButtonsOptions extends Component {
 						text={ translate(
 							"Encourage your community by giving readers the ability to show appreciation for one another's comments."
 						) }
-						link="https://wordpress.com/support/comment-likes/"
+						link={ localizeUrl( 'https://wordpress.com/support/comment-likes/' ) }
 						privacyLink={ false }
 						position="bottom left"
 					/>

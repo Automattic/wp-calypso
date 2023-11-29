@@ -5,7 +5,7 @@ const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
 	backLink: '.navigation-link:text("Back")',
-	dontHaveASiteButton: 'button:text-matches("don\'t have a site address", "i")',
+	dontHaveASiteButton: 'button:text-matches("choose a content platform", "i")',
 
 	// Inputs
 	urlInput: 'input.capture__input',
