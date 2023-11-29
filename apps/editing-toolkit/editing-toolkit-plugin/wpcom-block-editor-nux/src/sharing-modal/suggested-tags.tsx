@@ -54,9 +54,19 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 			number_of_added_tags: numAddedTags,
 		};
 		recordTracksEvent( 'calypso_reader_post_publish_add_tags', eventProps );
-		createNotice( 'success', _n( 'Tag Added.', 'Tags Added.', numAddedTags, 'full-site-editing' ), {
-			type: 'snackbar',
-		} );
+		if ( numAddedTags > 0 ) {
+			createNotice(
+				'success',
+				_n( 'Tag Added.', 'Tags Added.', numAddedTags, 'full-site-editing' ),
+				{
+					type: 'snackbar',
+				}
+			);
+		} else {
+			createNotice( 'warning', __( 'No Tags Added.', 'full-site-editing' ), {
+				type: 'snackbar',
+			} );
+		}
 		props.setShouldShowSuggestedTags( false );
 	};
 	const { saveTags } = useAddTagsToPost( postId, selectedTags, onAddTagsButtonClick );
@@ -66,6 +76,7 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 
 	const onChangeSelectedTags = ( newTags: ( string | TokenItem )[] ) => {
 		setSelectedTags( newTags );
+		recordTracksEvent( 'calypso_reader_post_publish_update_suggested_tags' );
 	};
 
 	const tokenField = (
@@ -75,6 +86,8 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 			label={ __( 'Tags', 'full-site-editing' ) }
 		/>
 	);
+
+	recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags' );
 
 	return (
 		<div className="wpcom-block-editor-post-published-sharing-modal__suggest-tags">
