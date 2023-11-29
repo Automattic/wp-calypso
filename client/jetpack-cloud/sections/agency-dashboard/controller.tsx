@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import { SitesDashboard } from 'calypso/sites-dashboard/components/sites-dashboard';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import DashboardOverview from './dashboard-overview';
@@ -27,11 +28,14 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 	context.header = <Header />;
 	context.secondary = <JetpackManageSidebar path={ context.path } />;
 	context.primary = (
-		<DashboardOverview
-			search={ search }
-			currentPage={ currentPage }
-			filter={ filter }
-			sort={ sort }
+		<SitesDashboard
+			queryParams={ {
+				page: context.query.page ? parseInt( context.query.page ) : undefined,
+				perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
+				search: context.query.search,
+				status: context.query.status,
+				newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
+			} }
 		/>
 	);
 
