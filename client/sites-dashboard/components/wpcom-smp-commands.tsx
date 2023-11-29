@@ -39,7 +39,7 @@ export const useCommandsArrayWpcom = ( {
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
-			setPlaceholderOverride( translate( 'Search for a site' ) );
+			setPlaceholderOverride( translate( 'Select a site' ) );
 		};
 
 	const { __ } = useI18n();
