@@ -50,6 +50,7 @@ const Description = styled.p`
 	font-size: 14px;
 	font-weight: 400;
 	text-align: left;
+	margin: 0;
 `;
 
 const CtaButton = styled( Button )`
