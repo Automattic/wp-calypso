@@ -12,8 +12,7 @@ import {
 	key as keyIcon,
 	page as pageIcon,
 	payment as creditCardIcon,
-	plus as addNewSiteIcon,
-	post as postIcon,
+	plus as plusIcon,
 	postComments as postCommentsIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
@@ -394,7 +393,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( createSiteUrl );
 			},
-			icon: addNewSiteIcon,
+			icon: plusIcon,
 		},
 		{
 			name: 'addNewPost',
@@ -407,7 +406,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/post/${ site.slug }` );
 				},
 			},
-			icon: postIcon,
+			icon: plusIcon,
 		},
 		{
 			name: 'manageComments',
