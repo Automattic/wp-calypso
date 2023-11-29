@@ -122,7 +122,7 @@ const SocialAuthenticationForm = ( {
 							// to return back to the user step, which then allows us to continue on with the flow once the submitSignupStep action is called within the user step.
 							isLogin ? null : window?.location?.pathname
 						}
-						// Attach the query string to the state so we can pass it back to the server to show the correct UI.
+						// If we are on signup, attach the query string to the state so we can pass it back to the server to show the correct UI.
 						// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
 						queryString={
 							isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
