@@ -115,6 +115,7 @@
 		"server-side-rendering": true,
 		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
+		"settings/self-serve-site-reset": false,
 		"sign-in-with-apple": false,
 		"signup/design-picker-preview-colors": true,
 		"signup/design-picker-preview-fonts": true,

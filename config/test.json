@@ -97,6 +97,7 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"settings/self-serve-site-reset": false,
 		"signup/social": true,
 		"signup/social-first": true,
 		"site-indicator": true,
