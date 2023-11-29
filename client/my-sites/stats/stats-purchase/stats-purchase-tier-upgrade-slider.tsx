@@ -114,7 +114,7 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 				<div className="stats-tier-upgrade-slider__extension-popover-content">
 					{ plans[ currentPlanIndex ]?.per_unit_fee &&
 						translate(
-							'This is the base price for %(views_extension_limit)s million monthlt views; beyone that, you will be charged additional +%(extension_value)s per million views.',
+							'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
 							{
 								args: {
 									views_extension_limit: EXTENSION_THRESHOLD,
