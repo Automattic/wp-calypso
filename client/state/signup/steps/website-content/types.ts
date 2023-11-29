@@ -37,7 +37,7 @@ export interface DIFMDependencies {
 	siteDescription: string;
 	tagline: string;
 	searchTerms: string;
-	selectedDesign: Design;
+	selectedDesign: Pick< Design, 'theme' >;
 	selectedSiteCategory: string;
 	isLetUsChooseSelected: boolean;
 	twitterUrl: string;

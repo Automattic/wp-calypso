@@ -1,6 +1,6 @@
 import { PricingSlider } from '@automattic/components';
 import classNames from 'classnames';
-import { translate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { PriceTierListItemProps } from './types';
 
@@ -17,7 +17,8 @@ type StatsPlanTierUI = {
 	description: string;
 };
 
-function getLocalizedStrings() {
+function useTranslatedStrings() {
+	const translate = useTranslate();
 	const limits = translate( 'Monthly site views limit', {
 		comment: 'Heading for Stats Upgrade slider. The monthly views limit.',
 	} );
@@ -61,17 +62,17 @@ function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) 
 		setCurrentPlanIndex( value );
 	};
 
-	const localizedStrings = getLocalizedStrings();
+	const translatedStrings = useTranslatedStrings();
 
 	return (
 		<div className={ componentClassNames }>
 			<div className="stats-tier-upgrade-slider__plan-callouts">
 				<div className="stats-tier-upgrade-slider__plan-callout">
-					<h2>{ localizedStrings.limits }</h2>
+					<h2>{ translatedStrings.limits }</h2>
 					<p>{ plans[ currentPlanIndex ]?.views }</p>
 				</div>
 				<div className="stats-tier-upgrade-slider__plan-callout">
-					<h2>{ localizedStrings.price }</h2>
+					<h2>{ translatedStrings.price }</h2>
 					<p className="right-aligned">{ plans[ currentPlanIndex ]?.price }</p>
 				</div>
 			</div>
@@ -83,7 +84,7 @@ function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) 
 				onChange={ handleSliderChange }
 				marks
 			/>
-			<p className="stats-tier-upgrade-slider__info-message">{ localizedStrings.strategy }</p>
+			<p className="stats-tier-upgrade-slider__info-message">{ translatedStrings.strategy }</p>
 		</div>
 	);
 }

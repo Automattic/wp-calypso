@@ -129,6 +129,11 @@
 		margin: 0 20px 24px 24px;
 		gap: 80px;
 	}
+
+	.launchpad__checklist-wrapper .checklist__tasks .checklist-item__task-content.is-placeholder .checklist-item__content {
+		/* Override default placeholder colours to align with other elements on the page. */
+		background-color: var(--color-neutral-5);
+	}
 }
 
 .launchpad__sidebar-content-container {

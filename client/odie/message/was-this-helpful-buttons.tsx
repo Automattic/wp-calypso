@@ -18,7 +18,7 @@ const WasThisHelpfulButtons = ( {
 	const THUMBS_UP_RATING_VALUE = 4;
 
 	const translate = useTranslate();
-	const { setMessageLikedStatus } = useOdieAssistantContext();
+	const { setMessageLikedStatus, botNameSlug, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useOdieSendMessageFeedback();
 
 	const liked = message.liked === true;
@@ -30,10 +30,18 @@ const WasThisHelpfulButtons = ( {
 			message,
 			rating_value: isHelpful ? THUMBS_UP_RATING_VALUE : THUMBS_DOWN_RATING_VALUE,
 		} );
+
 		setMessageLikedStatus( message, isHelpful );
 		if ( ! isHelpful ) {
 			onDislike();
 		}
+
+		trackEvent( 'calypso_odie_chat_message_action_feedback', {
+			bot_name_slug: botNameSlug,
+			action: 'feedback',
+			is_helpful: isHelpful,
+			message_id: message.message_id,
+		} );
 	};
 
 	const thumbsUpClasses = classnames( {
