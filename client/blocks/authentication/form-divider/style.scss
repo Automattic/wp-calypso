@@ -87,19 +87,18 @@ $breakpoint-mobile: 660px;
 }
 
 // Give the first card 10px of space at the bottom to compensate for the -10px margin above.
-:has(> .auth-form__separator) .card:first-of-type {
+:has(> .auth-form__separator) > .card:first-of-type {
 	border-bottom: 10px solid transparent;
 }
 
 // Give the last card 10px of space at the bottom to compensate for the -10px margin above.
-:has(> .auth-form__separator) .card:last-of-type {
+:has(> .auth-form__separator) > .card:last-of-type {
 	border-top: 10px solid transparent;
 }
 
-.auth-form__separator ~ .card {
+.auth-form__separator + .card {
 	// Remove the top box shadow if any.
 	clip-path: polygon(0% 1px, 102% 1px, 102% 102%, -1% 102%);
 	// Compensate for the clipped 1px to keep the contents unclipped.
 	border-top: 1px solid transparent;
 }
-

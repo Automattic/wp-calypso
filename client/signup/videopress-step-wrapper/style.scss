@@ -231,6 +231,11 @@ body.is-section-signup .videopress-step-wrapper {
 		width: 100%;
 	}
 
+	.auth-form__separator::before,
+	.auth-form__separator::after {
+		border-color: var(--videopress-color-separator-light);
+	}
+
 	.auth-form__separator-text {
 		color: var(--videopress-color-text);
 	}
