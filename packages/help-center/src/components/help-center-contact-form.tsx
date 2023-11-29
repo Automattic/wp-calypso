@@ -360,12 +360,16 @@ export const HelpCenterContactForm = () => {
 								section: sectionName,
 							} );
 							navigate( '/success' );
+
 							resetStore();
+
 							// reset support-history cache
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
-								queryClient.invalidateQueries( [ 'help-support-history', 'ticket', email ] );
+								queryClient.invalidateQueries( {
+									queryKey: [ 'help-support-history', 'ticket', email ],
+								} );
 							}, 30000 );
 						} )
 						.catch( () => {

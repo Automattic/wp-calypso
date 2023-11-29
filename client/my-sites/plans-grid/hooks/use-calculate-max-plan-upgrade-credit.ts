@@ -12,7 +12,6 @@ interface Props {
 /**
  * Calculate available plan credits given a set of displayed plans
  * This is the maximum possible credit value possible when comparing credits per plan
- *
  * @returns {number} The maximum amount of credits possible for a given set of plans
  */
 export function useCalculateMaxPlanUpgradeCredit( { siteId, plans }: Props ): number {

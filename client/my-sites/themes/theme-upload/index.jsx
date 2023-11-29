@@ -8,7 +8,6 @@ import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, find, isEmpty, flowRight } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -46,6 +45,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteAdminUrl,
+	getSiteThemeInstallUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
@@ -130,7 +130,7 @@ class Upload extends Component {
 	}
 
 	redirectToWpAdmin() {
-		page( `https://${ this.props.siteSlug }/wp-admin/theme-install.php` );
+		window.location = this.props.siteThemeInstallUrl;
 	}
 
 	successMessage() {
@@ -418,6 +418,7 @@ const mapStateToProps = ( state ) => {
 		backPath: getBackPath( state ),
 		showEligibility,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		siteThemeInstallUrl: getSiteThemeInstallUrl( state, siteId ),
 		canUploadThemesOrPlugins,
 		isFetchingPurchases:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),

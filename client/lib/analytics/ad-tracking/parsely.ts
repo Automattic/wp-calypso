@@ -18,7 +18,6 @@ declare global {
 /**
  * Loads the Parsely script, if the user has consented to tracking,
  * and tracking is allowed by the current environment.
- *
  * @returns Promise<void>
  */
 export const loadParselyTracker = async (): Promise< void > => {

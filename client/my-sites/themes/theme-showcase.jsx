@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';

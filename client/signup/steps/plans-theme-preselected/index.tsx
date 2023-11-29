@@ -21,7 +21,6 @@ type SignupDependencies = {
  * Determine which plans should be displayed based on the signupDependencies.
  *
  * Instead of making an API call (which is expensive), we are retrieving the information based on the query Params that were passed when the flow started.
- *
  * @param signupDependencies
  */
 function getHidePlanPropsBasedOnSignupDependencies(

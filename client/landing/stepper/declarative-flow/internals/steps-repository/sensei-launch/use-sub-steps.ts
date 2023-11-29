@@ -4,7 +4,6 @@ export const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, m
 
 /**
  * A step in a linear installation process.
- *
  * @param {number} retries Number of times this step was executed.
  * @returns Should resolve to true if the step was completed, false if it needs to be run again.
  */
@@ -26,7 +25,6 @@ type SubStepSettings = {
  * Steps should take care of waiting for requests or time delays, and resolve the returned promise
  * to false when they are ready to run again, or true when they are complete and we can proceed
  * with the next step.
- *
  * @returns {number} Progress percentage.
  */
 export const useSubSteps = (

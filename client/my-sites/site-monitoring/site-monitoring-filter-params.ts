@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import type { Moment } from 'moment';
 
 export type SiteMonitoringTab = 'metrics' | 'php' | 'web';

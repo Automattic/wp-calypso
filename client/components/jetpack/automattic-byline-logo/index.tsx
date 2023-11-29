@@ -5,7 +5,6 @@ import { AutomatticBylineLogoProps } from './types';
 
 /**
  * Automattic "By line" Logo component.
- *
  * @param {AutomatticBylineLogoProps} props - Component properties.
  * @returns {React.ReactNode} AutomatticBylineLogo component.
  */

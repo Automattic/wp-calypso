@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import wp from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import {
 	setJetpackConnectionHealthy,
 	setJetpackConnectionUnhealthy,
 } from 'calypso/state/jetpack-connection-health/actions';
+import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 
 export const JETPACK_CONNECTION_HEALTH_QUERY_KEY = 'jetpack-connection-health';
 
@@ -13,17 +15,13 @@ export interface JetpackConnectionHealth {
 	error: string;
 }
 
-interface UseCheckJetpackConnectionHealthOptions {
-	onError?: () => void;
-	onSuccess?: ( data: JetpackConnectionHealth | undefined ) => void;
-}
-
-export const useCheckJetpackConnectionHealth = (
-	siteId: number,
-	options: UseCheckJetpackConnectionHealthOptions
-) => {
+export const useCheckJetpackConnectionHealth = ( siteId: number ) => {
 	const dispatch = useDispatch();
-	return useQuery< JetpackConnectionHealth, unknown, JetpackConnectionHealth >( {
+	const reduxIsUnhealthy = useSelector( ( state ) =>
+		isJetpackConnectionUnhealthy( state, siteId )
+	);
+
+	const query = useQuery< JetpackConnectionHealth, unknown, JetpackConnectionHealth >( {
 		queryKey: [ JETPACK_CONNECTION_HEALTH_QUERY_KEY, siteId ],
 		queryFn: () =>
 			wp.req.get( {
@@ -34,13 +32,23 @@ export const useCheckJetpackConnectionHealth = (
 			persist: false,
 		},
 		staleTime: 10 * 1000,
-		onError: options?.onError,
-		onSuccess: ( data ) => {
-			if ( data?.is_healthy ) {
-				dispatch( setJetpackConnectionHealthy( siteId ) );
-			} else {
-				dispatch( setJetpackConnectionUnhealthy( siteId, data?.error ?? '' ) );
-			}
-		},
 	} );
+
+	const { data, isSuccess } = query;
+	const isHealthy = data?.is_healthy;
+	const error = data?.error;
+
+	useEffect( () => {
+		if ( ! isSuccess ) {
+			return;
+		}
+		if ( isHealthy && reduxIsUnhealthy ) {
+			dispatch( setJetpackConnectionHealthy( siteId ) );
+		}
+		if ( ! isHealthy && ! reduxIsUnhealthy ) {
+			dispatch( setJetpackConnectionUnhealthy( siteId, error ?? '' ) );
+		}
+	}, [ dispatch, reduxIsUnhealthy, isSuccess, isHealthy, error, siteId ] );
+
+	return query;
 };

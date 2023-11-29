@@ -6,7 +6,6 @@ const BASE_URL = 'http://__domain__.invalid';
 
 /**
  * Removes given params from a url.
- *
  * @param   url URL to be cleaned
  * @param   paramsToOmit The collection of params or single param to reject
  * @returns Url less the omitted params.

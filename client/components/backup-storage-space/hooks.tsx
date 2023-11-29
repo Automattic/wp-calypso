@@ -131,7 +131,6 @@ export const useDaysOfBackupsSavedText = (
 
 /**
  * The idea is to convert any storage amount in bytes to a human readable format.
- *
  * @param storageInBytes The storage amount in bytes
  * @returns				 The storage amount in a human readable format
  */

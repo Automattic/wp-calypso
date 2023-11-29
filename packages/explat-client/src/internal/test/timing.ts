@@ -29,15 +29,15 @@ describe( 'timeoutPromise', () => {
 	it( 'should reject if promises rejected below the timeout', async () => {
 		const promise = Timing.timeoutPromise( Promise.reject( new Error( 'error-123' ) ), 1 );
 		jest.advanceTimersByTime( 1 );
-		await expect( promise ).rejects.toThrowError( 'error-123' );
+		await expect( promise ).rejects.toThrow( 'error-123' );
 	} );
 	it( 'should throw if promise gets timed-out', async () => {
 		const promise1 = Timing.timeoutPromise( delayedValue( null, 4 ), 1 );
 		jest.advanceTimersByTime( 5 );
-		await expect( promise1 ).rejects.toThrowError();
+		await expect( promise1 ).rejects.toThrow();
 		const promise2 = Timing.timeoutPromise( delayedValue( null, 5 ), 2 );
 		jest.advanceTimersByTime( 6 );
-		await expect( promise2 ).rejects.toThrowError();
+		await expect( promise2 ).rejects.toThrow();
 	} );
 } );
 
@@ -53,7 +53,7 @@ describe( 'asyncOneAtATime', () => {
 		const f = Timing.asyncOneAtATime( async () => {
 			throw new Error( 'error-123' );
 		} );
-		await expect( f() ).rejects.toThrowError( 'error-123' );
+		await expect( f() ).rejects.toThrow( 'error-123' );
 	} );
 
 	it( 'should return the same promise when called multiple times, only calling the original function once', async () => {
@@ -79,7 +79,7 @@ describe( 'asyncOneAtATime', () => {
 		const c = f();
 		expect( a ).toBe( b );
 		expect( b ).toBe( c );
-		await expect( a ).rejects.toThrowError( 'error-123' );
+		await expect( a ).rejects.toThrow( 'error-123' );
 		expect( origF.mock.calls.length ).toBe( 1 );
 	} );
 
@@ -115,7 +115,7 @@ describe( 'asyncOneAtATime', () => {
 		const a = f();
 		const b = f();
 		expect( a ).toBe( b );
-		await expect( a ).rejects.toThrowError( 'error-123' );
+		await expect( a ).rejects.toThrow( 'error-123' );
 		expect( origF.mock.calls.length ).toBe( 1 );
 
 		isReject = false;

@@ -31,6 +31,7 @@ export type ContactsCardPassedProps = {
 	contactInfoDisclosureAvailable: boolean;
 	contactInfoDisclosed: boolean;
 	isPendingIcannVerification: boolean;
+	readOnly: boolean | undefined;
 };
 
 export type ContactsCardConnectedProps = {

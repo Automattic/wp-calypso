@@ -71,6 +71,12 @@
 	}
 }
 
+.checklist-item__task-content {
+	&.is-placeholder {
+		padding: 5px 0 5px 0;
+	}
+}
+
 .checklist-item__task-content.components-button:hover:not([disabled]),
 .checklist-item__task-content.components-button:focus:not([disabled]) {
 	fill: var(--studio-blue-50);

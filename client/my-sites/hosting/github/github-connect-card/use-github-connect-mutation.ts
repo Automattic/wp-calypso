@@ -36,11 +36,9 @@ export const useGithubConnectMutation = (
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
-			await queryClient.invalidateQueries( [
-				GITHUB_INTEGRATION_QUERY_KEY,
-				siteId,
-				GITHUB_CONNECTION_QUERY_KEY,
-			] );
+			await queryClient.invalidateQueries( {
+				queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ],
+			} );
 			options.onSuccess?.( ...args );
 		},
 	} );

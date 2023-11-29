@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Design } from '@automattic/design-picker/src/types';
 
-interface Options extends QueryOptions< Design, unknown > {
+interface Options extends QueryOptions< Design > {
 	enabled?: boolean;
 	select?: ( response: Design ) => Design;
 }

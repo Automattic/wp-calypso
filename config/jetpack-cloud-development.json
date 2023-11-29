@@ -40,7 +40,7 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"jetpack-cloud": true,
-		"jetpack/new-navigation": true,
+		"jetpack/bundle-licensing": false,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,

@@ -15,6 +15,10 @@ export type DnsRecord = {
 	rdata?: string;
 };
 
+export type ImportedDnsRecord = DnsRecord & {
+	selected: boolean;
+};
+
 type Dns = {
 	isFetching: boolean;
 	hasLoadedFromServer: boolean;

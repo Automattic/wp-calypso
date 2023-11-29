@@ -4,12 +4,12 @@ import {
 	getIntervalTypeForTerm,
 	domainProductSlugs,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useHasEnTranslation, useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';

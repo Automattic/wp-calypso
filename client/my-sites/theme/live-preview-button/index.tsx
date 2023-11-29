@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch, useSelector } from 'calypso/state';
 import { livePreview } from 'calypso/state/themes/actions';
 import { getIsLivePreviewSupported } from 'calypso/state/themes/selectors';
@@ -26,8 +27,11 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 	}
 
 	return (
-		<Button onClick={ () => dispatch( livePreview( themeId, siteId, 'detail' ) ) }>
-			{ translate( 'Preview & Customize' ) }
-		</Button>
+		<>
+			<TrackComponentView eventName="calypso_block_theme_live_preview_impression" />
+			<Button onClick={ () => dispatch( livePreview( themeId, siteId, 'detail' ) ) }>
+				{ translate( 'Preview & Customize' ) }
+			</Button>
+		</>
 	);
 };

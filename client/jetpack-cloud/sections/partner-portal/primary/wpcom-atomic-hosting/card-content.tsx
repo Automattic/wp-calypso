@@ -1,8 +1,8 @@
 import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
@@ -23,7 +23,6 @@ interface PlanInfo {
 	jetpackFeatures: Array< { text: string; tooltipText: string } >;
 	storage: string;
 	logo: JSX.Element | null;
-	previousProductName: string;
 }
 
 export default function CardContent( {
@@ -63,12 +62,23 @@ export default function CardContent( {
 		}
 	};
 
-	const getPreviousProductName = ( planSlug: string ) => {
+	const getFeaturesHeading = ( planSlug: string ) => {
 		switch ( planSlug ) {
 			case PLAN_BUSINESS:
-				return 'Premium';
+				return translate( 'Everything in {{a}}Premium{{/a}}, plus:', {
+					components: {
+						a: (
+							// For Business plan, we want to redirect user to find out more about features included in the  Premium plan.
+							<a
+								href="https://wordpress.com/pricing/#lpc-pricing"
+								target="_blank"
+								rel="noreferrer"
+							/>
+						),
+					},
+				} );
 			case PLAN_ECOMMERCE:
-				return 'Business';
+				return translate( 'Everything in Business, plus:' );
 			default:
 				return '';
 		}
@@ -103,16 +113,15 @@ export default function CardContent( {
 			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
 			interval: 'month',
 			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			jetpackFeatures: jetpackFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			storage: '50GB',
 			logo: getLogo( planSlug ),
-			previousProductName: getPreviousProductName( planSlug ),
 		};
 	};
 
@@ -165,9 +174,7 @@ export default function CardContent( {
 				</Button>
 				<div className="wpcom-atomic-hosting__card-features">
 					<div className="wpcom-atomic-hosting__card-features-heading">
-						{ translate( 'Everything in %(previousProductName)s, plus:', {
-							args: { previousProductName: plan.previousProductName },
-						} ) }
+						{ getFeaturesHeading( planSlug ) }
 					</div>
 					{ plan.wpcomFeatures.length > 0 &&
 						plan.wpcomFeatures.map( ( { text, tooltipText } ) => (

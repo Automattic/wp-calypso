@@ -1,5 +1,6 @@
 export const ACTION_QUICK_LINKS = 'home-action-quick-links';
 export const ACTION_QUICK_LINKS_FOR_HOSTED_SITES = 'home-action-quick-links-for-hosted-sites';
+export const ACTION_QUICK_POST = 'home-action-quick-post';
 export const ACTION_WP_FOR_TEAMS_QUICK_LINKS = 'home-action-wp-for-teams-quick-links';
 export const EDUCATION_FREE_PHOTO_LIBRARY = 'home-education-free-photo-library';
 export const EDUCATION_EARN = 'home-education-earn';
@@ -56,3 +57,4 @@ export const LAUNCHPAD_INTENT_FREE_NEWSLETTER = 'home-launchpad-intent-free-news
 export const LAUNCHPAD_INTENT_PAID_NEWSLETTER = 'home-launchpad-intent-paid-newsletter';
 export const LAUNCHPAD_PRE_LAUNCH = 'home-launchpad-pre-launch';
 export const NOTICE_HOME_LIMITED_TIME_OFFER_COUPON = 'home-limited-time-coupon';
+export const FEATURE_READER = 'home-feature-reader';

@@ -43,7 +43,7 @@ const ChatMessage = (
 	ref: React.Ref< HTMLDivElement >
 ) => {
 	const isUser = message.role === 'user';
-	const { botName, extraContactOptions, addMessage } = useOdieAssistantContext();
+	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
@@ -279,11 +279,25 @@ const ChatMessage = (
 				<FoldableCard
 					className="odie-sources-foldable-card"
 					clickableHeader
-					header={ translate( 'Sources', {
+					header={ translate( 'Related Guides', {
 						context:
 							'Below this text are links to sources for the current message received from the bot.',
 						textOnly: true,
 					} ) }
+					onClose={ () =>
+						trackEvent( 'calypso_odie_chat_message_action_sources', {
+							bot_name_slug: botName,
+							action: 'close',
+							message_id: message.message_id,
+						} )
+					}
+					onOpen={ () =>
+						trackEvent( 'calypso_odie_chat_message_action_sources', {
+							bot_name_slug: botName,
+							action: 'open',
+							message_id: message.message_id,
+						} )
+					}
 					screenReaderText="More"
 				>
 					<div className="odie-chatbox-message-sources">

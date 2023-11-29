@@ -44,9 +44,7 @@ export const StagingSiteCard = ( {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const [ loadingError, setLoadingError ] = useState( false );
 	const [ syncError, setSyncError ] = useState( null );
-	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
 	const removeAllNotices = () => {
@@ -56,27 +54,31 @@ export const StagingSiteCard = ( {
 		dispatch( removeNotice( stagingSiteDeleteFailureNoticeId ) );
 	};
 
-	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
-		siteId,
-		{
-			enabled: ! disabled,
-			onError: () => {
-				setIsErrorValidQuota( true );
-			},
-		}
-	);
-
-	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
+	const {
+		data: hasValidQuota,
+		isLoading: isLoadingQuotaValidation,
+		error: isErrorValidQuota,
+	} = useHasValidQuotaQuery( siteId, {
 		enabled: ! disabled,
-		onError: ( error ) => {
+	} );
+
+	const {
+		data: stagingSites,
+		isLoading: isLoadingStagingSites,
+		error: loadingError,
+	} = useStagingSite( siteId, {
+		enabled: ! disabled,
+	} );
+
+	useEffect( () => {
+		if ( loadingError ) {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_load_failure', {
-					code: error.code,
+					code: loadingError.code,
 				} )
 			);
-			setLoadingError( error );
-		},
-	} );
+		}
+	}, [ dispatch, loadingError ] );
 
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
@@ -123,7 +125,9 @@ export const StagingSiteCard = ( {
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
-			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ],
+			} );
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);

@@ -136,7 +136,6 @@ describe( 'StagingSiteCard component', () => {
 		);
 		expect( useStagingSite ).toHaveBeenCalledWith( defaultProps.siteId, {
 			enabled: true,
-			onError: expect.any( Function ),
 		} );
 
 		expect( screen.getByTestId( 'loading-placeholder' ) ).toBeInTheDocument();

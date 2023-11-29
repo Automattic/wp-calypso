@@ -9,7 +9,6 @@ const isServer = typeof document === 'undefined';
  * Returns a boolean indicating whether a GDPR banner should be shown.
  *
  * Defaults to `false` if the country code is unknown.
- *
  * @param countryCode Country code determined either from cookie or from a special header
  * @param trackingPrefs Parsed object based on `sensitive_pixel_options` (v2) cookie structure
  * @returns Whether the current user could be in the GDPR zone. When the `countryCode` are

@@ -29,6 +29,7 @@ class ReaderFeaturedVideo extends Component {
 		isExpanded: PropTypes.bool,
 		isCompactPost: PropTypes.bool,
 		expandCard: PropTypes.func,
+		hasExcerpt: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -99,6 +100,7 @@ class ReaderFeaturedVideo extends Component {
 			href,
 			isExpanded,
 			isCompactPost,
+			hasExcerpt,
 		} = this.props;
 
 		const classNames = classnames( className, 'reader-featured-video' );
@@ -113,6 +115,7 @@ class ReaderFeaturedVideo extends Component {
 					href={ href }
 					fetched={ true }
 					isCompactPost={ isCompactPost }
+					hasExcerpt={ hasExcerpt }
 				>
 					{ allowPlaying && (
 						<img

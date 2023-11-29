@@ -57,7 +57,6 @@ const CommercialPurchase = ( {
 					{ translate( 'Learn more' ) }
 				</Button>
 			</div>
-
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>

@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
-import page from 'page';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';

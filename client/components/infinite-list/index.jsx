@@ -1,8 +1,8 @@
 /* eslint-disable react/no-string-refs */
 // TODO: remove string ref usage.
 
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';
@@ -326,7 +326,6 @@ export default class InfiniteList extends Component {
 	 *
 	 * This includes any items that are partially visible in the viewport.
 	 * Instance method that is called externally (via a ref) by a parent component.
-	 *
 	 * @param {Object} options - offset properties
 	 * @param {number} options.offsetTop - in pixels, 0 if unspecified
 	 * @param {number} options.offsetBottom - in pixels, 0 if unspecified
@@ -461,7 +460,6 @@ export default class InfiniteList extends Component {
 
 	/**
 	 * Determine whether context is available or still being rendered.
-	 *
 	 * @returns {boolean} whether context is available
 	 */
 	_contextLoaded() {

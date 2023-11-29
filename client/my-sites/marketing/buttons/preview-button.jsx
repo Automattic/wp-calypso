@@ -77,10 +77,10 @@ class SharingButtonsPreviewButton extends Component {
 		);
 
 		return (
-			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			<div
 				className={ classes }
 				onClick={ this.onClick }
+				// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 				onMouseOver={ this.props.onMouseOver }
 				role="presentation"
 			>

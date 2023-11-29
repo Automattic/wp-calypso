@@ -19,22 +19,20 @@ jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isPlanAvailableForPurchase: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans', () =>
-	jest.fn()
-);
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
+		usePlans: jest.fn(),
 		useSitePlans: jest.fn(),
+		useIntroOffers: jest.fn(),
 	},
 } ) );
 
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
@@ -53,14 +51,17 @@ describe( 'usePricingMetaForGridPlans', () => {
 			data: null,
 		} ) );
 		getByPurchaseId.mockImplementation( () => undefined );
-		usePricedAPIPlans.mockImplementation( () => ( {
-			[ PLAN_PREMIUM ]: {
-				bill_period: 365,
-				currency_code: 'USD',
-			},
-			[ PLAN_PERSONAL ]: {
-				bill_period: 365,
-				currency_code: 'USD',
+		Plans.usePlans.mockImplementation( () => ( {
+			isFetching: false,
+			data: {
+				[ PLAN_PREMIUM ]: {
+					billPeriod: 365,
+					currencyCode: 'USD',
+				},
+				[ PLAN_PERSONAL ]: {
+					billPeriod: 365,
+					currencyCode: 'USD',
+				},
 			},
 		} ) );
 	} );

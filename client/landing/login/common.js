@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
-import page from 'page';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
@@ -12,7 +12,6 @@ const debug = debugFactory( 'calypso' );
 
 export function setupContextMiddleware() {
 	page( '*', ( context, next ) => {
-		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.canonicalPath );
 		const path = parsed.pathname + parsed.search || null;
 		context.prevPath = path === context.path ? false : path;

@@ -267,11 +267,17 @@ export interface ResponseCart< P = ResponseCartProduct > {
 
 	/**
 	 * The subtotal with taxes included in the currency's smallest unit.
+	 *
+	 * This is the sum of each item's price with all discounts (including
+	 * coupons), but without taxes. This does not include credits!
 	 */
 	sub_total_with_taxes_integer: number;
 
 	/**
 	 * The subtotal without taxes included in the currency's smallest unit.
+	 *
+	 * This is the sum of each item's price with all discounts (including
+	 * coupons), but without taxes. This does not include credits!
 	 */
 	sub_total_integer: number;
 
@@ -390,6 +396,9 @@ export interface ResponseCartProduct {
 
 	/**
 	 * The cart item's subtotal in the currency's smallest unit.
+	 *
+	 * This is the cost of the item with all discounts (including coupons),
+	 * but without taxes.
 	 */
 	item_subtotal_integer: number;
 
@@ -419,16 +428,13 @@ export interface ResponseCartProduct {
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
-	 *
 	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer
 	 */
 	coupon_savings?: number;
 
 	/**
-	 * The difference between `cost_before_coupon` and the actual price in the currency's smallest unit.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
+	 * The amount of the local currency deducted by an applied coupon, if any.
+	 * This is in the currency's smallest unit.
 	 */
 	coupon_savings_integer?: number;
 
@@ -549,8 +555,10 @@ export interface ResponseCartCostOverride {
 	new_price: number;
 	old_price: number;
 	override_code: string;
+	does_override_original_cost: boolean;
 	reason: string;
 }
+
 export interface IntroductoryOfferTerms {
 	enabled: boolean;
 	interval_unit: string;

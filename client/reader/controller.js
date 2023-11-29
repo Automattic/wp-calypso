@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import i18n from 'i18n-calypso';
-import page from 'page';
 import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
@@ -397,7 +397,6 @@ export async function pendingSubscriptionsManager( context, next ) {
 /**
  * Middleware to redirect logged out users to /discover.
  * Intended for reader pages that do not support logged out users such as /read.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}

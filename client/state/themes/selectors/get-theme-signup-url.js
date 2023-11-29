@@ -1,4 +1,4 @@
-import { FREE_THEME } from '@automattic/design-picker';
+import { FREE_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { getThemeType, isThemePremium } from 'calypso/state/themes/selectors';
@@ -24,6 +24,7 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 		theme: themeId,
 		theme_type: themeType,
 		style_variation: styleVariationSlug,
+		intervalType: themeType === MARKETPLACE_THEME ? 'monthly' : 'yearly',
 	};
 
 	// If the selected free theme belongs to the blog category, redirect users to the blog tailored flow

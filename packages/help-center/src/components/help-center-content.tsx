@@ -31,6 +31,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const section = useSelector( getSectionName );
 	const isWapuuEnabled = useIsWapuuEnabled();
+	const { isMinimized } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			isMinimized: store.getIsMinimized(),
+		};
+	}, [] );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -79,6 +85,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 							botSetting="supportDocs"
 							botName="Wapuu"
 							enabled={ isWapuuEnabled }
+							isMinimized={ isMinimized }
 							initialUserMessage={ searchTerm }
 							extraContactOptions={ <HelpCenterContactPage hideHeaders /> }
 						>

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import deepfreeze from 'deep-freeze';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
@@ -76,9 +75,7 @@ describe( 'streams', () => {
 					stream: 'discover:recommended',
 					expected: {
 						method: 'GET',
-						path: config.isEnabled( 'reader/discover-stream' )
-							? '/read/streams/discover'
-							: '/read/tags/cards',
+						path: '/read/streams/discover',
 						apiNamespace: 'wpcom/v2',
 						query: {
 							...query,
@@ -94,7 +91,7 @@ describe( 'streams', () => {
 					stream: 'discover:dailyprompt',
 					expected: {
 						method: 'GET',
-						path: `/read/tags/dailyprompt/cards`,
+						path: `/read/streams/discover?tags=dailyprompt`,
 						apiNamespace: 'wpcom/v2',
 						query: {
 							...query,
