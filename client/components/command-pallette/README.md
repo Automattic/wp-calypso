@@ -1,6 +1,6 @@
 # Command Palette
 
-The Command Palette is a React component used to display a text input used to search and filter a list of commands. It can be accessed in the Calypso using the shortcut `cmd+k`.
+The Command Palette is a UI element that displays a searchable list of commands. It can be accessed in Calypso using the shortcut `cmd+k`.
 
 The command palette is inspired by [Core](https://github.com/WordPress/gutenberg/blob/trunk/packages/commands/README.md) implementation used in the Gutenberg editor. We use the same CSS and similar markup, the commands share the same basic props that we extended to support the following differences:
 
