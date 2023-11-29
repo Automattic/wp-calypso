@@ -66,7 +66,12 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			name: 'pages',
 			title: translate( 'Add more pages' ),
 			description: translate(
-				"We've pre-selected common pages for your site. You can add more pages or unselect the current ones."
+				"We've pre-selected common pages for your site. You can add more pages or unselect the current ones.{{br/}}{{br/}}Page content can be edited later, in the Site Editor.",
+				{
+					components: {
+						br: <br />,
+					},
+				}
 			),
 			continueLabel: translate( 'Save and continue' ),
 			backLabel: translate( 'pages' ),
