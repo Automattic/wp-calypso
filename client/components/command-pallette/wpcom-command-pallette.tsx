@@ -31,6 +31,10 @@ const StyledCommandsMenuContainer = styled.div( {
 	},
 } );
 
+const BackButton = styled.button( {
+	cursor: 'pointer',
+} );
+
 const LabelWrapper = styled.div( {
 	display: 'flex',
 	flexDirection: 'column',
@@ -221,7 +225,13 @@ export const WpcomCommandPalette = () => {
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
-							<Icon icon={ backIcon } onClick={ reset } />
+							<BackButton
+								type="button"
+								onClick={ reset }
+								aria-label={ __( 'Go back to the previous screen' ) }
+							>
+								<Icon icon={ backIcon } />
+							</BackButton>
 						) : (
 							<Icon icon={ inputIcon } />
 						) }
