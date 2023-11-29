@@ -19,29 +19,55 @@
 			display: grid;
 			grid-template-columns: 200px 1fr 150px;
 			border-top: 1px solid var(--studio-gray-5);
-			padding-top: 20px;
+			padding: 20px 0;
 
 			&:first-of-type {
 				border-top: none;
 			}
-		}
 
-		.marketplace-reviews-list__author {
-			font-weight: bold;
-			padding-right: 20px;
-			font-size: $font-body-small;
-		}
+			.marketplace-reviews-list__author {
+				font-weight: bold;
+				padding-right: 20px;
+				font-size: $font-body-small;
+			}
 
-		.marketplace-reviews-list__content {
-			margin-top: 10px;
-			margin-left: 3px;
-		}
+			.marketplace-reviews-list__content {
+				margin-top: 10px;
+				margin-left: 3px;
 
-		.marketplace-reviews-list__date {
-			font-weight: bold;
-			font-size: $font-body-extra-small;
-			text-align: right;
-		}
+				p {
+					margin-bottom: 0;
+				}
+			}
 
+			.marketplace-reviews-list__date {
+				font-weight: bold;
+				font-size: $font-body-extra-small;
+				text-align: right;
+			}
+
+			@include breakpoint-deprecated( "<960px" ) {
+				position: relative;
+				grid-template-areas:
+					"content"
+					"author";
+				grid-template-columns: 100%;
+
+				.marketplace-reviews-list__author {
+					margin-top: 20px;
+					grid-area: author;
+				}
+
+				.marketplace-reviews-list__content {
+					grid-area: content;
+				}
+
+				.marketplace-reviews-list__date {
+					position: absolute;
+					right: 0;
+					top: 20px;
+				}
+			}
+		}
 	}
 }
