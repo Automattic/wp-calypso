@@ -55,7 +55,7 @@ const designFirst: Flow = {
 			},
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
+				asyncComponent: () => import( './internals/steps-repository/domains' ),
 			},
 			{
 				slug: 'use-my-domain',

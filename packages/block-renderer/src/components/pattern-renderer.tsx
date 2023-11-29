@@ -1,8 +1,9 @@
 import { memo } from 'react';
 import { normalizeMinHeight } from '../html-transformers';
-import shufflePosts from '../styles-transformers/shuffle-posts';
+import { shufflePosts } from '../styles-transformers';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
+import type { RenderedStyle } from '../types';
 
 interface Props {
 	patternId: string;
@@ -11,7 +12,6 @@ interface Props {
 	minHeight?: number;
 	maxHeight?: 'none' | number;
 	transformHtml?: ( patternHtml: string ) => string;
-	shouldShufflePosts: boolean;
 }
 
 const PatternRenderer = ( {
@@ -21,9 +21,8 @@ const PatternRenderer = ( {
 	minHeight,
 	maxHeight,
 	transformHtml,
-	shouldShufflePosts,
 }: Props ) => {
-	const renderedPatterns = usePatternsRendererContext();
+	const { renderedPatterns, shouldShufflePosts } = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 
 	let patternHtml = pattern?.html ?? '';
@@ -34,18 +33,20 @@ const PatternRenderer = ( {
 		patternHtml = transformHtml( patternHtml );
 	}
 
-	// TODO(fushar): refactor this similar to how we refactor html transformations above.
-	const inlineCss = shufflePosts( patternId, patternHtml, shouldShufflePosts );
+	let patternStyles = pattern?.styles ?? [];
+	if ( shouldShufflePosts ) {
+		const css = shufflePosts( patternId, patternHtml );
+		patternStyles = [ ...patternStyles, { css } as RenderedStyle ];
+	}
 
 	return (
 		<BlockRendererContainer
 			key={ pattern?.ID }
-			styles={ pattern?.styles ?? [] }
+			styles={ patternStyles }
 			scripts={ pattern?.scripts ?? '' }
 			viewportWidth={ viewportWidth }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }
-			inlineCss={ inlineCss }
 		>
 			<div
 				// eslint-disable-next-line react/no-danger

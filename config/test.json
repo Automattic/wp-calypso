@@ -66,6 +66,7 @@
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": true,
 		"mailchimp": true,
+		"marketplace-add-review": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"me/account-close": true,

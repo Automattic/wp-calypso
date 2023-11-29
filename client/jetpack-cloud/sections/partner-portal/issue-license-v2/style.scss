@@ -22,3 +22,14 @@
 		color: var(--studio-white);
 	}
 }
+
+.issue-license-v2__actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		justify-content: normal;
+	}
+}

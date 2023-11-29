@@ -85,6 +85,7 @@
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
 		"mailchimp": true,
+		"marketplace-add-review": false,
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,

@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getTotalInvoiceValue } from '../lib/pricing';
+import PricingBreakdown from './pricing-breakdown';
 import type { SelectedLicenseProp } from '../types';
 
 export default function PricingSummary( {
@@ -60,6 +61,7 @@ export default function PricingSummary( {
 					}
 				) }
 			</div>
+			<PricingBreakdown userProducts={ userProducts } selectedLicenses={ selectedLicenses } />
 		</>
 	);
 }
