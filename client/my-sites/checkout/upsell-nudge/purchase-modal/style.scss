@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $left-margin: 36px;
 
 @keyframes purchaseModalBackdropfadeIn {
@@ -17,18 +20,15 @@ $left-margin: 36px;
 }
 
 .purchase-modal.dialog__content {
-	--padding: -24px;
-
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	width: 460px;
+	width: 750px;
 	max-width: 100%;
 	box-sizing: border-box;
 
-	@media ( max-width: 480px ) {
-		--padding: -16px;
-		width: unset;
+	@media ( min-width: 480px ) {
+		padding: 0;
 	}
 
 	> hr {
@@ -40,6 +40,34 @@ $left-margin: 36px;
 		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 			height: 0.5px;
 		}
+	}
+}
+
+.purchase-modal__wrapper {
+	display: flex;
+	gap: 30px;
+	width: 100%;
+}
+
+.purchase-modal__steps {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	max-width: 100%;
+	@include break-mobile {
+		padding: 36px 0 36px 30px;
+	}
+}
+
+.purchase-modal__features {
+	background: var(--gray-gray-0, #f6f7f7);
+	padding: 36px 30px;
+	&.is-placeholder {
+		flex: 1;
+	}
+	display: none;
+	@include break-mobile {
+		display: block;
 	}
 }
 
@@ -178,13 +206,21 @@ $left-margin: 36px;
  * Pay button
  */
 .purchase-modal__pay-button {
-	align-self: flex-end;
-	margin-top: 24px;
-	min-width: 35%;
+	align-self: stretch;
+	margin: 24px 0 0 36px;
 	font-size: 1rem;
 
 	&.is-placeholder {
 		@include placeholder();
 		height: 2rem;
 	}
+}
+
+.purchase-modal__features-title {
+	color: var(--gray-gray-70, #3c434a);
+	font-size: 1rem;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	margin-bottom: 8px;
 }
