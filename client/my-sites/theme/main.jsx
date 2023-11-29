@@ -44,6 +44,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
@@ -631,6 +632,28 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderReviews = () => {
+		if ( ! config.isEnabled( 'marketplace-add-review' ) ) {
+			return null;
+		}
+		const { name, themeId } = this.props;
+
+		return (
+			<>
+				<ReviewsModal
+					isVisible={ this.state.showReviewModal }
+					onClose={ this.handleCloseReviewModal }
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
+				/>
+				<div className="theme__sheet-reviews">
+					<Button onClick={ this.handleAddReview }>Add Review</Button>
+				</div>
+			</>
+		);
+	};
+
 	renderStyleVariations = () => {
 		const { styleVariations } = this.props;
 
@@ -1160,6 +1183,13 @@ class ThemeSheet extends Component {
 		return translate( 'Additional styles require the Business plan or higher.' );
 	};
 
+	handleAddReview = () => {
+		this.setState( { showReviewModal: true } );
+	};
+	handleCloseReviewModal = () => {
+		this.setState( { showReviewModal: false } );
+	};
+
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
 		const {
@@ -1376,6 +1406,7 @@ class ThemeSheet extends Component {
 						{ pageUpsellBanner }
 						{ this.renderStagingPaidThemeNotice() }
 						{ this.renderHeader() }
+						{ this.renderReviews() }
 					</div>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }

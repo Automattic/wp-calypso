@@ -75,6 +75,7 @@
 		"legal-updates-banner": false,
 		"livechat_solution": true,
 		"mailchimp": false,
+		"marketplace-add-review": true,
 		"marketplace-domain-bundle": false,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
@@ -159,7 +160,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-pallette": false
+		"yolo/command-palette": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

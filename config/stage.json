@@ -85,6 +85,7 @@
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
 		"mailchimp": true,
+		"marketplace-add-review": false,
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
@@ -181,7 +182,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-pallette": false
+		"yolo/command-palette": false
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
