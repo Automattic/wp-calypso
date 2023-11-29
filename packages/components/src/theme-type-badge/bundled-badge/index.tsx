@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { FunctionComponent, useRef, useMemo, useState } from 'react';
+import { type FunctionComponent, useRef, useMemo, useState } from 'react';
 import Popover from '../../popover';
 
 import './style.scss';
