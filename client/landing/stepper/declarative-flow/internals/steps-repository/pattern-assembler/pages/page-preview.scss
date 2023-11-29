@@ -27,6 +27,13 @@ $font-family: "SF Pro Text", $sans;
 			top: 0;
 		}
 
+		&.pattern-assembler__preview--fullscreen-enter,
+		&.pattern-assembler__preview--fullscreen-leave {
+			.pattern-assembler__preview-frame {
+				transition: all 0.2s;
+			}
+		}
+
 		.pattern-assembler__preview-frame {
 			--fullscreen-x-px: calc(50vw - calc(var(--fullscreen-x, 0) * 1px));
 			--fullscreen-y-px: calc(50vh - calc(var(--fullscreen-y, 0) * 1px));
@@ -37,6 +44,7 @@ $font-family: "SF Pro Text", $sans;
 				0 21.57518px 16.59629px 0 rgba(0, 0, 0, 0.03);
 			cursor: default;
 			transform: translate(var(--fullscreen-x-px), var(--fullscreen-y-px)) scale(var(--scale));
+			transition: none;
 
 			@include break-medium {
 				--scale: var(--fullscreen-scale, 1.8);
@@ -55,6 +63,12 @@ $font-family: "SF Pro Text", $sans;
 		.pattern-assembler__preview-title {
 			opacity: 0;
 		}
+	}
+
+	.pattern-assembler__preview-container {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
 	}
 
 	.pattern-assembler__preview-frame {
