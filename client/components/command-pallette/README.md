@@ -35,9 +35,11 @@ Please consider carefully before adding a new command to the palette. We aim to 
 - Command labels should be short and descriptive and use sentence case. For example, "Add new site" instead of "Add New Site".
 - Commands should start with a verb. For example, "Add new site" instead of "New site".
 - Picking the correct verb is important. `Open` is the more generic verb, if the page has a list of elements, we can use `View`, if the user is expected to take an action we can use `Manage` or `Change`. We prefer specific verbs over generic ones.
+- We prefer to use [Gutenberg icons](https://wordpress.github.io/gutenberg/?path=/story/icons-icon--library) for root commands.
+- It's important to keep the same terminology and icons used elsewhere in the interace or in core.
+- We can introduce aliases, and keywords using `searchLabel`. For example. "Import a site" would be an alias of "Migrate a site" because the navigation it's under Tools → Import.
 - Most commands navigate to other pages. We can also navigate to a specific section/card inside a page. For example, "Manage cache settings" in addition to "Manage hosting configuration".
 - Commands that open modals are also allowed. Just be aware that the command palette is visible in most Calypso pages.
-- We prefer to use [Gutenberg icons](https://wordpress.github.io/gutenberg/?path=/story/icons-icon--library) for root commands.
 
 ## Usage
 
