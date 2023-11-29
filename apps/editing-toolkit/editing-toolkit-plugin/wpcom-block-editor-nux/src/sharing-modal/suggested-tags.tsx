@@ -73,17 +73,14 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 	const { saveTags } = useAddTagsToPost( postId, selectedTags, onAddTagsButtonClick );
 
 	useEffect( () => {
-		if ( origSuggestedTags?.length > 0 ) {
+		if ( origSuggestedTags?.length === 0 ) {
+			props.setShouldShowSuggestedTags( false );
+		} else {
 			recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags', {
 				number_of_original_suggested_tags: origSuggestedTags.length,
 			} );
 		}
 	}, [] );
-
-	if ( origSuggestedTags?.length === 0 ) {
-		props.setShouldShowSuggestedTags( false );
-		return null;
-	}
 
 	const onChangeSelectedTags = ( newTags: ( string | TokenItem )[] ) => {
 		setSelectedTags( newTags );
