@@ -41,19 +41,11 @@ $breakpoint-mobile: 660px;
 
 .is-section-signup {
 	.auth-form__separator {
-		width: calc(100% - 32px);
-		margin: 20px 0;
 
 		@include break-medium {
-			width: 60px;
-			margin: 0;
 
 			&::before,
 			&::after {
-				border-inline-start: $separator-style;
-				border-block-start: 0;
-				inset-block-start: 0;
-				inset-inline-start: 50%;
 				height: 40%;
 			}
 

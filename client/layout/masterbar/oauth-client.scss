@@ -574,6 +574,7 @@
 		max-width: 640px;
 		border: 1px solid var(--studio-gray-5);
 
+		.card.login__form,
 		.card.auth-form__social {
 			box-shadow: none;
 		}
