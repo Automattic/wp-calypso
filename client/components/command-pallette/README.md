@@ -7,7 +7,7 @@ This command palette is inspired by [Core's implementation](https://github.com/W
 - The Calypso version supports multisite commands with the sites as second step commands.
 - Users can go back to root commands with the `esc` and `backspace` keys, or the back button.
 - We change the search placeholder to inform the user about the current command.
-- Besides of icons, we also support images for the commands.
+- In addition to icons, we also support images for the commands.
 - We support two lines of text for the commands.
 
 ## Add a command
