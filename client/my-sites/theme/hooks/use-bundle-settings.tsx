@@ -1,20 +1,31 @@
 import { ExternalLink } from '@wordpress/components';
-import { translate, TranslateResult } from 'i18n-calypso';
-import type { FC } from 'react';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { type FC, useMemo } from 'react';
+import { useSelector } from 'calypso/state';
+import { getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 
-interface BundleSettings {
-	[ key: string ]: {
-		/** Name field is a label for the bundle name, which can be used isolated or in the middle of a sentence. Many times used as "{name} theme". */
-		name: string;
-		iconComponent: FC;
-		color: string;
-		designPickerBadgeTooltip: string;
-		bannerUpsellDescription: string;
-		bundledPluginMessage: TranslateResult;
-	};
+interface StaticSettings {
+	/** Name field is a label for the bundle name, which can be used isolated or in the middle of a sentence. Many times used as "{name} theme". */
+	name: string;
+	iconComponent: FC;
+	color: string;
 }
 
-const bundleSettings: BundleSettings = {
+interface StaticSettingsMap {
+	[ key: string ]: StaticSettings;
+}
+
+interface BundleSettings extends StaticSettings {
+	designPickerBadgeTooltip: string;
+	bannerUpsellDescription: string;
+	bundledPluginMessage: TranslateResult;
+}
+
+/**
+ * This is the static settings for bundles. Dynamic parts, should be added in
+ * the `switch` of the `useBundleSettings`.
+ */
+const staticSettings: StaticSettingsMap = {
 	'woo-on-plans': {
 		name: 'WooCommerce',
 		iconComponent: () => (
@@ -26,21 +37,47 @@ const bundleSettings: BundleSettings = {
 			</svg>
 		),
 		color: '#7f54b3',
-		designPickerBadgeTooltip: translate(
-			'This theme comes bundled with WooCommerce, the best way to sell online.'
-		),
-		bannerUpsellDescription: translate(
-			'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-		),
-		bundledPluginMessage: translate(
-			'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin.',
-			{
-				components: {
-					link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
-				},
-			}
-		),
 	},
 };
 
-export default bundleSettings;
+/**
+ * Hook to get the bundle settings for a given theme.
+ * If the theme doesn't have a sotfware set defined, it returns `null`.
+ */
+const useBundleSettings = ( themeId: string ): BundleSettings | null => {
+	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+	const translate = useTranslate();
+
+	const bundleSettings = useMemo( () => {
+		// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
+		const themeSoftware = themeSoftwareSet[ 0 ];
+
+		switch ( themeSoftware ) {
+			case 'woo-on-plans':
+				return {
+					...staticSettings[ themeSoftware ],
+					designPickerBadgeTooltip: translate(
+						'This theme comes bundled with WooCommerce, the best way to sell online.'
+					),
+					bannerUpsellDescription: translate(
+						'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+					),
+					bundledPluginMessage: translate(
+						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin.',
+						{
+							components: {
+								link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
+							},
+						}
+					),
+				};
+
+			default:
+				return null;
+		}
+	}, [ translate, themeSoftwareSet ] );
+
+	return bundleSettings;
+};
+
+export default useBundleSettings;

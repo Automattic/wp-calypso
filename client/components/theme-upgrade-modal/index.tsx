@@ -29,11 +29,11 @@ import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
-import { isExternallyManagedTheme, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
+import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import './style.scss';
 
 interface UpgradeModalProps {
@@ -73,9 +73,7 @@ export const ThemeUpgradeModal = ( {
 	const showBundleVersion = theme_software_set;
 	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
 
-	const themeSoftwareSet = useSelector( ( state ) =>
-		getThemeSoftwareSet( state, theme?.data?.id || '' )
-	);
+	const bundleSettings = useBundleSettings( slug );
 
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
@@ -135,9 +133,8 @@ export const ThemeUpgradeModal = ( {
 
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
 		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
-		const themeSoftware = themeSoftwareSet[ 0 ];
 
-		if ( ! bundleSettings[ themeSoftware ] ) {
+		if ( ! bundleSettings ) {
 			return {
 				header: null,
 				text: null,
@@ -146,11 +143,10 @@ export const ThemeUpgradeModal = ( {
 			};
 		}
 
-		const settings = bundleSettings[ themeSoftware ];
-		const bundleName = settings.name;
-		const bundledPluginMessage = settings.bundledPluginMessage;
-		const color = settings.color;
-		const Icon = settings.iconComponent;
+		const bundleName = bundleSettings.name;
+		const bundledPluginMessage = bundleSettings.bundledPluginMessage;
+		const color = bundleSettings.color;
+		const Icon = bundleSettings.iconComponent;
 
 		return {
 			header: (

@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
 import { useSelect } from '@wordpress/data';
-import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { SiteSelect } from '@automattic/data-stores';
@@ -30,19 +30,21 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 		)
 	);
 
+	const bundleSettings = useBundleSettings( selectedDesign.slug );
+
 	let badge: React.ReactNode = null;
 	if ( selectedDesign.software_sets && selectedDesign.software_sets.length > 0 ) {
-		const themeSoftware = selectedDesign.software_sets[ 0 ].slug;
-		const settings = bundleSettings[ themeSoftware ];
-		const BadgeIcon = settings.iconComponent;
+		if ( bundleSettings ) {
+			const BadgeIcon = bundleSettings.iconComponent;
 
-		const bundleBadgeProps = {
-			color: settings.color,
-			icon: <BadgeIcon />,
-			tooltipContent: <>{ settings.designPickerBadgeTooltip }</>,
-		};
+			const bundleBadgeProps = {
+				color: bundleSettings.color,
+				icon: <BadgeIcon />,
+				tooltipContent: <>{ bundleSettings.designPickerBadgeTooltip }</>,
+			};
 
-		badge = <BundledBadge { ...bundleBadgeProps }>{ settings.name }</BundledBadge>;
+			badge = <BundledBadge { ...bundleBadgeProps }>{ bundleSettings.name }</BundledBadge>;
+		}
 	} else if ( selectedDesign.is_premium ) {
 		badge = <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />;
 	}

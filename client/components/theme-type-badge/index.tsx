@@ -10,9 +10,9 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
-import { getThemeType, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
+import { getThemeType } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
 
 import './style.scss';
@@ -34,7 +34,7 @@ const ThemeTypeBadge = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+	const bundleSettings = useBundleSettings( themeId );
 
 	useEffect( () => {
 		if ( type === FREE_THEME && ! isLockedStyleVariation ) {
@@ -65,20 +65,17 @@ const ThemeTypeBadge = ( {
 
 	let badgeContent;
 	if ( type === BUNDLED_THEME ) {
-		const themeSoftware = themeSoftwareSet[ 0 ];
-
-		if ( bundleSettings[ themeSoftware ] ) {
-			const settings = bundleSettings[ themeSoftware ];
-			const BadgeIcon = settings.iconComponent;
+		if ( bundleSettings ) {
+			const BadgeIcon = bundleSettings.iconComponent;
 
 			const bundleBadgeProps = {
-				color: settings.color,
+				color: bundleSettings.color,
 				icon: <BadgeIcon />,
 			};
 
 			badgeContent = (
 				<BundledBadge { ...badgeContentProps } { ...bundleBadgeProps }>
-					{ settings.name }
+					{ bundleSettings.name }
 				</BundledBadge>
 			);
 		}

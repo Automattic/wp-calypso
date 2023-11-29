@@ -9,11 +9,10 @@ import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import bundleSettings from 'calypso/my-sites/theme/bundle-settings';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import {
 	canUseTheme,
-	getThemeSoftwareSet,
 	getThemeType,
 	isThemePurchased,
 	isMarketplaceThemeSubscribed,
@@ -71,7 +70,7 @@ const ThemeTypeBadgeTooltip = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+	const bundleSettings = useBundleSettings( themeId );
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
@@ -101,19 +100,17 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
-	const themeSoftware = themeSoftwareSet[ 0 ];
-
 	const getHeader = (): string | ReactElement | null => {
 		if ( isLockedStyleVariation ) {
 			return null;
 		}
 
 		if ( type === BUNDLED_THEME ) {
-			if ( ! bundleSettings[ themeSoftware ] ) {
+			if ( ! bundleSettings ) {
 				return null;
 			}
 
-			const bundleName = bundleSettings[ themeSoftware ].name;
+			const bundleName = bundleSettings.name;
 
 			// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
 			return translate( '%(bundleName)s theme', { textOnly: true, args: { bundleName } } );
@@ -180,8 +177,8 @@ const ThemeTypeBadgeTooltip = ( {
 					}
 			  );
 	} else if ( type === BUNDLED_THEME ) {
-		if ( bundleSettings[ themeSoftware ] ) {
-			const bundleName = bundleSettings[ themeSoftware ].name;
+		if ( bundleSettings ) {
+			const bundleName = bundleSettings.name;
 
 			if ( isIncludedCurrentPlan ) {
 				// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
