@@ -222,6 +222,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-pallette": true
+		"yolo/command-palette": true
 	}
 }
