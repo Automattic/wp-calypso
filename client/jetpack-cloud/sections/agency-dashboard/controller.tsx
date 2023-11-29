@@ -7,7 +7,14 @@ import DashboardOverview from './dashboard-overview';
 import Header from './header';
 
 export const agencyDashboardContext: Callback = ( context, next ) => {
-	const { s: search, page: contextPage, issue_types, sort_field, sort_direction } = context.query;
+	const {
+		s: search,
+		page: contextPage,
+		issue_types,
+		sort_field,
+		sort_direction,
+		origin,
+	} = context.query;
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
 		showOnlyFavorites: context.params.filter === 'favorites',
@@ -20,6 +27,10 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 	const isAgency = isAgencyUser( state );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 	if ( ! isAgency || ! isAgencyEnabled ) {
+		if ( origin === 'wp-admin' ) {
+			window.location.href = 'https://jetpack.com/manage/';
+			return;
+		}
 		return page.redirect( '/' );
 	}
 
