@@ -398,6 +398,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewPost',
 			label: __( 'Add new post' ),
+			searchLabel: __( 'Write new post' ),
 			context: [ '/posts' ],
 			callback: setStateCallback( 'addNewPost' ),
 			siteFunctions: {
