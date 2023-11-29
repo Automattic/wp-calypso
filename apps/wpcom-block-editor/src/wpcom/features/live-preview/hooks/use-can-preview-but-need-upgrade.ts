@@ -117,8 +117,13 @@ export const useCanPreviewButNeedUpgrade = ( {
 		};
 		const link =
 			previewingTheme.type === WOOCOMMERCE_THEME
-				? generateCheckoutUrl( PLAN_BUSINESS ) // For a WooCommerce theme, the users should have the Business plan or higher.
-				: generateCheckoutUrl( PLAN_PREMIUM ); // For a Premium theme, the users should have the Premium plan or higher.
+				? /**
+				   * For a WooCommerce theme, the users should have the Business plan or higher,
+				   * AND the WooCommerce plugin has to be installed.
+				   */
+				  generateCheckoutUrl( PLAN_BUSINESS )
+				: // For a Premium theme, the users should have the Premium plan or higher.
+				  generateCheckoutUrl( PLAN_PREMIUM );
 		window.location.href = link;
 
 		// TODO: Add the track event.
