@@ -32,7 +32,7 @@ const selectors = {
 	startImportGoalButton: 'span:has-text("Import my existing website content")',
 	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
-		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
+		`div.list__importers-primary button:nth-child(${ index + 1 })`,
 };
 
 /**
@@ -173,7 +173,7 @@ export class StartImportFlow {
 	 */
 	async validateImporterListPage(): Promise< void > {
 		await this.page
-			.locator( selectors.startBuildingHeader( 'Import your content from another platform' ) )
+			.locator( selectors.startBuildingHeader( 'Import content from another platform' ) )
 			.waitFor();
 	}
 
