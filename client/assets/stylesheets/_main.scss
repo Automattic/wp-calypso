@@ -147,6 +147,10 @@ h6 {
 	clear: both;
 	text-wrap: balance;
 }
+caption,
+figcaption {
+	text-wrap: balance;
+}
 hr {
 	background: var(--color-neutral-10);
 	border: 0;
