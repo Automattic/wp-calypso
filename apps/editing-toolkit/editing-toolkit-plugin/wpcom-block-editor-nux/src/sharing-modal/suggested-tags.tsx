@@ -87,7 +87,9 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 		/>
 	);
 
-	recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags' );
+	recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags', {
+		number_of_selected_tags: selectedTags?.length ?? 0,
+	} );
 
 	return (
 		<div className="wpcom-block-editor-post-published-sharing-modal__suggest-tags">
