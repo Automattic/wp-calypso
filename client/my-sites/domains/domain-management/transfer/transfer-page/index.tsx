@@ -340,9 +340,15 @@ const TransferPage = ( props: TransferPageProps ) => {
 			<>
 				<p>{ renderTransferMessage() }</p>
 				{ renderTransferLock() }
-				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
-					{ __( 'Get authorization code' ) }
-				</Button>
+				{ domain?.authCodeRequired && (
+					<Button
+						primary={ false }
+						busy={ isRequestingTransferCode }
+						onClick={ requestTransferCode }
+					>
+						{ __( 'Get authorization code' ) }
+					</Button>
+				) }
 			</>
 		);
 	};
