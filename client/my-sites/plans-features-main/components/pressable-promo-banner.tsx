@@ -4,11 +4,28 @@ import { useTranslate } from 'i18n-calypso';
 
 const Banner = styled.div`
 	display: flex;
-	justify-content: left;
-	height: 128px
-	padding: 0px, 24px, 0px, 0px
-	border-radius: 4px
-	border: 1px solid #DCDCDE
+	justify-content: start;
+	height: 128px;
+	padding: 0px, 24px, 0px, 0px;
+	border-radius: 4px;
+	border: 1px solid #dcdcde;
+	margin-left: 20px;
+	margin-right: 20px;
+	padding-right: 20px;
+	align-items: center;
+	gap: 16px;
+`;
+
+const LogoContainer = styled.div`
+	flex-basis: 120px;
+`;
+
+const TextContainer = styled.div`
+	flex-basis: 1200px;
+`;
+
+const CtaContainer = styled.div`
+	flex-basis: 200px;
 `;
 
 const Subtitle = styled.h4`
@@ -61,8 +78,8 @@ const PressablePromoBanner = () => {
 
 	return (
 		<Banner>
-			<div>Pressable Logo here</div>
-			<div>
+			<LogoContainer>Pressable Logo here</LogoContainer>
+			<TextContainer>
 				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
 				<Title>{ translate( 'Multi-Site Hosting by Pressable' ) }</Title>
 				<Description>
@@ -70,8 +87,8 @@ const PressablePromoBanner = () => {
 						'Looking to manage multiple websites with ease? Discover the power of Pressable Multi-Site Hosting. Ideal for agencies and web professionals. '
 					) }
 				</Description>
-			</div>
-			<div>
+			</TextContainer>
+			<CtaContainer>
 				<CtaButton
 					href="https://pressable.com/pricing/?utm_source=referral&utm_medium=wpdotcom&utm_campaign=pricing"
 					onClick={ onClick }
@@ -80,7 +97,7 @@ const PressablePromoBanner = () => {
 					{ translate( 'See Pressable Plans' ) }
 					<Gridicon icon="external" />
 				</CtaButton>
-			</div>
+			</CtaContainer>
 		</Banner>
 	);
 };
