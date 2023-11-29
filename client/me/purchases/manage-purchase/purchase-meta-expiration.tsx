@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -54,7 +54,7 @@ function PurchaseMetaExpiration( {
 	const translate = useTranslate();
 	const { hasTranslation } = useI18n();
 	const moment = useLocalizedMoment();
-
+	const locale = getLocaleSlug();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
 	const isCancellableSitelessPurchase = isAkismetTemporarySitePurchase( purchase );
@@ -175,7 +175,7 @@ function PurchaseMetaExpiration( {
 					} ) }
 				>
 					{ subsBillingText }
-					{ shouldShowTooltip() && hasToolTipTextBeenTranslated && (
+					{ shouldShowTooltip() && ( locale === 'en' || hasToolTipTextBeenTranslated ) && (
 						<InfoPopover position="bottom right">
 							{ translate(
 								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}',
