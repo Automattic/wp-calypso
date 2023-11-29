@@ -41,7 +41,7 @@ Please consider carefully before adding a new command to the palette. We aim to 
 - It's important to keep the same terminology and icons used elsewhere in the interace or in core.
 - We can introduce aliases, and keywords using `searchLabel`. For example. "Import a site" would be an alias of "Migrate a site" because the navigation it's under Tools → Import.
 - Most commands navigate to other pages. We can also navigate to a specific section/card inside a page. For example, "Manage cache settings" in addition to "Manage hosting configuration".
-- Commands that open modals are also allowed. Just be aware that the command palette is visible in most Calypso pages.
+- Commands that open modals are also allowed. Just be aware that the command palette is visible in most Calypso pages, and we may want to implement an async loading for the modal.
 
 ## Usage
 
