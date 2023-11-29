@@ -1057,6 +1057,7 @@ class ThemeSheet extends Component {
 
 			const bundleName = bundleSettings[ themeSoftware ].name;
 
+			// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
 			return translate( 'Access this %(bundleName)s theme with a Business plan!', {
 				args: { bundleName },
 			} );

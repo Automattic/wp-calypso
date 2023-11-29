@@ -115,6 +115,7 @@ const ThemeTypeBadgeTooltip = ( {
 
 			const bundleName = bundleSettings[ themeSoftware ].name;
 
+			// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
 			return translate( '%(bundleName)s theme', { textOnly: true, args: { bundleName } } );
 		}
 
@@ -183,11 +184,13 @@ const ThemeTypeBadgeTooltip = ( {
 			const bundleName = bundleSettings[ themeSoftware ].name;
 
 			if ( isIncludedCurrentPlan ) {
+				// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
 				message = translate( 'This %(bundleName)s theme is included in your plan.', {
 					args: { bundleName },
 				} );
 			} else {
 				message = createInterpolateElement(
+					// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
 					translate( 'This %(bundleName)s theme is included in the <Link>Business plan</Link>.', {
 						args: { bundleName },
 						textOnly: true,

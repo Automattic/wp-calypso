@@ -159,7 +159,10 @@ export const ThemeUpgradeModal = ( {
 						<Icon />
 					</div>
 					<h1 className="theme-upgrade-modal__heading bundle">
-						{ translate( 'Unlock this %(bundleName)s theme', { args: { bundleName } } ) }
+						{
+							// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+							translate( 'Unlock this %(bundleName)s theme', { args: { bundleName } } )
+						}
 					</h1>
 				</>
 			),
