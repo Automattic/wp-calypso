@@ -1,7 +1,12 @@
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
+import {
+	Icon,
+	search as inputIcon,
+	chevronLeft as backIcon,
+	chevronRight as forwardIcon,
+} from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
@@ -107,6 +112,7 @@ export function CommandMenuGroup( {
 									</SubLabel>
 								) }
 							</LabelWrapper>
+							{ selectedCommandName ? null : <Icon icon={ forwardIcon } /> }
 						</HStack>
 					</Command.Item>
 				);
