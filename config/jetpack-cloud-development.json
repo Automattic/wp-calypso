@@ -70,7 +70,8 @@
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
-		"jetpack/pricing-page-cart": true
+		"jetpack/pricing-page-cart": true,
+		"yolo/command-pallette": false
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -91,7 +92,9 @@
 		"scan": true,
 		"site-purchases": true
 	},
-	"site_filter": [ "jetpack" ],
+	"site_filter": [
+		"jetpack"
+	],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
