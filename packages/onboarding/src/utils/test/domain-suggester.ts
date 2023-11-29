@@ -72,4 +72,16 @@ describe( 'suggestEmailCorrection', () => {
 			wasCorrected: false,
 		} );
 	} );
+
+	test( 'should not suggest a correction for a domain if user is still typing', () => {
+		const result = suggestEmailCorrection( 'example@mail' );
+		expect( result ).toEqual( {
+			oldEmail: 'example@mail',
+			oldDomain: 'mail',
+			newDomain: null,
+			newEmail: null,
+			distance: Infinity,
+			wasCorrected: false,
+		} );
+	} );
 } );
