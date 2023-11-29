@@ -67,6 +67,7 @@ export type MessageType =
 	| 'introduction';
 
 export type Message = {
+	client_message_id?: string;
 	message_id?: number;
 	content: string;
 	meta?: Record< string, string >;

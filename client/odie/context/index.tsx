@@ -39,6 +39,7 @@ interface OdieAssistantContextInterface {
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
+	updateMessage: ( client_message_id: string, message: Message ) => void;
 }
 
 const defaultContextInterfaceValues = {
@@ -63,6 +64,7 @@ const defaultContextInterfaceValues = {
 	setIsVisible: noop,
 	setIsLoading: noop,
 	trackEvent: noop,
+	updateMessage: noop,
 };
 
 // Create a default new context
@@ -150,22 +152,17 @@ const OdieAssistantProvider = ( {
 			// Normalize message to always be an array
 			const newMessages = Array.isArray( message ) ? message : [ message ];
 
-			// Check if any message is a placeholder
-			const hasPlaceholder = prevChat.messages.some( ( msg ) => msg.type === 'placeholder' );
-
 			// Check if the new message is of type 'dislike-feedback'
 			const isNewMessageDislikeFeedback = newMessages.some(
 				( msg ) => msg.type === 'dislike-feedback'
 			);
 
-			// Remove placeholders if the new message is not 'dislike-feedback'
-			const filteredMessages =
-				hasPlaceholder && ! isNewMessageDislikeFeedback
-					? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
-					: prevChat.messages;
+			const filteredMessages = ! isNewMessageDislikeFeedback
+				? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
+				: prevChat.messages;
 
 			// If the new message is 'dislike-feedback' and there's a placeholder, insert it before the placeholder
-			if ( hasPlaceholder && isNewMessageDislikeFeedback ) {
+			if ( isNewMessageDislikeFeedback ) {
 				const lastPlaceholderIndex = prevChat.messages
 					.map( ( msg ) => msg.type )
 					.lastIndexOf( 'placeholder' );
@@ -183,6 +180,24 @@ const OdieAssistantProvider = ( {
 			return {
 				chat_id: prevChat.chat_id,
 				messages: [ ...filteredMessages, ...newMessages ],
+			};
+		} );
+	};
+
+	// Update the message, passing the client_message_id and properties to update
+	const updateMessage = ( client_message_id: string, message: Partial< Message > ) => {
+		setChat( ( prevChat ) => {
+			const messageIndex = prevChat.messages.findIndex(
+				( m ) => m.client_message_id === client_message_id
+			);
+			const updatedMessage = { ...prevChat.messages[ messageIndex ], ...message };
+			return {
+				...prevChat,
+				messages: [
+					...prevChat.messages.slice( 0, messageIndex ),
+					updatedMessage,
+					...prevChat.messages.slice( messageIndex + 1 ),
+				],
 			};
 		} );
 	};
@@ -217,6 +232,7 @@ const OdieAssistantProvider = ( {
 				setIsNudging,
 				setIsVisible,
 				trackEvent,
+				updateMessage,
 			} }
 		>
 			{ children }

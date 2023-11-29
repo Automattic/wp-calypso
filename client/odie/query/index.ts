@@ -1,13 +1,15 @@
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { v4 as uuid } from 'uuid';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
+import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { setOdieStorage } from '../data';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
-const buildSendChatMessage = (
+const buildSendChatMessage = async (
 	message: Message,
 	botNameSlug: OdieAllowedBots,
 	chat_id?: number | null
@@ -38,24 +40,56 @@ function odieWpcomSendSupportMessage( message: Message, path: string ) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content },
+		body: { message: message.content, client_message_id: message.client_message_id },
 	} );
 }
 
 // It will post a new message using the current chat_id
 export const useOdieSendMessage = (): UseMutationResult<
-	{ chat_id: string; messages: Message[] },
+	{ chat_id: string; messages: Message[]; client_message_id: string },
 	unknown,
 	{ message: Message }
 > => {
-	const { chat, setChat, botNameSlug, setIsLoading } = useOdieAssistantContext();
+	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage } = useOdieAssistantContext();
+
+	const client_message_id = uuid();
 
 	return useMutation( {
 		mutationFn: ( { message }: { message: Message } ) => {
-			return buildSendChatMessage( message, botNameSlug, chat.chat_id );
+			addMessage( [
+				message,
+				{
+					client_message_id,
+					content: '...',
+					role: 'bot',
+					type: 'placeholder',
+				},
+			] );
+
+			return buildSendChatMessage( { ...message, client_message_id }, botNameSlug, chat.chat_id );
 		},
 		onSuccess: ( data ) => {
-			setChat( { messages: chat.messages, chat_id: parseInt( data.chat_id ) } );
+			const received_client_message_id = data.client_message_id;
+
+			if ( ! data.messages || ! data.messages[ 0 ].content || ! received_client_message_id ) {
+				updateMessage( received_client_message_id, {
+					content: WAPUU_ERROR_MESSAGE,
+					role: 'bot',
+					type: 'message',
+					client_message_id: received_client_message_id,
+				} );
+
+				return;
+			}
+
+			updateMessage( received_client_message_id, {
+				content: data.messages[ 0 ].content,
+				role: 'bot',
+				simulateTyping: data.messages[ 0 ].simulateTyping,
+				type: 'message',
+				context: data.messages[ 0 ].context,
+			} );
+
 			setOdieStorage( 'chat_id', data.chat_id );
 		},
 		onMutate: () => {
@@ -63,6 +97,17 @@ export const useOdieSendMessage = (): UseMutationResult<
 		},
 		onSettled: () => {
 			setIsLoading( false );
+		},
+		onError: ( e ) => {
+			const error = e as Record< string, unknown >;
+			const returned_client_message_id = error[ 'client_message_id' ] as string;
+
+			updateMessage( returned_client_message_id, {
+				content: WAPUU_ERROR_MESSAGE,
+				role: 'bot',
+				type: 'message',
+				client_message_id: returned_client_message_id,
+			} );
 		},
 	} );
 };
