@@ -45,8 +45,7 @@ export const LivePreviewUpgradeNotice: FC< {
 				'wpcom-live-preview'
 			),
 			previewingTheme.name,
-			previewingTheme.typeDisplay,
-			previewingTheme.requiredPlan
+			previewingTheme.typeDisplay
 		);
 		createWarningNotice( noticeText, {
 			id: UPGRADE_NOTICE_ID,
@@ -79,7 +78,6 @@ export const LivePreviewUpgradeNotice: FC< {
 		previewingTheme.name,
 		dashboardLink,
 		previewingTheme.typeDisplay,
-		previewingTheme.requiredPlan,
 	] );
 	return null;
 };
