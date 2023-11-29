@@ -23,16 +23,12 @@ import useSharingModalDismissed from './use-sharing-modal-dismissed';
 
 import './style.scss';
 
-type PostMeta = {
-	reader_suggested_tags: string;
-};
 type CoreEditorPlaceholder = {
 	getCurrentPost: ( ...args: unknown[] ) => {
 		link: string;
 		title: string;
 		status: string;
 		password: string;
-		meta: PostMeta;
 	};
 	getCurrentPostType: ( ...args: unknown[] ) => string;
 	isCurrentPostPublished: ( ...args: unknown[] ) => boolean;
@@ -51,7 +47,6 @@ const SharingModalInner: React.FC = () => {
 		title,
 		status: postStatus,
 		password: postPassword,
-		meta: postMeta,
 	} = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
@@ -71,12 +66,10 @@ const SharingModalInner: React.FC = () => {
 	const shouldShowVideoCelebrationModal =
 		useShouldShowVideoCelebrationModal( isCurrentPostPublished );
 
-	const [ isOpen, setIsOpen ] = useState( true );
+	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 	const { createNotice } = useDispatch( noticesStore );
-	const [ shouldShowSuggestedTags, setShouldShowSuggestedTags ] = React.useState(
-		postMeta?.reader_suggested_tags?.length > 0
-	);
+	const [ shouldShowSuggestedTags, setShouldShowSuggestedTags ] = React.useState( true );
 
 	useEffect( () => {
 		// The first post will show a different modal.
