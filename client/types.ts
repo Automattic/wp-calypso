@@ -74,7 +74,7 @@ interface ThemeFeature {
 	term_id: string;
 }
 
-interface ThemeSoftwareSet {
+export interface ThemeSoftwareSet {
 	name: string;
 	slug: string;
 	term_id: string;

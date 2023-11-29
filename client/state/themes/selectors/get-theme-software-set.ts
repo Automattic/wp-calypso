@@ -1,27 +1,22 @@
 import { createSelector } from '@automattic/state-utils';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
+import type { AppState, ThemeSoftwareSet } from 'calypso/types';
 
 import 'calypso/state/themes/init';
 
 /**
  * Returns the theme software set from taxonomy.
- * @param {Object} state Global state tree
- * @param {string} themeId Theme ID
- * @returns {Object} The theme software set taxonomy.
  */
-function getThemeSoftwareSetTaxonomy( state, themeId ) {
+function getThemeSoftwareSetTaxonomy( state: AppState, themeId: string ): ThemeSoftwareSet[] {
 	const theme = getTheme( state, 'wpcom', themeId );
 	return theme?.taxonomies?.theme_software_set;
 }
 
 /**
- * Get the bundled software set of a theme.
- * @param {Object} state Global state tree
- * @param {string} themeId Theme ID
- * @returns {string[]} Array with the name of the softwares.
+ * Get the bundled software set slugs of a theme.
  */
 export const getThemeSoftwareSet = createSelector(
-	( state, themeId ) => {
+	( state: AppState, themeId: string ): string[] => {
 		const themeSoftwareSetTaxonomy = getThemeSoftwareSetTaxonomy( state, themeId );
 
 		if ( ! themeSoftwareSetTaxonomy ) {
@@ -30,5 +25,5 @@ export const getThemeSoftwareSet = createSelector(
 
 		return themeSoftwareSetTaxonomy.map( ( item ) => item.slug );
 	},
-	( state, themeId ) => [ getThemeSoftwareSetTaxonomy( state, themeId ) ]
+	( state: AppState, themeId: string ) => [ getThemeSoftwareSetTaxonomy( state, themeId ) ]
 );

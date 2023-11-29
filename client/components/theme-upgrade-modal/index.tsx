@@ -74,7 +74,7 @@ export const ThemeUpgradeModal = ( {
 	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
 
 	const themeSoftwareSet = useSelector( ( state ) =>
-		getThemeSoftwareSet( state, theme?.data?.id )
+		getThemeSoftwareSet( state, theme?.data?.id || '' )
 	);
 
 	const premiumPlanProduct = useSelect(
