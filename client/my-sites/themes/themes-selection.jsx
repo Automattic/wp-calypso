@@ -2,7 +2,7 @@ import {
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
-import { default as pageRouter } from '@automattic/calypso-router';
+import pageRouter from '@automattic/calypso-router';
 import { compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

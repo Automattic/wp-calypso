@@ -179,13 +179,14 @@ function PayButton( {
 			? translate( 'Complete Checkout' )
 			: sprintf( translate( 'Pay %s' ), totalCostDisplay );
 	const processingText = translate( 'Processing…' );
+	const noop = () => {};
 
 	return (
 		<Button
 			primary={ ! busy }
 			busy={ busy }
 			disabled={ busy }
-			onClick={ onClick }
+			onClick={ busy ? noop : onClick }
 			className="purchase-modal__pay-button"
 		>
 			{ busy ? processingText : payText }

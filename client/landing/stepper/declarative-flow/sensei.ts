@@ -18,9 +18,9 @@ import { AssertConditionState, Flow } from './internals/types';
 import './internals/sensei.scss';
 
 function getStartUrl( step: string, locale: string ) {
-	return locale && locale !== 'en'
-		? `/start/account/user/${ locale }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`
-		: `/start/account/user?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`;
+	const localeUrlPart = locale && locale !== 'en' ? `/${ locale }` : '';
+
+	return `/start/account/user${ localeUrlPart }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }&main_flow=${ SENSEI_FLOW }`;
 }
 
 const sensei: Flow = {

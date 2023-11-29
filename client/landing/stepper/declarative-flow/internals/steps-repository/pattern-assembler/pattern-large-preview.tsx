@@ -5,9 +5,10 @@ import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useEffect, useState, useMemo, CSSProperties } from 'react';
+import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -18,6 +19,7 @@ interface Props {
 	sections: Pattern[];
 	footer: Pattern | null;
 	activePosition: number;
+	pages?: Pattern[];
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
@@ -38,6 +40,7 @@ const PatternLargePreview = ( {
 	sections,
 	footer,
 	activePosition,
+	pages,
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
@@ -95,6 +98,19 @@ const PatternLargePreview = ( {
 		};
 	}, [ activeElement ] );
 
+	const transformPatternHtml = useCallback(
+		( patternHtml: string ) => {
+			const pageTitles = pages?.map( ( page ) => page.title );
+			if ( pageTitles ) {
+				return injectTitlesToPageListBlock( patternHtml, pageTitles, {
+					replaceCurrentPages: isNewSite,
+				} );
+			}
+			return patternHtml;
+		},
+		[ isNewSite, pages ]
+	);
+
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const isSection = type === 'section';
 		const clientId = isSection ? pattern.key : type;
@@ -141,7 +157,7 @@ const PatternLargePreview = ( {
 						viewportHeight={ viewportHeight }
 						// Disable default max-height
 						maxHeight="none"
-						shouldShufflePosts={ isNewSite }
+						transformHtml={ transformPatternHtml }
 					/>
 				) }
 				{ isActive && (
@@ -207,7 +223,15 @@ const PatternLargePreview = ( {
 			}
 		};
 
-		scrollIntoView();
+		// Only scroll when the pattern is added via the pattern list panel.
+		// This prevents auto-scrolling when the pattern is added via shuffle, which causes the pattern action bar to jump around.
+		const focusedElement = document.activeElement;
+		if (
+			! focusedElement ||
+			focusedElement.classList.contains( 'pattern-list-renderer__pattern-list-item' )
+		) {
+			scrollIntoView();
+		}
 
 		return () => {
 			if ( timerId ) {

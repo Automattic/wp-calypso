@@ -11,7 +11,9 @@ const useCreateAppPasswordMutation = ( queryOptions = {} ) => {
 			} ),
 		...queryOptions,
 		onSuccess( ...args ) {
-			queryClient.invalidateQueries( [ 'application-passwords' ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'application-passwords' ],
+			} );
 			queryOptions.onSuccess?.( ...args );
 		},
 	} );

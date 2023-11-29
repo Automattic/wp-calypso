@@ -19,6 +19,7 @@ export type {
 	PlanSimplifiedFeature,
 } from './types';
 
+export { default as usePlans } from './queries/use-plans';
 export { default as useSitePlans } from './queries/use-site-plans';
 export { default as useIntroOffers } from './hooks/use-intro-offers';
 export { default as useIntroOffersForWooExpress } from './hooks/use-intro-offers-for-woo-express';

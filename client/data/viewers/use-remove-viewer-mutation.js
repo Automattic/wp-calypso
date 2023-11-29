@@ -10,7 +10,9 @@ function useRemoveViewer() {
 		},
 		onSuccess( data, variables ) {
 			const { siteId } = variables;
-			queryClient.invalidateQueries( [ 'viewers', siteId ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'viewers', siteId ],
+			} );
 		},
 	} );
 

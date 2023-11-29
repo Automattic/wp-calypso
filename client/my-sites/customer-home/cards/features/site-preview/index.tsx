@@ -66,17 +66,26 @@ const SitePreview = ( {
 	const isMobile = useMobileBreakpoint();
 	const wpcomDomain = useSelector( ( state ) => getWpComDomainBySiteId( state, selectedSite?.ID ) );
 
-	if ( isMobile || ! selectedSite || ! wpcomDomain ) {
+	if ( isMobile ) {
 		return <></>;
 	}
 
-	const shouldShowEditSite = isFSEActive && showEditSite && canManageSite;
+	const shouldShowEditSite =
+		Boolean( selectedSite ) && isFSEActive && showEditSite && canManageSite;
 
-	const editSiteURL = addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
-		canvas: 'edit',
-	} );
+	const editSiteURL = selectedSite
+		? addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
+				canvas: 'edit',
+		  } )
+		: '#';
 
-	const iframeSrcKeepHomepage = `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`;
+	const iframeSrcKeepHomepage = wpcomDomain
+		? `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`
+		: '#';
+
+	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
+	const selectedSiteSlug = selectedSite ? selectedSite.slug : '...';
+	const selectedSiteName = selectedSite ? selectedSite.name : '&nbsp;';
 
 	return (
 		<div className="home-site-preview">
@@ -87,20 +96,24 @@ const SitePreview = ( {
 					</Button>
 				) }
 				<div className="home-site-preview__thumbnail">
-					<iframe
-						scrolling="no"
-						loading="lazy"
-						title={ __( 'Site Preview' ) }
-						src={ iframeSrcKeepHomepage }
-					/>
+					{ wpcomDomain ? (
+						<iframe
+							scrolling="no"
+							loading="lazy"
+							title={ __( 'Site Preview' ) }
+							src={ iframeSrcKeepHomepage }
+						/>
+					) : (
+						<div className="home-site-preview__thumbnail-placeholder" />
+					) }
 				</div>
 			</ThumbnailWrapper>
 			{ showSiteDetails && (
 				<div className="home-site-preview__action-bar">
 					<div className="home-site-preview__site-info">
-						<h2 className="home-site-preview__info-title">{ selectedSite.name }</h2>
-						<SiteUrl href={ selectedSite.URL } title={ selectedSite.URL }>
-							<Truncated>{ selectedSite.slug }</Truncated>
+						<h2 className="home-site-preview__info-title">{ selectedSiteName }</h2>
+						<SiteUrl href={ selectedSiteURL } title={ selectedSiteURL }>
+							<Truncated>{ selectedSiteSlug }</Truncated>
 						</SiteUrl>
 					</div>
 					<SitePreviewEllipsisMenu />

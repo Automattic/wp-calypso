@@ -23,7 +23,7 @@ export function getItemVariantCompareToPrice(
 		return compareTo.priceBeforeDiscounts * 2;
 	}
 
-	// CompareTo price with introductory offers (For Jetpack)
+	// CompareTo price for first-year introductory offers
 	if (
 		compareTo.introductoryInterval === 1 &&
 		compareTo.introductoryTerm === 'year' &&
@@ -33,7 +33,15 @@ export function getItemVariantCompareToPrice(
 		return compareTo.priceInteger + compareTo.priceBeforeDiscounts;
 	}
 
-	// CompareTo price without intro offers (For WPCOM)
+	// CompareTo price for Biennial, Triennial, Quadrennial, and so on, products
+	if ( compareTo.termIntervalInMonths >= 12 && variant.termIntervalInMonths >= 24 ) {
+		return (
+			compareTo.priceInteger +
+			compareTo.priceBeforeDiscounts * ( variant.termIntervalInMonths / 12 - 1 )
+		);
+	}
+
+	// Default
 	return ( compareTo.priceInteger / compareTo.termIntervalInMonths ) * variant.termIntervalInMonths;
 }
 

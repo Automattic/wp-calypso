@@ -22,6 +22,7 @@ const ReaderFeaturedImage = ( {
 	imageWidth,
 	imageHeight,
 	isCompactPost,
+	hasExcerpt,
 } ) => {
 	const featuredImageUrl = imageUrl || canonicalMedia?.src;
 	if ( featuredImageUrl === undefined ) {
@@ -29,7 +30,8 @@ const ReaderFeaturedImage = ( {
 	}
 	let resizedImageWidth = imageWidth;
 	if ( resizedImageWidth === undefined ) {
-		resizedImageWidth = isCompactPost ? READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH : 'auto';
+		resizedImageWidth =
+			isCompactPost && hasExcerpt ? READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH : 'auto';
 	}
 	// Don't resize image if it was already fetched.
 	const resizedUrl = fetched
@@ -38,7 +40,7 @@ const ReaderFeaturedImage = ( {
 	const safeCssUrl = cssSafeUrl( resizedUrl );
 	const newHeight =
 		imageHeight ||
-		( isCompactPost
+		( isCompactPost && hasExcerpt
 			? READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT
 			: READER_FEATURED_MAX_IMAGE_HEIGHT );
 	let featuredImageStyle = { background: 'none' };

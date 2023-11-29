@@ -267,3 +267,35 @@ button.dns__breadcrumb-button {
 		}
 	}
 }
+
+.import-bind-file-confirmation-dialog {
+	.import-bind-file-confirmation-dialog__header,
+	.import-bind-file-confirmation-dialog__row {
+		display: flex;
+		padding: 8px;
+		border-bottom: 1px solid $gray-20;
+	}
+
+	.import-bind-file-confirmation-dialog__header label {
+		font-weight: 600;
+		font-family: $sans;
+		font-size: $font-body-small;
+	}
+
+	.import-bind-file-confirmation-dialog__row {
+		border-bottom: 1px solid $gray-5;
+
+		.components-base-control__field {
+			display: flex;
+		}
+
+		label {
+			font-family: $monospace;
+			font-size: $font-body-extra-small;
+		}
+
+		&.not-selected label {
+			color: $gray-20;
+		}
+	}
+}

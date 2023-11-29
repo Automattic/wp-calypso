@@ -33,7 +33,12 @@ function CheckMarkOrNumber( { currentStep, step }: { currentStep: number; step: 
 	);
 }
 
-type StepKey = 'issueLicense' | 'addPaymentMethod' | 'assignLicense' | 'downloadProducts';
+type StepKey =
+	| 'issueLicense'
+	| 'reviewLicense'
+	| 'addPaymentMethod'
+	| 'assignLicense'
+	| 'downloadProducts';
 
 interface Step {
 	key: StepKey;
@@ -44,21 +49,42 @@ interface Props {
 	currentStep: StepKey;
 	selectedSite?: SiteDetails | null;
 	showDownloadStep?: boolean;
+	isBundleLicensing?: boolean;
 }
 
-const AssignLicenseStepProgress = ( { currentStep, selectedSite, showDownloadStep }: Props ) => {
+const AssignLicenseStepProgress = ( {
+	currentStep,
+	selectedSite,
+	showDownloadStep,
+	isBundleLicensing,
+}: Props ) => {
 	const translate = useTranslate();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
 
-	const steps: Step[] = [ { key: 'issueLicense', label: translate( 'Issue new license' ) } ];
+	const steps: Step[] = [
+		{
+			key: 'issueLicense',
+			label: isBundleLicensing ? translate( 'Select licenses' ) : translate( 'Issue new license' ),
+		},
+	];
+
+	if ( isBundleLicensing ) {
+		steps.push( {
+			key: 'reviewLicense',
+			label: translate( 'Review selections' ),
+		} );
+	}
 
 	if ( paymentMethodRequired ) {
 		steps.push( { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } );
 	}
 
 	if ( sites > 0 && ! selectedSite ) {
-		steps.push( { key: 'assignLicense', label: translate( 'Assign license' ) } );
+		steps.push( {
+			key: 'assignLicense',
+			label: translate( 'Assign licenses' ),
+		} );
 	}
 
 	if ( showDownloadStep ) {
