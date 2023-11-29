@@ -31,15 +31,15 @@ interface useCommandsArrayWpcomOptions {
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 }: useCommandsArrayWpcomOptions ) => {
+	const { __ } = useI18n();
 	const setStateCallback =
-		( actionName: string, placeholder: string = 'Select a site' ) =>
+		( actionName: string, placeholder: string = __( 'Select a site' ) ) =>
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
 			setPlaceholderOverride( placeholder );
 		};
 
-	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const displaySuccessNotice = ( message: string ) =>
 		dispatch( successNotice( message, { duration: 5000 } ) );
