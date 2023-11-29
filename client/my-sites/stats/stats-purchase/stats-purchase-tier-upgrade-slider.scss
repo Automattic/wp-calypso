@@ -30,12 +30,11 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 	border-radius: 5px; // stylelint-disable-line scales/radii
 	padding: 12px;
 
-	.jp-components-pricing-slider__thumb.upgrade-thumb {
+	.jp-components-pricing-slider__thumb.stats-tier-upgrade-slider__thumb {
 		width: $thumb-width;
 		height: $slider-height;
 		border-radius: 50%;
-		border-color: var(--color-primary);
-		background-color: var(--color-primary);
+		background-color: var(--jp-green-50);
 		color: var(--jp-white);
 	}
 
@@ -70,6 +69,13 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 			margin: 0 $track-extra-width;
 			bottom: calc(50% - ($mark-diameter / 2 + $mark-border-width));
 		}
+	}
+}
+
+// Override colors for WPCOM context.
+.stats-purchase-page--is-wpcom {
+	.jp-components-pricing-slider__thumb.stats-tier-upgrade-slider__thumb {
+		background-color: var(--color-primary);
 	}
 }
 
