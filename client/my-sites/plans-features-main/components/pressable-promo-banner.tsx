@@ -11,6 +11,33 @@ const Banner = styled.div`
 	border: 1px solid #DCDCDE
 `;
 
+const Subtitle = styled.h4`
+	font-family: SF Pro Text;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 20px;
+	letter-spacing: 0em;
+	text-align: left;
+`;
+
+const Title = styled.h2`
+	font-family: SF Pro Display;
+	font-size: 20px;
+	font-weight: 500;
+	line-height: 26px;
+	letter-spacing: 0.3799999952316284px;
+	text-align: left;
+`;
+
+const Description = styled.p`
+	font-family: SF Pro Text;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	letter-spacing: -0.15000000596046448px;
+	text-align: left;
+`;
+
 const CtaButton = styled( Button )`
 	font-family: SF Pro Display;
 	font-size: 14px;
@@ -36,13 +63,13 @@ const PressablePromoBanner = () => {
 		<Banner>
 			<div>Pressable Logo here</div>
 			<div>
-				<h4>{ translate( 'Hosting partner' ) }</h4>
-				<h2>{ translate( 'Multi-Site Hosting by Pressable' ) }</h2>
-				<p>
+				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
+				<Title>{ translate( 'Multi-Site Hosting by Pressable' ) }</Title>
+				<Description>
 					{ translate(
 						'Looking to manage multiple websites with ease? Discover the power of Pressable Multi-Site Hosting. Ideal for agencies and web professionals. '
 					) }
-				</p>
+				</Description>
 			</div>
 			<div>
 				<CtaButton
