@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { Task } from 'calypso/state/checklist/types';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import useSiteChecklist from './use-site-checklist';
@@ -13,12 +12,7 @@ const useSiteChecklistTask = (
 	taskId: ( typeof CHECKLIST_KNOWN_TASKS )[ keyof typeof CHECKLIST_KNOWN_TASKS ]
 ): Task | undefined => {
 	const siteChecklist = useSiteChecklist( siteId );
-	const task = useMemo(
-		() => siteChecklist?.tasks.find( ( { id } ) => id === taskId ),
-		[ siteChecklist, taskId ]
-	);
-
-	return task;
+	return siteChecklist?.tasks?.find( ( { id } ) => id === taskId );
 };
 
 export default useSiteChecklistTask;

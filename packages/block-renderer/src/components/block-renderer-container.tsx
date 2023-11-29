@@ -26,7 +26,6 @@ interface BlockRendererContainerProps {
 	children: ReactNode;
 	styles?: RenderedStyle[];
 	scripts?: string;
-	inlineCss?: string;
 	viewportWidth?: number;
 	maxHeight?: 'none' | number;
 	minHeight?: number;
@@ -40,7 +39,6 @@ const ScaledBlockRendererContainer = ( {
 	children,
 	styles: customStyles,
 	scripts: customScripts,
-	inlineCss = '',
 	viewportWidth = 1200,
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
@@ -66,12 +64,8 @@ const ScaledBlockRendererContainer = ( {
 			// Ignore svgs since the current version of EditorStyles doesn't support it
 			.filter( ( style: RenderedStyle ) => style.__unstableType !== 'svgs' );
 
-		if ( ! inlineCss ) {
-			return mergedStyles;
-		}
-
-		return [ ...mergedStyles, { css: inlineCss } ];
-	}, [ styles, customStyles, inlineCss ] );
+		return mergedStyles;
+	}, [ styles, customStyles ] );
 
 	const scripts = useMemo( () => {
 		return [ assets?.scripts, customScripts ].filter( Boolean ).join( '' );

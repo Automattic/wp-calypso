@@ -20,8 +20,9 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
+import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -104,20 +105,7 @@ export const useCommandsArrayWpcom = ( {
 		displaySuccessNotice( __( 'Copied new password' ) );
 	};
 
-	const openPHPmyAdmin = async ( siteId: number ) => {
-		try {
-			const { token } = await wpcom.req.post( {
-				path: `/sites/${ siteId }/hosting/pma/token`,
-				apiNamespace: 'wpcom/v2',
-			} );
-
-			if ( token ) {
-				window.open( `https://wordpress.com/pma-login?token=${ token }` );
-			}
-		} catch {
-			dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
-		}
-	};
+	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	const commands = [
 		{
@@ -134,10 +122,10 @@ export const useCommandsArrayWpcom = ( {
 			icon: dashboardIcon,
 		},
 		{
-			name: 'openHostingConfiguration',
-			label: __( 'Open hosting configuration' ),
+			name: 'manageHostingConfiguration',
+			label: __( 'Manage hosting configuration' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openHostingConfiguration' ),
+			callback: setStateCallback( 'manageHostingConfiguration' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -155,7 +143,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					await openPHPmyAdmin( site.ID );
+					await openPhpMyAdmin( site.ID );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
@@ -182,7 +170,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'acessPurchases',
-			label: __( 'Open my purchases' ),
+			label: __( 'View my purchases' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -255,9 +243,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: keyIcon,
 		},
 		{
-			name: 'openSiteStats',
-			label: __( 'Open site stats' ),
-			callback: setStateCallback( 'openSiteStats' ),
+			name: 'openJetpackStats',
+			label: __( 'Open Jetpack stats' ),
+			callback: setStateCallback( 'openJetpackStats' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -290,9 +278,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: acitvityLogIcon,
 		},
 		{
-			name: 'openBackups',
-			label: __( 'Open backups' ),
-			callback: setStateCallback( 'openBackups' ),
+			name: 'openJetpackBackups',
+			label: __( 'Open Jetpack backups' ),
+			callback: setStateCallback( 'openJetpackBackups' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -303,9 +291,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: backupIcon,
 		},
 		{
-			name: 'viewSiteMetrics',
-			label: __( 'View site metrics' ),
-			callback: setStateCallback( 'viewSiteMetrics' ),
+			name: 'viewSiteMonitoringMetrics',
+			label: __( 'View site monitoring metrics' ),
+			callback: setStateCallback( 'viewSiteMonitoringMetrics' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -355,9 +343,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: toolIcon,
 		},
 		{
-			name: 'managePHPVersion',
-			label: __( 'Manage PHP version' ),
-			callback: setStateCallback( 'managePHPVersion' ),
+			name: 'changePHPVersion',
+			label: __( 'Change PHP version' ),
+			callback: setStateCallback( 'changePHPVersion' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -381,9 +369,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: toolIcon,
 		},
 		{
-			name: 'manageAdminInterfaceStyle',
-			label: __( 'Manage admin interface style' ),
-			callback: setStateCallback( 'manageAdminInterfaceStyle' ),
+			name: 'changeAdminInterfaceStyle',
+			label: __( 'Change admin interface style' ),
+			callback: setStateCallback( 'changeAdminInterfaceStyle' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
