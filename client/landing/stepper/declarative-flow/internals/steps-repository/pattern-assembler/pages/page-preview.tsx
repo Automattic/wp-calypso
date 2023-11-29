@@ -1,7 +1,10 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { Dialog } from '@automattic/components';
 import { __unstableCompositeItem as CompositeItem } from '@wordpress/components';
-import { CSSProperties, useCallback, useMemo } from 'react';
+import classnames from 'classnames';
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
+import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import prependTitleBlockToPagePattern from '../html-transformers/prepend-title-block-to-page-pattern';
 import { encodePatternId, isPagePattern } from '../utils';
 import type { Pattern } from '../types';
@@ -18,15 +21,12 @@ interface PageProps extends BasePageProps {
 	className: string;
 }
 
-interface PagePreviewModalProps extends BasePageProps {
-	isOpen: boolean;
-	onClose: () => void;
-}
-
 interface PagePreviewProps extends BasePageProps {
 	composite: Record< string, unknown >;
+	slug: string;
 	title: string;
-	onClick: ( patterns: Pattern[] ) => void;
+	onFullscreenEnter: () => void;
+	onFullscreenLeave: () => void;
 }
 
 const PATTERN_PAGE_PREVIEW_ITEM_VIEWPORT_HEIGHT = 500;
@@ -69,34 +69,89 @@ const Page = ( {
 	);
 };
 
-export const PagePreviewModal = ( { isOpen, onClose, ...pageProps }: PagePreviewModalProps ) => {
-	return (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<Dialog
-			additionalClassNames="pattern-assembler__preview-modal"
-			additionalOverlayClassNames="pattern-assembler__preview-modal__backdrop"
-			className="pattern-assembler__preview-modal__wrapper"
-			isVisible={ isOpen }
-			isFullScreen
-			shouldCloseOnEsc
-			onClose={ onClose }
-		>
-			<Page className="pattern-assembler__preview-modal__content" { ...pageProps } />
-		</Dialog>
-	);
-};
+const PatternPagePreview = ( {
+	composite,
+	onFullscreenEnter,
+	onFullscreenLeave,
+	...pageProps
+}: PagePreviewProps ) => {
+	const { slug, title, patterns } = pageProps;
+	const [ isFullscreen, setIsFullscreen ] = useState( false );
+	const [ isFullscreenLeave, setIsFullscreenLeave ] = useState( false );
+	const [ frameStyles, setFrameStyles ] = useState( {} );
+	const ref = useRef< HTMLButtonElement >( null );
 
-const PatternPagePreview = ( { composite, onClick, ...pageProps }: PagePreviewProps ) => {
-	const { title, patterns } = pageProps;
+	const calculateFrameStyles = useCallback( () => {
+		if ( ! ref.current ) {
+			return;
+		}
+
+		const { height, width, x, y } = ref.current.getBoundingClientRect();
+		setFrameStyles( {
+			'--fullscreen-scale': ( window.innerHeight * 0.8 ) / height,
+			'--fullscreen-x': x + width / 2,
+			'--fullscreen-y': y + height / 2,
+		} );
+	}, [ ref ] );
+
+	const handleFullscreenEnter = () => {
+		if ( ! isFullscreen ) {
+			setIsFullscreen( true );
+			onFullscreenEnter();
+		}
+	};
+
+	// Use useCallback since useOutsideClickCallback memoizes the callback function.
+	const handleFullscreenLeave = useCallback( () => {
+		if ( isFullscreen ) {
+			setIsFullscreen( false );
+			onFullscreenLeave();
+
+			// The timeout delay should match the CSS transition timing of the element.
+			setIsFullscreenLeave( true );
+			setTimeout( () => setIsFullscreenLeave( false ), 200 );
+		}
+	}, [ isFullscreen, onFullscreenLeave ] );
+
+	const handleClick = () => {
+		handleFullscreenEnter();
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
+			pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
+			page_slug: slug,
+		} );
+	};
+
+	useEffect( () => {
+		if ( isFullscreen ) {
+			calculateFrameStyles();
+		}
+	}, [ isFullscreen, calculateFrameStyles ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', handleFullscreenLeave );
+		return () => {
+			window.removeEventListener( 'resize', handleFullscreenLeave );
+		};
+	}, [ handleFullscreenLeave ] );
+
+	useOutsideClickCallback( ref, handleFullscreenLeave );
+
 	return (
-		<div className="pattern-assembler__preview">
+		<div
+			className={ classnames( 'pattern-assembler__preview', {
+				'pattern-assembler__preview--fullscreen': isFullscreen,
+				'pattern-assembler__preview--fullscreen-leave': isFullscreenLeave,
+			} ) }
+		>
 			<CompositeItem
 				{ ...composite }
+				ref={ ref }
 				role="option"
 				as="button"
 				className="pattern-assembler__preview-frame"
+				style={ frameStyles }
 				aria-label={ title }
-				onClick={ () => onClick( patterns ) }
+				onClick={ handleClick }
 			>
 				<Page className="pattern-assembler__preview-frame-content" { ...pageProps } />
 			</CompositeItem>
