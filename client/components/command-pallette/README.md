@@ -10,6 +10,8 @@ This command palette is inspired by [Core's implementation](https://github.com/W
 - In addition to icons, we also support images for the commands.
 - We support two lines of text for the commands.
 
+This differences were highlighted in https://github.com/WordPress/gutenberg/issues/55514 . We can replace our command palette with the Core one, once we can use all these differences.
+
 ## Add a command
 
 In order to add a new command to the palette, you can include the command object in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPallette` hooks.
