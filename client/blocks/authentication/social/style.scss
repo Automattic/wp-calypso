@@ -8,8 +8,11 @@
 	.auth-form__social-buttons {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
-		justify-content: center;
+	}
+
+	.auth-form__social-buttons-container {
+		display: flex;
+		flex-direction: column;
 	}
 
 	.social-buttons__button {
@@ -40,11 +43,13 @@
 	}
 
 	.auth-form__social-buttons {
-		gap: 10px;
-
 		@include break-small {
 			align-items: center;
 		}
+	}
+
+	.auth-form__social-buttons-container {
+		gap: 10px;
 	}
 
 	.social-buttons__button.button {
@@ -54,7 +59,7 @@
 }
 
 .auth-form__social.is-social-first {
-	.auth-form__social-buttons {
+	.auth-form__social-buttons-container {
 		gap: 16px;
 	}
 
