@@ -123,10 +123,10 @@ export const useCommandsArrayWpcom = ( {
 			icon: dashboardIcon,
 		},
 		{
-			name: 'openHostingConfiguration',
-			label: __( 'Open hosting configuration' ),
+			name: 'manageHostingConfiguration',
+			label: __( 'Manage hosting configuration' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openHostingConfiguration' ),
+			callback: setStateCallback( 'manageHostingConfiguration' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -171,7 +171,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'acessPurchases',
-			label: __( 'Open my purchases' ),
+			label: __( 'View my purchases' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -244,9 +244,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: keyIcon,
 		},
 		{
-			name: 'openSiteStats',
-			label: __( 'Open site stats' ),
-			callback: setStateCallback( 'openSiteStats' ),
+			name: 'openJetpackStats',
+			label: __( 'Open Jetpack stats' ),
+			callback: setStateCallback( 'openJetpackStats' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -279,9 +279,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: acitvityLogIcon,
 		},
 		{
-			name: 'openBackups',
-			label: __( 'Open backups' ),
-			callback: setStateCallback( 'openBackups' ),
+			name: 'openJetpackBackups',
+			label: __( 'Open Jetpack backups' ),
+			callback: setStateCallback( 'openJetpackBackups' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -292,9 +292,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: backupIcon,
 		},
 		{
-			name: 'viewSiteMetrics',
-			label: __( 'View site metrics' ),
-			callback: setStateCallback( 'viewSiteMetrics' ),
+			name: 'viewSiteMonitoringMetrics',
+			label: __( 'View site monitoring metrics' ),
+			callback: setStateCallback( 'viewSiteMonitoringMetrics' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -344,9 +344,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: toolIcon,
 		},
 		{
-			name: 'managePHPVersion',
-			label: __( 'Manage PHP version' ),
-			callback: setStateCallback( 'managePHPVersion' ),
+			name: 'changePHPVersion',
+			label: __( 'Change PHP version' ),
+			callback: setStateCallback( 'changePHPVersion' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -370,9 +370,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: toolIcon,
 		},
 		{
-			name: 'manageAdminInterfaceStyle',
-			label: __( 'Manage admin interface style' ),
-			callback: setStateCallback( 'manageAdminInterfaceStyle' ),
+			name: 'changeAdminInterfaceStyle',
+			label: __( 'Change admin interface style' ),
+			callback: setStateCallback( 'changeAdminInterfaceStyle' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();

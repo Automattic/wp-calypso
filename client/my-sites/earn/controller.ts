@@ -10,6 +10,10 @@ export const redirectToAdsSettings: Callback = ( context ) => {
 	page.redirect( '/earn/ads-settings/' + context.params.site_id );
 };
 
+export const redirectToSettings: Callback = ( context ) => {
+	page.redirect( '/earn/payments/' + context.params.site_id );
+};
+
 export const layout: Callback = ( context, next ) => {
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
