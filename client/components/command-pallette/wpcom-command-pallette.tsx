@@ -112,7 +112,7 @@ export function CommandMenuGroup( {
 									</SubLabel>
 								) }
 							</LabelWrapper>
-							{ selectedCommandName ? null : <Icon icon={ forwardIcon } /> }
+							{ command.siteFunctions ? <Icon icon={ forwardIcon } /> : null }
 						</HStack>
 					</Command.Item>
 				);
