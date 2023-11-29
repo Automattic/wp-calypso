@@ -9,7 +9,6 @@ import {
 	globe as domainsIcon,
 	home as dashboardIcon,
 	key as keyIcon,
-	preformatted as sitesIcon,
 	page as pageIcon,
 	payment as creditCardIcon,
 	plus as plusIcon,
@@ -473,15 +472,6 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: uploadIcon,
-		},
-		{
-			name: 'viewMySites',
-			label: __( 'View my sites' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/sites` );
-			},
-			icon: sitesIcon,
 		},
 		{
 			name: 'manageSettingsWriting',
