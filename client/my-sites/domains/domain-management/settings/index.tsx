@@ -623,8 +623,8 @@ const Settings = ( {
 			>
 				{ /*
 					TO DO: Enable the link when the support page is ready
-					<NoticeAction href={ domain.pendingRegistrationAtRegistryUl }>
-						{ translate( 'Support link' ) }
+					<NoticeAction href={ domain.pendingRegistrationAtRegistryUrl }>
+						{ translate( 'More info' ) }
 					</NoticeAction>
 				*/ }
 			</Notice>
