@@ -74,10 +74,10 @@ describe( 'suggestEmailCorrection', () => {
 	} );
 
 	test( 'should not suggest a correction for a domain if user is still typing', () => {
-		const result = suggestEmailCorrection( 'example@mail' );
+		const result = suggestEmailCorrection( 'example@gmail.co' );
 		expect( result ).toEqual( {
-			oldEmail: 'example@mail',
-			oldDomain: 'mail',
+			oldEmail: 'example@gmail.co',
+			oldDomain: 'gmail.co',
 			newDomain: null,
 			newEmail: null,
 			distance: Infinity,
