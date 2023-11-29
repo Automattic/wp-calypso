@@ -155,6 +155,7 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
+		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": false,
 		"jetpack-cloud-features-comparison": false,
 		"jetpack-cloud-plugin-management": false,

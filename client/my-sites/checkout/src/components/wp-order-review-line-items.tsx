@@ -115,7 +115,8 @@ function filterAndGroupCostOverridesForDisplay(
 				return;
 			}
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
+			const newDiscountAmount =
+				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 			grouped[ costOverride.override_code ] = {
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
@@ -165,7 +166,7 @@ function CostOverridesList( {
 							{ costOverride.humanReadableReason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discountAmount, currency ) }
+							{ formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
 						</span>
 					</div>
 				);
@@ -190,7 +191,7 @@ function CostOverridesList( {
 								: costOverride.humanReadableReason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discountAmount, currency ) }
+							{ formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
 						</span>
 						<span className="cost-overrides-list-item__actions">
 							<DeleteButton
