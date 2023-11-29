@@ -133,6 +133,7 @@ class RegisterDomainStep extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		otherManagedSubdomains: PropTypes.array,
+		forceExactSuggestion: PropTypes.bool,
 
 		/**
 		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
@@ -168,6 +169,7 @@ class RegisterDomainStep extends Component {
 		useProvidedProductsList: false,
 		otherManagedSubdomains: null,
 		hasPendingRequests: false,
+		forceExactSuggestion: false,
 	};
 
 	constructor( props ) {
@@ -206,6 +208,11 @@ class RegisterDomainStep extends Component {
 			// If there's a domain name as a query parameter suggestion, we always search for it first when the page loads
 			if ( props.suggestion ) {
 				this.state.lastQuery = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
+
+				// If we're coming from the general settings page, we want to use the exact site title as the initial query
+				if ( props.forceExactSuggestion ) {
+					this.state.lastQuery = props.suggestion;
+				}
 			}
 		}
 	}
@@ -757,18 +764,72 @@ class RegisterDomainStep extends Component {
 		this.props.onSave( this.state );
 	};
 
+	removeUnavailablePremiumDomain = ( domainName ) => {
+		this.setState( ( state ) => {
+			const newPremiumDomains = { ...state.premiumDomains };
+			delete newPremiumDomains[ domainName ];
+			return {
+				premiumDomains: newPremiumDomains,
+				searchResults: state.searchResults.filter(
+					( suggestion ) => suggestion.domain_name !== domainName
+				),
+			};
+		} );
+	};
+
 	saveAndGetPremiumPrices = () => {
 		this.save();
 
-		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
-			this.fetchDomainPrice( premiumDomain ).then( ( domainPrice ) => {
-				this.setState( ( state ) => {
-					const newPremiumDomains = { ...state.premiumDomains };
-					newPremiumDomains[ premiumDomain ] = domainPrice;
-					return {
-						premiumDomains: newPremiumDomains,
-					};
-				} );
+		const premiumDomainsFetched = [];
+
+		Object.keys( this.state.premiumDomains ).forEach( ( domainName ) => {
+			premiumDomainsFetched.push(
+				new Promise( ( resolve ) => {
+					checkDomainAvailability(
+						{
+							domainName,
+							blogId: get( this.props, 'selectedSite.ID', null ),
+						},
+						( err, availabilityResult ) => {
+							if ( err ) {
+								// if any error occurs, removes the domain from both premium domains and
+								// search results state.
+								this.removeUnavailablePremiumDomain( domainName );
+								return resolve( null );
+							}
+
+							const status = availabilityResult?.status ?? err;
+
+							const isAvailablePremiumDomain = domainAvailability.AVAILABLE_PREMIUM === status;
+							const isAvailableSupportedPremiumDomain =
+								config.isEnabled( 'domains/premium-domain-purchases' ) &&
+								domainAvailability.AVAILABLE_PREMIUM === status &&
+								availabilityResult?.is_supported_premium_domain;
+
+							if ( ! isAvailablePremiumDomain || ! isAvailableSupportedPremiumDomain ) {
+								this.removeUnavailablePremiumDomain( domainName );
+								return resolve( null );
+							}
+
+							this.setState(
+								( state ) => {
+									const newPremiumDomains = { ...state.premiumDomains };
+									newPremiumDomains[ domainName ] = availabilityResult;
+									return {
+										premiumDomains: newPremiumDomains,
+									};
+								},
+								() => resolve( domainName )
+							);
+						}
+					);
+				} )
+			);
+		} );
+
+		Promise.all( premiumDomainsFetched ).then( () => {
+			this.setState( {
+				loadingResults: false,
 			} );
 		} );
 	};
@@ -931,6 +992,7 @@ class RegisterDomainStep extends Component {
 				is_premium: data.is_premium,
 				cost: data.cost,
 				sale_cost: data.sale_cost,
+				renew_cost: data.renew_cost,
 				is_price_limit_exceeded: data.is_price_limit_exceeded,
 			} ) )
 			.catch( ( error ) => ( {
@@ -1182,7 +1244,6 @@ class RegisterDomainStep extends Component {
 				premiumDomains,
 				pageSize: hasAvailableFQDNSearch ? EXACT_MATCH_PAGE_SIZE : PAGE_SIZE,
 				searchResults: markedSuggestions,
-				loadingResults: false,
 			},
 			this.saveAndGetPremiumPrices
 		);

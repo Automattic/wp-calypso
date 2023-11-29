@@ -3,12 +3,11 @@ import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
 } from '@wordpress/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { CSSProperties, useCallback, useMemo, useState } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import { injectTitlesToPageListBlock } from '../html-transformers';
-import PagePreview, { PagePreviewModal } from './page-preview';
+import PagePreview from './page-preview';
 import type { Pattern } from '../types';
 import './page-preview-list.scss';
 
@@ -31,12 +30,7 @@ const PagePreviewList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const composite = useCompositeState( { orientation: 'horizontal' } );
-	const [ zoomedPage, setZoomedPage ] = useState< Pattern[] >( [] );
-
-	// Using zoomedPage to control whether the modal is opened or not causes a flash of empty content.
-	// To prevent this, we use another separate state.
-	// See: https://github.com/Automattic/wp-calypso/pull/83902#discussion_r1383357522.
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ isFullscreenPreview, setIsFullscreenPreview ] = useState( false );
 
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const pagePreviewStyle = useMemo(
@@ -59,53 +53,52 @@ const PagePreviewList = ( {
 		[ isNewSite, selectedPages ]
 	);
 
-	const handleClick = ( patterns: Pattern[], pageSlug: string ) => {
-		setZoomedPage( patterns );
-		setIsModalOpen( true );
+	const handleFullscreenEnter = () => {
+		setIsFullscreenPreview( true );
+	};
 
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
-			pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
-			page_slug: pageSlug,
-		} );
+	const handleFullscreenLeave = () => {
+		// The timeout delay should match the CSS transition timing of the element.
+		setTimeout( () => setIsFullscreenPreview( false ), 200 );
 	};
 
 	return (
 		<>
-			<Composite { ...composite } role="listbox" className="pattern-assembler__preview-list">
+			<Composite
+				{ ...composite }
+				role="listbox"
+				className={ classnames( 'pattern-assembler__preview-list', {
+					'pattern-assembler__preview-list--fullscreen-preview': isFullscreenPreview,
+				} ) }
+			>
 				<PagePreview
 					composite={ composite }
+					slug="homepage"
 					title={ translate( 'Homepage' ) }
 					style={ pagePreviewStyle }
 					patterns={ homepage }
 					transformPatternHtml={ transformPatternHtml }
-					shouldShufflePosts={ isNewSite }
-					onClick={ ( patterns ) => handleClick( patterns, 'homepage' ) }
+					onFullscreenEnter={ handleFullscreenEnter }
+					onFullscreenLeave={ handleFullscreenLeave }
 				/>
 				{ selectedPages.map( ( page, index ) => (
 					<PagePreview
 						key={ page.ID }
 						composite={ composite }
-						style={ pagePreviewStyle }
+						slug={ selectedPageSlugs[ index ] }
 						title={ page.title }
+						style={ pagePreviewStyle }
 						patterns={ [
 							...( selectedHeader ? [ selectedHeader ] : [] ),
 							page,
 							...( selectedFooter ? [ selectedFooter ] : [] ),
 						] }
 						transformPatternHtml={ transformPatternHtml }
-						shouldShufflePosts={ isNewSite }
-						onClick={ ( patterns ) => handleClick( patterns, selectedPageSlugs[ index ] ) }
+						onFullscreenEnter={ handleFullscreenEnter }
+						onFullscreenLeave={ handleFullscreenLeave }
 					/>
 				) ) }
 			</Composite>
-			<PagePreviewModal
-				style={ pagePreviewStyle }
-				patterns={ zoomedPage }
-				transformPatternHtml={ transformPatternHtml }
-				shouldShufflePosts={ isNewSite }
-				isOpen={ isModalOpen }
-				onClose={ () => setIsModalOpen( false ) }
-			/>
 		</>
 	);
 };

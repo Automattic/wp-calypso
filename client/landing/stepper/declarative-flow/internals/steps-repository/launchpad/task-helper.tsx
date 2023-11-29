@@ -590,7 +590,7 @@ export function getEnhancedTasks(
 							site?.ID
 								? setShowPlansModal( true )
 								: window.location.assign(
-										`/earn/payments-plans/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+										`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
 								  );
 						},
 					};
