@@ -81,6 +81,7 @@ $breakpoint-mobile: 660px;
 }
 
 // If the separator is between two cards, pull them together.
+// If you want to help get rid of this, please consider removing Card component in sign up.
 .card ~ .auth-form__separator {
 	margin-bottom: -10px;
 	margin-top: -10px;
