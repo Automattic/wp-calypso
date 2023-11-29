@@ -26,7 +26,7 @@ Every command has a set of properties that can be used to customize its behavior
 - `context`?: Type `string[]`, a list of URL paths for which the command will have priority when displayed. Example: `['/sites', '/manage/domains']`.
 - `icon`?: Type `JSX.Element`, used to display an icon for the command. It's visible in the command palette.
 - `image`?: Type `JSX.Element`, used to display an image for the command, instead of an icon. It's visible in the command palette.
-- `siteFunctions`?: Type `object`, used for nested commands that need to execute a function when a site is selected in the command palette as a second step.
+- `siteFunctions`?: Type `object`, used for nested commands that need to execute a function when a site is selected in the command palette as a second step. The behaviour for nested commands is the same independently of the page we are.
 
 ## Best practices for defining a command
 
