@@ -45,6 +45,9 @@ $track-extra-width: ($thumb-width - $mark-diameter - $mark-border-width * 2) / 2
 	}
 
 	.jp-components-pricing-slider__control {
+		// TODO: Determine control alignment.
+		// Do we want the slider full-width or do we align based on thumb?
+		// Alternatively, we could use some CSS to reposition the thumbs if either end-cap is selected.
 		// width: calc(100% + $track-extra-width * 2);
 		// margin-left: -($track-extra-width);
 
