@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, PressableLogo } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 
@@ -18,6 +18,7 @@ const Banner = styled.div`
 
 const LogoContainer = styled.div`
 	flex-basis: 120px;
+	background-color: #ffffff;
 `;
 
 const TextContainer = styled.div`
@@ -78,7 +79,9 @@ const PressablePromoBanner = () => {
 
 	return (
 		<Banner>
-			<LogoContainer>Pressable Logo here</LogoContainer>
+			<LogoContainer>
+				<PressableLogo />
+			</LogoContainer>
 			<TextContainer>
 				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
 				<Title>{ translate( 'Multi-Site Hosting by Pressable' ) }</Title>
