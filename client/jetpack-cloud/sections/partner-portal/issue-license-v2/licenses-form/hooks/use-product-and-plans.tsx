@@ -26,6 +26,7 @@ type Props = {
 	selectedBundleSize?: number;
 	selectedSite?: SiteDetails | null;
 	selectedProductFilter?: string | null;
+	productSearchQuery?: string;
 };
 
 const getProductsAndPlansByFilter = (
@@ -69,6 +70,7 @@ export default function useProductAndPlans( {
 	selectedBundleSize = 1,
 	selectedSite,
 	selectedProductFilter = PRODUCT_FILTER_ALL,
+	productSearchQuery,
 }: Props ) {
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 	const dispatch = useDispatch();
@@ -114,6 +116,13 @@ export default function useProductAndPlans( {
 			supportedProducts
 		);
 
+		// Filter products based on the search term
+		if ( productSearchQuery ) {
+			filteredProductsAndBundles = filteredProductsAndBundles.filter(
+				( product ) => product.name?.toLowerCase().includes( productSearchQuery.toLowerCase() )
+			);
+		}
+
 		// Filter products & plan that are already assigned to a site
 		if ( selectedSite && addedPlanAndProducts && filteredProductsAndBundles ) {
 			filteredProductsAndBundles = filteredProductsAndBundles.filter(
@@ -147,6 +156,7 @@ export default function useProductAndPlans( {
 		data,
 		isLoadingProducts,
 		selectedBundleSize,
+		productSearchQuery,
 		selectedProductFilter,
 		selectedSite,
 	] );
