@@ -30,7 +30,7 @@ Every command has a set of properties that can be used to customize its behavior
 
 ## Usage
 
-Embed the command example:
+Embed the command example. This is already done for all WPcom calypso pages using `client/layout/index.jsx`.
 
 ```tsx
 import { WpcomCommandPalette } from 'calypso/components/command-pallette/wpcom-command-pallette';
