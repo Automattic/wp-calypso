@@ -365,12 +365,22 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
-	allThemes = ( { themeProps } ) => {
-		const { filter, isCollectionView, isJetpackSite, tier, children, search, category } =
-			this.props;
-		if ( isJetpackSite ) {
-			return children;
+	shouldShowCollections = () => {
+		const { category, search, filter, isCollectionView, tier } = this.props;
+
+		if ( this.props.isJetpackSite && ! this.props.isAtomicSite ) {
+			return false;
 		}
+
+		return (
+			! ( category || search || filter || isCollectionView ) &&
+			tier === '' &&
+			this.isThemeDiscoveryEnabled()
+		);
+	};
+
+	allThemes = ( { themeProps } ) => {
+		const { filter, isCollectionView, tier } = this.props;
 
 		// In Collection View of pricing tiers (e.g. Partner themes), prevent requesting only recommended themes.
 		const themesSelectionProps = {
@@ -378,15 +388,10 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
-		const showCollections =
-			! ( category || search || filter || isCollectionView ) &&
-			tier === '' &&
-			this.isThemeDiscoveryEnabled();
-
 		return (
 			<div className="theme-showcase__all-themes">
 				<ThemesSelection { ...themesSelectionProps }>
-					{ showCollections && (
+					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
 								{ ...THEME_COLLECTIONS.marketplace }
@@ -521,6 +526,7 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 			isCollectionView,
+			isJetpackSite,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -550,6 +556,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
+			source: isJetpackSite && this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
 		};
 
 		const tabFilters = this.getTabFilters();

@@ -57,9 +57,12 @@ function useSitePlans( { siteId }: Props ) {
 					...acc,
 					[ plan.product_slug ]: {
 						planSlug: plan.product_slug,
+						productSlug: plan.product_slug,
 						productId: Number( productId ),
 						introOffer: unpackIntroOffer( plan ),
 						expiry: plan.expiry,
+						currentPlan: plan.current_plan,
+						purchaseId: plan.id ? Number( plan.id ) : undefined,
 					},
 				};
 			}, {} );
