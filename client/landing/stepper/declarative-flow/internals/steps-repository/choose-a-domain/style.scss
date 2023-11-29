@@ -1,4 +1,6 @@
 @import "../../videopress-constants.scss";
+@import "@wordpress/base-styles/breakpoints.scss";
+@import "@wordpress/base-styles/mixins.scss";
 
 $videopress-mobile-layout-width: 1200px;
 $videopress-link-color: #c377ff;
@@ -380,8 +382,10 @@ $videopress-background: #010101;
 		text-decoration: underline;
 	}
 
-	.step-container__navigation .navigation-link:first-of-type {
-		margin-left: 40px;
-		margin-top: 4px;
+	@include break-small {
+		.step-container__navigation .navigation-link:first-of-type {
+			margin-left: 40px;
+			margin-top: 4px;
+		}
 	}
 }
