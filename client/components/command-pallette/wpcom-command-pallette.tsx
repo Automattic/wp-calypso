@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, search as inputIcon } from '@wordpress/icons';
+import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
@@ -214,7 +214,13 @@ export const WpcomCommandPalette = () => {
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
-						<Icon icon={ inputIcon } />
+						<div>
+							{ selectedCommandName ? (
+								<Icon icon={ backIcon } onClick={ reset } />
+							) : (
+								<Icon icon={ inputIcon } />
+							) }
+						</div>
 						<CommandInput
 							search={ search }
 							setSearch={ setSearch }
