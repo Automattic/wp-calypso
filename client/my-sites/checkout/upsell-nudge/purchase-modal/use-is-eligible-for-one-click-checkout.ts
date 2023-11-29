@@ -42,7 +42,7 @@ export const useIsEligibleForOneClickCheckout = (): IsEligibleForOneClickCheckou
 	const { isLoading: isStoredPaymentsLoading, paymentMethods } = useStoredPaymentMethods( {
 		type: 'card',
 	} );
-	const { isLoading: isContactInfoValidationLoading, data: contactValidationResult } =
+	const { isInitialLoading: isContactInfoValidationLoading, data: contactValidationResult } =
 		useIsContactInfoValid( paymentMethods );
 
 	if ( isStoredPaymentsLoading || isContactInfoValidationLoading ) {
