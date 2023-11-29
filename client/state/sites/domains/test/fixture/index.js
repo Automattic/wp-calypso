@@ -85,6 +85,7 @@ export const DOMAIN_PRIMARY = {
 	partnerDomain: false,
 	pendingRegistration: false,
 	pendingRegistrationAtRegistry: false,
+	pendingRegistrationAtRegistryUrl: '',
 	pendingRegistrationTime: '',
 	pendingTransfer: false,
 	privateDomain: false,
