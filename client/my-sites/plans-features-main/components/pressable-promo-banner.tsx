@@ -1,7 +1,7 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
-export const PressablePromoBanner = () => {
+const PressablePromoBanner = () => {
 	const translate = useTranslate();
 	const onClick = () => {};
 
@@ -21,9 +21,15 @@ export const PressablePromoBanner = () => {
 				<Button
 					href="https://pressable.com/pricing/?utm_source=referral&utm_medium=wpdotcom&utm_campaign=pricing"
 					onClick={ onClick }
+					target="_blank"
 					primary
-				></Button>
+				>
+					{ translate( 'See Pressable Plans' ) }
+					<Gridicon icon="external" />
+				</Button>
 			</div>
 		</div>
 	);
 };
+
+export default PressablePromoBanner;

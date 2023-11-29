@@ -50,6 +50,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
+import PressablePromoBanner from 'calypso/my-sites/plans-features-main/components/pressable-promo-banner';
 import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import { FeaturesGrid, ComparisonGrid, PlanTypeSelector } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
@@ -406,6 +407,8 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+
+	const showPressablePromoBanner = true;
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
 		useFreeHostingTrialAssignment( intent );
@@ -901,6 +904,7 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
+						{ showPressablePromoBanner && <PressablePromoBanner /> }
 					</>
 				) }
 			</div>
