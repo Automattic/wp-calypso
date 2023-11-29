@@ -41,6 +41,15 @@ function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) 
 
 	// Transform plan details to dusplay.
 	const plans = priceTiers?.map( ( plan ): StatsPlanTierUI => {
+		if ( plan?.maximum_units === null ) {
+			// highest tier extension
+			return {
+				price: plan?.minimum_price_monthly_display,
+				views: `1M+`,
+				description: `${ plan?.minimum_price_monthly_display }/month for an additional 1m views billed anually`,
+			};
+		}
+
 		return {
 			price: plan?.maximum_price_monthly_display,
 			views: numberFormat( plan?.maximum_units, 0 ), // TODO: consider short format
@@ -50,8 +59,6 @@ function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) 
 			) } views billed anually`,
 		};
 	} );
-
-	//TODO: support the final tier.
 
 	// Slider state.
 	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
