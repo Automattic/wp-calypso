@@ -223,7 +223,15 @@ const PatternLargePreview = ( {
 			}
 		};
 
-		scrollIntoView();
+		// Only scroll when the pattern is added via the pattern list panel.
+		// This prevents auto-scrolling when the pattern is added via shuffle, which causes the pattern action bar to jump around.
+		const focusedElement = document.activeElement;
+		if (
+			! focusedElement ||
+			focusedElement.classList.contains( 'pattern-list-renderer__pattern-list-item' )
+		) {
+			scrollIntoView();
+		}
 
 		return () => {
 			if ( timerId ) {
