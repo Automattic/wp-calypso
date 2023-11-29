@@ -14,7 +14,6 @@ import {
 	key as keyIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
 import { CommandCallBackParams } from 'calypso/components/command-pallette/use-command-pallette';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
@@ -32,13 +31,12 @@ interface useCommandsArrayWpcomOptions {
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 }: useCommandsArrayWpcomOptions ) => {
-	const translate = useTranslate();
 	const setStateCallback =
-		( actionName: string ) =>
+		( actionName: string, placeholder: string = 'Select a site' ) =>
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
 			setSearch( '' );
 			setSelectedCommandName( actionName );
-			setPlaceholderOverride( translate( 'Search for a site' ) );
+			setPlaceholderOverride( placeholder );
 		};
 
 	const { __ } = useI18n();
@@ -112,7 +110,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard' ),
+			callback: setStateCallback( 'openSiteDashboard', __( 'Select dashboard to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
