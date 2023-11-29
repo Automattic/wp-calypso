@@ -26,7 +26,6 @@ interface Props {
 	) => void | null;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
-	withBackground?: boolean;
 }
 
 export default function LicenseMultiProductCard( props: Props ) {
@@ -38,7 +37,6 @@ export default function LicenseMultiProductCard( props: Props ) {
 		onSelectProduct,
 		suggestedProduct,
 		hideDiscount,
-		withBackground,
 	} = props;
 	const [ product, setProduct ] = useState( products[ 0 ] );
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
@@ -136,7 +134,6 @@ export default function LicenseMultiProductCard( props: Props ) {
 				className={ classNames( 'license-product-card', 'license-product-card--with-variant', {
 					selected: isSelected,
 					disabled: isDisabled,
-					'license-product-card--with-background': withBackground,
 				} ) }
 			>
 				<div className="license-product-card__inner">

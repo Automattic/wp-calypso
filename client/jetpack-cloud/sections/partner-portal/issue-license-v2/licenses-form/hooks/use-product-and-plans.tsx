@@ -65,6 +65,33 @@ const getProductsAndPlansByFilter = (
 	return allProductsAndPlans || [];
 };
 
+// This function gets the displayable Plans based on how it should be arranged in the listing.
+const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
+	const plans = getProductsAndPlansByFilter( PRODUCT_FILTER_PLANS, filteredProductsAndBundles );
+
+	const securityPlans = plans.filter( ( { slug } ) => slug.startsWith( 'jetpack-security' ) );
+	const restOfPlans = plans.filter( ( { slug } ) => ! slug.startsWith( 'jetpack-security' ) );
+
+	return [ securityPlans, ...restOfPlans ];
+};
+
+// This function gets the displayable Products based on how it should be arranged in the listing.
+const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
+	const products = getProductsAndPlansByFilter(
+		PRODUCT_FILTER_PRODUCTS,
+		filteredProductsAndBundles
+	);
+
+	const backupProducts = products.filter( ( { slug } ) => slug.startsWith( 'jetpack-backup' ) );
+	const restOfProducts = products.filter( ( { slug } ) => ! slug.startsWith( 'jetpack-backup' ) );
+
+	return [ ...restOfProducts, backupProducts ].sort( ( a, b ) => {
+		const product_a = Array.isArray( a ) ? a[ 0 ].name : a.name;
+		const product_b = Array.isArray( b ) ? b[ 0 ].name : b.name;
+		return product_a.localeCompare( product_b );
+	} );
+};
+
 export default function useProductAndPlans( {
 	selectedBundleSize = 1,
 	selectedSite,
@@ -130,8 +157,8 @@ export default function useProductAndPlans( {
 		return {
 			isLoadingProducts,
 			filteredProductsAndBundles,
-			plans: getProductsAndPlansByFilter( PRODUCT_FILTER_PLANS, filteredProductsAndBundles ),
-			products: getProductsAndPlansByFilter( PRODUCT_FILTER_PRODUCTS, filteredProductsAndBundles ),
+			plans: getDisplayablePlans( filteredProductsAndBundles ),
+			products: getDisplayableProducts( filteredProductsAndBundles ),
 			backupAddons: getProductsAndPlansByFilter(
 				PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 				filteredProductsAndBundles
