@@ -214,13 +214,11 @@ export const WpcomCommandPalette = () => {
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
-						<div>
-							{ selectedCommandName ? (
-								<Icon icon={ backIcon } onClick={ reset } />
-							) : (
-								<Icon icon={ inputIcon } />
-							) }
-						</div>
+						{ selectedCommandName ? (
+							<Icon icon={ backIcon } onClick={ reset } />
+						) : (
+							<Icon icon={ inputIcon } />
+						) }
 						<CommandInput
 							search={ search }
 							setSearch={ setSearch }
