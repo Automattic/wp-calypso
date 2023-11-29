@@ -13,7 +13,7 @@ import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { CommandCallBackParams, useCommandPallette } from './use-command-pallette';
+import { CommandCallBackParams, useCommandPallette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
 
@@ -155,7 +155,7 @@ function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputP
 	);
 }
 
-export const WpcomCommandPalette = () => {
+const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -261,3 +261,5 @@ export const WpcomCommandPalette = () => {
 		</Modal>
 	);
 };
+
+export default CommandPalette;

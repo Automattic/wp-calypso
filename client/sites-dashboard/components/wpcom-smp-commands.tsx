@@ -18,7 +18,7 @@ import {
 	upload as uploadIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { CommandCallBackParams } from 'calypso/components/command-pallette/use-command-pallette';
+import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
