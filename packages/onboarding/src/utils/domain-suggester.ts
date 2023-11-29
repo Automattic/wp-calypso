@@ -104,8 +104,11 @@ export const suggestEmailCorrection = ( inputDomain: string, maxDistance: number
 			const validDomain = validDomains[ i ];
 			const distance = calculateLevenshteinDistance( extractedInputEmailDomain, validDomain );
 
+			// Check if the input is in the middle of typing the domain
+			const inTheMiddleOfTyping = validDomain.startsWith( extractedInputEmailDomain );
+
 			// If the distance is within the limit and better than the previous best match, update the suggestion
-			if ( distance <= maxDistance && distance < bestMatchDistance ) {
+			if ( distance <= maxDistance && distance < bestMatchDistance && ! inTheMiddleOfTyping ) {
 				bestMatch = validDomain;
 				bestMatchDistance = distance;
 			}
