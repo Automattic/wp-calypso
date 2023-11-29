@@ -56,13 +56,3 @@ export function useSubmitTransaction( {
 			} );
 	}, [ callPaymentProcessor, storedCard, setStep, onClose, reduxDispatch ] );
 }
-
-export function formatDate( cardExpiry: string ): string {
-	const expiryDate = new Date( cardExpiry );
-	const formattedDate = expiryDate.toLocaleDateString( 'en-US', {
-		month: '2-digit',
-		year: '2-digit',
-	} );
-
-	return formattedDate;
-}

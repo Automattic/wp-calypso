@@ -17,7 +17,7 @@ import { updateCartContactDetailsForCheckout } from '../../src/lib/update-cart-c
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
-import { useSubmitTransaction } from './util';
+import { useSubmitTransaction } from './use-submit-transaction';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails, ManagedValue, VatDetails } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/src/types/payment-processors';
