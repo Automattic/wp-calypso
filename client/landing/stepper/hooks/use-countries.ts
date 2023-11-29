@@ -4,9 +4,9 @@ import wpcom from 'calypso/lib/wp';
 type WooCountries = Record< string, string >;
 
 export function useCountries(
-	queryOptions: Omit< UseQueryOptions< any, unknown, WooCountries >, 'queryKey' > = {}
+	queryOptions: Omit< UseQueryOptions< any, Error, WooCountries >, 'queryKey' > = {}
 ): UseQueryResult< WooCountries > {
-	return useQuery< any, unknown, WooCountries >( {
+	return useQuery< any, Error, WooCountries >( {
 		queryKey: [ 'countries' ],
 		queryFn: () => wpcom.req.get( '/woocommerce/countries/regions/', { apiNamespace: 'wpcom/v2' } ),
 		staleTime: Infinity,

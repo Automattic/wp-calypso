@@ -1,6 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,17 +19,14 @@ type Props = {
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	onSelectProduct?: ( value: APIProductFamilyProduct ) => void;
-	hideDiscount?: boolean;
 };
 
 const LicenseBundleCard = ( {
 	isBusy = false,
 	isDisabled = false,
-	withBackground = isEnabled( 'jetpack/bundle-licensing' ),
 	tabIndex,
 	product,
 	onSelectProduct,
-	hideDiscount,
 }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -74,11 +69,7 @@ const LicenseBundleCard = ( {
 
 	return (
 		<>
-			<div
-				className={ classNames( 'license-bundle-card', {
-					'license-bundle-card--with-background': withBackground,
-				} ) }
-			>
+			<div className="license-bundle-card">
 				<div className="license-bundle-card__details">
 					<h3 className="license-bundle-card__title">{ productTitle }</h3>
 
@@ -89,7 +80,7 @@ const LicenseBundleCard = ( {
 
 				<div className="license-bundle-card__footer">
 					<div className="license-bundle-card__pricing">
-						<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
+						<ProductPriceWithDiscount product={ product } />
 					</div>
 					<Button
 						primary

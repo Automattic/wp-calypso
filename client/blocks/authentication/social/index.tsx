@@ -1,4 +1,6 @@
 import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
@@ -12,6 +14,8 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import SocialToS from './social-tos';
 import type { IAppState } from 'calypso/state/types';
 
+import './style.scss';
+
 interface SocialAuthenticationFormProps {
 	compact?: boolean;
 	handleGoogleResponse: ( response: any ) => void;
@@ -23,6 +27,8 @@ interface SocialAuthenticationFormProps {
 	children: JSX.Element;
 	disableTosText?: boolean;
 	flowName: string;
+	isSocialFirst?: boolean;
+	isLogin?: boolean;
 }
 
 const SocialAuthenticationForm = ( {
@@ -36,6 +42,8 @@ const SocialAuthenticationForm = ( {
 	children,
 	disableTosText,
 	flowName,
+	isSocialFirst,
+	isLogin,
 }: SocialAuthenticationFormProps ) => {
 	const translate = useTranslate();
 
@@ -67,15 +75,25 @@ const SocialAuthenticationForm = ( {
 	const uxMode = shouldUseRedirectFlow() ? 'redirect' : 'popup';
 	const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
+	// Note: we allow social sign-in on the Desktop app, but not social sign-up. Existing config flags do
+	// not distinguish between sign-in and sign-up but instead use the catch-all `signup/social` flag.
+	// Therefore we need to make an exception for the desktop app directly in this component because there
+	// are many places in which the social signup form is rendered based only on the presence of the
+	// `signup/social` config flag.
+	const isSignupOnDesktop = config.isEnabled( 'desktop' ) && ! isLogin;
+
 	return (
-		// Note: we allow social sign-in on the Desktop app, but not social sign-up. Existing config flags do
-		// not distinguish between sign-in and sign-up but instead use the catch-all `signup/social` flag.
-		// Therefore we need to make an exception for the desktop app directly in this component because there
-		// are many places in which the social signup form is rendered based only on the presence of the
-		// `signup/social` config flag.
-		! config.isEnabled( 'desktop' ) && (
-			<div className="auth-form__social">
-				{ ! compact && <p>{ preventWidows( translate( 'Or create an account using:' ) ) }</p> }
+		! isSignupOnDesktop && (
+			<Card
+				className={ classNames( 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
+					'is-social-first': isSocialFirst,
+				} ) }
+			>
+				{ ! compact && (
+					<p className="auth-form__social-text">
+						{ preventWidows( translate( 'Or create an account using:' ) ) }
+					</p>
+				) }
 
 				<div className="auth-form__social-buttons">
 					<GoogleSocialButton
@@ -87,7 +105,7 @@ const SocialAuthenticationForm = ( {
 							trackLoginAndRememberRedirect( 'google' );
 						} }
 						socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
-						startingPoint="signup"
+						startingPoint={ isLogin ? 'login' : 'signup' }
 					/>
 
 					<AppleLoginButton
@@ -102,17 +120,19 @@ const SocialAuthenticationForm = ( {
 						originalUrlPath={
 							// Since the signup form is only ever called from the user step, currently, we can rely on window.location.pathname
 							// to return back to the user step, which then allows us to continue on with the flow once the submitSignupStep action is called within the user step.
-							window?.location?.pathname
+							isLogin ? null : window?.location?.pathname
 						}
-						// Attach the query string to the state so we can pass it back to the server to show the correct UI.
+						// If we are on signup, attach the query string to the state so we can pass it back to the server to show the correct UI.
 						// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
-						queryString={ isWpccFlow( flowName ) ? window.location.search.slice( 1 ) : null }
+						queryString={
+							isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
+						}
 					/>
 					{ children }
 					{ ! isWoo && ! disableTosText && <SocialToS /> }
 				</div>
 				{ isWoo && ! disableTosText && <SocialToS /> }
-			</div>
+			</Card>
 		)
 	);
 };
