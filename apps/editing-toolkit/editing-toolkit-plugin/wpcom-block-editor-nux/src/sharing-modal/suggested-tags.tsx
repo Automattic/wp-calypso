@@ -88,7 +88,7 @@ function SuggestedTags( props: SuggestedTagsProps ) {
 	);
 
 	recordTracksEvent( 'calypso_reader_post_publish_show_suggested_tags', {
-		number_of_selected_tags: selectedTags?.length ?? 0,
+		number_of_original_suggested_tags: origSuggestedTags?.length ?? 0,
 	} );
 
 	return (
