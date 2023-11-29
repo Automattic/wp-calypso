@@ -83,7 +83,7 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 						{ plans[ currentPlanIndex ]?.extension ? (
 							<>
 								<span>+</span>
-								<ShortenedNumber value={ EXTENSION_TRESHOLD * 1000000 } />
+								<ShortenedNumber value={ EXTENSION_THRESHOLD * 1000000 } />
 							</>
 						) : (
 							<ShortenedNumber value={ plans[ currentPlanIndex ]?.views } />
