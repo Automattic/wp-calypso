@@ -1,17 +1,21 @@
 import {
-	plus as addNewSiteIcon,
-	globe as domainsIcon,
-	commentAuthorAvatar as profileIcon,
-	settings as accountSettingsIcon,
-	payment as creditCardIcon,
-	home as dashboardIcon,
-	chartBar as statsIcon,
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
+	chartBar as statsIcon,
 	cog as hostingConfigIcon,
-	tool as toolIcon,
-	page as pageIcon,
+	commentAuthorAvatar as profileIcon,
+	commentAuthorName as subscriberIcon,
+	download as downloadIcon,
+	upload as uploadIcon,
+	globe as domainsIcon,
+	home as dashboardIcon,
 	key as keyIcon,
+	page as pageIcon,
+	payment as creditCardIcon,
+	plus as plusIcon,
+	postComments as postCommentsIcon,
+	settings as accountSettingsIcon,
+	tool as toolIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-pallette/use-command-pallette';
@@ -387,7 +391,87 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( createSiteUrl );
 			},
-			icon: addNewSiteIcon,
+			icon: plusIcon,
+		},
+		{
+			name: 'addNewPost',
+			label: __( 'Add new post' ),
+			searchLabel: __( 'Write new post' ),
+			context: [ '/posts' ],
+			callback: setStateCallback( 'addNewPost' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/post/${ site.slug }` );
+				},
+			},
+			icon: plusIcon,
+		},
+		{
+			name: 'manageComments',
+			label: __( 'Manage comments' ),
+			callback: setStateCallback( 'manageComments' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/comments/${ site.slug }` );
+				},
+			},
+			icon: postCommentsIcon,
+		},
+		{
+			name: 'addSubscribers',
+			label: __( 'Add subscribers' ),
+			searchLabel: __( 'Import subscribers' ),
+			context: [ '/subscribers' ],
+			callback: setStateCallback( 'addSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/subscribers/${ site.slug }#add-subscribers` );
+				},
+			},
+			icon: subscriberIcon,
+		},
+		{
+			name: 'manageSubscribers',
+			label: __( 'Manage subscribers' ),
+			callback: setStateCallback( 'manageSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/subscribers/${ site.slug }` );
+				},
+			},
+			icon: subscriberIcon,
+		},
+		{
+			name: 'downloadSubscribers',
+			label: __( 'Download subscribers as CSV' ),
+			context: [ '/subscribers' ],
+			callback: setStateCallback( 'downloadSubscribers' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					window.location.assign(
+						`https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=${ site.ID }&blog_subscribers=csv&type=all`
+					);
+				},
+			},
+			icon: downloadIcon,
+		},
+		{
+			name: 'import',
+			label: __( 'Import content to the site' ),
+			context: [ '/posts' ],
+			callback: setStateCallback( 'import' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/import/${ site.slug }` );
+				},
+			},
+			icon: uploadIcon,
 		},
 	];
 
