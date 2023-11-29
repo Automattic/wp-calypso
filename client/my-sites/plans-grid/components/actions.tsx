@@ -41,7 +41,6 @@ type PlanFeaturesActionsButtonProps = {
 	planSlug: PlanSlug;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
-	isWooExpressPlusPlan?: boolean;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
@@ -431,7 +430,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	planSlug,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
-	isWooExpressPlusPlan = false,
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
@@ -473,14 +471,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<Button className={ classNames( classes ) } onClick={ () => handleUpgradeButtonClick() }>
 				{ translate( 'Learn more' ) }
-			</Button>
-		);
-	}
-
-	if ( isWooExpressPlusPlan ) {
-		return (
-			<Button className={ classNames( classes ) } onClick={ () => handleUpgradeButtonClick() }>
-				{ translate( 'Get in touch' ) }
 			</Button>
 		);
 	}

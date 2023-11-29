@@ -10,11 +10,9 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
-	PLAN_WOOEXPRESS_PLUS,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
-	isWooExpressPlusPlan,
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -329,18 +327,6 @@ const PlansFeaturesMain = ( {
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
 				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
 				return;
-			} else if ( isWooExpressPlusPlan( clickedPlanSlug ?? '' ) ) {
-				recordTracksEvent( 'calypso_plan_step_woo_express_plus_click', { flow: flowName } );
-				const vipLandingPageUrlWithUtmCampaign = addQueryArgs(
-					{
-						utm_source: 'WordPresscom',
-						utm_medium: 'automattic_referral',
-						utm_campaign: 'calypso_signup',
-					},
-					'https://woocommerce.com/get-in-touch/'
-				);
-				window.open( vipLandingPageUrlWithUtmCampaign, '_blank' );
-				return;
 			}
 			const cartItemForPlan = getPlanCartItem( cartItems );
 			const planSlug = clickedPlanSlug ?? PLAN_FREE;
@@ -479,11 +465,7 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useMemo( () => {
-		const hiddenPlans = [
-			PLAN_HOSTING_TRIAL_MONTHLY,
-			PLAN_WOOEXPRESS_PLUS,
-			PLAN_ENTERPRISE_GRID_WPCOM,
-		];
+		const hiddenPlans = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
 
 		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
 			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
