@@ -1,7 +1,8 @@
-import { PricingSlider } from '@automattic/components';
+import { PricingSlider, ShortenedNumber, Popover } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
-import { useTranslate, numberFormat } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import React, { useState, useRef } from 'react';
 import { PriceTierListItemProps } from './types';
 
 import './stats-purchase-tier-upgrade-slider.scss';
@@ -9,12 +10,14 @@ import './stats-purchase-tier-upgrade-slider.scss';
 type TierUpgradeSliderProps = {
 	className?: string;
 	priceTiers: [ PriceTierListItemProps ];
+	currencyCode: string;
 };
 
 type StatsPlanTierUI = {
 	price: string;
-	views: string;
-	description: string;
+	views: number;
+	extension?: boolean;
+	per_unit_fee?: number;
 };
 
 function useTranslatedStrings() {
@@ -36,8 +39,11 @@ function useTranslatedStrings() {
 	};
 }
 
-function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) {
+function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgradeSliderProps ) {
+	const translate = useTranslate();
+	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
+	const EXTENSION_TRESHOLD = 2; // in millions
 
 	// Transform plan details to dusplay.
 	const plans = priceTiers?.map( ( plan ): StatsPlanTierUI => {
@@ -45,18 +51,15 @@ function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) 
 			// highest tier extension
 			return {
 				price: plan?.minimum_price_monthly_display,
-				views: `1M+`,
-				description: `${ plan?.minimum_price_monthly_display }/month for an additional 1m views billed anually`,
+				views: plan?.minimum_units,
+				extension: true,
+				per_unit_fee: plan?.per_unit_fee,
 			};
 		}
 
 		return {
 			price: plan?.maximum_price_monthly_display,
-			views: numberFormat( plan?.maximum_units, 0 ), // TODO: consider short format
-			description: `${ plan?.maximum_price_monthly_display }/month for ${ numberFormat(
-				plan?.maximum_units,
-				0
-			) } views billed anually`,
+			views: plan?.maximum_units,
 		};
 	} );
 
@@ -76,11 +79,22 @@ function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) 
 			<div className="stats-tier-upgrade-slider__plan-callouts">
 				<div className="stats-tier-upgrade-slider__plan-callout">
 					<h2>{ translatedStrings.limits }</h2>
-					<p>{ plans[ currentPlanIndex ]?.views }</p>
+					<p className="left-aligned">
+						{ plans[ currentPlanIndex ]?.extension ? (
+							<>
+								<span>+</span>
+								<ShortenedNumber value={ EXTENSION_TRESHOLD * 1000000 } />
+							</>
+						) : (
+							<ShortenedNumber value={ plans[ currentPlanIndex ]?.views } />
+						) }
+					</p>
 				</div>
 				<div className="stats-tier-upgrade-slider__plan-callout">
 					<h2>{ translatedStrings.price }</h2>
-					<p className="right-aligned">{ plans[ currentPlanIndex ]?.price }</p>
+					<p className="right-aligned" ref={ infoReferenceElement }>
+						{ plans[ currentPlanIndex ]?.price }
+					</p>
 				</div>
 			</div>
 			<PricingSlider
@@ -91,6 +105,32 @@ function TierUpgradeSlider( { className, priceTiers }: TierUpgradeSliderProps ) 
 				onChange={ handleSliderChange }
 				marks
 			/>
+			<Popover
+				position="right"
+				context={ infoReferenceElement?.current }
+				isVisible={ plans[ currentPlanIndex ]?.extension }
+				className="stats-tier-upgrade-slider__extension-popover-wrapper"
+			>
+				<div className="stats-tier-upgrade-slider__extension-popover-content">
+					{ plans[ currentPlanIndex ]?.per_unit_fee &&
+						translate(
+							'This is the base price for %(views_extension_limit)s million monthlt views; beyone that, you will be charged additional +%(extension_value)s per million views.',
+							{
+								args: {
+									views_extension_limit: EXTENSION_TRESHOLD,
+									extension_value: formatCurrency(
+										plans[ currentPlanIndex ].per_unit_fee as number,
+										currencyCode,
+										{
+											isSmallestUnit: true,
+											stripZeros: true,
+										}
+									),
+								},
+							}
+						) }
+				</div>
+			</Popover>
 			<p className="stats-tier-upgrade-slider__info-message">{ translatedStrings.strategy }</p>
 		</div>
 	);

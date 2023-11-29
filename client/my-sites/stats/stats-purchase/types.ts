@@ -7,4 +7,5 @@ export type PriceTierListItemProps = {
 	minimum_price_display: string;
 	minimum_price_monthly_display: string;
 	minimum_units: number;
+	per_unit_fee?: number;
 };

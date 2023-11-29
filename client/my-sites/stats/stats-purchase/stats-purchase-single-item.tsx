@@ -143,7 +143,9 @@ Thanks\n\n`;
 			>
 				{ translate( 'Get Stats' ) }
 			</ButtonComponent>
-			{ isTierUpgradeSliderEnabled && <TierUpgradeSlider priceTiers={ priceTiers } /> }
+			{ isTierUpgradeSliderEnabled && (
+				<TierUpgradeSlider priceTiers={ priceTiers } currencyCode={ currencyCode } />
+			) }
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
