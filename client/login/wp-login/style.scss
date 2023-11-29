@@ -386,8 +386,13 @@ $image-height: 47px;
 				background-color: #fdfdfd;
 				border: 0;
 				height: unset;
-				width: 194px;
 				text-align: start;
+			}
+		}
+
+		.login__form-userdata {
+			button {
+				width: 194px;
 			}
 		}
 	}
