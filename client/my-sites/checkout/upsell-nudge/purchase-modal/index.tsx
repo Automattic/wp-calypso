@@ -158,12 +158,8 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	}, [ replaceProductsInCart, updateLocation, storedCard, productToAdd, countries ] );
 
 	const handleOnClose = () => {
-		try {
-			updateLocation( { countryCode: '' } );
-			replaceProductsInCart( [] );
-		} catch {
-			// No need to do anything if this fails.
-		}
+		Promise.all( [ updateLocation( { countryCode: '' } ), replaceProductsInCart( [] ) ] ).catch();
+		// We don't need to wait for the result of the above.
 		onClose();
 	};
 
