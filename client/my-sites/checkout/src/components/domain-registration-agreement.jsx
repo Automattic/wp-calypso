@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { get, map, reduce } from 'lodash';
 import { Component, Fragment } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
@@ -17,12 +16,13 @@ class DomainRegistrationAgreement extends Component {
 		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
 
-	renderAgreementLinkForList = ( url, domains ) => {
+	renderAgreementLinkForList = ( url, name, domains ) => {
 		return this.props.translate(
-			'View the {{domainRegistrationAgreementLink}}Domain Registration Agreement{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
+			'View the {{domainRegistrationAgreementLink}}%(legalAgreementName)s{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
 			{
 				args: {
 					domainsList: domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
+					legalAgreementName: name,
 				},
 				components: {
 					domainRegistrationAgreementLink: (
@@ -40,13 +40,15 @@ class DomainRegistrationAgreement extends Component {
 
 	renderMultipleAgreements = ( agreementsList ) => {
 		const preamble = this.props.translate(
-			'You agree to the following domain name registration agreements:'
+			'You agree to the following domain name registration legal agreements:'
 		);
 		return (
 			<Fragment>
 				<p>{ preamble }</p>
-				{ map( agreementsList, ( { url, domains } ) => (
-					<p key={ url + domains.length }>{ this.renderAgreementLinkForList( url, domains ) }</p>
+				{ agreementsList.map( ( { url, name, domains } ) => (
+					<p key={ url + domains.length }>
+						{ this.renderAgreementLinkForList( url, name, domains ) }
+					</p>
 				) ) }
 			</Fragment>
 		);
@@ -88,37 +90,41 @@ class DomainRegistrationAgreement extends Component {
 	};
 
 	getDomainsByRegistrationAgreement() {
-		const { cart } = this.props;
+		const { cart, translate } = this.props;
 		const domainItems = getDomainRegistrations( cart );
 		domainItems.push( ...getDomainTransfers( cart ) );
-		const agreementUrls = [
-			...new Set(
-				map( domainItems, ( registration ) =>
-					get( registration, 'extra.domain_registration_agreement_url' )
-				)
-			),
-		];
 
-		return reduce(
-			agreementUrls,
-			( domainsByAgreement, url ) => {
-				const domainsList = reduce(
-					domainItems,
-					( domains, domainItem ) => {
-						if ( domainItem.extra.domain_registration_agreement_url === url ) {
-							domains.push( domainItem.meta );
+		return Object.values(
+			domainItems.reduce( ( agreements, domainItem ) => {
+				if (
+					domainItem?.extra?.legal_agreements &&
+					Object.keys( domainItem.extra.legal_agreements ).length > 0
+				) {
+					Object.keys( domainItem.extra.legal_agreements ).forEach( ( url ) => {
+						if ( agreements[ url ] ) {
+							agreements[ url ].domains.push( domainItem.meta );
+						} else {
+							agreements[ url ] = {
+								name: domainItem.extra.legal_agreements[ url ],
+								url,
+								domains: [ domainItem.meta ],
+							};
 						}
-						return domains;
-					},
-					[]
-				);
-				domainsByAgreement.push( {
-					url,
-					domains: domainsList,
-				} );
-				return domainsByAgreement;
-			},
-			[]
+					} );
+				} else if ( domainItem?.extra?.domain_registration_agreement_url ) {
+					const url = domainItem?.extra?.domain_registration_agreement_url;
+					if ( agreements?.[ url ] ) {
+						agreements[ url ].domains.push( domainItem.meta );
+					} else {
+						agreements[ url ] = {
+							name: translate( 'Domain Registration Agreement' ),
+							url: url,
+							domains: [ domainItem.meta ],
+						};
+					}
+				}
+				return agreements;
+			}, {} )
 		);
 	}
 
