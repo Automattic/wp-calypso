@@ -46,19 +46,7 @@ function HelpCenterContent() {
 		return () => clearTimeout( timeout );
 	}, [] );
 
-	const actionHooks = useActionHooks();
-	useEffect( () => {
-		const timeout = setTimeout( () => {
-			actionHooks.forEach( ( actionHook ) => {
-				if ( actionHook.condition() ) {
-					actionHook.action();
-				}
-			} );
-		}, 0 );
-		return () => clearTimeout( timeout );
-		// Only want to run this once
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	useActionHooks();
 
 	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
 

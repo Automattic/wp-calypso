@@ -1,5 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 
 const useActionHooks = () => {
 	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( 'automattic/help-center' );
@@ -21,7 +22,18 @@ const useActionHooks = () => {
 		},
 	];
 
-	return actionHooks;
+	useEffect( () => {
+		const timeout = setTimeout( () => {
+			actionHooks.forEach( ( actionHook ) => {
+				if ( actionHook.condition() ) {
+					actionHook.action();
+				}
+			} );
+		}, 0 );
+		return () => clearTimeout( timeout );
+		// Only want to run this once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 };
 
 export default useActionHooks;
