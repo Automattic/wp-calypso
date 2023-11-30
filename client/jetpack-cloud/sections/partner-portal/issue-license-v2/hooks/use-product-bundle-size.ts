@@ -1,21 +1,48 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useURLQueryParams } from '../../hooks';
-
-const AVAILABLE_SIZES = [ 1, 5, 10, 20, 50, 75, 100 ]; //TO-DO: We will need to get this from the API
 
 const BUNDLE_SIZE_PARAM_KEY = 'bundle_size';
 
 // Parse the location hash to get the selected product bundle size
 // If the hash is not found, return the default size (1)
-const parseLocationHash = ( value: string ) => {
-	return AVAILABLE_SIZES.find( ( size ) => value === `${ size }` ) || 1;
+const parseLocationHash = ( supportedBundleSizes: number[], value: string ) => {
+	return supportedBundleSizes.find( ( size ) => value === `${ size }` ) || 1;
+};
+
+const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
+	if ( products?.length ) {
+		return [
+			1,
+			...products.reduce( ( set, product ) => {
+				product.supported_bundles.forEach( ( { quantity } ) => {
+					set.add( quantity );
+				} );
+
+				return set;
+			}, new Set< number >() ),
+		];
+	}
+
+	return [ 1 ];
 };
 
 export function useProductBundleSize() {
+	const { data: products } = useProductsQuery();
+
+	const supportedBundleSizes = getSupportedBundleSizes( products );
+
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
-	const [ selectedSize, setSelectedSize ] = useState(
-		parseLocationHash( getParamValue( BUNDLE_SIZE_PARAM_KEY ) )
-	);
+
+	const [ selectedSize, setSelectedSize ] = useState< number | undefined >( undefined );
+
+	// When products are changed, we need to reevaluate if selected bundle size is still valid
+	useEffect( () => {
+		setSelectedSize(
+			parseLocationHash( supportedBundleSizes, getParamValue( BUNDLE_SIZE_PARAM_KEY ) )
+		);
+	}, [ getParamValue, supportedBundleSizes ] );
 
 	const setSelectedSizeAndLocationHash = useCallback(
 		( size: number ) => {
@@ -34,9 +61,11 @@ export function useProductBundleSize() {
 		[ resetParams, setParams ]
 	);
 
-	return {
-		selectedSize,
-		setSelectedSize: setSelectedSizeAndLocationHash,
-		availableSizes: AVAILABLE_SIZES,
-	};
+	return useMemo( () => {
+		return {
+			selectedSize: selectedSize ?? 1,
+			setSelectedSize: setSelectedSizeAndLocationHash,
+			availableSizes: supportedBundleSizes,
+		};
+	}, [ selectedSize, setSelectedSizeAndLocationHash, supportedBundleSizes ] );
 }
