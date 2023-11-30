@@ -190,7 +190,7 @@
 		"stats/date-control": true,
 		"stats/new-video-summary": true,
 		"stats/paid-wpcom-stats": true,
-		"stats/plan-usage": false,
+		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": false,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
