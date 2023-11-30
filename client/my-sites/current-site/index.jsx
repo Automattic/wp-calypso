@@ -90,7 +90,7 @@ class CurrentSite extends Component {
 							<Site site={ selectedSite } homeLink={ true } />
 						</div>
 					) : (
-						<AllSites />
+						<AllSites href="/sites" />
 					) }
 					{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 						<AsyncLoad
