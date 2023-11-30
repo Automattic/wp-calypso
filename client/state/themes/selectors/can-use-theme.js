@@ -47,10 +47,7 @@ export function canUseTheme( state, siteId, themeId ) {
 	}
 
 	if ( type === MARKETPLACE_THEME ) {
-		return (
-			siteHasFeature( state, siteId, FEATURE_WOOP ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
-		);
+		return siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 	}
 
 	return false;
