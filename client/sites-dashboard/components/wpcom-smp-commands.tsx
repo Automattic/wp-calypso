@@ -544,6 +544,7 @@ export const useCommandsArrayWpcom = ( {
 							: `/themes/${ site.slug }`;
 					navigate( link );
 				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
 			},
 			icon: brushIcon,
 		},
@@ -561,6 +562,7 @@ export const useCommandsArrayWpcom = ( {
 							: `/plugins/${ site.slug }`;
 					navigate( link );
 				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
 			},
 			icon: pluginsIcon,
 		},
