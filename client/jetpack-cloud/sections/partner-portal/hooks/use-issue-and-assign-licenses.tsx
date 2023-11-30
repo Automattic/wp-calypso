@@ -13,7 +13,10 @@ import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-pr
 import { type APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
-import useIssueLicenses, { type FulfilledIssueLicenseResult } from './use-issue-licenses';
+import useIssueLicenses, {
+	type IssueLicenseRequest,
+	type FulfilledIssueLicenseResult,
+} from './use-issue-licenses';
 
 const NO_OP = () => {
 	/* Do nothing */
@@ -150,12 +153,12 @@ function useIssueAndAssignLicenses(
 	return useMemo( () => {
 		const isReady = isIssueReady && isAssignReady;
 
-		const issueAndAssignLicenses = async ( productSlugs: string[] ) => {
-			if ( ! isReady || productSlugs.length === 0 ) {
+		const issueAndAssignLicenses = async ( selectedLicenses: IssueLicenseRequest[] ) => {
+			if ( ! isReady || selectedLicenses.length === 0 ) {
 				return;
 			}
 
-			const issuedLicenses = ( await issueLicenses( productSlugs ) ).filter(
+			const issuedLicenses = ( await issueLicenses( selectedLicenses ) ).filter(
 				( r ): r is FulfilledIssueLicenseResult => r.status === 'fulfilled'
 			);
 

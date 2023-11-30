@@ -41,6 +41,21 @@ export default function LicensesForm( {
 		suggestedProductSlugs,
 	} = useProductAndPlans( { selectedSite, selectedProductFilter } );
 
+	// useEffect( () => {
+	// 	const productsQueryArg = getQueryArg( window.location.href, 'products' )?.toString?.();
+	// 	if ( ! productsQueryArg ) {
+	// 		return;
+	// 	}
+
+	// 	if ( isLoadingProducts ) {
+	// 		return;
+	// 	}
+
+	// 	const parsedItems = parseQueryStringProducts( productsQueryArg );
+	// 	// TODO: Validate parsed items from the query string exist and are selectable;
+	// 	// then, set them as selected items on the page
+	// }, [ isLoadingProducts ] );
+
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
 		getDisabledProductSlugs( state, filteredProductsAndBundles ?? [] )
 	);

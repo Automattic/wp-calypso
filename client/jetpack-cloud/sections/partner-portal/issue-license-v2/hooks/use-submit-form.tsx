@@ -10,14 +10,23 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
+import { IssueLicenseRequest } from '../../hooks/use-issue-licenses';
+import { serializeQueryStringProducts } from '../../lib/querystring-products';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const containEquivalentItems = ( arr1: string[], arr2: string[] ) => {
-	if ( arr1.length !== arr2.length ) {
+const containEquivalentItems = (
+	selectedLicenses: IssueLicenseRequest[],
+	suggestedProductSlugs: string[]
+) => {
+	const selectedProductSlugs = [ ...new Set( selectedLicenses.map( ( { slug } ) => slug ) ) ];
+	if ( selectedProductSlugs.length !== suggestedProductSlugs.length ) {
 		return false;
 	}
 
-	const [ sorted1, sorted2 ] = [ [ ...arr1 ].sort(), [ ...arr2 ].sort() ];
+	const [ sorted1, sorted2 ] = [
+		[ ...selectedProductSlugs ].sort(),
+		[ ...suggestedProductSlugs ].sort(),
+	];
 	for ( let i = 0; i < sorted1.length; ++i ) {
 		// If the two lists are sorted and an element differs between the two
 		// at any index, they must not contain exactly the same items
@@ -65,14 +74,14 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
 	const maybeTrackUnsuggestedSelection = useCallback(
-		( selectedSlugs: string[] ) => {
+		( selectedLicenses: IssueLicenseRequest[] ) => {
 			// No suggested products; do nothing
 			if ( ! suggestedProductSlugs?.length ) {
 				return;
 			}
 
 			// Selected products match the suggested ones; do nothing
-			if ( containEquivalentItems( selectedSlugs, suggestedProductSlugs ) ) {
+			if ( containEquivalentItems( selectedLicenses, suggestedProductSlugs ) ) {
 				return;
 			}
 
@@ -88,15 +97,16 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 	);
 
 	const submitForm = useCallback(
-		( slugsToIssue: string[] ) => {
+		( licensesToIssue: IssueLicenseRequest[] ) => {
+			const serializedLicenses = serializeQueryStringProducts( licensesToIssue );
 			// Record the user's intent to issue licenses for these product(s)
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_multiple_licenses_submit', {
-					products: slugsToIssue.join( ',' ),
+					products: serializedLicenses,
 				} )
 			);
 
-			maybeTrackUnsuggestedSelection( slugsToIssue );
+			maybeTrackUnsuggestedSelection( licensesToIssue );
 
 			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 
@@ -104,7 +114,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 			if ( paymentMethodRequired ) {
 				const nextStep = addQueryArgs(
 					{
-						products: slugsToIssue.join( ',' ),
+						products: serializedLicenses,
 						...( selectedSite?.ID && { site_id: selectedSite?.ID } ),
 						...( fromDashboard && { source: 'dashboard' } ),
 					},
@@ -115,7 +125,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 				return;
 			}
 
-			issueAndAssignLicenses( slugsToIssue );
+			issueAndAssignLicenses( licensesToIssue );
 		},
 		[
 			dispatch,
