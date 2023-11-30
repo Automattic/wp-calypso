@@ -459,6 +459,10 @@
 		&.is-selected:hover {
 			color: var(--color-text-inverted);
 		}
+
+		svg {
+			padding-left: 4px;
+		}
 	}
 
 	.filterbar__selection-close {
@@ -469,5 +473,11 @@
 		margin-left: 4px;
 		fill: currentColor;
 		color: var(--color-text-subtle);
+	}
+
+	.filterbar__selection-close.button,
+	.type-selector__selection-close.button {
+		border-left: 1px solid var(--color-text-inverted);
+		padding: 8px;
 	}
 }
