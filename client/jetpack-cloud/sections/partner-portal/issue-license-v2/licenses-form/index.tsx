@@ -39,7 +39,7 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		suggestedProductSlugs,
-	} = useProductAndPlans( { selectedSite, selectedProductFilter } );
+	} = useProductAndPlans( { selectedSite, selectedProductFilter, selectedBundleSize: quantity } );
 
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
 		getDisabledProductSlugs( state, filteredProductsAndBundles ?? [] )
