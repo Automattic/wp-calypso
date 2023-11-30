@@ -43,7 +43,7 @@ class PostRelativeTime extends PureComponent {
 	getDisplayedTimeForLabel() {
 		const moment = this.props.moment;
 		const now = moment();
-		const timestamp = moment( this.getTimestamp() );
+		const timestamp = moment( this.getTimestamp() ?? now );
 
 		const isScheduledPost = this.props.post.status === 'future';
 
