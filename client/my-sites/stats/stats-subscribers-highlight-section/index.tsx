@@ -121,7 +121,7 @@ export default function SubscribersHighlightSection( { siteId }: { siteId: numbe
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
 			<SubscriberHighlightsListing siteId={ siteId } />
-			<SubscriberLaunchpadSection siteId={ siteId } />
+			<SubscriberLaunchpadSection siteId={ siteId } launchpadContext="subscriber-stats" />
 		</div>
 	);
 }
