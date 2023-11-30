@@ -5,7 +5,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
@@ -24,7 +23,6 @@ export default function ThemeShowcaseHeader( {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const isSimple = useSelector( isSimpleSite );
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
@@ -77,7 +75,6 @@ export default function ThemeShowcaseHeader( {
 			<DocumentHead title={ documentHeadTitle } meta={ metas } />
 			{ isLoggedIn ? (
 				<NavigationHeader
-					screenOptionsTab={ isSimple ? null : 'themes.php' }
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
 					mobileItem={ null }
