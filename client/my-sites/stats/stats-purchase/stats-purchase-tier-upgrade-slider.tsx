@@ -39,6 +39,42 @@ function useTranslatedStrings() {
 	};
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const MOCK_PLAN_DATA = [
+	{
+		price: '$9',
+		views: 10000,
+		description: '$9/month for 10k views',
+	},
+	{
+		price: '$19',
+		views: 100000,
+		description: '$19/month for 100k views',
+	},
+	{
+		price: '$29',
+		views: 250000,
+		description: '$29/month for 250k views',
+	},
+	{
+		price: '$49',
+		views: 500000,
+		description: '$49/month for 500k views',
+	},
+	{
+		price: '$69',
+		views: 1000000,
+		description: '$69/month for 1M views',
+	},
+	{
+		price: '$89.99',
+		views: '1M++',
+		extension: true,
+		per_unit_fee: 1799,
+		description: '$25/month per million views if views exceed 1M',
+	},
+];
+
 function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
@@ -62,6 +98,8 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 			views: plan?.maximum_units,
 		};
 	} );
+
+	// const plans = MOCK_PLAN_DATA; // TODO: REMOVE MOCK DATA!
 
 	// Slider state.
 	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
