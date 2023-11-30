@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
-import { Dispatch, PropsWithChildren, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { hasTouch } from '../lib/touch-detect';
 
@@ -35,14 +35,9 @@ export const Plans2023Tooltip = ( {
 	id: string;
 	showOnMobile?: boolean;
 } > ) => {
-	const [ isVisible, setIsVisible ] = useState( false );
 	const { activeTooltipId, setActiveTooltipId, id } = props;
 	const tooltipRef = useRef< HTMLDivElement >( null );
 	const isTouch = hasTouch();
-
-	useEffect( () => {
-		activeTooltipId === id ? setIsVisible( true ) : setIsVisible( false );
-	}, [ activeTooltipId, id ] );
 
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
@@ -56,6 +51,8 @@ export const Plans2023Tooltip = ( {
 
 		return id;
 	};
+
+	const isVisible = activeTooltipId === id;
 
 	return (
 		<>
