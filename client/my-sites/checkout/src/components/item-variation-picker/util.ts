@@ -39,9 +39,15 @@ export function getItemVariantCompareToPrice(
 
 	// CompareTo price for Biennial, Triennial, Quadrennial, and so on, products
 	if ( compareTo.termIntervalInMonths >= 12 && variant.termIntervalInMonths >= 24 ) {
+		const compareToTermIntervalInYears = compareTo.termIntervalInMonths / 12;
+
+		const compareToPricePerYear = compareTo.priceInteger / compareToTermIntervalInYears;
+		const compareToPricePerYearBeforeDiscounts =
+			compareTo.priceBeforeDiscounts / compareToTermIntervalInYears;
+
 		return (
-			compareTo.priceInteger +
-			compareTo.priceBeforeDiscounts * ( variant.termIntervalInMonths / 12 - 1 )
+			compareToPricePerYear +
+			compareToPricePerYearBeforeDiscounts * ( variant.termIntervalInMonths / 12 - 1 )
 		);
 	}
 
