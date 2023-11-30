@@ -22,6 +22,10 @@ import {
 } from '../../constants';
 import type { SiteDetails } from '@automattic/data-stores';
 
+// Plans and Products that we can merged into 1 card.
+const MERGABLE_PLANS = [ 'jetpack-security' ];
+const MERGABLE_PRODUCTS = [ 'jetpack-backup' ];
+
 type Props = {
 	selectedBundleSize?: number;
 	selectedSite?: SiteDetails | null;
@@ -69,10 +73,15 @@ const getProductsAndPlansByFilter = (
 const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
 	const plans = getProductsAndPlansByFilter( PRODUCT_FILTER_PLANS, filteredProductsAndBundles );
 
-	const securityPlans = plans.filter( ( { slug } ) => slug.startsWith( 'jetpack-security' ) );
-	const restOfPlans = plans.filter( ( { slug } ) => ! slug.startsWith( 'jetpack-security' ) );
+	const filteredPlans = MERGABLE_PLANS.map( ( filter ) => {
+		return plans.filter( ( { slug } ) => slug.startsWith( filter ) );
+	} ).filter( ( subArray ) => subArray.length > 0 ); // Remove empty arrays
 
-	return [ securityPlans, ...restOfPlans ];
+	const restOfPlans = plans.filter( ( { slug } ) => {
+		return ! MERGABLE_PLANS.some( ( filter ) => slug.startsWith( filter ) );
+	} );
+
+	return [ ...filteredPlans, ...restOfPlans ];
 };
 
 // This function gets the displayable Products based on how it should be arranged in the listing.
@@ -81,11 +90,15 @@ const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyPro
 		PRODUCT_FILTER_PRODUCTS,
 		filteredProductsAndBundles
 	);
+	const filteredProducts = MERGABLE_PRODUCTS.map( ( filter ) => {
+		return products.filter( ( { slug } ) => slug.startsWith( filter ) );
+	} ).filter( ( subArray ) => subArray.length > 0 ); // Remove empty arrays
 
-	const backupProducts = products.filter( ( { slug } ) => slug.startsWith( 'jetpack-backup' ) );
-	const restOfProducts = products.filter( ( { slug } ) => ! slug.startsWith( 'jetpack-backup' ) );
+	const restOfProducts = products.filter( ( { slug } ) => {
+		return ! MERGABLE_PRODUCTS.some( ( filter ) => slug.startsWith( filter ) );
+	} );
 
-	return [ ...restOfProducts, backupProducts ].sort( ( a, b ) => {
+	return [ ...restOfProducts, ...filteredProducts ].sort( ( a, b ) => {
 		const product_a = Array.isArray( a ) ? a[ 0 ].name : a.name;
 		const product_b = Array.isArray( b ) ? b[ 0 ].name : b.name;
 		return product_a.localeCompare( product_b );

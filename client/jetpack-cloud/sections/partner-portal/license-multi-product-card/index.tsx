@@ -38,13 +38,21 @@ export default function LicenseMultiProductCard( props: Props ) {
 		suggestedProduct,
 		hideDiscount,
 	} = props;
-	const [ product, setProduct ] = useState( products[ 0 ] );
-	const { setParams, resetParams, getParamValue } = useURLQueryParams();
-	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
-	const productTitle = getProductTitle( product.name, true );
-	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const [ product, setProduct ] = useState( products[ 0 ] );
+	const { description: productDescription } = useProductDescription( product.slug );
+
+	const { setParams, resetParams, getParamValue } = useURLQueryParams();
+	const [ showLightbox, setShowLightbox ] = useState(
+		getParamValue( LICENSE_INFO_MODAL_ID ) === product.slug
+	);
+
+	const variantOptions = products.map( ( option ) => ( {
+		id: option.slug,
+		answerText: getProductVariantShortTitle( option.name ),
+	} ) );
 
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
@@ -76,8 +84,6 @@ export default function LicenseMultiProductCard( props: Props ) {
 		}
 	}, [ onSelect, product.slug, suggestedProduct ] );
 
-	const { description: productDescription } = useProductDescription( product.slug );
-
 	const onShowLightbox = useCallback(
 		( e: React.MouseEvent< HTMLElement > ) => {
 			e.stopPropagation();
@@ -103,11 +109,6 @@ export default function LicenseMultiProductCard( props: Props ) {
 		resetParams( [ LICENSE_INFO_MODAL_ID ] );
 		setShowLightbox( false );
 	}, [ resetParams ] );
-
-	const variantOptions = products.map( ( option ) => ( {
-		id: option.slug,
-		answerText: getProductVariantShortTitle( option.name ),
-	} ) );
 
 	const onChangeOption = useCallback(
 		( selectedProductSlug: string ) => {
@@ -140,7 +141,9 @@ export default function LicenseMultiProductCard( props: Props ) {
 					<div className="license-product-card__details">
 						<div className="license-product-card__main">
 							<div className="license-product-card__heading">
-								<h3 className="license-product-card__title">{ productTitle }</h3>
+								<h3 className="license-product-card__title">
+									{ getProductTitle( product.name, true ) }
+								</h3>
 
 								<MultipleChoiceQuestion
 									question={ translate( 'Select variant:' ) }
@@ -153,7 +156,10 @@ export default function LicenseMultiProductCard( props: Props ) {
 								<div className="license-product-card__description">{ productDescription }</div>
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
-									<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
+									<LicenseLightboxLink
+										productName={ getProductTitle( product.name ) }
+										onClick={ onShowLightbox }
+									/>
 								) }
 							</div>
 

@@ -113,6 +113,35 @@ export default function LicensesForm( {
 
 	const isSingleLicenseView = quantity === 1;
 
+	const getProductCards = (
+		products: ( APIProductFamilyProduct | APIProductFamilyProduct[] )[]
+	) => {
+		return products.map( ( productOption, i ) =>
+			Array.isArray( productOption ) ? (
+				<LicenseMultiProductCard
+					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
+					products={ productOption }
+					onSelectProduct={ onSelectOrReplaceProduct }
+					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
+					isDisabled={ ! isReady }
+					tabIndex={ 100 + i }
+					hideDiscount={ isSingleLicenseView }
+				/>
+			) : (
+				<LicenseProductCard
+					isMultiSelect
+					key={ productOption.slug }
+					product={ productOption }
+					onSelectProduct={ onSelectProduct }
+					isSelected={ isSelected( productOption.slug ) }
+					isDisabled={ ! isReady }
+					tabIndex={ 100 + i }
+					hideDiscount={ isSingleLicenseView }
+				/>
+			)
+		);
+	};
+
 	if ( isLoadingProducts ) {
 		return (
 			<div className="licenses-form">
@@ -141,30 +170,7 @@ export default function LicensesForm( {
 					) }
 					isTwoColumns
 				>
-					{ plans.map( ( productOption, i ) =>
-						Array.isArray( productOption ) ? (
-							<LicenseMultiProductCard
-								key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
-								products={ productOption }
-								onSelectProduct={ onSelectOrReplaceProduct }
-								isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
-								isDisabled={ ! isReady }
-								tabIndex={ 100 + i }
-								hideDiscount={ isSingleLicenseView }
-							/>
-						) : (
-							<LicenseProductCard
-								isMultiSelect
-								key={ productOption.slug }
-								product={ productOption }
-								onSelectProduct={ onSelectProduct }
-								isSelected={ isSelected( productOption.slug ) }
-								isDisabled={ ! isReady }
-								tabIndex={ 100 + i }
-								hideDiscount={ isSingleLicenseView }
-							/>
-						)
-					) }
+					{ getProductCards( plans ) }
 				</LicensesFormSection>
 			) }
 
@@ -175,31 +181,7 @@ export default function LicensesForm( {
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
 				>
-					{ products.map( ( productOption, i ) =>
-						Array.isArray( productOption ) ? (
-							<LicenseMultiProductCard
-								key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
-								products={ productOption }
-								onSelectProduct={ onSelectOrReplaceProduct }
-								isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
-								isDisabled={ ! isReady }
-								tabIndex={ 100 + i }
-								hideDiscount={ isSingleLicenseView }
-							/>
-						) : (
-							<LicenseProductCard
-								isMultiSelect
-								key={ productOption.slug }
-								product={ productOption }
-								onSelectProduct={ onSelectProduct }
-								isSelected={ isSelected( productOption.slug ) }
-								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-								tabIndex={ 100 + i }
-								suggestedProduct={ suggestedProduct }
-								hideDiscount={ isSingleLicenseView }
-							/>
-						)
-					) }
+					{ getProductCards( products ) }
 				</LicensesFormSection>
 			) }
 
