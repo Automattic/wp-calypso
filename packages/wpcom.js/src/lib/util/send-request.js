@@ -60,6 +60,10 @@ export default function sendRequest( params, query, body, fn ) {
 		delete query.proxyOrigin;
 	}
 
+	if ( window.prepared_tk_ai ) {
+		params.prepared_tk_ai = window.prepared_tk_ai;
+	}
+
 	// Stringify query object before to send
 	query = qs.stringify( query, { arrayFormat: 'brackets' } );
 
