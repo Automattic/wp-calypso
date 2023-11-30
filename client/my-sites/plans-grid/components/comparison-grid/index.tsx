@@ -325,7 +325,11 @@ const FeatureFootnote = styled.span`
 	}
 `;
 
-interface ComparisonGridProps extends Omit< PlansGridProps, 'onUpgradeClick' > {
+interface ComparisonGridProps
+	extends Omit<
+		PlansGridProps,
+		'onUpgradeClick' | 'generatedWPComSubdomain' | 'gridPlanForSpotlight' | 'intent'
+	> {
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 }
 

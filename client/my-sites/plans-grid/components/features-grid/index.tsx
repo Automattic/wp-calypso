@@ -43,7 +43,7 @@ type PlanRowOptions = {
 	isStuck?: boolean;
 };
 
-interface FeaturesGridType extends Omit< PlansGridProps, 'onUpgradeClick' > {
+interface FeaturesGridType extends Omit< PlansGridProps, 'onUpgradeClick' | 'intent' > {
 	isLargeCurrency: boolean;
 	translate: LocalizeProps[ 'translate' ];
 	currentPlanManageHref?: string;
