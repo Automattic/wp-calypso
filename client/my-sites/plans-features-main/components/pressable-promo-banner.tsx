@@ -101,16 +101,16 @@ const PressablePromoBanner = () => {
 			</LogoContainer>
 			<TextContainer>
 				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
-				<Title>{ translate( 'Multi-Site Hosting by Pressable' ) }</Title>
+				<Title>{ translate( 'Agency Hosting by Pressable' ) }</Title>
 				<Description>
 					{ translate(
-						'Looking to manage multiple websites with ease? Discover the power of Pressable Multi-Site Hosting. Ideal for agencies and web professionals. '
+						"Looking to manage multiple sites with ease? Discover Pressable's powerful and intuitive platform that goes beyond traditional WordPress hosting. Ideal for agencies and web professionals."
 					) }
 				</Description>
 			</TextContainer>
 			<CtaContainer>
 				<CtaButton
-					href="https://pressable.com/pricing/?utm_source=referral&utm_medium=wpdotcom&utm_campaign=pricing"
+					href="https://pressable.com/multiple-site-solution/?utm_source=wpdotcom&utm_medium=referral&utm_campaign=pricing"
 					onClick={ onClick }
 					target="_blank"
 				>
