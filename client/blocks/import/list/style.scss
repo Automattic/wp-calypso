@@ -23,17 +23,29 @@ html[dir="rtl"] {
 	}
 }
 
+.is-section-stepper > .wpcom-site > .import-list {
+	padding: 2rem 0;
+
+	@include break-small {
+		padding: 3.75rem 0 0 0;
+	}
+}
+
 .import__onboarding-page {
+	.import-layout {
+		flex-direction: column;
+	}
+
 	.list__wrapper {
 		margin-left: auto !important;
 		margin-right: auto !important;
 
 		.import__heading {
-			max-width: 420px;
+			margin-bottom: 2.5rem;
 
 			.onboarding-title {
-				margin-bottom: 40px;
 				width: 100%;
+				max-width: 100%;
 			}
 		}
 
@@ -55,64 +67,59 @@ html[dir="rtl"] {
 			}
 		}
 
-		ul {
-			margin: 0;
-
-			li {
-				margin-bottom: 10px;
-				list-style: none;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				line-height: 1.25em;
-			}
-
-			a,
-			button {
-				padding: 0;
-				font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				font-weight: 500;
-				line-height: 20px;
-				text-decoration: underline;
-				color: var(--studio-gray-100);
-			}
-		}
-
-		.importer__service-icon {
-			width: 48px;
-			min-width: 48px !important;
-			height: 48px;
-			margin-top: 10px;
-			margin-right: 0;
-			margin-inline-end: 1.5em !important;
-			border-radius: 4px;
-		}
-
-		.list__importers-primary {
-			margin-bottom: 1.5em;
-		}
-
+		.list__importers-primary,
 		.list__importers-secondary {
-			padding: 0;
+			margin: 0 auto 1.5rem auto;
+			min-width: 100%;
 
 			@include break-small {
-				padding-inline-start: 72px;
+				min-width: 433px;
 			}
 		}
+	}
+}
 
-		.list__importer-action {
-			position: relative;
-			display: inline-block !important;
-			width: calc(100% - 72px);
+.list__importers {
+	.select-dropdown > div {
+		width: 100%;
+	}
 
-			button {
-				background: none;
-				width: 100%;
-				position: absolute;
-				margin: 0;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				left: 0;
-			}
-		}
+	.select-dropdown__header-text {
+		font-weight: 400;
+	}
+
+	.select-dropdown__header {
+		border-radius: 4px;
+	}
+
+	.form-label {
+		font-weight: 500;
+	}
+}
+
+.list__importers-item-card {
+	display: flex;
+	width: 100%;
+	padding: 1.5em;
+	border: solid 1px var(--studio-gray-5);
+	border-radius: 4px;
+	margin-bottom: 0.5rem;
+	align-items: center;
+
+	h2 {
+		flex-grow: 1;
+		color: var(--studio-gray-100);
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.125rem;
+		font-weight: 500;
+		text-align: left;
+	}
+
+	.importer__service-icon {
+		width: 32px;
+		min-width: 32px !important;
+		height: 32px;
+		margin-inline-end: 0.5em !important;
+		border-radius: 4px;
 	}
 }

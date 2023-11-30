@@ -2,9 +2,12 @@ import config from '@automattic/calypso-config';
 import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
-import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import './style.scss';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
+import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 
 function useSubscriberHighlights(
 	siteId: number | null,
@@ -102,11 +105,23 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	);
 }
 
+function SubscriberLaunchpadSection( { siteId }: { siteId: number | null } ) {
+	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
+
+	const isSimple = useSelector( isSimpleSite );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+
+	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
+
+	return showLaunchpad ? <SubscriberLaunchpad /> : <></>;
+}
+
 export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
 	return (
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
 			<SubscriberHighlightsListing siteId={ siteId } />
+			<SubscriberLaunchpadSection siteId={ siteId } />
 		</div>
 	);
 }

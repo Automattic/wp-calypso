@@ -140,7 +140,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
 					<div className="enterprise-ecommerce__subtitle">
 						{ translate(
-							'Learn how Woo can support the unique needs of high-volume stores throught dedicated support, discounts, and more.'
+							'Learn how Woo can support the unique needs of high-volume stores through dedicated support, discounts, and more.'
 						) }
 					</div>
 					<div className="enterprise-ecommerce__cta">

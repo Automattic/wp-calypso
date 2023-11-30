@@ -148,17 +148,16 @@
 		}
 
 		.domains__domain-cart-rows {
-			.domains__domain-cart-row {
-				padding-bottom: 6px;
-				padding-top: 6px;
-			}
 
 			.domains__domain-cart-row > div {
 				display: flex;
 				justify-content: space-between;
+				padding-top: 6px;
 			}
 			.domains__domain-cart-row > div:nth-child(2) {
 				display: block;
+				padding-bottom: 6px;
+				padding-top: 0;
 			}
 
 			.savings-message {

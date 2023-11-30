@@ -16,6 +16,7 @@ import {
 	settings as accountSettingsIcon,
 	tool as toolIcon,
 	upload as uploadIcon,
+	wordpress as wordpressIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
@@ -110,6 +111,15 @@ export const useCommandsArrayWpcom = ( {
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	const commands = [
+		{
+			name: 'viewMySites',
+			label: __( 'View my sites' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/sites` );
+			},
+			icon: wordpressIcon,
+		},
 		{
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
@@ -246,7 +256,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'openJetpackStats',
-			label: __( 'Open Jetpack stats' ),
+			label: __( 'Open Jetpack Stats' ),
 			callback: setStateCallback( 'openJetpackStats' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -280,9 +290,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: acitvityLogIcon,
 		},
 		{
-			name: 'openJetpackBackups',
-			label: __( 'Open Jetpack backups' ),
-			callback: setStateCallback( 'openJetpackBackups' ),
+			name: 'openJetpackBackup',
+			label: __( 'Open Jetpack Backup' ),
+			callback: setStateCallback( 'openJetpackBackup' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
