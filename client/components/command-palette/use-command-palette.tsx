@@ -95,9 +95,9 @@ export const useCommandPallette = ( {
 
 		// Sort based on context
 		if ( hasContextA && ! hasContextB ) {
-			return -1; // a comes first
+			return -1; // commands with context set
 		} else if ( ! hasContextA && hasContextB ) {
-			return 1; // b comes first
+			return 1; // commands without context set
 		}
 
 		return 0; // no change in order
