@@ -1,8 +1,13 @@
+import {
+	AKISMET_BUSINESS_5K_PRODUCTS,
+	PRODUCT_AKISMET_PRO_500_UPGRADE_MAP,
+	PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import type { AkismetProQuantityDropDownProps } from './types';
 import type { FunctionComponent } from 'react';
 
@@ -101,6 +106,7 @@ const OptionList = styled.ul`
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
 	responseCart,
+	setForceShowAkQuantityDropdown,
 	onChangeAkProQuantity,
 } ) => {
 	const translate = useTranslate();
@@ -110,30 +116,103 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		responseCart.products[ 0 ].quantity ?? 1
 	);
 
-	const dropdownOptions = [ 1, 2, 3, 4 ];
+	const dropdownOptions = useMemo(
+		() => [
+			{
+				id: 1,
+				label: translate( '1 Site' ),
+			},
+			{
+				id: 2,
+				label: translate( '2 Sites' ),
+			},
+			{
+				id: 3,
+				label: translate( '3 Sites' ),
+			},
+			{
+				id: 4,
+				label: translate( '4 Sites' ),
+			},
+			{
+				id: 5,
+				label: translate( 'Unlimited sites (Akismet Business)' ),
+			},
+		],
+		[]
+	);
+
+	const AK_BUSINESS_DROPDOWN_ID = dropdownOptions[ dropdownOptions.length - 1 ].id;
 
 	const onSitesQuantityChange = useCallback(
 		( value: number ) => {
-			const newQuantity = value || 1;
-			const {
-				uuid,
-				product_slug: productSlug,
-				product_id: productId,
-				quantity: prevQuantity,
-			} = responseCart.products[ 0 ];
-			setSelectedQuantity( newQuantity );
+			const { uuid, product_slug, product_id, quantity: prevQuantity } = responseCart.products[ 0 ];
+			let productSlug;
+			let productId;
+			let newQuantity;
+			if ( value === AK_BUSINESS_DROPDOWN_ID ) {
+				productSlug =
+					PRODUCT_AKISMET_PRO_500_UPGRADE_MAP[
+						product_slug as keyof typeof PRODUCT_AKISMET_PRO_500_UPGRADE_MAP
+					].slug;
+				productId =
+					PRODUCT_AKISMET_PRO_500_UPGRADE_MAP[
+						product_slug as keyof typeof PRODUCT_AKISMET_PRO_500_UPGRADE_MAP
+					].id;
+				newQuantity = null;
+				setForceShowAkQuantityDropdown( true );
+			} else {
+				if (
+					( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes( product_slug )
+				) {
+					productSlug =
+						PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP[
+							product_slug as keyof typeof PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP
+						].slug;
+					productId =
+						PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP[
+							product_slug as keyof typeof PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP
+						].id;
+					newQuantity = value;
+				} else {
+					productSlug = product_slug;
+					productId = product_id;
+					newQuantity = value;
+				}
+				setForceShowAkQuantityDropdown( false );
+			}
+
+			setSelectedQuantity( value );
 			onChangeAkProQuantity &&
 				onChangeAkProQuantity( uuid, productSlug, productId, prevQuantity, newQuantity );
 		},
-		[ onChangeAkProQuantity, responseCart.products ]
+		[
+			AK_BUSINESS_DROPDOWN_ID,
+			onChangeAkProQuantity,
+			responseCart.products,
+			setForceShowAkQuantityDropdown,
+		]
 	);
+
+	const adjustedCartQuantity = useMemo( () => {
+		if (
+			( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes(
+				responseCart.products[ 0 ].product_slug
+			)
+		) {
+			return AK_BUSINESS_DROPDOWN_ID;
+		}
+
+		return responseCart.products[ 0 ].quantity ?? 1;
+	}, [ AK_BUSINESS_DROPDOWN_ID, responseCart.products ] );
 
 	useEffect( () => {
 		const { product_slug: productSlug, quantity } = responseCart.products[ 0 ];
-		setSelectedQuantity( quantity ?? 1 );
+
+		setSelectedQuantity( adjustedCartQuantity );
 
 		// Update the product-slug quantity value in the url
-		const urlQuantityPart = `:-q-${ quantity ?? 1 }`;
+		const urlQuantityPart = quantity ? `:-q-${ quantity ?? 1 }` : '';
 		const newUrl =
 			window.location.protocol +
 			'//' +
@@ -144,7 +223,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			window.location.search +
 			window.location.hash;
 		window.history.replaceState( null, '', newUrl );
-	}, [ responseCart.products ] );
+	}, [ AK_BUSINESS_DROPDOWN_ID, adjustedCartQuantity, responseCart.products ] );
 
 	const selectNextQuantity = useCallback( () => {
 		if ( selectedQuantity < dropdownOptions.length ) {
@@ -158,7 +237,6 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		}
 	}, [ selectedQuantity ] );
 
-	// reset highlight when dropdown is closed
 	const toggleDropDown = useCallback( () => {
 		setOpen( ! open );
 	}, [ open ] );
@@ -179,9 +257,9 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					break;
 				case 'Enter':
 					event.preventDefault();
-					if ( selectedQuantity !== responseCart.products[ 0 ].quantity ?? 1 ) {
+					if ( selectedQuantity !== adjustedCartQuantity ) {
 						onSitesQuantityChange( selectedQuantity );
-					} else if ( selectedQuantity === responseCart.products[ 0 ].quantity ?? 1 ) {
+					} else if ( selectedQuantity === adjustedCartQuantity ) {
 						toggleDropDown();
 					}
 					break;
@@ -192,8 +270,8 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			}
 		},
 		[
+			adjustedCartQuantity,
 			onSitesQuantityChange,
-			responseCart.products,
 			selectNextQuantity,
 			selectPreviousQuantity,
 			selectedQuantity,
@@ -214,32 +292,20 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					open={ open }
 					role="button"
 				>
-					{ translate( '%(count)d Site', '%(count)d Sites', {
-						count: selectedQuantity,
-						args: {
-							count: selectedQuantity,
-						},
-					} ) }
+					{ dropdownOptions[ selectedQuantity - 1 ].label }
 					<Gridicon icon={ open ? 'chevron-up' : 'chevron-down' } />
 				</CurrentOption>
 				{ open && (
 					<OptionList role="listbox" tabIndex={ -1 }>
-						{ dropdownOptions.map( ( value ) => (
+						{ dropdownOptions.map( ( { id, label } ) => (
 							<Option
-								key={ `quantity-${ value }` }
-								className={
-									value === selectedQuantity ? 'item-variant-option--selected' : undefined
-								}
+								key={ `quantity-${ id }` }
+								className={ id === selectedQuantity ? 'item-variant-option--selected' : undefined }
 								role="option"
-								aria-selected={ value === selectedQuantity }
-								onClick={ () => onSitesQuantityChange( value ) }
+								aria-selected={ id === selectedQuantity }
+								onClick={ () => onSitesQuantityChange( id ) }
 							>
-								{ translate( '%(count)d Site', '%(count)d Sites', {
-									count: value,
-									args: {
-										count: value,
-									},
-								} ) }
+								{ label }
 							</Option>
 						) ) }
 					</OptionList>

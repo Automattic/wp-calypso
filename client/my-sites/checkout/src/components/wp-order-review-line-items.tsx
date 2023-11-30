@@ -253,6 +253,7 @@ export function WPOrderReviewLineItems( {
 	} );
 
 	const [ initialProducts ] = useState( () => responseCart.products );
+	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
@@ -318,7 +319,8 @@ export function WPOrderReviewLineItems( {
 							);
 						} )?.months_per_bill_period
 					}
-					isAkPro500Cart={ isAkismetProMultipleLicensesCart }
+					isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
+					setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
 					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
 				/>
 			) ) }
@@ -373,6 +375,7 @@ function LineItemWrapper( {
 	isDisabled,
 	initialVariantTerm,
 	isAkPro500Cart,
+	setForceShowAkQuantityDropdown,
 	onChangeAkProQuantity,
 }: {
 	product: ResponseCartProduct;
@@ -388,8 +391,9 @@ function LineItemWrapper( {
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
-	isAkPro500Cart?: boolean;
-	onChangeAkProQuantity?: OnChangeAkProQuantity;
+	isAkPro500Cart: boolean;
+	setForceShowAkQuantityDropdown: React.Dispatch< React.SetStateAction< boolean > >;
+	onChangeAkProQuantity: OnChangeAkProQuantity;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -473,6 +477,7 @@ function LineItemWrapper( {
 				{ isAkPro500Cart && (
 					<AkismetProQuantityDropDown
 						responseCart={ responseCart }
+						setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
 						onChangeAkProQuantity={ onChangeAkProQuantity }
 					/>
 				) }
