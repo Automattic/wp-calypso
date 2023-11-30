@@ -169,7 +169,9 @@ function useIssueAndAssignLicenses(
 
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_multiple_licenses_issued', {
-					products: issuedLicenses.map( ( { slug } ) => slug ).join( ',' ),
+					products: issuedLicenses
+						.map( ( license ) => `${ license.slug }:${ license.quantity ?? 1 }` )
+						.join( ',' ),
 				} )
 			);
 
