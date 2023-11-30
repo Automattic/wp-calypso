@@ -10,7 +10,6 @@ import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import CompleteScreen from '../../components/complete-screen';
 import ErrorMessage from '../../components/error-message';
-import GettingStartedVideo from '../../components/getting-started-video';
 import ImporterDrag from '../../components/importer-drag';
 import { getImportDragConfig } from '../../components/importer-drag/config';
 import ProgressScreen from '../../components/progress-screen';
@@ -80,10 +79,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		return job?.importerState === appStates.IMPORT_FAILURE;
 	}
 
-	function showVideoComponent() {
-		return checkProgress() || checkIsSuccess();
-	}
-
 	/**
 	 ↓ HTML Renders
 	 */
@@ -144,7 +139,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					return renderImportDrag();
 				} )() }
 			</div>
-			{ showVideoComponent() && <GettingStartedVideo /> }
 		</>
 	);
 };
