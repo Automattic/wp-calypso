@@ -82,16 +82,23 @@ export const useCommandsArrayWpcom = ( {
 		copyType: 'username' | 'connectionString',
 		siteSlug: string
 	) => {
+		const loadingMessage =
+			copyType === 'username'
+				? __( 'Copying username…' )
+				: __( 'Copying SSH/SFTP connection string…' );
+		const { removeNotice: removeLoadingNotice } = displayNotice( loadingMessage, 'is-plain', 5000 );
 		const sshUser = await fetchSshUser( siteId );
 
 		if ( ! sshUser ) {
+			removeLoadingNotice();
 			return navigate( `/hosting-config/${ siteSlug }` );
 		}
 
 		const textToCopy = copyType === 'username' ? sshUser : `ssh ${ sshUser }@sftp.wp.com`;
 		navigator.clipboard.writeText( textToCopy );
+		removeLoadingNotice();
 		const successMessage =
-			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH connection string' );
+			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH/SFTP connection string' );
 		displayNotice( successMessage );
 	};
 
