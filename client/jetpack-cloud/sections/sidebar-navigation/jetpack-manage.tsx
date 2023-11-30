@@ -1,4 +1,5 @@
-import { plugins, currencyDollar, category } from '@wordpress/icons';
+import config from '@automattic/calypso-config';
+import { plugins, currencyDollar, category, home } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
@@ -9,6 +10,7 @@ import {
 	JETPACK_MANAGE_PLUGINS_LINK,
 	JETPACK_MANAGE_LICENCES_LINK,
 	JETPACK_MANAGE_BILLING_LINK,
+	JETPACK_MANAGE_OVERVIEW_LINK,
 } from './lib/constants';
 import type { MenuItemProps } from './types';
 
@@ -23,7 +25,27 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		isSelected: itemLinkMatches( props.link, path ),
 	} );
 
+	// Overview menu items. Will be only visible in development/staging environments.
+	// @todo: Once the Overview page is ready for production, remove the isDevEnv check.
+	const calypsoEnv = config( 'env_id' );
+	const isDevEnv = [ 'jetpack-cloud-stage', 'jetpack-cloud-development' ].includes(
+		calypsoEnv as string
+	);
+	const overviewMenuItem = [
+		createItem( {
+			icon: home,
+			path: '/',
+			link: JETPACK_MANAGE_OVERVIEW_LINK,
+			title: translate( 'Overview' ),
+			trackEventProps: {
+				menu_item: 'Jetpack Cloud / Overview',
+			},
+		} ),
+	];
+
 	const menuItems = [
+		...( isDevEnv ? overviewMenuItem : [] ),
+		// Production menu items:
 		createItem( {
 			icon: category,
 			path: '/',
