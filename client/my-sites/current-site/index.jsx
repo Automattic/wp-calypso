@@ -38,6 +38,10 @@ class CurrentSite extends Component {
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
+	onAllSitesClick = () => {
+		this.props.recordTracksEvent( 'calypso_sidebar_all_sites_click' );
+	};
+
 	render() {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
@@ -90,7 +94,7 @@ class CurrentSite extends Component {
 							<Site site={ selectedSite } homeLink={ true } />
 						</div>
 					) : (
-						<AllSites href="/sites" />
+						<AllSites href="/sites" onSelect={ this.onAllSitesClick } />
 					) }
 					{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 						<AsyncLoad
