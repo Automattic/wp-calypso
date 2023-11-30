@@ -11,11 +11,11 @@ import {
 	getSelectedPlugins,
 	saveSelectedPurposesAsSenseiSiteSettings,
 } from '../sensei-purpose/purposes';
+import { setAdminInterfaceStyle } from './launch-completion-tasks';
 import { useAtomicSiteChecklist } from './use-atomic-site-checklist';
 import { useAtomicSitePlugins } from './use-atomic-site-plugins';
 import { useSubSteps, wait } from './use-sub-steps';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
@@ -59,6 +59,10 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 				requestChecklist();
 				await wait( 5000 );
 				return isSenseiIncluded();
+			},
+			async function switchToDefaultAdminPanelView() {
+				await setAdminInterfaceStyle( siteId, 'wp-admin' );
+				return true;
 			},
 			async function done() {
 				setTimeout( () => submit?.(), 1000 );
