@@ -392,7 +392,7 @@
 			width: 24px;
 		}
 
-		@include break-xlarge {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-bottom: 0;
 			width: 240px;
 		}
@@ -403,9 +403,9 @@
 		margin: 0;
 		gap: 5px;
 
-		@include break-xlarge {
-			margin: 0 0 0 4px;
-			gap: 0;
+		@include breakpoint-deprecated( ">660px" ) {
+			margin: 0 0 0 8px;
+			gap: 8px;
 		}
 	}
 
@@ -414,8 +414,7 @@
 		margin: 0;
 		width: calc(50% - 2.5px);
 
-		@include break-xlarge {
-			margin: 0 4px;
+		@include breakpoint-deprecated( ">660px" ) {
 			flex-grow: 0;
 			width: auto;
 		}
