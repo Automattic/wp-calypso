@@ -153,6 +153,7 @@ export function testDomain(
 		must_remove_privacy_before_contact_update: false,
 		registry_expiry_date: '',
 		subdomain_part: '',
+		auth_code_required: true,
 		...defaults,
 	};
 

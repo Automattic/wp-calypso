@@ -1,17 +1,14 @@
-import { Button } from '@automattic/components';
-import { Title } from '@automattic/onboarding';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button, FormLabel, SelectDropdown } from '@automattic/components';
+import { Title, SubTitle } from '@automattic/onboarding';
+import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
-import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useDispatch } from 'calypso/state';
 import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
-import { GoToStep, ImporterPlatform, UrlData, RecordTracksEvent } from '../types';
+import type { GoToStep, ImporterPlatform } from '../types';
 import './style.scss';
-
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const trackEventName = 'calypso_signup_step_start';
 const trackEventParams = {
@@ -19,25 +16,48 @@ const trackEventParams = {
 	step: 'list',
 };
 
-interface Props {
-	goToStep: GoToStep;
-	urlDataUpdate: ( urlData: UrlData ) => void;
-	recordTracksEvent: RecordTracksEvent;
+interface ImporterOption {
+	value: ImporterPlatform;
+	label: string;
+	icon?: string;
 }
 
-const ListStep: React.FunctionComponent< Props > = ( props ) => {
-	const { __ } = useI18n();
-	const { goToStep, urlDataUpdate, recordTracksEvent } = props;
+interface Props {
+	goToStep: GoToStep;
+}
 
-	const onButtonClick = ( platform: ImporterPlatform ): void => {
-		urlDataUpdate( {
-			url: '',
-			platform,
-			meta: {
-				favicon: null,
-				title: null,
-			},
-		} );
+export default function ListStep( props: Props ) {
+	const dispatch = useDispatch();
+	const { __ } = useI18n();
+	const { goToStep } = props;
+
+	const primaryListOptions: ImporterOption[] = [
+		{ value: 'wordpress', label: 'WordPress', icon: 'wordpress' },
+		{ value: 'blogger', label: 'Blogger', icon: 'blogger-alt' },
+		{ value: 'medium', label: 'Medium', icon: 'medium' },
+		{ value: 'squarespace', label: 'Squarespace', icon: 'squarespace' },
+	];
+
+	const secondaryListOptions: ImporterOption[] = [
+		{ value: 'blogroll', label: 'Blogroll' },
+		{ value: 'ghost', label: 'Ghost' },
+		{ value: 'tumblr', label: 'Tumblr' },
+		{ value: 'livejournal', label: 'LiveJournal' },
+		{ value: 'movabletype', label: 'Movable Type & TypePad' },
+		{ value: 'xanga', label: 'Xanga' },
+	];
+
+	const onImporterSelect = ( platform: ImporterPlatform ): void => {
+		dispatch(
+			urlDataUpdate( {
+				url: '',
+				platform,
+				meta: {
+					favicon: null,
+					title: null,
+				},
+			} )
+		);
 		goToStep( `ready` );
 	};
 
@@ -53,93 +73,32 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<>
 			<div className="import-layout list__wrapper">
-				<div className="import-layout__column">
-					<div className="import__heading">
-						<Title>{ __( 'Import your content from another platform' ) }</Title>
-
-						<img alt="Import" src={ illustrationImg } aria-hidden="true" />
-					</div>
+				<div className="import__heading import__heading-center">
+					<Title>{ __( 'Import content from another platform' ) }</Title>
+					<SubTitle>{ __( 'Select the platform where your content lives' ) }</SubTitle>
 				</div>
-				<div className="import-layout__column">
-					<div className="list__importers list__importers-primary">
-						<ImporterLogo icon="wordpress" />
-						<ActionCard
-							classNames="list__importer-action"
-							headerText="WordPress"
-							mainText="www.wordpress.org"
-							buttonIcon="chevron-right"
-							buttonOnClick={ () => onButtonClick( 'wordpress' ) }
-						/>
-						<ImporterLogo icon="blogger-alt" />
-						<ActionCard
-							classNames="list__importer-action"
-							headerText="Blogger"
-							mainText="www.blogger.com"
-							buttonIcon="chevron-right"
-							buttonOnClick={ () => onButtonClick( 'blogger' ) }
-						/>
-						<ImporterLogo icon="medium" />
-						<ActionCard
-							classNames="list__importer-action"
-							headerText="Medium"
-							mainText="www.medium.com"
-							buttonIcon="chevron-right"
-							buttonOnClick={ () => onButtonClick( 'medium' ) }
-						/>
-						<ImporterLogo icon="squarespace" />
-						<ActionCard
-							classNames="list__importer-action"
-							headerText="Squarespace"
-							mainText="www.squarespace.com"
-							buttonIcon="chevron-right"
-							buttonOnClick={ () => onButtonClick( 'squarespace' ) }
-						/>
-					</div>
+				<div className="list__importers list__importers-primary">
+					{ primaryListOptions.map( ( x ) => (
+						<Button
+							className="list__importers-item-card"
+							onClick={ () => onImporterSelect( x.value ) }
+						>
+							<ImporterLogo icon={ x.icon } />
+							<h2>{ x.label }</h2>
+							<Icon icon={ chevronRight } />
+						</Button>
+					) ) }
+				</div>
 
-					<div className="list__importers list__importers-secondary">
-						<h3>{ __( 'Other platforms' ) }</h3>
-						<ul>
-							<li>
-								<Button borderless={ true } onClick={ () => onButtonClick( 'blogroll' ) }>
-									Blogroll
-								</Button>
-							</li>
-							<li>
-								<Button borderless={ true } onClick={ () => onButtonClick( 'ghost' ) }>
-									Ghost
-								</Button>
-							</li>
-							<li>
-								<Button borderless={ true } onClick={ () => onButtonClick( 'tumblr' ) }>
-									Tumblr
-								</Button>
-							</li>
-							<li>
-								<Button borderless={ true } onClick={ () => onButtonClick( 'livejournal' ) }>
-									LiveJournal
-								</Button>
-							</li>
-							<li>
-								<Button borderless={ true } onClick={ () => onButtonClick( 'movabletype' ) }>
-									Movable Type & TypePad
-								</Button>
-							</li>
-							<li>
-								<Button borderless={ true } onClick={ () => onButtonClick( 'xanga' ) }>
-									Xanga
-								</Button>
-							</li>
-						</ul>
-					</div>
+				<div className="list__importers list__importers-secondary">
+					<FormLabel>{ __( 'Other platforms' ) }</FormLabel>
+					<SelectDropdown
+						selectedText={ __( 'Select other platform' ) }
+						options={ secondaryListOptions }
+						onSelect={ ( x: ImporterOption ) => onImporterSelect( x.value ) }
+					></SelectDropdown>
 				</div>
 			</div>
 		</>
 	);
-};
-
-const connector = connect( () => ( {} ), {
-	urlDataUpdate,
-	recordTracksEvent,
-} );
-
-export default connector( ListStep );
+}
