@@ -17,9 +17,9 @@ const UPGRADE_NOTICE_ID = 'wpcom-live-preview/notice/upgrade';
 const unlock = getUnlock();
 
 const LivePreviewUpgradeNoticeView: FC< {
-	previewingTheme: ReturnType< typeof usePreviewingTheme >;
-	upgradePlan: any;
-} > = ( { previewingTheme, upgradePlan } ) => {
+	noticeText: string;
+	upgradePlan: () => void;
+} > = ( { noticeText, upgradePlan } ) => {
 	return (
 		<Notice
 			status="warning"
@@ -34,15 +34,7 @@ const LivePreviewUpgradeNoticeView: FC< {
 				},
 			] }
 		>
-			{ sprintf(
-				// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium')
-				__(
-					'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
-					'wpcom-live-preview'
-				),
-				previewingTheme.name,
-				previewingTheme.typeDisplay
-			) }
+			{ noticeText }
 		</Notice>
 	);
 };
@@ -54,33 +46,44 @@ export const LivePreviewUpgradeNotice: FC< {
 	const [ isRendered, setIsRendered ] = useState( false );
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
-	const canvasMode = unlock && siteEditorStore && unlock( siteEditorStore ).getCanvasMode();
+	const canvasMode = useSelect(
+		( select ) =>
+			unlock && select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode(),
+		[ siteEditorStore ]
+	);
 	const dashboardLink =
 		unlock &&
 		siteEditorStore &&
 		unlock( siteEditorStore ).getSettings().__experimentalDashboardLink;
 
+	const noticeText = sprintf(
+		// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium')
+		__(
+			'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
+			'wpcom-live-preview'
+		),
+		previewingTheme.name,
+		previewingTheme.typeDisplay
+	);
+
+	/**
+	 * Show the notice when the canvas mode is 'edit'.
+	 */
 	useEffect( () => {
 		// Do nothing in the Post Editor context.
 		if ( ! siteEditorStore ) {
 			removeNotice( UPGRADE_NOTICE_ID );
 			return;
 		}
-
+		if ( canvasMode !== 'edit' ) {
+			removeNotice( UPGRADE_NOTICE_ID );
+			return;
+		}
 		if ( ! isPreviewingTheme() ) {
 			removeNotice( UPGRADE_NOTICE_ID );
 			return;
 		}
 
-		const noticeText = sprintf(
-			// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium')
-			__(
-				'You are previewing %1$s, a %2$s theme. You can try out your own style customizations, which will only be saved if you upgrade and activate this theme.',
-				'wpcom-live-preview'
-			),
-			previewingTheme.name,
-			previewingTheme.typeDisplay
-		);
 		createWarningNotice( noticeText, {
 			id: UPGRADE_NOTICE_ID,
 			isDismissible: false,
@@ -104,16 +107,21 @@ export const LivePreviewUpgradeNotice: FC< {
 		} );
 		return () => removeNotice( UPGRADE_NOTICE_ID );
 	}, [
+		canvasMode,
 		createWarningNotice,
+		dashboardLink,
+		noticeText,
+		previewingTheme.name,
+		previewingTheme.type,
+		previewingTheme.typeDisplay,
 		removeNotice,
 		siteEditorStore,
 		upgradePlan,
-		previewingTheme.type,
-		previewingTheme.name,
-		dashboardLink,
-		previewingTheme.typeDisplay,
 	] );
 
+	/**
+	 * Show the notice when the canvas mode is 'view'.
+	 */
 	useEffect( () => {
 		// Do nothing in the Post Editor context.
 		if ( ! siteEditorStore ) {
@@ -123,6 +131,9 @@ export const LivePreviewUpgradeNotice: FC< {
 			return;
 		}
 		if ( isRendered ) {
+			return;
+		}
+		if ( ! isPreviewingTheme() ) {
 			return;
 		}
 
@@ -142,15 +153,12 @@ export const LivePreviewUpgradeNotice: FC< {
 		}
 
 		render(
-			<LivePreviewUpgradeNoticeView
-				previewingTheme={ previewingTheme }
-				upgradePlan={ upgradePlan }
-			/>,
+			<LivePreviewUpgradeNoticeView noticeText={ noticeText } upgradePlan={ upgradePlan } />,
 			noticeContainer
 		);
 
 		setIsRendered( true );
-	}, [ canvasMode, isRendered, previewingTheme, siteEditorStore, upgradePlan ] );
+	}, [ canvasMode, isRendered, noticeText, previewingTheme, siteEditorStore, upgradePlan ] );
 
 	return null;
 };
