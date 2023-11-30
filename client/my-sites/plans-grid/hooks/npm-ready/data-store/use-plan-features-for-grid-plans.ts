@@ -1,10 +1,5 @@
 import {
-	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
-	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_CUSTOM_PRODUCT_KITS,
-	FEATURE_LOYALTY_POINTS_PROGRAMS,
-	FEATURE_REFERRAL_PROGRAMS,
 	applyTestFiltersToPlansList,
 	isMonthly,
 } from '@automattic/calypso-products';
@@ -99,20 +94,13 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						);
 
 						/*
-						 * Woo Express plans with an introductory offer need some features removed.
+						 * Woo Express plans with an introductory offer need some features removed:
+						 * - custom domain feature removed for all Woo Express plans
 						 */
 						if ( gridPlan.pricing.introOffer ) {
-							const unavailableFeatures = [
-								FEATURE_CUSTOM_DOMAIN,
-								FEATURE_CUSTOM_PRODUCT_KITS,
-								FEATURE_REFERRAL_PROGRAMS,
-								FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
-								FEATURE_LOYALTY_POINTS_PROGRAMS,
-								FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
-							];
 							wpcomFeatures = wpcomFeatures.filter( ( feature ) => {
-								// Remove unavailable features for Woo Express plans with an introductory offer.
-								if ( unavailableFeatures.includes( feature.getSlug() ) ) {
+								// Remove the custom domain feature for Woo Express plans with an introductory offer.
+								if ( FEATURE_CUSTOM_DOMAIN === feature.getSlug() ) {
 									return false;
 								}
 

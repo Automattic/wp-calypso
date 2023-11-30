@@ -4,11 +4,6 @@ import {
 	isWooExpressPlan,
 	type FeatureList,
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_CUSTOM_PRODUCT_KITS,
-	FEATURE_REFERRAL_PROGRAMS,
-	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
-	FEATURE_LOYALTY_POINTS_PROGRAMS,
-	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
@@ -120,26 +115,16 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						previousPlan !== null ? planFeatureMap[ previousPlan ].jetpackFeatures : [],
 				};
 
-				// Woo Express plans with an introductory offer need some features removed.
-				const unavailableFeatures = [
-					FEATURE_CUSTOM_DOMAIN,
-					FEATURE_CUSTOM_PRODUCT_KITS,
-					FEATURE_REFERRAL_PROGRAMS,
-					FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
-					FEATURE_LOYALTY_POINTS_PROGRAMS,
-					FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
-				];
-
 				planFeatureMap[ planSlug ] = {
 					wpcomFeatures: [
 						...featuresAvailable.wpcomFeatures,
 						...previousPlanFeatures.wpcomFeatures,
 					].filter( ( feature ) => {
-						// Remove unavailable features for Woo Express plans with an introductory offer.
+						// Remove the custom domain feature for Woo Express plans with an introductory offer.
 						if (
 							'plans-woocommerce' === intent &&
 							gridPlan.pricing.introOffer &&
-							unavailableFeatures.includes( feature.getSlug() )
+							FEATURE_CUSTOM_DOMAIN === feature.getSlug()
 						) {
 							return false;
 						}
