@@ -1,4 +1,4 @@
-import { plugins, currencyDollar, category, home } from '@wordpress/icons';
+import { plugins, currencyDollar, category } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
@@ -9,7 +9,6 @@ import {
 	JETPACK_MANAGE_PLUGINS_LINK,
 	JETPACK_MANAGE_LICENCES_LINK,
 	JETPACK_MANAGE_BILLING_LINK,
-	JETPACK_MANAGE_OVERVIEW_LINK,
 } from './lib/constants';
 import type { MenuItemProps } from './types';
 
@@ -25,15 +24,6 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 	} );
 
 	const menuItems = [
-		createItem( {
-			icon: home,
-			path: '/',
-			link: JETPACK_MANAGE_OVERVIEW_LINK,
-			title: translate( 'Overview' ),
-			trackEventProps: {
-				menu_item: 'Jetpack Cloud / Overview',
-			},
-		} ),
 		createItem( {
 			icon: category,
 			path: '/',
