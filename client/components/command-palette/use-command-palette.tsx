@@ -71,8 +71,7 @@ const siteToAction =
 
 export const useCommandPallette = ( {
 	selectedCommandName,
-	setSelectedCommandName,
-	filter,
+	setSelectedCommandName, // filter,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -84,11 +83,11 @@ export const useCommandPallette = ( {
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Call the generateCommandsArray function to get the commands array
-	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
+	const commands = useCommandsArrayWpcom( { setSelectedCommandName } );
 
-	if ( 'function' === typeof filter ) {
-		commands = commands.filter( filter );
-	}
+	//if ( 'function' === typeof filter ) {
+	//	commands = commands.filter( filter );
+	//}
 
 	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
