@@ -24,7 +24,7 @@ const LivePreviewUpgradeNoticeView: FC< {
 		<Notice
 			status="warning"
 			isDismissible={ false }
-			className="wpcom-global-styles-notice"
+			className="wpcom-live-preview-upgrade-notice-view"
 			actions={ [
 				{
 					// TODO: Add the tracking event.
@@ -115,6 +115,10 @@ export const LivePreviewUpgradeNotice: FC< {
 	] );
 
 	useEffect( () => {
+		// Do nothing in the Post Editor context.
+		if ( ! siteEditorStore ) {
+			return;
+		}
 		if ( canvasMode !== 'view' ) {
 			return;
 		}
@@ -146,7 +150,7 @@ export const LivePreviewUpgradeNotice: FC< {
 		);
 
 		setIsRendered( true );
-	}, [ canvasMode, isRendered, previewingTheme, upgradePlan ] );
+	}, [ canvasMode, isRendered, previewingTheme, siteEditorStore, upgradePlan ] );
 
 	return null;
 };
