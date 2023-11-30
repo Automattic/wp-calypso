@@ -27,27 +27,19 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 
 	// Overview menu items. Will be only visible in development/staging environments.
 	// @todo: Once the Overview page is ready for production, remove the isDevEnv check.
-	const calypsoEnv = config( 'env_id' );
-	const isDevEnv = [
-		'jetpack-cloud-stage',
-		'jetpack-cloud-horizon',
-		'jetpack-cloud-development',
-	].includes( calypsoEnv as string );
-	const overviewMenuItem = [
-		createItem( {
-			icon: home,
-			path: '/',
-			link: JETPACK_MANAGE_OVERVIEW_LINK,
-			title: translate( 'Overview' ),
-			trackEventProps: {
-				menu_item: 'Jetpack Cloud / Overview',
-			},
-		} ),
-	];
+	const sections = config( 'sections' );
+	const overviewMenuItem = createItem( {
+		icon: home,
+		path: '/',
+		link: JETPACK_MANAGE_OVERVIEW_LINK,
+		title: translate( 'Overview' ),
+		trackEventProps: {
+			menu_item: 'Jetpack Cloud / Overview',
+		},
+	} );
 
 	const menuItems = [
-		...( isDevEnv ? overviewMenuItem : [] ),
-		// Production menu items:
+		...( sections[ 'jetpack-cloud-overview' ] ? [ overviewMenuItem ] : [] ),
 		createItem( {
 			icon: category,
 			path: '/',
