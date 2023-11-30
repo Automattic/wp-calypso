@@ -38,8 +38,8 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-
-.is-section-signup {
+.signup-form,
+.login.is-social-first {
 	.auth-form__separator {
 		width: calc(100% - 32px);
 		margin: 20px 0;
@@ -70,7 +70,7 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.is-section-login {
+.login:not(.is-social-first) {
 	.auth-form__separator {
 		width: 100%;
 	}

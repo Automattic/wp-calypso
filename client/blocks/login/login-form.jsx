@@ -858,6 +858,7 @@ export class LoginForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 							shouldRenderToS={ this.props.isWoo && ! isPartnerSignup }
+							isSocialFirst={ this.props.isSocialFirst }
 						/>
 					</Fragment>
 				) }

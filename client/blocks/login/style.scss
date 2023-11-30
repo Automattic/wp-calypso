@@ -2,6 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/p2-extends";
 
+$breakpoint-mobile: 782px; //Mobile size.
+
 .layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	.login.is-jetpack {
 		.button.is-primary {
@@ -541,6 +543,55 @@
 			.accessible-focus &:focus {
 				box-shadow: 0 0 0 2px var(--color-accent) !important;
 			}
+		}
+	}
+}
+
+.layout.is-jetpack-login {
+	.auth-form__separator {
+		background: var(--color-surface);
+		margin-bottom: -10px;
+		margin-top: -10px;
+
+		.auth-form__separator-text {
+			font-size: 0.875rem;
+		}
+	}
+}
+
+.layout.jetpack-cloud {
+	.auth-form__separator {
+		width: 100%;
+
+		&::before {
+			background: var(--color-neutral-5);
+			content: "";
+			height: 1px;
+			left: 0;
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			z-index: 1;
+		}
+	}
+}
+
+.login.is-social-first {
+	form {
+		max-width: 758px;
+		display: flex;
+		flex-direction: row;
+
+		@media (max-width: $breakpoint-mobile ) {
+			flex-direction: column;
+		}
+
+		.card.login__form,
+		.card.login__social {
+			width: 100%;
+			max-width: var(--login-form-column-max-width);
+			padding: 0 16px;
+			margin: 0;
 		}
 	}
 }

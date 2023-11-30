@@ -617,7 +617,7 @@ class Login extends Component {
 		);
 	}
 
-	renderContent() {
+	renderContent( isSocialFirst ) {
 		const {
 			domain,
 			isJetpack,
@@ -773,6 +773,7 @@ class Login extends Component {
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
+				isSocialFirst={ isSocialFirst }
 			/>
 		);
 	}
@@ -783,11 +784,14 @@ class Login extends Component {
 
 	render() {
 		const { isJetpack, oauth2Client, locale } = this.props;
+		const isSocialFirst = config.isEnabled( 'login/social-first' );
+
 		return (
 			<div
 				className={ classNames( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+					'is-social-first': isSocialFirst,
 				} ) }
 			>
 				{ this.renderHeader() }
@@ -796,7 +800,7 @@ class Login extends Component {
 
 				{ this.renderNotice() }
 
-				{ this.renderContent() }
+				{ this.renderContent( isSocialFirst ) }
 
 				{ this.renderFooter() }
 			</div>
