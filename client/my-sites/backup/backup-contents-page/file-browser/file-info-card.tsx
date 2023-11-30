@@ -13,7 +13,11 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupGranularRestorePath } from '../../paths';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
-import { onPreparingDownloadError, onProcessingDownloadError } from './notices';
+import {
+	onPreparingDownloadError,
+	onProcessingDownloadError,
+	onRetrievingFileInfoError,
+} from './notices';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -41,6 +45,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	const {
 		isSuccess,
 		isInitialLoading,
+		isError,
 		data: fileInfo,
 	} = useBackupPathInfoQuery(
 		siteId,
@@ -214,6 +219,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		trackDownloadByType,
 		triggerFileDownload,
 	] );
+
+	// Dispatch an error notice if the file info could not be retrieved
+	useEffect( () => {
+		if ( isError ) {
+			dispatch( onRetrievingFileInfoError() );
+		}
+	}, [ dispatch, isError ] );
 
 	const showActions =
 		item.type !== 'archive' || ( item.type === 'archive' && item.extensionType === 'unchanged' );
