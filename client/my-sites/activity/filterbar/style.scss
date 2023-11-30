@@ -117,6 +117,7 @@
 		border-bottom-right-radius: 2px;
 		border: 1px solid var(--color-neutral-60);
 		display: none;
+		text-overflow: initial;
 
 		@include breakpoint-deprecated( ">660px" ) {
 			display: inline;
@@ -441,9 +442,15 @@
 		}
 
 		span.button-label {
+			height: 100%;
+			line-height: 18px;
 			max-width: 180px;
 			overflow: hidden;
 			text-overflow: ellipsis;
+
+			@include break-xlarge {
+				max-width: 100%;
+			}
 		}
 
 		&.is-active,
