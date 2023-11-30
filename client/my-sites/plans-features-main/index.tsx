@@ -33,6 +33,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -50,7 +51,6 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import PressablePromoBanner from 'calypso/my-sites/plans-features-main/components/pressable-promo-banner';
 import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import { FeaturesGrid, ComparisonGrid, PlanTypeSelector } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
@@ -904,7 +904,12 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
-						{ showPressablePromoBanner && <PressablePromoBanner /> }
+						{ showPressablePromoBanner && (
+							<AsyncLoad
+								require="./components/pressable-promo-banner"
+								placeholder={ <LoadingPlaceholder /> }
+							/>
+						) }
 					</>
 				) }
 			</div>
