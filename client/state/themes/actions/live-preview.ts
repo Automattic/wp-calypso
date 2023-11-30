@@ -17,7 +17,7 @@ export function livePreview( themeId: string, siteId: number, source?: 'list' | 
 			theme_type: getThemeType( getState(), themeId ),
 			theme: themeId,
 		} );
-		dispatch( withAnalytics( analysis, { type: LIVE_PREVIEW_START } ) );
+		dispatch( withAnalytics( analysis, { type: LIVE_PREVIEW_START, themeId } ) );
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail, and we just switch to the Live Preview.

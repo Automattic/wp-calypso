@@ -8,7 +8,7 @@ export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-f
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
 export { getIsLivePreviewSupported } from 'calypso/state/themes/selectors/get-is-live-preview-supported';
-export { getIsLivePreviewStarted } from 'calypso/state/themes/selectors/get-is-live-preview-preparing';
+export { getIsLivePreviewStarted } from 'calypso/state/themes/selectors/get-is-live-preview-started';
 export { getJetpackUpgradeUrlIfPremiumTheme } from 'calypso/state/themes/selectors/get-jetpack-upgrade-url-if-premium-theme';
 export { getLastThemeQuery } from 'calypso/state/themes/selectors/get-last-theme-query';
 export { getLivePreviewUrl } from 'calypso/state/themes/selectors/get-live-preview-url';
