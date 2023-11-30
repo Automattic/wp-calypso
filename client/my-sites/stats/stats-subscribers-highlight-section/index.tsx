@@ -113,7 +113,7 @@ function SubscriberLaunchpadSection( { siteId }: { siteId: number | null } ) {
 
 	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
 
-	return showLaunchpad ? <SubscriberLaunchpad /> : <></>;
+	return showLaunchpad ? <SubscriberLaunchpad launchpadContext="subscriber-stats" /> : <></>;
 }
 
 export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
@@ -121,7 +121,7 @@ export default function SubscribersHighlightSection( { siteId }: { siteId: numbe
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
 			<SubscriberHighlightsListing siteId={ siteId } />
-			<SubscriberLaunchpadSection siteId={ siteId } launchpadContext="subscriber-stats" />
+			<SubscriberLaunchpadSection siteId={ siteId } />
 		</div>
 	);
 }

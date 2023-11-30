@@ -6,7 +6,11 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './styles.scss';
 
-const SubscriberLaunchpad = ( launchpadContext: string = 'subscriber-list' ) => {
+const SubscriberLaunchpad = ( {
+	launchpadContext = 'subscriber-list',
+}: {
+	launchpadContext: string;
+} ) => {
 	const { checklistSlug, taskFilter, numberOfSteps, completedSteps } =
 		useSubscriberLaunchpadTasks();
 	const translate = useTranslate();
