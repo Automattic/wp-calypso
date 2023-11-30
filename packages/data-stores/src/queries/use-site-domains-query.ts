@@ -109,6 +109,7 @@ export interface DomainData {
 	must_remove_privacy_before_contact_update: boolean;
 	registry_expiry_date: string;
 	subdomain_part: string;
+	auth_code_required: boolean;
 }
 
 export interface SiteDomainsQueryFnData {
