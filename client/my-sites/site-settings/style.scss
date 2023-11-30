@@ -718,3 +718,16 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		margin-inline-end: 0;
 	}
 }
+
+.site-settings__reset-site-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.form-label.reset-site__confirm-label {
+	margin-bottom: 8px;
+	line-height: 24px;
+	color: var(--color-text-subtle);
+	font-weight: normal;
+}
