@@ -435,24 +435,6 @@ export const useCommandsArrayWpcom = ( {
 			icon: editIcon,
 		},
 		{
-			name: 'addNewPage',
-			label: __( 'Add new page' ),
-			context: [ '/pages' ],
-			callback: setStateCallback( 'addNewPage' ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/post-new.php?post_type=page`
-							: `/page/${ site.slug }`;
-					navigate( link );
-				},
-			},
-			icon: plusIcon,
-		},
-		{
 			name: 'viewMediaUploads',
 			label: __( 'View media uploads' ),
 			callback: setStateCallback( 'viewMediaUploads' ),
@@ -502,6 +484,24 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: editIcon,
+		},
+		{
+			name: 'addNewPage',
+			label: __( 'Add new page' ),
+			context: [ '/pages' ],
+			callback: setStateCallback( 'addNewPage' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/post-new.php?post_type=page`
+							: `/page/${ site.slug }`;
+					navigate( link );
+				},
+			},
+			icon: plusIcon,
 		},
 		{
 			name: 'manageComments',
