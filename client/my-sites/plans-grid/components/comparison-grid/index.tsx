@@ -530,6 +530,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			siteId ?? 0,
 			displayedGridPlans.map( ( { planSlug } ) => planSlug )
 		);
+
 		return (
 			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
@@ -538,8 +539,11 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				>
 					{ isStuck && planTypeSelectorProps && (
 						<PlanTypeSelectorWrapper>
-							<p>{ translate( 'Billing Cycle' ) }</p>
-							<PlanTypeSelector { ...planTypeSelectorProps } hideDiscountLabel={ true } />
+							<PlanTypeSelector
+								{ ...planTypeSelectorProps }
+								title={ translate( 'Billing Cycle' ) }
+								hideDiscountLabel={ true }
+							/>
 						</PlanTypeSelectorWrapper>
 					) }
 				</RowTitleCell>

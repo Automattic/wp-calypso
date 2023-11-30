@@ -3,6 +3,10 @@
 	max-width: fit-content;
 }
 
+.plan-type-selector__title {
+	margin-bottom: 20px;
+}
+
 .plan-type-selector .plan-type-selector__interval-type .segmented-control.price-toggle {
 	background-color: #f2f2f2;
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
