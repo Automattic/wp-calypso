@@ -237,7 +237,6 @@ export default function PurchaseModalContent( {
 				{ firstProduct && <OrderStep siteSlug={ siteSlug } product={ firstProduct } /> }
 				{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
 				<CheckoutTerms cart={ cart } />
-				<hr />
 				<OrderReview
 					creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
 					shouldDisplayTax={ cart.tax.display_taxes }

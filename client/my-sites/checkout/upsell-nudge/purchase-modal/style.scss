@@ -23,30 +23,25 @@ $left-margin: 36px;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	width: 750px;
+	width: 800px;
 	max-width: 100%;
 	box-sizing: border-box;
+	padding: 0;
 
 	@media ( min-width: 480px ) {
 		padding: 0;
-	}
-
-	> hr {
-		width: calc(100% + var(--padding) * -2);
-		margin: 16px var(--padding);
-		background: var(--color-neutral-5);
-
-		// stylelint-disable-next-line unit-allowed-list
-		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
-			height: 0.5px;
-		}
 	}
 }
 
 .purchase-modal__wrapper {
 	display: flex;
-	gap: 30px;
 	width: 100%;
+	flex-direction: column;
+	gap: 12px;
+	@include break-mobile {
+		gap: 36px;
+		flex-direction: row;
+	}
 }
 
 .purchase-modal__steps {
@@ -54,20 +49,17 @@ $left-margin: 36px;
 	display: flex;
 	flex-direction: column;
 	max-width: 100%;
+	padding: 16px;
 	@include break-mobile {
-		padding: 36px 0 36px 30px;
+		padding: 45px 0 45px 36px;
 	}
 }
 
 .purchase-modal__features {
 	background: var(--gray-gray-0, #f6f7f7);
-	padding: 36px 30px;
+	padding: 45px 64px 45px 36px;
 	&.is-placeholder {
 		flex: 1;
-	}
-	display: none;
-	@include break-mobile {
-		display: block;
 	}
 }
 
@@ -174,9 +166,17 @@ $left-margin: 36px;
 	justify-content: space-between;
 	flex-wrap: wrap;
 
+	padding-inline-end: 18px;
+	@include break-mobile {
+		padding-inline-end: 0;
+	}
+
 	> dt {
 		width: 60%;
-		margin-left: $left-margin;
+		margin-inline-start: 18px;
+		@include break-mobile {
+			margin-inline-start: $left-margin;
+		}
 	}
 
 	> dd {
@@ -207,8 +207,12 @@ $left-margin: 36px;
  */
 .purchase-modal__pay-button {
 	align-self: stretch;
-	margin: 24px 0 0 36px;
 	font-size: 1rem;
+
+	margin: 24px 18px 0 18px;
+	@include break-mobile {
+		margin: 24px 0 0 36px;
+	}
 
 	&.is-placeholder {
 		@include placeholder();
@@ -222,5 +226,5 @@ $left-margin: 36px;
 	font-style: normal;
 	font-weight: 500;
 	line-height: 20px;
-	margin-bottom: 8px;
+	margin-bottom: 10px;
 }
