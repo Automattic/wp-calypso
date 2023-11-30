@@ -62,7 +62,6 @@ export const parseTrackingPrefs = (
  *
  * WARNING: this function is meant to work on the client side. If not called
  *          from the client side then it defaults to allow all
- *
  * @returns Whether we may track the current user
  */
 export default function getTrackingPrefs(): TrackingPrefs {
