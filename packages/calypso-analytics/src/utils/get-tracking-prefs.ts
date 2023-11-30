@@ -60,14 +60,12 @@ export const parseTrackingPrefs = (
 /**
  * Returns consents for every Cookie Jar bucket based on privacy driven approach
  *
- * WARNING: this function is meant to work on the client side. If not called
- *          from the client side then it defaults to allow all
+ * WARNING: this function only works on the client side.
  * @returns Whether we may track the current user
  */
 export default function getTrackingPrefs(): TrackingPrefs {
 	if ( typeof document === 'undefined' ) {
-		//throw new Error( 'getTrackingPrefs() can only be called on the client side' );
-		return prefsAllowAll;
+		throw new Error( 'getTrackingPrefs() can only be called on the client side' );
 	}
 
 	const cookies = cookie.parse( document.cookie );
