@@ -1,10 +1,10 @@
-import config from '@automattic/calypso-config';
 import { plugins, currencyDollar, category, home } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import {
 	JETPACK_MANAGE_DASHBOARD_LINK,
 	JETPACK_MANAGE_PLUGINS_LINK,
@@ -26,7 +26,6 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 	} );
 
 	// Overview menu items. Will be only visible if the jetpack-cloud-overview section is enabled.
-	const sections = config( 'sections' );
 	const overviewMenuItem = createItem( {
 		icon: home,
 		path: '/',
@@ -38,7 +37,7 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 	} );
 
 	const menuItems = [
-		...( sections[ 'jetpack-cloud-overview' ] ? [ overviewMenuItem ] : [] ),
+		...( isSectionNameEnabled( 'jetpack-cloud-overview' ) ? [ overviewMenuItem ] : [] ),
 		createItem( {
 			icon: category,
 			path: '/',
