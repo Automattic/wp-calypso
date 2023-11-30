@@ -37,6 +37,7 @@ const GDPR_COUNTRIES = [
 
 /**
  * Returns a boolean telling whether a country is in the GDPR zone.
+ *
  * @param countryCode The country code to look for.
  * @returns Whether the country is in the GDPR zone
  */
