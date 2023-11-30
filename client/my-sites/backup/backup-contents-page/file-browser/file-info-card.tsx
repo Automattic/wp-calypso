@@ -58,7 +58,15 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
 
-	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload( siteId );
+	// Dispatch an error notice if the download could not be prepared
+	const handlePrepareDownloadError = useCallback( () => {
+		dispatch( onPreparingDownloadError() );
+	}, [ dispatch ] );
+
+	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload(
+		siteId,
+		handlePrepareDownloadError
+	);
 
 	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
