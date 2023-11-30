@@ -17,7 +17,6 @@ import {
 	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
-	getIsLivePreviewStarted,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
 	hasActivatedTheme,
@@ -66,12 +65,6 @@ class ThanksModal extends Component {
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.isLivePreviewStarted ) {
-			return {
-				isVisible: true,
-				wasInstalling: false,
-			};
-		}
 		if ( nextProps.shouldRedirectToThankYouPage ) {
 			return {
 				isVisible: false,
@@ -242,12 +235,6 @@ class ThanksModal extends Component {
 	};
 
 	getLoadingLabel = () => {
-		const { isLivePreviewStarted } = this.props;
-
-		if ( isLivePreviewStarted ) {
-			return this.props.translate( 'Preparing theme preview…' );
-		}
-
 		return this.props.translate( 'Activating theme…' );
 	};
 
@@ -333,11 +320,9 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware, isLivePreviewStarted } =
-			this.props;
+		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware } = this.props;
 
-		const shouldDisplayContent =
-			hasActivated && currentTheme && ! doesThemeBundleUsableSoftware && ! isLivePreviewStarted;
+		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
 
 		return (
 			<Dialog
@@ -378,8 +363,6 @@ const ConnectedThanksModal = connect(
 
 		const activatingThemeId = state.themes.activationRequests?.themeId;
 
-		const isLivePreviewStarted = getIsLivePreviewStarted( state );
-
 		return {
 			siteId,
 			siteUrl,
@@ -399,7 +382,6 @@ const ConnectedThanksModal = connect(
 			isActivating: !! isActivatingTheme( state, siteId ),
 			isFSEActive,
 			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
-			isLivePreviewStarted,
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
