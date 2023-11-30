@@ -367,11 +367,7 @@
 }
 
 .filterbar {
-	margin: 0 16px;
-
-	@include break-xlarge {
-		margin: 0;
-	}
+	margin: 0;
 }
 
 .filterbar--compact .filterbar__wrap.card {
