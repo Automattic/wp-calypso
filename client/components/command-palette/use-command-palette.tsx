@@ -1,8 +1,10 @@
+import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -78,6 +80,10 @@ export const useCommandPallette = ( {
 		( site ) => ! site.options?.is_domain_only
 	);
 
+	//Sort sites in the nested commands to be consistent with site switcher and /sites page
+	const { sitesSorting } = useSitesSorting();
+	const sortedSites = useSitesListSorting( allSites, sitesSorting );
+
 	// Call the generateCommandsArray function to get the commands array
 	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
 
@@ -89,7 +95,7 @@ export const useCommandPallette = ( {
 	let sitesToPick = null;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
-		const filteredSites = filter ? allSites.filter( filter ) : allSites;
+		const filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
 	}
 
