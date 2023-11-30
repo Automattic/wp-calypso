@@ -100,7 +100,13 @@ export const SiteLogsToolbar = ( {
 	const requestStatuses = [
 		{ value: '', label: translate( 'All' ) },
 		{ value: '200', label: translate( '200' ) },
+		{ value: '301', label: translate( '301' ) },
+		{ value: '302', label: translate( '302' ) },
+		{ value: '400', label: translate( '400' ) },
+		{ value: '401', label: translate( '401' ) },
+		{ value: '403', label: translate( '403' ) },
 		{ value: '404', label: translate( '404' ) },
+		{ value: '500', label: translate( '500' ) },
 	];
 
 	const selectedSeverity =
