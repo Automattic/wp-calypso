@@ -575,23 +575,3 @@ $breakpoint-mobile: 782px; //Mobile size.
 		}
 	}
 }
-
-.login.is-social-first {
-	form {
-		max-width: 758px;
-		display: flex;
-		flex-direction: row;
-
-		@media (max-width: $breakpoint-mobile ) {
-			flex-direction: column;
-		}
-
-		.card.login__form,
-		.card.login__social {
-			width: 100%;
-			max-width: var(--login-form-column-max-width);
-			padding: 0 16px;
-			margin: 0;
-		}
-	}
-}

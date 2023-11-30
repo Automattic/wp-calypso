@@ -389,7 +389,6 @@ $image-height: 47px;
 			button {
 				background-color: #fdfdfd;
 				border: 0;
-				height: unset;
 				text-align: start;
 			}
 		}
@@ -397,6 +396,7 @@ $image-height: 47px;
 		.login__form-userdata {
 			button {
 				min-width: 194px;
+				height: unset;
 			}
 		}
 	}
@@ -446,12 +446,20 @@ $image-height: 47px;
 
 	.wp-login__main {
 		max-width: 540px;
+
+		&.is-social-first {
+			max-width: 758px;
+		}
 	}
 
 	.wp-login__links,
 	form {
 		max-width: 400px;
 		margin: 0 auto;
+
+		&.is-social-first {
+			max-width: 758px;
+		}
 	}
 
 	.wp-login__links {
@@ -492,13 +500,6 @@ $image-height: 47px;
 		padding-left: 0;
 		padding-right: 0;
 		box-shadow: none;
-
-		> svg {
-			/* Note: Same as in `.auth-form__social-buttons` */
-			border: 1px solid var(--studio-gray-10);
-			padding: 12px;
-			border-radius: 24px; /* stylelint-disable-line scales/radii */
-		}
 	}
 
 	.two-factor-authentication__verification-code-form > p,
@@ -753,4 +754,32 @@ $image-height: 47px;
 
 .wp-login__p2-powered-by-text {
 	font-size: var(--p2-font-size-form-xxs);
+}
+
+:root {
+	--login-form-column-max-width: 327px;
+}
+
+@include break-mobile {
+	:root {
+		--login-form-column-max-width: 600px;
+	}
+}
+
+@include break-small {
+	:root {
+		--login-form-column-max-width: 327px;
+	}
+}
+
+@include break-medium {
+	:root {
+		--login-form-column-max-width: 350px;
+	}
+}
+
+@include break-large {
+	:root {
+		--login-form-column-max-width: 327px;
+	}
 }

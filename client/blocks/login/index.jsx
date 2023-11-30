@@ -326,11 +326,16 @@ class Login extends Component {
 			isGravPoweredLoginPage,
 			isWooCoreProfilerFlow,
 			isSignupExistingAccount,
+			isSocialFirst,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
+
+		if ( isSocialFirst ) {
+			translate( 'Log into WordPress.com' );
+		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
 			headerText = translate( 'Log in to update your payment details and renew your subscription' );
@@ -617,7 +622,7 @@ class Login extends Component {
 		);
 	}
 
-	renderContent( isSocialFirst ) {
+	renderContent() {
 		const {
 			domain,
 			isJetpack,
@@ -642,6 +647,7 @@ class Login extends Component {
 			currentQuery,
 			isGravPoweredLoginPage,
 			isSignupExistingAccount,
+			isSocialFirst,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -784,14 +790,12 @@ class Login extends Component {
 
 	render() {
 		const { isJetpack, oauth2Client, locale } = this.props;
-		const isSocialFirst = config.isEnabled( 'login/social-first' );
 
 		return (
 			<div
 				className={ classNames( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
-					'is-social-first': isSocialFirst,
 				} ) }
 			>
 				{ this.renderHeader() }
@@ -800,7 +804,7 @@ class Login extends Component {
 
 				{ this.renderNotice() }
 
-				{ this.renderContent( isSocialFirst ) }
+				{ this.renderContent() }
 
 				{ this.renderFooter() }
 			</div>

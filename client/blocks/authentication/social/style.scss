@@ -28,6 +28,12 @@
 		@include break-medium {
 			text-align: start;
 		}
+
+		> svg {
+			/* Note: Same as in `.auth-form__social-buttons` */
+			border: 1px solid var(--studio-gray-10);
+			padding: 12px;
+		}
 	}
 }
 
@@ -87,7 +93,9 @@
 		}
 
 		>svg {
+			border: 0;
 			margin-right: auto;
+			padding: 0;
 		}
 
 		span {

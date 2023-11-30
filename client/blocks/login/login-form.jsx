@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button as ButtonCore } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
@@ -16,6 +17,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
+import MailIcon from 'calypso/components/social-icons/mail';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
@@ -58,6 +60,8 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import SocialLoginForm from './social';
+
+import './login-form.scss';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -596,7 +600,7 @@ export class LoginForm extends Component {
 		this.props.resetMagicLoginRequestForm();
 	};
 
-	renderMagicLoginLink() {
+	getMagicLoginPageLink() {
 		if (
 			! canDoMagicLogin(
 				this.props.twoFactorAuthType,
@@ -614,10 +618,15 @@ export class LoginForm extends Component {
 			this.props.currentQuery?.signup_url,
 			this.props.oauth2Client?.id
 		);
+
 		const { query, usernameOrEmail } = this.props;
 		const emailAddress = usernameOrEmail || query?.email_address || this.state.usernameOrEmail;
 
-		const magicLoginPageLinkWithEmail = addQueryArgs( { email_address: emailAddress }, loginLink );
+		return addQueryArgs( { email_address: emailAddress }, loginLink );
+	}
+
+	renderMagicLoginLink() {
+		const magicLoginPageLinkWithEmail = this.getMagicLoginPageLink();
 
 		return this.props.translate(
 			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
@@ -628,6 +637,19 @@ export class LoginForm extends Component {
 					),
 				},
 			}
+		);
+	}
+
+	renderMagicLoginButton() {
+		const magicLoginPageLinkWithEmail = this.getMagicLoginPageLink();
+
+		return (
+			<ButtonCore className="social-buttons__button button" href={ magicLoginPageLinkWithEmail }>
+				<MailIcon width="20" height="20" />
+				<span className="social-buttons__service-name">
+					{ this.props.translate( 'Continue with Email' ) }
+				</span>
+			</ButtonCore>
 		);
 	}
 
@@ -649,6 +671,7 @@ export class LoginForm extends Component {
 			hideSignupLink,
 			isSignupExistingAccount,
 			isSendingEmail,
+			isSocialFirst,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -720,7 +743,11 @@ export class LoginForm extends Component {
 		}
 
 		return (
-			<form onSubmit={ this.onSubmitForm } method="post">
+			<form
+				className={ classNames( { 'is-social-first': isSocialFirst } ) }
+				onSubmit={ this.onSubmitForm }
+				method="post"
+			>
 				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
 					<p className="login__form-subheader">
 						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
@@ -858,8 +885,10 @@ export class LoginForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 							shouldRenderToS={ this.props.isWoo && ! isPartnerSignup }
-							isSocialFirst={ this.props.isSocialFirst }
-						/>
+							isSocialFirst={ isSocialFirst }
+						>
+							{ this.renderMagicLoginButton() }
+						</SocialLoginForm>
 					</Fragment>
 				) }
 

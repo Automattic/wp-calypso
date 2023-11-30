@@ -282,7 +282,7 @@ export class Login extends Component {
 		);
 	}
 
-	renderContent() {
+	renderContent( isSocialFirst ) {
 		const {
 			clientId,
 			domain,
@@ -335,6 +335,7 @@ export class Login extends Component {
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
 						oauth2ClientId={ this.props.oauth2Client?.id }
+						isSocialFirst={ isSocialFirst }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
@@ -371,6 +372,7 @@ export class Login extends Component {
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
+				isSocialFirst={ isSocialFirst }
 			/>
 		);
 	}
@@ -378,8 +380,10 @@ export class Login extends Component {
 	render() {
 		const { locale, translate, isFromMigrationPlugin } = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
+		const isSocialFirst = config.isEnabled( 'login/social-first' );
 		const mainClassNames = classNames( 'wp-login__main', {
 			'is-wpcom-migration': isFromMigrationPlugin,
+			'is-social-first': isSocialFirst,
 		} );
 
 		return (
@@ -394,7 +398,7 @@ export class Login extends Component {
 						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
 
-					<div className="wp-login__container">{ this.renderContent() }</div>
+					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
 				</Main>
 
 				{ this.renderFooter() }
