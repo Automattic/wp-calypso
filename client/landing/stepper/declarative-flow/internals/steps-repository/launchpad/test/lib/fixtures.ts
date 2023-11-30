@@ -213,6 +213,7 @@ export const defaultDomainResponse: ResponseDomain = {
 	aftermarketAuctionEnd: null,
 	aftermarketAuctionStart: null,
 	autoRenewalDate: '',
+	authCodeRequired: true,
 	autoRenewing: false,
 	beginTransferUntilDate: '',
 	blogId: 0,
