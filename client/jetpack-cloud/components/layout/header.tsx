@@ -16,7 +16,7 @@ export function LayoutHeaderSubtitle( { children }: Props ) {
 }
 
 export function LayoutHeaderActions( { children }: Props ) {
-	return <h2 className="jetpack-cloud-layout__header-actions">{ children }</h2>;
+	return <div className="jetpack-cloud-layout__header-actions">{ children }</div>;
 }
 
 export default function LayoutHeader( { showStickyContent, children }: Props ) {

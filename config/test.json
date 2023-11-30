@@ -66,6 +66,7 @@
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": true,
 		"mailchimp": true,
+		"marketplace-add-review": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"me/account-close": true,
@@ -96,14 +97,16 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"settings/self-serve-site-reset": false,
 		"signup/social": true,
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler": true,
 		"ssr/prefetch-timebox": true,
+		"stats/date-control": true,
 		"stats/new-video-summary": false,
 		"stats/paid-wpcom-stats": true,
-		"stats/date-control": true,
+		"stats/plan-usage": false,
 		"stats/tier-upgrade-slider": false,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
@@ -115,6 +118,6 @@
 		"videomaker-trial": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-pallette": true
+		"yolo/command-palette": true
 	}
 }
