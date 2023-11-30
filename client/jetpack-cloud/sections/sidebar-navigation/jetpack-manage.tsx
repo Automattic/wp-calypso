@@ -25,8 +25,7 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		isSelected: itemLinkMatches( props.link, path ),
 	} );
 
-	// Overview menu items. Will be only visible in development/staging environments.
-	// @todo: Once the Overview page is ready for production, remove the isDevEnv check.
+	// Overview menu items. Will be only visible if the jetpack-cloud-overview section is enabled.
 	const sections = config( 'sections' );
 	const overviewMenuItem = createItem( {
 		icon: home,
