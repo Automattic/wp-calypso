@@ -16,7 +16,7 @@ const PricingPlansHeader: FunctionComponent< Props > = ( { currentPlan, attribut
 
 	return (
 		<section className="hb-pricing-plans-embed__header">
-			<div className="hb-pricing-plans-embed__header-label">{ currentPlan.getTitle() }</div>
+			<div className="hb-pricing-plans-embed__header-label">{ currentPlan.productNameShort }</div>
 			{ attributes.domain && (
 				<div className="hb-pricing-plans-embed__header-domain">
 					{

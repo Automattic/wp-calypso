@@ -1,14 +1,19 @@
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, search as inputIcon } from '@wordpress/icons';
+import {
+	Icon,
+	search as inputIcon,
+	chevronLeft as backIcon,
+	chevronRight as forwardIcon,
+} from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { CommandCallBackParams, useCommandPallette } from './use-command-pallette';
+import { CommandCallBackParams, useCommandPallette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
 
@@ -24,6 +29,10 @@ const StyledCommandsMenuContainer = styled.div( {
 	'[cmdk-root] > [cmdk-list]': {
 		overflowX: 'hidden',
 	},
+} );
+
+const BackButton = styled.button( {
+	cursor: 'pointer',
 } );
 
 const LabelWrapper = styled.div( {
@@ -107,6 +116,7 @@ export function CommandMenuGroup( {
 									</SubLabel>
 								) }
 							</LabelWrapper>
+							{ command.siteFunctions ? <Icon icon={ forwardIcon } /> : null }
 						</HStack>
 					</Command.Item>
 				);
@@ -145,7 +155,7 @@ function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputP
 	);
 }
 
-export const WpcomCommandPalette = () => {
+const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -214,7 +224,17 @@ export const WpcomCommandPalette = () => {
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
 				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
 					<div className="commands-command-menu__header">
-						<Icon icon={ inputIcon } />
+						{ selectedCommandName ? (
+							<BackButton
+								type="button"
+								onClick={ reset }
+								aria-label={ __( 'Go back to the previous screen' ) }
+							>
+								<Icon icon={ backIcon } />
+							</BackButton>
+						) : (
+							<Icon icon={ inputIcon } />
+						) }
 						<CommandInput
 							search={ search }
 							setSearch={ setSearch }
@@ -241,3 +261,5 @@ export const WpcomCommandPalette = () => {
 		</Modal>
 	);
 };
+
+export default CommandPalette;

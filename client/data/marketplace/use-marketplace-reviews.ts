@@ -12,14 +12,14 @@ const reviewsApiBase = '/sites/marketplace.wordpress.com/comments';
 const reviewsApiNamespace = 'wp/v2';
 const queryKeyBase: QueryKey = [ 'marketplace-reviews' ];
 
-type ProductType = 'plugin' | 'theme';
+export type ProductType = 'plugin' | 'theme';
 
-type ProductProps = {
+export type ProductProps = {
 	productType: ProductType;
-	pluginSlug: string;
+	slug: string;
 };
 
-type MarketplaceReviewBody = {
+export type MarketplaceReviewBody = {
 	content: string;
 	rating: number;
 } & ProductProps;
@@ -32,7 +32,7 @@ type DeleteMarketplaceReviewProps = {
 	reviewId: number;
 } & ProductProps;
 
-type MarketplaceReviewResponse = {
+export type MarketplaceReviewResponse = {
 	id: number;
 	post: number;
 	parent: number;
@@ -52,7 +52,7 @@ type MarketplaceReviewResponse = {
 	};
 };
 
-type ErrorResponse = {
+export type ErrorResponse = {
 	code: string;
 	message: string;
 	data: {
@@ -83,7 +83,7 @@ const fetchMarketplaceReviews = (
 
 const createReview = ( {
 	productType,
-	pluginSlug,
+	slug,
 	content,
 	rating,
 }: MarketplaceReviewBody ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
@@ -94,7 +94,7 @@ const createReview = ( {
 		},
 		{
 			product_type: productType,
-			product_slug: pluginSlug,
+			product_slug: slug,
 			content,
 			meta: { wpcom_marketplace_rating: rating },
 		}
@@ -104,7 +104,7 @@ const createReview = ( {
 const updateReview = ( {
 	reviewId,
 	productType,
-	pluginSlug,
+	slug,
 	content,
 	rating,
 }: UpdateMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
@@ -115,7 +115,7 @@ const updateReview = ( {
 		},
 		{
 			product_type: productType,
-			product_slug: pluginSlug,
+			product_slug: slug,
 			content,
 			meta: { wpcom_marketplace_rating: rating },
 		}
@@ -133,15 +133,15 @@ const deleteReview = ( {
 };
 
 export const useMarketplaceReviewsQuery = (
-	{ productType, pluginSlug }: ProductProps,
+	{ productType, slug }: ProductProps,
 	{
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
 	}: MarketplaceReviewsQueryOptions = {}
 ) => {
-	const queryKey: QueryKey = [ queryKeyBase, pluginSlug ];
-	const queryFn = () => fetchMarketplaceReviews( productType, pluginSlug );
+	const queryKey: QueryKey = [ queryKeyBase, slug ];
+	const queryFn = () => fetchMarketplaceReviews( productType, slug );
 	return useQuery( {
 		queryKey,
 		queryFn,
