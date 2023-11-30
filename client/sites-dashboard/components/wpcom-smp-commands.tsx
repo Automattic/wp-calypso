@@ -83,9 +83,7 @@ export const useCommandsArrayWpcom = ( {
 		siteSlug: string
 	) => {
 		const loadingMessage =
-			copyType === 'username'
-				? __( 'Copying username…' )
-				: __( 'Copying SSH/SFTP connection string…' );
+			copyType === 'username' ? __( 'Copying username…' ) : __( 'Copying SSH connection string…' );
 		const { removeNotice: removeLoadingNotice } = displayNotice( loadingMessage, 'is-plain', 5000 );
 		const sshUser = await fetchSshUser( siteId );
 
@@ -98,7 +96,7 @@ export const useCommandsArrayWpcom = ( {
 		navigator.clipboard.writeText( textToCopy );
 		removeLoadingNotice();
 		const successMessage =
-			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH/SFTP connection string' );
+			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH connection string' );
 		displayNotice( successMessage );
 	};
 
