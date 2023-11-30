@@ -108,6 +108,8 @@ export type ResponseDomain = {
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;
+	pendingRegistrationAtRegistry: boolean;
+	pendingRegistrationAtRegistryUrl: string;
 	pendingRegistrationTime: string;
 	pendingTransfer?: boolean;
 	pointsToWpcom: boolean;

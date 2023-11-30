@@ -158,7 +158,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 			);
 		}
 
-		if ( domain?.pendingRegistration ) {
+		if ( domain?.pendingRegistration || domain?.pendingRegistrationAtRegistry ) {
 			return (
 				<TransferUnavailableNotice
 					message={ __(
