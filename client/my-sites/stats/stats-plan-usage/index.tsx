@@ -2,6 +2,8 @@ import { formattedNumber } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+
 import './style.scss';
 
 interface PlanUsageProps {
@@ -94,10 +96,17 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	);
 };
 
-const StatsPlanUsage: React.FC< StatsPlanUsageProps > = () => {
+const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId } ) => {
+	const { data } = usePlanUsageQuery( siteId );
+
 	return (
 		<div className="stats__plan-usage">
-			<PlanUsage />
+			<PlanUsage
+				limit={ data?.views_limit }
+				usage={ data?.current_usage?.views_count }
+				daysToReset={ data?.current_usage?.days_to_reset }
+				overLimitMonths={ data?.over_limit_months }
+			/>
 		</div>
 	);
 };
