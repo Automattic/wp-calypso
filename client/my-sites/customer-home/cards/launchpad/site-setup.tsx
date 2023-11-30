@@ -1,7 +1,7 @@
 import LaunchpadPreLaunch from './pre-launch';
 
 const LaunchpadSiteSetup = (): JSX.Element => {
-	const checklistSlug = 'site-setup';
+	const checklistSlug = 'legacy-site-setup';
 
 	return (
 		<>
