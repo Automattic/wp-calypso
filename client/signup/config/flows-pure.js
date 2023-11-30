@@ -108,7 +108,7 @@ export function generateFlows( {
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'theme' ],
+			providesDependenciesInQuery: [ 'theme', 'intervalType' ],
 			optionalDependenciesInQuery: [ 'theme_type', 'style_variation', 'intervalType' ],
 			hideProgressIndicator: true,
 		},
