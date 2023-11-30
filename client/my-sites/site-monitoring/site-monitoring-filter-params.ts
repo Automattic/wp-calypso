@@ -80,7 +80,7 @@ export function getQuerySearchForTab( tabName: string ): string {
 
 	const url = new URL( window.location.href );
 
-	const keysToDelete = [];
+	const keysToDelete: string[] = [];
 
 	url.searchParams.forEach( ( value, key ) => {
 		if ( ! SiteMonitoringTabParams[ tabName ].includes( key ) ) {
