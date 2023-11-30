@@ -55,11 +55,11 @@ export const LogsTab = ( {
 	} );
 
 	const [ requestType, setRequestType ] = useState( () => {
-		return getFilterQueryParam( 'requestType' ) || '';
+		return getFilterQueryParam( 'request_type' ) || '';
 	} );
 
 	const [ requestStatus, setRequestStatus ] = useState( () => {
-		return getFilterQueryParam( 'requestStatus' ) || '';
+		return getFilterQueryParam( 'request_status' ) || '';
 	} );
 
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
@@ -168,13 +168,13 @@ export const LogsTab = ( {
 	const handleRequestTypeChange = ( requestType: string ) => {
 		setRequestType( requestType );
 		setAutoRefresh( false );
-		updateFilterQueryParam( 'requestType', requestType );
+		updateFilterQueryParam( 'request_type', requestType );
 	};
 
 	const handleRequestStatusChange = ( requestStatus: string ) => {
 		setRequestStatus( requestStatus );
 		setAutoRefresh( false );
-		updateFilterQueryParam( 'requestStatus', requestStatus );
+		updateFilterQueryParam( 'request_status', requestStatus );
 	};
 
 	const headerTitles =

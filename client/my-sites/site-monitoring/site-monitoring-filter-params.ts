@@ -10,7 +10,7 @@ interface SiteMonitoringTabParamsType {
 const SiteMonitoringTabParams: SiteMonitoringTabParamsType = {
 	metrics: [],
 	php: [ 'from', 'to', 'severity' ],
-	web: [ 'from', 'to', 'requestType', 'status' ],
+	web: [ 'from', 'to', 'request_type', 'request_status' ],
 };
 
 export function getPageQueryParam(): SiteMonitoringTab | null {
@@ -80,10 +80,16 @@ export function getQuerySearchForTab( tabName: string ): string {
 
 	const url = new URL( window.location.href );
 
+	const keysToDelete = [];
+
 	url.searchParams.forEach( ( value, key ) => {
 		if ( ! SiteMonitoringTabParams[ tabName ].includes( key ) ) {
-			url.searchParams.delete( key );
+			keysToDelete.push( key );
 		}
+	} );
+
+	keysToDelete.forEach( ( key ) => {
+		url.searchParams.delete( key );
 	} );
 
 	return url.search;
