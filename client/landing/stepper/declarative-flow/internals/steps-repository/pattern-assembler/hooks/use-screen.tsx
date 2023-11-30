@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
@@ -12,7 +12,7 @@ export type UseScreenOptions = {
 export type Screen = {
 	name: string;
 	title: string;
-	description: string;
+	description: TranslateResult;
 	continueLabel: string;
 	/** The label for going back from the next screen */
 	backLabel?: string;
