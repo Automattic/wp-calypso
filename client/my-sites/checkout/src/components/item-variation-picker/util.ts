@@ -4,6 +4,10 @@ export function getItemVariantCompareToPrice(
 	variant: WPCOMProductVariant,
 	compareTo?: WPCOMProductVariant
 ): number | undefined {
+	// If the same product is being compared to itself, there is no discount
+	if ( variant.productSlug === compareTo?.productSlug ) {
+		return undefined;
+	}
 	// This is the price that the compareTo variant would be if it was using the
 	// billing term of the variant. For example, if the price of the compareTo
 	// variant was 120 per year, and the variant we are displaying here is 5 per
