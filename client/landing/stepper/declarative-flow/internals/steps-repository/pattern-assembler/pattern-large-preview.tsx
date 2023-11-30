@@ -349,24 +349,26 @@ const PatternLargePreview = ( {
 					</ul>
 				</div>
 			) }
-			<Popover
-				className="pattern-assembler__tooltip"
-				animate={ false }
-				focusOnMount={ false }
-				resize={ false }
-				anchor={ tooltipAnchor }
-				placement="bottom-end"
-				variant="unstyled"
-			>
-				<div
-					className={ classnames( 'pattern-assembler__tooltip-content', {
-						'pattern-assembler__tooltip-content--visible': shouldShowTooltip,
-					} ) }
-					ref={ tooltipRef }
+			{ activeElement && (
+				<Popover
+					className="pattern-assembler__tooltip"
+					animate={ false }
+					focusOnMount={ false }
+					resize={ false }
+					anchor={ tooltipAnchor }
+					placement="bottom-end"
+					variant="unstyled"
 				>
-					{ translate( 'You can edit your content later in the Site Editor' ) }
-				</div>
-			</Popover>
+					<div
+						className={ classnames( 'pattern-assembler__tooltip-content', {
+							'pattern-assembler__tooltip-content--visible': shouldShowTooltip,
+						} ) }
+						ref={ tooltipRef }
+					>
+						{ translate( 'You can edit your content later in the Site Editor' ) }
+					</div>
+				</Popover>
+			) }
 		</DeviceSwitcher>
 	);
 };
