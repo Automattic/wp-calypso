@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
@@ -27,7 +28,9 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 	const isAgency = isAgencyUser( state );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 	if ( ! isAgency || ! isAgencyEnabled ) {
+		// Redirect to Jetpack.com if the user is not an agency user & the origin is wp-admin
 		if ( origin === 'wp-admin' ) {
+			recordTracksEvent( 'calypso_jetpack_manage_redirect_to_manage_in_jetpack_dot_com' );
 			window.location.href = 'https://jetpack.com/manage/';
 			return;
 		}
