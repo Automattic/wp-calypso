@@ -160,6 +160,27 @@
 - Add `was_hosting_trial` to `SiteDetails` type (#82700)
 - Allow null search terms in `useGetFreeSubdomainSuggestion()`, `useGetDomainSuggestions()`, `useGetWordPressSubdomain()`, and `useGetSingleCustomDotComDomainSuggestion()` (#82608)
 - Add `subscriptionId` argument to `useSiteSubscriptionDetailsQuery` (#82944)
+- Add raw_price_integer to PricedAPIPlan (#75147)
+- Add useSiteUnfollowMutation (#75165)
+- Add useSubscriptionManagerSiteDeliveryFrequencyMutation (#75074)
+- Add useSubscriptionManagerSiteSubscriptionsQuery (#75038)
+- Fix persistence data might be incorrect (#75056)
+- Add inject subscriptionManagerSubkeyin currentUser (#74892)
+- Fix memo dependencies on useSubscriberEmailAddress hook (#74921)
+- Add an entry point for the external subscription-manager portal (#74733)
+- Add user's email address to the Subscription Management portal (#74830)
+- Update Subscription Management settings page to get the current values from the API (#74763)
+- Update data stores docs (#74602)
+- Add client-side data interface for updating subscription settings. (#74718)
+- Add constants and types for Plans 2023 (#74206)
+- Improve actions performance (#74531)
+- Add hook for useSubscriptionManagerSubscriptionsCountQuery (#74627)
+- Add `was_ecommerce_trial` to `SiteDetails` (#74566)
+- Add data fetch queries and conditional logic for Subscription Management (#74522)
+- Add pass incoming profiler data to the ecommerce trial endpoint. (#74349)
+- Update custom homepage template (#74265)
+- Add `createCustomHomeTemplateContent` and `applyThemeWithPatterns` (#73944)
+- Add onboarding signup goals default site intent v3 (#74082)
 
 ### Dependency updates
 
@@ -207,7 +228,9 @@
 - Update `@wordpress/data` from ^9.10.0 to ^9.11.0 (#81291)
 - Update `nock` from ^13.3.2 to ^13.3.3 (#81328)
 - Update `typescript` from ^5.1.6 to ^5.2.2 (#81797)
- 
+- Upgrade wp-prettier to version 2.8.5 (#74775)
+- Upgrade @WordPress packages to pre-React 18 (#73890)
+
 ### Breaking changes
 
 - Remove `shouldLimitGlobalStyles` option from `useStarterDesignsQuery` (#75128)
@@ -263,6 +286,16 @@
 - Remove `setThemeOnSite`, `runThemeSetupOnSite`, and `applyThemeWithPatterns` (#80734)
 - Update `SiteSubscriptionDetails` and `SiteSubscriptionDetailsResponse` types to accept generic `DateT` (#81288)
 - Update `SiteDetails.options` type to possibly be undefined (#81997)
+- Refactor reader data-store (#75085)
+- Migrate SubscriptionManager.UserSettings to client (#75029)
+- Refactor ProductsList store to createReduxStore (#74566)
+- Migrate Subscriber store to createReduxStore (#74430)
+- Refactor WpcomPlansUI store to createReduxStore (#74468)
+- Migrate I18n to createReduxStore (#74427)
+- Migrate Analyzer store to createReduxStore (#74414)
+- Remove unused reader store (#74425)
+- Remove unused has_bundle_credit/hasDomainCredit (#74442)
+- Remove unused auth store (#74418)
 
 ## 3.0.1
 
