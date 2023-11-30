@@ -1,5 +1,6 @@
 import { CircularProgressBar } from '@automattic/components';
 import { Launchpad } from '@automattic/launchpad';
+import { useTranslate } from 'i18n-calypso';
 import { useSubscriberLaunchpadTasks } from 'calypso/my-sites/subscribers/hooks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
