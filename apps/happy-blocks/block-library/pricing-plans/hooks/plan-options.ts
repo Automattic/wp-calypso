@@ -2,7 +2,7 @@ import { BlockPlan } from './pricing-plans';
 
 const usePlanOptions = ( plans: BlockPlan[] ) => {
 	const options = plans.map( ( plan ) => ( {
-		label: plan.getTitle().toString(),
+		label: plan.productNameShort,
 		value: plan.type,
 	} ) );
 

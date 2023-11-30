@@ -78,6 +78,9 @@ const PatternLargePreview = ( {
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
 
+	const tooltipRef = useRef< HTMLDivElement | null >( null );
+	const [ shouldShowTooltip, setShouldShowTooltip ] = useState( false );
+
 	const popoverAnchor = useMemo( () => {
 		if ( ! activeElement ) {
 			return undefined;
@@ -98,6 +101,19 @@ const PatternLargePreview = ( {
 		};
 	}, [ activeElement ] );
 
+	const tooltipAnchor = useMemo( () => {
+		return {
+			getBoundingClientRect() {
+				if ( ! tooltipRef.current || ! shouldShowTooltip ) {
+					return new window.DOMRect();
+				}
+
+				const { width, height } = tooltipRef.current.getBoundingClientRect();
+				return new window.DOMRect( 0, 0, width, height );
+			},
+		};
+	}, [] );
+
 	const transformPatternHtml = useCallback(
 		( patternHtml: string ) => {
 			const pageTitles = pages?.map( ( page ) => page.title );
@@ -115,6 +131,23 @@ const PatternLargePreview = ( {
 		const isSection = type === 'section';
 		const clientId = isSection ? pattern.key : type;
 		const isActive = activeElement?.dataset?.clientId === clientId;
+
+		const handleMouseDown = ( event: React.MouseEvent< HTMLElement > ) => {
+			const target = event.target as HTMLElement | null;
+			if ( target && target.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
+				return;
+			}
+
+			if ( tooltipRef.current ) {
+				const { clientX, clientY } = event;
+				const { height, width } = tooltipRef.current.getBoundingClientRect();
+				const x = Math.min( clientX, window.innerWidth - ( width + 32 ) );
+				const y = Math.min( clientY, window.innerHeight - ( height + 32 ) );
+
+				tooltipRef.current.style.transform = `translate( ${ x }px, ${ y }px )`;
+				setShouldShowTooltip( true );
+			}
+		};
 
 		const handleMouseEnter = ( event: React.MouseEvent< HTMLElement > ) => {
 			setActiveElement( event.currentTarget );
@@ -141,6 +174,7 @@ const PatternLargePreview = ( {
 		};
 
 		return (
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 			<li
 				key={ clientId }
 				aria-label={ pattern.title }
@@ -148,6 +182,7 @@ const PatternLargePreview = ( {
 					'pattern-large-preview__pattern--active': isActive,
 				} ) }
 				data-client-id={ clientId }
+				onMouseDown={ handleMouseDown }
 				onMouseEnter={ handleMouseEnter }
 			>
 				{ !! viewportHeight && (
@@ -158,7 +193,6 @@ const PatternLargePreview = ( {
 						// Disable default max-height
 						maxHeight="none"
 						transformHtml={ transformPatternHtml }
-						shouldShufflePosts={ isNewSite }
 					/>
 				) }
 				{ isActive && (
@@ -224,7 +258,15 @@ const PatternLargePreview = ( {
 			}
 		};
 
-		scrollIntoView();
+		// Only scroll when the pattern is added via the pattern list panel.
+		// This prevents auto-scrolling when the pattern is added via shuffle, which causes the pattern action bar to jump around.
+		const focusedElement = document.activeElement;
+		if (
+			! focusedElement ||
+			focusedElement.classList.contains( 'pattern-list-renderer__pattern-list-item' )
+		) {
+			scrollIntoView();
+		}
 
 		return () => {
 			if ( timerId ) {
@@ -240,6 +282,8 @@ const PatternLargePreview = ( {
 			if ( ! relatedTarget?.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
 				setActiveElement( null );
 			}
+
+			setShouldShowTooltip( false );
 		};
 
 		// When the value of the `hasSelectedPattern` changes, it will append/remove the
@@ -253,7 +297,28 @@ const PatternLargePreview = ( {
 		return () => {
 			frameRef.current?.removeEventListener( 'mouseleave', handleMouseLeave );
 		};
-	}, [ frameRef, hasSelectedPattern, setActiveElement ] );
+	}, [ frameRef, hasSelectedPattern, setActiveElement, setShouldShowTooltip ] );
+
+	// Tooltip follows the mouse cursor.
+	useEffect( () => {
+		const handleMouseMove = ( event: MouseEvent ) => {
+			if ( ! tooltipRef.current || ! shouldShowTooltip ) {
+				return;
+			}
+
+			const { clientX, clientY } = event;
+			const { height, width } = tooltipRef.current.getBoundingClientRect();
+			const x = Math.min( clientX, window.innerWidth - ( width + 32 ) );
+			const y = Math.min( clientY, window.innerHeight - ( height + 32 ) );
+
+			tooltipRef.current.style.transform = `translate( ${ x }px, ${ y }px )`;
+		};
+
+		frameRef.current?.addEventListener( 'mousemove', handleMouseMove );
+		return () => {
+			frameRef.current?.removeEventListener( 'mousemove', handleMouseMove );
+		};
+	}, [ frameRef, tooltipRef, shouldShowTooltip ] );
 
 	return (
 		<DeviceSwitcher
@@ -293,6 +358,26 @@ const PatternLargePreview = ( {
 						<li>{ translate( 'Add your own content in the Editor.' ) } </li>
 					</ul>
 				</div>
+			) }
+			{ activeElement && (
+				<Popover
+					className="pattern-assembler__tooltip"
+					animate={ false }
+					focusOnMount={ false }
+					resize={ false }
+					anchor={ tooltipAnchor }
+					placement="bottom-end"
+					variant="unstyled"
+				>
+					<div
+						className={ classnames( 'pattern-assembler__tooltip-content', {
+							'pattern-assembler__tooltip-content--visible': shouldShowTooltip,
+						} ) }
+						ref={ tooltipRef }
+					>
+						{ translate( 'You can edit your content later in the Site Editor' ) }
+					</div>
+				</Popover>
 			) }
 		</DeviceSwitcher>
 	);

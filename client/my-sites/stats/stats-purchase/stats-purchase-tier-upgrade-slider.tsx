@@ -128,7 +128,7 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 						) }
 					</p>
 				</div>
-				<div className="stats-tier-upgrade-slider__plan-callout">
+				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
 					<h2>{ translatedStrings.price }</h2>
 					<p className="right-aligned" ref={ infoReferenceElement }>
 						{ plans[ currentPlanIndex ]?.price }
@@ -137,6 +137,7 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 			</div>
 			<PricingSlider
 				className="stats-tier-upgrade-slider__slider"
+				thumbClassName="stats-tier-upgrade-slider__thumb"
 				value={ currentPlanIndex }
 				minValue={ sliderMin }
 				maxValue={ sliderMax }

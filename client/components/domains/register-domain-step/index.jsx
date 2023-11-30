@@ -133,6 +133,7 @@ class RegisterDomainStep extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		otherManagedSubdomains: PropTypes.array,
+		forceExactSuggestion: PropTypes.bool,
 
 		/**
 		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
@@ -168,6 +169,7 @@ class RegisterDomainStep extends Component {
 		useProvidedProductsList: false,
 		otherManagedSubdomains: null,
 		hasPendingRequests: false,
+		forceExactSuggestion: false,
 	};
 
 	constructor( props ) {
@@ -206,6 +208,11 @@ class RegisterDomainStep extends Component {
 			// If there's a domain name as a query parameter suggestion, we always search for it first when the page loads
 			if ( props.suggestion ) {
 				this.state.lastQuery = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
+
+				// If we're coming from the general settings page, we want to use the exact site title as the initial query
+				if ( props.forceExactSuggestion ) {
+					this.state.lastQuery = props.suggestion;
+				}
 			}
 		}
 	}

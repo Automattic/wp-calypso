@@ -109,7 +109,7 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'theme', 'intervalType' ],
-			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
+			optionalDependenciesInQuery: [ 'theme_type', 'style_variation', 'intervalType' ],
 			hideProgressIndicator: true,
 		},
 		{

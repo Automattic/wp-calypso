@@ -163,7 +163,7 @@ export class RenderDomainsStep extends Component {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
 			wpcomSubdomainSelected: false,
-			isRemovingDomain: null,
+			domainRemovalQueue: [],
 			isGoingToNextStep: false,
 			temporaryCart: [],
 		};
@@ -647,7 +647,12 @@ export class RenderDomainsStep extends Component {
 	}
 
 	removeDomainClickHandler = ( domain ) => () => {
-		this.setState( { isRemovingDomain: domain.meta } );
+		this.setState( ( prevState ) => ( {
+			domainRemovalQueue: [
+				...prevState.domainRemovalQueue,
+				{ meta: domain.meta, productSlug: domain.product_slug },
+			],
+		} ) );
 		this.removeDomain( {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,
@@ -661,14 +666,21 @@ export class RenderDomainsStep extends Component {
 			} ) );
 		}
 
-		const productToRemove = this.props.cart.products.find(
-			( product ) => product.meta === domain_name && product.product_slug === product_slug
-		);
-		if ( productToRemove ) {
+		const productsToKeep = this.props.cart.products.filter( ( product ) => {
+			// check current item
+			if ( product.meta === domain_name && product.product_slug === product_slug ) {
+				// this is to be removed
+				return false;
+			}
+			// check removal queue
+			return ! this.state.domainRemovalQueue.find(
+				( domain ) => product.meta === domain.meta && product.product_slug === domain.productSlug
+			);
+		} );
+		if ( productsToKeep ) {
 			this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
-			const uuidToRemove = productToRemove.uuid;
 			this.props.shoppingCartManager
-				.removeProductFromCart( uuidToRemove )
+				.replaceProductsInCart( productsToKeep )
 				.then( () => {
 					this.setState( { isCartPendingUpdateDomain: null } );
 				} )
@@ -676,24 +688,12 @@ export class RenderDomainsStep extends Component {
 					this.setState( { isCartPendingUpdateDomain: null } );
 				} )
 				.finally( () => {
-					this.setState( { isRemovingDomain: null } );
+					this.setState( ( prevState ) => ( {
+						domainRemovalQueue: prevState.domainRemovalQueue.filter(
+							( item ) => item.meta !== domain_name
+						),
+					} ) );
 				} );
-		}
-	}
-
-	removeAllDomains() {
-		const cartProducts = this.props.cart.products;
-		const domainsToRemove = cartProducts.filter( ( product ) =>
-			product.product_slug.includes( 'domain' )
-		);
-
-		if ( domainsToRemove.length ) {
-			domainsToRemove.forEach( ( domain ) => {
-				this.removeDomain( {
-					domain_name: domain.meta,
-					product_slug: domain.product_slug,
-				} );
-			} );
 		}
 	}
 
@@ -797,8 +797,11 @@ export class RenderDomainsStep extends Component {
 			} );
 			const costDifference = domain.item_original_cost - domain.cost;
 			const hasPromotion = costDifference > 0;
+			const isRemoving = this.state.domainRemovalQueue.some(
+				( item ) => item.meta === domain.meta
+			);
 
-			return (
+			return isRemoving ? null : (
 				<>
 					<div>
 						<div
@@ -824,9 +827,7 @@ export class RenderDomainsStep extends Component {
 							className="domains__domain-cart-remove"
 							onClick={ this.removeDomainClickHandler( domain ) }
 						>
-							{ domain.meta === this.state.isRemovingDomain
-								? this.props.translate( 'Removing' )
-								: this.props.translate( 'Remove' ) }
+							{ translate( 'Remove' ) }
 						</Button>
 					</div>
 				</>
@@ -837,6 +838,10 @@ export class RenderDomainsStep extends Component {
 			if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) || cartIsLoading ) {
 				return null;
 			}
+			const domainCount =
+				domainsInCart.length +
+				( this.state.wpcomSubdomainSelected ? 1 : 0 ) -
+				this.state.domainRemovalQueue.length;
 
 			if ( isMobile() ) {
 				const MobileHeader = (
@@ -844,8 +849,8 @@ export class RenderDomainsStep extends Component {
 						<div className="domains__domain-cart-total">
 							<div key="rowtotal" className="domains__domain-cart-total-items">
 								{ this.props.translate( '%d domain', '%d domains', {
-									count: domainsInCart.length,
-									args: [ domainsInCart.length ],
+									count: domainCount,
+									args: [ domainCount ],
 								} ) }
 							</div>
 							<div key="rowtotalprice" className="domains__domain-cart-total-price">
@@ -936,8 +941,8 @@ export class RenderDomainsStep extends Component {
 					<div className="domains__domain-cart-total">
 						<div key="rowtotal" className="domains__domain-cart-count">
 							{ this.props.translate( '%d domain', '%d domains', {
-								count: domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ),
-								args: [ domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ) ],
+								count: domainCount,
+								args: [ domainCount ],
 							} ) }
 						</div>
 						<div key="rowtotalprice" className="domains__domain-cart-total-price">
@@ -964,7 +969,6 @@ export class RenderDomainsStep extends Component {
 							borderless
 							className="domains__domain-cart-choose-later"
 							onClick={ () => {
-								this.removeAllDomains();
 								this.handleSkip( undefined, false );
 							} }
 						>
@@ -1112,6 +1116,7 @@ export class RenderDomainsStep extends Component {
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 						hasPendingRequests={ isLoadingExperiment }
 						temporaryCart={ this.state.temporaryCart }
+						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 					/>
 				) }
 			</ProvideExperimentData>

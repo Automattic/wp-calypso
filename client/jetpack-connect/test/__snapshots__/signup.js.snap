@@ -222,16 +222,22 @@ exports[`JetpackSignup should render 1`] = `
           </form>
         </div>
         <div
-          class="auth-form__social"
+          class="card auth-form__social is-signup"
         >
-          <p>
+          <p
+            class="auth-form__social-text"
+          >
             Or create an account using:
           </p>
           <div
             class="auth-form__social-buttons"
           >
-            GoogleSocialButton
-            AppleLoginButton
+            <div
+              class="auth-form__social-buttons-container"
+            >
+              GoogleSocialButton
+              AppleLoginButton
+            </div>
             <p
               class="auth-form__social-buttons-tos"
             >
@@ -513,16 +519,22 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           </form>
         </div>
         <div
-          class="auth-form__social"
+          class="card auth-form__social is-signup"
         >
-          <p>
+          <p
+            class="auth-form__social-text"
+          >
             Or create an account using:
           </p>
           <div
             class="auth-form__social-buttons"
           >
-            GoogleSocialButton
-            AppleLoginButton
+            <div
+              class="auth-form__social-buttons-container"
+            >
+              GoogleSocialButton
+              AppleLoginButton
+            </div>
             <p
               class="auth-form__social-buttons-tos"
             >

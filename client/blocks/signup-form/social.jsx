@@ -21,6 +21,7 @@ class SocialSignupForm extends Component {
 		disableTosText: PropTypes.bool,
 		flowName: PropTypes.string,
 		redirectToAfterLoginUrl: PropTypes.string,
+		isSocialFirst: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -108,6 +109,7 @@ class SocialSignupForm extends Component {
 				socialServiceResponse={ this.props.socialServiceResponse }
 				disableTosText={ this.props.disableTosText }
 				flowName={ this.props.flowName }
+				isSocialFirst={ this.props.isSocialFirst }
 			>
 				{ this.props.children }
 			</SocialAuthenticationForm>

@@ -249,7 +249,7 @@ $image-height: 47px;
 		font-size: $font-body-extra-small;
 	}
 
-	.login__social {
+	.auth-form__social {
 		box-shadow: none;
 		padding-top: 0;
 		margin-right: auto;
@@ -257,7 +257,7 @@ $image-height: 47px;
 		width: 300px;
 	}
 
-	.login__social-buttons {
+	.auth-form__social-buttons {
 		.social-buttons__button {
 			border: 1px solid var(--studio-pink-50);
 			color: var(--studio-pink-50);
@@ -381,11 +381,18 @@ $image-height: 47px;
 		}
 
 		.login__form-userdata,
-		.login__social-buttons {
+		.auth-form__social-buttons {
 			button {
 				background-color: #fdfdfd;
 				border: 0;
 				height: unset;
+				text-align: start;
+			}
+		}
+
+		.login__form-userdata {
+			button {
+				min-width: 194px;
 			}
 		}
 	}
@@ -472,19 +479,6 @@ $image-height: 47px;
 
 	.form-password-input .form-password-input__toggle-visibility {
 		top: calc(( 44px - 24px ) / 2); /* height of input - height of toggle */
-	}
-
-	.login__social-buttons {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.login__social-buttons-container {
-		@include break-small {
-			display: flex;
-			flex-direction: column;
-		}
 	}
 
 	.social-buttons__button {
@@ -681,7 +675,7 @@ $image-height: 47px;
 		color: inherit;
 	}
 
-	.login__social,
+	.auth-form__social,
 	.social-buttons__button.button {
 		background-color: inherit;
 	}
@@ -720,7 +714,7 @@ $image-height: 47px;
 			margin-top: 44px;
 		}
 
-		.login__social {
+		.auth-form__social {
 			width: fit-content;
 		}
 
