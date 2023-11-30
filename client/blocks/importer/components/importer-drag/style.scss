@@ -3,9 +3,32 @@
 		border-radius: 4px;
 	}
 
+	.import__heading {
+		margin-bottom: 3.25rem;
+
+		.onboarding-title,
+		.onboarding-subtitle {
+			max-width: none;
+			width: 100%;
+		}
+	}
+
 	.importer-header {
 		margin-bottom: 40px;
 		padding-bottom: 20px;
+	}
+
+	.uploading-pane__upload-content.importer-ready-for-upload {
+		flex-direction: column;
+
+		svg {
+			width: 32px;
+			height: 32px;
+		}
+
+		p {
+			margin: 0.5rem 0 0;
+		}
 	}
 
 	.importer-header__service-info {
