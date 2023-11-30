@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { CountComparisonCard } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
@@ -111,13 +110,8 @@ function SubscriberLaunchpadSection( { siteId }: { siteId: number | null } ) {
 
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const locale = useLocale();
 
-	const showLaunchpad =
-		! isLoading &&
-		( isSimple || isAtomic ) &&
-		SubscriberLaunchpad.hasTranslationsAvailable( locale ) &&
-		! subscribersTotals?.total;
+	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
 
 	return showLaunchpad ? <SubscriberLaunchpad /> : <></>;
 }
