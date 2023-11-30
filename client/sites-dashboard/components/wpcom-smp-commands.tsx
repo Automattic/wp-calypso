@@ -26,7 +26,8 @@ import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
+import { createNotice, removeNotice } from 'calypso/state/notices/actions';
+import { NoticeStatus } from 'calypso/state/notices/types';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -46,8 +47,16 @@ export const useCommandsArrayWpcom = ( {
 		};
 
 	const dispatch = useDispatch();
-	const displaySuccessNotice = ( message: string ) =>
-		dispatch( successNotice( message, { duration: 5000 } ) );
+	const displayNotice = (
+		message: string,
+		noticeType: NoticeStatus = 'is-success',
+		duration = 5000
+	) => {
+		const { notice } = dispatch( createNotice( noticeType, message, { duration } ) );
+		return {
+			removeNotice: () => dispatch( removeNotice( notice.noticeId ) ),
+		};
+	};
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: 'sites-dashboard-command-palette',
 		ref: 'topbar',
@@ -83,10 +92,15 @@ export const useCommandsArrayWpcom = ( {
 		navigator.clipboard.writeText( textToCopy );
 		const successMessage =
 			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH connection string' );
-		displaySuccessNotice( successMessage );
+		displayNotice( successMessage );
 	};
 
 	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
+		const { removeNotice: removeLoadingNotice } = displayNotice(
+			__( 'Resetting SSH/SFTP password…' ),
+			'is-plain',
+			5000
+		);
 		const sshUser = await fetchSshUser( siteId );
 
 		if ( ! sshUser ) {
@@ -101,11 +115,13 @@ export const useCommandsArrayWpcom = ( {
 		const sshPassword = response?.password;
 
 		if ( ! sshPassword ) {
+			removeLoadingNotice();
 			return navigate( `/hosting-config/${ siteSlug }` );
 		}
 
 		navigator.clipboard.writeText( sshPassword );
-		displaySuccessNotice( __( 'Copied new password' ) );
+		removeLoadingNotice();
+		displayNotice( __( 'The new password was copied to your clipboard' ) );
 	};
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
