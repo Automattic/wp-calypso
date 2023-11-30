@@ -20,7 +20,11 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 
 	let emailAddresses: string[] = [];
 
-	if ( ! canCurrentUserAddEmail( domain ) || typesUnableToAddEmail.includes( domain.type ) ) {
+	if (
+		! canCurrentUserAddEmail( domain ) ||
+		typesUnableToAddEmail.includes( domain.type ) ||
+		domain.pendingRegistrationAtRegistry
+	) {
 		return null;
 	}
 

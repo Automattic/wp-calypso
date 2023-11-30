@@ -25,7 +25,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 
 	const { data: marketplaceReviews } = useMarketplaceReviewsQuery( {
 		productType: 'plugin',
-		pluginSlug: plugin.slug,
+		slug: plugin.slug,
 	} );
 	const numberOfReviews = marketplaceReviews?.length || 0;
 
