@@ -269,6 +269,7 @@ $font-family: "SF Pro Text", $sans;
 	&-content {
 		background: var(--studio-gray-100);
 		border-radius: 4px;
+		box-sizing: border-box;
 		box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1);
 		color: #fff;
 		font-size: $font-body-extra-small;
@@ -277,7 +278,6 @@ $font-family: "SF Pro Text", $sans;
 		padding: 8px 10px;
 		position: relative;
 		top: 16px;
-		transition: opacity 0.2s;
 		white-space: nowrap;
 
 		&--visible {

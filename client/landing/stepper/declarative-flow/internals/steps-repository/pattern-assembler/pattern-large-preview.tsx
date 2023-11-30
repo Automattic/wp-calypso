@@ -138,8 +138,12 @@ const PatternLargePreview = ( {
 				return;
 			}
 
-			const { clientX: x, clientY: y } = event;
 			if ( tooltipRef.current ) {
+				const { clientX, clientY } = event;
+				const { height, width } = tooltipRef.current.getBoundingClientRect();
+				const x = Math.min( clientX, window.innerWidth - ( width + 32 ) );
+				const y = Math.min( clientY, window.innerHeight - ( height + 32 ) );
+
 				tooltipRef.current.style.transform = `translate( ${ x }px, ${ y }px )`;
 				setShouldShowTooltip( true );
 			}
@@ -298,10 +302,16 @@ const PatternLargePreview = ( {
 	// Tooltip follows the mouse cursor.
 	useEffect( () => {
 		const handleMouseMove = ( event: MouseEvent ) => {
-			const { clientX: x, clientY: y } = event;
-			if ( tooltipRef.current && shouldShowTooltip ) {
-				tooltipRef.current.style.transform = `translate( ${ x }px, ${ y }px )`;
+			if ( ! tooltipRef.current || ! shouldShowTooltip ) {
+				return;
 			}
+
+			const { clientX, clientY } = event;
+			const { height, width } = tooltipRef.current.getBoundingClientRect();
+			const x = Math.min( clientX, window.innerWidth - ( width + 32 ) );
+			const y = Math.min( clientY, window.innerHeight - ( height + 32 ) );
+
+			tooltipRef.current.style.transform = `translate( ${ x }px, ${ y }px )`;
 		};
 
 		frameRef.current?.addEventListener( 'mousemove', handleMouseMove );
