@@ -9,7 +9,7 @@ import './styles.scss';
 const SubscriberLaunchpad = ( {
 	launchpadContext = 'subscriber-list',
 }: {
-	launchpadContext: string;
+	launchpadContext?: string;
 } ) => {
 	const { checklistSlug, taskFilter, numberOfSteps, completedSteps } =
 		useSubscriberLaunchpadTasks();
