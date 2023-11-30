@@ -838,6 +838,10 @@ export class RenderDomainsStep extends Component {
 			if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) || cartIsLoading ) {
 				return null;
 			}
+			const domainCount =
+				domainsInCart.length +
+				( this.state.wpcomSubdomainSelected ? 1 : 0 ) -
+				this.state.domainRemovalQueue.length;
 
 			if ( isMobile() ) {
 				const MobileHeader = (
@@ -845,8 +849,8 @@ export class RenderDomainsStep extends Component {
 						<div className="domains__domain-cart-total">
 							<div key="rowtotal" className="domains__domain-cart-total-items">
 								{ this.props.translate( '%d domain', '%d domains', {
-									count: domainsInCart.length,
-									args: [ domainsInCart.length ],
+									count: domainCount,
+									args: [ domainCount ],
 								} ) }
 							</div>
 							<div key="rowtotalprice" className="domains__domain-cart-total-price">
@@ -937,8 +941,8 @@ export class RenderDomainsStep extends Component {
 					<div className="domains__domain-cart-total">
 						<div key="rowtotal" className="domains__domain-cart-count">
 							{ this.props.translate( '%d domain', '%d domains', {
-								count: domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ),
-								args: [ domainsInCart.length + ( this.state.wpcomSubdomainSelected ? 1 : 0 ) ],
+								count: domainCount,
+								args: [ domainCount ],
 							} ) }
 						</div>
 						<div key="rowtotalprice" className="domains__domain-cart-total-price">
