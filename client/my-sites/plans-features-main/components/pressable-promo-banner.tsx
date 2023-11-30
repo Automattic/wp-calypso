@@ -1,36 +1,56 @@
 import { Button, Gridicon, PressableLogo } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
 
 const Banner = styled.div`
 	display: flex;
+	flex-direction: column;
 	justify-content: start;
 	min-height: 128px;
+	max-height: 170px;
 	padding: 0px, 24px, 0px, 0px;
 	border-radius: 4px;
 	border: 1px solid #dcdcde;
 	margin: 24px 20px 24px 20px;
-	padding-right: 20px;
-	padding-left: 20px;
+	padding: 24px 20px 24px 20px;
 	align-items: center;
 	gap: 16px;
+
+	${ plansBreakSmall( css`
+		flex-direction: row;
+		padding: 0 20px 0 20px;
+	` ) }
 `;
 
 const LogoContainer = styled.div`
-	flex-basis: 120px;
-	background-color: #ffffff;
+	display: none;
+
+	${ plansBreakSmall( css`
+		display: inherit;
+		flex-basis: 120px;
+		background-color: #ffffff;
+	` ) }
 `;
 
 const TextContainer = styled.div`
 	display: flex;
-	flex-basis: 1200px;
 	flex-direction: column;
 	justify-content: center;
 	height: 100%;
+
+	${ plansBreakSmall( css`
+		flex-basis: 1200px;
+	` ) }
 `;
 
 const CtaContainer = styled.div`
-	flex-basis: 200px;
+	width: 100%;
+	${ plansBreakSmall( css`
+		flex-basis: 200px;
+		width: auto;
+	` ) }
 `;
 
 const Subtitle = styled.h4`
@@ -57,13 +77,17 @@ const CtaButton = styled( Button )`
 	font-weight: 500;
 	line-height: 20px;
 	text-align: center;
-	width: 199px;
+	width: 100%;
 	height: 40px;
 	padding: 10px, 24px, 10px, 24px;
 	border-radius: 4px;
 	background-color: #000000;
 	color: #ffffff;
 	box-shadow: 0px 1px 2px 0px #0000000d;
+
+	${ plansBreakSmall( css`
+		width: 199px;
+	` ) }
 `;
 
 const PressablePromoBanner = () => {
