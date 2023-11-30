@@ -34,7 +34,7 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
-		"@tanstack/react-query": "^4.29.1",
+		"@tanstack/react-query": "^4.36.1",
 		"@wordpress/api-fetch": "^6.41.0",
 		"@wordpress/data-controls": "^3.13.0",
 		"@wordpress/deprecated": "^3.44.0",

@@ -32,6 +32,7 @@ import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
+import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
@@ -860,7 +861,10 @@ const FeatureGroup = ( {
 		firstSetOfFeatures,
 	] );
 	const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
-	const featureObjects = getPlanFeaturesObject( allFeaturesList, features );
+	const featureObjects = filterUnusedFeaturesObject(
+		visibleGridPlans,
+		getPlanFeaturesObject( allFeaturesList, features )
+	);
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 
 	const allJetpackFeatures = useMemo( () => {
@@ -899,6 +903,11 @@ const FeatureGroup = ( {
 
 		setVisibleFeatureGroups( newVisibleFeatureGroups );
 	}, [ featureGroup, setVisibleFeatureGroups, visibleFeatureGroups ] );
+
+	// Skip non Jetpack feature groups without any available features.
+	if ( featureGroup.slug !== FEATURE_GROUP_ESSENTIAL_FEATURES && ! featureObjects.length ) {
+		return null;
+	}
 
 	return (
 		<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
