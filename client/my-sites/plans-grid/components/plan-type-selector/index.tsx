@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import type { UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
@@ -41,7 +41,7 @@ export type PlanTypeSelectorProps = {
 	/**
 	 * Whether to render the selector along with a title if passed.
 	 */
-	title?: string;
+	title?: TranslateResult;
 };
 
 interface PathArgs {
