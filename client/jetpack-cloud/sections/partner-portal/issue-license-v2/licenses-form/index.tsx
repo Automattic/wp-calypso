@@ -126,6 +126,7 @@ export default function LicensesForm( {
 					isDisabled={ ! isReady }
 					tabIndex={ 100 + i }
 					hideDiscount={ isSingleLicenseView }
+					suggestedProduct={ suggestedProduct }
 				/>
 			) : (
 				<LicenseProductCard
@@ -134,9 +135,10 @@ export default function LicensesForm( {
 					product={ productOption }
 					onSelectProduct={ onSelectProduct }
 					isSelected={ isSelected( productOption.slug ) }
-					isDisabled={ ! isReady }
+					isDisabled={ ! isReady || disabledProductSlugs.includes( productOption.slug ) }
 					tabIndex={ 100 + i }
 					hideDiscount={ isSingleLicenseView }
+					suggestedProduct={ suggestedProduct }
 				/>
 			)
 		);
@@ -192,19 +194,7 @@ export default function LicensesForm( {
 						'You must have WooCommerce installed to utilize these paid extensions.'
 					) }
 				>
-					{ wooExtensions.map( ( productOption, i ) => (
-						<LicenseProductCard
-							isMultiSelect
-							key={ productOption.slug }
-							product={ productOption }
-							onSelectProduct={ onSelectProduct }
-							isSelected={ isSelected( productOption.slug ) }
-							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-							tabIndex={ 100 + i }
-							suggestedProduct={ suggestedProduct }
-							hideDiscount={ isSingleLicenseView }
-						/>
-					) ) }
+					{ getProductCards( wooExtensions ) }
 				</LicensesFormSection>
 			) }
 
@@ -215,19 +205,7 @@ export default function LicensesForm( {
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
 				>
-					{ backupAddons.map( ( productOption, i ) => (
-						<LicenseProductCard
-							isMultiSelect
-							key={ productOption.slug }
-							product={ productOption }
-							onSelectProduct={ onSelectProduct }
-							isSelected={ isSelected( productOption.slug ) }
-							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-							tabIndex={ 100 + i }
-							suggestedProduct={ suggestedProduct }
-							hideDiscount={ isSingleLicenseView }
-						/>
-					) ) }
+					{ getProductCards( backupAddons ) }
 				</LicensesFormSection>
 			) }
 		</div>
