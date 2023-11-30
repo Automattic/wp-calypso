@@ -1,9 +1,11 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 
 const FillDefaultIconWhite = styled.div( {
@@ -71,25 +73,37 @@ const siteToAction =
 
 export const useCommandPallette = ( {
 	selectedCommandName,
-	setSelectedCommandName, // filter,
+	setSelectedCommandName,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
 
-	//Sort sites in the nested commands to be consistent with site switcher and /sites page
+	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { sitesSorting } = useSitesSorting();
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommandsArrayWpcom( { setSelectedCommandName } );
 
-	//if ( 'function' === typeof filter ) {
-	//	commands = commands.filter( filter );
-	//}
+	// Simple sorting logic to prioritize commands with matching context
+	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
+	const sortedCommands = commands.sort( ( a, b ) => {
+		const hasContextA = Boolean( a.context?.includes( currentPath ) );
+		const hasContextB = Boolean( b.context?.includes( currentPath ) );
 
-	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
+		// Sort based on context
+		if ( hasContextA && ! hasContextB ) {
+			return -1; // a comes first
+		} else if ( ! hasContextA && hasContextB ) {
+			return 1; // b comes first
+		}
+
+		return 0; // no change in order
+	} );
+
+	const selectedCommand = sortedCommands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
@@ -97,5 +111,5 @@ export const useCommandPallette = ( {
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
 	}
 
-	return { commands: sitesToPick ?? commands };
+	return { commands: sitesToPick ?? sortedCommands };
 };
