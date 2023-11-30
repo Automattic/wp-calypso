@@ -143,7 +143,25 @@ function areRequestParamsEqual( a: SiteLogsParams, b: SiteLogsParams ) {
 }
 
 function areFilterParamsEqual( a: FilterType, b: FilterType ) {
-	return Object.keys( a ).every( ( filter ) => {
-		return b.hasOwnProperty( filter ) && a[ filter ].toString() === b[ filter ].toString();
-	} );
+	for ( const filter in a ) {
+		if ( ! b.hasOwnProperty( filter ) ) {
+			return false;
+		}
+
+		if ( a[ filter ].toString() !== b[ filter ].toString() ) {
+			return false;
+		}
+	}
+
+	for ( const filter in b ) {
+		if ( ! a.hasOwnProperty( filter ) ) {
+			return false;
+		}
+
+		if ( b[ filter ].toString() !== a[ filter ].toString() ) {
+			return false;
+		}
+	}
+
+	return true;
 }
