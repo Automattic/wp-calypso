@@ -46,6 +46,7 @@ interface useCommandPalletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	filter?: ( command: Command ) => boolean | undefined;
+	selectedSiteId?: number | null;
 }
 
 const siteToAction =
@@ -73,6 +74,7 @@ export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 	filter,
+	selectedSiteId,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -94,7 +96,14 @@ export const useCommandPallette = ( {
 	let sitesToPick = null;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
-		const filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+		let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+		if ( selectedSiteId ) {
+			const currentSiteIndex = filteredSites.findIndex( ( site ) => site.ID === selectedSiteId );
+			if ( currentSiteIndex > -1 ) {
+				const currentSite = filteredSites.splice( currentSiteIndex, 1 );
+				filteredSites = currentSite.concat( filteredSites );
+			}
+		}
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
 	}
 
