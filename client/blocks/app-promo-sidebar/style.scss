@@ -1,4 +1,4 @@
-.app-promo {
+.app-promo-sidebar {
 	align-items: flex-start;
 	display: flex;
 	max-width: 300px;
@@ -12,63 +12,62 @@
 	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
-}
 
-.app-promo .app-promo__dismiss {
-	cursor: pointer;
-	height: auto;
-	padding: 8px;
-
-	svg {
-		fill: var(--color-text-subtle);
-	}
-}
-
-.app-promo .app-promo__link {
-	height: auto;
-	border-radius: 0;
-	line-height: 1.5;
-	padding: 8px 0 8px 8px;
-	color: var(--color-text);
-	font-size: $font-body-extra-small;
-	font-weight: 400;
-	align-items: flex-start;
-
-	span {
-		font-weight: 700;
-
-		&.app-promo__jetpack-app-link {
-			color: var(--studio-jetpack-green-40);
-			border-bottom: 1.5px solid var(--studio-jetpack-green-40);
-		}
-
-		&.app-promo__wp-app-link {
-			color: var(--color-link);
-			border-bottom: 1.5px solid var(--color-link);
-		}
-	}
-
-	&:active,
-	&:focus,
-	&:hover {
-		color: var(--color-text);
+	.app-promo-sidebar__dismiss {
 		cursor: pointer;
+		height: auto;
+		padding: 8px;
+
+		svg {
+			fill: var(--color-text-subtle);
+		}
+	}
+
+	.app-promo-sidebar__link {
+		height: auto;
+		border-radius: 0;
+		line-height: 1.5;
+		padding: 8px 0 8px 8px;
+		color: var(--color-text);
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+		align-items: flex-start;
 
 		span {
-			border-bottom: none;
+			font-weight: 700;
 
-			&.app-promo__jetpack-app-link {
-				color: var(--studio-jetpack-green-60);
+			&.app-promo-sidebar__jetpack-app-link {
+				color: var(--studio-jetpack-green-40);
+				border-bottom: 1.5px solid var(--studio-jetpack-green-40);
 			}
 
-			&.app-promo__wp-app-link {
-				color: var(--color-link-dark);
+			&.app-promo-sidebar__wp-app-link {
+				color: var(--color-link);
+				border-bottom: 1.5px solid var(--color-link);
+			}
+		}
+
+		&:active,
+		&:focus,
+		&:hover {
+			color: var(--color-text);
+			cursor: pointer;
+
+			span {
+				border-bottom: none;
+
+				&.app-promo-sidebar__jetpack-app-link {
+					color: var(--studio-jetpack-green-60);
+				}
+
+				&.app-promo-sidebar__wp-app-link {
+					color: var(--color-link-dark);
+				}
 			}
 		}
 	}
-}
-
-.app-promo .app-promo__paragraph {
-	margin-bottom: 0;
-	padding: 0 10px;
+	.app-promo-sidebar__paragraph {
+		margin-bottom: 0;
+		padding: 0 10px;
+	}
 }

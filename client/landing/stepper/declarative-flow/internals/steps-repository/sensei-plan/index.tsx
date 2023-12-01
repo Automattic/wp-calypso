@@ -156,7 +156,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 					<PlansIntervalToggle
 						intervalType={ billingPeriod }
 						onChange={ setBillingPeriod }
-						maxMonthlyDiscountPercentage={ annualDiscount }
+						maxMonthlyDiscountPercentage={ isLoading ? undefined : annualDiscount }
 					/>
 
 					<div className="plan-item-wrapper">

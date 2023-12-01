@@ -212,6 +212,7 @@ export const defaultDomainResponse: any = {
 	aftermarketAuction: false,
 	aftermarketAuctionEnd: null,
 	aftermarketAuctionStart: null,
+	authCodeRequired: true,
 	autoRenewalDate: '',
 	autoRenewing: false,
 	beginTransferUntilDate: '',
