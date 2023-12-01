@@ -26,8 +26,10 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 	switch ( currentRoute ) {
 		case '/jetpack/connect/authorize':
 			redirectTo = currentQueryArguments?.redirect_after_auth;
+			break;
 		case '/log-in/jetpack':
 			redirectTo = getQueryArg( redirectToOriginal || '', 'redirect_after_auth' );
+			break;
 	}
 
 	if (
