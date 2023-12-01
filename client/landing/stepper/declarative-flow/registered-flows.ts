@@ -78,6 +78,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
 
+	'update-options': () =>
+		import( /* webpackChunkName: "update-options-flow" */ '../declarative-flow/update-options' ),
+
 	'domain-upsell': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/domain-upsell' ),
 
