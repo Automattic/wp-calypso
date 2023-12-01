@@ -18,6 +18,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -33,6 +34,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -176,6 +178,7 @@ export interface PlansFeaturesMainProps {
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
+	showPressablePromoBanner?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
 }
@@ -235,6 +238,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
+	showPressablePromoBanner = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 }: PlansFeaturesMainProps ) => {
@@ -242,6 +246,7 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -406,6 +411,20 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+
+	const onShowPressablePromoBanner = useCallback( () => {
+		recordTracksEvent( 'calypso_multisite_promo_banner_impression', {
+			service: 'pressable',
+			flowName,
+		} );
+	}, [] );
+
+	const onClickPressablePromoBannerCta = useCallback( () => {
+		recordTracksEvent( 'calypso_multisite_promo_banner_cta_click', {
+			service: 'pressable',
+			flowName,
+		} );
+	}, [] );
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
 		useFreeHostingTrialAssignment( intent );
@@ -901,6 +920,14 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
+						{ isEnglishLocale && showPressablePromoBanner && (
+							<AsyncLoad
+								require="./components/pressable-promo-banner"
+								onShow={ onShowPressablePromoBanner }
+								onClick={ onClickPressablePromoBannerCta }
+								placeholder={ <LoadingPlaceholder /> }
+							/>
+						) }
 					</>
 				) }
 			</div>
