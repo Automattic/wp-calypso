@@ -104,10 +104,11 @@ export function CommandMenuGroup( {
 							<LabelWrapper>
 								<Label>
 									<TextHighlight
-										text={ `${ command.label }${ command.siteFunctions ? '...' : '' }` }
+										text={ `${ command.label }${ command.siteFunctions ? '\u2026' : '' }` }
 										highlight={ search }
 									/>
 								</Label>
+
 								{ command.subLabel && (
 									<SubLabel>
 										<TextHighlight text={ command.subLabel } highlight={ search } />
