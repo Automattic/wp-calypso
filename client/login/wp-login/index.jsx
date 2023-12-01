@@ -15,7 +15,11 @@ import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link'
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
 import { getSignupUrl } from 'calypso/lib/login';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isJetpackCloudOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
@@ -33,6 +37,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginButtons from './login-buttons';
+import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
 
@@ -283,6 +288,46 @@ export class Login extends Component {
 		);
 	}
 
+	recordResetPasswordLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+	};
+
+	getLostPasswordLink() {
+		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+			return null;
+		}
+
+		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
+
+		// If we got here coming from Jetpack Cloud login page, we want to go back
+		// to it after we finish the process
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+			const currentUrl = new URL( window.location.href );
+			currentUrl.searchParams.append( 'lostpassword_flow', true );
+			const queryArgs = {
+				redirect_to: currentUrl.toString(),
+
+				// This parameter tells WPCOM that we are coming from Jetpack.com,
+				// so it can present the user a Lost password page that works in
+				// the context of Jetpack.com.
+				client_id: this.props.oauth2Client.id,
+			};
+			lostPasswordUrl = addQueryArgs( queryArgs, lostPasswordUrl );
+		}
+
+		return (
+			<a
+				href={ lostPasswordUrl }
+				key="lost-password-link"
+				className="login__lost-password-link"
+				onClick={ this.recordResetPasswordLinkClick }
+				rel="external"
+			>
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+	}
+
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -321,23 +366,27 @@ export class Login extends Component {
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
 			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
-			! isWooCoreProfilerFlow &&
-			! isSocialFirst;
+			! isWooCoreProfilerFlow;
 
 		const footer = (
 			<>
-				{ shouldRenderFooter && (
-					<LoginLinks
-						locale={ locale }
-						privateSite={ privateSite }
-						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
-						isGravPoweredClient={ isGravPoweredClient }
-						signupUrl={ signupUrl }
-						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2ClientId={ this.props.oauth2Client?.id }
-					/>
+				{ isSocialFirst ? (
+					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
+				) : (
+					shouldRenderFooter && (
+						<LoginLinks
+							locale={ locale }
+							privateSite={ privateSite }
+							twoFactorAuthType={ twoFactorAuthType }
+							isWhiteLogin={ isWhiteLogin }
+							isP2Login={ isP2Login }
+							isGravPoweredClient={ isGravPoweredClient }
+							signupUrl={ signupUrl }
+							usernameOrEmail={ this.state.usernameOrEmail }
+							oauth2ClientId={ this.props.oauth2Client?.id }
+							getLostPasswordLink={ this.getLostPasswordLink }
+						/>
+					)
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
 			</>

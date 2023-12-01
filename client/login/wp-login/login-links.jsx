@@ -18,7 +18,7 @@ import {
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isJetpackCloudOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -42,6 +42,7 @@ export class LoginLinks extends Component {
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
 		isGravPoweredClient: PropTypes.bool,
+		getLostPasswordLink: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -102,10 +103,6 @@ export class LoginLinks extends Component {
 		);
 
 		page( pathname + search );
-	};
-
-	recordResetPasswordLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
 
 	recordSignUpLinkClick = () => {
@@ -274,41 +271,6 @@ export class LoginLinks extends Component {
 		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
 	}
 
-	renderResetPasswordLink() {
-		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
-			return null;
-		}
-
-		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
-
-		// If we got here coming from Jetpack Cloud login page, we want to go back
-		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
-			const currentUrl = new URL( window.location.href );
-			currentUrl.searchParams.append( 'lostpassword_flow', true );
-			const queryArgs = {
-				redirect_to: currentUrl.toString(),
-
-				// This parameter tells WPCOM that we are coming from Jetpack.com,
-				// so it can present the user a Lost password page that works in
-				// the context of Jetpack.com.
-				client_id: this.props.oauth2Client.id,
-			};
-			lostPasswordUrl = addQueryArgs( queryArgs, lostPasswordUrl );
-		}
-
-		return (
-			<a
-				href={ lostPasswordUrl }
-				key="lost-password-link"
-				onClick={ this.recordResetPasswordLinkClick }
-				rel="external"
-			>
-				{ this.props.translate( 'Lost your password?' ) }
-			</a>
-		);
-	}
-
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
@@ -367,7 +329,7 @@ export class LoginLinks extends Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderQrCodeLoginLink() }
-				{ this.renderResetPasswordLink() }
+				{ this.props.getLostPasswordLink() }
 				{ ! config.isEnabled( 'desktop' ) && this.renderBackLink() }
 			</div>
 		);
