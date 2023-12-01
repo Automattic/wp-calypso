@@ -44,7 +44,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
+import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -636,20 +636,7 @@ class ThemeSheet extends Component {
 		}
 		const { name, themeId } = this.props;
 
-		return (
-			<>
-				<ReviewsModal
-					isVisible={ this.state.showReviewModal }
-					onClose={ this.handleCloseReviewModal }
-					slug={ themeId }
-					productName={ name }
-					productType="theme"
-				/>
-				<div className="theme__sheet-reviews">
-					<Button onClick={ this.handleAddReview }>Add Review</Button>
-				</div>
-			</>
-		);
+		return <ReviewsSummary slug={ themeId } productName={ name } productType="theme" />;
 	};
 
 	renderStyleVariations = () => {
