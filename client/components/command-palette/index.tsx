@@ -1,12 +1,7 @@
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	Icon,
-	search as inputIcon,
-	chevronLeft as backIcon,
-	chevronRight as forwardIcon,
-} from '@wordpress/icons';
+import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
@@ -109,6 +104,7 @@ export function CommandMenuGroup( {
 							<LabelWrapper>
 								<Label>
 									<TextHighlight text={ command.label } highlight={ search } />
+									{ command.siteFunctions && '...' }
 								</Label>
 								{ command.subLabel && (
 									<SubLabel>
@@ -116,7 +112,6 @@ export function CommandMenuGroup( {
 									</SubLabel>
 								) }
 							</LabelWrapper>
-							{ command.siteFunctions ? <Icon icon={ forwardIcon } /> : null }
 						</HStack>
 					</Command.Item>
 				);
