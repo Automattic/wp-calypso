@@ -1,4 +1,3 @@
-import { translate } from 'i18n-calypso';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -9,9 +8,6 @@ import type { Flow } from './internals/types';
 
 const updateOptions: Flow = {
 	name: 'update-options',
-	get title() {
-		return translate( 'Choose Design' );
-	},
 	useSteps() {
 		return [ STEPS.OPTIONS, STEPS.PROCESSING, STEPS.ERROR ];
 	},
