@@ -108,7 +108,7 @@ const PressablePromoBanner = () => {
 			</TextContainer>
 			<CtaContainer>
 				<CtaButton
-					href="https://pressable.com/multiple-site-solution/?utm_source=wpdotcom&utm_medium=referral&utm_campaign=pricing"
+					href="https://pressable.com/multiple-site-solution/?utm_source=wpdotcom&utm_medium=referral&utm_campaign=calypso_signup"
 					onClick={ onClick }
 					target="_blank"
 				>
