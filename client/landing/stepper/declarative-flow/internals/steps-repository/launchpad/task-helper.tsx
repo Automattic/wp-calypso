@@ -145,9 +145,10 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/${ flow }/setup-blog`, {
-									...{ siteSlug: siteSlug },
-								} )
+								addQueryArgs(
+									`/setup/${ flow }/setup-blog`,
+									isBlogOnboardingFlow( flow ) ? { siteId: site?.ID } : { siteSlug: siteSlug }
+								)
 							);
 						},
 						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
@@ -239,9 +240,10 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, {
-								...{ siteSlug: siteSlug },
-							} );
+							const plansUrl = addQueryArgs(
+								`/setup/${ flow }/plans`,
+								isBlogOnboardingFlow( flow ) ? { siteId: site?.ID } : { siteSlug: siteSlug }
+							);
 
 							window.location.assign( plansUrl );
 						},
