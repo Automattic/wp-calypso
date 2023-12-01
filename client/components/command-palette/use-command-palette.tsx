@@ -97,37 +97,34 @@ export const useCommandPallette = ( {
 	const commandHasContext = ( paths: string[] = [] ): boolean =>
 		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
 
-	const sortedCommands = commands
-		.filter( ( command ) => {
-			// Exclude "viewMySites" command when the current path is /sites
-			const isViewMySites = command.name === 'viewMySites';
-			return ! ( isViewMySites && currentPath === '/sites' );
-		} )
-		.sort( ( a, b ) => {
-			// Check if the current command is "viewMySites"
-			const isViewMySitesWithContextual = a.name === 'viewMySites';
-			const isViewMySitesNoContextual = b.name === 'viewMySites';
+	// Filter commands to exclude "viewMySites" when the current path is /sites
+	const filteredCommands = commands.filter( ( command ) => {
+		const isViewMySites = command.name === 'viewMySites';
+		return ! ( isViewMySites && currentPath === '/sites' );
+	} );
 
-			// Rank "viewMySites" command higher than contextual or regular comands in all contexts
-			if ( isViewMySitesWithContextual && ! isViewMySitesNoContextual ) {
-				return -1; // "viewMySites" comes first over contextual commands
-			} else if ( ! isViewMySitesWithContextual && isViewMySitesNoContextual ) {
-				return 1; // "viewMySites" comes first over regular
-			}
+	// Sort the filtered commands
+	const sortedCommands = filteredCommands.sort( ( a, b ) => {
+		const isViewMySitesWithContextual = a.name === 'viewMySites';
+		const isViewMySitesNoContextual = b.name === 'viewMySites';
 
-			// Check contextual filter for commands with context and without context
-			const hasContextCommand = commandHasContext( a.context );
-			const hasNoContext = commandHasContext( b.context );
+		if ( isViewMySitesWithContextual && ! isViewMySitesNoContextual ) {
+			return -1; // "viewMySites" comes first over contextual commands
+		} else if ( ! isViewMySitesWithContextual && isViewMySitesNoContextual ) {
+			return 1; // "viewMySites" comes first over regular commands
+		}
 
-			// Sort based on context
-			if ( hasContextCommand && ! hasNoContext ) {
-				return -1; // commands with context come first if there is a context match
-			} else if ( ! hasContextCommand && hasNoContext ) {
-				return 1; // commands without context set
-			}
+		const hasContextCommand = commandHasContext( a.context );
+		const hasNoContext = commandHasContext( b.context );
 
-			return 0; // no change in order
-		} );
+		if ( hasContextCommand && ! hasNoContext ) {
+			return -1; // commands with context come first if there is a context match
+		} else if ( ! hasContextCommand && hasNoContext ) {
+			return 1; // commands without context set
+		}
+
+		return 0; // no change in order
+	} );
 
 	const selectedCommand = sortedCommands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
