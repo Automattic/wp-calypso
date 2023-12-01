@@ -1,15 +1,16 @@
 import { Onboard } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
+import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { useSiteSlug } from '../hooks/use-site-slug';
+import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -80,12 +81,9 @@ const assemblerFirstFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setStepProgress, setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
-		const siteSlug = useSiteSlug();
+		const { siteSlug, siteId } = useSiteData();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -192,7 +190,19 @@ const assemblerFirstFlow: Flow = {
 			}
 		};
 
-		return { submit, goBack };
+		const goNext = async () => {
+			switch ( _currentStep ) {
+				case 'launchpad':
+					skipLaunchpad( {
+						checklistSlug: ASSEMBLER_FIRST_FLOW,
+						siteId,
+						siteSlug,
+					} );
+					return;
+			}
+		};
+
+		return { submit, goBack, goNext };
 	},
 
 	useAssertConditions(): AssertConditionResult {
