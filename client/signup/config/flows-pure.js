@@ -141,6 +141,11 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			props: {
+				plans: {
+					showPressablePromoBanner: true,
+				},
+			},
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -175,7 +180,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 			props: {
-				[ 'plans' ]: {
+				plans: {
 					showBiennialToggle: true,
 					/**
 					 * This intent is geared towards customizations related to the paid media flow
