@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
@@ -18,7 +19,6 @@ import {
 	plugins as pluginsIcon,
 	plus as plusIcon,
 	postComments as postCommentsIcon,
-	postFeaturedImage as postFeaturedImageIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
 	upload as uploadIcon,
@@ -154,7 +154,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/read` );
 			},
-			icon: postFeaturedImageIcon,
+			icon: <Gridicon icon="reader" />,
 		},
 		{
 			name: 'openSiteDashboard',
