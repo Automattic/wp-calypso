@@ -1,9 +1,11 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 
 const FillDefaultIconWhite = styled.div( {
@@ -88,28 +90,39 @@ export const useCommandPallette = ( {
 		setSelectedCommandName,
 	} );
 
-	const sortedCommands = commands.sort( ( a, b ) => {
-		// Check if the current command is "viewMySites"
-		const isViewMySites = a.name === 'viewMySites';
+	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
 
-		// Push "viewMySites" command on the top in all contexts beside /sites
-		if ( isViewMySites ) {
-			return -1;
-		}
+	const sortedCommands = commands
+		.filter( ( command ) => {
+			// Exclude "viewMySites" command when the current path is /sites
+			const isViewMySites = command.name === 'viewMySites';
+			return ! ( isViewMySites && currentPath === '/sites' );
+		} )
+		.sort( ( a, b ) => {
+			// Check if the current command is "viewMySites"
+			const isViewMySitesWithContextual = a.name === 'viewMySites';
+			const isViewMySitesNoContextual = b.name === 'viewMySites';
 
-		// Check if contextual filter is set for commands a and b
-		const hasContextA = filter?.( a ) ?? false;
-		const hasContextB = filter?.( b ) ?? false;
+			// Rank "viewMySites" command higher than contextual or regular comands in all contexts
+			if ( isViewMySitesWithContextual && ! isViewMySitesNoContextual ) {
+				return -1; // "viewMySites" comes first over contextual commands
+			} else if ( ! isViewMySitesWithContextual && isViewMySitesNoContextual ) {
+				return 1; // "viewMySites" comes first over regular
+			}
 
-		// Sort based on context
-		if ( hasContextA && ! hasContextB ) {
-			return -1; // commands with context set
-		} else if ( ! hasContextA && hasContextB ) {
-			return 1; // commands without context set
-		}
+			// Check contextual filter for commands a and b
+			const hasContextCommand = filter?.( a ) ?? false;
+			const hasNoContext = filter?.( b ) ?? false;
 
-		return 0; // no change in order
-	} );
+			// Sort based on context
+			if ( hasContextCommand && ! hasNoContext ) {
+				return -1; // commands with context set
+			} else if ( ! hasContextCommand && hasNoContext ) {
+				return 1; // commands without context set
+			}
+
+			return 0; // no change in order
+		} );
 
 	const selectedCommand = sortedCommands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
