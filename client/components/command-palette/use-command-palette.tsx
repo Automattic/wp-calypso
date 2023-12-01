@@ -113,10 +113,10 @@ export const useCommandPallette = ( {
 	};
 
 	// Filter commands to exclude "viewMySites" when the current path is /sites
-	const filteredCommands = commands.filter( ( command ) => {
-		const isViewMySites = command.name === 'viewMySites';
-		return ! ( isViewMySites && currentPath === '/sites' );
-	} );
+	// Filter commands to exclude "viewMySites" when the current path is "/sites"
+	const filteredCommands = commands.filter(
+		( command ) => ! ( command.name === 'viewMySites' && currentPath === '/sites' )
+	);
 
 	// Sort the filtered commands with the contextual commands ranking higher than general in a given context
 	const sortedCommands = filteredCommands.sort( ( a, b ) => {
