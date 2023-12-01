@@ -210,6 +210,7 @@ export default function PurchaseModalContent( {
 	siteSlug,
 	step,
 	submitTransaction,
+	showFeatureList,
 }: {
 	cards: StoredPaymentMethodCard[];
 	cart: ResponseCart;
@@ -217,6 +218,7 @@ export default function PurchaseModalContent( {
 	siteSlug: string;
 	step: string;
 	submitTransaction(): void;
+	showFeatureList: boolean;
 } ) {
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( cart );
@@ -259,15 +261,17 @@ export default function PurchaseModalContent( {
 					} ) }
 				/>
 			</div>
-			<div className="purchase-modal__features">
-				<h3 className="purchase-modal__features-title">
-					{ translate( 'Included with your purchase' ) }
-				</h3>
-				<CheckoutSummaryFeaturesList
-					siteId={ cart.blog_id }
-					nextDomainIsFree={ cart.next_domain_is_free }
-				/>
-			</div>
+			{ showFeatureList && (
+				<div className="purchase-modal__features">
+					<h3 className="purchase-modal__features-title">
+						{ translate( 'Included with your purchase' ) }
+					</h3>
+					<CheckoutSummaryFeaturesList
+						siteId={ cart.blog_id }
+						nextDomainIsFree={ cart.next_domain_is_free }
+					/>
+				</div>
+			) }
 		</div>
 	);
 }

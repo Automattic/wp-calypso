@@ -23,7 +23,7 @@ function PayButton() {
 	return <div className="purchase-modal__pay-button is-placeholder">Pay button</div>;
 }
 
-export default function PurchaseModalPlaceHolder() {
+export default function PurchaseModalPlaceHolder( { showFeatureList } ) {
 	return (
 		<div className="purchase-modal__wrapper">
 			<div className="purchase-modal__steps">
@@ -35,9 +35,11 @@ export default function PurchaseModalPlaceHolder() {
 				<OrderReview />
 				<PayButton />
 			</div>
-			<div className="purchase-modal__features is-placeholder">
-				<LoadingCheckoutSummaryFeaturesList />
-			</div>
+			{ showFeatureList && (
+				<div className="purchase-modal__features is-placeholder">
+					<LoadingCheckoutSummaryFeaturesList />
+				</div>
+			) }
 		</div>
 	);
 }
