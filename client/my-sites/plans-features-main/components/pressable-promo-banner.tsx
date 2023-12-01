@@ -2,6 +2,7 @@ import { Button, Gridicon, PressableLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
 
 const Banner = styled.div`
@@ -88,9 +89,18 @@ const CtaButton = styled( Button )`
 	` ) }
 `;
 
-const PressablePromoBanner = () => {
+const PressablePromoBanner = ( {
+	onShow,
+	onClick,
+}: {
+	onShow: () => void;
+	onClick: () => void;
+} ) => {
 	const translate = useTranslate();
-	const onClick = () => {};
+
+	useEffect( () => {
+		onShow();
+	}, [ onShow ] );
 
 	return (
 		<Banner>

@@ -410,6 +410,20 @@ const PlansFeaturesMain = ( {
 
 	const showPressablePromoBanner = isInSignup && ! isPlansInsideStepper;
 
+	const onShowPressablePromoBanner = useCallback( () => {
+		recordTracksEvent( 'calypso_multisite_promo_banner_impression', {
+			service: 'pressable',
+			flowName,
+		} );
+	}, [] );
+
+	const onClickPressablePromoBannerCta = useCallback( () => {
+		recordTracksEvent( 'calypso_multisite_promo_banner_cta_click', {
+			service: 'pressable',
+			flowName,
+		} );
+	}, [] );
+
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
 		useFreeHostingTrialAssignment( intent );
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
@@ -907,6 +921,8 @@ const PlansFeaturesMain = ( {
 						{ showPressablePromoBanner && (
 							<AsyncLoad
 								require="./components/pressable-promo-banner"
+								onShow={ onShowPressablePromoBanner }
+								onClick={ onClickPressablePromoBannerCta }
 								placeholder={ <LoadingPlaceholder /> }
 							/>
 						) }
