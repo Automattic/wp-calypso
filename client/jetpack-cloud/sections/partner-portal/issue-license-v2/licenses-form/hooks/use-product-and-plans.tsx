@@ -104,7 +104,7 @@ export default function useProductAndPlans( {
 			selectedBundleSize > 1
 				? data?.filter(
 						( { supported_bundles } ) =>
-							!! supported_bundles?.find( ( { quantity } ) => selectedBundleSize === quantity )
+							supported_bundles?.some?.( ( { quantity } ) => selectedBundleSize === quantity )
 				  )
 				: data;
 

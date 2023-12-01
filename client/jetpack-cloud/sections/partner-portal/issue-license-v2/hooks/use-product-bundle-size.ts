@@ -12,20 +12,16 @@ const parseLocationHash = ( supportedBundleSizes: number[], value: string ) => {
 };
 
 const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
-	if ( products?.length ) {
-		return [
-			1,
-			...products.reduce( ( set, product ) => {
-				product.supported_bundles.forEach( ( { quantity } ) => {
-					set.add( quantity );
-				} );
-
-				return set;
-			}, new Set< number >() ),
-		];
+	if ( ! products ) {
+		return [ 1 ];
 	}
 
-	return [ 1 ];
+	const supported = new Set( [
+		1,
+		...products.flatMap( ( p ) => p.supported_bundles?.map( ( { quantity } ) => quantity ) ),
+	] );
+
+	return [ ...supported ];
 };
 
 export function useProductBundleSize() {
