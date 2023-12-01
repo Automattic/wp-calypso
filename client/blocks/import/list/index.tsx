@@ -41,11 +41,11 @@ export default function ListStep( props: Props ) {
 	const secondaryListOptions: ImporterOption[] = [
 		{ value: 'blogroll', label: 'Blogroll' },
 		{ value: 'ghost', label: 'Ghost' },
-		{ value: 'tumblr', label: 'Tumblr' },
 		{ value: 'livejournal', label: 'LiveJournal' },
 		{ value: 'movabletype', label: 'Movable Type & TypePad' },
-		{ value: 'xanga', label: 'Xanga' },
 		{ value: 'substack', label: 'Substack' },
+		{ value: 'tumblr', label: 'Tumblr' },
+		{ value: 'xanga', label: 'Xanga' },
 	];
 
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
