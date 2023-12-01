@@ -46,19 +46,20 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		screenReader,
 		screenOptionsTab,
 	} = props;
+
+	const screenSwitcher = screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } />;
+
 	return (
 		<header
 			id={ id }
-			className={ classnames(
-				className,
-				'navigation-header',
-				screenOptionsTab && children ? 'navigation-header__screen-options-tab' : ''
-			) }
+			className={ classnames( className, 'navigation-header', {
+				'navigation-header__screen-options-tab': screenSwitcher && children,
+			} ) }
 			ref={ ref }
 		>
 			<Container>
 				<div className="navigation-header__main">
-					{ screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } /> }
+					{ screenSwitcher }
 					<Breadcrumb
 						items={ navigationItems }
 						mobileItem={ mobileItem }
