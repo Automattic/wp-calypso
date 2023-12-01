@@ -83,6 +83,7 @@ import type { ThunkAction } from 'redux-thunk';
 const SiteIntent = Onboard.SiteIntent;
 
 const EMPTY_ARRAY: Design[] = [];
+const EMPTY_OBJECT = {};
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
@@ -190,7 +191,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const categorizationOptions = getCategorizationOptions( intent );
 	const categorization = useCategorizationFromApi(
-		allDesigns?.filters?.subject || {},
+		allDesigns?.filters?.subject || EMPTY_OBJECT,
 		categorizationOptions
 	);
 
