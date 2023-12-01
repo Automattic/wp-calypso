@@ -14,6 +14,16 @@ export function getItemVariantCompareToPrice(
 		return undefined;
 	}
 
+	// If the same product is being compared to itself, there is no discount
+	if ( variant.productSlug === compareTo.productSlug ) {
+		return undefined;
+	}
+
+	// A variant with a shorter term should never be cheaper than a variant with a longer term
+	if ( compareTo.termIntervalInMonths > variant.termIntervalInMonths ) {
+		return undefined;
+	}
+
 	// Ignore a 1 month discount when calculating the discount percentage
 	if (
 		variant.termIntervalInMonths === 24 &&
@@ -35,9 +45,15 @@ export function getItemVariantCompareToPrice(
 
 	// CompareTo price for Biennial, Triennial, Quadrennial, and so on, products
 	if ( compareTo.termIntervalInMonths >= 12 && variant.termIntervalInMonths >= 24 ) {
+		const compareToTermIntervalInYears = compareTo.termIntervalInMonths / 12;
+
+		const compareToPricePerYear = compareTo.priceInteger / compareToTermIntervalInYears;
+		const compareToPricePerYearBeforeDiscounts =
+			compareTo.priceBeforeDiscounts / compareToTermIntervalInYears;
+
 		return (
-			compareTo.priceInteger +
-			compareTo.priceBeforeDiscounts * ( variant.termIntervalInMonths / 12 - 1 )
+			compareToPricePerYear +
+			compareToPricePerYearBeforeDiscounts * ( variant.termIntervalInMonths / 12 - 1 )
 		);
 	}
 
