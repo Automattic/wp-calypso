@@ -12,7 +12,7 @@ type CommentSettingsProps = {
 const CommentSettings = ( { onUnsubscribe, unsubscribing }: CommentSettingsProps ) => {
 	const translate = useTranslate();
 	return (
-		<SubscriptionsEllipsisMenu>
+		<SubscriptionsEllipsisMenu popoverClassName="comment-settings-popover">
 			<Button
 				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
 				disabled={ unsubscribing }

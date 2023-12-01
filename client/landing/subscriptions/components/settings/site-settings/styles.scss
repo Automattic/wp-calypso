@@ -13,6 +13,18 @@
 		margin-bottom: 24px;
 	}
 
+	button {
+		&:hover,
+		&:focus {
+			color: var(--color-primary);
+			background: rgba(var(--color-primary-light-rgb), 1);
+
+			.reader-export-button__label {
+				color: var(--color-text-inverted);
+			}
+		}
+	}
+
 	&__unsubscribe-button.components-button.has-icon,
 	&__view-feed-button.components-button.has-icon,
 	&__manage-subscription-button.components-button.has-icon {

@@ -4,6 +4,23 @@
 @import "client/landing/subscriptions/styles/search-component";
 @import "client/landing/subscriptions/components/site-subscriptions-list/styles/variables";
 
+@mixin hover-color {
+	&:hover,
+	&:focus {
+		color: var(--color-text-inverted);
+		background: rgba(var(--color-primary-light-rgb), 1);
+
+		.reader-import-button__label,
+		.reader-export-button__label {
+			color: var(--color-text-inverted);
+		}
+
+		path {
+			stroke: var(--color-text-inverted);
+		}
+	}
+}
+
 .site-subscriptions-manager {
 	&.main {
 		max-width: 1168px;
@@ -63,9 +80,13 @@
 		width: 305px;
 
 		button.components-button {
+			@include hover-color;
+
 			svg {
 				fill: none;
 			}
+
+			padding: 0 15px;
 
 			justify-content: flex-start;
 
@@ -98,4 +119,44 @@ hr.subscriptions__separator {
 	padding: 0;
 	border: none;
 	border-top: 1px solid $studio-gray-5;
+}
+
+.subscriptions-ellipsis-menu__popover.popover.site-subscriptions-manager__import-export-popover .popover__inner,
+.subscriptions-ellipsis-menu__popover.popover.comment-settings-popover .popover__inner {
+	padding: 5px 0 !important;
+}
+
+.subscriptions-ellipsis-menu__popover.popover .popover__inner {
+	padding: 5px 0 14px !important;
+
+	.settings.site-settings {
+		padding: 15px 0 0;
+
+		.setting-item {
+			padding: 0 21px;
+
+			&.email-me-new-comments-toggle {
+				margin-bottom: 16px;
+			}
+		}
+	}
+
+	.site-settings-popover__unsubscribe-button.components-button.has-icon:not(:last-child) {
+		margin-bottom: 16px;
+	}
+
+	.subscriptions__separator {
+		margin: 0 24px 15px;
+		width: auto;
+	}
+
+	& > .components-button,
+	.site-settings-popover__view-feed-button {
+		padding: 0 21px;
+		line-height: 36px;
+		width: 100%;
+
+		@include hover-color;
+
+	}
 }
