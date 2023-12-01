@@ -90,13 +90,13 @@ export const useCommandPallette = ( {
 
 	// Simple sorting logic to prioritize commands with matching context
 	const sortedCommands = commands.sort( ( a, b ) => {
-		const hasContextA = filter?.( a ) ?? false;
-		const hasContextB = filter?.( b ) ?? false;
+		const hasContext = filter?.( a ) ?? false;
+		const hasNoContext = filter?.( b ) ?? false;
 
 		// Sort based on context
-		if ( hasContextA && ! hasContextB ) {
+		if ( hasContext && ! hasNoContext ) {
 			return -1; // commands with context set
-		} else if ( ! hasContextA && hasContextB ) {
+		} else if ( ! hasContext && hasNoContext ) {
 			return 1; // commands without context set
 		}
 

@@ -334,6 +334,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageStagingSites',
 			label: __( 'Manage staging sites' ),
+			context: [ '/hosting-config' ],
 			callback: setStateCallback( 'manageStagingSites' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {

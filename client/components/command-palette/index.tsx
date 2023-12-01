@@ -80,7 +80,9 @@ export function CommandMenuGroup( {
 	const { commands } = useCommandPallette( {
 		selectedCommandName,
 		setSelectedCommandName,
-		filter: isContextual ? ( command ) => command.context?.includes( currentPath ) : undefined,
+		filter: isContextual
+			? ( command ) => command.context?.some( ( path ) => currentPath.includes( path ) ) ?? false
+			: undefined,
 	} );
 
 	if ( ! commands.length ) {
