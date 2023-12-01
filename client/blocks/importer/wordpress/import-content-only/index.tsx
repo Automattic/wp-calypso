@@ -121,25 +121,27 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	return (
-		<>
-			<div className={ classnames( 'import__import-content-only' ) }>
-				{ ( () => {
-					if ( checkIsSuccess() ) {
-						return renderHooray();
-					} else if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
-							/>
-						);
-					} else if ( checkProgress() ) {
-						return renderProgress();
-					}
-					return renderImportDrag();
-				} )() }
-			</div>
-		</>
+		<div
+			className={ classnames( 'import__import-content-only', {
+				'import__error-message': checkIsFailed(),
+			} ) }
+		>
+			{ ( () => {
+				if ( checkIsSuccess() ) {
+					return renderHooray();
+				} else if ( checkIsFailed() ) {
+					return (
+						<ErrorMessage
+							onStartBuilding={ stepNavigator?.goToIntentPage }
+							onBackToStart={ stepNavigator?.goToImportCapturePage }
+						/>
+					);
+				} else if ( checkProgress() ) {
+					return renderProgress();
+				}
+				return renderImportDrag();
+			} )() }
+		</div>
 	);
 };
 
