@@ -19,7 +19,7 @@ import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
@@ -81,6 +81,8 @@ import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 const SiteIntent = Onboard.SiteIntent;
+
+const EMPTY_ARRAY: Design[] = [];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
@@ -177,7 +179,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	);
 
-	const designs = useMemo( () => allDesigns?.designs ?? [], [ allDesigns?.designs ] );
+	const designs = allDesigns?.designs ?? EMPTY_ARRAY;
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
 		if ( ! hasTrackedView.current && designs.length > 0 ) {
