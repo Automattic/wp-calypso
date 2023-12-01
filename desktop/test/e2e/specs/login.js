@@ -95,28 +95,26 @@ describe( 'User Can log in', () => {
 		await mainWindow.keyboard.press( 'Enter' );
 		await mainWindow.fill( '#password', process.env.E2EPASSWORD );
 
-		await mainWindow.click( 'button:has-text("Log In")' );
-		await mainWindow.waitForSelector( '.is-logged-in' );
 		// Wait for response from the Login endpoint.
-		// const [ response ] = await Promise.all( [
-		// 	mainWindow.waitForResponse( '**/wp-login.php?action=login-endpoint' ),
-		//
-		// ] );
+		const [ response ] = await Promise.all( [
+			mainWindow.waitForResponse( '**/wp-login.php?action=login-endpoint' ),
+			mainWindow.click( 'button:has-text("Log In")' ),
+		] );
 
 		// If the account credentials are rejected, throw an error containing the text of
 		// the validation error.
 		// Credentaials can be rejected for any number of reasons:
 		// 	- closed account
 		//	- wrong password
-		// if ( response.status() === 400 ) {
-		// 	throw new Error(
-		// 		await mainWindow
-		// 			.waitForSelector( 'div.is-error' )
-		// 			.then( ( element ) => element.innerText() )
-		// 	);
-		// }
+		if ( response.status() === 400 ) {
+			throw new Error(
+				await mainWindow
+					.waitForSelector( 'div.is-error' )
+					.then( ( element ) => element.innerText() )
+			);
+		}
 
-		// expect( response.status() ).toBe( 200 );
+		expect( response.status() ).toBe( 200 );
 	} );
 
 	afterAll( async () => {
