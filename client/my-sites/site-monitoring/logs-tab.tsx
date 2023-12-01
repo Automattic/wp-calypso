@@ -22,6 +22,32 @@ export type LogType = 'php' | 'web';
 
 const DEFAULT_PAGE_SIZE = 50;
 
+export function buildFilterParam(
+	logType: string,
+	severity: string,
+	requestType: string,
+	requestStatus: string
+): FilterType {
+	const filters: FilterType = {};
+
+	if ( logType === 'php' ) {
+		if ( severity ) {
+			filters.severity = [ severity ];
+		}
+	}
+
+	if ( logType === 'web' ) {
+		if ( requestType ) {
+			filters.request_type = [ requestType ];
+		}
+		if ( requestStatus ) {
+			filters.status = [ requestStatus ];
+		}
+	}
+
+	return filters;
+}
+
 export const LogsTab = ( {
 	logType,
 	pageSize = DEFAULT_PAGE_SIZE,
@@ -69,32 +95,6 @@ export const LogsTab = ( {
 		setCurrentPageIndex( 0 );
 	}, [ getLatestDateRange ] );
 	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
-
-	const buildFilterParam = (
-		logType: string,
-		severity: string,
-		requestType: string,
-		requestStatus: string
-	) => {
-		const filters: FilterType = {};
-
-		if ( logType === 'php' ) {
-			if ( severity ) {
-				filters.severity = [ severity ];
-			}
-		}
-
-		if ( logType === 'web' ) {
-			if ( requestType ) {
-				filters.request_type = [ requestType ];
-			}
-			if ( requestStatus ) {
-				filters.status = [ requestStatus ];
-			}
-		}
-
-		return filters;
-	};
 
 	const { data, isInitialLoading, isFetching } = useSiteLogsQuery( siteId, {
 		logType,

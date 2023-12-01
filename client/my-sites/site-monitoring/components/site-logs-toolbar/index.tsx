@@ -5,6 +5,7 @@ import SelectDropdown from 'calypso/components/select-dropdown';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
+import { buildFilterParam } from '../../logs-tab';
 import { DateTimePicker } from './date-time-picker';
 import type { Moment } from 'moment';
 
@@ -210,7 +211,14 @@ export const SiteLogsToolbar = ( {
 					disabled={ isDownloading }
 					isBusy={ isDownloading }
 					variant="primary"
-					onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
+					onClick={ () =>
+						downloadLogs( {
+							logType,
+							startDateTime,
+							endDateTime,
+							filter: buildFilterParam( logType, severity, requestType, requestStatus ),
+						} )
+					}
 				>
 					{ translate( 'Download logs' ) }
 				</Button>
