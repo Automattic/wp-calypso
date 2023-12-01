@@ -168,11 +168,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 				showDismiss={ false }
 				status="is-warning"
 			>
-				<NoticeAction
-					href={ props.registeredViaTrusteeUrl }
-					rel="noopener noreferrer"
-					target="_blank"
-				>
+				<NoticeAction external={ true } href={ props.registeredViaTrusteeUrl }>
 					{ translate( 'More info' ) }
 				</NoticeAction>
 			</Notice>
