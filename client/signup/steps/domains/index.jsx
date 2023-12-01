@@ -83,7 +83,13 @@ import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 import './style.scss';
 
 const BoldTLD = ( { domain } ) => {
-	const tld = domain.split( '.' ).pop();
+	const split = domain.split( '.' );
+	let tld = split.pop();
+	const wp = split.pop();
+	if ( wp === 'wordpress' && tld === 'com' ) {
+		tld = `wordpress.com`;
+	}
+
 	return (
 		<>
 			<span>{ domain.replace( `.${ tld }`, '' ) }</span>
