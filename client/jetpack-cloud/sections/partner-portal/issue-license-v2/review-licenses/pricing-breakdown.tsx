@@ -13,7 +13,11 @@ const LicenseItem = ( {
 	license: SelectedLicenseProp;
 	userProducts: Record< string, ProductListItem >;
 } ) => {
-	const { actualCost, discountedCost } = getProductPricingInfo( userProducts, license );
+	const { actualCost, discountedCost } = getProductPricingInfo(
+		userProducts,
+		license,
+		license.quantity
+	);
 
 	const { title } = useLicenseLightboxData( license );
 

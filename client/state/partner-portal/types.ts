@@ -97,7 +97,7 @@ export interface APILicense {
 
 export interface APIProductFamilyProductBundlePrice {
 	quantity: number;
-	amount: number;
+	amount: string;
 }
 
 export interface APIProductFamilyProduct {

@@ -157,6 +157,7 @@ export default function LicensesForm( {
 					tabIndex={ 100 + i }
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
+					quantity={ quantity }
 				/>
 			) : (
 				<LicenseProductCard
@@ -169,6 +170,7 @@ export default function LicensesForm( {
 					tabIndex={ 100 + i }
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
+					quantity={ quantity }
 				/>
 			)
 		);

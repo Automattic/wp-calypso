@@ -1,12 +1,15 @@
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import type { SelectedLicenseProp } from '../types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 // This function calculates the pricing information for a given product.
 export const getProductPricingInfo = (
 	userProducts: Record< string, ProductListItem >,
-	product: SelectedLicenseProp
+	product: SelectedLicenseProp | APIProductFamilyProduct,
+	quantity: number
 ) => {
-	const productCost = product?.amount || 0;
+	const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
+	const productBundleCost = bundle ? parseFloat( bundle.amount ) : product?.amount || 0;
 
 	const isDailyPricing = product.price_interval === 'day';
 
@@ -16,7 +19,7 @@ export const getProductPricingInfo = (
 		discountPercentage: number;
 	} = {
 		actualCost: 0,
-		discountedCost: productCost * product.quantity, // This is the discounted cost based on the product quantity
+		discountedCost: productBundleCost, // This is the discounted cost based on the product quantity
 		discountPercentage: 0,
 	};
 	if ( Object.keys( userProducts ).length && product ) {
@@ -35,12 +38,13 @@ export const getProductPricingInfo = (
 			);
 		// If a monthly product is found, calculate the actual cost and discount percentage
 		if ( monthlyProduct ) {
-			const actualCost = isDailyPricing ? monthlyProduct.cost / 365 : monthlyProduct.cost;
-			const discountedCost = actualCost - productCost;
-			discountInfo.discountPercentage = productCost
+			const monthlyProductBundleCost = monthlyProduct.cost * quantity;
+			const actualCost = isDailyPricing ? monthlyProductBundleCost / 365 : monthlyProductBundleCost;
+			const discountedCost = actualCost - productBundleCost;
+			discountInfo.discountPercentage = productBundleCost
 				? Math.round( ( discountedCost / actualCost ) * 100 )
 				: 100;
-			discountInfo.actualCost = actualCost * product.quantity;
+			discountInfo.actualCost = actualCost;
 		}
 	}
 	return discountInfo;
@@ -57,7 +61,8 @@ export const getTotalInvoiceValue = (
 			// Get the pricing information for the current license
 			const { actualCost, discountedCost, discountPercentage } = getProductPricingInfo(
 				userProducts,
-				license
+				license,
+				license.quantity
 			);
 			// Add the actual cost, discounted cost, and discount percentage to the accumulator
 			acc.actualCost += actualCost;
