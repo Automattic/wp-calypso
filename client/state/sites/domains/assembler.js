@@ -139,6 +139,8 @@ export const createSiteDomainObject = ( domain ) => {
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		privateDomain: domain.private_domain,
 		privacyAvailable: Boolean( domain.privacy_available ),
+		registeredViaTrustee: Boolean( domain.registered_via_trustee ),
+		registeredViaTrusteeUrl: String( domain.registered_via_trustee_url ),
 		registrar: String( domain.registrar ),
 		registrationDate: String( domain.registration_date ),
 		renewableUntil: String( domain.renewable_until ),
