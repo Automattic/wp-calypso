@@ -26,6 +26,7 @@ const Banner = styled.div`
 
 const LogoContainer = styled.div`
 	display: none;
+	height: 18px;
 
 	${ plansBreakSmall( css`
 		display: inherit;
