@@ -4,7 +4,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { PLANS_LIST } from '@automattic/calypso-products/src/plans-list';
+import { getPlans } from '@automattic/calypso-products/src';
 import { registerBlockType } from '@wordpress/blocks';
 import { sprintf, __ } from '@wordpress/i18n';
 import config from './config';
@@ -47,14 +47,14 @@ function registerBlocks() {
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade %(planName)s', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_PERSONAL ].getTitle(),
+						planName: getPlans()[ PLAN_PERSONAL ].getTitle(),
 					}
 				),
 				description: sprintf(
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_PERSONAL ].getTitle(),
+						planName: getPlans()[ PLAN_PERSONAL ].getTitle(),
 					}
 				),
 				attributes: {
@@ -67,14 +67,14 @@ function registerBlocks() {
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade %(planName)s', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_PREMIUM ].getTitle(),
+						planName: getPlans()[ PLAN_PREMIUM ].getTitle(),
 					}
 				),
 				description: sprintf(
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_PREMIUM ].getTitle(),
+						planName: getPlans()[ PLAN_PREMIUM ].getTitle(),
 					}
 				),
 				attributes: {
@@ -87,14 +87,14 @@ function registerBlocks() {
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade %(planName)s', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_BUSINESS ].getTitle(),
+						planName: getPlans()[ PLAN_BUSINESS ].getTitle(),
 					}
 				),
 				description: sprintf(
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_BUSINESS ].getTitle(),
+						planName: getPlans()[ PLAN_BUSINESS ].getTitle(),
 					}
 				),
 				attributes: {
@@ -107,14 +107,14 @@ function registerBlocks() {
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade %(planName)s', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_ECOMMERCE ].getTitle(),
+						planName: getPlans()[ PLAN_ECOMMERCE ].getTitle(),
 					}
 				),
 				description: sprintf(
 					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
 					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
 					{
-						planName: PLANS_LIST[ PLAN_ECOMMERCE ].getTitle(),
+						planName: getPlans()[ PLAN_ECOMMERCE ].getTitle(),
 					}
 				),
 				attributes: {
