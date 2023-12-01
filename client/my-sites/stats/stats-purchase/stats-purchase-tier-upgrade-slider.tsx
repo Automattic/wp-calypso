@@ -11,6 +11,7 @@ type TierUpgradeSliderProps = {
 	className?: string;
 	priceTiers: [ PriceTierListItemProps ];
 	currencyCode: string;
+	setPurchaseTierQuantity: ( quantity: number ) => void;
 };
 
 type StatsPlanTierUI = {
@@ -75,7 +76,12 @@ const MOCK_PLAN_DATA = [
 	},
 ];
 
-function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgradeSliderProps ) {
+function TierUpgradeSlider( {
+	className,
+	priceTiers,
+	currencyCode,
+	setPurchaseTierQuantity,
+}: TierUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
@@ -108,6 +114,8 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
+
+		setPurchaseTierQuantity( plans[ value ]?.views );
 	};
 
 	const translatedStrings = useTranslatedStrings();

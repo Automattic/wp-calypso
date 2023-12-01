@@ -97,6 +97,7 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -134,17 +135,42 @@ Thanks\n\n`;
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-			<ButtonComponent
-				variant="primary"
-				primary={ isWPCOMSite ? true : undefined }
-				onClick={ () =>
-					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-				}
-			>
-				{ translate( 'Get Stats' ) }
-			</ButtonComponent>
+			{ ! isTierUpgradeSliderEnabled && (
+				<ButtonComponent
+					variant="primary"
+					primary={ isWPCOMSite ? true : undefined }
+					onClick={ () =>
+						gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+					}
+				>
+					{ translate( 'Get Stats' ) }
+				</ButtonComponent>
+			) }
 			{ isTierUpgradeSliderEnabled && (
-				<TierUpgradeSlider priceTiers={ priceTiers } currencyCode={ currencyCode } />
+				<>
+					<TierUpgradeSlider
+						priceTiers={ priceTiers }
+						currencyCode={ currencyCode }
+						setPurchaseTierQuantity={ setPurchaseTierQuantity }
+					/>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( {
+								from,
+								type: 'commercial',
+								siteSlug,
+								adminUrl,
+								redirectUri,
+								price: undefined,
+								quantity: purchaseTierQuantity,
+							} )
+						}
+					>
+						{ translate( 'Get Stats with Tiers' ) }
+					</ButtonComponent>
+				</>
 			) }
 
 			{ showClassificationDispute && (
