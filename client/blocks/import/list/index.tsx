@@ -45,6 +45,7 @@ export default function ListStep( props: Props ) {
 		{ value: 'livejournal', label: 'LiveJournal' },
 		{ value: 'movabletype', label: 'Movable Type & TypePad' },
 		{ value: 'xanga', label: 'Xanga' },
+		{ value: 'substack', label: 'Substack' },
 	];
 
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
@@ -80,6 +81,7 @@ export default function ListStep( props: Props ) {
 				<div className="list__importers list__importers-primary">
 					{ primaryListOptions.map( ( x ) => (
 						<Button
+							key={ x.value }
 							className="list__importers-item-card"
 							onClick={ () => onImporterSelect( x.value ) }
 						>
