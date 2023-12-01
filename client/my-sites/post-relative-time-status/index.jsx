@@ -40,24 +40,10 @@ class PostRelativeTime extends PureComponent {
 		}
 	}
 
-	/**
-	 * The `sameElse` setting of moment.js expects a string.
-	 * Since `translate()` could return an object, we need to ensure we pass a string.
-	 */
-	formatSameElseSetting( sameElse ) {
-		const defaultSameElse = 'll [at] LT';
-
-		if ( typeof sameElse === 'object' && sameElse ) {
-			return defaultSameElse;
-		}
-
-		return sameElse ?? defaultSameElse;
-	}
-
 	getDisplayedTimeForLabel() {
 		const moment = this.props.moment;
 		const now = moment();
-		const timestamp = moment( this.getTimestamp() );
+		const timestamp = moment( this.getTimestamp() ?? now );
 
 		const isScheduledPost = this.props.post.status === 'future';
 
@@ -67,24 +53,22 @@ class PostRelativeTime extends PureComponent {
 				nextDay: this.props.translate( '[tomorrow at] LT', {
 					comment: 'LT refers to time (eg. 18:00)',
 				} ),
-				sameElse: this.formatSameElseSetting(
+				sameElse:
 					this.props.translate( 'll [at] LT', {
 						comment:
 							'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" is translated',
-					} )
-				),
+					} ) ?? 'll [at] LT',
 			} );
 		} else {
 			if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
 				return timestamp.fromNow();
 			}
 
-			const sameElse = this.formatSameElseSetting(
+			const sameElse =
 				this.props.translate( 'll [at] LT', {
 					comment:
 						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
-				} )
-			);
+				} ) ?? 'll [at] LT';
 
 			displayedTime = timestamp.calendar( null, {
 				sameElse,
