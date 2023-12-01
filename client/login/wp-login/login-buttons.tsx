@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
@@ -110,7 +111,7 @@ const LoginButtons = ( {
 				data-e2e-link="magic-login-link"
 				key="lost-password-link"
 			>
-				<MailIcon width="20" height="20" />
+				<JetpackLogo size={ 20 } />
 				<span className="social-buttons__service-name">{ translate( 'Login via app' ) }</span>
 			</Button>
 		);
