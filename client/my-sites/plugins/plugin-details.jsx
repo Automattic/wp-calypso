@@ -462,7 +462,7 @@ function PluginDetails( props ) {
 					<MarketplaceReviewsList
 						slug={ fullPlugin.slug }
 						productType="plugin"
-						innerRef={ reviewsListRef }
+						ref={ reviewsListRef }
 					/>
 				</div>
 			) }
