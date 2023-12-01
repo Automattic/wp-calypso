@@ -65,7 +65,14 @@ const LivePreviewNotice: FC< {
 			}
 		);
 		return () => removeNotice( NOTICE_ID );
-	}, [ siteEditorStore, dashboardLink, createWarningNotice, removeNotice, previewingThemeName ] );
+	}, [
+		siteEditorStore,
+		dashboardLink,
+		setPreferences,
+		createWarningNotice,
+		removeNotice,
+		previewingThemeName,
+	] );
 	return null;
 };
 
