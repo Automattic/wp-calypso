@@ -96,7 +96,7 @@ export const useCommandsArrayWpcom = ( {
 		navigator.clipboard.writeText( textToCopy );
 		removeLoadingNotice();
 		const successMessage =
-			copyType === 'username' ? __( 'Copied username' ) : __( 'Copied SSH connection string' );
+			copyType === 'username' ? __( 'Copied username.' ) : __( 'Copied SSH connection string.' );
 		displayNotice( successMessage );
 	};
 
