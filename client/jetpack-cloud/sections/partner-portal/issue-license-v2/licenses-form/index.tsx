@@ -4,6 +4,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { useSelector } from 'calypso/state';
 import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
+import LicenseMultiProductCard from '../../license-multi-product-card';
 import { PRODUCT_FILTER_ALL } from '../constants';
 import IssueLicenseContext from '../context';
 import useSubmitForm from '../hooks/use-submit-form';
@@ -72,12 +73,33 @@ export default function LicensesForm( {
 		[ handleSelectBundleLicense ]
 	);
 
+	const onSelectOrReplaceProduct = useCallback(
+		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
+			if ( replace ) {
+				setSelectedLicenses(
+					selectedLicenses.map( ( item ) => {
+						if ( item.slug === replace.slug && item.quantity === quantity ) {
+							return { ...product, quantity };
+						}
+
+						return item;
+					} )
+				);
+			} else {
+				handleSelectBundleLicense( product );
+			}
+		},
+		[ handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
+	);
+
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const isSelected = useCallback(
-		( slug: string ) =>
+		( slug: string | string[] ) =>
 			selectedLicenses.some(
-				( license ) => license.slug === slug && license.quantity === quantity
+				( license ) =>
+					( Array.isArray( slug ) ? slug.includes( license.slug ) : license.slug === slug ) &&
+					license.quantity === quantity
 			),
 		[ quantity, selectedLicenses ]
 	);
@@ -90,6 +112,37 @@ export default function LicensesForm( {
 	);
 
 	const isSingleLicenseView = quantity === 1;
+
+	const getProductCards = (
+		products: ( APIProductFamilyProduct | APIProductFamilyProduct[] )[]
+	) => {
+		return products.map( ( productOption, i ) =>
+			Array.isArray( productOption ) ? (
+				<LicenseMultiProductCard
+					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
+					products={ productOption }
+					onSelectProduct={ onSelectOrReplaceProduct }
+					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
+					isDisabled={ ! isReady }
+					tabIndex={ 100 + i }
+					hideDiscount={ isSingleLicenseView }
+					suggestedProduct={ suggestedProduct }
+				/>
+			) : (
+				<LicenseProductCard
+					isMultiSelect
+					key={ productOption.slug }
+					product={ productOption }
+					onSelectProduct={ onSelectProduct }
+					isSelected={ isSelected( productOption.slug ) }
+					isDisabled={ ! isReady || disabledProductSlugs.includes( productOption.slug ) }
+					tabIndex={ 100 + i }
+					hideDiscount={ isSingleLicenseView }
+					suggestedProduct={ suggestedProduct }
+				/>
+			)
+		);
+	};
 
 	if ( isLoadingProducts ) {
 		return (
@@ -117,20 +170,9 @@ export default function LicensesForm( {
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) }
+					isTwoColumns
 				>
-					{ plans.map( ( productOption, i ) => (
-						<LicenseProductCard
-							isMultiSelect
-							key={ productOption.slug }
-							product={ productOption }
-							onSelectProduct={ onSelectProduct }
-							isSelected={ isSelected( productOption.slug ) }
-							isDisabled={ ! isReady }
-							tabIndex={ 100 + i }
-							hideDiscount={ isSingleLicenseView }
-							withBackground
-						/>
-					) ) }
+					{ getProductCards( plans ) }
 				</LicensesFormSection>
 			) }
 
@@ -141,19 +183,7 @@ export default function LicensesForm( {
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
 				>
-					{ products.map( ( productOption, i ) => (
-						<LicenseProductCard
-							isMultiSelect
-							key={ productOption.slug }
-							product={ productOption }
-							onSelectProduct={ onSelectProduct }
-							isSelected={ isSelected( productOption.slug ) }
-							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-							tabIndex={ 100 + i }
-							suggestedProduct={ suggestedProduct }
-							hideDiscount={ isSingleLicenseView }
-						/>
-					) ) }
+					{ getProductCards( products ) }
 				</LicensesFormSection>
 			) }
 
@@ -164,19 +194,7 @@ export default function LicensesForm( {
 						'You must have WooCommerce installed to utilize these paid extensions.'
 					) }
 				>
-					{ wooExtensions.map( ( productOption, i ) => (
-						<LicenseProductCard
-							isMultiSelect
-							key={ productOption.slug }
-							product={ productOption }
-							onSelectProduct={ onSelectProduct }
-							isSelected={ isSelected( productOption.slug ) }
-							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-							tabIndex={ 100 + i }
-							suggestedProduct={ suggestedProduct }
-							hideDiscount={ isSingleLicenseView }
-						/>
-					) ) }
+					{ getProductCards( wooExtensions ) }
 				</LicensesFormSection>
 			) }
 
@@ -187,19 +205,7 @@ export default function LicensesForm( {
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
 				>
-					{ backupAddons.map( ( productOption, i ) => (
-						<LicenseProductCard
-							isMultiSelect
-							key={ productOption.slug }
-							product={ productOption }
-							onSelectProduct={ onSelectProduct }
-							isSelected={ isSelected( productOption.slug ) }
-							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-							tabIndex={ 100 + i }
-							suggestedProduct={ suggestedProduct }
-							hideDiscount={ isSingleLicenseView }
-						/>
-					) ) }
+					{ getProductCards( backupAddons ) }
 				</LicensesFormSection>
 			) }
 		</div>

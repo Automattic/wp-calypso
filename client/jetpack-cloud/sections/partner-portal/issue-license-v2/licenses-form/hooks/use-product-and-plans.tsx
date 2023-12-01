@@ -22,6 +22,10 @@ import {
 } from '../../constants';
 import type { SiteDetails } from '@automattic/data-stores';
 
+// Plans and Products that we can merged into 1 card.
+const MERGABLE_PLANS = [ 'jetpack-security' ];
+const MERGABLE_PRODUCTS = [ 'jetpack-backup' ];
+
 type Props = {
 	selectedBundleSize?: number;
 	selectedSite?: SiteDetails | null;
@@ -63,6 +67,48 @@ const getProductsAndPlansByFilter = (
 	}
 
 	return allProductsAndPlans || [];
+};
+
+// This function gets the displayable Plans based on how it should be arranged in the listing.
+const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
+	const plans = getProductsAndPlansByFilter( PRODUCT_FILTER_PLANS, filteredProductsAndBundles );
+
+	const filteredPlans = MERGABLE_PLANS.map( ( filter ) => {
+		return plans.filter( ( { slug } ) => slug.startsWith( filter ) );
+	} )
+		.filter( ( subArray ) => subArray.length > 0 ) // Remove empty arrays
+		.map( ( mergedPlans ) => ( mergedPlans.length === 1 ? mergedPlans[ 0 ] : mergedPlans ) ); // flat out if only one plan.
+
+	const restOfPlans = plans.filter( ( { slug } ) => {
+		return ! MERGABLE_PLANS.some( ( filter ) => slug.startsWith( filter ) );
+	} );
+
+	return [ ...filteredPlans, ...restOfPlans ];
+};
+
+// This function gets the displayable Products based on how it should be arranged in the listing.
+const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
+	const products = getProductsAndPlansByFilter(
+		PRODUCT_FILTER_PRODUCTS,
+		filteredProductsAndBundles
+	);
+	const filteredProducts = MERGABLE_PRODUCTS.map( ( filter ) => {
+		return products.filter( ( { slug } ) => slug.startsWith( filter ) );
+	} )
+		.filter( ( subArray ) => subArray.length > 0 ) // Remove empty arrays
+		.map( ( mergedProducts ) =>
+			mergedProducts.length === 1 ? mergedProducts[ 0 ] : mergedProducts
+		); // flat out if only one product.
+
+	const restOfProducts = products.filter( ( { slug } ) => {
+		return ! MERGABLE_PRODUCTS.some( ( filter ) => slug.startsWith( filter ) );
+	} );
+
+	return [ ...restOfProducts, ...filteredProducts ].sort( ( a, b ) => {
+		const product_a = Array.isArray( a ) ? a[ 0 ].name : a.name;
+		const product_b = Array.isArray( b ) ? b[ 0 ].name : b.name;
+		return product_a.localeCompare( product_b );
+	} );
 };
 
 export default function useProductAndPlans( {
@@ -130,8 +176,8 @@ export default function useProductAndPlans( {
 		return {
 			isLoadingProducts,
 			filteredProductsAndBundles,
-			plans: getProductsAndPlansByFilter( PRODUCT_FILTER_PLANS, filteredProductsAndBundles ),
-			products: getProductsAndPlansByFilter( PRODUCT_FILTER_PRODUCTS, filteredProductsAndBundles ),
+			plans: getDisplayablePlans( filteredProductsAndBundles ),
+			products: getDisplayableProducts( filteredProductsAndBundles ),
 			backupAddons: getProductsAndPlansByFilter(
 				PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 				filteredProductsAndBundles
