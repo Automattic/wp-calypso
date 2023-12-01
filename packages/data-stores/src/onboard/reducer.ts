@@ -212,16 +212,6 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
-const siteGeoAffinity: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_SITE_GEO_AFFINITY' ) {
-		return action.siteGeoAffinity;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const productCartItems: Reducer< MinimalRequestCartProduct[] | null, OnboardAction > = (
 	state = [],
 	action
@@ -622,7 +612,6 @@ const reducer = combineReducers( {
 	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
-	siteGeoAffinity,
 	showSignupDialog,
 	planProductId,
 	randomizedDesigns,

@@ -7,12 +7,10 @@ import {
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
-import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import { PlanPrices } from 'calypso/state/plans/types';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
-	getCurrentPlan,
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
 } from 'calypso/state/sites/plans/selectors';
@@ -57,25 +55,24 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	storageAddOns,
 }: Props ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	const currentPlan = useSelector( ( state: IAppState ) =>
-		getCurrentPlan( state, selectedSiteId )
-	);
-	const currentSitePlanSlug = currentPlan?.productSlug;
-
-	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
-	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	// pricedAPIPlans - should have a definition for all plans, being the main source of API data
+	const pricedAPIPlans = Plans.usePlans();
+	// pricedAPISitePlans - unclear if all plans are included
+	const pricedAPISitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
 	const selectedStorageOptions = useSelect( ( select ) => {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
 
 	const purchasedPlan = useSelector(
-		( state: IAppState ) => currentPlan && getByPurchaseId( state, currentPlan.id || 0 )
+		( state: IAppState ) => currentPlan && getByPurchaseId( state, currentPlan.purchaseId || 0 )
 	);
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce(
 			( acc, planSlug ) => {
 				const availableForPurchase =
-					! currentSitePlanSlug ||
+					! currentPlan?.planSlug ||
 					( selectedSiteId
 						? isPlanAvailableForPurchase( state, selectedSiteId, planSlug )
 						: false );
@@ -106,7 +103,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
 
 				// raw prices for current site's plan
-				if ( selectedSiteId && currentSitePlanSlug === planSlug ) {
+				if ( selectedSiteId && currentPlan?.planSlug === planSlug ) {
 					let monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 						returnMonthly: true,
 						returnSmallestUnit: true,
@@ -195,29 +192,22 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	 * - For now a simple loader is shown until these are resolved
 	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
 	 */
-	if ( sitePlans.isFetching || ! pricedAPIPlans ) {
+	if ( pricedAPISitePlans.isFetching || pricedAPIPlans.isFetching ) {
 		return null;
 	}
 
 	return planSlugs.reduce(
-		( acc, planSlug ) => {
-			// pricedAPIPlans - should have a definition for all plans, being the main source of API data
-			const pricedAPIPlan = pricedAPIPlans[ planSlug ];
-			// pricedAPISitePlans - unclear if all plans are included
-			const sitePlan = sitePlans.data?.[ planSlug ];
-
-			return {
-				...acc,
-				[ planSlug ]: {
-					originalPrice: planPrices[ planSlug ]?.originalPrice,
-					discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-					billingPeriod: pricedAPIPlan?.bill_period,
-					currencyCode: pricedAPIPlan?.currency_code,
-					introOffer: sitePlan?.introOffer,
-					expiry: sitePlan?.expiry,
-				},
-			};
-		},
+		( acc, planSlug ) => ( {
+			...acc,
+			[ planSlug ]: {
+				originalPrice: planPrices[ planSlug ]?.originalPrice,
+				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
+				billingPeriod: pricedAPIPlans.data?.[ planSlug ]?.billPeriod,
+				currencyCode: pricedAPIPlans.data?.[ planSlug ]?.currencyCode,
+				expiry: pricedAPISitePlans.data?.[ planSlug ]?.expiry,
+				introOffer: introOffers?.[ planSlug ],
+			},
+		} ),
 		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
 	);
 };

@@ -98,7 +98,11 @@ function shouldSetToDefaultSelection(
 	categories: Category[],
 	currentSelection: string | null
 ): boolean {
-	return ! categories.find( ( { slug } ) => slug === currentSelection );
+	// For an empty list, `null` selection is the only correct one.
+	if ( categories.length === 0 && currentSelection === null ) {
+		return false;
+	}
+	return ! categories.some( ( { slug } ) => slug === currentSelection );
 }
 
 /**

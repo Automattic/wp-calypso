@@ -28,13 +28,13 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-polyfills": "workspace:^",
+		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
-		"@tanstack/react-query": "^4.29.1",
+		"@tanstack/react-query": "^4.36.1",
 		"calypso": "workspace:^",
-		"classnames": "^2.3.1",
+		"classnames": "^2.3.2",
 		"debug": "^4.3.4",
 		"moment": "^2.26.0",
-		"page": "^1.11.5",
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -54,16 +54,16 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^4.21.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^4.29.0",
 		"autoprefixer": "^10.2.5",
 		"gettext-parser": "^6.0.0",
-		"html-webpack-plugin": "^5.0.0-beta.4",
+		"html-webpack-plugin": "^5.5.3",
 		"lodash": "^4.17.21",
 		"mkdirp": "^1.0.4",
 		"node-fetch": "^2.6.6",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
-		"webpack": "^5.68.0",
-		"webpack-bundle-analyzer": "^4.5.0"
+		"webpack": "^5.89.0",
+		"webpack-bundle-analyzer": "^4.10.1"
 	}
 }

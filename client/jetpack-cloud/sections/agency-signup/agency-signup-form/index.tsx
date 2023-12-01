@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
@@ -75,9 +75,14 @@ export default function AgencySignupForm() {
 		[ notificationId, partner?.id, createPartner.mutate, dispatch ]
 	);
 
-	// Redirect the user if they are already a partner or the form was submitted successfully.
+	// Redirect the user to the dashboard if they are already a partner,
+	// or the overview page if the form was submitted successfully.
 	useEffect( () => {
-		if ( partner ) {
+		if ( createPartner.isSuccess ) {
+			// Redirect to dashboard until Overview page is built.
+			// page.redirect( overviewPath() );
+			page.redirect( dashboardPath() );
+		} else if ( partner ) {
 			page.redirect( dashboardPath() );
 		}
 	} );

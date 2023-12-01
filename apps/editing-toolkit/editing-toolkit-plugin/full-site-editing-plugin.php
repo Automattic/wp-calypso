@@ -370,14 +370,6 @@ function load_error_reporting() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
 
 /**
- * Universal themes.
- */
-function load_universal_themes() {
-	require_once __DIR__ . '/wpcom-universal-themes/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_universal_themes', 11 ); // load just after the Gutenberg plugin.
-
-/**
  * Tags Education
  */
 function load_tags_education() {

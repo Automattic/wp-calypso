@@ -53,7 +53,7 @@ export const useWPORGPlugins = (
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
-	}: UseQueryOptions< any > = {}
+	}: Omit< UseQueryOptions< any >, 'queryKey' > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 

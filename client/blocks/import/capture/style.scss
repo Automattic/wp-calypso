@@ -1,8 +1,14 @@
+.import__capture-container {
+	max-width: 368px;
+	margin: 0 auto;
+}
+
 .import-light__capture {
 	.form-label {
-		font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 0.875rem;
 		font-weight: 500;
 		color: var(--studio-gray-60);
+		margin-bottom: 0.5rem;
 
 		span {
 			font-weight: normal;
@@ -11,7 +17,7 @@
 	}
 
 	.form-fieldset {
-		margin-bottom: 2em;
+		margin-bottom: 1em;
 	}
 
 	input[type="text"].form-text-input {
@@ -20,11 +26,15 @@
 		line-height: 2rem;
 		color: var(--studio-gray-90);
 		border-radius: 4px;
-		border-color: var(--studio-gray-50);
+		border-color: var(--studio-gray-10);
 	}
 
 	input[type="text"].form-text-input::placeholder {
 		color: var(--studio-gray-30);
+	}
+
+	button[type="submit"] {
+		width: 100%;
 	}
 
 	.form-setting-explanation {
@@ -46,9 +56,16 @@
 	}
 
 	.action-buttons__importer-list {
-		font-weight: 500;
-		text-decoration: underline;
-		color: var(--studio-gray-100);
-		margin-top: 1em;
+		font-size: 0.875rem;
+		text-align: center;
+		color: var(--studio-gray-90);
+		margin-top: 1rem;
+
+		button {
+			text-decoration: underline;
+			color: inherit;
+			margin: 0;
+			padding: 0;
+		}
 	}
 }

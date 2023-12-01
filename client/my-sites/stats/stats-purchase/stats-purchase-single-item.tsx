@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -15,12 +15,14 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
+import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
+import { PriceTierListItemProps } from './types';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -32,6 +34,7 @@ interface StatsCommercialPurchaseProps {
 	redirectUri: string;
 	from: string;
 	showClassificationDispute?: boolean;
+	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -42,6 +45,7 @@ interface StatsSingleItemPagePurchaseProps {
 	from: string;
 	siteId: number | null;
 	isCommercial: boolean | null;
+	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPersonalPurchasePageProps {
@@ -82,6 +86,7 @@ const StatsCommercialPurchase = ( {
 	adminUrl,
 	redirectUri,
 	showClassificationDispute = true,
+	priceTiers,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -119,6 +124,10 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
+	// TODO: Replace current pricing info with slider.
+	// Currently displaying below the flow to maintain existing behaviour.
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
@@ -134,6 +143,9 @@ Thanks\n\n`;
 			>
 				{ translate( 'Get Stats' ) }
 			</ButtonComponent>
+			{ isTierUpgradeSliderEnabled && (
+				<TierUpgradeSlider priceTiers={ priceTiers } currencyCode={ currencyCode } />
+			) }
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
@@ -302,6 +314,7 @@ const StatsSingleItemPagePurchase = ( {
 	from,
 	siteId,
 	isCommercial,
+	priceTiers,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -316,6 +329,7 @@ const StatsSingleItemPagePurchase = ( {
 				redirectUri={ redirectUri }
 				from={ from }
 				showClassificationDispute={ !! isCommercial }
+				priceTiers={ priceTiers }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);

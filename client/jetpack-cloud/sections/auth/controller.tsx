@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import store from 'store';
 import Connect from './connect';
-import type { Callback, Context } from 'page';
+import type { Callback, Context } from '@automattic/calypso-router';
 
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 const debug = debugFactory( 'calypso:jetpack-cloud-connect' );

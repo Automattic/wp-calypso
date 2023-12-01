@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import qs from 'qs';
 import './style.scss';
 

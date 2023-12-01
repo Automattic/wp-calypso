@@ -10,17 +10,14 @@ import type { AddOnMeta } from '@automattic/data-stores';
  */
 const useAddOnPurchaseStatus = ( { productSlug, featureSlugs }: AddOnMeta ) => {
 	const translate = useTranslate();
-
-	const { purchased, isSiteFeature } = useSelector( ( state ) => {
-		const selectedSite = getSelectedSite( state );
-		const sitePurchases = getSitePurchases( state, selectedSite?.ID );
-		return {
-			purchased: sitePurchases.find( ( product ) => product.productSlug === productSlug ),
-			isSiteFeature:
-				selectedSite &&
-				featureSlugs?.find( ( slug ) => siteHasFeature( state, selectedSite?.ID, slug ) ),
-		};
-	} );
+	const selectedSite = useSelector( getSelectedSite );
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const purchased = sitePurchases.find( ( product ) => product.productSlug === productSlug );
+	const isSiteFeature = useSelector(
+		( state ) =>
+			selectedSite &&
+			featureSlugs?.find( ( slug ) => siteHasFeature( state, selectedSite?.ID, slug ) )
+	);
 
 	/*
 	 * Order matters below:

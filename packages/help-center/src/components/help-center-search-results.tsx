@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
 	getContextResults,
@@ -18,7 +19,6 @@ import {
 	external as externalIcon,
 } from '@wordpress/icons';
 import { debounce } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,14 +103,9 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 }: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
-
-	const { hasPurchases, sectionName, adminResults } = useSelector( ( state ) => {
-		return {
-			hasPurchases: hasCancelableUserPurchases( state ),
-			sectionName: getSectionName( state ),
-			adminResults: getAdminHelpResults( state, searchQuery, 3 ),
-		};
-	} );
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const sectionName = useSelector( getSectionName );
+	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );

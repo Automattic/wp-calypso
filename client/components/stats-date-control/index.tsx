@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import qs from 'qs';
 import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

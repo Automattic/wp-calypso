@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';

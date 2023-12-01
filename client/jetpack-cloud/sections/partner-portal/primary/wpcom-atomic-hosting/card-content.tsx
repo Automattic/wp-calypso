@@ -1,8 +1,8 @@
 import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
@@ -113,12 +113,12 @@ export default function CardContent( {
 			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
 			interval: 'month',
 			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			jetpackFeatures: jetpackFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			storage: '50GB',
 			logo: getLogo( planSlug ),

@@ -8,6 +8,7 @@ import {
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
@@ -19,7 +20,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import page from 'page';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
@@ -44,6 +44,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -624,8 +625,30 @@ class ThemeSheet extends Component {
 						) }
 					</div>
 				</div>
-				{ this.renderStyleVariations() }
+				{ ! retired && this.renderStyleVariations() }
 			</div>
+		);
+	};
+
+	renderReviews = () => {
+		if ( ! config.isEnabled( 'marketplace-add-review' ) ) {
+			return null;
+		}
+		const { name, themeId } = this.props;
+
+		return (
+			<>
+				<ReviewsModal
+					isVisible={ this.state.showReviewModal }
+					onClose={ this.handleCloseReviewModal }
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
+				/>
+				<div className="theme__sheet-reviews">
+					<Button onClick={ this.handleAddReview }>Add Review</Button>
+				</div>
+			</>
 		);
 	};
 
@@ -1140,6 +1163,13 @@ class ThemeSheet extends Component {
 		return translate( 'Additional styles require the Business plan or higher.' );
 	};
 
+	handleAddReview = () => {
+		this.setState( { showReviewModal: true } );
+	};
+	handleCloseReviewModal = () => {
+		this.setState( { showReviewModal: false } );
+	};
+
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
 		const {
@@ -1356,6 +1386,7 @@ class ThemeSheet extends Component {
 						{ pageUpsellBanner }
 						{ this.renderStagingPaidThemeNotice() }
 						{ this.renderHeader() }
+						{ this.renderReviews() }
 					</div>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }

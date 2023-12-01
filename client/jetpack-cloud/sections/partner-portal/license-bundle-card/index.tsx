@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useProductDescription, useURLQueryParams } from '../hooks';
 import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../lib';
 import LicenseLightbox from '../license-lightbox';
@@ -15,6 +15,7 @@ import './style.scss';
 type Props = {
 	isBusy: boolean;
 	isDisabled: boolean;
+	withBackground?: boolean;
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	onSelectProduct?: ( value: APIProductFamilyProduct ) => void;

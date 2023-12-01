@@ -1,13 +1,14 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import { AllowedTypes, RowMetaData, SiteData } from '../types';
 
@@ -37,6 +38,9 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
 	);
+
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
@@ -98,6 +102,9 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 				return <Gridicon icon="time" size={ 18 } className="sites-overview__grey-icon" />;
 			}
 			case 'inactive': {
+				if ( ! partnerCanIssueLicense ) {
+					return null;
+				}
 				return ! isLicenseSelected ? (
 					<button
 						className="sites-overview__column-action-button"
@@ -120,6 +127,7 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 	}, [
 		handleDeselectLicenseAction,
 		handleSelectLicenseAction,
+		partnerCanIssueLicense,
 		isLicenseSelected,
 		isSupported,
 		status,

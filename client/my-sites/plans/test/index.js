@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '../controller', () => ( {
 	features: jest.fn(),
 	plans: jest.fn(),
@@ -24,7 +24,7 @@ jest.mock( 'calypso/my-sites/controller', () => ( {
 } ) );
 jest.mock( 'calypso/my-sites/plans/jetpack-plans', () => jest.fn() );
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	navigation,

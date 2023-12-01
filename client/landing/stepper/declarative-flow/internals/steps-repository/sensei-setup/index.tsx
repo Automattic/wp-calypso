@@ -1,10 +1,10 @@
-import { Gridicon } from '@automattic/components';
+import { FormInputValidation, Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { CSSProperties, useEffect } from 'react';
+import { CSSProperties, useEffect, useRef } from 'react';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -58,6 +58,7 @@ const ThemeStylePreviews = ( {
 const SenseiSetup: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const isDesktop = useDesktopBreakpoint();
+	const inputRef = useRef< HTMLInputElement >( null );
 
 	const initialSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -65,6 +66,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 	);
 	const [ siteTitle, setSiteTitle ] = useState< string >( initialSiteTitle );
 	const [ checked, setChecked ] = useState< string >( 'green' );
+	const [ hasSubmitted, setHasSubmitted ] = useState< boolean >( false );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setChecked?.( event.target.value );
@@ -77,7 +79,21 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		dispatch.resetOnboardStore();
 	}, [ dispatch ] );
 
+	const focusOnSiteTitleInput = () => {
+		// Focus on the input when the step is mounted.
+		if ( inputRef.current ) {
+			inputRef.current.focus();
+		}
+	};
+
 	const handleSubmit = useCallback( () => {
+		setHasSubmitted( true );
+
+		if ( ! siteTitle ) {
+			focusOnSiteTitleInput();
+			return;
+		}
+
 		dispatch.setSiteTitle( siteTitle );
 		const variation = styles.find( ( style ) => style.name === checked ) || styles[ 0 ];
 		dispatch.setSelectedStyleVariation( {
@@ -89,6 +105,10 @@ const SenseiSetup: Step = ( { navigation } ) => {
 
 	const preview = <ThemeStylePreviews styles={ styles } active={ checked } />;
 
+	useEffect( () => {
+		focusOnSiteTitleInput();
+	}, [] );
+
 	return (
 		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
 			<div className="sensei-start-row">
@@ -99,11 +119,19 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						id="sensei_site_title"
 						type="text"
 						onChange={ ( ev ) => {
+							setHasSubmitted( false );
 							setSiteTitle( ev.target.value );
 						} }
 						placeholder={ __( 'Photography Class' ) }
 						value={ siteTitle }
+						ref={ inputRef }
 					/>
+					{ hasSubmitted && ! siteTitle && (
+						<FormInputValidation
+							isError={ true }
+							text={ __( `Oops. Looks like your course site doesn't have a name yet.` ) }
+						/>
+					) }
 					<Label>{ __( 'Pick a style' ) }</Label>
 					<Hint>
 						{ __( 'Choose a different theme style now, or customize colors and fonts later.' ) }
@@ -126,11 +154,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 					{ ! isDesktop && preview }
 					<div className="sensei-onboarding-action">
 						<div className="sensei-onboarding-action__content">
-							<button
-								className="sensei-button"
-								disabled={ siteTitle.length < 2 }
-								onClick={ handleSubmit }
-							>
+							<button className="sensei-button" onClick={ handleSubmit }>
 								{ __( 'Continue' ) }
 							</button>
 							<p className="sensei-style-notice">

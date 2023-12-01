@@ -17,7 +17,7 @@ interface StarterDesignsQueryParams {
 	_locale: string;
 }
 
-interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
+interface Options extends QueryOptions< StarterDesignsResponse > {
 	enabled?: boolean;
 	select?: ( response: StarterDesigns ) => StarterDesigns;
 }

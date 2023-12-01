@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { navigate } from 'calypso/lib/navigate';
 import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 import {
@@ -145,7 +145,7 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 	navigate: jest.fn(),
 } ) );
 
-jest.mock( 'page', () => ( {
+jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 

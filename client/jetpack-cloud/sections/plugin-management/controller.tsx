@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
-import page, { type Callback, type Context } from 'page';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import page, { type Callback, type Context } from '@automattic/calypso-router';
+import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import Header from '../agency-dashboard/header';
-import DashboardSidebar from '../agency-dashboard/sidebar';
 import PluginsOverview from './plugins-overview';
 
 const redirectIfHasNoAccess = ( context: Context ) => {
@@ -18,12 +17,8 @@ const redirectIfHasNoAccess = ( context: Context ) => {
 	}
 };
 
-const setSidebar = ( context: Context ) => {
-	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
-	} else {
-		context.secondary = <DashboardSidebar path={ context.path } />;
-	}
+const setSidebar = ( context: Context ): void => {
+	context.secondary = <JetpackManageSidebar path={ context.path } />;
 };
 
 export const pluginManagementContext: Callback = ( context, next ) => {

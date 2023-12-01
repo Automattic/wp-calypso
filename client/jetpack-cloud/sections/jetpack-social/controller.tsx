@@ -1,5 +1,5 @@
+import page, { type Callback } from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import page, { type Callback } from 'page';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

@@ -228,7 +228,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	if ( discountedPriceFullTermText ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 			return translate(
-				'per month, %(fullTermDiscountedPriceText)s for the first year, Excl. Taxes',
+				'per month, %(fullTermDiscountedPriceText)s for the first year, excl. taxes',
 				{
 					args: { fullTermDiscountedPriceText: discountedPriceFullTermText },
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -238,7 +238,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 
 		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
 			return translate(
-				'per month, %(fullTermDiscountedPriceText)s for the first two years, Excl. Taxes',
+				'per month, %(fullTermDiscountedPriceText)s for the first two years, excl. taxes',
 				{
 					args: { fullTermDiscountedPriceText: discountedPriceFullTermText },
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -248,7 +248,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 
 		if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
 			return translate(
-				'per month, %(fullTermDiscountedPriceText)s for the first three years, Excl. Taxes',
+				'per month, %(fullTermDiscountedPriceText)s for the first three years, excl. taxes',
 				{
 					args: { fullTermDiscountedPriceText: discountedPriceFullTermText },
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -257,21 +257,21 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		}
 	} else if ( originalPriceFullTermText ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, %(rawPrice)s billed annually, Excl. Taxes', {
+			return translate( 'per month, %(rawPrice)s billed annually, excl. taxes', {
 				args: { rawPrice: originalPriceFullTermText },
 				comment: 'Excl. Taxes is short for excluding taxes',
 			} );
 		}
 
 		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, %(rawPrice)s billed every two years, Excl. Taxes', {
+			return translate( 'per month, %(rawPrice)s billed every two years, excl. taxes', {
 				args: { rawPrice: originalPriceFullTermText },
 				comment: 'Excl. Taxes is short for excluding taxes',
 			} );
 		}
 
 		if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, %(rawPrice)s billed every three years, Excl. Taxes', {
+			return translate( 'per month, %(rawPrice)s billed every three years, excl. taxes', {
 				args: { rawPrice: originalPriceFullTermText },
 				comment: 'Excl. Taxes is short for excluding taxes',
 			} );
