@@ -88,15 +88,23 @@ export const useCommandPallette = ( {
 		setSelectedCommandName,
 	} );
 
-	// Simple sorting logic to prioritize commands with matching context
 	const sortedCommands = commands.sort( ( a, b ) => {
-		const hasContext = filter?.( a ) ?? false;
-		const hasNoContext = filter?.( b ) ?? false;
+		// Check if the current command is "viewMySites"
+		const isViewMySites = a.name === 'viewMySites';
+
+		// Push "viewMySites" command on the top in all contexts beside /sites
+		if ( isViewMySites ) {
+			return -1;
+		}
+
+		// Check if contextual filter is set for commands a and b
+		const hasContextA = filter?.( a ) ?? false;
+		const hasContextB = filter?.( b ) ?? false;
 
 		// Sort based on context
-		if ( hasContext && ! hasNoContext ) {
+		if ( hasContextA && ! hasContextB ) {
 			return -1; // commands with context set
-		} else if ( ! hasContext && hasNoContext ) {
+		} else if ( ! hasContextA && hasContextB ) {
 			return 1; // commands without context set
 		}
 
