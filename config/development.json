@@ -192,7 +192,6 @@
 		"stats/paid-wpcom-stats": true,
 		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": false,
-		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,
