@@ -1,0 +1,43 @@
+.foldable-nav.foldable-card.card {
+	margin: 5px;
+	background-color: transparent;
+	box-shadow: none;
+
+	&.is-expanded {
+		margin: 5px;
+	}
+
+	.foldable-card__header {
+
+		.foldable-card__expand .gridicon {
+			color: var(--studio-gray-50);
+		}
+
+		.foldable-card__main {
+			color: var(--studio-gray-100);
+			font-weight: 600;
+			font-size: 16;
+		}
+	}
+
+	.foldable-card__content {
+		border-top: none;
+		padding-top: 0;
+
+		p.no-content,
+		li {
+			color: var(--studio-gray-80);
+			font-size: 20;
+			margin-bottom: 0;
+		}
+
+		a {
+			padding-left: 0;
+		}
+	}
+
+	ul {
+		list-style: none;
+		margin: 0;
+	}
+}
