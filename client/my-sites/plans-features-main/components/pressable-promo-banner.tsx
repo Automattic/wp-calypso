@@ -30,7 +30,8 @@ const LogoContainer = styled.div`
 	${ plansBreakSmall( css`
 		display: inherit;
 		flex-basis: 120px;
-		background-color: #ffffff;
+		flex-shrink: 0;
+		background-color: var( --studio-white );
 	` ) }
 `;
 
@@ -80,9 +81,15 @@ const CtaButton = styled( Button )`
 	height: 40px;
 	padding: 10px, 24px, 10px, 24px;
 	border-radius: 4px;
-	background-color: #000000;
-	color: #ffffff;
+	background-color: var( --studio-black );
+	color: var( --studio-white );
 	box-shadow: 0px 1px 2px 0px #0000000d;
+
+	&:hover {
+		opacity: 0.85;
+		transition: 0.7s;
+		color: var( --studio-white );
+	}
 
 	${ plansBreakSmall( css`
 		width: 199px;
