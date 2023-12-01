@@ -20,7 +20,7 @@ type Option = {
 	label: string;
 };
 
-const getOptionByFuction = ( options: Option[], value: string | null ): Option => {
+const getOptionByValue = ( options: Option[], value: string | null ): Option => {
 	return options.find( ( option ) => option.value === value ) ?? options[ 0 ];
 };
 
@@ -63,7 +63,7 @@ export default function ProductFilterSelect( {
 		return options;
 	}, [ isSingleLicense, translate ] );
 
-	const currentSelectedOption = getOptionByFuction( productFilterOptions, selectedProductFilter );
+	const currentSelectedOption = getOptionByValue( productFilterOptions, selectedProductFilter );
 
 	const selectedText = translate( '{{b}}Products{{/b}}: %(productFilter)s', {
 		args: {
