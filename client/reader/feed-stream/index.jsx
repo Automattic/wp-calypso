@@ -27,7 +27,7 @@ const emptyContent = () => <EmptyContent />;
 const FeedStream = ( props ) => {
 	const { className = 'is-site-stream', feedId, showBack = true } = props;
 	const translate = useTranslate();
-	const feed = useSelector( ( state ) => getFeed( state, feedId ) );
+	let feed = useSelector( ( state ) => getFeed( state, feedId ) );
 	const siteId = getReaderSiteId( feed );
 	const followForFeed = useSelector( ( state ) =>
 		getReaderFollowForFeed( state, parseInt( feedId ) )
@@ -40,7 +40,7 @@ const FeedStream = ( props ) => {
 
 	if ( feed ) {
 		// Add site icon to feed object so have icon for external feeds
-		feed.site_icon = followForFeed?.site_icon;
+		feed = { ...feed, site_icon: followForFeed?.site_icon };
 	}
 
 	const siteTags = useSiteTags( siteId );
