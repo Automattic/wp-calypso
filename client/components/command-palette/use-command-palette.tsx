@@ -48,7 +48,6 @@ interface Command {
 interface useCommandPalletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
-	filter?: ( command: Command ) => boolean | undefined;
 }
 
 const siteToAction =
@@ -75,7 +74,6 @@ const siteToAction =
 export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
-	filter,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -96,6 +94,9 @@ export const useCommandPallette = ( {
 
 	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
 
+	const commandHasContext = ( paths: string[] = [] ): boolean =>
+		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
+
 	const sortedCommands = commands
 		.filter( ( command ) => {
 			// Exclude "viewMySites" command when the current path is /sites
@@ -115,8 +116,8 @@ export const useCommandPallette = ( {
 			}
 
 			// Check contextual filter for commands with context and without context
-			const hasContextCommand = filter?.( a ) ?? false;
-			const hasNoContext = filter?.( b ) ?? false;
+			const hasContextCommand = commandHasContext( a.context );
+			const hasNoContext = commandHasContext( b.context );
 
 			// Sort based on context
 			if ( hasContextCommand && ! hasNoContext ) {

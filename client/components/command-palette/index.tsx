@@ -11,8 +11,6 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { useSelector } from 'calypso/state';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { CommandCallBackParams, useCommandPallette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -68,7 +66,6 @@ const SubLabel = styled( Label )( {
 } );
 
 export function CommandMenuGroup( {
-	isContextual,
 	search,
 	close,
 	setSearch,
@@ -76,13 +73,9 @@ export function CommandMenuGroup( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
-	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
 	const { commands } = useCommandPallette( {
 		selectedCommandName,
 		setSelectedCommandName,
-		filter: isContextual
-			? ( command ) => command.context?.some( ( path ) => currentPath.includes( path ) ) ?? false
-			: undefined,
 	} );
 
 	if ( ! commands.length ) {
