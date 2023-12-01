@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .is-jetpack-new-navigation {
 	.jetpack-cloud-layout__header h1 {
 		font-weight: 600;
@@ -71,6 +74,7 @@
 	margin: auto;
 	height: 100%;
 
+
 	> * + * {
 		margin-inline-start: 24px;
 	}
@@ -91,14 +95,52 @@
 
 .jetpack-cloud-layout__sticky-header {
 	position: fixed;
-	width: calc(100% - var(--sidebar-width-max));
-	left: var(--sidebar-width-max);
+	width: calc(100%);
+	left: 0;
 	top: var(--masterbar-height);
 	background-color: rgba(246, 247, 247, 0.95);
 	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
 	z-index: 1001;
 	height: 74px;
 
+	.jetpack-cloud-layout__header {
+		flex-wrap: nowrap;
+		max-width: 1500px;
+		padding-inline: 48px;
+
+		> * {
+			width: auto;
+		}
+	}
+
+	.jetpack-cloud-layout__header-main,
+	.jetpack-cloud-layout__header-actions {
+		margin: 0;
+	}
+
+	.jetpack-cloud-layout__header-subtitle {
+		display: none;
+	}
+
+	.jetpack-cloud-layout__header-title {
+		font-size: rem(24px);
+		margin-block-end: 0;
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: calc(100% - var(--sidebar-width-min));
+		left: var(--sidebar-width-min);
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		width: calc(100% - var(--sidebar-width-max));
+		left: var(--sidebar-width-max);
+	}
 }
 
 .jetpack-cloud-layout__header-title {

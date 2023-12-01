@@ -40,7 +40,7 @@ const CheckoutTermsItem = ( {
 	onClick?: MouseEventHandler< HTMLDivElement >;
 	isPrewrappedChildren?: boolean;
 } > ) => {
-	const showToSFoldableCard = useToSFoldableCard();
+	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
 
 	return (
 		<Wrapper

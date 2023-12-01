@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Children, ReactNode } from 'react';
+import { Children, ReactNode, useLayoutEffect, useState } from 'react';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 
 type Props = {
@@ -16,7 +16,7 @@ export function LayoutHeaderSubtitle( { children }: Props ) {
 }
 
 export function LayoutHeaderActions( { children }: Props ) {
-	return <h2 className="jetpack-cloud-layout__header-actions">{ children }</h2>;
+	return <div className="jetpack-cloud-layout__header-actions">{ children }</div>;
 }
 
 export default function LayoutHeader( { showStickyContent, children }: Props ) {
@@ -39,8 +39,36 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
 
+	const [ minHeaderHeight, setMinHeaderHeight ] = useState( 0 );
+
+	// To avoid shifting the layout when displaying sticky content,  we will need to
+	// keep track of our Header height and set it as the minimum viewport height.
+	useLayoutEffect(
+		() => {
+			const headerRef = outerDivProps?.ref?.current;
+
+			const updateMinHeaderHeight = () => {
+				setMinHeaderHeight( headerRef?.clientHeight ?? 0 );
+			};
+
+			window.addEventListener( 'resize', updateMinHeaderHeight );
+
+			updateMinHeaderHeight();
+
+			return () => {
+				window.removeEventListener( 'resize', updateMinHeaderHeight );
+			};
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
 	return (
-		<div className="jetpack-cloud-layout__viewport" { ...outerDivProps }>
+		<div
+			className="jetpack-cloud-layout__viewport"
+			{ ...outerDivProps }
+			style={ showStickyContent ? { minHeight: `${ minHeaderHeight }px` } : {} }
+		>
 			<div
 				className={ classNames( {
 					'jetpack-cloud-layout__sticky-header': showStickyContent && hasCrossed,

@@ -1,5 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -22,10 +24,16 @@ const CompactPost = ( {
 			: null;
 
 	const isSmallScreen = useBreakpoint( '<660px' );
+	const [ hasExcerpt, setHasExcerpt ] = useState( true );
+	const imagePostWithoutExcerpt = post.canonical_media && ! hasExcerpt;
 
 	return (
 		<div className="reader-post-card__post">
-			<div className="reader-post-card__post-content">
+			<div
+				className={ classNames( 'reader-post-card__post-content', {
+					'reader-post-card__no-excerpt': ! hasExcerpt,
+				} ) }
+			>
 				<div className="reader-post-card__post-details">
 					<div className="reader-post-card__post-heading">
 						<div className="reader-post-card__post-title-meta">
@@ -38,7 +46,7 @@ const CompactPost = ( {
 							</AutoDirection>
 							{ postByline }
 						</div>
-						{ ( ! post.canonical_media || isSmallScreen ) && (
+						{ ( imagePostWithoutExcerpt || ! post.canonical_media || isSmallScreen ) && (
 							<ReaderPostEllipsisMenu
 								site={ site }
 								teams={ teams }
@@ -48,11 +56,11 @@ const CompactPost = ( {
 							/>
 						) }
 					</div>
-					<ReaderExcerpt post={ post } />
+					<ReaderExcerpt post={ post } setHasExcerpt={ setHasExcerpt } />
 				</div>
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">
-						{ ! isSmallScreen && (
+						{ ! isSmallScreen && hasExcerpt && (
 							<ReaderPostEllipsisMenu
 								site={ site }
 								teams={ teams }
@@ -68,6 +76,7 @@ const CompactPost = ( {
 							onVideoThumbnailClick={ onVideoThumbnailClick }
 							isVideoExpanded={ isExpanded }
 							isCompactPost={ true }
+							hasExcerpt={ hasExcerpt }
 						/>
 					</div>
 				) }

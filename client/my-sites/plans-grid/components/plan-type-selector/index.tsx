@@ -46,8 +46,8 @@ interface PathArgs {
 
 type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
 
-const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSignup: boolean } >`
-	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
+const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
+	display: flex;
 	align-content: space-between;
 	justify-content: center;
 	margin: 0 20px 24px;
@@ -290,10 +290,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const intervalTabs = showBiennialToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
-		<IntervalTypeToggleWrapper
-			showingMonthly={ intervalType === 'monthly' }
-			isInSignup={ isInSignup }
-		>
+		<IntervalTypeToggleWrapper showingMonthly={ intervalType === 'monthly' }>
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				{ intervalTabs.map( ( interval ) => (
 					<SegmentedControl.Item

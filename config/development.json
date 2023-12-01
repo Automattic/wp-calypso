@@ -119,9 +119,11 @@
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
+		"marketplace-add-review": true,
 		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
+		"marketplace-reviews-show": true,
 		"marketplace-test": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
@@ -173,6 +175,7 @@
 		"server-side-rendering": true,
 		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
+		"settings/self-serve-site-reset": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"signup/design-picker-preview-colors": true,
@@ -185,9 +188,10 @@
 		"site-profiler": true,
 		"ssr/prefetch-timebox": false,
 		"stats/date-control": true,
-		"stats/tier-upgrade-slider": false,
 		"stats/new-video-summary": true,
 		"stats/paid-wpcom-stats": true,
+		"stats/plan-usage": true,
+		"stats/tier-upgrade-slider": false,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
@@ -220,6 +224,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-pallette": true
+		"yolo/command-palette": true
 	}
 }

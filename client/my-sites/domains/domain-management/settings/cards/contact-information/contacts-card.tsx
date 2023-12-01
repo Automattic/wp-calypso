@@ -3,6 +3,8 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
 import {
@@ -156,18 +158,36 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent, currentRoute } = props;
+	const renderTrusteeNotice = () => {
+		return (
+			<Notice
+				text={ translate(
+					'Your domain is using a trustee service. The information displayed in public Whois database may differ from that displayed below.'
+				) }
+				icon="info"
+				showDismiss={ false }
+				status="is-warning"
+			>
+				<NoticeAction external={ true } href={ props.registeredViaTrusteeUrl }>
+					{ translate( 'More info' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	};
+
+	const { selectedDomainName, canManageConsent, currentRoute, readOnly } = props;
 
 	return (
 		<div>
 			<Card className="contact-information__card">
 				<div className="contact-information__main">
+					{ props.registeredViaTrustee && renderTrusteeNotice() }
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
 						<Button
-							disabled={ disableEdit }
+							disabled={ disableEdit || readOnly }
 							href={
-								disableEdit
+								disableEdit || readOnly
 									? ''
 									: domainManagementEditContactInfo(
 											props.selectedSite.slug,
@@ -191,7 +211,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 							</Button>
 						) }
 					</div>
-					{ disableEdit && (
+					{ disableEdit && ! readOnly && (
 						<p className="contact-information__transfer-warn">
 							{ translate(
 								'Contact modifications are disabled while domain transfers are pending.'

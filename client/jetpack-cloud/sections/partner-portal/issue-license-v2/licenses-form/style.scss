@@ -50,6 +50,12 @@ p.licenses-form__section-description {
 	}
 }
 
+.licenses-form__section.is-two-columns .licenses-form__section-content {
+	@include break-wide {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
 p.licenses-form__description {
 	flex: 1 1 auto;
 	align-self: flex-end;
@@ -66,4 +72,60 @@ p.licenses-form__description {
 	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
 	border-width: 1.5px !important;
 	border-color: transparent;
+}
+
+.licenses-form__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 16px 0 32px;
+}
+
+.licenses-form__product-filter-select {
+	flex-basis: 100%;
+
+	@include break-xlarge {
+		flex-basis: auto;
+	}
+
+	.select-dropdown__header-text {
+		font-size: rem(13px);
+		font-weight: 400;
+		color: var(--studio-grey-5);
+		padding-inline-end: 8px;
+	}
+
+	.select-dropdown__header-text b {
+		color: var(--studio-black);
+	}
+
+	.select-dropdown__container {
+		width: 100%;
+
+		@include break-xlarge {
+			width: auto;
+		}
+	}
+}
+
+.licenses-form__product-filter-search {
+	flex-basis: 100%;
+
+	@include break-xlarge {
+		flex-basis: 360px;
+	}
+
+	.search {
+		&.is-open {
+			height: 33px;
+		}
+		margin-bottom: 0;
+		border: 1px solid var(--color-neutral-10);
+	}
+
+	.search__input.form-text-input[type="search"] {
+		font-size: rem(13px);
+		font-weight: 400;
+		color: var(--studio-grey-5);
+	}
 }

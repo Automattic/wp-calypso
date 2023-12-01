@@ -14,6 +14,8 @@ export interface ApiPricingPlan {
 	bill_period: number;
 	product_slug: string;
 	currency_code: 'EUR' | 'USD' | 'GBP';
+	product_name_short: string;
+	product_name: string;
 }
 
 declare global {
