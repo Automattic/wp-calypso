@@ -1,11 +1,9 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
-import { useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 
 const FillDefaultIconWhite = styled.div( {
@@ -74,6 +72,7 @@ const siteToAction =
 export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
+	filter,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -85,13 +84,14 @@ export const useCommandPallette = ( {
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommandsArrayWpcom( { setSelectedCommandName } );
+	const commands = useCommandsArrayWpcom( {
+		setSelectedCommandName,
+	} );
 
 	// Simple sorting logic to prioritize commands with matching context
-	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
 	const sortedCommands = commands.sort( ( a, b ) => {
-		const hasContextA = Boolean( a.context?.includes( currentPath ) );
-		const hasContextB = Boolean( b.context?.includes( currentPath ) );
+		const hasContextA = filter?.( a ) ?? false;
+		const hasContextB = filter?.( b ) ?? false;
 
 		// Sort based on context
 		if ( hasContextA && ! hasContextB ) {
