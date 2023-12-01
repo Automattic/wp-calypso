@@ -23,6 +23,7 @@ import {
 import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {
+	selectedBundleSize?: number;
 	selectedSite?: SiteDetails | null;
 	selectedProductFilter?: string | null;
 };
@@ -65,6 +66,7 @@ const getProductsAndPlansByFilter = (
 };
 
 export default function useProductAndPlans( {
+	selectedBundleSize = 1,
 	selectedSite,
 	selectedProductFilter = PRODUCT_FILTER_ALL,
 }: Props ) {
@@ -97,8 +99,20 @@ export default function useProductAndPlans( {
 	);
 
 	return useMemo( () => {
+		// List only products that is compatible with current bundle size.
+		const supportedProducts =
+			selectedBundleSize > 1
+				? data?.filter(
+						( { supported_bundles } ) =>
+							supported_bundles?.some?.( ( { quantity } ) => selectedBundleSize === quantity )
+				  )
+				: data;
+
 		// We pre-filter the list by current selected filter
-		let filteredProductsAndBundles = getProductsAndPlansByFilter( selectedProductFilter, data );
+		let filteredProductsAndBundles = getProductsAndPlansByFilter(
+			selectedProductFilter,
+			supportedProducts
+		);
 
 		// Filter products & plan that are already assigned to a site
 		if ( selectedSite && addedPlanAndProducts && filteredProductsAndBundles ) {
@@ -128,5 +142,12 @@ export default function useProductAndPlans( {
 			),
 			suggestedProductSlugs,
 		};
-	}, [ addedPlanAndProducts, data, isLoadingProducts, selectedProductFilter, selectedSite ] );
+	}, [
+		addedPlanAndProducts,
+		data,
+		isLoadingProducts,
+		selectedBundleSize,
+		selectedProductFilter,
+		selectedSite,
+	] );
 }

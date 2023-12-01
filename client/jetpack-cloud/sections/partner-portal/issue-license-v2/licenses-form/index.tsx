@@ -39,7 +39,7 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		suggestedProductSlugs,
-	} = useProductAndPlans( { selectedSite, selectedProductFilter } );
+	} = useProductAndPlans( { selectedSite, selectedProductFilter, selectedBundleSize: quantity } );
 
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
 		getDisabledProductSlugs( state, filteredProductsAndBundles ?? [] )
@@ -157,7 +157,7 @@ export default function LicensesForm( {
 				</LicensesFormSection>
 			) }
 
-			{ isSingleLicenseView && wooExtensions.length > 0 && (
+			{ wooExtensions.length > 0 && (
 				<LicensesFormSection
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
@@ -174,12 +174,13 @@ export default function LicensesForm( {
 							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 							tabIndex={ 100 + i }
 							suggestedProduct={ suggestedProduct }
+							hideDiscount={ isSingleLicenseView }
 						/>
 					) ) }
 				</LicensesFormSection>
 			) }
 
-			{ isSingleLicenseView && backupAddons.length > 0 && (
+			{ backupAddons.length > 0 && (
 				<LicensesFormSection
 					title={ translate( 'VaultPress Backup Add-ons' ) }
 					description={ translate(
@@ -196,6 +197,7 @@ export default function LicensesForm( {
 							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 							tabIndex={ 100 + i }
 							suggestedProduct={ suggestedProduct }
+							hideDiscount={ isSingleLicenseView }
 						/>
 					) ) }
 				</LicensesFormSection>
