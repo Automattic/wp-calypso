@@ -9,7 +9,6 @@ const Banner = styled.div`
 	flex-direction: column;
 	justify-content: start;
 	min-height: 128px;
-	max-height: 170px;
 	padding: 0px, 24px, 0px, 0px;
 	border-radius: 4px;
 	border: 1px solid #dcdcde;
@@ -38,7 +37,6 @@ const TextContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	height: 100%;
 
 	${ plansBreakSmall( css`
 		flex-basis: 1200px;
