@@ -216,16 +216,14 @@ function renderSpaceAddOnquantitySummary(
 	translate: LocalizeProps[ 'translate' ]
 ) {
 	if ( isRenewal ) {
-		return translate( 'Renewal for %(quantity)d GB', 'Renewal for %(quantity)d GBs', {
+		return translate( 'Renewal for %(quantity)d GB', {
 			args: { quantity: licensed_quantity },
-			count: licensed_quantity,
 			comment: '%(quantity)d is number of GBs renewed',
 		} );
 	}
 
-	return translate( 'Purchase of %(quantity)d GB', 'Purchase of %(quantity)d GBs', {
+	return translate( 'Purchase of %(quantity)d GB', {
 		args: { quantity: licensed_quantity },
-		count: licensed_quantity,
 		comment: '%(quantity)d is number of GBs purchased',
 	} );
 }
