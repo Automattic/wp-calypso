@@ -648,6 +648,7 @@ class Login extends Component {
 			isGravPoweredLoginPage,
 			isSignupExistingAccount,
 			isSocialFirst,
+			loginButtons,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -780,6 +781,7 @@ class Login extends Component {
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
+				loginButtons={ loginButtons }
 			/>
 		);
 	}

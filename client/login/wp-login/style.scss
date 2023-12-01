@@ -449,13 +449,15 @@ $image-height: 47px;
 
 		&.is-social-first {
 			max-width: 758px;
+			margin-top: 25vh;
 		}
 	}
 
 	.wp-login__links,
 	form {
 		max-width: 400px;
-		margin: 0 auto;
+		margin-left: auto;
+		margin-right: auto;
 
 		&.is-social-first {
 			max-width: 758px;
@@ -464,6 +466,7 @@ $image-height: 47px;
 
 	.wp-login__links {
 		margin-top: 30px;
+		// margin: 0 auto;
 	}
 
 	.layout__primary {

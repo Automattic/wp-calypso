@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button as ButtonCore } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
@@ -17,7 +16,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
-import MailIcon from 'calypso/components/social-icons/mail';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
@@ -593,9 +591,9 @@ export class LoginForm extends Component {
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 	}
 
-	handleMagicLoginClick = () => {
+	handleMagicLoginClick = ( origin ) => {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click', {
-			origin: 'login-form',
+			origin,
 		} );
 		this.props.resetMagicLoginRequestForm();
 	};
@@ -633,23 +631,13 @@ export class LoginForm extends Component {
 			{
 				components: {
 					magicLoginLink: (
-						<a href={ magicLoginPageLinkWithEmail } onClick={ this.handleMagicLoginClick } />
+						<a
+							href={ magicLoginPageLinkWithEmail }
+							onClick={ () => this.handleMagicLoginClick( 'login-form' ) }
+						/>
 					),
 				},
 			}
-		);
-	}
-
-	renderMagicLoginButton() {
-		const magicLoginPageLinkWithEmail = this.getMagicLoginPageLink();
-
-		return (
-			<ButtonCore className="social-buttons__button button" href={ magicLoginPageLinkWithEmail }>
-				<MailIcon width="20" height="20" />
-				<span className="social-buttons__service-name">
-					{ this.props.translate( 'Continue with Email' ) }
-				</span>
-			</ButtonCore>
 		);
 	}
 
@@ -672,6 +660,7 @@ export class LoginForm extends Component {
 			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
+			loginButtons,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -887,7 +876,7 @@ export class LoginForm extends Component {
 							shouldRenderToS={ this.props.isWoo && ! isPartnerSignup }
 							isSocialFirst={ isSocialFirst }
 						>
-							{ this.renderMagicLoginButton() }
+							{ loginButtons }
 						</SocialLoginForm>
 					</Fragment>
 				) }

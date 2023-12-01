@@ -32,6 +32,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import LoginButtons from './login-buttons';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
 
@@ -320,7 +321,8 @@ export class Login extends Component {
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
 			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
-			! isWooCoreProfilerFlow;
+			! isWooCoreProfilerFlow &&
+			! isSocialFirst;
 
 		const footer = (
 			<>
@@ -335,10 +337,26 @@ export class Login extends Component {
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
 						oauth2ClientId={ this.props.oauth2Client?.id }
-						isSocialFirst={ isSocialFirst }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
+			</>
+		);
+
+		const loginButtons = (
+			<>
+				{ isSocialFirst && (
+					<LoginButtons
+						locale={ locale }
+						twoFactorAuthType={ twoFactorAuthType }
+						isWhiteLogin={ isWhiteLogin }
+						isP2Login={ isP2Login }
+						isGravPoweredClient={ isGravPoweredClient }
+						signupUrl={ signupUrl }
+						usernameOrEmail={ this.state.usernameOrEmail }
+						oauth2ClientId={ this.props.oauth2Client?.id }
+					/>
+				) }
 			</>
 		);
 
@@ -373,6 +391,7 @@ export class Login extends Component {
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
 				isSocialFirst={ isSocialFirst }
+				loginButtons={ loginButtons }
 			/>
 		);
 	}

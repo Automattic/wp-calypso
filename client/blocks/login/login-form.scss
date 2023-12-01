@@ -2,13 +2,15 @@
 $breakpoint-mobile: 782px; //Mobile size.
 
 form.is-social-first {
-	max-width: 758px;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	max-width: 758px;
+	margin-top: 32px;
 
 	@media (max-width: $breakpoint-mobile ) {
 		flex-direction: column;
+		margin-top: 24px;
 	}
 
 	.card.login__form,
@@ -17,10 +19,5 @@ form.is-social-first {
 		max-width: var(--login-form-column-max-width);
 		padding: 0 16px;
 		margin: 0;
-	}
-
-	.auth-form__separator {
-		margin-left: 40px;
-		margin-right: 40px;
 	}
 }
