@@ -47,6 +47,7 @@ $image-height: 47px;
 
 .wp-login__links,
 .wp-login__footer {
+
 	a,
 	a:visited,
 	button {
@@ -59,6 +60,7 @@ $image-height: 47px;
 }
 
 .wp-login__links {
+
 	a,
 	button {
 		border-bottom: 1px solid var(--color-neutral-10);
@@ -148,7 +150,7 @@ $image-height: 47px;
 	white-space: nowrap;
 
 	&::after {
-		@include long-content-fade( $color: var( --color-neutral-0-rgb ) );
+		@include long-content-fade($color: var(--color-neutral-0-rgb));
 	}
 }
 
@@ -222,7 +224,7 @@ $image-height: 47px;
 	}
 
 	.login__form {
-		@include elevation( 2dp );
+		@include elevation(2dp);
 		padding-bottom: 0;
 		padding-top: 8px;
 	}
@@ -288,6 +290,7 @@ $image-height: 47px;
 
 	.login__form-footer {
 		text-align: center;
+
 		.button {
 			max-width: 310px;
 			height: 48px;
@@ -350,12 +353,14 @@ $image-height: 47px;
 		@include break-mobile {
 			min-width: 170px;
 		}
+
 		&.is-busy {
 			background-image: linear-gradient(-45deg, var(--studio-gray-10) 28%, var(--studio-gray-20) 28%, var(--studio-gray-20) 72%, var(--studio-gray-10) 72%);
 		}
 	}
 
 	.login form {
+
 		input,
 		button {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
@@ -400,6 +405,7 @@ $image-height: 47px;
 			}
 		}
 	}
+
 	.wp-login__links > .button:first-of-type,
 	.wp-login__links:not(.has-2fa-links) > a:first-of-type {
 		/* Note: Matches secondary button used in /start (signup). Should probably turn this into a button. */
@@ -410,7 +416,7 @@ $image-height: 47px;
 		text-overflow: ellipsis;
 		text-decoration: none;
 		box-sizing: border-box;
-		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: $font-body-small;
 		-webkit-appearance: none;
 		-moz-appearance: none;
 		appearance: none;
@@ -449,7 +455,45 @@ $image-height: 47px;
 
 		&.is-social-first {
 			max-width: 758px;
-			margin-top: 25vh;
+			margin-top: 24px;
+
+			@include break-mobile {
+				margin-top: 25vh;
+			}
+		}
+	}
+
+	.wp-login__main-footer {
+
+		width: var(--login-form-column-max-width);
+		margin: 0 auto;
+
+		.login__lost-password-link {
+			color: var(--studio-gray-90, #1d2327);
+			display: block;
+			font-size: $font-body-small;
+			font-weight: 500;
+			text-align: center;
+			text-decoration: underline;
+			margin-top: 40px;
+
+			@include break-mobile {
+				margin-top: 24px;
+			}
+		}
+
+		p {
+			margin-top: 24px;
+			color: var(--studio-gray-50, #646970);
+			text-align: center;
+			font-size: $font-body-extra-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 18px;
+
+			a {
+				color: var(--studio-gray-50, #646970);
+			}
 		}
 	}
 
@@ -493,7 +537,8 @@ $image-height: 47px;
 	}
 
 	.form-password-input .form-password-input__toggle-visibility {
-		top: calc(( 44px - 24px ) / 2); /* height of input - height of toggle */
+		top: calc((44px - 24px) / 2);
+		/* height of input - height of toggle */
 	}
 
 	.social-buttons__button {
@@ -523,6 +568,7 @@ $image-height: 47px;
 	.login__form-terms,
 	.login__social-tos {
 		text-align: left;
+
 		a {
 			text-decoration: underline;
 		}
@@ -544,12 +590,14 @@ $image-height: 47px;
 	background-color: #e7e9ea;
 
 	&.is-wp-job-manager {
+
 		.login a,
 		.login__form-change-username {
 			color: #2404eb;
 		}
 
 		.form-button.is-primary {
+
 			&,
 			&:disabled {
 				background-color: #2404eb;
@@ -596,7 +644,7 @@ $image-height: 47px;
 
 	.login__form-header {
 		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-		font-size: 24px;
+		font-size: $font-title-medium;
 		font-weight: 900;
 		line-height: 1.2;
 		text-align: left;
@@ -732,6 +780,7 @@ $image-height: 47px;
 		}
 	}
 }
+
 /* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */
 
 .wp-login__p2-logo {
