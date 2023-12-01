@@ -3,6 +3,7 @@ import {
 	isDIFMProduct,
 	isGoogleWorkspace,
 	isTitanMail,
+	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
@@ -209,6 +210,26 @@ function renderDIFMTransactionQuantitySummary(
 	);
 }
 
+function renderSpaceAddOnquantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)d GB', 'Renewal for %(quantity)d GBs', {
+			args: { quantity: licensed_quantity },
+			count: licensed_quantity,
+			comment: '%(quantity)d is number of GBs renewed',
+		} );
+	}
+
+	return translate( 'Purchase of %(quantity)d GB', 'Purchase of %(quantity)d GBs', {
+		args: { quantity: licensed_quantity },
+		count: licensed_quantity,
+		comment: '%(quantity)d is number of GBs purchased',
+	} );
+}
+
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
 	translate: LocalizeProps[ 'translate' ]
@@ -235,6 +256,10 @@ export function renderTransactionQuantitySummary(
 
 	if ( isDIFMProduct( product ) ) {
 		return renderDIFMTransactionQuantitySummary( licensed_quantity, translate );
+	}
+
+	if ( isTieredVolumeSpaceAddon( product ) ) {
+		return renderSpaceAddOnquantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
 	if ( isRenewal ) {
