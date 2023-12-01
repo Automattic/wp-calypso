@@ -126,7 +126,7 @@ export const useCommandsArrayWpcom = ( {
 
 		navigator.clipboard.writeText( sshPassword );
 		removeLoadingNotice();
-		displayNotice( __( 'The new password was copied to your clipboard' ) );
+		displayNotice( __( 'SSH/SFTP password reset and copied to clipboard.' ) );
 	};
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
