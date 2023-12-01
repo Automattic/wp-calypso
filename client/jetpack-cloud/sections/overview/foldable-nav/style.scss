@@ -9,6 +9,8 @@
 
 	.foldable-card__header {
 
+		padding: 0;
+
 		.foldable-card__expand .gridicon {
 			color: var(--studio-gray-50);
 		}
@@ -22,7 +24,7 @@
 
 	.foldable-card__content {
 		border-top: none;
-		padding-top: 0;
+		padding: 0;
 
 		p.no-content,
 		li {

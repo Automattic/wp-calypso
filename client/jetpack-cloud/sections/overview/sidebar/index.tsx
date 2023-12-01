@@ -1,3 +1,4 @@
+import QuickLinksNav from '../quick-links-nav';
 import './style.scss';
 
 export default function OverviewSidebar() {
@@ -8,39 +9,7 @@ export default function OverviewSidebar() {
 				<p>Intro video</p>
 				Watch a short intro video
 			</section>
-			<section className="quick-links">
-				<h3>Quick links</h3>
-				<ul>
-					<li>
-						<div className="icon-placeholder"></div>
-						Manage all sites{ ' ' }
-					</li>
-					<li>
-						<div className="icon-placeholder"></div>
-						Add sites to Jetpack Manage{ ' ' }
-					</li>
-					<li>
-						<div className="icon-placeholder"></div>
-						Manage plugins{ ' ' }
-					</li>
-					<li>
-						<div className="icon-placeholder"></div>
-						View all licenses{ ' ' }
-					</li>
-					<li>
-						<div className="icon-placeholder"></div>
-						View billing{ ' ' }
-					</li>
-					<li>
-						<div className="icon-placeholder"></div>
-						View invoices{ ' ' }
-					</li>
-					<li>
-						<div className="icon-placeholder"></div>
-						View prices{ ' ' }
-					</li>
-				</ul>
-			</section>
+			<QuickLinksNav />
 			<section className="get-help">
 				<h3>Get help</h3>
 				<ul>
