@@ -113,7 +113,6 @@ export const useCommandPallette = ( {
 	};
 
 	// Filter commands to exclude "viewMySites" when the current path is /sites
-	// Filter commands to exclude "viewMySites" when the current path is "/sites"
 	const filteredCommands = commands.filter(
 		( command ) => ! ( command.name === 'viewMySites' && currentPath === '/sites' )
 	);
