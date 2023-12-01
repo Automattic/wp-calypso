@@ -615,7 +615,7 @@ const Settings = ( {
 		return (
 			<Notice
 				text={ translate(
-					'We forwarded the domain registration request to Registro (.com.br registry). It may take up to 3 days for the request to be evaluated and accepted.'
+					'We forwarded the domain registration request to Registro.br (.com.br registry). It may take up to 3 days for the request to be evaluated and accepted.'
 				) }
 				icon="info"
 				showDismiss={ false }

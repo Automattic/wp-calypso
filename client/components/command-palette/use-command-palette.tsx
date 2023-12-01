@@ -5,6 +5,7 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -79,9 +80,12 @@ export const useCommandPallette = ( {
 		( site ) => ! site.options?.is_domain_only
 	);
 
-	//Sort sites in the nested commands to be consistent with site switcher and /sites page
+	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { sitesSorting } = useSitesSorting();
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
+
+	// Get current site ID to rank it to the top of the sites list
+	const { currentSiteId } = useCurrentSiteRankTop();
 
 	// Call the generateCommandsArray function to get the commands array
 	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
@@ -94,7 +98,16 @@ export const useCommandPallette = ( {
 	let sitesToPick = null;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
-		const filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+		let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+		if ( currentSiteId ) {
+			const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
+			if ( currentSite ) {
+				filteredSites = [
+					currentSite,
+					...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
+				];
+			}
+		}
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
 	}
 

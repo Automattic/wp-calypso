@@ -50,6 +50,12 @@ p.licenses-form__section-description {
 	}
 }
 
+.licenses-form__section.is-two-columns .licenses-form__section-content {
+	@include break-wide {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
 p.licenses-form__description {
 	flex: 1 1 auto;
 	align-self: flex-end;

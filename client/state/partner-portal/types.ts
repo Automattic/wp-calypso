@@ -95,6 +95,11 @@ export interface APILicense {
 	revoked_at: string | null;
 }
 
+export interface APIProductFamilyProductBundlePrice {
+	quantity: number;
+	amount: number;
+}
+
 export interface APIProductFamilyProduct {
 	name: string;
 	slug: string;
@@ -103,6 +108,7 @@ export interface APIProductFamilyProduct {
 	amount: number;
 	price_interval: string;
 	family_slug: string;
+	supported_bundles: APIProductFamilyProductBundlePrice[];
 }
 
 export interface APIProductFamily {
