@@ -1,3 +1,4 @@
+import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { currentlyPreviewingTheme, PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
@@ -22,7 +23,12 @@ const getThemeType = ( theme?: Theme ) => {
 };
 
 export const usePreviewingTheme = () => {
-	const previewingThemeSlug = currentlyPreviewingTheme();
+	const previewingThemeSlug = useSelect( ( select ) => {
+		// Subscribe to the core store, so that previewingThemeSlug can be updated when the theme is activated.
+		// We need this hack because the currentlyPreviewingTheme() function is not a hook.
+		select( 'core' );
+		return currentlyPreviewingTheme();
+	}, [] );
 	const previewingThemeId =
 		( previewingThemeSlug as string )?.split( '/' )?.[ 1 ] || previewingThemeSlug;
 	const [ previewingThemeName, setPreviewingThemeName ] = useState< string >(

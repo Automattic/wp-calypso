@@ -6,7 +6,7 @@ import { FC, useEffect } from 'react';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
-import { getUnlock, isPreviewingTheme } from './utils';
+import { getUnlock } from './utils';
 
 const unlock = getUnlock();
 
@@ -18,7 +18,7 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  * @see https://github.com/Automattic/wp-calypso/issues/82218
  */
 const LivePreviewNotice: FC< {
-	previewingThemeName: string;
+	previewingThemeName?: string;
 } > = ( { previewingThemeName } ) => {
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { set: setPreferences } = useDispatch( 'core/preferences' );
@@ -34,7 +34,7 @@ const LivePreviewNotice: FC< {
 		if ( ! siteEditorStore ) {
 			return;
 		}
-		if ( ! isPreviewingTheme() ) {
+		if ( ! previewingThemeName ) {
 			removeNotice( NOTICE_ID );
 			return;
 		}

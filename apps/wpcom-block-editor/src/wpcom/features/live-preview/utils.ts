@@ -42,7 +42,7 @@ export function isPreviewingTheme() {
 
 export function currentlyPreviewingTheme() {
 	if ( isPreviewingTheme() ) {
-		return getQueryArg( window.location.href, 'wp_theme_preview' );
+		return getQueryArg( window.location.href, 'wp_theme_preview' ) as string;
 	}
-	return null;
+	return undefined;
 }
