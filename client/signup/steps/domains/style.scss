@@ -180,9 +180,8 @@
 					text-overflow: ellipsis;
 				}
 
-				&.limit-width {
-					width: 35%;
-				}
+				width: 0;
+				flex-grow: 1;
 			}
 
 			.domains__domain-cart-remove {

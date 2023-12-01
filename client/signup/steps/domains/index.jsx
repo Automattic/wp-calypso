@@ -804,11 +804,7 @@ export class RenderDomainsStep extends Component {
 			return isRemoving ? null : (
 				<>
 					<div>
-						<div
-							className={ classNames( 'domains__domain-cart-domain', {
-								'limit-width': hasPromotion,
-							} ) }
-						>
+						<div className="domains__domain-cart-domain">
 							<BoldTLD domain={ domain.meta } />
 						</div>
 						<div className="domain-product-price__price">
