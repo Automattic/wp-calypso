@@ -35,6 +35,7 @@ import type { AppState } from 'calypso/types';
 export interface CartFreeUserPlanUpsellProps {
 	cart: Pick< ResponseCart, 'products' >;
 	isCartPendingUpdate?: boolean;
+	planName: string;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 }
 
@@ -66,17 +67,18 @@ class CartFreeUserPlanUpsell extends Component<
 	};
 
 	getUpgradeText() {
-		const { cart, planPrice, translate } = this.props;
+		const { cart, planPrice, planName, translate } = this.props;
 		const firstDomain = cart.products.find( this.isRegistrationOrTransfer );
 
 		if ( planPrice && firstDomain && planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
 			return translate(
-				'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our Personal plan, and get access to all its ' +
+				'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its ' +
 					'features, plus the first year of your domain for free.',
 				{
 					args: {
 						extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
+						planName,
 					},
 					components: {
 						strong: <strong />,
@@ -86,10 +88,11 @@ class CartFreeUserPlanUpsell extends Component<
 		} else if ( planPrice && firstDomain && planPrice < firstDomain.cost ) {
 			const savings = firstDomain.cost - planPrice;
 			return translate(
-				'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com Personal plan ' +
+				'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan ' +
 					'instead — your domain comes free for a year.',
 				{
 					args: {
+						planName,
 						savings: formatCurrency( savings, firstDomain.currency ),
 					},
 					components: {
@@ -100,9 +103,10 @@ class CartFreeUserPlanUpsell extends Component<
 		}
 
 		return translate(
-			'Purchase our Personal plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
+			'Purchase our %(planName)s plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
 				'features, plus the first year of your domain for free.',
 			{
+				args: { planName },
 				components: {
 					strong: <strong />,
 				},
@@ -181,6 +185,7 @@ const mapStateToProps = ( state: AppState, { cart }: CartFreeUserPlanUpsellProps
 			selectedSiteId &&
 			upsellPlan &&
 			getPlanPrice( state, selectedSiteId, upsellPlan, false ),
+		planName: upsellPlan?.getTitle() ?? '',
 		selectedSite,
 		showPlanUpsell: !! selectedSiteId,
 	};
