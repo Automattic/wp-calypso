@@ -122,6 +122,18 @@ class DomainRegistrationAgreement extends Component {
 							domains: [ domainItem.meta ],
 						};
 					}
+				} else {
+					// This else should never be hit, but since some tests depend on incorrect behaviour we need to keep it
+					const url = 'undefined';
+					if ( agreements?.[ url ] ) {
+						agreements[ url ].domains.push( domainItem.meta );
+					} else {
+						agreements[ url ] = {
+							name: translate( 'Domain Registration Agreement' ),
+							url: url,
+							domains: [ domainItem.meta ],
+						};
+					}
 				}
 				return agreements;
 			}, {} )
