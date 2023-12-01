@@ -840,7 +840,7 @@ export class LoginForm extends Component {
 						</div>
 					</div>
 
-					<p className="login__form-terms">{ socialToS }</p>
+					{ ! isSocialFirst && <p className="login__form-terms">{ socialToS }</p> }
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>

@@ -41,13 +41,23 @@ $breakpoint-mobile: 660px;
 .signup-form,
 .wp-login__main.is-social-first {
 	.auth-form__separator {
-		width: 24px;
+		width: calc(100% - 32px);
 		margin: 20px 0;
 
-		margin-left: 40px;
-		margin-right: 40px;
+		&::before {
+			border-block-start: $separator-style;
+			border-inline-start: 0;
+			height: 0;
+			inset-block-start: 50%;
+			inset-inline-start: 0;
+			position: absolute;
+			width: 100%;
+		}
 
 		@include break-medium {
+			width: 24px;
+			margin-left: 40px;
+			margin-right: 40px;
 
 			&::before,
 			&::after {

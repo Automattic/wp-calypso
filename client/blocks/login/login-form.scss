@@ -20,4 +20,10 @@ form.is-social-first {
 		padding: 0 16px;
 		margin: 0;
 	}
+
+	.card.login__form {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
 }
