@@ -60,6 +60,7 @@ function FormCurrencyInput( {
 	const classes = classNames( 'form-currency-input', className );
 	const prefix = renderAffix( currencySymbolPrefix, onCurrencyChange, currencyList );
 	const suffix = renderAffix( currencySymbolSuffix, onCurrencyChange, currencyList );
+	const step = currencySymbolPrefix === 'JPY' ? '1' : '0.01';
 
 	return (
 		<FormTextInputWithAffixes
@@ -67,6 +68,8 @@ function FormCurrencyInput( {
 			className={ classes }
 			prefix={ prefix }
 			suffix={ suffix }
+			type="number"
+			step={ step }
 			placeholder={ placeholder }
 		/>
 	);
