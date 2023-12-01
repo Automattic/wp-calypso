@@ -75,7 +75,9 @@ const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduc
 
 	const filteredPlans = MERGABLE_PLANS.map( ( filter ) => {
 		return plans.filter( ( { slug } ) => slug.startsWith( filter ) );
-	} ).filter( ( subArray ) => subArray.length > 0 ); // Remove empty arrays
+	} )
+		.filter( ( subArray ) => subArray.length > 0 ) // Remove empty arrays
+		.map( ( mergedPlans ) => ( mergedPlans.length === 1 ? mergedPlans[ 0 ] : mergedPlans ) ); // flat out if only one plan.
 
 	const restOfPlans = plans.filter( ( { slug } ) => {
 		return ! MERGABLE_PLANS.some( ( filter ) => slug.startsWith( filter ) );
@@ -92,7 +94,11 @@ const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyPro
 	);
 	const filteredProducts = MERGABLE_PRODUCTS.map( ( filter ) => {
 		return products.filter( ( { slug } ) => slug.startsWith( filter ) );
-	} ).filter( ( subArray ) => subArray.length > 0 ); // Remove empty arrays
+	} )
+		.filter( ( subArray ) => subArray.length > 0 ) // Remove empty arrays
+		.map( ( mergedProducts ) =>
+			mergedProducts.length === 1 ? mergedProducts[ 0 ] : mergedProducts
+		); // flat out if only one product.
 
 	const restOfProducts = products.filter( ( { slug } ) => {
 		return ! MERGABLE_PRODUCTS.some( ( filter ) => slug.startsWith( filter ) );
