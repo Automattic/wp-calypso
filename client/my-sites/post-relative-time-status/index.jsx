@@ -98,6 +98,10 @@ class PostRelativeTime extends PureComponent {
 	}
 
 	getTimeText() {
+		if ( this.props.post.status === 'new' ) {
+			return null;
+		}
+
 		const time = this.getTimestamp();
 		return (
 			<span className="post-relative-time-status__time">
@@ -117,6 +121,11 @@ class PostRelativeTime extends PureComponent {
 
 	getStatusText() {
 		const status = this.props.post.status;
+
+		if ( status === 'new' ) {
+			return '';
+		}
+
 		const args = {
 			displayedTime: this.getDisplayedTimeForLabel(),
 		};
