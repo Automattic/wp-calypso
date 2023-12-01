@@ -241,6 +241,9 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 
 	const allowedHostsForRedirect = [
 		'wordpress.com',
+		'wpcalypso.wordpress.com',
+		'horizon.wordpress.com',
+		'calypso.live',
 		'calypso.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
