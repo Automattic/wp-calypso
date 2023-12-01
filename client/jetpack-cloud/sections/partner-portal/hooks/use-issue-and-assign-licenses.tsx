@@ -186,6 +186,13 @@ function useIssueAndAssignLicenses(
 				const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
 
+				// When bundle licensing is available, all license purchases
+				// will result in a redirect to the main Licenses page
+				if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
+					page.redirect( partnerPortalBasePath( '/licenses' ) );
+					return;
+				}
+
 				// If this user has no sites, send them to the licenses listing page
 				if ( sitesCount === 0 ) {
 					page.redirect( partnerPortalBasePath( '/licenses' ) );
