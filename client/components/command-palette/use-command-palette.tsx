@@ -110,13 +110,13 @@ export const useCommandPallette = ( {
 				return 1; // "viewMySites" comes first over regular
 			}
 
-			// Check contextual filter for commands a and b
+			// Check contextual filter for commands with context and without context
 			const hasContextCommand = filter?.( a ) ?? false;
 			const hasNoContext = filter?.( b ) ?? false;
 
 			// Sort based on context
 			if ( hasContextCommand && ! hasNoContext ) {
-				return -1; // commands with context set
+				return -1; // commands with context come first if there is a context match
 			} else if ( ! hasContextCommand && hasNoContext ) {
 				return 1; // commands without context set
 			}
