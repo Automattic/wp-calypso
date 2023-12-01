@@ -16,6 +16,14 @@ export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE =
 export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_TOOLTIP_PREFERENCE =
 	'jetpack-dashboard-agency-program-downtime-monitoring-upgrade-tooltip-preference';
 
+// Whether the quick links nav on the overview page is expanded
+export const JETPACK_DASHBOARD_QUICK_LINKS_NAV_PREFERENCE =
+	'jetpack-dashboard-quick-links-nav-preference';
+
+// Whether the get help nav on the overview page is expanded
+export const JETPACK_DASHBOARD_GET_HELP_NAV_PREFERENCE =
+	'jetpack-dashboard-get-help-nav-preference';
+
 export const JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE =
 	'jetpack-dashboard-agency-program-survey-banner-preference';
 

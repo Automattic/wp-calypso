@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { category, key, plugins, plus, receipt, store, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { JETPACK_DASHBOARD_QUICK_LINKS_NAV_PREFERENCE } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import {
 	JETPACK_MANAGE_BILLING_LINK,
 	JETPACK_MANAGE_DASHBOARD_LINK,
@@ -12,9 +13,12 @@ import FoldableNav from '../foldable-nav';
 import { FoldableNavItem } from '../foldable-nav/types';
 
 export default function QuickLinksNav() {
+	// JETPACK_DASHBOARD_QUICK_LINKS_NAV_PREFERENCE
+
 	const translate = useTranslate();
 
 	const header = translate( 'Quick links' );
+	const tracksName = 'calypso_jetpack_manage_overview_quick_links';
 
 	const navItems: FoldableNavItem[] = [
 		{
@@ -57,5 +61,12 @@ export default function QuickLinksNav() {
 		trackEventName: 'calypso_jetpack_manage_overview_quick_links_click',
 	} ) );
 
-	return <FoldableNav header={ header } navItems={ navItems } />;
+	return (
+		<FoldableNav
+			header={ header }
+			navItems={ navItems }
+			preferenceName={ JETPACK_DASHBOARD_QUICK_LINKS_NAV_PREFERENCE }
+			tracksName={ tracksName }
+		/>
+	);
 }
