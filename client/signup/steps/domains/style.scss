@@ -148,11 +148,11 @@
 		}
 
 		.domains__domain-cart-rows {
-
 			.domains__domain-cart-row > div {
 				display: flex;
 				justify-content: space-between;
 				padding-top: 6px;
+				column-gap: 7px;
 			}
 			.domains__domain-cart-row > div:nth-child(2) {
 				display: block;
@@ -200,7 +200,6 @@
 				del {
 					font-size: 0.75rem;
 					margin-right: 7px;
-					margin-left: 7px;
 				}
 			}
 
