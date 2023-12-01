@@ -22,7 +22,7 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-// Offloads whether to use siteSlug or siteId to useSite() enabling the launchpad to use either query param
+// This wrapper offloads whether to use siteSlug or siteId to useSite()
 const LaunchpadSiteWrapper: Step = ( {
 	navigation,
 	flow,
@@ -32,6 +32,7 @@ const LaunchpadSiteWrapper: Step = ( {
 } ) => {
 	const site = useSite();
 
+	// Return null while sites are loaded
 	if ( ! site || ! flow ) {
 		return null;
 	}
