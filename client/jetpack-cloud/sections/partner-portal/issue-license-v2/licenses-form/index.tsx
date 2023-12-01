@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState, useMemo } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { useSelector } from 'calypso/state';
@@ -174,6 +174,16 @@ export default function LicensesForm( {
 		);
 	};
 
+	const isSearchResultEmpty = useMemo( () => {
+		return (
+			productSearchQuery !== '' &&
+			plans.length === 0 &&
+			products.length === 0 &&
+			wooExtensions.length === 0 &&
+			backupAddons.length === 0
+		);
+	}, [ productSearchQuery, plans, products, wooExtensions, backupAddons ] );
+
 	if ( isLoadingProducts ) {
 		return (
 			<div className="licenses-form">
@@ -194,6 +204,10 @@ export default function LicensesForm( {
 					isSingleLicense={ isSingleLicenseView }
 				/>
 			</div>
+
+			{ isSearchResultEmpty && (
+				<h3>{ translate( 'No results found. Please try refining your search.' ) } </h3>
+			) }
 
 			{ plans.length > 0 && (
 				<LicensesFormSection
