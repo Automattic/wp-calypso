@@ -5,6 +5,7 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -46,7 +47,6 @@ interface useCommandPalletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	filter?: ( command: Command ) => boolean | undefined;
-	selectedSiteId?: number | null;
 }
 
 const siteToAction =
@@ -74,16 +74,18 @@ export const useCommandPallette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 	filter,
-	selectedSiteId,
 }: useCommandPalletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
 
-	//Sort sites in the nested commands to be consistent with site switcher and /sites page
+	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { sitesSorting } = useSitesSorting();
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
+
+	// Get current site ID to rank it to the top of the sites list
+	const { selectedSiteId } = useCurrentSiteRankTop();
 
 	// Call the generateCommandsArray function to get the commands array
 	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
