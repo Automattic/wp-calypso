@@ -94,17 +94,12 @@ export const useCommandPallette = ( {
 
 	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
 
+	// Filter out commands that have context
 	const commandHasContext = ( paths: string[] = [] ): boolean =>
 		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
 
-	// Filter commands to exclude "viewMySites" when the current path is /sites
-	const filteredCommands = commands.filter( ( command ) => {
-		const isViewMySites = command.name === 'viewMySites';
-		return ! ( isViewMySites && currentPath === '/sites' );
-	} );
-
-	// Sort the filtered commands
-	const sortedCommands = filteredCommands.sort( ( a, b ) => {
+	// Ensure that View My Sites command ranks the highest
+	const viewMySitesSort = ( a: { name: string }, b: { name: string } ) => {
 		const isViewMySitesWithContextual = a.name === 'viewMySites';
 		const isViewMySitesNoContextual = b.name === 'viewMySites';
 
@@ -114,6 +109,17 @@ export const useCommandPallette = ( {
 			return 1; // "viewMySites" comes first over regular commands
 		}
 
+		return 0; // no change in order
+	};
+
+	// Filter commands to exclude "viewMySites" when the current path is /sites
+	const filteredCommands = commands.filter( ( command ) => {
+		const isViewMySites = command.name === 'viewMySites';
+		return ! ( isViewMySites && currentPath === '/sites' );
+	} );
+
+	// Sort the filtered commands with the contextual commands ranking higher than general in a given context
+	const sortedCommands = filteredCommands.sort( ( a, b ) => {
 		const hasContextCommand = commandHasContext( a.context );
 		const hasNoContext = commandHasContext( b.context );
 
@@ -126,7 +132,10 @@ export const useCommandPallette = ( {
 		return 0; // no change in order
 	} );
 
-	const selectedCommand = sortedCommands.find( ( c ) => c.name === selectedCommandName );
+	// Combine the sorted "viewMySites" commands and the main sorted commands
+	const finalSortedCommands = [ ...sortedCommands ].sort( viewMySitesSort );
+
+	const selectedCommand = finalSortedCommands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
@@ -143,5 +152,5 @@ export const useCommandPallette = ( {
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
 	}
 
-	return { commands: sitesToPick ?? sortedCommands };
+	return { commands: sitesToPick ?? finalSortedCommands };
 };
