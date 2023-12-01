@@ -13,9 +13,12 @@ export const parseQueryStringProducts = (
 
 	const commaSeparated = products.split( ',' );
 	return commaSeparated.map( ( i ) => {
-		const colonSeparatedItem = i.split( ':' );
-		const quantity = parseInt( colonSeparatedItem[ 1 ] ?? 1, 10 );
-		const slug = colonSeparatedItem[ 0 ];
+		const [ slug, quantityStr ] = i.split( ':', 2 );
+
+		const quantity = parseInt( quantityStr, 10 );
+		if ( Number.isNaN( quantity ) ) {
+			return { slug, quantity: 1 };
+		}
 
 		return { slug, quantity };
 	} );
