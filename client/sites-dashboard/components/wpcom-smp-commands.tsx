@@ -18,6 +18,7 @@ import {
 	plugins as pluginsIcon,
 	plus as plusIcon,
 	postComments as postCommentsIcon,
+	postFeaturedImage as postFeaturedImageIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
 	upload as uploadIcon,
@@ -145,6 +146,15 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'openReader',
+			label: __( 'Open reader' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/read` );
+			},
+			icon: postFeaturedImageIcon,
 		},
 		{
 			name: 'openSiteDashboard',
