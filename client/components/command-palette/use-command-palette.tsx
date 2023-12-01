@@ -85,7 +85,7 @@ export const useCommandPallette = ( {
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Get current site ID to rank it to the top of the sites list
-	const { selectedSiteId } = useCurrentSiteRankTop();
+	const { currentSiteId } = useCurrentSiteRankTop();
 
 	// Call the generateCommandsArray function to get the commands array
 	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
@@ -99,11 +99,13 @@ export const useCommandPallette = ( {
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
 		let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
-		if ( selectedSiteId ) {
-			const currentSiteIndex = filteredSites.findIndex( ( site ) => site.ID === selectedSiteId );
-			if ( currentSiteIndex > -1 ) {
-				const currentSite = filteredSites.splice( currentSiteIndex, 1 );
-				filteredSites = currentSite.concat( filteredSites );
+		if ( currentSiteId ) {
+			const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
+			if ( currentSite ) {
+				filteredSites = [
+					currentSite,
+					...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
+				];
 			}
 		}
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
