@@ -33,7 +33,7 @@ export const BloggingPromptsModalInner = () => {
 				return setPrompts( result );
 			} )
 			// eslint-disable-next-line no-console
-			.catch( () => console.log( 'Unable to fetch writing prompts' ) );
+			.catch( () => console.error( 'Unable to fetch writing prompts' ) );
 	}, [] );
 
 	if ( ! isOpen || ! prompts.length ) {
