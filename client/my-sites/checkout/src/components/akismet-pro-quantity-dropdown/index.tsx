@@ -4,6 +4,7 @@ import {
 	PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -102,6 +103,22 @@ const OptionList = styled.ul`
 			border-bottom-right-radius: 3px;
 		}
 	}
+`;
+
+const CurrentOptionContainer = styled.div`
+	align-items: center;
+	display: flex;
+	font-size: 14px;
+	font-weight: 400;
+	justify-content: space-between;
+	line-height: 20px;
+	width: 100%;
+	column-gap: 20px;
+`;
+
+const Price = styled.span`
+	text-align: right;
+	color: #646970;
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
@@ -271,6 +288,33 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		]
 	);
 
+	const { quantity, currency, item_subtotal_integer } = responseCart.products[ 0 ];
+	const itemSubtotalQuantityOneInteger = item_subtotal_integer / ( quantity ?? 1 );
+
+	const actualAmountQuantityOneDisplay = formatCurrency( itemSubtotalQuantityOneInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
+	const actualAmountDisplay = formatCurrency( item_subtotal_integer, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
+	const currentOptionPriceDisplay = translate(
+		'%(quantity)d licenses X %(actualAmountQuantityOneDisplay)s per license = %(actualAmountDisplay)s',
+		{
+			args: {
+				quantity: quantity ?? 1,
+				actualAmountQuantityOneDisplay,
+				actualAmountDisplay,
+			},
+			components: {
+				s: <s />,
+			},
+		}
+	);
+
 	return (
 		<AkismetSitesSelect>
 			<AkismetSitesSelectHeading>{ translate( 'Number of licenses' ) }</AkismetSitesSelectHeading>
@@ -284,7 +328,10 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					open={ open }
 					role="button"
 				>
-					{ dropdownOptions[ selectedQuantity - 1 ] }
+					<CurrentOptionContainer>
+						<span>{ dropdownOptions[ selectedQuantity - 1 ] }</span>
+						<Price>{ currentOptionPriceDisplay }</Price>
+					</CurrentOptionContainer>
 					<Gridicon icon={ open ? 'chevron-up' : 'chevron-down' } />
 				</CurrentOption>
 				{ open && (

@@ -465,6 +465,7 @@ function LineItemWrapper( {
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
+				isAkPro500Cart={ isAkPro500Cart }
 			>
 				{ areThereVariants && shouldShowVariantSelector && onChangeSelection && (
 					<ItemVariationPicker
