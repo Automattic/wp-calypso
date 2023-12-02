@@ -23,16 +23,11 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import PageViewTracker from '../stats-page-view-tracker';
-import { StatsPurchaseNoticePage, StatsPurchaseNotice } from './stats-purchase-notice';
-import {
-	StatsSingleItemPagePurchase,
-	StatsSingleItemPersonalPurchasePage,
-} from './stats-purchase-single-item';
+import { StatsPurchaseNotice } from './stats-purchase-notice';
 import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
 	TYPE_COMMERCIAL,
-	TYPE_PERSONAL,
 } from './stats-purchase-wizard';
 
 const StatsPurchasePage = ( {
@@ -41,7 +36,6 @@ const StatsPurchasePage = ( {
 	query: { redirect_uri: string; from: string; productType: 'commercial' | 'personal' };
 } ) => {
 	const translate = useTranslate();
-	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -49,10 +43,6 @@ const StatsPurchasePage = ( {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
-
-	const isCommercial = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'is_commercial' )
-	) as boolean;
 
 	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, supportCommercialUse } =
 		useStatsPurchases( siteId );
@@ -86,36 +76,16 @@ const StatsPurchasePage = ( {
 		! commercialProduct || ! commercialMonthlyProduct || ! pwywProduct || isRequestingSitePurchases;
 
 	const [ initialStep, initialSiteType ] = useMemo( () => {
-		// if the site is detected as commercial
-		if ( isTypeDetectionEnabled ) {
-			if ( isCommercial && ! supportCommercialUse ) {
-				return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
-			}
-			// If the site is detected as personal
-			else if ( isCommercial === false && ! supportCommercialUse ) {
-				return [ SCREEN_PURCHASE, TYPE_PERSONAL ];
-			}
-		}
-
 		if ( isPWYWOwned && ! supportCommercialUse ) {
 			return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
 		}
 		// if nothing is owned don't specify the type
 		return [ SCREEN_TYPE_SELECTION, null ];
-	}, [ isPWYWOwned, supportCommercialUse, isCommercial, isTypeDetectionEnabled ] );
+	}, [ isPWYWOwned, supportCommercialUse ] );
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
-	// Redirect to commercial is there is the query param is set and the site doesn't have commercial license yet
-	const redirectToCommercial = query?.productType === 'commercial' && ! supportCommercialUse;
-	// Redirect to personal is there is the query param is set, the site doesn't have personal license yet, and it's not redirecting to commercial
-	const redirectToPersonal =
-		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
-	// Whether it's forced to redirect to a product
-	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
-	// We show purchase page if there is no plan owned or if we are forcing a product redirect
-	const showPurchasePage = noPlanOwned || isForceProductRedirect;
 
 	return (
 		<Main fullWidthLayout>
@@ -127,7 +97,7 @@ const StatsPurchasePage = ( {
 			/>
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {
-					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
+					'stats-purchase-page--is-wpcom': isWPCOMSite,
 				} ) }
 			>
 				{ /* Only query site purchases on Calypso via existing data component */ }
@@ -139,8 +109,8 @@ const StatsPurchasePage = ( {
 					</div>
 				) }
 				{
-					// old flow - show the purchase wizard
-					! isLoading && ! isTypeDetectionEnabled && (
+					// Show the purchase wizard
+					! isLoading && (
 						<>
 							{ supportCommercialUse && (
 								<div className="stats-purchase-page__notice">
@@ -161,74 +131,6 @@ const StatsPurchasePage = ( {
 									initialSiteType={ initialSiteType }
 								/>
 							) }
-						</>
-					)
-				}
-				{
-					// a plan is owned or not forced to purchase - show a notice page
-					! isLoading && isTypeDetectionEnabled && ! showPurchasePage && (
-						<StatsPurchaseNoticePage
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							isCommercialOwned={ supportCommercialUse }
-							isFreeOwned={ isFreeOwned }
-							isPWYWOwned={ isPWYWOwned }
-						/>
-					)
-				}
-				{
-					// there is still plans to purchase - show the purchase page
-					! isLoading && isTypeDetectionEnabled && showPurchasePage && (
-						<>
-							{
-								// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-								! isForceProductRedirect && isCommercial === null && (
-									<StatsPurchaseWizard
-										siteSlug={ siteSlug }
-										commercialProduct={ commercialProduct }
-										maxSliderPrice={ maxSliderPrice ?? 10 }
-										pwywProduct={ pwywProduct }
-										siteId={ siteId }
-										redirectUri={ query.redirect_uri ?? '' }
-										from={ query.from ?? '' }
-										disableFreeProduct={ ! noPlanOwned }
-										initialStep={ initialStep }
-										initialSiteType={ initialSiteType }
-									/>
-								)
-							}
-							{
-								// blog is commercial or we are forcing a product - show the commercial purchase page
-								( ( ! isForceProductRedirect && isCommercial ) || redirectToCommercial ) && (
-									<div className="stats-purchase-page__notice">
-										<StatsSingleItemPagePurchase
-											siteSlug={ siteSlug ?? '' }
-											planValue={ commercialProduct?.cost }
-											currencyCode={ commercialProduct?.currency_code }
-											siteId={ siteId }
-											redirectUri={ query.redirect_uri ?? '' }
-											from={ query.from ?? '' }
-											isCommercial={ isCommercial }
-											priceTiers={ commercialMonthlyProduct?.price_tier_list } // personal plan can also purchase commercial plans
-										/>
-									</div>
-								)
-							}
-							{
-								// blog is personal or we are forcing a product - show the personal purchase page
-								( ( ! isForceProductRedirect && isCommercial === false ) ||
-									redirectToPersonal ) && (
-									<StatsSingleItemPersonalPurchasePage
-										siteSlug={ siteSlug || '' }
-										maxSliderPrice={ maxSliderPrice ?? 10 }
-										pwywProduct={ pwywProduct }
-										siteId={ siteId }
-										redirectUri={ query.redirect_uri ?? '' }
-										from={ query.from ?? '' }
-										disableFreeProduct={ ! noPlanOwned }
-									/>
-								)
-							}
 						</>
 					)
 				}
