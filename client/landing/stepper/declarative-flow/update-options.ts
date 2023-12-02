@@ -16,18 +16,6 @@ const updateOptions: Flow = {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
-		// const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		// const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
-
-		// const exitFlow = ( to: string ) => {
-		// 	setPendingAction( () => {
-		// 		return new Promise( () => {
-		// 			window.location.assign( to );
-		// 		} );
-		// 	} );
-
-		// 	return navigate( 'processing' );
-		// };
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
 			recordSubmitStep( providedDependencies, 'update-options', flowName, currentStep );
@@ -45,13 +33,6 @@ const updateOptions: Flow = {
 				}
 			}
 		}
-
-		// const goBack = () => {
-		// 	switch ( currentStep ) {
-		// 		case 'patternAssembler':
-		// 			return navigate( 'designSetup' );
-		// 	}
-		// };
 
 		return { submit };
 	},
