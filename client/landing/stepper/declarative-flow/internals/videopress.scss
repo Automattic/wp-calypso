@@ -268,6 +268,10 @@ body.is-videopress-tv-purchase-stepper {
 			}
 		}
 
+		.step-container__skip-wrapper .step-container__navigation-link.has-underline {
+			color: $videopress-theme-grey;
+		}
+
 		.launchpad__checklist-item-chevron,
 		.checklist-item__chevron {
 			align-self: center;
