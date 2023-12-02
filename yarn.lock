@@ -544,7 +544,7 @@ __metadata:
     "@storybook/react": "npm:^7.5.3"
     "@testing-library/dom": "npm:^9.3.3"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.1"
     "@types/canvas-confetti": "npm:^1.6.0"
     "@types/react-slider": "npm:^1.3.4"
@@ -588,7 +588,7 @@ __metadata:
     "@storybook/react": "npm:^7.5.3"
     "@testing-library/dom": "npm:^9.3.3"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.1"
     "@wordpress/i18n": "npm:^4.44.0"
     "@wordpress/react-i18n": "npm:^3.42.0"
@@ -699,7 +699,7 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": "npm:^4.36.1"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/components": "npm:^25.10.0"
     "@wordpress/react-i18n": "npm:^3.42.0"
     "@wordpress/url": "npm:^3.45.0"
@@ -736,7 +736,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/components": "npm:^25.10.0"
     "@wordpress/html-entities": "npm:^3.44.0"
     "@wordpress/icons": "npm:^9.35.0"
@@ -769,7 +769,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/base-styles": "npm:^4.35.0"
     "@wordpress/components": "npm:^25.10.0"
     "@wordpress/compose": "npm:^6.21.0"
@@ -806,7 +806,7 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": "npm:^4.36.1"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/components": "npm:^25.10.0"
     "@wordpress/react-i18n": "npm:^3.42.0"
     classnames: "npm:^2.3.2"
@@ -863,7 +863,7 @@ __metadata:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/explat-client": "workspace:^"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:>=2.3.0"
@@ -980,7 +980,7 @@ __metadata:
     "@automattic/calypso-url": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@types/react": "npm:^18.2.6"
     "@wordpress/compose": "npm:^6.21.0"
     "@wordpress/i18n": "npm:^4.44.0"
@@ -1171,7 +1171,7 @@ __metadata:
     "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/i18n": "npm:^4.44.0"
     "@wordpress/react-i18n": "npm:^3.42.0"
     debug: "npm:^4.3.3"
@@ -1329,7 +1329,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/base-styles": "npm:^4.35.0"
     "@wordpress/components": "npm:^25.10.0"
     "@wordpress/data": "npm:^9.14.0"
@@ -1361,7 +1361,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/block-editor": "npm:^12.12.0"
     "@wordpress/blocks": "npm:^12.21.0"
     "@wordpress/components": "npm:^25.10.0"
@@ -1432,7 +1432,7 @@ __metadata:
     "@storybook/cli": "npm:^7.5.3"
     "@storybook/react": "npm:^7.5.3"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@types/classnames": "npm:^2.3.1"
     classnames: "npm:^2.3.2"
     postcss: "npm:^8.4.5"
@@ -1482,7 +1482,7 @@ __metadata:
     "@storybook/react": "npm:^7.5.3"
     "@testing-library/dom": "npm:^9.3.3"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.1"
     "@wordpress/base-styles": "npm:^4.35.0"
     "@wordpress/components": "npm:^25.10.0"
@@ -1512,7 +1512,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     debug: "npm:^4.3.3"
     typescript: "npm:^5.2.2"
   peerDependencies:
@@ -1528,7 +1528,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/dom": "npm:^3.44.0"
     "@wordpress/i18n": "npm:^4.44.0"
     "@wordpress/icons": "npm:^9.35.0"
@@ -1548,7 +1548,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     typescript: "npm:^5.2.2"
   peerDependencies:
     "@wordpress/data": ^9.14.0
@@ -1566,7 +1566,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": "npm:^11.11.1"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/components": "npm:^25.10.0"
     "@wordpress/element": "npm:^5.21.0"
     "@wordpress/i18n": "npm:^4.44.0"
@@ -1869,7 +1869,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@stripe/stripe-js": "npm:^1.53.0"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/data": "npm:^9.14.0"
     "@wordpress/i18n": "npm:^4.44.0"
     "@wordpress/react-i18n": "npm:^3.42.0"
@@ -1917,7 +1917,7 @@ __metadata:
     "@tanstack/eslint-plugin-query": "npm:^4.36.1"
     "@tanstack/react-query": "npm:^4.36.1"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@types/node": "npm:^20.8.6"
     "@wordpress/a11y": "npm:^3.44.0"
     "@wordpress/api-fetch": "npm:^6.41.0"
@@ -7354,7 +7354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^14.1.0":
+"@testing-library/react@npm:^14.1.2":
   version: 14.1.2
   resolution: "@testing-library/react@npm:14.1.2"
   dependencies:
@@ -7844,13 +7844,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.8":
-  version: 29.5.8
-  resolution: "@types/jest@npm:29.5.8"
+"@types/jest@npm:^29.5.10":
+  version: 29.5.10
+  resolution: "@types/jest@npm:29.5.10"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: a28e7827ea7e1a2aace6a386868fa6b8402c162d6c71570aed2c29d3745ddc22ceef6899a20643071817905d3c57b670a7992fc8760bff65939351fd4dc481cf
+  checksum: b46171d59d12a5f69bbe710f65eaf59a8073337c6b4a67dff8158575caec53f1c61f8a7d645b34d6ac3c4ea398acd30f0c5d1c4a131c0c918798019264a3397d
   languageName: node
   linkType: hard
 
@@ -12099,7 +12099,7 @@ __metadata:
     "@tanstack/react-query-persist-client": "npm:^4.36.1"
     "@testing-library/dom": "npm:^9.3.3"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.1"
     "@types/react": "npm:^18.2.14"
     "@types/redux-mock-store": "npm:1.0.6"
@@ -18290,7 +18290,7 @@ __metadata:
     "@automattic/wpcom-template-parts": "workspace:^"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
-    "@testing-library/react": "npm:^14.1.0"
+    "@testing-library/react": "npm:^14.1.2"
     "@wordpress/base-styles": "npm:^4.35.0"
     "@wordpress/block-editor": "npm:^12.12.0"
     "@wordpress/blocks": "npm:^12.21.0"
@@ -32282,7 +32282,7 @@ __metadata:
     "@types/debug": "npm:^4.1.7"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
     "@types/gtag.js": "npm:^0.0.10"
-    "@types/jest": "npm:^29.5.8"
+    "@types/jest": "npm:^29.5.10"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^20.8.6"
     "@types/page": "npm:^1.11.5"
