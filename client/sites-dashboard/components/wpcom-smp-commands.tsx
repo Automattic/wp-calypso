@@ -771,7 +771,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/writing/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-writing.php`
+							: `/settings/writing/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
@@ -784,7 +789,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/reading/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-reading.php`
+							: `/settings/reading/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
@@ -797,7 +807,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/discussion/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-discussion.php`
+							: `/settings/discussion/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
