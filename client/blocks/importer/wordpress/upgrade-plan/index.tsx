@@ -68,8 +68,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	}, [] );
 
 	return (
-		<div className="import__import-everything import__import-everything--redesign">
-			<div className="import__heading-title">
+		<div className="import__upgrade-plan">
+			<div className="import__heading-center">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
 					{ translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan.', {
