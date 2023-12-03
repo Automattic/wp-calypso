@@ -1,3 +1,4 @@
+import { JetpackLogo } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
@@ -145,6 +146,15 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'addJetpack',
+			label: __( 'Add Jetpack to a self-hosted site' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/jetpack/connect?cta_from=command-palette` );
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
 		{
 			name: 'openSiteDashboard',
