@@ -1,6 +1,7 @@
 import { JetpackLogo } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
+	arrowDown as arrowDownIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -43,7 +44,7 @@ interface useCommandsArrayWpcomOptions {
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 }: useCommandsArrayWpcomOptions ) => {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 	const setStateCallback =
 		( actionName: string, placeholder: string = __( 'Select a site' ) ) =>
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
@@ -150,11 +151,31 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addJetpack',
 			label: __( 'Add Jetpack to a self-hosted site' ),
+			searchLabel: [
+				_x(
+					'Add Jetpack to a self-hosted site',
+					'Keyword for Add Jetpack to a self-hosted site command'
+				),
+				_x( 'connect jetpack', 'Keyword for Add Jetpack to a self-hosted site command' ),
+			].join( ' ' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigate( `/jetpack/connect?cta_from=command-palette` );
 			},
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
+			name: 'importSite',
+			label: __( 'Import site to WordPress.com' ),
+			searchLabel: [
+				_x( 'Import site to WordPress.com', 'Keyword for Import site to WordPress.com command' ),
+				_x( 'migrate site', 'Keyword for Import site to WordPress.com command' ),
+			].join( ' ' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/start/import?source=command-palette` );
+			},
+			icon: arrowDownIcon,
 		},
 		{
 			name: 'openSiteDashboard',
