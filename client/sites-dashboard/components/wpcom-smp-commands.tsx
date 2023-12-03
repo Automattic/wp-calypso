@@ -150,7 +150,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard', __( 'Select dashboard to open' ) ),
+			callback: setStateCallback( 'openSiteDashboard', __( 'Select site dashboard to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -163,7 +163,10 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageHostingConfiguration',
 			label: __( 'Manage hosting configuration' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'manageHostingConfiguration' ),
+			callback: setStateCallback(
+				'manageHostingConfiguration',
+				__( 'Select site hosting configuration to open' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -177,7 +180,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'openPHPmyAdmin',
 			label: __( 'Open database in phpMyAdmin' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openPHPmyAdmin' ),
+			callback: setStateCallback( 'openPHPmyAdmin', __( 'Select site phpMyAdmin to open' ) ),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -230,7 +233,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageDns',
 			label: __( 'Manage DNS records' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'manageDns' ),
+			callback: setStateCallback( 'manageDns', __( 'Select site DNS records to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -244,7 +247,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'copySshConnectionString',
 			label: __( 'Copy SSH connection string' ),
-			callback: setStateCallback( 'copySshConnectionString' ),
+			callback: setStateCallback(
+				'copySshConnectionString',
+				__( 'Select site SSH connection string to copy' )
+			),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -257,7 +263,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openSshCredentials',
 			label: __( 'Open SFTP/SSH credentials' ),
-			callback: setStateCallback( 'openSshCredentials' ),
+			callback: setStateCallback(
+				'openSshCredentials',
+				__( 'Select site SFTP/SSH credentials to open' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -269,8 +278,11 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'resetSshSftpPassword',
-			label: __( 'Reset SSH/SFTP password' ),
-			callback: setStateCallback( 'resetSshSftpPassword' ),
+			label: __( 'Reset SFTP/SSH password' ),
+			callback: setStateCallback(
+				'resetSshSftpPassword',
+				__( 'Select site SFTP/SSH password to reset' )
+			),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -283,7 +295,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openJetpackStats',
 			label: __( 'Open Jetpack Stats' ),
-			callback: setStateCallback( 'openJetpackStats' ),
+			callback: setStateCallback( 'openJetpackStats', __( 'Select site Jetpack Stats to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -305,7 +317,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openActivityLog',
 			label: __( 'Open activity log' ),
-			callback: setStateCallback( 'openActivityLog' ),
+			callback: setStateCallback( 'openActivityLog', __( 'Select site activity log to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -318,7 +330,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openJetpackBackup',
 			label: __( 'Open Jetpack Backup' ),
-			callback: setStateCallback( 'openJetpackBackup' ),
+			callback: setStateCallback( 'openJetpackBackup', __( 'Select site Jetpack Backup to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -331,7 +343,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'viewSiteMonitoringMetrics',
 			label: __( 'View site monitoring metrics' ),
-			callback: setStateCallback( 'viewSiteMonitoringMetrics' ),
+			callback: setStateCallback(
+				'viewSiteMonitoringMetrics',
+				__( 'Select site monitoring metrics to view' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -344,7 +359,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openPHPLogs',
 			label: __( 'Open PHP logs' ),
-			callback: setStateCallback( 'openPHPLogs' ),
+			callback: setStateCallback( 'openPHPLogs', __( 'Select site PHP logs to open' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -357,7 +372,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openWebServerLogs',
 			label: __( 'Open web server logs' ),
-			callback: setStateCallback( 'openWebServerLogs' ),
+			callback: setStateCallback(
+				'openWebServerLogs',
+				__( 'Select site web server logs to open' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -370,7 +388,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageStagingSites',
 			label: __( 'Manage staging sites' ),
-			callback: setStateCallback( 'manageStagingSites' ),
+			callback: setStateCallback(
+				'manageStagingSites',
+				__( 'Select site staging sites to manage' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -383,7 +404,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'changePHPVersion',
 			label: __( 'Change PHP version' ),
-			callback: setStateCallback( 'changePHPVersion' ),
+			callback: setStateCallback( 'changePHPVersion', __( 'Select site PHP version to change' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -396,7 +417,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageCacheSettings',
 			label: __( 'Manage cache settings' ),
-			callback: setStateCallback( 'manageCacheSettings' ),
+			callback: setStateCallback(
+				'manageCacheSettings',
+				__( 'Select site cache settings to manage' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -409,7 +433,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'changeAdminInterfaceStyle',
 			label: __( 'Change admin interface style' ),
-			callback: setStateCallback( 'changeAdminInterfaceStyle' ),
+			callback: setStateCallback(
+				'changeAdminInterfaceStyle',
+				__( 'Select site admin interface style to change' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -434,7 +461,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Add new post' ),
 			searchLabel: __( 'Write new post' ),
 			context: [ '/posts' ],
-			callback: setStateCallback( 'addNewPost' ),
+			callback: setStateCallback( 'addNewPost', __( 'Select site to add new post' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -451,7 +478,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'managePosts',
 			label: __( 'Manage posts' ),
-			callback: setStateCallback( 'managePosts' ),
+			callback: setStateCallback( 'managePosts', __( 'Select site to manage posts' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -468,7 +495,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'viewMediaUploads',
 			label: __( 'View media uploads' ),
-			callback: setStateCallback( 'viewMediaUploads' ),
+			callback: setStateCallback( 'viewMediaUploads', __( 'Select site to view media uploads' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -485,7 +512,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'uploadMedia',
 			label: __( 'Upload media' ),
-			callback: setStateCallback( 'uploadMedia' ),
+			callback: setStateCallback( 'uploadMedia', __( 'Select site to upload media' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -502,7 +529,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'managePages',
 			label: __( 'Manage pages' ),
-			callback: setStateCallback( 'managePages' ),
+			callback: setStateCallback( 'managePages', __( 'Select site to manage pages' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -520,7 +547,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'addNewPage',
 			label: __( 'Add new page' ),
 			context: [ '/pages' ],
-			callback: setStateCallback( 'addNewPage' ),
+			callback: setStateCallback( 'addNewPage', __( 'Select site to add new page' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -537,7 +564,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageComments',
 			label: __( 'Manage comments' ),
-			callback: setStateCallback( 'manageComments' ),
+			callback: setStateCallback( 'manageComments', __( 'Select site to manage comments' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -554,7 +581,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageThemes',
 			label: __( 'Manage themes' ),
-			callback: setStateCallback( 'manageThemes' ),
+			callback: setStateCallback( 'manageThemes', __( 'Select site to manage themes' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -572,7 +599,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'managePlugins',
 			label: __( 'Manage plugins' ),
-			callback: setStateCallback( 'managePlugins' ),
+			callback: setStateCallback( 'managePlugins', __( 'Select site to manage plugins' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -590,7 +617,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageUsers',
 			label: __( 'Manage users' ),
-			callback: setStateCallback( 'manageUsers' ),
+			callback: setStateCallback( 'manageUsers', __( 'Select site to manage users' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -607,7 +634,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewUser',
 			label: __( 'Add new user' ),
-			callback: setStateCallback( 'addNewUser' ),
+			callback: setStateCallback( 'addNewUser', __( 'Select site to add new user' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -626,7 +653,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Add subscribers' ),
 			searchLabel: __( 'Import subscribers' ),
 			context: [ '/subscribers' ],
-			callback: setStateCallback( 'addSubscribers' ),
+			callback: setStateCallback( 'addSubscribers', __( 'Select site to add subscribers' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -638,7 +665,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageSubscribers',
 			label: __( 'Manage subscribers' ),
-			callback: setStateCallback( 'manageSubscribers' ),
+			callback: setStateCallback( 'manageSubscribers', __( 'Select site to manage subscribers' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -651,7 +678,10 @@ export const useCommandsArrayWpcom = ( {
 			name: 'downloadSubscribers',
 			label: __( 'Download subscribers as CSV' ),
 			context: [ '/subscribers' ],
-			callback: setStateCallback( 'downloadSubscribers' ),
+			callback: setStateCallback(
+				'downloadSubscribers',
+				__( 'Select site to download subscribers' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -666,7 +696,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'import',
 			label: __( 'Import content to the site' ),
 			context: [ '/posts' ],
-			callback: setStateCallback( 'import' ),
+			callback: setStateCallback( 'import', __( 'Select site to import content' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -679,7 +709,10 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings' ),
 			context: [ '/settings' ],
-			callback: setStateCallback( 'manageSettingsWriting' ),
+			callback: setStateCallback(
+				'manageSettingsWriting',
+				__( 'Select site to manage writing settings' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -692,7 +725,10 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageSettingsReading',
 			label: __( 'Manage reading settings' ),
 			context: [ '/settings' ],
-			callback: setStateCallback( 'manageSettingsReading' ),
+			callback: setStateCallback(
+				'manageSettingsReading',
+				__( 'Select site to manage reading settings' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -705,7 +741,10 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageSettingsDiscussion',
 			label: __( 'Manage discussion settings' ),
 			context: [ '/settings' ],
-			callback: setStateCallback( 'manageSettingsDiscussion' ),
+			callback: setStateCallback(
+				'manageSettingsDiscussion',
+				__( 'Select site to manage discussion settings' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -718,7 +757,10 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageSettingsNewsletter',
 			label: __( 'Manage newsletter settings' ),
 			context: [ '/settings' ],
-			callback: setStateCallback( 'manageSettingsNewsletter' ),
+			callback: setStateCallback(
+				'manageSettingsNewsletter',
+				__( 'Select site to manage newsletter settings' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -731,7 +773,10 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageSettingsPodcast',
 			label: __( 'Manage podcast settings' ),
 			context: [ '/settings' ],
-			callback: setStateCallback( 'manageSettingsPodcast' ),
+			callback: setStateCallback(
+				'manageSettingsPodcast',
+				__( 'Select site to manage podcast settings' )
+			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
