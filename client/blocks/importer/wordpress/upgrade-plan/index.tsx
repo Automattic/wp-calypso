@@ -13,6 +13,8 @@ import { requestSite } from 'calypso/state/sites/actions';
 import UpgradePlanDetails from './upgrade-plan-details';
 import type { URL } from 'calypso/types';
 
+import './style.scss';
+
 interface Props {
 	sourceSiteUrl: URL;
 	targetSite: SiteDetails;
