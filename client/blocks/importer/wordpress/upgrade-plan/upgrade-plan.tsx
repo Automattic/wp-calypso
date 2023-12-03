@@ -24,7 +24,7 @@ interface Props {
 	migrationTrackingProps?: Record< string, unknown >;
 }
 
-export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
+export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
