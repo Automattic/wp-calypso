@@ -570,6 +570,24 @@ export const useCommandsArrayWpcom = ( {
 			icon: brushIcon,
 		},
 		{
+			name: 'installTheme',
+			label: __( 'Install theme' ),
+			callback: setStateCallback( 'installTheme', __( 'Select site to install theme' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/theme-install.php`
+							: `/themes/${ site.slug }`;
+					navigate( link );
+				},
+				filter: ( site: SiteExcerptData ) => site?.jetpack,
+			},
+			icon: brushIcon,
+		},
+		{
 			name: 'managePlugins',
 			label: __( 'Manage plugins' ),
 			callback: setStateCallback( 'managePlugins' ),
@@ -584,6 +602,24 @@ export const useCommandsArrayWpcom = ( {
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
+			},
+			icon: pluginsIcon,
+		},
+		{
+			name: 'installPlugin',
+			label: __( 'Install plugin' ),
+			callback: setStateCallback( 'installPlugin' ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/plugin-install.php`
+							: `/plugins/${ site.slug }`;
+					navigate( link );
+				},
+				filter: ( site: SiteExcerptData ) => site?.jetpack,
 			},
 			icon: pluginsIcon,
 		},
