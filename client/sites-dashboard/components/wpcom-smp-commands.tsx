@@ -639,7 +639,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'installPlugin',
 			label: __( 'Install plugin' ),
-			callback: setStateCallback( 'installPlugin' ),
+			callback: setStateCallback( 'installPlugin', __( 'Select site to install plugin' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
