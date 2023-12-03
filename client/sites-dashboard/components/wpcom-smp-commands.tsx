@@ -743,6 +743,27 @@ export const useCommandsArrayWpcom = ( {
 			icon: uploadIcon,
 		},
 		{
+			name: 'manageSettingsGeneral',
+			label: __( 'Manage general settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback(
+				'manageSettingsGeneral',
+				__( 'Select site to manage general settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-general.php`
+							: `/settings/general/${ site.slug }`;
+					navigate( link );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings' ),
 			context: [ '/settings' ],
