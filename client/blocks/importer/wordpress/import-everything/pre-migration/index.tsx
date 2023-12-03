@@ -7,7 +7,7 @@ import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-c
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { MigrationReady } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-ready';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
-import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
+import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan/upgrade-plan';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
