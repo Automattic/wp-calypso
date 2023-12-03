@@ -23,7 +23,7 @@ Every command has a set of properties that can be used to customize its behavior
 - `name`: Type `string`, used as identifier for the command. It's expected to be unique and `camelCase`. It's not visible for the user.
 - `label`: Type `string`, used as the label for the command. Visible in the command palette.
 - `subLabel`?: Type `string`, used as a second line for the command. Visible in the command palette.
-- `searchLabel`?: Type `string`, used to match the user search. It's not visible for the user. We recommend to use `_x()` to add context to the translators.
+- `searchLabel`?: Type `string`, used to match the user search. It's not visible for the user. We recommend adding keywords related to the command, and using `_x()` to add context to the translators.
 - `callback`: Type `function`, used to execute the command when the user clicks on it or presses enter on that command.
 - `context`?: Type `string[]`, a list of URL paths for which the command will have priority when displayed. Example: `['/sites', '/manage/domains']`.
 - `icon`?: Type `JSX.Element`, used to display an icon for the command. It's visible in the command palette.

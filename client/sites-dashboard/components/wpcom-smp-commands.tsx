@@ -42,7 +42,7 @@ interface useCommandsArrayWpcomOptions {
 export const useCommandsArrayWpcom = ( {
 	setSelectedCommandName,
 }: useCommandsArrayWpcomOptions ) => {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 	const setStateCallback =
 		( actionName: string, placeholder: string = __( 'Select a site' ) ) =>
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
@@ -140,6 +140,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'viewMySites',
 			label: __( 'View my sites' ),
+			searchLabel: [
+				_x( 'view my sites', 'Keyword for the View my sites command' ),
+				_x( 'manage sites', 'Keyword for the View my sites command' ),
+				_x( 'sites dashboard', 'Keyword for the View my sites command' ),
+			].join( ' ' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigate( `/sites` );
@@ -149,6 +154,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
+			searchLabel: [
+				_x( 'open site dashboard', 'Keyword for the Open site dashboard command' ),
+				_x( 'admin', 'Keyword for the Open site dashboard command' ),
+				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'openSiteDashboard', __( 'Select dashboard to open' ) ),
 			siteFunctions: {
@@ -162,6 +172,22 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageHostingConfiguration',
 			label: __( 'Manage hosting configuration' ),
+			searchLabel: [
+				_x(
+					'manage hosting configuration',
+					'Keyword for the Manage hosting configuration command'
+				),
+				_x( 'admin interface style', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'cache', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'database', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'global edge cache', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'hosting', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'mysql', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'phpmyadmin', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'php version', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'sftp/ssh credentials', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'wp-cli', 'Keyword for the Manage hosting configuration command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'manageHostingConfiguration' ),
 			siteFunctions: {
@@ -176,6 +202,12 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openPHPmyAdmin',
 			label: __( 'Open database in phpMyAdmin' ),
+			searchLabel: [
+				_x( 'open database in phpmyadmin', 'Keyword for the Open database in phpMyAdmin command' ),
+				_x( 'database', 'Keyword for the Open database in phpMyAdmin command' ),
+				_x( 'mysql', 'Keyword for the Open database in phpMyAdmin command' ),
+				_x( 'phpmyadmin', 'Keyword for the Open database in phpMyAdmin command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'openPHPmyAdmin' ),
 			siteFunctions: {
@@ -190,6 +222,12 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openProfile',
 			label: __( 'Open my profile' ),
+			searchLabel: [
+				_x( 'open my profile', 'Keyword for the Open my profile command' ),
+				_x( 'account', 'Keyword for the Open my profile command' ),
+				_x( 'display name', 'Keyword for the Open my profile command' ),
+				_x( 'gravatar', 'Keyword for the Open my profile command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -200,6 +238,12 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openAccountSettings',
 			label: __( 'Open account settings' ),
+			searchLabel: [
+				_x( 'open account settings', 'Keyword for the Open account settings command' ),
+				_x( 'profile', 'Keyword for the Open account settings command' ),
+				_x( 'email', 'Keyword for the Open account settings command' ),
+				_x( 'language', 'Keyword for the Open account settings command' ),
+			].join( ' ' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				navigate( `/me/account` );
@@ -207,8 +251,17 @@ export const useCommandsArrayWpcom = ( {
 			icon: accountSettingsIcon,
 		},
 		{
-			name: 'acessPurchases',
+			name: 'accessPurchases',
 			label: __( 'View my purchases' ),
+			searchLabel: [
+				_x( 'view my purchases', 'Keyword for the View my purchases command' ),
+				_x( 'manage purchases', 'Keyword for the View my purchases command' ),
+				_x( 'billing history', 'Keyword for the View my purchases command' ),
+				_x( 'credit card', 'Keyword for the View my purchases command' ),
+				_x( 'payment methods', 'Keyword for the View my purchases command' ),
+				_x( 'subscriptions', 'Keyword for the View my purchases command' ),
+				_x( 'upgrades', 'Keyword for the View my purchases command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -219,6 +272,16 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageDomains',
 			label: __( 'Manage domains' ),
+			searchLabel: [
+				_x( 'dns', 'Keyword for the Manage domains command' ),
+				_x( 'domain mapping', 'Keyword for the Manage domains command' ),
+				_x( 'domain registration', 'Keyword for the Manage domains command' ),
+				_x( 'domain transfer', 'Keyword for the Manage domains command' ),
+				_x( 'email forwarding', 'Keyword for the Manage domains command' ),
+				_x( 'nameservers', 'Keyword for the Manage domains command' ),
+				_x( 'subdomains', 'Keyword for the Manage domains command' ),
+				_x( 'whois', 'Keyword for the Manage domains command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -229,6 +292,12 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageDns',
 			label: __( 'Manage DNS records' ),
+			searchLabel: [
+				_x( 'manage dns records', 'Keyword for the Manage DNS records command' ),
+				_x( 'cname', 'Keyword for the Manage DNS records command' ),
+				_x( 'mx', 'Keyword for the Manage DNS records command' ),
+				_x( 'txt', 'Keyword for the Manage DNS records command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'manageDns' ),
 			siteFunctions: {
@@ -344,6 +413,13 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openPHPLogs',
 			label: __( 'Open PHP logs' ),
+			searchLabel: [
+				_x( 'open php logs', 'Keyword for the Open PHP logs command' ),
+				_x( 'error logs', 'Keyword for the Open PHP logs command' ),
+				_x( 'fatal errors', 'Keyword for the Open PHP logs command' ),
+				_x( 'php errors', 'Keyword for the Open PHP logs command' ),
+				_x( 'php warnings', 'Keyword for the Open PHP logs command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'openPHPLogs' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -357,6 +433,13 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openWebServerLogs',
 			label: __( 'Open web server logs' ),
+			searchLabel: [
+				_x( 'open web server logs', 'Keyword for the Open web server logs command' ),
+				_x( 'access logs', 'Keyword for the Open web server logs command' ),
+				_x( 'apache logs', 'Keyword for the Open web server logs command' ),
+				_x( 'nginx logs', 'Keyword for the Open web server logs command' ),
+				_x( 'request logs', 'Keyword for the Open web server logs command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'openWebServerLogs' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -370,6 +453,13 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageStagingSites',
 			label: __( 'Manage staging sites' ),
+			searchLabel: [
+				_x( 'manage staging sites', 'Keyword for the Manage staging sites command' ),
+				_x( 'add staging site', 'Keyword for the Manage staging sites command' ),
+				_x( 'create staging site', 'Keyword for the Manage staging sites command' ),
+				_x( 'delete staging site', 'Keyword for the Manage staging sites command' ),
+				_x( 'sync staging site', 'Keyword for the Manage staging sites command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'manageStagingSites' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -396,6 +486,14 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageCacheSettings',
 			label: __( 'Manage cache settings' ),
+			searchLabel: [
+				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
+				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'manageCacheSettings' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -409,6 +507,13 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'changeAdminInterfaceStyle',
 			label: __( 'Change admin interface style' ),
+			searchLabel: [
+				_x(
+					'change admin interface style',
+					'Keyword for the Change admin interface style command'
+				),
+				_x( 'wp-admin', 'Keyword for the Change admin interface style command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'changeAdminInterfaceStyle' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -422,6 +527,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewSite',
 			label: __( 'Add new site' ),
+			searchLabel: [
+				_x( 'add new site', 'Keyword for the Add new site command' ),
+				_x( 'create site', 'Keyword for the Add new site command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -432,7 +541,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewPost',
 			label: __( 'Add new post' ),
-			searchLabel: __( 'Write new post' ),
+			searchLabel: [
+				_x( 'add new post', 'Keyword for the Add new post command' ),
+				_x( 'create post', 'Keyword for the Add new post command' ),
+				_x( 'write post', 'Keyword for the Add new post command' ),
+			].join( ' ' ),
 			context: [ '/posts' ],
 			callback: setStateCallback( 'addNewPost' ),
 			siteFunctions: {
@@ -451,6 +564,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'managePosts',
 			label: __( 'Manage posts' ),
+			searchLabel: [
+				_x( 'manage posts', 'Keyword for the Manage posts command' ),
+				_x( 'edit posts', 'Keyword for the Manage posts command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'managePosts' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -468,6 +585,10 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'viewMediaUploads',
 			label: __( 'View media uploads' ),
+			searchLabel: [
+				_x( 'view media uploads', 'Keyword for the View media uploads command' ),
+				_x( 'manage uploads', 'Keyword for the View media uploads command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'viewMediaUploads' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -502,6 +623,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'managePages',
 			label: __( 'Manage pages' ),
+			searchLabel: [
+				_x( 'manage pages', 'Keyword for the Manage pages command' ),
+				_x( 'edit pages', 'Keyword for the Manage pages command' ),
+				_x( 'delete pages', 'Keyword for the Manage pages command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'managePages' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -519,6 +645,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewPage',
 			label: __( 'Add new page' ),
+			searchLabel: [
+				_x( 'add new page', 'Keyword for the Add new page command' ),
+				_x( 'create page', 'Keyword for the Add new page command' ),
+				_x( 'write page', 'Keyword for the Add new page command' ),
+			].join( ' ' ),
 			context: [ '/pages' ],
 			callback: setStateCallback( 'addNewPage' ),
 			siteFunctions: {
@@ -537,6 +668,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageComments',
 			label: __( 'Manage comments' ),
+			searchLabel: [
+				_x( 'manage comments', 'Keyword for the Manage comments command' ),
+				_x( 'edit comments', 'Keyword for the Manage comments command' ),
+				_x( 'delete comments', 'Keyword for the Manage comments command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'manageComments' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -554,6 +690,12 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageThemes',
 			label: __( 'Manage themes' ),
+			searchLabel: [
+				_x( 'manage themes', 'Keyword for the Manage themes command' ),
+				_x( 'activate theme', 'Keyword for the Manage themes command' ),
+				_x( 'install theme', 'Keyword for the Manage themes command' ),
+				_x( 'delete theme', 'Keyword for the Manage themes command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'manageThemes' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -572,6 +714,14 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'managePlugins',
 			label: __( 'Manage plugins' ),
+			searchLabel: [
+				_x( 'manage plugins', 'Keyword for the Manage plugins command' ),
+				_x( 'activate plugin', 'Keyword for the Manage plugins command' ),
+				_x( 'deactivate plugin', 'Keyword for the Manage plugins command' ),
+				_x( 'install plugin', 'Keyword for the Manage plugins command' ),
+				_x( 'delete plugin', 'Keyword for the Manage plugins command' ),
+				_x( 'update plugin', 'Keyword for the Manage plugins command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'managePlugins' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -590,6 +740,14 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageUsers',
 			label: __( 'Manage users' ),
+			searchLabel: [
+				_x( 'manage users', 'Keyword for the Manage users command' ),
+				_x( 'add user', 'Keyword for the Manage users command' ),
+				_x( 'delete user', 'Keyword for the Manage users command' ),
+				_x( 'edit user', 'Keyword for the Manage users command' ),
+				_x( 'remove user', 'Keyword for the Manage users command' ),
+				_x( 'update user', 'Keyword for the Manage users command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'manageUsers' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -607,6 +765,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addNewUser',
 			label: __( 'Add new user' ),
+			searchLabel: [
+				_x( 'add new user', 'Keyword for the Add new user command' ),
+				_x( 'create user', 'Keyword for the Add new user command' ),
+				_x( 'invite user', 'Keyword for the Add new user command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'addNewUser' ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -624,7 +787,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addSubscribers',
 			label: __( 'Add subscribers' ),
-			searchLabel: __( 'Import subscribers' ),
 			context: [ '/subscribers' ],
 			callback: setStateCallback( 'addSubscribers' ),
 			siteFunctions: {
