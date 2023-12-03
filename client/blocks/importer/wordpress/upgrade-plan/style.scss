@@ -6,9 +6,6 @@
 $business-plan-color: #7f54b3;
 
 .import__upgrade-plan {
-	margin-top: 2.5rem;
-	margin-bottom: 2.5rem;
-
 	.onboarding-title {
 		@include onboarding-font-recoleta;
 		color: var(--studio-gray-100);
@@ -77,7 +74,7 @@ $business-plan-color: #7f54b3;
 	}
 
 	.import__upgrade-plan-price,
-	.import__upgrade-plan-details {
+	.import__upgrade-plan-features-list {
 		display: flex;
 	}
 
@@ -162,6 +159,11 @@ $business-plan-color: #7f54b3;
 	}
 
 	.import__upgrade-plan-details {
+		margin-top: 2.5rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.import__upgrade-plan-features-list {
 		flex-direction: column;
 
 		ul {
