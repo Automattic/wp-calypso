@@ -47,7 +47,9 @@ export const ReviewsModal = ( {
 						{ translate( 'Review submitted for %(productName)s', { args: { productName } } ) }
 					</CardHeading>
 					<CardHeading tagName="h2">
-						{ translate( 'Thank you for your contribution.' ) }
+						{ translate(
+							'Thank you for your contribution. It will be published following a review from our team.'
+						) }
 					</CardHeading>
 				</Card>
 			</Dialog>
