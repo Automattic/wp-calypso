@@ -1,10 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "../mixins.scss";
 
 .issue-license-v2__select-license {
 	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
 	border-width: 1.5px !important;
 	border-color: transparent;
+	text-wrap: nowrap;
 
 	@include breakpoint-deprecated("<660px") {
 		width: auto;
@@ -25,11 +27,11 @@
 
 .issue-license-v2__actions {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	gap: 8px;
+}
 
-	@include breakpoint-deprecated( "<960px" ) {
-		justify-content: normal;
-	}
+.issue-license-v2__controls {
+	@include licensing-portal-bottom-action-bar;
+	padding: 14px;
 }

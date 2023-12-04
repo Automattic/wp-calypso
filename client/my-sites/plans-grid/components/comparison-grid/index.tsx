@@ -32,6 +32,7 @@ import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
+import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
@@ -326,7 +327,6 @@ type ComparisonGridProps = {
 	intervalType: string;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
-	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
@@ -346,7 +346,6 @@ type ComparisonGridHeaderProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
-	flowName?: string | null;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
@@ -382,7 +381,6 @@ const ComparisonGridHeaderCell = ( {
 	displayedGridPlans,
 	currentSitePlanSlug,
 	isLaunchPage,
-	flowName,
 	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
@@ -478,7 +476,6 @@ const ComparisonGridHeaderCell = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				flowName={ flowName }
 				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
@@ -495,7 +492,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			visibleGridPlans,
 			isInSignup,
 			isLaunchPage,
-			flowName,
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
@@ -541,7 +537,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						flowName={ flowName }
 						onUpgradeClick={ onUpgradeClick }
 						isLaunchPage={ isLaunchPage }
 						isLargeCurrency={ isLargeCurrency }
@@ -860,7 +855,10 @@ const FeatureGroup = ( {
 		firstSetOfFeatures,
 	] );
 	const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
-	const featureObjects = getPlanFeaturesObject( allFeaturesList, features );
+	const featureObjects = filterUnusedFeaturesObject(
+		visibleGridPlans,
+		getPlanFeaturesObject( allFeaturesList, features )
+	);
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 
 	const allJetpackFeatures = useMemo( () => {
@@ -899,6 +897,11 @@ const FeatureGroup = ( {
 
 		setVisibleFeatureGroups( newVisibleFeatureGroups );
 	}, [ featureGroup, setVisibleFeatureGroups, visibleFeatureGroups ] );
+
+	// Skip non Jetpack feature groups without any available features.
+	if ( featureGroup.slug !== FEATURE_GROUP_ESSENTIAL_FEATURES && ! featureObjects.length ) {
+		return null;
+	}
 
 	return (
 		<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
@@ -952,7 +955,6 @@ const ComparisonGrid = ( {
 	intervalType,
 	isInSignup,
 	isLaunchPage,
-	flowName,
 	currentSitePlanSlug,
 	onUpgradeClick,
 	siteId,
@@ -1101,7 +1103,6 @@ const ComparisonGrid = ( {
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
-							flowName={ flowName }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							onUpgradeClick={ onUpgradeClick }
@@ -1132,7 +1133,6 @@ const ComparisonGrid = ( {
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }

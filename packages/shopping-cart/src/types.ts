@@ -229,7 +229,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 
 	/**
 	 * The amount of tax collected.
-	 *
 	 * @deprecated This is a float and is unreliable. Use total_tax_integer.
 	 */
 	total_tax: string;
@@ -246,7 +245,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 
 	/**
 	 * The cart's total cost.
-	 *
 	 * @deprecated This is a float and is unreliable. Use total_cost_integer.
 	 */
 	total_cost: number;
@@ -363,7 +361,6 @@ export interface ResponseCartProduct {
 
 	/**
 	 * The cart item's original price in the currency's smallest unit.
-	 *
 	 * @deprecated Use item_original_cost_integer or item_original_subtotal_integer.
 	 */
 	product_cost_integer: number;
@@ -404,7 +401,6 @@ export interface ResponseCartProduct {
 
 	/**
 	 * The cart item's subtotal without volume.
-	 *
 	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer
 	 */
 	cost: number;
@@ -416,7 +412,6 @@ export interface ResponseCartProduct {
 	 * before a coupon was applied, it already includes sale coupons (which are
 	 * actually discounts), and other discounts and does not include certain
 	 * other price changes (eg: domain discounts). It's best not to rely on it.
-	 *
 	 * @deprecated This is a float and is unreliable. Use
 	 * item_original_subtotal_integer if you
 	 * can, although those have slightly different meanings.
@@ -552,11 +547,10 @@ export interface ResponseCartProductVariant {
 
 export interface ResponseCartCostOverride {
 	human_readable_reason: string;
-	new_price: number;
-	old_price: number;
+	new_subtotal_integer: number;
+	old_subtotal_integer: number;
 	override_code: string;
 	does_override_original_cost: boolean;
-	reason: string;
 }
 
 export interface IntroductoryOfferTerms {

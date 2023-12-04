@@ -83,6 +83,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		const shouldGoToAssemblerStep = isAssemblerSupported();
 		props.recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_cta_click', {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
+			is_logged_in: isLoggedIn,
 		} );
 
 		const destinationUrl = getSiteAssemblerUrl( {

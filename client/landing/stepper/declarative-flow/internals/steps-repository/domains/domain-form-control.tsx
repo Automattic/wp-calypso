@@ -53,12 +53,8 @@ export function DomainFormControl( {
 	isCartPendingUpdate,
 	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
-	const { selectedSite, productsList } = useSelector( ( state ) => {
-		return {
-			selectedSite: getSelectedSite( state ),
-			productsList: getAvailableProductsList( state ),
-		};
-	} );
+	const selectedSite = useSelector( getSelectedSite );
+	const productsList = useSelector( getAvailableProductsList );
 
 	const { domainForm, siteTitle } = useSelect(
 		( select ) => ( {

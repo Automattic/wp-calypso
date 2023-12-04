@@ -69,9 +69,10 @@ const PatternPagePreview = ( {
 }: PagePreviewProps ) => {
 	const { slug, title, patterns } = pageProps;
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
+	const [ isFullscreenEnter, setIsFullscreenEnter ] = useState( false );
 	const [ isFullscreenLeave, setIsFullscreenLeave ] = useState( false );
 	const [ frameStyles, setFrameStyles ] = useState( {} );
-	const ref = useRef< HTMLButtonElement >( null );
+	const ref = useRef< HTMLDivElement >( null );
 
 	const calculateFrameStyles = useCallback( () => {
 		if ( ! ref.current ) {
@@ -90,6 +91,10 @@ const PatternPagePreview = ( {
 		if ( ! isFullscreen ) {
 			setIsFullscreen( true );
 			onFullscreenEnter();
+
+			// The timeout delay should match the CSS transition timing of the element.
+			setIsFullscreenEnter( true );
+			setTimeout( () => setIsFullscreenEnter( false ), 200 );
 		}
 	};
 
@@ -120,11 +125,11 @@ const PatternPagePreview = ( {
 	}, [ isFullscreen, calculateFrameStyles ] );
 
 	useEffect( () => {
-		window.addEventListener( 'resize', handleFullscreenLeave );
+		window.addEventListener( 'resize', calculateFrameStyles );
 		return () => {
-			window.removeEventListener( 'resize', handleFullscreenLeave );
+			window.removeEventListener( 'resize', calculateFrameStyles );
 		};
-	}, [ handleFullscreenLeave ] );
+	}, [ calculateFrameStyles ] );
 
 	useOutsideClickCallback( ref, handleFullscreenLeave );
 
@@ -132,22 +137,24 @@ const PatternPagePreview = ( {
 		<div
 			className={ classnames( 'pattern-assembler__preview', {
 				'pattern-assembler__preview--fullscreen': isFullscreen,
+				'pattern-assembler__preview--fullscreen-enter': isFullscreenEnter,
 				'pattern-assembler__preview--fullscreen-leave': isFullscreenLeave,
 			} ) }
 		>
-			<CompositeItem
-				{ ...composite }
-				ref={ ref }
-				role="option"
-				as="button"
-				className="pattern-assembler__preview-frame"
-				style={ frameStyles }
-				aria-label={ title }
-				onClick={ handleClick }
-			>
-				<Page className="pattern-assembler__preview-frame-content" { ...pageProps } />
-			</CompositeItem>
-			<div className="pattern-assembler__preview-title">{ title }</div>
+			<div className="pattern-assembler__preview-container" ref={ ref }>
+				<CompositeItem
+					{ ...composite }
+					role="option"
+					as="button"
+					className="pattern-assembler__preview-frame"
+					style={ frameStyles }
+					aria-label={ title }
+					onClick={ handleClick }
+				>
+					<Page className="pattern-assembler__preview-frame-content" { ...pageProps } />
+				</CompositeItem>
+				<div className="pattern-assembler__preview-title">{ title }</div>
+			</div>
 		</div>
 	);
 };

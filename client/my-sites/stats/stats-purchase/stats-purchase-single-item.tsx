@@ -22,6 +22,7 @@ import {
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
+import { PriceTierListItemProps } from './types';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -33,6 +34,7 @@ interface StatsCommercialPurchaseProps {
 	redirectUri: string;
 	from: string;
 	showClassificationDispute?: boolean;
+	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -43,6 +45,7 @@ interface StatsSingleItemPagePurchaseProps {
 	from: string;
 	siteId: number | null;
 	isCommercial: boolean | null;
+	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPersonalPurchasePageProps {
@@ -83,6 +86,7 @@ const StatsCommercialPurchase = ( {
 	adminUrl,
 	redirectUri,
 	showClassificationDispute = true,
+	priceTiers,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -139,7 +143,9 @@ Thanks\n\n`;
 			>
 				{ translate( 'Get Stats' ) }
 			</ButtonComponent>
-			{ isTierUpgradeSliderEnabled && <TierUpgradeSlider /> }
+			{ isTierUpgradeSliderEnabled && (
+				<TierUpgradeSlider priceTiers={ priceTiers } currencyCode={ currencyCode } />
+			) }
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
@@ -308,6 +314,7 @@ const StatsSingleItemPagePurchase = ( {
 	from,
 	siteId,
 	isCommercial,
+	priceTiers,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -322,6 +329,7 @@ const StatsSingleItemPagePurchase = ( {
 				redirectUri={ redirectUri }
 				from={ from }
 				showClassificationDispute={ !! isCommercial }
+				priceTiers={ priceTiers }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);
