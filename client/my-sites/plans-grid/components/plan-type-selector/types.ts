@@ -3,7 +3,7 @@ import { type TranslateResult } from 'i18n-calypso';
 import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 export type PlanTypeSelectorProps = {
-	kind: 'interval' | 'customer';
+	kind: 'interval';
 	basePlansPath?: string | null;
 	intervalType: string;
 	customerType: string;

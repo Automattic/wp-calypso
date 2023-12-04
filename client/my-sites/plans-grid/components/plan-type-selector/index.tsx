@@ -1,6 +1,5 @@
 import { useEffect } from '@wordpress/element';
 import * as React from 'react';
-import { CustomerTypeToggle } from './components/customer-type-toggle';
 import { IntervalTypeToggle } from './components/interval-type-toggle';
 import { PlanTypeSelectorProps } from './types';
 
@@ -23,18 +22,14 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 			</div>
 		);
 	}
-
-	if ( kind === 'customer' ) {
-		return (
-			<div className="plan-type-selector">
-				<CustomerTypeToggle { ...props } />
-			</div>
-		);
-	}
+	/**
+	 * Allowance for other types of toggles that maybe based on other plan attributes such as customer types
+	 * Eg: Customer type toggle https://github.com/Automattic/wp-calypso/pull/27125
+	 * Potential for a cleanup if such a dynamic is not required and plan type selector will always be based on time intervals, i.e. YAGNI.
+	 */
 
 	return null;
 };
 
 export default PlanTypeSelector;
-export { CustomerTypeToggle, IntervalTypeToggle };
 export type { PlanTypeSelectorProps };
