@@ -51,6 +51,7 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 				productName={ productName }
 				productType={ productType }
 				buttons={ [] }
+				reviewsNumber={ numberOfReviews }
 			/>
 			<div className="reviews-summary__container">
 				{ numberOfReviews && (

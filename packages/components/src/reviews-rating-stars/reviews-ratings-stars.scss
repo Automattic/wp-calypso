@@ -5,22 +5,22 @@
 }
 
 .wccom-ratings__average {
-	color: $c-gray-100;
+	color: "#101517"; // $c-gray-100;
 	font-size: 2rem;
 	font-weight: 600;
-	margin-right: $grid-unit-15;
+	margin-right: "12px"; //$grid-unit-15;
 }
 
 .wccom-ratings__rating-count {
-	color: $c-gray-50;
+	color: "@646970"; // $c-gray-50;
 	font-size: 0.875rem;
-	margin-left: $grid-unit-15;
+	margin-left: "12px"; //$grid-unit-15;
 }
 
 .wccom-ratings__selected-rating {
-	color: $c-gray-40;
+	color: "#787c82"; // $c-gray-40;
 	font-size: 1rem;
-	margin-left: $grid-unit-15;
+	margin-left: "12px"; //$grid-unit-15;
 }
 
 .wccom-ratings__stars {
@@ -47,12 +47,12 @@
 
 	.wccom-ratings__average {
 		font-size: 1.25rem;
-		margin-right: $grid-unit-10;
+		margin-right: "8px";// $grid-unit-10;
 	}
 
 	.wccom-ratings__rating-count {
 		font-size: 0.75rem;
-		margin-left: $grid-unit-10;
+		margin-left: "8px";// $grid-unit-10;
 	}
 }
 

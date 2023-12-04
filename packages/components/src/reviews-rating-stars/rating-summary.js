@@ -1,4 +1,3 @@
-// import { sprintf, __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Star from './star';

@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { forwardRef, useState, useEffect } from 'react';
 import RatingSummary from './rating-summary';
 import Star from './star';
+import './reviews-ratings-stars.scss';
 
 export const MAX_RATING = 5;
 
@@ -60,13 +61,16 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 	let numberOfReviewsText;
 	if ( numberOfReviews ) {
 		numberOfReviewsText = translate( '%(numberOfReviews) review', '%(numberOfReviews) reviews', {
-			numberOfReviews,
+			count: numberOfReviews,
 			args: { numberOfReviews },
 		} );
 	}
 
-	function getStarsNumberSign( number ) {
-		return translate( '%(number) star', '%(number) stars', { number, args: { number } } );
+	function getStarsNumberSign( numberOfStars ) {
+		return translate( '%(numberToAdd)d star', '%(numberToAdd)d stars', {
+			count: numberOfStars,
+			args: { numberToAdd: numberOfStars },
+		} );
 	}
 
 	// Show currently selected rating if we're not showing rating count

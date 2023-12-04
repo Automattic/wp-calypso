@@ -83,4 +83,4 @@ export { default as WooLogo } from './logos/woo-logo';
 export { default as WordPressLogo } from './wordpress-logo';
 export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
 export { default as PressableLogo } from './logos/pressable-logo';
-export { default as ReviewsRatingsStars } from './rating-stars/ratings-stars';
+export { default as ReviewsRatingsStars } from './reviews-rating-stars/reviews-ratings-stars';

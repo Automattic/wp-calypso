@@ -90,11 +90,11 @@ export const ReviewsModal = ( {
 						onChange={ setContent }
 					/>
 					<ReviewsRatingsStars
-						onSelectRating={ ( rating: string ) => setRating( rating ) }
-						rating={ 4 }
-						averageRating={ 4.1 }
-						ratingCount={ 567 }
-						size="small"
+						onSelectRating={ setRating }
+						isInteractive
+						showSelectedRating
+						rating={ rating }
+						hoverRating={ rating }
 					/>
 					<div className="marketplace-reviews-modal__buttons-container">
 						<Button
