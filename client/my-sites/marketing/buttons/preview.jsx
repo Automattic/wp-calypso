@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Gridicon } from '@automattic/components';
+import { Icon, starEmpty } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { filter, some } from 'lodash';
 import PropTypes from 'prop-types';
@@ -147,11 +148,10 @@ class SharingButtonsPreview extends Component {
 	getLikeButtonElement = () => {
 		if ( this.props.showLike ) {
 			return (
-				<span>
+				<span className="sharing-buttons-preview__like-container">
 					<div className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
-						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
-						<Gridicon icon="star" size={ 16 } />
+						<Icon icon={ starEmpty } className="sharing-buttons-preview__like-icon" />
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.translate( 'Like' ) }
 					</div>
@@ -162,7 +162,7 @@ class SharingButtonsPreview extends Component {
 						/>
 					</div>
 					<div className="sharing-buttons-preview__fake-like">
-						{ this.props.translate( 'One blogger likes this.' ) }
+						{ this.props.translate( '1 like' ) }
 					</div>
 				</span>
 			);
