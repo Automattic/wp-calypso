@@ -45,6 +45,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -105,6 +106,93 @@ import ThemeStyleVariations from './theme-style-variations';
 import './style.scss';
 
 const noop = () => {};
+
+/**
+ * Renders the description for the banner upsell.
+ * It's a workaround to use hooks in the class component.
+ * @param {Object} props
+ * @param {string} props.themeId
+ * @param {boolean} props.isBundledSoftwareSet
+ * @param {boolean} props.isExternallyManagedTheme
+ * @param {Function} props.translate
+ * @param {boolean} props.isSiteEligibleForManagedExternalThemes
+ * @param {boolean} props.isMarketplaceThemeSubscribed
+ * @returns {string} The description for the banner upsell.
+ */
+const BannerUpsellDescription = ( {
+	themeId,
+	isBundledSoftwareSet,
+	isExternallyManagedTheme,
+	translate,
+	isSiteEligibleForManagedExternalThemes,
+	isMarketplaceThemeSubscribed,
+} ) => {
+	const bundleSettings = useBundleSettings( themeId );
+
+	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
+		if ( ! bundleSettings ) {
+			return translate(
+				'This theme comes bundled with a plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+			);
+		}
+
+		return bundleSettings.bannerUpsellDescription;
+	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+		if ( ! isSiteEligibleForManagedExternalThemes ) {
+			return translate(
+				'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
+			);
+		}
+		return translate( 'Subscribe to this theme and unlock all its features.' );
+	}
+
+	return translate(
+		'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+	);
+};
+
+/**
+ * Renders the title for the banner upsell.
+ * It's a workaround to use hooks in the class component.
+ * @param {Object} props
+ * @param {string} props.themeId
+ * @param {boolean} props.isBundledSoftwareSet
+ * @param {boolean} props.isExternallyManagedTheme
+ * @param {Function} props.translate
+ * @param {boolean} props.isSiteEligibleForManagedExternalThemes
+ * @param {boolean} props.isMarketplaceThemeSubscribed
+ * @returns {string} The title for the banner upsell.
+ */
+const BannerUpsellTitle = ( {
+	themeId,
+	isBundledSoftwareSet,
+	isExternallyManagedTheme,
+	translate,
+	isSiteEligibleForManagedExternalThemes,
+	isMarketplaceThemeSubscribed,
+} ) => {
+	const bundleSettings = useBundleSettings( themeId );
+
+	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
+		if ( ! bundleSettings ) {
+			return translate( 'Access this theme with a Business plan!' );
+		}
+
+		const bundleName = bundleSettings.name;
+
+		// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+		return translate( 'Access this %(bundleName)s theme with a Business plan!', {
+			args: { bundleName },
+		} );
+	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+		if ( ! isSiteEligibleForManagedExternalThemes ) {
+			return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
+		}
+		return translate( 'Subscribe to this theme!' );
+	}
+
+	return translate( 'Access this theme for FREE with a Premium or Business plan!' );
+};
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -1023,53 +1111,9 @@ class ThemeSheet extends Component {
 		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 	};
 
-	getBannerUpsellTitle = () => {
-		const {
-			isBundledSoftwareSet,
-			isExternallyManagedTheme,
-			translate,
-			isSiteEligibleForManagedExternalThemes,
-			isMarketplaceThemeSubscribed,
-		} = this.props;
+	getBannerUpsellTitle = () => <BannerUpsellTitle { ...this.props } />;
 
-		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
-			return translate( 'Access this WooCommerce theme with a Business plan!' );
-		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
-			if ( ! isSiteEligibleForManagedExternalThemes ) {
-				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
-			}
-			return translate( 'Subscribe to this theme!' );
-		}
-
-		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
-	};
-
-	getBannerUpsellDescription = () => {
-		const {
-			isBundledSoftwareSet,
-			isExternallyManagedTheme,
-			translate,
-			isSiteEligibleForManagedExternalThemes,
-			isMarketplaceThemeSubscribed,
-		} = this.props;
-
-		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
-			return translate(
-				'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-			);
-		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
-			if ( ! isSiteEligibleForManagedExternalThemes ) {
-				return translate(
-					'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
-				);
-			}
-			return translate( 'Subscribe to this theme and unlock all its features.' );
-		}
-
-		return translate(
-			'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
-		);
-	};
+	getBannerUpsellDescription = () => <BannerUpsellDescription { ...this.props } />;
 
 	getPremiumGlobalStylesEventProps = () => {
 		const { selectedStyleVariationSlug, themeId } = this.props;
