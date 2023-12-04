@@ -167,18 +167,32 @@ export const useCommandsArrayWpcom = ( {
 	};
 
 	const toggleEdgeCache = async ( siteId: number ) => {
+		const active = await getEdgeCacheStatus( siteId );
+
+		const toggleCacheMessage = active
+			? __( 'Disabling global edge cache' )
+			: __( 'Enabling global edge cache' );
+
+		const successMessageEnabled = __( 'Global edge cache enabled' );
+		const successMessageDisabled = __( 'Global edge cache disabled' );
+
+		const { removeNotice: removeLoadingNotice } = displayNotice(
+			toggleCacheMessage,
+			'is-plain',
+			5000
+		);
 		try {
-			const active = await getEdgeCacheStatus( siteId );
-			await wpcom.req.post( {
+			const response = await wpcom.req.post( {
 				path: `/sites/${ siteId }/hosting/edge-cache/active`,
 				apiNamespace: 'wpcom/v2',
 				body: {
 					active: ! active,
 				},
 			} );
-
-			displayNotice( __( 'Global edge cache enabled' ) );
+			removeLoadingNotice();
+			displayNotice( response ? successMessageEnabled : successMessageDisabled );
 		} catch ( error ) {
+			removeLoadingNotice();
 			displayNotice( __( 'Failed to enable global edge cache' ), 'is-error' );
 		}
 	};
@@ -198,7 +212,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'clearEdgeCache',
 			label: __( 'Clear edge cache' ),
-			context: [ '/sites' ],
 			callback: setStateCallback( 'clearEdgeCache', __( 'Select a site to clear cache' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -212,7 +225,6 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'toggleEdgeCache',
 			label: __( 'Toggle edge cache' ),
-			context: [ '/sites' ],
 			callback: setStateCallback( 'toggleEdgeCache', __( 'Select a site to toggle cache' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
