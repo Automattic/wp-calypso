@@ -181,6 +181,8 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/start/import?source=command-palette` );
 			},
 			icon: arrowDownIcon,
+		},
+		{
 			name: 'openReader',
 			label: __( 'Open reader' ),
 			callback: ( { close }: { close: () => void } ) => {
