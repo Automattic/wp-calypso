@@ -1,7 +1,7 @@
 import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
@@ -106,6 +106,18 @@ export const LogsTab = ( {
 		pageIndex: currentPageIndex,
 	} );
 
+	const [ latestLogType, setLatestLogType ] = useState< LogType | undefined | null >( null );
+	useEffect( () => {
+		if ( ! isFetching && logType !== latestLogType ) {
+			setLatestLogType( logType );
+			if ( latestLogType ) {
+				setSeverity( '' );
+				setRequestType( '' );
+				setRequestStatus( '' );
+			}
+		}
+	}, [ latestLogType, logType, isFetching ] );
+
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
 		if ( isChecked ) {
 			setDateRange( getLatestDateRange() );
@@ -208,6 +220,7 @@ export const LogsTab = ( {
 				isLoading={ isFetching }
 				headerTitles={ headerTitles }
 				logType={ logType }
+				latestLogType={ latestLogType }
 			/>
 			{ paginationText && (
 				<div className="site-monitoring__pagination-text">{ paginationText }</div>
