@@ -13,7 +13,7 @@ import type {
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from './types';
-import type { FeatureList, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import type { FeatureList, WPComStorageAddOnSlug, PlanSlug } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
@@ -37,9 +37,11 @@ export interface PlansGridProps {
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
-	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	onUpgradeClick?: (
+		cartItems?: MinimalRequestCartProduct[] | null,
+		clickedPlanSlug?: PlanSlug
+	) => void;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	flowName?: string | null;
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType: string;
@@ -69,7 +71,6 @@ const WrappedComparisonGrid = ( {
 	intervalType,
 	isInSignup,
 	isLaunchPage,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -95,7 +96,6 @@ const WrappedComparisonGrid = ( {
 				intervalType={ intervalType }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
-				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				onUpgradeClick={ handleUpgradeClick }
 				siteId={ siteId }

@@ -1,9 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -19,6 +20,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { MarketplaceReviewsList } from 'calypso/my-sites/marketplace/components/reviews-list';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -88,6 +90,7 @@ function PluginDetails( props ) {
 	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const reviewsListRef = useRef();
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
@@ -370,7 +373,11 @@ function PluginDetails( props ) {
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
-						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+						<PluginDetailsHeader
+							plugin={ fullPlugin }
+							isPlaceholder={ showPlaceholder }
+							reviewsListRef={ reviewsListRef }
+						/>
 					</div>
 					<div className="plugin-details__content">
 						{ ! showPlaceholder && (
@@ -450,6 +457,15 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
+			{ isEnabled( 'marketplace-reviews-show' ) && ! showPlaceholder && (
+				<div className="plugin-details__reviews">
+					<MarketplaceReviewsList
+						slug={ fullPlugin.slug }
+						productType="plugin"
+						ref={ reviewsListRef }
+					/>
+				</div>
+			) }
 			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
 		</MainComponent>
 	);

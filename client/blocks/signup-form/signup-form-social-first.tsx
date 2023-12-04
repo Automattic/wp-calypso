@@ -47,16 +47,10 @@ const SignupFormSocialFirst = ( {
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
-
-	const { isWoo, isGravatar } = useSelector( ( state ) => {
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
-
-		return {
-			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
-			isGravatar: isGravatarOAuth2Client( oauth2Client ),
-		};
-	} );
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWooCoreProfilerFlow = useSelector( isWooCommerceCoreProfilerFlow );
+	const isWoo = isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow;
+	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
 	const renderContent = () => {
 		if ( currentStep === 'initial' ) {

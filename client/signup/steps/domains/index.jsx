@@ -82,8 +82,48 @@ import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
 
+// Referenced from WordAds_Ads_Txt
+const wpcomSubdomains = [
+	'wordpress.com',
+	'art.blog',
+	'business.blog',
+	'car.blog',
+	'code.blog',
+	'data.blog',
+	'design.blog',
+	'family.blog',
+	'fashion.blog',
+	'finance.blog',
+	'fitness.blog',
+	'food.blog',
+	'game.blog',
+	'health.blog',
+	'home.blog',
+	'law.blog',
+	'movie.blog',
+	'music.blog',
+	'news.blog',
+	'photo.blog',
+	'poetry.blog',
+	'politics.blog',
+	'school.blog',
+	'science.blog',
+	'sport.blog',
+	'tech.blog',
+	'travel.blog',
+	'video.blog',
+	'water.blog',
+];
+
 const BoldTLD = ( { domain } ) => {
-	const tld = domain.split( '.' ).pop();
+	const split = domain.split( '.' );
+	let tld = split.pop();
+	const wp = split.pop();
+
+	if ( wpcomSubdomains.includes( `${ wp }.${ tld }` ) ) {
+		tld = `${ wp }.${ tld }`;
+	}
+
 	return (
 		<>
 			<span>{ domain.replace( `.${ tld }`, '' ) }</span>
@@ -804,11 +844,7 @@ export class RenderDomainsStep extends Component {
 			return isRemoving ? null : (
 				<>
 					<div>
-						<div
-							className={ classNames( 'domains__domain-cart-domain', {
-								'limit-width': hasPromotion,
-							} ) }
-						>
+						<div className="domains__domain-cart-domain">
 							<BoldTLD domain={ domain.meta } />
 						</div>
 						<div className="domain-product-price__price">
