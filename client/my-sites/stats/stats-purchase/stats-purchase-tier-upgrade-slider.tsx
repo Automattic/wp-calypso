@@ -51,6 +51,14 @@ function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps 
 
 	const translatedStrings = useTranslatedStrings();
 
+	// TODO: Review tier values from API.
+	// Should consider validating the inputs before displaying them.
+	// The following will draw a "-" for the views value if it's undefined.
+	const hasExtension = tiers[ currentPlanIndex ]?.extension || false;
+	const lhValue = hasExtension
+		? EXTENSION_THRESHOLD * 1000000
+		: Number( tiers[ currentPlanIndex ]?.views );
+
 	return (
 		<div className={ componentClassNames }>
 			<div className="stats-tier-upgrade-slider__plan-callouts">
@@ -60,10 +68,10 @@ function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps 
 						{ tiers[ currentPlanIndex ]?.extension ? (
 							<>
 								<span>+</span>
-								<ShortenedNumber value={ EXTENSION_THRESHOLD * 1000000 } />
+								<ShortenedNumber value={ lhValue } />
 							</>
 						) : (
-							<ShortenedNumber value={ tiers[ currentPlanIndex ]?.views } />
+							<ShortenedNumber value={ lhValue } />
 						) }
 					</p>
 				</div>
