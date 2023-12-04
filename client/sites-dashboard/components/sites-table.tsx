@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Icon, starFilled } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useRef, useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -8,7 +9,7 @@ import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
-const N_LOADING_ROWS = 3;
+const N_LOADING_ROWS = 4;
 
 interface SitesTableProps {
 	className?: string;
@@ -78,6 +79,13 @@ const StatsThInner = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: '6px',
+} );
+
+const FavoriteTh = styled.th( {
+	width: '4%',
+} );
+const FavoriteThInner = styled.div( {
+	marginTop: '6px',
 } );
 
 export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
@@ -150,6 +158,11 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					style={ isHeaderStuck ? headerShadow : undefined }
 				>
 					<Row>
+						<FavoriteTh>
+							<FavoriteThInner>
+								<Icon size={ 32 } icon={ starFilled } />
+							</FavoriteThInner>
+						</FavoriteTh>
 						<SiteTh>{ __( 'Site' ) }</SiteTh>
 						<PlanTh>{ __( 'Plan' ) }</PlanTh>
 						<th>{ __( 'Status' ) }</th>

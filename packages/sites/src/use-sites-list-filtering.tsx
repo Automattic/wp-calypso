@@ -5,19 +5,31 @@ export const SITES_SEARCH_INDEX_KEYS = [ 'name', 'slug', 'title', 'URL' ];
 
 export interface SitesFilterOptions {
 	search?: string;
+	userId?: number | null;
+	isFilterByOwner?: boolean;
 }
 
-type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' >;
+type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' | 'site_owner' >;
 
 export function useSitesListFiltering< T extends SiteForFiltering >(
 	sites: T[],
-	{ search }: SitesFilterOptions
+	{ search, userId, isFilterByOwner }: SitesFilterOptions
 ) {
+	let sitesOwnedByMe: T[] = [];
+	if ( userId ) {
+		sitesOwnedByMe = sites.filter( ( site ) => site.site_owner === userId );
+	}
 	const filteredSites = useFuzzySearch( {
-		data: sites,
+		data: isFilterByOwner ? sitesOwnedByMe : sites,
 		keys: SITES_SEARCH_INDEX_KEYS,
 		query: search,
 	} );
 
-	return filteredSites;
+	return {
+		sites: filteredSites,
+		countOwner: {
+			me: sitesOwnedByMe.length,
+			all: sites.length,
+		},
+	};
 }

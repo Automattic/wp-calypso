@@ -23,6 +23,7 @@ import {
 	getSiteWpAdminUrl,
 } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
+import SitesFavorite from './sites-favorite';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
@@ -168,6 +169,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	return (
 		<Row ref={ ref }>
+			<Column mobileHidden>
+				<SitesFavorite site={ site } />
+			</Column>
 			<Column>
 				<SiteListTile
 					contentClassName={ css`

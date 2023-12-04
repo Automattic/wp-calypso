@@ -16,7 +16,8 @@ import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { withoutHttp } from 'calypso/lib/url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
@@ -147,7 +148,7 @@ const ManageAllDomainsButton = styled( Button )`
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
-	queryParams: { page = 1, perPage = 96, search, status = 'all', newSiteID },
+	queryParams: { page = 1, perPage = 96, search, status = 'all', owner = '', newSiteID },
 }: SitesDashboardProps ) {
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: TRACK_SOURCE_NAME,
@@ -156,11 +157,13 @@ export function SitesDashboard( {
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
 		ref: 'topbar',
 	} );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
+	const isFilterByOwner = owner === 'me';
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
@@ -229,11 +232,11 @@ export function SitesDashboard( {
 			<PageBodyWrapper>
 				<SitesDashboardSitesList
 					sites={ allSites }
-					filtering={ { search } }
+					filtering={ { search, userId, isFilterByOwner } }
 					sorting={ sitesSorting }
 					grouping={ { status, showHidden: true } }
 				>
-					{ ( { sites, statuses } ) => {
+					{ ( { sites, statuses, countOwner } ) => {
 						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
 
 						const selectedStatus =
@@ -251,6 +254,8 @@ export function SitesDashboard( {
 										sitesSorting={ sitesSorting }
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+										isFilterByOwner={ isFilterByOwner }
+										countOwner={ countOwner }
 									/>
 								) }
 								{ userPreferencesLoaded && (

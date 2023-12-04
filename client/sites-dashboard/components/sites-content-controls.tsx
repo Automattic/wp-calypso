@@ -1,6 +1,10 @@
 import page from '@automattic/calypso-router';
 import { SearchIcon, type ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
-import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
+import {
+	GroupableSiteLaunchStatuses,
+	useSitesListFiltering,
+	useSitesListGrouping,
+} from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -18,6 +22,7 @@ export interface SitesDashboardQueryParams {
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
 	newSiteID?: number;
+	owner?: string;
 }
 
 const FilterBar = styled.div( {
@@ -67,8 +72,6 @@ const VisibilityControls = styled.div( {
 } );
 
 const ControlsSelectDropdown = styled( SelectDropdown )( {
-	width: '100%',
-
 	'.select-dropdown__container': {
 		minWidth: '100%',
 
@@ -79,12 +82,15 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 } );
 
 type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
+type CountOwner = ReturnType< typeof useSitesListFiltering >[ 'countOwner' ];
 
 type SitesContentControlsProps = {
 	initialSearch?: string;
 	onQueryParamChange?: ( params: Partial< SitesDashboardQueryParams > ) => void;
 	statuses: Statuses;
+	isFilterByOwner: boolean;
 	selectedStatus: Statuses[ number ];
+	countOwner: CountOwner;
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
 	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
 
@@ -118,6 +124,8 @@ export const SitesContentControls = ( {
 	sitesSorting,
 	onSitesSortingChange,
 	hasSitesSortingPreferenceLoaded,
+	isFilterByOwner = false,
+	countOwner = { me: 0, all: 0 },
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 	const searchRef = useRef< SearchImperativeHandle >( null );
@@ -175,6 +183,38 @@ export const SitesContentControls = ( {
 							{ title }
 						</SelectDropdown.Item>
 					) ) }
+				</ControlsSelectDropdown>
+				<ControlsSelectDropdown
+					// Translators: `siteOwner` is one of the site statuses specified in the Sites page.
+					selectedText={ isFilterByOwner ? __( 'Owner: Me' ) : __( 'Owner: Everyone' ) }
+					ariaLabel={
+						isFilterByOwner ? __( 'Displaying my sites.' ) : __( 'Displaying all sites' )
+					}
+				>
+					<SelectDropdown.Item
+						count={ countOwner.all }
+						selected={ ! isFilterByOwner }
+						onClick={ () =>
+							onQueryParamChange( {
+								owner: undefined,
+								page: undefined,
+							} )
+						}
+					>
+						{ __( 'Everyone' ) }
+					</SelectDropdown.Item>
+					<SelectDropdown.Item
+						count={ countOwner.me }
+						selected={ isFilterByOwner }
+						onClick={ () =>
+							onQueryParamChange( {
+								owner: 'me',
+								page: undefined,
+							} )
+						}
+					>
+						{ __( 'Me' ) }
+					</SelectDropdown.Item>
 				</ControlsSelectDropdown>
 				<VisibilityControls>
 					<SitesSortingDropdown
