@@ -145,7 +145,6 @@ Thanks\n\n`;
 			{ isTierUpgradeSliderEnabled && (
 				<>
 					<TierUpgradeSlider
-						priceTiers={ priceTiers }
 						currencyCode={ currencyCode }
 						setPurchaseTierQuantity={ setPurchaseTierQuantity }
 					/>
