@@ -206,6 +206,8 @@ export class RenderDomainsStep extends Component {
 			domainRemovalQueue: [],
 			isGoingToNextStep: false,
 			temporaryCart: [],
+			replaceDomainFailed: false,
+			replaceDomainFailedMessage: null,
 		};
 	}
 
@@ -655,7 +657,19 @@ export class RenderDomainsStep extends Component {
 			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+			await this.props.shoppingCartManager
+				.replaceProductsInCart( sortedProducts )
+				.then( () => {
+					this.setState( { replaceDomainFailed: false } );
+				} )
+				.catch( () => {
+					this.setState( { replaceDomainFailed: true } );
+					this.setState( {
+						replaceDomainFailedMessage: this.props.translate(
+							'Failed to add domain. Please try again.'
+						),
+					} );
+				} );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
@@ -723,8 +737,15 @@ export class RenderDomainsStep extends Component {
 				.replaceProductsInCart( productsToKeep )
 				.then( () => {
 					this.setState( { isCartPendingUpdateDomain: null } );
+					this.setState( { replaceDomainFailed: false } );
 				} )
 				.catch( () => {
+					this.setState( { replaceDomainFailed: true } );
+					this.setState( {
+						replaceDomainFailedMessage: this.props.translate(
+							'Failed to remove domain. Please try again.'
+						),
+					} );
 					this.setState( { isCartPendingUpdateDomain: null } );
 				} )
 				.finally( () => {
@@ -1327,12 +1348,25 @@ export class RenderDomainsStep extends Component {
 			sideContent = null;
 		}
 
-		if ( this.props.step && 'invalid' === this.props.step.status ) {
+		if (
+			( this.props.step && 'invalid' === this.props.step.status ) ||
+			this.state.replaceDomainFailed
+		) {
 			content = (
 				<div className="domains__step-section-wrapper">
-					<Notice status="is-error" showDismiss={ false }>
-						{ this.props.step.errors.message }
-					</Notice>
+					{ this.props.step && 'invalid' === this.props.step.status && (
+						<Notice status="is-error" showDismiss={ false }>
+							{ this.props.step.errors.message }
+						</Notice>
+					) }
+					{ this.state.replaceDomainFailed && (
+						<Notice
+							status="is-error"
+							text={ this.state.replaceDomainFailedMessage }
+							showDismiss={ true }
+							onDismissClick={ () => this.setState( { replaceDomainFailed: false } ) }
+						/>
+					) }
 					{ content }
 				</div>
 			);
