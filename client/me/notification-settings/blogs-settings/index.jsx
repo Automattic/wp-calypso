@@ -11,6 +11,7 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InfiniteList from 'calypso/components/infinite-list';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { addDotSuffix } from 'calypso/utils';
 import Blog from './blog';
 import Placeholder from './placeholder';
 
@@ -115,7 +116,7 @@ class BlogsSettings extends Component {
 					/>
 				) }
 				<FilteredInfiniteList
-					searchTerm={ this.state.searchTerm }
+					searchTerm={ addDotSuffix( this.state.searchTerm ) }
 					items={ sites }
 					renderItem={ renderBlog }
 				/>
