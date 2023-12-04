@@ -14,7 +14,7 @@ This differences were highlighted in <https://github.com/WordPress/gutenberg/iss
 
 ## Add a command
 
-In order to add a new command to the palette, you can include the command object in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPallette` hooks.
+In order to add a new command to the palette, you can include the command object in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPalette` hooks.
 
 ### Command properties
 
@@ -48,7 +48,7 @@ Please consider carefully before adding a new command to the palette. We aim to 
 Embed the command example. This is already done for all WPcom calypso pages using `client/layout/index.jsx`.
 
 ```tsx
-import { WpcomCommandPalette } from 'calypso/components/command-pallette/wpcom-command-pallette';
+import { WpcomCommandPalette } from 'calypso/components/command-palette/wpcom-command-palette';
 
 export default function MyComponent() {
 	return <WpcomCommandPalette />;
