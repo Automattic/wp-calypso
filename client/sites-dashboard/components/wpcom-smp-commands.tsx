@@ -787,6 +787,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'addSubscribers',
 			label: __( 'Add subscribers' ),
+			searchLabel: [
+				_x( 'add subscribers', 'Keyword for the Add subscribers command' ),
+				_x( 'import subscribers', 'Keyword for the Add subscribers command' ),
+				_x( 'upload subscribers', 'Keyword for the Add subscribers command' ),
+			].join( ' ' ),
 			context: [ '/subscribers' ],
 			callback: setStateCallback( 'addSubscribers' ),
 			siteFunctions: {
