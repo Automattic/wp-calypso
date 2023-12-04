@@ -67,7 +67,12 @@ class DomainToPlanNudge extends Component {
 				plan={ PLAN_PERSONAL }
 				price={ prices }
 				showIcon
-				title={ translate( 'Upgrade to a Personal Plan and Save!' ) }
+				title={
+					/* translators: %(planName)s is the short-hand version of the Personal plan name */
+					translate( 'Upgrade to a %(planName)s Plan and Save!', {
+						args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+					} )
+				}
 			/>
 		);
 	}
