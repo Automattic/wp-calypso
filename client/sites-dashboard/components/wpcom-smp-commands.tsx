@@ -210,9 +210,9 @@ export const useCommandsArrayWpcom = ( {
 			icon: wordpressIcon,
 		},
 		{
-			name: 'clearEdgeCache',
-			label: __( 'Clear edge cache' ),
-			callback: setStateCallback( 'clearEdgeCache', __( 'Select a site to clear cache' ) ),
+			name: 'clearCache',
+			label: __( 'Clear cache' ),
+			callback: setStateCallback( 'clearCache', __( 'Select a site to clear cache' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
