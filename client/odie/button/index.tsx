@@ -1,12 +1,14 @@
 import classNames from 'classnames';
-import { PropsWithChildren } from 'react';
-import './style.scss'; // Assuming you have a Button.scss file for styles
+import { PropsWithChildren, MouseEvent, PropsWithRef } from 'react';
+
+import './style.scss';
 
 type ButtonProps = {
 	compact?: boolean;
 	borderless?: boolean;
-	onClick?: () => void;
-} & PropsWithChildren;
+	onClick?: ( event: MouseEvent ) => void;
+} & PropsWithRef< HTMLButtonElement > &
+	PropsWithChildren;
 
 const Button = ( { compact, borderless, onClick, children }: ButtonProps ) => {
 	const className = classNames( 'odie-button-default', {
