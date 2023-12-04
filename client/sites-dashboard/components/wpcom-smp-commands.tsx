@@ -167,9 +167,9 @@ export const useCommandsArrayWpcom = ( {
 				},
 			} );
 
-			displayNotice( __( 'Global edge cache cleared' ) );
+			displayNotice( __( 'Global edge cache enabled' ) );
 		} catch ( error ) {
-			displayNotice( __( 'Failed to clear global edge cache' ), 'is-error' );
+			displayNotice( __( 'Failed to enable global edge cache' ), 'is-error' );
 		}
 	};
 
