@@ -65,8 +65,8 @@ function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps 
 				<div className="stats-tier-upgrade-slider__plan-callout">
 					<h2>{ translatedStrings.limits }</h2>
 					<p className="left-aligned">
-						{ hasExtension && <span>+</span> }
 						<ShortenedNumber value={ lhValue } />
+						{ hasExtension && <span>+</span> }
 					</p>
 				</div>
 				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
