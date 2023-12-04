@@ -544,16 +544,3 @@
 		}
 	}
 }
-
-.layout.is-jetpack-login {
-	.card.login__form {
-		box-shadow: none;
-		border: 1px solid var(--color-border-subtle);
-		border-bottom: none;
-	}
-	.card.login__social {
-		box-shadow: none;
-		border: 1px solid var(--color-border-subtle);
-		border-top: none;
-	}
-}
