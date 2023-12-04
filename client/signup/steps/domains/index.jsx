@@ -257,8 +257,14 @@ export class RenderDomainsStep extends Component {
 			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
 			suggestion?.isSubDomainSuggestion
 		) {
-			this.setState( { wpcomSubdomainSelected: suggestion } );
-			this.props.saveSignupStep( stepData );
+			suggestion.domain_name = suggestion.domain_name.replace( '.wordpress.com', '' );
+			await this.setState( { wpcomSubdomainSelected: suggestion } );
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				suggestion,
+			} );
+
 			return;
 		}
 
@@ -281,6 +287,9 @@ export class RenderDomainsStep extends Component {
 
 		// If we already have a free selection in place, let's enforce that as a free site suggestion
 		if ( this.state.wpcomSubdomainSelected ) {
+			this.state.wpcomSubdomainSelected.domain_name =
+				this.state.wpcomSubdomainSelected.domain_name.replace( '.wordpress.com', '' );
+
 			await this.props.saveSignupStep( {
 				stepName: this.props.stepName,
 				suggestion: this.state.wpcomSubdomainSelected,
