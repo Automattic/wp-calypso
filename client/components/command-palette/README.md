@@ -14,7 +14,7 @@ This differences were highlighted in <https://github.com/WordPress/gutenberg/iss
 
 ## Add a command
 
-In order to add a new command to the palette, you can include the command object in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPallette` hooks.
+In order to add a new command to the palette, you can include the command object in `useCommandsArrayWpcom` or create a new hook and include it to `useCommandPalette` hooks.
 
 ### Command properties
 
@@ -23,7 +23,7 @@ Every command has a set of properties that can be used to customize its behavior
 - `name`: Type `string`, used as identifier for the command. It's expected to be unique and `camelCase`. It's not visible for the user.
 - `label`: Type `string`, used as the label for the command. Visible in the command palette.
 - `subLabel`?: Type `string`, used as a second line for the command. Visible in the command palette.
-- `searchLabel`?: Type `string`, used to match the user search. It's not visible for the user. We recommend to use `_x()` to add context to the translators.
+- `searchLabel`?: Type `string`, used to match the user search. It's not visible for the user. We recommend adding keywords related to the command, and using `_x()` to add context to the translators.
 - `callback`: Type `function`, used to execute the command when the user clicks on it or presses enter on that command.
 - `context`?: Type `string[]`, a list of URL paths for which the command will have priority when displayed. Example: `['/sites', '/manage/domains']`.
 - `icon`?: Type `JSX.Element`, used to display an icon for the command. It's visible in the command palette.
@@ -48,7 +48,7 @@ Please consider carefully before adding a new command to the palette. We aim to 
 Embed the command example. This is already done for all WPcom calypso pages using `client/layout/index.jsx`.
 
 ```tsx
-import { WpcomCommandPalette } from 'calypso/components/command-pallette/wpcom-command-pallette';
+import { WpcomCommandPalette } from 'calypso/components/command-palette/wpcom-command-palette';
 
 export default function MyComponent() {
 	return <WpcomCommandPalette />;

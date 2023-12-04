@@ -41,9 +41,10 @@ export default function ListStep( props: Props ) {
 	const secondaryListOptions: ImporterOption[] = [
 		{ value: 'blogroll', label: 'Blogroll' },
 		{ value: 'ghost', label: 'Ghost' },
-		{ value: 'tumblr', label: 'Tumblr' },
 		{ value: 'livejournal', label: 'LiveJournal' },
 		{ value: 'movabletype', label: 'Movable Type & TypePad' },
+		{ value: 'substack', label: 'Substack' },
+		{ value: 'tumblr', label: 'Tumblr' },
 		{ value: 'xanga', label: 'Xanga' },
 	];
 
@@ -80,6 +81,7 @@ export default function ListStep( props: Props ) {
 				<div className="list__importers list__importers-primary">
 					{ primaryListOptions.map( ( x ) => (
 						<Button
+							key={ x.value }
 							className="list__importers-item-card"
 							onClick={ () => onImporterSelect( x.value ) }
 						>
