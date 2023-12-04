@@ -22,6 +22,7 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
+import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -581,6 +582,7 @@ class ThemeShowcase extends Component {
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 				/>
+				<ThemeShowcaseSurvey survey={ SurveyType.DECEMBER_2023 } condition={ () => true } />
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
