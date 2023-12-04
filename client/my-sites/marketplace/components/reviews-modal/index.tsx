@@ -1,5 +1,5 @@
-import { Dialog, Button, Card, Spinner } from '@automattic/components';
-import { TextControl, TextareaControl } from '@wordpress/components';
+import { Dialog, Button, Card, Spinner, ReviewsRatingsStars } from '@automattic/components';
+import { TextareaControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -89,14 +89,12 @@ export const ReviewsModal = ( {
 						value={ content }
 						onChange={ setContent }
 					/>
-					<TextControl
-						label="Rating"
-						name="rating"
-						type="number"
-						min={ 1 }
-						max={ 5 }
-						value={ rating }
-						onChange={ setRating }
+					<ReviewsRatingsStars
+						onSelectRating={ ( rating: string ) => setRating( rating ) }
+						rating={ 4 }
+						averageRating={ 4.1 }
+						ratingCount={ 567 }
+						size="small"
 					/>
 					<div className="marketplace-reviews-modal__buttons-container">
 						<Button

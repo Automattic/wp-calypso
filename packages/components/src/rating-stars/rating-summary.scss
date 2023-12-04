@@ -1,0 +1,29 @@
+.wccom-rating-summary {
+	align-items: center;
+	color: inherit;
+	display: flex;
+	font-size: 0.875rem; // 14px
+	font-weight: 600;
+	line-height: 1.25; // 20px by default
+	text-decoration: none;
+	$star-dimensions: 0.9375rem; // 15px
+
+	&:hover {
+		text-decoration: none;
+	}
+
+	&__star {
+		height: $star-dimensions;
+		margin-right: 7px;
+		width: $star-dimensions;
+	}
+
+	&__rating::after {
+		content: "\00a0"; // natural spacing after rating
+	}
+
+	&__review-count {
+		color: $c-gray-40;
+		font-weight: 400;
+	}
+}
