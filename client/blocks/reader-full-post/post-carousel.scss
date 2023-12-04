@@ -24,9 +24,7 @@
 			font-size: $font-title-small;
 
 			a {
-				/* autoprefixer: off */
 				-webkit-box-orient: vertical;
-				/* autoprefixer: on */
 				display: -webkit-box;
 				-webkit-line-clamp: 3;
 				max-height: 3.5625em;
@@ -86,7 +84,7 @@
 	}
 	&__placeholder {
 		height: 420px;
-		background: var(--color-neutral-0);
+		background: var(--color-neutral-10);
 	}
 
 	/* Swiper Slide */
