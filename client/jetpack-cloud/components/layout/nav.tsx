@@ -21,32 +21,40 @@ type LayoutNavigationItemProps = {
 	selected?: boolean;
 };
 
-export function LayoutNavigationItem( {
-	label,
-	onClick,
-	path,
-	count,
-	selected,
-	compactCount = true,
-}: LayoutNavigationItemProps ) {
+type LayoutNavigationTabsProps = {
+	selectedText: string;
+	selectedCount?: number;
+	items: LayoutNavigationItemProps[];
+};
+
+export function LayoutNavigationTabs( {
+	selectedText,
+	selectedCount,
+	items,
+}: LayoutNavigationTabsProps ) {
 	return (
-		<NavItem
-			compactCount={ compactCount }
-			count={ count }
-			path={ path }
-			onClick={ onClick }
-			selected={ selected }
-		>
-			{ label }
-		</NavItem>
+		<NavTabs selectedText={ selectedText } selectedCount={ selectedCount }>
+			{ items.map( ( { label, onClick, selected, count, path, compactCount = true } ) => (
+				<NavItem
+					key={ label.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase() }
+					compactCount={ compactCount }
+					count={ count }
+					path={ path }
+					onClick={ onClick }
+					selected={ selected }
+				>
+					{ label }
+				</NavItem>
+			) ) }
+		</NavTabs>
 	);
 }
 
 export default function LayoutNavigation( {
 	className,
-	children,
 	selectedText,
 	selectedCount,
+	children,
 }: LayoutNavigationProps ) {
 	return (
 		<SectionNav
@@ -59,9 +67,7 @@ export default function LayoutNavigation( {
 				</span>
 			}
 		>
-			<NavTabs selectedText={ selectedText } selectedCount={ selectedCount }>
-				{ children }
-			</NavTabs>
+			{ children }
 		</SectionNav>
 	);
 }
