@@ -160,7 +160,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard', __( 'Select site dashboard to open' ) ),
+			callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
