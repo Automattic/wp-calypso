@@ -452,13 +452,44 @@ $image-height: 47px;
 
 	.wp-login__main {
 		max-width: 540px;
+	}
 
-		&.is-social-first {
-			max-width: 758px;
-			margin-top: 24px;
+	.wp-login__main.is-social-first {
+		max-width: 758px;
+		margin-top: 24px;
 
-			@include break-mobile {
-				margin-top: 25vh;
+		@include break-mobile {
+			margin-top: 25vh;
+		}
+
+		.wp-login__header-navigation {
+			align-items: center;
+			display: flex;
+			height: 60px;
+			inset-inline-start: 72px;
+			inset-inline-end: 24px;
+			position: absolute;
+			padding: 0;
+			right: 16px;
+			top: 9px;
+			margin: 0;
+			left: 11px;
+
+			@include break-small {
+				border: none;
+				inset-inline-start: 72px;
+				inset-inline-end: 24px;
+			}
+
+			a {
+				color: #1d2327;
+				font-size: $font-body-small;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+				margin-left: auto;
+				text-decoration: underline;
+				text-underline-offset: 5px;
 			}
 		}
 	}
@@ -502,9 +533,13 @@ $image-height: 47px;
 		max-width: 400px;
 		margin-left: auto;
 		margin-right: auto;
+		align-items: center;
 
 		&.is-social-first {
 			max-width: 758px;
+			@include break-mobile {
+				align-items: unset;
+			}
 		}
 	}
 

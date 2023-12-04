@@ -334,7 +334,7 @@ class Login extends Component {
 		let postHeader = null;
 
 		if ( isSocialFirst ) {
-			translate( 'Log into WordPress.com' );
+			headerText = translate( 'Log into WordPress.com' );
 		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {

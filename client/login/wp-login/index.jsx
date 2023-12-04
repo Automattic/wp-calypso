@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -14,7 +15,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -328,6 +329,60 @@ export class Login extends Component {
 		);
 	}
 
+	renderSignUpLink( signupLinkText ) {
+		// Taken from client/layout/masterbar/logged-out.jsx
+		const {
+			currentRoute,
+			isP2Login,
+			locale,
+			oauth2Client,
+			pathname,
+			query,
+			translate,
+			usernameOrEmail,
+		} = this.props;
+
+		// use '?signup_url' if explicitly passed as URL query param
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
+
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
+			return null;
+		}
+
+		if ( isP2Login && query?.redirect_to ) {
+			const urlParts = getUrlParts( query.redirect_to );
+			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
+				return null;
+			}
+		}
+
+		return (
+			<a
+				href={ addQueryArgs(
+					{
+						user_email: usernameOrEmail,
+					},
+					signupUrl
+				) }
+				key="sign-up-link"
+				onClick={ this.recordSignUpLinkClick }
+				rel="external"
+			>
+				{ signupLinkText ?? translate( 'Create a new account' ) }
+			</a>
+		);
+	}
+
+	renderLoginHeaderNavigation() {
+		return (
+			<div className="wp-login__header-navigation">
+				{ this.renderSignUpLink( this.props.translate( 'Create an account' ) ) }
+			</div>
+		);
+	}
+
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -385,6 +440,7 @@ export class Login extends Component {
 							usernameOrEmail={ this.state.usernameOrEmail }
 							oauth2ClientId={ this.props.oauth2Client?.id }
 							getLostPasswordLink={ this.getLostPasswordLink }
+							renderSignUpLink={ this.renderSignUpLink }
 						/>
 					)
 				) }
@@ -466,6 +522,7 @@ export class Login extends Component {
 						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
 
+					{ isSocialFirst && this.renderLoginHeaderNavigation() }
 					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
 				</Main>
 

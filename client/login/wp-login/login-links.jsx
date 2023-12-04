@@ -11,12 +11,7 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import {
-	getSignupUrl,
-	pathWithLeadingSlash,
-	canDoMagicLogin,
-	getLoginLinkPageUrl,
-} from 'calypso/lib/login';
+import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isJetpackCloudOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -43,6 +38,7 @@ export class LoginLinks extends Component {
 		isPartnerSignup: PropTypes.bool,
 		isGravPoweredClient: PropTypes.bool,
 		getLostPasswordLink: PropTypes.func.isRequired,
+		renderSignUpLink: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -271,52 +267,6 @@ export class LoginLinks extends Component {
 		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
 	}
 
-	renderSignUpLink() {
-		// Taken from client/layout/masterbar/logged-out.jsx
-		const {
-			currentRoute,
-			isP2Login,
-			locale,
-			oauth2Client,
-			pathname,
-			query,
-			translate,
-			usernameOrEmail,
-		} = this.props;
-
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
-
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
-			return null;
-		}
-
-		if ( isP2Login && query?.redirect_to ) {
-			const urlParts = getUrlParts( query.redirect_to );
-			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
-				return null;
-			}
-		}
-
-		return (
-			<a
-				href={ addQueryArgs(
-					{
-						user_email: usernameOrEmail,
-					},
-					signupUrl
-				) }
-				key="sign-up-link"
-				onClick={ this.recordSignUpLinkClick }
-				rel="external"
-			>
-				{ translate( 'Create a new account' ) }
-			</a>
-		);
-	}
-
 	render() {
 		return (
 			<div
@@ -324,7 +274,7 @@ export class LoginLinks extends Component {
 					'has-2fa-links': this.props.twoFactorAuthType,
 				} ) }
 			>
-				{ this.renderSignUpLink() }
+				{ this.props.renderSignUpLink() }
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
