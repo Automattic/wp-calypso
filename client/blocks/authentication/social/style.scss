@@ -13,6 +13,7 @@
 	.auth-form__social-buttons-container {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 	}
 
 	.social-buttons__button {
@@ -49,7 +50,6 @@
 	}
 
 	.auth-form__social-buttons-container {
-		width: 100%;
 		gap: 10px;
 	}
 
