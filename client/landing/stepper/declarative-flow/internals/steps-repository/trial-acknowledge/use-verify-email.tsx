@@ -2,7 +2,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import { UserData } from 'calypso/lib/user/user';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -10,7 +9,7 @@ import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 
 export const useVerifyEmail = () => {
 	const dispatch = useDispatch();
-	const user = useSelector( getCurrentUser ) as UserData;
+	const user = useSelector( getCurrentUser );
 	const safeUser = user ?? { email_verified: false, email: '' };
 	const sendEmail = useSendEmailVerification();
 	const { __ } = useI18n();
