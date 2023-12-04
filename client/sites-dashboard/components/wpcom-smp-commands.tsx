@@ -25,6 +25,7 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
+import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -197,7 +198,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: dashboardIcon,
+			icon: <MaterialIcon icon="autorenew" />,
 		},
 		{
 			name: 'toggleEdgeCache',
@@ -211,7 +212,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: dashboardIcon,
+			icon: <MaterialIcon icon="autorenew" />,
 		},
 		{
 			name: 'openSiteDashboard',
