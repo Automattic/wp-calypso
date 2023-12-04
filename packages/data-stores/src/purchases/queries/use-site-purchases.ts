@@ -13,18 +13,16 @@ interface Props {
 	siteId?: string | number | null;
 }
 
-const fetchSitePurchases = ( siteId: string ): RawPurchase[] =>
-	wpcomRequest( {
-		path: `/sites/${ encodeURIComponent( siteId ) }/purchases`,
-		apiVersion: '1.1',
-	} );
-
 function useSitePurchases( { siteId }: Props ) {
 	const queryKeys = useQueryKeysFactory();
 
 	return useQuery( {
 		queryKey: queryKeys.sitePurchases( siteId ),
-		queryFn: fetchSitePurchases( siteId as string ),
+		queryFn: (): RawPurchase[] =>
+			wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId as string ) }/purchases`,
+				apiVersion: '1.1',
+			} ),
 		select: useCallback( ( data: RawPurchase[] ) => {
 			return data.reduce< PurchasesIndex >( ( acc, rawPurchase ) => {
 				const purchase = createPurchaseObject( rawPurchase );
