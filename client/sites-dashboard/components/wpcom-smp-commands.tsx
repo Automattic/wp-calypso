@@ -161,7 +161,7 @@ export const useCommandsArrayWpcom = ( {
 				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
 			}
 		} catch ( error ) {
-			displayNotice( __( 'Failed to clear cach.' ), 'is-error' );
+			displayNotice( __( 'Failed to clear cache.' ), 'is-error' );
 		}
 	};
 
