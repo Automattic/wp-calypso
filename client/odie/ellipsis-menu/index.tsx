@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useRef, useState, FunctionComponent, PropsWithChildren } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -26,10 +27,10 @@ const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 		setMenuVisible( false );
 	};
 
-	const classes = classnames( 'ellipsis-menu', popoverClassName, {
+	const classes = classnames( 'ellipsis-menu', {
 		'is-menu-visible': isMenuVisible,
 	} );
-	const popoverClasses = classnames( 'ellipsis-menu__menu', 'popover' );
+	const popoverClasses = classnames( 'ellipsis-menu__menu', 'popover', popoverClassName );
 
 	return (
 		<span className={ classes }>
@@ -38,7 +39,9 @@ const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 				onClick={ handleClick }
 				borderless
 				className="ellipsis-menu__toggle"
-			/>
+			>
+				<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
+			</Button>
 			{ isMenuVisible && (
 				<PopoverMenu
 					isVisible
