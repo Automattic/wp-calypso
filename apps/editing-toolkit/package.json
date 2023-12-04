@@ -125,7 +125,7 @@
 		"@floating-ui/utils": "^0.1.6",
 		"@tanstack/eslint-plugin-query": "^4.36.1",
 		"@testing-library/jest-dom": "^6.1.4",
-		"@testing-library/react": "^14.1.0",
+		"@testing-library/react": "^14.1.2",
 		"@types/node": "^20.8.6",
 		"@wordpress/eslint-plugin": "^17.1.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.30.0",
