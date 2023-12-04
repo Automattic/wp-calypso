@@ -129,6 +129,16 @@ declare module 'calypso/components/popover-menu/item' {
 	export default PopoverMenuItem;
 }
 
+declare module 'calypso/components/popover-menu' {
+	const PopoverMenuItem: FC< {
+		popoverClassName?: string;
+		position?: string;
+		children: React.ReactNode;
+	} >;
+
+	export default PopoverMenuItem;
+}
+
 declare module 'calypso/components/gravatar' {
 	const Gravatar: FC< {
 		user?: { display_name: string };
