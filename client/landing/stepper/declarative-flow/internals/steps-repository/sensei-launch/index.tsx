@@ -11,10 +11,10 @@ import {
 	getSelectedPlugins,
 	saveSelectedPurposesAsSenseiSiteSettings,
 } from '../sensei-purpose/purposes';
-import { setAdminInterfaceStyle } from './launch-completion-tasks';
+import { setAdminInterfaceStyle, wait } from './launch-completion-tasks';
 import { useAtomicSiteChecklist } from './use-atomic-site-checklist';
 import { useAtomicSitePlugins } from './use-atomic-site-plugins';
-import { useSubSteps, wait } from './use-sub-steps';
+import { useSubSteps } from './use-sub-steps';
 import type { Step } from '../../types';
 import './style.scss';
 
