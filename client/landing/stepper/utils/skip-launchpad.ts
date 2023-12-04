@@ -22,5 +22,5 @@ export const skipLaunchpad = async ( { checklistSlug, siteId, siteSlug }: SkipLa
 		}
 	}
 
-	return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+	return window.location.assign( `/home/${ siteId ? siteId : siteSlug }` );
 };
