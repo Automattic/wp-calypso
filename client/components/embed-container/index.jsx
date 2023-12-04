@@ -1,7 +1,7 @@
 import { loadScript } from '@automattic/load-script';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
-import { React, Children, PureComponent } from 'react';
+import { Children, PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import DotPager from 'calypso/components/dot-pager';
