@@ -53,7 +53,7 @@ function TierUpgradeSlider( {
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
 
-		setPurchaseTierQuantity( plans[ value ]?.views );
+		setPurchaseTierQuantity( tiers[ value ]?.views as number );
 	};
 
 	const translatedStrings = useTranslatedStrings();
