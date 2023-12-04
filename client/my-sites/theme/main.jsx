@@ -724,7 +724,11 @@ class ThemeSheet extends Component {
 		}
 		const { name, themeId } = this.props;
 
-		return <ReviewsSummary slug={ themeId } productName={ name } productType="theme" />;
+		return (
+			<div className="theme__sheet-reviews-summary">
+				<ReviewsSummary slug={ themeId } productName={ name } productType="theme" />
+			</div>
+		);
 	};
 
 	renderStyleVariations = () => {
