@@ -210,7 +210,8 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					toggleEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				filter: ( site: SiteExcerptData ) =>
+					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
 			},
 			icon: <MaterialIcon icon="autorenew" />,
 		},
