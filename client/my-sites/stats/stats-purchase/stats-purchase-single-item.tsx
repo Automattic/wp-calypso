@@ -168,7 +168,7 @@ Thanks\n\n`;
 							} )
 						}
 					>
-						{ translate( 'Get Stats with Tiers' ) }
+						{ translate( 'Get Stats' ) }
 					</ButtonComponent>
 				</>
 			) }
