@@ -139,7 +139,7 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	intervalType?: IntervalType;
-	planTypeSelector?: 'customer' | 'interval';
+	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
