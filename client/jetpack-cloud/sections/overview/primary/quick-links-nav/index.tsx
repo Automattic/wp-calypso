@@ -8,13 +8,11 @@ import {
 	JETPACK_MANAGE_INVOICES_LINK,
 	JETPACK_MANAGE_LICENCES_LINK,
 	JETPACK_MANAGE_PLUGINS_LINK,
-} from '../../sidebar-navigation/lib/constants';
-import FoldableNav from '../foldable-nav';
-import { FoldableNavItem } from '../foldable-nav/types';
+} from '../../../sidebar-navigation/lib/constants';
+import FoldableNav from '../../foldable-nav';
+import { FoldableNavItem } from '../../foldable-nav/types';
 
 export default function QuickLinksNav() {
-	// JETPACK_DASHBOARD_QUICK_LINKS_NAV_PREFERENCE
-
 	const translate = useTranslate();
 
 	const header = translate( 'Quick links' );
