@@ -1,4 +1,4 @@
-import { createPurchaseObject } from './lib/assembler';
+import { createPurchaseObject, createPurchasesArray } from './lib/assembler';
 
 /** Queries */
 export { default as useSitePurchases } from './queries/use-site-purchases';
@@ -12,4 +12,5 @@ export * from './types';
 /** Utils */
 export const utils = {
 	createPurchaseObject,
+	createPurchasesArray,
 };

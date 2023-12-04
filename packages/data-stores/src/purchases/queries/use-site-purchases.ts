@@ -21,7 +21,7 @@ function useSitePurchases( { siteId }: Props ) {
 		queryFn: async () =>
 			await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/purchases`,
-				apiVersion: '1.3',
+				apiVersion: '1.1',
 			} ),
 		select: useCallback( ( data: RawPurchase[] ) => {
 			return data.reduce< PurchasesIndex >( ( acc, rawPurchase ) => {
