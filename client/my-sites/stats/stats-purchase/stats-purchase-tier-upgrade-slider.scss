@@ -69,7 +69,7 @@ $track-height: 4px;
 			border-radius: 50%;
 			cursor: pointer;
 			margin: 0 $track-extra-width;
-			bottom: calc(50% - ($mark-diameter / 2 + $mark-border-width));
+			bottom: calc(50% - (math.div($mark-diameter, 2) + $mark-border-width));
 		}
 	}
 }
