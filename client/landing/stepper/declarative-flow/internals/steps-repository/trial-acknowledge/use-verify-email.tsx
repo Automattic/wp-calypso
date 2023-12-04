@@ -11,13 +11,14 @@ import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 export const useVerifyEmail = () => {
 	const dispatch = useDispatch();
 	const user = useSelector( getCurrentUser ) as UserData;
+	const safeUser = user ?? { email_verified: false, email: '' };
 	const sendEmail = useSendEmailVerification();
 	const { __ } = useI18n();
 
 	const [ data, setData ] = useState( {
-		isVerified: user.email_verified,
+		isVerified: safeUser.email_verified,
 		isSending: false,
-		email: user.email,
+		email: safeUser.email,
 		resent: false,
 	} );
 
@@ -47,7 +48,7 @@ export const useVerifyEmail = () => {
 
 	useEffect( () => {
 		const interval = setInterval( () => {
-			if ( ! user.email_verified ) {
+			if ( ! safeUser.email_verified ) {
 				dispatch( fetchCurrentUser() );
 			} else {
 				setData( ( prevState ) => ( {
@@ -57,7 +58,7 @@ export const useVerifyEmail = () => {
 			}
 		}, EVERY_FIVE_SECONDS );
 		return () => clearInterval( interval );
-	}, [ user.email_verified, dispatch ] );
+	}, [ safeUser.email_verified, dispatch ] );
 
 	return {
 		isVerified: data.isVerified,
