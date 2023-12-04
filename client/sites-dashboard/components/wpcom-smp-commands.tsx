@@ -155,14 +155,13 @@ export const useCommandsArrayWpcom = ( {
 					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
 					apiNamespace: 'wpcom/v2',
 				} );
+				displayNotice( __( 'Succesfully cleared cache.' ) );
 			} else {
 				// If global edge cache is not active, clear WordPress cache
 				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
 			}
-
-			displayNotice( __( 'Cleared cache' ) );
 		} catch ( error ) {
-			displayNotice( __( 'Failed to clear cache' ), 'is-error' );
+			displayNotice( __( 'Failed to clear cach.' ), 'is-error' );
 		}
 	};
 
@@ -170,11 +169,11 @@ export const useCommandsArrayWpcom = ( {
 		const active = await getEdgeCacheStatus( siteId );
 
 		const toggleCacheMessage = active
-			? __( 'Disabling global edge cache' )
-			: __( 'Enabling global edge cache' );
+			? __( 'Disabling global edge cache…' )
+			: __( 'Enabling global edge cache…' );
 
-		const successMessageEnabled = __( 'Global edge cache enabled' );
-		const successMessageDisabled = __( 'Global edge cache disabled' );
+		const successMessageEnabled = __( 'Global edge cache enabled.' );
+		const successMessageDisabled = __( 'Global edge cache disabled.' );
 
 		const { removeNotice: removeLoadingNotice } = displayNotice(
 			toggleCacheMessage,
@@ -193,7 +192,7 @@ export const useCommandsArrayWpcom = ( {
 			displayNotice( response ? successMessageEnabled : successMessageDisabled );
 		} catch ( error ) {
 			removeLoadingNotice();
-			displayNotice( __( 'Failed to enable global edge cache' ), 'is-error' );
+			displayNotice( __( 'Failed to enable global edge cache.' ), 'is-error' );
 		}
 	};
 
