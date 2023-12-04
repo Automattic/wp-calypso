@@ -15,6 +15,7 @@ type SiteLogs = SiteLogsData[ 'logs' ];
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
 	logType?: LogType;
+	latestLogType?: LogType | null;
 	isLoading?: boolean;
 	headerTitles: string[];
 }
