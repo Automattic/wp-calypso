@@ -32,6 +32,7 @@ import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
+import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
@@ -146,10 +147,18 @@ export const useCommandsArrayWpcom = ( {
 
 	const clearEdgeCache = async ( siteId: number ) => {
 		try {
-			await wpcom.req.post( {
-				path: `/sites/${ siteId }/hosting/edge-cache/purge`,
-				apiNamespace: 'wpcom/v2',
-			} );
+			const response = await getEdgeCacheStatus( siteId );
+
+			if ( response ) {
+				// If global cache is active, purge the cache
+				await wpcom.req.post( {
+					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
+					apiNamespace: 'wpcom/v2',
+				} );
+			} else {
+				// If global edge cache is not active, clear WordPress cache
+				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
+			}
 
 			displayNotice( __( 'Cleared cache' ) );
 		} catch ( error ) {
@@ -159,7 +168,7 @@ export const useCommandsArrayWpcom = ( {
 
 	const toggleEdgeCache = async ( siteId: number ) => {
 		try {
-			const active = getEdgeCacheStatus( siteId );
+			const active = await getEdgeCacheStatus( siteId );
 			await wpcom.req.post( {
 				path: `/sites/${ siteId }/hosting/edge-cache/active`,
 				apiNamespace: 'wpcom/v2',
