@@ -482,7 +482,7 @@ $image-height: 47px;
 			}
 
 			a {
-				color: #1d2327;
+				color: var(--studio-gray-90, #1d2327);
 				font-size: $font-body-small;
 				font-style: normal;
 				font-weight: 500;
@@ -491,6 +491,10 @@ $image-height: 47px;
 				text-decoration: underline;
 				text-underline-offset: 5px;
 			}
+		}
+
+		.login__form-header {
+			text-align: center;
 		}
 	}
 
