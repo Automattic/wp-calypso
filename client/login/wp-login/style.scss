@@ -495,6 +495,7 @@ $image-height: 47px;
 
 		.login__form-header {
 			text-align: center;
+			font-size: $font-title-large;
 		}
 	}
 
@@ -510,24 +511,11 @@ $image-height: 47px;
 			font-weight: 500;
 			text-align: center;
 			text-decoration: underline;
+			text-underline-offset: 5px;
 			margin-top: 40px;
 
 			@include break-mobile {
 				margin-top: 24px;
-			}
-		}
-
-		p {
-			margin-top: 24px;
-			color: var(--studio-gray-50, #646970);
-			text-align: center;
-			font-size: $font-body-extra-small;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 18px;
-
-			a {
-				color: var(--studio-gray-50, #646970);
 			}
 		}
 	}

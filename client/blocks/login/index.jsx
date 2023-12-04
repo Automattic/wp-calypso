@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
@@ -608,6 +609,39 @@ class Login extends Component {
 		);
 	}
 
+	renderToS() {
+		const { isSocialFirst, translate } = this.props;
+
+		if ( ! isSocialFirst ) {
+			return null;
+		}
+
+		const tos = translate(
+			'Just a little reminder that by choosing any of the options below, ' +
+				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			{
+				components: {
+					tosLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					privacyLink: (
+						<a
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
+
+		return <div className="login__form-subheader-terms">{ tos }</div>;
+	}
+
 	renderNotice() {
 		const { requestNotice } = this.props;
 
@@ -805,6 +839,8 @@ class Login extends Component {
 				<ErrorNotice locale={ locale } />
 
 				{ this.renderNotice() }
+
+				{ this.renderToS() }
 
 				{ this.renderContent() }
 
