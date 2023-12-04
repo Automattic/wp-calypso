@@ -117,6 +117,8 @@ export type ResponseDomain = {
 	privacyAvailable: boolean;
 	privateDomain: boolean;
 	redeemableUntil: string;
+	registeredViaTrustee: boolean;
+	registeredViaTrusteeUrl: string;
 	registrar: string;
 	registrationDate: string;
 	registryExpiryDate: string;

@@ -6,14 +6,14 @@ import {
 	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
-	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
-	PLAN_WOOEXPRESS_PLUS,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
+	isWpcomEnterpriseGridPlan,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
@@ -88,6 +88,7 @@ import type {
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from 'calypso/my-sites/plans-grid/types';
 import type { IAppState } from 'calypso/state/types';
+
 import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
@@ -326,9 +327,14 @@ const PlansFeaturesMain = ( {
 	};
 
 	const handleUpgradeClick = useCallback(
-		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
+			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
+				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+				return;
+			}
 			const cartItemForPlan = getPlanCartItem( cartItems );
-			const { product_slug: planSlug = PLAN_FREE } = cartItemForPlan ?? {};
+			const planSlug = clickedPlanSlug ?? PLAN_FREE;
 			setLastClickedPlan( planSlug );
 			if ( isFreePlan( planSlug ) ) {
 				recordTracksEvent( 'calypso_signup_free_plan_click' );
@@ -370,7 +376,7 @@ const PlansFeaturesMain = ( {
 
 			page( checkoutUrlWithArgs );
 		},
-		[ onUpgradeClick, resolveModal, siteSlug, withDiscount ]
+		[ flowName, onUpgradeClick, resolveModal, siteSlug, withDiscount ]
 	);
 
 	const term = usePlanBillingPeriod( {
@@ -478,11 +484,7 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useMemo( () => {
-		const hiddenPlans = [
-			PLAN_HOSTING_TRIAL_MONTHLY,
-			PLAN_WOOEXPRESS_PLUS,
-			PLAN_ENTERPRISE_GRID_WPCOM,
-		];
+		const hiddenPlans = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
 
 		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
 			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
@@ -826,7 +828,6 @@ const PlansFeaturesMain = ( {
 									isInSignup={ isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
-									flowName={ flowName }
 									selectedFeature={ selectedFeature }
 									selectedPlan={ selectedPlan }
 									siteId={ siteId }
@@ -887,7 +888,6 @@ const PlansFeaturesMain = ( {
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
-												flowName={ flowName }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
 												siteId={ siteId }

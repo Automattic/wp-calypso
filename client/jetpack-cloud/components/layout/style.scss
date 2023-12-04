@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .is-jetpack-new-navigation {
 	.jetpack-cloud-layout__header h1 {
 		font-weight: 600;
@@ -122,6 +125,11 @@
 	.jetpack-cloud-layout__header-title {
 		font-size: rem(24px);
 		margin-block-end: 0;
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
