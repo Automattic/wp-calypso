@@ -37,3 +37,4 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 
 export default PlanTypeSelector;
 export { CustomerTypeToggle, IntervalTypeToggle };
+export type { PlanTypeSelectorProps };
