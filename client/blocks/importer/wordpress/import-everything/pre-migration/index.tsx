@@ -227,12 +227,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
 					<UpgradePlan
 						site={ targetSite }
-						startImport={ onUpgradeAndMigrateClick }
 						navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
-						onContentOnlyClick={ onContentOnlyClick }
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
+						ctaText={ translate( 'Upgrade and migrate' ) }
+						onCtaClick={ onUpgradeAndMigrateClick }
+						onContentOnlyClick={ onContentOnlyClick }
 						trackingEventsProps={ migrationTrackingProps }
 					/>
 				</>

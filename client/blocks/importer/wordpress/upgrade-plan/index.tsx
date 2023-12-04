@@ -16,10 +16,11 @@ import './style.scss';
 
 interface Props {
 	site: SiteDetails;
-	startImport: () => void;
-	navigateToVerifyEmailStep: () => void;
-	onContentOnlyClick: () => void;
 	isBusy: boolean;
+	ctaText: string;
+	navigateToVerifyEmailStep: () => void;
+	onCtaClick: () => void;
+	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
 }
 
@@ -29,9 +30,10 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
 		site,
-		startImport,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
+		ctaText,
+		onCtaClick,
 		isBusy,
 		trackingEventsProps,
 	} = props;
@@ -87,8 +89,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 			</div>
 
 			<UpgradePlanDetails>
-				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ () => startImport() }>
-					{ translate( 'Upgrade and migrate' ) }
+				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ onCtaClick }>
+					{ ctaText }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
 					<>
