@@ -18,6 +18,7 @@ interface Props {
 	site: SiteDetails;
 	isBusy: boolean;
 	ctaText: string;
+	subTitleText?: string;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
@@ -33,6 +34,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
 		ctaText,
+		subTitleText,
 		onCtaClick,
 		isBusy,
 		trackingEventsProps,
@@ -69,11 +71,12 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 			<div className="import__heading-center">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
-					{ translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan.', {
-						args: {
-							plan: plan?.getTitle() ?? '',
-						},
-					} ) }
+					{ subTitleText ||
+						translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan.', {
+							args: {
+								plan: plan?.getTitle() ?? '',
+							},
+						} ) }
 					<br />
 					{ ! isEligibleForTrialPlan &&
 						onContentOnlyClick &&
