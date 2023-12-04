@@ -28,7 +28,9 @@ import {
 	getSelectedProductSlugs,
 } from 'calypso/state/partner-portal/products/selectors';
 import { APIProductFamilyProduct, PartnerPortalStore } from 'calypso/state/partner-portal/types';
+import { type IssueLicenseRequest } from '../hooks/use-issue-licenses';
 import useSubmitForm from '../issue-license-v2/hooks/use-submit-form';
+import { parseQueryStringProducts } from '../lib/querystring-products';
 import { AssignLicenceProps } from '../types';
 
 import './style.scss';
@@ -83,18 +85,18 @@ export default function IssueMultipleLicensesForm( {
 
 	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
 	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
-	const defaultProductSlugs = useMemo(
-		() => getQueryArg( window.location.href, 'products' )?.toString().split( ',' ),
-		[]
-	);
+	const defaultSelectedLicenses = useMemo( () => {
+		const arg = getQueryArg( window.location.href, 'products' )?.toString();
+		return [ ...new Set( parseQueryStringProducts( arg )?.map?.( ( { slug } ) => slug ) ) ];
+	}, [] );
 
 	useEffect( () => {
 		// Select the slugs included in the URL
-		defaultProductSlugs &&
+		defaultSelectedLicenses &&
 			dispatch(
 				addSelectedProductSlugs(
 					// Filter the bundles and select only individual products
-					defaultProductSlugs.filter( ( slug ) => ! isJetpackBundle( slug ) )
+					defaultSelectedLicenses.filter( ( slug ) => ! isJetpackBundle( slug ) )
 				)
 			);
 
@@ -102,9 +104,13 @@ export default function IssueMultipleLicensesForm( {
 		return () => {
 			dispatch( clearSelectedProductSlugs() );
 		};
-	}, [ dispatch, defaultProductSlugs ] );
+	}, [ dispatch, defaultSelectedLicenses ] );
 
 	const selectedProductSlugs = useSelector( getSelectedProductSlugs );
+	const selectedLicenses: IssueLicenseRequest[] = selectedProductSlugs.map( ( slug ) => ( {
+		slug,
+		quantity: 1,
+	} ) );
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
 		getDisabledProductSlugs( state, allProducts ?? [] )
 	);
@@ -154,14 +160,14 @@ export default function IssueMultipleLicensesForm( {
 				);
 			}
 
-			submitForm( [ product.slug ] );
+			submitForm( [ { slug: product.slug, quantity: 1 } ] );
 		},
 		[ dispatch, submitForm, hasPurchasedProductsWithoutBundle ]
 	);
 
 	const onClickIssueLicenses = useCallback( () => {
-		submitForm( selectedProductSlugs );
-	}, [ submitForm, selectedProductSlugs ] );
+		submitForm( selectedLicenses );
+	}, [ submitForm, selectedLicenses ] );
 
 	if ( isLoadingProducts ) {
 		return (

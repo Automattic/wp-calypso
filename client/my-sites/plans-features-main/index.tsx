@@ -535,25 +535,42 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	// These never reach the grid-components. Little/no need to memoize.
-	const planTypeSelectorProps = {
+	const planTypeSelectorProps = useMemo( () => {
+		return {
+			basePlansPath,
+			isStepperUpgradeFlow,
+			isInSignup,
+			eligibleForWpcomMonthlyPlans,
+			isPlansInsideStepper,
+			intervalType,
+			customerType: _customerType,
+			siteSlug,
+			selectedPlan,
+			selectedFeature,
+			showBiennialToggle,
+			kind: planTypeSelector,
+			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+			currentSitePlanSlug: sitePlanSlug,
+			usePricingMetaForGridPlans,
+			recordTracksEvent,
+		};
+	}, [
+		_customerType,
 		basePlansPath,
-		isStepperUpgradeFlow,
-		isInSignup,
-		eligibleForWpcomMonthlyPlans,
-		isPlansInsideStepper,
+		gridPlansForFeaturesGrid,
 		intervalType,
-		customerType: _customerType,
-		siteSlug,
-		selectedPlan,
+		planTypeSelector,
 		selectedFeature,
+		selectedPlan,
+		sitePlanSlug,
+		siteSlug,
+		isInSignup,
+		isPlansInsideStepper,
+		isStepperUpgradeFlow,
 		showBiennialToggle,
-		kind: planTypeSelector,
-		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
-		currentSitePlanSlug: sitePlanSlug,
-		usePricingMetaForGridPlans,
-		recordTracksEvent,
-	};
+		eligibleForWpcomMonthlyPlans,
+	] );
+
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
@@ -806,7 +823,11 @@ const PlansFeaturesMain = ( {
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
-						{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
+						{ ! hidePlanSelector && (
+							<div className="plans-features-main__plan-type-selector">
+								<PlanTypeSelector { ...planTypeSelectorProps } />
+							</div>
+						) }
 						<div
 							className={ classNames(
 								'plans-features-main__group',
@@ -877,7 +898,9 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<PlanTypeSelector { ...planTypeSelectorProps } />
+												<div className="plans-features-main__plan-type-selector">
+													<PlanTypeSelector { ...planTypeSelectorProps } />
+												</div>
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
@@ -903,6 +926,9 @@ const PlansFeaturesMain = ( {
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
+												planTypeSelectorProps={
+													! hidePlanSelector ? planTypeSelectorProps : undefined
+												}
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

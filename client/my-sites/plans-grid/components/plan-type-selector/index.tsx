@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import type { UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
@@ -38,6 +38,10 @@ export type PlanTypeSelectorProps = {
 	currentSitePlanSlug?: PlanSlug | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
+	/**
+	 * Whether to render the selector along with a title if passed.
+	 */
+	title?: TranslateResult;
 };
 
 interface PathArgs {
@@ -45,13 +49,6 @@ interface PathArgs {
 }
 
 type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
-
-const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
-	display: flex;
-	align-content: space-between;
-	justify-content: center;
-	margin: 0 20px 24px;
-`;
 
 const StyledPopover = styled( Popover )`
 	&.popover {
@@ -232,6 +229,7 @@ type IntervalTypeProps = Pick<
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
+	| 'title'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -244,9 +242,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		showBiennialToggle,
 		currentSitePlanSlug,
 		usePricingMetaForGridPlans,
+		title,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
-	const segmentClasses = classNames( 'plan-type-selector__interval-type', 'price-toggle', {
+	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
@@ -290,75 +289,85 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const intervalTabs = showBiennialToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
-		<IntervalTypeToggleWrapper showingMonthly={ intervalType === 'monthly' }>
-			<SegmentedControl compact className={ segmentClasses } primary={ true }>
-				{ intervalTabs.map( ( interval ) => (
-					<SegmentedControl.Item
-						key={ interval }
-						selected={ intervalType === interval }
-						path={ generatePath( props, {
-							intervalType: interval,
-							domain: isDomainUpsellFlow,
-							domainAndPlanPackage: isDomainAndPlanPackageFlow,
-							jetpackAppPlans: isJetpackAppFlow,
-							...additionalPathProps,
-						} ) }
-						isPlansInsideStepper={ props.isPlansInsideStepper }
-					>
-						<span
-							ref={
-								intervalType === 'monthly' ? ( ref ) => ref && ! spanRef && setSpanRef( ref ) : null
-							}
+		<>
+			{ title && <div className="plan-type-selector__title">{ title }</div> }
+			<div className="plan-type-selector__interval-type">
+				<SegmentedControl compact className={ segmentClasses } primary={ true }>
+					{ intervalTabs.map( ( interval ) => (
+						<SegmentedControl.Item
+							key={ interval }
+							selected={ intervalType === interval }
+							path={ generatePath( props, {
+								intervalType: interval,
+								domain: isDomainUpsellFlow,
+								domainAndPlanPackage: isDomainAndPlanPackageFlow,
+								jetpackAppPlans: isJetpackAppFlow,
+								...additionalPathProps,
+							} ) }
+							isPlansInsideStepper={ props.isPlansInsideStepper }
 						>
-							{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
-							{ interval === 'yearly' && ! showBiennialToggle ? translate( 'Pay annually' ) : null }
-							{ interval === 'yearly' && showBiennialToggle ? translate( 'Pay 1 year' ) : null }
-							{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
-						</span>
-						{ ! showBiennialToggle && hideDiscountLabel ? null : (
-							<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-								{ translate(
-									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
-									{
-										args: { maxDiscount },
-										comment: 'Will be like "Save up to 30% by paying annually..."',
-									}
-								) }
-							</PopupMessages>
-						) }
-					</SegmentedControl.Item>
-				) ) }
-			</SegmentedControl>
-		</IntervalTypeToggleWrapper>
+							<span
+								ref={
+									intervalType === 'monthly'
+										? ( ref ) => ref && ! spanRef && setSpanRef( ref )
+										: null
+								}
+							>
+								{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
+								{ interval === 'yearly' && ! showBiennialToggle
+									? translate( 'Pay annually' )
+									: null }
+								{ interval === 'yearly' && showBiennialToggle ? translate( 'Pay 1 year' ) : null }
+								{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
+							</span>
+							{ ! showBiennialToggle && hideDiscountLabel ? null : (
+								<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+									{ translate(
+										'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
+										{
+											args: { maxDiscount },
+											comment: 'Will be like "Save up to 30% by paying annually..."',
+										}
+									) }
+								</PopupMessages>
+							) }
+						</SegmentedControl.Item>
+					) ) }
+				</SegmentedControl>
+			</div>
+		</>
 	);
 };
 
-type CustomerTypeProps = Pick< PlanTypeSelectorProps, 'customerType' | 'isInSignup' >;
+type CustomerTypeProps = Pick< PlanTypeSelectorProps, 'customerType' | 'isInSignup' | 'title' >;
 
 export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { customerType } = props;
+	const { customerType, title } = props;
 	const segmentClasses = classNames(
 		'plan-type-selector__interval-type',
 		'is-customer-type-toggle'
 	);
 
 	return (
-		<SegmentedControl className={ segmentClasses } primary={ true }>
-			<SegmentedControl.Item
-				selected={ customerType === 'personal' }
-				path={ generatePath( props, { customerType: 'personal' } ) }
-			>
-				{ translate( 'Blogs and personal sites' ) }
-			</SegmentedControl.Item>
+		<>
+			{ title && <div className="plan-type-selector__title">{ title }</div> }
+			<SegmentedControl className={ segmentClasses } primary={ true }>
+				<SegmentedControl.Item
+					selected={ customerType === 'personal' }
+					path={ generatePath( props, { customerType: 'personal' } ) }
+				>
+					{ translate( 'Blogs and personal sites' ) }
+				</SegmentedControl.Item>
 
-			<SegmentedControl.Item
-				selected={ customerType === 'business' }
-				path={ generatePath( props, { customerType: 'business' } ) }
-			>
-				{ translate( 'Business sites and online stores' ) }
-			</SegmentedControl.Item>
-		</SegmentedControl>
+				<SegmentedControl.Item
+					selected={ customerType === 'business' }
+					path={ generatePath( props, { customerType: 'business' } ) }
+				>
+					{ translate( 'Business sites and online stores' ) }
+				</SegmentedControl.Item>
+			</SegmentedControl>
+		</>
 	);
 };
 
@@ -373,11 +382,19 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	}, [] );
 
 	if ( kind === 'interval' ) {
-		return <IntervalTypeToggle { ...props } />;
+		return (
+			<div className="plan-type-selector">
+				<IntervalTypeToggle { ...props } />
+			</div>
+		);
 	}
 
 	if ( kind === 'customer' ) {
-		return <CustomerTypeToggle { ...props } />;
+		return (
+			<div className="plan-type-selector">
+				<CustomerTypeToggle { ...props } />
+			</div>
+		);
 	}
 
 	return null;
