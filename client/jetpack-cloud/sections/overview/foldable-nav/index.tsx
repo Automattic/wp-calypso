@@ -1,4 +1,4 @@
-import FoldableCard from '@automattic/components/src/foldable-card';
+import { FoldableCard } from '@automattic/components';
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
