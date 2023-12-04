@@ -134,6 +134,45 @@ export const useCommandsArrayWpcom = ( {
 		displayNotice( __( 'SSH/SFTP password reset and copied to clipboard.' ) );
 	};
 
+	const getEdgeCacheStatus = async ( siteId: number ) => {
+		const response = await wpcom.req.get( {
+			path: `/sites/${ siteId }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		return response;
+	};
+
+	const clearEdgeCache = async ( siteId: number ) => {
+		try {
+			await wpcom.req.post( {
+				path: `/sites/${ siteId }/hosting/edge-cache/purge`,
+				apiNamespace: 'wpcom/v2',
+			} );
+
+			displayNotice( __( 'Cleared cache' ) );
+		} catch ( error ) {
+			displayNotice( __( 'Failed to clear cache' ), 'is-error' );
+		}
+	};
+
+	const toggleEdgeCache = async ( siteId: number ) => {
+		try {
+			const active = getEdgeCacheStatus( siteId );
+			await wpcom.req.post( {
+				path: `/sites/${ siteId }/hosting/edge-cache/active`,
+				apiNamespace: 'wpcom/v2',
+				body: {
+					active: ! active,
+				},
+			} );
+
+			displayNotice( __( 'Global edge cache cleared' ) );
+		} catch ( error ) {
+			displayNotice( __( 'Failed to clear global edge cache' ), 'is-error' );
+		}
+	};
+
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	const commands = [
@@ -145,6 +184,34 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'clearEdgeCache',
+			label: __( 'Clear edge cache' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'clearEdgeCache', __( 'Select a site to clear cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					clearEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: dashboardIcon,
+		},
+		{
+			name: 'toggleEdgeCache',
+			label: __( 'Toggle edge cache' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'toggleEdgeCache', __( 'Select a site to toggle cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					toggleEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: dashboardIcon,
 		},
 		{
 			name: 'openSiteDashboard',
