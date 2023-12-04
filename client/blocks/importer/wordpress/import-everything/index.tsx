@@ -190,9 +190,6 @@ export class ImportEverything extends SectionMigrate {
 					startImport={ this.startMigration }
 					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
 					onContentOnlyClick={ onContentOnlySelection }
-					onFreeTrialClick={ () => {
-						stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
-					} }
 					onNotAuthorizedClick={ () => {
 						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
 							from: 'pre-migration',

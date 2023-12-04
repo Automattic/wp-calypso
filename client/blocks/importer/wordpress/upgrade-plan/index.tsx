@@ -18,7 +18,6 @@ interface Props {
 	site: SiteDetails;
 	startImport: () => void;
 	navigateToVerifyEmailStep: () => void;
-	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	isBusy: boolean;
 	trackingEventsProps?: Record< string, unknown >;
