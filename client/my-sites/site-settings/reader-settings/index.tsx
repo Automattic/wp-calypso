@@ -10,6 +10,11 @@ type ReaderSettingsSectionProps = {
 	siteIsJetpack: boolean | null;
 };
 
+// Note this component is not in use as of https://github.com/Automattic/wp-calypso/pull/84828. This
+// PR removed the only remaining setting in this component, so this component was removed from
+// reading settings page as well. I thought it may make sense to keep this component's definition,
+// as we may want to add other reader settings in the future. More necessary props and types for
+// settings can be seen on the above PR.
 const ReaderSettingsSection = ( { isAtomic, siteIsJetpack }: ReaderSettingsSectionProps ) => {
 	const translate = useTranslate();
 
