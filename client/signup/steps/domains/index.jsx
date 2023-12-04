@@ -278,6 +278,14 @@ export class RenderDomainsStep extends Component {
 		);
 		await this.props.saveSignupStep( stepData );
 		await this.submitWithDomain( { signupDomainOrigin, position } );
+
+		// If we already have a free selection in place, let's enforce that as a free site suggestion
+		if ( this.state.wpcomSubdomainSelected ) {
+			await this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				suggestion: this.state.wpcomSubdomainSelected,
+			} );
+		}
 	};
 
 	handleDomainMappingError = ( domain_name ) => {
