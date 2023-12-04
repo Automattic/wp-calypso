@@ -54,7 +54,7 @@ function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps 
 	// TODO: Review tier values from API.
 	// Should consider validating the inputs before displaying them.
 	// The following will draw a "-" for the views value if it's undefined.
-	const hasExtension = tiers[ currentPlanIndex ]?.extension || false;
+	const hasExtension = !! tiers[ currentPlanIndex ]?.extension;
 	const lhValue = hasExtension
 		? EXTENSION_THRESHOLD * 1000000
 		: Number( tiers[ currentPlanIndex ]?.views );
@@ -65,7 +65,7 @@ function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps 
 				<div className="stats-tier-upgrade-slider__plan-callout">
 					<h2>{ translatedStrings.limits }</h2>
 					<p className="left-aligned">
-						{ tiers[ currentPlanIndex ]?.extension ? (
+						{ hasExtension ? (
 							<>
 								<span>+</span>
 								<ShortenedNumber value={ lhValue } />
@@ -94,7 +94,7 @@ function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps 
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }
-				isVisible={ tiers[ currentPlanIndex ]?.extension }
+				isVisible={ hasExtension }
 				className="stats-tier-upgrade-slider__extension-popover-wrapper"
 			>
 				<div className="stats-tier-upgrade-slider__extension-popover-content">
