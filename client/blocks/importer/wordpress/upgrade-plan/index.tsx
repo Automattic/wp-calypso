@@ -74,14 +74,15 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 						},
 					} ) }
 					<br />
-					{ translate(
-						'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
-						{
-							components: {
-								link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
-							},
-						}
-					) }
+					{ ! isEligibleForTrialPlan &&
+						translate(
+							'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
+							{
+								components: {
+									link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
+								},
+							}
+						) }
 				</SubTitle>
 			</div>
 
