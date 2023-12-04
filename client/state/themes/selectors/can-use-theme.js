@@ -8,13 +8,17 @@ import {
 	FREE_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getThemeType } from 'calypso/state/themes/selectors';
+import { getThemeType, getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
+
+const extraFeatureChecks = {
+	'woo-on-plans': [ FEATURE_WOOP ],
+};
 
 /**
  * Checks whether the given theme is included in the current plan of the site.
@@ -38,19 +42,21 @@ export function canUseTheme( state, siteId, themeId ) {
 		return siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 	}
 
-	if ( type === WOOCOMMERCE_THEME ) {
-		return (
-			siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ) &&
-			siteHasFeature( state, siteId, FEATURE_WOOP ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
-		);
+	if ( type === BUNDLED_THEME ) {
+		const themeSoftwareSet = getThemeSoftwareSet( state, themeId );
+		const themeSoftware = themeSoftwareSet[ 0 ];
+
+		const featureChecks = [
+			WPCOM_FEATURES_PREMIUM_THEMES,
+			WPCOM_FEATURES_ATOMIC,
+			...( extraFeatureChecks[ themeSoftware ] || [] ),
+		];
+
+		return featureChecks.every( ( feature ) => siteHasFeature( state, siteId, feature ) );
 	}
 
 	if ( type === MARKETPLACE_THEME ) {
-		return (
-			siteHasFeature( state, siteId, FEATURE_WOOP ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
-		);
+		return siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 	}
 
 	return false;

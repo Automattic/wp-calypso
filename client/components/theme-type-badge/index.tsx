@@ -1,15 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/components';
+import { PremiumBadge, BundledBadge } from '@automattic/components';
 import {
 	FREE_THEME,
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	PREMIUM_THEME,
 } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { getThemeType } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
@@ -33,6 +34,7 @@ const ThemeTypeBadge = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const bundleSettings = useBundleSettings( themeId );
 
 	useEffect( () => {
 		if ( type === FREE_THEME && ! isLockedStyleVariation ) {
@@ -62,8 +64,21 @@ const ThemeTypeBadge = ( {
 	};
 
 	let badgeContent;
-	if ( type === WOOCOMMERCE_THEME ) {
-		badgeContent = <WooCommerceBundledBadge { ...badgeContentProps } />;
+	if ( type === BUNDLED_THEME ) {
+		if ( bundleSettings ) {
+			const BadgeIcon = bundleSettings.iconComponent;
+
+			const bundleBadgeProps = {
+				color: bundleSettings.color,
+				icon: <BadgeIcon />,
+			};
+
+			badgeContent = (
+				<BundledBadge { ...badgeContentProps } { ...bundleBadgeProps }>
+					{ bundleSettings.name }
+				</BundledBadge>
+			);
+		}
 	} else if ( isLockedStyleVariation ) {
 		badgeContent = <PremiumBadge { ...badgeContentProps } />;
 	} else if ( type === FREE_THEME ) {
