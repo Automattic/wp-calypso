@@ -130,13 +130,13 @@ declare module 'calypso/components/popover-menu/item' {
 }
 
 declare module 'calypso/components/popover-menu' {
-	const PopoverMenuItem: FC< {
+	const EllipsisMenu: FC< {
 		popoverClassName?: string;
 		position?: string;
 		children: React.ReactNode;
 	} >;
 
-	export default PopoverMenuItem;
+	export default EllipsisMenu;
 }
 
 declare module 'calypso/components/gravatar' {
