@@ -6,18 +6,19 @@ import {
 	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
-	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
 	WPComStorageAddOnSlug,
 	PLAN_HOSTING_TRIAL_MONTHLY,
-	PLAN_WOOEXPRESS_PLUS,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
+	isWpcomEnterpriseGridPlan,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -33,6 +34,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -86,6 +88,7 @@ import type {
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from 'calypso/my-sites/plans-grid/types';
 import type { IAppState } from 'calypso/state/types';
+
 import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
@@ -176,6 +179,7 @@ export interface PlansFeaturesMainProps {
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
+	showPressablePromoBanner?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
 }
@@ -235,6 +239,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
+	showPressablePromoBanner = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 }: PlansFeaturesMainProps ) => {
@@ -242,6 +247,7 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -321,9 +327,14 @@ const PlansFeaturesMain = ( {
 	};
 
 	const handleUpgradeClick = useCallback(
-		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
+			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
+				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+				return;
+			}
 			const cartItemForPlan = getPlanCartItem( cartItems );
-			const { product_slug: planSlug = PLAN_FREE } = cartItemForPlan ?? {};
+			const planSlug = clickedPlanSlug ?? PLAN_FREE;
 			setLastClickedPlan( planSlug );
 			if ( isFreePlan( planSlug ) ) {
 				recordTracksEvent( 'calypso_signup_free_plan_click' );
@@ -365,7 +376,7 @@ const PlansFeaturesMain = ( {
 
 			page( checkoutUrlWithArgs );
 		},
-		[ onUpgradeClick, resolveModal, siteSlug, withDiscount ]
+		[ flowName, onUpgradeClick, resolveModal, siteSlug, withDiscount ]
 	);
 
 	const term = usePlanBillingPeriod( {
@@ -406,6 +417,20 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+
+	const onShowPressablePromoBanner = useCallback( () => {
+		recordTracksEvent( 'calypso_multisite_promo_banner_impression', {
+			service: 'pressable',
+			flowName,
+		} );
+	}, [] );
+
+	const onClickPressablePromoBannerCta = useCallback( () => {
+		recordTracksEvent( 'calypso_multisite_promo_banner_cta_click', {
+			service: 'pressable',
+			flowName,
+		} );
+	}, [] );
 
 	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
 		useFreeHostingTrialAssignment( intent );
@@ -459,11 +484,7 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useMemo( () => {
-		const hiddenPlans = [
-			PLAN_HOSTING_TRIAL_MONTHLY,
-			PLAN_WOOEXPRESS_PLUS,
-			PLAN_ENTERPRISE_GRID_WPCOM,
-		];
+		const hiddenPlans = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
 
 		return filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
 			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
@@ -514,25 +535,42 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	// These never reach the grid-components. Little/no need to memoize.
-	const planTypeSelectorProps = {
+	const planTypeSelectorProps = useMemo( () => {
+		return {
+			basePlansPath,
+			isStepperUpgradeFlow,
+			isInSignup,
+			eligibleForWpcomMonthlyPlans,
+			isPlansInsideStepper,
+			intervalType,
+			customerType: _customerType,
+			siteSlug,
+			selectedPlan,
+			selectedFeature,
+			showBiennialToggle,
+			kind: planTypeSelector,
+			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
+			currentSitePlanSlug: sitePlanSlug,
+			usePricingMetaForGridPlans,
+			recordTracksEvent,
+		};
+	}, [
+		_customerType,
 		basePlansPath,
-		isStepperUpgradeFlow,
-		isInSignup,
-		eligibleForWpcomMonthlyPlans,
-		isPlansInsideStepper,
+		gridPlansForFeaturesGrid,
 		intervalType,
-		customerType: _customerType,
-		siteSlug,
-		selectedPlan,
+		planTypeSelector,
 		selectedFeature,
+		selectedPlan,
+		sitePlanSlug,
+		siteSlug,
+		isInSignup,
+		isPlansInsideStepper,
+		isStepperUpgradeFlow,
 		showBiennialToggle,
-		kind: planTypeSelector,
-		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
-		currentSitePlanSlug: sitePlanSlug,
-		usePricingMetaForGridPlans,
-		recordTracksEvent,
-	};
+		eligibleForWpcomMonthlyPlans,
+	] );
+
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
@@ -785,7 +823,11 @@ const PlansFeaturesMain = ( {
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
-						{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
+						{ ! hidePlanSelector && (
+							<div className="plans-features-main__plan-type-selector">
+								<PlanTypeSelector { ...planTypeSelectorProps } />
+							</div>
+						) }
 						<div
 							className={ classNames(
 								'plans-features-main__group',
@@ -807,7 +849,6 @@ const PlansFeaturesMain = ( {
 									isInSignup={ isInSignup }
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
-									flowName={ flowName }
 									selectedFeature={ selectedFeature }
 									selectedPlan={ selectedPlan }
 									siteId={ siteId }
@@ -857,7 +898,9 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<PlanTypeSelector { ...planTypeSelectorProps } />
+												<div className="plans-features-main__plan-type-selector">
+													<PlanTypeSelector { ...planTypeSelectorProps } />
+												</div>
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
@@ -868,7 +911,6 @@ const PlansFeaturesMain = ( {
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
-												flowName={ flowName }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
 												siteId={ siteId }
@@ -884,6 +926,9 @@ const PlansFeaturesMain = ( {
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
+												planTypeSelectorProps={
+													! hidePlanSelector ? planTypeSelectorProps : undefined
+												}
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
@@ -901,6 +946,14 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
+						{ isEnglishLocale && showPressablePromoBanner && (
+							<AsyncLoad
+								require="./components/pressable-promo-banner"
+								onShow={ onShowPressablePromoBanner }
+								onClick={ onClickPressablePromoBannerCta }
+								placeholder={ <LoadingPlaceholder /> }
+							/>
+						) }
 					</>
 				) }
 			</div>

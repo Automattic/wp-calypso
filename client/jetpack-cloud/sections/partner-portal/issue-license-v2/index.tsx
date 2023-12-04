@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -19,6 +20,7 @@ import { useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
 import LicensesForm from './licenses-form';
 import ReviewLicenses from './review-licenses';
+import TotalCost from './total-cost';
 import type { SelectedLicenseProp } from './types';
 import type { AssignLicenceProps } from '../types';
 
@@ -52,7 +54,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		handleShowLicenseOverview();
 	}, [ handleShowLicenseOverview ] );
 
-	const showStickyContent = selectedLicenses.length > 0;
+	const showStickyContent = useBreakpoint( '>660px' ) && selectedLicenses.length > 0;
 
 	// Group licenses by slug and sort them by quantity
 	const getGroupedLicenses = useCallback( () => {
@@ -88,24 +90,29 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						</Subtitle>
 						<Actions>
 							{ selectedLicenses.length > 0 && (
-								<Button
-									primary
-									className="issue-license-v2__select-license"
-									busy={ ! isReady }
-									onClick={ onClickIssueLicenses }
-								>
-									{ translate(
-										'Review %(numLicenses)d license',
-										'Review %(numLicenses)d licenses',
-										{
-											context: 'button label',
-											count: selectedLicenseCount,
-											args: {
-												numLicenses: selectedLicenseCount,
-											},
-										}
-									) }
-								</Button>
+								<div className="issue-license-v2__controls">
+									<div className="issue-license-v2__actions">
+										<TotalCost selectedLicenses={ selectedLicenses } />
+										<Button
+											primary
+											className="issue-license-v2__select-license"
+											busy={ ! isReady }
+											onClick={ onClickIssueLicenses }
+										>
+											{ translate(
+												'Review %(numLicenses)d license',
+												'Review %(numLicenses)d licenses',
+												{
+													context: 'button label',
+													count: selectedLicenseCount,
+													args: {
+														numLicenses: selectedLicenseCount,
+													},
+												}
+											) }
+										</Button>
+									</div>
+								</div>
 							) }
 						</Actions>
 					</LayoutHeader>

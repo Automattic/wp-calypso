@@ -13,11 +13,6 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
 
-	const handlePrimaryAction = () => {
-		localStorage.removeItem( 'launchpad_siteSlug' );
-		actionDispatch && actionDispatch();
-	};
-
 	// Display task counter if task is incomplete and has the count properties;
 	const shouldDisplayTaskCounter =
 		task.target_repetitions &&
@@ -49,7 +44,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 				<Button
 					className="checklist-item__checklist-primary-button"
 					data-task={ id }
-					onClick={ handlePrimaryAction }
+					onClick={ actionDispatch }
 					{ ...buttonProps }
 				>
 					{ title }

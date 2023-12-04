@@ -32,6 +32,7 @@ import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../hooks/use-plan-pricing-info-from-grid-plans';
+import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import { plansBreakSmall } from '../../media-queries';
@@ -39,6 +40,7 @@ import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
+import PlanTypeSelector, { type PlanTypeSelectorProps } from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import { StickyContainer } from '../sticky-container';
@@ -326,7 +328,6 @@ type ComparisonGridProps = {
 	intervalType: string;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
-	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	siteId?: number | null;
@@ -338,6 +339,7 @@ type ComparisonGridProps = {
 	stickyRowOffset: number;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showRefundPeriod?: boolean;
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 };
 
 type ComparisonGridHeaderProps = {
@@ -346,7 +348,6 @@ type ComparisonGridHeaderProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
-	flowName?: string | null;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	onUpgradeClick: ( planSlug: PlanSlug ) => void;
@@ -356,9 +357,10 @@ type ComparisonGridHeaderProps = {
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
 	isHiddenInMobile?: boolean;
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 };
 
-type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
+type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
 	allVisible: boolean;
 	isLastInRow: boolean;
 	isLargeCurrency: boolean;
@@ -382,7 +384,6 @@ const ComparisonGridHeaderCell = ( {
 	displayedGridPlans,
 	currentSitePlanSlug,
 	isLaunchPage,
-	flowName,
 	isLargeCurrency,
 	onUpgradeClick,
 	planActionOverrides,
@@ -478,7 +479,6 @@ const ComparisonGridHeaderCell = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				flowName={ flowName }
 				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
@@ -488,6 +488,13 @@ const ComparisonGridHeaderCell = ( {
 	);
 };
 
+const PlanTypeSelectorWrapper = styled.div`
+	display: none;
+	${ plansBreakSmall( css`
+		display: block;
+	` ) }
+`;
+
 const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderProps >(
 	(
 		{
@@ -495,7 +502,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			visibleGridPlans,
 			isInSignup,
 			isLaunchPage,
-			flowName,
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
@@ -506,9 +512,11 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			isHiddenInMobile,
 			showRefundPeriod,
 			isStuck,
+			planTypeSelectorProps,
 		},
 		ref
 	) => {
+		const translate = useTranslate();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 			gridPlans: displayedGridPlans,
@@ -522,12 +530,23 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			siteId ?? 0,
 			displayedGridPlans.map( ( { planSlug } ) => planSlug )
 		);
+
 		return (
 			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
 					key="feature-name"
-					className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
-				/>
+					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
+				>
+					{ isStuck && planTypeSelectorProps && (
+						<PlanTypeSelectorWrapper>
+							<PlanTypeSelector
+								{ ...planTypeSelectorProps }
+								title={ translate( 'Billing Cycle' ) }
+								hideDiscountLabel={ true }
+							/>
+						</PlanTypeSelectorWrapper>
+					) }
+				</RowTitleCell>
 				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
@@ -541,7 +560,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						flowName={ flowName }
 						onUpgradeClick={ onUpgradeClick }
 						isLaunchPage={ isLaunchPage }
 						isLargeCurrency={ isLargeCurrency }
@@ -860,7 +878,10 @@ const FeatureGroup = ( {
 		firstSetOfFeatures,
 	] );
 	const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
-	const featureObjects = getPlanFeaturesObject( allFeaturesList, features );
+	const featureObjects = filterUnusedFeaturesObject(
+		visibleGridPlans,
+		getPlanFeaturesObject( allFeaturesList, features )
+	);
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 
 	const allJetpackFeatures = useMemo( () => {
@@ -899,6 +920,11 @@ const FeatureGroup = ( {
 
 		setVisibleFeatureGroups( newVisibleFeatureGroups );
 	}, [ featureGroup, setVisibleFeatureGroups, visibleFeatureGroups ] );
+
+	// Skip non Jetpack feature groups without any available features.
+	if ( featureGroup.slug !== FEATURE_GROUP_ESSENTIAL_FEATURES && ! featureObjects.length ) {
+		return null;
+	}
 
 	return (
 		<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
@@ -952,7 +978,6 @@ const ComparisonGrid = ( {
 	intervalType,
 	isInSignup,
 	isLaunchPage,
-	flowName,
 	currentSitePlanSlug,
 	onUpgradeClick,
 	siteId,
@@ -963,6 +988,7 @@ const ComparisonGrid = ( {
 	stickyRowOffset,
 	onStorageAddOnClick,
 	showRefundPeriod,
+	planTypeSelectorProps,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1101,7 +1127,6 @@ const ComparisonGrid = ( {
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
-							flowName={ flowName }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							onUpgradeClick={ onUpgradeClick }
@@ -1109,6 +1134,7 @@ const ComparisonGrid = ( {
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
+							planTypeSelectorProps={ planTypeSelectorProps }
 						/>
 					) }
 				</StickyContainer>
@@ -1132,7 +1158,6 @@ const ComparisonGrid = ( {
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
@@ -1144,6 +1169,7 @@ const ComparisonGrid = ( {
 					isStuck={ false }
 					isHiddenInMobile={ true }
 					ref={ bottomHeaderRef }
+					planTypeSelectorProps={ planTypeSelectorProps }
 				/>
 			</Grid>
 

@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getTotalInvoiceValue } from '../lib/pricing';
+import PricingBreakdown from './pricing-breakdown';
 import type { SelectedLicenseProp } from '../types';
 
 export default function PricingSummary( {
@@ -39,7 +40,7 @@ export default function PricingSummary( {
 				<span className="review-licenses__pricing-original">
 					{ formatCurrency( actualCost, currency ) }
 				</span>
-				<div className="review-licenses__pricing-interval">{ translate( '/per month' ) }</div>
+				<div className="review-licenses__pricing-interval">{ translate( '/month' ) }</div>
 			</div>
 			<Button primary className="review-licenses__cta-button" onClick={ handleCTAClick }>
 				{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
@@ -60,6 +61,7 @@ export default function PricingSummary( {
 					}
 				) }
 			</div>
+			<PricingBreakdown userProducts={ userProducts } selectedLicenses={ selectedLicenses } />
 		</>
 	);
 }

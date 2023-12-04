@@ -1,0 +1,65 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-cloud-content-sidebar {
+	.manage-overview {
+		max-width: 100%;
+		h1 {
+			font-family: "SF Pro Display", serif;
+			font-size: rem(36px);
+			font-weight: 700;
+			line-height: 48px;
+		}
+		h2 {
+			font-family: "SF Pro Text", serif;
+			font-size: rem(16px);
+			font-weight: 500;
+			line-height: 24px;
+			color: var(--studio-gray-100);
+		}
+		.welcome-section {
+			padding: 32px;
+			background-color: var(--studio-white);
+
+			p {
+				color: #333;
+				margin-bottom: 16px;
+			}
+			.benefits-list {
+				list-style: none;
+				padding: 0;
+				margin-bottom: 24px;
+				li {
+					margin-bottom: 8px;
+				}
+			}
+			.next-button {
+				padding: 8px 16px;
+				background-color: var(--studio-jetpack-green-50);
+				color: var(--studio-white);
+				border: none;
+				cursor: pointer;
+			}
+		}
+
+		.next-steps {
+			margin-top: 16px;
+			padding: 16px 32px 16px 32px;
+			background-color: var(--studio-white);
+
+			.steps-list {
+				list-style: none;
+				padding: 0;
+				li {
+					margin-bottom: 16px;
+				}
+			}
+		}
+
+		.jetpack-products {
+			background-color: var(--studio-white);
+			margin-top: 32px;
+			padding: 24px;
+		}
+	}
+}

@@ -4,7 +4,6 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -18,38 +17,16 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
-import { addTracking } from './helpers';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
-import ThemesSelection from './themes-selection';
-
-const ConnectedThemesSelection = connectOptions( ( props ) => {
-	return (
-		<ThemesSelection
-			{ ...props }
-			getOptions={ function ( theme ) {
-				return pickBy(
-					addTracking( props.options ),
-					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
-				);
-			} }
-		/>
-	);
-} );
 
 const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const {
 		currentPlan,
 		currentThemeId,
-		filter,
-		getScreenshotOption,
 		isAtomic,
 		isPossibleJetpackConnectionProblem,
-		showWpcomThemesList,
-		search,
 		siteId,
-		vertical,
-		tier,
 		translate,
 		requestingSitePlans,
 	} = props;
@@ -113,41 +90,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				siteId={ siteId }
 				isJetpackSite={ true }
 				upsellBanner={ displayUpsellBanner ? upsellBanner() : null }
-			>
-				{ showWpcomThemesList && (
-					<div>
-						<ConnectedThemesSelection
-							origin="wpcom"
-							defaultOption="activate"
-							secondaryOption="tryandcustomize"
-							search={ search }
-							tier={ tier }
-							filter={ filter }
-							vertical={ vertical }
-							siteId={ siteId /* This is for the options in the '...' menu only */ }
-							getScreenshotUrl={ function ( theme ) {
-								if ( ! getScreenshotOption( theme ).getUrl ) {
-									return null;
-								}
-								return getScreenshotOption( theme ).getUrl( theme );
-							} }
-							onScreenshotClick={ function ( themeId ) {
-								if ( ! getScreenshotOption( themeId ).action ) {
-									return;
-								}
-								getScreenshotOption( themeId ).action( themeId );
-							} }
-							getActionLabel={ function ( theme ) {
-								return getScreenshotOption( theme ).label;
-							} }
-							trackScrollPage={ props.trackScrollPage }
-							source="wpcom"
-							upsellUrl={ upsellUrl }
-							forceWpOrgSearch
-						/>
-					</div>
-				) }
-			</ThemeShowcase>
+			/>
 		</Main>
 	);
 } );

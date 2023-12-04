@@ -278,16 +278,11 @@
 		margin-top: 25px;
 	}
 
-	.login__social-buttons {
+	.auth-form__social-buttons {
 		align-items: center;
 
 		@media screen and ( max-width: 660px ) {
 			align-items: flex-start;
-		}
-
-		.login__social-buttons-container {
-			display: flex;
-			flex-direction: column;
 		}
 
 		.social-buttons__button {
@@ -296,6 +291,7 @@
 			padding-bottom: 0;
 			padding-left: 0;
 			padding-right: 0;
+			width: 196px;
 
 			svg {
 				border: 1px solid var(--studio-gray-10);
@@ -512,7 +508,7 @@
 		display: none;
 	}
 
-	.login__social,
+	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;
 		border-top: $woo-form-divider-border;
@@ -566,14 +562,13 @@
 
 	.auth-form__separator .auth-form__separator-text {
 		padding: 0 27px;
-		background-color: #fdfdfd;
 	}
 
 	.wp-login__footer--oauth {
 		display: none;
 	}
 
-	.login-form__social-buttons-tos {
+	.auth-form__social-buttons-tos {
 		margin-top: 24px;
 		font-size: $woo-font-size-small;
 		line-height: 18px;
@@ -911,7 +906,7 @@
 			font-weight: 600;
 		}
 
-		.login-form__social-buttons-tos {
+		.auth-form__social-buttons-tos {
 			text-align: center;
 			line-height: 16px;
 

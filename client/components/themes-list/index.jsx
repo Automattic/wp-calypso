@@ -18,6 +18,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteThemeInstallUrl } from 'calypso/state/sites/selectors';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
@@ -82,6 +83,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		const shouldGoToAssemblerStep = isAssemblerSupported();
 		props.recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_cta_click', {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
+			is_logged_in: isLoggedIn,
 		} );
 
 		const destinationUrl = getSiteAssemblerUrl( {
@@ -236,6 +238,9 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 			assembler: '1',
 		} )
 	);
+	const siteThemeInstallUrl = useSelector( ( state ) =>
+		getSiteThemeInstallUrl( state, selectedSite?.ID )
+	);
 	const assemblerCtaData = usePatternAssemblerCtaData();
 
 	const options = [];
@@ -324,9 +329,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 					search_term: searchTerm,
 					destination: 'upload-theme',
 				} ),
-			url: isAtomic
-				? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
-				: `/themes/upload/${ selectedSite.slug }`,
+			url: isAtomic ? siteThemeInstallUrl : `/themes/upload/${ selectedSite.slug }`,
 			buttonText: translate( 'Upload theme' ),
 		} );
 	} else {

@@ -231,3 +231,42 @@
 		@include license-product-card-block__pricing;
 	}
 }
+
+.license-product-card--with-background {
+	.license-product-card__inner {
+		background-image: url(./gradient.svg);
+		background-size: 100% 100%;
+	}
+}
+
+.license-product-card .multiple-choice-question {
+	margin-block-start: 16px;
+	margin-block-end: 8px;
+
+	.form-legend {
+		display: none;
+	}
+
+	.multiple-choice-question__answers {
+		display: flex;
+		gap: 36px;
+	}
+
+	.form-label {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 0;
+	}
+
+	.form-radio:checked::before {
+		background: var(--studio-green-50);
+	}
+}
+
+.license-product-card--with-variant .license-product-card__inner {
+	cursor: default;
+
+	.license-product-card__select-button {
+		cursor: pointer;
+	}
+}

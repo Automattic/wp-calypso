@@ -168,7 +168,6 @@ body.is-section-signup .videopress-step-wrapper {
 		border: none !important;
 		border-radius: 0;
 		box-shadow: none;
-		margin: 0;
 		transition: 0.3s;
 
 		span {
@@ -231,24 +230,13 @@ body.is-section-signup .videopress-step-wrapper {
 		width: 100%;
 	}
 
-	.auth-form__separator::before {
-		position: absolute;
-		content: "";
-		border-inline-start: 0;
-		border-block-start: 1px solid var(--videopress-color-separator-light);
-		inset-block-start: 50%;
-		inset-inline-start: 0;
-		height: 0;
-		width: 100%;
+	.auth-form__separator::before,
+	.auth-form__separator::after {
+		border-color: var(--videopress-color-separator-light);
 	}
 
 	.auth-form__separator-text {
-		font-size: 0.75rem;
-		padding: 0 24px;
-		z-index: 1;
-		text-transform: uppercase;
 		color: var(--videopress-color-text);
-		background-color: var(--videopress-color-background-dark);
 	}
 
 	.form-text-input {
@@ -268,21 +256,6 @@ body.is-section-signup .videopress-step-wrapper {
 		.auth-form__separator {
 			width: 60px;
 			margin-top: 0;
-		}
-
-		.auth-form__separator::before {
-			width: 100%;
-			height: 100%;
-			border-inline-start: 1px solid var(--videopress-color-separator-light);
-			border-block-start: 0;
-			inset-block-start: 0;
-			inset-inline-start: 50%;
-			position: absolute;
-			content: "";
-		}
-
-		.auth-form__separator-text {
-			padding: 24px 0;
 		}
 
 		.auth-form__social-buttons button {

@@ -19,7 +19,6 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -40,10 +39,8 @@ type PlanFeaturesActionsButtonProps = {
 	isMonthlyPlan?: boolean;
 	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	planSlug: PlanSlug;
-	flowName?: string | null;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
-	isWooExpressPlusPlan?: boolean;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
@@ -431,10 +428,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isLaunchPage,
 	onUpgradeClick,
 	planSlug,
-	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
-	isWooExpressPlusPlan = false,
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
@@ -464,49 +459,18 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 					current_plan: currentSitePlanSlug,
 					upgrading_to: upgradePlan,
+					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
 			}
-
 			onUpgradeClick?.( upgradePlan );
 		},
 		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
 	);
 
 	if ( isWpcomEnterpriseGridPlan ) {
-		const vipLandingPageUrlWithUtmCampaign = addQueryArgs(
-			'https://wpvip.com/wordpress-vip-agile-content-platform',
-			{
-				utm_source: 'WordPresscom',
-				utm_medium: 'automattic_referral',
-				utm_campaign: 'calypso_signup',
-			}
-		);
-
 		return (
-			<Button
-				className={ classNames( classes ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } )
-				}
-				href={ vipLandingPageUrlWithUtmCampaign }
-				target="_blank"
-			>
+			<Button className={ classNames( classes ) } onClick={ () => handleUpgradeButtonClick() }>
 				{ translate( 'Learn more' ) }
-			</Button>
-		);
-	}
-
-	if ( isWooExpressPlusPlan ) {
-		return (
-			<Button
-				className={ classNames( classes ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_plan_step_woo_express_plus_click', { flow: flowName } )
-				}
-				href="https://woocommerce.com/get-in-touch/"
-				target="_blank"
-			>
-				{ translate( 'Get in touch' ) }
 			</Button>
 		);
 	}

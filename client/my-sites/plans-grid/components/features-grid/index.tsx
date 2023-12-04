@@ -6,7 +6,6 @@ import {
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	PlanSlug,
-	isWooExpressPlusPlan,
 	isBusinessTrial,
 	isWooExpressPlan,
 	FEATURE_CUSTOM_DOMAIN,
@@ -249,11 +248,9 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { isLargeCurrency, translate, isPlanUpgradeCreditEligible, currentSitePlanSlug, siteId } =
+		const { isLargeCurrency, isPlanUpgradeCreditEligible, currentSitePlanSlug, siteId } =
 			this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
-			const isWooExpressPlus = isWooExpressPlusPlan( planSlug );
-
 			return (
 				<PlanDivOrTdContainer
 					scope="col"
@@ -269,11 +266,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						siteId={ siteId }
 						visibleGridPlans={ renderedGridPlans }
 					/>
-					{ isWooExpressPlus && (
-						<div className="plan-features-2023-grid__header-tagline">
-							{ translate( 'Speak to our team for a custom quote.' ) }
-						</div>
-					) }
 				</PlanDivOrTdContainer>
 			);
 		} );
@@ -357,7 +349,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		const {
 			isInSignup,
 			isLaunchPage,
-			flowName,
 			currentSitePlanSlug,
 			translate,
 			planActionOverrides,
@@ -398,7 +389,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 							className={ getPlanClass( planSlug ) }
 							freePlan={ isFreePlan( planSlug ) }
 							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
-							isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							isMonthlyPlan={ isMonthlyPlan }
@@ -406,7 +396,6 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 								handleUpgradeClick( overridePlanSlug ?? planSlug )
 							}
 							planSlug={ planSlug }
-							flowName={ flowName }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							buttonText={ buttonText }
 							planActionOverrides={ planActionOverrides }
@@ -441,8 +430,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		const { translate, gridPlans } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug } ) => {
-			const shouldRenderEnterpriseLogos =
-				isWpcomEnterpriseGridPlan( planSlug ) || isWooExpressPlusPlan( planSlug );
+			const shouldRenderEnterpriseLogos = isWpcomEnterpriseGridPlan( planSlug );
 			const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug ) && ! shouldRenderEnterpriseLogos;
 			const indexInGridPlansForFeaturesGrid = gridPlans.findIndex(
 				( { planSlug: slug } ) => slug === planSlug
@@ -486,9 +474,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			isCustomDomainAllowedOnFreePlan,
 		} = this.props;
 		const plansWithFeatures = renderedGridPlans.filter(
-			( gridPlan ) =>
-				! isWpcomEnterpriseGridPlan( gridPlan.planSlug ) &&
-				! isWooExpressPlusPlan( gridPlan.planSlug )
+			( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
 		);
 
 		return (

@@ -24,6 +24,7 @@ function usePlans() {
 					...acc,
 					[ plan.product_slug ]: {
 						planSlug: plan.product_slug,
+						productSlug: plan.product_slug,
 						productId: plan.product_id,
 						productNameShort: plan.product_name_short,
 						billPeriod: plan.bill_period,

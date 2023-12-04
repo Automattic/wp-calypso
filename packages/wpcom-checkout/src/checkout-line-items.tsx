@@ -1046,8 +1046,7 @@ const DesktopGiftWrapper = styled.div`
 `;
 
 /**
- * Note that this function returns the cost in the currency's standard unit as
- * a float (eg: dollars in USD).
+ * Note that this function returns the cost in the currency's smallest unit.
  */
 function getCostBeforeDiscounts( product: ResponseCartProduct ): number {
 	const originalCostOverrides =
@@ -1055,16 +1054,16 @@ function getCostBeforeDiscounts( product: ResponseCartProduct ): number {
 	if ( originalCostOverrides.length > 0 ) {
 		const lastOriginalCostOverride = originalCostOverrides.pop();
 		if ( lastOriginalCostOverride ) {
-			return lastOriginalCostOverride.new_price;
+			return lastOriginalCostOverride.new_subtotal_integer;
 		}
 	}
 	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
 		const firstOverride = product.cost_overrides[ 0 ];
 		if ( firstOverride ) {
-			return firstOverride.old_price;
+			return firstOverride.old_subtotal_integer;
 		}
 	}
-	return product.cost;
+	return product.item_subtotal_integer;
 }
 
 function CheckoutLineItem( {
@@ -1131,7 +1130,9 @@ function CheckoutLineItem( {
 	);
 	const originalAmountInteger = product.item_original_subtotal_integer;
 
-	// Introductory offers have their renewal price returned as the original cost property, and we don't want to show that as the item's cost before discounts, so we calculate that separately here.
+	// Introductory offers have their renewal price returned as the original
+	// cost property, and we don't want to show that as the item's cost before
+	// discounts, so we calculate that separately here.
 	const costBeforeDiscounts = getCostBeforeDiscounts( product );
 
 	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
@@ -1175,6 +1176,7 @@ function CheckoutLineItem( {
 				{ hasCheckoutVersion( '2' ) ? (
 					<LineItemPrice
 						actualAmount={ formatCurrency( costBeforeDiscounts, product.currency, {
+							isSmallestUnit: true,
 							stripZeros: true,
 						} ) }
 						isSummary={ isSummary }

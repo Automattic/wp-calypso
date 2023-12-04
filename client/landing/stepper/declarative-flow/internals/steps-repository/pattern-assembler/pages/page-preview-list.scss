@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "../variables";
 
 .pattern-assembler__preview-list {
 	box-sizing: border-box;
@@ -11,6 +12,22 @@
 	height: 100vh;
 	overflow-y: scroll;
 	padding: 100px 12px;
+	z-index: 2;
+
+	&--fullscreen-preview {
+		margin-left: -$pattern-assembler-sidebar-width;
+		overflow: hidden;
+		padding-left: calc($pattern-assembler-sidebar-width + 12px);
+
+		@include break-wide {
+			margin-left: -$pattern-assembler-sidebar-width-wide;
+			padding-left: calc($pattern-assembler-sidebar-width-wide + 12px);
+		}
+
+		.pattern-assembler__preview--fullscreen-leave {
+			z-index: 2;
+		}
+	}
 
 	@include break-medium {
 		gap: 48px 24px;
@@ -26,7 +43,11 @@
 		grid-template-columns: repeat(4, 1fr);
 	}
 
-	@media (min-width: 2560px) {
+	@media (min-width: 1920px) {
 		grid-template-columns: repeat(5, 1fr);
+
+	}
+	@media (min-width: 2560px) {
+		grid-template-columns: repeat(6, 1fr);
 	}
 }

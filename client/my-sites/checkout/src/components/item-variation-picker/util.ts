@@ -1,4 +1,3 @@
-import { isJetpackPlan, isJetpackProduct, isAkismetProduct } from '@automattic/calypso-products';
 import type { WPCOMProductVariant } from './types';
 
 export function getItemVariantCompareToPrice(
@@ -15,6 +14,16 @@ export function getItemVariantCompareToPrice(
 		return undefined;
 	}
 
+	// If the same product is being compared to itself, there is no discount
+	if ( variant.productSlug === compareTo.productSlug ) {
+		return undefined;
+	}
+
+	// A variant with a shorter term should never be cheaper than a variant with a longer term
+	if ( compareTo.termIntervalInMonths > variant.termIntervalInMonths ) {
+		return undefined;
+	}
+
 	// Ignore a 1 month discount when calculating the discount percentage
 	if (
 		variant.termIntervalInMonths === 24 &&
@@ -24,18 +33,31 @@ export function getItemVariantCompareToPrice(
 		return compareTo.priceBeforeDiscounts * 2;
 	}
 
-	// CompareTo price with introductory offers and without (For Jetpack and Akismet)
+	// CompareTo price for first-year introductory offers
 	if (
-		isJetpackPlan( { product_slug: compareTo.productSlug } ) ||
-		isJetpackProduct( { product_slug: compareTo.productSlug } ) ||
-		isAkismetProduct( { product_slug: compareTo.productSlug } )
+		compareTo.introductoryInterval === 1 &&
+		compareTo.introductoryTerm === 'year' &&
+		variant.introductoryInterval === 2 &&
+		variant.introductoryTerm === 'year'
 	) {
-		if ( compareTo.termIntervalInMonths === 12 && variant.termIntervalInMonths === 24 ) {
-			return compareTo.priceInteger + compareTo.priceBeforeDiscounts;
-		}
+		return compareTo.priceInteger + compareTo.priceBeforeDiscounts;
 	}
 
-	// CompareTo price without intro offers (For WPCOM)
+	// CompareTo price for Biennial, Triennial, Quadrennial, and so on, products
+	if ( compareTo.termIntervalInMonths >= 12 && variant.termIntervalInMonths >= 24 ) {
+		const compareToTermIntervalInYears = compareTo.termIntervalInMonths / 12;
+
+		const compareToPricePerYear = compareTo.priceInteger / compareToTermIntervalInYears;
+		const compareToPricePerYearBeforeDiscounts =
+			compareTo.priceBeforeDiscounts / compareToTermIntervalInYears;
+
+		return (
+			compareToPricePerYear +
+			compareToPricePerYearBeforeDiscounts * ( variant.termIntervalInMonths / 12 - 1 )
+		);
+	}
+
+	// Default
 	return ( compareTo.priceInteger / compareTo.termIntervalInMonths ) * variant.termIntervalInMonths;
 }
 

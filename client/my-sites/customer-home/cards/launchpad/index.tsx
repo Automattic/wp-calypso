@@ -27,7 +27,7 @@ const CustomerHomeLaunchpad = ( {
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const {
-		data: { checklist, is_dismissed: initialIsChecklistDismissed },
+		data: { checklist, is_dismissed: initialIsChecklistDismissed, title },
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
 
 	useEffect( () => {
@@ -46,7 +46,7 @@ const CustomerHomeLaunchpad = ( {
 		<div className="customer-home-launchpad">
 			<div className="customer-home-launchpad__header">
 				<h2 className="customer-home-launchpad__title">
-					{ translate( 'Next steps for your site' ) }
+					{ title ?? translate( 'Next steps for your site' ) }
 				</h2>
 				{ numberOfSteps > completedSteps ? (
 					<div className="customer-home-launchpad__progress-bar-container">
