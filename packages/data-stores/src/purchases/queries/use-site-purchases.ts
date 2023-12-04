@@ -13,16 +13,18 @@ interface Props {
 	siteId?: string | number | null;
 }
 
+const fetchSitePurchases = ( siteId: string ): RawPurchase[] =>
+	wpcomRequest( {
+		path: `/sites/${ encodeURIComponent( siteId ) }/purchases`,
+		apiVersion: '1.1',
+	} );
+
 function useSitePurchases( { siteId }: Props ) {
 	const queryKeys = useQueryKeysFactory();
 
-	return useQuery< RawPurchase[], Error, PurchasesIndex >( {
+	return useQuery( {
 		queryKey: queryKeys.sitePurchases( siteId ),
-		queryFn: async () =>
-			await wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId as string ) }/purchases`,
-				apiVersion: '1.1',
-			} ),
+		queryFn: fetchSitePurchases( siteId as string ),
 		select: useCallback( ( data: RawPurchase[] ) => {
 			return data.reduce< PurchasesIndex >( ( acc, rawPurchase ) => {
 				const purchase = createPurchaseObject( rawPurchase );
@@ -32,7 +34,6 @@ function useSitePurchases( { siteId }: Props ) {
 				};
 			}, {} );
 		}, [] ),
-		refetchOnWindowFocus: false,
 		staleTime: 1000 * 60 * 5, // 5 minutes
 		enabled: !! siteId,
 	} );
