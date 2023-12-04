@@ -782,6 +782,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'installTheme',
 			label: __( 'Install theme' ),
+			searchLabel: [
+				_x( 'install theme', 'Keyword for the Install theme command' ),
+				_x( 'add theme', 'Keyword for the Install theme command' ),
+				_x( 'upload theme', 'Keyword for the Install theme command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'installTheme', __( 'Select site to install theme' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -826,6 +831,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'installPlugin',
 			label: __( 'Install plugin' ),
+			searchLabel: [
+				_x( 'install plugin', 'Keyword for the Install plugin command' ),
+				_x( 'add plugin', 'Keyword for the Install plugin command' ),
+				_x( 'upload plugin', 'Keyword for the Install plugin command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'installPlugin', __( 'Select site to install plugin' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
