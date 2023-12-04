@@ -10,7 +10,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ReaderSettingsSection from '../reader-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -121,13 +120,10 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 		( {
 			fields,
 			onChangeField,
-			handleAutosavingToggle,
 			handleSubmitForm,
 			handleToggle,
-			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
-			siteIsJetpack,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
@@ -143,14 +139,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isRequestingSettings={ isRequestingSettings }
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
-					/>
-					<ReaderSettingsSection
-						fields={ fields }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						isAtomic={ isAtomic }
-						siteIsJetpack={ siteIsJetpack }
 					/>
 					<RssFeedSettingsSection
 						fields={ fields }
