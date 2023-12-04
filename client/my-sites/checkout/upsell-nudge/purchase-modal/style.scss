@@ -42,7 +42,7 @@ $left-margin: 36px;
 	width: 100%;
 	flex-direction: column;
 	gap: 12px;
-	@include break-mobile {
+	@include break-small {
 		gap: 36px;
 		flex-direction: row;
 	}
@@ -54,7 +54,7 @@ $left-margin: 36px;
 	flex-direction: column;
 	max-width: 100%;
 	padding: 16px;
-	@include break-mobile {
+	@include break-small {
 		padding: 45px 36px;
 		.has-feature-list & {
 			padding: 45px 0 45px 36px;
@@ -174,14 +174,14 @@ $left-margin: 36px;
 	flex-wrap: wrap;
 
 	padding-inline-end: 18px;
-	@include break-mobile {
+	@include break-small {
 		padding-inline-end: 0;
 	}
 
 	> dt {
 		width: 60%;
 		margin-inline-start: 18px;
-		@include break-mobile {
+		@include break-small {
 			margin-inline-start: $left-margin;
 		}
 	}
@@ -217,7 +217,7 @@ $left-margin: 36px;
 	font-size: 1rem;
 
 	margin: 24px 18px 0 18px;
-	@include break-mobile {
+	@include break-small {
 		margin: 24px 0 0 36px;
 	}
 
