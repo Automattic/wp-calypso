@@ -82,6 +82,7 @@ import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
 
+// Referenced from WordAds_Ads_Txt
 const wpcomSubdomains = [
 	'wordpress.com',
 	'art.blog',
