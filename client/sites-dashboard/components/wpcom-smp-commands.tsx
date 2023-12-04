@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
@@ -150,6 +151,15 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'openReader',
+			label: __( 'Open reader' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/read` );
+			},
+			icon: <Gridicon icon="reader" />,
 		},
 		{
 			name: 'openSiteDashboard',
