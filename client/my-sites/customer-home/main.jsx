@@ -27,6 +27,7 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
+import { useDispatch } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
@@ -74,6 +75,7 @@ const Home = ( {
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
@@ -187,7 +189,7 @@ const Home = ( {
 					showDismiss={ false }
 					status="is-warning"
 				>
-					<NoticeAction onClick={ () => verifyIcannEmail( customDomain.name ) }>
+					<NoticeAction onClick={ () => dispatch( verifyIcannEmail( customDomain.name ) ) }>
 						{ translate( 'Resend Email' ) }
 					</NoticeAction>
 				</Notice>
