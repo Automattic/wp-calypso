@@ -11,6 +11,7 @@ import './stats-purchase-tier-upgrade-slider.scss';
 type TierUpgradeSliderProps = {
 	className?: string;
 	currencyCode: string;
+	setPurchaseTierQuantity: ( quantity: number ) => void;
 };
 
 function useTranslatedStrings() {
@@ -32,7 +33,11 @@ function useTranslatedStrings() {
 	};
 }
 
-function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps ) {
+function TierUpgradeSlider( {
+	className,
+	currencyCode,
+	setPurchaseTierQuantity,
+}: TierUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
@@ -47,6 +52,8 @@ function TierUpgradeSlider( { className, currencyCode }: TierUpgradeSliderProps 
 
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
+
+		setPurchaseTierQuantity( tiers[ value ]?.views as number );
 	};
 
 	const translatedStrings = useTranslatedStrings();
