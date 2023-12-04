@@ -1,6 +1,4 @@
-.woocommerce-bundled-badge {
-	--woocommerce-purple-50: #7f54b3;
-
+.bundled-badge {
 	display: inline-flex;
 	align-items: center;
 	height: 20px;
@@ -10,27 +8,16 @@
 	box-sizing: border-box;
 	font-size: 0.75rem;
 	color: var(--studio-white);
-	background: var(--woocommerce-purple-50);
 	z-index: 1;
 
-	&--is-clickable {
-		cursor: pointer;
-
-		.accessible-focus &:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
-	}
-
-	svg {
+	.bundled-badge__icon {
+		display: inline-flex;
+		align-items: center;
 		height: 20px;
 		margin-right: 5px;
 
-		.cls-1 {
-			fill: var(--woocommerce-purple-50);
-		}
-
-		.cls-2 {
-			fill: #fff;
+		svg {
+			height: 20px;
 		}
 	}
 
@@ -38,13 +25,22 @@
 		min-height: 0;
 	}
 
-	.woocommerce-bundled-badge__logo {
+	.bundled-badge__logo {
 		margin-top: -1px;
 		margin-right: 3px;
 		fill: currentcolor;
 	}
 }
-.woocommerce-bundled-badge__popover {
+
+.bundled-badge--is-clickable {
+	cursor: pointer;
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+}
+
+.bundled-badge__popover {
 	max-width: 300px;
 	outline: none;
 	.popover__inner {

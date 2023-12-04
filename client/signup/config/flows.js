@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
@@ -173,7 +173,7 @@ function getWithThemeDestination( {
 } ) {
 	if (
 		! cartItems &&
-		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
+		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes( themeType )
 	) {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
 	}
@@ -184,7 +184,7 @@ function getWithThemeDestination( {
 
 	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
 
-	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, WOOCOMMERCE_THEME ].includes( themeType ) ) {
+	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, BUNDLED_THEME ].includes( themeType ) ) {
 		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
 	}
 
