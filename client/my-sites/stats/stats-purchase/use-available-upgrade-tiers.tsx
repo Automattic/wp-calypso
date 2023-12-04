@@ -4,7 +4,8 @@ import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { PriceTierListItemProps, StatsPlanTierUI } from './types';
 
-// TODO: remove the mock data after release.
+// TODO: Remove the mock data after release.
+// No need to translate mock data.
 const MOCK_PLAN_DATA = [
 	{
 		price: '$9',
@@ -41,6 +42,8 @@ const MOCK_PLAN_DATA = [
 ];
 
 function transformTier( tier: PriceTierListItemProps ): StatsPlanTierUI {
+	// TODO: Some description of transform logic here.
+	// So as to clarify what we should expect from the API.
 	if ( tier?.maximum_units === null ) {
 		// highest tier extension
 		return {
@@ -66,7 +69,7 @@ function getPlanTiersForSite( siteId: number | null, tiers: StatsPlanTierUI[] ):
 }
 
 function useAvailableUpgradeTiers( siteId: number | null ): StatsPlanTierUI[] {
-	// 1. Get the tiers.
+	// 1. Get the tiers. Default to yearly pricing.
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	) as ProductsList.ProductsListItem | null;
