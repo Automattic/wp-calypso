@@ -17,6 +17,7 @@ import {
 	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
+	getIsLivePreviewStarted,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
 	hasActivatedTheme,
@@ -65,6 +66,12 @@ class ThanksModal extends Component {
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.isLivePreviewStarted ) {
+			return {
+				isVisible: false,
+				wasInstalling: false,
+			};
+		}
 		if ( nextProps.shouldRedirectToThankYouPage ) {
 			return {
 				isVisible: false,
@@ -363,6 +370,8 @@ const ConnectedThanksModal = connect(
 
 		const activatingThemeId = state.themes.activationRequests?.themeId;
 
+		const isLivePreviewStarted = getIsLivePreviewStarted( state );
+
 		return {
 			siteId,
 			siteUrl,
@@ -382,6 +391,7 @@ const ConnectedThanksModal = connect(
 			isActivating: !! isActivatingTheme( state, siteId ),
 			isFSEActive,
 			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
+			isLivePreviewStarted,
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
