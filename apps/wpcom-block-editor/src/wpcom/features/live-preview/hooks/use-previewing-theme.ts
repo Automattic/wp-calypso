@@ -24,8 +24,8 @@ const getThemeType = ( theme?: Theme ) => {
 
 export const usePreviewingTheme = () => {
 	const previewingThemeSlug = useSelect( ( select ) => {
-		// Subscribe to the core store, so that previewingThemeSlug can be updated when the theme is activated.
-		// We need this hack because the currentlyPreviewingTheme() function is not a hook.
+		// Subscribe to the core store, so that we can recompute `previewingThemeSlug` when the active theme changes.
+		// This is a workaround because we're not listening to the changes to the `wp_theme_preview` param in the URL.
 		select( 'core' );
 		return currentlyPreviewingTheme();
 	}, [] );
