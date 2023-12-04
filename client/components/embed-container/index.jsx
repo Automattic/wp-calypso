@@ -210,28 +210,31 @@ function embedStory( domNode ) {
 function embedPostCarousel( domNode ) {
 	debug( 'processing post carousel for ', domNode );
 	const carouselWrapper = domNode.querySelector( '.swiper' );
-	const carouselItemsWrapper = carouselWrapper.querySelector( '.swiper-wrapper' );
+	const carouselItemsWrapper = carouselWrapper?.querySelector( '.swiper-wrapper' );
 
 	// Inject the DotPager component.
-	if ( carouselItemsWrapper ) {
-		const carouselItems = Array.from( carouselItemsWrapper.children );
-		createRoot( carouselWrapper ).render(
-			<DotPager>
-				{ carouselItems.map( ( item, index ) => {
-					return (
-						<article
-							className="swiper-slide"
-							id={ index }
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ { __html: item.innerHTML } }
-						/>
-					);
-				} ) }
-			</DotPager>
-		);
+	if ( carouselWrapper && carouselItemsWrapper ) {
+		const carouselItems = Array.from( carouselItemsWrapper?.children );
+
+		if ( carouselItems ) {
+			createRoot( carouselWrapper ).render(
+				<DotPager>
+					{ carouselItems.map( ( item, index ) => {
+						return (
+							<article
+								className="carousel-slide"
+								id={ index }
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ { __html: item?.innerHTML } }
+							/>
+						);
+					} ) }
+				</DotPager>
+			);
+		}
 
 		// Remove unused slider markup.
-		domNode.querySelector( '.swiper-pagination-bullets' ).remove();
+		domNode.querySelector( '.swiper-pagination-bullets' )?.remove();
 	}
 }
 
