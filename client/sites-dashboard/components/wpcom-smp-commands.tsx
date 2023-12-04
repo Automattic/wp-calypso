@@ -273,6 +273,7 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageDomains',
 			label: __( 'Manage domains' ),
 			searchLabel: [
+				_x( 'manage domains', 'Keyword for the Manage domains command' ),
 				_x( 'dns', 'Keyword for the Manage domains command' ),
 				_x( 'domain mapping', 'Keyword for the Manage domains command' ),
 				_x( 'domain registration', 'Keyword for the Manage domains command' ),
