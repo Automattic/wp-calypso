@@ -21,7 +21,7 @@ interface Props {
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	isBusy: boolean;
-	migrationTrackingProps?: Record< string, unknown >;
+	trackingEventsProps?: Record< string, unknown >;
 }
 
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
@@ -34,7 +34,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
 		isBusy,
-		migrationTrackingProps,
+		trackingEventsProps,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
@@ -59,7 +59,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 	useEffect( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', migrationTrackingProps )
+			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', trackingEventsProps )
 		);
 	}, [] );
 
@@ -74,15 +74,14 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 						},
 					} ) }
 					<br />
-					{ ! isEligibleForTrialPlan &&
-						translate(
-							'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
-							{
-								components: {
-									link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
-								},
-							}
-						) }
+					{ translate(
+						'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
+						{
+							components: {
+								link: <Button borderless={ true } onClick={ onContentOnlyClick } />,
+							},
+						}
+					) }
 				</SubTitle>
 			</div>
 

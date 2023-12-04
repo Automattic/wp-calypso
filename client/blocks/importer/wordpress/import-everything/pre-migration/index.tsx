@@ -237,7 +237,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
-						migrationTrackingProps={ migrationTrackingProps }
+						trackingEventsProps={ migrationTrackingProps }
 					/>
 				</>
 			);
