@@ -15,6 +15,15 @@ $business-plan-color: #7f54b3;
 		margin-bottom: 0.5rem;
 	}
 
+	.onboarding-subtitle {
+		button {
+			padding: 0;
+			color: inherit;
+			font-size: inherit;
+			text-decoration: underline;
+		}
+	}
+
 	p {
 		color: var(--studio-gray-40);
 		margin-bottom: 1em;
