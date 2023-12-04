@@ -15,7 +15,7 @@ import UpgradePlanDetails from './upgrade-plan-details';
 import './style.scss';
 
 interface Props {
-	targetSite: SiteDetails;
+	site: SiteDetails;
 	startImport: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onFreeTrialClick: () => void;
@@ -29,16 +29,14 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
-		targetSite,
+		site,
 		startImport,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
 		isBusy,
 		migrationTrackingProps,
 	} = props;
-	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
-		targetSite.ID
-	);
+	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
 		migrationTrialEligibility?.eligible ||
 		// If the user's email is unverified, we still want to show the trial plan option
@@ -47,7 +45,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			// After the trial is added, we need to request the site again to get the updated plan
-			targetSite && dispatch( requestSite( targetSite.ID ) );
+			site && dispatch( requestSite( site.ID ) );
 		},
 	} );
 
@@ -55,7 +53,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
 			navigateToVerifyEmailStep();
 		} else {
-			addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
+			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 		}
 	};
 
