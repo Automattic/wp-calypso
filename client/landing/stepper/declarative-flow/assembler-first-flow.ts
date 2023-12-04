@@ -98,7 +98,7 @@ const assemblerFirstFlow: Flow = {
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
 			const selectedSiteId = providedDependencies?.siteId as string;
-			const isNewSite = providedDependencies?.isNewSite as string;
+			const isNewSite = providedDependencies?.isNewSite === 'true';
 			setSelectedSite( selectedSiteId );
 			setIntentOnSite( selectedSiteSlug, ASSEMBLER_FIRST_FLOW );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
@@ -117,8 +117,12 @@ const assemblerFirstFlow: Flow = {
 			params = new URLSearchParams( {
 				siteSlug: selectedSiteSlug,
 				siteId: selectedSiteId,
-				isNewSite,
 			} );
+
+			if ( isNewSite ) {
+				params.set( 'isNewSite', 'true' );
+			}
+
 			return navigate( `patternAssembler?${ params }` );
 		};
 
