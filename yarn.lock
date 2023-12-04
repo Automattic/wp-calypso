@@ -7740,10 +7740,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gtag.js@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "@types/gtag.js@npm:0.0.10"
-  checksum: e8a6bd42ec1287150ca455f300c7abf69ba73ade4ae80bc3f9705460f4124e73bdb56284dd9150be176ba7b716ed104a54501ac9519cc99abb3bda27ec0e4af2
+"@types/gtag.js@npm:^0.0.18":
+  version: 0.0.18
+  resolution: "@types/gtag.js@npm:0.0.18"
+  checksum: af7a0a5769c5cfbe75e47f2b0346a65db8234b3c89775b897681548dfb6898edb3145153e2bc5dd1751a5ace221e03e6a68b7650ecacc6aa16a099aa9d925c99
   languageName: node
   linkType: hard
 
@@ -32281,7 +32281,7 @@ __metadata:
     "@types/cookie": "npm:^0.4.1"
     "@types/debug": "npm:^4.1.7"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
-    "@types/gtag.js": "npm:^0.0.10"
+    "@types/gtag.js": "npm:^0.0.18"
     "@types/jest": "npm:^29.5.10"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^20.8.6"
