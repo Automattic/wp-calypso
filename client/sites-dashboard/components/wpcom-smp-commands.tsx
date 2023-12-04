@@ -191,7 +191,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: setStateCallback(
 				'manageHostingConfiguration',
-				__( 'Select site hosting configuration to open' )
+				__( 'Select site to open hosting configuration' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -212,7 +212,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'phpmyadmin', 'Keyword for the Open database in phpMyAdmin command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'openPHPmyAdmin', __( 'Select site phpMyAdmin to open' ) ),
+			callback: setStateCallback( 'openPHPmyAdmin', __( 'Select site to open phpMyAdmin' ) ),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -303,7 +303,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'txt', 'Keyword for the Manage DNS records command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
-			callback: setStateCallback( 'manageDns', __( 'Select site DNS records to open' ) ),
+			callback: setStateCallback( 'manageDns', __( 'Select site to open DNS records' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -319,7 +319,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Copy SSH connection string' ),
 			callback: setStateCallback(
 				'copySshConnectionString',
-				__( 'Select site SSH connection string to copy' )
+				__( 'Select site to copy SSH connection string' )
 			),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -335,7 +335,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open SFTP/SSH credentials' ),
 			callback: setStateCallback(
 				'openSshCredentials',
-				__( 'Select site SFTP/SSH credentials to open' )
+				__( 'Select site to open SFTP/SSH credentials' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -351,7 +351,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Reset SFTP/SSH password' ),
 			callback: setStateCallback(
 				'resetSshSftpPassword',
-				__( 'Select site SFTP/SSH password to reset' )
+				__( 'Select site to reset SFTP/SSH password' )
 			),
 			siteFunctions: {
 				onClick: async ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -365,7 +365,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openJetpackStats',
 			label: __( 'Open Jetpack Stats' ),
-			callback: setStateCallback( 'openJetpackStats', __( 'Select site Jetpack Stats to open' ) ),
+			callback: setStateCallback( 'openJetpackStats', __( 'Select site to open Jetpack Stats' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -387,7 +387,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openActivityLog',
 			label: __( 'Open activity log' ),
-			callback: setStateCallback( 'openActivityLog', __( 'Select site activity log to open' ) ),
+			callback: setStateCallback( 'openActivityLog', __( 'Select site to open activity log' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -400,7 +400,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openJetpackBackup',
 			label: __( 'Open Jetpack Backup' ),
-			callback: setStateCallback( 'openJetpackBackup', __( 'Select site Jetpack Backup to open' ) ),
+			callback: setStateCallback( 'openJetpackBackup', __( 'Select site to open Jetpack Backup' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -415,7 +415,7 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'View site monitoring metrics' ),
 			callback: setStateCallback(
 				'viewSiteMonitoringMetrics',
-				__( 'Select site monitoring metrics to view' )
+				__( 'Select site to view monitoring metrics' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -436,7 +436,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'php errors', 'Keyword for the Open PHP logs command' ),
 				_x( 'php warnings', 'Keyword for the Open PHP logs command' ),
 			].join( ' ' ),
-			callback: setStateCallback( 'openPHPLogs', __( 'Select site PHP logs to open' ) ),
+			callback: setStateCallback( 'openPHPLogs', __( 'Select site to open PHP logs' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -458,7 +458,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback(
 				'openWebServerLogs',
-				__( 'Select site web server logs to open' )
+				__( 'Select site to open web server logs' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -481,7 +481,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback(
 				'manageStagingSites',
-				__( 'Select site staging sites to manage' )
+				__( 'Select site to manage staging sites' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -495,7 +495,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'changePHPVersion',
 			label: __( 'Change PHP version' ),
-			callback: setStateCallback( 'changePHPVersion', __( 'Select site PHP version to change' ) ),
+			callback: setStateCallback( 'changePHPVersion', __( 'Select site to change PHP version' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
@@ -518,7 +518,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback(
 				'manageCacheSettings',
-				__( 'Select site cache settings to manage' )
+				__( 'Select site to manage cache settings' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -541,7 +541,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback(
 				'changeAdminInterfaceStyle',
-				__( 'Select site admin interface style to change' )
+				__( 'Select site to change admin interface style' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
