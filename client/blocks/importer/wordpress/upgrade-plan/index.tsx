@@ -74,6 +74,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 					} ) }
 					<br />
 					{ ! isEligibleForTrialPlan &&
+						onContentOnlyClick &&
 						translate(
 							'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
 							{
