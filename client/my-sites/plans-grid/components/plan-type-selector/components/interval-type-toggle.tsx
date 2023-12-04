@@ -10,13 +10,6 @@ import useMaxDiscount from '../hooks/use-max-discount';
 import { IntervalTypeProps } from '../types';
 import generatePath from '../utils';
 
-const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
-	display: flex;
-	align-content: space-between;
-	justify-content: center;
-	margin: 0 20px 24px;
-`;
-
 const StyledPopover = styled( Popover )`
 	&.popover {
 		display: none;
@@ -154,9 +147,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		showBiennialToggle,
 		currentSitePlanSlug,
 		usePricingMetaForGridPlans,
+		title,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
-	const segmentClasses = classNames( 'plan-type-selector__interval-type', 'price-toggle', {
+	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
@@ -200,45 +194,52 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const intervalTabs = showBiennialToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
-		<IntervalTypeToggleWrapper showingMonthly={ intervalType === 'monthly' }>
-			<SegmentedControl compact className={ segmentClasses } primary={ true }>
-				{ intervalTabs.map( ( interval ) => (
-					<SegmentedControl.Item
-						key={ interval }
-						selected={ intervalType === interval }
-						path={ generatePath( props, {
-							intervalType: interval,
-							domain: isDomainUpsellFlow,
-							domainAndPlanPackage: isDomainAndPlanPackageFlow,
-							jetpackAppPlans: isJetpackAppFlow,
-							...additionalPathProps,
-						} ) }
-						isPlansInsideStepper={ props.isPlansInsideStepper }
-					>
-						<span
-							ref={
-								intervalType === 'monthly' ? ( ref ) => ref && ! spanRef && setSpanRef( ref ) : null
-							}
+		<>
+			{ title && <div className="plan-type-selector__title">{ title }</div> }
+			<div className="plan-type-selector__interval-type">
+				<SegmentedControl compact className={ segmentClasses } primary={ true }>
+					{ intervalTabs.map( ( interval ) => (
+						<SegmentedControl.Item
+							key={ interval }
+							selected={ intervalType === interval }
+							path={ generatePath( props, {
+								intervalType: interval,
+								domain: isDomainUpsellFlow,
+								domainAndPlanPackage: isDomainAndPlanPackageFlow,
+								jetpackAppPlans: isJetpackAppFlow,
+								...additionalPathProps,
+							} ) }
+							isPlansInsideStepper={ props.isPlansInsideStepper }
 						>
-							{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
-							{ interval === 'yearly' && ! showBiennialToggle ? translate( 'Pay annually' ) : null }
-							{ interval === 'yearly' && showBiennialToggle ? translate( 'Pay 1 year' ) : null }
-							{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
-						</span>
-						{ ! showBiennialToggle && hideDiscountLabel ? null : (
-							<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-								{ translate(
-									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
-									{
-										args: { maxDiscount },
-										comment: 'Will be like "Save up to 30% by paying annually..."',
-									}
-								) }
-							</PopupMessages>
-						) }
-					</SegmentedControl.Item>
-				) ) }
-			</SegmentedControl>
-		</IntervalTypeToggleWrapper>
+							<span
+								ref={
+									intervalType === 'monthly'
+										? ( ref ) => ref && ! spanRef && setSpanRef( ref )
+										: null
+								}
+							>
+								{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
+								{ interval === 'yearly' && ! showBiennialToggle
+									? translate( 'Pay annually' )
+									: null }
+								{ interval === 'yearly' && showBiennialToggle ? translate( 'Pay 1 year' ) : null }
+								{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
+							</span>
+							{ ! showBiennialToggle && hideDiscountLabel ? null : (
+								<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+									{ translate(
+										'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
+										{
+											args: { maxDiscount },
+											comment: 'Will be like "Save up to 30% by paying annually..."',
+										}
+									) }
+								</PopupMessages>
+							) }
+						</SegmentedControl.Item>
+					) ) }
+				</SegmentedControl>
+			</div>
+		</>
 	);
 };

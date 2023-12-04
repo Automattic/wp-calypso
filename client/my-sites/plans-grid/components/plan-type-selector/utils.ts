@@ -5,10 +5,7 @@ interface PathArgs {
 	[ key: string ]: string | null;
 }
 
-export type GeneratePathFunction = (
-	props: Partial< PlanTypeSelectorProps >,
-	args: PathArgs
-) => string;
+type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
 
 const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;

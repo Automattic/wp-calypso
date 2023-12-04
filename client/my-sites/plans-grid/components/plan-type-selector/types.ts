@@ -1,5 +1,6 @@
-import { PlanSlug } from '@automattic/calypso-products';
-import { UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
+import { type PlanSlug } from '@automattic/calypso-products';
+import { type TranslateResult } from 'i18n-calypso';
+import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval' | 'customer';
@@ -21,6 +22,10 @@ export type PlanTypeSelectorProps = {
 	currentSitePlanSlug?: PlanSlug | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
+	/**
+	 * Whether to render the selector along with a title if passed.
+	 */
+	title?: TranslateResult;
 };
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
@@ -36,4 +41,5 @@ export type IntervalTypeProps = Pick<
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
+	| 'title'
 >;
