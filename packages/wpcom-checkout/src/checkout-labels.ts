@@ -15,7 +15,7 @@ import {
 	isTriennially,
 	isJetpackAISlug,
 } from '@automattic/calypso-products';
-import { TranslateResult, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -90,7 +90,7 @@ export function DefaultLineItemSublabel( { product }: { product: ResponseCartPro
 	return null;
 }
 
-export function getLabel( product: ResponseCartProduct ): string | TranslateResult {
+export function getLabel( product: ResponseCartProduct ): string {
 	if ( product.meta && ( isDomainProduct( product ) || isDomainTransfer( product ) ) ) {
 		return product.meta;
 	}
@@ -101,6 +101,7 @@ export function getLabel( product: ResponseCartProduct ): string | TranslateResu
 				productName: product.product_name,
 				quantity: product.quantity,
 			},
+			textOnly: true,
 		} );
 	}
 

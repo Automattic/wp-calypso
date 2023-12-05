@@ -16,7 +16,7 @@ import {
 	doesPurchaseHaveFullCredits,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -241,9 +241,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser: boolean;
-	onRemoveProduct?: ( label: string | TranslateResult ) => void;
-	onRemoveProductClick?: ( label: string | TranslateResult ) => void;
-	onRemoveProductCancel?: ( label: string | TranslateResult ) => void;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -346,9 +346,9 @@ function LineItemWrapper( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser: boolean;
-	onRemoveProduct?: ( label: string | TranslateResult ) => void;
-	onRemoveProductClick?: ( label: string | TranslateResult ) => void;
-	onRemoveProductCancel?: ( label: string | TranslateResult ) => void;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;

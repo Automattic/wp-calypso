@@ -28,7 +28,7 @@ import {
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { hasCheckoutVersion } from './checkout-version-checker';
@@ -1088,9 +1088,9 @@ function CheckoutLineItem( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser?: boolean;
-	onRemoveProduct?: ( label: string | TranslateResult ) => void;
-	onRemoveProductClick?: ( label: string | TranslateResult ) => void;
-	onRemoveProductCancel?: ( label: string | TranslateResult ) => void;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
