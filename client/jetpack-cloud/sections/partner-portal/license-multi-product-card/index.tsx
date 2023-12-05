@@ -136,6 +136,12 @@ export default function LicenseMultiProductCard( props: Props ) {
 					selected: isSelected,
 					disabled: isDisabled,
 				} ) }
+				onKeyDown={ onKeyDown }
+				onClick={ onSelect }
+				role="checkbox"
+				aria-checked={ isSelected }
+				aria-disabled={ isDisabled }
+				tabIndex={ tabIndex }
 			>
 				<div className="license-product-card__inner">
 					<div className="license-product-card__details">
@@ -163,15 +169,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 								) }
 							</div>
 
-							<div
-								className="license-product-card__select-button license-product-card_multi-select"
-								onKeyDown={ onKeyDown }
-								onClick={ () => onSelect() }
-								role="checkbox"
-								aria-checked={ isSelected }
-								aria-disabled={ isDisabled }
-								tabIndex={ tabIndex }
-							>
+							<div className="license-product-card__select-button license-product-card_multi-select">
 								{ isSelected && <Gridicon icon="checkmark" /> }
 							</div>
 						</div>
