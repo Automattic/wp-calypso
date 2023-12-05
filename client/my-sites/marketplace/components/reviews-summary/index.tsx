@@ -53,9 +53,9 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 				buttons={ [] }
 			/>
 			<div className="reviews-summary__container">
-				<div>
-					{ averageRating && <Rating rating={ averageRating } /> }
-					{ numberOfReviews && (
+				{ numberOfReviews && (
+					<div>
+						{ averageRating && <Rating rating={ averageRating } /> }
 						<Button borderless className="reviews-summary__number-reviews-link is-link">
 							{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 								count: numberOfReviews,
@@ -64,8 +64,8 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 								},
 							} ) }
 						</Button>
-					) }
-				</div>
+					</div>
+				) }
 				<Button onClick={ () => setIsVisible( true ) }>{ translate( 'Add Review' ) }</Button>
 			</div>
 		</>
