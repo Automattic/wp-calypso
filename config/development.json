@@ -191,7 +191,7 @@
 		"stats/new-video-summary": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/plan-usage": true,
-		"stats/tier-upgrade-slider": false,
+		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
