@@ -9,6 +9,7 @@ import { PRODUCT_FILTER_ALL } from '../constants';
 import IssueLicenseContext from '../context';
 import useSubmitForm from '../hooks/use-submit-form';
 import useProductAndPlans from './hooks/use-product-and-plans';
+import ProductFilterSearch from './product-filter-search';
 import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
 import type { AssignLicenceProps } from '../../types';
@@ -28,6 +29,8 @@ export default function LicensesForm( {
 
 	const { selectedLicenses, setSelectedLicenses } = useContext( IssueLicenseContext );
 
+	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
+
 	const [ selectedProductFilter, setSelectedProductFilter ] = useState< string | null >(
 		PRODUCT_FILTER_ALL
 	);
@@ -40,7 +43,27 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		suggestedProductSlugs,
-	} = useProductAndPlans( { selectedSite, selectedProductFilter, selectedBundleSize: quantity } );
+	} = useProductAndPlans( {
+		selectedSite,
+		selectedProductFilter,
+		selectedBundleSize: quantity,
+		productSearchQuery,
+	} );
+
+	// useEffect( () => {
+	// 	const productsQueryArg = getQueryArg( window.location.href, 'products' )?.toString?.();
+	// 	if ( ! productsQueryArg ) {
+	// 		return;
+	// 	}
+
+	// 	if ( isLoadingProducts ) {
+	// 		return;
+	// 	}
+
+	// 	const parsedItems = parseQueryStringProducts( productsQueryArg );
+	// 	// TODO: Validate parsed items from the query string exist and are selectable;
+	// 	// then, set them as selected items on the page
+	// }, [ isLoadingProducts ] );
 
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
 		getDisabledProductSlugs( state, filteredProductsAndBundles ?? [] )
@@ -111,6 +134,13 @@ export default function LicensesForm( {
 		[ setSelectedProductFilter ]
 	);
 
+	const onProductSearch = useCallback(
+		( value: string ) => {
+			setProductSearchQuery( value );
+		},
+		[ setProductSearchQuery ]
+	);
+
 	const isSingleLicenseView = quantity === 1;
 
 	const getProductCards = (
@@ -157,6 +187,7 @@ export default function LicensesForm( {
 			<QueryProductsList type="jetpack" currency="USD" />
 
 			<div className="licenses-form__actions">
+				<ProductFilterSearch onProductSearch={ onProductSearch } />
 				<ProductFilterSelect
 					selectedProductFilter={ selectedProductFilter }
 					onProductFilterSelect={ onProductFilterSelect }

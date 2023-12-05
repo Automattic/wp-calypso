@@ -19,7 +19,7 @@ import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
@@ -81,6 +81,9 @@ import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 const SiteIntent = Onboard.SiteIntent;
+
+const EMPTY_ARRAY: Design[] = [];
+const EMPTY_OBJECT = {};
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
@@ -154,7 +157,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! (
 							design.is_premium ||
 							design.is_externally_managed ||
-							design.is_bundled_with_woo_commerce
+							( design.software_sets && design.software_sets.length > 0 )
 						)
 				)
 				.map( ( design ) => {
@@ -177,7 +180,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	);
 
-	const designs = useMemo( () => allDesigns?.designs ?? [], [ allDesigns?.designs ] );
+	const designs = allDesigns?.designs ?? EMPTY_ARRAY;
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
 		if ( ! hasTrackedView.current && designs.length > 0 ) {
@@ -188,7 +191,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const categorizationOptions = getCategorizationOptions( intent );
 	const categorization = useCategorizationFromApi(
-		allDesigns?.filters?.subject || {},
+		allDesigns?.filters?.subject || EMPTY_OBJECT,
 		categorizationOptions
 	);
 
@@ -387,13 +390,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
+	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
-		( ! isPluginBundleEligible && isBundledWithWooCommerce );
+		( ! isPluginBundleEligible && isBundled );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -439,12 +442,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setShowUpgradeModal( false );
 	}
 	function navigateToCheckout() {
-		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
-			( set ) => set.slug === 'woo-on-plans'
-		);
+		const themeHasBundle = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 		let plan;
-		if ( themeHasWooCommerce ) {
+		if ( themeHasBundle ) {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
@@ -813,7 +814,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					previewUrl={ previewUrl }
 					splitDefaultVariation={
 						! selectedDesign.is_premium &&
-						! isBundledWithWooCommerce &&
+						! isBundled &&
 						! isPremiumThemeAvailable &&
 						! didPurchaseSelectedTheme &&
 						! isPluginBundleEligible &&

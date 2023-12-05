@@ -25,16 +25,12 @@ const emptyContent = () => <EmptyContent />;
 const SiteStream = ( props ) => {
 	const { className = 'is-site-stream', showBack = true, siteId } = props;
 	const translate = useTranslate();
-
-	const { feed, isBlocked, postCount, site } = useSelector( ( state ) => {
-		const _site = getSite( state, siteId );
-		return {
-			feed: _site && _site.feed_ID && getFeed( state, _site.feed_ID ),
-			isBlocked: isSiteBlocked( state, siteId ),
-			postCount: siteId && getAllPostCount( state, siteId, 'post', 'publish' ),
-			site: _site,
-		};
-	} );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const feed = useSelector( ( state ) => site && site.feed_ID && getFeed( state, site.feed_ID ) );
+	const isBlocked = useSelector( ( state ) => isSiteBlocked( state, siteId ) );
+	const postCount = useSelector(
+		( state ) => siteId && getAllPostCount( state, siteId, 'post', 'publish' )
+	);
 
 	// check for redirect
 	useEffect( () => {

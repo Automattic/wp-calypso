@@ -16,36 +16,29 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 // Masterbar for WooCommerce Core Profiler Jetpack step
 const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) => string } ) => {
-	const { redirectTo, shouldShowProgressBar, shouldShowNoThanks, currentRoute } = useSelector(
-		( state ) => {
-			const currentRoute = getCurrentRoute( state );
-			let redirectTo = null;
-			let shouldShowProgressBar = true;
-			let shouldShowNoThanks = true;
-			switch ( currentRoute ) {
-				case '/jetpack/connect/authorize':
-					redirectTo = getCurrentQueryArguments( state )?.redirect_after_auth;
-				case '/log-in/jetpack':
-					redirectTo = getQueryArg( getRedirectToOriginal( state ) || '', 'redirect_after_auth' );
-				default:
-			}
+	const currentQueryArguments = useSelector( getCurrentQueryArguments );
+	const currentRoute = useSelector( getCurrentRoute );
+	const redirectToOriginal = useSelector( getRedirectToOriginal );
 
-			if (
-				currentRoute === '/log-in/jetpack/lostpassword' ||
-				getCurrentQueryArguments( state )?.lostpassword_flow
-			) {
-				shouldShowProgressBar = false;
-				shouldShowNoThanks = false;
-			}
+	let redirectTo = null;
+	let shouldShowProgressBar = true;
+	let shouldShowNoThanks = true;
+	switch ( currentRoute ) {
+		case '/jetpack/connect/authorize':
+			redirectTo = currentQueryArguments?.redirect_after_auth;
+			break;
+		case '/log-in/jetpack':
+			redirectTo = getQueryArg( redirectToOriginal || '', 'redirect_after_auth' );
+			break;
+	}
 
-			return {
-				redirectTo,
-				shouldShowProgressBar,
-				shouldShowNoThanks,
-				currentRoute,
-			};
-		}
-	);
+	if (
+		currentRoute === '/log-in/jetpack/lostpassword' ||
+		currentQueryArguments?.lostpassword_flow
+	) {
+		shouldShowProgressBar = false;
+		shouldShowNoThanks = false;
+	}
 
 	return (
 		<Fragment>

@@ -1,17 +1,12 @@
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	Icon,
-	search as inputIcon,
-	chevronLeft as backIcon,
-	chevronRight as forwardIcon,
-} from '@wordpress/icons';
+import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { CommandCallBackParams, useCommandPallette } from './use-command-palette';
+import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
 
@@ -73,7 +68,7 @@ export function CommandMenuGroup( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
-	const { commands } = useCommandPallette( {
+	const { commands } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 	} );
@@ -103,15 +98,18 @@ export function CommandMenuGroup( {
 							{ command.image }
 							<LabelWrapper>
 								<Label>
-									<TextHighlight text={ command.label } highlight={ search } />
+									<TextHighlight
+										text={ `${ command.label }${ command.siteFunctions ? '…' : '' }` }
+										highlight={ search }
+									/>
 								</Label>
+
 								{ command.subLabel && (
 									<SubLabel>
 										<TextHighlight text={ command.subLabel } highlight={ search } />
 									</SubLabel>
 								) }
 							</LabelWrapper>
-							{ command.siteFunctions ? <Icon icon={ forwardIcon } /> : null }
 						</HStack>
 					</Command.Item>
 				);

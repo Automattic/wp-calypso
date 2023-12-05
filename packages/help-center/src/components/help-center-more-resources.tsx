@@ -29,17 +29,12 @@ type CoreDataPlaceholder = {
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const sectionName = useSelector( getSectionName );
-
-	const { isBusinessOrEcomPlanUser } = useSelector( ( state ) => {
-		const purchases = getUserPurchases( state );
-		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
-		return {
-			isBusinessOrEcomPlanUser: !! (
-				purchaseSlugs &&
-				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
-			),
-		};
-	} );
+	const purchases = useSelector( getUserPurchases );
+	const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
+	const isBusinessOrEcomPlanUser = !! (
+		purchaseSlugs &&
+		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
+	);
 
 	const { hasSeenWhatsNewModal, doneLoading } = useSelect(
 		( select ) => ( {
