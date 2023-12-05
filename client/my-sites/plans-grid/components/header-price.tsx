@@ -143,7 +143,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
 	} = gridPlansIndex[ planSlug ];
-	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
+	const isGridPlanDiscounted = Boolean( discountedPrice.monthly );
 	const isAnyVisibleGridPlanDiscounted = visibleGridPlans.some(
 		( { pricing } ) => pricing.discountedPrice.monthly
 	);
@@ -176,7 +176,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 
 	return (
 		<HeaderPriceContainer>
-			{ shouldShowDiscountedPrice ? (
+			{ isGridPlanDiscounted ? (
 				<>
 					<Badge className="plan-features-2023-grid__badge">
 						{ isPlanUpgradeCreditEligible
