@@ -35,7 +35,7 @@ export default function ReviewLicenses( { onClose, selectedLicenses }: Props ) {
 					</div>
 					<div className="review-licenses__selected-licenses">
 						{ selectedLicenses.map( ( license ) => (
-							<LicenseInfo product={ license } />
+							<LicenseInfo key={ `license-info-${ license.product_id }` } product={ license } />
 						) ) }
 					</div>
 				</div>
