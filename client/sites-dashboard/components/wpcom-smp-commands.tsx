@@ -67,8 +67,7 @@ export const useCommandsArrayWpcom = ( {
 		};
 	};
 	const createSiteUrl = useAddNewSiteUrl( {
-		source: 'sites-dashboard-command-palette',
-		ref: 'topbar',
+		ref: 'command-palette',
 	} );
 
 	const fetchSshUser = async ( siteId: number ) => {
@@ -406,7 +405,7 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `/start/import?source=command-palette` );
+				navigate( `/start/import?ref=command-palette` );
 			},
 			icon: arrowDownIcon,
 		},
@@ -566,7 +565,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `/start/domain/domain-only` );
+				navigate( `/start/domain/domain-only?ref=command-palette` );
 			},
 			icon: domainsIcon,
 		},
