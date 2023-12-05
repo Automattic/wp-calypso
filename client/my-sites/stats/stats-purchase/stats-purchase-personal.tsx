@@ -125,13 +125,6 @@ const PersonalPurchase = ( {
 				maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
 				minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
 			/>
-			{ isTierUpgradeSliderEnabled && (
-				<StatsPWYWUpgradeSlider
-					settings={ sliderSettings }
-					currencyCode={ currencyCode }
-					onSliderChange={ handleSliderChanged }
-				/>
-			) }
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
 				{ translate( 'Our users pay %(value)s per month on average', {
@@ -140,6 +133,14 @@ const PersonalPurchase = ( {
 					},
 				} ) }
 			</p>
+
+			{ isTierUpgradeSliderEnabled && (
+				<StatsPWYWUpgradeSlider
+					settings={ sliderSettings }
+					currencyCode={ currencyCode }
+					onSliderChange={ handleSliderChanged }
+				/>
+			) }
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 				<ul>
