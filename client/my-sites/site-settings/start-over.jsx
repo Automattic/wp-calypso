@@ -1,7 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { useSiteResetMutation } from '@automattic/data-stores/';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -15,8 +16,10 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
+import { useDispatch, useSelector } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug, siteDomain } ) => {
 	const localizeUrl = useLocalizeUrl();
@@ -83,12 +86,50 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain } ) => {
 };
 
 function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
+	const siteId = useSelector( getSelectedSiteId );
+	const dispatch = useDispatch();
+	const [ disabled, setDisabled ] = useState( false );
+
+	const handleError = () => {
+		dispatch(
+			errorNotice( translate( 'We were unable to reset your site.' ), {
+				id: 'site-reset-failure-notice',
+				duration: 6000,
+			} )
+		);
+	};
+
+	const handleResult = ( result ) => {
+		if ( result.success ) {
+			dispatch(
+				successNotice( translate( 'Your site has been reset.' ), {
+					id: 'site-reset-success-notice',
+					duration: 4000,
+				} )
+			);
+		} else {
+			handleError();
+		}
+	};
+
+	const { resetSite } = useSiteResetMutation( { onSuccess: handleResult, onError: handleError } );
+
 	const contentInfo = [
 		translate( 'posts' ),
 		translate( 'pages' ),
 		translate( 'user installed plugins' ),
 		translate( 'user themes' ),
 	];
+
+	const handleReset = async () => {
+		try {
+			setDisabled( true );
+			await resetSite( siteId );
+		} finally {
+			setDisabled( false );
+		}
+	};
+
 	return (
 		<div
 			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -135,20 +176,24 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 							}
 						) }
 					</FormLabel>
-					<span className="site-settings__reset-site-controls">
+					<div className="site-settings__reset-site-controls">
 						<FormTextInput
 							autoCapitalize="off"
 							aria-required="true"
 							id="confirmResetInput"
+							disabled={ disabled }
 							style={ { flex: 2 } }
 						/>
 						<Button
 							style={ { flex: '1' } }
 							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
+							onClick={ handleReset }
+							disabled={ disabled }
+							busy={ disabled }
 						>
 							{ translate( 'Reset Site' ) }
 						</Button>
-					</span>
+					</div>
 				</ActionPanelFooter>
 			</ActionPanel>
 		</div>

@@ -2,7 +2,7 @@ import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
-interface APIResponse {
+export interface SiteResetAPIResponse {
 	success: boolean;
 }
 
@@ -13,7 +13,11 @@ export interface APIError {
 	data?: any;
 }
 
-export const useSiteResetMutation = < TData = APIResponse, TError = APIError, TContext = unknown >(
+export const useSiteResetMutation = <
+	TData = SiteResetAPIResponse | APIError,
+	TError = APIError,
+	TContext = unknown,
+>(
 	options: UseMutationOptions< TData, TError, { siteId: number }, TContext > = {}
 ) => {
 	const { mutate, ...rest } = useMutation( {
@@ -23,7 +27,6 @@ export const useSiteResetMutation = < TData = APIResponse, TError = APIError, TC
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 			} ),
-
 		...options,
 	} );
 
