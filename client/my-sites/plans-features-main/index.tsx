@@ -517,8 +517,7 @@ const PlansFeaturesMain = ( {
 		}, [] as GridPlan[] );
 	}, [ filteredPlansForPlanFeatures, planFeaturesForFeaturesGrid ] );
 
-	// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
-	let hidePlanSelector = 'customer' === planTypeSelector && isDisplayingPlansNeededForFeature();
+	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
