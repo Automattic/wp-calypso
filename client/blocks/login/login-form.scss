@@ -1,5 +1,11 @@
-
 $breakpoint-mobile: 782px; //Mobile size.
+
+form {
+	max-width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+	align-items: center;
+}
 
 form.is-social-first {
 	display: flex;
