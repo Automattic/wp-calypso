@@ -9,18 +9,16 @@ const Banner = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	min-height: 128px;
-	padding: 0px, 24px, 0px, 0px;
+	min-height: 80px;
 	border-radius: 4px;
 	border: 1px solid #dcdcde;
 	margin: 24px 20px 24px 20px;
-	padding: 24px 20px 24px 20px;
+	padding: 24px;
 	align-items: center;
-	gap: 16px;
+	gap: 32px;
 
 	${ plansBreakSmall( css`
 		flex-direction: row;
-		padding: 0 20px 0 20px;
 	` ) }
 `;
 
@@ -61,12 +59,14 @@ const Subtitle = styled.h4`
 	font-size: 12px;
 	font-weight: 400;
 	text-align: left;
+	line-height: 20px;
 `;
 
 const Title = styled.h2`
 	font-size: 20px;
 	font-weight: 500;
 	text-align: left;
+	line-height: 26px;
 `;
 
 const Description = styled.p`
@@ -74,6 +74,7 @@ const Description = styled.p`
 	font-weight: 400;
 	text-align: left;
 	margin: 0;
+	line-height: 20px;
 `;
 
 const CtaButton = styled( Button )`
