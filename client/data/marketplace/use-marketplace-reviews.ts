@@ -20,8 +20,8 @@ export type ProductProps = {
 };
 
 export type PaginationProps = {
-	page: number;
-	perPage: number;
+	page?: number;
+	perPage?: number;
 };
 
 export type MarketplaceReviewsQueryProps = ProductProps & PaginationProps;
