@@ -52,10 +52,6 @@
 }
 
 .main.jetpack-cloud-layout.is-with-border {
-	.jetpack-cloud-layout__body {
-		padding-block: 16px;
-	}
-
 	@include breakpoint-deprecated( ">660px" ) {
 		.jetpack-cloud-layout__top {
 			border-block-end: 1px solid var(--color-primary-5);
@@ -63,6 +59,7 @@
 
 		.jetpack-cloud-layout__body {
 			background: rgba(255, 255, 255, 0.5);
+			padding-block: 16px;
 		}
 	}
 }
@@ -159,7 +156,6 @@
 }
 
 .section-nav.jetpack-cloud-layout__navigation {
-	margin-block-start: 32px;
 	.section-nav__mobile-header-text .count {
 		margin-inline-start: 8px;
 	}
@@ -202,6 +198,10 @@
 		// Since the search below the dropdown has z-index: 22,
 		// we need to make sure the dropdown is above it
 		z-index: 23;
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-block-start: 32px;
 	}
 }
 

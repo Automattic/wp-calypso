@@ -77,15 +77,28 @@ p.licenses-form__description {
 .licenses-form__actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: 16px;
 	margin: 16px 0 32px;
 }
 
-.licenses-form__product-filter-select {
+.select-dropdown.is-compact.licenses-form__product-filter-select {
 	flex-basis: 100%;
+	height: 46px;
 
 	@include break-xlarge {
 		flex-basis: auto;
+	}
+
+	.select-dropdown__header {
+		height: 46px;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		height: 35px;
+
+		.select-dropdown__header {
+			height: 35px;
+		}
 	}
 
 	.select-dropdown__header-text {
@@ -117,7 +130,11 @@ p.licenses-form__description {
 
 	.search {
 		&.is-open {
-			height: 33px;
+			height: 46px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				height: 33px;
+			}
 		}
 		margin-bottom: 0;
 		border: 1px solid var(--color-neutral-10);
