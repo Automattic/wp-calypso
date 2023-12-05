@@ -1573,6 +1573,7 @@ class RegisterDomainStep extends Component {
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
+				replaceDomainFailed={ this.props.replaceDomainFailed }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&
