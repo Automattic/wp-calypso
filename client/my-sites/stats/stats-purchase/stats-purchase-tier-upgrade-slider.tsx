@@ -1,4 +1,4 @@
-import { PricingSlider, ShortenedNumber, Popover } from '@automattic/components';
+import { PricingSlider, Popover } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
@@ -14,7 +14,7 @@ type TierUpgradeSliderProps = {
 	className?: string;
 	uiStrings: any;
 	popupInfoString: any;
-	tiers: StatsPlanTierUI[];
+	steps: any[];
 	onSliderChange: ( index: number ) => void;
 };
 
@@ -41,44 +41,34 @@ function TierUpgradeSlider( {
 	className,
 	uiStrings,
 	popupInfoString,
-	tiers,
+	steps,
 	onSliderChange,
 }: TierUpgradeSliderProps ) {
-	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
-	const EXTENSION_THRESHOLD = 2; // in millions
 
 	// Slider state.
 	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
 	const sliderMin = 0;
-	const sliderMax = tiers?.length - 1;
+	const sliderMax = steps?.length - 1;
 
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
 		onSliderChange( value );
 	};
 
-	// TODO: Review tier values from API.
-	// Should consider validating the inputs before displaying them.
-	// The following will draw a "-" for the views value if it's undefined.
-	const hasExtension = !! tiers[ currentPlanIndex ]?.extension;
-	const lhValue = hasExtension
-		? EXTENSION_THRESHOLD * 1000000
-		: Number( tiers[ currentPlanIndex ]?.views );
-	const rhValue = tiers[ currentPlanIndex ]?.price;
-
-	// Special case for per-unit fees.
-	const hasPerUnitFee = popupInfoString !== undefined;
+	// Info popup state.
+	// Only visible if the slider is at the max value and we have a string/node to display.
+	const infoReferenceElement = useRef( null );
+	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
+	const lhValue = steps[ currentPlanIndex ]?.lhValue;
+	const rhValue = steps[ currentPlanIndex ]?.rhValue;
 
 	return (
 		<div className={ componentClassNames }>
 			<div className="stats-tier-upgrade-slider__plan-callouts">
 				<div className="stats-tier-upgrade-slider__plan-callout">
 					<h2>{ uiStrings.limits }</h2>
-					<p className="left-aligned">
-						<ShortenedNumber value={ lhValue } />
-						{ hasExtension && <span>+</span> }
-					</p>
+					<p className="left-aligned">{ lhValue }</p>
 				</div>
 				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
 					<h2>{ uiStrings.price }</h2>
@@ -101,12 +91,12 @@ function TierUpgradeSlider( {
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }
-				isVisible={ hasExtension }
+				isVisible={ showPopup }
 				focusOnShow={ false }
 				className="stats-tier-upgrade-slider__extension-popover-wrapper"
 			>
 				<div className="stats-tier-upgrade-slider__extension-popover-content">
-					{ hasPerUnitFee && popupInfoString }
+					{ showPopup && popupInfoString }
 				</div>
 			</Popover>
 			<p className="stats-tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
@@ -120,6 +110,8 @@ type StatsCommercialUpgradeSliderProps = {
 };
 
 function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
+	// TODO: Review tier values from API.
+	// Should consider validating the inputs before displaying them.
 	return tiers.map( ( tier ) => {
 		// No transformation needed (yet).
 		const price = tier.price;
@@ -176,10 +168,7 @@ export function StatsCommercialUpgradeSlider( {
 		lastTier.views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
 	}
 
-	// TODO: Pass steps to slider.
 	const steps = getStepsForTiers( tiers );
-	console.log( 'steps', steps );
-	console.log( 'tiers', tiers );
 
 	const handleSliderChanged = ( index: number ) => {
 		onSliderChange( tiers[ index ]?.views as number );
@@ -190,7 +179,7 @@ export function StatsCommercialUpgradeSlider( {
 			className="stats-commercial-upgrade-slider"
 			uiStrings={ uiStrings }
 			popupInfoString={ perUnitFeeMessaging }
-			tiers={ tiers }
+			steps={ steps }
 			onSliderChange={ handleSliderChanged }
 		/>
 	);
