@@ -30,7 +30,7 @@ export default function Prices() {
 			return null;
 		}
 
-		const dailyAgencyPrice = ( product.amount * 12 ) / 365;
+		const dailyAgencyPrice = ( parseFloat( product.amount ) * 12 ) / 365;
 		const dailyUserYearlyPrice = userYearlyProduct.cost / 365;
 
 		const userMonthlyProduct =
