@@ -1,4 +1,5 @@
 import { PricingSlider, ShortenedNumber, Popover } from '@automattic/components';
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -129,6 +130,25 @@ type StatsCommercialUpgradeSliderProps = {
 	onSliderChange: ( quantity: number ) => void;
 };
 
+function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
+	return tiers.map( ( tier ) => {
+		// No transformation needed (yet).
+		const price = tier.price;
+		// Views can be a number or a string so address that.
+		let views = '';
+		if ( typeof tier.views === 'string' ) {
+			views = tier.views;
+		} else if ( typeof tier.views === 'number' ) {
+			views = formatNumber( tier.views );
+		}
+		// Return the new step with string values.
+		return {
+			lhValue: views,
+			rhValue: price,
+		};
+	} );
+}
+
 export function StatsCommercialUpgradeSlider( {
 	currencyCode,
 	onSliderChange,
@@ -142,6 +162,10 @@ export function StatsCommercialUpgradeSlider( {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
+
+	const steps = getStepsForTiers( tiers );
+	console.log( 'steps', steps );
+	console.log( 'tiers', tiers );
 
 	const handleSliderChanged = ( index: number ) => {
 		onSliderChange( tiers[ index ]?.views as number );
