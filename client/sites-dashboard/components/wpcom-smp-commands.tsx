@@ -1,7 +1,6 @@
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
-	arrowUp as arrowDownIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -407,7 +406,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/start/import?ref=command-palette` );
 			},
-			icon: arrowDownIcon,
+			icon: uploadIcon,
 		},
 		{
 			name: 'addNewSite',
