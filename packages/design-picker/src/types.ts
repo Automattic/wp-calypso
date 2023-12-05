@@ -109,7 +109,6 @@ export interface Design {
 	style_variations?: StyleVariation[];
 	price?: string;
 	software_sets?: SoftwareSet[];
-	is_bundled_with_woo_commerce?: boolean;
 	is_virtual?: boolean;
 	preview_data?: PreviewData;
 	screenshot?: string;

@@ -1,7 +1,13 @@
 
-body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle,
-body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle,
-body.is-group-stepper .plans .segmented-control.price-toggle {
+.plan-type-selector {
+	max-width: fit-content;
+}
+
+.plan-type-selector__title {
+	margin-bottom: 20px;
+}
+
+.plan-type-selector .plan-type-selector__interval-type .segmented-control.price-toggle {
 	background-color: #f2f2f2;
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
 	margin-top: 16px;
@@ -10,6 +16,14 @@ body.is-group-stepper .plans .segmented-control.price-toggle {
 	.segmented-control__item {
 		border: 6px;
 		padding: 2px;
+
+		&.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: #f2f2f2;
+			&:hover {
+				border-left-color: var(--studio-gray-10);
+			}
+		}
+
 		.segmented-control__link {
 			color: var(--studio-gray-90);
 			font-weight: 500;
@@ -44,13 +58,4 @@ body.is-group-stepper .plans .segmented-control.price-toggle {
 			white-space: initial;
 		}
 	}
-}
-
-.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle {
-	border: solid 1px var(--studio-gray-5);
-}
-
-.notouch body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle {
-	margin: 8px auto 16px;
-	max-width: fit-content;
 }

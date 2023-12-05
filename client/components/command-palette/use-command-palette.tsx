@@ -45,7 +45,7 @@ interface Command {
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
 }
-interface useCommandPalletteOptions {
+interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 }
@@ -71,10 +71,10 @@ const siteToAction =
 		};
 	};
 
-export const useCommandPallette = ( {
+export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
-}: useCommandPalletteOptions ): { commands: Command[] } => {
+}: useCommandPaletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only

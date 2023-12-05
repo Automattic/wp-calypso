@@ -570,7 +570,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 
 			.design-picker-design-title__container {
 				.premium-badge,
-				.woocommerce-bundled-badge {
+				.bundled-badge {
 					display: none;
 
 					@include break-small {

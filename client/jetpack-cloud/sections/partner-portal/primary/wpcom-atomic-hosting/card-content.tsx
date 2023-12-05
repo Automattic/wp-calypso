@@ -138,7 +138,7 @@ export default function CardContent( {
 		dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
 		dispatch( recordTracksEvent( getCTAEventName( planSlug ) ) );
 
-		issueLicenses( [ productSlug ] );
+		issueLicenses( [ { slug: productSlug, quantity: 1 } ] );
 
 		setIsRequesting( false );
 		page.redirect( `/dashboard?provisioning=true` );

@@ -95,10 +95,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 
 	const is_externally_managed = design.theme_type === 'managed-external';
 
-	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
-		( { slug } ) => slug === 'woo-on-plans'
-	);
-
 	return {
 		slug,
 		title,
@@ -107,7 +103,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		categories,
 		is_premium,
 		is_externally_managed,
-		is_bundled_with_woo_commerce,
 		price,
 		software_sets,
 		design_type: design_type ?? ( is_premium ? 'premium' : 'standard' ),
