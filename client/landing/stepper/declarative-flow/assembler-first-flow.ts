@@ -69,6 +69,7 @@ const assemblerFirstFlow: Flow = {
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PATTERN_ASSEMBLER,
+			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
@@ -155,6 +156,10 @@ const assemblerFirstFlow: Flow = {
 					return handleSelectSite( providedDependencies );
 				}
 
+				case 'freePostSetup': {
+					return navigate( 'launchpad' );
+				}
+
 				case 'processing': {
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
 						return navigate( 'error' );
@@ -186,6 +191,10 @@ const assemblerFirstFlow: Flow = {
 			switch ( _currentStep ) {
 				case 'site-picker': {
 					return navigate( 'new-or-existing-site' );
+				}
+
+				case 'freePostSetup': {
+					return navigate( 'launchpad' );
 				}
 
 				case 'patternAssembler': {
