@@ -156,7 +156,7 @@ interface Props {
 		sitePlanSlug,
 	}: {
 		planSlugs: PlanSlug[];
-		sitePlanSlug: string | null;
+		sitePlanSlug: PlanSlug | null;
 	} ) => {
 		[ key: string ]: boolean;
 	};
