@@ -1,5 +1,6 @@
 import { useSelector } from 'calypso/state';
 import {
+	getIsLivePreviewStarted,
 	getPremiumThemePrice,
 	getThemeDetailsUrl as getThemeDetailsUrlSelector,
 	getThemesForQueryIgnoringPage,
@@ -29,6 +30,10 @@ export function useThemeCollection( query: ThemesQuery ) {
 		( state ) => ( themeId: string ) => isInstallingTheme( state, themeId, siteId as number )
 	);
 
+	const isLivePreviewStarted = useSelector(
+		( state ) => ( themeId: string ) => getIsLivePreviewStarted( state, themeId )
+	);
+
 	const getPrice = useSelector(
 		( state ) => ( themeId: string ) => getPremiumThemePrice( state, themeId, siteId as number )
 	);
@@ -53,6 +58,7 @@ export function useThemeCollection( query: ThemesQuery ) {
 		themes,
 		isActive,
 		isInstalling,
+		isLivePreviewStarted,
 		siteId,
 		getThemeType,
 		filterString,
