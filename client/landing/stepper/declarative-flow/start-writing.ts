@@ -1,8 +1,4 @@
-import {
-	LaunchpadNavigator,
-	OnboardSelect,
-	updateLaunchpadSettings,
-} from '@automattic/data-stores';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
@@ -91,7 +87,6 @@ const startWriting: Flow = {
 			[]
 		).getState();
 		const site = useSite();
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -246,7 +241,6 @@ const startWriting: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'start-writing',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

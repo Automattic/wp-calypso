@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { LaunchpadNavigator, PlansSelect, SiteSelect } from '@automattic/data-stores';
+import { PlansSelect, SiteSelect } from '@automattic/data-stores';
 import { StyleVariation } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
@@ -106,7 +106,6 @@ const videopress: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 			[]
 		);
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		const [ isSiteCreationPending, setIsSiteCreationPending ] = useState( false );
 
@@ -361,7 +360,6 @@ const videopress: Flow = {
 				case 'launchpad':
 					await skipLaunchpad( {
 						checklistSlug: 'videopress',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

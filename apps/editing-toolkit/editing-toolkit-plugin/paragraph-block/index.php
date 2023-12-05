@@ -24,7 +24,7 @@ function paragraph_block_script() {
 	);
 
 	global $post;
-	if ( isset( $post ) && is_post_with_write_intent( $post ) ) {
+	if ( is_post_with_write_intent( $post ) ) {
 		wp_localize_script(
 			'paragraph-block-script',
 			'wpcomParagraphBlockPlaceholder',
@@ -41,17 +41,17 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\paragraph_block_scr
 /**
  * Check is it a post with “write” intent
  *
- * @param WP_Post $post Current post object.
+ * @param WP_Post|null $post Current post object. It would be null if the current post is not retrieved.
  */
 function is_post_with_write_intent( $post ) {
-	return 'post' === $post->post_type && 'write' === get_option( 'site_intent', '' );
+	return isset( $post ) && 'post' === $post->post_type && 'write' === get_option( 'site_intent', '' );
 }
 
 /**
  * Replace the title placeholder if it's the post with “write” intent
  *
- * @param string  $text Text to shown.
- * @param WP_Post $post Current post object.
+ * @param string       $text Text to shown.
+ * @param WP_Post|null $post Current post object. It would be null if the current post is not retrieved.
  */
 function enter_title_here( $text, $post ) {
 	if ( is_post_with_write_intent( $post ) ) {
@@ -69,8 +69,8 @@ add_filter( 'enter_title_here', __NAMESPACE__ . '\enter_title_here', 0, 2 );
 /**
  * Replace the body placeholder if it's the post with “write” intent
  *
- * @param string  $text Text to shown.
- * @param WP_Post $post Current post object.
+ * @param string       $text Text to shown.
+ * @param WP_Post|null $post Current post object. It would be null if the current post is not retrieved.
  */
 function write_your_story( $text, $post ) {
 	if ( is_post_with_write_intent( $post ) ) {

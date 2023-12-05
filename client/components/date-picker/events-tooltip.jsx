@@ -1,8 +1,8 @@
+import { Tooltip } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import { CalendarEvent } from './event';
 
 const noop = () => {};

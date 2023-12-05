@@ -421,14 +421,14 @@ const PlansFeaturesMain = ( {
 	const onShowPressablePromoBanner = useCallback( () => {
 		recordTracksEvent( 'calypso_multisite_promo_banner_impression', {
 			service: 'pressable',
-			flowName,
+			flow: flowName,
 		} );
 	}, [] );
 
 	const onClickPressablePromoBannerCta = useCallback( () => {
 		recordTracksEvent( 'calypso_multisite_promo_banner_cta_click', {
 			service: 'pressable',
-			flowName,
+			flow: flowName,
 		} );
 	}, [] );
 
