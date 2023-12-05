@@ -6,6 +6,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
+import { Icon, upload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
@@ -144,6 +145,11 @@ const ManageAllDomainsButton = styled( Button )`
 	margin-inline-end: 1rem;
 `;
 
+const UploadIcon = styled( Icon )`
+	margin-right: 8px;
+	vertical-align: bottom;
+`;
+
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
@@ -219,8 +225,8 @@ export function SitesDashboard( {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
 							href={ importSiteUrl }
-							icon="arrow-down"
 						>
+							<UploadIcon icon={ upload } size={ 18 } />
 							<span>{ __( 'Import an existing site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
