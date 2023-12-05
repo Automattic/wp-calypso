@@ -57,6 +57,7 @@ export function fromApi( state ) {
 	const {
 		importId: importerId,
 		importStatus,
+		importerFileType,
 		type,
 		progress,
 		customData,
@@ -67,6 +68,7 @@ export function fromApi( state ) {
 	return {
 		importerId,
 		importerState: apiToAppState( importStatus ),
+		importerFileType,
 		type: `importer-type-${ type }`,
 		progress,
 		...( customData && { customData: generateSourceAuthorIds( customData ) } ),
