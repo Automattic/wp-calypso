@@ -1,8 +1,9 @@
-import { Dialog, Button, Card, Spinner, ReviewsRatingsStars } from '@automattic/components';
+import { Dialog, Button, Card, Spinner } from '@automattic/components';
 import { TextareaControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	ProductType,
 	ErrorResponse,

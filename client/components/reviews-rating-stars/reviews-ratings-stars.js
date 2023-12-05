@@ -1,7 +1,6 @@
-// import { __, _n, translate } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { forwardRef, useState, useEffect } from 'react';
-import RatingSummary from './rating-summary';
+import Rating from 'calypso/components/rating';
 import Star from './star';
 import './reviews-ratings-stars.scss';
 
@@ -79,6 +78,8 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 		selectedRatingText = getStarsNumberSign( ratingState );
 	}
 
+	const ratingNormalized = ( rating * 100 ) / 20;
+
 	return (
 		<div
 			className={ classNames.join( ' ' ) }
@@ -87,7 +88,7 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 		>
 			{ simpleView ? (
 				<div ref={ ref }>
-					<RatingSummary rating={ rating } reviews={ numberOfReviews } shouldShowReviews />
+					<Rating rating={ ratingNormalized } />
 				</div>
 			) : (
 				<>
