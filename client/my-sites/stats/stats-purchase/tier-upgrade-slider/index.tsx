@@ -6,7 +6,7 @@ import './styles.scss';
 type TierUpgradeSlider2Props = {
 	className?: string;
 	uiStrings: any;
-	popupInfoString: any;
+	popupInfoString?: any;
 	steps: any[];
 	onSliderChange: ( index: number ) => void;
 };
