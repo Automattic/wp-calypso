@@ -28,7 +28,7 @@ const getIconByLevel = ( level: NoticeBannerProps[ 'level' ] ) => {
 		case 'error':
 			return warning;
 		case 'warning':
-			return warning;
+			return info;
 		case 'info':
 			return info;
 		case 'success':

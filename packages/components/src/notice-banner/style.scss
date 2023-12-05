@@ -26,6 +26,51 @@ $banner-title-height: 30px;
 	border-left-width: 6px;
 
 	padding: 24px;
+
+	&.is-info {
+		border-left-color: var(--jp-black);
+
+		.notice-banner__icon {
+			fill: var(--jp-black);
+		}
+	}
+
+	// TODO: Move out these two classes to StatsNotices since they are defined and passed there.
+	.notice-banner__action-button,
+	.notice-banner__action-link {
+		font-family: inherit;
+		font-size: var(--font-body);
+		font-weight: 600;
+		line-height: 24px;
+		cursor: pointer;
+		margin-top: 20px;
+	}
+
+	.notice-banner__action-link {
+		color: var(--jp-black);
+		font-weight: 600;
+		margin-left: 24px;
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+
+		& > span {
+			border-bottom: 1.5px solid var(--jp-black);
+		}
+
+		& > svg {
+			margin-left: 4px;
+		}
+	}
+
+	.notice-banner__action-button {
+		background-color: var(--jp-black);
+		color: var(--studio-white);
+		border-radius: 4px;
+		padding: 8px 24px;
+	}
 }
 
 .notice-banner__icon-wrapper {
@@ -114,52 +159,6 @@ $banner-title-height: 30px;
 		fill: var(--jp-yellow-20);
 	}
 }
-
-.notice-banner.is-info {
-	border-left-color: var(--jp-black);
-
-	.notice-banner__icon {
-		fill: var(--jp-black);
-	}
-
-	// TODO: Move out these two classes to StatsNotices since they are defined and passed there.
-	.notice-banner__action-button,
-	.notice-banner__action-link {
-		font-family: inherit;
-		font-size: var(--font-body);
-		font-weight: 600;
-		line-height: 24px;
-		cursor: pointer;
-		margin-top: 20px;
-	}
-
-	.notice-banner__action-link {
-		color: var(--jp-black);
-		font-weight: 600;
-		margin-left: 24px;
-
-		&:focus {
-			outline: none;
-			box-shadow: none;
-		}
-
-		& > span {
-			border-bottom: 1.5px solid var(--jp-black);
-		}
-
-		& > svg {
-			margin-left: 4px;
-		}
-	}
-
-	.notice-banner__action-button {
-		background-color: var(--jp-black);
-		color: var(--studio-white);
-		border-radius: 4px;
-		padding: 8px 24px;
-	}
-}
-
 
 .notice-banner.is-success {
 	border-left-color: var(--jp-green);
