@@ -11,6 +11,7 @@ import './stats-purchase-tier-upgrade-slider.scss';
 
 type TierUpgradeSliderProps = {
 	className?: string;
+	uiStrings: any;
 	tiers: StatsPlanTierUI[];
 	currencyCode: string;
 	onSliderChange: ( index: number ) => void;
@@ -37,6 +38,7 @@ function useTranslatedStrings() {
 
 function TierUpgradeSlider( {
 	className,
+	uiStrings,
 	tiers,
 	currencyCode,
 	onSliderChange,
@@ -56,8 +58,6 @@ function TierUpgradeSlider( {
 		onSliderChange( value );
 	};
 
-	const translatedStrings = useTranslatedStrings();
-
 	// TODO: Review tier values from API.
 	// Should consider validating the inputs before displaying them.
 	// The following will draw a "-" for the views value if it's undefined.
@@ -70,14 +70,14 @@ function TierUpgradeSlider( {
 		<div className={ componentClassNames }>
 			<div className="stats-tier-upgrade-slider__plan-callouts">
 				<div className="stats-tier-upgrade-slider__plan-callout">
-					<h2>{ translatedStrings.limits }</h2>
+					<h2>{ uiStrings.limits }</h2>
 					<p className="left-aligned">
 						<ShortenedNumber value={ lhValue } />
 						{ hasExtension && <span>+</span> }
 					</p>
 				</div>
 				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
-					<h2>{ translatedStrings.price }</h2>
+					<h2>{ uiStrings.price }</h2>
 					<p className="right-aligned" ref={ infoReferenceElement }>
 						{ tiers[ currentPlanIndex ]?.price }
 					</p>
@@ -121,7 +121,7 @@ function TierUpgradeSlider( {
 						) }
 				</div>
 			</Popover>
-			<p className="stats-tier-upgrade-slider__info-message">{ translatedStrings.strategy }</p>
+			<p className="stats-tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
 		</div>
 	);
 }
@@ -143,6 +143,7 @@ export function StatsCommercialUpgradeSlider( {
 	// const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const tiers = useAvailableUpgradeTiers( siteId );
+	const uiStrings = useTranslatedStrings();
 
 	const handleSliderChanged = ( index: number ) => {
 		onSliderChange( tiers[ index ]?.views as number );
@@ -151,6 +152,7 @@ export function StatsCommercialUpgradeSlider( {
 	return (
 		<TierUpgradeSlider
 			className="stats-commercial-upgrade-slider"
+			uiStrings={ uiStrings }
 			tiers={ tiers }
 			currencyCode={ currencyCode }
 			onSliderChange={ handleSliderChanged }
