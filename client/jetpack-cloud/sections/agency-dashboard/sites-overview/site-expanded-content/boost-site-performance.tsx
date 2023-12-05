@@ -1,9 +1,8 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Tooltip } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useMemo } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import { useSelector } from 'calypso/state';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';

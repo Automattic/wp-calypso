@@ -29,6 +29,7 @@ export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
+export const ASSEMBLER_FIRST_FLOW = 'assembler-first';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
@@ -144,7 +145,11 @@ export const isDomainUpsellFlow = ( flowName: string | null ) => {
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
-	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW, AI_ASSEMBLER_FLOW ];
+	const SITE_ASSEMBLER_FLOWS = [
+		WITH_THEME_ASSEMBLER_FLOW,
+		AI_ASSEMBLER_FLOW,
+		ASSEMBLER_FIRST_FLOW,
+	];
 
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };
