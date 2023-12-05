@@ -3,14 +3,8 @@ $tiled-gallery-max-rounded-corners: 20;
 .wp-block-jetpack-tiled-gallery {
 	margin: 0 auto 1.5em;
 
-	&.is-style-circle .tiled-gallery__item img {
+	&.is-style-circle .gallery-item img {
 		border-radius: 50%;
-	}
-
-	@for $i from 1 through $tiled-gallery-max-rounded-corners {
-		&.has-rounded-corners-#{$i} .tiled-gallery__item img {
-			border-radius: #{$i}px;
-		}
 	}
 
 	.tiled-gallery__gallery {

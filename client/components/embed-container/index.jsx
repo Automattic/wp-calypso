@@ -245,25 +245,35 @@ function embedStory( domNode ) {
 
 function embedTiledGallery( domNode ) {
 	debug( 'processing tiled gallery for', domNode );
-
 	const galleryToReplace = domNode.querySelector( '.tiled-gallery__gallery' );
-	const galleryItems = domNode.getElementsByTagName( 'img' );
+	const galleryItems = domNode.getElementsByClassName( 'tiled-gallery__item' );
 
 	if ( galleryItems ) {
 		const imageItems = Array.from( galleryItems );
+
 		// Replace the gallery with a list of images
 		createRoot( galleryToReplace ).render(
 			<div className="gallery-container">
 				{ imageItems.map( ( item ) => {
+					const itemImage = item.querySelector( 'img' );
+					const itemLink = item.querySelector( 'a' );
+
+					const imgProps = {
+						id: itemImage?.id || undefined,
+						className: itemImage?.className || undefined,
+						src: itemImage?.src || undefined,
+					};
+
 					return (
 						<figure className="gallery-item">
 							<div className="gallery-item-wrapper">
-								<img
-									id={ item?.id }
-									className={ item?.className }
-									src={ item?.src }
-									alt={ item?.alt }
-								/>
+								{ itemLink?.href ? (
+									<a href={ itemLink.href }>
+										<img alt={ itemImage?.alt || '' } { ...imgProps } />
+									</a>
+								) : (
+									<img alt={ itemImage?.alt || '' } { ...imgProps } />
+								) }
 							</div>
 						</figure>
 					);
