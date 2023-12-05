@@ -279,7 +279,7 @@ export class RenderDomainsStep extends Component {
 		await this.props.saveSignupStep( stepData );
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
-			this.handleDomainToDomainCart();
+			await this.handleDomainToDomainCart();
 
 			// If we already have a free selection in place, let's enforce that as a free site suggestion
 			if ( this.state.wpcomSubdomainSelected ) {
