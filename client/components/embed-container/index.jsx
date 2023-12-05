@@ -21,6 +21,7 @@ const embedsToLookFor = {
 	'.embed-reddit': embedReddit,
 	'.embed-tiktok': embedTikTok,
 	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
+	'.wp-block-jetpack-tiled-gallery': embedTiledGallery,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -239,6 +240,36 @@ function embedStory( domNode ) {
 	// Open story in a new tab
 	if ( storyLink ) {
 		storyLink.setAttribute( 'target', '_blank' );
+	}
+}
+
+function embedTiledGallery( domNode ) {
+	debug( 'processing tiled gallery for', domNode );
+
+	const galleryToReplace = domNode.querySelector( '.tiled-gallery__gallery' );
+	const galleryItems = domNode.getElementsByTagName( 'img' );
+
+	if ( galleryItems ) {
+		const imageItems = Array.from( galleryItems );
+		// Replace the gallery with a list of images
+		createRoot( galleryToReplace ).render(
+			<div className="gallery-container">
+				{ imageItems.map( ( item ) => {
+					return (
+						<figure className="gallery-item">
+							<div className="gallery-item-wrapper">
+								<img
+									id={ item?.id }
+									className={ item?.className }
+									src={ item?.src }
+									alt={ item?.alt }
+								/>
+							</div>
+						</figure>
+					);
+				} ) }
+			</div>
+		);
 	}
 }
 
