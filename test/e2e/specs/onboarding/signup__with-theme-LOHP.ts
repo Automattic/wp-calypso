@@ -58,9 +58,12 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 		} );
 
 		it( 'Selects a theme', async function () {
-			const themeContainer = await page.locator( '.lp-content.lp-content-area--scrolling' ).first();
+			// Hovering over the container to stop the carousel scrolling
+			// The force is necessary as the container is not considered stable due to the scrolling
+			const themeContainer = page.locator( '.lp-content.lp-content-area--scrolling' ).first();
 			await themeContainer.hover( { force: true } );
 
+			// Hovering over the theme card is necessary to make the "Start with this theme" button visible.
 			const themeCard = await themeContainer.locator( '.lp-image-top-row' ).last();
 			await themeCard.hover();
 
@@ -71,7 +74,6 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			const pageMatch = new URL( page.url() ).search.match( 'theme=([a-z]*)?&' );
 
 			themeSlug = pageMatch?.[ 1 ] || null;
-			console.log( { themeSlug, pageMatch, url: page.url() } );
 		} );
 
 		it( 'Sign up as new user', async function () {
