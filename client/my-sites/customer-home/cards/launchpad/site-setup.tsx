@@ -1,6 +1,6 @@
 import LaunchpadPreLaunch from './pre-launch';
 
-const LaunchpadSiteSetup = (): JSX.Element => {
+export const LaunchpadSiteSetup = (): JSX.Element => {
 	const checklistSlug = 'legacy-site-setup';
 
 	return (
@@ -10,4 +10,22 @@ const LaunchpadSiteSetup = (): JSX.Element => {
 	);
 };
 
-export default LaunchpadSiteSetup;
+export const LaunchpadSiteSetupHosted = (): JSX.Element => {
+	const checklistSlug = 'hosted-site-setup';
+
+	return (
+		<>
+			<LaunchpadPreLaunch checklistSlug={ checklistSlug } />
+		</>
+	);
+};
+
+export const LaunchpadSiteSetupWrite = (): JSX.Element => {
+	const checklistSlug = 'write-site-setup';
+
+	return (
+		<>
+			<LaunchpadPreLaunch checklistSlug={ checklistSlug } />
+		</>
+	);
+};
