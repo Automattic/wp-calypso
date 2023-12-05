@@ -98,41 +98,32 @@ export const useCommandPallette = ( {
 	const commandHasContext = ( paths: string[] = [] ): boolean =>
 		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
 
-	// Ensure that View My Sites command ranks the highest
-	const viewMySitesSort = ( a: { name: string }, b: { name: string } ) => {
-		const isViewMySitesWithContextual = a.name === 'viewMySites';
-		const isViewMySitesNoContextual = b.name === 'viewMySites';
+	// Find and store the "viewMySites" command
+	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
 
-		if ( isViewMySitesWithContextual && ! isViewMySitesNoContextual ) {
-			return -1; // "viewMySites" comes first over contextual commands
-		} else if ( ! isViewMySitesWithContextual && isViewMySitesNoContextual ) {
-			return 1; // "viewMySites" comes first over regular commands
-		}
+	// Sort the commands with the contextual commands ranking higher than general in a given context
+	const sortedCommands = commands
+		.filter( ( command ) => ! ( command === viewMySitesCommand ) )
+		.sort( ( a, b ) => {
+			const hasContextCommand = commandHasContext( a.context );
+			const hasNoContext = commandHasContext( b.context );
 
-		return 0; // no change in order
-	};
+			if ( hasContextCommand && ! hasNoContext ) {
+				return -1; // commands with context come first if there is a context match
+			} else if ( ! hasContextCommand && hasNoContext ) {
+				return 1; // commands without context set
+			}
 
-	// Filter commands to exclude "viewMySites" when the current path is /sites
-	const filteredCommands = commands.filter(
-		( command ) => ! ( command.name === 'viewMySites' && currentPath === '/sites' )
-	);
+			return 0; // no change in order
+		} );
 
-	// Sort the filtered commands with the contextual commands ranking higher than general in a given context
-	const sortedCommands = filteredCommands.sort( ( a, b ) => {
-		const hasContextCommand = commandHasContext( a.context );
-		const hasNoContext = commandHasContext( b.context );
+	// Create a variable to hold the final result
+	const finalSortedCommands = [ ...sortedCommands ];
 
-		if ( hasContextCommand && ! hasNoContext ) {
-			return -1; // commands with context come first if there is a context match
-		} else if ( ! hasContextCommand && hasNoContext ) {
-			return 1; // commands without context set
-		}
-
-		return 0; // no change in order
-	} );
-
-	// Combine the sorted "viewMySites" commands and the main sorted commands
-	const finalSortedCommands = [ ...sortedCommands ].sort( viewMySitesSort );
+	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
+	if ( viewMySitesCommand && currentPath !== '/sites' ) {
+		finalSortedCommands.unshift( viewMySitesCommand );
+	}
 
 	const selectedCommand = finalSortedCommands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
