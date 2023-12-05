@@ -26,13 +26,16 @@ const Banner = styled.div`
 
 const LogoContainer = styled.div`
 	display: none;
-	height: 18px;
 
 	${ plansBreakSmall( css`
 		display: inherit;
-		flex-basis: 120px;
+		background-color: #f9f9f9;
+		border-radius: 4px;
+		height: 100px;
+		flex-basis: 100px;
 		flex-shrink: 0;
-		background-color: var( --studio-white );
+		align-items: center;
+		justify-content: center;
 	` ) }
 `;
 
@@ -81,6 +84,7 @@ const CtaButton = styled( Button )`
 	width: 100%;
 	height: 40px;
 	padding: 10px, 24px, 10px, 24px;
+	border: 0;
 	border-radius: 4px;
 	background-color: var( --studio-black );
 	color: var( --studio-white );
@@ -113,7 +117,7 @@ const PressablePromoBanner = ( {
 	return (
 		<Banner>
 			<LogoContainer>
-				<PressableLogo />
+				<PressableLogo height={ 10 } width={ 69 } />
 			</LogoContainer>
 			<TextContainer>
 				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
