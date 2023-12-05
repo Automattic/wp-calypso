@@ -5,11 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useRef } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { StatsPlanTierUI } from './types';
 import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
 import './stats-purchase-tier-upgrade-slider.scss';
 
 type TierUpgradeSliderProps = {
 	className?: string;
+	tiers: StatsPlanTierUI[];
 	currencyCode: string;
 	setPurchaseTierQuantity: ( quantity: number ) => void;
 };
@@ -35,14 +37,13 @@ function useTranslatedStrings() {
 
 function TierUpgradeSlider( {
 	className,
+	tiers,
 	currencyCode,
 	setPurchaseTierQuantity,
 }: TierUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const tiers = useAvailableUpgradeTiers( siteId );
 	const EXTENSION_THRESHOLD = 2; // in millions
 
 	// Slider state.
@@ -136,6 +137,8 @@ export function StatsCommercialUpgradeSlider( {
 	onSliderChanged,
 }: StatsCommercialUpgradeSliderProps ) {
 	// const translate = useTranslate();
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const tiers = useAvailableUpgradeTiers( siteId );
 	// 1. Prepare and translate UI strings.
 	// 2. Fetch tier data.
 	// 3. Transform data for slider.
@@ -143,6 +146,7 @@ export function StatsCommercialUpgradeSlider( {
 	return (
 		<TierUpgradeSlider
 			className="stats-commercial-upgrade-slider"
+			tiers={ tiers }
 			currencyCode={ currencyCode }
 			setPurchaseTierQuantity={ onSliderChanged }
 		/>
