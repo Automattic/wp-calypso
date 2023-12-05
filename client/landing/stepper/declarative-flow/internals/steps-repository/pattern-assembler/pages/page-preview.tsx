@@ -68,7 +68,7 @@ const PatternPagePreview = ( {
 	onFullscreenLeave,
 	...pageProps
 }: PagePreviewProps ) => {
-	const { slug, title, patterns } = pageProps;
+	const { slug, title } = pageProps;
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isFullscreenEnter, setIsFullscreenEnter ] = useState( false );
 	const [ isFullscreenLeave, setIsFullscreenLeave ] = useState( false );
@@ -101,7 +101,6 @@ const PatternPagePreview = ( {
 			setTimeout( () => setIsFullscreenEnter( false ), 200 );
 
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
-				pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
 				page_slug: slug,
 			} );
 		}
