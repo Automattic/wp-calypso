@@ -151,7 +151,7 @@ export const useMarketplaceReviewsQuery = (
 		refetchOnMount = true,
 	}: MarketplaceReviewsQueryOptions = {}
 ) => {
-	const queryKey: QueryKey = [ queryKeyBase, slug ];
+	const queryKey: QueryKey = [ queryKeyBase, productType, slug, page, perPage ];
 	const queryFn = () => fetchMarketplaceReviews( productType, slug, page, perPage );
 	return useQuery( {
 		queryKey,
