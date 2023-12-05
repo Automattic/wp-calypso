@@ -1,5 +1,13 @@
-const PressableLogo = () => (
-	<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 495 75.1">
+const PressableLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
+	<svg
+		version="1.1"
+		xmlns="http://www.w3.org/2000/svg"
+		x="0px"
+		y="0px"
+		viewBox="0 0 495 75.1"
+		width={ props.width }
+		height={ props.height }
+	>
 		<style type="text/css">{ '.st0{fill: #040047; }' }</style>
 		<g id="pressable-logo">
 			<g id="pressable">
