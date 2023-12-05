@@ -209,15 +209,14 @@ function embedStory( domNode ) {
 
 function embedPostCarousel( domNode ) {
 	debug( 'processing post carousel for ', domNode );
-	const carouselWrapper = domNode.querySelector( '.swiper' );
-	const carouselItemsWrapper = carouselWrapper?.querySelector( '.swiper-wrapper' );
+	const carouselItemsWrapper = domNode.querySelector( '.swiper-wrapper' );
 
 	// Inject the DotPager component.
-	if ( carouselWrapper && carouselItemsWrapper ) {
+	if ( carouselItemsWrapper ) {
 		const carouselItems = Array.from( carouselItemsWrapper?.children );
 
 		if ( carouselItems ) {
-			createRoot( carouselWrapper ).render(
+			createRoot( domNode ).render(
 				<DotPager>
 					{ carouselItems.map( ( item, index ) => {
 						return (
