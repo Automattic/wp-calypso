@@ -1,3 +1,6 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
 $breakpoint-mobile: 782px; //Mobile size.
 
 form {
@@ -5,6 +8,10 @@ form {
 	margin-left: auto;
 	margin-right: auto;
 	align-items: center;
+
+	@include break-medium {
+		align-items: unset;
+	}
 }
 
 form.is-social-first {
