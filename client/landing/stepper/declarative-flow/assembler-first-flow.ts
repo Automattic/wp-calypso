@@ -58,7 +58,7 @@ const assemblerFirstFlow: Flow = {
 				design_type: 'assembler',
 			} );
 
-			setIntent( SiteIntent.WithThemeAssembler );
+			setIntent( SiteIntent.AssemblerFirst );
 		}, [ theme ] );
 	},
 
@@ -100,7 +100,7 @@ const assemblerFirstFlow: Flow = {
 			const selectedSiteId = providedDependencies?.siteId as string;
 			const isNewSite = providedDependencies?.isNewSite === 'true';
 			setSelectedSite( selectedSiteId );
-			setIntentOnSite( selectedSiteSlug, ASSEMBLER_FIRST_FLOW );
+			setIntentOnSite( selectedSiteSlug, SiteIntent.AssemblerFirst );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
 
 			// Check whether to go to the assembler. If not, go to the site editor directly
