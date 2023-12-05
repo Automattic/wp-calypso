@@ -113,9 +113,9 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 	const forumHeaderText = useMemo( () => {
 		if ( isDefaultLocale( locale ) ) {
-			return __( 'Community Forums', __i18n_text_domain__ );
+			return __( 'Community forums', __i18n_text_domain__ );
 		}
-		return __( 'Community Forums (English)', __i18n_text_domain__ );
+		return __( 'Community forums (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
