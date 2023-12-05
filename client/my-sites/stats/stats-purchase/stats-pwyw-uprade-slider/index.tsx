@@ -2,9 +2,10 @@ import formatCurrency from '@automattic/format-currency';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import './styles.scss';
 
+// TODO: Remove test data.
 function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
 	// From $0 to $20, in $1 increments.
-	let tiers = [];
+	let tiers: any[] = [];
 	for ( let i = 0; i <= 28; i++ ) {
 		tiers.push( {
 			price: formatCurrency( ( minPrice + i * stepPrice ) / 100, 'USD' ),
@@ -22,6 +23,7 @@ function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
 	return tiers;
 }
 
+// TODO: Remove this test data too.
 function getPWYWSteps() {
 	return [
 		{
@@ -51,19 +53,68 @@ function getPWYWSteps() {
 	];
 }
 
-function StatsPWYWUpgradeSlider() {
+function emojiForStep( index: number ) {
+	const uiEmojiHeartTier = 14;
+	const uiImageCelebrationTier = 23;
+	if ( index === 0 ) {
+		return '';
+	}
+	// Smiling face emoji.
+	if ( index < uiEmojiHeartTier ) {
+		return String.fromCodePoint( 0x1f60a );
+	}
+	// Heart emoji.
+	if ( index < uiImageCelebrationTier ) {
+		return String.fromCodePoint( 0x2764, 0xfe0f );
+	}
+	// Big spender! Fire emoji.
+	return String.fromCodePoint( 0x1f525 );
+}
+
+function stepsFromSettings( settings: any, currencyCode: string ) {
+	const sliderSteps = [];
+	const maxSliderValue = Math.floor( settings.maxSliderPrice / settings.sliderStepPrice );
+	const minSliderValue = Math.round( settings.minSliderPrice / settings.sliderStepPrice );
+	for ( let i = minSliderValue; i <= maxSliderValue; i++ ) {
+		const rawValue = settings.minSliderPrice + i * settings.sliderStepPrice;
+		sliderSteps.push( {
+			raw: rawValue,
+			lhValue: formatCurrency( rawValue, currencyCode ),
+			rhValue: emojiForStep( i ),
+		} );
+	}
+	return sliderSteps;
+}
+
+type StatsPWYWUpgradeSliderProps = {
+	settings?: any;
+	currencyCode?: string;
+	onSliderChange: ( index: number ) => void;
+};
+
+function StatsPWYWUpgradeSlider( {
+	settings,
+	currencyCode,
+	onSliderChange,
+}: StatsPWYWUpgradeSliderProps ) {
+	// TODO: Translate UI strings.
 	const strings = {
 		limits: 'Your monthly contribution',
 		price: 'Thank you!',
 		strategy: 'The average person pays $5 per month, billed yearly',
 	};
 	// TODO: Set up tiers/steps for slider.
-	const smallSteps = true;
-	const steps = smallSteps ? getPWYWPlanTiers( 0, 50 ) : getPWYWSteps();
-	const handleSliderChanged = () => {
-		console.log( 'handleSliderChanged' );
-	};
+	let steps = getPWYWPlanTiers( 0, 50 );
+	if ( settings !== undefined ) {
+		steps = stepsFromSettings( settings, currencyCode || '' );
+	}
 	const marks = [ 0, steps.length - 1 ];
+
+	// TODO: Wire up parent to handle changes.
+	const handleSliderChanged = ( index: number ) => {
+		onSliderChange( index );
+	};
+
 	return (
 		<TierUpgradeSlider
 			className="stats-pwyw-upgrade-slider"
