@@ -1,5 +1,5 @@
 import BusinessInfo from './internals/steps-repository/business-info';
-import CheckForWoo from './internals/steps-repository/check-for-woo';
+import CheckForPlugins from './internals/steps-repository/check-for-plugins';
 import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import StoreAddress from './internals/steps-repository/store-address';
@@ -10,7 +10,7 @@ import { StepperStep } from './internals/types';
 
 const pluginBundleSteps: Record< string, StepperStep[] > = {
 	'woo-on-plans': [
-		{ slug: 'checkForWoo', component: CheckForWoo },
+		{ slug: 'checkForPlugins', component: CheckForPlugins },
 		{ slug: 'storeAddress', component: StoreAddress },
 		{ slug: 'businessInfo', component: BusinessInfo },
 		{ slug: 'wooConfirm', component: WooConfirm },

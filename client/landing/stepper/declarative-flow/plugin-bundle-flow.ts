@@ -159,9 +159,9 @@ const pluginBundleFlow: Flow = {
 				}
 			}
 			switch ( currentStep ) {
-				case 'checkForWoo':
-					// If WooCommerce is already installed, we should exit the flow.
-					if ( providedDependencies?.hasWooCommerce ) {
+				case 'checkForPlugins':
+					// If plugins are already installed, we should exit the flow.
+					if ( providedDependencies?.hasPlugins ) {
 						// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
 
 						return exitFlow( defaultExitDest );
@@ -241,7 +241,7 @@ const pluginBundleFlow: Flow = {
 					return navigate( 'businessInfo' );
 
 				default:
-					return navigate( 'checkForWoo' );
+					return navigate( 'checkForPlugins' );
 			}
 		};
 
@@ -249,7 +249,7 @@ const pluginBundleFlow: Flow = {
 			switch ( currentStep ) {
 				// TODO - Do we need anything here?
 				default:
-					return navigate( 'checkForWoo' );
+					return navigate( 'checkForPlugins' );
 			}
 		};
 
