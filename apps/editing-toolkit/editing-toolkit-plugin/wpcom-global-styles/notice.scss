@@ -1,11 +1,11 @@
-.edit-site-save-hub {
-	border-top: none;
-	padding-top: 0;
-}
-
 .wpcom-global-styles-notice-container {
 	padding: 24px 24px 0;
 	border-top: 1px solid #2f2f2f;
+	// Hide the original border only when the notice is present.
+	+ .edit-site-save-hub {
+		border-top: none;
+		padding-top: 0;
+	}
 }
 
 .wpcom-global-styles-notice {

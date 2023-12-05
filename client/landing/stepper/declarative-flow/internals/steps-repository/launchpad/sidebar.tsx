@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Badge, CircularProgressBar, Gridicon } from '@automattic/components';
+import { Badge, CircularProgressBar, Gridicon, Tooltip } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { LaunchpadInternal } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
@@ -10,7 +10,6 @@ import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Tooltip from 'calypso/components/tooltip';
 import { type NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';

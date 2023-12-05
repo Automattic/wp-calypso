@@ -155,7 +155,8 @@
 .link-in-bio-tld:not(.domains),
 .free,
 .build,
-.write {
+.write,
+.assembler-first {
 	.step-container {
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
@@ -378,9 +379,10 @@
 	}
 }
 
-// Write and Build flow
+// Write, Build, and Assembler First flow
 .write.launchpad,
-.build.launchpad {
+.build.launchpad,
+.assembler-first.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
 	}

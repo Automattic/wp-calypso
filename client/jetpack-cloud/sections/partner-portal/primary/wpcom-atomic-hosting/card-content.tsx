@@ -1,10 +1,9 @@
 import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
+import { Button, JetpackLogo, WooLogo, CloudLogo, Tooltip } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useDispatch } from 'calypso/state';
