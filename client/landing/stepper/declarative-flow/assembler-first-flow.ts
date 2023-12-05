@@ -72,6 +72,7 @@ const assemblerFirstFlow: Flow = {
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
+			STEPS.CELEBRATION,
 		];
 	},
 
@@ -126,7 +127,10 @@ const assemblerFirstFlow: Flow = {
 			return navigate( `patternAssembler?${ params }` );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
+		const submit = async (
+			providedDependencies: ProvidedDependencies = {},
+			...results: string[]
+		) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
@@ -168,6 +172,14 @@ const assemblerFirstFlow: Flow = {
 						} );
 					}
 
+					// If the user's site has just been launched.
+					if ( providedDependencies?.siteSlug && providedDependencies?.blogLaunched ) {
+						await saveSiteSettings( providedDependencies?.siteSlug, {
+							launchpad_screen: 'off',
+						} );
+						return navigate( 'celebration-step' );
+					}
+
 					const params = new URLSearchParams( {
 						canvas: 'edit',
 						assembler: '1',
@@ -179,6 +191,13 @@ const assemblerFirstFlow: Flow = {
 				case 'patternAssembler': {
 					return navigate( 'processing' );
 				}
+
+				case 'launchpad': {
+					return navigate( 'processing' );
+				}
+
+				case 'celebration-step':
+					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		};
 
