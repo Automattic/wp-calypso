@@ -54,11 +54,9 @@ export const StagingSiteCard = ( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const [ syncError, setSyncError ] = useState( null );
-<<<<<<< HEAD
-=======
-	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+	// eslint-disable-next-line no-unused-vars
+	const [ _, setIsErrorValidQuota ] = useState( false );
 
->>>>>>> 4b4dd5cec2 (Staging Sites: Fix problem with staging site add/delete state)
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
 	const removeAllNotices = () => {
@@ -168,16 +166,9 @@ export const StagingSiteCard = ( {
 	} );
 
 	useEffect( () => {
-<<<<<<< HEAD
-		if ( wasCreating && isStagingSiteTransferComplete ) {
-			queryClient.invalidateQueries( {
-				queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ],
-			} );
-=======
 		if ( stagingSiteStatus === StagingSiteStatus.COMPLETE ) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
->>>>>>> 4b4dd5cec2 (Staging Sites: Fix problem with staging site add/delete state)
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
