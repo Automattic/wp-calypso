@@ -1,3 +1,5 @@
+import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import GetHelpNav from '../get-help-nav';
 import QuickLinksNav from '../quick-links-nav';
@@ -18,6 +20,14 @@ export default function OverviewSidebar() {
 			></iframe>
 			<QuickLinksNav />
 			<GetHelpNav />
+
+			<Button
+				href={ localizeUrl( 'https://jetpack.com/contact-support/' ) }
+				className="contact-support-button"
+				onClick={ () => {} }
+			>
+				{ translate( 'Contact support' ) }
+			</Button>
 		</>
 	);
 }
