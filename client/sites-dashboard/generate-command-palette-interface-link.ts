@@ -7,7 +7,7 @@ export const generateLink = ( site: SiteExcerptData, calypsoBase: string, wpAdmi
 
 	const targetLink = isWpAdminDefault
 		? `${ site.URL }/wp-admin/${ wpAdminBase }`
-		: `${ calypsoBase }/${ site.slug }`;
+		: `/${ calypsoBase }/${ site.slug }`;
 
 	return targetLink;
 };

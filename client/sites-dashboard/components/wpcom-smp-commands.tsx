@@ -35,6 +35,7 @@ import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
+import { generateLink } from '../generate-command-palette-interface-link';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site, siteDefaultInterface } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
@@ -619,11 +620,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						siteDefaultInterface( site ) === 'wp-admin'
-							? `${ site.URL }/wp-admin/post-new.php`
-							: `/post/${ site.slug }`;
+					const link = generateLink( site, 'post', 'post-new.php' );
 					navigate( link );
 				},
 			},
@@ -640,11 +637,7 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						siteDefaultInterface( site ) === 'wp-admin'
-							? `${ site.URL }/wp-admin/edit.php`
-							: `/posts/${ site.slug }`;
+					const link = generateLink( site, 'posts', 'edit.php' );
 					navigate( link );
 				},
 			},
