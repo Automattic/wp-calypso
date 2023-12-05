@@ -259,7 +259,6 @@ export class RenderDomainsStep extends Component {
 		) {
 			this.setState( { wpcomSubdomainSelected: suggestion } );
 			this.props.saveSignupStep( stepData );
-
 			return;
 		}
 
@@ -278,14 +277,19 @@ export class RenderDomainsStep extends Component {
 			suggestion?.is_premium
 		);
 		await this.props.saveSignupStep( stepData );
-		await this.submitWithDomain( { signupDomainOrigin, position } );
 
-		// If we already have a free selection in place, let's enforce that as a free site suggestion
-		if ( this.state.wpcomSubdomainSelected ) {
-			await this.props.saveSignupStep( {
-				stepName: this.props.stepName,
-				suggestion: this.state.wpcomSubdomainSelected,
-			} );
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
+			this.handleDomainToDomainCart();
+
+			// If we already have a free selection in place, let's enforce that as a free site suggestion
+			if ( this.state.wpcomSubdomainSelected ) {
+				await this.props.saveSignupStep( {
+					stepName: this.props.stepName,
+					suggestion: this.state.wpcomSubdomainSelected,
+				} );
+			}
+		} else {
+			await this.submitWithDomain( { signupDomainOrigin, position } );
 		}
 	};
 
@@ -399,12 +403,9 @@ export class RenderDomainsStep extends Component {
 	};
 
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
-		const { step, flowName } = this.props;
+		const { step } = this.props;
 		const { suggestion } = step;
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) && suggestion ) {
-			return this.handleDomainToDomainCart();
-		}
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
