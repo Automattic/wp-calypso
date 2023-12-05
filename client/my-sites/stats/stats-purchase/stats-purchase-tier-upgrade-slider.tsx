@@ -13,7 +13,7 @@ type TierUpgradeSliderProps = {
 	className?: string;
 	tiers: StatsPlanTierUI[];
 	currencyCode: string;
-	setPurchaseTierQuantity: ( quantity: number ) => void;
+	onSliderChange: ( index: number ) => void;
 };
 
 function useTranslatedStrings() {
@@ -39,7 +39,7 @@ function TierUpgradeSlider( {
 	className,
 	tiers,
 	currencyCode,
-	setPurchaseTierQuantity,
+	onSliderChange,
 }: TierUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
@@ -53,8 +53,7 @@ function TierUpgradeSlider( {
 
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
-
-		setPurchaseTierQuantity( tiers[ value ]?.views as number );
+		onSliderChange( value );
 	};
 
 	const translatedStrings = useTranslatedStrings();
@@ -129,26 +128,32 @@ function TierUpgradeSlider( {
 
 type StatsCommercialUpgradeSliderProps = {
 	currencyCode: string;
-	onSliderChanged: ( quantity: number ) => void;
+	onSliderChange: ( quantity: number ) => void;
 };
 
 export function StatsCommercialUpgradeSlider( {
 	currencyCode,
-	onSliderChanged,
+	onSliderChange,
 }: StatsCommercialUpgradeSliderProps ) {
-	// const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const tiers = useAvailableUpgradeTiers( siteId );
 	// 1. Prepare and translate UI strings.
 	// 2. Fetch tier data.
 	// 3. Transform data for slider.
 	// 4. Render component parts.
+
+	// const translate = useTranslate();
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const tiers = useAvailableUpgradeTiers( siteId );
+
+	const handleSliderChanged = ( index: number ) => {
+		onSliderChange( tiers[ index ]?.views as number );
+	};
+
 	return (
 		<TierUpgradeSlider
 			className="stats-commercial-upgrade-slider"
 			tiers={ tiers }
 			currencyCode={ currencyCode }
-			setPurchaseTierQuantity={ onSliderChanged }
+			onSliderChange={ handleSliderChanged }
 		/>
 	);
 }
