@@ -48,7 +48,7 @@ const LaunchpadSiteWrapper: Step = ( {
 	);
 };
 
-function Launchpad( {
+export function Launchpad( {
 	siteSlug,
 	siteId,
 	site,

@@ -13,7 +13,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import Launchpad from '../index';
+import { Launchpad } from '../index';
 import { buildSiteDetails, defaultSiteDetails, MOCK_USE_QUERY_RESULT } from './lib/fixtures';
 
 jest.mock( '../launchpad-site-preview', () => () => {
@@ -86,7 +86,12 @@ function renderLaunchpad(
 		return (
 			<Provider store={ reduxStore }>
 				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
-					<Launchpad { ...props } />
+					<Launchpad
+						siteId={ siteDetails.ID }
+						siteSlug={ siteSlug }
+						site={ siteDetails }
+						{ ...props }
+					/>
 				</MemoryRouter>
 			</Provider>
 		);
