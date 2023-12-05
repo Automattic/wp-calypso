@@ -69,6 +69,7 @@ function StatsPWYWUpgradeSlider() {
 			className="stats-pwyw-upgrade-slider"
 			uiStrings={ strings }
 			steps={ steps }
+			initialValue={ ( steps.length - 1 ) / 2 }
 			onSliderChange={ handleSliderChanged }
 			marks={ marks }
 		/>
