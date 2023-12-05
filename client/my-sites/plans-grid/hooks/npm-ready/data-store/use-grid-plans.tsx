@@ -149,7 +149,6 @@ interface Props {
 	selectedPlan?: PlanSlug;
 	sitePlanSlug?: PlanSlug | null;
 	hideEnterprisePlan?: boolean;
-	isInSignup?: boolean;
 	// whether plan is upgradable from current plan (used in logged-in state)
 	usePlanUpgradeabilityCheck?: ( {
 		planSlugs,
@@ -282,7 +281,6 @@ const useGridPlans = ( {
 	selectedPlan,
 	sitePlanSlug,
 	hideEnterprisePlan,
-	isInSignup,
 	usePlanUpgradeabilityCheck,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
@@ -344,7 +342,7 @@ const useGridPlans = ( {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const planObject = pricedAPIPlans.data?.[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
-		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
+		const availableForPurchase = !! planUpgradeability?.[ planSlug ];
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
