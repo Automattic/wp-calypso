@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Tooltip } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
@@ -13,7 +13,6 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
-import Tooltip from 'calypso/components/tooltip';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 
