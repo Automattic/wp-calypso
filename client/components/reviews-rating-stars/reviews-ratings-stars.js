@@ -11,7 +11,6 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 		rating,
 		averageRating,
 		numberOfReviews,
-		isInteractive = false,
 		size = 'medium',
 		showSelectedRating = false,
 		children,
@@ -26,33 +25,28 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 	const [ ratingState, setRatingState ] = useState( rating );
 	const [ hoverRating, setHoverRating ] = useState( rating );
 
-	const onStarMouseEnter = isInteractive ? ( index ) => setHoverRating( index ) : null;
-	const onStarMouseLeave = isInteractive ? () => setHoverRating( ratingState ) : null;
-	const onSaveRating = isInteractive
-		? ( e, index ) => {
-				setRatingState( index );
-				if ( onSelectRating ) {
-					onSelectRating( index );
-				}
-		  }
-		: null;
+	const onStarMouseEnter = ( index ) => setHoverRating( index );
+	const onStarMouseLeave = () => setHoverRating( ratingState );
+	const onSaveRating = ( e, index ) => {
+		setRatingState( index );
+		if ( onSelectRating ) {
+			onSelectRating( index );
+		}
+	};
 
 	useEffect( () => {
 		setRatingState( rating );
 		setHoverRating( rating );
 	}, [ rating ] );
 
-	const classNames = [ 'wccom-ratings__star-bar' ];
-	if ( ! isInteractive ) {
-		classNames.push( 'wccom-ratings__star-bar--read-only' );
-	}
+	const classNames = [ 'reviews-ratings-stars__star-bar' ];
 
 	switch ( size ) {
 		case 'medium-small':
-			classNames.push( 'wccom-ratings__star-bar--medium-small' );
+			classNames.push( 'reviews-ratings-stars__star-bar--medium-small' );
 			break;
 		case 'medium-large':
-			classNames.push( 'wccom-ratings__star-bar--medium-large' );
+			classNames.push( 'reviews-ratings-stars__star-bar--medium-large' );
 			break;
 	}
 
@@ -93,12 +87,12 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 			) : (
 				<>
 					{ averageRating && (
-						<div className="wccom-ratings__average">
+						<div className="reviews-ratings-stars__average">
 							<span className="screen-reader-text">{ translate( 'Average rating ' ) }</span>
 							{ averageRating }
 						</div>
 					) }
-					<div className="wccom-ratings__stars" aria-hidden={ isInteractive ? 'false' : 'true' }>
+					<div className="reviews-ratings-stars__stars" aria-hidden="false">
 						{ Array( MAX_RATING )
 							.fill( null )
 							.map( ( _, index ) => {
@@ -117,9 +111,9 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 									onMouseEnter: onStarMouseEnter,
 									onMouseLeave: onStarMouseLeave,
 									onClick: onSaveRating,
-									className: 'wccom-ratings__star',
-									isInteractive,
-									tabIndex: isInteractive ? 0 : -1,
+									className: 'reviews-ratings-stars__star',
+									isInteractive: true,
+									tabIndex: 0,
 									ariaLabel: ratingStarsScreenReaderText,
 								};
 
@@ -131,10 +125,10 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 							} ) }
 					</div>
 					{ numberOfReviewsText && (
-						<div className="wccom-ratings__rating-count">{ numberOfReviewsText }</div>
+						<div className="reviews-ratings-stars__rating-count">{ numberOfReviewsText }</div>
 					) }
 					{ selectedRatingText && (
-						<div className="wccom-ratings__selected-rating">{ selectedRatingText }</div>
+						<div className="reviews-ratings-stars__selected-rating">{ selectedRatingText }</div>
 					) }
 				</>
 			) }

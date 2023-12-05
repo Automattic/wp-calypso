@@ -14,21 +14,13 @@ import './styles.scss';
 
 type Props = {
 	isVisible: boolean;
-	buttons: React.ReactElement[];
 	onClose: () => void;
 	slug: string;
 	productName: string;
 	productType: ProductType;
 };
 
-export const ReviewsModal = ( {
-	isVisible,
-	buttons,
-	onClose,
-	slug,
-	productName,
-	productType,
-}: Props ) => {
+export const ReviewsModal = ( { isVisible, onClose, slug, productName, productType }: Props ) => {
 	const [ content, setContent ] = useState< string >( '' );
 	const [ rating, setRating ] = useState< string >( '5' );
 
@@ -39,7 +31,6 @@ export const ReviewsModal = ( {
 			<Dialog
 				className="marketplace-reviews-modal"
 				isVisible={ isVisible }
-				buttons={ buttons }
 				onClose={ onClose }
 				showCloseIcon
 			>
@@ -61,7 +52,6 @@ export const ReviewsModal = ( {
 		<Dialog
 			className="marketplace-reviews-modal"
 			isVisible={ isVisible }
-			buttons={ buttons }
 			onClose={ onClose }
 			showCloseIcon
 		>
