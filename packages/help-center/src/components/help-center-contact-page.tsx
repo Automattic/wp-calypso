@@ -111,12 +111,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		return __( 'Email', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
-	const forumtHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Public Forums (English)' ) ) {
-			return __( 'Public Forums', __i18n_text_domain__ );
+	const forumHeaderText = useMemo( () => {
+		if ( isDefaultLocale( locale ) ) {
+			return __( 'Community Forums', __i18n_text_domain__ );
 		}
-
-		return __( 'Public Forums (English)', __i18n_text_domain__ );
+		return __( 'Community Forums (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
@@ -176,8 +175,10 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 								<Icon icon={ <Forum /> } />
 							</div>
 							<div>
-								<h2>{ forumtHeaderText }</h2>
-								<p>{ __( 'Ask our WordPress.com community', __i18n_text_domain__ ) }</p>
+								<h2>{ forumHeaderText }</h2>
+								<p>
+									{ __( 'Your question and any answers will be public', __i18n_text_domain__ ) }
+								</p>
 							</div>
 						</div>
 					</Link>

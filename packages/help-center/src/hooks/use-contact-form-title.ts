@@ -27,7 +27,7 @@ export const useContactFormTitle = (
 		FORUM: {
 			formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
 			formDisclaimer: __(
-				'Please do not provide financial or contact information when submitting this form.',
+				'Please do not share financial or contact information. Your question and any answers will be public.',
 				__i18n_text_domain__
 			),
 			buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
