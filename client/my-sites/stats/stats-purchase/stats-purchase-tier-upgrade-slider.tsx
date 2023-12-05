@@ -3,8 +3,10 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useRef } from 'react';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { StatsPlanTierUI } from './types';
 import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
 import './stats-purchase-tier-upgrade-slider.scss';
 
@@ -42,8 +44,28 @@ function TierUpgradeSlider( {
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const tiers = useAvailableUpgradeTiers( siteId );
+	const availableTiers = useAvailableUpgradeTiers( siteId );
 	const EXTENSION_THRESHOLD = 2; // in millions
+
+	// Filter out already purchased tiers.
+	const { data: purchasedTierData } = usePlanUsageQuery( siteId );
+	let tiers: StatsPlanTierUI[];
+
+	if ( purchasedTierData?.views_limit === null || purchasedTierData?.views_limit === 0 ) {
+		// No tier has been purchased.
+		tiers = availableTiers;
+	} else {
+		tiers = availableTiers.filter( ( availableTier ) => {
+			if ( ! availableTier?.views || ! purchasedTierData?.views_limit ) {
+				return true;
+			}
+
+			return (
+				availableTier.views === null ||
+				( availableTier?.views as number ) > purchasedTierData?.views_limit
+			);
+		} );
+	}
 
 	// Slider state.
 	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
