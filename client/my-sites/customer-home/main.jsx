@@ -27,7 +27,6 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
-import { useDispatch } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
@@ -70,12 +69,12 @@ const Home = ( {
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
+	handleVerifyIcannEmail,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
@@ -189,7 +188,7 @@ const Home = ( {
 					showDismiss={ false }
 					status="is-warning"
 				>
-					<NoticeAction onClick={ () => dispatch( verifyIcannEmail( customDomain.name ) ) }>
+					<NoticeAction onClick={ () => handleVerifyIcannEmail( customDomain.name ) }>
 						{ translate( 'Resend Email' ) }
 					</NoticeAction>
 				</Notice>
@@ -278,6 +277,7 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 
 const mapDispatchToProps = {
 	trackViewSiteAction,
+	verifyIcannEmail,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -286,6 +286,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
+		handleVerifyIcannEmail: dispatchProps.verifyIcannEmail,
 	};
 };
 
