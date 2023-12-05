@@ -88,6 +88,7 @@ button {
 .free-post-setup,
 .free,
 .with-theme-assembler,
+.assembler-first,
 .setup-blog,
 .celebration-step,
 .use-my-domain,
@@ -121,6 +122,12 @@ button {
 	.import-step,
 	.importer-step {
 		@include onboarding-block-margin;
+	}
+
+	&.site-picker,
+	&.new-or-existing-site,
+	&.launchpad {
+		padding: 0;
 	}
 
 	/**

@@ -18,6 +18,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
+	isSiteAssemblerFlow,
 	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -138,6 +139,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isMigrationFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
+		isSiteAssemblerFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
