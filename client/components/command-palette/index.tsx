@@ -12,7 +12,6 @@ import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
-	isContextual?: boolean;
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
@@ -240,7 +239,6 @@ const CommandPalette = () => {
 							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
 						) }
 						<CommandMenuGroup
-							isContextual={ ! search && ! selectedCommandName }
 							search={ search }
 							close={ closeAndReset }
 							setSearch={ setSearch }
