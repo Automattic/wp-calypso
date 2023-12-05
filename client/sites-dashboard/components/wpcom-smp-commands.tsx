@@ -26,6 +26,7 @@ import {
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { generateSiteInterfaceLink } from 'calypso/components/command-palette/generate-command-palette-interface-link';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
@@ -35,7 +36,6 @@ import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import { generateSiteInterfaceLink } from '../generate-command-palette-interface-link';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {

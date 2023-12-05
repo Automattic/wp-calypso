@@ -1,5 +1,5 @@
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { siteDefaultInterface } from './utils';
+import { siteDefaultInterface } from 'calypso/sites-dashboard/utils';
 
 export const generateSiteInterfaceLink = (
 	site: SiteExcerptData,
