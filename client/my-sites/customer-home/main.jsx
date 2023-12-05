@@ -69,6 +69,7 @@ const Home = ( {
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
+	handleVerifyIcannEmail,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -187,7 +188,7 @@ const Home = ( {
 					showDismiss={ false }
 					status="is-warning"
 				>
-					<NoticeAction onClick={ () => verifyIcannEmail( customDomain.name ) }>
+					<NoticeAction onClick={ () => handleVerifyIcannEmail( customDomain.name ) }>
 						{ translate( 'Resend Email' ) }
 					</NoticeAction>
 				</Notice>
@@ -276,6 +277,7 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 
 const mapDispatchToProps = {
 	trackViewSiteAction,
+	verifyIcannEmail,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -284,6 +286,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
+		handleVerifyIcannEmail: dispatchProps.verifyIcannEmail,
 	};
 };
 
