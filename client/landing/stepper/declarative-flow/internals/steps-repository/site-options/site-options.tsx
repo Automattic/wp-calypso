@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
@@ -56,9 +55,6 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 		setSiteTitle( site.name || '' );
 		setTagline( site.description );
 	}, [ site, formTouched ] );
-
-	const shouldHideActionButtons =
-		getQueryArg( window.location.search, 'flowToReturnTo' ) !== undefined;
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -159,7 +155,6 @@ export const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) =
 				className={ `is-step-${ intent }` }
 				headerImageUrl={ headerImage }
 				hideSkip={ true }
-				hideBack={ shouldHideActionButtons }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout

@@ -34,7 +34,16 @@ const updateOptions: Flow = {
 			}
 		}
 
-		return { submit };
+		const goBack = async () => {
+			switch ( currentStep ) {
+				case 'options':
+					return window.location.assign(
+						`/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }`
+					);
+			}
+		};
+
+		return { goBack, submit };
 	},
 };
 
