@@ -65,6 +65,23 @@ function TierUpgradeSlider( {
 	const lhValue = hasExtension
 		? EXTENSION_THRESHOLD * 1000000
 		: Number( tiers[ currentPlanIndex ]?.views );
+	const rhValue = tiers[ currentPlanIndex ]?.price;
+
+	// Special case for per-unit fees.
+	const hasPerUnitFee = !! tiers[ currentPlanIndex ]?.per_unit_fee;
+	const perUnitFee = hasPerUnitFee ? Number( tiers[ currentPlanIndex ]?.per_unit_fee ) : 0;
+	const perUnitFeeMessaging = translate(
+		'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
+		{
+			args: {
+				views_extension_limit: EXTENSION_THRESHOLD,
+				extension_value: formatCurrency( perUnitFee, currencyCode, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+			},
+		}
+	);
 
 	return (
 		<div className={ componentClassNames }>
@@ -79,7 +96,7 @@ function TierUpgradeSlider( {
 				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
 					<h2>{ uiStrings.price }</h2>
 					<p className="right-aligned" ref={ infoReferenceElement }>
-						{ tiers[ currentPlanIndex ]?.price }
+						{ rhValue }
 					</p>
 				</div>
 			</div>
@@ -99,23 +116,7 @@ function TierUpgradeSlider( {
 				className="stats-tier-upgrade-slider__extension-popover-wrapper"
 			>
 				<div className="stats-tier-upgrade-slider__extension-popover-content">
-					{ tiers[ currentPlanIndex ]?.per_unit_fee &&
-						translate(
-							'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
-							{
-								args: {
-									views_extension_limit: EXTENSION_THRESHOLD,
-									extension_value: formatCurrency(
-										tiers[ currentPlanIndex ].per_unit_fee as number,
-										currencyCode,
-										{
-											isSmallestUnit: true,
-											stripZeros: true,
-										}
-									),
-								},
-							}
-						) }
+					{ hasPerUnitFee && perUnitFeeMessaging }
 				</div>
 			</Popover>
 			<p className="stats-tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
