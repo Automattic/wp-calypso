@@ -4,7 +4,6 @@
 $breakpoint-mobile: 782px; //Mobile size.
 
 form {
-	max-width: 400px;
 	margin-left: auto;
 	margin-right: auto;
 	align-items: center;
@@ -14,29 +13,35 @@ form {
 	}
 }
 
-form.is-social-first {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	max-width: 758px;
-	margin-top: 32px;
+.is-white-login {
+	form {
+		max-width: 400px;
 
-	@media (max-width: $breakpoint-mobile ) {
-		flex-direction: column;
-		margin-top: 24px;
-	}
+		&.is-social-first {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			max-width: 758px;
+			margin-top: 32px;
 
-	.card.login__form,
-	.card.auth-form__social {
-		width: 100%;
-		max-width: var(--login-form-column-max-width);
-		padding: 0 16px;
-		margin: 0;
-	}
+			@media (max-width: $breakpoint-mobile ) {
+				flex-direction: column;
+				margin-top: 24px;
+			}
 
-	.card.login__form {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+			.card.login__form,
+			.card.auth-form__social {
+				width: 100%;
+				max-width: var(--login-form-column-max-width);
+				padding: 0 16px;
+				margin: 0;
+			}
+
+			.card.login__form {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+		}
 	}
 }

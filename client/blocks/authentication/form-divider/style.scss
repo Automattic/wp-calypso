@@ -6,6 +6,7 @@ $separator-style: 1px solid #eaeaeb;
 $breakpoint-mobile: 660px;
 
 .auth-form__separator {
+	background: var(--color-surface);
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -38,8 +39,20 @@ $breakpoint-mobile: 660px;
 	}
 }
 
+// In this case the separator will be horizontal
+.wp-login__main {
+	.auth-form__separator {
+		width: 100%;
+	}
+
+	.auth-form__separator-text {
+		padding: 0 24px;
+	}
+}
+
+// In this case we want the separator to be vertical
 .signup-form,
-.wp-login__main.is-social-first {
+.is-white-login .is-social-first {
 	.auth-form__separator {
 		width: calc(100% - 32px);
 		margin: 20px 0;
@@ -78,16 +91,6 @@ $breakpoint-mobile: 660px;
 		@media screen and (max-width: $breakpoint-mobile ) {
 			padding: 0 24px;
 		}
-	}
-}
-
-.wp-login__main:not(.is-social-first) {
-	.auth-form__separator {
-		width: 100%;
-	}
-
-	.auth-form__separator-text {
-		padding: 0 24px;
 	}
 }
 

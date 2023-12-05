@@ -208,23 +208,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__form-subheader-terms {
-	max-width: 420px;
-	margin: 0 auto;
-
-	color: var(--studio-gray-50, #646970);
-	text-align: center;
-	font-size: $font-body-small;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 20px;
-
-	a {
-		color: var(--studio-gray-50, #646970);
-		text-decoration: underline;
-	}
-}
-
 .login__form-terms,
 .login__form-signup-link {
 	font-size: $font-body-extra-small;
@@ -564,31 +547,30 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.layout.is-jetpack-login {
-	.auth-form__separator {
-		background: var(--color-surface);
-		margin-bottom: -10px;
-		margin-top: -10px;
-
-		.auth-form__separator-text {
-			font-size: 0.875rem;
-		}
-	}
+.login__form-subheader-terms {
+	display: none;
 }
 
-.layout.jetpack-cloud {
-	.auth-form__separator {
-		width: 100%;
+.is-white-login {
+	.login__form-subheader-terms {
+		display: block;
+		max-width: 420px;
+		margin: 0 auto;
 
-		&::before {
-			background: var(--color-neutral-5);
-			content: "";
-			height: 1px;
-			left: 0;
-			position: absolute;
-			top: 50%;
-			width: 100%;
-			z-index: 1;
+		color: var(--studio-gray-50, #646970);
+		text-align: center;
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+
+		a {
+			color: var(--studio-gray-50, #646970);
+			text-decoration: underline;
 		}
+	}
+
+	.login__form-terms {
+		display: none;
 	}
 }
