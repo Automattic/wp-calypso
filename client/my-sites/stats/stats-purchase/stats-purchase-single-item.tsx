@@ -15,7 +15,9 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
-import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
+import TierUpgradeSlider, {
+	StatsCommercialUpgradeSlider,
+} from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
@@ -125,6 +127,10 @@ Thanks\n\n`;
 	// Currently displaying below the flow to maintain existing behaviour.
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
+	const handleSliderChanged = ( value: number ) => {
+		setPurchaseTierQuantity( value );
+	};
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
@@ -149,6 +155,10 @@ Thanks\n\n`;
 					<TierUpgradeSlider
 						currencyCode={ currencyCode }
 						setPurchaseTierQuantity={ setPurchaseTierQuantity }
+					/>
+					<StatsCommercialUpgradeSlider
+						currencyCode={ currencyCode }
+						onSliderChanged={ handleSliderChanged }
 					/>
 					<ButtonComponent
 						variant="primary"
