@@ -202,6 +202,29 @@ export const useCommandsArrayWpcom = ( {
 		}
 	};
 
+	const disableEdgeCache = async ( siteId: number ) => {
+		const currentStatus = await getEdgeCacheStatus( siteId );
+
+		if ( ! currentStatus ) {
+			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success' );
+			return;
+		}
+
+		const { removeNotice: removeLoadingNotice } = displayNotice(
+			__( 'Disabling global edge cache…' ),
+			'is-plain',
+			5000
+		);
+		try {
+			await toggleEdgeCache( siteId, false );
+			removeLoadingNotice();
+			displayNotice( __( 'Global edge cache disabled.' ) );
+		} catch ( error ) {
+			removeLoadingNotice();
+			displayNotice( __( 'Failed to disable global edge cache.' ), 'is-error' );
+		}
+	};
+
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	const commands = [
@@ -235,6 +258,20 @@ export const useCommandsArrayWpcom = ( {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
 					enableEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) =>
+					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			},
+			icon: <MaterialIcon icon="autorenew" />,
+		},
+		{
+			name: 'disableEdgeCache',
+			label: __( 'Disable edge cache' ),
+			callback: setStateCallback( 'disableEdgeCache', __( 'Select a site to disable edge cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					disableEdgeCache( site.ID );
 				},
 				filter: ( site: SiteExcerptData ) =>
 					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
