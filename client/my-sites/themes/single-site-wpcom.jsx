@@ -2,10 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_PREMIUM,
+	PLAN_ECOMMERCE,
 	PLAN_BUSINESS,
 	getPlan,
 } from '@automattic/calypso-products';
-import { PLAN_ECOMMERCE } from '@automattic/data-stores/src/plans/constants';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
