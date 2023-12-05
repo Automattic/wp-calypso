@@ -1,7 +1,7 @@
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
-	arrowDown as arrowDownIcon,
+	arrowUp as arrowDownIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
