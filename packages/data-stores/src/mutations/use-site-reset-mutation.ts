@@ -2,7 +2,18 @@ import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
-export const useSiteResetMutation = < TData = unknown, TError = unknown, TContext = unknown >(
+interface APIResponse {
+	success: boolean;
+}
+
+export interface APIError {
+	status: number;
+	code: string | null;
+	message: string;
+	data?: any;
+}
+
+export const useSiteResetMutation = < TData = APIResponse, TError = APIError, TContext = unknown >(
 	options: UseMutationOptions< TData, TError, { siteId: number }, TContext > = {}
 ) => {
 	const { mutate, ...rest } = useMutation( {
