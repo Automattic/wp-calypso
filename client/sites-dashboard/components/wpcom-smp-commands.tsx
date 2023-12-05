@@ -1,6 +1,7 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, JetpackLogo } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
+	arrowDown as arrowDownIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -151,6 +152,35 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'addJetpack',
+			label: __( 'Add Jetpack to a self-hosted site' ),
+			searchLabel: [
+				_x(
+					'Add Jetpack to a self-hosted site',
+					'Keyword for Add Jetpack to a self-hosted site command'
+				),
+				_x( 'connect jetpack', 'Keyword for Add Jetpack to a self-hosted site command' ),
+			].join( ' ' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/jetpack/connect?cta_from=command-palette` );
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
+			name: 'importSite',
+			label: __( 'Import site to WordPress.com' ),
+			searchLabel: [
+				_x( 'Import site to WordPress.com', 'Keyword for Import site to WordPress.com command' ),
+				_x( 'migrate site', 'Keyword for Import site to WordPress.com command' ),
+			].join( ' ' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/start/import?source=command-palette` );
+			},
+			icon: arrowDownIcon,
 		},
 		{
 			name: 'openReader',
@@ -750,6 +780,29 @@ export const useCommandsArrayWpcom = ( {
 			icon: brushIcon,
 		},
 		{
+			name: 'installTheme',
+			label: __( 'Install theme' ),
+			searchLabel: [
+				_x( 'install theme', 'Keyword for the Install theme command' ),
+				_x( 'add theme', 'Keyword for the Install theme command' ),
+				_x( 'upload theme', 'Keyword for the Install theme command' ),
+			].join( ' ' ),
+			callback: setStateCallback( 'installTheme', __( 'Select site to install theme' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/theme-install.php`
+							: `/themes/${ site.slug }`;
+					navigate( link );
+				},
+				filter: ( site: SiteExcerptData ) => site?.jetpack,
+			},
+			icon: brushIcon,
+		},
+		{
 			name: 'managePlugins',
 			label: __( 'Manage plugins' ),
 			searchLabel: [
@@ -772,6 +825,29 @@ export const useCommandsArrayWpcom = ( {
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
+			},
+			icon: pluginsIcon,
+		},
+		{
+			name: 'installPlugin',
+			label: __( 'Install plugin' ),
+			searchLabel: [
+				_x( 'install plugin', 'Keyword for the Install plugin command' ),
+				_x( 'add plugin', 'Keyword for the Install plugin command' ),
+				_x( 'upload plugin', 'Keyword for the Install plugin command' ),
+			].join( ' ' ),
+			callback: setStateCallback( 'installPlugin', __( 'Select site to install plugin' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/plugin-install.php`
+							: `/plugins/${ site.slug }`;
+					navigate( link );
+				},
+				filter: ( site: SiteExcerptData ) => site?.jetpack,
 			},
 			icon: pluginsIcon,
 		},
@@ -884,6 +960,27 @@ export const useCommandsArrayWpcom = ( {
 			icon: uploadIcon,
 		},
 		{
+			name: 'manageSettingsGeneral',
+			label: __( 'Manage general settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback(
+				'manageSettingsGeneral',
+				__( 'Select site to manage general settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-general.php`
+							: `/settings/general/${ site.slug }`;
+					navigate( link );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings' ),
 			context: [ '/settings' ],
@@ -894,7 +991,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/writing/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-writing.php`
+							: `/settings/writing/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
@@ -910,7 +1012,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/reading/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-reading.php`
+							: `/settings/reading/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
@@ -926,7 +1033,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/discussion/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-discussion.php`
+							: `/settings/discussion/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
