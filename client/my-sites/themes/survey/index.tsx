@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
+import { useState } from 'react';
 import Banner from 'calypso/components/banner';
 import './survey.scss';
 
@@ -33,7 +33,7 @@ let isGloballyDismissed = false;
 
 const Survey = ( { survey, condition, title = null }: SurveyProps ) => {
 	const surveyData = surveys.get( survey );
-	const [ isDismissed, setIsDismissed ] = React.useState( isGloballyDismissed );
+	const [ isDismissed, setIsDismissed ] = useState( isGloballyDismissed );
 
 	if ( ! isVisible && condition() ) {
 		isVisible = true;
