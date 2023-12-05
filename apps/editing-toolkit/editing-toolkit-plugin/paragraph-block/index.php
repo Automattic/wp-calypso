@@ -24,7 +24,7 @@ function paragraph_block_script() {
 	);
 
 	global $post;
-	if ( isset( $post ) && is_post_with_write_intent( $post ) ) {
+	if ( is_post_with_write_intent( $post ) ) {
 		wp_localize_script(
 			'paragraph-block-script',
 			'wpcomParagraphBlockPlaceholder',
@@ -44,7 +44,7 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\paragraph_block_scr
  * @param WP_Post $post Current post object.
  */
 function is_post_with_write_intent( $post ) {
-	return 'post' === $post->post_type && 'write' === get_option( 'site_intent', '' );
+	return isset( $post ) && 'post' === $post->post_type && 'write' === get_option( 'site_intent', '' );
 }
 
 /**
