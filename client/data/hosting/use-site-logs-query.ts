@@ -20,10 +20,15 @@ export type SiteLogsData = {
 
 export type SiteLogsTab = 'php' | 'web';
 
+export interface FilterType {
+	[ key: string ]: Array< string >;
+}
+
 export interface SiteLogsParams {
 	logType: SiteLogsTab;
 	start: number;
 	end: number;
+	filter: FilterType;
 	sortOrder?: 'asc' | 'desc';
 	pageSize?: number;
 	pageIndex?: number;
@@ -66,6 +71,7 @@ export function useSiteLogsQuery(
 				{
 					start: params.start,
 					end: params.end,
+					filter: params.filter,
 					sort_order: params.sortOrder,
 					page_size: params.pageSize,
 					scroll_id: scrollId,
@@ -116,6 +122,7 @@ function buildQueryKey( siteId: number | null | undefined, params: SiteLogsParam
 		...buildPartialQueryKey( siteId, params ),
 		params.start,
 		params.end,
+		params.filter,
 		params.sortOrder,
 		params.pageSize,
 		params.pageIndex,
@@ -130,6 +137,31 @@ function areRequestParamsEqual( a: SiteLogsParams, b: SiteLogsParams ) {
 		a.start === b.start &&
 		a.end === b.end &&
 		a.sortOrder === b.sortOrder &&
-		a.pageSize === b.pageSize
+		a.pageSize === b.pageSize &&
+		areFilterParamsEqual( a.filter, b.filter )
 	);
+}
+
+function areFilterParamsEqual( a: FilterType, b: FilterType ) {
+	for ( const filter in a ) {
+		if ( ! b.hasOwnProperty( filter ) ) {
+			return false;
+		}
+
+		if ( a[ filter ].toString() !== b[ filter ].toString() ) {
+			return false;
+		}
+	}
+
+	for ( const filter in b ) {
+		if ( ! a.hasOwnProperty( filter ) ) {
+			return false;
+		}
+
+		if ( b[ filter ].toString() !== a[ filter ].toString() ) {
+			return false;
+		}
+	}
+
+	return true;
 }
