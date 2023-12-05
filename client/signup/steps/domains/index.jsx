@@ -1174,7 +1174,6 @@ export class RenderDomainsStep extends Component {
 						hasPendingRequests={ isLoadingExperiment }
 						temporaryCart={ this.state.temporaryCart }
 						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
-						replaceDomainFailed={ this.state.replaceDomainFailed }
 					/>
 				) }
 			</ProvideExperimentData>

@@ -141,7 +141,6 @@ class DomainRegistrationSuggestion extends Component {
 			isCartPendingUpdateDomain,
 			flowName,
 			temporaryCart,
-			replaceDomainFailed,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 
@@ -202,12 +201,8 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-			if ( getDomainRegistrations( cart ).length > 0 ) {
-				buttonStyles = { ...buttonStyles, primary: false };
-			} else if ( replaceDomainFailed ) {
-				buttonStyles = { ...buttonStyles, primary: false, disabled: false };
-			}
+		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
+			buttonStyles = { ...buttonStyles, primary: false };
 		}
 
 		return {

@@ -290,7 +290,6 @@ class DomainSearchResults extends Component {
 					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 					temporaryCart={ this.props.temporaryCart }
-					replaceDomainFailed={ this.props.replaceDomainFailed }
 				/>
 			);
 
@@ -326,7 +325,6 @@ class DomainSearchResults extends Component {
 						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 						temporaryCart={ this.props.temporaryCart }
-						replaceDomainFailed={ this.props.replaceDomainFailed }
 					/>
 				);
 			} );
