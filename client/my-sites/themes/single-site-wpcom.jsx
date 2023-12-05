@@ -1,5 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_UPLOAD_THEMES, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	FEATURE_UPLOAD_THEMES,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	getPlan,
+} from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE } from '@automattic/data-stores/src/plans/constants';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -27,7 +33,14 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			event: 'calypso_themes_list_install_themes',
 			feature: FEATURE_UPLOAD_THEMES,
 			plan: PLAN_BUSINESS,
-			title: translate( 'Upload your own themes with our Business and eCommerce plans!' ),
+			title:
+				/* translators: %(planName1)s and %(planName2)s the short-hand version of the Business and Commerce plan names */
+				translate( 'Upload your own themes with our %(planName1)s and %(planName2)s plans!', {
+					args: {
+						planName1: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+						planName2: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+					},
+				} ),
 			callToAction: translate( 'Upgrade now' ),
 			showIcon: true,
 		};

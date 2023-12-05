@@ -3,7 +3,9 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	getPlan,
 } from '@automattic/calypso-products';
+import { PLAN_PREMIUM } from '@automattic/data-stores/src/plans/constants';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -55,7 +57,13 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				feature={ FEATURE_UPLOAD_THEMES }
 				plan={ PLAN_BUSINESS }
 				title={ translate(
-					'Unlock ALL premium themes and upload your own themes with our Business and eCommerce plans!'
+					'Unlock ALL premium themes and upload your own themes with our %(planName1)s and %(planName2)s plans!',
+					{
+						args: {
+							planName1: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+							planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+						},
+					}
 				) }
 				callToAction={ translate( 'Upgrade now' ) }
 				showIcon={ true }
