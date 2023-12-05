@@ -8,6 +8,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import RevokeChildLicenseDialog from '../revoke-child-license-dialog';
 
 interface Props {
 	licenseKey: string;
@@ -99,14 +100,23 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
-			{ revokeDialog && (
-				<RevokeLicenseDialog
-					licenseKey={ licenseKey }
-					product={ product }
-					siteUrl={ siteUrl }
-					onClose={ closeRevokeDialog }
-				/>
-			) }
+			{ revokeDialog &&
+				( bundleGroupSize ? (
+					<RevokeChildLicenseDialog
+						licenseKey={ licenseKey }
+						product={ product }
+						siteUrl={ siteUrl }
+						onClose={ closeRevokeDialog }
+						bundleGroupSize={ bundleGroupSize }
+					/>
+				) : (
+					<RevokeLicenseDialog
+						licenseKey={ licenseKey }
+						product={ product }
+						siteUrl={ siteUrl }
+						onClose={ closeRevokeDialog }
+					/>
+				) ) }
 		</div>
 	);
 }

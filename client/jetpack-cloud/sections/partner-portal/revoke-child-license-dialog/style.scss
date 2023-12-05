@@ -1,0 +1,82 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.revoke-child-license-dialog {
+	&.dialog.card {
+		max-height: 100vh;
+		max-width: 100vh;
+		margin: 0;
+		align-self: stretch;
+
+		@include break-small {
+			max-height: 90%;
+			max-width: 90%;
+			margin: auto 0;
+			align-self: center;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px;
+			padding: 64px;
+		}
+	}
+
+	.dialog__content {
+		max-width: 628px;
+		align-self: stretch;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		@include break-small {
+			align-self: center;
+			padding: 0;
+		}
+
+		p {
+			font-size: 1rem;
+			margin: 0;
+		}
+	}
+}
+
+.revoke-child-license-dialog__heading {
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--studio-gray-100);
+}
+
+.revoke-child-license-dialog__list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+
+	li {
+		background: url(../../../../assets/images/jetpack/jetpack-green-checkmark.svg) no-repeat 0 2px;
+		padding-inline-start: 40px;
+	}
+}
+
+.revoke-child-license-dialog__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-block-start: auto;
+
+	.button.is-primary {
+		font-weight: 600;
+	}
+
+	.button.is-borderless {
+		padding: 8px 24px;
+		text-decoration: underline;
+		font-weight: 400;
+	}
+
+	@include break-small {
+		margin-block-start: 24px;
+		flex-direction: row;
+	}
+}
