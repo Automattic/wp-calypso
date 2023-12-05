@@ -124,10 +124,15 @@
 
 	.pattern-assembler-cta__image-wrapper {
 		flex-grow: 1;
+		padding-left: 35px;
+
+		@include break-xlarge {
+			padding-left: 195px;
+		}
 
 		@include break-wide {
 			flex-grow: 0;
-			margin-right: 96px;
+			padding-left: 35px;
 		}
 
 		@media ( min-width: 1600px ) {
@@ -136,10 +141,11 @@
 	}
 
 	.pattern-assembler-cta__image {
-		width: 200px;
+		width: 350px;
+
 
 		@include break-wide {
-			width: 272px;
+			width: 405px;
 		}
 	}
 }
