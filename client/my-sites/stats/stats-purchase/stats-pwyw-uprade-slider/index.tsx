@@ -63,12 +63,14 @@ function StatsPWYWUpgradeSlider() {
 	const handleSliderChanged = () => {
 		console.log( 'handleSliderChanged' );
 	};
+	const marks = [ 0, steps.length - 1 ];
 	return (
 		<TierUpgradeSlider
 			className="stats-pwyw-upgrade-slider"
 			uiStrings={ strings }
 			steps={ steps }
 			onSliderChange={ handleSliderChanged }
+			marks={ marks }
 		/>
 	);
 }
