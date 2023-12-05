@@ -1,14 +1,21 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import page from 'page';
-import NewJetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
+import page, { type Callback } from '@automattic/calypso-router';
+import JetpackManageSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/jetpack-manage';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import DashboardOverview from './dashboard-overview';
 import Header from './header';
-import DashboardSidebar from './sidebar';
 
-export function agencyDashboardContext( context: PageJS.Context, next: VoidFunction ): void {
-	const { s: search, page: contextPage, issue_types, sort_field, sort_direction } = context.query;
+export const agencyDashboardContext: Callback = ( context, next ) => {
+	const {
+		s: search,
+		page: contextPage,
+		issue_types,
+		sort_field,
+		sort_direction,
+		origin,
+	} = context.query;
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
 		showOnlyFavorites: context.params.filter === 'favorites',
@@ -21,18 +28,18 @@ export function agencyDashboardContext( context: PageJS.Context, next: VoidFunct
 	const isAgency = isAgencyUser( state );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 	if ( ! isAgency || ! isAgencyEnabled ) {
+		// Redirect to Jetpack.com if the user is not an agency user & the origin is wp-admin
+		if ( origin === 'wp-admin' ) {
+			recordTracksEvent( 'calypso_jetpack_manage_redirect_to_manage_in_jetpack_dot_com' );
+			window.location.href = 'https://jetpack.com/manage/';
+			return;
+		}
 		return page.redirect( '/' );
 	}
 
 	const currentPage = parseInt( contextPage ) || 1;
 	context.header = <Header />;
-
-	if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-		context.secondary = <NewJetpackManageSidebar path={ context.path } />;
-	} else {
-		context.secondary = <DashboardSidebar path={ context.path } />;
-	}
-
+	context.secondary = <JetpackManageSidebar path={ context.path } />;
 	context.primary = (
 		<DashboardOverview
 			search={ search }
@@ -46,4 +53,4 @@ export function agencyDashboardContext( context: PageJS.Context, next: VoidFunct
 	context.store.dispatch( setAllSitesSelected() );
 
 	next();
-}
+};

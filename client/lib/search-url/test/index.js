@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import searchUrl from '..';
 
 const SEARCH_KEYWORD = 'giraffe';

@@ -3,7 +3,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Retrieves a backup browser node by path array.
- *
  * @param state The application state.
  * @param siteId The site ID we're retrieving for.
  * @param pathList The path or array of paths leading to the node we want.

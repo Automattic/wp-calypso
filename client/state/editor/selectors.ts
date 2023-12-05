@@ -9,7 +9,6 @@ import 'calypso/state/editor/init';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
- *
  * @param  {Object} state Global state tree
  * @returns {?number}      Current editor post ID
  */
@@ -19,7 +18,6 @@ export function getEditorPostId( state: AppState ): number | undefined {
 
 /**
  * Returns whether editing a new post in the post editor.
- *
  * @param  {Object}  state Global state tree
  * @returns {boolean}       Whether editing new post in editor
  */
@@ -29,7 +27,6 @@ export function isEditorNewPost( state: AppState ): boolean {
 
 /**
  * Returns the editor URL for duplicating a given site ID, post ID pair.
- *
  * @param  {Object} state       Global state tree
  * @param  {number} siteId      Site ID
  * @param  {number} postId      Post ID
@@ -52,7 +49,6 @@ export function getEditorDuplicatePostPath(
 
 /**
  * Returns the editor new post URL path for the given site ID and type.
- *
  * @param  {Object} state       Global state tree
  * @param  {number} siteId      Site ID
  * @param  {number} type        Post type
@@ -84,7 +80,6 @@ export function getEditorNewPostPath( state: AppState, siteId: number, type = 'p
 
 /**
  * Returns the editor URL path for the given site ID, post ID pair.
- *
  * @param  {Object} state       Global state tree
  * @param  {number} siteId      Site ID
  * @param  {number} postId      Post ID

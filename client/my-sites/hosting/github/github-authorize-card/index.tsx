@@ -32,7 +32,9 @@ export const GithubAuthorizeCard = () => {
 		},
 		onSuccess: async () => {
 			const connectionKey = [ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ];
-			await queryClient.invalidateQueries( connectionKey );
+			await queryClient.invalidateQueries( {
+				queryKey: connectionKey,
+			} );
 
 			const authorized =
 				queryClient.getQueryData< GithubConnectionData >( connectionKey )?.connected;

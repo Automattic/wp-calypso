@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import {
 	HappinessEngineersTray,
 	Gravatar,
@@ -16,12 +17,13 @@ import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
 import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
+import SegmentedControl from '@automattic/components/src/segmented-control/docs/example';
 import SelectDropdown from '@automattic/components/src/select-dropdown/docs/example';
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
@@ -97,7 +99,6 @@ import SearchCard from 'calypso/components/search-card';
 import Section from 'calypso/components/section/docs/example';
 import SectionHeader from 'calypso/components/section-header/docs/example';
 import SectionNav from 'calypso/components/section-nav/docs/example';
-import SegmentedControl from 'calypso/components/segmented-control/docs/example';
 import ShareButton from 'calypso/components/share-button/docs/example';
 import SocialLogos from 'calypso/components/social-logo/docs/example';
 import SpinnerButton from 'calypso/components/spinner-button/docs/example';
@@ -115,7 +116,6 @@ import TimeSince from 'calypso/components/time-since/docs/example';
 import Timeline from 'calypso/components/timeline/docs/example';
 import Timezone from 'calypso/components/timezone/docs/example';
 import TokenFields from 'calypso/components/token-field/docs/example';
-import Tooltip from 'calypso/components/tooltip/docs/example';
 import UserItem from 'calypso/components/user/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';

@@ -93,6 +93,7 @@ export function createP24Method( {
 } ): PaymentMethod {
 	return {
 		id: 'p24',
+		hasRequiredFields: true,
 		paymentProcessorId: 'p24',
 		label: <P24Label />,
 		activeContent: <P24Fields />,

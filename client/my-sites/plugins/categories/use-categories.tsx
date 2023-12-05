@@ -755,7 +755,6 @@ export const getCategories: () => Record< string, Category > = () => ( {
 
 /**
  * Get the first matching category from a collection of tags
- *
  * @param {Array<string>} pluginTags - array of tags of a plugin
  * @returns string | undefined - category name or undefined if no category is found
  */

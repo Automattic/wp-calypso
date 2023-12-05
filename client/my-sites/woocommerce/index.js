@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { createElement } from 'react';
 import { makeLayout } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -8,7 +8,7 @@ import {
 	getSiteOption,
 	getSiteWooCommerceUrl,
 } from 'calypso/state/sites/selectors';
-import main from './main';
+import Main from './main';
 
 import './style.scss';
 
@@ -32,10 +32,10 @@ function setup( context, next ) {
 	// instead of passive redirect.
 	if ( getSiteOption( state, siteId, 'is_wpcom_store' ) ) {
 		const redirectUrl = getSiteWooCommerceUrl( state, siteId );
-		window.location.href = redirectUrl;
+		window.location.assign( redirectUrl );
 		return;
 	}
 
-	context.primary = createElement( main );
+	context.primary = createElement( Main );
 	next();
 }

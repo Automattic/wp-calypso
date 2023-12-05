@@ -1,0 +1,210 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.is-jetpack-new-navigation {
+	.jetpack-cloud-layout__header h1 {
+		font-weight: 600;
+	}
+}
+
+.main.jetpack-cloud-layout {
+	padding-inline: 0;
+
+	header.current-section {
+		padding: 0 16px;
+
+		button {
+			padding: 20px 8px;
+		}
+	}
+}
+
+.jetpack-cloud-layout__container {
+	max-width: 100%;
+	min-height: calc(100vh - 123px);
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	padding: 0;
+}
+
+.jetpack-cloud-layout__body {
+	width: 100%;
+	margin-block-end: -32px;
+	flex: 1 1 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		// We need these negative margin values because we want to make the container full-width,
+		// but our element is inside a limited-width parent.
+		margin-inline-start: -73px;
+		padding-inline: 73px;
+	}
+}
+
+.jetpack-cloud-layout__top-wrapper,
+.jetpack-cloud-layout__body-wrapper {
+	margin-inline: 0;
+
+	> * {
+		max-width: 1500px;
+		margin-inline: auto !important;
+	}
+}
+
+.main.jetpack-cloud-layout.is-with-border {
+	.jetpack-cloud-layout__body {
+		padding-block: 16px;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		.jetpack-cloud-layout__top {
+			border-block-end: 1px solid var(--color-primary-5);
+		}
+
+		.jetpack-cloud-layout__body {
+			background: rgba(255, 255, 255, 0.5);
+		}
+	}
+}
+
+.jetpack-cloud-layout__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: auto;
+	height: 100%;
+
+
+	> * + * {
+		margin-inline-start: 24px;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		flex-wrap: wrap;
+
+		> * {
+			width: 100%;
+			margin-block-end: 16px;
+		}
+
+		> * + * {
+			margin-inline-start: 0;
+		}
+	}
+}
+
+.jetpack-cloud-layout__sticky-header {
+	position: fixed;
+	width: calc(100%);
+	left: 0;
+	top: var(--masterbar-height);
+	background-color: rgba(246, 247, 247, 0.95);
+	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
+	z-index: 1001;
+	height: 74px;
+
+	.jetpack-cloud-layout__header {
+		flex-wrap: nowrap;
+		max-width: 1500px;
+		padding-inline: 48px;
+
+		> * {
+			width: auto;
+		}
+	}
+
+	.jetpack-cloud-layout__header-main,
+	.jetpack-cloud-layout__header-actions {
+		margin: 0;
+	}
+
+	.jetpack-cloud-layout__header-subtitle {
+		display: none;
+	}
+
+	.jetpack-cloud-layout__header-title {
+		font-size: rem(24px);
+		margin-block-end: 0;
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: calc(100% - var(--sidebar-width-min));
+		left: var(--sidebar-width-min);
+	}
+
+	@include breakpoint-deprecated( ">960px" ) {
+		width: calc(100% - var(--sidebar-width-max));
+		left: var(--sidebar-width-max);
+	}
+}
+
+.jetpack-cloud-layout__header-title {
+	font-size: 2.25rem;
+	margin-block-end: 8px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.jetpack-cloud-layout__header-subtitle {
+	font-size: 1rem;
+	color: var(--studio-gray-60);
+	margin: 0;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.section-nav.jetpack-cloud-layout__navigation {
+	margin-block-start: 32px;
+	.section-nav__mobile-header-text .count {
+		margin-inline-start: 8px;
+	}
+
+	.select-dropdown__item.is-selected .count {
+		color: var(--color-text);
+	}
+
+	.select-dropdown__header {
+		border-width: 0;
+
+		.count {
+			top: 12.5px;
+		}
+
+		@include breakpoint-deprecated( ">660px" ) {
+			border-width: 1px;
+		}
+	}
+
+	.section-nav-tabs.is-dropdown {
+		width: 100%;
+		margin: 0 0 1px 0;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin-block-end: 12px;
+		}
+	}
+
+	.select-dropdown__options {
+		margin-inline: -1px;
+	}
+
+	.section-nav-tabs__dropdown .select-dropdown__container {
+		max-width: unset;
+		width: 100%;
+	}
+
+	.section-nav-tabs__dropdown {
+		// Since the search below the dropdown has z-index: 22,
+		// we need to make sure the dropdown is above it
+		z-index: 23;
+	}
+}
+
+.jetpack-cloud-layout__viewport {
+	margin-inline-start: 0;
+}

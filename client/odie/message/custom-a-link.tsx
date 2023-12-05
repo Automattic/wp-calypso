@@ -1,7 +1,4 @@
-import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useOdieAssistantContext } from '../context';
 
 import './style.scss';
@@ -21,8 +18,7 @@ const CustomALink = ( {
 	children: React.ReactNode;
 	inline?: boolean;
 } ) => {
-	const dispatch = useDispatch();
-	const { botNameSlug } = useOdieAssistantContext();
+	const { botNameSlug, trackEvent } = useOdieAssistantContext();
 
 	const classNames = classnames( 'odie-sources', {
 		'odie-sources-inline': inline,
@@ -36,18 +32,15 @@ const CustomALink = ( {
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ () => {
-					dispatch(
-						recordTracksEvent( 'calypso_odie_chat_message_action_click', {
-							bot_name_slug: botNameSlug,
-							action: 'link',
-							href: href,
-						} )
-					);
+					trackEvent( 'calypso_odie_chat_message_action_click', {
+						bot_name_slug: botNameSlug,
+						action: 'link',
+						href: href,
+					} );
 				} }
 			>
 				{ children }
 			</a>
-			<Gridicon icon="external" size={ 18 } />
 		</span>
 	);
 };

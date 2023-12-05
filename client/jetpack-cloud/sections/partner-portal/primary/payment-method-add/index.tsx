@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	ReloadSetupIntentId,
 	StripeHookProvider,
@@ -12,7 +13,6 @@ import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
@@ -38,6 +38,7 @@ import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import Layout from '../../layout';
 import LayoutHeader from '../../layout/header';
+import { parseQueryStringProducts } from '../../lib/querystring-products';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -176,7 +177,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 			} )
 		);
 
-		const itemsToIssue = products.split( ',' );
+		const itemsToIssue = parseQueryStringProducts( products );
 		issueAndAssignLicenses( itemsToIssue );
 		// Do not update the dependency array with products since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.

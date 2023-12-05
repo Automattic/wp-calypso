@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { trim, escapeRegExp } from 'lodash';
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
 import { domForHtml } from 'calypso/lib/post-normalizer/utils';
 
@@ -42,7 +43,6 @@ const convertExcerptNewlinesToBreaks = ( excerpt ) => {
 
 /**
  * Removes double spaces and also &nbsp; characters which may be present in the excerpt.
- *
  * @param {string} str the string to normalize
  * @returns a string with single space characters.
  */
@@ -52,7 +52,6 @@ const normalizeWhitespace = ( str ) => {
 
 /**
  * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
- *
  * @param {Object} post the post object
  * @returns writing prompt text
  */
@@ -117,8 +116,13 @@ const chooseExcerpt = ( post ) => {
 	return null;
 };
 
-const ReaderExcerpt = ( { post } ) => {
+const ReaderExcerpt = ( { post, setHasExcerpt } ) => {
 	const isDailyPrompt = !! getDailyPromptText( post );
+	const excerpt = chooseExcerpt( post );
+
+	useEffect( () => {
+		setHasExcerpt?.( excerpt !== '' && excerpt !== null );
+	}, [ excerpt ] );
 
 	return (
 		<AutoDirection>
@@ -126,7 +130,7 @@ const ReaderExcerpt = ( { post } ) => {
 				className={ classNames( 'reader-excerpt__content reader-excerpt', {
 					'reader-excerpt__daily-prompt': isDailyPrompt,
 				} ) }
-				dangerouslySetInnerHTML={ { __html: chooseExcerpt( post ) } } // eslint-disable-line react/no-danger
+				dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger
 			/>
 		</AutoDirection>
 	);

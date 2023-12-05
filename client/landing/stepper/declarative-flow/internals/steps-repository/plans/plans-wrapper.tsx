@@ -1,4 +1,4 @@
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	START_WRITING_FLOW,
@@ -18,10 +18,8 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -29,7 +27,8 @@ import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlanSlug } from 'calypso/state/plans/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
@@ -38,8 +37,9 @@ import './style.scss';
 interface Props {
 	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
-	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
-	plansLoaded: boolean;
+	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
+	selectedSiteId: number | null;
+	setSelectedSiteId: ( siteId: number ) => void;
 }
 
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
@@ -72,11 +72,20 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName } = props;
+	const { flowName, selectedSiteId, setSelectedSiteId } = props;
 
-	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
+		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
+	const siteId = site?.ID;
+
+	useEffect( () => {
+		if ( ! selectedSiteId && siteId ) {
+			setSelectedSiteId( siteId );
+		}
+	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
+
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -89,7 +98,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onSelectPlan = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
 		const planCartItem = getPlanCartItem( cartItems );
 		if ( planCartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
@@ -102,6 +111,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			} );
 		}
 
+		const cartItemForStorageAddOn = cartItems?.find(
+			( items ) => items.product_slug === PRODUCT_1GB_SPACE
+		);
+
+		cartItemForStorageAddOn && setProductCartItems( [ cartItemForStorageAddOn ] );
 		setPlanCartItem( planCartItem );
 		props.onSubmit?.( planCartItem );
 	};
@@ -111,16 +125,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const handleFreePlanButtonClick = () => {
-		onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+		onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 		props.onSubmit( null );
-	};
-
-	const renderLoading = () => {
-		return (
-			<div className="plans__loading">
-				<LoadingEllipsis className="active" />
-			</div>
-		);
 	};
 
 	const removePaidDomain = () => {
@@ -132,10 +138,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesList = () => {
-		if ( ! props.plansLoaded ) {
-			return renderLoading();
-		}
-
 		return (
 			<div>
 				<PlansFeaturesMain
@@ -146,7 +148,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
-					onUpgradeClick={ onSelectPlan }
+					onUpgradeClick={ onUpgradeClick }
 					paidDomainName={ getPaidDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
@@ -155,8 +157,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
+					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 				/>
-				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
 		);
 	};
@@ -246,14 +248,18 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	return (
 		<div className="stepper-plans">
-			<QueryPlans />
 			<div className={ classes }>{ plansFeaturesSelection() }</div>
 		</div>
 	);
 };
 
-export default connect( ( state ) => {
-	return {
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-	};
-} )( localize( PlansWrapper ) );
+export default connect(
+	( state ) => {
+		return {
+			selectedSiteId: getSelectedSiteId( state ),
+		};
+	},
+	{
+		setSelectedSiteId: setSelectedSiteId,
+	}
+)( localize( PlansWrapper ) );

@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEmpty, isEqual, snakeCase } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

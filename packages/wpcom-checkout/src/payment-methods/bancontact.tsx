@@ -68,6 +68,7 @@ export function createBancontactMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'bancontact',
+		hasRequiredFields: true,
 		paymentProcessorId: 'bancontact',
 		label: <BancontactLabel />,
 		activeContent: <BancontactFields />,

@@ -1,24 +1,21 @@
-import { Card, Gridicon } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
-import { login } from 'calypso/lib/paths';
+import { lostPassword } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { withEnhancers } from 'calypso/state/utils';
-
+import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
 class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
-		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		locale: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 	};
@@ -27,33 +24,18 @@ class EmailedLoginLinkSuccessfully extends Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 	}
 
-	onClickBackLink = ( event ) => {
-		event.preventDefault();
-
-		this.props.hideMagicLoginRequestForm();
-
-		page(
-			login( {
-				isJetpack: this.props.isJetpackLogin,
-				isWhiteLogin: this.props.isWhiteLogin,
-				locale: this.props.locale,
-			} )
-		);
+	onLostPasswordClick = () => {
+		recordTracksEvent( 'calypso_magic_login_lost_password_click' );
 	};
 
 	render() {
 		const { translate, emailAddress } = this.props;
-		const line = [
-			emailAddress
-				? translate( 'We just emailed a link to %(emailAddress)s.', {
-						args: {
-							emailAddress,
-						},
-				  } )
-				: translate( 'We just emailed you a link.' ),
-			' ',
-			translate( 'Please check your inbox and click the link to log in.' ),
-		];
+		const successMessage = emailAddress
+			? translate( "We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}", {
+					args: { emailAddress },
+					components: { strong: <strong /> },
+			  } )
+			: translate( 'We just emailed you a link.' );
 
 		return (
 			<div>
@@ -63,24 +45,34 @@ class EmailedLoginLinkSuccessfully extends Component {
 					waitForEmailAddress={ emailAddress }
 				/>
 
-				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
+				<h1 className="magic-login__form-header">{ translate( 'Check your email' ) }</h1>
 
 				<Card className="magic-login__form">
-					<p>{ preventWidows( line ) }</p>
+					<div className="magic-login__form-text">
+						<p>{ preventWidows( successMessage ) }</p>
+					</div>
 				</Card>
+				<div className="magic-login__emails-list">
+					<MagicLoginEmailWrapper emailAddress={ emailAddress } />
+				</div>
 
 				<div className="magic-login__footer">
-					<a
-						href={ login( {
-							isJetpack: this.props.isJetpackLogin,
-							isWhiteLogin: this.props.isWhiteLogin,
-							locale: this.props.locale,
-						} ) }
-						onClick={ this.onClickBackLink }
-					>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ translate( 'Back to login' ) }
-					</a>
+					<p>
+						{ translate(
+							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or reset your password.{{/a}}",
+							{
+								components: {
+									a: (
+										<a
+											href={ lostPassword( { locale: this.props.locale } ) }
+											onClick={ this.onLostPasswordClick }
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
 				</div>
 			</div>
 		);
@@ -89,12 +81,9 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
-	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isWhiteLogin: getCurrentRoute( state )?.startsWith( '/log-in/new/link' ),
 } );
 
 const mapDispatch = {
-	hideMagicLoginRequestForm,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 

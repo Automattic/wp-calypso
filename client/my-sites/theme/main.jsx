@@ -8,6 +8,7 @@ import {
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
@@ -19,7 +20,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import page from 'page';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
@@ -44,6 +44,8 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -104,6 +106,93 @@ import ThemeStyleVariations from './theme-style-variations';
 import './style.scss';
 
 const noop = () => {};
+
+/**
+ * Renders the description for the banner upsell.
+ * It's a workaround to use hooks in the class component.
+ * @param {Object} props
+ * @param {string} props.themeId
+ * @param {boolean} props.isBundledSoftwareSet
+ * @param {boolean} props.isExternallyManagedTheme
+ * @param {Function} props.translate
+ * @param {boolean} props.isSiteEligibleForManagedExternalThemes
+ * @param {boolean} props.isMarketplaceThemeSubscribed
+ * @returns {string} The description for the banner upsell.
+ */
+const BannerUpsellDescription = ( {
+	themeId,
+	isBundledSoftwareSet,
+	isExternallyManagedTheme,
+	translate,
+	isSiteEligibleForManagedExternalThemes,
+	isMarketplaceThemeSubscribed,
+} ) => {
+	const bundleSettings = useBundleSettings( themeId );
+
+	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
+		if ( ! bundleSettings ) {
+			return translate(
+				'This theme comes bundled with a plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+			);
+		}
+
+		return bundleSettings.bannerUpsellDescription;
+	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+		if ( ! isSiteEligibleForManagedExternalThemes ) {
+			return translate(
+				'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
+			);
+		}
+		return translate( 'Subscribe to this theme and unlock all its features.' );
+	}
+
+	return translate(
+		'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+	);
+};
+
+/**
+ * Renders the title for the banner upsell.
+ * It's a workaround to use hooks in the class component.
+ * @param {Object} props
+ * @param {string} props.themeId
+ * @param {boolean} props.isBundledSoftwareSet
+ * @param {boolean} props.isExternallyManagedTheme
+ * @param {Function} props.translate
+ * @param {boolean} props.isSiteEligibleForManagedExternalThemes
+ * @param {boolean} props.isMarketplaceThemeSubscribed
+ * @returns {string} The title for the banner upsell.
+ */
+const BannerUpsellTitle = ( {
+	themeId,
+	isBundledSoftwareSet,
+	isExternallyManagedTheme,
+	translate,
+	isSiteEligibleForManagedExternalThemes,
+	isMarketplaceThemeSubscribed,
+} ) => {
+	const bundleSettings = useBundleSettings( themeId );
+
+	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
+		if ( ! bundleSettings ) {
+			return translate( 'Access this theme with a Business plan!' );
+		}
+
+		const bundleName = bundleSettings.name;
+
+		// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+		return translate( 'Access this %(bundleName)s theme with a Business plan!', {
+			args: { bundleName },
+		} );
+	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+		if ( ! isSiteEligibleForManagedExternalThemes ) {
+			return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
+		}
+		return translate( 'Subscribe to this theme!' );
+	}
+
+	return translate( 'Access this theme for FREE with a Premium or Business plan!' );
+};
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -352,7 +441,6 @@ class ThemeSheet extends Component {
 			source,
 			/**
 			 * To see tracks as the UI changes depending on whether Live Preview is available or not.
-			 *
 			 * @see https://github.com/Automattic/wp-calypso/pull/80540
 			 */
 			has_live_preview_cta: isLivePreviewSupported,
@@ -625,8 +713,30 @@ class ThemeSheet extends Component {
 						) }
 					</div>
 				</div>
-				{ this.renderStyleVariations() }
+				{ ! retired && this.renderStyleVariations() }
 			</div>
+		);
+	};
+
+	renderReviews = () => {
+		if ( ! config.isEnabled( 'marketplace-add-review' ) ) {
+			return null;
+		}
+		const { name, themeId } = this.props;
+
+		return (
+			<>
+				<ReviewsModal
+					isVisible={ this.state.showReviewModal }
+					onClose={ this.handleCloseReviewModal }
+					slug={ themeId }
+					productName={ name }
+					productType="theme"
+				/>
+				<div className="theme__sheet-reviews">
+					<Button onClick={ this.handleAddReview }>Add Review</Button>
+				</div>
+			</>
 		);
 	};
 
@@ -1014,53 +1124,9 @@ class ThemeSheet extends Component {
 		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 	};
 
-	getBannerUpsellTitle = () => {
-		const {
-			isBundledSoftwareSet,
-			isExternallyManagedTheme,
-			translate,
-			isSiteEligibleForManagedExternalThemes,
-			isMarketplaceThemeSubscribed,
-		} = this.props;
+	getBannerUpsellTitle = () => <BannerUpsellTitle { ...this.props } />;
 
-		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
-			return translate( 'Access this WooCommerce theme with a Business plan!' );
-		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
-			if ( ! isSiteEligibleForManagedExternalThemes ) {
-				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
-			}
-			return translate( 'Subscribe to this theme!' );
-		}
-
-		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
-	};
-
-	getBannerUpsellDescription = () => {
-		const {
-			isBundledSoftwareSet,
-			isExternallyManagedTheme,
-			translate,
-			isSiteEligibleForManagedExternalThemes,
-			isMarketplaceThemeSubscribed,
-		} = this.props;
-
-		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
-			return translate(
-				'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-			);
-		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
-			if ( ! isSiteEligibleForManagedExternalThemes ) {
-				return translate(
-					'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
-				);
-			}
-			return translate( 'Subscribe to this theme and unlock all its features.' );
-		}
-
-		return translate(
-			'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
-		);
-	};
+	getBannerUpsellDescription = () => <BannerUpsellDescription { ...this.props } />;
 
 	getPremiumGlobalStylesEventProps = () => {
 		const { selectedStyleVariationSlug, themeId } = this.props;
@@ -1139,6 +1205,13 @@ class ThemeSheet extends Component {
 		}
 
 		return translate( 'Additional styles require the Business plan or higher.' );
+	};
+
+	handleAddReview = () => {
+		this.setState( { showReviewModal: true } );
+	};
+	handleCloseReviewModal = () => {
+		this.setState( { showReviewModal: false } );
 	};
 
 	renderSheet = () => {
@@ -1357,6 +1430,7 @@ class ThemeSheet extends Component {
 						{ pageUpsellBanner }
 						{ this.renderStagingPaidThemeNotice() }
 						{ this.renderHeader() }
+						{ this.renderReviews() }
 					</div>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }

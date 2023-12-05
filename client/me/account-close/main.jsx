@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
@@ -123,15 +123,17 @@ class AccountSettingsClose extends Component {
 											<ActionPanelFigureListItem>
 												{ translate( 'Media' ) }
 											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Domains' ) }
+											</ActionPanelFigureListItem>
 										</Fragment>
 									) }
-									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
 									{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
 										<ActionPanelFigureListItem>
 											{ translate( 'Premium themes' ) }
 										</ActionPanelFigureListItem>
 									) }
+									<ActionPanelFigureListItem>Gravatar</ActionPanelFigureListItem>
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
@@ -173,9 +175,11 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Fragment>
 								<p className="account-close__body-copy">
-									{ translate(
-										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
-									) }
+									{ this.props.sitesToBeDeleted.length > 0
+										? translate(
+												'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
+										  )
+										: translate( 'Account closure cannot be undone.' ) }
 								</p>
 								{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
 									<Fragment>

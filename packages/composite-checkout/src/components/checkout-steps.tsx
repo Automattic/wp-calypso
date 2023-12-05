@@ -102,18 +102,18 @@ function createCheckoutStepGroupActions(
 	onStateChange: () => void
 ): CheckoutStepGroupActions {
 	const setActiveStepNumber = ( stepNumber: number ) => {
-		if ( stepNumber < 1 ) {
-			throw new Error( `Cannot set step number to '${ stepNumber }' because it is too low` );
-		}
+		debug( `setting active step number to ${ stepNumber }` );
 		if ( stepNumber > state.totalSteps && state.totalSteps === 0 ) {
 			throw new Error(
 				`Cannot set step number to '${ stepNumber }' because the total number of steps is 0`
 			);
 		}
 		if ( stepNumber > state.totalSteps ) {
+			debug( `setting active step number to ${ stepNumber }; using highest step instead` );
 			stepNumber = state.totalSteps;
 		}
 		if ( stepNumber === state.activeStepNumber ) {
+			debug( `setting active step number to ${ stepNumber }; step already active` );
 			return;
 		}
 		state.activeStepNumber = stepNumber;
@@ -138,8 +138,20 @@ function createCheckoutStepGroupActions(
 		onStateChange();
 	};
 
+	/**
+	 * Update the current status of which steps are complete and which are
+	 * incomplete.
+	 *
+	 * Remember that a complete step can be active and an incomplete step can be
+	 * inactive. They are not connected.
+	 *
+	 * This merges the new status with the current status, so it's important to
+	 * explicitly disable any step that you want to be incomplete.
+	 */
 	const setStepCompleteStatus = ( newStatus: CheckoutStepCompleteStatus ) => {
-		state.stepCompleteStatus = newStatus;
+		const mergedStatus = { ...state.stepCompleteStatus, ...newStatus };
+		debug( `setting step complete status to '${ JSON.stringify( mergedStatus ) }'` );
+		state.stepCompleteStatus = mergedStatus;
 		onStateChange();
 	};
 
@@ -164,6 +176,7 @@ function createCheckoutStepGroupActions(
 	};
 
 	const setStepComplete = async ( stepId: string ) => {
+		debug( `attempting to set step complete: '${ stepId }'` );
 		const stepNumber = getStepNumberFromId( stepId );
 		if ( ! stepNumber ) {
 			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step complete.` );
@@ -173,6 +186,9 @@ function createCheckoutStepGroupActions(
 		for ( let step = 1; step <= stepNumber; step++ ) {
 			if ( ! state.stepCompleteStatus[ step ] ) {
 				const didStepComplete = await getStepCompleteCallback( step )();
+				debug(
+					`attempting to set step complete: '${ stepId }'; step ${ step } result was ${ didStepComplete }`
+				);
 				if ( ! didStepComplete ) {
 					return false;
 				}
@@ -276,7 +292,7 @@ export const CheckoutStepGroupInner = ( {
 		'active step',
 		activeStepNumber,
 		'step complete status',
-		stepCompleteStatus,
+		JSON.stringify( stepCompleteStatus ),
 		'total steps',
 		totalSteps
 	);
@@ -289,7 +305,7 @@ export const CheckoutStepGroupInner = ( {
 				}
 				if ( isElementAStep( child ) ) {
 					stepNumber = nextStepNumber || 0;
-					nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
+					nextStepNumber = stepNumber === totalSteps ? 0 : stepNumber + 1;
 					const isStepActive = areStepsActive && activeStepNumber === stepNumber;
 					const isStepComplete = !! stepCompleteStatus[ stepNumber ];
 					return (
@@ -417,8 +433,7 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
-	const { state, actions } = useContext( CheckoutStepGroupContext );
-	const { stepCompleteStatus } = state;
+	const { actions } = useContext( CheckoutStepGroupContext );
 	const {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -431,7 +446,7 @@ export const CheckoutStep = ( {
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
-		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
+		setStepCompleteStatus( { [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
 
 	// This is the callback called when you press "Continue" on a step.
@@ -441,7 +456,7 @@ export const CheckoutStep = ( {
 		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
 		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
 		setThisStepCompleteStatus( completeResult );
-		if ( completeResult && nextStepNumber ) {
+		if ( completeResult && nextStepNumber !== null ) {
 			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
@@ -600,8 +615,11 @@ export function CheckoutFormSubmit( {
 	submitButton?: ReactNode;
 } ) {
 	const { state } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps } = state;
+	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
+		( isComplete ) => isComplete === true
+	);
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const onSubmitButtonLoadError = useCallback(
 		( error: Error ) => onPageLoadError?.( 'submit_button_load', error ),
@@ -612,13 +630,29 @@ export function CheckoutFormSubmit( {
 		customPropertyForSubmitButtonHeight
 	);
 
+	const isDisabled = ( () => {
+		if ( disableSubmitButton ) {
+			return true;
+		}
+		if ( activeStepNumber === 0 && areAllStepsComplete ) {
+			// We enable the submit button if no step is active and all the steps are
+			// complete so that we have the option of marking all steps as complete.
+			return false;
+		}
+		if ( isThereAnotherNumberedStep ) {
+			// If there is another step after the active one, we disable the submit
+			// button so you have to complete the step first.
+			return true;
+		}
+		return false;
+	} )();
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
 			{ submitButton || (
 				<CheckoutSubmitButton
 					validateForm={ validateForm }
-					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
+					disabled={ isDisabled }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
 			) }

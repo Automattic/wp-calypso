@@ -6,9 +6,7 @@ import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 
 const useSiteChecklist = ( siteId: string ): Checklist | null => {
 	const dispatch = useDispatch();
-	const { siteChecklist } = useSelector( ( state ) => ( {
-		siteChecklist: getSiteChecklist( state, Number( siteId ) ),
-	} ) );
+	const siteChecklist = useSelector( ( state ) => getSiteChecklist( state, Number( siteId ) ) );
 
 	useEffect( () => {
 		if ( siteId && ! siteChecklist ) {

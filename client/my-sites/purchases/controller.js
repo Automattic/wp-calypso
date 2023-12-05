@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	Purchases,

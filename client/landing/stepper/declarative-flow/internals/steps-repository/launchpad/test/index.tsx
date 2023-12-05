@@ -2,8 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { Site } from '@automattic/data-stores';
-import * as ReactQuery from '@tanstack/react-query';
+import { Site, useLaunchpad } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import React from 'react';
@@ -37,6 +36,13 @@ jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
+	} ),
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: jest.fn( () => {
+		return jest.requireActual( '@automattic/data-stores' ).useLaunchpad();
 	} ),
 } ) );
 
@@ -134,28 +140,22 @@ describe( 'Launchpad', () => {
 	describe( 'when loading the Launchpad view', () => {
 		describe( 'and the site is launchpad enabled', () => {
 			it( 'does not redirect', () => {
-				jest
-					.spyOn( ReactQuery, 'useQuery' )
-					.mockImplementation(
-						jest
-							.fn()
-							.mockReturnValue( { ...MOCK_USE_QUERY_RESULT, data: { launchpad_screen: 'full' } } )
-					);
+				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+					...MOCK_USE_QUERY_RESULT,
+					data: { launchpad_screen: 'full' },
+				} );
 				const initialReduxState = { currentUser: { id: user.ID } };
 				renderLaunchpad( props, defaultSiteDetails, initialReduxState, siteSlug );
-				expect( replaceMock ).not.toBeCalled();
+				expect( replaceMock ).not.toHaveBeenCalled();
 			} );
 		} );
 
 		describe( 'and the site is not launchpad enabled', () => {
 			it( 'redirects to Calypso My Home', () => {
-				jest
-					.spyOn( ReactQuery, 'useQuery' )
-					.mockImplementation(
-						jest
-							.fn()
-							.mockReturnValue( { ...MOCK_USE_QUERY_RESULT, data: { launchpad_screen: 'off' } } )
-					);
+				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+					...MOCK_USE_QUERY_RESULT,
+					data: { launchpad_screen: 'off' },
+				} );
 				const initialReduxState = { currentUser: { id: user.ID } };
 				renderLaunchpad(
 					props,
@@ -168,8 +168,8 @@ describe( 'Launchpad', () => {
 					initialReduxState,
 					siteSlug
 				);
-				expect( replaceMock ).toBeCalledTimes( 1 );
-				expect( replaceMock ).toBeCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledTimes( 1 );
+				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
 			} );
 		} );
 
@@ -186,7 +186,7 @@ describe( 'Launchpad', () => {
 					{},
 					siteSlug
 				);
-				expect( replaceMock ).toBeCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
 			} );
 		} );
 
@@ -204,7 +204,7 @@ describe( 'Launchpad', () => {
 					initialReduxState,
 					''
 				);
-				expect( replaceMock ).toBeCalledWith( `/home` );
+				expect( replaceMock ).toHaveBeenCalledWith( `/home` );
 			} );
 		} );
 	} );

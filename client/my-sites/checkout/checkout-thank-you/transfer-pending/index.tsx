@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import * as React from 'react';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';

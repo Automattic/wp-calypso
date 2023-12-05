@@ -88,6 +88,7 @@ describe( 'PreMigration', () => {
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: true,
+			isInitFetchingDone: true,
 		} );
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -107,10 +108,10 @@ describe( 'PreMigration', () => {
 
 		expect( screen.getByText( 'Upgrade your plan' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Upgrade and migrate' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Use the content-only import option' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'free content-only import option' ) ).toBeInTheDocument();
 
 		// Click on "Use the content-only import option"
-		const button = screen.getByText( 'Use the content-only import option' );
+		const button = screen.getByText( 'free content-only import option' );
 		fireEvent.click( button );
 		expect( onContentOnlyClick ).toHaveBeenCalled();
 	} );
@@ -123,6 +124,7 @@ describe( 'PreMigration', () => {
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: false,
+			isInitFetchingDone: true,
 		} );
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -135,7 +137,7 @@ describe( 'PreMigration', () => {
 		renderPreMigrationScreen( {
 			sourceSite: sourceSite,
 			targetSite: targetSite,
-			isTargetSitePlanCompatible: false,
+			isTargetSitePlanCompatible: true,
 			isMigrateFromWp: true,
 			onContentOnlyClick,
 		} );
@@ -152,12 +154,20 @@ describe( 'PreMigration', () => {
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: false,
+			isInitFetchingDone: true,
+		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useCheckEligibilityMigrationTrialPlan.mockReturnValue( {
+			blog_id: 777712,
+			eligible: false,
 		} );
 
 		renderPreMigrationScreen( {
 			sourceSite: sourceSite as SiteDetails,
 			targetSite: targetSite,
-			isTargetSitePlanCompatible: false,
+			isTargetSitePlanCompatible: true,
 			isMigrateFromWp: false,
 			onContentOnlyClick,
 		} );
@@ -175,6 +185,7 @@ describe( 'PreMigration', () => {
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: true,
+			isInitFetchingDone: true,
 		} );
 
 		renderPreMigrationScreen( {

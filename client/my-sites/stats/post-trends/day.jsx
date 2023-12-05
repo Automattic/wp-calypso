@@ -1,9 +1,9 @@
+import { Tooltip } from '@automattic/components';
 import { Icon, postContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent, Fragment } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 class PostTrendsDay extends PureComponent {
 	static propTypes = {

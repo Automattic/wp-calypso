@@ -129,6 +129,11 @@
 		margin: 0 20px 24px 24px;
 		gap: 80px;
 	}
+
+	.launchpad__checklist-wrapper .checklist__tasks .checklist-item__task-content.is-placeholder .checklist-item__content {
+		/* Override default placeholder colours to align with other elements on the page. */
+		background-color: var(--color-neutral-5);
+	}
 }
 
 .launchpad__sidebar-content-container {
@@ -150,7 +155,8 @@
 .link-in-bio-tld:not(.domains),
 .free,
 .build,
-.write {
+.write,
+.assembler-first {
 	.step-container {
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
@@ -365,9 +371,18 @@
 	}
 }
 
-// Write and Build flow
+// Link in Bio flow
+.link-in-bio-tld.launchpad {
+	padding: 0;
+	.signup-header {
+		display: none;
+	}
+}
+
+// Write, Build, and Assembler First flow
 .write.launchpad,
-.build.launchpad {
+.build.launchpad,
+.assembler-first.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
 	}

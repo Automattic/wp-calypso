@@ -15,7 +15,6 @@ const publicFilterMap = {
 /**
  * Convert a public license filter to its internal representation.
  * Public filter differences are entirely cosmetic.
- *
  * @param {string} publicFilter Public filter value (e.g. "assigned").
  * @param {LicenseFilter} fallback Filter to return if publicFilter is invalid.
  * @returns {LicenseFilter} Internal filter.
@@ -34,7 +33,6 @@ export function publicToInternalLicenseFilter(
 /**
  * Convert an internal license filter to its public representation.
  * Public filter differences are entirely cosmetic.
- *
  * @param {LicenseFilter} internalFilter Internal filter (e.g. LicenseFilter.Attached).
  * @returns {string} Public filter.
  */

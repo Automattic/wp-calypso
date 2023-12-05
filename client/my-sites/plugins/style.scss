@@ -3,12 +3,6 @@
 @import "./grid-mixins.scss";
 @import "./woocommerce-box.scss";
 
-.is-jetpack-new-navigation {
-	.plugins__top-container-jc {
-		border-block-end: none;
-	}
-}
-
 .is-section-plugins .main {
 
 	&.is-logged-out:not(.is-plugin-details) {
@@ -461,10 +455,6 @@ body.is-section-plugins #primary {
 	margin: 0 -32px;
 	padding: 4px 48px 0;
 
-	@include breakpoint-deprecated( ">660px" ) {
-		border-bottom: 1px solid var(--color-primary-5);
-	}
-
 	@include break-large() {
 		padding: 6px 48px 0;
 	}
@@ -536,6 +526,11 @@ body.is-section-plugins #primary {
 			line-height: 1;
 		}
 	}
+}
+
+.plugin-details__reviews {
+	margin-top: 20px;
+	margin-bottom: 40px;
 }
 
 .plugin__header {

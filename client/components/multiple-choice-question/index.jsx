@@ -30,7 +30,7 @@ const MultipleChoiceQuestion = ( {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
 	const shuffledAnswers = shouldShuffleAnswers ? shuffleAnswers( answers ) : answers;
 	return (
-		<FormFieldset className="multiple-choice-question">
+		<FormFieldset className="multiple-choice-question" onClick={ ( e ) => e.stopPropagation() }>
 			<FormLegend>{ question }</FormLegend>
 			<div className="multiple-choice-question__answers">
 				{ shuffledAnswers.map( ( answer ) => (

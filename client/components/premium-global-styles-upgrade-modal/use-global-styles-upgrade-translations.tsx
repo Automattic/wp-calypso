@@ -19,6 +19,7 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 	];
 
 	return {
+		planTitle,
 		featuresTitle: translate( 'Included with your Premium plan' ),
 		features: features,
 		description: translate(
@@ -36,7 +37,7 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 		),
 		cancel: translate( 'Decide later' ),
 		upgrade: translate( 'Upgrade plan' ),
-		upgradeWithPlan: translate( 'Get %(planTitle)s', {
+		upgradeWithPlan: translate( 'Get %(planTitle)s plan', {
 			args: { planTitle },
 		} ),
 	};

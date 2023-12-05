@@ -1,14 +1,5 @@
-.card.login__social {
+.card.auth-form__social {
 	margin-bottom: 0;
-}
-
-.login__social-buttons {
-	display: flex;
-	flex-direction: column;
-
-	.social-buttons__button:not(:first-of-type) {
-		margin-top: 10px;
-	}
 }
 
 .login__social-tos {

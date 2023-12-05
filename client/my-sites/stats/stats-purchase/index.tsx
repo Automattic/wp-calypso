@@ -4,10 +4,10 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';

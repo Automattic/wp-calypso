@@ -34,9 +34,6 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( ( selector ) => selector() ),
 	useDispatch: jest.fn(),
 } ) );
-jest.mock( 'calypso/state/plans/selectors', () => ( {
-	getPlanBillPeriod: jest.fn(),
-} ) );
 jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
 
 import {
@@ -46,13 +43,14 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_MONTHLY_PERIOD,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
-import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../../grid-context';
 import PlanFeatures2023GridActions from '../actions';
 
@@ -70,13 +68,11 @@ describe( 'PlanFeatures2023GridActions', () => {
 		const contactSupport = 'Contact support';
 		const defaultProps = {
 			availableForPurchase: true,
-			canUserManageCurrentPlan: true,
 			className: '',
 			current: false,
 			freePlan: false,
 			isInSignup: false,
 			onUpgradeClick: jest.fn(),
-			flowName: 'foo-flow',
 			isWpcomEnterpriseGridPlan: false,
 			isStuck: false,
 			showMonthlyPrice: true,
@@ -93,20 +89,26 @@ describe( 'PlanFeatures2023GridActions', () => {
 				gridPlansIndex: {
 					[ PLAN_BUSINESS ]: {
 						isMonthlyPlan: false,
-						pricing,
+						pricing: {
+							...pricing,
+							billingPeriod: PLAN_ANNUAL_PERIOD,
+						},
+					},
+					[ PLAN_PREMIUM_2_YEARS ]: {
+						isMonthlyPlan: false,
+						pricing: {
+							...pricing,
+							billingPeriod: PLAN_BIENNIAL_PERIOD,
+						},
 					},
 				},
 			} ) );
-			getPlanBillPeriod.mockImplementation( ( _state, planSlug ) =>
-				planSlug === PLAN_PREMIUM_2_YEARS ? PLAN_BIENNIAL_PERIOD : PLAN_ANNUAL_PERIOD
-			);
 
 			render(
 				<PlanFeatures2023GridActions
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM_2_YEARS }
 					planSlug={ PLAN_BUSINESS }
-					planTitle="Business"
 				/>
 			);
 
@@ -121,7 +123,17 @@ describe( 'PlanFeatures2023GridActions', () => {
 				gridPlansIndex: {
 					[ PLAN_BUSINESS ]: {
 						isMonthlyPlan: false,
-						pricing,
+						pricing: {
+							...pricing,
+							billingPeriod: PLAN_ANNUAL_PERIOD,
+						},
+					},
+					[ PLAN_PREMIUM ]: {
+						isMonthlyPlan: false,
+						pricing: {
+							...pricing,
+							billingPeriod: PLAN_ANNUAL_PERIOD,
+						},
 					},
 				},
 			} ) );
@@ -131,7 +143,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM }
 					planSlug={ PLAN_BUSINESS }
-					planTitle="Business"
 				/>
 			);
 
@@ -146,7 +157,17 @@ describe( 'PlanFeatures2023GridActions', () => {
 					gridPlansIndex: {
 						[ PLAN_BUSINESS ]: {
 							isMonthlyPlan: false,
-							pricing,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_ANNUAL_PERIOD,
+							},
+						},
+						[ PLAN_BUSINESS_MONTHLY ]: {
+							isMonthlyPlan: true,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_MONTHLY_PERIOD,
+							},
 						},
 					},
 				} ) );
@@ -155,7 +176,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS }
-						planTitle="Business"
 					/>
 				);
 
@@ -169,7 +189,10 @@ describe( 'PlanFeatures2023GridActions', () => {
 					gridPlansIndex: {
 						[ PLAN_BUSINESS ]: {
 							isMonthlyPlan: false,
-							pricing,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_ANNUAL_PERIOD,
+							},
 						},
 					},
 				} ) );
@@ -177,7 +200,10 @@ describe( 'PlanFeatures2023GridActions', () => {
 					gridPlansIndex: {
 						[ PLAN_BUSINESS_2_YEARS ]: {
 							isMonthlyPlan: false,
-							pricing,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_BIENNIAL_PERIOD,
+							},
 						},
 					},
 				} ) );
@@ -187,7 +213,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS_2_YEARS }
-						planTitle="Business"
 					/>
 				);
 
@@ -201,7 +226,17 @@ describe( 'PlanFeatures2023GridActions', () => {
 					gridPlansIndex: {
 						[ PLAN_BUSINESS_3_YEARS ]: {
 							isMonthlyPlan: false,
-							pricing,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_TRIENNIAL_PERIOD,
+							},
+						},
+						[ PLAN_BUSINESS_MONTHLY ]: {
+							isMonthlyPlan: true,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_MONTHLY_PERIOD,
+							},
 						},
 					},
 				} ) );
@@ -210,7 +245,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
-						planTitle="Business"
 					/>
 				);
 
@@ -224,7 +258,10 @@ describe( 'PlanFeatures2023GridActions', () => {
 					gridPlansIndex: {
 						[ PLAN_BUSINESS_3_YEARS ]: {
 							isMonthlyPlan: false,
-							pricing,
+							pricing: {
+								...pricing,
+								billingPeriod: PLAN_TRIENNIAL_PERIOD,
+							},
 						},
 					},
 				} ) );
@@ -233,7 +270,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 						{ ...defaultProps }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
 						isStuck={ true }
-						planTitle="Business"
 					/>
 				);
 				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $20' } );

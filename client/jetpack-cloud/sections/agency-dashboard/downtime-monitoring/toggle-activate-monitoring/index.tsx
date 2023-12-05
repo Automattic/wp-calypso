@@ -1,12 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Tooltip } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState, useRef } from 'react';
 import alertIcon from 'calypso/assets/images/jetpack/alert-icon.svg';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import Tooltip from 'calypso/components/tooltip';
 import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent, useToggleActivateMonitor } from '../../hooks';

@@ -1,0 +1,115 @@
+@use "sass:math";
+
+$slider-height: 40px;
+$slider-bg-color: var(--studio-white);
+$thumb-width: 40px;
+$mark-diameter: 8px;
+$mark-border-width: 2px;
+$track-extra-width: math.div($thumb-width - $mark-diameter - $mark-border-width * 2, 2);
+$track-height: 4px;
+
+// The trick is to cover the extra slider track with blocks with the same background color as the slider.
+@mixin slider-track-extra-cover() {
+	content: "";
+	position: absolute;
+	width: $track-extra-width;
+	height: $slider-height;
+	background-color: $slider-bg-color;
+}
+
+.stats-tier-upgrade-slider {
+	--jp-white: #fff;
+	--jp-green-50: #008710;
+	--gray-gray-5: #dcdcde;
+
+	margin-top: 42px;
+	background-color: $slider-bg-color;
+
+	border: 1px solid var(--gray-gray-5);
+	border-radius: 5px; // stylelint-disable-line scales/radii
+	padding: 12px;
+
+	.jp-components-pricing-slider__thumb.stats-tier-upgrade-slider__thumb {
+		width: $thumb-width;
+		height: $slider-height;
+		border-radius: 50%;
+		background-color: var(--jp-green-50);
+		color: var(--jp-white);
+	}
+
+	.jp-components-pricing-slider__track {
+		// Based on slider height of 40px & track height of 4px.
+		height: $track-height;
+		top: math.div($slider-height, 2) - math.div($track-height, 2);
+	}
+
+	.jp-components-pricing-slider__control {
+		// TODO: Determine control alignment.
+		// Do we want the slider full-width or do we align based on thumb?
+		// Alternatively, we could use some CSS to reposition the thumbs if either end-cap is selected.
+		// width: calc(100% + $track-extra-width * 2);
+		// margin-left: -($track-extra-width);
+
+		&::before {
+			@include slider-track-extra-cover();
+			left: 0;
+			z-index: 1;
+		}
+
+		&::after {
+			@include slider-track-extra-cover();
+			right: 0;
+		}
+
+		.mark {
+			height: $mark-diameter;
+			width: $mark-diameter;
+			border: $mark-border-width solid var(--gray-gray-5);
+			background-color: var(--gray-gray-5);
+			border-radius: 50%;
+			cursor: pointer;
+			margin: 0 $track-extra-width;
+			bottom: calc(50% - (math.div($mark-diameter, 2) + $mark-border-width));
+		}
+	}
+}
+
+// Override colors for WPCOM context.
+.stats-purchase-page--is-wpcom {
+	.jp-components-pricing-slider__thumb.stats-tier-upgrade-slider__thumb {
+		background-color: var(--color-primary);
+	}
+}
+
+.stats-tier-upgrade-slider__info-message {
+	color: var(--studio-gray-40);
+	margin: 12px 0;
+	text-align: center;
+}
+
+.stats-tier-upgrade-slider__plan-callouts {
+	display: flex;
+	justify-content: space-between;
+
+	h2 {
+		font-weight: 500;
+	}
+	p {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 2em;
+		font-weight: 500;
+		margin: 0;
+	}
+	.right-aligned {
+		text-align: right;
+	}
+}
+
+.stats-tier-upgrade-slider__extension-popover-wrapper {
+	max-width: 245px;
+}
+
+.stats-tier-upgrade-slider__extension-popover-content {
+	padding: 24px;
+	text-align: left;
+}

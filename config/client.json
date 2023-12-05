@@ -26,6 +26,8 @@
 	"stats/date-control",
 	"stats/new-video-summary",
 	"stats/paid-wpcom-stats",
+	"stats/plan-usage",
+	"stats/tier-upgrade-slider",
 	"stats/type-detection",
 	"wpcom_concierge_schedule_id",
 	"wpcom_signup_id",

@@ -27,7 +27,6 @@ declare global {
 
 /**
  * Loads Google reCAPTCHA
- *
  * @returns {boolean} false if the script failed to load
  */
 async function loadGoogleRecaptchaScript() {
@@ -49,7 +48,6 @@ async function loadGoogleRecaptchaScript() {
 
 /**
  * Renders reCAPTCHA badge to an explicit DOM id that should already be on the page
- *
  * @param {string} elementId - render client to this existing DOM node
  * @param {string} siteKey - reCAPTCHA site key
  * @returns {number} reCAPTCHA clientId
@@ -70,7 +68,6 @@ async function renderRecaptchaClient( elementId: string, siteKey: string ) {
 
 /**
  * Records an arbitrary action to Google reCAPTCHA
- *
  * @param {number} clientId - a clientId of the reCAPTCHA instance
  * @param {string} action  - name of action to record in reCAPTCHA
  */
@@ -94,7 +91,6 @@ export async function recordGoogleRecaptchaAction( clientId: number, action: str
 
 /**
  * Records reCAPTCHA action, loading Google script if necessary.
- *
  * @param elementId - a DOM id in which to render the reCAPTCHA client
  * @param siteKey - reCAPTCHA site key
  * @returns either the reCAPTCHA token and clientId, or null if the function fails

@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Badge, CircularProgressBar, Dialog, Gridicon } from '@automattic/components';
+import { Badge, CircularProgressBar, Gridicon, Tooltip } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { LaunchpadInternal } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
@@ -10,13 +10,10 @@ import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Tooltip from 'calypso/components/tooltip';
-import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
-import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { type NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ResponseDomain } from 'calypso/lib/domains/types';
+import { type ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
@@ -25,7 +22,7 @@ import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selec
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
-import { Task } from './types';
+import { type Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
@@ -47,18 +44,6 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-function recordUnverifiedDomainDialogShownTracksEvent( site_id?: number ) {
-	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_dialog_shown', {
-		site_id,
-	} );
-}
-
-function recordUnverifiedDomainContinueAnywayClickedTracksEvent( site_id?: number ) {
-	recordTracksEvent( 'calypso_launchpad_unverified_domain_email_continue_anyway_clicked', {
-		site_id,
-	} );
-}
-
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
@@ -70,7 +55,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
-	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const queryClient = useQueryClient();
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
@@ -92,20 +76,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		! isBlogOnboardingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
-	const { isEmailUnverified: isDomainEmailUnverified } = useDomainEmailVerification(
-		site?.ID,
-		siteSlug ?? '',
-		selectedDomain?.domain_name ?? sidebarDomain?.domain
-	);
-
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem, getDomainCartItem } = useSelect(
+	const { planCartItem, domainCartItem, productCartItems } = useSelect(
 		( select ) => ( {
-			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
 		} ),
 		[]
 	);
@@ -125,14 +104,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem(),
-			getDomainCartItem(),
-			stripeConnectUrl,
-			() => {
-				recordUnverifiedDomainDialogShownTracksEvent( site?.ID );
-				setShowConfirmModal( true );
-			},
-			isDomainEmailUnverified
+			planCartItem,
+			domainCartItem,
+			productCartItems,
+			stripeConnectUrl
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
@@ -184,21 +159,21 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		);
 	}
 
-	if ( ! site ) {
-		return null;
-	}
-
+	// If there is no site yet then we set 1 as numberOfSteps so the CircularProgressBar gets rendered in
+	// an empty state. If site is here then we default to the previous behaviour: show it if enhancedTasks.length > 0.
+	const numberOfSteps = site === null ? 1 : enhancedTasks?.length || null;
 	return (
 		<>
-			<QueryMembershipsSettings siteId={ site.ID } source="launchpad" />
+			{ site && <QueryMembershipsSettings siteId={ site.ID } source="launchpad" /> }
 			<div className="launchpad__sidebar">
 				<div className="launchpad__sidebar-content-container">
 					<div className="launchpad__progress-bar-container">
 						<CircularProgressBar
 							size={ 40 }
 							enableDesktopScaling
-							currentStep={ currentTask || null }
-							numberOfSteps={ enhancedTasks?.length || null }
+							currentStep={ currentTask || 0 }
+							numberOfSteps={ numberOfSteps }
+							showProgressText={ site !== null }
 						/>
 					</div>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
@@ -275,46 +250,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 								title: translate( 'Paid newsletter' ),
 								type: TYPE_TIER,
 							} }
-							annualProduct={ { subscribe_as_site_subscriber: true, price: 5 * 12 } }
+							annualProduct={ {
+								price: 5 * 12,
+								subscribe_as_site_subscriber: true,
+								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+							} }
 							siteId={ site.ID }
 						/>
 					) }
 				</div>
 			</div>
-			<Dialog
-				isVisible={ showConfirmModal }
-				buttons={ [
-					{
-						action: 'cancel',
-						label: translate( 'Cancel' ),
-					},
-					{
-						action: 'launch',
-						label: translate( 'Continue anyway' ),
-						isPrimary: true,
-						onClick: () => {
-							recordUnverifiedDomainContinueAnywayClickedTracksEvent( site?.ID );
-							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
-							setShowConfirmModal( false );
-						},
-					},
-				] }
-				onClose={ () => setShowConfirmModal( false ) }
-			>
-				<p>
-					{ translate(
-						'Your domain email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in the future.{{break/}}{{break/}}Please check your inbox for the ICANN verification email.',
-						{
-							components: {
-								p: <p />,
-								break: <br />,
-								strong: <strong />,
-							},
-							args: { domain: sidebarDomain?.domain },
-						}
-					) }
-				</p>
-			</Dialog>
 		</>
 	);
 };

@@ -781,7 +781,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const aiAssistantShortDescription = translate(
 		'Experience the ease of crafting content with intuitive and powerful AI.'
 	);
-	const creatorShortDescription = translate( 'Create, grow, and monetize your audience' );
+	const creatorShortDescription = translate( 'Create, grow, and monetize your audience.' );
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
 	);

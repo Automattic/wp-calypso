@@ -9,12 +9,19 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { identifyUser } from 'calypso/lib/analytics/identify-user';
 import { addToQueue } from 'calypso/lib/analytics/queue';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { setSignupStartTime, getSignupCompleteElapsedTime } from 'calypso/signup/storageUtils';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
 export function recordSignupStart( flow, ref, optionalProps ) {
+	setSignupStartTime();
+
 	// Tracks
-	recordTracksEvent( 'calypso_signup_start', { flow, ref, ...optionalProps } );
+	recordTracksEvent( 'calypso_signup_start', {
+		flow,
+		ref,
+		...optionalProps,
+	} );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_start' );
 	// Marketing
@@ -46,6 +53,7 @@ export function recordSignupComplete(
 		isTransfer,
 		isMapping,
 		signupDomainOrigin,
+		elapsedTimeSinceStart = null,
 	},
 	now
 ) {
@@ -57,6 +65,7 @@ export function recordSignupComplete(
 			'signup',
 			'recordSignupComplete',
 			{
+				elapsedTimeSinceStart: elapsedTimeSinceStart ?? getSignupCompleteElapsedTime(),
 				flow,
 				siteId,
 				isNewUser,
@@ -81,6 +90,7 @@ export function recordSignupComplete(
 	// blog_id instead of site_id here. We keep using "siteId" otherwise since
 	// all the other fields still refer with "site". e.g. isNewSite
 	recordTracksEvent( 'calypso_signup_complete', {
+		elapsed_time_since_start: elapsedTimeSinceStart ?? getSignupCompleteElapsedTime(),
 		flow,
 		blog_id: siteId,
 		is_new_user: isNewUser,

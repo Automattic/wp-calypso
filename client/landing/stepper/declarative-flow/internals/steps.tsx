@@ -14,6 +14,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/celebration-step' ),
 	},
 
+	CHECK_SITES: {
+		slug: 'check-sites',
+		asyncComponent: () => import( './steps-repository/sites-checker' ),
+	},
+
 	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
 
 	DESIGN_SETUP: {
@@ -102,6 +107,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
+	NEW_OR_EXISTING_SITE: {
+		slug: 'new-or-existing-site',
+		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),
+	},
+
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
 	OPTIONS: {
@@ -120,8 +130,13 @@ export const STEPS = {
 	},
 
 	SITE_CREATION_STEP: {
-		slug: 'siteCreationStep',
+		slug: 'site-creation-step',
 		asyncComponent: () => import( './steps-repository/site-creation-step' ),
+	},
+
+	SITE_PICKER: {
+		slug: 'site-picker',
+		asyncComponent: () => import( './steps-repository/site-picker-list' ),
 	},
 
 	SITE_PROMPT: {

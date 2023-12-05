@@ -21,7 +21,6 @@ export interface AtomicSoftwareError {
 
 /**
  * Initiate plugin install and activation.
- *
  * @param {string} siteId Site ID.
  * @param {string} softwareSet Software set slug.
  * @returns {Object} An action object.
@@ -35,7 +34,6 @@ export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: strin
 
 /**
  * Fetch install status.
- *
  * @param {string} siteId Site ID.
  * @param {string} softwareSet Software set slug.
  * @returns {Object} An action object.
@@ -49,7 +47,6 @@ export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string
 
 /**
  * Set the install status.
- *
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.
  * @param {Object} status The new status of the transfer.
@@ -69,7 +66,6 @@ export const setAtomicSoftwareStatus = (
 
 /**
  * Set the install error.
- *
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.*
  * @param {AtomicSoftwareError} error The error of the install.
@@ -89,7 +85,6 @@ export const setAtomicSoftwareError = (
 
 /**
  * Clean the install status.
- *
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.*
  * @returns {Object} An action object

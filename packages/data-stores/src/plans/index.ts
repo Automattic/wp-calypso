@@ -19,7 +19,11 @@ export type {
 	PlanSimplifiedFeature,
 } from './types';
 
+/** Queries */
+export { default as usePlans } from './queries/use-plans';
 export { default as useSitePlans } from './queries/use-site-plans';
+/** Hooks/Selectors */
+export { default as useCurrentPlan } from './hooks/use-current-plan';
 export { default as useIntroOffers } from './hooks/use-intro-offers';
 export { default as useIntroOffersForWooExpress } from './hooks/use-intro-offers-for-woo-express';
 

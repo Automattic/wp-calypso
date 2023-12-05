@@ -4,12 +4,20 @@
 	.onboarding-title,
 	.onboarding-subtitle {
 		max-width: 100%;
-		margin-bottom: rem(40px);
+		margin-bottom: 0.75rem;
 	}
 
 	.onboarding-subtitle a {
 		font-weight: 500;
 		text-decoration: underline;
 		color: var(--studio-gray-100);
+	}
+
+	.import__buttons-group {
+		margin: 1.5rem 0;
+
+		button {
+			margin-bottom: 0.5rem;
+		}
 	}
 }

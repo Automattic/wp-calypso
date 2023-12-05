@@ -12,7 +12,6 @@ const publicSortFieldMap = {
 /**
  * Convert a public license sort field to its internal representation.
  * Public sort field differences are entirely cosmetic.
- *
  * @param {string} publicSortField Public sort field value (e.g. "assigned_on").
  * @param {LicenseSortField} fallback Sort field to return if publicSortField is invalid.
  * @returns {LicenseSortField} Internal sort field.
@@ -31,7 +30,6 @@ export function publicToInternalLicenseSortField(
 /**
  * Convert an internal license sort field to its public representation.
  * Public sort field differences are entirely cosmetic.
- *
  * @param {LicenseSortField} internalSortField Internal sort field (e.g. LicenseSortField.AttachedAt).
  * @returns {string} Public sort field.
  */

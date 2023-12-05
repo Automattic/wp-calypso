@@ -1,5 +1,5 @@
+import { Tooltip } from '@automattic/components';
 import { useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 interface Props {
 	feature: string;
@@ -23,7 +23,11 @@ export default function FeatureItem( { feature, tooltipText }: Props ) {
 			>
 				{ feature }
 			</div>
-			<Tooltip context={ tooltipRef.current } isVisible={ showPopover } position="top">
+			<Tooltip
+				context={ tooltipRef.current }
+				isVisible={ showPopover && !! tooltipText }
+				position="top"
+			>
 				{ tooltipText }
 			</Tooltip>
 		</>

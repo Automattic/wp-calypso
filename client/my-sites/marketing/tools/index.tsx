@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import page from 'page';
 import { Fragment, FunctionComponent } from 'react';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';

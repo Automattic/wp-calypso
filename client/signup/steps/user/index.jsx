@@ -1,19 +1,20 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isNewsletterFlow } from '@automattic/onboarding';
+import { isNewsletterFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { useExperiment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -269,6 +270,13 @@ export class UserStep extends Component {
 					subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 					} );
+				} else if ( isHostingSignupFlow( flowName ) ) {
+					subHeaderText = translate(
+						'The most reliable WordPress platform awaits you. Have an account? {{a}}Log in{{/a}}',
+						{
+							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+						}
+					);
 				} else {
 					subHeaderText = translate(
 						'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -379,7 +387,6 @@ export class UserStep extends Component {
 
 	/**
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
-	 *
 	 * @param {string} service      The name of the social service
 	 * @param {string} access_token An OAuth2 acccess token
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
@@ -464,7 +471,7 @@ export class UserStep extends Component {
 		}
 
 		const params = new URLSearchParams( window.location.search );
-		if ( isNewsletterFlow( params.get( 'variationName' ) ) ) {
+		if ( isNewsletterFlow( params.get( 'variationName' ) ) || isHostingSignupFlow( flowName ) ) {
 			return translate( 'Let’s get you signed up.' );
 		}
 
@@ -672,7 +679,7 @@ export class UserStep extends Component {
 	}
 }
 
-export default connect(
+const ConnectedUser = connect(
 	( state ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
@@ -688,3 +695,55 @@ export default connect(
 		submitSignupStep,
 	}
 )( localize( UserStep ) );
+
+const ExperimentWrappedUser = ( props ) => {
+	const [ isLayoutSwitchComplete, setIsLayoutSwitchComplete ] = useState(
+		props.flowName !== 'onboarding-pm'
+	);
+	const [ isLoading, experimentAssignment ] = useExperiment(
+		'calypso_gf_signup_onboardingpm_passwordless_registration',
+		{
+			isEligible: props.flowName === 'onboarding-pm',
+		}
+	);
+	useEffect( () => {
+		if ( ! isLoading && props.flowName === 'onboarding-pm' ) {
+			const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
+			const variationName = experimentAssignment?.variationName;
+			if ( typeof globalDiv === 'object' ) {
+				if ( variationName === 'treatment' ) {
+					globalDiv.classList.add( 'is-passwordless-experiment' );
+				} else if ( variationName === null || variationName === 'control' ) {
+					globalDiv.classList.remove( 'is-passwordless-experiment' );
+				}
+			}
+
+			setIsLayoutSwitchComplete( true );
+		}
+		return () => {
+			if ( props.flowName === 'onboarding-pm' ) {
+				const [ globalDiv ] = document.getElementsByClassName( 'signup__step is-user' );
+				if ( typeof globalDiv === 'object' ) {
+					globalDiv.classList.remove( 'is-passwordless-experiment' );
+				}
+			}
+		};
+	}, [
+		experimentAssignment?.variationName,
+		isLoading,
+		props.flowName,
+		setIsLayoutSwitchComplete,
+	] );
+
+	if ( ! isLayoutSwitchComplete ) {
+		return null;
+	}
+	return (
+		<ConnectedUser
+			{ ...props }
+			isSocialFirst={ experimentAssignment?.variationName === 'treatment' || props.isSocialFirst }
+		/>
+	);
+};
+
+export default ExperimentWrappedUser;

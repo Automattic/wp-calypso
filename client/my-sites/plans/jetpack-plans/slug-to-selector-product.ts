@@ -125,7 +125,6 @@ function getLightboxPlanDescription( item: Plan ) {
 }
 /**
  * Converts data from a product, plan, or selector product to selector product.
- *
  * @param item Product, Plan, or SelectorProduct.
  * @returns SelectorProduct
  */
@@ -214,9 +213,7 @@ function itemToSelectorProduct(
 			description: getForCurrentCROIteration( item.getDescription ),
 			featuredDescription: getFeaturedPlanDescription( item ),
 			lightboxDescription: getLightboxPlanDescription( item ),
-			productsIncluded:
-				// There are no products included for Jetpack Creator plans, so we don't want to show the "Included" section
-				item.getProductsIncluded?.() || [],
+			productsIncluded: item.getProductsIncluded?.() || [],
 			whatIsIncluded: item.getWhatIsIncluded
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
@@ -241,7 +238,6 @@ function itemToSelectorProduct(
 
 /**
  * Converts an item slug to a SelectorProduct item type.
- *
  * @param slug string
  * @returns SelectorProduct | null
  */

@@ -58,6 +58,10 @@
 			excludePackagePatterns: [ '^@storybook' ],
 			prPriority: 2,
 		},
+		{
+			groupName: 'size-limit',
+			matchPackageNames: [ '@size-limit/file', 'size-limit' ],
+		},
 		{ extends: [ 'monorepo:storybook' ], prPriority: 2 },
 		{ extends: [ 'packages:linters' ], groupName: 'linters', prPriority: 2 },
 		{

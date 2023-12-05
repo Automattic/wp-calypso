@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { PAST_SEVEN_DAYS, PAST_THIRTY_DAYS } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
@@ -6,7 +7,6 @@ import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -53,6 +53,7 @@ import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
+import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import { getPathWithUpdatedQueryString } from './utils';
 
@@ -461,6 +462,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				{ config.isEnabled( 'stats/plan-usage' ) && <StatsPlanUsage siteId={ siteId } /> }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />

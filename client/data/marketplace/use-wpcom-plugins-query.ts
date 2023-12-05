@@ -59,7 +59,6 @@ export const getWPCOMPluginsQueryParams = (
 
 /**
  * Returns marketplace plugins list filtered by searchterm and type.
- *
  * @param {Type} type Optional The query type
  * @param {string} searchTerm Optional The term to search for
  * @param {string} tag Optional The tag to search for
@@ -74,7 +73,7 @@ export const useWPCOMPluginsList = (
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
-	}: UseQueryOptions< any > = {}
+	}: Omit< UseQueryOptions< any >, 'queryKey' > = {}
 ): UseQueryResult => {
 	return useQuery( {
 		...getWPCOMPluginsQueryParams( type, searchTerm, tag ),
@@ -104,14 +103,17 @@ export const getWPCOMPluginQueryParams = (
 
 /**
  * Returns a marketplace plugin data
- *
  * @param {Type} slug The plugin slug to query
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
 export const useWPCOMPlugin = (
 	slug: string,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions, 'queryKey' > = {}
 ): UseQueryResult< any > => {
 	return useQuery( {
 		...getWPCOMPluginQueryParams( slug ),
@@ -146,7 +148,6 @@ export const getWPCOMFeaturedPluginsQueryParams = (): {
 
 /**
  * Returns the featured list of plugins from WPCOM
- *
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
@@ -154,7 +155,7 @@ export const useWPCOMFeaturedPlugins = ( {
 	enabled = true,
 	staleTime = BASE_STALE_TIME,
 	refetchOnMount = true,
-}: UseQueryOptions = {} ): UseQueryResult => {
+}: Omit< UseQueryOptions, 'queryKey' > = {} ): UseQueryResult => {
 	return useQuery( {
 		...getWPCOMFeaturedPluginsQueryParams(),
 		enabled,

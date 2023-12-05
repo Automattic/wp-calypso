@@ -85,9 +85,15 @@ const importHostedSiteFlow: Flow = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
-							providedDependencies?.platform as ImporterMainPlatform
-						) !== -1
+						[
+							'blogroll',
+							'ghost',
+							'tumblr',
+							'livejournal',
+							'movabletype',
+							'xanga',
+							'substack',
+						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -144,7 +150,14 @@ const importHostedSiteFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as string );
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
+						default:
+							return navigate( providedDependencies?.url as string );
+					}
 				}
 
 				case 'trialAcknowledge': {
@@ -161,7 +174,7 @@ const importHostedSiteFlow: Flow = {
 				}
 
 				case 'verifyEmail':
-					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;

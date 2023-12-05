@@ -19,13 +19,10 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useManageTooltipToggle } from 'calypso/my-sites/plans-grid/hooks/use-manage-tooltip-toggle';
-import { useSelector } from 'calypso/state';
-import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/npm-ready/data-store/use-default-storage-option';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
@@ -33,21 +30,17 @@ import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
-	canUserManageCurrentPlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
 	freePlan: boolean;
-	currentPlanManageHref?: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
 	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	planSlug: PlanSlug;
-	flowName?: string | null;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
-	isWooExpressPlusPlan?: boolean;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	siteId?: number | null;
@@ -219,8 +212,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
-	currentPlanManageHref,
-	canUserManageCurrentPlan,
 	currentSitePlanSlug,
 	buttonText,
 	planActionOverrides,
@@ -236,8 +227,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: PlanSlug;
-	currentPlanManageHref?: string;
-	canUserManageCurrentPlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
 	planActionOverrides?: PlanActionOverrides;
@@ -250,7 +239,14 @@ const LoggedInPlansFeatureActionButton = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug ),
 		[ planSlug ]
 	);
-	const { current, storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
+	const {
+		current,
+		storageAddOnsForPlan,
+		pricing: { billingPeriod },
+	} = gridPlansIndex[ planSlug ];
+	const currentPlanBillingPeriod = currentSitePlanSlug
+		? gridPlansIndex[ currentSitePlanSlug ]?.pricing.billingPeriod
+		: null;
 	const defaultStorageOption = useDefaultStorageOption( {
 		storageOptions,
 		storageAddOnsForPlan,
@@ -263,12 +259,6 @@ const LoggedInPlansFeatureActionButton = ( {
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
 	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
-	const currentPlanBillPeriod = useSelector( ( state ) => {
-		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
-	} );
-	const gridPlanBillPeriod = useSelector( ( state ) => {
-		return planSlug ? getPlanBillPeriod( state, planSlug ) : null;
-	} );
 
 	if (
 		freePlan ||
@@ -276,11 +266,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planActionOverrides?.loggedInFreePlan ) {
 			return (
-				<Button
-					className={ classes }
-					onClick={ planActionOverrides.loggedInFreePlan.callback }
-					disabled={ ! currentPlanManageHref } // not sure why this is here
-				>
+				<Button className={ classes } onClick={ planActionOverrides.loggedInFreePlan.callback }>
 					{ planActionOverrides.loggedInFreePlan.text }
 				</Button>
 			);
@@ -307,15 +293,17 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</Button>
 			);
+		} else if ( planActionOverrides?.currentPlan ) {
+			const { callback, text } = planActionOverrides.currentPlan;
+			return (
+				<Button className={ classes } disabled={ ! callback } onClick={ callback }>
+					{ text }
+				</Button>
+			);
 		}
-
 		return (
-			<Button
-				className={ classes }
-				href={ currentPlanManageHref }
-				disabled={ ! currentPlanManageHref }
-			>
-				{ canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ) }
+			<Button className={ classes } disabled>
+				{ translate( 'Active Plan' ) }
 			</Button>
 		);
 	}
@@ -331,9 +319,9 @@ const LoggedInPlansFeatureActionButton = ( {
 		currentSitePlanSlug &&
 		! current &&
 		! isTrialPlan &&
-		currentPlanBillPeriod &&
-		gridPlanBillPeriod &&
-		currentPlanBillPeriod > gridPlanBillPeriod
+		currentPlanBillingPeriod &&
+		billingPeriod &&
+		currentPlanBillingPeriod > billingPeriod
 	) {
 		return (
 			<Button className={ classes } disabled={ true }>
@@ -433,19 +421,15 @@ const LoggedInPlansFeatureActionButton = ( {
 
 const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( {
 	availableForPurchase = true,
-	canUserManageCurrentPlan,
 	className,
 	currentSitePlanSlug,
 	freePlan = false,
-	currentPlanManageHref,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
 	planSlug,
-	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
-	isWooExpressPlusPlan = false,
 	planActionOverrides,
 	isStuck,
 	isLargeCurrency,
@@ -475,49 +459,18 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 					current_plan: currentSitePlanSlug,
 					upgrading_to: upgradePlan,
+					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
 			}
-
 			onUpgradeClick?.( upgradePlan );
 		},
 		[ currentSitePlanSlug, freePlan, freeTrialPlanSlug, onUpgradeClick, planSlug ]
 	);
 
 	if ( isWpcomEnterpriseGridPlan ) {
-		const vipLandingPageUrlWithUtmCampaign = addQueryArgs(
-			'https://wpvip.com/wordpress-vip-agile-content-platform',
-			{
-				utm_source: 'WordPresscom',
-				utm_medium: 'automattic_referral',
-				utm_campaign: 'calypso_signup',
-			}
-		);
-
 		return (
-			<Button
-				className={ classNames( classes ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } )
-				}
-				href={ vipLandingPageUrlWithUtmCampaign }
-				target="_blank"
-			>
+			<Button className={ classNames( classes ) } onClick={ () => handleUpgradeButtonClick() }>
 				{ translate( 'Learn more' ) }
-			</Button>
-		);
-	}
-
-	if ( isWooExpressPlusPlan ) {
-		return (
-			<Button
-				className={ classNames( classes ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_plan_step_woo_express_plus_click', { flow: flowName } )
-				}
-				href="https://woocommerce.com/get-in-touch/"
-				target="_blank"
-			>
-				{ translate( 'Get in touch' ) }
 			</Button>
 		);
 	}
@@ -567,8 +520,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			currentPlanManageHref={ currentPlanManageHref }
-			canUserManageCurrentPlan={ canUserManageCurrentPlan }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			planActionOverrides={ planActionOverrides }

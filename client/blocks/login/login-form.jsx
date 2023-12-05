@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
@@ -91,6 +91,7 @@ export class LoginForm extends Component {
 		hideSignupLink: PropTypes.bool,
 		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
+		isSendingEmail: PropTypes.bool,
 	};
 
 	state = {
@@ -192,12 +193,12 @@ export class LoginForm extends Component {
 	}
 
 	isUsernameOrEmailView() {
-		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
-
+		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
 		return (
-			! socialAccountIsLinking &&
-			! hasAccountTypeLoaded &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup )
+			isSendingEmail ||
+			( ! socialAccountIsLinking &&
+				! hasAccountTypeLoaded &&
+				! ( this.props.isWoo && ! this.props.isPartnerSignup ) )
 		);
 	}
 
@@ -647,6 +648,7 @@ export class LoginForm extends Component {
 			isWooCoreProfilerFlow,
 			hideSignupLink,
 			isSignupExistingAccount,
+			isSendingEmail,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -825,7 +827,7 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">{ socialToS }</p>
 					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
-						<FormsButton primary disabled={ isSubmitButtonDisabled }>
+						<FormsButton primary busy={ isSendingEmail } disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
 						</FormsButton>
 					</div>

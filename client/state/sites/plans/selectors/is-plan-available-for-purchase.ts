@@ -5,7 +5,6 @@ import { isCurrentUserCurrentPlanOwner } from './is-current-user-current-plan-ow
 
 /**
  * Check if a given plan is currently purchasable
- *
  * @param {AppState} state - Global state tree
  * @param {number} siteId - Site ID
  * @param {number} planName - The name of the plan being considered

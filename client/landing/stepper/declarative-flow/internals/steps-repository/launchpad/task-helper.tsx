@@ -59,9 +59,8 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
-	stripeConnectUrl?: string,
-	setShowConfirmModal: () => void = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	isDomainEmailUnverified = false
+	productCartItems?: MinimalRequestCartProduct[] | null,
+	stripeConnectUrl?: string
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -121,7 +120,7 @@ export function getEnhancedTasks(
 			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { newsletter_plan_created: true },
 			} );
-			queryClient?.invalidateQueries( [ 'launchpad' ] );
+			queryClient?.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 		}
 	};
 
@@ -296,13 +295,7 @@ export function getEnhancedTasks(
 					taskData = {
 						isLaunchTask: true,
 						disabled: mustVerifyEmailBeforePosting || false,
-						actionDispatch: ( force = false ) => {
-							if ( ! force ) {
-								if ( isDomainEmailUnverified ) {
-									setShowConfirmModal();
-									return;
-								}
-							}
+						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
 						},
@@ -349,15 +342,8 @@ export function getEnhancedTasks(
 				case 'link_in_bio_launched':
 					taskData = {
 						isLaunchTask: true,
-						actionDispatch: ( force = false ) => {
+						actionDispatch: () => {
 							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
-
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -381,14 +367,8 @@ export function getEnhancedTasks(
 				case 'site_launched':
 					taskData = {
 						isLaunchTask: true,
-						actionDispatch: ( force = false ) => {
+						actionDispatch: () => {
 							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -410,7 +390,12 @@ export function getEnhancedTasks(
 					};
 					break;
 				case 'blog_launched': {
-					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
+					// If user selected products during onboarding, update cart and redirect to checkout
+					const onboardingCartItems = [
+						planCartItem,
+						domainCartItem,
+						...( productCartItems ?? [] ),
+					].filter( Boolean ) as MinimalRequestCartProduct[];
 					let title = task.title;
 					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
 						title = translate( 'Checkout and launch' );
@@ -427,24 +412,13 @@ export function getEnhancedTasks(
 									! setupBlogCompleted ) ) ||
 							( isDesignFirstFlow( flow ) &&
 								( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ) ),
-						actionDispatch: ( force = false ) => {
+						actionDispatch: () => {
 							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
-
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Directing to checkout' ) );
-									// If user selected products during onboarding, update cart and redirect to checkout
-									const onboardingCartItems = [ planCartItem, domainCartItem ].filter(
-										Boolean
-									) as MinimalRequestCartProduct[];
 									if ( onboardingCartItems.length ) {
 										await replaceProductsInCart( siteSlug as string, onboardingCartItems );
 										const { goToCheckout } = useCheckout();
@@ -485,15 +459,8 @@ export function getEnhancedTasks(
 				case 'videopress_launched':
 					taskData = {
 						isLaunchTask: true,
-						actionDispatch: ( force = false ) => {
+						actionDispatch: () => {
 							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
-
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -551,15 +518,6 @@ export function getEnhancedTasks(
 								: translate( 'Upgrade plan' ),
 					};
 					break;
-				case 'verify_domain_email':
-					taskData = {
-						completed: ! isDomainEmailUnverified,
-						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace( task.calypso_path || `/domains/manage/${ siteSlug }` );
-						},
-					};
-					break;
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
@@ -588,7 +546,7 @@ export function getEnhancedTasks(
 							site?.ID
 								? setShowPlansModal( true )
 								: window.location.assign(
-										`/earn/payments-plans/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+										`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
 								  );
 						},
 					};

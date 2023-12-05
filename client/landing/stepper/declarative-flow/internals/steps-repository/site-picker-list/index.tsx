@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import './styles.scss';
 
 const SitePicker: Step = function SitePicker( { navigation, flow } ) {
 	const translate = useTranslate();
+	const { submit, goBack } = navigation;
 
 	const [ selectedSiteId, setSelectedSiteId ] = useState< SiteId | null >( null );
 
@@ -33,7 +34,7 @@ const SitePicker: Step = function SitePicker( { navigation, flow } ) {
 		const siteSlug = new URL( site?.URL || '' ).host;
 		const siteId = site?.ID;
 
-		navigation.submit?.( { siteSlug, siteId } );
+		submit?.( { siteSlug, siteId } );
 	}, [ site ] );
 
 	const selectSite = ( siteId: SiteId ) => {
@@ -70,7 +71,8 @@ const SitePicker: Step = function SitePicker( { navigation, flow } ) {
 				}
 				recordTracksEvent={ recordTracksEvent }
 				flowName={ flow }
-				hideBack={ true }
+				hideBack={ ! isSiteAssemblerFlow( flow ) }
+				goBack={ goBack }
 			/>
 		</>
 	);

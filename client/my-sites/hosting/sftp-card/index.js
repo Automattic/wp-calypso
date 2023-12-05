@@ -208,7 +208,6 @@ export const SftpCard = ( {
 			</div>
 		);
 	};
-
 	const displayQuestionsAndButton = ! hasSftpFeatureAndIsLoading && ! ( username || isLoading );
 	const showSshPanel = ! siteHasSftpFeature || siteHasSshFeature;
 

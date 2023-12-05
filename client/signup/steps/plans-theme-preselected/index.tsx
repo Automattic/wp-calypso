@@ -3,7 +3,7 @@ import {
 	FREE_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { isDesktop } from '@automattic/viewport';
@@ -21,7 +21,6 @@ type SignupDependencies = {
  * Determine which plans should be displayed based on the signupDependencies.
  *
  * Instead of making an API call (which is expensive), we are retrieving the information based on the query Params that were passed when the flow started.
- *
  * @param signupDependencies
  */
 function getHidePlanPropsBasedOnSignupDependencies(
@@ -33,7 +32,7 @@ function getHidePlanPropsBasedOnSignupDependencies(
 	if (
 		signupDependencies.themeType === DOT_ORG_THEME ||
 		signupDependencies.themeType === MARKETPLACE_THEME ||
-		signupDependencies.themeType === WOOCOMMERCE_THEME
+		signupDependencies.themeType === BUNDLED_THEME
 	) {
 		return { hidePremiumPlan: true, hidePersonalPlan: true, hideFreePlan: true };
 	}

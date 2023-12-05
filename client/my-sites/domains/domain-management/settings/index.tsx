@@ -1,10 +1,10 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -611,10 +611,38 @@ const Settings = ( {
 		return null;
 	};
 
+	const renderPendingRegistrationAtRegistryNotice = () => {
+		return (
+			<Notice
+				text={ translate(
+					'We forwarded the domain registration request to Registro.br (.com.br registry). It may take up to 3 days for the request to be evaluated and accepted.'
+				) }
+				icon="info"
+				showDismiss={ false }
+				status="is-warning"
+			>
+				{ /*
+					TO DO: Enable the link when the support page is ready
+					<NoticeAction href={ domain.pendingRegistrationAtRegistryUrl }>
+						{ translate( 'More info' ) }
+					</NoticeAction>
+				*/ }
+			</Notice>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
 			return undefined;
+		}
+		if ( domain.pendingRegistrationAtRegistry ) {
+			return (
+				<>
+					{ renderPendingRegistrationAtRegistryNotice() }
+					{ renderDetailsSection() }
+				</>
+			);
 		}
 		return (
 			<>

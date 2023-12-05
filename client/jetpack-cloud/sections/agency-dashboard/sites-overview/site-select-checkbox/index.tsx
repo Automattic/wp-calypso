@@ -1,6 +1,6 @@
+import { Tooltip } from '@automattic/components';
 import { ReactNode, useRef, useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import Tooltip from 'calypso/components/tooltip';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import type { SiteData } from '../types';
 

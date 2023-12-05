@@ -85,12 +85,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ verifiedParam, translate, dispatch ] );
 
-	useEffect( () => {
-		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
-			localStorage.setItem( 'launchpad_siteSlug', siteSlug );
-		}
-	}, [ siteSlug, site ] );
-
 	if ( launchpadScreenOption === 'skipped' ) {
 		window.location.assign( `/home/${ siteSlug }` );
 		return;

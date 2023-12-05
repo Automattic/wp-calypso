@@ -1,8 +1,4 @@
-import {
-	OnboardSelect,
-	LaunchpadNavigator,
-	updateLaunchpadSettings,
-} from '@automattic/data-stores';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
@@ -55,7 +51,7 @@ const designFirst: Flow = {
 			},
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
+				asyncComponent: () => import( './internals/steps-repository/domains' ),
 			},
 			{
 				slug: 'use-my-domain',
@@ -93,7 +89,6 @@ const designFirst: Flow = {
 			[]
 		).getState();
 		const site = useSite();
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -262,7 +257,6 @@ const designFirst: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: site?.options?.site_intent,
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

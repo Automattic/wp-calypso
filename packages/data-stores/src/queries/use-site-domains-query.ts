@@ -109,6 +109,7 @@ export interface DomainData {
 	must_remove_privacy_before_contact_update: boolean;
 	registry_expiry_date: string;
 	subdomain_part: string;
+	auth_code_required: boolean;
 }
 
 export interface SiteDomainsQueryFnData {
@@ -117,14 +118,14 @@ export interface SiteDomainsQueryFnData {
 
 export function useSiteDomainsQuery< TError = unknown, TData = SiteDomainsQueryFnData >(
 	siteIdOrSlug: number | string | null | undefined,
-	options: UseQueryOptions< SiteDomainsQueryFnData, TError, TData > = {}
+	options: Omit< UseQueryOptions< SiteDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ) {
 	return useQuery( getSiteDomainsQueryObject( siteIdOrSlug, options ) );
 }
 
 export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomainsQueryFnData >(
 	siteIdOrSlug: number | string | null | undefined,
-	options: UseQueryOptions< SiteDomainsQueryFnData, TError, TData > = {}
+	options: Omit< UseQueryOptions< SiteDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ): UseQueryOptions< SiteDomainsQueryFnData, TError, TData > {
 	return {
 		queryKey: [ 'site-domains', siteIdOrSlug ],

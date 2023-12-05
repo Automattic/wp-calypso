@@ -24,7 +24,7 @@
 }
 
 // New navigation will not include a masterbar
-.theme-jetpack-cloud .layout.has-no-masterbar.is-jetpack-new-navigation {
+.theme-jetpack-cloud .layout.has-no-masterbar {
 	--masterbar-height: 0;
 
 	// By default, there's 32px of top padding on the layout component.
@@ -39,7 +39,7 @@
 	}
 }
 
-.theme-jetpack-cloud .is-jetpack-new-navigation .layout__secondary {
+.theme-jetpack-cloud .layout__secondary {
 	border-right: initial;
 
 	// Allow visible overflow, so the profile dropdown menu can be displayed
@@ -471,7 +471,7 @@ body.is-section-jetpack-cloud-pricing.is-group-jetpack-cloud .mini-cart {
 		}
 	}
 
-	.gridicon {
+	.button .gridicon {
 		width: 20px;
 		height: 20px;
 		fill: var(--studio-white);

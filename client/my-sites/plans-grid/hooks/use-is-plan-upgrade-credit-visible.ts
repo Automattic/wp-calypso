@@ -7,7 +7,6 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 
 /**
  * This hook determines if the plan upgrade credit should be visible in the current plans display context
- *
  * @param siteId Considered site id
  * @param visiblePlans Plans that are visible to the user
  * @returns If the credit should be displayed to the user

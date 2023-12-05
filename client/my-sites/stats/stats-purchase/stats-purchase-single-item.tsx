@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -15,6 +15,7 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
+import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
@@ -92,6 +93,7 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -119,21 +121,52 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
+	// TODO: Replace current pricing info with slider.
+	// Currently displaying below the flow to maintain existing behaviour.
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-			<ButtonComponent
-				variant="primary"
-				primary={ isWPCOMSite ? true : undefined }
-				onClick={ () =>
-					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-				}
-			>
-				{ translate( 'Get Stats' ) }
-			</ButtonComponent>
+			{ ! isTierUpgradeSliderEnabled && (
+				<ButtonComponent
+					variant="primary"
+					primary={ isWPCOMSite ? true : undefined }
+					onClick={ () =>
+						gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+					}
+				>
+					{ translate( 'Get Stats' ) }
+				</ButtonComponent>
+			) }
+			{ isTierUpgradeSliderEnabled && (
+				<>
+					<TierUpgradeSlider
+						currencyCode={ currencyCode }
+						setPurchaseTierQuantity={ setPurchaseTierQuantity }
+					/>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( {
+								from,
+								type: 'commercial',
+								siteSlug,
+								adminUrl,
+								redirectUri,
+								price: undefined,
+								quantity: purchaseTierQuantity,
+							} )
+						}
+					>
+						{ translate( 'Get Stats' ) }
+					</ButtonComponent>
+				</>
+			) }
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>

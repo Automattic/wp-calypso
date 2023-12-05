@@ -5,10 +5,12 @@ import { useGlobalStyle } from '@automattic/global-styles';
 import { Popover } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useEffect, useState, useMemo, CSSProperties } from 'react';
+import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
+import PatternTooltipDeadClick from './pattern-tooltip-dead-click';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-large-preview.scss';
@@ -18,6 +20,7 @@ interface Props {
 	sections: Pattern[];
 	footer: Pattern | null;
 	activePosition: number;
+	pages?: Pattern[];
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
@@ -38,6 +41,7 @@ const PatternLargePreview = ( {
 	sections,
 	footer,
 	activePosition,
+	pages,
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
@@ -74,6 +78,7 @@ const PatternLargePreview = ( {
 	}, 300 );
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
+	const [ shouldShowTooltip, setShouldShowTooltip ] = useState( false );
 
 	const popoverAnchor = useMemo( () => {
 		if ( ! activeElement ) {
@@ -95,10 +100,32 @@ const PatternLargePreview = ( {
 		};
 	}, [ activeElement ] );
 
+	const transformPatternHtml = useCallback(
+		( patternHtml: string ) => {
+			const pageTitles = pages?.map( ( page ) => page.title );
+			if ( pageTitles ) {
+				return injectTitlesToPageListBlock( patternHtml, pageTitles, {
+					replaceCurrentPages: isNewSite,
+				} );
+			}
+			return patternHtml;
+		},
+		[ isNewSite, pages ]
+	);
+
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const isSection = type === 'section';
 		const clientId = isSection ? pattern.key : type;
 		const isActive = activeElement?.dataset?.clientId === clientId;
+
+		const handleMouseDown = ( event: React.MouseEvent< HTMLElement > ) => {
+			const target = event.target as HTMLElement | null;
+			if ( target && target.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
+				return;
+			}
+
+			setShouldShowTooltip( true );
+		};
 
 		const handleMouseEnter = ( event: React.MouseEvent< HTMLElement > ) => {
 			setActiveElement( event.currentTarget );
@@ -125,6 +152,7 @@ const PatternLargePreview = ( {
 		};
 
 		return (
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 			<li
 				key={ clientId }
 				aria-label={ pattern.title }
@@ -132,6 +160,7 @@ const PatternLargePreview = ( {
 					'pattern-large-preview__pattern--active': isActive,
 				} ) }
 				data-client-id={ clientId }
+				onMouseDown={ handleMouseDown }
 				onMouseEnter={ handleMouseEnter }
 			>
 				{ !! viewportHeight && (
@@ -141,7 +170,7 @@ const PatternLargePreview = ( {
 						viewportHeight={ viewportHeight }
 						// Disable default max-height
 						maxHeight="none"
-						shouldShufflePosts={ isNewSite }
+						transformHtml={ transformPatternHtml }
 					/>
 				) }
 				{ isActive && (
@@ -207,7 +236,15 @@ const PatternLargePreview = ( {
 			}
 		};
 
-		scrollIntoView();
+		// Only scroll when the pattern is added via the pattern list panel.
+		// This prevents auto-scrolling when the pattern is added via shuffle, which causes the pattern action bar to jump around.
+		const focusedElement = document.activeElement;
+		if (
+			! focusedElement ||
+			focusedElement.classList.contains( 'pattern-list-renderer__pattern-list-item' )
+		) {
+			scrollIntoView();
+		}
 
 		return () => {
 			if ( timerId ) {
@@ -223,6 +260,8 @@ const PatternLargePreview = ( {
 			if ( ! relatedTarget?.closest?.( '.pattern-assembler__pattern-action-bar' ) ) {
 				setActiveElement( null );
 			}
+
+			setShouldShowTooltip( false );
 		};
 
 		// When the value of the `hasSelectedPattern` changes, it will append/remove the
@@ -236,7 +275,7 @@ const PatternLargePreview = ( {
 		return () => {
 			frameRef.current?.removeEventListener( 'mouseleave', handleMouseLeave );
 		};
-	}, [ frameRef, hasSelectedPattern, setActiveElement ] );
+	}, [ frameRef, hasSelectedPattern, setActiveElement, setShouldShowTooltip ] );
 
 	return (
 		<DeviceSwitcher
@@ -276,6 +315,9 @@ const PatternLargePreview = ( {
 						<li>{ translate( 'Add your own content in the Editor.' ) } </li>
 					</ul>
 				</div>
+			) }
+			{ activeElement && (
+				<PatternTooltipDeadClick targetRef={ frameRef } isVisible={ shouldShowTooltip } />
 			) }
 		</DeviceSwitcher>
 	);

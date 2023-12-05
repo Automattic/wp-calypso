@@ -31,7 +31,6 @@ type OptionValueType = Record< string, unknown > | string;
 
 /**
  * Simple react custom hook to deal with site settings.
- *
  * @param {number} siteId - site id
  * @returns {Array} - site option handlers
  */
@@ -54,7 +53,6 @@ export function useSiteSettings( siteId: number ) {
 
 	/**
 	 * Simple getter function.
-	 *
 	 * @todo The any return type was inferred in the original code because of an
 	 * invalid JSDoc type. Once that type was fixed, we had to hardcode "any" in
 	 * order to avoid the errors that got hidden. See below for more details.

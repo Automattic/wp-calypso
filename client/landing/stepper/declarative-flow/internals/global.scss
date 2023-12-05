@@ -88,12 +88,14 @@ button {
 .free-post-setup,
 .free,
 .with-theme-assembler,
+.assembler-first,
 .setup-blog,
 .celebration-step,
 .use-my-domain,
 .domain-transfer,
 .update-design,
-.hundred-year-plan {
+.hundred-year-plan,
+.link-in-bio-tld {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -120,6 +122,12 @@ button {
 	.import-step,
 	.importer-step {
 		@include onboarding-block-margin;
+	}
+
+	&.site-picker,
+	&.new-or-existing-site,
+	&.launchpad {
+		padding: 0;
 	}
 
 	/**

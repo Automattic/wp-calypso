@@ -77,6 +77,7 @@ export function createAlipayMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'alipay',
+		hasRequiredFields: true,
 		paymentProcessorId: 'alipay',
 		label: <AlipayLabel />,
 		activeContent: <AlipayFields />,

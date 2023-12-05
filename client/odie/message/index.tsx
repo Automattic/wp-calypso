@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Button, FoldableCard } from '@automattic/components';
+import { FoldableCard } from '@automattic/components';
 import { useTyper } from '@automattic/help-center/src/hooks';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 import MaximizeIcon from 'calypso/assets/images/odie/maximize-icon.svg';
@@ -14,6 +14,7 @@ import WapuuThinking from 'calypso/assets/images/odie/wapuu-thinking.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import Button from '../button';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
@@ -38,9 +39,12 @@ type ChatMessageProps = {
 	scrollToBottom: () => void;
 };
 
-const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
+const ChatMessage = (
+	{ message, scrollToBottom }: ChatMessageProps,
+	ref: React.Ref< HTMLDivElement >
+) => {
 	const isUser = message.role === 'user';
-	const { botName, extraContactOptions, addMessage } = useOdieAssistantContext();
+	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
@@ -54,10 +58,17 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const hasFeedback = !! message?.rating_value;
-	const sources = message?.context?.sources ?? [];
+
+	// dedupe sources based on url
+	let sources = message?.context?.sources ?? [];
+	if ( sources.length > 0 ) {
+		sources = [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ];
+	}
+
 	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
 	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
+	const fullscreenRef = useRef< HTMLDivElement >( null );
 
 	const messageFullyTyped =
 		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
@@ -78,6 +89,42 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 	const handleFullscreenToggle = () => {
 		setIsFullscreen( ! isFullscreen );
 	};
+
+	const handleWheel = useCallback(
+		( event: WheelEvent ) => {
+			if ( ! isFullscreen ) {
+				return;
+			}
+
+			const element = fullscreenRef.current;
+
+			if ( element ) {
+				const { scrollTop, scrollHeight, clientHeight } = element;
+				const atTop = scrollTop <= 0;
+				const tolerance = 2;
+				const atBottom = scrollTop + clientHeight >= scrollHeight - tolerance;
+
+				// Prevent scrolling the parent element when at the bounds
+				if ( ( atTop && event.deltaY < 0 ) || ( atBottom && event.deltaY > 0 ) ) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}
+		},
+		[ isFullscreen ]
+	);
+
+	useEffect( () => {
+		const fullscreenElement = fullscreenRef.current;
+		if ( fullscreenElement ) {
+			fullscreenElement.addEventListener( 'wheel', handleWheel, { passive: false } );
+		}
+		return () => {
+			if ( fullscreenElement ) {
+				fullscreenElement.removeEventListener( 'wheel', handleWheel );
+			}
+		};
+	}, [ handleWheel ] );
 
 	useEffect( () => {
 		if ( message.content !== realTimeMessage && message.simulateTyping ) {
@@ -158,28 +205,30 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
 
+	const shouldRenderExtraContactOptions = isRequestingHumanSupport && messageFullyTyped;
+
 	const onDislike = () => {
+		if ( shouldRenderExtraContactOptions ) {
+			return;
+		}
 		setTimeout( () => {
 			addMessage( {
-				content: translate(
-					'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
-					{
-						context: 'Message displayed when the user dislikes a message from the bot',
-						textOnly: true,
-					}
-				),
+				content: '...',
 				role: 'bot',
 				type: 'dislike-feedback',
 			} );
-		}, 600 );
+		}, 1200 );
 	};
 
-	const shouldRenderExtraContactOptions =
-		( isRequestingHumanSupport !== undefined && isRequestingHumanSupport ) ||
-		( message && message.type === 'dislike-feedback' );
+	const odieChatBoxMessageSourcesContainerClass = classnames(
+		'odie-chatbox-message-sources-container',
+		{
+			'odie-chatbox-message-sources-container-fullscreen': isFullscreen,
+		}
+	);
 
 	const messageContent = (
-		<div className="odie-chatbox-message-sources-container">
+		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>
 			<div className={ messageClasses }>
 				{ messageHeader }
 				{ ( message.type === 'message' || ! message.type ) && (
@@ -205,35 +254,60 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 					</div>
 				) }
 				{ message.type === 'dislike-feedback' && (
-					<AsyncLoad
-						require="react-markdown"
-						placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
-						transformLinkUri={ uriTransformer }
-						components={ {
-							a: CustomALink,
-						} }
-					>
-						{ message.content }
-					</AsyncLoad>
+					<>
+						<AsyncLoad
+							require="react-markdown"
+							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
+							transformLinkUri={ uriTransformer }
+							components={ {
+								a: CustomALink,
+							} }
+						>
+							{ translate(
+								'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+								{
+									context: 'Message displayed when the user dislikes a message from the bot',
+									textOnly: true,
+								}
+							) }
+						</AsyncLoad>
+						{ extraContactOptions }
+					</>
 				) }
 				{ shouldRenderExtraContactOptions && extraContactOptions }
 			</div>
 			{ hasSources && messageFullyTyped && (
 				<FoldableCard
-					header={ translate( 'Sources:', {
+					className="odie-sources-foldable-card"
+					clickableHeader
+					header={ translate( 'Related Guides', {
 						context:
 							'Below this text are links to sources for the current message received from the bot.',
 						textOnly: true,
 					} ) }
+					onClose={ () =>
+						trackEvent( 'calypso_odie_chat_message_action_sources', {
+							bot_name_slug: botName,
+							action: 'close',
+							message_id: message.message_id,
+						} )
+					}
+					onOpen={ () =>
+						trackEvent( 'calypso_odie_chat_message_action_sources', {
+							bot_name_slug: botName,
+							action: 'open',
+							message_id: message.message_id,
+						} )
+					}
 					screenReaderText="More"
-					onClick={ scrollToBottom }
 				>
 					<div className="odie-chatbox-message-sources">
-						{ sources.map( ( source: Source, index: number ) => (
-							<CustomALink key={ index } href={ source.url } inline={ false }>
-								{ source?.title }
-							</CustomALink>
-						) ) }
+						{ sources.length > 0 &&
+							sources.map( ( source: Source, index: number ) => (
+								<CustomALink key={ index } href={ source.url } inline={ false }>
+									{ source?.title }
+								</CustomALink>
+							) ) }
 					</div>
 				</FoldableCard>
 			) }
@@ -242,11 +316,25 @@ const ChatMessage = ( { message, scrollToBottom }: ChatMessageProps ) => {
 
 	const fullscreenContent = (
 		<div className="odie-fullscreen" onClick={ handleBackdropClick }>
-			<div onClick={ handleContentClick }>{ messageContent }</div>
+			<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
+				{ messageContent }
+			</div>
 		</div>
 	);
 
-	return isFullscreen ? ReactDOM.createPortal( fullscreenContent, document.body ) : messageContent;
+	if ( isFullscreen ) {
+		return (
+			<>
+				{ messageContent }
+				{ ReactDOM.createPortal( fullscreenContent, document.body ) }
+			</>
+		);
+	}
+	return (
+		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ ref }>
+			{ messageContent }
+		</div>
+	);
 };
 
 export default ChatMessage;

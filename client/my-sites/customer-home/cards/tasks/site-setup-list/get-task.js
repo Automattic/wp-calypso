@@ -125,7 +125,7 @@ export const getTask = (
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
-				title: translate( 'Try the Jetpack app' ),
+				title: translate( 'Get the mobile app' ),
 				subtitle: translate( 'Put your site in your pocket' ),
 				icon: (
 					<AnimatedIcon

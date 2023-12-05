@@ -21,7 +21,6 @@ export class Instagram extends SharingService {
 
 	/**
 	 * Deletes the passed connections.
-	 *
 	 * @param {Array} [connections] List of connections to delete. If undefined, delete all connections.
 	 */
 	removeConnection = ( connections ) => {
