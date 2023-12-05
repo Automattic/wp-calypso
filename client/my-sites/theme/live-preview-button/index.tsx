@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch, useSelector } from 'calypso/state';
 import { livePreview } from 'calypso/state/themes/actions';
@@ -19,6 +19,8 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const [ isLoading, setIsLoading ] = useState( false );
+
 	const isLivePreviewSupported = useSelector( ( state ) =>
 		getIsLivePreviewSupported( state, themeId, siteId )
 	);
@@ -26,10 +28,15 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 		return null;
 	}
 
+	const handleClick = () => {
+		setIsLoading( true );
+		dispatch( livePreview( themeId, siteId, 'detail' ) );
+	};
+
 	return (
 		<>
 			<TrackComponentView eventName="calypso_block_theme_live_preview_impression" />
-			<Button onClick={ () => dispatch( livePreview( themeId, siteId, 'detail' ) ) }>
+			<Button busy={ isLoading } onClick={ handleClick }>
 				{ translate( 'Preview & Customize' ) }
 			</Button>
 		</>

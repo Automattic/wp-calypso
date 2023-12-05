@@ -35,27 +35,26 @@ function hasExceededPriceThreshold( displayPrices?: string[], isAddOn = false ) 
 	return !! displayPrices?.some( ( price ) => price.length > threshold );
 }
 
+/**
+ * Returns true if the combined length of the display prices exceeds the threshold.
+ * Checks the adjacent pairs in the displayPrices array,
+ * which correspnd to the original-price and discounted-price for each plan.
+ */
 function hasExceededCombinedPriceThreshold( displayPrices?: string[] ) {
-	let planPrices: string[] = [];
-	let exceedsThreshold = false;
+	if ( ! displayPrices || displayPrices.length < 2 ) {
+		return false;
+	}
 
-	displayPrices?.forEach( ( price ) => {
-		const [ originalPrice, discountedPrice ] = planPrices;
+	for ( let i = 0; i < displayPrices.length - 1; i++ ) {
+		const originalPrice = displayPrices[ i ];
+		const discountedPrice = displayPrices[ i + 1 ];
 
-		// pushes until a pair of original and discounted prices can be evaluated
-		if ( ! originalPrice || ! discountedPrice ) {
-			planPrices.push( price );
-			return;
+		if ( originalPrice.length + discountedPrice.length > LARGE_CURRENCY_COMBINED_CHAR_THRESHOLD ) {
+			return true;
 		}
+	}
 
-		exceedsThreshold =
-			originalPrice.length + discountedPrice.length > LARGE_CURRENCY_COMBINED_CHAR_THRESHOLD;
-
-		// reset to evaluate the next pair of prices
-		planPrices = [];
-	} );
-
-	return !! exceedsThreshold;
+	return false;
 }
 
 /**

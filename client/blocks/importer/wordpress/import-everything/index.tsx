@@ -22,7 +22,7 @@ import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
-import { MigrationStatus } from '../types';
+import { MigrationStatus, WPImportOption } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -60,7 +60,7 @@ export class ImportEverything extends SectionMigrate {
 		if ( isMigrateFromWp ) {
 			extraParamsArg[ 'skipCta' ] = true;
 		}
-		stepNavigator?.goToCheckoutPage( extraParamsArg );
+		stepNavigator?.goToCheckoutPage?.( WPImportOption.EVERYTHING, extraParamsArg );
 	};
 
 	resetMigration = () => {
@@ -190,9 +190,6 @@ export class ImportEverything extends SectionMigrate {
 					startImport={ this.startMigration }
 					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
 					onContentOnlyClick={ onContentOnlySelection }
-					onFreeTrialClick={ () => {
-						stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
-					} }
 					onNotAuthorizedClick={ () => {
 						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
 							from: 'pre-migration',

@@ -26,7 +26,7 @@ export function usePlanPricingInfoFromGridPlans( {
 
 					return {
 						prices: [ ...acc.prices, originalPriceForTerm, discountedPriceForTerm ],
-						...( currencyCode && { currencyCode } ),
+						currencyCode: currencyCode ?? acc.currencyCode,
 					};
 				},
 				{ prices: [], currencyCode: 'USD' }

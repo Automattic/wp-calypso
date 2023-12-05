@@ -27,12 +27,14 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
+import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
+import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
@@ -135,6 +137,95 @@ export const useCommandsArrayWpcom = ( {
 		displayNotice( __( 'SSH/SFTP password reset and copied to clipboard.' ) );
 	};
 
+	const getEdgeCacheStatus = async ( siteId: number ) => {
+		const response = await wpcom.req.get( {
+			path: `/sites/${ siteId }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		return response;
+	};
+
+	const clearEdgeCache = async ( siteId: number ) => {
+		try {
+			const response = await getEdgeCacheStatus( siteId );
+
+			if ( response ) {
+				// If global cache is active, purge the cache
+				await wpcom.req.post( {
+					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
+					apiNamespace: 'wpcom/v2',
+				} );
+				displayNotice( __( 'Succesfully cleared cache.' ) );
+			} else {
+				// If global edge cache is not active, clear WordPress cache
+				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
+			}
+		} catch ( error ) {
+			displayNotice( __( 'Failed to clear cache.' ), 'is-error' );
+		}
+	};
+
+	// Toggle cache function
+	const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
+		const response = await wpcom.req.post( {
+			path: `/sites/${ siteId }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				active: newStatus,
+			},
+		} );
+		return response;
+	};
+
+	const enableEdgeCache = async ( siteId: number ) => {
+		const currentStatus = await getEdgeCacheStatus( siteId );
+
+		// Check if the cache is already active
+		if ( currentStatus ) {
+			// Display a different notice if the cache is already active
+			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success' );
+			return;
+		}
+
+		const { removeNotice: removeLoadingNotice } = displayNotice(
+			__( 'Enabling edge cache…' ),
+			'is-plain',
+			5000
+		);
+		try {
+			await setEdgeCache( siteId, true );
+			removeLoadingNotice();
+			displayNotice( __( 'Edge cache enabled.' ) );
+		} catch ( error ) {
+			removeLoadingNotice();
+			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error' );
+		}
+	};
+
+	const disableEdgeCache = async ( siteId: number ) => {
+		const currentStatus = await getEdgeCacheStatus( siteId );
+
+		if ( ! currentStatus ) {
+			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success' );
+			return;
+		}
+
+		const { removeNotice: removeLoadingNotice } = displayNotice(
+			__( 'Disabling edge cache…' ),
+			'is-plain',
+			5000
+		);
+		try {
+			await setEdgeCache( siteId, false );
+			removeLoadingNotice();
+			displayNotice( __( 'Edge cache disabled.' ) );
+		} catch ( error ) {
+			removeLoadingNotice();
+			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error' );
+		}
+	};
+
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	const commands = [
@@ -151,6 +242,47 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'clearCache',
+			label: __( 'Clear cache' ),
+			callback: setStateCallback( 'clearCache', __( 'Select a site to clear cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					clearEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: <MaterialIcon icon="autorenew" />,
+		},
+		{
+			name: 'enableEdgeCache',
+			label: __( 'Enable edge cache' ),
+			callback: setStateCallback( 'enableEdgeCache', __( 'Select a site to enable edge cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					enableEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) =>
+					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			},
+			icon: <MaterialIcon icon="autorenew" />,
+		},
+		{
+			name: 'disableEdgeCache',
+			label: __( 'Disable edge cache' ),
+			callback: setStateCallback( 'disableEdgeCache', __( 'Select a site to disable edge cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					disableEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) =>
+					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			},
+			icon: <MaterialIcon icon="autorenew" />,
 		},
 		{
 			name: 'openSiteDashboard',
@@ -321,7 +453,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `me/purchases` );
+				navigate( `/me/purchases` );
 			},
 			icon: creditCardIcon,
 		},
@@ -342,7 +474,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `domains/manage` );
+				navigate( `/domains/manage` );
 			},
 			icon: domainsIcon,
 		},
