@@ -154,44 +154,6 @@ export const useCommandsArrayWpcom = ( {
 			icon: wordpressIcon,
 		},
 		{
-			name: 'addJetpack',
-			label: __( 'Add Jetpack to a self-hosted site' ),
-			searchLabel: [
-				_x(
-					'Add Jetpack to a self-hosted site',
-					'Keyword for Add Jetpack to a self-hosted site command'
-				),
-				_x( 'connect jetpack', 'Keyword for Add Jetpack to a self-hosted site command' ),
-			].join( ' ' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/jetpack/connect?cta_from=command-palette` );
-			},
-			icon: <JetpackLogo className="gridicon" size={ 18 } />,
-		},
-		{
-			name: 'importSite',
-			label: __( 'Import site to WordPress.com' ),
-			searchLabel: [
-				_x( 'Import site to WordPress.com', 'Keyword for Import site to WordPress.com command' ),
-				_x( 'migrate site', 'Keyword for Import site to WordPress.com command' ),
-			].join( ' ' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/start/import?source=command-palette` );
-			},
-			icon: arrowDownIcon,
-		},
-		{
-			name: 'openReader',
-			label: __( 'Open reader' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/read` );
-			},
-			icon: <Gridicon icon="reader" />,
-		},
-		{
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
 			searchLabel: [
@@ -277,6 +239,58 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/me` );
 			},
 			icon: profileIcon,
+		},
+		{
+			name: 'openReader',
+			label: __( 'Open reader' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/read` );
+			},
+			icon: <Gridicon icon="reader" />,
+		},
+		{
+			name: 'addJetpack',
+			label: __( 'Add Jetpack to a self-hosted site' ),
+			searchLabel: [
+				_x(
+					'Add Jetpack to a self-hosted site',
+					'Keyword for Add Jetpack to a self-hosted site command'
+				),
+				_x( 'connect jetpack', 'Keyword for Add Jetpack to a self-hosted site command' ),
+			].join( ' ' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/jetpack/connect?cta_from=command-palette` );
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
+			name: 'importSite',
+			label: __( 'Import site to WordPress.com' ),
+			searchLabel: [
+				_x( 'Import site to WordPress.com', 'Keyword for Import site to WordPress.com command' ),
+				_x( 'migrate site', 'Keyword for Import site to WordPress.com command' ),
+			].join( ' ' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/start/import?source=command-palette` );
+			},
+			icon: arrowDownIcon,
+		},
+		{
+			name: 'addNewSite',
+			label: __( 'Add new site' ),
+			searchLabel: [
+				_x( 'add new site', 'Keyword for the Add new site command' ),
+				_x( 'create site', 'Keyword for the Add new site command' ),
+			].join( ' ' ),
+			context: [ '/sites' ],
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( createSiteUrl );
+			},
+			icon: plusIcon,
 		},
 		{
 			name: 'openAccountSettings',
@@ -592,20 +606,6 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
 			icon: pageIcon,
-		},
-		{
-			name: 'addNewSite',
-			label: __( 'Add new site' ),
-			searchLabel: [
-				_x( 'add new site', 'Keyword for the Add new site command' ),
-				_x( 'create site', 'Keyword for the Add new site command' ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( createSiteUrl );
-			},
-			icon: plusIcon,
 		},
 		{
 			name: 'addNewPost',
