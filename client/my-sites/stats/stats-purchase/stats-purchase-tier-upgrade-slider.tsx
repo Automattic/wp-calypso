@@ -13,8 +13,8 @@ import './stats-purchase-tier-upgrade-slider.scss';
 type TierUpgradeSliderProps = {
 	className?: string;
 	uiStrings: any;
+	popupInfoString: any;
 	tiers: StatsPlanTierUI[];
-	currencyCode: string;
 	onSliderChange: ( index: number ) => void;
 };
 
@@ -40,11 +40,10 @@ function useTranslatedStrings() {
 function TierUpgradeSlider( {
 	className,
 	uiStrings,
+	popupInfoString,
 	tiers,
-	currencyCode,
 	onSliderChange,
 }: TierUpgradeSliderProps ) {
-	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
 	const EXTENSION_THRESHOLD = 2; // in millions
@@ -69,20 +68,7 @@ function TierUpgradeSlider( {
 	const rhValue = tiers[ currentPlanIndex ]?.price;
 
 	// Special case for per-unit fees.
-	const hasPerUnitFee = !! tiers[ currentPlanIndex ]?.per_unit_fee;
-	const perUnitFee = hasPerUnitFee ? Number( tiers[ currentPlanIndex ]?.per_unit_fee ) : 0;
-	const perUnitFeeMessaging = translate(
-		'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
-		{
-			args: {
-				views_extension_limit: EXTENSION_THRESHOLD,
-				extension_value: formatCurrency( perUnitFee, currencyCode, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
-			},
-		}
-	);
+	const hasPerUnitFee = popupInfoString !== undefined;
 
 	return (
 		<div className={ componentClassNames }>
@@ -117,7 +103,7 @@ function TierUpgradeSlider( {
 				className="stats-tier-upgrade-slider__extension-popover-wrapper"
 			>
 				<div className="stats-tier-upgrade-slider__extension-popover-content">
-					{ hasPerUnitFee && perUnitFeeMessaging }
+					{ hasPerUnitFee && popupInfoString }
 				</div>
 			</Popover>
 			<p className="stats-tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
@@ -158,11 +144,36 @@ export function StatsCommercialUpgradeSlider( {
 	// 3. Transform data for slider.
 	// 4. Render component parts.
 
-	// const translate = useTranslate();
+	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
 
+	// Special case for per-unit fees.
+	// Determine this based on last tier in the list.
+	// The translate() call returns a node so we need to set the type correctly.
+	let perUnitFeeMessaging;
+	const lastTier = tiers.at( -1 );
+	const hasPerUnitFee = !! lastTier?.per_unit_fee;
+	if ( hasPerUnitFee ) {
+		const EXTENSION_THRESHOLD = 2; // in millions
+		const perUnitFee = Number( lastTier?.per_unit_fee );
+		perUnitFeeMessaging = translate(
+			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
+			{
+				args: {
+					views_extension_limit: EXTENSION_THRESHOLD,
+					extension_value: formatCurrency( perUnitFee, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				},
+			}
+		);
+		lastTier.views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
+	}
+
+	// TODO: Pass steps to slider.
 	const steps = getStepsForTiers( tiers );
 	console.log( 'steps', steps );
 	console.log( 'tiers', tiers );
@@ -175,8 +186,8 @@ export function StatsCommercialUpgradeSlider( {
 		<TierUpgradeSlider
 			className="stats-commercial-upgrade-slider"
 			uiStrings={ uiStrings }
+			popupInfoString={ perUnitFeeMessaging }
 			tiers={ tiers }
-			currencyCode={ currencyCode }
 			onSliderChange={ handleSliderChanged }
 		/>
 	);
