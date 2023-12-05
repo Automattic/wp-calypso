@@ -209,7 +209,6 @@ const StatsPurchasePage = ( {
 											redirectUri={ query.redirect_uri ?? '' }
 											from={ query.from ?? '' }
 											isCommercial={ isCommercial }
-											priceTiers={ commercialMonthlyProduct?.price_tier_list } // personal plan can also purchase commercial plans
 										/>
 									</div>
 								)
