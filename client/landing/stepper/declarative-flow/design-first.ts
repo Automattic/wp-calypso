@@ -143,7 +143,7 @@ const designFirst: Flow = {
 				case 'processing': {
 					// If we just created a new site.
 					const siteSlug = providedDependencies?.siteSlug;
-					if ( ! providedDependencies?.blogLaunched && siteSlug ) {
+					if ( ! providedDependencies?.isLaunched && siteSlug ) {
 						const siteId = providedDependencies?.siteId;
 						setSelectedSite( siteId );
 						setIntentOnSite( siteSlug, DESIGN_FIRST_FLOW );
@@ -170,7 +170,7 @@ const designFirst: Flow = {
 					}
 
 					// If the user's site has just been launched.
-					if ( providedDependencies?.blogLaunched && siteSlug ) {
+					if ( providedDependencies?.isLaunched && siteSlug ) {
 						await Promise.all( [
 							// We set launchpad_screen to off because users can choose to
 							// complete the first_post_published checklist task or not.

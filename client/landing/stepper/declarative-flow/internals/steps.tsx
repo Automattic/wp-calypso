@@ -124,6 +124,8 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
 
+	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
+
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),

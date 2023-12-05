@@ -70,8 +70,9 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( isBlogOnboardingFlow( flow ) ? planCartItem?.product_slug : null ) ??
-		site?.plan?.product_slug;
+		( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
+			? planCartItem?.product_slug
+			: null ) ?? site?.plan?.product_slug;
 
 	const translatedPlanName = ( productSlug && PLANS_LIST[ productSlug ]?.getTitle() ) || '';
 
@@ -185,7 +186,7 @@ export function getEnhancedTasks(
 					stepName: 'launchpad',
 					siteSlug: siteSlug ?? '',
 					destination: `/setup/${ flow }/site-launch?siteSlug=${ siteSlug }`,
-					cancelDestination: '/home',
+					cancelDestination: `/home/${ siteSlug }`,
 				} );
 				return { goToCheckout: true };
 			}
@@ -202,10 +203,8 @@ export function getEnhancedTasks(
 
 			return {
 				siteSlug,
-				// For the assembler-first flow.
+				// For the blog onboarding flow and the assembler-first flow.
 				isLaunched: true,
-				// For the blog-related flow, e.g.: design-first.
-				blogLaunched: true,
 				// For the general onboarding flow.
 				goToHome: true,
 			};
@@ -337,7 +336,9 @@ export function getEnhancedTasks(
 						},
 						badge_text: ! task.completed ? null : translatedPlanName,
 						disabled:
-							( task.completed || ! domainUpsellCompleted ) && ! isBlogOnboardingFlow( flow ),
+							( task.completed || ! domainUpsellCompleted ) &&
+							! isBlogOnboardingFlow( flow ) &&
+							! isSiteAssemblerFlow( flow ),
 					};
 					break;
 				case 'subscribers_added':

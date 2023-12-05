@@ -1,4 +1,4 @@
-import { Onboard } from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
@@ -72,6 +72,7 @@ const assemblerFirstFlow: Flow = {
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
+			STEPS.PLANS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
 		];
@@ -181,6 +182,11 @@ const assemblerFirstFlow: Flow = {
 						return navigate( 'celebration-step' );
 					}
 
+					if ( providedDependencies?.goToCheckout ) {
+						// Do nothing and wait for checkout redirect
+						return;
+					}
+
 					const params = new URLSearchParams( {
 						canvas: 'edit',
 						assembler: '1',
@@ -195,6 +201,14 @@ const assemblerFirstFlow: Flow = {
 
 				case 'launchpad': {
 					return navigate( 'processing' );
+				}
+
+				case 'plans': {
+					await updateLaunchpadSettings( siteSlug, {
+						checklist_statuses: { plan_completed: true },
+					} );
+
+					return navigate( 'launchpad' );
 				}
 
 				case 'site-launch':
