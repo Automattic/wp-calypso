@@ -277,7 +277,20 @@ export class RenderDomainsStep extends Component {
 			suggestion?.is_premium
 		);
 		await this.props.saveSignupStep( stepData );
-		await this.submitWithDomain( { signupDomainOrigin, position } );
+
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
+			await this.handleDomainToDomainCart();
+
+			// If we already have a free selection in place, let's enforce that as a free site suggestion
+			if ( this.state.wpcomSubdomainSelected ) {
+				await this.props.saveSignupStep( {
+					stepName: this.props.stepName,
+					suggestion: this.state.wpcomSubdomainSelected,
+				} );
+			}
+		} else {
+			await this.submitWithDomain( { signupDomainOrigin, position } );
+		}
 	};
 
 	handleDomainMappingError = ( domain_name ) => {
@@ -390,12 +403,9 @@ export class RenderDomainsStep extends Component {
 	};
 
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
-		const { step, flowName } = this.props;
+		const { step } = this.props;
 		const { suggestion } = step;
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) && suggestion ) {
-			return this.handleDomainToDomainCart();
-		}
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -753,7 +763,8 @@ export class RenderDomainsStep extends Component {
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
 		const siteUrl =
 			suggestion &&
-			( isPurchasingItem
+			// If we have a free domain in the cart, we want to use it as the siteUrl
+			( isPurchasingItem && ! this.state.wpcomSubdomainSelected
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
