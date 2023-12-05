@@ -85,3 +85,6 @@ export const getIsMigrateFromWp = ( state: State ) => state.isMigrateFromWp;
 export const getPluginsToVerify = ( state: State ) => state.pluginsToVerify;
 export const getProfilerData = ( state: State ) => state.profilerData;
 export const getPaidSubscribers = ( state: State ) => state.paidSubscribers;
+
+export const isHostingTrialAvailable = ( state: State ) =>
+	state.hostingTrialAvailability === 'available';

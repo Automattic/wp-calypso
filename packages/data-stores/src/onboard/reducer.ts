@@ -590,6 +590,22 @@ const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, acti
 	return state;
 };
 
+type HostingTrialAvailability = null | 'unavailable' | 'available';
+
+const hostingTrialAvailability: Reducer< HostingTrialAvailability, OnboardAction > = (
+	state = null,
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_HOSTING_TRIAL_AVAILABLE':
+			return 'available';
+		case 'RESET_ONBOARD_STORE':
+			return null;
+		default:
+			return state;
+	}
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -639,6 +655,7 @@ const reducer = combineReducers( {
 	pluginsToVerify,
 	profilerData,
 	paidSubscribers,
+	hostingTrialAvailability,
 } );
 
 export type State = ReturnType< typeof reducer >;
