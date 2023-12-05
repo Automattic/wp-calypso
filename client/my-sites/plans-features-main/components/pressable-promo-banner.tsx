@@ -56,25 +56,31 @@ const CtaContainer = styled.div`
 `;
 
 const Subtitle = styled.h4`
+	font-name: SF Pro Text;
 	font-size: 12px;
 	font-weight: 400;
 	text-align: left;
 	line-height: 20px;
+	color: var( --studio-gray-50 );
 `;
 
 const Title = styled.h2`
+	font-name: SF Pro Display;
 	font-size: 20px;
 	font-weight: 500;
 	text-align: left;
 	line-height: 26px;
+	color: var( --studio-black );
 `;
 
 const Description = styled.p`
+	font-name: SF Pro Text;
 	font-size: 14px;
 	font-weight: 400;
 	text-align: left;
 	margin: 0;
 	line-height: 20px;
+	color: var( --studio-black );
 `;
 
 const CtaButton = styled( Button )`
