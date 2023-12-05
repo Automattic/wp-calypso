@@ -152,7 +152,7 @@ Thanks\n\n`;
 				<>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
-						onSliderChanged={ handleSliderChanged }
+						onSliderChange={ handleSliderChanged }
 					/>
 					<ButtonComponent
 						variant="primary"
