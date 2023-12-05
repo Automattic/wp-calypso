@@ -509,10 +509,10 @@ $image-height: 47px;
 			text-align: center;
 			text-decoration: underline;
 			text-underline-offset: 5px;
-			margin-top: 40px;
+			margin-top: 24px;
 
 			@include break-mobile {
-				margin-top: 24px;
+				margin-top: 40px;
 			}
 		}
 	}
