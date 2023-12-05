@@ -165,31 +165,37 @@ export const useCommandsArrayWpcom = ( {
 		}
 	};
 
-	const toggleEdgeCache = async ( siteId: number ) => {
-		const active = await getEdgeCacheStatus( siteId );
+	// Toggle cache function
+	const toggleEdgeCache = async ( siteId: number, newStatus: boolean ) => {
+		const response = await wpcom.req.post( {
+			path: `/sites/${ siteId }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				active: newStatus,
+			},
+		} );
+		return response;
+	};
 
-		const toggleCacheMessage = active
-			? __( 'Disabling global edge cache…' )
-			: __( 'Enabling global edge cache…' );
+	const enableEdgeCache = async ( siteId: number ) => {
+		const currentStatus = await getEdgeCacheStatus( siteId );
 
-		const successMessageEnabled = __( 'Global edge cache enabled.' );
-		const successMessageDisabled = __( 'Global edge cache disabled.' );
+		// Check if the cache is already active
+		if ( currentStatus ) {
+			// Display a different notice if the cache is already active
+			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success' );
+			return;
+		}
 
 		const { removeNotice: removeLoadingNotice } = displayNotice(
-			toggleCacheMessage,
+			__( 'Enabling global edge cache…' ),
 			'is-plain',
 			5000
 		);
 		try {
-			const response = await wpcom.req.post( {
-				path: `/sites/${ siteId }/hosting/edge-cache/active`,
-				apiNamespace: 'wpcom/v2',
-				body: {
-					active: ! active,
-				},
-			} );
+			await toggleEdgeCache( siteId, true );
 			removeLoadingNotice();
-			displayNotice( response ? successMessageEnabled : successMessageDisabled );
+			displayNotice( __( 'Global edge cache enabled.' ) );
 		} catch ( error ) {
 			removeLoadingNotice();
 			displayNotice( __( 'Failed to enable global edge cache.' ), 'is-error' );
@@ -222,13 +228,13 @@ export const useCommandsArrayWpcom = ( {
 			icon: <MaterialIcon icon="autorenew" />,
 		},
 		{
-			name: 'toggleEdgeCache',
-			label: __( 'Toggle edge cache' ),
-			callback: setStateCallback( 'toggleEdgeCache', __( 'Select a site to toggle cache' ) ),
+			name: 'enableEdgeCache',
+			label: __( 'Enable edge cache' ),
+			callback: setStateCallback( 'enableEdgeCache', __( 'Select a site to enable edge cache' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					toggleEdgeCache( site.ID );
+					enableEdgeCache( site.ID );
 				},
 				filter: ( site: SiteExcerptData ) =>
 					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
