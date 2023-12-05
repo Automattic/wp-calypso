@@ -198,6 +198,7 @@ const BannerUpsellTitle = ( {
 		} );
 	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
+			/* translators: %(planName)s is the short-hand version of the Business plan name */
 			return translate( 'Upgrade to a %(planName)s plan and subscribe to this theme!', {
 				args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 			} );
@@ -205,7 +206,7 @@ const BannerUpsellTitle = ( {
 		return translate( 'Subscribe to this theme!' );
 	}
 
-	/* translators: %(planName1)s and %(planName1)s the short-hand version of the Premium and Business plan names */
+	/* translators: %(planName1)s and %(planName2)s the short-hand version of the Premium and Business plan names */
 	return translate( 'Access this theme for FREE with a %(planName1)s or %(planName2)s plan!', {
 		args: {
 			planName1: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
