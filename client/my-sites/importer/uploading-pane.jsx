@@ -65,7 +65,15 @@ export class UploadingPane extends PureComponent {
 				prevImporterStatus.importerState === appStates.UPLOAD_SUCCESS ) &&
 			importerStatus.importerState === appStates.UPLOAD_SUCCESS
 		) {
-			this.props.startMappingAuthors( importerStatus.importerId );
+			switch ( importerStatus.importerFileType ) {
+				case 'content':
+					this.props.startMappingAuthors( importerStatus.importerId );
+					break;
+				case 'playground':
+				case 'jetpack_backup':
+					// Placeholder for starting the import
+					break;
+			}
 		}
 	}
 
