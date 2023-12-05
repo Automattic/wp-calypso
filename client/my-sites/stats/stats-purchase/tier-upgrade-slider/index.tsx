@@ -9,6 +9,7 @@ type TierUpgradeSlider2Props = {
 	popupInfoString?: any;
 	steps: any[];
 	onSliderChange: ( index: number ) => void;
+	marks?: boolean | number[];
 };
 
 function TierUpgradeSlider2( {
@@ -17,6 +18,7 @@ function TierUpgradeSlider2( {
 	popupInfoString,
 	steps,
 	onSliderChange,
+	marks,
 }: TierUpgradeSlider2Props ) {
 	const componentClassNames = classNames( 'tier-upgrade-slider', className );
 
@@ -56,7 +58,7 @@ function TierUpgradeSlider2( {
 				minValue={ sliderMin }
 				maxValue={ sliderMax }
 				onChange={ handleSliderChange }
-				marks
+				marks={ marks }
 			/>
 			<Popover
 				position="right"
