@@ -1,14 +1,13 @@
 import {
+	FEATURE_CUSTOM_DOMAIN,
 	getPlanClass,
+	isBusinessTrial,
 	isFreePlan,
+	isWooExpressMediumPlan,
+	isWooExpressPlan,
+	isWooExpressSmallPlan,
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
-	isWooExpressMediumPlan,
-	isWooExpressSmallPlan,
-	PlanSlug,
-	isBusinessTrial,
-	isWooExpressPlan,
-	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -16,15 +15,15 @@ import {
 	CondenastLogo,
 	DisneyLogo,
 	FacebookLogo,
+	FoldableCard,
 	SalesforceLogo,
 	SlackLogo,
 	TimeLogo,
-	FoldableCard,
 } from '@automattic/components';
 import classNames from 'classnames';
-import { LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
+import { FeaturesGridProps } from '../../types';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
@@ -35,7 +34,6 @@ import PlanFeaturesContainer from '../plan-features-container';
 import PlanLogo from '../plan-logo';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type { PlansGridProps } from '../..';
 import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 type PlanRowOptions = {
@@ -43,15 +41,7 @@ type PlanRowOptions = {
 	isStuck?: boolean;
 };
 
-interface FeaturesGridType extends Omit< PlansGridProps, 'onUpgradeClick' | 'intent' > {
-	isLargeCurrency: boolean;
-	translate: LocalizeProps[ 'translate' ];
-	currentPlanManageHref?: string;
-	isPlanUpgradeCreditEligible: boolean;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-}
-
-class FeaturesGrid extends Component< FeaturesGridType > {
+class FeaturesGrid extends Component< FeaturesGridProps > {
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset } = this.props;
 		// Do not render the spotlight plan if it exists

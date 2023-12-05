@@ -849,7 +849,6 @@ const PlansFeaturesMain = ( {
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									selectedPlan={ selectedPlan }
 									siteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -903,10 +902,6 @@ const PlansFeaturesMain = ( {
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
-												gridPlanForSpotlight={ gridPlanForSpotlight }
-												paidDomainName={ paidDomainName }
-												generatedWPComSubdomain={ resolvedSubdomainName }
-												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
@@ -918,7 +913,6 @@ const PlansFeaturesMain = ( {
 												currentSitePlanSlug={ sitePlanSlug }
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
-												showLegacyStorageFeature={ showLegacyStorageFeature }
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ masterbarHeight }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }

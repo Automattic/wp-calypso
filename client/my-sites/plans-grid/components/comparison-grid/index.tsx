@@ -45,12 +45,11 @@ import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type { PlansGridProps } from '../..';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
 } from '../../hooks/npm-ready/data-store/use-grid-plans';
-import type { PlanActionOverrides } from '../../types';
+import type { ComparisonGridProps, PlanActionOverrides } from '../../types';
 import type {
 	FeatureObject,
 	Feature,
@@ -324,14 +323,6 @@ const FeatureFootnote = styled.span`
 		left: 0;
 	}
 `;
-
-interface ComparisonGridProps
-	extends Omit<
-		PlansGridProps,
-		'onUpgradeClick' | 'generatedWPComSubdomain' | 'gridPlanForSpotlight' | 'intent'
-	> {
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-}
 
 type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
