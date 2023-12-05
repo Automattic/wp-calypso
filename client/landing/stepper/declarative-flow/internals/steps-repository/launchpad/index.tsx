@@ -1,4 +1,4 @@
-import { useLaunchpad, SiteDetails } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/data-stores';
 import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -8,6 +8,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
@@ -22,56 +24,30 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-// This wrapper offloads whether to use siteSlug or siteId to useSite()
-const LaunchpadSiteWrapper: Step = ( {
-	navigation,
-	flow,
-}: {
-	navigation: NavigationControls;
-	flow: string | null;
-} ) => {
-	const site = useSite();
-
-	// Return null while sites are loaded
-	if ( ! site || ! flow ) {
-		return null;
-	}
-
-	return (
-		<Launchpad
-			site={ site }
-			siteId={ site.ID }
-			siteSlug={ urlToSlug( site.URL ) }
-			navigation={ navigation }
-			flow={ flow }
-		/>
-	);
-};
-
-export function Launchpad( {
-	siteSlug,
-	siteId,
-	site,
+const Launchpad: Step = ( {
 	navigation,
 	flow,
 }: {
 	navigation: NavigationControls;
 	flow: string;
-	siteSlug: string;
-	siteId: number;
-	site: SiteDetails;
-} ) {
+} ) => {
+	const site = useSite();
+	const siteSlugParam = useSiteSlugParam();
+	const siteIdParam = useSiteIdParam();
+	const siteKey = siteIdParam || site?.ID || siteSlugParam || '';
+	const siteSlug = urlToSlug( site?.URL ?? '' ) || siteSlugParam || '';
+
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 
 	const verifiedParam = useQuery().get( 'verified' );
 
-	const siteIntentOption = site.options?.site_intent;
-	const isSiteLaunched = site.launch_status === 'launched' || false;
+	const siteIntentOption = site?.options?.site_intent;
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const {
 		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
-	} = useLaunchpad( siteId.toString(), siteIntentOption );
+	} = useLaunchpad( siteKey.toString(), siteIntentOption );
 
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
@@ -82,7 +58,7 @@ export function Launchpad( {
 		[]
 	);
 
-	if ( ! siteSlug || fetchingSiteError?.error || launchpadFetchError ) {
+	if ( ( ! siteSlugParam && ! siteIdParam ) || fetchingSiteError?.error || launchpadFetchError ) {
 		window.location.replace( '/home' );
 	}
 
@@ -98,7 +74,7 @@ export function Launchpad( {
 	}
 
 	if ( areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched ) ) {
-		saveSiteSettings( siteId, { launchpad_screen: 'off' } );
+		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
 		redirectToSiteHome( siteSlug, flow );
 	}
 
@@ -149,6 +125,6 @@ export function Launchpad( {
 			/>
 		</>
 	);
-}
+};
 
-export default LaunchpadSiteWrapper;
+export default Launchpad;
