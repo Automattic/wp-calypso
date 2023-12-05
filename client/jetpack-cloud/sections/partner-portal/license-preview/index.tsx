@@ -243,7 +243,6 @@ export default function LicensePreview( {
 							attachedAt={ attachedAt }
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
-							bundleGroupSize={ bundleGroupSize }
 						/>
 					) : (
 						<Button onClick={ open } className="license-preview__toggle" borderless>
