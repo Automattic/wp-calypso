@@ -1,8 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { useSiteResetMutation } from '@automattic/data-stores/';
+import { useSiteResetMutation } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { createInterpolateElement, useState } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -88,7 +88,6 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain } ) => {
 function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
-	const [ disabled, setDisabled ] = useState( false );
 
 	const handleError = () => {
 		dispatch(
@@ -112,7 +111,10 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 		}
 	};
 
-	const { resetSite } = useSiteResetMutation( { onSuccess: handleResult, onError: handleError } );
+	const { resetSite, isLoading } = useSiteResetMutation( {
+		onSuccess: handleResult,
+		onError: handleError,
+	} );
 
 	const contentInfo = [
 		translate( 'posts' ),
@@ -121,13 +123,8 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 		translate( 'user themes' ),
 	];
 
-	const handleReset = async () => {
-		try {
-			setDisabled( true );
-			await resetSite( siteId );
-		} finally {
-			setDisabled( false );
-		}
+	const handleReset = () => {
+		resetSite( siteId );
 	};
 
 	return (
@@ -181,15 +178,15 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 							autoCapitalize="off"
 							aria-required="true"
 							id="confirmResetInput"
-							disabled={ disabled }
+							disabled={ isLoading }
 							style={ { flex: 2 } }
 						/>
 						<Button
 							style={ { flex: '1' } }
 							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
 							onClick={ handleReset }
-							disabled={ disabled }
-							busy={ disabled }
+							disabled={ isLoading }
+							busy={ isLoading }
 						>
 							{ translate( 'Reset Site' ) }
 						</Button>
