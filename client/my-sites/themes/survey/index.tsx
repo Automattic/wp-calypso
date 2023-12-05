@@ -56,7 +56,6 @@ const Survey = ( { survey, condition, title = null }: SurveyProps ) => {
 		<Banner
 			className="theme-showcase__survey"
 			title={ title || defaultTitle }
-			event={ surveyData.eventName }
 			onDismiss={ ( e: Event ) => {
 				e.stopPropagation();
 				setIsDismissed( true );
@@ -67,9 +66,6 @@ const Survey = ( { survey, condition, title = null }: SurveyProps ) => {
 			disableHref
 			showIcon={ false }
 			showLinkIcon={ false }
-			tracksImpressionName="calypso_theme_showcase_survey_impression"
-			tracksClickName="calypso_theme_showcase_survey_click"
-			tracksDismissName="calypso_theme_showcase_survey_dismiss"
 		/>
 	);
 };
