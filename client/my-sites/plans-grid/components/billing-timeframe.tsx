@@ -97,7 +97,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( isMonthlyPlan ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s for the first month, excl. taxes',
 						{
 							args: {
@@ -144,7 +144,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s for the first year, excl. taxes',
 						{
 							args: {
@@ -191,7 +191,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s for the first two years, excl. taxes',
 						{
 							args: {
@@ -238,7 +238,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s for the first three years, excl. taxes',
 						{
 							args: {
@@ -285,7 +285,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( isMonthlyPlan ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s billed monthly, excl. taxes',
 						{
 							args: {
@@ -332,7 +332,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s billed annually, excl. taxes',
 						{
 							args: {
@@ -379,7 +379,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s billed every two years, excl. taxes',
 						{
 							args: {
@@ -426,7 +426,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 			if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
 				if ( 1 === introOffer.intervalCount ) {
 					return translate(
-						'for your first %(introOfferIntervalUnit),{{br/}}' +
+						'for your first %(introOfferIntervalUnit)s,{{br/}}' +
 							'then %(rawPrice)s billed every three years, excl. taxes',
 						{
 							args: {
