@@ -54,7 +54,7 @@ describe( 'use-site-reset-mutation hook', () => {
 		);
 
 		const error = {
-			success: false,
+			code: 'Unauthorized',
 			message: 'Something went wrong',
 		};
 
