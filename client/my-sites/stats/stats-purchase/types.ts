@@ -9,3 +9,11 @@ export type PriceTierListItemProps = {
 	minimum_units: number;
 	per_unit_fee?: number;
 };
+
+export type StatsPlanTierUI = {
+	price: string | undefined;
+	description?: string;
+	views: string | number | undefined;
+	extension?: boolean;
+	per_unit_fee?: number;
+};

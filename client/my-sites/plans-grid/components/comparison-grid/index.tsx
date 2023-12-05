@@ -40,6 +40,7 @@ import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
+import PlanTypeSelector, { type PlanTypeSelectorProps } from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import { StickyContainer } from '../sticky-container';
@@ -338,6 +339,7 @@ type ComparisonGridProps = {
 	stickyRowOffset: number;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showRefundPeriod?: boolean;
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 };
 
 type ComparisonGridHeaderProps = {
@@ -355,9 +357,10 @@ type ComparisonGridHeaderProps = {
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
 	isHiddenInMobile?: boolean;
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 };
 
-type ComparisonGridHeaderCellProps = ComparisonGridHeaderProps & {
+type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
 	allVisible: boolean;
 	isLastInRow: boolean;
 	isLargeCurrency: boolean;
@@ -485,6 +488,13 @@ const ComparisonGridHeaderCell = ( {
 	);
 };
 
+const PlanTypeSelectorWrapper = styled.div`
+	display: none;
+	${ plansBreakSmall( css`
+		display: block;
+	` ) }
+`;
+
 const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderProps >(
 	(
 		{
@@ -502,9 +512,11 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			isHiddenInMobile,
 			showRefundPeriod,
 			isStuck,
+			planTypeSelectorProps,
 		},
 		ref
 	) => {
+		const translate = useTranslate();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
 			gridPlans: displayedGridPlans,
@@ -518,12 +530,23 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			siteId ?? 0,
 			displayedGridPlans.map( ( { planSlug } ) => planSlug )
 		);
+
 		return (
 			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
 					key="feature-name"
-					className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
-				/>
+					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
+				>
+					{ isStuck && planTypeSelectorProps && (
+						<PlanTypeSelectorWrapper>
+							<PlanTypeSelector
+								{ ...planTypeSelectorProps }
+								title={ translate( 'Billing Cycle' ) }
+								hideDiscountLabel={ true }
+							/>
+						</PlanTypeSelectorWrapper>
+					) }
+				</RowTitleCell>
 				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
@@ -965,6 +988,7 @@ const ComparisonGrid = ( {
 	stickyRowOffset,
 	onStorageAddOnClick,
 	showRefundPeriod,
+	planTypeSelectorProps,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1110,6 +1134,7 @@ const ComparisonGrid = ( {
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
+							planTypeSelectorProps={ planTypeSelectorProps }
 						/>
 					) }
 				</StickyContainer>
@@ -1144,6 +1169,7 @@ const ComparisonGrid = ( {
 					isStuck={ false }
 					isHiddenInMobile={ true }
 					ref={ bottomHeaderRef }
+					planTypeSelectorProps={ planTypeSelectorProps }
 				/>
 			</Grid>
 

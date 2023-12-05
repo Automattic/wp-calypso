@@ -8,7 +8,7 @@ import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { CommandCallBackParams, useCommandPallette } from './use-command-palette';
+import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
 
@@ -72,7 +72,7 @@ export function CommandMenuGroup( {
 	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
 	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
-	const { commands } = useCommandPallette( {
+	const { commands } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 		filter: isContextual ? ( command ) => command.context?.includes( currentPath ) : undefined,
