@@ -731,3 +731,13 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	color: var(--color-text-subtle);
 	font-weight: normal;
 }
+
+.site-settings__reset-site {
+	.card {
+		margin-bottom: 0;
+	}
+
+	.action-panel__body {
+		color: var(--color-primary);
+	}
+}

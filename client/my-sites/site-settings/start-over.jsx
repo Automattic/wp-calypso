@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { useSiteResetMutation } from '@automattic/data-stores';
+import { isSiteAtomic } from '@automattic/data-stores/src/site/selectors';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -14,6 +15,9 @@ import ActionPanelTitle from 'calypso/components/action-panel/title';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -21,7 +25,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const StartOver = ( { translate, selectedSiteSlug, siteDomain } ) => {
+const StartOver = ( { translate, selectedSiteSlug, siteDomain, isAtomic } ) => {
 	const localizeUrl = useLocalizeUrl();
 	if ( isEnabled( 'settings/self-serve-site-reset' ) ) {
 		return (
@@ -29,6 +33,7 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain } ) => {
 				translate={ translate }
 				selectedSiteSlug={ selectedSiteSlug }
 				siteDomain={ siteDomain }
+				isAtomic={ isAtomic }
 			/>
 		);
 	}
@@ -85,7 +90,7 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain } ) => {
 	);
 };
 
-function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
+function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
@@ -127,33 +132,56 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 		resetSite( siteId );
 	};
 
+	const instructions = ! isAtomic
+		? createInterpolateElement(
+				sprintf(
+					// translators: %s is the site domain
+					translate(
+						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. ' +
+							'If you want to keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
+					),
+					siteDomain
+				),
+				{
+					strong: <strong />,
+					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
+				}
+		  )
+		: createInterpolateElement(
+				sprintf(
+					// translators: %s is the site domain
+					translate(
+						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. '
+					),
+					siteDomain
+				),
+				{
+					strong: <strong />,
+				}
+		  );
+
 	return (
-		<div
-			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
-			role="main"
-		>
-			<PageViewTracker path="/settings/start-over/:site" title="Settings > Start Over" />
+		<Main className="site-settings__reset-site">
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Site Reset' ) }
+				subtitle={ translate(
+					"Keep your site's address and theme, but delete all posts, pages, and media to start fresh. {{a}}Learn more.{{/a}}",
+					{
+						components: {
+							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
+						},
+					}
+				) }
+			/>
+			<PageViewTracker path="/settings/start-reset/:site" title="Settings > Site Reset" />
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
-				<h1>{ translate( 'Start Over' ) }</h1>
+				<h1>{ translate( 'Site Reset' ) }</h1>
 			</HeaderCake>
-			<ActionPanel>
+			<ActionPanel style={ { margin: 0 } }>
 				<ActionPanelBody>
-					<ActionPanelFigure inlineBodyText={ true }>
-						<img src="/calypso/images/wordpress/logo-stars.svg" alt="" width="170" height="143" />
-					</ActionPanelFigure>
-					<ActionPanelTitle>{ translate( 'Start Over' ) }</ActionPanelTitle>
-					<p>
-						{ createInterpolateElement(
-							sprintf(
-								// translators: %s is the site domain
-								translate( 'Resetting <strong>%s</strong> will remove all of my content includes' ),
-								siteDomain
-							),
-							{
-								strong: <strong />,
-							}
-						) }
-					</p>
+					<p>{ instructions }</p>
+					<p>{ translate( 'The following content will be removed:' ) }</p>
 					<ul>
 						{ contentInfo.map( ( content ) => (
 							<li key={ content }>{ content }</li>
@@ -179,10 +207,9 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 							aria-required="true"
 							id="confirmResetInput"
 							disabled={ isLoading }
-							style={ { flex: 2 } }
+							style={ { flex: 0.5 } }
 						/>
 						<Button
-							style={ { flex: '1' } }
 							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
 							onClick={ handleReset }
 							disabled={ isLoading }
@@ -193,7 +220,7 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain } ) {
 					</div>
 				</ActionPanelFooter>
 			</ActionPanel>
-		</div>
+		</Main>
 	);
 }
 
@@ -203,5 +230,6 @@ export default connect( ( state ) => {
 	return {
 		siteDomain,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
+		isAtomic: isSiteAtomic( state, siteId ),
 	};
 } )( localize( StartOver ) );
