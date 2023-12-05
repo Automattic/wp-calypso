@@ -8,6 +8,7 @@ type TierUpgradeSlider2Props = {
 	uiStrings: any;
 	popupInfoString?: any;
 	steps: any[];
+	initialValue?: number;
 	onSliderChange: ( index: number ) => void;
 	marks?: boolean | number[];
 };
@@ -17,13 +18,14 @@ function TierUpgradeSlider2( {
 	uiStrings,
 	popupInfoString,
 	steps,
+	initialValue = 0,
 	onSliderChange,
 	marks,
 }: TierUpgradeSlider2Props ) {
 	const componentClassNames = classNames( 'tier-upgrade-slider', className );
 
 	// Slider state.
-	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
+	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( initialValue );
 	const sliderMin = 0;
 	const sliderMax = steps?.length - 1;
 
