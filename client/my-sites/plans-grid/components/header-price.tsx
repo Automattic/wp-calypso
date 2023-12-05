@@ -209,7 +209,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					{ isAnyVisibleGridPlanDiscounted && (
 						<Badge className="plan-features-2023-grid__badge" isHidden={ true }></Badge>
 					) }
-					{ isLargeCurrency ? (
+					{ isLargeCurrency && isAnyVisibleGridPlanDiscounted ? (
 						<PricesGroup isLargeCurrency={ isLargeCurrency }>
 							<PlanPrice
 								currencyCode={ currencyCode }
