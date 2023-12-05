@@ -72,6 +72,7 @@ const assemblerFirstFlow: Flow = {
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
+			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
 		];
 	},
@@ -165,7 +166,7 @@ const assemblerFirstFlow: Flow = {
 					}
 
 					// If we just created a new site, navigate to the assembler step.
-					if ( providedDependencies?.siteSlug && ! providedDependencies?.blogLaunched ) {
+					if ( providedDependencies?.siteSlug && ! providedDependencies?.isLaunched ) {
 						return handleSelectSite( {
 							...providedDependencies,
 							isNewSite: 'true',
@@ -173,7 +174,7 @@ const assemblerFirstFlow: Flow = {
 					}
 
 					// If the user's site has just been launched.
-					if ( providedDependencies?.siteSlug && providedDependencies?.blogLaunched ) {
+					if ( providedDependencies?.siteSlug && providedDependencies?.isLaunched ) {
 						await saveSiteSettings( providedDependencies?.siteSlug, {
 							launchpad_screen: 'off',
 						} );
@@ -195,6 +196,9 @@ const assemblerFirstFlow: Flow = {
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
+
+				case 'site-launch':
+					return navigate( 'processing' );
 
 				case 'celebration-step':
 					return window.location.assign( providedDependencies.destinationUrl as string );

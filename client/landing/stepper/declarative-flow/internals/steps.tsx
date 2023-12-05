@@ -134,6 +134,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-creation-step' ),
 	},
 
+	SITE_LAUNCH: {
+		slug: 'site-launch',
+		asyncComponent: () => import( './steps-repository/site-launch' ),
+	},
+
 	SITE_PICKER: {
 		slug: 'site-picker',
 		asyncComponent: () => import( './steps-repository/site-picker-list' ),
