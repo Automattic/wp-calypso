@@ -1,9 +1,9 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import TierUpgradeSlider from '../stats-purchase-tier-upgrade-slider';
 import { StatsPlanTierUI } from '../types';
 import useAvailableUpgradeTiers from '../use-available-upgrade-tiers';
 import './styles.scss';
