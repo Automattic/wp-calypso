@@ -168,7 +168,7 @@ export const useCommandsArrayWpcom = ( {
 	};
 
 	// Toggle cache function
-	const toggleEdgeCache = async ( siteId: number, newStatus: boolean ) => {
+	const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
 		const response = await wpcom.req.post( {
 			path: `/sites/${ siteId }/hosting/edge-cache/active`,
 			apiNamespace: 'wpcom/v2',
@@ -195,7 +195,7 @@ export const useCommandsArrayWpcom = ( {
 			5000
 		);
 		try {
-			await toggleEdgeCache( siteId, true );
+			await setEdgeCache( siteId, true );
 			removeLoadingNotice();
 			displayNotice( __( 'Edge cache enabled.' ) );
 		} catch ( error ) {
@@ -218,7 +218,7 @@ export const useCommandsArrayWpcom = ( {
 			5000
 		);
 		try {
-			await toggleEdgeCache( siteId, false );
+			await setEdgeCache( siteId, false );
 			removeLoadingNotice();
 			displayNotice( __( 'Edge cache disabled.' ) );
 		} catch ( error ) {
