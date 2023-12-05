@@ -16,6 +16,7 @@ interface Props {
 	licenseState: LicenseState;
 	licenseType: LicenseType;
 	hasDownloads: boolean;
+	bundleGroupSize?: number;
 }
 
 export default function LicenseDetailsActions( {
@@ -25,6 +26,7 @@ export default function LicenseDetailsActions( {
 	licenseState,
 	licenseType,
 	hasDownloads,
+	bundleGroupSize,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -82,7 +84,7 @@ export default function LicenseDetailsActions( {
 
 			{ licenseState !== LicenseState.Revoked && licenseType === LicenseType.Partner && (
 				<Button compact onClick={ openRevokeDialog } scary>
-					{ translate( 'Revoke' ) }
+					{ bundleGroupSize ? translate( 'Detach' ) : translate( 'Revoke' ) }
 				</Button>
 			) }
 

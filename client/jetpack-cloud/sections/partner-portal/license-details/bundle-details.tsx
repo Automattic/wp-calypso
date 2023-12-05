@@ -4,9 +4,10 @@ import LicensePreview, { LicensePreviewPlaceholder } from '../license-preview';
 
 interface Props {
 	parentLicenseId: number;
+	size: number;
 }
 
-export default function BundleDetails( { parentLicenseId }: Props ) {
+export default function BundleDetails( { parentLicenseId, size }: Props ) {
 	const { data } = useBundleLicensesQuery( parentLicenseId );
 
 	if ( ! data ) {
@@ -16,6 +17,7 @@ export default function BundleDetails( { parentLicenseId }: Props ) {
 	return data.map( ( item ) => (
 		<LicensePreview
 			isChildLicense
+			bundleGroupSize={ size }
 			key={ item.licenseId }
 			licenseKey={ item.licenseKey }
 			product={ item.product }

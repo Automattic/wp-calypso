@@ -41,6 +41,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
+	bundleGroupSize?: number;
 }
 
 export default function LicensePreview( {
@@ -57,6 +58,7 @@ export default function LicensePreview( {
 	parentLicenseId,
 	quantity,
 	isChildLicense,
+	bundleGroupSize,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -241,6 +243,7 @@ export default function LicensePreview( {
 							attachedAt={ attachedAt }
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
+							bundleGroupSize={ bundleGroupSize }
 						/>
 					) : (
 						<Button onClick={ open } className="license-preview__toggle" borderless>
@@ -252,7 +255,7 @@ export default function LicensePreview( {
 
 			{ isOpen &&
 				( showBundleDetails ? (
-					<BundleDetails parentLicenseId={ parentLicenseId } />
+					<BundleDetails parentLicenseId={ parentLicenseId } size={ quantity } />
 				) : (
 					<LicenseDetails
 						licenseKey={ licenseKey }
@@ -266,6 +269,7 @@ export default function LicensePreview( {
 						revokedAt={ revokedAt }
 						onCopyLicense={ onCopyLicense }
 						licenseType={ licenseType }
+						bundleGroupSize={ bundleGroupSize }
 					/>
 				) ) }
 		</div>
