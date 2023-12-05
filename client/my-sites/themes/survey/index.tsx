@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { translate } from 'i18n-calypso';
+import React from 'react';
 import Banner from 'calypso/components/banner';
 import './survey.scss';
 
@@ -19,35 +20,47 @@ const surveys = new Map< SurveyType, { eventName: string; eventUrl: string } >( 
 type SurveyProps = {
 	survey: SurveyType;
 	condition: () => boolean;
+	title?: string | null;
 };
 
-const Survey = ( { survey, condition }: SurveyProps ) => {
-	const surveyData = surveys.get( survey );
-	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
+/**
+ * We lose the state of whether the survey has been dismissed when navigating between pages.
+ * We also lose the state when navigating between the theme showcase and the theme details page because of all the re-renders and unmounts.
+ * This is a temporary solution to prevent the survey from showing up again after it's been dismissed.
+ */
+let isVisible = false;
+let isGloballyDismissed = false;
 
-	if ( ! surveyData || ! condition() || surveyDismissed ) {
+const Survey = ( { survey, condition, title = null }: SurveyProps ) => {
+	const surveyData = surveys.get( survey );
+	const [ isDismissed, setIsDismissed ] = React.useState( isGloballyDismissed );
+
+	if ( ! isVisible && condition() ) {
+		isVisible = true;
+	}
+
+	if ( isDismissed || ! isVisible || ! surveyData ) {
 		return null;
 	}
 
-	const title = // Translation to other locales is not required
-		(
-			<>
-				We’d love to hear your thoughts. Fill out this{ ' ' }
-				<a href={ surveyData.eventUrl } target="blank">
-					quick survey
-				</a>{ ' ' }
-				on your theme selection experience.
-			</>
-		);
+	const defaultTitle = translate(
+		'We’d love to hear your thoughts. Fill out this {{a}}quick survey{{/a}} on your theme selection experience.',
+		{
+			components: {
+				a: <a href={ surveyData.eventUrl } target="blank" />,
+			},
+		}
+	);
 
 	return (
 		<Banner
 			className="theme-showcase__survey"
-			title={ title }
+			title={ title || defaultTitle }
 			event={ surveyData.eventName }
 			onDismiss={ ( e: Event ) => {
 				e.stopPropagation();
-				setSurveyDismissed( true );
+				setIsDismissed( true );
+				isGloballyDismissed = true;
 			} }
 			dismissWithoutSavingPreference={ true }
 			dismissTemporary={ true }
