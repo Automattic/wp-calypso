@@ -22,7 +22,7 @@ export default function useBundleLicensesQuery(
 					path: '/jetpack-licensing/licenses',
 				},
 				{
-					...( parentLicenseId && { parent_id: parentLicenseId } ),
+					parent_id: parentLicenseId,
 				}
 			),
 		select: ( data ) => formatLicenses( data.items ),

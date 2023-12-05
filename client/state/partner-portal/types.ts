@@ -242,6 +242,7 @@ export interface License {
 	attachedAt: string | null;
 	revokedAt: string | null;
 	ownerType: string | null;
+	quantity: number | null;
 }
 
 export interface LicenseCounts {

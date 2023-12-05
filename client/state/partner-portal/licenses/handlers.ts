@@ -37,6 +37,7 @@ interface APILicense {
 	attached_at: string | null;
 	revoked_at: string | null;
 	owner_type: string | null;
+	quantity: number | null;
 }
 
 interface APIPaginatedItems< T > {
@@ -96,7 +97,7 @@ export function receiveLicensesErrorHandler(): NoticeAction {
 	return errorNotice( translate( 'Failed to retrieve your licenses. Please try again later.' ) );
 }
 
-function formatLicenses( items: APILicense[] ): License[] {
+export function formatLicenses( items: APILicense[] ): License[] {
 	return items.map( ( item ) => ( {
 		licenseId: item.license_id,
 		licenseKey: item.license_key,
@@ -111,6 +112,7 @@ function formatLicenses( items: APILicense[] ): License[] {
 		attachedAt: item.attached_at,
 		revokedAt: item.revoked_at,
 		ownerType: item.owner_type,
+		quantity: item.quantity,
 	} ) );
 }
 
