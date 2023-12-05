@@ -135,6 +135,7 @@ const PressablePromoBanner = ( {
 					target="_blank"
 				>
 					{ translate( 'See Pressable Plans' ) }
+					&nbsp;
 					<Gridicon icon="external" />
 				</CtaButton>
 			</CtaContainer>
