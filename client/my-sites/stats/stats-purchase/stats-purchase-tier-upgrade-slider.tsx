@@ -126,4 +126,27 @@ function TierUpgradeSlider( {
 	);
 }
 
+type StatsCommercialUpgradeSliderProps = {
+	currencyCode: string;
+	onSliderChanged: ( quantity: number ) => void;
+};
+
+export function StatsCommercialUpgradeSlider( {
+	currencyCode,
+	onSliderChanged,
+}: StatsCommercialUpgradeSliderProps ) {
+	// const translate = useTranslate();
+	// 1. Prepare and translate UI strings.
+	// 2. Fetch tier data.
+	// 3. Transform data for slider.
+	// 4. Render component parts.
+	return (
+		<TierUpgradeSlider
+			className="stats-commercial-upgrade-slider"
+			currencyCode={ currencyCode }
+			setPurchaseTierQuantity={ onSliderChanged }
+		/>
+	);
+}
+
 export default TierUpgradeSlider;
