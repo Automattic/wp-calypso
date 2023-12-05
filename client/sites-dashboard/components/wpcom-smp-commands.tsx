@@ -188,17 +188,17 @@ export const useCommandsArrayWpcom = ( {
 		}
 
 		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Enabling global edge cache…' ),
+			__( 'Enabling edge cache…' ),
 			'is-plain',
 			5000
 		);
 		try {
 			await toggleEdgeCache( siteId, true );
 			removeLoadingNotice();
-			displayNotice( __( 'Global edge cache enabled.' ) );
+			displayNotice( __( 'Edge cache enabled.' ) );
 		} catch ( error ) {
 			removeLoadingNotice();
-			displayNotice( __( 'Failed to enable global edge cache.' ), 'is-error' );
+			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error' );
 		}
 	};
 
@@ -211,17 +211,17 @@ export const useCommandsArrayWpcom = ( {
 		}
 
 		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Disabling global edge cache…' ),
+			__( 'Disabling edge cache…' ),
 			'is-plain',
 			5000
 		);
 		try {
 			await toggleEdgeCache( siteId, false );
 			removeLoadingNotice();
-			displayNotice( __( 'Global edge cache disabled.' ) );
+			displayNotice( __( 'Edge cache disabled.' ) );
 		} catch ( error ) {
 			removeLoadingNotice();
-			displayNotice( __( 'Failed to disable global edge cache.' ), 'is-error' );
+			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error' );
 		}
 	};
 
