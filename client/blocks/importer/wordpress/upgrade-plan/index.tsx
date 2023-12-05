@@ -11,34 +11,35 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import UpgradePlanDetails from './upgrade-plan-details';
-import type { URL } from 'calypso/types';
+
+import './style.scss';
 
 interface Props {
-	sourceSiteUrl: URL;
-	targetSite: SiteDetails;
-	startImport: () => void;
-	navigateToVerifyEmailStep: () => void;
-	onFreeTrialClick: () => void;
-	onContentOnlyClick: () => void;
+	site: SiteDetails;
 	isBusy: boolean;
-	migrationTrackingProps?: Record< string, unknown >;
+	ctaText: string;
+	subTitleText?: string;
+	navigateToVerifyEmailStep: () => void;
+	onCtaClick: () => void;
+	onContentOnlyClick?: () => void;
+	trackingEventsProps?: Record< string, unknown >;
 }
 
-export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
+export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
-		targetSite,
-		startImport,
+		site,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
+		ctaText,
+		subTitleText,
+		onCtaClick,
 		isBusy,
-		migrationTrackingProps,
+		trackingEventsProps,
 	} = props;
-	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
-		targetSite.ID
-	);
+	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
 		migrationTrialEligibility?.eligible ||
 		// If the user's email is unverified, we still want to show the trial plan option
@@ -47,7 +48,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			// After the trial is added, we need to request the site again to get the updated plan
-			targetSite && dispatch( requestSite( targetSite.ID ) );
+			site && dispatch( requestSite( site.ID ) );
 		},
 	} );
 
@@ -55,28 +56,30 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
 			navigateToVerifyEmailStep();
 		} else {
-			addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
+			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 		}
 	};
 
 	useEffect( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', migrationTrackingProps )
+			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', trackingEventsProps )
 		);
 	}, [] );
 
 	return (
-		<div className="import__import-everything import__import-everything--redesign">
-			<div className="import__heading-title">
+		<div className="import__upgrade-plan">
+			<div className="import__heading-center">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
-					{ translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan.', {
-						args: {
-							plan: plan?.getTitle() ?? '',
-						},
-					} ) }
+					{ subTitleText ||
+						translate( 'Migrating themes, plugins, users, and settings requires a %(plan)s plan.', {
+							args: {
+								plan: plan?.getTitle() ?? '',
+							},
+						} ) }
 					<br />
 					{ ! isEligibleForTrialPlan &&
+						onContentOnlyClick &&
 						translate(
 							'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
 							{
@@ -89,8 +92,8 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 			</div>
 
 			<UpgradePlanDetails>
-				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ () => startImport() }>
-					{ translate( 'Upgrade and migrate' ) }
+				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ onCtaClick }>
+					{ ctaText }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
 					<>

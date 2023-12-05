@@ -45,7 +45,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	}, [ plan ] );
 
 	return (
-		<div className={ classnames( 'import__upgrade-plan' ) }>
+		<div className={ classnames( 'import__upgrade-plan-details' ) }>
 			<QueryPlans />
 
 			<div className={ classnames( 'import__upgrade-plan-period-switcher' ) }>
@@ -95,7 +95,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 
 				<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
 
-				<div className={ classnames( 'import__upgrade-plan-details' ) }>
+				<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
 					<UpgradePlanFeatureList plan={ plan } />
 				</div>
 			</div>

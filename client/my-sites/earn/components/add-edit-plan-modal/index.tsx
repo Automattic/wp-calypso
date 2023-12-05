@@ -227,7 +227,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		ID: annualProduct?.ID, // will the the ID if already existing
 		price: currentAnnualPrice,
 		interval: PLAN_YEARLY_FREQUENCY,
-		title: `${ productDetails.title } ${ translate( '(yearly)' ) }`,
+		title: productDetails.title,
 	} );
 
 	const getCurrentProductDetails = (): Product => {

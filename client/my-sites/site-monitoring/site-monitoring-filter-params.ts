@@ -3,6 +3,16 @@ import type { Moment } from 'moment';
 
 export type SiteMonitoringTab = 'metrics' | 'php' | 'web';
 
+interface SiteMonitoringTabParamsType {
+	[ key: string ]: string[];
+}
+
+const SiteMonitoringTabParams: SiteMonitoringTabParamsType = {
+	metrics: [],
+	php: [ 'from', 'to', 'severity' ],
+	web: [ 'from', 'to', 'request_type', 'request_status' ],
+};
+
 export function getPageQueryParam(): SiteMonitoringTab | null {
 	const param = new URL( window.location.href ).searchParams.get( 'page' );
 	return param && [ 'metrics', 'php', 'web' ].includes( param )
@@ -44,4 +54,43 @@ export function updateDateRangeQueryParam(
 	}
 
 	page.replace( url.pathname + url.search );
+}
+
+export function getFilterQueryParam( filter: string ): string {
+	const { searchParams } = new URL( window.location.href );
+	return searchParams.get( filter ) || '';
+}
+
+export function updateFilterQueryParam( filter: string, value: string | null ) {
+	const url = new URL( window.location.href );
+
+	if ( value ) {
+		url.searchParams.set( filter, value );
+	} else {
+		url.searchParams.delete( filter );
+	}
+
+	page.replace( url.pathname + url.search );
+}
+
+export function getQuerySearchForTab( tabName: string ): string {
+	if ( ! SiteMonitoringTabParams[ tabName ].length ) {
+		return '';
+	}
+
+	const url = new URL( window.location.href );
+
+	const keysToDelete: string[] = [];
+
+	url.searchParams.forEach( ( value, key ) => {
+		if ( ! SiteMonitoringTabParams[ tabName ].includes( key ) ) {
+			keysToDelete.push( key );
+		}
+	} );
+
+	keysToDelete.forEach( ( key ) => {
+		url.searchParams.delete( key );
+	} );
+
+	return url.search;
 }

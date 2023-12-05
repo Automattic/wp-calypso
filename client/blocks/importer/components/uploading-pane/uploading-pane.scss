@@ -5,7 +5,7 @@
 	margin-bottom: 40px;
 
 	background-color: transparent;
-	border: 2px dashed var(--studio-gray-10);
+	border: 1px dashed var(--studio-gray-10);
 	border-radius: 4px;
 	transition: all 200ms ease-out, color 100ms ease-out;
 	fill: var(--color-neutral-20);
@@ -41,7 +41,6 @@
 	}
 
 	.drop-zone {
-		// background: none;
 		margin: 0;
 		border: none;
 		transition: none;

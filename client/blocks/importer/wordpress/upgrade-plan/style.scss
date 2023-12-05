@@ -1,0 +1,232 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$business-plan-color: #7f54b3;
+
+.import__upgrade-plan {
+	.onboarding-title {
+		@include onboarding-font-recoleta;
+		color: var(--studio-gray-100);
+		font-size: 2.75rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 3rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.onboarding-subtitle {
+		button {
+			padding: 0;
+			color: inherit;
+			font-size: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	p {
+		color: var(--studio-gray-40);
+		margin-bottom: 1em;
+	}
+
+	.import__upgrade-plan-container {
+		background: #fff;
+		border: solid var(--studio-gray-5) 1px;
+		border-radius: 4px;
+		padding: 1.75em;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 2em;
+		display: flex;
+		gap: 1.5rem;
+		flex-direction: column;
+		max-width: 425px;
+
+		@include break-medium {
+			flex-direction: column;
+		}
+	}
+
+	.import__upgrade-plan-header {
+		.plan-title {
+			font-size: 2.25rem;
+			line-height: 1;
+			margin: 0;
+		}
+	}
+
+	.import__upgrade-plan-period-switcher {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 3rem;
+
+		.button-group {
+			background: #f2f2f2;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 7px;
+			padding: 2px;
+		}
+
+		.button {
+			font-weight: 500;
+			color: var(--studio-gray-90);
+			padding: 6px 20px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 5px;
+		}
+
+		.button.selected {
+			background: #fff;
+			box-shadow: 0 3px 1px 0 #0000000a;
+
+		}
+	}
+
+	.import__upgrade-plan-price,
+	.import__upgrade-plan-features-list {
+		display: flex;
+	}
+
+	.import__upgrade-plan-price {
+		min-width: 150px;
+		flex-direction: column;
+
+		.plan-price {
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-weight: 500;
+		}
+
+		.plan-price__currency-symbol {
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-size: 0.875rem;
+			color: inherit;
+			vertical-align: top;
+		}
+
+		.plan-price__integer {
+			line-height: 1;
+			font-size: 2.75rem;
+			font-weight: inherit;
+		}
+
+		.plan-time-frame {
+			color: var(--studio-gray-50);
+
+			small {
+				display: block;
+			}
+		}
+	}
+
+	.import__upgrade-plan-cta {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+
+		small {
+			text-align: center;
+			color: var(--studio-gray-50);
+			max-width: 250px;
+			margin: 0 auto;
+		}
+
+		button.button {
+			border-radius: 4px;
+
+			&.is-primary {
+				background-color: $business-plan-color !important;
+				color: var(--studio-purple-0);
+			}
+
+			&.is-busy {
+				background-image: linear-gradient(-45deg, $business-plan-color 28%, var(--studio-purple-70) 28%, var(--studio-purple-70) 72%, $business-plan-color 72%);
+				color: #fff;
+			}
+
+			&.is-transparent {
+				border-color: $business-plan-color;
+				color: $business-plan-color;
+
+				&.isBusy {
+					color: #fff;
+				}
+			}
+
+			&:hover {
+				opacity: 0.85;
+				transition: 0.7s;
+			}
+
+			&:focus {
+				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px $business-plan-color !important;
+			}
+
+			&[disabled] {
+				opacity: 0.5;
+			}
+		}
+	}
+
+	.import__upgrade-plan-details {
+		margin-top: 2.5rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.import__upgrade-plan-features-list {
+		flex-direction: column;
+
+		ul {
+			margin: 0;
+		}
+
+		.import__upgrade-plan-feature.logo {
+			margin-top: 22px;
+
+			svg {
+				position: relative;
+			}
+		}
+
+		.import__upgrade-plan-feature,
+		.import__upgrade-plan-feature-more {
+			color: var(--studio-gray-80);
+			flex-basis: 100%;
+			padding: 0;
+
+			button {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				line-height: 1.5em;
+				cursor: pointer;
+			}
+
+			span {
+				margin: 0;
+			}
+
+			.badge {
+				font-size: 0.75rem;
+				border-radius: 4px;
+				padding: 3px 15px;
+			}
+
+			.badge--info {
+				background: #f2f2f2;
+				color: var(--studio-gray-90);
+			}
+		}
+
+		.import__upgrade-plan-feature-more button {
+			width: 100%;
+			font-weight: 600;
+			color: $business-plan-color;
+			text-align: start;
+		}
+
+		.import__upgrade-plan-feature-more svg {
+			top: 0;
+			inset-inline-start: auto;
+			inset-inline-end: 0;
+			fill: $business-plan-color;
+		}
+	}
+}

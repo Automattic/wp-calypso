@@ -43,8 +43,8 @@ export class Theme extends Component {
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
-		// If true, the theme is being installed
-		installing: PropTypes.bool,
+		// If true, highlight this theme in a loading state
+		loading: PropTypes.bool,
 		// If true, render a placeholder
 		isPlaceholder: PropTypes.bool,
 		// URL the screenshot link points to
@@ -107,7 +107,7 @@ export class Theme extends Component {
 		return (
 			nextProps.theme.id !== this.props.theme.id ||
 			nextProps.active !== this.props.active ||
-			nextProps.installing !== this.props.installing ||
+			nextProps.loading !== this.props.loading ||
 			! isEqual(
 				Object.keys( nextProps.buttonContents ),
 				Object.keys( this.props.buttonContents )
@@ -320,7 +320,7 @@ export class Theme extends Component {
 				selectedStyleVariation={ selectedStyleVariation }
 				optionsMenu={ this.renderMoreButton() }
 				isActive={ this.props.active }
-				isInstalling={ this.props.installing }
+				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
 				isShowDescriptionOnImageHover
 				onClick={ this.setBookmark }

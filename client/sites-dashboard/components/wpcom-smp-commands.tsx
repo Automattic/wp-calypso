@@ -454,7 +454,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `me/purchases` );
+				navigate( `/me/purchases` );
 			},
 			icon: creditCardIcon,
 		},
@@ -475,7 +475,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `domains/manage` );
+				navigate( `/domains/manage` );
 			},
 			icon: domainsIcon,
 		},
