@@ -87,7 +87,7 @@ const fetchMarketplaceReviews = (
 			product_type: productType,
 			product_slug: productSlug,
 			page,
-			per_pave: perPage,
+			per_page: perPage,
 		}
 	);
 };
