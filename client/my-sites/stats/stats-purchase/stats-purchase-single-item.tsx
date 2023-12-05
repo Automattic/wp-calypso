@@ -15,9 +15,7 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
-import TierUpgradeSlider, {
-	StatsCommercialUpgradeSlider,
-} from './stats-purchase-tier-upgrade-slider';
+import { StatsCommercialUpgradeSlider } from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
@@ -152,10 +150,6 @@ Thanks\n\n`;
 			) }
 			{ isTierUpgradeSliderEnabled && (
 				<>
-					<TierUpgradeSlider
-						currencyCode={ currencyCode }
-						setPurchaseTierQuantity={ setPurchaseTierQuantity }
-					/>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
 						onSliderChanged={ handleSliderChanged }
