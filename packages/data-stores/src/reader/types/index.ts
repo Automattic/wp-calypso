@@ -43,6 +43,7 @@ export type SiteSubscriptionDeliveryMethods = {
 	};
 	notification?: {
 		send_posts: boolean;
+		send_comments?: boolean;
 	};
 };
 
@@ -99,6 +100,17 @@ export type PostSubscription = {
 	post_title: string;
 	post_excerpt: string;
 	post_url: string;
+	notification: {
+		send_comments: boolean;
+	};
+};
+
+export type PostSubscriptionsResult = {
+	pageParams: [];
+	pages: {
+		comment_subscriptions: PostSubscription[];
+		total_comment_subscriptions_count: number;
+	}[];
 };
 
 export type PendingSiteSubscription = {
