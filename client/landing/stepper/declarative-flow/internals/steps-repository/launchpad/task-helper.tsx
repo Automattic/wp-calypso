@@ -86,10 +86,9 @@ export function getEnhancedTasks(
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
-	const planCompleted =
-		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
-		! isBlogOnboardingFlow( flow );
-	! isSiteAssemblerFlow( flow );
+	const planCompleted = Boolean(
+		tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed
+	);
 
 	const videoPressUploadCompleted = Boolean(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
