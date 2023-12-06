@@ -10,6 +10,7 @@ import {
 	type SiteDetails,
 	type OnboardActions,
 	type SiteActions,
+	type ChecklistStatuses,
 } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
@@ -35,7 +36,26 @@ import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
+import { LaunchpadChecklist, Task } from './types';
+
+interface GetEnhancedTasksProps {
+	tasks: Task[] | null | undefined;
+	siteSlug: string | null;
+	site: SiteDetails | null;
+	submit: NavigationControls[ 'submit' ];
+	displayGlobalStylesWarning: boolean;
+	globalStylesMinimumPlan: string;
+	setShowPlansModal: Dispatch< SetStateAction< boolean > >;
+	queryClient: QueryClient;
+	goToStep?: NavigationControls[ 'goToStep' ];
+	flow: string | null;
+	isEmailVerified: boolean;
+	checklistStatuses: ChecklistStatuses | undefined;
+	planCartItem?: MinimalRequestCartProduct | null;
+	domainCartItem?: MinimalRequestCartProduct | null;
+	productCartItems?: MinimalRequestCartProduct[] | null;
+	stripeConnectUrl?: string;
+}
 
 const PLANS_LIST = getPlans();
 
@@ -48,24 +68,24 @@ const PLANS_LIST = getPlans();
  * Please ensure that the enhancements you are adding here are attributes that couldn't be
  * generated in the REST API
  */
-export function getEnhancedTasks(
-	tasks: Task[] | null | undefined,
-	siteSlug: string | null,
-	site: SiteDetails | null,
-	submit: NavigationControls[ 'submit' ],
-	displayGlobalStylesWarning: boolean,
-	globalStylesMinimumPlan: string,
-	setShowPlansModal: Dispatch< SetStateAction< boolean > >,
-	queryClient: QueryClient,
-	goToStep?: NavigationControls[ 'goToStep' ],
-	flow: string | null = '',
+export function getEnhancedTasks( {
+	tasks,
+	siteSlug,
+	site,
+	submit,
+	displayGlobalStylesWarning,
+	globalStylesMinimumPlan,
+	setShowPlansModal,
+	queryClient,
+	goToStep,
+	flow = '',
 	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {},
-	planCartItem?: MinimalRequestCartProduct | null,
-	domainCartItem?: MinimalRequestCartProduct | null,
-	productCartItems?: MinimalRequestCartProduct[] | null,
-	stripeConnectUrl?: string
-) {
+	checklistStatuses = {},
+	planCartItem,
+	domainCartItem,
+	productCartItems,
+	stripeConnectUrl,
+}: GetEnhancedTasksProps ) {
 	if ( ! tasks ) {
 		return [];
 	}
@@ -78,27 +98,25 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = ( productSlug && PLANS_LIST[ productSlug ]?.getTitle() ) || '';
 
-	const firstPostPublished = Boolean(
-		tasks?.find( ( task ) => task.id === 'first_post_published' )?.completed
+	const completedTasks: Record< string, boolean > = tasks.reduce(
+		( acc, cur ) => ( {
+			...acc,
+			[ cur.id ]: cur.completed,
+		} ),
+		{}
 	);
 
-	const setupBlogCompleted =
-		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
-		! isStartWritingFlow( flow );
+	const firstPostPublished = completedTasks.first_post_published;
+
+	const setupBlogCompleted = completedTasks.setup_blog || ! isStartWritingFlow( flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
-	const planCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed
-	);
+	const planCompleted = completedTasks.plan_completed;
 
-	const videoPressUploadCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
-	);
+	const videoPressUploadCompleted = completedTasks.video_uploaded;
 
-	const setupSiteCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'setup_free' )?.completed
-	);
+	const setupSiteCompleted = completedTasks.setup_free;
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -605,7 +623,7 @@ export function getEnhancedTasks(
 
 function isDomainUpsellCompleted(
 	site: SiteDetails | null,
-	checklistStatuses: LaunchpadStatuses
+	checklistStatuses: ChecklistStatuses
 ): boolean {
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
