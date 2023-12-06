@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import useSitePluginSlug from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -41,6 +42,8 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 	const site = useSite();
 
 	const siteId = site?.ID;
+
+	const pluginSlug = useSitePluginSlug();
 
 	const {
 		getSiteLatestAtomicTransfer,
@@ -88,7 +91,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 			const maxRetry = 3;
 
 			// Initiate transfer
-			await initiateAtomicTransfer( siteId, 'woo-on-plans' );
+			await initiateAtomicTransfer( siteId, pluginSlug );
 
 			// Poll for transfer status
 			let stopPollingTransfer = false;
@@ -142,10 +145,10 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 			let pollingSoftwareRetry = 0;
 
 			while ( ! stopPollingSoftware ) {
-				await requestAtomicSoftwareStatus( siteId, 'woo-on-plans' );
-				const softwareStatus = getAtomicSoftwareStatus( siteId, 'woo-on-plans' );
+				await requestAtomicSoftwareStatus( siteId, pluginSlug );
+				const softwareStatus = getAtomicSoftwareStatus( siteId, pluginSlug );
 
-				const softwareError = getAtomicSoftwareError( siteId, 'woo-on-plans' );
+				const softwareError = getAtomicSoftwareError( siteId, pluginSlug );
 				if ( softwareError ) {
 					if ( pollingSoftwareRetry < maxRetry ) {
 						pollingSoftwareRetry++;
