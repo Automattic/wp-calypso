@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import config from '@automattic/calypso-config';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import useSitePluginSlug from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
@@ -26,6 +27,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 		useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 	const site = useSite();
 	const softwareSet = useSitePluginSlug();
+	const translate = useTranslate();
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
@@ -58,7 +60,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 		}
 
 		setPendingAction( async () => {
-			setProgressTitle( 'Installing WooCommerce' );
+			setProgressTitle( translate( 'Installing WooCommerce' ) );
 			setProgress( 0 );
 			initiateSoftwareInstall( site.ID, softwareSet );
 
