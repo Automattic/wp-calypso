@@ -307,7 +307,7 @@ const designFirst: Flow = {
 				isSiteCreationStep &&
 				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
 			) {
-				redirect( '/setup/design-first/site-creation-step' );
+				redirect( `/setup/design-first/site-creation-step${ window.location.search }` );
 			}
 		}, [] );
 
