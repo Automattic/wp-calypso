@@ -3,8 +3,9 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { render } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { FC, useEffect, useState } from 'react';
+import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
-import { getUnlock, isPreviewingTheme } from './utils';
+import { getUnlock } from './utils';
 
 declare global {
 	interface Window {
@@ -12,6 +13,8 @@ declare global {
 	}
 }
 
+const LIVE_PREVIEW_UPGRADE_NOTICE_VIEW_SELECTOR =
+	'wpcom-live-preview-upgrade-notice-view-container';
 const UPGRADE_NOTICE_ID = 'wpcom-live-preview/notice/upgrade';
 
 const unlock = getUnlock();
@@ -40,21 +43,18 @@ const LivePreviewUpgradeNoticeView: FC< {
 };
 
 export const LivePreviewUpgradeNotice: FC< {
+	dashboardLink?: string;
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
 	upgradePlan: () => void;
-} > = ( { previewingTheme, upgradePlan } ) => {
+} > = ( { dashboardLink, previewingTheme, upgradePlan } ) => {
 	const [ isRendered, setIsRendered ] = useState( false );
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
-	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const canvasMode = useSelect(
 		( select ) =>
 			unlock && select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode(),
-		[ siteEditorStore ]
+		[]
 	);
-	const dashboardLink =
-		unlock &&
-		siteEditorStore &&
-		unlock( siteEditorStore ).getSettings().__experimentalDashboardLink;
+	useHideTemplatePartHint();
 
 	const noticeText = sprintf(
 		// translators: %1$s: The previewing theme name, %2$s: The theme type ('WooCommerce' or 'Premium')
@@ -70,16 +70,7 @@ export const LivePreviewUpgradeNotice: FC< {
 	 * Show the notice when the canvas mode is 'edit'.
 	 */
 	useEffect( () => {
-		// Do nothing in the Post Editor context.
-		if ( ! siteEditorStore ) {
-			removeNotice( UPGRADE_NOTICE_ID );
-			return;
-		}
 		if ( canvasMode !== 'edit' ) {
-			removeNotice( UPGRADE_NOTICE_ID );
-			return;
-		}
-		if ( ! isPreviewingTheme() ) {
 			removeNotice( UPGRADE_NOTICE_ID );
 			return;
 		}
@@ -115,7 +106,6 @@ export const LivePreviewUpgradeNotice: FC< {
 		previewingTheme.type,
 		previewingTheme.typeDisplay,
 		removeNotice,
-		siteEditorStore,
 		upgradePlan,
 	] );
 
@@ -123,17 +113,10 @@ export const LivePreviewUpgradeNotice: FC< {
 	 * Show the notice when the canvas mode is 'view'.
 	 */
 	useEffect( () => {
-		// Do nothing in the Post Editor context.
-		if ( ! siteEditorStore ) {
-			return;
-		}
 		if ( canvasMode !== 'view' ) {
 			return;
 		}
 		if ( isRendered ) {
-			return;
-		}
-		if ( ! isPreviewingTheme() ) {
 			return;
 		}
 
@@ -147,7 +130,7 @@ export const LivePreviewUpgradeNotice: FC< {
 		// to prevent our notice from breaking the flex styles of the hub.
 		const container = saveHub.parentNode;
 		const noticeContainer = document.createElement( 'div' );
-		noticeContainer.classList.add( 'wpcom-live-preview-upgrade-notice-view-container' );
+		noticeContainer.classList.add( LIVE_PREVIEW_UPGRADE_NOTICE_VIEW_SELECTOR );
 		if ( container ) {
 			container.insertBefore( noticeContainer, saveHub );
 		}
@@ -158,7 +141,11 @@ export const LivePreviewUpgradeNotice: FC< {
 		);
 
 		setIsRendered( true );
-	}, [ canvasMode, isRendered, noticeText, previewingTheme, siteEditorStore, upgradePlan ] );
+
+		return () => {
+			document.querySelector( `.${ LIVE_PREVIEW_UPGRADE_NOTICE_VIEW_SELECTOR }` )?.remove();
+		};
+	}, [ canvasMode, isRendered, noticeText, previewingTheme, upgradePlan ] );
 
 	return null;
 };
