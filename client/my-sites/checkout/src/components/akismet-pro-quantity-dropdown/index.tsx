@@ -199,6 +199,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 				setForceShowAkQuantityDropdown( true );
 			} else {
 				// 1 - 4 Sites was selected.
+				// eslint-disable-next-line no-lonely-if
 				if (
 					( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes( product_slug )
 				) {
@@ -218,7 +219,6 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					productId = product_id;
 					newQuantity = value;
 				}
-				setForceShowAkQuantityDropdown( false );
 			}
 
 			setSelectedQuantity( value );
@@ -327,13 +327,13 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 	} );
 
 	const getCurrentOptionPriceDisplay = useCallback( () => {
-		if ( validatedDropdownQuantity !== AkBusinessDropdownPosition ) {
+		if ( selectedQuantity !== AkBusinessDropdownPosition ) {
 			return isMobile()
 				? translate(
 						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. ={{/span}} %(actualAmountDisplay)s',
 						{
 							args: {
-								quantity: validatedDropdownQuantity,
+								quantity: selectedQuantity,
 								actualAmountQuantityOneDisplay,
 								actualAmountDisplay,
 							},
@@ -351,7 +351,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license ={{/span}} %(actualAmountDisplay)s',
 						{
 							args: {
-								quantity: validatedDropdownQuantity,
+								quantity: selectedQuantity,
 								actualAmountQuantityOneDisplay,
 								actualAmountDisplay,
 							},
@@ -373,7 +373,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		actualAmountDisplay,
 		actualAmountQuantityOneDisplay,
 		translate,
-		validatedDropdownQuantity,
+		selectedQuantity,
 	] );
 
 	return (
