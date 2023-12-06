@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 interface APIFetchOptions {
@@ -58,13 +59,17 @@ export type UseLaunchpadOptions = {
 
 export const fetchLaunchpad = (
 	siteSlug: string | null,
-	checklist_slug?: string | 0 | null | undefined
+	checklist_slug?: string | 0 | null | undefined,
+	launchpad_context?: string | undefined
 ): Promise< LaunchpadResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
 	const checklistSlug = checklist_slug ? encodeURIComponent( checklist_slug ) : null;
-	const requestUrl = checklistSlug
-		? `/sites/${ slug }/launchpad?_locale=user&checklist_slug=${ checklistSlug }`
-		: `/sites/${ slug }/launchpad?_locale=user`;
+	const launchpadContext = launchpad_context ? encodeURIComponent( launchpad_context ) : null;
+
+	const requestUrl = addQueryArgs( `/sites/${ slug }/launchpad?_locale=user`, {
+		...( checklistSlug && { checklist_slug: checklistSlug } ),
+		...( launchpadContext && { launchpad_context: launchpadContext } ),
+	} );
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
@@ -100,14 +105,16 @@ const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
 export const useLaunchpad = (
 	siteSlug: string | null,
 	checklist_slug?: string | 0 | null | undefined,
-	options?: UseLaunchpadOptions
+	options?: UseLaunchpadOptions,
+	launchpad_context?: string | undefined
 ) => {
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
 	const onSuccessCallback = options?.onSuccess || defaultSuccessCallback;
 
 	return useQuery( {
 		queryKey: key,
-		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ).then( onSuccessCallback ),
+		queryFn: () =>
+			fetchLaunchpad( siteSlug, checklist_slug, launchpad_context ).then( onSuccessCallback ),
 		retry: 3,
 		initialData: {
 			site_intent: '',
@@ -123,12 +130,13 @@ export const useLaunchpad = (
 
 export const useSortedLaunchpadTasks = (
 	siteSlug: string | null,
-	checklist_slug?: string | 0 | null | undefined
+	checklist_slug?: string | 0 | null | undefined,
+	launchpad_context?: string | undefined
 ) => {
 	const launchpadOptions = {
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
 	};
-	return useLaunchpad( siteSlug, checklist_slug, launchpadOptions );
+	return useLaunchpad( siteSlug, checklist_slug, launchpadOptions, launchpad_context );
 };
 
 export const updateLaunchpadSettings = (
