@@ -1,27 +1,15 @@
-import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
-import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { SITE_STORE } from '../../../../stores';
-import type { BundledPlugin } from '../../../plugin-bundle-data';
+import useSiteBundleSettings from 'calypso/landing/stepper/hooks/use-site-bundle-settings';
 import type { Step, PluginsResponse } from '../../types';
-import type { SiteSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
 	const { submit } = navigation;
 	const site = useSite();
-	const siteSlugParam = useSiteSlugParam();
-	const pluginSlug = useSelect(
-		( select ) =>
-			( select( SITE_STORE ) as SiteSelect ).getBundledPluginSlug( siteSlugParam || '' ),
-		[ siteSlugParam ]
-	) as BundledPlugin;
-
-	const bundleSettings = useBundleSettings( pluginSlug );
+	const bundleSettings = useSiteBundleSettings();
 	const checkForActivePlugins = bundleSettings?.checkForActivePlugins;
 
 	useEffect( () => {

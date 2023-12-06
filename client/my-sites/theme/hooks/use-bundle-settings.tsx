@@ -15,7 +15,7 @@ interface BundleSettings {
 	checkForActivePlugins: string[];
 }
 
-type BundleSettingsHookReturn = BundleSettings | null;
+export type BundleSettingsHookReturn = BundleSettings | null;
 
 const WooOnPlansIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
