@@ -1,4 +1,4 @@
-import GetHelpNav from '../../get-help-nav';
+import GetHelpNav from '../get-help-nav';
 import QuickLinksNav from '../quick-links-nav';
 import './style.scss';
 
