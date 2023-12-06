@@ -189,7 +189,7 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'patternAssembler': {
-					return window.location.assign( `/themes/${ siteSlug }` );
+					return navigate( 'site-picker' );
 				}
 			}
 		};
