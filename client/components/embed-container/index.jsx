@@ -1,4 +1,5 @@
 import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
 import { Children, PureComponent } from 'react';
@@ -18,7 +19,7 @@ const embedsToLookFor = {
 	'.jetpack-slideshow': embedSlideshow,
 	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
-	'.wp-block-newspack-blocks-carousel': embedPostCarousel,
+	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -195,20 +196,9 @@ function embedSlideshow( domNode ) {
 	}
 }
 
-function embedStory( domNode ) {
-	debug( 'processing story for ', domNode );
+function embedCarousel( domNode ) {
+	debug( 'processing carousel for ', domNode );
 
-	// wp-story-overlay is here for backwards compatiblity with Stories on Jetpack 9.7 and below.
-	const storyLink = domNode.querySelector( 'a.wp-story-container, a.wp-story-overlay' );
-
-	// Open story in a new tab
-	if ( storyLink ) {
-		storyLink.setAttribute( 'target', '_blank' );
-	}
-}
-
-function embedPostCarousel( domNode ) {
-	debug( 'processing post carousel for ', domNode );
 	const carouselItemsWrapper = domNode.querySelector( '.swiper-wrapper' );
 
 	// Inject the DotPager component.
@@ -219,21 +209,30 @@ function embedPostCarousel( domNode ) {
 			createRoot( domNode ).render(
 				<DotPager>
 					{ carouselItems.map( ( item, index ) => {
-						return (
-							<article
-								className="carousel-slide"
-								id={ index }
-								// eslint-disable-next-line react/no-danger
-								dangerouslySetInnerHTML={ { __html: item?.innerHTML } }
-							/>
-						);
+						const itemProps = {
+							key: index,
+							className: classNames( 'carousel-slide', item?.className ),
+							id: index,
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML: { __html: item?.innerHTML },
+						};
+						return <div { ...itemProps } />;
 					} ) }
 				</DotPager>
 			);
 		}
+	}
+}
 
-		// Remove unused slider markup.
-		domNode.querySelector( '.swiper-pagination-bullets' )?.remove();
+function embedStory( domNode ) {
+	debug( 'processing story for ', domNode );
+
+	// wp-story-overlay is here for backwards compatiblity with Stories on Jetpack 9.7 and below.
+	const storyLink = domNode.querySelector( 'a.wp-story-container, a.wp-story-overlay' );
+
+	// Open story in a new tab
+	if ( storyLink ) {
+		storyLink.setAttribute( 'target', '_blank' );
 	}
 }
 

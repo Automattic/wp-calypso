@@ -6,10 +6,8 @@
 // some unnecessary styles removed.
 @import "story.scss";
 
-// Import styles for Newspack Post Carousel block.
-// This is a copy of Newspack's blocks/carousel/view.scss, with
-// some unnecessary styles removed.
-@import "post-carousel.scss";
+// Import styles for carousel blocks (Newspack Post Carousel, Jetpack Slideshow).
+@import "carousel.scss";
 
 .reader-full-post__story-content {
 	@extend %rendered-block-content;
