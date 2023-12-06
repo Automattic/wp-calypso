@@ -634,11 +634,12 @@ const Settings = ( {
 	};
 
 	const renderDomainGlueRecordsSection = () => {
-		// We can only create glue records for domains registered with us
+		// We can only create glue records for domains registered with us through KS_RAM
 		if (
 			! config.isEnabled( 'domains/glue-records' ) ||
 			! domain ||
 			domain.type !== domainTypes.REGISTERED ||
+			domain.registrar !== 'KS_RAM' ||
 			! domain.canManageDnsRecords
 		) {
 			return null;
