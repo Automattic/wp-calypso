@@ -5,7 +5,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { isDefaultWooExpressThemeActive } from 'calypso/state/themes/selectors/is-wooexpress-default-theme-active';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
 import PatternAssemblerButton from './pattern-assembler-button';
@@ -27,6 +27,9 @@ export default function ThemeShowcaseHeader( {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const _isDefaultWooExpressThemeActive = useSelector( ( state ) =>
+		isDefaultWooExpressThemeActive( state, selectedSiteId )
+	);
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
@@ -51,12 +54,9 @@ export default function ThemeShowcaseHeader( {
 		  }
 		: loggedOutSeoContent;
 
-	const isWooExpressDefaultTheme = useSelector(
-		( state ) => getActiveTheme( state, selectedSiteId ) === 'tsubaki'
-	);
-	// Hide the button when the site is on a WooExpress trial or is a WooExpress site and the active theme is default theme (Tsubaki).
+	// Don't show the Install Theme button if the site is on a WooExpress or Ecom Free Trial and the default WooExpress theme is active
 	const showInstallThemeButton =
-		! ( isSiteWooExpressOrEcomFreeTrial && isWooExpressDefaultTheme ) && !! selectedSiteId;
+		! ( isSiteWooExpressOrEcomFreeTrial && _isDefaultWooExpressThemeActive ) && !! selectedSiteId;
 
 	const metas = [
 		{
