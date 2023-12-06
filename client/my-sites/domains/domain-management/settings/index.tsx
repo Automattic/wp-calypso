@@ -634,11 +634,11 @@ const Settings = ( {
 	};
 
 	const renderDomainGlueRecordsSection = () => {
+		// We can only create glue records for domains registered with us
 		if (
 			! config.isEnabled( 'domains/glue-records' ) ||
 			! domain ||
-			domain.type === domainTypes.SITE_REDIRECT ||
-			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			domain.type !== domainTypes.REGISTERED ||
 			! domain.canManageDnsRecords
 		) {
 			return null;
