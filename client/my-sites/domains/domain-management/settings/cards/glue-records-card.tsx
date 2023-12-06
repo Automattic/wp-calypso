@@ -158,10 +158,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		setIsValidRecord( recordIsValid );
 		setIsValidIpAddress( ipAddressIsValid );
 
-		if ( ! recordIsValid || ! ipAddressIsValid ) {
-			return false;
-		}
-		return true;
+		return recordIsValid && ipAddressIsValid;
 	};
 
 	const handleSubmit = () => {
