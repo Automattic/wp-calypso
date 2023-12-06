@@ -19,7 +19,6 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/stat
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
@@ -220,7 +219,7 @@ export class LoginLinks extends Component {
 			this.props.locale,
 			this.props.currentRoute,
 			this.props.query?.signup_url,
-			this.props.oauth2ClientId
+			this.props.oauth2Client?.id
 		);
 
 		return (
@@ -290,7 +289,6 @@ export default connect(
 	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		oauth2Client: getCurrentOAuth2Client( state ),
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
 		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],

@@ -438,7 +438,7 @@ export class Login extends Component {
 							isGravPoweredClient={ isGravPoweredClient }
 							signupUrl={ signupUrl }
 							usernameOrEmail={ this.state.usernameOrEmail }
-							oauth2ClientId={ this.props.oauth2Client?.id }
+							oauth2Client={ this.props.oauth2Client }
 							getLostPasswordLink={ this.getLostPasswordLink }
 							renderSignUpLink={ this.renderSignUpLink }
 						/>
@@ -459,7 +459,7 @@ export class Login extends Component {
 						isGravPoweredClient={ isGravPoweredClient }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2ClientId={ this.props.oauth2Client?.id }
+						oauth2Client={ this.props.oauth2Client }
 					/>
 				) }
 			</>

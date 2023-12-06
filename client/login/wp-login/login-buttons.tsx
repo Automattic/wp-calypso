@@ -67,6 +67,10 @@ const LoginButtons = ( {
 	const renderMagicLoginButton = () => {
 		const magicLoginPageLinkWithEmail = getMagicLoginPageLink();
 
+		if ( ! magicLoginPageLinkWithEmail ) {
+			return null;
+		}
+
 		return (
 			<Button
 				className="social-buttons__button button"
@@ -99,8 +103,8 @@ const LoginButtons = ( {
 		const loginUrl = login( {
 			locale: locale,
 			twoFactorAuthType: 'qr',
-			redirectTo: query?.redirect_to,
-			signupUrl: query?.signup_url,
+			redirectTo: query?.redirect_to as string,
+			signupUrl: query?.signup_url as string,
 		} );
 
 		return (
