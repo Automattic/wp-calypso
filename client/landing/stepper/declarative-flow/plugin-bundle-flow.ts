@@ -8,6 +8,7 @@ import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useComingFromThemeActivationParam } from '../hooks/use-coming-from-theme-activation';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
+import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
@@ -24,7 +25,6 @@ import {
 	StepperStep,
 } from './internals/types';
 import pluginBundleData from './plugin-bundle-data';
-import type { BundledPlugin } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -33,12 +33,7 @@ const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
 
 	useSteps() {
-		const siteSlugParam = useSiteSlugParam();
-		const pluginSlug = useSelect(
-			( select ) =>
-				( select( SITE_STORE ) as SiteSelect ).getBundledPluginSlug( siteSlugParam || '' ),
-			[ siteSlugParam ]
-		) as BundledPlugin;
+		const pluginSlug = useSitePluginSlug();
 
 		const steps = [
 			{
