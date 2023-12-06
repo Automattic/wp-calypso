@@ -260,7 +260,7 @@ export class ReaderSidebar extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/subscriptions', path, {
 						'sidebar-streams__manage-subscriptions': true,
 					} ) }
-					label={ translate( 'Manage Subscriptions' ) }
+					label={ translate( 'Manage subscriptions' ) }
 					onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
 					customIcon={ <ReaderManageSubscriptionsIcon /> }
 					link="/read/subscriptions"
