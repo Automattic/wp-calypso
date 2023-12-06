@@ -206,6 +206,7 @@ export class RenderDomainsStep extends Component {
 			domainRemovalQueue: [],
 			isGoingToNextStep: false,
 			temporaryCart: [],
+			replaceDomainFailedMessage: null,
 		};
 	}
 
@@ -665,7 +666,18 @@ export class RenderDomainsStep extends Component {
 			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+			await this.props.shoppingCartManager
+				.replaceProductsInCart( sortedProducts )
+				.then( () => {
+					this.setState( { replaceDomainFailedMessage: null } );
+				} )
+				.catch( () => {
+					this.handleReplaceProductsInCartError(
+						this.props.translate(
+							'Sorry, there was a problem adding that domain. Please try again later.'
+						)
+					);
+				} );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
@@ -732,10 +744,14 @@ export class RenderDomainsStep extends Component {
 			this.props.shoppingCartManager
 				.replaceProductsInCart( productsToKeep )
 				.then( () => {
-					this.setState( { isCartPendingUpdateDomain: null } );
+					this.setState( { replaceDomainFailedMessage: null } );
 				} )
 				.catch( () => {
-					this.setState( { isCartPendingUpdateDomain: null } );
+					this.handleReplaceProductsInCartError(
+						this.props.translate(
+							'Sorry, there was a problem removing that domain. Please try again later.'
+						)
+					);
 				} )
 				.finally( () => {
 					this.setState( ( prevState ) => ( {
@@ -746,6 +762,17 @@ export class RenderDomainsStep extends Component {
 				} );
 		}
 	}
+
+	handleReplaceProductsInCartError = ( errorMessage ) => {
+		const errors = this.props.shoppingCartManager.responseCart.messages?.errors;
+		if ( errors && errors.length === 0 ) {
+			this.setState( {
+				replaceDomainFailedMessage: errorMessage,
+			} );
+		}
+		this.setState( () => ( { temporaryCart: [] } ) );
+		this.props.shoppingCartManager.reloadFromServer();
+	};
 
 	goToNext = () => {
 		this.setState( { isGoingToNextStep: true } );
@@ -1164,10 +1191,16 @@ export class RenderDomainsStep extends Component {
 						hasPendingRequests={ isLoadingExperiment }
 						temporaryCart={ this.state.temporaryCart }
 						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
+						replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
+						dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
 					/>
 				) }
 			</ProvideExperimentData>
 		);
+	};
+
+	dismissReplaceDomainFailed = () => {
+		this.setState( { replaceDomainFailedMessage: null } );
 	};
 
 	onUseMyDomainConnect = ( { domain } ) => {
