@@ -102,7 +102,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		if ( isExpanded && isStale ) {
 			refetchGlueRecordsData();
 		}
-	}, [ isExpanded, isStale ] );
+	}, [ isExpanded, isStale, refetchGlueRecordsData ] );
 
 	useEffect( () => {
 		if ( isLoadingData || ! data ) {
