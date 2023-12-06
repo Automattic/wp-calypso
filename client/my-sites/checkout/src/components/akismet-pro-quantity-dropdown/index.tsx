@@ -340,6 +340,11 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 							components: {
 								span: <span />,
 							},
+							comment: `
+								%(quantity) is the number of product licenses being purchased, e.g. "3 licenses".
+								%(actualAmountQuantityOneDisplay)s is the localized price for 1 license, e.g. "$10.25".
+								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75". 
+							`,
 						}
 				  )
 				: translate(
@@ -353,6 +358,11 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 							components: {
 								span: <span />,
 							},
+							comment: `
+								%(quantity) is the number of product licenses being purchased, e.g. "3 licenses".
+								%(actualAmountQuantityOneDisplay)s is the localized price for 1 license, e.g. "$10.25".
+								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75". 
+							`,
 						}
 				  );
 		}
