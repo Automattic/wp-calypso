@@ -909,7 +909,10 @@ export class RenderDomainsStep extends Component {
 		};
 
 		const DomainsInCart = () => {
-			if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) || cartIsLoading ) {
+			if (
+				! shouldUseMultipleDomainsInCart( this.props.flowName ) ||
+				( cartIsLoading && domainsInCart.length === 0 )
+			) {
 				return null;
 			}
 			const domainCount =
