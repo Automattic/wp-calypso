@@ -160,6 +160,10 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	}
 
 	if ( isGridPlanOnIntroOffer ) {
+		const introOfferPrice =
+			introOffer.intervalUnit === 'year'
+				? parseFloat( ( introOffer.rawPrice / ( introOffer.intervalCount * 12 ) ).toFixed( 2 ) )
+				: introOffer.rawPrice;
 		return (
 			<HeaderPriceContainer>
 				{ ! current && (
@@ -181,7 +185,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ introOffer.rawPrice }
+							rawPrice={ introOfferPrice }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
 							isSmallestUnit={ false }
@@ -192,7 +196,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 				) : (
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ introOffer.rawPrice }
+						rawPrice={ introOfferPrice }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
 						isSmallestUnit={ false }
