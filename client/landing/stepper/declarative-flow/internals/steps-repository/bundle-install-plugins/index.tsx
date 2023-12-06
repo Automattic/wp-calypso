@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import useSitePluginSlug from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -24,7 +25,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 	const { getAtomicSoftwareInstallError, getAtomicSoftwareStatus, getAtomicSoftwareError } =
 		useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 	const site = useSite();
-	const softwareSet = 'woo-on-plans';
+	const softwareSet = useSitePluginSlug();
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
