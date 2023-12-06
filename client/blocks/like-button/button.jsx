@@ -78,8 +78,22 @@ class LikeButton extends PureComponent {
 			containerClasses[ 'is-liked' ] = true;
 		}
 
+		const stopPropagation = ( event ) => {
+			if ( showLikeCount ) {
+				event.stopPropagation();
+			}
+		};
+
 		const labelElement = (
-			<span className="like-button__label">
+			<span
+				role="button"
+				tabIndex={ 0 }
+				className="like-button__label"
+				onClick={ stopPropagation }
+				onKeyDown={ stopPropagation }
+				onMouseEnter={ onMouseEnter }
+				onMouseLeave={ onMouseLeave }
+			>
 				<span className="like-button__label-count">
 					{ showLikeCount ? likeCount : defaultLabel }
 				</span>
@@ -95,8 +109,6 @@ class LikeButton extends PureComponent {
 					href,
 					className: classNames( containerClasses ),
 					onClick: ! isLink ? this.toggleLiked : null,
-					onMouseEnter,
-					onMouseLeave,
 					title: this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
 				},
 				( prop ) => prop === null

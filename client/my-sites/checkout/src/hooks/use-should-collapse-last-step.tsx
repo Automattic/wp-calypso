@@ -15,7 +15,7 @@ export function useShouldCollapseLastStep(): 'loading' | 'collapse' | 'no-collap
 
 	const isWPcomCheckout = ! isJetpackCheckout() && ! isAkismetCheckout() && ! isJetpackNotAtomic;
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'wp_web_checkout_collapse_payment_method',
+		'wp_web_checkout_collapse_payment_method_2',
 		{ isEligible: isWPcomCheckout }
 	);
 
