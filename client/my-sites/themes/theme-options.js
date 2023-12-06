@@ -328,14 +328,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	};
 }
 
-export const getWooMyCustomThemeOptions = ( {
-	translate,
-	isFSEActive,
-	siteAdminUrl,
-	siteSlug,
-} ) => {
-	const options = getAllThemeOptions( { translate, isFSEActive } );
-
+export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug, options } ) => {
 	return {
 		assembler: {
 			key: 'assembler',
@@ -351,15 +344,12 @@ export const getWooMyCustomThemeOptions = ( {
 			extendedLabel: translate( 'Advance customization in the Editor' ),
 		},
 		preview: {
-			...options.preview,
 			label: translate( 'Store preview' ),
 			extendedLabel: translate( 'Store preview' ),
 			getUrl: () => {
 				return `//${ siteSlug }`;
 			},
-			action: undefined,
 		},
-		separator: options.separator,
 	};
 };
 
