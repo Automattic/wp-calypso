@@ -1,6 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { JETPACK_CONNECTION_HEALTH_QUERY_KEY } from 'calypso/components/jetpack/connection-health/use-check-jetpack-connection-health';
 import { useDispatch, useSelector } from 'calypso/state';
-import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import 'calypso/state/jetpack-connection-health/init';
 
@@ -31,17 +32,21 @@ export default function isJetpackConnectionProblem( state, siteId ) {
  */
 export const useIsJetpackConnectionProblem = ( siteId ) => {
 	const dispatch = useDispatch();
-	const isPossibleConnectionProblem = useSelector( ( state ) => {
-		return isJetpackConnectionProblem( state, siteId );
-	} );
+	const queryClient = useQueryClient();
+	const queryClientConnectionData = queryClient.getQueryData( [
+		JETPACK_CONNECTION_HEALTH_QUERY_KEY,
+		siteId,
+	] );
 
 	useEffect( () => {
 		const onMessage = ( event ) => {
 			const error = event.data?.[ 0 ];
 			const status = event.data?.[ 1 ];
 			if ( status > 200 && typeof error?.message === 'string' ) {
-				if ( error.message.includes( 'site is inaccessible' ) && ! isPossibleConnectionProblem ) {
-					dispatch( setJetpackConnectionMaybeUnhealthy( siteId ) );
+				if ( error.message.includes( 'site is inaccessible' ) ) {
+					if ( queryClientConnectionData?.is_healthy === true ) {
+						queryClient.invalidateQueries( [ JETPACK_CONNECTION_HEALTH_QUERY_KEY, siteId ] );
+					}
 				}
 			}
 		};
@@ -61,9 +66,9 @@ export const useIsJetpackConnectionProblem = ( siteId ) => {
 				window.removeEventListener( 'message', onMessage );
 			}
 		};
-	}, [ isPossibleConnectionProblem, siteId, dispatch ] );
+	}, [ siteId, dispatch, queryClient, queryClientConnectionData ] );
 
-	return isPossibleConnectionProblem;
+	return queryClientConnectionData?.is_healthy === false;
 };
 
 /**

@@ -7,13 +7,13 @@ import { connect } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
+import { withCheckJetpackConnectionHealth } from 'calypso/components/jetpack/connection-health/use-check-jetpack-connection-health';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -305,7 +305,6 @@ export class SiteIndicator extends Component {
 export default connect(
 	( state, { site } ) => {
 		return {
-			siteIsConnected: site && ! isJetpackConnectionUnhealthy( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
 			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
@@ -324,4 +323,4 @@ export default connect(
 				recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
 			),
 	}
-)( localize( SiteIndicator ) );
+)( withCheckJetpackConnectionHealth( localize( SiteIndicator ) ) );

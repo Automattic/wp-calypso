@@ -48,7 +48,7 @@ export async function maybeRedirect( context, next ) {
 		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
 		fetchPromise = Promise.allSettled( [
 			context.store.dispatch( fetchSitePlugins( siteId ) ),
-			context.store.dispatch( fetchModuleList( siteId ) ),
+			context.store.dispatch( fetchModuleList( siteId, context.queryClient ) ),
 		] );
 	}
 

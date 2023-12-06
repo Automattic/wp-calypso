@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -21,6 +22,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { _x } = useI18n();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -60,7 +62,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 
 	useEffect( () => {
 		if ( isAtomic ) {
-			dispatch( fetchModuleList( siteId ) );
+			dispatch( fetchModuleList( siteId, queryClient ) );
 		}
 		// Close the component when a click outside happens or users clicks Esc key.
 		document.addEventListener( 'click', handleClosing, true );
@@ -71,7 +73,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 			document.removeEventListener( 'click', handleClosing, true );
 			document.removeEventListener( 'keydown', handleClosing, true );
 		};
-	}, [ siteId, isAtomic, dispatch, handleClosing ] );
+	}, [ siteId, isAtomic, dispatch, handleClosing, queryClient ] );
 
 	// Only visible on single-site screens of WordPress.com Simple and Atomic sites.
 	if ( ! wpAdminPath || ! siteId || ( isJetpack && ! isAtomic ) ) {

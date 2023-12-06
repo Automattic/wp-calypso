@@ -15,6 +15,11 @@ import useNock from 'calypso/test-helpers/use-nock';
 import { activateModule, deactivateModule, fetchModuleList } from '../actions';
 import { api_module_list_response as API_MODULE_LIST_RESPONSE_FIXTURE } from './fixture';
 
+const mockQueryClient = {
+	invalidateQuery: jest.fn(),
+	getQueryData: jest.fn(),
+};
+
 describe( 'actions', () => {
 	let spy;
 
@@ -179,7 +184,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch JETPACK_MODULES_REQUEST when trying to fetch the list of jetpack modules', () => {
-				fetchModuleList( siteId )( spy );
+				fetchModuleList( siteId, mockQueryClient )( spy );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: JETPACK_MODULES_REQUEST,
@@ -188,7 +193,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch JETPACK_MODULES_RECEIVE when we get the response from the API', () => {
-				const result = fetchModuleList( siteId )( spy );
+				const result = fetchModuleList( siteId, mockQueryClient )( spy );
 				return result.then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_MODULES_RECEIVE,
@@ -202,7 +207,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch JETPACK_MODULES_REQUEST_SUCCESS when we get the response from the API', () => {
-				const result = fetchModuleList( siteId )( spy );
+				const result = fetchModuleList( siteId, mockQueryClient )( spy );
 				return result.then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_MODULES_REQUEST_SUCCESS,
@@ -226,7 +231,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch JETPACK_MODULES_REQUEST_FAILURE when the requests fails', () => {
-				const result = fetchModuleList( siteId )( spy );
+				const result = fetchModuleList( siteId, mockQueryClient )( spy );
 				return result.then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_MODULES_REQUEST_FAILURE,
