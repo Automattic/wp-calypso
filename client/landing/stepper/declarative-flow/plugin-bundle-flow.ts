@@ -175,7 +175,7 @@ const pluginBundleFlow: Flow = {
 
 				case 'businessInfo': {
 					if ( isAtomic ) {
-						return navigate( 'wooInstallPlugins' );
+						return navigate( 'bundleInstallPlugins' );
 					}
 					return navigate( 'bundleConfirm' );
 				}
@@ -224,7 +224,7 @@ const pluginBundleFlow: Flow = {
 
 				case 'bundleTransfer':
 					return navigate( 'processing' );
-				case 'wooInstallPlugins':
+				case 'bundleInstallPlugins':
 					return navigate( 'processing' );
 			}
 		}

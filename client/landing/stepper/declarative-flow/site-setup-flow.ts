@@ -86,7 +86,7 @@ const siteSetupFlow: Flow = {
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.BUNDLE_TRANSFER,
-			STEPS.WOO_INSTALL_PLUGINS,
+			STEPS.BUNDLE_INSTALL_PLUGINS,
 			STEPS.WOO_VERIFY_EMAIL,
 			STEPS.BUNDLE_CONFIRM,
 			STEPS.EDIT_EMAIL,
@@ -383,7 +383,7 @@ const siteSetupFlow: Flow = {
 
 				case 'businessInfo': {
 					if ( isAtomic ) {
-						return navigate( 'wooInstallPlugins' );
+						return navigate( 'bundleInstallPlugins' );
 					}
 					return navigate( 'bundleConfirm' );
 				}
@@ -401,7 +401,7 @@ const siteSetupFlow: Flow = {
 				case 'bundleTransfer':
 					return navigate( 'processing' );
 
-				case 'wooInstallPlugins':
+				case 'bundleInstallPlugins':
 					return navigate( 'processing' );
 
 				case 'editEmail':

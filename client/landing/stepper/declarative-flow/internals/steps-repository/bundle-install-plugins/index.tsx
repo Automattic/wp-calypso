@@ -17,7 +17,7 @@ export interface FailureInfo {
 	error: string;
 }
 
-const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
+const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation } ) {
 	const { submit } = navigation;
 	const { setPendingAction, setProgressTitle, setProgress } = useDispatch( ONBOARD_STORE );
 	const { initiateSoftwareInstall, requestAtomicSoftwareStatus } = useDispatch( SITE_STORE );
@@ -111,4 +111,4 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 	return null;
 };
 
-export default WooInstallPlugins;
+export default BundleInstallPlugins;
