@@ -109,7 +109,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 			return;
 		}
 
-		// By default, the interface already opens with domain forwarding addition
+		// If there are no glue records, start with the form to add one open
 		if ( data?.length === 0 ) {
 			showGlueRecordForm();
 		}
