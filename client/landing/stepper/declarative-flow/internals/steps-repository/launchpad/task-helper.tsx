@@ -28,11 +28,11 @@ import { translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { goToCheckout } from '../../../../utils/checkout';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 
@@ -180,7 +180,6 @@ export function getEnhancedTasks(
 			if ( onboardingCartItems.length ) {
 				setProgressTitle( __( 'Directing to checkout' ) );
 				await replaceProductsInCart( siteSlug as string, onboardingCartItems );
-				const { goToCheckout } = useCheckout();
 				goToCheckout( {
 					flowName: flow ?? '',
 					stepName: 'launchpad',

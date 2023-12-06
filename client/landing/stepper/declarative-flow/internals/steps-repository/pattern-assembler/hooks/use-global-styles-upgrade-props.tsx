@@ -1,7 +1,7 @@
 import { urlToSlug } from 'calypso/lib/url';
-import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
+import { goToCheckout } from '../../../../../utils/checkout';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import type { ScreenName } from '../types';
 
@@ -23,7 +23,6 @@ const useGlobalStylesUpgradeProps = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { goToCheckout } = useCheckout();
 
 	const handleCheckout = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_UPSELL_CHECKOUT_BUTTON_CLICK );
