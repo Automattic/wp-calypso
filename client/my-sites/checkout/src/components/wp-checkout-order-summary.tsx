@@ -44,6 +44,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { useHideCheckoutIncludedPurchases } from '../hooks/use-hide-checkout-included-purchases';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -85,12 +86,14 @@ export default function WPCheckoutOrderSummary( {
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
+	const shouldHideCheckoutIncludedPurchases = useHideCheckoutIncludedPurchases();
+
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
-			{ ! hasCheckoutVersion( '2' ) && (
+			{ ! hasCheckoutVersion( '2' ) && ! shouldHideCheckoutIncludedPurchases && (
 				<CheckoutSummaryFeatures>
 					<CheckoutSummaryFeaturesTitle>
 						{ responseCart.is_gift_purchase
