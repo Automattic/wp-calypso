@@ -54,7 +54,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 		} );
 
 		it( 'Navigate to the Logged Out Home Page', async function () {
-			await page.goto( DataHelper.getCalypsoURL( '/' ) );
+			await page.goto( 'https://WordPress.com' );
 		} );
 
 		it( 'Selects a theme', async function () {
