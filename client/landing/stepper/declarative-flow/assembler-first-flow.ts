@@ -1,4 +1,4 @@
-import { Onboard } from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
@@ -73,6 +73,9 @@ const assemblerFirstFlow: Flow = {
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
+			STEPS.PLANS,
+			STEPS.SITE_LAUNCH,
+			STEPS.CELEBRATION,
 		];
 	},
 
@@ -127,7 +130,10 @@ const assemblerFirstFlow: Flow = {
 			return navigate( `patternAssembler?${ params }` );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
+		const submit = async (
+			providedDependencies: ProvidedDependencies = {},
+			...results: string[]
+		) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
@@ -166,11 +172,24 @@ const assemblerFirstFlow: Flow = {
 					}
 
 					// If we just created a new site, navigate to the assembler step.
-					if ( providedDependencies?.siteSlug && ! providedDependencies?.blogLaunched ) {
+					if ( providedDependencies?.siteSlug && ! providedDependencies?.isLaunched ) {
 						return handleSelectSite( {
 							...providedDependencies,
 							isNewSite: 'true',
 						} );
+					}
+
+					// If the user's site has just been launched.
+					if ( providedDependencies?.siteSlug && providedDependencies?.isLaunched ) {
+						await saveSiteSettings( providedDependencies?.siteSlug, {
+							launchpad_screen: 'off',
+						} );
+						return navigate( 'celebration-step' );
+					}
+
+					if ( providedDependencies?.goToCheckout ) {
+						// Do nothing and wait for checkout redirect
+						return;
 					}
 
 					const params = new URLSearchParams( {
@@ -184,6 +203,24 @@ const assemblerFirstFlow: Flow = {
 				case 'patternAssembler': {
 					return navigate( 'processing' );
 				}
+
+				case 'launchpad': {
+					return navigate( 'processing' );
+				}
+
+				case 'plans': {
+					await updateLaunchpadSettings( siteSlug, {
+						checklist_statuses: { plan_completed: true },
+					} );
+
+					return navigate( 'launchpad' );
+				}
+
+				case 'site-launch':
+					return navigate( 'processing' );
+
+				case 'celebration-step':
+					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		};
 

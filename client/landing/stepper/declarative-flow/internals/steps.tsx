@@ -129,6 +129,8 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
 
+	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
+
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),
@@ -137,6 +139,11 @@ export const STEPS = {
 	SITE_CREATION_STEP: {
 		slug: 'site-creation-step',
 		asyncComponent: () => import( './steps-repository/site-creation-step' ),
+	},
+
+	SITE_LAUNCH: {
+		slug: 'site-launch',
+		asyncComponent: () => import( './steps-repository/site-launch' ),
 	},
 
 	SITE_PICKER: {

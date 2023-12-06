@@ -136,7 +136,7 @@ const startWriting: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
-					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
+					if ( ! providedDependencies?.isLaunched && providedDependencies?.siteSlug ) {
 						setSelectedSite( providedDependencies?.siteId );
 						await Promise.all( [
 							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
@@ -152,7 +152,7 @@ const startWriting: Flow = {
 						);
 					}
 
-					if ( providedDependencies?.blogLaunched ) {
+					if ( providedDependencies?.isLaunched ) {
 						// Remove the site_intent so that it doesn't affect the editor.
 						await setIntentOnSite( providedDependencies?.siteSlug, '' );
 						return navigate( 'celebration-step' );
