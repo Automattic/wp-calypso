@@ -108,8 +108,8 @@ const OptionList = styled.ul`
 const CurrentOptionContainer = styled.div`
 	align-items: center;
 	display: flex;
-	font-size: 14px;
-	font-weight: 400;
+	font-size: ${ ( props ) => props.theme.fontSize.small };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	justify-content: space-between;
 	line-height: 20px;
 	width: 100%;
