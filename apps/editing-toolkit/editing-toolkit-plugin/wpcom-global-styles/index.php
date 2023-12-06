@@ -62,6 +62,16 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
+	// Do not limit Global Styles when live previewing a Woo theme without a Business plan or higher.
+	if ( wpcom_global_styles_is_previewing_woo_theme_without_business_plan( $blog_id ) ) {
+		return false;
+	}
+
+	// Do not limit Global Styles when live previewing a Premium theme without a Premium plan or higher.
+	if ( wpcom_global_styles_is_previewing_premium_theme_without_premium_plan( $blog_id ) ) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -625,4 +635,72 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 	}
 
 	return false;
+}
+
+/**
+ * Checks whether the site has access to the Global Styles feature when the editor is live previewing a Woo theme without a Business plan or higher.
+ *
+ * @param int $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has access to Global Styles when live previewing.
+ */
+function wpcom_global_styles_is_previewing_woo_theme_without_business_plan( $blog_id ) {
+	if ( ! isset( $_GET['wp_theme_preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Not live previewing.
+		return false;
+	}
+	$wp_theme_preview = sanitize_text_field( wp_unslash( $_GET['wp_theme_preview'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+	$is_previewing_premium_theme = str_starts_with( $wp_theme_preview, 'premium/' );
+	if ( ! $is_previewing_premium_theme ) {
+		// Not a premium theme.
+		return false;
+	}
+
+	// Check for a Woo theme.
+	require_once WP_CONTENT_DIR . '/lib/wpcom-themes.php';
+	$software_sets = \WPCom_Themes::get_theme_software_set( $wp_theme_preview );
+
+	$is_previewing_woo_theme = ! empty(
+		array_filter(
+			$software_sets,
+			function ( $software_set ) {
+				return $software_set->product_slug === 'woo-on-plans';
+			}
+		)
+	);
+
+	if ( ! $is_previewing_woo_theme ) {
+		// Not a Woo theme
+		return false;
+	}
+
+	// Check for a Business plan or higher by checking if can install plugins.
+	$has_business_plan_or_higher = wpcom_site_has_feature( WPCOM_Features::INSTALL_PLUGINS, $blog_id );
+
+	return ! $has_business_plan_or_higher;
+}
+
+/**
+ * Checks whether the site has access to the Global Styles feature when the editor is live previewing a Premium theme without a Premium plan or higher.
+ *
+ * @param int $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has access to Global Styles when live previewing.
+ */
+function wpcom_global_styles_is_previewing_premium_theme_without_premium_plan( $blog_id ) {
+	if ( ! isset( $_GET['wp_theme_preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Not live previewing.
+		return false;
+	}
+	$wp_theme_preview = sanitize_text_field( wp_unslash( $_GET['wp_theme_preview'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+	$is_previewing_premium_theme = str_starts_with( $wp_theme_preview, 'premium/' );
+	if ( ! $is_previewing_premium_theme ) {
+		// Not a premium theme.
+		return false;
+	}
+
+	// Check for a Premium plan or higher by checking if can use global styles.
+	$has_premium_plan_or_higher = wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id );
+
+	return ! $has_premium_plan_or_higher;
 }
