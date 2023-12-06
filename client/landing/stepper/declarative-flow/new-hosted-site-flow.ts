@@ -125,14 +125,23 @@ const hosting: Flow = {
 		);
 
 		useLayoutEffect( () => {
+			const queryParams = Object.fromEntries( query );
+
+			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
+
 			if ( ! userIsLoggedIn ) {
-				window.location.assign( '/start/hosting' );
+				window.location.assign(
+					addQueryArgs( '/start/hosting', {
+						...queryParams,
+						flow: 'new-hosted-site',
+					} )
+				);
 			}
 
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
-				window.location.assign( '/setup/new-hosted-site' );
+				window.location.assign( urlWithQueryParams );
 			}
-		}, [ userIsLoggedIn, isEligible, currentStepSlug ] );
+		}, [ userIsLoggedIn, isEligible, currentStepSlug, query ] );
 
 		useEffect(
 			() => {
