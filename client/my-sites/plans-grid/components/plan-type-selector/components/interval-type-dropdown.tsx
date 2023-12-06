@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
-import { useState } from 'react';
 import { IntervalTypeProps } from '../types';
+import generatePath from '../utils';
 
-const AddOnOption = styled.div`
+const AddOnOption = styled.a`
 	.discount {
 		color: var( --studio-green-40 );
 		display: inline-block;
@@ -15,6 +15,11 @@ const AddOnOption = styled.div`
 `;
 
 const StyledCustomSelectControl = styled( CustomSelectControl )`
+	&,
+	&:visited,
+	&:hover .name {
+		color: var( --color-text );
+	}
 	.components-custom-select-control__button {
 		min-width: 195px;
 	}
@@ -23,32 +28,54 @@ const StyledCustomSelectControl = styled( CustomSelectControl )`
 	}
 `;
 
-const optionsList = [
-	{ key: 'yearly', name: 'Pay yearly', discountText: '55% off' },
-	{ key: '2yearly', name: 'Pay every 2 years', discountText: '63% off' },
-	{ key: '3yearly', name: 'Pay every 3 years', discountText: '69% off' },
-	{ key: 'monthly', name: 'Pay monthly', discountText: '' },
-];
+const optionsMap: Record<
+	string,
+	{ key: string; name: string; discountText: string; url: string }
+> = {
+	yearly: { key: 'yearly', name: 'Pay yearly', discountText: '55% off', url: '' },
+	'2yearly': { key: '2yearly', name: 'Pay every 2 years', discountText: '63% off', url: '' },
+	'3yearly': { key: '3yearly', name: 'Pay every 3 years', discountText: '69% off', url: '' },
+	monthly: { key: 'monthly', name: 'Pay monthly', discountText: '', url: '' },
+};
+const optionsList = Object.values( optionsMap );
 
-export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = () => {
-	const [ selectedTerm, setSelectedTerm ] = useState( optionsList[ 0 ] );
+export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
+	const { intervalType } = props;
+	const additionalPathProps = {
+		...( props.redirectTo ? { redirect_to: props.redirectTo } : {} ),
+		...( props.selectedPlan ? { plan: props.selectedPlan } : {} ),
+		...( props.selectedFeature ? { feature: props.selectedFeature } : {} ),
+	};
 
+	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+
+	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+		'domainAndPlanPackage'
+	);
+
+	const isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+	const selectOptonsList = optionsList.map( ( option ) => ( {
+		key: option.key,
+		name: (
+			<AddOnOption
+				href={ generatePath( props, {
+					intervalType: option.key,
+					domain: isDomainUpsellFlow,
+					domainAndPlanPackage: isDomainAndPlanPackageFlow,
+					jetpackAppPlans: isJetpackAppFlow,
+					...additionalPathProps,
+				} ) }
+			>
+				<span className="name"> { option.name } </span>
+				<span className="discount"> { option.discountText } </span>
+			</AddOnOption>
+		),
+	} ) );
 	return (
 		<StyledCustomSelectControl
 			label=""
-			options={ optionsList.map( ( option ) => ( {
-				key: option.key,
-				name: (
-					<AddOnOption>
-						<span className="name"> { option.name } </span>
-						<span className="discount"> { option.discountText } </span>
-					</AddOnOption>
-				),
-			} ) ) }
-			value={ selectedTerm }
-			onChange={ ( newSelectedTerm: { selectedItem: ( typeof optionsList )[ number ] } ) => {
-				setSelectedTerm( newSelectedTerm.selectedItem );
-			} }
+			options={ selectOptonsList }
+			value={ optionsMap[ intervalType ] }
 		/>
 	);
 };
