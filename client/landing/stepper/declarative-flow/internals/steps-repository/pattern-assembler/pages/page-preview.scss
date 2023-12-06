@@ -59,7 +59,7 @@ $font-family: "SF Pro Text", $sans;
 				overflow-y: scroll;
 
 				.scaled-block-renderer {
-					transform: scale(var(--scaled-block-renderer-scale), 1) perspective(1px);
+					transform: scale(var(--scaled-block-renderer-scale, 1)) perspective(1px);
 				}
 			}
 		}
