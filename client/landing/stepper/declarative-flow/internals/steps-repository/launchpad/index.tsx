@@ -24,30 +24,26 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-const Launchpad: Step = ( {
-	navigation,
-	flow,
-}: {
+type LaunchpadProps = {
 	navigation: NavigationControls;
-	flow: string;
-} ) => {
-	const site = useSite();
-	const siteSlugParam = useSiteSlugParam();
-	const siteIdParam = useSiteIdParam();
-	const siteKey = siteIdParam || site?.ID || siteSlugParam || '';
-	const siteSlug = urlToSlug( site?.URL ?? '' ) || siteSlugParam || '';
+	flow: string | null;
+};
 
+const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
-
 	const verifiedParam = useQuery().get( 'verified' );
-
+	const site = useSite();
+	const siteIdParam = useSiteIdParam();
+	const siteSlugParam = useSiteSlugParam();
+	const siteSlug = urlToSlug( site?.URL ?? '' ) || siteSlugParam || '';
+	const launchpadKey = siteIdParam || site?.ID || siteSlugParam || '';
 	const siteIntentOption = site?.options?.site_intent;
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const {
 		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
-	} = useLaunchpad( siteKey.toString(), siteIntentOption );
+	} = useLaunchpad( launchpadKey.toString(), siteIntentOption );
 
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
