@@ -5,22 +5,20 @@ import type { PlanSlug } from '@automattic/calypso-products';
 
 interface Props {
 	planSlugs: PlanSlug[];
-	sitePlanSlug: PlanSlug | null;
 }
 
 type PlanUpgradeability = {
 	[ planSlug in PlanSlug ]: boolean;
 };
 
-const usePlanUpgradeabilityCheck = ( { planSlugs, sitePlanSlug }: Props ): PlanUpgradeability => {
+const usePlanUpgradeabilityCheck = ( { planSlugs }: Props ): PlanUpgradeability => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const planUpgradeability = useSelector( ( state ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
 			return {
 				...acc,
 				[ planSlug ]:
-					! sitePlanSlug ||
-					( !! selectedSiteId && isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) ),
+					! selectedSiteId || isPlanAvailableForPurchase( state, selectedSiteId, planSlug ),
 			};
 		}, {} as PlanUpgradeability );
 	} );

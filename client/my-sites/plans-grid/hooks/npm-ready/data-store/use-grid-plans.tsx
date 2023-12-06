@@ -149,14 +149,9 @@ interface Props {
 	selectedPlan?: PlanSlug;
 	sitePlanSlug?: PlanSlug | null;
 	hideEnterprisePlan?: boolean;
+	isInSignup?: boolean;
 	// whether plan is upgradable from current plan (used in logged-in state)
-	usePlanUpgradeabilityCheck?: ( {
-		planSlugs,
-		sitePlanSlug,
-	}: {
-		planSlugs: PlanSlug[];
-		sitePlanSlug: PlanSlug | null;
-	} ) => {
+	usePlanUpgradeabilityCheck?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
@@ -281,6 +276,7 @@ const useGridPlans = ( {
 	selectedPlan,
 	sitePlanSlug,
 	hideEnterprisePlan,
+	isInSignup,
 	usePlanUpgradeabilityCheck,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
@@ -314,7 +310,6 @@ const useGridPlans = ( {
 	} );
 	const planUpgradeability = usePlanUpgradeabilityCheck?.( {
 		planSlugs: availablePlanSlugs,
-		sitePlanSlug: sitePlanSlug ?? null,
 	} );
 
 	// only fetch highlights for the plans that are available for the intent
@@ -342,7 +337,7 @@ const useGridPlans = ( {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const planObject = pricedAPIPlans.data?.[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
-		const availableForPurchase = !! planUpgradeability?.[ planSlug ];
+		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
