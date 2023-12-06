@@ -1,6 +1,9 @@
 import { PRODUCT_JETPACK_STATS_YEARLY } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
-import { PlanUsage } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import {
+	default as usePlanUsageQuery,
+	PlanUsage,
+} from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { PriceTierListItemProps, StatsPlanTierUI } from './types';
@@ -62,8 +65,7 @@ function transformTier( tier: PriceTierListItemProps ): StatsPlanTierUI {
 	};
 }
 
-function getPlanTiersForSite(
-	siteId: number | null,
+function filterPurchasedTiers(
 	availableTiers: StatsPlanTierUI[],
 	purchasedTiers: PlanUsage | undefined
 ): StatsPlanTierUI[] {
@@ -95,19 +97,22 @@ function getPlanTiersForSite(
 
 function useAvailableUpgradeTiers(
 	siteId: number | null,
-	purchasedTiers: PlanUsage | undefined
+	shouldFilterPurchasedTiers = true
 ): StatsPlanTierUI[] {
 	// 1. Get the tiers. Default to yearly pricing.
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	) as ProductsList.ProductsListItem | null;
+	const { data: purchasedTiers } = usePlanUsageQuery( siteId );
 
 	let tiersForUi = commercialProduct?.price_tier_list?.map( transformTier );
 
 	tiersForUi = tiersForUi?.length > 0 ? tiersForUi : MOCK_PLAN_DATA;
 
-	// 2. Filter based on current plan. (this could also happen on the server)
-	tiersForUi = getPlanTiersForSite( siteId, tiersForUi, purchasedTiers );
+	// 2. Filter based on current plan.
+	if ( shouldFilterPurchasedTiers ) {
+		tiersForUi = filterPurchasedTiers( tiersForUi, purchasedTiers );
+	}
 
 	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;

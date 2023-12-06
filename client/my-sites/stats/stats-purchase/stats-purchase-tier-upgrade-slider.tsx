@@ -3,7 +3,6 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useRef } from 'react';
-import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
@@ -43,8 +42,7 @@ function TierUpgradeSlider( {
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const { data: purchasedTierData } = usePlanUsageQuery( siteId ); // pass to the filtering function
-	const tiers = useAvailableUpgradeTiers( siteId, purchasedTierData );
+	const tiers = useAvailableUpgradeTiers( siteId );
 	const EXTENSION_THRESHOLD = 2; // in millions
 
 	// Slider state.
