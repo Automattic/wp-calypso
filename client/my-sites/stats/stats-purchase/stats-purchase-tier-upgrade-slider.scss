@@ -70,6 +70,11 @@ $track-height: 4px;
 			cursor: pointer;
 			margin: 0 $track-extra-width;
 			bottom: calc(50% - (math.div($mark-diameter, 2) + $mark-border-width));
+
+			&.jp-components-pricing-slider__mark--selected {
+				background-color: var(--jp-green-40);
+				border-color: var(--jp-green-40);
+			}
 		}
 	}
 }
@@ -107,6 +112,7 @@ $track-height: 4px;
 
 .stats-tier-upgrade-slider__extension-popover-wrapper {
 	max-width: 245px;
+	margin-left: 15px;
 }
 
 .stats-tier-upgrade-slider__extension-popover-content {
