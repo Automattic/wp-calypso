@@ -161,6 +161,15 @@ export default function LicenseMultiProductCard( props: Props ) {
 									shouldShuffleAnswers={ false }
 								/>
 
+								<div className="license-product-card__pricing is-compact">
+									<ProductPriceWithDiscount
+										product={ product }
+										hideDiscount={ hideDiscount }
+										quantity={ quantity }
+										compact
+									/>
+								</div>
+
 								<div className="license-product-card__description">{ productDescription }</div>
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
@@ -174,14 +183,6 @@ export default function LicenseMultiProductCard( props: Props ) {
 							<div className="license-product-card__select-button license-product-card_multi-select">
 								{ isSelected && <Gridicon icon="checkmark" /> }
 							</div>
-						</div>
-
-						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount
-								product={ product }
-								hideDiscount={ hideDiscount }
-								quantity={ quantity }
-							/>
 						</div>
 					</div>
 				</div>
