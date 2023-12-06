@@ -133,7 +133,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/free-post-setup/freePostSetup`, {
+								addQueryArgs( `/setup/${ flow }/freePostSetup`, {
 									siteSlug,
 								} )
 							);
