@@ -48,7 +48,7 @@ export const LivePreviewUpgradeNotice: FC< {
 	upgradePlan: () => void;
 } > = ( { dashboardLink, previewingTheme, upgradePlan } ) => {
 	const [ isRendered, setIsRendered ] = useState( false );
-	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
+	const { createWarningNotice } = useDispatch( 'core/notices' );
 	const canvasMode = useSelect(
 		( select ) =>
 			unlock && select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode(),
@@ -91,18 +91,7 @@ export const LivePreviewUpgradeNotice: FC< {
 					: [] ),
 			],
 		} );
-		return () => removeNotice( UPGRADE_NOTICE_ID );
-	}, [
-		canvasMode,
-		createWarningNotice,
-		dashboardLink,
-		noticeText,
-		previewingTheme.name,
-		previewingTheme.type,
-		previewingTheme.typeDisplay,
-		removeNotice,
-		upgradePlan,
-	] );
+	}, [ createWarningNotice, dashboardLink, noticeText, upgradePlan ] );
 
 	/**
 	 * Show the notice when the canvas mode is 'view'.
@@ -136,11 +125,7 @@ export const LivePreviewUpgradeNotice: FC< {
 		);
 
 		setIsRendered( true );
-
-		return () => {
-			document.querySelector( `.${ LIVE_PREVIEW_UPGRADE_NOTICE_VIEW_SELECTOR }` )?.remove();
-		};
-	}, [ canvasMode, isRendered, noticeText, previewingTheme, upgradePlan ] );
+	}, [ canvasMode, isRendered, noticeText, upgradePlan ] );
 
 	return null;
 };
