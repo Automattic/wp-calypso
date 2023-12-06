@@ -28,7 +28,7 @@ const WooOnPlansIcon = () => (
 	</svg>
 );
 
-const useBundleSettings = ( themeSoftware?: string ): BundleSettingsHookReturn => {
+export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookReturn {
 	const translate = useTranslate();
 
 	const bundleSettings = useMemo( () => {
@@ -62,19 +62,17 @@ const useBundleSettings = ( themeSoftware?: string ): BundleSettingsHookReturn =
 	}, [ translate, themeSoftware ] );
 
 	return bundleSettings;
-};
+}
 
 /**
  * Hook to get the bundle settings for a given theme.
  * If the theme doesn't have a sotfware set defined, it returns `null`.
  */
-export const useBundleSettingsByTheme = ( themeId: string ): BundleSettingsHookReturn => {
+export function useBundleSettingsByTheme( themeId: string ): BundleSettingsHookReturn {
 	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
 	// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
 	const themeSoftware = themeSoftwareSet[ 0 ];
 	const bundleSettings = useBundleSettings( themeSoftware );
 
 	return bundleSettings;
-};
-
-export default useBundleSettings;
+}

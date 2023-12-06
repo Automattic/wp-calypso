@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import useSitePluginSlug from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
+import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import type { Step, PluginsResponse } from '../../types';
 import './styles.scss';
 

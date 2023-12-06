@@ -4,7 +4,7 @@ import { useSiteSlugParam } from './use-site-slug-param';
 import type { BundledPlugin } from '../declarative-flow/plugin-bundle-data';
 import type { SiteSelect } from '@automattic/data-stores';
 
-const useSitePluginSlug = (): BundledPlugin => {
+export function useSitePluginSlug(): BundledPlugin {
 	const siteSlugParam = useSiteSlugParam();
 	const pluginSlug = useSelect(
 		( select ) =>
@@ -13,6 +13,4 @@ const useSitePluginSlug = (): BundledPlugin => {
 	) as BundledPlugin;
 
 	return pluginSlug;
-};
-
-export default useSitePluginSlug;
+}
