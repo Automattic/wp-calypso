@@ -7,8 +7,8 @@ $banner-title-height: 30px;
 	--font-body: 16px;
 	--jp-black: #000;
 	--jp-gray-5: #dcdcde;
-	--jp-red: #d63639;
-	--jp-yellow-20: #f0c930;
+	--jp-red-50: #d63638;
+	--jp-yellow-30: #deb100;
 	--jp-green: #069e08;
 	--spacing-base: 8px;
 }
@@ -145,18 +145,18 @@ $banner-title-height: 30px;
 }
 
 .notice-banner.is-error {
-	border-left-color: var(--jp-red);
+	border-color: var(--jp-red-50);
 
 	.notice-banner__icon {
-		fill: var(--jp-red);
+		fill: var(--jp-red-50);
 	}
 }
 
 .notice-banner.is-warning {
-	border-left-color: var(--jp-yellow-20);
+	border-color: var(--jp-yellow-30);
 
 	.notice-banner__icon {
-		fill: var(--jp-yellow-20);
+		fill: var(--jp-yellow-30);
 	}
 }
 
