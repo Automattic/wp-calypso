@@ -54,7 +54,7 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 		},
 		wordpress: {
 			description: translate(
-				'Import posts, pages, and media from your %(importerName)s export file.',
+				'Import posts, pages, and media from a supported %(importerName)s export file',
 				options
 			),
 			uploadDescription: translate(
