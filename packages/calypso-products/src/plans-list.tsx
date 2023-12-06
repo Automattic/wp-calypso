@@ -3690,13 +3690,8 @@ PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 	getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	getTitle: () =>
-		i18n.translate( '%(planName)s free trial', {
-			args: { planName: PLANS_LIST[ PLAN_ECOMMERCE ].getTitle() },
-		} ),
-	getDescription: function () {
-		return this.getTitle();
-	},
+	getTitle: () => i18n.translate( 'eCommerce free trial' ),
+	getDescription: () => i18n.translate( 'eCommerce free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
 };
 
@@ -3710,20 +3705,13 @@ if ( isEnabled( 'plans/migration-trial' ) ) {
 		term: TERM_MONTHLY,
 		getBillingTimeFrame: () => i18n.translate( 'free trial' ),
 		getStoreSlug: () => PLAN_MIGRATION_TRIAL_MONTHLY,
-		getTitle: () =>
-			experiments[ 'wpcom_plan_name_change' ] === 'treatment'
-				? i18n.translate( 'Creator Trial' )
-				: i18n.translate( 'Business Trial' ),
+		getTitle: () => i18n.translate( 'Business Trial' ),
 	};
 }
 
 PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	...getPlanBusinessDetails(),
-	getPlanTagline: () =>
-		i18n.translate( 'Try all the features of our %(planName)s plan.', {
-			args: { planName: PLANS_LIST[ PLAN_BUSINESS ].getTitle() },
-		} ),
-
+	getPlanTagline: () => i18n.translate( 'Try all the features of our Business plan.' ),
 	type: TYPE_BUSINESS,
 	group: GROUP_WPCOM,
 	getProductId: () => 1058,
@@ -3731,10 +3719,7 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => i18n.translate( 'Try it for 3 days' ),
 	getStoreSlug: () => PLAN_HOSTING_TRIAL_MONTHLY,
-	getTitle: () =>
-		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
-			? i18n.translate( 'Creator Trial' )
-			: i18n.translate( 'Business Trial' ),
+	getTitle: () => i18n.translate( 'Business trial' ),
 	getDescription: () => i18n.translate( 'Hosting free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
 };
