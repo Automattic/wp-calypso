@@ -116,8 +116,7 @@ const hosting: Flow = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const { resetOnboardStoreWithSkipFlags, setHostingTrialAvailable } =
-			useDispatch( ONBOARD_STORE );
+		const { resetOnboardStore, setHostingTrialAvailable } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		const userIsLoggedIn = useSelect(
@@ -147,8 +146,7 @@ const hosting: Flow = {
 		useEffect(
 			() => {
 				if ( currentStepSlug === undefined ) {
-					resetOnboardStoreWithSkipFlags( [ 'skipHostingTrialAvailability' ] );
-
+					resetOnboardStore();
 					if ( query.get( 'campaign' ) === 'reddit' ) {
 						setHostingTrialAvailable();
 					}
