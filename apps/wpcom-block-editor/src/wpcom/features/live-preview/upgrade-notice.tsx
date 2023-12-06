@@ -70,11 +70,6 @@ export const LivePreviewUpgradeNotice: FC< {
 	 * Show the notice when the canvas mode is 'edit'.
 	 */
 	useEffect( () => {
-		if ( canvasMode !== 'edit' ) {
-			removeNotice( UPGRADE_NOTICE_ID );
-			return;
-		}
-
 		createWarningNotice( noticeText, {
 			id: UPGRADE_NOTICE_ID,
 			isDismissible: false,
