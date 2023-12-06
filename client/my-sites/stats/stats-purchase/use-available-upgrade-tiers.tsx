@@ -67,27 +67,18 @@ function transformTier( tier: PriceTierListItemProps ): StatsPlanTierUI {
 
 function filterPurchasedTiers(
 	availableTiers: StatsPlanTierUI[],
-	purchasedTiers: PlanUsage | undefined
+	usageData: PlanUsage | undefined
 ): StatsPlanTierUI[] {
 	// Filter out already purchased tiers.
 	let tiers: StatsPlanTierUI[];
 
-	if (
-		! purchasedTiers ||
-		purchasedTiers?.views_limit === null ||
-		purchasedTiers?.views_limit === 0
-	) {
+	if ( ! usageData || usageData?.views_limit === null || usageData?.views_limit === 0 ) {
 		// No tier has been purchased.
 		tiers = availableTiers;
 	} else {
 		tiers = availableTiers.filter( ( availableTier ) => {
-			if ( ! availableTier?.views || ! purchasedTiers?.views_limit ) {
-				return true;
-			}
-
 			return (
-				availableTier.views === null ||
-				( availableTier?.views as number ) > purchasedTiers?.views_limit
+				availableTier.views === null || ( availableTier?.views as number ) > usageData?.views_limit
 			);
 		} );
 	}
@@ -103,7 +94,7 @@ function useAvailableUpgradeTiers(
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	) as ProductsList.ProductsListItem | null;
-	const { data: purchasedTiers } = usePlanUsageQuery( siteId );
+	const { data: usageData } = usePlanUsageQuery( siteId );
 
 	let tiersForUi = commercialProduct?.price_tier_list?.map( transformTier );
 
@@ -111,7 +102,7 @@ function useAvailableUpgradeTiers(
 
 	// 2. Filter based on current plan.
 	if ( shouldFilterPurchasedTiers ) {
-		tiersForUi = filterPurchasedTiers( tiersForUi, purchasedTiers );
+		tiersForUi = filterPurchasedTiers( tiersForUi, usageData );
 	}
 
 	// 3. Return the relevant upgrade options as a list.
