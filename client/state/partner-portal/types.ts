@@ -97,7 +97,7 @@ export interface APILicense {
 
 export interface APIProductFamilyProductBundlePrice {
 	quantity: number;
-	amount: number;
+	amount: string;
 }
 
 export interface APIProductFamilyProduct {
@@ -105,7 +105,7 @@ export interface APIProductFamilyProduct {
 	slug: string;
 	product_id: number;
 	currency: string;
-	amount: number;
+	amount: string;
 	price_interval: string;
 	family_slug: string;
 	supported_bundles: APIProductFamilyProductBundlePrice[];
