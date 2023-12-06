@@ -106,7 +106,7 @@ const ScaledBlockRendererContainer = ( {
 		<div
 			className="scaled-block-renderer"
 			style={ {
-				transform: `scale(${ scale })`,
+				'--scaled-block-renderer-scale': scale,
 				height: scaledHeight,
 				maxHeight:
 					maxHeight && maxHeight !== 'none' && contentHeight > maxHeight
