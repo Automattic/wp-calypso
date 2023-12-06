@@ -1,3 +1,4 @@
+import { danger } from '@automattic/components/src/icons';
 import { Icon, warning, info, check, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import React from 'react';
@@ -26,7 +27,7 @@ type NoticeBannerProps = {
 const getIconByLevel = ( level: NoticeBannerProps[ 'level' ] ) => {
 	switch ( level ) {
 		case 'error':
-			return warning;
+			return danger;
 		case 'warning':
 			return info;
 		case 'info':
