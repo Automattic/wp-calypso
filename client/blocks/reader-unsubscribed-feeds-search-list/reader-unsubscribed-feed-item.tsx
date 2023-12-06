@@ -1,4 +1,5 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -106,15 +107,19 @@ const ReaderUnsubscribedFeedItem = ( {
 					busy={ isSubscribing }
 					onClick={ onSubscribeClick }
 				>
-					{ hasSubscribed
-						? translate( 'Subscribed', {
-								comment:
-									'The user just subscribed to the site that the button relates to, and so the button is in disabled state.',
-						  } )
-						: translate( 'Subscribe', {
-								comment:
-									'Describes an action to be done on the click of the button, i.e. subscribe to the site that this button relates to.',
-						  } ) }
+					{ isMobile() && (
+						<Gridicon className="subscriptions-add-sites__button-icon" icon="plus" size={ 24 } />
+					) }
+					{ ! isMobile() &&
+						( hasSubscribed
+							? translate( 'Subscribed', {
+									comment:
+										'The user just subscribed to the site that the button relates to, and so the button is in disabled state.',
+							  } )
+							: translate( 'Subscribe', {
+									comment:
+										'Describes an action to be done on the click of the button, i.e. subscribe to the site that this button relates to.',
+							  } ) ) }
 				</Button>
 			</div>
 		</HStack>
