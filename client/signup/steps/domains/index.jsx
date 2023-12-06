@@ -662,12 +662,11 @@ export class RenderDomainsStep extends Component {
 					this.setState( { replaceDomainFailedMessage: null } );
 				} )
 				.catch( () => {
-					this.setState( {
-						replaceDomainFailedMessage: this.props.translate(
+					this.handleReplaceProductsInCartError(
+						this.props.translate(
 							'Sorry, there was a problem adding that domain. Please try again later.'
-						),
-					} );
-					this.props.shoppingCartManager.reloadFromServer();
+						)
+					);
 				} );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
@@ -735,17 +734,14 @@ export class RenderDomainsStep extends Component {
 			this.props.shoppingCartManager
 				.replaceProductsInCart( productsToKeep )
 				.then( () => {
-					this.setState( { isCartPendingUpdateDomain: null } );
 					this.setState( { replaceDomainFailedMessage: null } );
 				} )
 				.catch( () => {
-					this.setState( {
-						replaceDomainFailedMessage: this.props.translate(
+					this.handleReplaceProductsInCartError(
+						this.props.translate(
 							'Sorry, there was a problem removing that domain. Please try again later.'
-						),
-					} );
-					this.setState( { isCartPendingUpdateDomain: null } );
-					this.props.shoppingCartManager.reloadFromServer();
+						)
+					);
 				} )
 				.finally( () => {
 					this.setState( ( prevState ) => ( {
@@ -756,6 +752,17 @@ export class RenderDomainsStep extends Component {
 				} );
 		}
 	}
+
+	handleReplaceProductsInCartError = ( errorMessage ) => {
+		const errors = this.props.shoppingCartManager.responseCart.messages?.errors;
+		if ( errors && errors.length === 0 ) {
+			this.setState( {
+				replaceDomainFailedMessage: errorMessage,
+			} );
+		}
+		this.setState( () => ( { temporaryCart: [] } ) );
+		this.props.shoppingCartManager.reloadFromServer();
+	};
 
 	goToNext = () => {
 		this.setState( { isGoingToNextStep: true } );
@@ -1183,7 +1190,6 @@ export class RenderDomainsStep extends Component {
 
 	dismissReplaceDomainFailed = () => {
 		this.setState( { replaceDomainFailedMessage: null } );
-		this.props.shoppingCartManager.reloadFromServer();
 	};
 
 	onUseMyDomainConnect = ( { domain } ) => {
