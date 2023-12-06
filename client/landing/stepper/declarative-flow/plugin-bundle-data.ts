@@ -1,9 +1,9 @@
+import BundleConfirm from './internals/steps-repository/bundle-confirm';
 import BusinessInfo from './internals/steps-repository/business-info';
 import CheckForPlugins from './internals/steps-repository/check-for-plugins';
 import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import StoreAddress from './internals/steps-repository/store-address';
-import WooConfirm from './internals/steps-repository/woo-confirm';
 import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
 import WooTransfer from './internals/steps-repository/woo-transfer';
 import { StepperStep } from './internals/types';
@@ -13,7 +13,7 @@ const pluginBundleSteps: Record< string, StepperStep[] > = {
 		{ slug: 'checkForPlugins', component: CheckForPlugins },
 		{ slug: 'storeAddress', component: StoreAddress },
 		{ slug: 'businessInfo', component: BusinessInfo },
-		{ slug: 'wooConfirm', component: WooConfirm },
+		{ slug: 'bundleConfirm', component: BundleConfirm },
 		{ slug: 'wooTransfer', component: WooTransfer },
 		{ slug: 'wooInstallPlugins', component: WooInstallPlugins },
 		{ slug: 'processing', component: ProcessingStep },

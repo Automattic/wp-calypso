@@ -4,7 +4,7 @@
 
 body.is-section-stepper {
 	// Two column layout.
-	.step-container.woo-confirm {
+	.step-container.bundle-confirm {
 		@media ( min-width: 660px ) {
 			display: flex;
 		}
@@ -48,7 +48,7 @@ body.is-section-stepper {
 				margin: 0 24px;
 			}
 
-			.woo-confirm__instructions-container {
+			.bundle-confirm__instructions-container {
 				font-size: 0.875rem;
 				letter-spacing: -0.16px;
 				color: var(--studio-gray-60);
@@ -63,7 +63,7 @@ body.is-section-stepper {
 					margin-top: 16px;
 				}
 
-				.woo-confirm__upgrade-required {
+				.bundle-confirm__upgrade-required {
 					margin-top: 1rem;
 				}
 
@@ -113,14 +113,14 @@ body.is-section-stepper {
 	}
 }
 
-.site-setup.woo-confirm {
-	.woo-confirm__loading-container,
-	.woo-confirm__info-section {
+.site-setup.bundle-confirm {
+	.bundle-confirm__loading-container,
+	.bundle-confirm__info-section {
 		display: flex;
 		justify-content: center;
 	}
 
-	.woo-confirm__loading-container {
+	.bundle-confirm__loading-container {
 		margin-top: 25vh;
 
 		@include break-small {

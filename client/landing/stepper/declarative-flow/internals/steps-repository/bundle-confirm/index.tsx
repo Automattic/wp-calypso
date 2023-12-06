@@ -41,7 +41,7 @@ const TRANSFERRING_NOT_BLOCKERS = [
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
 
-const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
+const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
@@ -180,7 +180,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		checkoutUrl: addQueryArgs(
 			{
 				redirect_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooTransfer' ),
-				cancel_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooConfirm' ),
+				cancel_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/bundleConfirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
@@ -206,7 +206,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		}
 
 		return (
-			<div className="woo-confirm__upgrade-required">
+			<div className="bundle-confirm__upgrade-required">
 				<PlanWarning title={ __( 'Plan upgrade required' ) }>
 					{ siteUpgrading.description }
 				</PlanWarning>
@@ -242,8 +242,8 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	function getContent() {
 		return (
 			<>
-				<div className="woo-confirm__info-section" />
-				<div className="woo-confirm__instructions-container">
+				<div className="bundle-confirm__info-section" />
+				<div className="bundle-confirm__instructions-container">
 					{ getWPComSubdomainWarningContent() }
 					{ getCheckoutContent() }
 					{ getWarningsOrHoldsSection() }
@@ -276,7 +276,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	if ( site === null || ! site.ID || ! isDataReady || isReadyToStart ) {
 		return (
-			<div className="woo-confirm__loading-container">
+			<div className="bundle-confirm__loading-container">
 				<LoadingEllipsis />
 			</div>
 		);
@@ -289,13 +289,13 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName="woo-confirm"
+			stepName="bundle-confirm"
 			goBack={ goBack }
 			hideSkip
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id="woo-confirm-title-header"
+					id="bundle-confirm-title-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
 					align="left"
@@ -308,4 +308,4 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	);
 };
 
-export default WooConfirm;
+export default BundleConfirm;

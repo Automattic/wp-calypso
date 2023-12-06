@@ -177,10 +177,10 @@ const pluginBundleFlow: Flow = {
 					if ( isAtomic ) {
 						return navigate( 'wooInstallPlugins' );
 					}
-					return navigate( 'wooConfirm' );
+					return navigate( 'bundleConfirm' );
 				}
 
-				case 'wooConfirm': {
+				case 'bundleConfirm': {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
@@ -237,7 +237,7 @@ const pluginBundleFlow: Flow = {
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
 
-				case 'wooConfirm':
+				case 'bundleConfirm':
 					return navigate( 'businessInfo' );
 
 				default:

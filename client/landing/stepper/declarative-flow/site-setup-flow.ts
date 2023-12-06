@@ -88,7 +88,7 @@ const siteSetupFlow: Flow = {
 			STEPS.WOO_TRANSFER,
 			STEPS.WOO_INSTALL_PLUGINS,
 			STEPS.WOO_VERIFY_EMAIL,
-			STEPS.WOO_CONFIRM,
+			STEPS.BUNDLE_CONFIRM,
 			STEPS.EDIT_EMAIL,
 			STEPS.DIFM_STARTING_POINT,
 		];
@@ -385,10 +385,10 @@ const siteSetupFlow: Flow = {
 					if ( isAtomic ) {
 						return navigate( 'wooInstallPlugins' );
 					}
-					return navigate( 'wooConfirm' );
+					return navigate( 'bundleConfirm' );
 				}
 
-				case 'wooConfirm': {
+				case 'bundleConfirm': {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
@@ -502,7 +502,7 @@ const siteSetupFlow: Flow = {
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
 
-				case 'wooConfirm':
+				case 'bundleConfirm':
 					return navigate( 'businessInfo' );
 
 				case 'courses':

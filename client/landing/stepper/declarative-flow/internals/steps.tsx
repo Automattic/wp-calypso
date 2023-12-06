@@ -171,9 +171,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/import-verify-email' ),
 	},
 
-	WOO_CONFIRM: {
-		slug: 'wooConfirm',
-		asyncComponent: () => import( './steps-repository/woo-confirm' ),
+	BUNDLE_CONFIRM: {
+		slug: 'bundleConfirm',
+		asyncComponent: () => import( './steps-repository/bundle-confirm' ),
 	},
 
 	WOO_INSTALL_PLUGINS: {
