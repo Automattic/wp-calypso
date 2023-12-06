@@ -418,7 +418,7 @@ function DIFMPagePicker( props: StepProps ) {
 
 	const subHeaderText = isStoreFlow
 		? translate(
-				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.' +
+				'Select pages by clicking on the thumbnails to select or unselect them. Your site build includes up to %(freePageCount)s pages; you can add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.' +
 					'{{br}}{{/br}}{{br}}{{/br}}A cart and checkout are also included with your site.{{br}}{{/br}}You can add products later with the WordPress editor.',
 				{
 					components: {
@@ -444,7 +444,7 @@ function DIFMPagePicker( props: StepProps ) {
 				}
 		  )
 		: translate(
-				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
+				'Select pages by clicking on the thumbnails to select or unselect them. Your site build includes up to %(freePageCount)s pages; you can add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
 				{
 					components: {
 						br: <br />,
