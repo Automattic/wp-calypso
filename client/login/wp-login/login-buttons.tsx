@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -54,7 +54,7 @@ const LoginButtons = ( {
 
 		const emailAddress = usernameOrEmail || query?.email_address;
 
-		return addQueryArgs( { email_address: emailAddress }, loginLink );
+		return addQueryArgs( loginLink, { email_address: emailAddress } );
 	};
 
 	const handleMagicLoginClick = () => {
