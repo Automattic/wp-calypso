@@ -71,11 +71,16 @@ const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean 
 			return '0px 0px 0px 3px #E3EAF0';
 		} };
 	}
-	width: 222px;
-	height: 170px;
+	height: 100%;
+	width: 100%;
+
 	position: relative;
 	cursor: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'default' : 'pointer' ) };
 	pointer-events: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'none' : 'default' ) };
+
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
 `;
 
 const HeaderContainer = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
@@ -92,12 +97,9 @@ const Line = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	height: 0.75px;
 	background-color: var( --studio-gray-10 );
 	position: absolute;
-	width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '222px' ) };
 	left: ${ ( { isSelected } ) => ( isSelected ? '-1px' : '0' ) };
 	top: 12px;
-	&:hover {
-		width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '221px' ) };
-	}
+	width: 100%;
 `;
 
 function Header( props: { isSelected?: boolean; isClickDisabled?: boolean } ) {
@@ -110,10 +112,13 @@ function Header( props: { isSelected?: boolean; isClickDisabled?: boolean } ) {
 }
 
 const Content = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 157px;
+	padding: 15px;
+	text-align: center;
+	> img {
+		aspect-ratio: 1.5;
+		width: 100%;
+		max-width: 186px;
+	}
 `;
 
 const SelectedCount = styled.div`
