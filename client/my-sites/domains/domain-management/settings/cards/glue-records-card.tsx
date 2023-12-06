@@ -94,7 +94,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		}
 	}, [ isError, dispatch, translate ] );
 
-	const handleAddGlueRecord = () => {
+	const showGlueRecordForm = () => {
 		setIsEditing( true );
 	};
 
@@ -111,7 +111,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 
 		// By default, the interface already opens with domain forwarding addition
 		if ( data?.length === 0 ) {
-			handleAddGlueRecord();
+			showGlueRecordForm();
 		}
 	}, [ isLoadingData, data, isExpanded ] );
 
@@ -306,7 +306,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 					<Button
 						borderless
 						className="add-forward-button  link-button"
-						onClick={ () => handleAddGlueRecord() }
+						onClick={ () => showGlueRecordForm() }
 					>
 						{ translate( '+ Add Glue Record' ) }
 					</Button>
