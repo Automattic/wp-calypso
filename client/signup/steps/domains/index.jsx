@@ -664,7 +664,7 @@ export class RenderDomainsStep extends Component {
 				.catch( () => {
 					this.setState( {
 						replaceDomainFailedMessage: this.props.translate(
-							'Sorry, there was an error adding that domain. Please refresh the page to try again.'
+							'Sorry, there was an error adding that domain. Please try again later.'
 						),
 					} );
 					this.props.shoppingCartManager.reloadFromServer();
@@ -741,7 +741,7 @@ export class RenderDomainsStep extends Component {
 				.catch( () => {
 					this.setState( {
 						replaceDomainFailedMessage: this.props.translate(
-							'Sorry, we had a problem adding that domain. Please refresh the page and try again.'
+							'Sorry, we had a problem removing that domain. Please refresh the page and try again.'
 						),
 					} );
 					this.setState( { isCartPendingUpdateDomain: null } );
