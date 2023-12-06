@@ -9,7 +9,10 @@ export type OnChangeAkProQuantity = (
 ) => void;
 
 export interface AkismetProQuantityDropDownProps {
+	id: string;
 	responseCart: ResponseCart;
 	setForceShowAkQuantityDropdown: React.Dispatch< React.SetStateAction< boolean > >;
-	onChangeAkProQuantity?: OnChangeAkProQuantity;
+	onChangeAkProQuantity: OnChangeAkProQuantity;
+	toggle: ( id: string | null ) => void;
+	isOpen: boolean;
 }

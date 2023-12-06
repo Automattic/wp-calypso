@@ -105,9 +105,12 @@ const OptionList = styled.ul`
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
+	id,
 	responseCart,
 	setForceShowAkQuantityDropdown,
 	onChangeAkProQuantity,
+	toggle,
+	isOpen,
 } ) => {
 	const translate = useTranslate();
 
@@ -149,7 +152,6 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		};
 	}, [ AkBusinessDropdownPosition, dropdownOptions.length, responseCart.products ] );
 
-	const [ open, setOpen ] = useState( false );
 	const [ selectedQuantity, setSelectedQuantity ] = useState( validatedDropdownQuantity );
 
 	const onSitesQuantityChange = useCallback(
@@ -196,8 +198,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			}
 
 			setSelectedQuantity( value );
-			onChangeAkProQuantity &&
-				onChangeAkProQuantity( uuid, productSlug, productId, prevQuantity, newQuantity );
+			onChangeAkProQuantity( uuid, productSlug, productId, prevQuantity, newQuantity );
 		},
 		[
 			AkBusinessDropdownPosition,
@@ -213,8 +214,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 
 		// only allow valid quantity in cart (1 - 4 || null)
 		if ( quantity !== validatedCartQuantity ) {
-			onChangeAkProQuantity &&
-				onChangeAkProQuantity( uuid, product_slug, product_id, quantity, validatedCartQuantity );
+			onChangeAkProQuantity( uuid, product_slug, product_id, quantity, validatedCartQuantity );
 		}
 
 		setSelectedQuantity( validatedDropdownQuantity );
@@ -250,10 +250,6 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		}
 	}, [ selectedQuantity ] );
 
-	const toggleDropDown = useCallback( () => {
-		setOpen( ! open );
-	}, [ open ] );
-
 	// arrow keys require onKeyDown for some browsers
 	const handleKeyDown: React.KeyboardEventHandler = useCallback(
 		( event ) => {
@@ -273,12 +269,12 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					if ( selectedQuantity !== validatedDropdownQuantity ) {
 						onSitesQuantityChange( selectedQuantity );
 					} else if ( selectedQuantity === validatedDropdownQuantity ) {
-						toggleDropDown();
+						toggle( id );
 					}
 					break;
 				case 'Space':
 					event.preventDefault();
-					toggleDropDown();
+					toggle( id );
 					break;
 			}
 		},
@@ -288,7 +284,8 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			selectNextQuantity,
 			selectPreviousQuantity,
 			selectedQuantity,
-			toggleDropDown,
+			toggle,
+			id,
 		]
 	);
 
@@ -298,17 +295,17 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			<AkismetSitesSelectLabel>
 				{ translate( 'On how many sites do you plan to use Akismet?' ) }
 			</AkismetSitesSelectLabel>
-			<Dropdown aria-expanded={ open } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
+			<Dropdown aria-expanded={ isOpen } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
 				<CurrentOption
 					aria-label={ translate( 'Pick the number of sites you plan to use Akismet?' ) }
-					onClick={ () => setOpen( ! open ) }
-					open={ open }
+					onClick={ () => toggle( id ) }
+					open={ isOpen }
 					role="button"
 				>
 					{ dropdownOptions[ selectedQuantity - 1 ] }
-					<Gridicon icon={ open ? 'chevron-up' : 'chevron-down' } />
+					<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 				</CurrentOption>
-				{ open && (
+				{ isOpen && (
 					<OptionList role="listbox" tabIndex={ -1 }>
 						{ dropdownOptions.map( ( option, index ) => (
 							<Option
