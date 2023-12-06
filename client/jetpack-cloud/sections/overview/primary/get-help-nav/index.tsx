@@ -38,8 +38,10 @@ export default function GetHelpNav() {
 				'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-managing-plugins/'
 			),
 			title: translate( 'Managing plugins' ),
+			isExternalLink: true,
 		},
 	].map( ( props ) => ( {
+		isExternalLink: true,
 		...props,
 		trackEventName: 'calypso_jetpack_manage_overview_get_help_click',
 	} ) );
