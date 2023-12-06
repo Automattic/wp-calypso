@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useState, useMemo } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
@@ -175,16 +175,6 @@ export default function LicensesForm( {
 		);
 	};
 
-	const isSearchResultEmpty = useMemo( () => {
-		return (
-			productSearchQuery !== '' &&
-			plans.length === 0 &&
-			products.length === 0 &&
-			wooExtensions.length === 0 &&
-			backupAddons.length === 0
-		);
-	}, [ productSearchQuery, plans, products, wooExtensions, backupAddons ] );
-
 	if ( isLoadingProducts ) {
 		return (
 			<div className="licenses-form">
@@ -206,7 +196,7 @@ export default function LicensesForm( {
 				/>
 			</div>
 
-			{ isSearchResultEmpty && (
+			{ productSearchQuery !== '' && filteredProductsAndBundles.length === 0 && (
 				<p>
 					{ translate(
 						"Sorry, we couldn't find a product with that name. Please refine your search, or {{link}}contact our support team{{/link}} if you continue to experience an issue.",
