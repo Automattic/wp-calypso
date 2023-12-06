@@ -1071,15 +1071,14 @@ function CheckoutLineItem( {
 	const productSlug = product?.product_slug;
 
 	const label = getLabel( product );
-	const itemOriginalSubtotalInteger =
+	const originalAmountInteger =
 		isAkPro500Cart && product.quantity
 			? product.item_original_cost_for_quantity_one_integer
 			: product.item_original_subtotal_integer;
-	const originalAmountDisplay = formatCurrency( itemOriginalSubtotalInteger, product.currency, {
+	const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
-	const originalAmountInteger = itemOriginalSubtotalInteger;
 	const itemSubtotalInteger =
 		isAkPro500Cart && product.quantity
 			? product.item_subtotal_integer / product.quantity
