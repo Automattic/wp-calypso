@@ -404,6 +404,20 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'setup_general':
+					taskData = {
+						disabled: false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/update-options/options`, {
+									siteSlug,
+									flowToReturnTo: flow,
+								} )
+							);
+						},
+					};
+					break;
 				case 'setup_link_in_bio':
 					taskData = {
 						actionDispatch: () => {
