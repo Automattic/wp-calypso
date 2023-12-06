@@ -154,6 +154,8 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		return () => {
 			isUpdatingCart = true;
 		};
+		// This hook updates cart values which also changes the `responseCart` variable.
+		// We do not want this effect to run when `responseCart` is updated to avoid an infinite loop.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ replaceProductsInCart, updateLocation, storedCard, productToAdd, countries ] );
 
