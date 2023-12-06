@@ -24,12 +24,9 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
-import { useFreeHostingTrialAssignment } from 'calypso/my-sites/plans-features-main/hooks/use-free-hosting-trial-assignment';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
-import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -140,10 +137,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		setDomain( freeDomainSuggestion );
 	};
 
-	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
-		useFreeHostingTrialAssignment( plansIntent ?? undefined );
-	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
-
 	const plansFeaturesList = () => {
 		return (
 			<div>
@@ -165,10 +158,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
-					isLoadingHostingTrialExperiment={ isLoadingHostingTrialExperiment }
-					eligibleForFreeHostingTrial={
-						isAssignedToHostingTrialExperiment && eligibleForFreeHostingTrial
-					}
 				/>
 			</div>
 		);
