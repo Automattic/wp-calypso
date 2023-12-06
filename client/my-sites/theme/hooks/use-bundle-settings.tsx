@@ -7,6 +7,8 @@ import { getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 interface BundleSettings {
 	/** Name field is a label for the bundle name, which can be used isolated or in the middle of a sentence. Many times used as "{name} theme". */
 	name: string;
+	/** Software name field is a label for the product name, which can be used isolated or in the middle of a sentence, like: "Installing {softwareName}" */
+	softwareName: string;
 	iconComponent: FC;
 	color: string;
 	designPickerBadgeTooltip: string;
@@ -34,6 +36,7 @@ const useBundleSettings = ( themeSoftware?: string ): BundleSettingsHookReturn =
 			case 'woo-on-plans':
 				return {
 					name: 'WooCommerce',
+					softwareName: 'WooCommerce',
 					iconComponent: WooOnPlansIcon,
 					color: '#7f54b3',
 					designPickerBadgeTooltip: translate(
