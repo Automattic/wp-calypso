@@ -596,14 +596,18 @@ const hostingTrialAvailability: Reducer< HostingTrialAvailability, OnboardAction
 	state = null,
 	action
 ) => {
-	switch ( action.type ) {
-		case 'SET_HOSTING_TRIAL_AVAILABLE':
-			return 'available';
-		case 'RESET_ONBOARD_STORE':
-			return null;
-		default:
-			return state;
+	if ( action.type === 'SET_HOSTING_TRIAL_AVAILABLE' ) {
+		return 'available';
 	}
+
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'skipHostingTrialAvailability' )
+	) {
+		return null;
+	}
+
+	return state;
 };
 
 const reducer = combineReducers( {
