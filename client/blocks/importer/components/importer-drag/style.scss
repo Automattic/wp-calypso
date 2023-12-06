@@ -1,8 +1,4 @@
 .importer-drag {
-	.social-logo {
-		border-radius: 4px;
-	}
-
 	.import__heading {
 		margin-bottom: 3.25rem;
 
@@ -32,6 +28,18 @@
 
 			span {
 				text-decoration: underline;
+			}
+		}
+	}
+
+	.drop-zone {
+		&.is-active {
+			background: linear-gradient(0deg, var(--studio-gray-0), var(--studio-gray-0)), linear-gradient(0deg, var(--studio-gray-40), var(--studio-gray-40));
+			box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
+
+			.drop-zone__content-text {
+				font-weight: 400;
+				color: var(--studio-gray-70);
 			}
 		}
 	}
