@@ -14,6 +14,8 @@ interface BundleSettings {
 	bundledPluginMessage: TranslateResult;
 }
 
+type BundleSettingsHookReturn = BundleSettings | null;
+
 const WooOnPlansIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 		<path
@@ -23,18 +25,10 @@ const WooOnPlansIcon = () => (
 	</svg>
 );
 
-/**
- * Hook to get the bundle settings for a given theme.
- * If the theme doesn't have a sotfware set defined, it returns `null`.
- */
-const useBundleSettings = ( themeId: string ): BundleSettings | null => {
-	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+const useBundleSettings = ( themeSoftware?: string ): BundleSettingsHookReturn => {
 	const translate = useTranslate();
 
 	const bundleSettings = useMemo( () => {
-		// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
-		const themeSoftware = themeSoftwareSet[ 0 ];
-
 		switch ( themeSoftware ) {
 			case 'woo-on-plans':
 				return {
@@ -60,7 +54,20 @@ const useBundleSettings = ( themeId: string ): BundleSettings | null => {
 			default:
 				return null;
 		}
-	}, [ translate, themeSoftwareSet ] );
+	}, [ translate, themeSoftware ] );
+
+	return bundleSettings;
+};
+
+/**
+ * Hook to get the bundle settings for a given theme.
+ * If the theme doesn't have a sotfware set defined, it returns `null`.
+ */
+export const useBundleSettingsByTheme = ( themeId: string ): BundleSettingsHookReturn => {
+	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+	// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
+	const themeSoftware = themeSoftwareSet[ 0 ];
+	const bundleSettings = useBundleSettings( themeSoftware );
 
 	return bundleSettings;
 };
