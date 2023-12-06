@@ -13,7 +13,9 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 interface LoginButtonsProps {
 	locale: string;
-	oauth2Client: object;
+	oauth2Client: {
+		id: string;
+	};
 	twoFactorAuthType: string;
 	usernameOrEmail: string;
 }
