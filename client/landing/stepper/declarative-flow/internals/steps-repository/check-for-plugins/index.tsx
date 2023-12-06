@@ -3,21 +3,13 @@ import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE } from '../../../../stores';
 import type { BundledPlugin } from '../../../plugin-bundle-data';
 import type { Step, PluginsResponse } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
 import './styles.scss';
-
-type PluginsToCheckConfig = {
-	[ key: string ]: string[];
-};
-
-// TODO: Move to a centered object.
-const pluginsToCheckConfig: PluginsToCheckConfig = {
-	'woo-on-plans': [ 'woocommerce' ],
-};
 
 const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
 	const { submit } = navigation;
@@ -29,8 +21,11 @@ const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
 		[ siteSlugParam ]
 	) as BundledPlugin;
 
+	const bundleSettings = useBundleSettings( pluginSlug );
+	const checkForActivePlugins = bundleSettings?.checkForActivePlugins;
+
 	useEffect( () => {
-		if ( ! site ) {
+		if ( ! site || ! checkForActivePlugins ) {
 			return;
 		}
 
@@ -43,16 +38,12 @@ const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
 					apiVersion: '1.1',
 				} );
 
-				const pluginsToCheck = pluginsToCheckConfig[ pluginSlug ];
-
-				if ( pluginsToCheck ) {
-					hasPlugins = pluginsToCheck.every(
-						( pluginToCheck ) =>
-							response?.plugins.find(
-								( plugin: { slug: string } ) => plugin.slug === pluginToCheck
-							) !== undefined
-					);
-				}
+				hasPlugins = checkForActivePlugins.every(
+					( pluginToCheck ) =>
+						response?.plugins.find(
+							( plugin: { slug: string } ) => plugin.slug === pluginToCheck
+						) !== undefined
+				);
 			} catch ( error ) {
 				hasPlugins = false;
 			}
@@ -64,7 +55,7 @@ const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
 
 		// We don't need to include `submit` in the dependency array.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ site ] );
+	}, [ site, checkForActivePlugins ] );
 
 	return (
 		<div className="step-container">

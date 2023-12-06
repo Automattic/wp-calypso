@@ -12,6 +12,7 @@ interface BundleSettings {
 	designPickerBadgeTooltip: string;
 	bannerUpsellDescription: string;
 	bundledPluginMessage: TranslateResult;
+	checkForActivePlugins: string[];
 }
 
 type BundleSettingsHookReturn = BundleSettings | null;
@@ -49,6 +50,7 @@ const useBundleSettings = ( themeSoftware?: string ): BundleSettingsHookReturn =
 							},
 						}
 					),
+					checkForActivePlugins: [ 'woocommerce' ],
 				};
 
 			default:
