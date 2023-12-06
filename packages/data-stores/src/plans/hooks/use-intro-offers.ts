@@ -23,13 +23,13 @@ const useIntroOffers = ( { siteId }: Props ): IntroOffersIndex | undefined => {
 	const plans = usePlans();
 
 	return useMemo( () => {
-		if ( ! sitePlans.data || ! plans.data ) {
+		if ( ! sitePlans.data && ! plans.data ) {
 			return undefined;
 		}
 
 		return Object.keys( { ...sitePlans.data, ...plans.data } ).reduce< IntroOffersIndex >(
 			( acc, planSlug ) => {
-				const plan = sitePlans.data[ planSlug ] ?? plans.data[ planSlug ];
+				const plan = sitePlans?.data?.[ planSlug ] ?? plans?.data?.[ planSlug ];
 
 				return {
 					...acc,
