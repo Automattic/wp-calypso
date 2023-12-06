@@ -39,12 +39,10 @@
 	}
 
 	.form-password-input__toggle-visibility {
-		top: 50%;
-		transform: translateY(-50%);
+		top: calc(50% - 24px);
 		right: 14px;
 
 		svg {
-			display: block;
 			fill: var(--p2-color-text);
 		}
 	}
