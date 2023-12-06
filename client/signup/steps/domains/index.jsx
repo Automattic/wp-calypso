@@ -206,7 +206,6 @@ export class RenderDomainsStep extends Component {
 			domainRemovalQueue: [],
 			isGoingToNextStep: false,
 			temporaryCart: [],
-			replaceDomainFailed: false,
 			replaceDomainFailedMessage: null,
 		};
 	}
@@ -660,15 +659,15 @@ export class RenderDomainsStep extends Component {
 			await this.props.shoppingCartManager
 				.replaceProductsInCart( sortedProducts )
 				.then( () => {
-					this.setState( { replaceDomainFailed: false } );
+					this.setState( { replaceDomainFailedMessage: null } );
 				} )
 				.catch( () => {
-					this.setState( { replaceDomainFailed: true } );
 					this.setState( {
 						replaceDomainFailedMessage: this.props.translate(
-							'Failed to add domain. Please try again.'
+							'Sorry, there was an error adding that domain. Please refresh the page to try again.'
 						),
 					} );
+					this.props.shoppingCartManager.reloadFromServer();
 				} );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
@@ -737,16 +736,16 @@ export class RenderDomainsStep extends Component {
 				.replaceProductsInCart( productsToKeep )
 				.then( () => {
 					this.setState( { isCartPendingUpdateDomain: null } );
-					this.setState( { replaceDomainFailed: false } );
+					this.setState( { replaceDomainFailedMessage: null } );
 				} )
 				.catch( () => {
-					this.setState( { replaceDomainFailed: true } );
 					this.setState( {
 						replaceDomainFailedMessage: this.props.translate(
-							'Failed to remove domain. Please try again.'
+							'Sorry, we had a problem adding that domain. Please refresh the page and try again.'
 						),
 					} );
 					this.setState( { isCartPendingUpdateDomain: null } );
+					this.props.shoppingCartManager.reloadFromServer();
 				} )
 				.finally( () => {
 					this.setState( ( prevState ) => ( {
@@ -1174,10 +1173,17 @@ export class RenderDomainsStep extends Component {
 						hasPendingRequests={ isLoadingExperiment }
 						temporaryCart={ this.state.temporaryCart }
 						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
+						replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
+						dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
 					/>
 				) }
 			</ProvideExperimentData>
 		);
+	};
+
+	dismissReplaceDomainFailed = () => {
+		this.setState( { replaceDomainFailedMessage: null } );
+		this.props.shoppingCartManager.reloadFromServer();
 	};
 
 	onUseMyDomainConnect = ( { domain } ) => {
@@ -1348,24 +1354,13 @@ export class RenderDomainsStep extends Component {
 			sideContent = null;
 		}
 
-		if (
-			( this.props.step && 'invalid' === this.props.step.status ) ||
-			this.state.replaceDomainFailed
-		) {
+		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains__step-section-wrapper">
 					{ this.props.step && 'invalid' === this.props.step.status && (
 						<Notice status="is-error" showDismiss={ false }>
 							{ this.props.step.errors.message }
 						</Notice>
-					) }
-					{ this.state.replaceDomainFailed && (
-						<Notice
-							status="is-error"
-							text={ this.state.replaceDomainFailedMessage }
-							showDismiss={ true }
-							onDismissClick={ () => this.setState( { replaceDomainFailed: false } ) }
-						/>
 					) }
 					{ content }
 				</div>
