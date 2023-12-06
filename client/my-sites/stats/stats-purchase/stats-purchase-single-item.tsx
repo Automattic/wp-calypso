@@ -22,7 +22,6 @@ import {
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
-import { PriceTierListItemProps } from './types';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -34,7 +33,6 @@ interface StatsCommercialPurchaseProps {
 	redirectUri: string;
 	from: string;
 	showClassificationDispute?: boolean;
-	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -45,7 +43,6 @@ interface StatsSingleItemPagePurchaseProps {
 	from: string;
 	siteId: number | null;
 	isCommercial: boolean | null;
-	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPersonalPurchasePageProps {
@@ -86,7 +83,6 @@ const StatsCommercialPurchase = ( {
 	adminUrl,
 	redirectUri,
 	showClassificationDispute = true,
-	priceTiers,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -97,6 +93,7 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -134,17 +131,41 @@ Thanks\n\n`;
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-			<ButtonComponent
-				variant="primary"
-				primary={ isWPCOMSite ? true : undefined }
-				onClick={ () =>
-					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-				}
-			>
-				{ translate( 'Get Stats' ) }
-			</ButtonComponent>
+			{ ! isTierUpgradeSliderEnabled && (
+				<ButtonComponent
+					variant="primary"
+					primary={ isWPCOMSite ? true : undefined }
+					onClick={ () =>
+						gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+					}
+				>
+					{ translate( 'Get Stats' ) }
+				</ButtonComponent>
+			) }
 			{ isTierUpgradeSliderEnabled && (
-				<TierUpgradeSlider priceTiers={ priceTiers } currencyCode={ currencyCode } />
+				<>
+					<TierUpgradeSlider
+						currencyCode={ currencyCode }
+						setPurchaseTierQuantity={ setPurchaseTierQuantity }
+					/>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( {
+								from,
+								type: 'commercial',
+								siteSlug,
+								adminUrl,
+								redirectUri,
+								price: undefined,
+								quantity: purchaseTierQuantity,
+							} )
+						}
+					>
+						{ translate( 'Get Stats' ) }
+					</ButtonComponent>
+				</>
 			) }
 
 			{ showClassificationDispute && (
@@ -314,7 +335,6 @@ const StatsSingleItemPagePurchase = ( {
 	from,
 	siteId,
 	isCommercial,
-	priceTiers,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -329,7 +349,6 @@ const StatsSingleItemPagePurchase = ( {
 				redirectUri={ redirectUri }
 				from={ from }
 				showClassificationDispute={ !! isCommercial }
-				priceTiers={ priceTiers }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);

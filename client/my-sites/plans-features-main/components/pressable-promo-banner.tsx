@@ -9,30 +9,31 @@ const Banner = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	min-height: 128px;
-	padding: 0px, 24px, 0px, 0px;
+	min-height: 80px;
 	border-radius: 4px;
 	border: 1px solid #dcdcde;
 	margin: 24px 20px 24px 20px;
-	padding: 24px 20px 24px 20px;
+	padding: 24px;
 	align-items: center;
-	gap: 16px;
+	gap: 32px;
 
 	${ plansBreakSmall( css`
 		flex-direction: row;
-		padding: 0 20px 0 20px;
 	` ) }
 `;
 
 const LogoContainer = styled.div`
 	display: none;
-	height: 18px;
 
 	${ plansBreakSmall( css`
 		display: inherit;
-		flex-basis: 120px;
+		background-color: #f9f9f9;
+		border-radius: 4px;
+		height: 100px;
+		flex-basis: 100px;
 		flex-shrink: 0;
-		background-color: var( --studio-white );
+		align-items: center;
+		justify-content: center;
 	` ) }
 `;
 
@@ -55,22 +56,31 @@ const CtaContainer = styled.div`
 `;
 
 const Subtitle = styled.h4`
+	font-name: SF Pro Text;
 	font-size: 12px;
 	font-weight: 400;
 	text-align: left;
+	line-height: 20px;
+	color: var( --studio-gray-50 );
 `;
 
 const Title = styled.h2`
+	font-name: SF Pro Display;
 	font-size: 20px;
 	font-weight: 500;
 	text-align: left;
+	line-height: 26px;
+	color: var( --studio-black );
 `;
 
 const Description = styled.p`
+	font-name: SF Pro Text;
 	font-size: 14px;
 	font-weight: 400;
 	text-align: left;
 	margin: 0;
+	line-height: 20px;
+	color: var( --studio-black );
 `;
 
 const CtaButton = styled( Button )`
@@ -81,6 +91,7 @@ const CtaButton = styled( Button )`
 	width: 100%;
 	height: 40px;
 	padding: 10px, 24px, 10px, 24px;
+	border: 0;
 	border-radius: 4px;
 	background-color: var( --studio-black );
 	color: var( --studio-white );
@@ -113,7 +124,7 @@ const PressablePromoBanner = ( {
 	return (
 		<Banner>
 			<LogoContainer>
-				<PressableLogo />
+				<PressableLogo height={ 10 } width={ 69 } />
 			</LogoContainer>
 			<TextContainer>
 				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
@@ -131,6 +142,7 @@ const PressablePromoBanner = ( {
 					target="_blank"
 				>
 					{ translate( 'See Pressable Plans' ) }
+					&nbsp;
 					<Gridicon icon="external" />
 				</CtaButton>
 			</CtaContainer>

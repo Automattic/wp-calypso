@@ -4,16 +4,16 @@ import moment from 'moment';
 import { LegacyRef, forwardRef } from 'react';
 import Rating from 'calypso/components/rating';
 import {
-	ProductProps,
 	useMarketplaceReviewsQuery,
 	MarketplaceReviewResponse,
+	MarketplaceReviewsQueryProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
 
 export const MarketplaceReviewsList = forwardRef<
 	HTMLDivElement,
-	ProductProps & { innerRef: LegacyRef< HTMLDivElement > }
+	MarketplaceReviewsQueryProps & { innerRef: LegacyRef< HTMLDivElement > }
 >( ( props, ref ) => {
 	const translate = useTranslate();
 	const { data: reviews } = useMarketplaceReviewsQuery( props );

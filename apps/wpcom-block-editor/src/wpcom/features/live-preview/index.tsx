@@ -21,7 +21,6 @@ const LivePreviewNotice: FC< {
 	previewingThemeName?: string;
 } > = ( { previewingThemeName } ) => {
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
-	const { set: setPreferences } = useDispatch( 'core/preferences' );
 
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const dashboardLink =
@@ -38,10 +37,6 @@ const LivePreviewNotice: FC< {
 			removeNotice( NOTICE_ID );
 			return;
 		}
-
-		// Suppress the "Looking for template parts?" notice in the Site Editor sidebar.
-		// The preference name is defined in https://github.com/WordPress/gutenberg/blob/d47419499cd58e20db25c370cdbf02ddf7cffce0/packages/edit-site/src/components/sidebar-navigation-screen-main/template-part-hint.js#L9.
-		setPreferences( 'core', 'isTemplatePartMoveHintVisible', false );
 
 		createWarningNotice(
 			sprintf(
@@ -65,22 +60,30 @@ const LivePreviewNotice: FC< {
 			}
 		);
 		return () => removeNotice( NOTICE_ID );
-	}, [
-		siteEditorStore,
-		dashboardLink,
-		setPreferences,
-		createWarningNotice,
-		removeNotice,
-		previewingThemeName,
-	] );
+	}, [ siteEditorStore, dashboardLink, createWarningNotice, removeNotice, previewingThemeName ] );
 	return null;
 };
 
 const LivePreviewNoticePlugin = () => {
+	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const previewingTheme = usePreviewingTheme();
 	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( {
 		previewingTheme,
 	} );
+
+	const { set: setPreferences } = useDispatch( 'core/preferences' );
+	useEffect( () => {
+		if ( ! siteEditorStore ) {
+			return;
+		}
+		if ( ! previewingTheme.name ) {
+			return;
+		}
+		// Suppress the "Looking for template parts?" notice in the Site Editor sidebar.
+		// The preference name is defined in https://github.com/WordPress/gutenberg/blob/d47419499cd58e20db25c370cdbf02ddf7cffce0/packages/edit-site/src/components/sidebar-navigation-screen-main/template-part-hint.js#L9.
+		setPreferences( 'core', 'isTemplatePartMoveHintVisible', false );
+	}, [ previewingTheme.name, setPreferences, siteEditorStore ] );
+
 	if ( canPreviewButNeedUpgrade ) {
 		return <LivePreviewUpgradeNotice { ...{ previewingTheme, upgradePlan } } />;
 	}

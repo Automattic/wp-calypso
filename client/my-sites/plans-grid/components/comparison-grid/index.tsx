@@ -519,7 +519,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		const translate = useTranslate();
 		const allVisible = visibleGridPlans.length === displayedGridPlans.length;
 		const { prices, currencyCode } = usePlanPricingInfoFromGridPlans( {
-			gridPlans: displayedGridPlans,
+			gridPlans: visibleGridPlans,
 		} );
 
 		const isLargeCurrency = useIsLargeCurrency( {

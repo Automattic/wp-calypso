@@ -62,6 +62,7 @@ $font-family: "SF Pro Text", $sans;
 
 		.pattern-assembler__preview-title {
 			opacity: 0;
+			pointer-events: none;
 		}
 	}
 

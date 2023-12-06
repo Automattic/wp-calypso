@@ -3,21 +3,15 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useRef } from 'react';
-import { PriceTierListItemProps } from './types';
-
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
 import './stats-purchase-tier-upgrade-slider.scss';
 
 type TierUpgradeSliderProps = {
 	className?: string;
-	priceTiers: [ PriceTierListItemProps ];
 	currencyCode: string;
-};
-
-type StatsPlanTierUI = {
-	price: string;
-	views: number;
-	extension?: boolean;
-	per_unit_fee?: number;
+	setPurchaseTierQuantity: ( quantity: number ) => void;
 };
 
 function useTranslatedStrings() {
@@ -39,78 +33,38 @@ function useTranslatedStrings() {
 	};
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MOCK_PLAN_DATA = [
-	{
-		price: '$9',
-		views: 10000,
-		description: '$9/month for 10k views',
-	},
-	{
-		price: '$19',
-		views: 100000,
-		description: '$19/month for 100k views',
-	},
-	{
-		price: '$29',
-		views: 250000,
-		description: '$29/month for 250k views',
-	},
-	{
-		price: '$49',
-		views: 500000,
-		description: '$49/month for 500k views',
-	},
-	{
-		price: '$69',
-		views: 1000000,
-		description: '$69/month for 1M views',
-	},
-	{
-		price: '$89.99',
-		views: '1M++',
-		extension: true,
-		per_unit_fee: 1799,
-		description: '$25/month per million views if views exceed 1M',
-	},
-];
-
-function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgradeSliderProps ) {
+function TierUpgradeSlider( {
+	className,
+	currencyCode,
+	setPurchaseTierQuantity,
+}: TierUpgradeSliderProps ) {
 	const translate = useTranslate();
 	const infoReferenceElement = useRef( null );
 	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const tiers = useAvailableUpgradeTiers( siteId );
 	const EXTENSION_THRESHOLD = 2; // in millions
-
-	// Transform plan details to dusplay.
-	const plans = priceTiers?.map( ( plan ): StatsPlanTierUI => {
-		if ( plan?.maximum_units === null ) {
-			// highest tier extension
-			return {
-				price: plan?.minimum_price_monthly_display,
-				views: plan?.minimum_units,
-				extension: true,
-				per_unit_fee: plan?.per_unit_fee,
-			};
-		}
-
-		return {
-			price: plan?.maximum_price_monthly_display,
-			views: plan?.maximum_units,
-		};
-	} );
-
-	// const plans = MOCK_PLAN_DATA; // TODO: REMOVE MOCK DATA!
 
 	// Slider state.
 	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
 	const sliderMin = 0;
-	const sliderMax = plans?.length - 1;
+	const sliderMax = tiers?.length - 1;
 
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
+
+		setPurchaseTierQuantity( tiers[ value ]?.views as number );
 	};
 
 	const translatedStrings = useTranslatedStrings();
+
+	// TODO: Review tier values from API.
+	// Should consider validating the inputs before displaying them.
+	// The following will draw a "-" for the views value if it's undefined.
+	const hasExtension = !! tiers[ currentPlanIndex ]?.extension;
+	const lhValue = hasExtension
+		? EXTENSION_THRESHOLD * 1000000
+		: Number( tiers[ currentPlanIndex ]?.views );
 
 	return (
 		<div className={ componentClassNames }>
@@ -118,20 +72,14 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 				<div className="stats-tier-upgrade-slider__plan-callout">
 					<h2>{ translatedStrings.limits }</h2>
 					<p className="left-aligned">
-						{ plans[ currentPlanIndex ]?.extension ? (
-							<>
-								<span>+</span>
-								<ShortenedNumber value={ EXTENSION_THRESHOLD * 1000000 } />
-							</>
-						) : (
-							<ShortenedNumber value={ plans[ currentPlanIndex ]?.views } />
-						) }
+						<ShortenedNumber value={ lhValue } />
+						{ hasExtension && <span>+</span> }
 					</p>
 				</div>
 				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
 					<h2>{ translatedStrings.price }</h2>
 					<p className="right-aligned" ref={ infoReferenceElement }>
-						{ plans[ currentPlanIndex ]?.price }
+						{ tiers[ currentPlanIndex ]?.price }
 					</p>
 				</div>
 			</div>
@@ -147,18 +95,18 @@ function TierUpgradeSlider( { className, priceTiers, currencyCode }: TierUpgrade
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }
-				isVisible={ plans[ currentPlanIndex ]?.extension }
+				isVisible={ hasExtension }
 				className="stats-tier-upgrade-slider__extension-popover-wrapper"
 			>
 				<div className="stats-tier-upgrade-slider__extension-popover-content">
-					{ plans[ currentPlanIndex ]?.per_unit_fee &&
+					{ tiers[ currentPlanIndex ]?.per_unit_fee &&
 						translate(
 							'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
 							{
 								args: {
 									views_extension_limit: EXTENSION_THRESHOLD,
 									extension_value: formatCurrency(
-										plans[ currentPlanIndex ].per_unit_fee as number,
+										tiers[ currentPlanIndex ].per_unit_fee as number,
 										currencyCode,
 										{
 											isSmallestUnit: true,

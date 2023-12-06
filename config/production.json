@@ -178,6 +178,7 @@
 		"themes/subscription-purchases": false,
 		"themes/text-search-lots": true,
 		"themes/theme-switch-persist-template": false,
+		"themes/assembler-first": false,
 		"unified-pages/virtual-home-page": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,

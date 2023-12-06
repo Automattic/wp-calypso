@@ -6,13 +6,24 @@
 	.reader-unsubscribed-feed-item {
 		@extend %site-subscriptions-list-site-row;
 
+
 		&__site-preview-h-stack {
 			flex: 1;
 			max-width: 250px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				align-items: flex-start;
+			}
 		}
 
 		&__title-with-url-v-stack {
 			flex: 1;
+		}
+
+		&__icon {
+			@include breakpoint-deprecated( "<660px" ) {
+				padding-top: 6px;
+			}
 		}
 
 		&__title {
@@ -23,6 +34,17 @@
 			@extend %site-subscriptions-list-site-url;
 		}
 
+		&__mobile-description {
+			@extend %site-subscriptions-list-default-text;
+			display: none;
+			margin-top: 4px;
+			margin-bottom: 4px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				display: block;
+			}
+		}
+
 		&__description {
 			@extend %site-subscriptions-list-default-text;
 			flex: 1;
@@ -30,6 +52,11 @@
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
+
+
+			@include breakpoint-deprecated( "<660px" ) {
+				display: none;
+			}
 		}
 	}
 }

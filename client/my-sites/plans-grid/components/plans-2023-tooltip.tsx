@@ -1,7 +1,7 @@
+import { Tooltip } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
 import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import { hasTouch } from '../lib/touch-detect';
 
 const HoverAreaContainer = styled.span`

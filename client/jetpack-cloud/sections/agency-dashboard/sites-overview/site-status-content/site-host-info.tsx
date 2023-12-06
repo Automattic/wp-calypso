@@ -1,9 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { WordPressLogo } from '@automattic/components';
+import { WordPressLogo, Tooltip } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import useWPPlanName from './hooks/use-wp-plan-name';
 import type { Site } from '../types';
 

@@ -23,6 +23,7 @@ interface Props {
 	isMultiSelect?: boolean;
 	hideDiscount?: boolean;
 	withBackground?: boolean;
+	quantity?: number;
 }
 
 export default function LicenseProductCard( props: Props ) {
@@ -36,6 +37,7 @@ export default function LicenseProductCard( props: Props ) {
 		isMultiSelect,
 		hideDiscount,
 		withBackground,
+		quantity,
 	} = props;
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
 	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
@@ -140,7 +142,11 @@ export default function LicenseProductCard( props: Props ) {
 						</div>
 
 						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
+							<ProductPriceWithDiscount
+								product={ product }
+								hideDiscount={ hideDiscount }
+								quantity={ quantity }
+							/>
 						</div>
 					</div>
 				</div>

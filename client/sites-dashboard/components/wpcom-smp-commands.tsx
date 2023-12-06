@@ -1,6 +1,7 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, JetpackLogo } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
+	arrowDown as arrowDownIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -26,12 +27,14 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
+import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
 import { useDispatch } from 'calypso/state';
+import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
 import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
@@ -64,8 +67,7 @@ export const useCommandsArrayWpcom = ( {
 		};
 	};
 	const createSiteUrl = useAddNewSiteUrl( {
-		source: 'sites-dashboard-command-palette',
-		ref: 'topbar',
+		ref: 'command-palette',
 	} );
 
 	const fetchSshUser = async ( siteId: number ) => {
@@ -135,6 +137,95 @@ export const useCommandsArrayWpcom = ( {
 		displayNotice( __( 'SSH/SFTP password reset and copied to clipboard.' ) );
 	};
 
+	const getEdgeCacheStatus = async ( siteId: number ) => {
+		const response = await wpcom.req.get( {
+			path: `/sites/${ siteId }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		return response;
+	};
+
+	const clearEdgeCache = async ( siteId: number ) => {
+		try {
+			const response = await getEdgeCacheStatus( siteId );
+
+			if ( response ) {
+				// If global cache is active, purge the cache
+				await wpcom.req.post( {
+					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
+					apiNamespace: 'wpcom/v2',
+				} );
+				displayNotice( __( 'Succesfully cleared cache.' ) );
+			} else {
+				// If global edge cache is not active, clear WordPress cache
+				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
+			}
+		} catch ( error ) {
+			displayNotice( __( 'Failed to clear cache.' ), 'is-error' );
+		}
+	};
+
+	// Toggle cache function
+	const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
+		const response = await wpcom.req.post( {
+			path: `/sites/${ siteId }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				active: newStatus,
+			},
+		} );
+		return response;
+	};
+
+	const enableEdgeCache = async ( siteId: number ) => {
+		const currentStatus = await getEdgeCacheStatus( siteId );
+
+		// Check if the cache is already active
+		if ( currentStatus ) {
+			// Display a different notice if the cache is already active
+			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success' );
+			return;
+		}
+
+		const { removeNotice: removeLoadingNotice } = displayNotice(
+			__( 'Enabling edge cache…' ),
+			'is-plain',
+			5000
+		);
+		try {
+			await setEdgeCache( siteId, true );
+			removeLoadingNotice();
+			displayNotice( __( 'Edge cache enabled.' ) );
+		} catch ( error ) {
+			removeLoadingNotice();
+			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error' );
+		}
+	};
+
+	const disableEdgeCache = async ( siteId: number ) => {
+		const currentStatus = await getEdgeCacheStatus( siteId );
+
+		if ( ! currentStatus ) {
+			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success' );
+			return;
+		}
+
+		const { removeNotice: removeLoadingNotice } = displayNotice(
+			__( 'Disabling edge cache…' ),
+			'is-plain',
+			5000
+		);
+		try {
+			await setEdgeCache( siteId, false );
+			removeLoadingNotice();
+			displayNotice( __( 'Edge cache disabled.' ) );
+		} catch ( error ) {
+			removeLoadingNotice();
+			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error' );
+		}
+	};
+
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	const commands = [
@@ -153,13 +244,45 @@ export const useCommandsArrayWpcom = ( {
 			icon: wordpressIcon,
 		},
 		{
-			name: 'openReader',
-			label: __( 'Open reader' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/read` );
+			name: 'clearCache',
+			label: __( 'Clear cache' ),
+			callback: setStateCallback( 'clearCache', __( 'Select a site to clear cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					clearEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <Gridicon icon="reader" />,
+			icon: <MaterialIcon icon="autorenew" />,
+		},
+		{
+			name: 'enableEdgeCache',
+			label: __( 'Enable edge cache' ),
+			callback: setStateCallback( 'enableEdgeCache', __( 'Select a site to enable edge cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					enableEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) =>
+					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			},
+			icon: <MaterialIcon icon="autorenew" />,
+		},
+		{
+			name: 'disableEdgeCache',
+			label: __( 'Disable edge cache' ),
+			callback: setStateCallback( 'disableEdgeCache', __( 'Select a site to disable edge cache' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					disableEdgeCache( site.ID );
+				},
+				filter: ( site: SiteExcerptData ) =>
+					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			},
+			icon: <MaterialIcon icon="autorenew" />,
 		},
 		{
 			name: 'openSiteDashboard',
@@ -249,6 +372,58 @@ export const useCommandsArrayWpcom = ( {
 			icon: profileIcon,
 		},
 		{
+			name: 'openReader',
+			label: __( 'Open reader' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/read` );
+			},
+			icon: <Gridicon icon="reader" />,
+		},
+		{
+			name: 'addJetpack',
+			label: __( 'Add Jetpack to a self-hosted site' ),
+			searchLabel: [
+				_x(
+					'Add Jetpack to a self-hosted site',
+					'Keyword for Add Jetpack to a self-hosted site command'
+				),
+				_x( 'connect jetpack', 'Keyword for Add Jetpack to a self-hosted site command' ),
+			].join( ' ' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/jetpack/connect?cta_from=command-palette` );
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
+			name: 'importSite',
+			label: __( 'Import site to WordPress.com' ),
+			searchLabel: [
+				_x( 'Import site to WordPress.com', 'Keyword for Import site to WordPress.com command' ),
+				_x( 'migrate site', 'Keyword for Import site to WordPress.com command' ),
+			].join( ' ' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/start/import?ref=command-palette` );
+			},
+			icon: arrowDownIcon,
+		},
+		{
+			name: 'addNewSite',
+			label: __( 'Add new site' ),
+			searchLabel: [
+				_x( 'add new site', 'Keyword for the Add new site command' ),
+				_x( 'create site', 'Keyword for the Add new site command' ),
+			].join( ' ' ),
+			context: [ '/sites' ],
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( createSiteUrl );
+			},
+			icon: plusIcon,
+		},
+		{
 			name: 'openAccountSettings',
 			label: __( 'Open account settings' ),
 			searchLabel: [
@@ -278,7 +453,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `me/purchases` );
+				navigate( `/me/purchases` );
 			},
 			icon: creditCardIcon,
 		},
@@ -299,7 +474,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `domains/manage` );
+				navigate( `/domains/manage` );
 			},
 			icon: domainsIcon,
 		},
@@ -390,7 +565,7 @@ export const useCommandsArrayWpcom = ( {
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
-				navigate( `/start/domain/domain-only` );
+				navigate( `/start/domain/domain-only?ref=command-palette` );
 			},
 			icon: domainsIcon,
 		},
@@ -482,6 +657,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'manageStagingSites',
 			label: __( 'Manage staging sites' ),
+			context: [ '/hosting-config' ],
 			searchLabel: [
 				_x( 'manage staging sites', 'Keyword for the Manage staging sites command' ),
 				_x( 'add staging site', 'Keyword for the Manage staging sites command' ),
@@ -561,20 +737,6 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
 			icon: pageIcon,
-		},
-		{
-			name: 'addNewSite',
-			label: __( 'Add new site' ),
-			searchLabel: [
-				_x( 'add new site', 'Keyword for the Add new site command' ),
-				_x( 'create site', 'Keyword for the Add new site command' ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( createSiteUrl );
-			},
-			icon: plusIcon,
 		},
 		{
 			name: 'addNewPost',
@@ -750,6 +912,29 @@ export const useCommandsArrayWpcom = ( {
 			icon: brushIcon,
 		},
 		{
+			name: 'installTheme',
+			label: __( 'Install theme' ),
+			searchLabel: [
+				_x( 'install theme', 'Keyword for the Install theme command' ),
+				_x( 'add theme', 'Keyword for the Install theme command' ),
+				_x( 'upload theme', 'Keyword for the Install theme command' ),
+			].join( ' ' ),
+			callback: setStateCallback( 'installTheme', __( 'Select site to install theme' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/theme-install.php`
+							: `/themes/${ site.slug }`;
+					navigate( link );
+				},
+				filter: ( site: SiteExcerptData ) => site?.jetpack,
+			},
+			icon: brushIcon,
+		},
+		{
 			name: 'managePlugins',
 			label: __( 'Manage plugins' ),
 			searchLabel: [
@@ -772,6 +957,29 @@ export const useCommandsArrayWpcom = ( {
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
+			},
+			icon: pluginsIcon,
+		},
+		{
+			name: 'installPlugin',
+			label: __( 'Install plugin' ),
+			searchLabel: [
+				_x( 'install plugin', 'Keyword for the Install plugin command' ),
+				_x( 'add plugin', 'Keyword for the Install plugin command' ),
+				_x( 'upload plugin', 'Keyword for the Install plugin command' ),
+			].join( ' ' ),
+			callback: setStateCallback( 'installPlugin', __( 'Select site to install plugin' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/plugin-install.php`
+							: `/plugins/${ site.slug }`;
+					navigate( link );
+				},
+				filter: ( site: SiteExcerptData ) => site?.jetpack,
 			},
 			icon: pluginsIcon,
 		},
@@ -884,6 +1092,27 @@ export const useCommandsArrayWpcom = ( {
 			icon: uploadIcon,
 		},
 		{
+			name: 'manageSettingsGeneral',
+			label: __( 'Manage general settings' ),
+			context: [ '/settings' ],
+			callback: setStateCallback(
+				'manageSettingsGeneral',
+				__( 'Select site to manage general settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-general.php`
+							: `/settings/general/${ site.slug }`;
+					navigate( link );
+				},
+			},
+			icon: settingsIcon,
+		},
+		{
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings' ),
 			context: [ '/settings' ],
@@ -894,7 +1123,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/writing/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-writing.php`
+							: `/settings/writing/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
@@ -910,7 +1144,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/reading/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-reading.php`
+							: `/settings/reading/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,
@@ -926,7 +1165,12 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/settings/discussion/${ site.slug }` );
+					const link =
+						( site.jetpack && ! site.is_wpcom_atomic ) ||
+						'wp-admin' === site.options?.wpcom_admin_interface
+							? `${ site.URL }/wp-admin/options-discussion.php`
+							: `/settings/discussion/${ site.slug }`;
+					navigate( link );
 				},
 			},
 			icon: settingsIcon,

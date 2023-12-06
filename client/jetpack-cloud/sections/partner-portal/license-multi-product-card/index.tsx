@@ -26,6 +26,7 @@ interface Props {
 	) => void | null;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
+	quantity?: number;
 }
 
 export default function LicenseMultiProductCard( props: Props ) {
@@ -37,6 +38,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 		onSelectProduct,
 		suggestedProduct,
 		hideDiscount,
+		quantity,
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -136,6 +138,12 @@ export default function LicenseMultiProductCard( props: Props ) {
 					selected: isSelected,
 					disabled: isDisabled,
 				} ) }
+				onKeyDown={ onKeyDown }
+				onClick={ onSelect }
+				role="checkbox"
+				aria-checked={ isSelected }
+				aria-disabled={ isDisabled }
+				tabIndex={ tabIndex }
 			>
 				<div className="license-product-card__inner">
 					<div className="license-product-card__details">
@@ -163,21 +171,17 @@ export default function LicenseMultiProductCard( props: Props ) {
 								) }
 							</div>
 
-							<div
-								className="license-product-card__select-button license-product-card_multi-select"
-								onKeyDown={ onKeyDown }
-								onClick={ () => onSelect() }
-								role="checkbox"
-								aria-checked={ isSelected }
-								aria-disabled={ isDisabled }
-								tabIndex={ tabIndex }
-							>
+							<div className="license-product-card__select-button license-product-card_multi-select">
 								{ isSelected && <Gridicon icon="checkmark" /> }
 							</div>
 						</div>
 
 						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
+							<ProductPriceWithDiscount
+								product={ product }
+								hideDiscount={ hideDiscount }
+								quantity={ quantity }
+							/>
 						</div>
 					</div>
 				</div>

@@ -1,5 +1,5 @@
+import { Tooltip } from '@automattic/components';
 import { useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 interface Props {
 	feature: string;

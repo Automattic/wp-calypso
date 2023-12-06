@@ -212,6 +212,7 @@
 		"themes/subscription-purchases": true,
 		"themes/text-search-lots": true,
 		"themes/theme-switch-persist-template": false,
+		"themes/assembler-first": true,
 		"titan/iframe-control-panel": false,
 		"unified-pages/virtual-home-page": true,
 		"upgrades/redirect-payments": true,

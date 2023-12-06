@@ -11,7 +11,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutNavigation, {
-	LayoutNavigationItem as NavigationItem,
+	LayoutNavigationTabs as NavigationTabs,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
@@ -72,6 +72,11 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 
 	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
 
+	const selectedText =
+		selectedSize === 1
+			? translate( 'Single license' )
+			: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string );
+
 	return (
 		<>
 			<Layout
@@ -117,25 +122,20 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						</Actions>
 					</LayoutHeader>
 
-					<LayoutNavigation
-						selectedText={
-							selectedSize === 1
-								? translate( 'Single license' )
-								: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string )
-						}
-					>
-						{ availableSizes.map( ( size ) => (
-							<NavigationItem
-								key={ `bundle-size-${ size }` }
-								label={
+					<LayoutNavigation selectedText={ selectedText }>
+						<NavigationTabs
+							selectedText={ selectedText }
+							items={ availableSizes.map( ( size ) => ( {
+								label:
 									size === 1
 										? translate( 'Single license' )
-										: ( translate( '%(size)d licenses', { args: { size } } ) as string )
-								}
-								selected={ selectedSize === size }
-								onClick={ () => setSelectedSize( size ) }
-							/>
-						) ) }
+										: ( translate( '%(size)d licenses', {
+												args: { size },
+										  } ) as string ),
+								selected: selectedSize === size,
+								onClick: () => setSelectedSize( size ),
+							} ) ) }
+						/>
 					</LayoutNavigation>
 				</LayoutTop>
 

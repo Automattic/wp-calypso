@@ -4,13 +4,17 @@ import { APIError, APILicense } from 'calypso/state/partner-portal/types';
 
 export interface MutationIssueLicenseVariables {
 	product: string;
+	quantity: number;
 }
 
-function mutationIssueLicense( { product }: MutationIssueLicenseVariables ): Promise< APILicense > {
+function mutationIssueLicense( {
+	product,
+	quantity,
+}: MutationIssueLicenseVariables ): Promise< APILicense > {
 	return wpcomJpl.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/jetpack-licensing/license',
-		body: { product },
+		body: { product, quantity },
 	} );
 }
 

@@ -155,6 +155,7 @@ ThemesList.propTypes = {
 	isActive: PropTypes.func,
 	getPrice: PropTypes.func,
 	isInstalling: PropTypes.func,
+	isLivePreviewStarted: PropTypes.func,
 	// i18n function provided by localize()
 	translate: PropTypes.func,
 	placeholderCount: PropTypes.number,
@@ -180,6 +181,7 @@ ThemesList.defaultProps = {
 	isActive: () => false,
 	getPrice: () => '',
 	isInstalling: () => false,
+	isLivePreviewStarted: () => false,
 };
 
 export function ThemeBlock( props ) {
@@ -213,8 +215,8 @@ export function ThemeBlock( props ) {
 			index={ index }
 			theme={ theme }
 			active={ props.isActive( theme.id ) }
+			loading={ props.isInstalling( theme.id ) || props.isLivePreviewStarted( theme.id ) }
 			price={ props.getPrice( theme.id ) }
-			installing={ props.isInstalling( theme.id ) }
 			upsellUrl={ props.upsellUrl }
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }
