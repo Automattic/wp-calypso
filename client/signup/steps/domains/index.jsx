@@ -643,6 +643,7 @@ export class RenderDomainsStep extends Component {
 				)
 			) {
 				this.setState( ( state ) => ( {
+					isCartPendingUpdateDomain: { domain_name: suggestion.domain_name },
 					temporaryCart: [
 						...( state.temporaryCart || [] ),
 						{
