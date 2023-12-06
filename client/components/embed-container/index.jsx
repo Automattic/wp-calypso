@@ -205,18 +205,18 @@ function embedCarousel( domNode ) {
 	if ( carouselItemsWrapper ) {
 		const carouselItems = Array.from( carouselItemsWrapper?.children );
 
-		if ( carouselItems ) {
+		if ( carouselItems && carouselItems.length ) {
 			createRoot( domNode ).render(
 				<DotPager>
 					{ carouselItems.map( ( item, index ) => {
-						const itemProps = {
-							key: index,
-							className: classNames( 'carousel-slide', item?.className ),
-							id: index,
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML: { __html: item?.innerHTML },
-						};
-						return <div { ...itemProps } />;
+						return (
+							<div
+								key={ index }
+								className={ classNames( 'carousel-slide', item?.className ) }
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ { __html: item?.innerHTML } }
+							/>
+						);
 					} ) }
 				</DotPager>
 			);
