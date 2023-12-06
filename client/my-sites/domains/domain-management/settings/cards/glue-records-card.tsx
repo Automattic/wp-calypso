@@ -32,6 +32,8 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const [ isEditing, setIsEditing ] = useState( false );
 	const [ record, setRecord ] = useState( '' );
 	const [ ipAddress, setIpAddress ] = useState( '' );
+	const [ isValidRecord, setIsValidRecord ] = useState( true );
+	const [ isValidIpAddress, setIsValidIpAddress ] = useState( true );
 
 	const {
 		data,
@@ -47,6 +49,8 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		setIpAddress( '' );
 		setIsSaving( false );
 		setIsRemoving( false );
+		setIsValidRecord( true );
+		setIsValidIpAddress( true );
 	};
 
 	// Display success notices when the glue record is updated
@@ -117,10 +121,6 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		setIpAddress( ipAddress );
 	};
 
-	const glueRecordValidation = () => {
-		return true;
-	};
-
 	const handleRecordChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const record = event.target.value;
 
@@ -132,7 +132,43 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		deleteGlueRecord( record );
 	};
 
+	const validateRecord = () => {
+		if ( ! record ) {
+			return false;
+		}
+		if ( ! record.match( /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/ ) ) {
+			return false;
+		}
+		return true;
+	};
+
+	const validateIpAddress = () => {
+		if ( ! ipAddress ) {
+			return false;
+		}
+		if ( ! ipAddress.match( /^(\d{1,3}\.){3}\d{1,3}$/ ) ) {
+			return false;
+		}
+		return true;
+	};
+
+	const validateGlueRecord = () => {
+		const recordIsValid = validateRecord();
+		const ipAddressIsValid = validateIpAddress();
+		setIsValidRecord( recordIsValid );
+		setIsValidIpAddress( ipAddressIsValid );
+
+		if ( ! recordIsValid || ! ipAddressIsValid ) {
+			return false;
+		}
+		return true;
+	};
+
 	const handleSubmit = () => {
+		if ( ! validateGlueRecord() ) {
+			return;
+		}
+
 		setIsSaving( true );
 		updateGlueRecord( {
 			record: `${ record }.${ domain.domain }`,
@@ -198,6 +234,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						value={ record }
 						maxLength={ 1000 }
 						suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
+						isError={ ! isValidRecord }
 					/>
 				</div>
 				<FormLabel>{ translate( 'IP address' ) }</FormLabel>
@@ -212,15 +249,9 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						name="ip-address"
 						noWrap
 						onChange={ handleIpAddressChange }
-						onBlur={ glueRecordValidation }
 						value={ ipAddress }
-						// className={ classNames( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
-						/* suffix={
-							<Button className="forwarding__clear" onClick={ cleanGlueRecordInput }>
-								<Gridicon icon="cross" />
-							</Button>
-						} */
+						isError={ ! isValidIpAddress }
 					/>
 				</div>
 				<div className="glue-records__action-buttons">
