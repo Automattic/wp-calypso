@@ -7,7 +7,6 @@ import type { SiteSelect } from '@automattic/data-stores';
 export function useSite() {
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
-	console.log( { siteSlug, siteIdParam } );
 
 	const site = useSelect(
 		( select ) => {

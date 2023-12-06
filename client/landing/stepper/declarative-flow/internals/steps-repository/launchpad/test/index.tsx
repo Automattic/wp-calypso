@@ -66,7 +66,7 @@ function renderLaunchpad(
 	props = {},
 	siteDetails = defaultSiteDetails,
 	initialReduxState = {},
-	siteSlug = ''
+	route = '/setup/link-in-bio/launchpad?siteSlug=testlinkinbio.wordpress.com'
 ): void {
 	function TestLaunchpad( props ) {
 		window.initialReduxState = initialReduxState;
@@ -85,7 +85,7 @@ function renderLaunchpad(
 
 		return (
 			<Provider store={ reduxStore }>
-				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
+				<MemoryRouter initialEntries={ [ route ] }>
 					<Launchpad { ...props } />
 				</MemoryRouter>
 			</Provider>
@@ -144,7 +144,27 @@ describe( 'Launchpad', () => {
 					data: { launchpad_screen: 'full' },
 				} );
 				const initialReduxState = { currentUser: { id: user.ID } };
-				renderLaunchpad( props, defaultSiteDetails, initialReduxState, siteSlug );
+				renderLaunchpad(
+					props,
+					defaultSiteDetails,
+					initialReduxState,
+					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
+				);
+				expect( replaceMock ).not.toHaveBeenCalled();
+			} );
+
+			it( 'does not redirect when site id is used', () => {
+				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+					...MOCK_USE_QUERY_RESULT,
+					data: { launchpad_screen: 'full' },
+				} );
+				const initialReduxState = { currentUser: { id: user.ID } };
+				renderLaunchpad(
+					props,
+					defaultSiteDetails,
+					initialReduxState,
+					`/setup/link-in-bio/launchpad?siteId=${ defaultSiteDetails.ID }`
+				);
 				expect( replaceMock ).not.toHaveBeenCalled();
 			} );
 		} );
@@ -165,7 +185,7 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					initialReduxState,
-					siteSlug
+					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
 				);
 				expect( replaceMock ).toHaveBeenCalledTimes( 1 );
 				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
@@ -183,7 +203,7 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					{},
-					siteSlug
+					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
 				);
 				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
 			} );
@@ -201,7 +221,7 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					initialReduxState,
-					''
+					'/setup/link-in-bio/launchpad'
 				);
 				expect( replaceMock ).toHaveBeenCalledWith( `/home` );
 			} );
