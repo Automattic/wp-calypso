@@ -114,11 +114,10 @@ const assemblerFirstFlow: Flow = {
 				return `/site-editor/${ selectedSiteSlug }?${ params }`;
 			}
 
-			params = new URLSearchParams( {
-				siteSlug: selectedSiteSlug,
-				siteId: selectedSiteId,
-			} );
-
+			// Carry over the current search parameters
+			params = new URLSearchParams( window.location.search );
+			params.set( 'siteSlug', selectedSiteSlug );
+			params.set( 'siteId', selectedSiteId );
 			if ( isNewSite ) {
 				params.set( 'isNewSite', 'true' );
 			}
@@ -189,7 +188,11 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'patternAssembler': {
-					return navigate( 'site-picker' );
+					const params = new URLSearchParams( window.location.search );
+					params.delete( 'siteSlug' );
+					params.delete( 'siteId' );
+					setSelectedSite( null );
+					return navigate( `site-picker?${ params }` );
 				}
 			}
 		};
