@@ -13,6 +13,9 @@ const validDomains = [
 	'sbcglobal.net',
 ];
 
+// Skip suggestions for these domains
+const avoidList = [ 'mail.com', 'ymail.com', 'email.com' ];
+
 // This function extracts the domain from an email address.
 export const extractDomainWithExtension = ( email: string ) => {
 	if ( email ) {
@@ -85,20 +88,27 @@ const calculateLevenshteinDistance = ( str1: string, str2: string ) => {
  * @param {string} inputDomain - The email address to be corrected.
  * @param {number} maxDistance - The maximum Levenshtein distance between the input and the suggestion.
  */
-export const suggestEmailCorrection = ( inputDomain: string, maxDistance: number = 2 ) => {
+export const suggestEmailCorrection = ( inputDomain: string, maxDistance: number = 1 ) => {
 	const extractedInputEmailDomain = extractDomainWithExtension( inputDomain );
 
 	let bestMatch = null;
 	let bestMatchDistance = Infinity;
 
-	if ( extractedInputEmailDomain && ! validDomains.includes( extractedInputEmailDomain ) ) {
+	if (
+		extractedInputEmailDomain &&
+		! validDomains.includes( extractedInputEmailDomain ) &&
+		! avoidList.includes( extractedInputEmailDomain )
+	) {
 		// Iterate through each valid domain and calculate the Levenshtein distance
 		for ( let i = 0; i < validDomains.length; i++ ) {
 			const validDomain = validDomains[ i ];
 			const distance = calculateLevenshteinDistance( extractedInputEmailDomain, validDomain );
 
+			// Check if the input is in the middle of typing the domain
+			const inTheMiddleOfTyping = validDomain.startsWith( extractedInputEmailDomain );
+
 			// If the distance is within the limit and better than the previous best match, update the suggestion
-			if ( distance <= maxDistance && distance < bestMatchDistance ) {
+			if ( distance <= maxDistance && distance < bestMatchDistance && ! inTheMiddleOfTyping ) {
 				bestMatch = validDomain;
 				bestMatchDistance = distance;
 			}

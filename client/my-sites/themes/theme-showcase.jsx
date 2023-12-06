@@ -22,8 +22,10 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
+import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -527,6 +529,7 @@ class ThemeShowcase extends Component {
 			isSiteWooExpressOrEcomFreeTrial,
 			isCollectionView,
 			isJetpackSite,
+			lastNonEditorRoute,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -580,6 +583,10 @@ class ThemeShowcase extends Component {
 					vertical={ this.props.vertical }
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
+				/>
+				<ThemeShowcaseSurvey
+					survey={ SurveyType.DECEMBER_2023 }
+					condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
 				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
@@ -679,6 +686,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
+		lastNonEditorRoute: getLastNonEditorRoute( state ),
 	};
 };
 

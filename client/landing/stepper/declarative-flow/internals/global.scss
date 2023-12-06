@@ -88,6 +88,7 @@ button {
 .free-post-setup,
 .free,
 .with-theme-assembler,
+.assembler-first,
 .setup-blog,
 .celebration-step,
 .use-my-domain,
@@ -95,12 +96,7 @@ button {
 .update-design,
 .hundred-year-plan,
 .link-in-bio-tld {
-	padding: 60px 0 0;
 	box-sizing: border-box;
-
-	&.courses {
-		padding: 0;
-	}
 
 	.flow-progress {
 		position: absolute;
@@ -121,6 +117,23 @@ button {
 	.import-step,
 	.importer-step {
 		@include onboarding-block-margin;
+	}
+
+	&.step-route {
+		padding: 60px 0 0;
+
+		// Launchpad has its own header
+		&.launchpad {
+			margin-top: -60px;
+		}
+
+		@include break-small {
+			&.courses,
+			&.site-picker,
+			&.new-or-existing-site {
+				margin-top: -60px;
+			}
+		}
 	}
 
 	/**

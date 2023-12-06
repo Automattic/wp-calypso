@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
-import PlanTypeSelector from './components/plan-type-selector';
+import PlanTypeSelector, { type PlanTypeSelectorProps } from './components/plan-type-selector';
 import PlansGridContextProvider from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import useUpgradeClickHandler from './hooks/npm-ready/use-upgrade-click-handler';
@@ -13,7 +13,7 @@ import type {
 	UsePricingMetaForGridPlans,
 } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from './types';
-import type { FeatureList, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import type { FeatureList, WPComStorageAddOnSlug, PlanSlug } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
@@ -37,9 +37,11 @@ export interface PlansGridProps {
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
-	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	onUpgradeClick?: (
+		cartItems?: MinimalRequestCartProduct[] | null,
+		clickedPlanSlug?: PlanSlug
+	) => void;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	flowName?: string | null;
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	intervalType: string;
@@ -57,6 +59,8 @@ export interface PlansGridProps {
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	showRefundPeriod?: boolean;
+	// only used for comparison grid
+	planTypeSelectorProps?: PlanTypeSelectorProps;
 }
 
 const WrappedComparisonGrid = ( {
@@ -69,7 +73,6 @@ const WrappedComparisonGrid = ( {
 	intervalType,
 	isInSignup,
 	isLaunchPage,
-	flowName,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -95,7 +98,6 @@ const WrappedComparisonGrid = ( {
 				intervalType={ intervalType }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
-				flowName={ flowName }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				onUpgradeClick={ handleUpgradeClick }
 				siteId={ siteId }

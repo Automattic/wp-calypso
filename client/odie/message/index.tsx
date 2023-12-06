@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Button, FoldableCard } from '@automattic/components';
+import { FoldableCard } from '@automattic/components';
 import { useTyper } from '@automattic/help-center/src/hooks';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -14,6 +14,7 @@ import WapuuThinking from 'calypso/assets/images/odie/wapuu-thinking.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import Button from '../button';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';

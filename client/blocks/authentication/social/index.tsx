@@ -47,15 +47,12 @@ const SocialAuthenticationForm = ( {
 }: SocialAuthenticationFormProps ) => {
 	const translate = useTranslate();
 
-	const { currentRoute, oauth2Client, isWoo } = useSelector( ( state: IAppState ) => {
-		return {
-			currentRoute: getCurrentRoute( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
-			isWoo:
-				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-				isWooCommerceCoreProfilerFlow( state ),
-		};
-	} );
+	const currentRoute = useSelector( getCurrentRoute );
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWoo = useSelector(
+		( state: IAppState ) =>
+			isWooOAuth2Client( oauth2Client ) || isWooCommerceCoreProfilerFlow( state )
+	);
 
 	const shouldUseRedirectFlow = () => {
 		// If calypso is loaded in a popup, we don't want to open a second popup for social signup or login
@@ -96,39 +93,41 @@ const SocialAuthenticationForm = ( {
 				) }
 
 				<div className="auth-form__social-buttons">
-					<GoogleSocialButton
-						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ handleGoogleResponse }
-						uxMode={ uxMode }
-						redirectUri={ getRedirectUri( 'google' ) }
-						onClick={ () => {
-							trackLoginAndRememberRedirect( 'google' );
-						} }
-						socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
-						startingPoint={ isLogin ? 'login' : 'signup' }
-					/>
+					<div className="auth-form__social-buttons-container">
+						<GoogleSocialButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ getRedirectUri( 'google' ) }
+							onClick={ () => {
+								trackLoginAndRememberRedirect( 'google' );
+							} }
+							socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
+							startingPoint={ isLogin ? 'login' : 'signup' }
+						/>
 
-					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
-						responseHandler={ handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ getRedirectUri( 'apple' ) }
-						onClick={ () => {
-							trackLoginAndRememberRedirect( 'apple' );
-						} }
-						socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
-						originalUrlPath={
-							// Since the signup form is only ever called from the user step, currently, we can rely on window.location.pathname
-							// to return back to the user step, which then allows us to continue on with the flow once the submitSignupStep action is called within the user step.
-							isLogin ? null : window?.location?.pathname
-						}
-						// If we are on signup, attach the query string to the state so we can pass it back to the server to show the correct UI.
-						// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
-						queryString={
-							isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
-						}
-					/>
-					{ children }
+						<AppleLoginButton
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ handleAppleResponse }
+							uxMode={ uxModeApple }
+							redirectUri={ getRedirectUri( 'apple' ) }
+							onClick={ () => {
+								trackLoginAndRememberRedirect( 'apple' );
+							} }
+							socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
+							originalUrlPath={
+								// Since the signup form is only ever called from the user step, currently, we can rely on window.location.pathname
+								// to return back to the user step, which then allows us to continue on with the flow once the submitSignupStep action is called within the user step.
+								isLogin ? null : window?.location?.pathname
+							}
+							// If we are on signup, attach the query string to the state so we can pass it back to the server to show the correct UI.
+							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
+							queryString={
+								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
+							}
+						/>
+						{ children }
+					</div>
 					{ ! isWoo && ! disableTosText && <SocialToS /> }
 				</div>
 				{ isWoo && ! disableTosText && <SocialToS /> }

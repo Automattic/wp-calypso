@@ -23,6 +23,8 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 			contactInfoDisclosed,
 			contactInfoDisclosureAvailable,
 			isPendingIcannVerification,
+			registeredViaTrustee,
+			registeredViaTrusteeUrl,
 		} = domain;
 
 		const canManageConsent =
@@ -39,6 +41,8 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 				contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
 				isPendingIcannVerification={ isPendingIcannVerification }
 				readOnly={ readonly }
+				registeredViaTrustee={ registeredViaTrustee }
+				registeredViaTrusteeUrl={ registeredViaTrusteeUrl }
 			/>
 		);
 	};

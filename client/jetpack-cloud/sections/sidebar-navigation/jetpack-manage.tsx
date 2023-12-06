@@ -4,6 +4,7 @@ import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import {
 	JETPACK_MANAGE_DASHBOARD_LINK,
 	JETPACK_MANAGE_PLUGINS_LINK,
@@ -24,16 +25,19 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 		isSelected: itemLinkMatches( props.link, path ),
 	} );
 
+	// Overview menu items. Will be only visible if the jetpack-cloud-overview section is enabled.
+	const overviewMenuItem = createItem( {
+		icon: home,
+		path: '/',
+		link: JETPACK_MANAGE_OVERVIEW_LINK,
+		title: translate( 'Overview' ),
+		trackEventProps: {
+			menu_item: 'Jetpack Cloud / Overview',
+		},
+	} );
+
 	const menuItems = [
-		createItem( {
-			icon: home,
-			path: '/',
-			link: JETPACK_MANAGE_OVERVIEW_LINK,
-			title: translate( 'Overview' ),
-			trackEventProps: {
-				menu_item: 'Jetpack Cloud / Overview',
-			},
-		} ),
+		...( isSectionNameEnabled( 'jetpack-cloud-overview' ) ? [ overviewMenuItem ] : [] ),
 		createItem( {
 			icon: category,
 			path: '/',

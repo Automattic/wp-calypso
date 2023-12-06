@@ -109,7 +109,7 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'theme', 'intervalType' ],
-			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
+			optionalDependenciesInQuery: [ 'theme_type', 'style_variation', 'intervalType' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -141,6 +141,11 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			props: {
+				plans: {
+					showPressablePromoBanner: true,
+				},
+			},
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -167,13 +172,24 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans-pm' ],
+			steps: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
 			lastModified: '2023-07-18',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			props: {
+				plans: {
+					showBiennialToggle: true,
+					/**
+					 * This intent is geared towards customizations related to the paid media flow
+					 * Current customizations are as follows
+					 * - Show only Personal, Premium, Business, and eCommerce plans (Hide free, enterprise)
+					 */
+					intent: 'plans-paid-media',
+				},
+			},
 		},
 		{
 			name: 'import',

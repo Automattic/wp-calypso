@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
@@ -12,7 +12,7 @@ export type UseScreenOptions = {
 export type Screen = {
 	name: string;
 	title: string;
-	description: string;
+	description: TranslateResult;
 	continueLabel: string;
 	/** The label for going back from the next screen */
 	backLabel?: string;
@@ -66,7 +66,12 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			name: 'pages',
 			title: translate( 'Add more pages' ),
 			description: translate(
-				"We've pre-selected common pages for your site. You can add more pages or unselect the current ones."
+				"We've pre-selected common pages for your site. You can add more pages or unselect the current ones.{{br/}}{{br/}}Page content can be edited later, in the Site Editor.",
+				{
+					components: {
+						br: <br />,
+					},
+				}
 			),
 			continueLabel: translate( 'Save and continue' ),
 			backLabel: translate( 'pages' ),

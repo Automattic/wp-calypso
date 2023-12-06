@@ -4,7 +4,7 @@ import wpcom from 'calypso/lib/wp';
 import type { WebsiteContentResponseDTO, WebsiteContentServerState } from '../types';
 import type { SiteSlug } from 'calypso/types';
 
-export function useGetWebsiteContentQuery( siteSlug: SiteSlug | undefined ) {
+export function useGetWebsiteContentQuery( siteSlug: SiteSlug | undefined | null ) {
 	return useQuery< WebsiteContentResponseDTO, unknown, WebsiteContentServerState >( {
 		queryKey: [ 'bbe-website-content', siteSlug ],
 		queryFn: (): Promise< WebsiteContentResponseDTO > =>

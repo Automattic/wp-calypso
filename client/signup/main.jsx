@@ -789,15 +789,19 @@ class Signup extends Component {
 	}
 
 	renderCurrentStep( isReskinned ) {
-		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
+		const { stepName, flowName } = this.props;
+
+		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
+		const flowStepProps = flow?.props?.[ stepName ] || {};
+
+		const currentStepProgress = find( this.props.progress, { stepName } );
 		const CurrentComponent = this.props.stepComponent;
 		const propsFromConfig = {
 			...omit( this.props, 'locale' ),
-			...steps[ this.props.stepName ].props,
+			...steps[ stepName ].props,
+			...flowStepProps,
 		};
-		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-
+		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
@@ -810,7 +814,7 @@ class Signup extends Component {
 			};
 		}
 
-		const stepClassName = this.props.stepName === 'user-hosting' ? 'user' : this.props.stepName;
+		const stepClassName = stepName === 'user-hosting' ? 'user' : stepName;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -826,12 +830,12 @@ class Signup extends Component {
 							step={ currentStepProgress }
 							initialContext={ this.props.initialContext }
 							steps={ flow.steps }
-							stepName={ this.props.stepName }
+							stepName={ stepName }
 							meta={ flow.meta || {} }
 							goToNextStep={ this.goToNextStep }
 							goToStep={ this.goToStep }
 							previousFlowName={ this.state.previousFlowName }
-							flowName={ this.props.flowName }
+							flowName={ flowName }
 							signupDependencies={ this.props.signupDependencies }
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }

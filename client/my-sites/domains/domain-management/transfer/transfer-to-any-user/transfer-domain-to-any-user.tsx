@@ -176,7 +176,7 @@ export default function TransferDomainToAnyUser( {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( selectedDomain?.pendingRegistration ) {
+		if ( selectedDomain?.pendingRegistration || selectedDomain?.pendingRegistrationAtRegistry ) {
 			return (
 				<TransferUnavailableNotice
 					message={ translate(

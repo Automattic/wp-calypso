@@ -13,7 +13,10 @@ import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-pr
 import { type APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
-import useIssueLicenses, { type FulfilledIssueLicenseResult } from './use-issue-licenses';
+import useIssueLicenses, {
+	type IssueLicenseRequest,
+	type FulfilledIssueLicenseResult,
+} from './use-issue-licenses';
 
 const NO_OP = () => {
 	/* Do nothing */
@@ -150,12 +153,12 @@ function useIssueAndAssignLicenses(
 	return useMemo( () => {
 		const isReady = isIssueReady && isAssignReady;
 
-		const issueAndAssignLicenses = async ( productSlugs: string[] ) => {
-			if ( ! isReady || productSlugs.length === 0 ) {
+		const issueAndAssignLicenses = async ( selectedLicenses: IssueLicenseRequest[] ) => {
+			if ( ! isReady || selectedLicenses.length === 0 ) {
 				return;
 			}
 
-			const issuedLicenses = ( await issueLicenses( productSlugs ) ).filter(
+			const issuedLicenses = ( await issueLicenses( selectedLicenses ) ).filter(
 				( r ): r is FulfilledIssueLicenseResult => r.status === 'fulfilled'
 			);
 
@@ -166,7 +169,9 @@ function useIssueAndAssignLicenses(
 
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_multiple_licenses_issued', {
-					products: issuedLicenses.map( ( { slug } ) => slug ).join( ',' ),
+					products: issuedLicenses
+						.map( ( license ) => `${ license.slug }:${ license.quantity ?? 1 }` )
+						.join( ',' ),
 				} )
 			);
 
@@ -180,6 +185,13 @@ function useIssueAndAssignLicenses(
 			if ( ! selectedSiteId ) {
 				const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
+
+				// When bundle licensing is available, all license purchases
+				// will result in a redirect to the main Licenses page
+				if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
+					page.redirect( partnerPortalBasePath( '/licenses' ) );
+					return;
+				}
 
 				// If this user has no sites, send them to the licenses listing page
 				if ( sitesCount === 0 ) {

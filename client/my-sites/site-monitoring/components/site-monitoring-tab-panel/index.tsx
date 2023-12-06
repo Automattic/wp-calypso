@@ -5,6 +5,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getQuerySearchForTab } from '../../site-monitoring-filter-params';
 import type { SiteMonitoringTab } from '../../site-monitoring-filter-params';
 import './style.scss';
 
@@ -37,10 +38,8 @@ export const SiteMonitoringTabPanel = ( {
 							key={ name }
 							path={
 								name === 'metrics'
-									? `/site-monitoring/${ siteSlug }${ new URL( window.location.href ).search }`
-									: `/site-monitoring/${ siteSlug }/${ name }${
-											new URL( window.location.href ).search
-									  }`
+									? `/site-monitoring/${ siteSlug }${ getQuerySearchForTab( name ) }`
+									: `/site-monitoring/${ siteSlug }/${ name }${ getQuerySearchForTab( name ) }`
 							}
 							selected={ selectedTab === name }
 						>

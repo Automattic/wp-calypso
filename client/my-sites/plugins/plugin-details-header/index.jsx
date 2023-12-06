@@ -1,11 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Badge, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';
+import scrollTo from 'calypso/lib/scroll-to';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
@@ -14,7 +16,12 @@ import usePluginVersionInfo from '../plugin-management-v2/hooks/use-plugin-versi
 
 import './style.scss';
 
-const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
+const PluginDetailsHeader = ( {
+	plugin,
+	isPlaceholder,
+	isJetpackCloud,
+	reviewsListRef = null,
+} ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { localizePath } = useLocalizedPlugins();
@@ -25,9 +32,16 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 
 	const { data: marketplaceReviews } = useMarketplaceReviewsQuery( {
 		productType: 'plugin',
-		pluginSlug: plugin.slug,
+		slug: plugin.slug,
 	} );
 	const numberOfReviews = marketplaceReviews?.length || 0;
+	const scrollToReviews = useCallback( () => {
+		scrollTo( {
+			x: 0,
+			y: reviewsListRef?.current?.offsetTop - 50,
+			duration: 1000,
+		} );
+	}, [ reviewsListRef ] );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
@@ -76,7 +90,11 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 						<div className="plugin-details-header__info-value">
 							<PluginRatings rating={ plugin.rating } />
 							{ isEnabled( 'marketplace-reviews-show' ) && numberOfReviews > 0 && (
-								<Button borderless className="plugin-details-header__number-reviews-link is-link">
+								<Button
+									borderless
+									className="plugin-details-header__number-reviews-link is-link"
+									onClick={ scrollToReviews }
+								>
 									{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 										count: numberOfReviews,
 										args: {

@@ -20,6 +20,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 	onBeforeChange,
 	onAfterChange,
 	renderThumb,
+	thumbClassName,
 	marks = false,
 } ) => {
 	const [ isThumbHolding, setIsThumbHolding ] = React.useState( false );
@@ -27,6 +28,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 	const componentClassName = classNames( 'jp-components-pricing-slider', className, {
 		'jp-components-pricing-slider--is-holding': isThumbHolding,
 	} );
+	const thumbClassNames = classNames( 'jp-components-pricing-slider__thumb', thumbClassName );
 
 	const onBeforeChangeCallback = ( beforeValue: number ) => {
 		setIsThumbHolding( true );
@@ -54,7 +56,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 		<div className={ componentClassName } data-testid="pricing-slider">
 			<ReactSlider
 				className="jp-components-pricing-slider__control"
-				thumbClassName="jp-components-pricing-slider__thumb"
+				thumbClassName={ thumbClassNames }
 				thumbActiveClassName="jp-components-pricing-slider__thumb--is-active"
 				trackClassName="jp-components-pricing-slider__track"
 				marks={ marks }

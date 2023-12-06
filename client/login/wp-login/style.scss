@@ -382,12 +382,21 @@ $image-height: 47px;
 
 		.login__form-userdata,
 		.auth-form__social-buttons {
+			.auth-form__social-buttons-container {
+				width: unset;
+			}
+
 			button {
 				background-color: #fdfdfd;
 				border: 0;
 				height: unset;
-				width: 194px;
 				text-align: start;
+			}
+		}
+
+		.login__form-userdata {
+			button {
+				min-width: 194px;
 			}
 		}
 	}

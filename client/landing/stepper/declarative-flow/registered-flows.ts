@@ -69,6 +69,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'with-theme-assembler': () =>
 		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
 
+	'assembler-first': () =>
+		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 

@@ -304,24 +304,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-pm': {
-			stepName: 'plans-pm',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				showBiennialToggle: true,
-				/**
-				 * This intent is geared towards customizations related to the paid media flow
-				 * Current customizations are as follows
-				 * - Show only Personal, Premium, Business, and eCommerce plans (Hide free, enterprise)
-				 */
-				intent: 'plans-paid-media',
-			},
-		},
-
 		'plans-new': {
 			stepName: 'plans',
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],

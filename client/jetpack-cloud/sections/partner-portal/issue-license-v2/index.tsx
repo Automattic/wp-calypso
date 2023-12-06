@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -10,7 +11,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/jetpack-cloud/components/layout/header';
 import LayoutNavigation, {
-	LayoutNavigationItem as NavigationItem,
+	LayoutNavigationTabs as NavigationTabs,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
@@ -53,7 +54,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		handleShowLicenseOverview();
 	}, [ handleShowLicenseOverview ] );
 
-	const showStickyContent = selectedLicenses.length > 0;
+	const showStickyContent = useBreakpoint( '>660px' ) && selectedLicenses.length > 0;
 
 	// Group licenses by slug and sort them by quantity
 	const getGroupedLicenses = useCallback( () => {
@@ -70,6 +71,11 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 	}, [ selectedLicenses ] );
 
 	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
+
+	const selectedText =
+		selectedSize === 1
+			? translate( 'Single license' )
+			: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string );
 
 	return (
 		<>
@@ -89,50 +95,47 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						</Subtitle>
 						<Actions>
 							{ selectedLicenses.length > 0 && (
-								<div className="issue-license-v2__actions">
-									<TotalCost selectedLicenses={ selectedLicenses } />
-									<Button
-										primary
-										className="issue-license-v2__select-license"
-										busy={ ! isReady }
-										onClick={ onClickIssueLicenses }
-									>
-										{ translate(
-											'Review %(numLicenses)d license',
-											'Review %(numLicenses)d licenses',
-											{
-												context: 'button label',
-												count: selectedLicenseCount,
-												args: {
-													numLicenses: selectedLicenseCount,
-												},
-											}
-										) }
-									</Button>
+								<div className="issue-license-v2__controls">
+									<div className="issue-license-v2__actions">
+										<TotalCost selectedLicenses={ selectedLicenses } />
+										<Button
+											primary
+											className="issue-license-v2__select-license"
+											busy={ ! isReady }
+											onClick={ onClickIssueLicenses }
+										>
+											{ translate(
+												'Review %(numLicenses)d license',
+												'Review %(numLicenses)d licenses',
+												{
+													context: 'button label',
+													count: selectedLicenseCount,
+													args: {
+														numLicenses: selectedLicenseCount,
+													},
+												}
+											) }
+										</Button>
+									</div>
 								</div>
 							) }
 						</Actions>
 					</LayoutHeader>
 
-					<LayoutNavigation
-						selectedText={
-							selectedSize === 1
-								? translate( 'Single license' )
-								: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string )
-						}
-					>
-						{ availableSizes.map( ( size ) => (
-							<NavigationItem
-								key={ `bundle-size-${ size }` }
-								label={
+					<LayoutNavigation selectedText={ selectedText }>
+						<NavigationTabs
+							selectedText={ selectedText }
+							items={ availableSizes.map( ( size ) => ( {
+								label:
 									size === 1
 										? translate( 'Single license' )
-										: ( translate( '%(size)d licenses', { args: { size } } ) as string )
-								}
-								selected={ selectedSize === size }
-								onClick={ () => setSelectedSize( size ) }
-							/>
-						) ) }
+										: ( translate( '%(size)d licenses', {
+												args: { size },
+										  } ) as string ),
+								selected: selectedSize === size,
+								onClick: () => setSelectedSize( size ),
+							} ) ) }
+						/>
 					</LayoutNavigation>
 				</LayoutTop>
 

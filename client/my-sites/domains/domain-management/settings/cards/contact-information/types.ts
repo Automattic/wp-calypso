@@ -32,6 +32,8 @@ export type ContactsCardPassedProps = {
 	contactInfoDisclosed: boolean;
 	isPendingIcannVerification: boolean;
 	readOnly: boolean | undefined;
+	registeredViaTrustee: boolean;
+	registeredViaTrusteeUrl: string;
 };
 
 export type ContactsCardConnectedProps = {

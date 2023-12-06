@@ -674,7 +674,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
-			hideBack={ isSiteAssemblerFlow( flow ) && isNewSite }
+			hideBack={
+				isSiteAssemblerFlow( flow ) &&
+				navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN ) &&
+				isNewSite
+			}
 			hideSkip={ true }
 			stepContent={
 				<PatternAssemblerContainer

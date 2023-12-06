@@ -232,8 +232,12 @@ exports[`JetpackSignup should render 1`] = `
           <div
             class="auth-form__social-buttons"
           >
-            GoogleSocialButton
-            AppleLoginButton
+            <div
+              class="auth-form__social-buttons-container"
+            >
+              GoogleSocialButton
+              AppleLoginButton
+            </div>
             <p
               class="auth-form__social-buttons-tos"
             >
@@ -525,8 +529,12 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           <div
             class="auth-form__social-buttons"
           >
-            GoogleSocialButton
-            AppleLoginButton
+            <div
+              class="auth-form__social-buttons-container"
+            >
+              GoogleSocialButton
+              AppleLoginButton
+            </div>
             <p
               class="auth-form__social-buttons-tos"
             >

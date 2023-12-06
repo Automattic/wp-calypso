@@ -4,13 +4,7 @@ import { cloneElement } from 'react';
 import joinClasses from '../lib/join-classes';
 import { useAllPaymentMethods, usePaymentMethodId } from '../lib/payment-methods';
 import { makeErrorResponse } from '../lib/payment-processors';
-import {
-	useFormStatus,
-	FormStatus,
-	useProcessPayment,
-	useTransactionStatus,
-	TransactionStatus,
-} from '../public-api';
+import { useFormStatus, FormStatus, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import type { PaymentMethod, PaymentProcessorSubmitData, ProcessPayment } from '../types';
 
@@ -67,24 +61,13 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	const [ activePaymentMethodId ] = usePaymentMethodId();
 	const isActive = paymentMethod.id === activePaymentMethodId;
 	const { formStatus } = useFormStatus();
-	const { transactionStatus } = useTransactionStatus();
 	const { __ } = useI18n();
-	const isDisabled =
-		disabled ||
-		formStatus !== FormStatus.READY ||
-		transactionStatus !== TransactionStatus.NOT_STARTED ||
-		! isActive;
+	const isDisabled = disabled || formStatus !== FormStatus.READY || ! isActive;
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
 	const onClickWithValidation: ProcessPayment = async (
 		processorData: PaymentProcessorSubmitData
 	) => {
-		if ( formStatus === FormStatus.SUBMITTING || transactionStatus === TransactionStatus.PENDING ) {
-			return Promise.resolve(
-				makeErrorResponse( __( 'A transaction is currently pending. Please wait.' ) )
-			);
-		}
-
-		if ( isDisabled ) {
+		if ( ! isActive ) {
 			return Promise.resolve(
 				makeErrorResponse( __( 'This payment method is not currently available.' ) )
 			);

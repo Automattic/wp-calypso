@@ -47,6 +47,7 @@ const StepRoute = ( {
 	return (
 		<div
 			className={ classnames(
+				'step-route',
 				flow.name,
 				flow.variantSlug,
 				flow.classnames,

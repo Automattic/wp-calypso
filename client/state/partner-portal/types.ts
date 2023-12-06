@@ -95,14 +95,20 @@ export interface APILicense {
 	revoked_at: string | null;
 }
 
+export interface APIProductFamilyProductBundlePrice {
+	quantity: number;
+	amount: string;
+}
+
 export interface APIProductFamilyProduct {
 	name: string;
 	slug: string;
 	product_id: number;
 	currency: string;
-	amount: number;
+	amount: string;
 	price_interval: string;
 	family_slug: string;
+	supported_bundles: APIProductFamilyProductBundlePrice[];
 }
 
 export interface APIProductFamily {
@@ -236,6 +242,7 @@ export interface License {
 	attachedAt: string | null;
 	revokedAt: string | null;
 	ownerType: string | null;
+	quantity: number | null;
 }
 
 export interface LicenseCounts {

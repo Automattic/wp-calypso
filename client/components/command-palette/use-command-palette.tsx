@@ -1,8 +1,13 @@
+import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 
 const FillDefaultIconWhite = styled.div( {
 	flexShrink: 0,
@@ -39,12 +44,10 @@ interface Command {
 	icon?: JSX.Element;
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
-	separator?: boolean;
 }
-interface useCommandPalletteOptions {
+interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
-	filter?: ( command: Command ) => boolean | undefined;
 }
 
 const siteToAction =
@@ -68,30 +71,76 @@ const siteToAction =
 		};
 	};
 
-export const useCommandPallette = ( {
+export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
-	filter,
-}: useCommandPalletteOptions ): { commands: Command[] } => {
+}: useCommandPaletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
 
-	// Call the generateCommandsArray function to get the commands array
-	let commands = useCommandsArrayWpcom( { setSelectedCommandName } );
+	// Sort sites in the nested commands to be consistent with site switcher and /sites page
+	const { sitesSorting } = useSitesSorting();
+	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
-	if ( 'function' === typeof filter ) {
-		commands = commands.filter( filter );
+	// Get current site ID to rank it to the top of the sites list
+	const { currentSiteId } = useCurrentSiteRankTop();
+
+	// Call the generateCommandsArray function to get the commands array
+	const commands = useCommandsArrayWpcom( {
+		setSelectedCommandName,
+	} );
+
+	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
+
+	// Filter out commands that have context
+	const commandHasContext = ( paths: string[] = [] ): boolean =>
+		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
+
+	// Find and store the "viewMySites" command
+	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
+
+	// Sort the commands with the contextual commands ranking higher than general in a given context
+	const sortedCommands = commands
+		.filter( ( command ) => ! ( command === viewMySitesCommand ) )
+		.sort( ( a, b ) => {
+			const hasContextCommand = commandHasContext( a.context );
+			const hasNoContext = commandHasContext( b.context );
+
+			if ( hasContextCommand && ! hasNoContext ) {
+				return -1; // commands with context come first if there is a context match
+			} else if ( ! hasContextCommand && hasNoContext ) {
+				return 1; // commands without context set
+			}
+
+			return 0; // no change in order
+		} );
+
+	// Create a variable to hold the final result
+	const finalSortedCommands = [ ...sortedCommands ];
+
+	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
+	if ( viewMySitesCommand && currentPath !== '/sites' ) {
+		finalSortedCommands.unshift( viewMySitesCommand );
 	}
 
-	const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
+	const selectedCommand = finalSortedCommands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
-		const filteredSites = filter ? allSites.filter( filter ) : allSites;
+		let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+		if ( currentSiteId ) {
+			const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
+			if ( currentSite ) {
+				filteredSites = [
+					currentSite,
+					...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
+				];
+			}
+		}
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
 	}
 
-	return { commands: sitesToPick ?? commands };
+	return { commands: sitesToPick ?? finalSortedCommands };
 };

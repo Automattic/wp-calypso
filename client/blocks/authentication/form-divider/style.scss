@@ -11,7 +11,8 @@ $breakpoint-mobile: 660px;
 	align-items: center;
 	justify-content: center;
 
-	&::before {
+	&::before,
+	&::after {
 		position: absolute;
 		content: "";
 		border-inline-start: 0;
@@ -19,11 +20,15 @@ $breakpoint-mobile: 660px;
 		inset-block-start: 50%;
 		inset-inline-start: 0;
 		height: 0;
-		width: 100%;
+		width: 42%;
+		z-index: 1;
+	}
+
+	&::after {
+		left: 58%;
 	}
 
 	.auth-form__separator-text {
-		background-color: #fdfdfd;
 		text-transform: uppercase;
 		text-align: center;
 		padding: 24px 0;
@@ -43,12 +48,17 @@ $breakpoint-mobile: 660px;
 			width: 60px;
 			margin: 0;
 
-			&::before {
+			&::before,
+			&::after {
 				border-inline-start: $separator-style;
 				border-block-start: 0;
 				inset-block-start: 0;
 				inset-inline-start: 50%;
-				height: 100%;
+				height: 40%;
+			}
+
+			&::after {
+				top: 60%;
 			}
 		}
 	}
@@ -68,4 +78,24 @@ $breakpoint-mobile: 660px;
 	.auth-form__separator-text {
 		padding: 0 24px;
 	}
+}
+
+// If the separator is between two cards, pull them together.
+// If you want to help get rid of this, please consider removing Card component in sign up.
+.card ~ .auth-form__separator {
+	margin-bottom: -10px;
+	margin-top: -10px;
+}
+
+// Give the first card 10px of space at the bottom to compensate for the -10px margin above.
+:has(> .auth-form__separator) > .card:first-of-type {
+	border-bottom: 10px solid transparent;
+}
+
+// Give the last card 10px of space at the bottom to compensate for the -10px margin above.
+.auth-form__separator + .card {
+	// Remove the top-edge box shadow if any.
+	clip-path: polygon(-1px 1px, 102% 1px, 102% 102%, -1px 102%);
+	// Compensate for the clipped 1px + the negative 10px, to keep the contents unclipped.
+	border-top: 11px solid transparent;
 }

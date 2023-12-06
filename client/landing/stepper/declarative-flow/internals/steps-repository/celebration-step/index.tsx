@@ -45,6 +45,7 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 		flow,
 		siteSlug,
 		isFirstPostPublished: checklistStatuses?.first_post_published,
+		isLaunched: checklistStatuses?.site_launched,
 	} );
 
 	const handleSubmit = ( destinationName: string, destinationUrl: string ) =>

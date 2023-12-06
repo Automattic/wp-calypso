@@ -397,7 +397,6 @@ pathToRegexp.tokensToRegExp = tokensToRegExp;
 const hasDocument = 'undefined' !== typeof document;
 const hasWindow = 'undefined' !== typeof window;
 const hasHistory = 'undefined' !== typeof history;
-const hasProcess = typeof process !== 'undefined';
 
 /**
  * Detect click event
@@ -809,11 +808,6 @@ Page.prototype.clickHandler = function ( e ) {
 	let path = svg ? el.href.baseVal : el.pathname + el.search + ( el.hash || '' );
 
 	path = path[ 0 ] !== '/' ? '/' + path : path;
-
-	// strip leading "/[drive letter]:" on NW.js on Windows
-	if ( hasProcess && path.match( /^\/[a-zA-Z]:\// ) ) {
-		path = path.replace( /^\/[a-zA-Z]:\//, '/' );
-	}
 
 	// same page
 	const orig = path;

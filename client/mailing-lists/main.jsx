@@ -114,6 +114,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Jetpack Newsletter' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack Reports' );
+		} else if ( 'jetpack_manage_onboarding' === category ) {
+			return this.props.translate( 'Jetpack Manage Onboarding' );
 		} else if ( 'akismet_marketing' === category ) {
 			return this.props.translate( 'Akismet Marketing' );
 		} else if ( 'woopay_marketing' === category ) {
@@ -159,6 +161,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack security and performance reports.' );
+		} else if ( 'jetpack_manage_onboarding' === category ) {
+			return this.props.translate( 'Jetpack Manage program setup and onboarding.' );
 		} else if ( 'akismet_marketing' === category ) {
 			return this.props.translate(
 				'Relevant tips and new features to get the most out of Akismet'
