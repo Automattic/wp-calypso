@@ -1,8 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { JETPACK_DASHBOARD_GET_HELP_NAV_PREFERENCE } from 'calypso/state/jetpack-agency-dashboard/selectors';
-import FoldableNav from '../foldable-nav';
-import { FoldableNavItem } from '../foldable-nav/types';
+import FoldableNav from '../../foldable-nav';
+import { FoldableNavItem } from '../../foldable-nav/types';
 
 export default function GetHelpNav() {
 	const translate = useTranslate();
