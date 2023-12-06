@@ -328,6 +328,41 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	};
 }
 
+export const getWooMyCustomThemeOptions = ( {
+	translate,
+	isFSEActive,
+	siteAdminUrl,
+	siteSlug,
+} ) => {
+	const options = getAllThemeOptions( { translate, isFSEActive } );
+
+	return {
+		assembler: {
+			key: 'assembler',
+			label: translate( 'Quick editing in the Assembler' ),
+			extendedLabel: translate( 'Quick editing in the Assembler' ),
+			getUrl: () => {
+				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub`;
+			},
+		},
+		customize: {
+			...options.customize,
+			label: translate( 'Advance customization in the Editor' ),
+			extendedLabel: translate( 'Advance customization in the Editor' ),
+		},
+		preview: {
+			...options.preview,
+			label: translate( 'Store preview' ),
+			extendedLabel: translate( 'Store preview' ),
+			getUrl: () => {
+				return `//${ siteSlug }`;
+			},
+			action: undefined,
+		},
+		separator: options.separator,
+	};
+};
+
 const connectOptionsHoc = connect(
 	( state, props ) => {
 		const { siteId, origin = siteId, locale } = props;
