@@ -91,9 +91,14 @@ const ReaderUnsubscribedFeedItem = ( {
 					>
 						{ filteredDisplayUrl }
 					</ExternalLink>
+
+					<div className="reader-unsubscribed-feed-item__mobile-description" aria-hidden="true">
+						{ description }
+					</div>
 				</VStack>
 			</HStack>
 			<div className="reader-unsubscribed-feed-item__description">{ description }</div>
+
 			<div>
 				<Button
 					primary
