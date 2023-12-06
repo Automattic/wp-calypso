@@ -37,7 +37,7 @@ const SignupHeader = ( {
 	const params = new URLSearchParams( window.location.search );
 	const variationName = params.get( 'variationName' );
 	const variationTitle = variationName && VARIATION_TITLES[ variationName ];
-	const showPageTitle = params.has( 'pageTitle' ) || Boolean( pageTitle );
+	const showPageTitle = variationTitle || params.has( 'pageTitle' ) || Boolean( pageTitle );
 	const variablePageTitle = variationTitle || pageTitle || params.get( 'pageTitle' );
 	const flowProgress = useFlowProgress(
 		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
