@@ -8,14 +8,22 @@
 	&:hover,
 	&:focus {
 		color: var(--color-text-inverted);
-		background: rgba(var(--color-primary-light-rgb), 1);
+		background: var(--color-primary);
 
 		.reader-import-button__label,
 		.reader-export-button__label {
 			color: var(--color-text-inverted);
 		}
 
-		path {
+		svg path[fill],
+		svg path[fill-rule],
+		svg path[fill-opacity] {
+			fill: var(--color-text-inverted);
+		}
+
+		svg path[stroke],
+		svg path[stroke-width],
+		svg path[stroke-opacity] {
 			stroke: var(--color-text-inverted);
 		}
 	}
