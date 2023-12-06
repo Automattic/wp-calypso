@@ -187,7 +187,7 @@ const pluginBundleFlow: Flow = {
 						window.location.replace( checkoutUrl.toString() );
 					}
 
-					return navigate( 'wooTransfer' );
+					return navigate( 'bundleTransfer' );
 				}
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
@@ -222,7 +222,7 @@ const pluginBundleFlow: Flow = {
 					return exitFlow( defaultExitDest );
 				}
 
-				case 'wooTransfer':
+				case 'bundleTransfer':
 					return navigate( 'processing' );
 				case 'wooInstallPlugins':
 					return navigate( 'processing' );

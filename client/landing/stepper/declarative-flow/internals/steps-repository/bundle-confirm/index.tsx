@@ -180,7 +180,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooTransfer' ),
+				redirect_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/bundleTransfer' ),
 				cancel_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/bundleConfirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`

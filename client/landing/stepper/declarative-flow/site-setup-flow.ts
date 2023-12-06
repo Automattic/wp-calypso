@@ -85,7 +85,7 @@ const siteSetupFlow: Flow = {
 			STEPS.STORE_ADDRESS,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.WOO_TRANSFER,
+			STEPS.BUNDLE_TRANSFER,
 			STEPS.WOO_INSTALL_PLUGINS,
 			STEPS.WOO_VERIFY_EMAIL,
 			STEPS.BUNDLE_CONFIRM,
@@ -395,10 +395,10 @@ const siteSetupFlow: Flow = {
 						window.location.replace( checkoutUrl.toString() );
 					}
 
-					return navigate( 'wooTransfer' );
+					return navigate( 'bundleTransfer' );
 				}
 
-				case 'wooTransfer':
+				case 'bundleTransfer':
 					return navigate( 'processing' );
 
 				case 'wooInstallPlugins':

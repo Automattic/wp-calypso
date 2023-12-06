@@ -181,9 +181,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/woo-install-plugins' ),
 	},
 
-	WOO_TRANSFER: {
-		slug: 'wooTransfer',
-		asyncComponent: () => import( './steps-repository/woo-transfer' ),
+	BUNDLE_TRANSFER: {
+		slug: 'bundleTransfer',
+		asyncComponent: () => import( './steps-repository/bundle-transfer' ),
 	},
 
 	WOO_VERIFY_EMAIL: {

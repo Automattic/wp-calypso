@@ -33,7 +33,7 @@ export const transferStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const WooTransfer: Step = function WooTransfer( { navigation } ) {
+const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 	const { submit } = navigation;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestAtomicSoftwareStatus, requestLatestAtomicTransfer, initiateAtomicTransfer } =
@@ -185,4 +185,4 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 	return null;
 };
 
-export default WooTransfer;
+export default BundleTransfer;
