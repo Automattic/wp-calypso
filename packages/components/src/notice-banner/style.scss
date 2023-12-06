@@ -1,6 +1,6 @@
 @import "@automattic/components/src/styles/typography";
 
-$banner-title-height: 30px;
+$banner-title-height: 22px;
 
 :root {
 	--font-title-small: 20px;
@@ -118,9 +118,9 @@ $banner-title-height: 30px;
 }
 
 .notice-banner__title {
-	font-family: $font-sf-pro-display;
-	font-weight: 500;
-	font-size: var(--font-title-small);
+	font-family: $font-sf-pro-text;
+	font-weight: 600;
+	font-size: $font-body;
 	line-height: $banner-title-height;
 	margin-bottom: 8px;
 }
