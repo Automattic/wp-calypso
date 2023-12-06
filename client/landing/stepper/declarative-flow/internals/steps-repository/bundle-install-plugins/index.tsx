@@ -4,10 +4,10 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import useSiteBundleSettings from 'calypso/landing/stepper/hooks/use-site-bundle-settings';
 import useSitePluginSlug from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import type { AtomicSoftwareStatus, OnboardSelect, SiteSelect } from '@automattic/data-stores';
@@ -28,7 +28,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 		useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 	const site = useSite();
 	const softwareSet = useSitePluginSlug();
-	const bundleSettings = useSiteBundleSettings();
+	const bundleSettings = useBundleSettings( softwareSet );
 	const translate = useTranslate();
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
