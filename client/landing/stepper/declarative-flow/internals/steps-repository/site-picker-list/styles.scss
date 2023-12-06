@@ -4,7 +4,7 @@
 
 .site-picker {
 	.step-container__header {
-		margin: 24px;
+		margin: 44px 24px 24px;
 
 		@include break-small {
 			margin-top: 74px;
@@ -25,7 +25,7 @@
 	.step-container__content {
 		.site-picker__container {
 			width: 100%;
-			height: calc(100vh - 240px);
+			max-height: calc(100vh - 240px);
 			display: flex;
 			justify-content: center;
 			@include break-small {
