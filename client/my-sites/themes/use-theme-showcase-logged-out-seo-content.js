@@ -46,7 +46,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Browse all premium themes for WordPress.com. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Browse all premium themes for WordPress.com. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -85,7 +85,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your blog with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your blog with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -124,7 +124,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your business website with the perfect premium theme. Available on all %(planName1), %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							"Enhance your business website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -163,7 +163,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your portfolio website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your portfolio website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -202,7 +202,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your online store with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your online store with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -241,7 +241,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your About Me website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your About Me website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -280,7 +280,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your link in bio website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your link in bio website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -319,7 +319,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your newsletter with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your newsletter with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -358,7 +358,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your entertainment website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your entertainment website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -397,7 +397,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your website with the perfect premium coming soon theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your website with the perfect premium coming soon theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -436,7 +436,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your podcast website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your podcast website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -481,7 +481,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your non-profit or community organization's website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your non-profit or community organization's website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -524,7 +524,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your fashion and beauty website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your fashion and beauty website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -565,7 +565,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your travel and lifestyle website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your travel and lifestyle website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -604,7 +604,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your restaurant website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your restaurant website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -643,7 +643,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your music website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your music website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -682,7 +682,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your magazine website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your magazine website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -721,7 +721,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your education website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your education website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -760,7 +760,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your author or writer website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your author or writer website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -801,7 +801,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your health and wellness website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your health and wellness website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -840,7 +840,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your real estate website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your real estate website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -879,7 +879,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your video website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your video website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
@@ -918,7 +918,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description:
 						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
 						translate(
-							"Enhance your art and design website with the perfect premium theme. Available on all %(planName1), %(planName2), and %(planName3) plans. Activate the one that's right for you.",
+							"Enhance your art and design website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
 							{
 								args: {
 									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
