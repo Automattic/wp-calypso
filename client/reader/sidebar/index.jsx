@@ -20,6 +20,7 @@ import ReaderConversationsIcon from 'calypso/reader/components/icons/conversatio
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
+import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
 import ReaderNotificationsIcon from 'calypso/reader/components/icons/notifications-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -138,6 +139,12 @@ export class ReaderSidebar extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_like_activity_clicked' );
 	};
 
+	handleReaderSidebarManageSubscriptionsClicked = () => {
+		recordAction( 'clicked_reader_sidebar_manage_subscriptions' );
+		recordGaEvent( 'Clicked Reader Sidebar Manage Subscriptions' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_manage_subscriptions_clicked' );
+	};
+
 	renderSidebar() {
 		const { path, translate, teams, locale } = this.props;
 		const recentLabelTranslationReady = hasTranslation( 'Recent' ) || locale.startsWith( 'en' );
@@ -247,6 +254,16 @@ export class ReaderSidebar extends Component {
 					onNavigate={ this.handleReaderSidebarNotificationsClicked }
 					customIcon={ <ReaderNotificationsIcon /> }
 					link="/read/notifications"
+				/>
+
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/subscriptions', path, {
+						'sidebar-streams__manage-subscriptions': true,
+					} ) }
+					label={ translate( 'Manage Subscriptions' ) }
+					onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
+					customIcon={ <ReaderManageSubscriptionsIcon /> }
+					link="/read/subscriptions"
 				/>
 			</SidebarMenu>
 		);
