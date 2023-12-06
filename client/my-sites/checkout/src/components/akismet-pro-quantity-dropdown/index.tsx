@@ -111,11 +111,6 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 } ) => {
 	const translate = useTranslate();
 
-	const [ open, setOpen ] = useState( false );
-	const [ selectedQuantity, setSelectedQuantity ] = useState(
-		responseCart.products[ 0 ].quantity ?? 1
-	);
-
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
 			translate( '1 Site' ),
@@ -131,6 +126,32 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		};
 	}, [ translate ] );
 
+	const { validatedCartQuantity, validatedDropdownQuantity } = useMemo( () => {
+		const { product_slug, quantity } = responseCart.products[ 0 ];
+		let validatedCartQuantity = quantity;
+		let validatedDropdownQuantity = quantity ?? 1;
+		if ( ( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes( product_slug ) ) {
+			validatedCartQuantity = null;
+			validatedDropdownQuantity = AkBusinessDropdownPosition;
+		} else if ( quantity == null || quantity < 1 ) {
+			validatedCartQuantity = 1;
+			validatedDropdownQuantity = 1;
+		} else if ( quantity && quantity > dropdownOptions.length - 1 ) {
+			validatedCartQuantity = dropdownOptions.length - 1;
+			validatedDropdownQuantity = dropdownOptions.length - 1;
+		} else if ( quantity ) {
+			validatedCartQuantity = quantity;
+			validatedDropdownQuantity = quantity;
+		}
+		return {
+			validatedCartQuantity,
+			validatedDropdownQuantity,
+		};
+	}, [ AkBusinessDropdownPosition, dropdownOptions.length, responseCart.products ] );
+
+	const [ open, setOpen ] = useState( false );
+	const [ selectedQuantity, setSelectedQuantity ] = useState( validatedDropdownQuantity );
+
 	const onSitesQuantityChange = useCallback(
 		( value: number ) => {
 			const { uuid, product_slug, product_id, quantity: prevQuantity } = responseCart.products[ 0 ];
@@ -139,7 +160,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			let newQuantity;
 			if ( value === AkBusinessDropdownPosition ) {
 				// 'Unlimited sites (Akismet Business)' was selected.
-				// Replace cart with Akismet Business, quantity null
+				// Replace cart with Akismet Business, quantity: null
 				productSlug =
 					PRODUCT_AKISMET_PRO_500_UPGRADE_MAP[
 						product_slug as keyof typeof PRODUCT_AKISMET_PRO_500_UPGRADE_MAP
@@ -186,22 +207,17 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		]
 	);
 
-	const adjustedCartQuantity = useMemo( () => {
-		if (
-			( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes(
-				responseCart.products[ 0 ].product_slug
-			)
-		) {
-			return AkBusinessDropdownPosition;
+	useEffect( () => {
+		// When the cart changes, update the dropdown and the url.
+		const { uuid, product_slug, product_id, quantity } = responseCart.products[ 0 ];
+
+		// only allow valid quantity in cart (1 - 4 || null)
+		if ( quantity !== validatedCartQuantity ) {
+			onChangeAkProQuantity &&
+				onChangeAkProQuantity( uuid, product_slug, product_id, quantity, validatedCartQuantity );
 		}
 
-		return responseCart.products[ 0 ].quantity ?? 1;
-	}, [ AkBusinessDropdownPosition, responseCart.products ] );
-
-	useEffect( () => {
-		const { product_slug: productSlug, quantity } = responseCart.products[ 0 ];
-
-		setSelectedQuantity( adjustedCartQuantity );
+		setSelectedQuantity( validatedDropdownQuantity );
 
 		// Update the product-slug quantity value in the url
 		const urlQuantityPart = quantity ? `:-q-${ quantity ?? 1 }` : '';
@@ -210,12 +226,17 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			'//' +
 			window.location.host +
 			'/checkout/akismet' +
-			`/${ productSlug }` +
+			`/${ product_slug }` +
 			urlQuantityPart +
 			window.location.search +
 			window.location.hash;
 		window.history.replaceState( null, '', newUrl );
-	}, [ AkBusinessDropdownPosition, adjustedCartQuantity, responseCart.products ] );
+	}, [
+		onChangeAkProQuantity,
+		responseCart.products,
+		validatedCartQuantity,
+		validatedDropdownQuantity,
+	] );
 
 	const selectNextQuantity = useCallback( () => {
 		if ( selectedQuantity < dropdownOptions.length ) {
@@ -249,9 +270,9 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					break;
 				case 'Enter':
 					event.preventDefault();
-					if ( selectedQuantity !== adjustedCartQuantity ) {
+					if ( selectedQuantity !== validatedDropdownQuantity ) {
 						onSitesQuantityChange( selectedQuantity );
-					} else if ( selectedQuantity === adjustedCartQuantity ) {
+					} else if ( selectedQuantity === validatedDropdownQuantity ) {
 						toggleDropDown();
 					}
 					break;
@@ -262,7 +283,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 			}
 		},
 		[
-			adjustedCartQuantity,
+			validatedDropdownQuantity,
 			onSitesQuantityChange,
 			selectNextQuantity,
 			selectPreviousQuantity,
