@@ -26,7 +26,6 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ isRemoving, setIsRemoving ] = useState( false );
@@ -62,7 +61,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		},
 	} );
 
-	// Display success notices when the forwarding is deleted
+	// Display success notices when the glue record is deleted
 	const { deleteGlueRecord } = useDeleteGlueRecordMutation( domain.name, {
 		onSuccess() {
 			dispatch( successNotice( translate( 'Glue record deleted successfully.' ), noticeOptions ) );
