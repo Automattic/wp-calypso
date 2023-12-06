@@ -5,10 +5,12 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { isMobile } from '@automattic/viewport';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import type { AkismetProQuantityDropDownProps } from './types';
 import type { FunctionComponent } from 'react';
 
@@ -114,11 +116,16 @@ const CurrentOptionContainer = styled.div`
 	line-height: 20px;
 	width: 100%;
 	column-gap: 20px;
+	text-align: left;
 `;
 
 const Price = styled.span`
+	flex: 1 0 auto;
 	text-align: right;
 	color: #646970;
+	> span {
+		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
+	}
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
@@ -133,11 +140,11 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
-			translate( '1 Site' ),
-			translate( '2 Sites' ),
-			translate( '3 Sites' ),
-			translate( '4 Sites' ),
-			translate( 'Unlimited sites (Akismet Business)' ),
+			preventWidows( translate( '1 Site' ) ),
+			preventWidows( translate( '2 Sites' ) ),
+			preventWidows( translate( '3 Sites' ) ),
+			preventWidows( translate( '4 Sites' ) ),
+			preventWidows( translate( 'Unlimited sites (Akismet Business)' ) ),
 		];
 		const AkBusinessDropdownPosition = dropdownOptions.length;
 		return {
@@ -319,19 +326,45 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		stripZeros: true,
 	} );
 
-	const currentOptionPriceDisplay = translate(
-		'%(quantity)d licenses X %(actualAmountQuantityOneDisplay)s per license = %(actualAmountDisplay)s',
-		{
-			args: {
-				quantity: quantity ?? 1,
-				actualAmountQuantityOneDisplay,
-				actualAmountDisplay,
-			},
-			components: {
-				s: <s />,
-			},
+	const getCurrentOptionPriceDisplay = useCallback( () => {
+		if ( validatedDropdownQuantity !== AkBusinessDropdownPosition ) {
+			return isMobile()
+				? translate(
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. ={{/span}} %(actualAmountDisplay)s',
+						{
+							args: {
+								quantity: validatedDropdownQuantity,
+								actualAmountQuantityOneDisplay,
+								actualAmountDisplay,
+							},
+							components: {
+								span: <span />,
+							},
+						}
+				  )
+				: translate(
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license ={{/span}} %(actualAmountDisplay)s',
+						{
+							args: {
+								quantity: validatedDropdownQuantity,
+								actualAmountQuantityOneDisplay,
+								actualAmountDisplay,
+							},
+							components: {
+								span: <span />,
+							},
+						}
+				  );
 		}
-	);
+
+		return actualAmountDisplay;
+	}, [
+		AkBusinessDropdownPosition,
+		actualAmountDisplay,
+		actualAmountQuantityOneDisplay,
+		translate,
+		validatedDropdownQuantity,
+	] );
 
 	return (
 		<AkismetSitesSelect>
@@ -348,7 +381,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 				>
 					<CurrentOptionContainer>
 						<span>{ dropdownOptions[ selectedQuantity - 1 ] }</span>
-						<Price>{ currentOptionPriceDisplay }</Price>
+						<Price>{ getCurrentOptionPriceDisplay() }</Price>
 					</CurrentOptionContainer>
 					<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 				</CurrentOption>
