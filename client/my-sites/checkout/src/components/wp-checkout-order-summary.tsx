@@ -115,7 +115,7 @@ export default function WPCheckoutOrderSummary( {
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }
 			{ shouldHideCheckoutIncludedPurchases && (
-				<CheckoutSummaryPriceListTitle>Your order</CheckoutSummaryPriceListTitle>
+				<CheckoutSummaryPriceListTitle>{ translate( 'Your order' ) }</CheckoutSummaryPriceListTitle>
 			) }
 			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
