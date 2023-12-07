@@ -9,11 +9,16 @@ type TierUIStrings = {
 	strategy: string;
 };
 
+interface TierStep {
+	lhValue: string;
+	rhValue: string;
+}
+
 type TierUpgradeSliderProps = {
 	className?: string;
 	uiStrings: TierUIStrings;
 	popupInfoString?: string;
-	steps: any[];
+	steps: TierStep[];
 	initialValue?: number;
 	onSliderChange: ( index: number ) => void;
 	marks?: boolean | number[];
