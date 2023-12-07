@@ -278,6 +278,13 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		</>
 	);
 
+	const expandCard = () => {
+		setIsExpanded( true );
+		// We want to always fetch the latest glue record when the card is expanded
+		// otherwise the user might see stale data if they made an update and refreshed the page
+		refetchGlueRecordsData();
+	};
+
 	const renderGlueRecords = () => {
 		if ( isLoadingData || ! data ) {
 			return (
@@ -320,7 +327,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 			title={ translate( 'Glue Records' ) }
 			subtitle={ translate( 'Edit your private name servers (glue records)' ) }
 			expanded={ isExpanded }
-			onOpen={ () => setIsExpanded( true ) }
+			onOpen={ expandCard }
 			onClose={ () => setIsExpanded( false ) }
 		>
 			{ renderGlueRecords() }
