@@ -508,6 +508,12 @@
 		display: none;
 	}
 
+	.auth-form__separator + .auth-form__social.card {
+		clip-path: unset; // unset the rule applied in ./client/blocks/authentication/form-divider/style.scss
+		border-top: 1px solid #e6e6e6;
+		max-width: 100%;
+	}
+
 	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;
@@ -568,6 +574,10 @@
 			margin-left: 0;
 			margin-right: 0;
 
+			@media ( min-width: 782px ) {
+				width: 100%;
+			}
+
 			&::before,
 			&::after {
 				position: absolute;
@@ -576,6 +586,7 @@
 				inset-block-start: 50%;
 				inset-inline-start: 0;
 				width: 42%;
+				content: none;
 			}
 
 			&::after {
@@ -590,6 +601,11 @@
 			background: #fff;
 			padding: 0 27px !important;
 		}
+	}
+
+	.auth-form__separator .auth-form__separator-text {
+		padding: 0 27px;
+		background: #fff;
 	}
 
 	.wp-login__footer--oauth {
@@ -958,6 +974,10 @@
 
 		.signup-form {
 			padding-top: 24px;
+		}
+
+		button.social-buttons__button.button {
+			width: 100%;
 		}
 
 		// Log in link on signup page
