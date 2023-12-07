@@ -105,3 +105,11 @@
 		}
 	}
 }
+
+.license-details--child-license {
+	&,
+	.license-details__actions a,
+	.license-details__actions button {
+		background-color: #fafafa;
+	}
+}
