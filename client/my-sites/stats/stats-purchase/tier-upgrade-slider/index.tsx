@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useState, useRef } from 'react';
 import './styles.scss';
 
-type TierUpgradeSlider2Props = {
+type TierUpgradeSliderProps = {
 	className?: string;
 	uiStrings: any;
 	popupInfoString?: any;
@@ -13,7 +13,7 @@ type TierUpgradeSlider2Props = {
 	marks?: boolean | number[];
 };
 
-function TierUpgradeSlider2( {
+function TierUpgradeSlider( {
 	className,
 	uiStrings,
 	popupInfoString,
@@ -21,7 +21,7 @@ function TierUpgradeSlider2( {
 	initialValue = 0,
 	onSliderChange,
 	marks,
-}: TierUpgradeSlider2Props ) {
+}: TierUpgradeSliderProps ) {
 	const componentClassNames = classNames( 'tier-upgrade-slider', className );
 
 	// Slider state.
@@ -77,4 +77,4 @@ function TierUpgradeSlider2( {
 	);
 }
 
-export default TierUpgradeSlider2;
+export default TierUpgradeSlider;
