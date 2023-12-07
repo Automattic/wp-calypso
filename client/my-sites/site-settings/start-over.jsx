@@ -228,6 +228,17 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 
 	const canReset = siteDomainTest.trim() === siteDomain;
 
+	const activityLogHint = isAtomic
+		? createInterpolateElement(
+				translate(
+					'The site will be automatically backed up before the reset. You can restore it from <a>Activity Log</a>.'
+				),
+				{
+					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
+				}
+		  )
+		: null;
+
 	return (
 		<Main className="site-settings__reset-site">
 			<NavigationHeader
@@ -295,6 +306,9 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 							{ translate( 'Reset Site' ) }
 						</Button>
 					</div>
+					{ activityLogHint && (
+						<p className="site-settings__reset-site-activity-log-hint">{ activityLogHint }</p>
+					) }
 				</ActionPanelFooter>
 			</ActionPanel>
 		</Main>
