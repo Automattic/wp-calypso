@@ -5,7 +5,6 @@ $banner-title-height: 22px;
 
 :root {
 	--font-title-small: 20px;
-	--font-body: 16px;
 	--jp-black: #000;
 	--jp-gray-5: #dcdcde;
 	--jp-red-50: #d63638;
@@ -17,7 +16,7 @@ $banner-title-height: 22px;
 	display: flex;
 	align-items: flex-start;
 
-	font-size: var(--font-body);
+	font-size: $font-body;
 
 	background-color: var(--studio-white);
 
@@ -40,7 +39,7 @@ $banner-title-height: 22px;
 	.notice-banner__action-button,
 	.notice-banner__action-link {
 		font-family: inherit;
-		font-size: var(--font-body);
+		font-size: $font-body;
 		font-weight: 600;
 		line-height: 24px;
 		cursor: pointer;
