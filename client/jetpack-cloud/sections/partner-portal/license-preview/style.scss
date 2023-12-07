@@ -207,3 +207,52 @@ button {
 	padding: 16px 32px;
 	background-color: #fafafa;
 }
+
+.license-bundle-dropdown__popover-menu {
+	font-size: rem(14px);
+	font-weight: 400;
+	border-radius: 2px;
+
+	.popover__menu {
+		padding: 8px;
+	}
+
+	.popover__menu-item {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.popover__menu-item:hover,
+	.popover__menu-item:focus {
+		background: var(--color-sidebar-menu-hover-background);
+		color: var(--color-text);
+		fill: var(--color-text);
+
+		.gridicon {
+			fill: var(--color-text);
+		}
+	}
+
+	.popover__menu-item .gridicon {
+		margin: 0;
+	}
+}
+
+.license-bundle-dropdown__popover-menu-title {
+	text-align: left;
+	padding: 8px 16px;
+	font-size: rem(14px);
+	font-weight: 400;
+}
+
+.popover__menu-item.license-bundle-dropdown__popover-menu-item-revoke {
+	&,
+	&:hover,
+	&:focus {
+		color: var(--studio-red-50);
+
+		.gridicon {
+			fill: var(--studio-red-50);
+		}
+	}
+}

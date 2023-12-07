@@ -24,6 +24,7 @@ import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/p
 import { getSite } from 'calypso/state/sites/selectors';
 import BundleDetails from '../license-details/bundle-details';
 import LicenseActions from './license-actions';
+import LicenseBundleDropDown from './license-bundle-dropdown';
 
 import './style.scss';
 
@@ -119,7 +120,8 @@ export default function LicensePreview( {
 	const isSiteAtomic =
 		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
-	const showBundleDetails = isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
+	const isParentLicenseBundle =
+		isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
 
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" type="info">
@@ -224,12 +226,17 @@ export default function LicensePreview( {
 					</div>
 				) }
 
-				<div className="license-preview__badge-container">
-					{ showBundleDetails
-						? bundleCountContent
-						: LicenseType.Standard === licenseType && (
-								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
-						  ) }
+				<div className="license-preview__extras">
+					{ isParentLicenseBundle ? (
+						<>
+							{ bundleCountContent }
+							<LicenseBundleDropDown />
+						</>
+					) : (
+						LicenseType.Standard === licenseType && (
+							<Badge type="success">{ translate( 'Standard license' ) }</Badge>
+						)
+					) }
 				</div>
 
 				<div>
@@ -252,7 +259,7 @@ export default function LicensePreview( {
 			</LicenseListItem>
 
 			{ isOpen &&
-				( showBundleDetails ? (
+				( isParentLicenseBundle ? (
 					<BundleDetails parentLicenseId={ parentLicenseId } />
 				) : (
 					<LicenseDetails
