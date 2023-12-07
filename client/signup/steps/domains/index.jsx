@@ -158,6 +158,7 @@ export class RenderDomainsStep extends Component {
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
 		const suggestedDomain = get( props, 'signupDependencies.suggestedDomain' );
+		const siteUrl = get( props, 'signupDependencies.siteUrl' );
 
 		// If we landed anew from `/domains` and it's the `new-flow` variation
 		// or there's a suggestedDomain from previous steps, always rerun the search.
@@ -202,7 +203,8 @@ export class RenderDomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
-			wpcomSubdomainSelected: false,
+			wpcomSubdomainSelected:
+				siteUrl && siteUrl.indexOf( '.wordpress.com' ) !== -1 ? { domain_name: siteUrl } : null,
 			domainRemovalQueue: [],
 			isGoingToNextStep: false,
 			temporaryCart: [],
@@ -821,7 +823,7 @@ export class RenderDomainsStep extends Component {
 			Object.assign(
 				{ domainItem, domainCart },
 				useThemeHeadstartItem,
-				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				{ siteUrl: suggestion?.domain_name },
 				lastDomainSearched ? { lastDomainSearched } : {},
 				{ domainCart }
 			)
@@ -925,6 +927,18 @@ export class RenderDomainsStep extends Component {
 						className="button domains__domain-cart-remove"
 						onClick={ () => {
 							this.setState( { wpcomSubdomainSelected: false } );
+							this.props.saveSignupStep( {
+								stepName: this.props.stepName,
+								suggestion: {
+									domain_name: false,
+								},
+							} );
+							this.props.submitSignupStep(
+								Object.assign( {
+									stepName: this.props.stepName,
+								} ),
+								Object.assign( { siteUrl: false } )
+							);
 						} }
 					>
 						{ this.props.translate( 'Remove' ) }
