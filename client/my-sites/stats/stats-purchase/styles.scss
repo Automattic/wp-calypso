@@ -155,6 +155,8 @@ $button-padding: 8px 32px;
 
 	.stats-purchase-wizard__card-parent {
 		border-radius: 4px;
+		width: 1124px;
+		max-width: 100%;
 	}
 
 	.stats-purchase-wizard__card {
@@ -173,6 +175,7 @@ $button-padding: 8px 32px;
 		padding: 64px;
 		min-width: var(--stats-purchase-left-min-width);
 		max-width: var(--stats-purchase-left-max-width);
+		width: 60%;
 		box-sizing: border-box;
 	}
 
