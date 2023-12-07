@@ -1,4 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';
 import './styles.scss';
@@ -24,6 +25,25 @@ function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
 		};
 	} );
 	return tiers;
+}
+
+function useTranslatedStrings() {
+	const translate = useTranslate();
+	const limits = translate( 'Your monthly contribution', {
+		comment: 'Heading for Stats PWYW Upgrade slider. The monthly payment amount.',
+	} );
+	const price = translate( 'Thank you!', {
+		comment: 'Heading for Stats PWYW Upgrade slider. The thank you message.',
+	} );
+	const strategy = translate( 'The average person pays $7 per month, billed yearly', {
+		comment: 'Stats PWYW Upgrade slider message. The billing strategy.',
+	} );
+
+	return {
+		limits,
+		price,
+		strategy,
+	};
 }
 
 function emojiForStep( index: number ) {
@@ -76,13 +96,8 @@ function StatsPWYWUpgradeSlider( {
 	currencyCode,
 	onSliderChange,
 }: StatsPWYWUpgradeSliderProps ) {
-	// TODO: Translate UI strings.
-	const strings = {
-		limits: 'Your monthly contribution',
-		price: 'Thank you!',
-		strategy: 'The average person pays $5 per month, billed yearly',
-	};
-	// TODO: Set up tiers/steps for slider.
+	const uiStrings = useTranslatedStrings();
+
 	let steps = getPWYWPlanTiers( 0, 50 );
 	if ( settings !== undefined ) {
 		steps = stepsFromSettings( settings, currencyCode || '' );
@@ -96,7 +111,7 @@ function StatsPWYWUpgradeSlider( {
 	return (
 		<TierUpgradeSlider
 			className="stats-pwyw-upgrade-slider"
-			uiStrings={ strings }
+			uiStrings={ uiStrings }
 			steps={ steps }
 			initialValue={ ( steps.length - 1 ) / 2 }
 			onSliderChange={ handleSliderChanged }
