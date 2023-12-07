@@ -156,49 +156,60 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 
 	const onSitesQuantityChange = useCallback(
 		( value: number ) => {
-			const { uuid, product_slug, product_id, quantity: prevQuantity } = responseCart.products[ 0 ];
-			let productSlug;
-			let productId;
+			const {
+				uuid: cartProductUuid,
+				product_slug: cartProductSlug,
+				product_id: cartProductId,
+				quantity: prevQuantity,
+			} = responseCart.products[ 0 ];
+			let newProductSlug;
+			let newProductId;
 			let newQuantity;
 			if ( value === AkBusinessDropdownPosition ) {
 				// 'Unlimited sites (Akismet Business)' was selected.
 				// Replace cart with Akismet Business, quantity: null
-				productSlug =
+				newProductSlug =
 					PRODUCT_AKISMET_PRO_500_UPGRADE_MAP[
-						product_slug as keyof typeof PRODUCT_AKISMET_PRO_500_UPGRADE_MAP
+						cartProductSlug as keyof typeof PRODUCT_AKISMET_PRO_500_UPGRADE_MAP
 					].slug;
-				productId =
+				newProductId =
 					PRODUCT_AKISMET_PRO_500_UPGRADE_MAP[
-						product_slug as keyof typeof PRODUCT_AKISMET_PRO_500_UPGRADE_MAP
+						cartProductSlug as keyof typeof PRODUCT_AKISMET_PRO_500_UPGRADE_MAP
 					].id;
 				newQuantity = null;
 				setForceShowAkQuantityDropdown( true );
 			} else {
 				// 1 - 4 Sites was selected.
 				if (
-					( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes( product_slug )
+					( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes( cartProductSlug )
 				) {
 					// If Akismet Business is in the cart, replace it with Akismet Pro, with the selected quantity.
-					productSlug =
+					newProductSlug =
 						PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP[
-							product_slug as keyof typeof PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP
+							cartProductSlug as keyof typeof PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP
 						].slug;
-					productId =
+					newProductId =
 						PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP[
-							product_slug as keyof typeof PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP
+							cartProductSlug as keyof typeof PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP
 						].id;
 					newQuantity = value;
 				} else {
 					// Akismet Pro, with the seleced quantity.
-					productSlug = product_slug;
-					productId = product_id;
+					newProductSlug = cartProductSlug;
+					newProductId = cartProductId;
 					newQuantity = value;
 				}
 				setForceShowAkQuantityDropdown( false );
 			}
 
 			setSelectedQuantity( value );
-			onChangeAkProQuantity( uuid, productSlug, productId, prevQuantity, newQuantity );
+			onChangeAkProQuantity(
+				cartProductUuid,
+				newProductSlug,
+				newProductId,
+				prevQuantity,
+				newQuantity
+			);
 		},
 		[
 			AkBusinessDropdownPosition,
