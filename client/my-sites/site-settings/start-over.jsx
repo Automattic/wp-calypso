@@ -186,6 +186,9 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 	};
 
 	const handleReset = () => {
+		if ( ! isDomainConfirmed ) {
+			return;
+		}
 		resetSite( siteId );
 	};
 
