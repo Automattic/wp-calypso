@@ -65,13 +65,12 @@ export default function RevokeLicenseDialog( {
 
 	const renderHeading = () => {
 		if ( isAssignedChildLicense ) {
-			return translate( 'Revoke %(product)s license from %(siteUrl)s?', {
+			return translate( 'Revoke %(product)s license?', {
 				args: {
 					product,
 					siteUrl,
 				},
-				comment:
-					'The %(product)s and %(siteUrl)s placeholders are replaced with the product name and site URL, respectively.',
+				comment: 'The %(product)s is replaced with the product name.',
 			} );
 		}
 
