@@ -13,7 +13,12 @@ import TextInput from 'calypso/components/forms/form-text-input';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import { startMappingAuthors, startUpload, failPreUpload } from 'calypso/state/imports/actions';
+import {
+	startMappingAuthors,
+	startUpload,
+	failPreUpload,
+	startImporting,
+} from 'calypso/state/imports/actions';
 import { appStates, MAX_FILE_SIZE } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
@@ -65,7 +70,15 @@ export class UploadingPane extends PureComponent {
 				prevImporterStatus.importerState === appStates.UPLOAD_SUCCESS ) &&
 			importerStatus.importerState === appStates.UPLOAD_SUCCESS
 		) {
-			this.props.startMappingAuthors( importerStatus.importerId );
+			switch ( importerStatus.importerFileType ) {
+				case 'content':
+					this.props.startMappingAuthors( importerStatus.importerId );
+					break;
+				case 'playground':
+				case 'jetpack_backup':
+					this.props.startImporting( importerStatus );
+					break;
+			}
 		}
 	}
 
@@ -285,5 +298,5 @@ export default connect(
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
 	} ),
-	{ startMappingAuthors, startUpload, failPreUpload }
+	{ startMappingAuthors, startUpload, startImporting, failPreUpload }
 )( localize( UploadingPane ) );
