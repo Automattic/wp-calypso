@@ -1,4 +1,13 @@
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { ProductsList } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
+import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal/use-is-eligible-for-one-click-checkout';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import EducationFooter from '../education-footer';
@@ -86,10 +95,49 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const translate = useTranslate();
+	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
+
+	// TODO: Do we need this temp function?
+	const onCloseModal = () => {
+		setShowPurchaseModal( false );
+	};
+
+	const businessPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle' ),
+		[]
+	);
+
+	const isEligibleForOneClickCheckout = useIsEligibleForOneClickCheckout();
+
+	// TODO: Add loading state
+	// if ( isEligibleForOneClickCheckout.isLoading ) {
+	// 	return <Loader />
+	// }
 
 	return (
 		<>
-			<UpgradeNudge { ...props } paidPlugins={ true } />
+			{ isEligibleForOneClickCheckout.result && (
+				<CalypsoShoppingCartProvider>
+					<StripeHookProvider
+						fetchStripeConfiguration={ getStripeConfiguration }
+						locale={ translate.localeSlug }
+					>
+						{ showPurchaseModal && (
+							<PurchaseModal
+								productToAdd={ businessPlanProduct }
+								onClose={ onCloseModal }
+								siteSlug={ props.siteSlug }
+							/>
+						) }
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			) }
+			<UpgradeNudge
+				{ ...props }
+				paidPlugins={ true }
+				setShowPurchaseModal={ setShowPurchaseModal }
+			/>
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
