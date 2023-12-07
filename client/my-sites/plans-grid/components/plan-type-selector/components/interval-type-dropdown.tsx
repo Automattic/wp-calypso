@@ -30,12 +30,24 @@ const StyledCustomSelectControl = styled( CustomSelectControl )`
 
 const optionsMap: Record<
 	string,
-	{ key: string; name: string; discountText: string; url: string }
+	{ key: string; name: string; discountText: string; url: string; termInMonths: number }
 > = {
-	yearly: { key: 'yearly', name: 'Pay yearly', discountText: '55% off', url: '' },
-	'2yearly': { key: '2yearly', name: 'Pay every 2 years', discountText: '63% off', url: '' },
-	'3yearly': { key: '3yearly', name: 'Pay every 3 years', discountText: '69% off', url: '' },
-	monthly: { key: 'monthly', name: 'Pay monthly', discountText: '', url: '' },
+	yearly: { key: 'yearly', name: 'Pay yearly', discountText: '55% off', url: '', termInMonths: 12 },
+	'2yearly': {
+		key: '2yearly',
+		name: 'Pay every 2 years',
+		discountText: '63% off',
+		url: '',
+		termInMonths: 24,
+	},
+	'3yearly': {
+		key: '3yearly',
+		name: 'Pay every 3 years',
+		discountText: '69% off',
+		url: '',
+		termInMonths: 36,
+	},
+	monthly: { key: 'monthly', name: 'Pay monthly', discountText: '', url: '', termInMonths: 1 },
 };
 const optionsList = Object.values( optionsMap );
 
