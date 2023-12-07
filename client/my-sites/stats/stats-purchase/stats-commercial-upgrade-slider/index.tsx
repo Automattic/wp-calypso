@@ -12,13 +12,13 @@ function useTranslatedStrings() {
 	const translate = useTranslate();
 	const limits = translate( 'Monthly site views limit', {
 		comment: 'Heading for Stats Upgrade slider. The monthly views limit.',
-	} );
+	} ) as string;
 	const price = translate( 'You will pay', {
 		comment: 'Heading for Stats Upgrade slider. The monthly price.',
-	} );
+	} ) as string;
 	const strategy = translate( 'Price per month, billed yearly', {
 		comment: 'Stats Upgrade slider message. The billing strategy.',
-	} );
+	} ) as string;
 
 	return {
 		limits,
@@ -89,7 +89,7 @@ function StatsCommercialUpgradeSlider( {
 					} ),
 				},
 			}
-		);
+		) as string;
 		lastTier.views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
 	}
 

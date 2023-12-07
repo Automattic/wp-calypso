@@ -3,10 +3,16 @@ import classNames from 'classnames';
 import { useState, useRef } from 'react';
 import './styles.scss';
 
+type TierUIStrings = {
+	limits: string;
+	price: string;
+	strategy: string;
+};
+
 type TierUpgradeSliderProps = {
 	className?: string;
-	uiStrings: any;
-	popupInfoString?: any;
+	uiStrings: TierUIStrings;
+	popupInfoString?: string;
 	steps: any[];
 	initialValue?: number;
 	onSliderChange: ( index: number ) => void;
