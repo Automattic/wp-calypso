@@ -51,7 +51,7 @@ function TierUpgradeSlider( {
 					</p>
 				</div>
 			</div>
-			{ tiers.length > 1 && (
+			{ steps.length > 1 && (
 				<PricingSlider
 					className="stats-tier-upgrade-slider__slider"
 					thumbClassName="stats-tier-upgrade-slider__thumb"
