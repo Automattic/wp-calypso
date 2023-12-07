@@ -31,13 +31,14 @@ export default function OverviewSidebar() {
 			<section>
 				<GetHelpNav />
 				<Button
-					href={ localizeUrl( 'https://jetpack.com/contact-support/' ) }
 					className="contact-support-button"
+					href={ localizeUrl( 'https://jetpack.com/contact-support/' ) }
 					onClick={ () =>
 						dispatch(
 							recordTracksEvent( 'calypso_jetpack_manage_overview_contact_support_button_click' )
 						)
 					}
+					target="_blank"
 				>
 					{ translate( 'Contact support' ) }
 				</Button>
