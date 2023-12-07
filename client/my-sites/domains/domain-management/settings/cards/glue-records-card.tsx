@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -130,6 +131,12 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const handleDelete = ( record: GlueRecordObject ) => {
 		setIsRemoving( true );
 		deleteGlueRecord( record );
+
+		recordTracksEvent( 'calypso_domain_glue_records_delete_record', {
+			domain: domain.domain,
+			record: record.record,
+			address: record.address,
+		} );
 	};
 
 	const validateRecord = () => {
@@ -168,6 +175,12 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 
 		setIsSaving( true );
 		updateGlueRecord( {
+			record: `${ record }.${ domain.domain }`,
+			address: ipAddress,
+		} );
+
+		recordTracksEvent( 'calypso_domain_glue_records_add_record', {
+			domain: domain.domain,
 			record: `${ record }.${ domain.domain }`,
 			address: ipAddress,
 		} );
@@ -283,6 +296,10 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		// We want to always fetch the latest glue record when the card is expanded
 		// otherwise the user might see stale data if they made an update and refreshed the page
 		refetchGlueRecordsData();
+
+		recordTracksEvent( 'calypso_domain_glue_records_expand_card_click', {
+			domain: domain.domain,
+		} );
 	};
 
 	const renderGlueRecords = () => {
