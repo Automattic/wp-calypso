@@ -7,7 +7,7 @@ import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import wpcomRequest from 'wpcom-proxy-request';
-import { useSiteResetMutation } from '../use-site-reset-mutation';
+import { useSiteResetMutation } from '../../site-reset/use-site-reset-mutation';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,

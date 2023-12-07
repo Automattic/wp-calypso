@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { useSiteResetMutation } from '@automattic/data-stores';
+import { useSiteResetMutation, useSiteResetContentSummaryQuery } from '@automattic/data-stores';
 import { isSiteAtomic } from '@automattic/data-stores/src/site/selectors';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -94,6 +94,9 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
+	const { data } = useSiteResetContentSummaryQuery( siteId );
+	const [ siteDomainTest, setSiteDomainTest ] = useState( '' );
+
 	const handleError = () => {
 		dispatch(
 			errorNotice( translate( 'We were unable to reset your site.' ), {
@@ -121,12 +124,58 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 		onError: handleError,
 	} );
 
-	const contentInfo = [
-		translate( 'posts' ),
-		translate( 'pages' ),
-		translate( 'user installed plugins' ),
-		translate( 'user themes' ),
-	];
+	const contentInfo = () => {
+		const result = [];
+
+		if ( data?.post_count > 0 ) {
+			const message =
+				data.post_count === 1
+					? translate( '1 post' )
+					: sprintf( translate( '%d posts' ), data.post_count );
+			result.push( {
+				message,
+				url: `/posts/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.page_count > 0 ) {
+			const message =
+				data.page_count === 1
+					? translate( '1 page' )
+					: sprintf( translate( '%d pages' ), data.page_count );
+			result.push( {
+				message,
+				url: `/pages/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.media_count > 0 ) {
+			const message =
+				data.media_count === 1
+					? translate( '1 media item' )
+					: sprintf( translate( '%d media items' ), data.media_count );
+			result.push( {
+				message,
+				url: `/media/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.plugin_count > 0 ) {
+			const message =
+				data.plugin_count === 1
+					? translate( '1 plugin' )
+					: sprintf( translate( '%d plugins' ), data.plugin_count );
+			result.push( {
+				message,
+				url: `https://${ siteDomain }/wp-admin/plugins.php`,
+			} );
+		}
+
+		result.push( {
+			message: translate( 'All theme modifications you made' ),
+		} );
+		return result;
+	};
 
 	const handleReset = () => {
 		resetSite( siteId );
@@ -160,6 +209,8 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 				}
 		  );
 
+	const canReset = siteDomainTest.trim() === siteDomain;
+
 	return (
 		<Main className="site-settings__reset-site">
 			<NavigationHeader
@@ -183,9 +234,16 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 					<p>{ instructions }</p>
 					<p>{ translate( 'The following content will be removed:' ) }</p>
 					<ul>
-						{ contentInfo.map( ( content ) => (
-							<li key={ content }>{ content }</li>
-						) ) }
+						{ contentInfo().map( ( { message, url } ) => {
+							if ( url ) {
+								return (
+									<li key={ message }>
+										<a href={ url }>{ message }</a>
+									</li>
+								);
+							}
+							return <li key={ message }>{ message }</li>;
+						} ) }
 					</ul>
 				</ActionPanelBody>
 				<ActionPanelFooter>
@@ -208,11 +266,13 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 							id="confirmResetInput"
 							disabled={ isLoading }
 							style={ { flex: 0.5 } }
+							value={ siteDomainTest }
+							onChange={ ( event ) => setSiteDomainTest( event.currentTarget.value ) }
 						/>
 						<Button
 							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
 							onClick={ handleReset }
-							disabled={ isLoading }
+							disabled={ isLoading || ! canReset }
 							busy={ isLoading }
 						>
 							{ translate( 'Reset Site' ) }
