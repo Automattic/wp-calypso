@@ -1,11 +1,14 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import GetHelpNav from '../get-help-nav';
 import QuickLinksNav from '../quick-links-nav';
 import './style.scss';
 
 export default function OverviewSidebar() {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	return (
 		<>
@@ -27,11 +30,14 @@ export default function OverviewSidebar() {
 
 			<section>
 				<GetHelpNav />
-
 				<Button
 					href={ localizeUrl( 'https://jetpack.com/contact-support/' ) }
 					className="contact-support-button"
-					onClick={ () => {} }
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_manage_overview_contact_support_button_click' )
+						)
+					}
 				>
 					{ translate( 'Contact support' ) }
 				</Button>
