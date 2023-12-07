@@ -100,6 +100,12 @@ function StatsPWYWUpgradeSlider( {
 	currencyCode,
 	onSliderChange,
 }: StatsPWYWUpgradeSliderProps ) {
+	// Responsible for:
+	// 1. Transforming the slider settings into tiers that the slider can use.
+	// 2. Preparing the UI strings for the slider.
+	// 3. Rendering the slider.
+	// 4. Nofiying the parent component when the slider changes.
+
 	const uiStrings = useTranslatedStrings();
 
 	let steps = getPWYWPlanTiers( 0, 50 );

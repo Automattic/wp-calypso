@@ -57,10 +57,12 @@ function StatsCommercialUpgradeSlider( {
 	currencyCode,
 	onSliderChange,
 }: StatsCommercialUpgradeSliderProps ) {
-	// 1. Prepare and translate UI strings.
-	// 2. Fetch tier data.
-	// 3. Transform data for slider.
-	// 4. Render component parts.
+	// Responsible for:
+	// 1. Fetching the tiers from the API.
+	// 2. Transforming the tiers into a format that the slider can use.
+	// 3. Preparing the UI strings for the slider.
+	// 4. Rendering the slider.
+	// 5. Nofiying the parent component when the slider changes.
 
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
