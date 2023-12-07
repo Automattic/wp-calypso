@@ -130,17 +130,19 @@ Thanks\n\n`;
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
-			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 			{ ! isTierUpgradeSliderEnabled && (
-				<ButtonComponent
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					onClick={ () =>
-						gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-					}
-				>
-					{ translate( 'Get Stats' ) }
-				</ButtonComponent>
+				<>
+					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+						}
+					>
+						{ translate( 'Get Stats' ) }
+					</ButtonComponent>
+				</>
 			) }
 			{ isTierUpgradeSliderEnabled && (
 				<>
@@ -163,7 +165,7 @@ Thanks\n\n`;
 							} )
 						}
 					>
-						{ translate( 'Get Stats' ) }
+						{ translate( 'Purchase' ) }
 					</ButtonComponent>
 				</>
 			) }
