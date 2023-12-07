@@ -1,6 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useMemo } from 'react';
 import { PATTERN_CATEGORIES, PATTERN_PAGES_CATEGORIES } from '../constants';
-import { isPriorityPattern, isPagePattern } from '../utils';
+import { isPriorityPattern, isPriorityPatternV1, isPagePattern } from '../utils';
 import type { Pattern } from '../types';
 
 type CategoryPatternsMap = Record< string, Pattern[] >;
@@ -34,8 +35,32 @@ const useCategoryPatternsMap = ( patterns: Pattern[] ) => {
 				categoryPatternsMap[ category ].push( pattern );
 			}
 		};
+		const insertInOrder = (
+			categoryPatternsMap: CategoryPatternsMap,
+			category: string,
+			pattern: Pattern
+		) => {
+			if ( ! categoryPatternsMap[ category ] ) {
+				categoryPatternsMap[ category ] = [];
+			}
+			const categoryPatterns = categoryPatternsMap[ category ];
+			categoryPatterns.push( pattern );
+			// FIXME: Easy to read the ordering but not optimized
+			categoryPatternsMap[ category ] = [
+				// v2 priority patterns
+				...categoryPatterns.filter( isPriorityPattern ),
+				// v1 priority patterns
+				...( isEnabled( 'pattern-assembler/v2' )
+					? categoryPatterns.filter( isPriorityPatternV1 )
+					: [] ),
+				// Non priority patterns
+				...categoryPatterns.filter(
+					( pattern: Pattern ) => ! isPriorityPattern( pattern ) && ! isPriorityPatternV1( pattern )
+				),
+			];
+		};
 
-		patterns.reverse().forEach( ( pattern ) => {
+		patterns.forEach( ( pattern ) => {
 			Object.keys( pattern.categories ).forEach( ( category ) => {
 				const isPage = isPagePattern( pattern );
 
@@ -45,7 +70,7 @@ const useCategoryPatternsMap = ( patterns: Pattern[] ) => {
 				}
 
 				if ( ! isPage && layoutCategoryPatternsMap.hasOwnProperty( category ) ) {
-					insert( layoutCategoryPatternsMap, category, pattern );
+					insertInOrder( layoutCategoryPatternsMap, category, pattern );
 				}
 			} );
 		} );
