@@ -3,6 +3,8 @@ import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrad
 import './styles.scss';
 
 // TODO: Remove test data.
+// Currently used as a fallback if no plan info is provided.
+// Better approach is to require plan info and do some form of validation on it.
 function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
 	// From $0 to $20, in $1 increments.
 	let tiers: any[] = [];
@@ -21,36 +23,6 @@ function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
 		};
 	} );
 	return tiers;
-}
-
-// TODO: Remove this test data too.
-function getPWYWSteps() {
-	return [
-		{
-			lhValue: '$0',
-			rhValue: ':|',
-		},
-		{
-			lhValue: '50 cents',
-			rhValue: ':|',
-		},
-		{
-			lhValue: '$1',
-			rhValue: ':|',
-		},
-		{
-			lhValue: '$1.50',
-			rhValue: ':|',
-		},
-		{
-			lhValue: '$2',
-			rhValue: ':)',
-		},
-		{
-			lhValue: '$5',
-			rhValue: ':>',
-		},
-	];
 }
 
 function emojiForStep( index: number ) {
