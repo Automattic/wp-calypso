@@ -39,6 +39,9 @@ export const QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js';
 export const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
 export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
 export const PARSLEY_SCRIPT_URL = 'https://cdn.parsely.com/keys/wordpress.com/p.js?ver=3.3.2';
+export const REDDIT_TRACKING_SCRIPT = 'https://www.redditstatic.com/ads/pixel.js';
+export const WPCOM_REDDIT_PIXEL_ID = 'a2_e41564o4pd5f'; //TODO - Replace with real pixel id.
+
 export const TRACKING_IDS = {
 	bingInit: '4074038',
 	criteo: '31321',
