@@ -65,7 +65,7 @@ export default function RevokeLicenseDialog( {
 
 	const renderHeading = () => {
 		if ( isAssignedChildLicense ) {
-			return translate( 'Revoke %(product)s license from (siteUrl)s?', {
+			return translate( 'Revoke %(product)s license from %(siteUrl)s?', {
 				args: {
 					product,
 					siteUrl,
