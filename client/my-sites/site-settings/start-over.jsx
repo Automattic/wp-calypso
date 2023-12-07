@@ -99,15 +99,10 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 
 	const handleError = () => {
 		dispatch(
-			errorNotice(
-				translate(
-					'We were unable to reset your site. This could be because a request is already in progress.'
-				),
-				{
-					id: 'site-reset-failure-notice',
-					duration: 6000,
-				}
-			)
+			errorNotice( translate( 'We were unable to reset your site.' ), {
+				id: 'site-reset-failure-notice',
+				duration: 6000,
+			} )
 		);
 	};
 
