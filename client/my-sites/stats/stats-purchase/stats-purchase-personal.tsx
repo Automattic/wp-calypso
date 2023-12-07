@@ -103,6 +103,9 @@ const PersonalPurchase = ( {
 		// Value is used below to determine tier price.
 		setSubscriptionValue( index );
 	};
+	// TODO: Remove old slider code paths.
+	const showOldSlider = ! isTierUpgradeSliderEnabled;
+	// const showOldSlider = true;
 
 	return (
 		<div>
@@ -117,22 +120,26 @@ const PersonalPurchase = ( {
 				) }
 			</div>
 
-			<PricingSlider
-				className={ `${ COMPONENT_CLASS_NAME }__slider` }
-				value={ subscriptionValue }
-				renderThumb={ sliderLabel }
-				onChange={ setSubscriptionValue }
-				maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
-				minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
-			/>
+			{ showOldSlider && (
+				<>
+					<PricingSlider
+						className={ `${ COMPONENT_CLASS_NAME }__slider` }
+						value={ subscriptionValue }
+						renderThumb={ sliderLabel }
+						onChange={ setSubscriptionValue }
+						maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
+						minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
+					/>
 
-			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
-				{ translate( 'Our users pay %(value)s per month on average', {
-					args: {
-						value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
-					},
-				} ) }
-			</p>
+					<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
+						{ translate( 'Our users pay %(value)s per month on average', {
+							args: {
+								value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
+							},
+						} ) }
+					</p>
+				</>
+			) }
 
 			{ isTierUpgradeSliderEnabled && (
 				<StatsPWYWUpgradeSlider
