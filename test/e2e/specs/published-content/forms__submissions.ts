@@ -87,11 +87,9 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 			await publishedFormLocator.getByRole( 'textbox', { name: 'Phone' } ).fill( formData.phone );
 
-			// Not a true "select" element, so we can't use the native Playwright select() method.
-			await publishedFormLocator.getByRole( 'combobox' ).click();
 			await publishedFormLocator
-				.getByRole( 'option', { name: formData.hearAboutUsOption } )
-				.click();
+				.getByRole( 'combobox', { name: 'How did you hear about us?' } )
+				.selectOption( { label: formData.hearAboutUsOption } );
 
 			await publishedFormLocator
 				.getByRole( 'textbox', { name: 'Other details' } )
