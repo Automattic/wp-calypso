@@ -12,6 +12,7 @@
 			max-width: 250px;
 
 			@include breakpoint-deprecated( "<660px" ) {
+				max-width: none;
 				align-items: flex-start;
 			}
 		}
