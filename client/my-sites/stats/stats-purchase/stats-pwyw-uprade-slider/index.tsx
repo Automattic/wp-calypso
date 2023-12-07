@@ -1,5 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
+import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';
 import './styles.scss';
 
 // TODO: Remove test data.
@@ -59,7 +60,7 @@ function stepsFromSettings( settings: any, currencyCode: string ) {
 }
 
 type StatsPWYWUpgradeSliderProps = {
-	settings?: any;
+	settings?: StatsPWYWSliderSettings;
 	currencyCode?: string;
 	onSliderChange: ( index: number ) => void;
 };
