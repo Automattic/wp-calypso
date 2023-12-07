@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
@@ -6,13 +7,11 @@ import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 const SiteRecommendations = () => {
 	const followedTags = useSelector( getReaderFollowedTags ) || [];
 
-	const followedTagSlugString = followedTags.reduce(
-		( acc, tag, index ) => acc + ( index === 0 ? '' : ',' ) + tag.slug,
-		''
-	);
+	const followedTagSlugs = followedTags.map( ( tag ) => tag.slug );
+	followedTagSlugs.sort();
 
 	const { data: recommendedSites = [] } = useQuery( {
-		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugString ],
+		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs ],
 		queryFn: () =>
 			wpcom.req.get(
 				{
@@ -20,20 +19,38 @@ const SiteRecommendations = () => {
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					tags: followedTagSlugString,
+					tags: followedTagSlugs,
 					site_recs_per_card: 10,
 					tag_recs_per_card: 0,
 				}
 			),
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
 		select: ( data ) => {
-			console.log( data );
 			const recommendedBlogs = data.cards.filter( ( card ) => card.type === 'recommended_blogs' );
-			console.log( recommendedBlogs[ 0 ]?.data );
-			return data?.cards?.recommendedSites;
+			return recommendedBlogs[ 0 ]?.data;
 		},
 	} );
 
-	return <h1>Recommended Sites</h1>;
+	return (
+		<>
+			<h1>Recommended Sites</h1>
+			{ recommendedSites.map( ( site ) => (
+				<ConnectedReaderSubscriptionListItem
+					key={ site.feed_ID }
+					feedId={ site.feed_ID }
+					siteId={ site.blog_ID }
+					site={ site }
+					url={ site.URL }
+					showLastUpdatedDate={ false }
+					showNotificationSettings={ false }
+					showFollowedOnDate={ false }
+					followSource="reader-onboarding-modal"
+					disableSuggestedFollows
+				/>
+			) ) }
+		</>
+	);
 };
 
 export default SiteRecommendations;

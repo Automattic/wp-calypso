@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
@@ -18,6 +19,7 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 
 	// TODO extract this to a reusable hook as we do the same thing in discover-stream.js
+	// maybe move this to HOC to start fetch earlier...
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -48,9 +50,10 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 				) }
 			</p>
 			{ interestTags.map( ( tag ) => (
-				<TagButton title={ tag.title } slug={ tag.slug } />
+				<TagButton title={ tag.title } slug={ tag.slug } key={ tag.slug } />
 			) ) }
 		</>,
+		<SiteRecommendations />,
 	];
 
 	return (
@@ -60,8 +63,8 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 			onRequestClose={ () => setIsOpen( false ) }
 		>
 			<h1>{ translate( 'Welcome to the Reader!' ) }</h1>
-			<SiteRecommendations />
-			{ pages[ currentPage ] };
+			{ pages[ currentPage ] }
+			<Button onClick={ () => setCurrentPage( currentPage + 1 ) }>{ translate( 'Next' ) }</Button>
 		</Modal>
 	);
 }
