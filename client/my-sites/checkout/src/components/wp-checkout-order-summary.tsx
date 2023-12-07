@@ -114,6 +114,9 @@ export default function WPCheckoutOrderSummary( {
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }
+			{ shouldHideCheckoutIncludedPurchases && (
+				<CheckoutSummaryPriceListTitle>Your order</CheckoutSummaryPriceListTitle>
+			) }
 			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
 	);
@@ -856,6 +859,14 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 CheckoutSummaryFeaturesListItem.defaultProps = {
 	isSupported: true,
 };
+
+const CheckoutSummaryPriceListTitle = styled.div`
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 16px;
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	line-height: 26px;
+	margin: 1em 0 0.5em;
+`;
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
