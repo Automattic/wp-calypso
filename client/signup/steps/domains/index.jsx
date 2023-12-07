@@ -822,7 +822,7 @@ export class RenderDomainsStep extends Component {
 			Object.assign(
 				{ domainItem, domainCart },
 				useThemeHeadstartItem,
-				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				{ siteUrl: suggestion?.domain_name },
 				lastDomainSearched ? { lastDomainSearched } : {},
 				{ domainCart }
 			)
@@ -1007,9 +1007,15 @@ export class RenderDomainsStep extends Component {
 											this.props.saveSignupStep( {
 												stepName: this.props.stepName,
 												suggestion: {
-													domain_name: 'no-suggestion',
+													domain_name: false,
 												},
 											} );
+											this.props.submitSignupStep(
+												Object.assign( {
+													stepName: this.props.stepName,
+												} ),
+												Object.assign( { siteUrl: false } )
+											);
 										} }
 									>
 										{ this.props.translate( 'Remove' ) }
