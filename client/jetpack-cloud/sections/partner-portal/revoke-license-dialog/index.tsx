@@ -68,7 +68,6 @@ export default function RevokeLicenseDialog( {
 			return translate( 'Revoke %(product)s license?', {
 				args: {
 					product,
-					siteUrl,
 				},
 				comment: 'The %(product)s is replaced with the product name.',
 			} );
