@@ -97,6 +97,29 @@ describe( 'state', () => {
 				expect( newState ).toHaveProperty( 'progress', 1 );
 				expect( newState ).toHaveProperty( 'fetchingStatus', false );
 			} );
+
+			test( 'should set isSyncingInProgress to false if status become allow_retry', () => {
+				const SITE_ID = 12345;
+				const AT_STATE = {
+					status: SiteSyncStatus.PENDING,
+					progress: 1,
+					isSyncingInProgress: true,
+					syncingTargetSite: 'production',
+					syncingSourceSite: 'staging',
+					lastRestoreId: '12345',
+					fetchingStatus: false,
+					error: null,
+				};
+				reducer( AT_STATE, {} );
+				const newState = reducer(
+					AT_STATE,
+					setSiteSyncStatus( SITE_ID, SiteSyncStatus.ALLOW_RETRY )
+				);
+				expect( newState ).toHaveProperty( 'isSyncingInProgress', false );
+				expect( newState ).toHaveProperty( 'status', SiteSyncStatus.ALLOW_RETRY );
+				expect( newState ).toHaveProperty( 'progress', 1 );
+				expect( newState ).toHaveProperty( 'fetchingStatus', false );
+			} );
 		} );
 	} );
 } );
