@@ -108,6 +108,12 @@ const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId, isOdysseySta
 
 	const { data } = usePlanUsageQuery( siteId );
 
+	// If there's no limit, don't show the component.
+	// Site with legacy plans or no plans at all will have a null limit.
+	if ( data?.views_limit === null ) {
+		return null;
+	}
+
 	return (
 		<div className="stats__plan-usage">
 			<PlanUsage
