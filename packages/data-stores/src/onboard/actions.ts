@@ -539,10 +539,6 @@ export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
 	paidSubscribers,
 } );
 
-export const setHostingTrialAvailable = () => ( {
-	type: 'SET_HOSTING_TRIAL_AVAILABLE' as const,
-} );
-
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -601,5 +597,4 @@ export type OnboardAction = ReturnType<
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
 	| typeof setPaidSubscribers
-	| typeof setHostingTrialAvailable
 >;
