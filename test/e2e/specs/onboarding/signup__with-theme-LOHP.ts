@@ -67,13 +67,25 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			const themeCard = await themeContainer.locator( '.lp-image-top-row' ).last();
 			await themeCard.hover();
 
-			await themeCard.getByText( 'Start with this theme' ).click();
-		} );
+			const themeButton = themeCard.getByText( 'Start with this theme' );
+			const calypsoUrl = new URL( DataHelper.getCalypsoURL() );
+			const themeButtonUrl = new URL( ( await themeButton.getAttribute( 'href' ) ) || '' );
 
-		it( 'Get theme slug', async function () {
-			const pageMatch = new URL( page.url() ).search.match( 'theme=([a-z]*)?&' );
+			if ( calypsoUrl.hostname !== 'wordpress.com' ) {
+				// Reroute the click to the current Calypso URL.
+				await page.route( themeButtonUrl.href, async ( route ) => {
+					themeButtonUrl.host = calypsoUrl.host;
+					themeButtonUrl.protocol = calypsoUrl.protocol;
 
+					await route.abort();
+					await page.goto( themeButtonUrl.href );
+				} );
+			}
+			// Get theme slug
+			const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
 			themeSlug = pageMatch?.[ 1 ] || null;
+
+			await themeCard.getByText( 'Start with this theme' ).click();
 		} );
 
 		it( 'Sign up as new user', async function () {
