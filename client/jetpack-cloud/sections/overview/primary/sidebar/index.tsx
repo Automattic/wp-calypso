@@ -27,9 +27,7 @@ export default function OverviewSidebar() {
 
 			<section>
 				<GetHelpNav />
-			</section>
 
-			<section>
 				<Button
 					href={ localizeUrl( 'https://jetpack.com/contact-support/' ) }
 					className="contact-support-button"
