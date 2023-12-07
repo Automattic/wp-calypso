@@ -245,14 +245,13 @@ function embedStory( domNode ) {
 
 function embedTiledGallery( domNode ) {
 	debug( 'processing tiled gallery for', domNode );
-	const galleryToReplace = domNode.querySelector( '.tiled-gallery__gallery' );
 	const galleryItems = domNode.getElementsByClassName( 'tiled-gallery__item' );
 
 	if ( galleryItems && galleryItems.length ) {
 		const imageItems = Array.from( galleryItems );
 
 		// Replace the gallery with updated markup
-		createRoot( galleryToReplace ).render(
+		createRoot( domNode ).render(
 			<div className="gallery-container">
 				{ imageItems.map( ( item ) => {
 					const itemImage = item.querySelector( 'img' );
