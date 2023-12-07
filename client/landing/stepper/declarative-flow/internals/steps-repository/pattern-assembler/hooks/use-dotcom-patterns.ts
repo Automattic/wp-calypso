@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { PATTERN_CATEGORIES } from '../constants';
@@ -15,7 +16,11 @@ const useDotcomPatterns = (
 				method: 'GET',
 				apiVersion: '1.1',
 				query: new URLSearchParams( {
-					tags: 'assembler,assembler_priority',
+					tags: isEnabled( 'pattern-assembler/v2' )
+						? 'assembler_v2,assembler_v2_priority,assembler,assembler_priority'
+						: // Pages are fetched with assembler_priority.
+						  // There are more pages tagged with assembler_page that still aren't offered in Assembler.
+						  'assembler,assembler_priority',
 					categories: PATTERN_CATEGORIES.join( ',' ),
 				} ).toString(),
 			} );
