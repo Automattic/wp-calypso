@@ -6,75 +6,21 @@
  */
 html[dir="rtl"] {
 	.import__onboarding-page {
-		.list__importer-action .action-card__button-container {
-			button,
-			a {
-				text-align: left;
-
-				svg {
-					transform: rotate(180deg);
-				}
-			}
+		.list__importers-item-card svg:not(.importer__service-icon) {
+			transform: rotate(180deg);
 		}
-
-		.importer__service-icon {
-			float: right;
-		}
-	}
-}
-
-.is-section-stepper > .wpcom-site > .import-list {
-	padding: 2rem 0;
-
-	@include break-small {
-		padding: 3.75rem 0 0 0;
 	}
 }
 
 .import__onboarding-page {
-	.import-layout {
-		flex-direction: column;
-	}
-
 	.list__wrapper {
-		margin-left: auto !important;
-		margin-right: auto !important;
-
-		.import__heading {
-			margin-bottom: 2.5rem;
-
-			.onboarding-title {
-				width: 100%;
-				max-width: 100%;
-			}
-		}
-
 		@include break-wide {
 			max-width: 1032px;
 		}
 
-		h3 {
-			font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			color: var(--studio-gray-90);
-			margin-bottom: 1em;
-		}
-
-		img {
-			display: none;
-
-			@include break-small {
-				display: block;
-			}
-		}
-
-		.list__importers-primary,
-		.list__importers-secondary {
+		.list__importers {
 			margin: 0 auto 1.5rem auto;
-			min-width: 100%;
-
-			@include break-small {
-				min-width: 433px;
-			}
+			max-width: 433px;
 		}
 	}
 }

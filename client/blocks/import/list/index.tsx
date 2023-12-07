@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormLabel, SelectDropdown } from '@automattic/components';
-import { Title, SubTitle } from '@automattic/onboarding';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import { useDispatch } from 'calypso/state';
 import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
@@ -72,35 +72,35 @@ export default function ListStep( props: Props ) {
 	useEffect( recordImportList, [] );
 
 	return (
-		<>
-			<div className="import-layout list__wrapper">
-				<div className="import__heading import__heading-center">
-					<Title>{ __( 'Import content from another platform' ) }</Title>
-					<SubTitle>{ __( 'Select the platform where your content lives' ) }</SubTitle>
-				</div>
-				<div className="list__importers list__importers-primary">
-					{ primaryListOptions.map( ( x ) => (
-						<Button
-							key={ x.value }
-							className="list__importers-item-card"
-							onClick={ () => onImporterSelect( x.value ) }
-						>
-							<ImporterLogo icon={ x.icon } />
-							<h2>{ x.label }</h2>
-							<Icon icon={ chevronRight } />
-						</Button>
-					) ) }
-				</div>
-
-				<div className="list__importers list__importers-secondary">
-					<FormLabel>{ __( 'Other platforms' ) }</FormLabel>
-					<SelectDropdown
-						selectedText={ __( 'Select other platform' ) }
-						options={ secondaryListOptions }
-						onSelect={ ( x: ImporterOption ) => onImporterSelect( x.value ) }
-					></SelectDropdown>
-				</div>
+		<div className="list__wrapper">
+			<div className="import__header">
+				<FormattedHeader
+					headerText={ __( 'Import content from another platform' ) }
+					subHeaderText={ __( 'Select the platform where your content lives' ) }
+				/>
 			</div>
-		</>
+			<div className="list__importers list__importers-primary">
+				{ primaryListOptions.map( ( x ) => (
+					<Button
+						key={ x.value }
+						className="list__importers-item-card"
+						onClick={ () => onImporterSelect( x.value ) }
+					>
+						<ImporterLogo icon={ x.icon } />
+						<h2>{ x.label }</h2>
+						<Icon icon={ chevronRight } />
+					</Button>
+				) ) }
+			</div>
+
+			<div className="list__importers list__importers-secondary">
+				<FormLabel>{ __( 'Other platforms' ) }</FormLabel>
+				<SelectDropdown
+					selectedText={ __( 'Select other platform' ) }
+					options={ secondaryListOptions }
+					onSelect={ ( x: ImporterOption ) => onImporterSelect( x.value ) }
+				></SelectDropdown>
+			</div>
+		</div>
 	);
 }
