@@ -34,7 +34,7 @@ const usePostNotifyMeOfNewCommentsMutation = () => {
 					send_comments: params.sendComments,
 				},
 				isLoggedIn,
-				apiVersion: '1.1',
+				apiVersion: '2',
 			} );
 			if ( ! response.updated ) {
 				throw new Error(
