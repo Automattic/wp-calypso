@@ -654,5 +654,5 @@ function wpcom_global_styles_is_previewing_premium_theme_with_premium_plan( $blo
 	// Check for a Premium plan or higher by checking if can use global styles.
 	$has_premium_plan_or_higher = wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id );
 
-	return $has_premium_plan_or_higher;
+	return ! $has_premium_plan_or_higher;
 }
