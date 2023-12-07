@@ -241,6 +241,7 @@ export default function LicensePreview( {
 							attachedAt={ attachedAt }
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
+							isChildLicense={ isChildLicense }
 						/>
 					) : (
 						<Button onClick={ open } className="license-preview__toggle" borderless>
@@ -266,6 +267,7 @@ export default function LicensePreview( {
 						revokedAt={ revokedAt }
 						onCopyLicense={ onCopyLicense }
 						licenseType={ licenseType }
+						isChildLicense={ isChildLicense }
 					/>
 				) ) }
 		</div>

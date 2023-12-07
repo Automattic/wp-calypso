@@ -19,6 +19,7 @@ interface Props {
 	revokedAt: string | null;
 	onCopyLicense?: () => void;
 	licenseType: LicenseType;
+	isChildLicense?: boolean;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -36,6 +37,7 @@ export default function LicenseDetails( {
 	revokedAt,
 	onCopyLicense = noop,
 	licenseType,
+	isChildLicense,
 }: Props ) {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
@@ -100,6 +102,7 @@ export default function LicenseDetails( {
 				licenseState={ licenseState }
 				licenseType={ licenseType }
 				hasDownloads={ hasDownloads }
+				isChildLicense={ isChildLicense }
 			/>
 		</Card>
 	);

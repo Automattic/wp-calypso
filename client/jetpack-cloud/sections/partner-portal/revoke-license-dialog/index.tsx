@@ -15,6 +15,7 @@ interface Props {
 	product: string;
 	siteUrl: string | null;
 	onClose: ( action?: string ) => void;
+	isChildLicense?: boolean;
 }
 
 export default function RevokeLicenseDialog( {
@@ -22,6 +23,7 @@ export default function RevokeLicenseDialog( {
 	product,
 	siteUrl,
 	onClose,
+	isChildLicense,
 	...rest
 }: Props ) {
 	let close = noop;
@@ -47,7 +49,9 @@ export default function RevokeLicenseDialog( {
 	const revoke = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_revoke_dialog_revoke' ) );
 		mutation.mutate( { licenseKey } );
-	}, [ licenseKey, mutation.mutate ] );
+	}, [ dispatch, licenseKey, mutation ] );
+
+	const isAssignedChildLicense = isChildLicense && siteUrl;
 
 	const buttons = [
 		<Button disabled={ false } onClick={ close }>
@@ -59,6 +63,78 @@ export default function RevokeLicenseDialog( {
 		</Button>,
 	];
 
+	const renderHeading = () => {
+		if ( isAssignedChildLicense ) {
+			return translate( 'Revoke %(product)s license from (siteUrl)s?', {
+				args: {
+					product,
+					siteUrl,
+				},
+				comment:
+					'The %(product)s and %(siteUrl)s placeholders are replaced with the product name and site URL, respectively.',
+			} );
+		}
+
+		return translate( 'Are you sure you want to revoke this license?' );
+	};
+
+	const renderContent = () => {
+		if ( isAssignedChildLicense ) {
+			return (
+				<p>
+					{ translate(
+						'This license will be revoked from {{b}}%(siteUrl)s{{/b}}, and a new {{b}}%(product)s{{/b}} license will be created and added to the bundle.',
+						{
+							args: {
+								product,
+								siteUrl,
+							},
+							components: {
+								b: <b />,
+							},
+							comment:
+								'The %(siteUrl)s and %(product)s placeholders are replaced with the site URL and product name, respectively.',
+						}
+					) }
+				</p>
+			);
+		}
+
+		return (
+			<>
+				<p>
+					{ translate(
+						'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
+					) }
+					&nbsp;
+					<a
+						className="revoke-license-dialog__learn-more"
+						href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
+						target="_blank"
+						rel="noreferrer noopener"
+					>
+						{ translate( 'Learn more about revoking licenses' ) }
+						&nbsp;
+						<Gridicon icon="external" size={ 18 } />
+					</a>
+				</p>
+				<ul>
+					{ siteUrl && (
+						<li>
+							<strong>{ translate( 'Site:' ) }</strong> { siteUrl }
+						</li>
+					) }
+					<li>
+						<strong>{ translate( 'Product:' ) }</strong> { product }
+					</li>
+					<li>
+						<strong>{ translate( 'License:' ) }</strong> <code>{ licenseKey }</code>
+					</li>
+				</ul>
+			</>
+		);
+	};
+
 	return (
 		<Dialog
 			isVisible={ true }
@@ -67,38 +143,10 @@ export default function RevokeLicenseDialog( {
 			onClose={ close }
 			{ ...rest }
 		>
-			<h2 className="revoke-license-dialog__heading">
-				{ translate( 'Are you sure you want to revoke this license?' ) }
-			</h2>
-			<p>
-				{ translate(
-					'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
-				) }
-				&nbsp;
-				<a
-					className="revoke-license-dialog__learn-more"
-					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
-					target="_blank"
-					rel="noreferrer noopener"
-				>
-					{ translate( 'Learn more about revoking licenses' ) }
-					&nbsp;
-					<Gridicon icon="external" size={ 18 } />
-				</a>
-			</p>
-			<ul>
-				{ siteUrl && (
-					<li>
-						<strong>{ translate( 'Site:' ) }</strong> { siteUrl }
-					</li>
-				) }
-				<li>
-					<strong>{ translate( 'Product:' ) }</strong> { product }
-				</li>
-				<li>
-					<strong>{ translate( 'License:' ) }</strong> <code>{ licenseKey }</code>
-				</li>
-			</ul>
+			<h2 className="revoke-license-dialog__heading">{ renderHeading() }</h2>
+
+			{ renderContent() }
+
 			<p className="revoke-license-dialog__warning">
 				<Gridicon icon="info-outline" size={ 18 } />
 
