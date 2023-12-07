@@ -32,7 +32,10 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 	// Should consider validating the inputs before displaying them.
 	return tiers.map( ( tier ) => {
 		// No transformation needed (yet).
-		const price = tier.price;
+		let price = '';
+		if ( typeof tier.price === 'string' ) {
+			price = tier.price;
+		}
 		// Views can be a number or a string so address that.
 		let views = '';
 		if ( typeof tier.views === 'string' ) {
