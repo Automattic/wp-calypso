@@ -44,12 +44,18 @@ function emojiForStep( index: number ) {
 	return String.fromCodePoint( 0x1f525 );
 }
 
-function stepsFromSettings( settings: any, currencyCode: string ) {
+// Takes a StatsPWYWSliderSettings object and returns an array of slider steps.
+// The slider wants string values for the left and right labels.
+// We ignore the emoji thresholds and use our own.
+function stepsFromSettings(
+	{ sliderStepPrice, minSliderPrice, maxSliderPrice }: StatsPWYWSliderSettings,
+	currencyCode: string
+) {
 	const sliderSteps = [];
-	const maxSliderValue = Math.floor( settings.maxSliderPrice / settings.sliderStepPrice );
-	const minSliderValue = Math.round( settings.minSliderPrice / settings.sliderStepPrice );
+	const maxSliderValue = Math.floor( maxSliderPrice / sliderStepPrice );
+	const minSliderValue = Math.round( minSliderPrice / sliderStepPrice );
 	for ( let i = minSliderValue; i <= maxSliderValue; i++ ) {
-		const rawValue = settings.minSliderPrice + i * settings.sliderStepPrice;
+		const rawValue = minSliderPrice + i * sliderStepPrice;
 		sliderSteps.push( {
 			raw: rawValue,
 			lhValue: formatCurrency( rawValue, currencyCode ),
@@ -83,7 +89,6 @@ function StatsPWYWUpgradeSlider( {
 	}
 	const marks = [ 0, steps.length - 1 ];
 
-	// TODO: Wire up parent to handle changes.
 	const handleSliderChanged = ( index: number ) => {
 		onSliderChange( index );
 	};
