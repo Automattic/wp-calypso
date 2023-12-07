@@ -70,7 +70,7 @@ const linkInBio: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/patterns`,
-			pageTitle: 'Link%20in%20Bio',
+			pageTitle: 'Link% in Bio',
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
