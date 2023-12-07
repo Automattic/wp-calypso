@@ -45,10 +45,6 @@ class Subscribe_Auto_Block {
 	 * Enqueue block editor scripts.
 	 */
 	public function enqueue_scripts() {
-		// if ( ! has_block( 'a8c/subscribe-auto' ) ) {
-		// 	return;
-		// }
-
 		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/subscribe-auto-block.asset.php';
 		$script_dependencies = $asset_file['dependencies'];
 		wp_enqueue_script(
@@ -66,10 +62,6 @@ class Subscribe_Auto_Block {
 	 * Enqueue block styles.
 	 */
 	public function enqueue_styles() {
-		// if ( ! has_block( 'a8c/subscribe-auto' ) ) {
-		// 	return;
-		// }
-
 		$style_file = is_rtl()
 			? 'subscribe-auto-block.rtl.css'
 			: 'subscribe-auto-block.css';
@@ -104,8 +96,7 @@ class Subscribe_Auto_Block {
 	 */
 	public function render_a8c_subscribe_auto_block( $attributes, $content ) {
 		$subscribe_block_html = do_blocks( '<!-- wp:jetpack/subscriptions /-->' );
-		$subscribe_block_html = 'temp placeholder';
-		return "<div style=\"background: yellow; padding 10px; color: black;\">" . $subscribe_block_html . "</div>";
+		return '<div class="a8c-subscribe-auto">' . $subscribe_block_html . '</div>';
 	}
 
 	public static function insert_subscribe_auto_block( $hooked_blocks, $relative_position, $anchor_block, $context ) {
@@ -113,7 +104,7 @@ class Subscribe_Auto_Block {
 			if ( $context->area == 'footer' &&
 				$relative_position == 'before' &&
 				$anchor_block == 'core/pattern' ) {
-				$hooked_blocks[] = 'jetpack/subscribe';
+				$hooked_blocks[] = 'a8c/subscribe-auto';
 			}
 		}
 	
@@ -122,15 +113,3 @@ class Subscribe_Auto_Block {
 }
 
 add_filter( 'hooked_block_types', [ 'A8C\FSE\Subscribe_Auto_Block', 'insert_subscribe_auto_block' ], 10, 4 );
-
-
-
-
-
-		// $hooked_blocks[] = 'a8c/subscribe-auto';
-
-
-				// echo '<pre style="font-size: 10px;">';
-				// var_dump( [ 'context' => $context, 'anchor_block' => $anchor_block, 'relative_position' => $relative_position, 'hooked_blocks' => 'a8c/subscribe-auto' ] );
-				// echo '</pre>';
-				// echo '<hr />';

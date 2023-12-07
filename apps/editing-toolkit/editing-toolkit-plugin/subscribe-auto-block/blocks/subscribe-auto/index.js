@@ -15,8 +15,6 @@ const icon = (
 	</svg>
 );
 
-console.log( 'HELLO THERE!!' );
-
 registerBlockType( metadata.name, {
 	title: __( 'Subscribe Auto Block', 'full-site-editing' ),
 	description: __( 'Automatically inserts subsribe block on your site.', 'full-site-editing' ),
