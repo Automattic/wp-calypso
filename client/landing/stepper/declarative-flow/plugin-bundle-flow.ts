@@ -13,7 +13,6 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -23,7 +22,12 @@ import {
 	ProvidedDependencies,
 	StepperStep,
 } from './internals/types';
-import pluginBundleData from './plugin-bundle-data';
+import {
+	initialBundleSteps,
+	customBundleSteps,
+	beforeCustomBundleSteps,
+	afterCustomBundleSteps,
+} from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -34,19 +38,16 @@ const pluginBundleFlow: Flow = {
 	useSteps() {
 		const pluginSlug = useSitePluginSlug();
 
-		const steps = [
-			{
-				slug: 'getCurrentThemeSoftwareSets',
-				component: GetCurrentThemeSoftwareSets,
-			},
-		];
-
 		let bundlePluginSteps: StepperStep[] = [];
 
-		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
-			bundlePluginSteps = pluginBundleData[ pluginSlug ];
+		if ( pluginSlug && customBundleSteps.hasOwnProperty( pluginSlug ) ) {
+			bundlePluginSteps = [
+				...beforeCustomBundleSteps,
+				...customBundleSteps[ pluginSlug ],
+				...afterCustomBundleSteps,
+			];
 		}
-		return [ ...steps, ...bundlePluginSteps ];
+		return [ ...initialBundleSteps, ...bundlePluginSteps ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
