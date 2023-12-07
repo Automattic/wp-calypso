@@ -46,11 +46,11 @@ function emojiForStep( index: number ) {
 
 // Takes a StatsPWYWSliderSettings object and returns an array of slider steps.
 // The slider wants string values for the left and right labels.
-// We ignore the emoji thresholds and use our own.
-function stepsFromSettings(
-	{ sliderStepPrice, minSliderPrice, maxSliderPrice }: StatsPWYWSliderSettings,
-	currencyCode: string
-) {
+function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: string ) {
+	// Pull tier strategy from settings.
+	// We ignore the emoji thresholds and use our own.
+	const { sliderStepPrice, minSliderPrice, maxSliderPrice } = settings;
+	// Set up our slider steps based on above strategy.
 	const sliderSteps = [];
 	const maxSliderValue = Math.floor( maxSliderPrice / sliderStepPrice );
 	const minSliderValue = Math.round( minSliderPrice / sliderStepPrice );
