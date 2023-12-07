@@ -73,7 +73,7 @@ function AcceptTermsOfServiceCheckbox( {
 		onChange( event.target.checked );
 	};
 
-	const showToSFoldableCard = useToSFoldableCard();
+	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
 
 	return (
 		<FormLabel>

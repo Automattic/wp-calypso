@@ -68,13 +68,11 @@ describe( 'PlanFeatures2023GridActions', () => {
 		const contactSupport = 'Contact support';
 		const defaultProps = {
 			availableForPurchase: true,
-			canUserManageCurrentPlan: true,
 			className: '',
 			current: false,
 			freePlan: false,
 			isInSignup: false,
 			onUpgradeClick: jest.fn(),
-			flowName: 'foo-flow',
 			isWpcomEnterpriseGridPlan: false,
 			isStuck: false,
 			showMonthlyPrice: true,

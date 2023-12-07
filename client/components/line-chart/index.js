@@ -1,3 +1,4 @@
+import { Tooltip } from '@automattic/components';
 import { extent as d3Extent } from 'd3-array';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
@@ -8,7 +9,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import D3Base from 'calypso/components/d3-base';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Tooltip from 'calypso/components/tooltip';
 import LineChartLegend from './legend';
 
 import './style.scss';

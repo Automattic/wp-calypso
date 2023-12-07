@@ -35,7 +35,7 @@ const boot = ( currentUser ) => {
 	} );
 
 	initLoginSection( ( route, ...handlers ) => page( route, ...handlers, render ) );
-	page.start( { decodeURLComponents: false } );
+	page.start();
 };
 
 window.AppBoot = async () => {

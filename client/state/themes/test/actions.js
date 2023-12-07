@@ -1420,6 +1420,7 @@ describe( 'actions', () => {
 		);
 		const livePreviewStartAction = {
 			type: 'LIVE_PREVIEW_START',
+			themeId: 'pendant',
 			meta: {
 				analytics: [
 					{

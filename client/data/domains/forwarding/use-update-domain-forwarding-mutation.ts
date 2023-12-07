@@ -18,7 +18,7 @@ export default function useUpdateDomainForwardingMutation(
 			wp.req.post( `/sites/all/domain/${ domainName }/redirects`, forwarding ),
 		...queryOptions,
 		onSuccess() {
-			queryClient.invalidateQueries( domainForwardingQueryKey( domainName ) );
+			queryClient.invalidateQueries( { queryKey: domainForwardingQueryKey( domainName ) } );
 			queryOptions.onSuccess?.();
 		},
 		onError( error: DomainsApiError ) {

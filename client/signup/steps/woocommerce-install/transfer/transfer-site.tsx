@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { useState, useEffect } from 'react';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -34,7 +33,7 @@ export default function TransferSite( {
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+	const wcAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	const { transfer, error: transferError } = useSelector( ( state ) =>
 		getLatestAtomicTransfer( state, siteId )
@@ -137,10 +136,10 @@ export default function TransferSite( {
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
-				page( wcAdmin );
+				window.location.assign( wcAdminUrl );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin, trackRedirect ] );
+	}, [ siteId, softwareApplied, wcAdminUrl, trackRedirect ] );
 
 	// Timeout threshold for the install to complete.
 	useEffect( () => {
@@ -158,14 +157,9 @@ export default function TransferSite( {
 		}, 1000 * 180 );
 
 		return () => {
-			window?.clearTimeout( timeId );
+			clearTimeout( timeId );
 		};
 	}, [ onFailure, transferFailed ] );
 
-	return (
-		<>
-			{ transferFailed && <Error /> }
-			{ ! transferFailed && <Progress progress={ progress } /> }
-		</>
-	);
+	return transferFailed ? <Error /> : <Progress progress={ progress } />;
 }

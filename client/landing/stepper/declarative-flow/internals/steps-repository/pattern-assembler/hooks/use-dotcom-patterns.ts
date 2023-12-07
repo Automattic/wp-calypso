@@ -5,7 +5,7 @@ import type { Pattern } from '../types';
 
 const useDotcomPatterns = (
 	lang?: string,
-	queryOptions: UseQueryOptions< any, unknown, Pattern[] > = {}
+	queryOptions: Omit< UseQueryOptions< any, unknown, Pattern[] >, 'queryKey' > = {}
 ): Pattern[] => {
 	const { data } = useQuery< any, unknown, Pattern[] >( {
 		queryKey: [ lang, 'patterns' ],

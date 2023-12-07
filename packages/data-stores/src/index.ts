@@ -33,6 +33,7 @@ export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';
 export * from './mutations/use-domains-bulk-actions-mutation';
 export * from './queries/use-bulk-domain-update-status-query';
+export * from './mutations/use-site-reset-mutation';
 
 const { SubscriptionManager } = Reader;
 

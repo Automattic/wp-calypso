@@ -56,6 +56,11 @@ export type PricingSliderProps = {
 	renderThumb?: RenderThumbFunction;
 
 	/**
+	 * Additional classname to be applied to the slider thumb.
+	 */
+	thumbClassName?: string;
+
+	/**
 	 * The marks on the slider, represented as an array of numbers or true.
 	 * Passing true will enable marks for every step on the slider.
 	 */

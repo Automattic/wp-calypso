@@ -46,7 +46,11 @@ const getRelatedPluginsQueryParams = (
 export const useGetRelatedPlugins = (
 	pluginSlug: string,
 	size = 4,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions, 'queryKey' > = {}
 ): UseQueryResult => {
 	return useQuery( {
 		...getRelatedPluginsQueryParams( pluginSlug, size ),

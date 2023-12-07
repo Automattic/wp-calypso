@@ -218,7 +218,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( domain?.pendingRegistration ) {
+		if ( domain?.pendingRegistration || domain?.pendingRegistrationAtRegistry ) {
 			return (
 				<TransferUnavailableNotice
 					message={ translate(

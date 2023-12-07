@@ -23,6 +23,7 @@ import {
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
@@ -126,6 +127,17 @@ export default function SitesOverview() {
 			refetch();
 		}
 	}, [ refetch, jetpackSiteDisconnected ] );
+
+	useEffect( () => {
+		if ( isError ) {
+			dispatch(
+				errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ), {
+					id: 'dashboard-sites-fetch-failure',
+					duration: 5000,
+				} )
+			);
+		}
+	}, [ isError, translate, dispatch ] );
 
 	const pageTitle = translate( 'Sites' );
 

@@ -838,3 +838,9 @@ $button-border: 4px;
 		text-decoration: none;
 	}
 }
+.theme__sheet-reviews-summary {
+
+	@include breakpoint-deprecated( "<960px" ) {
+		padding-left: 1.5rem;
+	}
+}

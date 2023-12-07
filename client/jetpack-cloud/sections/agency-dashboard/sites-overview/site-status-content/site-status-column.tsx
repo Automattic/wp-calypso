@@ -1,9 +1,8 @@
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Tooltip } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';

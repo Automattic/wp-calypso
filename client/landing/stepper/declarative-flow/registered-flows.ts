@@ -69,11 +69,17 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'with-theme-assembler': () =>
 		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
 
+	'assembler-first': () =>
+		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
+
+	'update-options': () =>
+		import( /* webpackChunkName: "update-options-flow" */ '../declarative-flow/update-options' ),
 
 	'domain-upsell': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/domain-upsell' ),

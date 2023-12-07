@@ -15,6 +15,7 @@ class DomainSuggestion extends Component {
 		premiumDomain: PropTypes.object,
 		priceRule: PropTypes.string,
 		price: PropTypes.string,
+		renewPrice: PropTypes.string,
 		domain: PropTypes.string,
 		hidePrice: PropTypes.bool,
 		showChevron: PropTypes.bool,
@@ -29,6 +30,7 @@ class DomainSuggestion extends Component {
 			hidePrice,
 			premiumDomain,
 			price,
+			renewPrice,
 			priceRule,
 			salePrice,
 			isSignupStep,
@@ -47,6 +49,7 @@ class DomainSuggestion extends Component {
 		return (
 			<DomainProductPrice
 				price={ price }
+				renewPrice={ renewPrice }
 				salePrice={ salePrice }
 				rule={ priceRule }
 				isSignupStep={ isSignupStep }

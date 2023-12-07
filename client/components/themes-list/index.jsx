@@ -18,6 +18,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteThemeInstallUrl } from 'calypso/state/sites/selectors';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
@@ -82,6 +83,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		const shouldGoToAssemblerStep = isAssemblerSupported();
 		props.recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_cta_click', {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
+			is_logged_in: isLoggedIn,
 		} );
 
 		const destinationUrl = getSiteAssemblerUrl( {
@@ -153,6 +155,7 @@ ThemesList.propTypes = {
 	isActive: PropTypes.func,
 	getPrice: PropTypes.func,
 	isInstalling: PropTypes.func,
+	isLivePreviewStarted: PropTypes.func,
 	// i18n function provided by localize()
 	translate: PropTypes.func,
 	placeholderCount: PropTypes.number,
@@ -178,6 +181,7 @@ ThemesList.defaultProps = {
 	isActive: () => false,
 	getPrice: () => '',
 	isInstalling: () => false,
+	isLivePreviewStarted: () => false,
 };
 
 export function ThemeBlock( props ) {
@@ -211,8 +215,8 @@ export function ThemeBlock( props ) {
 			index={ index }
 			theme={ theme }
 			active={ props.isActive( theme.id ) }
+			loading={ props.isInstalling( theme.id ) || props.isLivePreviewStarted( theme.id ) }
 			price={ props.getPrice( theme.id ) }
-			installing={ props.isInstalling( theme.id ) }
 			upsellUrl={ props.upsellUrl }
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }
@@ -235,6 +239,9 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 			canvas: 'edit',
 			assembler: '1',
 		} )
+	);
+	const siteThemeInstallUrl = useSelector( ( state ) =>
+		getSiteThemeInstallUrl( state, selectedSite?.ID )
 	);
 	const assemblerCtaData = usePatternAssemblerCtaData();
 
@@ -324,9 +331,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 					search_term: searchTerm,
 					destination: 'upload-theme',
 				} ),
-			url: isAtomic
-				? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
-				: `/themes/upload/${ selectedSite.slug }`,
+			url: isAtomic ? siteThemeInstallUrl : `/themes/upload/${ selectedSite.slug }`,
 			buttonText: translate( 'Upload theme' ),
 		} );
 	} else {

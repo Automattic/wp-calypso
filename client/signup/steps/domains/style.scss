@@ -38,6 +38,9 @@
 
 	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
+		.spinner {
+			width: 100%;
+		}
 	}
 
 	.search-component .search-component__icon-navigation {
@@ -145,17 +148,16 @@
 		}
 
 		.domains__domain-cart-rows {
-			.domains__domain-cart-row {
-				padding-bottom: 6px;
-				padding-top: 6px;
-			}
-
 			.domains__domain-cart-row > div {
 				display: flex;
 				justify-content: space-between;
+				padding-top: 6px;
+				column-gap: 10px;
 			}
 			.domains__domain-cart-row > div:nth-child(2) {
 				display: block;
+				padding-bottom: 6px;
+				padding-top: 0;
 			}
 
 			.savings-message {
@@ -178,9 +180,8 @@
 					text-overflow: ellipsis;
 				}
 
-				&.limit-width {
-					width: 35%;
-				}
+				width: 0;
+				flex-grow: 1;
 			}
 
 			.domains__domain-cart-remove {
@@ -198,8 +199,7 @@
 
 				del {
 					font-size: 0.75rem;
-					margin-right: 7px;
-					margin-left: 7px;
+					margin-right: 10px;
 				}
 			}
 

@@ -239,7 +239,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const hasDiscount = discountPercentage > 0;
 	// Display the discount percentage if it's not an introductory offer
 	// or if it's a Jetpack 2 or 3-year plan
-	const canDisplayDiscountPercentage = ! isIntroductoryOffer || ( isJetpack && introCount > 1 );
+	const canDisplayDiscountPercentage = ! isIntroductoryOffer || ( isJetpack && introCount >= 1 );
 
 	return (
 		<Variant>

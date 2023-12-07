@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { flowRight, pick } from 'lodash';
 import { Component } from 'react';
@@ -167,11 +168,11 @@ class SiteSettingsFormDiscussion extends Component {
 					) }
 				/>
 				<SupportInfo
-					text={ translate( 'Allow readers to use markdown in comments.' ) }
+					text={ translate( 'Allow readers to use markdown in comments' ) }
 					link={
 						isJetpack && ! isAtomic
 							? 'https://jetpack.com/support/markdown/'
-							: 'https://wordpress.com/support/markdown-quick-reference/'
+							: localizeUrl( 'https://wordpress.com/support/markdown-quick-reference/' )
 					}
 				/>
 				<ToggleControl

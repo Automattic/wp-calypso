@@ -43,6 +43,11 @@
 				transform-origin: top left;
 				translate: 0 -10px;
 			}
+
+			.home-site-preview__thumbnail-placeholder {
+				height: 100%;
+				@include placeholder();
+			}
 		}
 
 		.home-site-preview__thumbnail-label {

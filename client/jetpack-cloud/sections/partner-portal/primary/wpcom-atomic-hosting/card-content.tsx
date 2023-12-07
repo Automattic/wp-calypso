@@ -1,10 +1,9 @@
 import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
+import { Button, JetpackLogo, WooLogo, CloudLogo, Tooltip } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useDispatch } from 'calypso/state';
@@ -110,15 +109,21 @@ export default function CardContent( {
 		return {
 			title: plan?.getTitle?.().toString() || '',
 			description: getProductTagline( planSlug ) || '',
-			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
+			price: formatCurrency(
+				parseFloat( agencyProduct?.amount as string ) || 0,
+				agencyProduct?.currency || 'USD',
+				{
+					stripZeros: true,
+				}
+			),
 			interval: 'month',
 			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			jetpackFeatures: jetpackFeaturesObject.map( ( feature ) => ( {
-				text: feature?.getTitle?.()?.toString() || '',
-				tooltipText: feature?.getDescription?.()?.toString() || '',
+				text: ( feature?.getTitle?.() as string ) || '',
+				tooltipText: ( feature?.getDescription?.() as string ) || '',
 			} ) ),
 			storage: '50GB',
 			logo: getLogo( planSlug ),
@@ -138,7 +143,7 @@ export default function CardContent( {
 		dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
 		dispatch( recordTracksEvent( getCTAEventName( planSlug ) ) );
 
-		issueLicenses( [ productSlug ] );
+		issueLicenses( [ { slug: productSlug, quantity: 1 } ] );
 
 		setIsRequesting( false );
 		page.redirect( `/dashboard?provisioning=true` );

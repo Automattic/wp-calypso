@@ -88,6 +88,10 @@ $mobile-icon-height: 175px;
 		box-sizing: border-box;
 		padding: 0;
 
+		.plugin-details-header__number-reviews-link {
+			font-size: $font-body-small;
+		}
+
 		@media screen and ( max-width: 1280px ) {
 			width: 50%;
 			padding-bottom: 12px;

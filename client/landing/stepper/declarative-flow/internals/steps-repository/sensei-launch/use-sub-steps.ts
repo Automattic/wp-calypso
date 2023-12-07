@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 
-export const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
-
 /**
  * A step in a linear installation process.
  * @param {number} retries Number of times this step was executed.

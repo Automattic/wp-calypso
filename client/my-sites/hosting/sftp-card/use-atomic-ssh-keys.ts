@@ -10,7 +10,10 @@ export interface AtomicKey {
 	attached_at: string;
 }
 
-export const useAtomicSshKeys = ( siteId: number, options: UseQueryOptions ) => {
+export const useAtomicSshKeys = (
+	siteId: number,
+	options: Omit< UseQueryOptions, 'queryKey' >
+) => {
 	return useQuery< { ssh_keys: Array< AtomicKey > }, unknown, Array< AtomicKey > >( {
 		queryKey: [ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ],
 		queryFn: () =>

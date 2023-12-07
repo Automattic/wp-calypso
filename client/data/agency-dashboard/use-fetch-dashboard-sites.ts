@@ -1,8 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTranslate } from 'i18n-calypso';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
 import type {
 	AgencyDashboardFilter,
 	DashboardSortInterface,
@@ -35,9 +32,6 @@ const useFetchDashboardSites = (
 	filter: AgencyDashboardFilter,
 	sort: DashboardSortInterface
 ) => {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-
 	return useQuery( {
 		queryKey: [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ],
 		queryFn: () =>
@@ -61,10 +55,6 @@ const useFetchDashboardSites = (
 				totalFavorites: data.total_favorites,
 			};
 		},
-		onError: () =>
-			dispatch(
-				errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ) )
-			),
 		enabled: isPartnerOAuthTokenLoaded,
 	} );
 };

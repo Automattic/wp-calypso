@@ -15,6 +15,7 @@ class DomainProductPrice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
 		price: PropTypes.string,
+		renewPrice: PropTypes.string,
 		freeWithPlan: PropTypes.bool,
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -59,6 +60,23 @@ class DomainProductPrice extends Component {
 			return;
 		}
 		return this.renderReskinDomainPrice();
+	}
+
+	renderRenewalPrice() {
+		const { price, renewPrice, translate } = this.props;
+		const isRenewCostDifferent = renewPrice && price !== renewPrice;
+
+		if ( isRenewCostDifferent ) {
+			return (
+				<div className="domain-product-price__renewal-price">
+					{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
+						args: { cost: renewPrice },
+						components: { small: <small /> },
+						comment: '%(cost)s is the annual renewal price of the domain',
+					} ) }
+				</div>
+			);
+		}
 	}
 
 	renderReskinFreeWithPlanText() {
@@ -152,13 +170,14 @@ class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</div>
-				<div className="domain-product-price__renewal-price">
+				<div className="domain-product-price__regular-price">
 					{ translate( '%(cost)s {{small}}/year{{/small}}', {
 						args: { cost: price },
 						components: { small: <small /> },
 						comment: '%(cost)s is the annual renewal price of a domain currently on sale',
 					} ) }
 				</div>
+				{ this.renderRenewalPrice() }
 			</div>
 		);
 	}
@@ -183,6 +202,7 @@ class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</span>
+				{ this.renderRenewalPrice() }
 			</div>
 		);
 	}

@@ -1,6 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -26,7 +24,6 @@ type Props = {
 const LicenseBundleCard = ( {
 	isBusy = false,
 	isDisabled = false,
-	withBackground = isEnabled( 'jetpack/bundle-licensing' ),
 	tabIndex,
 	product,
 	onSelectProduct,
@@ -72,11 +69,7 @@ const LicenseBundleCard = ( {
 
 	return (
 		<>
-			<div
-				className={ classNames( 'license-bundle-card', {
-					'license-bundle-card--with-background': withBackground,
-				} ) }
-			>
+			<div className="license-bundle-card">
 				<div className="license-bundle-card__details">
 					<h3 className="license-bundle-card__title">{ productTitle }</h3>
 

@@ -11,7 +11,9 @@ function useRemoveFollowerMutation() {
 		},
 		onSuccess( data, variables ) {
 			const { siteId, type } = variables;
-			queryClient.invalidateQueries( [ 'followers', siteId, type ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'followers', siteId, type ],
+			} );
 		},
 	} );
 	const { mutate } = mutation;

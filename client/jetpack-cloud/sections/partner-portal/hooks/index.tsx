@@ -31,7 +31,9 @@ export function useReturnUrl( redirect: boolean ): void {
  * Returns the recent payment methods from the Jetpack Stripe account.
  *
  */
-export function useRecentPaymentMethodsQuery( { enabled = true }: UseQueryOptions = {} ) {
+export function useRecentPaymentMethodsQuery( {
+	enabled = true,
+}: Omit< UseQueryOptions, 'queryKey' > = {} ) {
 	return useQuery( {
 		queryKey: [ 'jetpack-cloud', 'partner-portal', 'recent-cards' ],
 		queryFn: () =>

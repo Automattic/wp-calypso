@@ -126,6 +126,9 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 		biennialVariant.introductoryTerm === 'year' &&
 		currentVariant.introductoryInterval === 1 &&
 		currentVariant.introductoryTerm === 'year';
+	const isDiscounted =
+		! isComparisonWithIntroOffer &&
+		currentVariant.priceInteger < currentVariant.priceBeforeDiscounts;
 	const currencyConfig = {
 		stripZeros: true,
 		isSmallestUnit: true,
@@ -140,15 +143,16 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 		{ strong: <strong /> }
 	);
 
-	const yearOnePrice = isComparisonWithIntroOffer
-		? currentVariant.priceInteger
-		: currentVariant.priceBeforeDiscounts;
+	const yearOnePrice =
+		isComparisonWithIntroOffer || isDiscounted
+			? currentVariant.priceInteger
+			: currentVariant.priceBeforeDiscounts;
 
 	const yearTwoPrice = currentVariant.priceBeforeDiscounts;
 
 	const twoYearTotal =
 		currentVariant.priceBeforeDiscounts +
-		( isComparisonWithIntroOffer
+		( isComparisonWithIntroOffer || isDiscounted
 			? currentVariant.priceInteger
 			: currentVariant.priceBeforeDiscounts );
 

@@ -291,7 +291,7 @@ function CustomerSection() {
 
 	function renderSubscriber( subscriber: Subscriber ) {
 		return (
-			<li className="supporter-row row" role="row">
+			<li key={ subscriber.id } className="supporter-row row" role="row">
 				<span className="supporters-list__profile-column" role="cell">
 					<div className="supporters-list__user-profile">
 						<Gravatar

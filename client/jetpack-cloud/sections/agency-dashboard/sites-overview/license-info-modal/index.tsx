@@ -4,6 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import useJetpackAgencyDashboardRecordTrackEvent from '../../hooks/use-jetpack-agency-dashboard-record-track-event';
 import SitesOverviewContext from '../context';
 import DashboardDataContext from '../dashboard-data-context';
@@ -32,6 +34,8 @@ export default function LicenseInfoModal( {
 }: Props ) {
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const { hideLicenseInfo } = useContext( SitesOverviewContext );
 
@@ -80,7 +84,7 @@ export default function LicenseInfoModal( {
 				className={ className }
 				product={ currentLicenseProduct }
 				ctaLabel={ label ?? translate( 'Issue License' ) }
-				isDisabled={ isDisabled }
+				isDisabled={ ! partnerCanIssueLicense || isDisabled }
 				onActivate={ onIssueLicense }
 				onClose={ onHideLicenseInfo }
 				extraAsideContent={ extraAsideContent }

@@ -342,6 +342,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'yolo/command-palette' ) && (
+					<AsyncLoad require="calypso/components/command-palette" placeholder={ null } />
+				) }
 			</div>
 		);
 	}
@@ -367,7 +370,9 @@ export default withCurrentRoute(
 			isDomainAndPlanPackageFlow ||
 			isReaderTagEmbedPage( window?.location );
 		const noMasterbarForSection =
-			! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName );
+			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
+			! sectionName ||
+			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||

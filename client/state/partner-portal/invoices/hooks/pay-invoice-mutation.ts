@@ -32,11 +32,9 @@ export default function usePayInvoiceMutation< TContext = unknown >(
 	return useMutation< APIInvoice, Error, PayInvoiceMutationVariables, TContext >( {
 		mutationFn: payInvoiceMutation,
 		onSuccess: ( invoice: APIInvoice ) => {
-			const invoicePages = queryClient.getQueriesData( [
-				'partner-portal',
-				'invoices',
-				activeKeyId,
-			] );
+			const invoicePages = queryClient.getQueriesData( {
+				queryKey: [ 'partner-portal', 'invoices', activeKeyId ],
+			} );
 
 			invoicePages.forEach( ( query ) => {
 				const data = query[ 1 ] as APIInvoices;

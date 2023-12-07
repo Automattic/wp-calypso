@@ -10,6 +10,7 @@ import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-reques
 import type { Site } from '../sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
+const DEFAULT_CHECK_INTERVAL = 5;
 
 export default function useToggleActivateMonitor(
 	sites: Array< { blog_id: number; url: string } >
@@ -27,7 +28,9 @@ export default function useToggleActivateMonitor(
 		},
 		onSuccess: async ( _data, { siteId, params } ) => {
 			// Cancel any current refetches, so they don't overwrite our update
-			await queryClient.cancelQueries( queryKey );
+			await queryClient.cancelQueries( {
+				queryKey,
+			} );
 
 			// Update to the new value
 			queryClient.setQueryData( queryKey, ( oldSites: any ) => {
@@ -40,6 +43,7 @@ export default function useToggleActivateMonitor(
 								monitor_settings: {
 									...site.monitor_settings,
 									monitor_active: params.monitor_active,
+									check_interval: site.monitor_settings?.check_interval ?? DEFAULT_CHECK_INTERVAL,
 									// As we rely primarily on the monitor_site_status field to determine the status of the monitor,
 									// we need to update it when the monitor_active field is updated.
 									monitor_site_status: params.monitor_active,

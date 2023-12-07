@@ -1,0 +1,17 @@
+.marketplace-reviews-modal__card {
+	padding: 0 1rem;
+	box-shadow: none;
+}
+.marketplace-reviews-modal__error {
+	font-size: $font-body-small;
+	color: var(--color-error);
+}
+
+.marketplace-reviews-modal__button-submit {
+	display: flex;
+}
+.marketplace-reviews-modal__buttons-container {
+	display: flex;
+	gap: 8px;
+	padding-top: 8px;
+}

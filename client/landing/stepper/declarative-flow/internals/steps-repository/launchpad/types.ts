@@ -5,7 +5,7 @@ export interface Task {
 	title?: string;
 	subtitle?: string | React.ReactNode | null;
 	badge_text?: string;
-	actionDispatch?: ( force?: boolean ) => void;
+	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
 	calypso_path?: string;
 }

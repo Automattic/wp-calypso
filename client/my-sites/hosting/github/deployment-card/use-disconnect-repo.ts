@@ -25,12 +25,12 @@ export const useGithubDisconnectRepoMutation = (
 		...options,
 		onSuccess: async ( ...args ) => {
 			await Promise.all( [
-				queryClient.invalidateQueries( [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId ] ),
-				queryClient.invalidateQueries( [
-					GITHUB_INTEGRATION_QUERY_KEY,
-					siteId,
-					GITHUB_CONNECTION_QUERY_KEY,
-				] ),
+				queryClient.invalidateQueries( {
+					queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId ],
+				} ),
+				queryClient.invalidateQueries( {
+					queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ],
+				} ),
 			] );
 			options.onSuccess?.( ...args );
 		},

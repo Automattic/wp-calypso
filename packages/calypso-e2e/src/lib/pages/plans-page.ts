@@ -40,7 +40,7 @@ const selectors = {
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
 	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
-
+	spotlightPlan: '.plan-features-2023-grid__plan-spotlight',
 	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
@@ -123,13 +123,7 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
-		await Promise.race( [
-			this.page.locator( selectors.myPlanTitle( expectedPlan ) ).waitFor(),
-			// There can be lots of these link buttons for different viewports.
-			// We only need one to be there! We must use strict selection.
-			// Any of these link buttons means the right plan is selected.
-			this.page.locator( selectors.activePlan( expectedPlan ) ).first().waitFor(),
-		] );
+		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
 	}
 
 	/**
@@ -138,7 +132,6 @@ export class PlansPage {
 	async clickManagePlan(): Promise< void > {
 		await this.page.click( selectors.managePlanButton );
 	}
-
 	/**
 	 * Validates that the provided tab name is the the currently active tab in the wrapper Plans page. Throws if it isn't.
 	 *
