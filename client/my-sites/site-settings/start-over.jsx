@@ -182,10 +182,6 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 				url: `https://${ siteDomain }/wp-admin/plugins.php`,
 			} );
 		}
-
-		result.push( {
-			message: translate( 'All theme modifications you made' ),
-		} );
 		return result;
 	};
 
@@ -193,37 +189,22 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 		resetSite( siteId );
 	};
 
-	const instructions = ! isAtomic
-		? createInterpolateElement(
-				sprintf(
-					// translators: %s is the site domain
-					translate(
-						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. ' +
-							'If you want to keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
-					),
-					siteDomain
-				),
-				{
-					strong: <strong />,
-					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
-				}
-		  )
-		: createInterpolateElement(
-				sprintf(
-					// translators: %s is the site domain
-					translate(
-						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. '
-					),
-					siteDomain
-				),
-				{
-					strong: <strong />,
-				}
-		  );
+	const instructions = createInterpolateElement(
+		sprintf(
+			// translators: %s is the site domain
+			translate(
+				'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. You’ll also lose any modifications you made to your current theme.'
+			),
+			siteDomain
+		),
+		{
+			strong: <strong />,
+		}
+	);
 
 	const canReset = siteDomainTest.trim() === siteDomain;
 
-	const activityLogHint = isAtomic
+	const backupHint = isAtomic
 		? createInterpolateElement(
 				translate(
 					'The site will be automatically backed up before the reset. You can restore it from <a>Activity Log</a>.'
@@ -232,7 +213,14 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
 				}
 		  )
-		: null;
+		: createInterpolateElement(
+				translate(
+					'To keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
+				),
+				{
+					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
+				}
+		  );
 
 	return (
 		<Main className="site-settings__reset-site">
@@ -301,9 +289,7 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 							{ translate( 'Reset Site' ) }
 						</Button>
 					</div>
-					{ activityLogHint && (
-						<p className="site-settings__reset-site-activity-log-hint">{ activityLogHint }</p>
-					) }
+					{ backupHint && <p className="site-settings__reset-site-backup-hint">{ backupHint }</p> }
 				</ActionPanelFooter>
 			</ActionPanel>
 		</Main>
