@@ -39,7 +39,7 @@ export const loadRedditTracker = async (): Promise< void > => {
  * @returns Promise<void>
  */
 export const redditTrackerPageView = async (): Promise< void > => {
-	if ( ! window.rdt ) {
+	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
 		return;
 	}
 	await loadRedditTracker();
