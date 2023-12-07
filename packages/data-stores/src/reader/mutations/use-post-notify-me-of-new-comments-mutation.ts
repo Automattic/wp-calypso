@@ -54,7 +54,7 @@ const usePostNotifyMeOfNewCommentsMutation = () => {
 					...previousPostSubscriptions,
 					pages: previousPostSubscriptions.pages.map( ( page ) => ( {
 						...page,
-						subscriptions: page.comment_subscriptions.map( ( commentSubscription ) => {
+						comment_subscriptions: page.comment_subscriptions.map( ( commentSubscription ) => {
 							if ( commentSubscription.id === subscriptionId ) {
 								return {
 									...commentSubscription,
