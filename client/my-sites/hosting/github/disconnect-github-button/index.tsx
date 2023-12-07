@@ -25,11 +25,9 @@ export function DisconnectGitHubButton( { connection }: DisconnectGitHubButtonPr
 		mutationFn: async ( c ) => {
 			dispatch( recordTracksEvent( 'calypso_hosting_github_unauthorize_click' ) );
 			await dispatch( deleteStoredKeyringConnection( c ) );
-			await queryClient.invalidateQueries( [
-				GITHUB_INTEGRATION_QUERY_KEY,
-				siteId,
-				GITHUB_CONNECTION_QUERY_KEY,
-			] );
+			await queryClient.invalidateQueries( {
+				queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ],
+			} );
 		},
 	} );
 	const { mutate: disconnect, isLoading: isDisconnecting } = mutation;

@@ -44,7 +44,7 @@ import type { PropsWithChildren } from 'react';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	box-sizing: border-box;
-	margin: 20px 0;
+	margin: 24px 0;
 	padding: 0;
 `;
 
@@ -61,12 +61,21 @@ const CostOverridesListStyle = styled.div`
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
+	margin-top: 10px;
 
 	& .cost-overrides-list-item {
 		display: grid;
 		justify-content: space-between;
 		grid-template-columns: auto auto;
-		padding: 2px 0px;
+		margin-top: 4px;
+	}
+
+	& .cost-overrides-list-item--coupon {
+		margin-top: 16px;
+	}
+
+	& .cost-overrides-list-item:nth-of-type( 1 ) {
+		margin-top: 0;
 	}
 
 	& .cost-overrides-list-item__actions {
@@ -115,7 +124,8 @@ function filterAndGroupCostOverridesForDisplay(
 				return;
 			}
 			const discountAmount = grouped[ costOverride.override_code ]?.discountAmount ?? 0;
-			const newDiscountAmount = costOverride.old_price - costOverride.new_price;
+			const newDiscountAmount =
+				costOverride.old_subtotal_integer - costOverride.new_subtotal_integer;
 			grouped[ costOverride.override_code ] = {
 				humanReadableReason: costOverride.human_readable_reason,
 				overrideCode: costOverride.override_code,
@@ -165,7 +175,7 @@ function CostOverridesList( {
 							{ costOverride.humanReadableReason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discountAmount, currency ) }
+							{ formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
 						</span>
 					</div>
 				);
@@ -180,14 +190,17 @@ function CostOverridesList( {
 			) }
 			{ couponOverrides.map( ( costOverride ) => {
 				return (
-					<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+					<div
+						className="cost-overrides-list-item cost-overrides-list-item--coupon"
+						key={ costOverride.humanReadableReason }
+					>
 						<span className="cost-overrides-list-item__reason">
 							{ couponCode.length > 0
 								? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
 								: costOverride.humanReadableReason }
 						</span>
 						<span className="cost-overrides-list-item__discount">
-							{ formatCurrency( -costOverride.discountAmount, currency ) }
+							{ formatCurrency( -costOverride.discountAmount, currency, { isSmallestUnit: true } ) }
 						</span>
 						<span className="cost-overrides-list-item__actions">
 							<DeleteButton

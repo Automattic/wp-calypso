@@ -61,7 +61,7 @@ export { default as ScreenReaderTextExample } from '@automattic/components/src/s
 export { default as SearchDemo } from 'calypso/components/search/docs/example';
 export { default as SectionHeader } from 'calypso/components/section-header/docs/example';
 export { default as SectionNav } from 'calypso/components/section-nav/docs/example';
-export { default as SegmentedControl } from 'calypso/components/segmented-control/docs/example';
+export { default as SegmentedControl } from '@automattic/components/src/segmented-control/docs/example';
 export { default as SelectDropdown } from '@automattic/components/src/select-dropdown/docs/example';
 export { default as ShareButton } from 'calypso/components/share-button/docs/example';
 export { default as SocialLogos } from 'calypso/components/social-logo/docs/example';

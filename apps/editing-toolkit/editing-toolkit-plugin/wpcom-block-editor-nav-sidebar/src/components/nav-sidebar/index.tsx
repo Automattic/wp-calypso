@@ -11,7 +11,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { ESCAPE } from '@wordpress/keycodes';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
 import * as React from 'react';
@@ -116,9 +116,11 @@ function WpcomBlockEditorNavSidebar() {
 
 	const launchpadScreenOption = window?.wpcomBlockEditorNavSidebar?.currentSite?.launchpad_screen;
 	const siteIntent = window?.wpcomBlockEditorNavSidebar?.currentSite?.site_intent;
+	const siteOrigin =
+		getQueryArg( window.location.search, 'calypso_origin' ) || 'https://wordpress.com';
 
 	if ( launchpadScreenOption === 'full' && siteIntent !== false ) {
-		defaultCloseUrl = `http://wordpress.com/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
+		defaultCloseUrl = `${ siteOrigin }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
 	} else {
 		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
@@ -153,17 +155,6 @@ function WpcomBlockEditorNavSidebar() {
 		defaultListHeading,
 		postType.slug
 	) as string;
-
-	const dialogDescription =
-		postType.slug === 'page'
-			? __(
-					'Contains links to your dashboard or to edit other pages on your site. Press the Escape key to close.',
-					'full-site-editing'
-			  )
-			: __(
-					'Contains links to your dashboard or to edit other posts on your site. Press the Escape key to close.',
-					'full-site-editing'
-			  );
 
 	const dismissSidebar = () => {
 		if ( isOpen && ! isClosing ) {
@@ -204,8 +195,17 @@ function WpcomBlockEditorNavSidebar() {
 			<div
 				aria-label={ __( 'Block editor sidebar', 'full-site-editing' ) }
 				// Waiting for jsx-a11y version bump to support aria-description attribute
-				// eslint-disable-next-line jsx-a11y/aria-props
-				aria-description={ dialogDescription }
+				// aria-description={
+				// 	postType.slug === 'page'
+				// 		? __(
+				// 		'Contains links to your dashboard or to edit other pages on your site. Press the Escape key to close.',
+				// 		'full-site-editing'
+				//   	)
+				// 	: __(
+				// 		'Contains links to your dashboard or to edit other posts on your site. Press the Escape key to close.',
+				// 		'full-site-editing'
+				//  	)
+				// }
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }

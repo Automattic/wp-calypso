@@ -122,9 +122,15 @@ const importFlow: Flow = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
-							providedDependencies?.platform as ImporterMainPlatform
-						) !== -1
+						[
+							'blogroll',
+							'ghost',
+							'tumblr',
+							'livejournal',
+							'movabletype',
+							'xanga',
+							'substack',
+						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -241,10 +247,12 @@ const importFlow: Flow = {
 
 						case 'select-site': {
 							const selectedSite = providedDependencies.site as SiteExcerptData;
+							const skipStoringTempTargetSite = urlQueryParams.get( 'skipStoringTempTargetSite' );
 
 							if ( selectedSite && migrationStatus ) {
 								// Store temporary target blog id to source site option
-								selectedSite &&
+								! skipStoringTempTargetSite &&
+									selectedSite &&
 									migrationStatus?.source_blog_id &&
 									addTempSiteToSourceOption( selectedSite.ID, migrationStatus.source_blog_id );
 

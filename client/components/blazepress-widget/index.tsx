@@ -66,11 +66,16 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	};
 
 	const onClose = ( goToCampaigns?: boolean ) => {
-		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
+		queryClient.invalidateQueries( {
+			queryKey: [ 'promote-post-campaigns', siteId ],
+		} );
 		if ( goToCampaigns ) {
 			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
-			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
+			queryClient &&
+				queryClient.invalidateQueries( {
+					queryKey: [ 'promote-post-campaigns', siteId ],
+				} );
 			if ( previousRoute ) {
 				closeModal();
 			} else {

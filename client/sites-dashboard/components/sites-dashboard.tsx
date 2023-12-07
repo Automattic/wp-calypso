@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -10,7 +9,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
-import { WpcomCommandPalette } from 'calypso/components/command-pallette/wpcom-command-pallette';
 import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -181,14 +179,12 @@ export function SitesDashboard( {
 	} );
 
 	const isMobile = useMobileBreakpoint();
-	const isYoloCommandPalletteDevelopment = isEnabled( 'yolo/command-pallette' );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
 	return (
 		<main>
-			{ isYoloCommandPalletteDevelopment && <WpcomCommandPalette /> }
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
 				<HeaderControls>

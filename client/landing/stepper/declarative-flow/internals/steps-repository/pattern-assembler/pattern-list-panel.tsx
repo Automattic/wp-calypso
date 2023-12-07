@@ -18,7 +18,6 @@ type PatternListPanelProps = {
 	label?: string;
 	description?: string;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
-	isNewSite: boolean;
 };
 
 const PatternListPanel = ( {
@@ -31,7 +30,6 @@ const PatternListPanel = ( {
 	description,
 	onSelect,
 	recordTracksEvent,
-	isNewSite,
 }: PatternListPanelProps ) => {
 	const translate = useTranslate();
 	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState( false );
@@ -61,7 +59,6 @@ const PatternListPanel = ( {
 				selectedPattern={ selectedPattern }
 				selectedPatterns={ selectedPatterns }
 				isShowMorePatterns={ isShowMorePatterns }
-				isNewSite={ isNewSite }
 			/>
 			{ ! isShowMorePatterns && hasNonPriorityPatterns && (
 				<div className="pattern-list-panel__show-more">

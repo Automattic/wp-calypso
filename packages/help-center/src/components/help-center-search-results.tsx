@@ -103,14 +103,9 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 }: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
-
-	const { hasPurchases, sectionName, adminResults } = useSelector( ( state ) => {
-		return {
-			hasPurchases: hasCancelableUserPurchases( state ),
-			sectionName: getSectionName( state ),
-			adminResults: getAdminHelpResults( state, searchQuery, 3 ),
-		};
-	} );
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const sectionName = useSelector( getSectionName );
+	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );

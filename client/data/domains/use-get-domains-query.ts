@@ -9,7 +9,7 @@ type UseGetDomainsQueryData = ResponseDomain[];
 
 export const useGetDomainsQuery = (
 	siteId: number | null,
-	queryOptions?: UseQueryOptions< any, unknown, UseGetDomainsQueryData >
+	queryOptions?: Omit< UseQueryOptions< any, unknown, UseGetDomainsQueryData >, 'queryKey' >
 ) => {
 	const enabled = queryOptions?.enabled ?? true;
 

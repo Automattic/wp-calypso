@@ -4,8 +4,9 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
+import { getPlan } from '@automattic/calypso-products/src';
 import { registerBlockType } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import config from './config';
 import { Edit } from './edit';
 
@@ -42,32 +43,80 @@ function registerBlocks() {
 			{
 				isDefault: true,
 				name: 'personal',
-				title: __( 'Upgrade Personal', 'happy-blocks' ),
-				description: __( 'Upgrade to Personal pricing plan', 'happy-blocks' ),
+				title: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade %(planName)s', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_PERSONAL )?.getTitle(),
+					}
+				),
+				description: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_PERSONAL )?.getTitle(),
+					}
+				),
 				attributes: {
 					defaultProductSlug: PLAN_PERSONAL,
 				},
 			},
 			{
 				name: 'premium',
-				title: __( 'Upgrade Premium', 'happy-blocks' ),
-				description: __( 'Upgrade to Premium pricing plan', 'happy-blocks' ),
+				title: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade %(planName)s', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_PREMIUM )?.getTitle(),
+					}
+				),
+				description: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_PREMIUM )?.getTitle(),
+					}
+				),
 				attributes: {
 					defaultProductSlug: PLAN_PREMIUM,
 				},
 			},
 			{
 				name: 'business',
-				title: __( 'Upgrade Business', 'happy-blocks' ),
-				description: __( 'Upgrade to Business pricing plan', 'happy-blocks' ),
+				title: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade %(planName)s', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_BUSINESS )?.getTitle(),
+					}
+				),
+				description: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_BUSINESS )?.getTitle(),
+					}
+				),
 				attributes: {
 					defaultProductSlug: PLAN_BUSINESS,
 				},
 			},
 			{
 				name: 'ecommerce',
-				title: __( 'Upgrade Commerce', 'happy-blocks' ),
-				description: __( 'Upgrade to Commerce pricing plan', 'happy-blocks' ),
+				title: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade %(planName)s', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_ECOMMERCE )?.getTitle(),
+					}
+				),
+				description: sprintf(
+					/* translators: planName can be any short name of WPCOM Plan bundle (ex. Personal, Permium, Business) */
+					__( 'Upgrade to %(planName)s pricing plan', 'happy-blocks' ),
+					{
+						planName: getPlan( PLAN_ECOMMERCE )?.getTitle(),
+					}
+				),
 				attributes: {
 					defaultProductSlug: PLAN_ECOMMERCE,
 				},

@@ -752,11 +752,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
-	.signup-form__social p {
+	.auth-form__social p {
 		color: var(--color-neutral-60);
 	}
 
-	.signup-form__social,
+	.auth-form__social,
 	.login__form-social {
 		padding-bottom: 0;
 		margin-top: 16px;
@@ -764,7 +764,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			font-size: $font-body-extra-small;
 		}
 
-		.signup-form__social-buttons-tos {
+		.auth-form__social-buttons-tos {
 			color: var(--studio-gray-60);
 			margin-bottom: 16px;
 			a {
@@ -938,7 +938,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			font-size: $font-body-small;
 		}
 
-		.signup-form__social,
+		.auth-form__social,
 		.login__form-social {
 			.social-buttons__button {
 				border-color: var(--studio-pink-50);
@@ -1300,7 +1300,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-bottom: 12px;
 	}
 
-	.signup-form__social {
+	.auth-form__social {
 		padding-bottom: 0;
 		margin-bottom: 48px;
 	}

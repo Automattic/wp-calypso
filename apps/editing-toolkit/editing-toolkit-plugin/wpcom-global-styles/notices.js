@@ -15,6 +15,8 @@ import { useGlobalStylesConfig } from './use-global-styles-config';
 import { usePreview } from './use-preview';
 import './notice.scss';
 
+const GLOBAL_STYLES_VIEW_NOTICE_SELECTOR = 'wpcom-global-styles-notice-container';
+
 const trackEvent = ( eventName, isSiteEditor = true ) =>
 	recordTracksEvent( eventName, {
 		context: isSiteEditor ? 'site-editor' : 'post-editor',
@@ -22,17 +24,9 @@ const trackEvent = ( eventName, isSiteEditor = true ) =>
 	} );
 
 function GlobalStylesWarningNotice() {
-	const { globalStylesInUse } = useGlobalStylesConfig();
-
 	useEffect( () => {
-		if ( globalStylesInUse ) {
-			trackEvent( 'calypso_global_styles_gating_notice_view_canvas_show' );
-		}
-	}, [ globalStylesInUse ] );
-
-	if ( ! globalStylesInUse ) {
-		return null;
-	}
+		trackEvent( 'calypso_global_styles_gating_notice_view_canvas_show' );
+	}, [] );
 
 	const upgradeTranslation = __(
 		'Your site includes premium styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
@@ -58,11 +52,20 @@ function GlobalStylesWarningNotice() {
 
 function GlobalStylesViewNotice() {
 	const { canvas } = useCanvas();
-
 	const [ isRendered, setIsRendered ] = useState( false );
+	const { globalStylesInUse } = useGlobalStylesConfig();
 
 	useEffect( () => {
-		if ( isRendered || canvas !== 'view' ) {
+		if ( ! globalStylesInUse ) {
+			document.querySelector( `.${ GLOBAL_STYLES_VIEW_NOTICE_SELECTOR }` )?.remove();
+			setIsRendered( false );
+			return;
+		}
+
+		if ( isRendered ) {
+			return;
+		}
+		if ( canvas !== 'view' ) {
 			return;
 		}
 
@@ -75,13 +78,13 @@ function GlobalStylesViewNotice() {
 		// to prevent our notice from breaking the flex styles of the hub.
 		const container = saveHub.parentNode;
 		const noticeContainer = document.createElement( 'div' );
-		noticeContainer.classList.add( 'wpcom-global-styles-notice-container' );
+		noticeContainer.classList.add( GLOBAL_STYLES_VIEW_NOTICE_SELECTOR );
 		container.insertBefore( noticeContainer, saveHub );
 
 		render( <GlobalStylesWarningNotice />, noticeContainer );
 
 		setIsRendered( true );
-	}, [ isRendered, canvas ] );
+	}, [ isRendered, canvas, globalStylesInUse ] );
 
 	return null;
 }

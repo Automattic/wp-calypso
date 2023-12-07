@@ -99,6 +99,9 @@ function getLocation( path ) {
 	if ( path.indexOf( '/read/conversations' ) === 0 ) {
 		return 'conversations';
 	}
+	if ( path.indexOf( '/home' ) === 0 ) {
+		return 'home';
+	}
 	return 'unknown';
 }
 

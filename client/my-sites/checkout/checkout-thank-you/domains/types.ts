@@ -12,8 +12,6 @@ export type DomainThankYouParams = {
 	domain: string;
 	domains: string[];
 	email?: string;
-	shouldDisplayVerifyEmailStep?: boolean;
-	onResendEmailVerificationClick?(): void;
 	hasProfessionalEmail: boolean;
 	hideProfessionalEmailStep: boolean;
 	launchpadScreen: ReturnType< typeof useSiteOption >;

@@ -1,8 +1,4 @@
-import {
-	LaunchpadNavigator,
-	updateLaunchpadSettings,
-	type UserSelect,
-} from '@automattic/data-stores';
+import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -101,8 +97,6 @@ const newsletter: Flow = {
 			pageTitle: 'Newsletter',
 		} );
 
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
-
 		const completeSubscribersTask = async () => {
 			if ( siteSlug ) {
 				await updateLaunchpadSettings( siteSlug, {
@@ -195,7 +189,6 @@ const newsletter: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'newsletter',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

@@ -51,6 +51,7 @@ export type ResponseDomain = {
 	aftermarketAuctionEnd: string | null;
 	aftermarketAuctionStart: string | null;
 	aRecordsRequiredForMapping?: Array< string >;
+	authCodeRequired: boolean;
 	autoRenewalDate: string;
 	autoRenewing: boolean;
 	beginTransferUntilDate: string;
@@ -108,12 +109,16 @@ export type ResponseDomain = {
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;
+	pendingRegistrationAtRegistry: boolean;
+	pendingRegistrationAtRegistryUrl: string;
 	pendingRegistrationTime: string;
 	pendingTransfer?: boolean;
 	pointsToWpcom: boolean;
 	privacyAvailable: boolean;
 	privateDomain: boolean;
 	redeemableUntil: string;
+	registeredViaTrustee: boolean;
+	registeredViaTrusteeUrl: string;
 	registrar: string;
 	registrationDate: string;
 	registryExpiryDate: string;

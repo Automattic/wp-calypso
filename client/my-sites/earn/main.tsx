@@ -18,7 +18,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import CustomerSection from './customers';
 import Home from './home';
-import MembershipsProductsSection from './memberships/products';
 import MembershipsSection from './memberships/section';
 import ReferAFriendSection from './refer-a-friend';
 import { Query } from './types';
@@ -27,6 +26,12 @@ type EarningsMainProps = {
 	section?: string;
 	query: Query;
 	path: string;
+};
+
+type Tab = {
+	title: string;
+	path: string;
+	id: string;
 };
 
 const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
@@ -42,7 +47,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
 		supporters: translate( 'Supporters' ),
-		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -63,6 +67,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				title: translate( 'Payment Settings' ),
 				path: '/earn/payments' + pathSuffix,
 				id: 'payments',
+			},
+			{
+				title: translate( 'Ads' ),
+				path: '/earn/ads-earnings' + pathSuffix,
+				id: 'ads-earnings',
 			},
 		];
 	};
@@ -136,8 +145,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				);
 			case 'payments':
 				return <MembershipsSection query={ query } />;
-			case 'payments-plans':
-				return <MembershipsProductsSection />;
 
 			case 'supporters':
 				return <CustomerSection />;
@@ -163,9 +170,17 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return currentPath;
 	};
 
-	const getEarnSectionNav = () => {
+	const isEarnTabSelected = ( tabItem: Tab ) => {
 		const currentPath = getCurrentPath();
 
+		if ( 'ads-earnings' === tabItem.id ) {
+			return isAdSection( section );
+		}
+
+		return tabItem.path === currentPath;
+	};
+
+	const getEarnSectionNav = () => {
 		return (
 			<div id="earn-navigation">
 				<SectionNav selectedText={ getEarnSelectedText() }>
@@ -175,7 +190,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 								<NavItem
 									key={ tabItem.id }
 									path={ tabItem.path }
-									selected={ tabItem.path === currentPath }
+									selected={ isEarnTabSelected( tabItem ) }
 								>
 									{ tabItem.title }
 								</NavItem>

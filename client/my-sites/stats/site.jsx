@@ -53,6 +53,7 @@ import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
+import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import { getPathWithUpdatedQueryString } from './utils';
 
@@ -461,6 +462,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				{ config.isEnabled( 'stats/plan-usage' ) && <StatsPlanUsage siteId={ siteId } /> }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />

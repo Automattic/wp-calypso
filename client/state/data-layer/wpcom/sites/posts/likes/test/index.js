@@ -1,6 +1,6 @@
 import { POST_LIKES_REQUEST } from 'calypso/state//action-types';
 import { receiveLikes } from 'calypso/state/posts/likes/actions';
-import { fetch, fromApi, onSuccess } from '../';
+import { fetch, fromApi, onLikesSuccess } from '../';
 
 describe( 'fromApi', () => {
 	test( 'transforms to standard output', () => {
@@ -45,6 +45,8 @@ describe( 'fetch', () => {
 describe( 'onSuccess', () => {
 	it( 'should return a receiveLikes action with the data', () => {
 		const data = {};
-		expect( onSuccess( { siteId: 1, postId: 1 }, data ) ).toEqual( receiveLikes( 1, 1, data ) );
+		expect( onLikesSuccess( { siteId: 1, postId: 1 }, data ) ).toEqual(
+			receiveLikes( 1, 1, data )
+		);
 	} );
 } );

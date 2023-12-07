@@ -555,7 +555,18 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 							onChange={ handleFormChange }
 							value="true"
 						/>
-						<span>{ translate( 'Remember credentials' ) }</span>
+						<span>
+							{ translate( 'Remember credentials' ) }
+							<InfoPopover
+								className="credentials-form__remember-credentials-info-popover"
+								position="right"
+								showOnHover={ true }
+							>
+								{ translate(
+									'Save this configuration so you can easily access it the next time you copy a site to staging.'
+								) }
+							</InfoPopover>
+						</span>
 					</FormLabel>
 				</FormFieldset>
 			) }

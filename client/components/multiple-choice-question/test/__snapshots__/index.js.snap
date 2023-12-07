@@ -3,6 +3,7 @@
 exports[`MultipleChoiceQuestion should render with the minimum required properties ( plus extra prop to guarantee order ) 1`] = `
 <fieldset
   className="multiple-choice-question form-fieldset"
+  onClick={[Function]}
   role="group"
 >
   <legend

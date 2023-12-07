@@ -1,14 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
+	BUNDLED_THEME,
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
 	PREMIUM_THEME,
-	WOOCOMMERCE_THEME,
 } from '@automattic/design-picker';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import {
 	canUseTheme,
@@ -17,6 +18,7 @@ import {
 	isMarketplaceThemeSubscribed,
 	getMarketplaceThemeSubscriptionPrices,
 } from 'calypso/state/themes/selectors';
+import type { ReactElement } from 'react';
 
 interface Props {
 	canGoToCheckout?: boolean;
@@ -68,6 +70,7 @@ const ThemeTypeBadgeTooltip = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const bundleSettings = useBundleSettings( themeId );
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
@@ -97,9 +100,20 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
-	const getHeader = (): string | null => {
+	const getHeader = (): string | ReactElement | null => {
 		if ( isLockedStyleVariation ) {
 			return null;
+		}
+
+		if ( type === BUNDLED_THEME ) {
+			if ( ! bundleSettings ) {
+				return null;
+			}
+
+			const bundleName = bundleSettings.name;
+
+			// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+			return translate( '%(bundleName)s theme', { textOnly: true, args: { bundleName } } );
 		}
 
 		const headers = {
@@ -108,7 +122,6 @@ const ThemeTypeBadgeTooltip = ( {
 				context: 'This theme is developed and supported by a community',
 				textOnly: true,
 			} ),
-			[ WOOCOMMERCE_THEME ]: translate( 'WooCommerce theme' ),
 			[ MARKETPLACE_THEME ]: translate( 'Partner theme', {
 				context: 'This theme is developed and supported by a theme partner',
 				textOnly: true,
@@ -163,11 +176,22 @@ const ThemeTypeBadgeTooltip = ( {
 						),
 					}
 			  );
-	} else if ( type === WOOCOMMERCE_THEME ) {
-		message = isIncludedCurrentPlan
-			? translate( 'This WooCommerce theme is included in your plan.' )
-			: createInterpolateElement(
-					translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
+	} else if ( type === BUNDLED_THEME ) {
+		if ( bundleSettings ) {
+			const bundleName = bundleSettings.name;
+
+			if ( isIncludedCurrentPlan ) {
+				// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+				message = translate( 'This %(bundleName)s theme is included in your plan.', {
+					args: { bundleName },
+				} );
+			} else {
+				message = createInterpolateElement(
+					// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+					translate( 'This %(bundleName)s theme is included in the <Link>Business plan</Link>.', {
+						args: { bundleName },
+						textOnly: true,
+					} ),
 					{
 						Link: (
 							<ThemeTypeBadgeTooltipUpgradeLink
@@ -177,7 +201,9 @@ const ThemeTypeBadgeTooltip = ( {
 							/>
 						),
 					}
-			  );
+				);
+			}
+		}
 	} else if ( type === MARKETPLACE_THEME ) {
 		if ( isPurchased && isIncludedCurrentPlan ) {
 			message = translate(

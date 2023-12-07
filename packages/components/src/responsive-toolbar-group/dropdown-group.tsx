@@ -1,4 +1,12 @@
-import { ToolbarGroup, ToolbarButton, Dropdown, MenuItem, MenuGroup } from '@wordpress/components';
+import {
+	ToolbarGroup,
+	ToolbarButton,
+	Dropdown,
+	MenuItem,
+	MenuGroup,
+	SlotFillProvider,
+	Popover,
+} from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -82,45 +90,49 @@ export default function DropdownGroup( {
 
 		if ( containGroupedIndexes || always ) {
 			return (
-				<Dropdown
-					renderToggle={ ( { onToggle } ) => (
-						<ToolbarButton
-							className={ classnames(
-								'responsive-toolbar-group__more-item',
-								'responsive-toolbar-group__button-item'
-							) }
-							isActive={ groupedIndexes[ activeIndex ] }
-							onClick={ () => {
-								onToggle();
-							} }
-						>
-							{ translate( 'More' ) }
-							<Icon icon={ chevronDown } />
-						</ToolbarButton>
-					) }
-					renderContent={ ( { onClose } ) => (
-						<MenuGroup>
-							{ getChildrenToRender()
-								.filter( ( { grouped } ) => grouped )
-								.map( ( { index, child } ) => (
-									<MenuItem
-										key={ `menu-item-${ index }` }
-										onClick={ () => {
-											setActiveIndex( parseInt( index ) );
-											onClick( parseInt( index ) );
-											onClose();
-										} }
-										className={ classnames(
-											'responsive-toolbar-group__menu-item',
-											activeIndex === parseInt( index ) ? 'is-selected' : ''
-										) }
-									>
-										{ child }
-									</MenuItem>
-								) ) }
-						</MenuGroup>
-					) }
-				/>
+				<SlotFillProvider>
+					{ /* @ts-expect-error-ignore  */ }
+					<Popover.Slot />
+					<Dropdown
+						renderToggle={ ( { onToggle } ) => (
+							<ToolbarButton
+								className={ classnames(
+									'responsive-toolbar-group__more-item',
+									'responsive-toolbar-group__button-item'
+								) }
+								isActive={ groupedIndexes[ activeIndex ] }
+								onClick={ () => {
+									onToggle();
+								} }
+							>
+								{ translate( 'More' ) }
+								<Icon icon={ chevronDown } />
+							</ToolbarButton>
+						) }
+						renderContent={ ( { onClose } ) => (
+							<MenuGroup>
+								{ getChildrenToRender()
+									.filter( ( { grouped } ) => grouped )
+									.map( ( { index, child } ) => (
+										<MenuItem
+											key={ `menu-item-${ index }` }
+											onClick={ () => {
+												setActiveIndex( parseInt( index ) );
+												onClick( parseInt( index ) );
+												onClose();
+											} }
+											className={ classnames(
+												'responsive-toolbar-group__menu-item',
+												activeIndex === parseInt( index ) ? 'is-selected' : ''
+											) }
+										>
+											{ child }
+										</MenuItem>
+									) ) }
+							</MenuGroup>
+						) }
+					/>
+				</SlotFillProvider>
 			);
 		}
 

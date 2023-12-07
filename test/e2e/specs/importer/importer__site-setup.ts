@@ -15,7 +15,7 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		startImportFlow = new StartImportFlow( page, 'signup' );
+		startImportFlow = new StartImportFlow( page );
 
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );

@@ -1,3 +1,5 @@
+import { isDomainRegistration } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/format-currency';
 import i18n from 'i18n-calypso';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -108,6 +110,53 @@ export function getIntroductoryOfferIntervalDisplay(
 	return text;
 }
 
+export function getPremiumDomainIntroductoryOfferDisplay(
+	translate: typeof i18n.translate,
+	product: ResponseCartProduct
+): string | null {
+	if (
+		! isDomainRegistration( product ) ||
+		! product.extra.premium ||
+		! product.introductory_offer_terms?.enabled
+	) {
+		return null;
+	}
+
+	const { interval_unit: intervalUnit, interval_count: intervalCount } =
+		product.introductory_offer_terms;
+
+	// Monthly introductory offers are covered, but they shouldn't normally happen.
+	if ( intervalUnit === 'month' ) {
+		return null;
+	}
+
+	if ( intervalUnit === 'year' ) {
+		const renewalPrice = formatCurrency( product.item_original_cost_integer, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
+		if ( intervalCount === 1 ) {
+			return String(
+				translate( 'Renews for %(renewalPrice)s/year', {
+					args: {
+						renewalPrice,
+					},
+				} )
+			);
+		} else if ( intervalCount >= 1 ) {
+			return String(
+				translate( 'Renews for %(renewalPrice)s/year after %(numberOfYears)d years', {
+					args: {
+						renewalPrice,
+						numberOfYears: intervalCount,
+					},
+				} )
+			);
+		}
+	}
+	return null;
+}
+
 export function getItemIntroductoryOfferDisplay(
 	translate: typeof i18n.translate,
 	product: ResponseCartProduct
@@ -119,6 +168,12 @@ export function getItemIntroductoryOfferDisplay(
 
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
+	}
+
+	const premiumDomainText = getPremiumDomainIntroductoryOfferDisplay( translate, product );
+
+	if ( premiumDomainText ) {
+		return { enabled: true, text: premiumDomainText };
 	}
 
 	const isFreeTrial = product.item_subtotal_integer === 0;

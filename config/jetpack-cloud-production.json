@@ -66,13 +66,15 @@
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": false,
-		"jetpack/pricing-page-cart": true
+		"jetpack/pricing-page-cart": true,
+		"yolo/command-palette": false
 	},
 	"enable_all_sections": false,
 	"sections": {
 		"activity": true,
 		"backup": true,
 		"jetpack-cloud": true,
+		"jetpack-cloud-overview": false,
 		"jetpack-cloud-agency-dashboard": true,
 		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": true,

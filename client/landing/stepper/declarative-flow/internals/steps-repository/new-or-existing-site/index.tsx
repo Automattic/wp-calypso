@@ -6,8 +6,10 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	StepContainer,
 	isBlogOnboardingFlow,
+	isSiteAssemblerFlow,
 	START_WRITING_FLOW,
 	DESIGN_FIRST_FLOW,
+	ASSEMBLER_FIRST_FLOW,
 } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -60,6 +62,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 			];
 		case DESIGN_FIRST_FLOW:
 		case START_WRITING_FLOW:
+		case ASSEMBLER_FIRST_FLOW:
 			return [
 				{
 					key: 'existing-site',
@@ -94,7 +97,7 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 	};
 
 	const getHeaderText = () => {
-		if ( isBlogOnboardingFlow( flow ) ) {
+		if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return translate( 'New or existing site' );
 		}
 		switch ( flow ) {
@@ -124,7 +127,7 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 			stepName="new-or-existing-site"
 			flowName={ flow }
 			recordTracksEvent={ recordTracksEvent }
-			hideBack={ isBlogOnboardingFlow( flow ) }
+			hideBack={ isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) }
 		/>
 	);
 };

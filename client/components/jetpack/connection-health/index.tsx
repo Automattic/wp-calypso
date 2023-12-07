@@ -1,6 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
@@ -30,15 +29,11 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		( state ) => !! isSiteAutomatedTransfer( state, siteId )
 	);
 
-	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
-		useState( false );
-
-	const { data: jetpackConnectionHealth, isLoading: isLoadingJetpackConnectionHealth } =
-		useCheckJetpackConnectionHealth( siteId, {
-			onError: () => {
-				setIsErrorCheckJetpackConnectionHealth( true );
-			},
-		} );
+	const {
+		data: jetpackConnectionHealth,
+		isLoading: isLoadingJetpackConnectionHealth,
+		isError: isErrorCheckJetpackConnectionHealth,
+	} = useCheckJetpackConnectionHealth( siteId );
 
 	if (
 		isLoadingJetpackConnectionHealth ||

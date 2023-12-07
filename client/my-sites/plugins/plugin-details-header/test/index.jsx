@@ -23,6 +23,10 @@ jest.mock( '../../plugin-management-v2/hooks/use-plugin-version-info', () => {
 	} );
 } );
 
+jest.mock( 'calypso/data/marketplace/use-marketplace-reviews', () => ( {
+	useMarketplaceReviewsQuery: () => ( { data: [] } ),
+} ) );
+
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = ( key ) => {
 		if ( 'magnificent_non_en_locales' === key ) {

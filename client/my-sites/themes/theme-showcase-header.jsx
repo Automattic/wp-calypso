@@ -75,7 +75,6 @@ export default function ThemeShowcaseHeader( {
 			<DocumentHead title={ documentHeadTitle } meta={ metas } />
 			{ isLoggedIn ? (
 				<NavigationHeader
-					screenOptionsTab="themes.php"
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
 					mobileItem={ null }

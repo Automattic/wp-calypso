@@ -37,10 +37,10 @@ export function useStepNavigator(
 		} );
 	}
 
-	function goToCheckoutPage( extraArgs = {} ) {
+	function goToCheckoutPage( importOption: WPImportOption, extraArgs = {} ) {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: getCheckoutUrl( extraArgs ),
+			url: getCheckoutUrl( importOption, extraArgs ),
 		} );
 	}
 
@@ -80,12 +80,36 @@ export function useStepNavigator(
 		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
 	}
 
-	function getCheckoutUrl( extraArgs = {} ) {
+	function getWordpressImportContentOnlyUrl( extraArgs = {} ): string {
+		const queryParams = {
+			siteSlug: siteSlug,
+			option: WPImportOption.CONTENT_ONLY,
+			...extraArgs,
+		};
+
+		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
+	}
+
+	function getCheckoutUrl( importOption: WPImportOption, extraArgs = {} ) {
 		const path = buildCheckoutUrl( siteSlug, selectedPlan );
+		let redirectTo = '';
+		let cancelTo = '';
+
+		switch ( importOption ) {
+			case WPImportOption.CONTENT_ONLY:
+				redirectTo = getWordpressImportContentOnlyUrl( extraArgs );
+				cancelTo = getWordpressImportContentOnlyUrl();
+				break;
+
+			case WPImportOption.EVERYTHING:
+				redirectTo = getWordpressImportEverythingUrl( extraArgs );
+				cancelTo = getWordpressImportEverythingUrl();
+				break;
+		}
 
 		const queryParams = {
-			redirect_to: getWordpressImportEverythingUrl( extraArgs ),
-			cancel_to: getWordpressImportEverythingUrl(),
+			redirect_to: redirectTo,
+			cancel_to: cancelTo,
 		};
 
 		return addQueryArgs( queryParams, path );

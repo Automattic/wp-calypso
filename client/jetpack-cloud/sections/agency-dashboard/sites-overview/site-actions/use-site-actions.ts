@@ -2,8 +2,9 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
@@ -14,6 +15,8 @@ export default function useSiteActions(
 ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const siteValue = site?.value;
 
@@ -58,10 +61,12 @@ export default function useSiteActions(
 			},
 			{
 				name: translate( 'Issue new license' ),
-				href: `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`,
+				href: partnerCanIssueLicense
+					? `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`
+					: undefined,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
-				isEnabled: ! siteError,
+				isEnabled: partnerCanIssueLicense && ! siteError,
 			},
 			{
 				name: translate( 'View activity' ),

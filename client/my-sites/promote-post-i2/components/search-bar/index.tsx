@@ -86,6 +86,10 @@ export default function SearchBar( props: Props ) {
 			label: translate( 'Pages' ),
 			value: 'page',
 		},
+		{
+			label: translate( 'Products' ),
+			value: 'product',
+		},
 	];
 
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );

@@ -41,7 +41,7 @@ export function getTotalSelectedCost(
 
 	const totalSelectedProductCost = allProducts
 		.filter( ( product ) => selectedProductSlugs.includes( product.slug ) )
-		.map( ( product ) => product.amount )
+		.map( ( product ) => parseFloat( product.amount ) )
 		.reduce( ( totalCost, productCost ) => totalCost + productCost, 0 );
 
 	return totalSelectedProductCost;

@@ -6,6 +6,9 @@
 // some unnecessary styles removed.
 @import "story.scss";
 
+// Import styles for carousel blocks (Newspack Post Carousel, Jetpack Slideshow).
+@import "carousel.scss";
+
 .reader-full-post__story-content {
 	@extend %rendered-block-content;
 	padding-top: 16px;

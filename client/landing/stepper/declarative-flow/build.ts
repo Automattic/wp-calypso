@@ -1,4 +1,3 @@
-import { LaunchpadNavigator } from '@automattic/data-stores';
 import { useFlowProgress, BUILD_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -30,7 +29,6 @@ const build: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 
 		setStepProgress( flowProgress );
@@ -74,7 +72,6 @@ const build: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'build',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

@@ -17,7 +17,9 @@ export const useAddBlogStickerMutation = ( options = {} ) => {
 		...options,
 		onSuccess( ...args ) {
 			const [ , { blogId } ] = args;
-			queryClient.invalidateQueries( [ `blog-stickers`, blogId ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ `blog-stickers`, blogId ],
+			} );
 			options.onSuccess?.( ...args );
 		},
 	} );

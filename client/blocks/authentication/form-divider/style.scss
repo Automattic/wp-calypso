@@ -1,0 +1,101 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$separator-style: 1px solid #eaeaeb;
+$breakpoint-mobile: 660px;
+
+.auth-form__separator {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&::before,
+	&::after {
+		position: absolute;
+		content: "";
+		border-inline-start: 0;
+		border-block-start: $separator-style;
+		inset-block-start: 50%;
+		inset-inline-start: 0;
+		height: 0;
+		width: 42%;
+		z-index: 1;
+	}
+
+	&::after {
+		left: 58%;
+	}
+
+	.auth-form__separator-text {
+		text-transform: uppercase;
+		text-align: center;
+		padding: 24px 0;
+		font-size: 0.75rem;
+		z-index: 1;
+		color: var(--studio-gray-50);
+	}
+}
+
+
+.is-section-signup {
+	.auth-form__separator {
+		width: calc(100% - 32px);
+		margin: 20px 0;
+
+		@include break-medium {
+			width: 60px;
+			margin: 0;
+
+			&::before,
+			&::after {
+				border-inline-start: $separator-style;
+				border-block-start: 0;
+				inset-block-start: 0;
+				inset-inline-start: 50%;
+				height: 40%;
+			}
+
+			&::after {
+				top: 60%;
+			}
+		}
+	}
+
+	.auth-form__separator-text {
+		@media screen and (max-width: $breakpoint-mobile ) {
+			padding: 0 24px;
+		}
+	}
+}
+
+.is-section-login {
+	.auth-form__separator {
+		width: 100%;
+	}
+
+	.auth-form__separator-text {
+		padding: 0 24px;
+	}
+}
+
+// If the separator is between two cards, pull them together.
+// If you want to help get rid of this, please consider removing Card component in sign up.
+.card ~ .auth-form__separator {
+	margin-bottom: -10px;
+	margin-top: -10px;
+}
+
+// Give the first card 10px of space at the bottom to compensate for the -10px margin above.
+:has(> .auth-form__separator) > .card:first-of-type {
+	border-bottom: 10px solid transparent;
+}
+
+// Give the last card 10px of space at the bottom to compensate for the -10px margin above.
+.auth-form__separator + .card {
+	// Remove the top-edge box shadow if any.
+	clip-path: polygon(-1px 1px, 102% 1px, 102% 102%, -1px 102%);
+	// Compensate for the clipped 1px + the negative 10px, to keep the contents unclipped.
+	border-top: 11px solid transparent;
+}

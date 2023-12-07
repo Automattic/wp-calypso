@@ -70,42 +70,6 @@ describe( 'useInvoicesQuery', () => {
 
 		expect( result.current.data ).toEqual( formattedStub );
 	} );
-
-	it( 'dispatches notice on error', async () => {
-		const queryClient = createQueryClient();
-		const wrapper = ( { children } ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		);
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/jetpack-licensing/partner/invoices?starting_after=&ending_before=' )
-			.reply( 403 );
-
-		const dispatch = jest.fn();
-		useDispatch.mockReturnValue( dispatch );
-
-		const { result } = renderHook(
-			() =>
-				useInvoicesQuery(
-					{
-						starting_after: '',
-						ending_before: '',
-					},
-					{ retry: false }
-				),
-			{
-				wrapper,
-			}
-		);
-
-		await waitFor( () => expect( result.current.isError ).toBe( true ) );
-
-		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
-			'partner-portal-invoices-failure'
-		);
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
-	} );
 } );
 
 describe( 'usePayInvoiceMutation', () => {

@@ -9,6 +9,7 @@ import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import { useExperiment } from 'calypso/lib/explat';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import noticesReducer from 'calypso/state/notices/reducer';
 import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
@@ -25,6 +26,9 @@ import type {
 	PossiblyCompleteDomainContactDetails,
 	ContactDetailsType,
 } from '@automattic/wpcom-checkout';
+
+jest.mock( 'calypso/lib/explat' );
+( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
 
 export const normalAllowedPaymentMethods = [
 	'WPCOM_Billing_PayPal_Express',

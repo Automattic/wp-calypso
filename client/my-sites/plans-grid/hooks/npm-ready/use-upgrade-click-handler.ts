@@ -1,4 +1,4 @@
-import { isFreeHostingTrial, isFreePlan, type PlanSlug } from '@automattic/calypso-products';
+import { isFreeHostingTrial, type PlanSlug } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -7,7 +7,10 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 interface Props {
 	gridPlans: GridPlan[]; // TODO clk: to be removed, grabbed from context
-	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	onUpgradeClick?: (
+		cartItems?: MinimalRequestCartProduct[] | null,
+		clickedPlanSlug?: PlanSlug
+	) => void;
 }
 
 const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {
@@ -34,23 +37,19 @@ const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {
 				};
 
 			if ( cartItemForPlan ) {
-				onUpgradeClick?.( [
-					cartItemForPlan,
-					...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ),
-				] );
+				onUpgradeClick?.(
+					[ cartItemForPlan, ...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ) ],
+					planSlug
+				);
 				return;
 			}
 
 			if ( isFreeHostingTrial( planSlug ) ) {
 				const cartItemForPlan = { product_slug: planSlug };
-				onUpgradeClick?.( [ cartItemForPlan ] );
+				onUpgradeClick?.( [ cartItemForPlan ], planSlug );
 				return;
 			}
-
-			if ( isFreePlan( planSlug ) ) {
-				onUpgradeClick?.( null );
-				return;
-			}
+			onUpgradeClick?.( null, planSlug );
 		},
 		[ gridPlans, onUpgradeClick, selectedStorageOptions ]
 	);

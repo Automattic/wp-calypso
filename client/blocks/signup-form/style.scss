@@ -34,7 +34,7 @@
 	}
 }
 
-.signup-form__social {
+.auth-form__social {
 	max-width: 400px;
 	margin: 0 auto;
 	padding: 16px;
@@ -52,7 +52,7 @@
 	}
 }
 
-.signup-form__social-buttons {
+.auth-form__social-buttons {
 	button {
 		display: block;
 		margin: 0 auto 15px;
@@ -63,7 +63,7 @@
 	}
 }
 
-.signup-form__social-buttons-tos a {
+.auth-form__social-buttons-tos a {
 	text-decoration: underline;
 }
 
@@ -127,7 +127,7 @@
 	}
 
 	.signup-form.is-showing-recaptcha-tos {
-		.signup-form__social {
+		.auth-form__social {
 			padding-bottom: 28px;
 		}
 
@@ -155,7 +155,7 @@ body.is-section-accept-invite {
 				color: var(--studio-gray-80, #2c3338);
 			}
 
-			.signup-form__social {
+			.auth-form__social {
 				padding: 0 !important;
 			}
 

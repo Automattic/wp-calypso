@@ -302,6 +302,11 @@
 		text-align: left;
 	}
 
+	& > button.info-popover {
+		position: relative;
+		top: 3px;
+	}
+
 	.components-toggle-control {
 		display: inline-block;
 

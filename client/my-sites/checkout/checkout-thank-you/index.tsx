@@ -4,7 +4,6 @@ import {
 	isChargeback,
 	isCredits,
 	isDelayedDomainTransfer,
-	isDIFMProduct,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
@@ -45,7 +44,6 @@ import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
-import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
@@ -531,7 +529,6 @@ export class CheckoutThankYou extends Component<
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let showHappinessSupport = ! isRedesignV2( this.props ) && ! this.props.isSimplified;
-		let wasDIFMProduct = false;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasDomainProduct = false;
 		let wasGSuiteOrGoogleWorkspace = false;
@@ -555,7 +552,6 @@ export class CheckoutThankYou extends Component<
 					isDomainTransfer( purchase ) ||
 					isDomainRegistration( purchase )
 			);
-			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 			wasDomainOnly =
 				domainOnlySiteFlow &&
@@ -576,14 +572,6 @@ export class CheckoutThankYou extends Component<
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return <WordPressLogo className="wpcom-site__logo" />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
-		}
-
-		if ( wasDIFMProduct ) {
-			return (
-				<Main className="checkout-thank-you">
-					<DIFMLiteThankYou />
-				</Main>
-			);
 		}
 
 		if ( wasEcommercePlanPurchased ) {

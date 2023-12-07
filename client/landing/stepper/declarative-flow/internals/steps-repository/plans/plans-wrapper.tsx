@@ -1,4 +1,4 @@
-import { getPlan, PLAN_FREE, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	START_WRITING_FLOW,
@@ -20,8 +20,6 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -29,7 +27,6 @@ import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -41,7 +38,6 @@ interface Props {
 	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
-	plansLoaded: boolean;
 	selectedSiteId: number | null;
 	setSelectedSiteId: ( siteId: number ) => void;
 }
@@ -133,14 +129,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		props.onSubmit( null );
 	};
 
-	const renderLoading = () => {
-		return (
-			<div className="plans__loading">
-				<LoadingEllipsis className="active" />
-			</div>
-		);
-	};
-
 	const removePaidDomain = () => {
 		setDomainCartItem( null );
 	};
@@ -150,10 +138,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesList = () => {
-		if ( ! props.plansLoaded ) {
-			return renderLoading();
-		}
-
 		return (
 			<div>
 				<PlansFeaturesMain
@@ -173,8 +157,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
+					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 				/>
-				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
 		);
 	};
@@ -264,7 +248,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	return (
 		<div className="stepper-plans">
-			<QueryPlans />
 			<div className={ classes }>{ plansFeaturesSelection() }</div>
 		</div>
 	);
@@ -273,7 +256,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect(
 	( state ) => {
 		return {
-			plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 			selectedSiteId: getSelectedSiteId( state ),
 		};
 	},
