@@ -224,6 +224,20 @@ function load_blog_posts_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
 
 /**
+ * Load Subscribe Auto Block.
+ */
+function load_subscribe_auto_block() {
+	if ( class_exists( 'Subscribe_Auto_Block' ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/subscribe-auto-block/class-subscribe-auto-block.php';
+
+	Subscribe_Auto_Block::get_instance();
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_subscribe_auto_block' );
+
+/**
  * Load WPCOM Block Editor NUX.
  */
 function load_wpcom_block_editor_nux() {

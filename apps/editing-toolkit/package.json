@@ -27,6 +27,7 @@
 		"build:newspack-blocks": "npm run sync:newspack-blocks -- --nodemodules && calypso-build --env source='newspack-blocks/blog-posts-block-editor','newspack-blocks/blog-posts-block-view','newspack-blocks/carousel-block-editor','newspack-blocks/carousel-block-view'",
 		"build:paragraph-block": "calypso-build --env source='paragraph-block'",
 		"build:posts-list-block": "calypso-build --env source='posts-list-block'",
+		"build:subscribe-auto-block": "calypso-build --env source='subscribe-auto-block'",
 		"build:starter-page-templates": "calypso-build --env source='starter-page-templates'",
 		"build:tags-education": "calypso-build --env source='tags-education'",
 		"build:whats-new": "calypso-build --env source='whats-new'",
