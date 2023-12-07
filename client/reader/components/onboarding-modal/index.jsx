@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import TagButton from './tagButton';
+import SiteRecommendations from './site-recs';
+import TagButton from './tag-button';
 
 // 9 for testing purposes, we will probably do 3 to start.
 const MINIMUM_TAG_THRESHOLD = 9;
@@ -59,6 +60,7 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 			onRequestClose={ () => setIsOpen( false ) }
 		>
 			<h1>{ translate( 'Welcome to the Reader!' ) }</h1>
+			<SiteRecommendations />
 			{ pages[ currentPage ] };
 		</Modal>
 	);
