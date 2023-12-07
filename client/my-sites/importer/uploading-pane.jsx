@@ -92,7 +92,16 @@ export class UploadingPane extends PureComponent {
 				if ( this.state.fileToBeUploaded ) {
 					return <p>{ this.state?.fileToBeUploaded?.name?.substring?.( 0, 100 ) }</p>;
 				}
-				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
+				return (
+					<p>
+						{ this.props.translate(
+							'Drag a file here, or {{span}}click to upload a file{{/span}}',
+							{
+								components: { span: <span /> },
+							}
+						) }
+					</p>
+				);
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
 				const uploadPercent = percentComplete;
