@@ -14,6 +14,7 @@ import {
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
+	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
@@ -80,7 +81,6 @@ import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
-import type { IntervalType } from './types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
@@ -138,7 +138,7 @@ export interface PlansFeaturesMainProps {
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
-	intervalType?: IntervalType;
+	intervalType?: UrlFriendlyTermType;
 	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;
