@@ -64,7 +64,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await themeContainer.hover( { force: true } );
 
 			// Hovering over the theme card is necessary to make the "Start with this theme" button visible.
-			const themeCard = await themeContainer.locator( '.lp-image-top-row' ).last();
+			const themeCard = themeContainer.locator( '.lp-image-top-row' ).last();
 			await themeCard.hover();
 
 			const themeButton = themeCard.getByText( 'Start with this theme' );
