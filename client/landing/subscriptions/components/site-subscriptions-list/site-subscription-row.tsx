@@ -75,6 +75,8 @@ const scrollToFirstRow = () => {
 	}
 };
 
+const siteUnsubscribedNoticeId = 'site-unsubscribed';
+
 const SiteSubscriptionRow = ( {
 	ID: subscriptionId,
 	blog_ID: blog_id,
@@ -138,7 +140,7 @@ const SiteSubscriptionRow = ( {
 			successNotice(
 				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
 				{
-					id: 'site-unsubscribed',
+					id: siteUnsubscribedNoticeId,
 					button: translate( 'Resubscribe' ),
 					onClick: () => {
 						if ( unsubscribeInProgress.current ) {
@@ -150,7 +152,7 @@ const SiteSubscriptionRow = ( {
 								doNotInvalidateSiteSubscriptions: true,
 								resubscribed: true,
 							} );
-							dispatch( removeNotice( 'site-unsubscribed' ) );
+							dispatch( removeNotice( siteUnsubscribedNoticeId ) );
 							scrollToFirstRow();
 
 							recordSiteResubscribed( {
