@@ -3,7 +3,6 @@
 
 .jetpack-cloud-content-sidebar {
 	.right-sidebar {
-		background: #f9f9f9;
 
 		.intro-video {
 			width: 100%;
@@ -15,6 +14,7 @@
 
 		.contact-support-button {
 			width: 100%;
+			font-weight: 500;
 			color: var(--studio-gray-100);
 			border-color: var(--studio-gray-10);
 		}

@@ -17,8 +17,8 @@
 
 		.foldable-card__main {
 			color: var(--studio-gray-100);
-			font-weight: 600;
-			font-size: 16;
+			font-weight: 500;
+			font-size: rem(16px);
 		}
 	}
 
@@ -27,9 +27,9 @@
 		padding: 0;
 
 		p.no-content,
-		li {
+		.components-flex-item {
 			color: var(--studio-gray-80);
-			font-size: 20;
+			font-size: rem(14px);
 			margin-bottom: 0;
 		}
 
