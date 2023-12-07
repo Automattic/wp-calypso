@@ -9,6 +9,9 @@ import ProcessingStep from './internals/steps-repository/processing-step';
 import StoreAddress from './internals/steps-repository/store-address';
 import { StepperStep } from './internals/types';
 
+/**
+ * First steps that will always run, regardless of the plugin bundle being registered here or not.
+ */
 export const initialBundleSteps: StepperStep[] = [
 	{
 		slug: 'getCurrentThemeSoftwareSets',
@@ -16,10 +19,26 @@ export const initialBundleSteps: StepperStep[] = [
 	},
 ];
 
+/**
+ * Steps that will run for each plugin bundle.
+ */
+export const customBundleSteps: Record< string, StepperStep[] > = {
+	'woo-on-plans': [
+		{ slug: 'storeAddress', component: StoreAddress },
+		{ slug: 'businessInfo', component: BusinessInfo },
+	],
+};
+
+/**
+ * Steps that will run before the custom bundle steps.
+ */
 export const beforeCustomBundleSteps: StepperStep[] = [
 	{ slug: 'checkForPlugins', component: CheckForPlugins },
 ];
 
+/**
+ * Steps that will run after the custom bundle steps.
+ */
 export const afterCustomBundleSteps: StepperStep[] = [
 	{ slug: 'bundleConfirm', component: BundleConfirm },
 	{ slug: 'bundleTransfer', component: BundleTransfer },
@@ -27,12 +46,5 @@ export const afterCustomBundleSteps: StepperStep[] = [
 	{ slug: 'processing', component: ProcessingStep },
 	{ slug: 'error', component: ErrorStep },
 ];
-
-export const customBundleSteps: Record< string, StepperStep[] > = {
-	'woo-on-plans': [
-		{ slug: 'storeAddress', component: StoreAddress },
-		{ slug: 'businessInfo', component: BusinessInfo },
-	],
-};
 
 export type BundledPlugin = keyof typeof customBundleSteps;
