@@ -55,6 +55,7 @@ const FoldableNav = ( {
 		navContent = navItems.map( ( navItem ) => {
 			return (
 				<SidebarNavigatorMenuItem
+					isExternalLink={ navItem.isExternalLink }
 					key={ navItem.link }
 					icon={ navItem.icon ?? <></> }
 					path="/"
