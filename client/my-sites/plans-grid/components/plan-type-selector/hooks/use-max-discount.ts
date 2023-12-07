@@ -31,13 +31,12 @@ export default function useMaxDiscount(
 
 	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {
 		const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
-
+		const monthlyPlanSlug = monthlyPlansPricing?.[ planSlug ];
 		if ( ! yearlyVariantPlanSlug ) {
 			return 0;
 		}
 
-		const monthlyPlanAnnualCost =
-			( monthlyPlansPricing?.[ planSlug ]?.originalPrice.full ?? 0 ) * 12;
+		const monthlyPlanAnnualCost = ( monthlyPlanSlug?.originalPrice.full ?? 0 ) * 12;
 
 		if ( ! monthlyPlanAnnualCost ) {
 			return 0;
