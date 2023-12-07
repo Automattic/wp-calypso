@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -9,7 +8,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
@@ -87,9 +85,7 @@ const siteSetupFlow: Flow = {
 			STEPS.ERROR,
 			STEPS.BUNDLE_TRANSFER,
 			STEPS.BUNDLE_INSTALL_PLUGINS,
-			STEPS.WOO_VERIFY_EMAIL,
 			STEPS.BUNDLE_CONFIRM,
-			STEPS.EDIT_EMAIL,
 			STEPS.DIFM_STARTING_POINT,
 		];
 	},
@@ -115,7 +111,6 @@ const siteSetupFlow: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
-		const currentUser = useSelector( getCurrentUser );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -284,13 +279,6 @@ const siteSetupFlow: Flow = {
 					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
-						if (
-							isEnabled( 'signup/woo-verify-email' ) &&
-							currentUser &&
-							! currentUser.email_verified
-						) {
-							return navigate( 'wooVerifyEmail' );
-						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
@@ -404,17 +392,6 @@ const siteSetupFlow: Flow = {
 				case 'bundleInstallPlugins':
 					return navigate( 'processing' );
 
-				case 'editEmail':
-					return navigate( 'wooVerifyEmail' );
-
-				case 'wooVerifyEmail': {
-					if ( params[ 0 ] === 'edit-email' ) {
-						return navigate( 'editEmail' );
-					}
-
-					return navigate( 'wooVerifyEmail' );
-				}
-
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
@@ -522,9 +499,6 @@ const siteSetupFlow: Flow = {
 
 				case 'patternAssembler':
 					return navigate( 'designSetup' );
-
-				case 'editEmail':
-					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
 					// eslint-disable-next-line no-case-declarations

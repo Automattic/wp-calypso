@@ -1,9 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard, getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
+import { useDispatch as reduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useComingFromThemeActivationParam } from '../hooks/use-coming-from-theme-activation';
 import { useSite } from '../hooks/use-site';
@@ -69,7 +68,6 @@ const pluginBundleFlow: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
-		const currentUser = useSelector( getCurrentUser );
 		const comingFromThemeActivation = useComingFromThemeActivationParam();
 
 		let siteSlug: string | null = null;
@@ -204,13 +202,6 @@ const pluginBundleFlow: Flow = {
 					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
-						if (
-							isEnabled( 'signup/woo-verify-email' ) &&
-							currentUser &&
-							! currentUser.email_verified
-						) {
-							return navigate( 'wooVerifyEmail' );
-						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 

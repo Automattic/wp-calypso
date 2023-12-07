@@ -31,11 +31,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
-	EDIT_EMAIL: {
-		slug: 'editEmail',
-		asyncComponent: () => import( './steps-repository/edit-email' ),
-	},
-
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	FREE_POST_SETUP: {
@@ -184,10 +179,5 @@ export const STEPS = {
 	BUNDLE_TRANSFER: {
 		slug: 'bundleTransfer',
 		asyncComponent: () => import( './steps-repository/bundle-transfer' ),
-	},
-
-	WOO_VERIFY_EMAIL: {
-		slug: 'wooVerifyEmail',
-		asyncComponent: () => import( './steps-repository/woo-verify-email' ),
 	},
 };
