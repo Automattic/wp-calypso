@@ -31,17 +31,17 @@ function useTranslatedStrings() {
 	const translate = useTranslate();
 	const limits = translate( 'Your monthly contribution', {
 		comment: 'Heading for Stats PWYW Upgrade slider. The monthly payment amount.',
-	} );
+	} ) as string;
 	const price = translate( 'Thank you!', {
 		comment: 'Heading for Stats PWYW Upgrade slider. The thank you message.',
-	} );
+	} ) as string;
 	const defaultAverageAmount = 7; // Matches the default set in the slider.
 	const strategy = translate( 'The average person pays %(value)s per month, billed yearly', {
 		comment: 'Stats PWYW Upgrade slider message. The billing strategy.',
 		args: {
 			value: formatCurrency( defaultAverageAmount, '', { stripZeros: true } ),
 		},
-	} );
+	} ) as string;
 
 	return {
 		limits,
