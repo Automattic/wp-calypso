@@ -1,9 +1,9 @@
-import { SubTitle, Title } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -47,9 +47,11 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div className={ classnames( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
-			<div className="import__heading import__heading-center">
-				<Title>{ importerData?.title }</Title>
-				<SubTitle>{ importerData?.description }</SubTitle>
+			<div className="import__header">
+				<FormattedHeader
+					headerText={ importerData?.title }
+					subHeaderText={ importerData?.description }
+				/>
 			</div>
 			{ errorData && (
 				<ErrorPane
