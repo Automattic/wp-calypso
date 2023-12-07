@@ -1,7 +1,7 @@
-import { Title } from '@automattic/onboarding';
 import { localize, translate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -28,7 +28,7 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 	return (
 		<>
 			<div className="import__header">
-				<Title>{ translate( 'Where will you import from?' ) }</Title>
+				<FormattedHeader headerText={ translate( 'Where will you import from?' ) } />
 			</div>
 			<div className="import__capture-container">
 				<CaptureInput
