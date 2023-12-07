@@ -50,6 +50,7 @@ export const afterCustomBundleSteps: StepperStep[] = [
 interface BundleStepsSettings {
 	[ key: string ]: {
 		goBack: ( currentStep: string, navigate: Navigate< StepperStep[] > ) => boolean | void;
+		checkForActivePlugins: string[];
 	};
 }
 
@@ -67,6 +68,7 @@ export const bundleStepsSettings: BundleStepsSettings = {
 					return false;
 			}
 		},
+		checkForActivePlugins: [ 'woocommerce' ],
 	},
 };
 
