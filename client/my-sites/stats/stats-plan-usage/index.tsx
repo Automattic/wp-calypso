@@ -7,27 +7,34 @@ import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query
 import './style.scss';
 
 interface PlanUsageProps {
-	limit?: number;
+	limit?: number | null;
 	usage?: number;
 	daysToReset?: number;
-	overLimitMonths?: number;
+	overLimitMonths?: number | null;
+	upgradeLink?: string;
 }
 interface StatsPlanUsageProps {
 	siteId: number;
+	isOdysseyStats: boolean;
 }
+
+const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
+	const from = isOdysseyStats ? 'jetpack' : 'calypso';
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/tier-upgrade-slider&from=${ from }-stats-tier-upgrade-usage-section&productType=commercial`;
+
+	return purchasePath;
+};
 
 const PlanUsage: React.FC< PlanUsageProps > = ( {
 	limit = 10000,
 	usage = 0,
 	daysToReset = 30,
 	overLimitMonths = 0,
+	upgradeLink,
 } ) => {
 	const translate = useTranslate();
 
-	// TODO: Replace with real upgrade link.
-	const upgradeLink = '#';
-
-	const isOverLimit = usage >= limit;
+	const isOverLimit = limit && usage >= limit;
 	const progressClassNames = classNames( 'plan-usage-progress', {
 		'is-over-limit': isOverLimit,
 	} );
@@ -35,7 +42,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	// 0, 1, 2, or greater than 2
 	let overLimitMonthsText = '';
 
-	if ( overLimitMonths === 1 ) {
+	if ( overLimitMonths && overLimitMonths === 1 ) {
 		overLimitMonthsText = translate(
 			"{{bold}}You've surpassed your limit the past month.{{/bold}} ",
 			{
@@ -46,7 +53,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 		) as string;
 	}
 
-	if ( overLimitMonths >= 2 ) {
+	if ( overLimitMonths && overLimitMonths >= 2 ) {
 		overLimitMonthsText = translate(
 			"{{bold}}You've surpassed your limit for two consecutive months already.{{/bold}} ",
 			{
@@ -96,7 +103,9 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	);
 };
 
-const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId } ) => {
+const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId, isOdysseyStats } ) => {
+	const upgradeLink = getStatsPurchaseURL( siteId, isOdysseyStats );
+
 	const { data } = usePlanUsageQuery( siteId );
 
 	return (
@@ -106,6 +115,7 @@ const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId } ) => {
 				usage={ data?.current_usage?.views_count }
 				daysToReset={ data?.current_usage?.days_to_reset }
 				overLimitMonths={ data?.over_limit_months }
+				upgradeLink={ upgradeLink }
 			/>
 		</div>
 	);
