@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -233,6 +233,11 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
 						isError={ ! isValidRecord }
 					/>
+					{ ! isValidRecord && (
+						<div className="domain-forwarding-card__error-field">
+							<FormInputValidation isError text={ translate( 'Invalid subdomain' ) } />
+						</div>
+					) }
 				</div>
 				<FormLabel>{ translate( 'IP address' ) }</FormLabel>
 				<div className="ip-address">
@@ -250,6 +255,11 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						maxLength={ 1000 }
 						isError={ ! isValidIpAddress }
 					/>
+					{ ! isValidIpAddress && (
+						<div className="domain-forwarding-card__error-field">
+							<FormInputValidation isError text={ translate( 'Invalid IP address' ) } />
+						</div>
+					) }
 				</div>
 				<div className="glue-records__action-buttons">
 					<FormButton
