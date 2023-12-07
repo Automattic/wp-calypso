@@ -56,5 +56,8 @@ export const renderHookWithProvider = (
 		</QueryClientProvider>
 	);
 
-	return rtlRenderHook( hookContainer, { wrapper: Wrapper, ...renderOptions } );
+	return {
+		store,
+		...rtlRenderHook( hookContainer, { wrapper: Wrapper, ...renderOptions } ),
+	};
 };

@@ -8,7 +8,8 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -116,7 +117,8 @@ const hosting: Flow = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const { resetOnboardStore, setHostingTrialAvailable } = useDispatch( ONBOARD_STORE );
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const reduxDispatch = useReduxDispatch();
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		const userIsLoggedIn = useSelect(
@@ -148,7 +150,7 @@ const hosting: Flow = {
 				if ( currentStepSlug === undefined ) {
 					resetOnboardStore();
 					if ( query.get( 'campaign' ) === 'reddit' ) {
-						setHostingTrialAvailable();
+						reduxDispatch( savePreference( 'hosting-trial-campaign', 'reddit' ) );
 					}
 				}
 			},
