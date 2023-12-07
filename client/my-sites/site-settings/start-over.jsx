@@ -99,21 +99,38 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 
 	const handleError = () => {
 		dispatch(
-			errorNotice( translate( 'We were unable to reset your site.' ), {
-				id: 'site-reset-failure-notice',
-				duration: 6000,
-			} )
+			errorNotice(
+				translate(
+					'We were unable to reset your site. This could be because a request is already in progress.'
+				),
+				{
+					id: 'site-reset-failure-notice',
+					duration: 6000,
+				}
+			)
 		);
 	};
 
 	const handleResult = ( result ) => {
 		if ( result.success ) {
-			dispatch(
-				successNotice( translate( 'Your site has been reset.' ), {
-					id: 'site-reset-success-notice',
-					duration: 4000,
-				} )
-			);
+			if ( isAtomic ) {
+				dispatch(
+					successNotice(
+						translate( 'Your site will be reset. It can take up to one minute to complete. ' ),
+						{
+							id: 'site-reset-success-notice',
+							duration: 6000,
+						}
+					)
+				);
+			} else {
+				dispatch(
+					successNotice( translate( 'Your site has been reset.' ), {
+						id: 'site-reset-success-notice',
+						duration: 4000,
+					} )
+				);
+			}
 		} else {
 			handleError();
 		}
