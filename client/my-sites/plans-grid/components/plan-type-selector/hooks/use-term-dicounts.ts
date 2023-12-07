@@ -1,72 +1,90 @@
 import {
-	UrlFriendlyIntervalType,
 	PlanSlug,
-	TERM_ANNUALLY,
+	URL_FRIENDLY_TERMS_MAPPING,
+	UrlFriendlyTermType,
 	getPlanSlugForTermVariant,
 	isMonthly,
 	isWpComPlan,
 } from '@automattic/calypso-products';
-import { useState } from '@wordpress/element';
 import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
-export default function useMaxDiscount(
+export default function useTermDiscounts(
 	plans: PlanSlug[],
-	terms: UrlFriendlyIntervalType[],
+	terms: UrlFriendlyTermType[],
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans
-): number {
-	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
+): Record< UrlFriendlyTermType, number > {
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
-	const yearlyVariantPlanSlugs = wpcomMonthlyPlans
-		.map( ( planSlug ) => getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY ) )
-		.filter( Boolean ) as PlanSlug[];
-	const termWiseVariantPlanSlugs: Record< UrlFriendlyIntervalType, PlanSlug[] > = {} as Record<
-		UrlFriendlyIntervalType,
-		PlanSlug[]
-	>;
-	terms.forEach( ( term ) => {
-		termWiseVariantPlanSlugs[ term ] = wpcomMonthlyPlans
-			.map( ( planSlug ) => getPlanSlugForTermVariant( planSlug, term ) )
-			.filter( Boolean ) as PlanSlug[];
-	} );
 
+	const pricingInfoRequiredPlans = terms
+		.map(
+			( term ) =>
+				wpcomMonthlyPlans
+					.map( ( planSlug ) =>
+						getPlanSlugForTermVariant( planSlug, URL_FRIENDLY_TERMS_MAPPING[ term ] )
+					)
+					.filter( Boolean ) as PlanSlug[]
+		)
+		.flat();
 	const monthlyPlansPricing = usePricingMetaForGridPlans( {
 		planSlugs: wpcomMonthlyPlans,
 		withoutProRatedCredits: true,
 		storageAddOns: null,
 	} );
-	const yearlyPlansPricing = usePricingMetaForGridPlans( {
-		planSlugs: yearlyVariantPlanSlugs,
+	const allPlansPricing = usePricingMetaForGridPlans( {
+		planSlugs: pricingInfoRequiredPlans,
 		withoutProRatedCredits: true,
 		storageAddOns: null,
 	} );
 
-	const discounts = wpcomMonthlyPlans.map( ( planSlug ) => {
-		const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
-		const monthlyPlanSlug = monthlyPlansPricing?.[ planSlug ];
-		if ( ! yearlyVariantPlanSlug ) {
-			return 0;
+	const termInMonths = ( term: UrlFriendlyTermType ): number => {
+		switch ( term ) {
+			case '3yearly':
+				return 36;
+			case '2yearly':
+				return 24;
+			case 'yearly':
+				return 12;
+			case 'monthly':
+			default:
+				return 1;
 		}
+	};
 
-		const monthlyPlanAnnualCost = ( monthlyPlanSlug?.originalPrice.full ?? 0 ) * 12;
+	const termViseMaxDiscount: Record< UrlFriendlyTermType, number > = {} as Record<
+		UrlFriendlyTermType,
+		number
+	>;
+	terms.forEach( ( urlFriendlyTerm: UrlFriendlyTermType ) => {
+		const termDiscounts = wpcomMonthlyPlans.map( ( planSlug ) => {
+			const variantPlanSlug = getPlanSlugForTermVariant(
+				planSlug,
+				URL_FRIENDLY_TERMS_MAPPING[ urlFriendlyTerm as UrlFriendlyTermType ]
+			);
+			const monthlyPlanSlug = monthlyPlansPricing?.[ planSlug ];
+			if ( ! variantPlanSlug ) {
+				return 0;
+			}
 
-		if ( ! monthlyPlanAnnualCost ) {
-			return 0;
-		}
+			const monthlyPlanAnnualCost =
+				( monthlyPlanSlug?.originalPrice.full ?? 0 ) * termInMonths( urlFriendlyTerm );
 
-		const yearlyPlanAnnualCost =
-			yearlyPlansPricing?.[ yearlyVariantPlanSlug ]?.discountedPrice.full ||
-			yearlyPlansPricing?.[ yearlyVariantPlanSlug ]?.originalPrice.full ||
-			0;
+			if ( ! monthlyPlanAnnualCost ) {
+				return 0;
+			}
 
-		return Math.floor(
-			( ( monthlyPlanAnnualCost - yearlyPlanAnnualCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100
-		);
+			const yearlyPlanAnnualCost =
+				allPlansPricing?.[ variantPlanSlug ]?.discountedPrice.full ||
+				allPlansPricing?.[ variantPlanSlug ]?.originalPrice.full ||
+				0;
+
+			return Math.floor(
+				( ( monthlyPlanAnnualCost - yearlyPlanAnnualCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100
+			);
+		} );
+		termViseMaxDiscount[ urlFriendlyTerm ] = termDiscounts.length
+			? Math.max( ...termDiscounts )
+			: 0;
 	} );
-	const currentMaxDiscount = discounts.length ? Math.max( ...discounts ) : 0;
 
-	if ( currentMaxDiscount > 0 && currentMaxDiscount !== maxDiscount ) {
-		setMaxDiscount( currentMaxDiscount );
-	}
-
-	return currentMaxDiscount || maxDiscount;
+	return termViseMaxDiscount;
 }
