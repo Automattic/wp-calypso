@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useExperiment } from 'calypso/lib/explat';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
@@ -110,14 +111,26 @@ const PluginsDiscoveryPage = ( props ) => {
 
 	const isEligibleForOneClickCheckout = useIsEligibleForOneClickCheckout();
 
-	// TODO: Add loading state
-	// if ( isEligibleForOneClickCheckout.isLoading ) {
+	// TODO: Uncomment when experiment is ready for testing
+	// const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+	// 	'calypso_plugins_page_business_plan_one_click_upsell',
+	// 	{
+	// 		isEligible: translate.localeSlug === 'en',
+	// 	}
+	// );
+
+	// TODO: Account for loading state
+	// if ( isEligibleForOneClickCheckout.isLoading || isLoadingExperiment ) {
 	// 	return <Loader />
 	// }
 
+	const canDisplayPurchaseModal = isEligibleForOneClickCheckout.result;
+	// TODO: Uncomment when experiment is ready for testing
+	// && experimentAssignment?.variationName === 'treatment';
+
 	return (
 		<>
-			{ isEligibleForOneClickCheckout.result && (
+			{ canDisplayPurchaseModal && (
 				<CalypsoShoppingCartProvider>
 					<StripeHookProvider
 						fetchStripeConfiguration={ getStripeConfiguration }
