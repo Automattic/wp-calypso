@@ -13,6 +13,7 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 import StatsPWYWUpgradeSlider from './stats-pwyw-uprade-slider';
+import { StatsPWYWSliderSettings } from './types';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
@@ -22,13 +23,7 @@ interface PersonalPurchaseProps {
 	currencyCode: string;
 	siteId: number | null;
 	siteSlug: string;
-	sliderSettings: {
-		sliderStepPrice: number;
-		minSliderPrice: number;
-		maxSliderPrice: number;
-		uiEmojiHeartTier: number;
-		uiImageCelebrationTier: number;
-	};
+	sliderSettings: StatsPWYWSliderSettings;
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
