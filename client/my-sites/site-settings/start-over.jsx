@@ -95,7 +95,7 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 	const dispatch = useDispatch();
 
 	const { data } = useSiteResetContentSummaryQuery( siteId );
-	const [ siteDomainTest, setSiteDomainTest ] = useState( '' );
+	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 
 	const handleError = () => {
 		dispatch(
@@ -202,8 +202,6 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 		}
 	);
 
-	const canReset = siteDomainTest.trim() === siteDomain;
-
 	const backupHint = isAtomic
 		? createInterpolateElement(
 				translate(
@@ -277,13 +275,14 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 							id="confirmResetInput"
 							disabled={ isLoading }
 							style={ { flex: 0.5 } }
-							value={ siteDomainTest }
-							onChange={ ( event ) => setSiteDomainTest( event.currentTarget.value ) }
+							onChange={ ( event ) =>
+								setDomainConfirmed( event.currentTarget.value.trim() === siteDomain )
+							}
 						/>
 						<Button
 							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
 							onClick={ handleReset }
-							disabled={ isLoading || ! canReset }
+							disabled={ isLoading || ! isDomainConfirmed }
 							busy={ isLoading }
 						>
 							{ translate( 'Reset Site' ) }
