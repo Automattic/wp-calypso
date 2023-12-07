@@ -3,12 +3,12 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalNavigatorBackButton as NavigatorBackButton,
 } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 interface Props {
 	title: JSX.Element;
-	description?: string;
+	description?: TranslateResult;
 	hideBack?: boolean;
 	onBack?: () => void;
 }

@@ -73,7 +73,7 @@ export const useWPCOMPluginsList = (
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
-	}: UseQueryOptions< any > = {}
+	}: Omit< UseQueryOptions< any >, 'queryKey' > = {}
 ): UseQueryResult => {
 	return useQuery( {
 		...getWPCOMPluginsQueryParams( type, searchTerm, tag ),
@@ -109,7 +109,11 @@ export const getWPCOMPluginQueryParams = (
  */
 export const useWPCOMPlugin = (
 	slug: string,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions, 'queryKey' > = {}
 ): UseQueryResult< any > => {
 	return useQuery( {
 		...getWPCOMPluginQueryParams( slug ),
@@ -151,7 +155,7 @@ export const useWPCOMFeaturedPlugins = ( {
 	enabled = true,
 	staleTime = BASE_STALE_TIME,
 	refetchOnMount = true,
-}: UseQueryOptions = {} ): UseQueryResult => {
+}: Omit< UseQueryOptions, 'queryKey' > = {} ): UseQueryResult => {
 	return useQuery( {
 		...getWPCOMFeaturedPluginsQueryParams(),
 		enabled,

@@ -22,7 +22,9 @@ type Context = {
 const MUTATION_KEY = 'addEmailForward';
 
 export function useIsLoading() {
-	const activeCount = useIsMutating( [ MUTATION_KEY ] );
+	const activeCount = useIsMutating( {
+		mutationKey: [ MUTATION_KEY ],
+	} );
 
 	return Boolean( activeCount );
 }
@@ -58,16 +60,16 @@ export default function useAddEmailForwardMutation(
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
 
-		queryClient.invalidateQueries( emailAccountsQueryKey );
-		queryClient.invalidateQueries( domainsQueryKey );
+		queryClient.invalidateQueries( { queryKey: emailAccountsQueryKey } );
+		queryClient.invalidateQueries( { queryKey: domainsQueryKey } );
 	};
 
 	mutationOptions.onMutate = async ( variables ) => {
 		const { mailbox, destination } = variables;
 		suppliedOnMutate?.( variables );
 
-		await queryClient.cancelQueries( emailAccountsQueryKey );
-		await queryClient.cancelQueries( domainsQueryKey );
+		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
+		await queryClient.cancelQueries( { queryKey: domainsQueryKey } );
 
 		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
 		const emailForwards = previousEmailAccountsQueryData?.accounts?.[ 0 ]?.emails;

@@ -60,11 +60,41 @@ export interface PlanIntroductoryOffer {
 }
 
 export interface SitePlan {
+	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;
+	productSlug: PlanSlugFromProducts;
 	productId: number;
-	introOffer?: PlanIntroductoryOffer | null;
-	/* This value is only returned for the current plan on the site. */
+	/* END: Same SitePlan/PlanNext props */
+
+	currentPlan?: boolean;
+
+	/**
+	 * This value is only returned for the current plan on the site.
+	 */
 	expiry?: string;
+
+	/**
+	 * This is only set when `currentPlan` is true (so for the current plan on the site).
+	 * It is sent through as `id` from the endpoint and remapped here to avoid confusion e.g. with `productId`.
+	 */
+	purchaseId?: number;
+	introOffer?: PlanIntroductoryOffer | null;
+}
+
+/**
+ * This is the new interface for API Plans that will replace the existing Plan interface above.
+ * The existing Plan interface will be removed once this interface is fully implemented.
+ */
+export interface PlanNext {
+	/* START: Same SitePlan/PlanNext props */
+	planSlug: PlanSlugFromProducts;
+	productSlug: PlanSlugFromProducts;
+	productId: number;
+	/* END: Same SitePlan/PlanNext props */
+
+	productNameShort: string;
+	billPeriod: -1 | ( typeof PERIOD_LIST )[ number ];
+	currencyCode: string;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
@@ -95,7 +125,6 @@ export interface PricedAPIPlan {
 
 	/**
 	 * The product price as a float.
-	 *
 	 * @deprecated use raw_price_integer as using floats for currency is not safe.
 	 */
 	raw_price: number;
@@ -109,7 +138,6 @@ export interface PricedAPIPlan {
 
 	/**
 	 * The orig cost as a float.
-	 *
 	 * @deprecated use orig_cost_integer as using floats for currency is not safe.
 	 */
 	orig_cost?: number | null;
@@ -123,9 +151,20 @@ export interface PricedAPIPlan {
  */
 export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
 	/* product_id: number; // not included in the plan's payload */
-	current_plan?: boolean;
-	expiry?: string;
 	product_slug: StorePlanSlug;
+	current_plan?: boolean;
+
+	/**
+	 * This is the purchase ID present when `current_plan` is true.
+	 * For this, we map it (on `SitePlan` interface) as `purchaseId` instead
+	 * of `id` to avoid confusion e.g. with `productId`.
+	 */
+	id?: string;
+
+	/**
+	 * This value is only returned for the current plan on the site
+	 */
+	expiry?: string;
 }
 
 export interface PricedAPIPlanFree extends PricedAPIPlan {

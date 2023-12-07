@@ -58,7 +58,7 @@ class RegistrantVerificationPage extends Component {
 		return {
 			title: translate( 'Success!' ),
 			message: translate(
-				'Thank your for verifying your contact information for:{{br /}}{{strong}}{{domainLinks /}}{{/strong}}.',
+				'Thank you for verifying your contact information for:{{br /}}{{strong}}{{domainLinks /}}{{/strong}}.',
 				{
 					components: {
 						domainLinks: DomainLinks,

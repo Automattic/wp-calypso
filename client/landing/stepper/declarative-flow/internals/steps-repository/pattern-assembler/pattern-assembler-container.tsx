@@ -12,7 +12,7 @@ interface Props {
 	patternsMapByCategory: Record< string, Pattern[] >;
 	children: JSX.Element;
 	siteInfo: SiteInfo;
-	isNewSite?: boolean;
+	isNewSite: boolean;
 }
 
 const PatternAssemblerContainer = ( {
@@ -51,6 +51,7 @@ const PatternAssemblerContainer = ( {
 				patternIdsByCategory={ patternIdsByCategory }
 				// Use siteInfo to overwrite site-related things such as title, and tagline.
 				siteInfo={ siteInfo }
+				shouldShufflePosts={ isNewSite }
 			>
 				{ children }
 			</PatternsRendererProvider>

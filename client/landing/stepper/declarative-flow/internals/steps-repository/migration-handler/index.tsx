@@ -32,16 +32,19 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const [ isUnAuthorized, setIsUnAuthorized ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
-	const onSourceMigrationStatusError = () => {
-		setIsUnAuthorized( true );
-	};
 	const { data: sites } = useSiteExcerptsQuery( SITE_PICKER_FILTER_CONFIG );
 	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
-		useSourceMigrationStatusQuery( sourceSiteSlug, onSourceMigrationStatusError );
+		useSourceMigrationStatusQuery( sourceSiteSlug );
 
 	useEffect( () => {
 		setIsMigrateFromWp( true );
 	}, [] );
+
+	useEffect( () => {
+		if ( isErrorSourceSiteMigrationStatus ) {
+			setIsUnAuthorized( true );
+		}
+	}, [ isErrorSourceSiteMigrationStatus ] );
 
 	useEffect( () => {
 		if ( ! submit || ! sourceSiteMigrationStatus || isErrorSourceSiteMigrationStatus || ! sites ) {

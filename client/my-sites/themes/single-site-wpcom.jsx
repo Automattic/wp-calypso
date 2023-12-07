@@ -1,12 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	FEATURE_UPLOAD_THEMES,
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	FEATURE_PREMIUM_THEMES_V2,
-} from '@automattic/calypso-products';
+import { FEATURE_UPLOAD_THEMES, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -29,46 +22,22 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
 	if ( displayUpsellBanner ) {
-		if ( isEnabled( 'themes/premium' ) ) {
-			if ( [ PLAN_PERSONAL, PLAN_FREE ].includes( currentPlan.productSlug ) ) {
-				upsellBanner = (
-					<UpsellNudge
-						className="themes__showcase-banner"
-						event="calypso_themes_list_premium_themes"
-						feature={ FEATURE_PREMIUM_THEMES_V2 }
-						plan={ PLAN_PREMIUM }
-						title={ translate( 'Unlock premium themes with our Premium and Business plans!' ) }
-						callToAction={ translate( 'Upgrade now' ) }
-						showIcon={ true }
-					/>
-				);
-			}
+		const commonProps = {
+			className: 'themes__showcase-banner',
+			event: 'calypso_themes_list_install_themes',
+			feature: FEATURE_UPLOAD_THEMES,
+			plan: PLAN_BUSINESS,
+			title: translate( 'Upload your own themes with our Business and eCommerce plans!' ),
+			callToAction: translate( 'Upgrade now' ),
+			showIcon: true,
+		};
 
+		if ( isEnabled( 'themes/premium' ) ) {
 			if ( currentPlan.productSlug === PLAN_PREMIUM ) {
-				upsellBanner = (
-					<UpsellNudge
-						className="themes__showcase-banner"
-						event="calypso_themes_list_install_themes"
-						feature={ FEATURE_UPLOAD_THEMES }
-						plan={ PLAN_BUSINESS }
-						title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-						callToAction={ translate( 'Upgrade now' ) }
-						showIcon={ true }
-					/>
-				);
+				upsellBanner = <UpsellNudge { ...commonProps } />;
 			}
 		} else {
-			upsellBanner = (
-				<UpsellNudge
-					className="themes__showcase-banner"
-					event="calypso_themes_list_install_themes"
-					feature={ FEATURE_UPLOAD_THEMES }
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-					callToAction={ translate( 'Upgrade now' ) }
-					showIcon={ true }
-				/>
-			);
+			upsellBanner = <UpsellNudge { ...commonProps } />;
 		}
 	}
 

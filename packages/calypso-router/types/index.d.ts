@@ -222,10 +222,6 @@ interface Options {
 	 */
 	hashbang: boolean;
 	/**
-	 * remove URL encoding from path components
-	 */
-	decodeURLComponents: boolean;
-	/**
 	 * provide a window to control (by default it will control the main window)
 	 */
 	window: Window;

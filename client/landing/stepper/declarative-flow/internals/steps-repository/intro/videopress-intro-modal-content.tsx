@@ -61,7 +61,7 @@ const VideoPressIntroModalContent: React.FC< IntroModalContentProps > = ( { onSu
 			</ul>
 			<div className="videopress-intro-modal__button-column">
 				<Button className="intro__button" primary onClick={ onSubmit }>
-					{ translate( 'Get started' ) }
+					{ translate( 'Start free trial' ) }
 				</Button>
 				<div className="learn-more">
 					{ translate( '{{a}}Or learn more about VideoPress.{{/a}}', {

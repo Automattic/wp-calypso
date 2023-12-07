@@ -19,7 +19,7 @@ export default function useDeleteDomainForwardingMutation(
 			} ),
 		...queryOptions,
 		onSuccess() {
-			queryClient.removeQueries( domainForwardingQueryKey( domainName ) );
+			queryClient.removeQueries( { queryKey: domainForwardingQueryKey( domainName ) } );
 			queryOptions.onSuccess?.();
 		},
 	} );

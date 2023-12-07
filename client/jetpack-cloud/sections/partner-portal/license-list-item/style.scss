@@ -170,3 +170,36 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 36px;
 		font-size: 1rem;
 	}
 }
+
+.license-preview__bundle {
+	.license-preview__no-value {
+		display: none;
+
+		@include break-xlarge() {
+			display: block;
+		}
+	}
+
+	.license-preview__license-count {
+		display: block;
+		max-width: fit-content;
+		margin-block-start: 4px;
+
+		@include break-xlarge() {
+			display: none;
+		}
+	}
+}
+
+.license-preview__badge-container {
+	display: flex;
+
+	.license-preview__license-count {
+		text-wrap: nowrap;
+		display: none;
+
+		@include break-xlarge() {
+			display: block;
+		}
+	}
+}

@@ -2,8 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { JumpToRecent } from '../message/jump-to-recent';
@@ -25,10 +23,9 @@ export const OdieSendMessageButton = ( {
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat, isLoading } =
+	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat, isLoading, trackEvent } =
 		useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -41,11 +38,9 @@ export const OdieSendMessageButton = ( {
 		try {
 			setIsLoading( true );
 
-			dispatch(
-				recordTracksEvent( 'calypso_odie_chat_message_action_send', {
-					bot_name_slug: botNameSlug,
-				} )
-			);
+			trackEvent( 'calypso_odie_chat_message_action_send', {
+				bot_name_slug: botNameSlug,
+			} );
 
 			const message = {
 				content: messageString,
@@ -63,11 +58,9 @@ export const OdieSendMessageButton = ( {
 			] );
 
 			const receivedMessage = await sendOdieMessage( { message } );
-			dispatch(
-				recordTracksEvent( 'calypso_odie_chat_message_action_receive', {
-					bot_name_slug: botNameSlug,
-				} )
-			);
+			trackEvent( 'calypso_odie_chat_message_action_receive', {
+				bot_name_slug: botNameSlug,
+			} );
 
 			addMessage( {
 				content: receivedMessage.messages[ 0 ].content,

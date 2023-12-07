@@ -6,6 +6,7 @@ import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import AppPromo from 'calypso/blocks/app-promo';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -418,6 +419,26 @@ class ReaderStream extends Component {
 		} );
 	};
 
+	renderAppPromo = ( index ) => {
+		const { isDiscoverStream } = this.props;
+		// Only show it once in the 4th position.
+		if ( index !== 3 ) {
+			return;
+		}
+
+		return (
+			isDiscoverStream && (
+				<AppPromo
+					iconSize={ 40 }
+					campaign="calypso-reader-stream"
+					title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
+					hasQRCode={ true }
+					hasGetAppButton={ false }
+				/>
+			)
+		);
+	};
+
 	getPostRef = ( postKey ) => {
 		return keyToString( postKey );
 	};
@@ -436,6 +457,7 @@ class ReaderStream extends Component {
 
 		return (
 			<Fragment key={ itemKey }>
+				{ this.renderAppPromo( index ) }
 				<PostLifecycle
 					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
 					isSelected={ isSelected }

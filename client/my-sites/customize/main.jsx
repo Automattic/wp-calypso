@@ -93,7 +93,8 @@ class Customize extends Component {
 			page( menusUrl );
 		}
 		if ( isJetpack ) {
-			page( customizerUrl );
+			// Always an external non-Calypso wp-admin URL, so no `page()`, but a full-page navigation.
+			window.location = customizerUrl;
 		}
 	};
 

@@ -183,7 +183,7 @@ const MailboxLoaderError = ( {
 	const queryClient = useQueryClient();
 
 	const reloadMailboxes = () => {
-		queryClient.removeQueries( getMailboxesQueryKey( siteId ) );
+		queryClient.removeQueries( { queryKey: getMailboxesQueryKey( siteId ) } );
 		reFetchMailboxes();
 	};
 

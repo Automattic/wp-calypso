@@ -1199,6 +1199,7 @@ class SignupForm extends Component {
 					queryArgs={ this.props.queryArgs }
 					userEmail={ this.getEmailValue() }
 					notice={ this.getNotice( true ) }
+					isSocialFirst={ this.props.isSocialFirst }
 				/>
 			);
 		}

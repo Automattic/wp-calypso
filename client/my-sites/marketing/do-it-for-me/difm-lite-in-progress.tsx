@@ -16,8 +16,8 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
-import { getSiteSlug, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { AppState, SiteId, SiteSlug } from 'calypso/types';
 
@@ -153,22 +153,19 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	const isLoadingSite = useSelector(
-		( state: AppState ) =>
-			isRequestingSite( state, siteId ) ||
-			isRequestingSites( state ) ||
-			isFetchingSitePurchases( state )
+	useQuerySitePurchases( siteId );
+	const isLoadingSitePurchases = useSelector( ( state: AppState ) =>
+		isFetchingSitePurchases( state )
 	);
-	const isWebsiteContentSubmitted = useSelector( ( state ) =>
-		isDIFMLiteWebsiteContentSubmitted( state, siteId )
-	);
+	const { isLoading: isLoadingWebsiteContent, data: websiteContentQueryResult } =
+		useGetWebsiteContentQuery( siteSlug );
 	const primaryDomain = useSelector( ( state: AppState ) =>
 		getPrimaryDomainBySiteId( state, siteId )
 	);
 
-	useQuerySitePurchases( siteId );
+	const isLoading = isLoadingSitePurchases || isLoadingWebsiteContent;
 
-	if ( ! primaryDomain || ! siteSlug || isLoadingSite ) {
+	if ( ! primaryDomain || ! siteSlug || isLoading ) {
 		return (
 			<>
 				<QuerySiteDomains siteId={ siteId } />
@@ -181,7 +178,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 		);
 	}
 
-	if ( isWebsiteContentSubmitted ) {
+	if ( websiteContentQueryResult?.isWebsiteContentSubmitted ) {
 		return <WebsiteContentSubmitted primaryDomain={ primaryDomain } siteSlug={ siteSlug } />;
 	}
 

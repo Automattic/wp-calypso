@@ -15,6 +15,7 @@ import {
 	isDesignFirstFlow,
 	isNewsletterFlow,
 	isStartWritingFlow,
+	isSiteAssemblerFlow,
 	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -27,11 +28,11 @@ import { translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { goToCheckout } from '../../../../utils/checkout';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 
@@ -60,9 +61,7 @@ export function getEnhancedTasks(
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
 	productCartItems?: MinimalRequestCartProduct[] | null,
-	stripeConnectUrl?: string,
-	setShowConfirmModal: () => void = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	isDomainEmailUnverified = false
+	stripeConnectUrl?: string
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -71,8 +70,9 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( isBlogOnboardingFlow( flow ) ? planCartItem?.product_slug : null ) ??
-		site?.plan?.product_slug;
+		( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
+			? planCartItem?.product_slug
+			: null ) ?? site?.plan?.product_slug;
 
 	const translatedPlanName = ( productSlug && PLANS_LIST[ productSlug ]?.getTitle() ) || '';
 
@@ -86,12 +86,16 @@ export function getEnhancedTasks(
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
-	const planCompleted =
-		Boolean( tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed ) ||
-		! isBlogOnboardingFlow( flow );
+	const planCompleted = Boolean(
+		tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed
+	);
 
 	const videoPressUploadCompleted = Boolean(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
+	);
+
+	const setupSiteCompleted = Boolean(
+		tasks?.find( ( task ) => task.id === 'setup_free' )?.completed
 	);
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
@@ -122,8 +126,89 @@ export function getEnhancedTasks(
 			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { newsletter_plan_created: true },
 			} );
-			queryClient?.invalidateQueries( [ 'launchpad' ] );
+			queryClient?.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 		}
+	};
+
+	const getOnboardingCartItems = () =>
+		[ planCartItem, domainCartItem, ...( productCartItems ?? [] ) ].filter(
+			Boolean
+		) as MinimalRequestCartProduct[];
+
+	const getLaunchSiteTaskTitle = ( task: Task ) => {
+		const onboardingCartItems = getOnboardingCartItems();
+		const isSupportedFlow = isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow );
+		if ( isSupportedFlow && planCompleted && onboardingCartItems.length ) {
+			return translate( 'Checkout and launch' );
+		}
+
+		return task.title;
+	};
+
+	const getIsLaunchSiteTaskDisabled = () => {
+		if ( isStartWritingFlow( flow ) ) {
+			return ! (
+				firstPostPublished &&
+				planCompleted &&
+				domainUpsellCompleted &&
+				setupBlogCompleted
+			);
+		}
+
+		if ( isDesignFirstFlow( flow ) ) {
+			return ! ( planCompleted && domainUpsellCompleted && setupBlogCompleted );
+		}
+
+		if ( isSiteAssemblerFlow( flow ) ) {
+			return ! ( planCompleted && domainUpsellCompleted && setupSiteCompleted );
+		}
+
+		return false;
+	};
+
+	const completeLaunchSiteTask = async ( task: Task ) => {
+		if ( ! site?.ID ) {
+			return;
+		}
+
+		const onboardingCartItems = getOnboardingCartItems();
+		const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE ) as OnboardActions;
+
+		setPendingAction( async () => {
+			// If user selected products during onboarding, update cart and redirect to checkout
+			if ( onboardingCartItems.length ) {
+				setProgressTitle( __( 'Directing to checkout' ) );
+				await replaceProductsInCart( siteSlug as string, onboardingCartItems );
+				goToCheckout( {
+					flowName: flow ?? '',
+					stepName: 'launchpad',
+					siteSlug: siteSlug ?? '',
+					destination: `/setup/${ flow }/site-launch?siteSlug=${ siteSlug }`,
+					cancelDestination: `/home/${ siteSlug }`,
+				} );
+				return { goToCheckout: true };
+			}
+
+			// Launch the site or blog immediately if no items in cart
+			const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
+			setProgressTitle(
+				task.id === 'blog_launched' ? __( 'Launching blog' ) : __( 'Launching website' )
+			);
+			await launchSite( site.ID );
+			// Waits for half a second so that the loading screen doesn't flash away too quickly
+			await new Promise( ( res ) => setTimeout( res, 500 ) );
+			recordTaskClickTracksEvent( flow, task.completed, task.id );
+
+			return {
+				siteSlug,
+				// For the blog onboarding flow and the assembler-first flow.
+				isLaunched: true,
+				// For the general onboarding flow.
+				goToHome: true,
+			};
+		} );
+
+		submit?.();
 	};
 
 	tasks &&
@@ -135,7 +220,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/free-post-setup/freePostSetup`, {
+								addQueryArgs( `/setup/${ flow }/freePostSetup`, {
 									siteSlug,
 								} )
 							);
@@ -249,7 +334,9 @@ export function getEnhancedTasks(
 						},
 						badge_text: ! task.completed ? null : translatedPlanName,
 						disabled:
-							( task.completed || ! domainUpsellCompleted ) && ! isBlogOnboardingFlow( flow ),
+							( task.completed || ! domainUpsellCompleted ) &&
+							! isBlogOnboardingFlow( flow ) &&
+							! isSiteAssemblerFlow( flow ),
 					};
 					break;
 				case 'subscribers_added':
@@ -297,13 +384,7 @@ export function getEnhancedTasks(
 					taskData = {
 						isLaunchTask: true,
 						disabled: mustVerifyEmailBeforePosting || false,
-						actionDispatch: ( force = false ) => {
-							if ( ! force ) {
-								if ( isDomainEmailUnverified ) {
-									setShowConfirmModal();
-									return;
-								}
-							}
+						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
 						},
@@ -316,6 +397,20 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/setup/update-design/designSetup`, {
+									siteSlug,
+									flowToReturnTo: flow,
+								} )
+							);
+						},
+					};
+					break;
+				case 'setup_general':
+					taskData = {
+						disabled: false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/update-options/options`, {
 									siteSlug,
 									flowToReturnTo: flow,
 								} )
@@ -350,15 +445,8 @@ export function getEnhancedTasks(
 				case 'link_in_bio_launched':
 					taskData = {
 						isLaunchTask: true,
-						actionDispatch: ( force = false ) => {
+						actionDispatch: () => {
 							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
-
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -382,94 +470,20 @@ export function getEnhancedTasks(
 				case 'site_launched':
 					taskData = {
 						isLaunchTask: true,
-						actionDispatch: ( force = false ) => {
-							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
-								const { setPendingAction, setProgressTitle } = dispatch(
-									ONBOARD_STORE
-								) as OnboardActions;
-								const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
-
-								setPendingAction( async () => {
-									setProgressTitle( __( 'Launching website' ) );
-									await launchSite( site.ID );
-
-									// Waits for half a second so that the loading screen doesn't flash away too quickly
-									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, task.completed, task.id );
-									return { goToHome: true, siteSlug };
-								} );
-
-								submit?.();
-							}
+						title: getLaunchSiteTaskTitle( task ),
+						disabled: getIsLaunchSiteTaskDisabled(),
+						actionDispatch: () => {
+							completeLaunchSiteTask( task );
 						},
 					};
 					break;
 				case 'blog_launched': {
-					// If user selected products during onboarding, update cart and redirect to checkout
-					const onboardingCartItems = [
-						planCartItem,
-						domainCartItem,
-						...( productCartItems ?? [] ),
-					].filter( Boolean ) as MinimalRequestCartProduct[];
-					let title = task.title;
-					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
-						title = translate( 'Checkout and launch' );
-					}
-
 					taskData = {
 						isLaunchTask: true,
-						title,
-						disabled:
-							( isStartWritingFlow( flow ) &&
-								( ! firstPostPublished ||
-									! planCompleted ||
-									! domainUpsellCompleted ||
-									! setupBlogCompleted ) ) ||
-							( isDesignFirstFlow( flow ) &&
-								( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ) ),
-						actionDispatch: ( force = false ) => {
-							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
-
-								const { setPendingAction, setProgressTitle } = dispatch(
-									ONBOARD_STORE
-								) as OnboardActions;
-								setPendingAction( async () => {
-									setProgressTitle( __( 'Directing to checkout' ) );
-									if ( onboardingCartItems.length ) {
-										await replaceProductsInCart( siteSlug as string, onboardingCartItems );
-										const { goToCheckout } = useCheckout();
-										goToCheckout( {
-											flowName: flow ?? '',
-											stepName: 'blog_launched',
-											siteSlug: siteSlug ?? '',
-											destination: `/setup/${ flow }/site-launch?siteSlug=${ siteSlug }`,
-											cancelDestination: '/home',
-										} );
-										return { goToCheckout: true };
-									}
-									// Launch blog if no items in cart
-									const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
-									setProgressTitle( __( 'Launching blog' ) );
-									await launchSite( site.ID );
-									// Waits for half a second so that the loading screen doesn't flash away too quickly
-									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, task.completed, task.id );
-									return { blogLaunched: true, siteSlug };
-								} );
-								submit?.();
-							}
+						title: getLaunchSiteTaskTitle( task ),
+						disabled: getIsLaunchSiteTaskDisabled(),
+						actionDispatch: () => {
+							completeLaunchSiteTask( task );
 						},
 					};
 					break;
@@ -487,15 +501,8 @@ export function getEnhancedTasks(
 				case 'videopress_launched':
 					taskData = {
 						isLaunchTask: true,
-						actionDispatch: ( force = false ) => {
+						actionDispatch: () => {
 							if ( site?.ID ) {
-								if ( ! force ) {
-									if ( isDomainEmailUnverified ) {
-										setShowConfirmModal();
-										return;
-									}
-								}
-
 								const { setPendingAction, setProgressTitle } = dispatch(
 									ONBOARD_STORE
 								) as OnboardActions;
@@ -553,15 +560,6 @@ export function getEnhancedTasks(
 								: translate( 'Upgrade plan' ),
 					};
 					break;
-				case 'verify_domain_email':
-					taskData = {
-						completed: ! isDomainEmailUnverified,
-						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace( task.calypso_path || `/domains/manage/${ siteSlug }` );
-						},
-					};
-					break;
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
@@ -590,7 +588,7 @@ export function getEnhancedTasks(
 							site?.ID
 								? setShowPlansModal( true )
 								: window.location.assign(
-										`/earn/payments-plans/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+										`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
 								  );
 						},
 					};

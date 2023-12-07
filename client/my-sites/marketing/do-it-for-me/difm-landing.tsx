@@ -11,10 +11,11 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -331,18 +332,39 @@ export default function DIFMLanding( {
 		}
 	}, [ isFAQSectionOpen ] );
 
-	const headerText = translate(
-		'Let us build your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
-		{
-			components: {
-				PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
-				sup: <sup />,
-			},
-			args: {
-				displayCost,
-			},
-		}
-	);
+	const isEnglishLocale = useIsEnglishLocale();
+
+	const headerText =
+		isEnglishLocale ||
+		i18n.hasTranslation(
+			'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}'
+		)
+			? translate(
+					'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+					{
+						components: {
+							PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
+							sup: <sup />,
+							br: <br />,
+						},
+						args: {
+							displayCost,
+							days: 4,
+						},
+					}
+			  )
+			: translate(
+					'Let us build your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+					{
+						components: {
+							PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
+							sup: <sup />,
+						},
+						args: {
+							displayCost,
+						},
+					}
+			  );
 
 	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
 	const hasCurrentPlanOrHigherPlan = currentPlan?.product_slug

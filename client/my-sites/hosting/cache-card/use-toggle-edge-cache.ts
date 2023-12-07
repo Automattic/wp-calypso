@@ -32,7 +32,9 @@ export const useToggleEdgeCacheMutation = (
 		},
 		mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY, siteId ],
 		onMutate: async ( active ) => {
-			await queryClient.cancelQueries( [ USE_EDGE_CACHE_QUERY_KEY, siteId ] );
+			await queryClient.cancelQueries( {
+				queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
+			} );
 			const previousData = queryClient.getQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ] );
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], active );
 			return previousData;
@@ -43,7 +45,9 @@ export const useToggleEdgeCacheMutation = (
 		},
 		onSettled: ( ...args ) => {
 			// Refetch settings regardless
-			queryClient.invalidateQueries( [ USE_EDGE_CACHE_QUERY_KEY, siteId ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
+			} );
 			options?.onSettled?.( ...args );
 		},
 	} );

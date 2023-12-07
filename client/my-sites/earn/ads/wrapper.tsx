@@ -215,7 +215,8 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
 				description={ translate(
-					"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
+					"By upgrading to the Premium plan, you'll be able to monetize your site through the <a href='%(url)s'>WordAds program</>.",
+					{ args: { url: 'https://wordads.co/' } }
 				) }
 				feature={ WPCOM_FEATURES_WORDADS }
 				href={ bannerURL }

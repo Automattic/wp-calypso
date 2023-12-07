@@ -48,8 +48,6 @@ export const ImportWrapper: Step = function ( props ) {
 	const shouldHideSkipBtn = () => {
 		switch ( flow ) {
 			case IMPORT_FOCUSED_FLOW:
-				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
-
 			case IMPORT_HOSTED_SITE_FLOW:
 				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
 

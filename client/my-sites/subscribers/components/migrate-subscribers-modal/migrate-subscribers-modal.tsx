@@ -95,7 +95,9 @@ const MigrateSubscribersModal = () => {
 								<Button
 									variant="link"
 									target="_blank"
-									href={ localizeUrl( 'https://jetpack.com/support/subscription-migration-tool/' ) }
+									href={ localizeUrl(
+										'https://wordpress.com/support/migrate-subscribers-from-another-site/'
+									) }
 								/>
 							),
 						}

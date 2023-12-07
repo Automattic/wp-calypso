@@ -75,7 +75,7 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 
 export default function PromotedPosts( { tab }: Props ) {
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
-	const selectedTab = tab && [ 'campaigns', 'posts', 'credits' ].includes( tab ) ? tab : 'posts';
+	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();

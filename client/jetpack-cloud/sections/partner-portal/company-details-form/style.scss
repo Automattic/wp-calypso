@@ -1,10 +1,5 @@
 .company-details-form {
 
-	// We have to add some "invisible" spacing below the form so
-	// our country and state dropdown have enough space to fold out
-	// and be visible (using position: relative/absolute).
-	margin-bottom: 100px;
-
 	&__controls {
 		margin-top: 2rem;
 	}

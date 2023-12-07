@@ -25,12 +25,10 @@ export const getSiteSuggestions = (
 export const useGetSiteSuggestionsQuery = ( {
 	params,
 	enabled,
-	onSuccess,
 	refetchOnWindowFocus,
 }: {
 	params?: Record< string, unknown >;
 	enabled: boolean;
-	onSuccess?: ( response: SuggestionsResponse ) => void;
 	refetchOnWindowFocus?: boolean;
 } ) =>
 	useQuery( {
@@ -38,7 +36,6 @@ export const useGetSiteSuggestionsQuery = ( {
 		queryFn: () => getSiteSuggestions( params ),
 		refetchOnWindowFocus,
 		enabled,
-		onSuccess,
 		queryKey: [ 'site-suggestions', params ],
 		meta: {
 			persist: false,

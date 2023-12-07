@@ -1,7 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
+import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -25,7 +27,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
 import NavItem from './nav-item';
-
 /**
  * Import Styles
  */
@@ -59,6 +60,11 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 		advanceToNextIncompleteTask();
 	}
 };
+
+const unverifiedEmailTaskComparator = memoize(
+	( isEmailUnverified ) => ( task ) =>
+		isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0
+);
 
 const skipTask = (
 	dispatch,
@@ -123,6 +129,7 @@ const SiteSetupList = ( {
 	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
 	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
+
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
@@ -360,17 +367,18 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	} );
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
+	const isEmailUnverified = ! isCurrentUserEmailVerified( state );
 
 	return {
 		emailVerificationStatus,
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
-		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isEmailUnverified,
 		isFSEActive,
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		tasks: taskList.getAll(),
+		tasks: taskList.getAllSorted( unverifiedEmailTaskComparator( isEmailUnverified ) ),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
 		siteCount,

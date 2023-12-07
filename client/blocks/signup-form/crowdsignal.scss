@@ -93,7 +93,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		margin-top: 40px;
 	}
 
-	.signup-form__social {
+	.auth-form__social {
 		padding: 0;
 
 		p {
@@ -119,11 +119,12 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	margin: 0 15px 0 0;
 }
 
-.crowdsignal .signup-form__social {
+.crowdsignal .auth-form__social {
 	.button {
 		display: none;
 		margin-bottom: 40px;
-		text-align: left;
+		text-align: center;
+		padding: 13px 40px 12px;
 
 		&:first-child {
 			display: block;
@@ -138,7 +139,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		margin-left: 15px;
 	}
 
-	.signup-form__social-buttons-tos {
+	.auth-form__social-buttons-tos {
 		display: none;
 	}
 }

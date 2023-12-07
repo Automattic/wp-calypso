@@ -46,7 +46,9 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], data );
 
 			// Invalidate queries made by `useStoredPaymentMethods`.
-			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ storedPaymentMethodsQueryKey ],
+			} );
 		},
 	} );
 	const toggleIsBackup = useCallback(

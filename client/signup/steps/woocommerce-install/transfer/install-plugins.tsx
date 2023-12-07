@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { useEffect, useState } from 'react';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -36,7 +35,7 @@ export default function InstallPlugins( {
 
 	const softwareApplied = !! softwareStatus?.applied;
 
-	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+	const wcAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	const installFailed = isTimeoutError || softwareError;
 
@@ -108,15 +107,10 @@ export default function InstallPlugins( {
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
-				page( wcAdmin );
+				window.location.assign( wcAdminUrl );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin, installFailed, trackRedirect ] );
+	}, [ siteId, softwareApplied, wcAdminUrl, installFailed, trackRedirect ] );
 
-	return (
-		<>
-			{ installFailed && <Error /> }
-			{ ! installFailed && <Progress progress={ progress } /> }
-		</>
-	);
+	return installFailed ? <Error /> : <Progress progress={ progress } />;
 }

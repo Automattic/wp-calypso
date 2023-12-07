@@ -2,7 +2,6 @@
 import { Button } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -13,7 +12,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { bulb } from 'calypso/signup/icons';
 import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent } from 'react';
 
@@ -30,7 +28,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
-	const exampleInputWebsite = 'www.artfulbaker.blog';
+	const exampleInputWebsite = 'artfulbaker.blog';
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
@@ -69,11 +67,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	return (
 		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
 			<FormFieldset>
-				<FormLabel>
-					{ createInterpolateElement( translate( 'Existing site address' ).toString(), {
-						span: createElement( 'span' ),
-					} ) }
-				</FormLabel>
+				<FormLabel>{ translate( 'Enter the URL of the site:' ) }</FormLabel>
 				<FormTextInput
 					type="text"
 					className={ classnames( { 'is-error': showValidationMsg } ) }
@@ -83,32 +77,12 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					autoCorrect="off"
 					spellCheck="false"
 					value={ urlValue }
-					placeholder={ sprintf(
-						/* translators: the exampleSite is a URL, eg: www.artfulbaker.blog */
-						translate( 'Ex. %(exampleSite)s' ).toString(),
-						{
-							exampleSite: exampleInputWebsite,
-						}
-					) }
+					placeholder={ exampleInputWebsite }
 					onChange={ onChange }
 				/>
-				{ onDontHaveSiteAddressClick && (
-					<Button
-						borderless={ true }
-						className="action-buttons__importer-list"
-						onClick={ onDontHaveSiteAddressClick }
-					>
-						{ translate( "Don't have a site address?" ) }
-					</Button>
-				) }
 
 				<FormSettingExplanation>
 					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
-						{ ! showValidationMsg && (
-							<>
-								<Icon icon={ bulb } size={ 20 } /> { translate( 'You must own this website.' ) }
-							</>
-						) }
 						{ showValidationMsg && (
 							<>
 								<Icon icon={ info } size={ 20 } />{ ' ' }
@@ -120,6 +94,16 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			</FormFieldset>
 
 			<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
+
+			<div className="action-buttons__importer-list">
+				{ onDontHaveSiteAddressClick &&
+					createInterpolateElement( translate( 'Or <button>choose a content platform</button>' ), {
+						button: createElement( Button, {
+							borderless: true,
+							onClick: onDontHaveSiteAddressClick,
+						} ),
+					} ) }
+			</div>
 		</form>
 	);
 };

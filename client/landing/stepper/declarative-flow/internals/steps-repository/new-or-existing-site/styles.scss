@@ -40,8 +40,13 @@
 }
 
 .start-writing,
-.design-first {
+.design-first,
+.assembler-first {
 	&.new-or-existing-site {
+		.step-container__header {
+			margin-top: 0;
+		}
+
 		.signup-header {
 			.wordpress-logo {
 				position: absolute;
@@ -55,10 +60,10 @@
 			.formatted-header__title {
 				font-size: rem(32px);
 				@include break-small {
-					font-size: rem(36px);
+					font-size: rem(44px);
 				}
 			}
-			margin-top: 72px;
+
 			@include break-small {
 				margin-top: 0;
 			}
@@ -68,26 +73,24 @@
 			display: flex;
 			flex-direction: column;
 			-webkit-box-align: center;
-			align-items: center;
+			align-items: flex-start;
 			-webkit-box-pack: center;
 			justify-content: center;
-			@include break-small {
-				margin-top: 0;
-				min-height: 100vh;
-			}
+			margin: 44px 20px 0;
+			box-sizing: content-box;
 
+			@include break-small {
+				min-height: 100vh;
+				align-items: center;
+				margin: 0 auto;
+			}
 
 			.step-container__content {
 				min-height: auto;
 				@media (max-width: $break-mobile ) {
 					width: 100%;
 				}
-				.select-items {
-					@media (max-width: $break-mobile ) {
-						margin-left: 20px;
-						margin-right: 20px;
-					}
-				}
+
 				.select-items__item {
 					.select-items__item-icon {
 						@media (min-width: $break-mobile ) {
