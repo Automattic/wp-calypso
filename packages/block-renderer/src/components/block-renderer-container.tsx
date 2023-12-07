@@ -6,7 +6,7 @@ import {
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect, useMergeRefs } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import React, { useMemo, useState, useContext, ReactNode } from 'react';
+import React, { useMemo, useState, useContext, CSSProperties, ReactNode } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
 import loadScripts from '../utils/load-scripts';
@@ -105,14 +105,16 @@ const ScaledBlockRendererContainer = ( {
 	return (
 		<div
 			className="scaled-block-renderer"
-			style={ {
-				'--scaled-block-renderer-scale': scale,
-				height: scaledHeight,
-				maxHeight:
-					maxHeight && maxHeight !== 'none' && contentHeight > maxHeight
-						? maxHeight * scale
-						: undefined,
-			} }
+			style={
+				{
+					'--scaled-block-renderer-scale': scale,
+					height: scaledHeight,
+					maxHeight:
+						maxHeight && maxHeight !== 'none' && contentHeight > maxHeight
+							? maxHeight * scale
+							: undefined,
+				} as CSSProperties
+			}
 		>
 			<Iframe
 				contentRef={ useMergeRefs( [ contentRef, contentAssetsRef ] ) }
