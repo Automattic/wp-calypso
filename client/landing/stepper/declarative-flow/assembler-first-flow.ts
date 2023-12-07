@@ -274,7 +274,6 @@ const assemblerFirstFlow: Flow = {
 		// We also need to support both query param and path suffix localized urls
 		// depending on where the user is coming from.
 		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
 		const queryLocaleSlug = getLocaleFromQueryParam();
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;

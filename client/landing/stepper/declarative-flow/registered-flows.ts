@@ -141,7 +141,7 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+const aiAssemblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
 	'calypso/ai-assembler'
 )
 	? {
@@ -150,4 +150,4 @@ const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = co
 	  }
 	: {};
 
-export default { ...availableFlows, ...videoPressTvFlows, ...aiAsseblerFlows };
+export default { ...availableFlows, ...videoPressTvFlows, ...aiAssemblerFlows };
