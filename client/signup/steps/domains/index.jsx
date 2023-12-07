@@ -645,6 +645,7 @@ export class RenderDomainsStep extends Component {
 				)
 			) {
 				this.setState( ( state ) => ( {
+					isCartPendingUpdateDomain: { domain_name: suggestion.domain_name },
 					temporaryCart: [
 						...( state.temporaryCart || [] ),
 						{
@@ -910,6 +911,42 @@ export class RenderDomainsStep extends Component {
 			);
 		};
 
+		const FreeDomain = () => (
+			<div key="row-free" className="domains__domain-cart-row">
+				<div>
+					<div className="domains__domain-cart-domain">
+						<BoldTLD domain={ this.state.wpcomSubdomainSelected.domain_name } />
+					</div>
+					<div className="domain-product-price__price">
+						<span className="domains__price-free">{ this.props.translate( 'Free' ) }</span>
+					</div>
+				</div>
+				<div>
+					<Button
+						borderless
+						className="button domains__domain-cart-remove"
+						onClick={ () => {
+							this.setState( { wpcomSubdomainSelected: false } );
+							this.props.saveSignupStep( {
+								stepName: this.props.stepName,
+								suggestion: {
+									domain_name: false,
+								},
+							} );
+							this.props.submitSignupStep(
+								Object.assign( {
+									stepName: this.props.stepName,
+								} ),
+								Object.assign( { siteUrl: false } )
+							);
+						} }
+					>
+						{ this.props.translate( 'Remove' ) }
+					</Button>
+				</div>
+			</div>
+		);
+
 		const DomainsInCart = () => {
 			if (
 				! shouldUseMultipleDomainsInCart( this.props.flowName ) ||
@@ -971,6 +1008,7 @@ export class RenderDomainsStep extends Component {
 					>
 						<div className="domains__domain-side-content domains__domain-cart">
 							<div className="domains__domain-cart-rows">
+								{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
 								{ domainsInCart.map( ( domain, i ) => (
 									<div key={ `row${ i }` } className="domains__domain-cart-row">
 										<DomainNameAndCost domain={ domain } />
@@ -988,41 +1026,7 @@ export class RenderDomainsStep extends Component {
 						{ this.props.translate( 'Your domains' ) }
 					</div>
 					<div className="domains__domain-cart-rows">
-						{ this.state.wpcomSubdomainSelected && (
-							<div key="row-free" className="domains__domain-cart-row">
-								<div>
-									<div className="domains__domain-cart-domain">
-										<BoldTLD domain={ this.state.wpcomSubdomainSelected.domain_name } />
-									</div>
-									<div className="domain-product-price__price">
-										<span className="domains__price-free">{ this.props.translate( 'Free' ) }</span>
-									</div>
-								</div>
-								<div>
-									<Button
-										borderless
-										className="button domains__domain-cart-remove"
-										onClick={ () => {
-											this.setState( { wpcomSubdomainSelected: false } );
-											this.props.saveSignupStep( {
-												stepName: this.props.stepName,
-												suggestion: {
-													domain_name: false,
-												},
-											} );
-											this.props.submitSignupStep(
-												Object.assign( {
-													stepName: this.props.stepName,
-												} ),
-												Object.assign( { siteUrl: false } )
-											);
-										} }
-									>
-										{ this.props.translate( 'Remove' ) }
-									</Button>
-								</div>
-							</div>
-						) }
+						{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
 						{ domainsInCart.map( ( domain, i ) => (
 							<div key={ `row${ i }` } className="domains__domain-cart-row">
 								<DomainNameAndCost domain={ domain } />
