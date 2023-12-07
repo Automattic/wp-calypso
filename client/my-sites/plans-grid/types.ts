@@ -82,16 +82,24 @@ export type GridContextProps = {
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	onUpgradeClick?: (
-		cartItems?: MinimalRequestCartProduct[] | null,
-		clickedPlanSlug?: PlanSlug
-	) => void;
+	children: React.ReactNode;
 };
 
-export type ComparisonGridExternalProps = GridContextProps &
-	Omit< ComparisonGridProps, 'onUpgradeClick' >;
-export type FeaturesGridExternalProps = GridContextProps &
+export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
+	Omit< ComparisonGridProps, 'onUpgradeClick' > & {
+		onUpgradeClick?: (
+			cartItems?: MinimalRequestCartProduct[] | null,
+			clickedPlanSlug?: PlanSlug
+		) => void;
+	};
+
+export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
 	Omit<
 		FeaturesGridProps,
 		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'isPlanUpgradeCreditEligible'
-	>;
+	> & {
+		onUpgradeClick?: (
+			cartItems?: MinimalRequestCartProduct[] | null,
+			clickedPlanSlug?: PlanSlug
+		) => void;
+	};
