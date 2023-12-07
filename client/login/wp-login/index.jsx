@@ -15,6 +15,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
@@ -425,7 +426,7 @@ export class Login extends Component {
 
 		const footer = (
 			<>
-				{ isSocialFirst ? (
+				{ isSocialFirst && isWhiteLogin ? (
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
 				) : (
 					shouldRenderFooter && (
@@ -439,8 +440,8 @@ export class Login extends Component {
 							signupUrl={ signupUrl }
 							usernameOrEmail={ this.state.usernameOrEmail }
 							oauth2Client={ this.props.oauth2Client }
-							getLostPasswordLink={ this.getLostPasswordLink }
-							renderSignUpLink={ this.renderSignUpLink }
+							getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
+							renderSignUpLink={ this.renderSignUpLink.bind( this ) }
 						/>
 					)
 				) }
@@ -450,7 +451,7 @@ export class Login extends Component {
 
 		const loginButtons = (
 			<>
-				{ isSocialFirst && (
+				{ isSocialFirst && isWhiteLogin && (
 					<LoginButtons
 						locale={ locale }
 						twoFactorAuthType={ twoFactorAuthType }
@@ -504,31 +505,48 @@ export class Login extends Component {
 	render() {
 		const { locale, translate, isFromMigrationPlugin } = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst = config.isEnabled( 'login/social-first' );
-		const mainClassNames = classNames( 'wp-login__main', {
-			'is-wpcom-migration': isFromMigrationPlugin,
-			'is-social-first': isSocialFirst,
-		} );
+		const isSocialFirstEnabled = config.isEnabled( 'login/social-first' );
+		let isSocialFirst = false;
 
 		return (
-			<div>
-				{ this.props.isP2Login && this.renderP2Logo() }
-				<Main className={ mainClassNames }>
-					{ this.renderI18nSuggestions() }
+			<ProvideExperimentData
+				name="wpcom_login_page_emphasise_socials_redesign_202311_v1"
+				options={ {
+					isEligible: isSocialFirstEnabled,
+				} }
+			>
+				{ ( isLoadingExperiment, experimentAssignment ) => {
+					if ( experimentAssignment?.variationName === 'treatment' ) {
+						isSocialFirst = true;
+					}
 
-					<DocumentHead
-						title={ translate( 'Log In' ) }
-						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
-						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
-					/>
+					return (
+						<div>
+							{ this.props.isP2Login && this.renderP2Logo() }
+							<Main
+								className={ classNames( 'wp-login__main', {
+									'is-wpcom-migration': isFromMigrationPlugin,
+									'is-social-first': isSocialFirst,
+								} ) }
+							>
+								{ this.renderI18nSuggestions() }
 
-					{ isSocialFirst && this.renderLoginHeaderNavigation() }
-					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
-				</Main>
+								<DocumentHead
+									title={ translate( 'Log In' ) }
+									link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+									meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
+								/>
 
-				{ this.renderFooter() }
-				{ this.props.isP2Login && this.renderP2PoweredBy() }
-			</div>
+								{ isSocialFirst && this.renderLoginHeaderNavigation() }
+								<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+							</Main>
+
+							{ this.renderFooter() }
+							{ this.props.isP2Login && this.renderP2PoweredBy() }
+						</div>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 }
