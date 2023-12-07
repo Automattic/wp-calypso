@@ -7,7 +7,7 @@ import ErrorStep from './internals/steps-repository/error-step';
 import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import StoreAddress from './internals/steps-repository/store-address';
-import { StepperStep } from './internals/types';
+import type { StepperStep, Navigate } from './internals/types';
 
 /**
  * First steps that will always run, regardless of the plugin bundle being registered here or not.
@@ -46,5 +46,28 @@ export const afterCustomBundleSteps: StepperStep[] = [
 	{ slug: 'processing', component: ProcessingStep },
 	{ slug: 'error', component: ErrorStep },
 ];
+
+interface BundleStepsSettings {
+	[ key: string ]: {
+		goBack: ( currentStep: string, navigate: Navigate< StepperStep[] > ) => boolean | void;
+	};
+}
+
+export const bundleStepsSettings: BundleStepsSettings = {
+	'woo-on-plans': {
+		goBack: ( currentStep, navigate ) => {
+			switch ( currentStep ) {
+				case 'businessInfo':
+					return navigate( 'storeAddress' );
+
+				case 'bundleConfirm':
+					return navigate( 'businessInfo' );
+
+				default:
+					return false;
+			}
+		},
+	},
+};
 
 export type BundledPlugin = keyof typeof customBundleSteps;

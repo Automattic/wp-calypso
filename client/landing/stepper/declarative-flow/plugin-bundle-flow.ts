@@ -27,6 +27,7 @@ import {
 	customBundleSteps,
 	beforeCustomBundleSteps,
 	afterCustomBundleSteps,
+	bundleStepsSettings,
 } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
@@ -102,6 +103,8 @@ const pluginBundleFlow: Flow = {
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
+
+		const pluginSlug = useSitePluginSlug();
 
 		if ( flowProgress ) {
 			setStepProgress( flowProgress );
@@ -220,16 +223,13 @@ const pluginBundleFlow: Flow = {
 			if ( comingFromThemeActivation ) {
 				return exitFlow( `/themes/${ siteSlug }` );
 			}
-			switch ( currentStep ) {
-				case 'businessInfo':
-					return navigate( 'storeAddress' );
 
-				case 'bundleConfirm':
-					return navigate( 'businessInfo' );
-
-				default:
-					return navigate( 'checkForPlugins' );
+			const navigateReturn = bundleStepsSettings[ pluginSlug ]?.goBack?.( currentStep, navigate );
+			if ( false !== navigateReturn ) {
+				return navigateReturn;
 			}
+
+			return navigate( 'checkForPlugins' );
 		};
 
 		const goNext = () => {
