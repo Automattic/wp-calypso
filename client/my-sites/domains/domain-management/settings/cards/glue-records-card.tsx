@@ -19,7 +19,7 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `domain-forwarding-notification`,
+	id: `glue-records-notification`,
 };
 
 export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } ) {
@@ -182,28 +182,24 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	};
 
 	const FormViewRow = ( { child: child }: { child: GlueRecordObject } ) => (
-		<FormFieldset className="domain-forwarding-card__fields" key={ `view-${ child.record }` }>
-			<div className="domain-forwarding-card__fields-row">
-				<div className="domain-forwarding-card__fields-column glue-record-data">
-					<div className="domain-forwarding-card__fields-row addresses">
-						<div className="domain-forwarding-card__fields-column source">
-							{ translate( 'Name server' ) }:
-						</div>
-						<div className="domain-forwarding-card__fields-column destination">
+		<FormFieldset key={ `view-${ child.record }` }>
+			<div className="domain-glue-records-card__fields">
+				<div className="glue-record-data">
+					<div className="domain-glue-records-card__fields-row">
+						<div className="label">{ translate( 'Name server' ) }:</div>
+						<div className="value">
 							<strong>{ child.record }</strong>
 						</div>
 					</div>
 
-					<div className="domain-forwarding-card__fields-row addresses">
-						<div className="domain-forwarding-card__fields-column source">
-							{ translate( 'IP address' ) }:
-						</div>
-						<div className="domain-forwarding-card__fields-column destination">
+					<div className="domain-glue-records-card__fields-row">
+						<div className="label">{ translate( 'IP address' ) }:</div>
+						<div className="value">
 							<strong>{ child.address }</strong>
 						</div>
 					</div>
 				</div>
-				<div className="domain-forwarding-card__fields-column">
+				<div>
 					<Button
 						scary
 						disabled={ isSaving || isRemoving }
@@ -220,9 +216,9 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 
 	const FormRowEditable = ( { child }: { child: GlueRecordObject } ) => (
 		<>
-			<FormFieldset className="domain-forwarding-card__fields" key={ `edit-${ child.record }` }>
+			<FormFieldset key={ `edit-${ child.record }` }>
 				<FormLabel>{ translate( 'Name server' ) }</FormLabel>
-				<div className="glue-record-input-wrapper">
+				<div>
 					<FormTextInputWithAffixes
 						placeholder={ translate( 'Enter subdomain (e.g. ns1)' ) }
 						disabled={ isLoadingData || isSaving }
@@ -234,7 +230,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						isError={ ! isValidRecord }
 					/>
 					{ ! isValidRecord && (
-						<div className="domain-forwarding-card__error-field">
+						<div className="domain-glue-records-card__error-field">
 							<FormInputValidation isError text={ translate( 'Invalid subdomain' ) } />
 						</div>
 					) }
@@ -256,7 +252,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 						isError={ ! isValidIpAddress }
 					/>
 					{ ! isValidIpAddress && (
-						<div className="domain-forwarding-card__error-field">
+						<div className="domain-glue-records-card__error-field">
 							<FormInputValidation isError text={ translate( 'Invalid IP address' ) } />
 						</div>
 					) }
@@ -285,14 +281,14 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 	const renderGlueRecords = () => {
 		if ( isLoadingData || ! data ) {
 			return (
-				<div className="domain-glue-records">
-					<div className="domain-glue-records is-placeholder"></div>
+				<div className="domain-glue-records-card">
+					<div className="domain-glue-records-card is-placeholder"></div>
 				</div>
 			);
 		}
 
 		return (
-			<div className="domain-glue-records">
+			<div className="domain-glue-records-card">
 				<form
 					onSubmit={ ( e ) => {
 						e.preventDefault();
@@ -310,11 +306,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 				</form>
 
 				{ ! isEditing && data && data.length < 3 && (
-					<Button
-						borderless
-						className="add-forward-button  link-button"
-						onClick={ () => showGlueRecordForm() }
-					>
+					<Button borderless className="link-button" onClick={ () => showGlueRecordForm() }>
 						{ translate( '+ Add Glue Record' ) }
 					</Button>
 				) }
@@ -324,7 +316,7 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 
 	return (
 		<Accordion
-			className="domain-forwarding-card__accordion"
+			className="domain-glue-records-card__accordion"
 			title={ translate( 'Glue Records' ) }
 			subtitle={ translate( 'Edit your private name servers (glue records)' ) }
 			expanded={ isExpanded }
