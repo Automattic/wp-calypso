@@ -248,10 +248,10 @@ function embedTiledGallery( domNode ) {
 	const galleryToReplace = domNode.querySelector( '.tiled-gallery__gallery' );
 	const galleryItems = domNode.getElementsByClassName( 'tiled-gallery__item' );
 
-	if ( galleryItems ) {
+	if ( galleryItems && galleryItems.length ) {
 		const imageItems = Array.from( galleryItems );
 
-		// Replace the gallery with a list of images
+		// Replace the gallery with updated markup
 		createRoot( galleryToReplace ).render(
 			<div className="gallery-container">
 				{ imageItems.map( ( item ) => {
