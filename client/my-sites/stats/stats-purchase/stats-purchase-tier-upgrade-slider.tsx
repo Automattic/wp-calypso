@@ -83,19 +83,22 @@ function TierUpgradeSlider( {
 					</p>
 				</div>
 			</div>
-			<PricingSlider
-				className="stats-tier-upgrade-slider__slider"
-				thumbClassName="stats-tier-upgrade-slider__thumb"
-				value={ currentPlanIndex }
-				minValue={ sliderMin }
-				maxValue={ sliderMax }
-				onChange={ handleSliderChange }
-				marks
-			/>
+			{ tiers.length > 1 && (
+				<PricingSlider
+					className="stats-tier-upgrade-slider__slider"
+					thumbClassName="stats-tier-upgrade-slider__thumb"
+					value={ currentPlanIndex }
+					minValue={ sliderMin }
+					maxValue={ sliderMax }
+					onChange={ handleSliderChange }
+					marks
+				/>
+			) }
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }
 				isVisible={ hasExtension }
+				focusOnShow={ false }
 				className="stats-tier-upgrade-slider__extension-popover-wrapper"
 			>
 				<div className="stats-tier-upgrade-slider__extension-popover-content">
