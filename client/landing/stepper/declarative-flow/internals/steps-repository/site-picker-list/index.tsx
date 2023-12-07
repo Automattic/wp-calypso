@@ -1,13 +1,11 @@
 import { StepContainer, isSiteAssemblerFlow } from '@automattic/onboarding';
-import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSelector from 'calypso/components/site-selector';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
-import type { SiteDetails, SiteSelect } from '@automattic/data-stores';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { SiteId } from 'calypso/types';
 
 import './styles.scss';
@@ -16,10 +14,8 @@ const SitePicker: Step = function SitePicker( { navigation, flow } ) {
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
 
-	const selectSite = ( siteId: SiteId ) => {
-		const site = ( select( SITE_STORE ) as SiteSelect ).getSite( siteId );
-		const siteSlug = new URL( site?.URL || '' ).host;
-
+	const selectSite = ( siteId: SiteId, site: SiteDetails ) => {
+		const siteSlug = site.URL ? new URL( site.URL ).host : '';
 		submit?.( { siteSlug, siteId } );
 	};
 
