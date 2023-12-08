@@ -104,6 +104,7 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-redirect-to-themes": true,
+		"onboarding/interval-dropdown": false,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"pattern-assembler/v2": false,
