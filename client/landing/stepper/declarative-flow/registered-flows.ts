@@ -72,6 +72,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
 
+	[ AI_ASSEMBLER_FLOW ]: () =>
+		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 
@@ -141,13 +144,4 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'calypso/ai-assembler'
-)
-	? {
-			[ AI_ASSEMBLER_FLOW ]: () =>
-				import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
-	  }
-	: {};
-
-export default { ...availableFlows, ...videoPressTvFlows, ...aiAsseblerFlows };
+export default { ...availableFlows, ...videoPressTvFlows };

@@ -21,4 +21,5 @@ export enum SiteIntent {
 	Import = 'import', // deprecated
 	WithThemeAssembler = 'with-theme-assembler',
 	AssemblerFirst = 'assembler-first',
+	AIAssembler = 'ai-assembler',
 }

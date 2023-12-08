@@ -7,6 +7,7 @@ import {
 } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
 import {
+	AI_ASSEMBLER_FLOW,
 	StepContainer,
 	isSiteAssemblerFlow,
 	isWithThemeAssemblerFlow,
@@ -419,11 +420,16 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		recordTracksEvent,
 	} );
 
-	// Don't show the “Back” button if the site is being created by the site assembler flow
-	// as the previous step is the site creation step that cannot be undone.
-	const hideBack = ! currentScreen.previousScreen && isSiteAssemblerFlow( flow ) && isNewSite;
-
 	const getBackLabel = () => {
+		// Exits the Assembler.
+		if ( isSiteAssemblerFlow( flow ) && ! currentScreen.previousScreen ) {
+			if ( flow === AI_ASSEMBLER_FLOW ) {
+				return translate( 'Back' );
+			}
+
+			return translate( 'Back to themes' );
+		}
+
 		if ( ! currentScreen.previousScreen ) {
 			// Go back to the Theme Showcase if people are from the with-theme-assembler flow.
 			if ( isWithThemeAssemblerFlow( flow ) ) {
@@ -438,6 +444,27 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				pageTitle: currentScreen.previousScreen.backLabel || currentScreen.previousScreen.title,
 			},
 		} );
+	};
+
+	const shouldHideBack = () => {
+		// Back button goes to the previous Assembler navigation screen.
+		if ( currentScreen.previousScreen ) {
+			return false;
+		}
+
+		// Back button goes to the Theme Showcase.
+		if ( ! isNewSite ) {
+			return false;
+		}
+
+		// Back button goes to the AI prompt step.
+		if ( flow === AI_ASSEMBLER_FLOW ) {
+			return false;
+		}
+
+		// Don't show the “Back” button if the site is being created by the site assembler flow.
+		// as the previous step is the site creation step that cannot be undone.
+		return isSiteAssemblerFlow( flow );
 	};
 
 	const onBack = () => {
@@ -684,7 +711,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
-			hideBack={ hideBack }
+			hideBack={ shouldHideBack() }
 			hideSkip={ true }
 			stepContent={
 				<PatternAssemblerContainer
