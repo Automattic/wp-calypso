@@ -1,8 +1,9 @@
-import { NextButton, Title } from '@automattic/onboarding';
+import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { StartImportTrackingProps } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/types';
+import FormattedHeader from 'calypso/components/formatted-header';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isNewSite } from 'calypso/state/sites/selectors';
@@ -83,8 +84,8 @@ export function MigrationReady( props: Props ) {
 				/>
 			) }
 			<div className="import__pre-migration import__import-everything import__import-everything--redesign">
-				<div className="import__heading-title">
-					<Title>{ translate( 'You are ready to migrate' ) }</Title>
+				<div className="import__header">
+					<FormattedHeader headerText={ translate( 'You are ready to migrate' ) } />
 				</div>
 				{ ! sourceSiteHasCredentials && (
 					<CredentialsCta onButtonClick={ onProvideCredentialsClick } />
