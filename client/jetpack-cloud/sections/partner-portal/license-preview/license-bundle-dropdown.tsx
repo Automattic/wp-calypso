@@ -63,7 +63,7 @@ export default function LicenseBundleDropDown( { licenseKey, product, bundleSize
 
 			{ showRevokeDialog && (
 				<RevokeLicenseDialog
-					roleType="parent"
+					licenseRole="parent"
 					licenseKey={ licenseKey }
 					product={ product }
 					siteUrl={ null }

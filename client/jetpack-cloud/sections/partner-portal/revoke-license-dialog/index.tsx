@@ -15,7 +15,7 @@ interface Props {
 	product: string;
 	siteUrl: string | null;
 	onClose: ( action?: string ) => void;
-	roleType?: 'parent' | 'child' | 'single';
+	licenseRole?: 'parent' | 'child' | 'single';
 	bundleSize?: number;
 }
 
@@ -24,7 +24,7 @@ export default function RevokeLicenseDialog( {
 	product,
 	siteUrl,
 	onClose,
-	roleType = 'single',
+	licenseRole = 'single',
 	bundleSize = 1,
 	...rest
 }: Props ) {
@@ -53,7 +53,7 @@ export default function RevokeLicenseDialog( {
 		mutation.mutate( { licenseKey } );
 	}, [ dispatch, licenseKey, mutation ] );
 
-	const isAssignedChildLicense = roleType === 'child' && siteUrl;
+	const isAssignedChildLicense = licenseRole === 'child' && siteUrl;
 
 	const buttons = [
 		<Button disabled={ false } onClick={ close }>
@@ -66,7 +66,7 @@ export default function RevokeLicenseDialog( {
 	];
 
 	const renderHeading = () => {
-		if ( roleType === 'parent' ) {
+		if ( licenseRole === 'parent' ) {
 			return translate( 'Revoke bundle of %(count)s %(product)s licenses?', {
 				args: {
 					product,
@@ -90,7 +90,7 @@ export default function RevokeLicenseDialog( {
 	};
 
 	const renderContent = () => {
-		if ( roleType === 'parent' ) {
+		if ( licenseRole === 'parent' ) {
 			return (
 				<p>
 					{ translate(
