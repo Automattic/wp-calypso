@@ -159,13 +159,10 @@ function SiteResetCard( {
 		if ( result.success ) {
 			if ( isAtomic ) {
 				dispatch(
-					successNotice(
-						translate( 'Your site will be reset. It can take up to one minute to complete. ' ),
-						{
-							id: 'site-reset-success-notice',
-							duration: 6000,
-						}
-					)
+					successNotice( translate( 'Your site will be reset. ' ), {
+						id: 'site-reset-success-notice',
+						duration: 6000,
+					} )
 				);
 			} else {
 				dispatch(
@@ -267,7 +264,7 @@ function SiteResetCard( {
 		  )
 		: createInterpolateElement(
 				translate(
-					'To keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
+					'To keep a copy of your current site, head to the <a>Export page</a> before resetting.'
 				),
 				{
 					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
