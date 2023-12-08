@@ -59,7 +59,7 @@ function TierUpgradeSlider( {
 	} ) as RenderThumbFunction;
 
 	// Slider state.
-	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( initialValue );
+	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( Math.floor( initialValue ) );
 	const sliderMin = 0;
 	const sliderMax = steps?.length - 1;
 
