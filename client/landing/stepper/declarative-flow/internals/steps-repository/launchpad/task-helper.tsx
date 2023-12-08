@@ -2,6 +2,8 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
 	FEATURE_STYLE_CUSTOMIZATION,
+	getPlans,
+	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import {
 	updateLaunchpadSettings,
@@ -26,7 +28,6 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
-import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
@@ -35,6 +36,8 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
+
+const PLANS_LIST = getPlans();
 
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -69,10 +72,9 @@ export function getEnhancedTasks(
 
 	const enhancedTaskList: Task[] = [];
 
-	const productSlug =
-		( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-			? planCartItem?.product_slug
-			: null ) ?? site?.plan?.product_slug;
+	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
+
+	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
 
 	const translatedPlanName = ( productSlug && PLANS_LIST[ productSlug ]?.getTitle() ) || '';
 
@@ -134,6 +136,36 @@ export function getEnhancedTasks(
 		[ planCartItem, domainCartItem, ...( productCartItems ?? [] ) ].filter(
 			Boolean
 		) as MinimalRequestCartProduct[];
+
+	const getPlanTaskSubtitle = ( task: Task ) => {
+		if ( ! displayGlobalStylesWarning ) {
+			return task.subtitle;
+		}
+
+		const removeCustomStyles = translate( 'Or, {{a}}remove your premium styles{{/a}}.', {
+			components: {
+				a: (
+					<ExternalLink
+						children={ null }
+						href={ localizeUrl( 'https://wordpress.com/support/using-styles/#reset-all-styles' ) }
+						onClick={ ( event ) => {
+							event.stopPropagation();
+							recordTracksEvent(
+								'calypso_launchpad_global_styles_gating_plan_selected_reset_styles',
+								{ flow }
+							);
+						} }
+					/>
+				),
+			},
+		} );
+
+		return (
+			<>
+				{ task.subtitle }&nbsp;{ removeCustomStyles }
+			</>
+		);
+	};
 
 	const getLaunchSiteTaskTitle = ( task: Task ) => {
 		const onboardingCartItems = getOnboardingCartItems();
@@ -287,39 +319,11 @@ export function getEnhancedTasks(
 					};
 
 					const completed = task.completed && ! isVideoPressFlowWithUnsupportedPlan;
-					let subtitle = task.subtitle;
-
-					if ( displayGlobalStylesWarning ) {
-						const removeCustomStyles = translate( 'Or, {{a}}remove your premium styles{{/a}}.', {
-							components: {
-								a: (
-									<ExternalLink
-										children={ null }
-										href={ localizeUrl(
-											'https://wordpress.com/support/using-styles/#reset-all-styles'
-										) }
-										onClick={ ( event ) => {
-											event.stopPropagation();
-											recordTracksEvent(
-												'calypso_launchpad_global_styles_gating_plan_selected_reset_styles',
-												{ flow }
-											);
-										} }
-									/>
-								),
-							},
-						} );
-						subtitle = (
-							<>
-								{ subtitle }&nbsp;{ removeCustomStyles }
-							</>
-						);
-					}
 
 					taskData = {
 						actionDispatch: openPlansPage,
 						completed,
-						subtitle,
+						subtitle: getPlanTaskSubtitle( task ),
 					};
 					/* eslint-enable no-case-declarations */
 					break;
@@ -334,11 +338,9 @@ export function getEnhancedTasks(
 
 							window.location.assign( plansUrl );
 						},
-						badge_text: ! task.completed ? null : translatedPlanName,
-						disabled:
-							( task.completed || ! domainUpsellCompleted ) &&
-							! isBlogOnboardingFlow( flow ) &&
-							! isSiteAssemblerFlow( flow ),
+						badge_text: task.completed ? translatedPlanName : task.badge_text,
+						subtitle: getPlanTaskSubtitle( task ),
+						disabled: task.completed && ! isCurrentPlanFree,
 					};
 					break;
 				case 'subscribers_added':
