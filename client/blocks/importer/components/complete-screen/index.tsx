@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Hooray, SubTitle, Title } from '@automattic/onboarding';
+import { Hooray } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { ImportJob } from '../../types';
 import DoneButton from '../done-button';
 
@@ -22,8 +23,12 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<Hooray>
-			<Title>{ __( 'Hooray!' ) }</Title>
-			<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
+			<div className="import__header">
+				<FormattedHeader
+					headerText={ __( 'Hooray!' ) }
+					subHeaderText={ __( 'Congratulations. Your content was successfully imported.' ) }
+				/>
+			</div>
 			<DoneButton
 				siteId={ siteId }
 				job={ job as ImportJob }

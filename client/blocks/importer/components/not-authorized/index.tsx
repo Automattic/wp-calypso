@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { BackButton, NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -24,21 +25,21 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
-					<Title>{ __( 'You are not authorized to import content' ) }</Title>
-					<SubTitle>{ __( 'Please check with your site admin.' ) }</SubTitle>
-
-					<div className="import__buttons-group">
-						{ onStartBuilding && (
-							<NextButton onClick={ onStartBuilding }>{ startBuildingText }</NextButton>
-						) }
-						{ onBackToStart && (
-							<div>
-								<BackButton onClick={ onBackToStart }>{ __( 'Back to start' ) }</BackButton>
-							</div>
-						) }
+				<FormattedHeader
+					className="import__heading"
+					headerText={ __( 'You are not authorized to import content' ) }
+					subHeaderText={ __( 'Please check with your site admin.' ) }
+				/>
+			</div>
+			<div className="import__buttons-group import__heading-center">
+				{ onStartBuilding && (
+					<NextButton onClick={ onStartBuilding }>{ startBuildingText }</NextButton>
+				) }
+				{ onBackToStart && (
+					<div>
+						<BackButton onClick={ onBackToStart }>{ __( 'Back to start' ) }</BackButton>
 					</div>
-				</div>
+				) }
 			</div>
 		</div>
 	);
