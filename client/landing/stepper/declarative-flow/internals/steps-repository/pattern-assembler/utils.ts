@@ -29,15 +29,7 @@ export const injectCategoryToPattern = (
 	return pattern;
 };
 
-// Assembler v2 shows all v1 patterns without priority.
-export const isPriorityPatternV1 = ( { tags: { assembler_priority } }: Pattern ) =>
-	Boolean( assembler_priority );
-
-export const isPriorityPattern = ( {
-	tags: { assembler_priority, assembler_v2_priority },
-}: Pattern ) =>
-	isEnabled( 'pattern-assembler/v2' )
-		? Boolean( assembler_v2_priority )
-		: Boolean( assembler_priority );
+export const isPriorityPattern = ( { tags: { assembler_priority } }: Pattern ) =>
+	isEnabled( 'pattern-assembler/v2' ) ? true : Boolean( assembler_priority );
 
 export const isPagePattern = ( { tags: { assembler_page } }: Pattern ) => !! assembler_page;
