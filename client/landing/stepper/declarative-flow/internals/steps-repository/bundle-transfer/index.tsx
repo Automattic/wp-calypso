@@ -43,7 +43,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 
 	const siteId = site?.ID;
 
-	const pluginSlug = useSitePluginSlug();
+	const softwareSet = useSitePluginSlug();
 
 	const {
 		getSiteLatestAtomicTransfer,
@@ -91,7 +91,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 			const maxRetry = 3;
 
 			// Initiate transfer
-			await initiateAtomicTransfer( siteId, pluginSlug );
+			await initiateAtomicTransfer( siteId, softwareSet );
 
 			// Poll for transfer status
 			let stopPollingTransfer = false;
@@ -145,10 +145,10 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 			let pollingSoftwareRetry = 0;
 
 			while ( ! stopPollingSoftware ) {
-				await requestAtomicSoftwareStatus( siteId, pluginSlug );
-				const softwareStatus = getAtomicSoftwareStatus( siteId, pluginSlug );
+				await requestAtomicSoftwareStatus( siteId, softwareSet );
+				const softwareStatus = getAtomicSoftwareStatus( siteId, softwareSet );
 
-				const softwareError = getAtomicSoftwareError( siteId, pluginSlug );
+				const softwareError = getAtomicSoftwareError( siteId, softwareSet );
 				if ( softwareError ) {
 					if ( pollingSoftwareRetry < maxRetry ) {
 						pollingSoftwareRetry++;
