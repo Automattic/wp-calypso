@@ -204,7 +204,7 @@ const pluginBundleFlow: Flow = {
 						return exitFlow( `/post/${ siteSlug }` );
 					}
 
-					// End of flow.
+					// Custom end of flow.
 					const endReturn = bundleStepsSettings[ pluginSlug ]?.endFlow?.( {
 						intent,
 						storeType,
@@ -231,6 +231,7 @@ const pluginBundleFlow: Flow = {
 				return exitFlow( `/themes/${ siteSlug }` );
 			}
 
+			// Custom back navigation.
 			const navigateReturn = bundleStepsSettings[ pluginSlug ]?.goBack?.( currentStep, navigate );
 			if ( false !== navigateReturn ) {
 				return navigateReturn;
