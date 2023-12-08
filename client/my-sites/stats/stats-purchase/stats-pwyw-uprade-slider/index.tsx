@@ -87,17 +87,13 @@ function StatsPWYWUpgradeSlider( {
 	const steps = stepsFromSettings( settings, currencyCode || '' );
 	const marks = [ 0, steps.length - 1 ];
 
-	const handleSliderChanged = ( index: number ) => {
-		onSliderChange( index );
-	};
-
 	return (
 		<TierUpgradeSlider
 			className="stats-pwyw-upgrade-slider"
 			uiStrings={ uiStrings }
 			steps={ steps }
 			initialValue={ ( steps.length - 1 ) / 2 }
-			onSliderChange={ handleSliderChanged }
+			onSliderChange={ onSliderChange }
 			marks={ marks }
 		/>
 	);
