@@ -14,8 +14,7 @@ import { useEffect } from 'react';
 import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import useThemeTier from 'calypso/state/themes/hooks/use-theme-tier';
-import { getThemeType } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getThemeType, isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
 
 import './style.scss';
@@ -39,7 +38,9 @@ const ThemeTypeBadge = ( {
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const bundleSettings = useBundleSettings( themeId );
 
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isPartnerThemePurchased = useSelector( ( state ) =>
+		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
+	);
 	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
 	useEffect( () => {
@@ -78,10 +79,28 @@ const ThemeTypeBadge = ( {
 		let badgeContent;
 		if ( isLockedStyleVariation ) {
 			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
+		} else if ( 'partner' === themeTier.slug ) {
+			if ( isPartnerThemePurchased ) {
+				badgeContent = <>{ translate( 'Included in my plan' ) }</>;
+			} else if ( isThemeAllowedOnSite ) {
+				badgeContent = (
+					<PremiumBadge
+						{ ...badgeContentProps }
+						className={ classNames( badgeContentProps.className, 'is-marketplace' ) }
+						labelText={ translate( 'Subscribe' ) }
+					/>
+				);
+			} else {
+				badgeContent = (
+					<PremiumBadge
+						{ ...badgeContentProps }
+						className={ classNames( badgeContentProps.className, 'is-marketplace' ) }
+						labelText={ translate( 'Upgrade and Subscribe' ) }
+					/>
+				);
+			}
 		} else if ( isThemeAllowedOnSite ) {
-			badgeContent = (
-				<>{ selectedSiteId ? translate( 'Included in my plan' ) : translate( 'Free' ) }</>
-			);
+			badgeContent = <>{ siteId ? translate( 'Included in my plan' ) : translate( 'Free' ) }</>;
 		} else {
 			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
 		}
