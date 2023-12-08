@@ -224,12 +224,13 @@ button {
 	border-radius: 2px;
 
 	.popover__menu {
-		padding: 8px;
+		padding: 8px 4px;
 	}
 
 	.popover__menu-item {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 	}
 
 	.popover__menu-item:hover,
