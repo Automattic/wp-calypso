@@ -75,6 +75,8 @@ export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 		const bundleBadgeProps = {
 			color: bundleSettings.color,
 			icon: <BadgeIcon />,
+			isClickable: false,
+			shouldHideTooltip: true,
 		};
 
 		if ( legacyCanUseTheme ) {
