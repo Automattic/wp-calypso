@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { setPlanExperiment } from '@automattic/calypso-products/src/plans-list';
+import { setPlansListExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
 	getLanguage,
@@ -52,7 +52,7 @@ export const ProviderWrappedLayout = ( {
 
 	useEffect( () => {
 		if ( ! isLoading ) {
-			setPlanExperiment( 'wpcom_plan_name_change', experimentAssignment?.variationName );
+			setPlansListExperiment( 'wpcom_plan_name_change', experimentAssignment?.variationName );
 		}
 	}, [ isLoading ] );
 

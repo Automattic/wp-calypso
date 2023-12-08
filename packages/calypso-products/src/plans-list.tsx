@@ -457,8 +457,9 @@ import type {
 import type { TranslateResult } from 'i18n-calypso';
 
 const experiments: { [ key: string ]: string } = {};
-export const setPlanExperiment = ( exp: string, variation: string ) => {
-	experiments[ exp ] = variation;
+// DO NOT import. Use `setPlansListExperiment` instead.
+export const setExperiment = ( experimentName: string, variation: string ): void => {
+	experiments[ experimentName ] = variation;
 };
 
 function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined | false | 0 | '' > {
