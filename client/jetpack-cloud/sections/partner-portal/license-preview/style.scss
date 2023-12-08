@@ -210,6 +210,7 @@ button {
 
 .button.is-borderless.license-bundle-dropdown__button {
 	padding: 4px;
+	max-height: 24px;
 	&:hover,
 	&:focus {
 		background: var(--color-sidebar-menu-hover-background);
@@ -222,6 +223,10 @@ button {
 	font-size: rem(14px);
 	font-weight: 400;
 	border-radius: 2px;
+
+	.popover__arrow {
+		display: none;
+	}
 
 	.popover__menu {
 		padding: 8px 4px;

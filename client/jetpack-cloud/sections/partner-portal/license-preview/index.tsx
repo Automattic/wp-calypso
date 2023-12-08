@@ -227,23 +227,21 @@ export default function LicensePreview( {
 				) }
 
 				<div className="license-preview__extras">
-					{ isParentLicenseBundle ? (
-						<>
-							{ bundleCountContent }
-							<LicenseBundleDropDown
-								product={ product }
-								licenseKey={ licenseKey }
-								bundleSize={ quantity }
-							/>
-						</>
-					) : (
-						LicenseType.Standard === licenseType && (
-							<Badge type="success">{ translate( 'Standard license' ) }</Badge>
-						)
-					) }
+					{ isParentLicenseBundle
+						? bundleCountContent
+						: LicenseType.Standard === licenseType && (
+								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
+						  ) }
 				</div>
 
 				<div>
+					{ isParentLicenseBundle && (
+						<LicenseBundleDropDown
+							product={ product }
+							licenseKey={ licenseKey }
+							bundleSize={ quantity }
+						/>
+					) }
 					{ isSiteAtomic ? (
 						<LicenseActions
 							siteUrl={ siteUrl }
