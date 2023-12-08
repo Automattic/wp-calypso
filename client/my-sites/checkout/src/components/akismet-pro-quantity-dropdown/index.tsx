@@ -4,10 +4,13 @@ import {
 	PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { isMobile } from '@automattic/viewport';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import type { AkismetProQuantityDropDownProps } from './types';
 import type { FunctionComponent } from 'react';
 
@@ -104,6 +107,27 @@ const OptionList = styled.ul`
 	}
 `;
 
+const CurrentOptionContainer = styled.div`
+	align-items: center;
+	display: flex;
+	font-size: ${ ( props ) => props.theme.fontSize.small };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	justify-content: space-between;
+	line-height: 20px;
+	width: 100%;
+	column-gap: 20px;
+	text-align: left;
+`;
+
+const Price = styled.span`
+	flex: 1 0 auto;
+	text-align: right;
+	color: #646970;
+	> span {
+		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
+	}
+`;
+
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
 	id,
 	responseCart,
@@ -116,11 +140,11 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
-			translate( '1 Site' ),
-			translate( '2 Sites' ),
-			translate( '3 Sites' ),
-			translate( '4 Sites' ),
-			translate( 'Unlimited sites (Akismet Business)' ),
+			preventWidows( translate( '1 Site' ) ),
+			preventWidows( translate( '2 Sites' ) ),
+			preventWidows( translate( '3 Sites' ) ),
+			preventWidows( translate( '4 Sites' ) ),
+			preventWidows( translate( 'Unlimited sites (Akismet Business)' ) ),
 		];
 		const AkBusinessDropdownPosition = dropdownOptions.length;
 		return {
@@ -180,6 +204,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 				setForceShowAkQuantityDropdown( true );
 			} else {
 				// 1 - 4 Sites was selected.
+				// eslint-disable-next-line no-lonely-if
 				if (
 					( AKISMET_BUSINESS_5K_PRODUCTS as ReadonlyArray< string > ).includes( cartProductSlug )
 				) {
@@ -199,7 +224,6 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					newProductId = cartProductId;
 					newQuantity = value;
 				}
-				setForceShowAkQuantityDropdown( false );
 			}
 
 			setSelectedQuantity( value );
@@ -300,6 +324,69 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		]
 	);
 
+	const { quantity, currency, item_subtotal_integer } = responseCart.products[ 0 ];
+	const itemSubtotalQuantityOneInteger = item_subtotal_integer / ( quantity ?? 1 );
+
+	const actualAmountQuantityOneDisplay = formatCurrency( itemSubtotalQuantityOneInteger, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
+	const actualAmountDisplay = formatCurrency( item_subtotal_integer, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+
+	const getCurrentOptionPriceDisplay = useCallback( () => {
+		if ( selectedQuantity !== AkBusinessDropdownPosition ) {
+			return isMobile()
+				? translate(
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. ={{/span}} %(actualAmountDisplay)s',
+						{
+							args: {
+								quantity: selectedQuantity,
+								actualAmountQuantityOneDisplay,
+								actualAmountDisplay,
+							},
+							components: {
+								span: <span />,
+							},
+							comment: `
+								%(quantity) is the number of product licenses being purchased, e.g. "3 licenses".
+								%(actualAmountQuantityOneDisplay)s is the localized price for 1 license, e.g. "$10.25".
+								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75". 
+							`,
+						}
+				  )
+				: translate(
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license ={{/span}} %(actualAmountDisplay)s',
+						{
+							args: {
+								quantity: selectedQuantity,
+								actualAmountQuantityOneDisplay,
+								actualAmountDisplay,
+							},
+							components: {
+								span: <span />,
+							},
+							comment: `
+								%(quantity) is the number of product licenses being purchased, e.g. "3 licenses".
+								%(actualAmountQuantityOneDisplay)s is the localized price for 1 license, e.g. "$10.25".
+								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75". 
+							`,
+						}
+				  );
+		}
+
+		return actualAmountDisplay;
+	}, [
+		AkBusinessDropdownPosition,
+		actualAmountDisplay,
+		actualAmountQuantityOneDisplay,
+		translate,
+		selectedQuantity,
+	] );
+
 	return (
 		<AkismetSitesSelect>
 			<AkismetSitesSelectHeading>{ translate( 'Number of licenses' ) }</AkismetSitesSelectHeading>
@@ -313,7 +400,10 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					open={ isOpen }
 					role="button"
 				>
-					{ dropdownOptions[ selectedQuantity - 1 ] }
+					<CurrentOptionContainer>
+						<span>{ dropdownOptions[ selectedQuantity - 1 ] }</span>
+						<Price>{ getCurrentOptionPriceDisplay() }</Price>
+					</CurrentOptionContainer>
 					<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 				</CurrentOption>
 				{ isOpen && (
