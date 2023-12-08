@@ -1,3 +1,4 @@
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import BundleConfirm from './internals/steps-repository/bundle-confirm';
 import BundleInstallPlugins from './internals/steps-repository/bundle-install-plugins';
 import BundleTransfer from './internals/steps-repository/bundle-transfer';
@@ -8,6 +9,7 @@ import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-curren
 import ProcessingStep from './internals/steps-repository/processing-step';
 import StoreAddress from './internals/steps-repository/store-address';
 import type { StepperStep, Navigate } from './internals/types';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 /**
  * First steps that will always run, regardless of the plugin bundle being registered here or not.
@@ -40,7 +42,22 @@ export const afterCustomBundleSteps: StepperStep[] = [
 interface BundleStepsSettings {
 	[ key: string ]: {
 		customSteps: StepperStep[];
+		/** The back needs to be customized only for custom steps of the flow. The default steps have their logic already. It returns `false` if nothing should be done here. */
 		goBack: ( currentStep: string, navigate: Navigate< StepperStep[] > ) => boolean | void;
+		/** Custom end of flow. Notice that it can end earlier depending on the current state. It returns `false` if nothing should be done here. */
+		endFlow: ( {
+			intent,
+			storeType,
+			adminUrl,
+			dispatch,
+			exitFlow,
+		}: {
+			intent: string;
+			storeType: string;
+			adminUrl: string;
+			dispatch: CalypsoDispatch;
+			exitFlow: ( to: string ) => void;
+		} ) => boolean | void;
 		checkForActivePlugins: string[];
 	};
 }
@@ -54,7 +71,6 @@ export const bundleStepsSettings: BundleStepsSettings = {
 			{ slug: 'storeAddress', component: StoreAddress },
 			{ slug: 'businessInfo', component: BusinessInfo },
 		],
-		/** It needs to be customized only for custom steps of the flow. The default steps have their logic already. */
 		goBack: ( currentStep, navigate ) => {
 			switch ( currentStep ) {
 				case 'businessInfo':
@@ -66,6 +82,15 @@ export const bundleStepsSettings: BundleStepsSettings = {
 				default:
 					return false;
 			}
+		},
+		endFlow: ( { intent, storeType, adminUrl, dispatch, exitFlow } ) => {
+			if ( intent === 'sell' && storeType === 'power' ) {
+				dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
+
+				return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+			}
+
+			return false;
 		},
 		checkForActivePlugins: [ 'woocommerce' ],
 	},

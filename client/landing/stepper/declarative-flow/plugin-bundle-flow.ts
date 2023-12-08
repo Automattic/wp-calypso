@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Onboard, getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useComingFromThemeActivationParam } from '../hooks/use-coming-from-theme-activation';
 import { useSite } from '../hooks/use-site';
@@ -80,7 +79,11 @@ const pluginBundleFlow: Flow = {
 
 		const adminUrl = useSelect(
 			( select ) =>
-				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+				String(
+					( site &&
+						( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ) ) ||
+						''
+				),
 			[ site ]
 		);
 		const isAtomic = useSelect(
@@ -201,11 +204,16 @@ const pluginBundleFlow: Flow = {
 						return exitFlow( `/post/${ siteSlug }` );
 					}
 
-					// End of woo flow
-					if ( intent === 'sell' && storeType === 'power' ) {
-						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
-
-						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+					// End of flow.
+					const endReturn = bundleStepsSettings[ pluginSlug ]?.endFlow?.( {
+						intent,
+						storeType,
+						adminUrl,
+						dispatch,
+						exitFlow,
+					} );
+					if ( false !== endReturn ) {
+						return endReturn;
 					}
 
 					return exitFlow( defaultExitDest );
