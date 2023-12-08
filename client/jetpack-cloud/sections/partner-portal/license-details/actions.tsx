@@ -108,7 +108,7 @@ export default function LicenseDetailsActions( {
 					product={ product }
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
-					isChildLicense={ isChildLicense }
+					roleType={ isChildLicense ? 'child' : 'single' }
 				/>
 			) }
 		</div>

@@ -230,7 +230,11 @@ export default function LicensePreview( {
 					{ isParentLicenseBundle ? (
 						<>
 							{ bundleCountContent }
-							<LicenseBundleDropDown />
+							<LicenseBundleDropDown
+								product={ product }
+								licenseKey={ licenseKey }
+								bundleSize={ quantity }
+							/>
 						</>
 					) : (
 						LicenseType.Standard === licenseType && (

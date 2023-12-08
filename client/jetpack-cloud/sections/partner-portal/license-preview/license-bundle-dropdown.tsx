@@ -3,10 +3,26 @@ import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import RevokeLicenseDialog from '../revoke-license-dialog';
 
-export default function LicenseBundleDropDown() {
+type Props = {
+	licenseKey: string;
+	product: string;
+	bundleSize: number;
+};
+
+export default function LicenseBundleDropDown( { licenseKey, product, bundleSize }: Props ) {
 	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
+	const [ showContextMenu, setShowContextMenu ] = useState( false );
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
+
+	const onShowContextMenu = useCallback( () => {
+		setShowContextMenu( true );
+	}, [] );
+
+	const onHideContextMenu = useCallback( () => {
+		setShowContextMenu( false );
+	}, [] );
 
 	const onShowRevokeDialog = useCallback( () => {
 		setShowRevokeDialog( true );
@@ -16,15 +32,13 @@ export default function LicenseBundleDropDown() {
 		setShowRevokeDialog( false );
 	}, [] );
 
-	const onRevokeLicense = useCallback( () => {}, [] );
-
 	return (
 		<>
 			<Button
 				className="license-bundle-dropdown__button"
 				borderless
 				compact
-				onClick={ onShowRevokeDialog }
+				onClick={ onShowContextMenu }
 				ref={ buttonActionRef }
 			>
 				<Gridicon icon="ellipsis" size={ 18 } />
@@ -33,8 +47,8 @@ export default function LicenseBundleDropDown() {
 			<PopoverMenu
 				className="license-bundle-dropdown__popover-menu"
 				context={ buttonActionRef.current }
-				isVisible={ showRevokeDialog }
-				onClose={ onHideRevokeDialog }
+				isVisible={ showContextMenu }
+				onClose={ onHideContextMenu }
 				position="bottom left"
 			>
 				<span className="license-bundle-dropdown__popover-menu-title">
@@ -42,12 +56,23 @@ export default function LicenseBundleDropDown() {
 				</span>
 
 				<PopoverMenuItem
-					onClick={ onRevokeLicense }
+					onClick={ onShowRevokeDialog }
 					className="license-bundle-dropdown__popover-menu-item-revoke"
 				>
 					{ translate( 'Revoke bundle' ) } <Gridicon icon="trash" size={ 18 } />
 				</PopoverMenuItem>
 			</PopoverMenu>
+
+			{ showRevokeDialog && (
+				<RevokeLicenseDialog
+					roleType="parent"
+					licenseKey={ licenseKey }
+					product={ product }
+					siteUrl={ null }
+					onClose={ onHideRevokeDialog }
+					bundleSize={ bundleSize }
+				/>
+			) }
 		</>
 	);
 }
