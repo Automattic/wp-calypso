@@ -20,7 +20,6 @@ import {
 	Flow,
 	ProvidedDependencies,
 	StepperStep,
-	Navigate,
 } from './internals/types';
 import {
 	initialBundleSteps,
@@ -30,20 +29,11 @@ import {
 } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const navigateToNext = (
-	navigate: Navigate< StepperStep[] >,
-	currentStep: string,
-	steps: string[]
-): void => {
+const getNextStep = ( currentStep: string, steps: string[] ): string | undefined => {
 	const currentStepIndex = steps.indexOf( currentStep );
 	const nextStep = steps[ currentStepIndex + 1 ];
 
-	// Don't navigate if there is no more steps. This case is handled by the functions that call it.
-	if ( ! nextStep ) {
-		return;
-	}
-
-	return navigate( nextStep );
+	return nextStep;
 };
 
 const SiteIntent = Onboard.SiteIntent;
@@ -174,30 +164,33 @@ const pluginBundleFlow: Flow = {
 					defaultExitDest = `/theme/${ themeId }/${ siteSlug }`;
 				}
 			}
-			switch ( currentStep ) {
-				case 'checkForPlugins':
-					// If plugins are already installed, we should exit the flow.
-					if ( providedDependencies?.hasPlugins ) {
-						// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
 
-						return exitFlow( defaultExitDest );
-					}
+			if ( 'checkForPlugins' === currentStep ) {
+				// If plugins are already installed, we should exit the flow.
+				if ( providedDependencies?.hasPlugins ) {
+					// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
 
-				// Otherwise, leave it to continue to the next step.
-
-				case 'businessInfo': {
-					if ( isAtomic ) {
-						return navigate( 'bundleInstallPlugins' );
-					}
-					return navigate( 'bundleConfirm' );
+					return exitFlow( defaultExitDest );
 				}
+			}
 
+			const nextStep = getNextStep( currentStep, steps );
+
+			if ( 'bundleConfirm' === nextStep ) {
+				if ( isAtomic ) {
+					return navigate( 'bundleInstallPlugins' );
+				}
+			}
+
+			switch ( currentStep ) {
 				case 'bundleConfirm': {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
 						window.location.replace( checkoutUrl.toString() );
 					}
+
+					return navigate( 'bundleTransfer' );
 				}
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
@@ -229,13 +222,15 @@ const pluginBundleFlow: Flow = {
 
 					return exitFlow( defaultExitDest );
 				}
-
-				case 'bundleTransfer':
+				case 'bundleTransfer': {
 					return navigate( 'processing' );
+				}
+				default: {
+					if ( nextStep ) {
+						return navigate( nextStep );
+					}
+				}
 			}
-
-			// If it didn't match any case earlier, it navigates to the next step.
-			return navigateToNext( navigate, currentStep, steps );
 		}
 
 		const goBack = () => {
