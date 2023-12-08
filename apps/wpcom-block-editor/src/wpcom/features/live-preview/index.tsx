@@ -6,6 +6,7 @@ import { FC, useEffect } from 'react';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
+import { LivePreviewUpgradeModal } from './upgrade-modal';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
 import { getUnlock } from './utils';
 
@@ -77,7 +78,12 @@ const LivePreviewNoticePlugin = () => {
 	}
 
 	if ( canPreviewButNeedUpgrade ) {
-		return <LivePreviewUpgradeNotice { ...{ previewingTheme, upgradePlan, dashboardLink } } />;
+		return (
+			<>
+				<LivePreviewUpgradeModal { ...{ themeId: previewingTheme.id as string, upgradePlan } } />
+				<LivePreviewUpgradeNotice { ...{ previewingTheme, upgradePlan, dashboardLink } } />
+			</>
+		);
 	}
 	return <LivePreviewNotice { ...{ dashboardLink, previewingThemeName: previewingTheme.name } } />;
 };
