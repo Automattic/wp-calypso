@@ -97,4 +97,4 @@ export const bundleStepsSettings: BundleStepsSettings = {
 	},
 };
 
-export type BundledPlugin = keyof typeof bundleStepsSettings;
+export type BundledPlugin = keyof typeof bundleStepsSettings & string;
