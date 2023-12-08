@@ -24,6 +24,14 @@ type TierUpgradeSliderProps = {
 	marks?: boolean | number[];
 };
 
+function getValidInitialIndex( initialValue: number, maxIndex: number ) {
+	let validatedInitialValue = initialValue;
+	if ( validatedInitialValue < 0 || validatedInitialValue > maxIndex ) {
+		validatedInitialValue = maxIndex / 2;
+	}
+	return Math.floor( validatedInitialValue );
+}
+
 function TierUpgradeSlider( {
 	className,
 	uiStrings,
@@ -58,10 +66,13 @@ function TierUpgradeSlider( {
 		return <div { ...props }>{ thumbSVG }</div>;
 	} ) as RenderThumbFunction;
 
+	const maxIndex = steps.length - 1;
+	const validatedInitialValue = getValidInitialIndex( initialValue, maxIndex );
+
 	// Slider state.
-	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( Math.floor( initialValue ) );
+	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( validatedInitialValue );
 	const sliderMin = 0;
-	const sliderMax = steps?.length - 1;
+	const sliderMax = maxIndex;
 
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
