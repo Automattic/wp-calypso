@@ -134,18 +134,15 @@
 	.pattern-assembler-cta__image-wrapper {
 		flex-grow: 1;
 		padding-left: 35px;
-
-		@include break-xlarge {
-			padding-left: 195px;
-		}
+		text-align: right;
 
 		@include break-wide {
 			flex-grow: 0;
-			padding-left: 35px;
 		}
 
 		@media ( min-width: 1600px ) {
 			margin: 0;
+			padding-left: 35px;
 		}
 	}
 
