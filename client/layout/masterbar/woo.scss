@@ -509,14 +509,7 @@
 	}
 
 	.signup-form .auth-form__separator {
-		@media ( min-width: 782px ) {
-			width: 100%;
-		}
-
-		&::before,
-		&::after {
-			content: none;
-		}
+		width: 100%;
 	}
 
 	.auth-form__separator + .auth-form__social.card {
@@ -525,6 +518,12 @@
 		max-width: 100%;
 	}
 
+	.auth-form__separator {
+		&::before,
+		&::after {
+			content: none;
+		}
+	}
 	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;
