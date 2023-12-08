@@ -45,7 +45,7 @@ import {
 	GROUP_P2,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
-import { PLANS_LIST, setExperiment } from './plans-list';
+import { PLANS_LIST } from './plans-list';
 import {
 	isJetpackBusiness,
 	isBusiness,
@@ -67,10 +67,6 @@ import type {
 	FeatureGroupMap,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
-
-export function setPlansListExperiment( experimentName: string, variation: string ): void {
-	setExperiment( experimentName, variation );
-}
 
 export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;

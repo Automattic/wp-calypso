@@ -445,6 +445,7 @@ import {
 	PRODUCT_JETPACK_CREATOR_YEARLY,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
 } from './constants';
+import { getPlansListExperiment } from './experiments';
 import type {
 	BillingTerm,
 	Plan,
@@ -455,12 +456,6 @@ import type {
 	CancellationFeatureLists,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
-
-const experiments: { [ key: string ]: string } = {};
-// DO NOT import. Use `setPlansListExperiment` instead.
-export const setExperiment = ( experimentName: string, variation: string ): void => {
-	experiments[ experimentName ] = variation;
-};
 
 function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined | false | 0 | '' > {
 	return !! value;
@@ -787,7 +782,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: () =>
-		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
 			? // translators: Starter is a plan name
 			  i18n.translate( 'Starter' )
 			: i18n.translate( 'Personal' ),
@@ -964,7 +959,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
 	getTitle: () =>
-		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
 			? // translators: Entrepreneur is a plan name
 			  i18n.translate( 'Entrepreneur' )
 			: i18n.translate( 'Commerce' ),
@@ -1351,7 +1346,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: () =>
-		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
 			? // translators: Explorer is a plan name
 			  i18n.translate( 'Explorer' )
 			: i18n.translate( 'Premium' ),
@@ -1575,7 +1570,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
 	getTitle: () =>
-		experiments[ 'wpcom_plan_name_change' ] === 'treatment'
+		getPlansListExperiment( 'wpcom_plan_name_change' ) === 'treatment'
 			? // translators: Creator is a plan name
 			  i18n.translate( 'Creator' )
 			: i18n.translate( 'Business' ),
