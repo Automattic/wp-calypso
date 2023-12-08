@@ -41,11 +41,12 @@ export const afterCustomBundleSteps: StepperStep[] = [
 
 interface BundleStepsSettings {
 	[ key: string ]: {
+		/** Custom steps for the bundle. Empty string if it has not custom steps. */
 		customSteps: StepperStep[];
-		/** The back needs to be customized only for custom steps of the flow. The default steps have their logic already. It returns `false` if nothing should be done here. */
-		goBack: ( currentStep: string, navigate: Navigate< StepperStep[] > ) => boolean | void;
+		/** Customize back function only for custom steps of the flow. The default steps have their logic separately. It returns `false` if nothing should be done here. */
+		goBack?: ( currentStep: string, navigate: Navigate< StepperStep[] > ) => boolean | void;
 		/** Custom end of flow. Notice that it can end earlier depending on the current state. It returns `false` if nothing should be done here. */
-		endFlow: ( {
+		endFlow?: ( {
 			intent,
 			storeType,
 			adminUrl,
