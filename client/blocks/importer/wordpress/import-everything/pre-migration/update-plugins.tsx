@@ -1,8 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
-import { Title, SubTitle, SelectItems } from '@automattic/onboarding';
+import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { jetpack } from 'calypso/signup/icons';
 import { URL } from 'calypso/types';
@@ -90,9 +91,8 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 
 	return (
 		<div className="import__import-everything import__import-everything--redesign">
-			<div className="import__heading-title">
-				<Title>{ renderTitle() }</Title>
-				<SubTitle>{ renderSubTitle() }</SubTitle>
+			<div className="import__header">
+				<FormattedHeader headerText={ renderTitle() } subHeaderText={ renderSubTitle() } />
 			</div>
 			<div className="select-items-wrapper">
 				<SelectItems
