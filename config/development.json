@@ -144,7 +144,6 @@
 		"page/export": true,
 		"pattern-assembler/v2": false,
 		"pattern-assembler/add-pages": true,
-		"pattern-assembler/v2": false,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
