@@ -93,11 +93,17 @@ function StatsCommercialUpgradeSlider( {
 				},
 			}
 		) as string;
+		// Don't modify the original tier data!
 		lastTier.views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
 	}
 
 	const steps = getStepsForTiers( tiers );
 
+	// TODO: Special case the last tier.
+	// We're getting a string as the final tier when the parent expects a number.
+	// Fix above lastTier logic and make sure we always return a
+	// number representing the view limits.
+	// Then test with real API data (vs mock data).
 	const handleSliderChanged = ( index: number ) => {
 		onSliderChange( tiers[ index ]?.views as number );
 	};
