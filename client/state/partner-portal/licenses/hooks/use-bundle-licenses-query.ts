@@ -8,13 +8,14 @@ import { errorNotice } from '../../../notices/actions';
 import { formatLicenses } from '../handlers';
 
 export default function useBundleLicensesQuery(
-	parentLicenseId: number
+	parentLicenseId: number,
+	perPage: number = 100
 ): UseQueryResult< License[] > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const query = useQuery( {
-		queryKey: [ 'partner-portal', 'bundle-licenses', parentLicenseId ],
+		queryKey: [ 'partner-portal', 'bundle-licenses', parentLicenseId, perPage ],
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -23,6 +24,7 @@ export default function useBundleLicensesQuery(
 				},
 				{
 					parent_id: parentLicenseId,
+					per_page: perPage,
 				}
 			),
 		select: ( data ) => formatLicenses( data.items ),

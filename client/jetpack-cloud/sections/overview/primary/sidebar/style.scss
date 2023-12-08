@@ -3,59 +3,20 @@
 
 .jetpack-cloud-content-sidebar {
 	.right-sidebar {
-		background: #f9f9f9;
 
-		.intro-video,
-		.quick-links,
-		.get-help {
-			margin-bottom: 48px;
+		.intro-video {
+			width: 100%;
 		}
 
-		h2,
-		h3 {
-			margin: 0 0 16px;
+		.foldable-card__expand {
+			width: 24px;
 		}
 
-		.video-placeholder {
-			background: var(--color-accent-20);
-			height: 150px;
-			margin-bottom: 16px;
-		}
-
-		.icon-placeholder {
-			display: inline-block;
-			background: var(--color-accent-10);
-			width: 20px;
-			height: 20px;
-			margin-right: 8px;
-		}
-
-		.button-placeholder {
-			display: block;
-			background: var(--studio-jetpack-green-10);
-			padding: 8px 16px;
-			text-align: center;
-			margin: 24px 0;
-		}
-
-		ul {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-			li {
-				margin-bottom: 40px;
-
-				&:last-child {
-					margin-bottom: 0;
-				}
-			}
-		}
-
-		.watch-video,
-		.feedback {
-			text-decoration: none;
-			display: block;
-			margin-top: 24px;
+		.contact-support-button {
+			width: 100%;
+			font-weight: 500;
+			color: var(--studio-gray-100);
+			border-color: var(--studio-gray-10);
 		}
 	}
 }

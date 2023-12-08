@@ -269,7 +269,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 					return (
 						<DesignCard
-							key={ index }
+							key={ design.recipe?.slug ?? design.slug ?? index }
 							category={ categorization?.selection }
 							design={ design }
 							locale={ locale }

@@ -16,6 +16,7 @@ interface Props {
 	licenseState: LicenseState;
 	licenseType: LicenseType;
 	hasDownloads: boolean;
+	isChildLicense?: boolean;
 }
 
 export default function LicenseDetailsActions( {
@@ -25,6 +26,7 @@ export default function LicenseDetailsActions( {
 	licenseState,
 	licenseType,
 	hasDownloads,
+	isChildLicense,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -80,11 +82,14 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
-			{ licenseState !== LicenseState.Revoked && licenseType === LicenseType.Partner && (
-				<Button compact onClick={ openRevokeDialog } scary>
-					{ translate( 'Revoke' ) }
-				</Button>
-			) }
+			{ ( isChildLicense
+				? licenseState === LicenseState.Attached
+				: licenseState !== LicenseState.Revoked ) &&
+				licenseType === LicenseType.Partner && (
+					<Button compact onClick={ openRevokeDialog } scary>
+						{ translate( 'Revoke' ) }
+					</Button>
+				) }
 
 			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
 				<Button
@@ -103,6 +108,7 @@ export default function LicenseDetailsActions( {
 					product={ product }
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
+					isChildLicense={ isChildLicense }
 				/>
 			) }
 		</div>

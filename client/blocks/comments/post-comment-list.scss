@@ -66,6 +66,10 @@
 			}
 		}
 	}
+
+	&.is-inline * {
+		font-size: $font-body;
+	}
 }
 
 .comments__info-bar {
