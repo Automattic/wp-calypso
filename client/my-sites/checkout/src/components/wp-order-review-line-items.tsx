@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isAkismetProduct,
 	isJetpackPurchasableItem,
@@ -275,6 +276,9 @@ export function WPOrderReviewLineItems( {
 		: responseCart.credits_integer;
 
 	const isAkismetProMultipleLicensesCart = useMemo( () => {
+		if ( ! config.isEnabled( 'akismet/checkout-quantity-dropdown' ) ) {
+			return false;
+		}
 		if ( ! window.location.pathname.startsWith( '/checkout/akismet/' ) ) {
 			return false;
 		}
