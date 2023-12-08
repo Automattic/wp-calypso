@@ -120,8 +120,7 @@ export default function LicensePreview( {
 	const isSiteAtomic =
 		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
-	const isParentLicenseBundle =
-		isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
+	const isParentLicense = isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
 
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" type="info">
@@ -226,8 +225,8 @@ export default function LicensePreview( {
 					</div>
 				) }
 
-				<div className="license-preview__extras">
-					{ isParentLicenseBundle
+				<div className="license-preview__badge-container">
+					{ isParentLicense
 						? bundleCountContent
 						: LicenseType.Standard === licenseType && (
 								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
@@ -235,7 +234,7 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ isParentLicenseBundle && (
+					{ isParentLicense && (
 						<LicenseBundleDropDown
 							product={ product }
 							licenseKey={ licenseKey }
@@ -261,7 +260,7 @@ export default function LicensePreview( {
 			</LicenseListItem>
 
 			{ isOpen &&
-				( isParentLicenseBundle ? (
+				( isParentLicense ? (
 					<BundleDetails parentLicenseId={ parentLicenseId } />
 				) : (
 					<LicenseDetails
