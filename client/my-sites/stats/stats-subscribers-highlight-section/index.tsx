@@ -113,7 +113,7 @@ function SubscriberLaunchpadSection( { siteId }: { siteId: number | null } ) {
 
 	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
 
-	return showLaunchpad ? <SubscriberLaunchpad /> : <></>;
+	return showLaunchpad ? <SubscriberLaunchpad launchpadContext="subscriber-stats" /> : <></>;
 }
 
 export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
