@@ -8,8 +8,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
-import './style.scss';
 import { LicenseRole } from '../types';
+
+import './style.scss';
 
 interface Props {
 	licenseKey: string;
