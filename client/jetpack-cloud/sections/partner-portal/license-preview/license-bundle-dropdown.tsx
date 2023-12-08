@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import RevokeLicenseDialog from '../revoke-license-dialog';
+import { LicenseRole } from '../types';
 
 type Props = {
 	licenseKey: string;
@@ -63,7 +64,7 @@ export default function LicenseBundleDropDown( { licenseKey, product, bundleSize
 
 			{ showRevokeDialog && (
 				<RevokeLicenseDialog
-					licenseRole="parent"
+					licenseRole={ LicenseRole.Parent }
 					licenseKey={ licenseKey }
 					product={ product }
 					siteUrl={ null }

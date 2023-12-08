@@ -9,13 +9,14 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
 import './style.scss';
+import { LicenseRole } from '../types';
 
 interface Props {
 	licenseKey: string;
 	product: string;
 	siteUrl: string | null;
 	onClose: ( action?: string ) => void;
-	licenseRole?: 'parent' | 'child' | 'single';
+	licenseRole?: LicenseRole;
 	bundleSize?: number;
 }
 
@@ -24,7 +25,7 @@ export default function RevokeLicenseDialog( {
 	product,
 	siteUrl,
 	onClose,
-	licenseRole = 'single',
+	licenseRole = LicenseRole.Single,
 	bundleSize = 1,
 	...rest
 }: Props ) {
@@ -53,7 +54,8 @@ export default function RevokeLicenseDialog( {
 		mutation.mutate( { licenseKey } );
 	}, [ dispatch, licenseKey, mutation ] );
 
-	const isAssignedChildLicense = licenseRole === 'child' && siteUrl;
+	const isParentLicense = licenseRole === LicenseRole.Parent;
+	const isAssignedChildLicense = licenseRole === LicenseRole.Child && siteUrl;
 
 	const buttons = [
 		<Button disabled={ false } onClick={ close }>
@@ -61,12 +63,12 @@ export default function RevokeLicenseDialog( {
 		</Button>,
 
 		<Button primary scary busy={ mutation.isLoading } onClick={ revoke }>
-			{ translate( 'Revoke License' ) }
+			{ isParentLicense ? translate( 'Revoke bundle' ) : translate( 'Revoke License' ) }
 		</Button>,
 	];
 
 	const renderHeading = () => {
-		if ( licenseRole === 'parent' ) {
+		if ( isParentLicense ) {
 			return translate( 'Revoke bundle of %(count)s %(product)s licenses?', {
 				args: {
 					product,
@@ -90,7 +92,7 @@ export default function RevokeLicenseDialog( {
 	};
 
 	const renderContent = () => {
-		if ( licenseRole === 'parent' ) {
+		if ( isParentLicense ) {
 			return (
 				<p>
 					{ translate(
