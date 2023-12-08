@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
 import {
 	FREE_THEME,
@@ -12,6 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
+import useThemeTier from 'calypso/state/themes/hooks/use-theme-tier';
 import { getThemeType } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
 
@@ -35,6 +37,7 @@ const ThemeTypeBadge = ( {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const bundleSettings = useBundleSettings( themeId );
+	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
 	useEffect( () => {
 		if ( type === FREE_THEME && ! isLockedStyleVariation ) {
@@ -62,6 +65,24 @@ const ThemeTypeBadge = ( {
 		focusOnShow: false,
 		isClickable: true,
 	};
+
+	if ( isEnabled( 'themes/tiers' ) && Object.keys( themeTier ).length ) {
+		const tieredBadgeContentProps = {
+			...badgeContentProps,
+			labelText: translate( 'Upgrade' ),
+		};
+
+		let badgeContent;
+		if ( isLockedStyleVariation ) {
+			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
+		} else if ( isThemeAllowedOnSite ) {
+			badgeContent = <>{ translate( 'Included in my plan' ) }</>;
+		} else {
+			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
+		}
+
+		return <div className="theme-type-badge">{ badgeContent }</div>;
+	}
 
 	let badgeContent;
 	if ( type === BUNDLED_THEME ) {
