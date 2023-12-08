@@ -20,6 +20,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 	StepperStep,
+	Navigate,
 } from './internals/types';
 import {
 	initialBundleSteps,
@@ -28,6 +29,22 @@ import {
 	bundleStepsSettings,
 } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+
+const navigateToNext = (
+	navigate: Navigate< StepperStep[] >,
+	currentStep: string,
+	steps: string[]
+): void => {
+	const currentStepIndex = steps.indexOf( currentStep );
+	const nextStep = steps[ currentStepIndex + 1 ];
+
+	// Don't navigate if there is no more steps. This case is handled by the functions that call it.
+	if ( ! nextStep ) {
+		return;
+	}
+
+	return navigate( nextStep );
+};
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -48,7 +65,7 @@ const pluginBundleFlow: Flow = {
 		}
 		return [ ...initialBundleSteps, ...bundlePluginSteps ];
 	},
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( currentStep, navigate, steps = [] ) {
 		const flowName = this.name;
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -166,11 +183,7 @@ const pluginBundleFlow: Flow = {
 						return exitFlow( defaultExitDest );
 					}
 
-					// Otherwise, we should continue to the next step.
-					return navigate( 'storeAddress' );
-
-				case 'storeAddress':
-					return navigate( 'businessInfo' );
+				// Otherwise, leave it to continue to the next step.
 
 				case 'businessInfo': {
 					if ( isAtomic ) {
@@ -185,8 +198,6 @@ const pluginBundleFlow: Flow = {
 					if ( checkoutUrl ) {
 						window.location.replace( checkoutUrl.toString() );
 					}
-
-					return navigate( 'bundleTransfer' );
 				}
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
@@ -221,9 +232,10 @@ const pluginBundleFlow: Flow = {
 
 				case 'bundleTransfer':
 					return navigate( 'processing' );
-				case 'bundleInstallPlugins':
-					return navigate( 'processing' );
 			}
+
+			// If it didn't match any case earlier, it navigates to the next step.
+			return navigateToNext( navigate, currentStep, steps );
 		}
 
 		const goBack = () => {
