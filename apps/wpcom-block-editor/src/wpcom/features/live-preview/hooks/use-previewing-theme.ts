@@ -31,15 +31,14 @@ export const usePreviewingTheme = () => {
 	}, [] );
 	const [ previewingTheme, setPreviewingTheme ] = useState< Theme | undefined >( undefined );
 
+	const previewingThemeId =
+		( previewingThemeSlug as string )?.split( '/' )?.[ 1 ] || previewingThemeSlug;
 	const previewingThemeName = previewingTheme?.name || previewingThemeSlug;
 	const previewingThemeType = previewingTheme ? getThemeType( previewingTheme ) : undefined;
 	const previewingThemeTypeDisplay =
 		previewingThemeType === WOOCOMMERCE_THEME ? 'WooCommerce' : 'Premium';
 
 	useEffect( () => {
-		const previewingThemeId =
-			( previewingThemeSlug as string )?.split( '/' )?.[ 1 ] || previewingThemeSlug;
-
 		if ( previewingThemeId ) {
 			wpcom.req
 				.get( `/themes/${ previewingThemeId }`, { apiVersion: '1.2' } )
@@ -53,9 +52,10 @@ export const usePreviewingTheme = () => {
 			setPreviewingTheme( undefined );
 		}
 		return;
-	}, [ previewingThemeSlug ] );
+	}, [ previewingThemeId, previewingThemeSlug ] );
 
 	return {
+		id: previewingThemeId,
 		name: previewingThemeName,
 		type: previewingThemeType,
 		typeDisplay: previewingThemeTypeDisplay,

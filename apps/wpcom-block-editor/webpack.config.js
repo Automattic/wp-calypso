@@ -5,6 +5,7 @@
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const webpack = require( 'webpack' );
 
 /**
  * Internal variables
@@ -58,6 +59,13 @@ function getWebpackConfig(
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
+			new webpack.DefinePlugin( {
+				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
+			} ),
+			// Replace the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
+			// The sprite is loaded separately in `apps/wpcom-block-editor/src/wpcom/features/live-preview/upgrade-modal.tsx`.
+			new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
+			new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
 			new DependencyExtractionWebpackPlugin( {
 				requestToExternal( request ) {
 					if ( request === 'tinymce/tinymce' ) {

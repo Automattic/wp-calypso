@@ -37,6 +37,7 @@ import './style.scss';
 
 interface UpgradeModalProps {
 	additionalClassNames?: string;
+	additionalOverlayClassNames?: string;
 	/* Theme slug */
 	slug: string;
 	isOpen: boolean;
@@ -56,6 +57,7 @@ interface UpgradeModalContent {
 
 export const ThemeUpgradeModal = ( {
 	additionalClassNames,
+	additionalOverlayClassNames,
 	slug,
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
@@ -364,6 +366,7 @@ export const ThemeUpgradeModal = ( {
 	return (
 		<Dialog
 			additionalClassNames={ additionalClassNames }
+			additionalOverlayClassNames={ additionalOverlayClassNames }
 			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
 			onClose={ () => closeModal() }
