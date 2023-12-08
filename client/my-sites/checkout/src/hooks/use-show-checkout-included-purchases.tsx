@@ -6,7 +6,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 
-export function useHideCheckoutIncludedPurchases(): 'loading' | 'treatment' | 'control' {
+export function useShowCheckoutIncludedPurchases(): 'loading' | 'treatment' | 'control' {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	const isJetpackNotAtomic = useSelector(
@@ -27,10 +27,10 @@ export function useHideCheckoutIncludedPurchases(): 'loading' | 'treatment' | 'c
 	if ( isLoadingExperimentAssignment ) {
 		return 'loading';
 	}
-	// Done loading experiment assignment, and treatment assignment found
+	// Done loading experiment assignment, and treatment assignment found - show included purchases
 	if ( experimentAssignment?.variationName === 'treatment' ) {
 		return 'treatment';
 	}
-	// Done loading experiment assignment, and control or null assignment found
+	// Done loading experiment assignment, and control or null assignment found - hide included purchases
 	return 'control';
 }
