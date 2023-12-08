@@ -121,13 +121,7 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
-	// TODO: Replace current pricing info with slider.
-	// Currently displaying below the flow to maintain existing behaviour.
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
-
-	const handleSliderChanged = ( value: number ) => {
-		setPurchaseTierQuantity( value );
-	};
 
 	return (
 		<>
@@ -152,7 +146,7 @@ Thanks\n\n`;
 				<>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
-						onSliderChange={ handleSliderChanged }
+						onSliderChange={ setPurchaseTierQuantity }
 					/>
 					<ButtonComponent
 						variant="primary"
