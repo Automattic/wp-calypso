@@ -29,14 +29,14 @@ import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
-import { useSelector } from 'calypso/state';
+import { useBundleSettingsFromThemeSoftwareSet } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
-import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import { ThemeSoftwareSet } from 'calypso/types';
 import './style.scss';
 
 interface UpgradeModalProps {
+	additionalClassNames?: string;
 	/* Theme slug */
 	slug: string;
 	isOpen: boolean;
@@ -55,6 +55,7 @@ interface UpgradeModalContent {
 }
 
 export const ThemeUpgradeModal = ( {
+	additionalClassNames,
 	slug,
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
@@ -71,9 +72,13 @@ export const ThemeUpgradeModal = ( {
 	// Check current theme: Does it have a plugin bundled?
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
 	const showBundleVersion = theme_software_set;
-	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
+	const isExternallyManaged = theme?.data?.theme_type === 'managed-external';
 
-	const bundleSettings = useBundleSettings( slug );
+	const bundleSettings = useBundleSettingsFromThemeSoftwareSet(
+		( theme?.data?.taxonomies?.theme_software_set as ThemeSoftwareSet[] )?.map(
+			( item ) => item.slug
+		)
+	);
 
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
@@ -358,6 +363,7 @@ export const ThemeUpgradeModal = ( {
 
 	return (
 		<Dialog
+			additionalClassNames={ additionalClassNames }
 			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
 			onClose={ () => closeModal() }

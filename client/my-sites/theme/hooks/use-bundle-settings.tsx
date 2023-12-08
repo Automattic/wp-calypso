@@ -24,11 +24,11 @@ const WooOnPlansIcon = () => (
 );
 
 /**
- * Hook to get the bundle settings for a given theme.
- * If the theme doesn't have a sotfware set defined, it returns `null`.
+ * Hook to get the bundle settings for a software set.
  */
-const useBundleSettings = ( themeId: string ): BundleSettings | null => {
-	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+export const useBundleSettingsFromThemeSoftwareSet = (
+	themeSoftwareSet: string[] = []
+): BundleSettings | null => {
 	const translate = useTranslate();
 
 	const bundleSettings = useMemo( () => {
@@ -63,6 +63,15 @@ const useBundleSettings = ( themeId: string ): BundleSettings | null => {
 	}, [ translate, themeSoftwareSet ] );
 
 	return bundleSettings;
+};
+
+/**
+ * Hook to get the bundle settings for a given theme.
+ * If the theme doesn't have a software set defined, it returns `null`.
+ */
+const useBundleSettings = ( themeId: string ): BundleSettings | null => {
+	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+	return useBundleSettingsFromThemeSoftwareSet( themeSoftwareSet );
 };
 
 export default useBundleSettings;
