@@ -1,4 +1,5 @@
 import { Gridicon, Button } from '@automattic/components';
+import { Icon, trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -50,16 +51,13 @@ export default function LicenseBundleDropDown( { licenseKey, product, bundleSize
 				isVisible={ showContextMenu }
 				onClose={ onHideContextMenu }
 				position="bottom left"
+				focusOnShow={ false }
 			>
-				<span className="license-bundle-dropdown__popover-menu-title">
-					{ translate( 'Option' ) }
-				</span>
-
 				<PopoverMenuItem
 					onClick={ onShowRevokeDialog }
 					className="license-bundle-dropdown__popover-menu-item-revoke"
 				>
-					{ translate( 'Revoke bundle' ) } <Gridicon icon="trash" size={ 18 } />
+					{ translate( 'Revoke bundle' ) } <Icon className="gridicon" icon={ trash } size={ 24 } />
 				</PopoverMenuItem>
 			</PopoverMenu>
 
