@@ -27,6 +27,11 @@ function useTranslatedStrings() {
 	};
 }
 
+// TODO: Review tier thresholds.
+// Have a report of this not working correctly.
+// I'm wondering if the number of tiers differs based on currency.
+// Originally thresholds were set based on a percentage.
+// Review and update as needed!
 function emojiForStep( index: number ) {
 	const uiEmojiHeartTier = 14;
 	const uiImageCelebrationTier = 23;
