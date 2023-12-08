@@ -572,6 +572,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openActivityLog',
 			label: __( 'Open activity log' ),
+			searchLabel: [
+				_x( 'open activity log', 'Keyword for the Open activity log command' ),
+				_x( 'jetpack activity log', 'Keyword for the Open activity log command' ),
+				_x( 'audit log', 'Keyword for the Open activity log command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'openActivityLog', __( 'Select site to open activity log' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
