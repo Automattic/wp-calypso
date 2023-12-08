@@ -104,9 +104,7 @@ function TierUpgradeSlider( {
 				focusOnShow={ false }
 				className="tier-upgrade-slider__extension-popover-wrapper"
 			>
-				<div className="tier-upgrade-slider__extension-popover-content">
-					{ showPopup && popupInfoString }
-				</div>
+				<div className="tier-upgrade-slider__extension-popover-content">{ popupInfoString }</div>
 			</Popover>
 			<p className="tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
 		</div>
