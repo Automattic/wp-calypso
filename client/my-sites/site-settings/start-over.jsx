@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { useSiteResetMutation } from '@automattic/data-stores';
+import { useSiteResetMutation, useSiteResetContentSummaryQuery } from '@automattic/data-stores';
 import { isSiteAtomic } from '@automattic/data-stores/src/site/selectors';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -94,6 +94,9 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
+	const { data } = useSiteResetContentSummaryQuery( siteId );
+	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
+
 	const handleError = () => {
 		dispatch(
 			errorNotice( translate( 'We were unable to reset your site.' ), {
@@ -105,12 +108,24 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 
 	const handleResult = ( result ) => {
 		if ( result.success ) {
-			dispatch(
-				successNotice( translate( 'Your site has been reset.' ), {
-					id: 'site-reset-success-notice',
-					duration: 4000,
-				} )
-			);
+			if ( isAtomic ) {
+				dispatch(
+					successNotice(
+						translate( 'Your site will be reset. It can take up to one minute to complete. ' ),
+						{
+							id: 'site-reset-success-notice',
+							duration: 6000,
+						}
+					)
+				);
+			} else {
+				dispatch(
+					successNotice( translate( 'Your site has been reset.' ), {
+						id: 'site-reset-success-notice',
+						duration: 4000,
+					} )
+				);
+			}
 		} else {
 			handleError();
 		}
@@ -121,42 +136,90 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 		onError: handleError,
 	} );
 
-	const contentInfo = [
-		translate( 'posts' ),
-		translate( 'pages' ),
-		translate( 'user installed plugins' ),
-		translate( 'user themes' ),
-	];
+	const contentInfo = () => {
+		const result = [];
+
+		if ( data?.post_count > 0 ) {
+			const message =
+				data.post_count === 1
+					? translate( '1 post' )
+					: sprintf( translate( '%d posts' ), data.post_count );
+			result.push( {
+				message,
+				url: `/posts/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.page_count > 0 ) {
+			const message =
+				data.page_count === 1
+					? translate( '1 page' )
+					: sprintf( translate( '%d pages' ), data.page_count );
+			result.push( {
+				message,
+				url: `/pages/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.media_count > 0 ) {
+			const message =
+				data.media_count === 1
+					? translate( '1 media item' )
+					: sprintf( translate( '%d media items' ), data.media_count );
+			result.push( {
+				message,
+				url: `/media/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.plugin_count > 0 ) {
+			const message =
+				data.plugin_count === 1
+					? translate( '1 plugin' )
+					: sprintf( translate( '%d plugins' ), data.plugin_count );
+			result.push( {
+				message,
+				url: `https://${ siteDomain }/wp-admin/plugins.php`,
+			} );
+		}
+		return result;
+	};
 
 	const handleReset = () => {
+		if ( ! isDomainConfirmed ) {
+			return;
+		}
 		resetSite( siteId );
 	};
 
-	const instructions = ! isAtomic
+	const instructions = createInterpolateElement(
+		sprintf(
+			// translators: %s is the site domain
+			translate(
+				'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. You’ll also lose any modifications you made to your current theme.'
+			),
+			siteDomain
+		),
+		{
+			strong: <strong />,
+		}
+	);
+
+	const backupHint = isAtomic
 		? createInterpolateElement(
-				sprintf(
-					// translators: %s is the site domain
-					translate(
-						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. ' +
-							'If you want to keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
-					),
-					siteDomain
+				translate(
+					'The site will be automatically backed up before the reset. You can restore it from <a>Activity Log</a>.'
 				),
 				{
-					strong: <strong />,
-					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
+					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
 				}
 		  )
 		: createInterpolateElement(
-				sprintf(
-					// translators: %s is the site domain
-					translate(
-						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. '
-					),
-					siteDomain
+				translate(
+					'To keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
 				),
 				{
-					strong: <strong />,
+					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
 				}
 		  );
 
@@ -183,9 +246,16 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 					<p>{ instructions }</p>
 					<p>{ translate( 'The following content will be removed:' ) }</p>
 					<ul>
-						{ contentInfo.map( ( content ) => (
-							<li key={ content }>{ content }</li>
-						) ) }
+						{ contentInfo().map( ( { message, url } ) => {
+							if ( url ) {
+								return (
+									<li key={ message }>
+										<a href={ url }>{ message }</a>
+									</li>
+								);
+							}
+							return <li key={ message }>{ message }</li>;
+						} ) }
 					</ul>
 				</ActionPanelBody>
 				<ActionPanelFooter>
@@ -208,16 +278,20 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 							id="confirmResetInput"
 							disabled={ isLoading }
 							style={ { flex: 0.5 } }
+							onChange={ ( event ) =>
+								setDomainConfirmed( event.currentTarget.value.trim() === siteDomain )
+							}
 						/>
 						<Button
 							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
 							onClick={ handleReset }
-							disabled={ isLoading }
+							disabled={ isLoading || ! isDomainConfirmed }
 							busy={ isLoading }
 						>
 							{ translate( 'Reset Site' ) }
 						</Button>
 					</div>
+					{ backupHint && <p className="site-settings__reset-site-backup-hint">{ backupHint }</p> }
 				</ActionPanelFooter>
 			</ActionPanel>
 		</Main>

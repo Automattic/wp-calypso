@@ -735,5 +735,20 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__reset-site {
 	.card {
 		margin-bottom: 0;
+		padding: 24px;
 	}
+
+	.action-panel__body a,
+	li a {
+		color: var(--gray-gray-100, #101517);
+		text-decoration: underline;
+	}
+}
+
+.site-settings__reset-site-backup-hint {
+	margin-top: 8px;
+	margin-bottom: 0;
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	font-style: italic;
 }
