@@ -808,6 +808,10 @@ export class RenderDomainsStep extends Component {
 			} );
 		}
 
+		const signupDomainOrigin = isPurchasingItem
+			? SIGNUP_DOMAIN_ORIGIN.CUSTOM
+			: SIGNUP_DOMAIN_ORIGIN.FREE;
+
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -823,6 +827,7 @@ export class RenderDomainsStep extends Component {
 			Object.assign(
 				{ domainItem, domainCart },
 				useThemeHeadstartItem,
+				signupDomainOrigin ? { signupDomainOrigin } : {},
 				{ siteUrl: suggestion?.domain_name },
 				lastDomainSearched ? { lastDomainSearched } : {},
 				{ domainCart }
@@ -1064,7 +1069,7 @@ export class RenderDomainsStep extends Component {
 							borderless
 							className="domains__domain-cart-choose-later"
 							onClick={ () => {
-								this.handleSkip( undefined, false );
+								this.handleSkip( undefined, false, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
 							} }
 						>
 							{ this.props.translate( 'Choose my domain later' ) }
