@@ -101,29 +101,12 @@
 	}
 }
 
-.import__onboarding-page--redesign {
-	.onboarding-progress-simple {
-		min-width: 100% !important;
+.onboarding-progress-simple {
+	min-width: 100% !important;
 
-		.onboarding-title {
-			font-size: rem(48px);
-		}
-
-		h2.onboarding-subtitle {
-			color: var(--studio-gray-60);
-			font-size: rem(18px);
-			line-height: rem(26px);
-			margin-bottom: rem(40px);
-		}
-
-		h3.onboarding-subtitle {
-			margin-bottom: rem(50px);
-		}
-
-		.progress-bar {
-			max-width: 385px;
-			margin-bottom: rem(24px);
-		}
+	.progress-bar {
+		max-width: 385px;
+		margin: rem(24px) auto;
 	}
 }
 

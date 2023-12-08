@@ -1,12 +1,12 @@
 import { ProgressBar } from '@automattic/components';
-import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
+import { Hooray, Progress, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
@@ -203,26 +203,34 @@ export class ImportEverything extends SectionMigrate {
 
 	renderMigrationProgress() {
 		const { translate, sourceSite, targetSite } = this.props;
+		let title;
+
+		switch ( this.state.migrationStatus ) {
+			case MigrationStatus.NEW:
+			case MigrationStatus.BACKING_UP:
+				title =
+					sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) + '...';
+				break;
+			case MigrationStatus.RESTORING:
+				title =
+					sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) + '...';
+				break;
+		}
 
 		return (
 			<>
 				<Progress>
 					<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-					<Title>
-						{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
-							MigrationStatus.NEW === this.state.migrationStatus ) &&
-							sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
-								'...' }
-						{ MigrationStatus.RESTORING === this.state.migrationStatus &&
-							sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) +
-								'...' }
-					</Title>
-					<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-					<SubTitle>
-						{ translate(
-							"This may take a few minutes. We'll notify you by email when it's done."
-						) }
-					</SubTitle>
+					<div className="import__header">
+						<FormattedHeader headerText={ title } isSecondary>
+							<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
+							<h3 className="onboarding-subtitle">
+								{ translate(
+									"This may take a few minutes. We'll notify you by email when it's done."
+								) }
+							</h3>
+						</FormattedHeader>
+					</div>
 				</Progress>
 				<GettingStartedVideo />
 			</>
@@ -235,13 +243,16 @@ export class ImportEverything extends SectionMigrate {
 		return (
 			<Progress className="onboarding-progress-simple">
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-				<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
-				<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-				<SubTitle tagName="h3">
-					{ translate(
-						'Feel free to close this window. We’ll email you when your new site is ready.'
-					) }
-				</SubTitle>
+				<div className="import__header">
+					<FormattedHeader headerText={ translate( 'We’re safely migrating all your data' ) }>
+						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
+						<h3 className="onboarding-subtitle">
+							{ translate(
+								'Feel free to close this window. We’ll email you when your new site is ready.'
+							) }
+						</h3>
+					</FormattedHeader>
+				</div>
 			</Progress>
 		);
 	}
@@ -261,19 +272,23 @@ export class ImportEverything extends SectionMigrate {
 		const { translate } = this.props;
 
 		return (
-			<div className={ classnames( 'import__header' ) }>
-				<div className={ classnames( 'import__heading import__heading-center' ) }>
-					<Title>{ translate( 'Import failed' ) }</Title>
-					<SubTitle>
-						{ translate( 'There was an error with your import.' ) }
-						<br />
-						{ translate( 'Please try again soon or contact support for help.' ) }
-					</SubTitle>
-					<div className={ classnames( 'import__buttons-group' ) }>
-						<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
-					</div>
+			<>
+				<div className="import__header">
+					<FormattedHeader
+						headerText={ translate( 'Import failed' ) }
+						subHeaderText={
+							<>
+								{ translate( 'There was an error with your import.' ) }
+								<br />
+								{ translate( 'Please try again soon or contact support for help.' ) }
+							</>
+						}
+					/>
 				</div>
-			</div>
+				<div className="import__buttons-group import__heading-center">
+					<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
+				</div>
+			</>
 		);
 	}
 
@@ -282,10 +297,14 @@ export class ImportEverything extends SectionMigrate {
 
 		return (
 			<>
-				<Title>{ translate( 'Hooray!' ) }</Title>
-				<SubTitle>
-					{ translate( 'Congratulations. Your content was successfully imported.' ) }
-				</SubTitle>
+				<div className="import__header">
+					<FormattedHeader
+						headerText={ translate( 'Hooray!' ) }
+						subHeaderText={ translate(
+							'Congratulations. Your content was successfully imported.'
+						) }
+					/>
+				</div>
 				<DoneButton
 					label={ translate( 'View site' ) }
 					onSiteViewClick={ () => {
@@ -301,15 +320,17 @@ export class ImportEverything extends SectionMigrate {
 		const { translate, stepNavigator, targetSite } = this.props;
 		return (
 			<>
-				<Title>{ translate( "Migration done! You're all set!" ) }</Title>
-				<SubTitle>
-					{ createInterpolateElement(
-						translate(
-							'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
-						),
-						{ br: createElement( 'br' ) }
-					) }
-				</SubTitle>
+				<div className="import__header">
+					<FormattedHeader
+						headerText={ translate( "Migration done! You're all set!" ) }
+						subHeaderText={ createInterpolateElement(
+							translate(
+								'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
+							),
+							{ br: createElement( 'br' ) }
+						) }
+					/>
+				</div>
 				<DomainInfo domain={ targetSite.slug } />
 				<DoneButton
 					className="is-normal-width"

@@ -28,6 +28,10 @@
 		align-items: center;
 	}
 
+	.onboarding-hooray .import__header {
+		margin-top: 0;
+	}
+
 	.import__heading {
 		flex-grow: 1;
 
@@ -114,6 +118,14 @@
 		.formatted-header__title,
 		.formatted-header__subtitle {
 			text-align: center;
+		}
+
+		h2.formatted-header__title {
+			font-size: rem(26px);
+		}
+
+		.progress-bar {
+			margin: rem(30px) auto rem(20px) auto;
 		}
 	}
 }
