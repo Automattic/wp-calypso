@@ -22,10 +22,19 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { BuiltByUpsell } from './built-by-upsell-banner';
 
-const StartOver = ( { translate, selectedSiteSlug, siteDomain, isAtomic } ) => {
+const StartOver = ( {
+	translate,
+	selectedSiteSlug,
+	siteDomain,
+	isAtomic,
+	site,
+	isUnlaunchedSite: isUnlaunchedSiteProp,
+} ) => {
 	const localizeUrl = useLocalizeUrl();
 	if ( isEnabled( 'settings/self-serve-site-reset' ) ) {
 		return (
@@ -34,6 +43,8 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain, isAtomic } ) => {
 				selectedSiteSlug={ selectedSiteSlug }
 				siteDomain={ siteDomain }
 				isAtomic={ isAtomic }
+				site={ site }
+				isUnlaunchedSite={ isUnlaunchedSiteProp }
 			/>
 		);
 	}
@@ -90,7 +101,14 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain, isAtomic } ) => {
 	);
 };
 
-function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) {
+function SiteResetCard( {
+	translate,
+	selectedSiteSlug,
+	siteDomain,
+	isAtomic,
+	isUnlaunchedSite: isUnlaunchedSiteProp,
+	site,
+} ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
@@ -294,6 +312,7 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 					{ backupHint && <p className="site-settings__reset-site-backup-hint">{ backupHint }</p> }
 				</ActionPanelFooter>
 			</ActionPanel>
+			<BuiltByUpsell site={ site } isUnlaunchedSite={ isUnlaunchedSiteProp } />
 		</Main>
 	);
 }
@@ -301,9 +320,12 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteDomain = getSiteDomain( state, siteId );
+	const site = getSite( state, siteId );
 	return {
 		siteDomain,
+		site,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		isAtomic: isSiteAtomic( state, siteId ),
+		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 	};
 } )( localize( StartOver ) );
