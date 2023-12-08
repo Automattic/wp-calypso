@@ -622,9 +622,12 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				background-color: #fdfdfd;
 				width: unset;
 				max-width: var(--signup-form-column-max-width);
-				padding: 0;
 				box-shadow: none;
 				margin: 0;
+
+				@include break-mobile {
+					padding: 0;
+				}
 			}
 
 			.logged-out-form {
