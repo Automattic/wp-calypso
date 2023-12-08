@@ -57,7 +57,7 @@ $grid-wide: 0.5fr 0.5fr 128px 128px 128px 74px;
 		}
 
 		> *:nth-child(#{$column-actions}) {
-			display: flex;
+			display: block;
 		}
 
 		> *:nth-child(#{$column-domain}) {
