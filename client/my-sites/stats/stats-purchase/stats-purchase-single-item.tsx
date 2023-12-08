@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import StatsCommercialUpgradeSlider from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
 import {
@@ -15,7 +16,6 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
-import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
@@ -125,6 +125,10 @@ Thanks\n\n`;
 	// Currently displaying below the flow to maintain existing behaviour.
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
+	const handleSliderChanged = ( value: number ) => {
+		setPurchaseTierQuantity( value );
+	};
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
@@ -146,9 +150,9 @@ Thanks\n\n`;
 			) }
 			{ isTierUpgradeSliderEnabled && (
 				<>
-					<TierUpgradeSlider
+					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
-						setPurchaseTierQuantity={ setPurchaseTierQuantity }
+						onSliderChange={ handleSliderChanged }
 					/>
 					<ButtonComponent
 						variant="primary"

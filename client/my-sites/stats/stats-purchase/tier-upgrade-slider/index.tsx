@@ -1,14 +1,27 @@
 import { PricingSlider, Popover } from '@automattic/components';
 import classNames from 'classnames';
 import { useState, useRef } from 'react';
-import './stats-purchase-tier-upgrade-slider.scss';
+import './styles.scss';
+
+type TierUIStrings = {
+	limits: string;
+	price: string;
+	strategy: string;
+};
+
+interface TierStep {
+	lhValue: string;
+	rhValue: string;
+}
 
 type TierUpgradeSliderProps = {
 	className?: string;
-	uiStrings: any;
-	popupInfoString: any;
-	steps: any[];
+	uiStrings: TierUIStrings;
+	popupInfoString?: string;
+	steps: TierStep[];
+	initialValue?: number;
 	onSliderChange: ( index: number ) => void;
+	marks?: boolean | number[];
 };
 
 function TierUpgradeSlider( {
@@ -16,12 +29,14 @@ function TierUpgradeSlider( {
 	uiStrings,
 	popupInfoString,
 	steps,
+	initialValue = 0,
 	onSliderChange,
+	marks,
 }: TierUpgradeSliderProps ) {
-	const componentClassNames = classNames( 'stats-tier-upgrade-slider', className );
+	const componentClassNames = classNames( 'tier-upgrade-slider', className );
 
 	// Slider state.
-	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( 0 );
+	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( initialValue );
 	const sliderMin = 0;
 	const sliderMax = steps?.length - 1;
 
@@ -39,41 +54,37 @@ function TierUpgradeSlider( {
 
 	return (
 		<div className={ componentClassNames }>
-			<div className="stats-tier-upgrade-slider__plan-callouts">
-				<div className="stats-tier-upgrade-slider__plan-callout">
+			<div className="tier-upgrade-slider__step-callouts">
+				<div className="tier-upgrade-slider__step-callout">
 					<h2>{ uiStrings.limits }</h2>
-					<p className="left-aligned">{ lhValue }</p>
+					<p>{ lhValue }</p>
 				</div>
-				<div className="stats-tier-upgrade-slider__plan-callout right-aligned">
+				<div className="tier-upgrade-slider__step-callout right-aligned">
 					<h2>{ uiStrings.price }</h2>
-					<p className="right-aligned" ref={ infoReferenceElement }>
-						{ rhValue }
-					</p>
+					<p ref={ infoReferenceElement }>{ rhValue }</p>
 				</div>
 			</div>
-			{ steps.length > 1 && (
-				<PricingSlider
-					className="stats-tier-upgrade-slider__slider"
-					thumbClassName="stats-tier-upgrade-slider__thumb"
-					value={ currentPlanIndex }
-					minValue={ sliderMin }
-					maxValue={ sliderMax }
-					onChange={ handleSliderChange }
-					marks
-				/>
-			) }
+			<PricingSlider
+				className="tier-upgrade-slider__slider"
+				thumbClassName="tier-upgrade-slider__thumb"
+				value={ currentPlanIndex }
+				minValue={ sliderMin }
+				maxValue={ sliderMax }
+				onChange={ handleSliderChange }
+				marks={ marks }
+			/>
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }
 				isVisible={ showPopup }
 				focusOnShow={ false }
-				className="stats-tier-upgrade-slider__extension-popover-wrapper"
+				className="tier-upgrade-slider__extension-popover-wrapper"
 			>
-				<div className="stats-tier-upgrade-slider__extension-popover-content">
+				<div className="tier-upgrade-slider__extension-popover-content">
 					{ showPopup && popupInfoString }
 				</div>
 			</Popover>
-			<p className="stats-tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
+			<p className="tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
 		</div>
 	);
 }
