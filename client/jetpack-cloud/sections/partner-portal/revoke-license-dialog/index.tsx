@@ -8,6 +8,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
+import { LicenseRole } from '../types';
+
 import './style.scss';
 
 interface Props {
@@ -15,7 +17,8 @@ interface Props {
 	product: string;
 	siteUrl: string | null;
 	onClose: ( action?: string ) => void;
-	isChildLicense?: boolean;
+	licenseRole?: LicenseRole;
+	bundleSize?: number;
 }
 
 export default function RevokeLicenseDialog( {
@@ -23,7 +26,8 @@ export default function RevokeLicenseDialog( {
 	product,
 	siteUrl,
 	onClose,
-	isChildLicense,
+	licenseRole = LicenseRole.Single,
+	bundleSize = 1,
 	...rest
 }: Props ) {
 	let close = noop;
@@ -51,7 +55,8 @@ export default function RevokeLicenseDialog( {
 		mutation.mutate( { licenseKey } );
 	}, [ dispatch, licenseKey, mutation ] );
 
-	const isAssignedChildLicense = isChildLicense && siteUrl;
+	const isParentLicense = licenseRole === LicenseRole.Parent;
+	const isAssignedChildLicense = licenseRole === LicenseRole.Child && siteUrl;
 
 	const buttons = [
 		<Button disabled={ false } onClick={ close }>
@@ -59,11 +64,22 @@ export default function RevokeLicenseDialog( {
 		</Button>,
 
 		<Button primary scary busy={ mutation.isLoading } onClick={ revoke }>
-			{ translate( 'Revoke License' ) }
+			{ isParentLicense ? translate( 'Revoke bundle' ) : translate( 'Revoke License' ) }
 		</Button>,
 	];
 
 	const renderHeading = () => {
+		if ( isParentLicense ) {
+			return translate( 'Revoke bundle of %(count)s %(product)s licenses?', {
+				args: {
+					product,
+					count: bundleSize,
+				},
+				comment:
+					'The %(product)s is replaced with the product name and %(count)s is replace with the bundle size.',
+			} );
+		}
+
 		if ( isAssignedChildLicense ) {
 			return translate( 'Revoke %(product)s license?', {
 				args: {
@@ -77,6 +93,27 @@ export default function RevokeLicenseDialog( {
 	};
 
 	const renderContent = () => {
+		if ( isParentLicense ) {
+			return (
+				<p>
+					{ translate(
+						'Revoking this bundle will cause {{b}}%(product)s{{/b}} to stop working on your %(count)s assigned sites.',
+						{
+							args: {
+								product,
+								count: bundleSize,
+							},
+							components: {
+								b: <b />,
+							},
+							comment:
+								'The %(product)s is replaced with the product name and %(count)s is replace with the number of assigned sites.',
+						}
+					) }
+				</p>
+			);
+		}
+
 		if ( isAssignedChildLicense ) {
 			return (
 				<p>
