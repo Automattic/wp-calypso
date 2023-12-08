@@ -219,7 +219,7 @@ export class UserStep extends Component {
 						break;
 					default:
 						subHeaderText = translate(
-							'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							'All Woo stores are powered by WordPress.com!{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 							{
 								components: {
 									a: <a href={ loginUrl } />,
@@ -232,7 +232,7 @@ export class UserStep extends Component {
 				}
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+					'All Woo stores are powered by WordPress.com!{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
@@ -705,16 +705,16 @@ export class UserStep extends Component {
 }
 
 const ConnectedUser = connect(
-	( state ) => ( {
-        const oauth2RedirectUrl = new URL( getCurrentQueryArguments( state ).oauth2_redirect );
-        return {
-            oauth2Client: getCurrentOAuth2Client( state ),
-		    suggestedUsername: getSuggestedUsername( state ),
+	( state ) => {
+		const oauth2RedirectUrl = new URL( getCurrentQueryArguments( state ).oauth2_redirect );
+		return {
+			oauth2Client: getCurrentOAuth2Client( state ),
+			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: oauth2RedirectUrl.searchParams.get( 'wccom-from' ),
-		    from: get( getCurrentQueryArguments( state ), 'from' ),
-		    userLoggedIn: isUserLoggedIn( state ),
-        }
-	} ),
+			from: get( getCurrentQueryArguments( state ), 'from' ),
+			userLoggedIn: isUserLoggedIn( state ),
+		};
+	},
 	{
 		errorNotice,
 		recordTracksEvent,
