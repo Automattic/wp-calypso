@@ -15,6 +15,7 @@ import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings'
 import { useSelector } from 'calypso/state';
 import useThemeTier from 'calypso/state/themes/hooks/use-theme-tier';
 import { getThemeType } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
 
 import './style.scss';
@@ -37,6 +38,8 @@ const ThemeTypeBadge = ( {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const bundleSettings = useBundleSettings( themeId );
+
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
 	useEffect( () => {
@@ -76,7 +79,9 @@ const ThemeTypeBadge = ( {
 		if ( isLockedStyleVariation ) {
 			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
 		} else if ( isThemeAllowedOnSite ) {
-			badgeContent = <>{ translate( 'Included in my plan' ) }</>;
+			badgeContent = (
+				<>{ selectedSiteId ? translate( 'Included in my plan' ) : translate( 'Free' ) }</>
+			);
 		} else {
 			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
 		}
