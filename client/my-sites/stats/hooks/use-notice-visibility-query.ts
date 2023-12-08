@@ -7,6 +7,8 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
 	commercial_site_upgrade: false,
+	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
+	tier_upgrade_notice: true,
 };
 const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
 	client_paid_plan_purchase_success: true,
@@ -28,6 +30,7 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'client_free_plan_purchase_success',
 		'do_you_love_jetpack_stats',
 		'commercial_site_upgrade',
+		'tier_upgrade_notice',
 	],
 };
 
