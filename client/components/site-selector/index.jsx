@@ -215,7 +215,8 @@ export class SiteSelector extends Component {
 			} );
 		}
 
-		const handledByHost = this.props.onSiteSelect( siteId );
+		const selectedSite = this.props.sites.find( ( site ) => site.ID === siteId );
+		const handledByHost = this.props.onSiteSelect( siteId, selectedSite );
 		this.props.onClose( event, siteId );
 
 		if ( ! this.siteSelectorRef ) {

@@ -6,7 +6,12 @@ import {
 	getVariationType,
 } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, isSiteAssemblerFlow, NavigatorScreen } from '@automattic/onboarding';
+import {
+	StepContainer,
+	isSiteAssemblerFlow,
+	isWithThemeAssemblerFlow,
+	NavigatorScreen,
+} from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalUseNavigator as useNavigator,
@@ -414,8 +419,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		recordTracksEvent,
 	} );
 
+	// Don't show the “Back” button if the site is being created by the site assembler flow
+	// as the previous step is the site creation step that cannot be undone.
+	const hideBack = ! currentScreen.previousScreen && isSiteAssemblerFlow( flow ) && isNewSite;
+
 	const getBackLabel = () => {
 		if ( ! currentScreen.previousScreen ) {
+			// Go back to the Theme Showcase if people are from the with-theme-assembler flow.
+			if ( isWithThemeAssemblerFlow( flow ) ) {
+				return translate( 'Back to themes' );
+			}
+
 			return undefined;
 		}
 
@@ -665,20 +679,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		<StepContainer
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
-			backLabelText={
-				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
-					? translate( 'Back to themes' )
-					: getBackLabel()
-			}
+			backLabelText={ getBackLabel() }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
-			hideBack={
-				isSiteAssemblerFlow( flow ) &&
-				navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN ) &&
-				isNewSite
-			}
+			hideBack={ hideBack }
 			hideSkip={ true }
 			stepContent={
 				<PatternAssemblerContainer
