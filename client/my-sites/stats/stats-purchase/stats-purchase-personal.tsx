@@ -1,10 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	PricingSlider,
-	RenderThumbFunction,
-	Button as CalypsoButton,
-} from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
+import { Button as CalypsoButton } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -49,40 +44,6 @@ const PersonalPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
-	const {
-		sliderStepPrice,
-		minSliderPrice,
-		maxSliderPrice,
-		uiEmojiHeartTier,
-		uiImageCelebrationTier,
-	} = sliderSettings;
-
-	const sliderLabel = ( ( props, state ) => {
-		let emoji;
-
-		if ( subscriptionValue < uiEmojiHeartTier ) {
-			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
-		} else if ( subscriptionValue < uiImageCelebrationTier ) {
-			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
-		} else if ( subscriptionValue >= uiImageCelebrationTier ) {
-			emoji = String.fromCodePoint( 0x1f525 ); /* Fire emoji */
-		}
-
-		return (
-			<div { ...props }>
-				{ translate( '%(value)s/month', {
-					args: {
-						value: formatCurrency(
-							( state?.valueNow || subscriptionValue ) * sliderStepPrice,
-							currencyCode
-						),
-					},
-					comment: 'Price per month selected by the user via the pricing slider',
-				} ) }
-				{ ` ${ subscriptionValue > 0 ? emoji : '' }` }
-			</div>
-		);
-	} ) as RenderThumbFunction;
 
 	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
 		handlePlanSwap( e );
@@ -98,9 +59,6 @@ const PersonalPurchase = ( {
 		// Value is used below to determine tier price.
 		setSubscriptionValue( index );
 	};
-	// TODO: Remove old slider code paths.
-	const showOldSlider = ! isTierUpgradeSliderEnabled;
-	// const showOldSlider = true;
 
 	return (
 		<div>
@@ -114,27 +72,6 @@ const PersonalPurchase = ( {
 					}
 				) }
 			</div>
-
-			{ showOldSlider && (
-				<>
-					<PricingSlider
-						className={ `${ COMPONENT_CLASS_NAME }__slider` }
-						value={ subscriptionValue }
-						renderThumb={ sliderLabel }
-						onChange={ setSubscriptionValue }
-						maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
-						minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
-					/>
-
-					<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
-						{ translate( 'Our users pay %(value)s per month on average', {
-							args: {
-								value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
-							},
-						} ) }
-					</p>
-				</>
-			) }
 
 			{ isTierUpgradeSliderEnabled && (
 				<StatsPWYWUpgradeSlider
