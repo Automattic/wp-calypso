@@ -93,8 +93,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						<Subtitle>
 							{ translate( 'Select single product licenses or save when you issue in bulk' ) }
 						</Subtitle>
-						<Actions>
-							{ selectedLicenses.length > 0 && (
+						{ selectedLicenses.length > 0 && (
+							<Actions>
 								<div className="issue-license-v2__controls">
 									<div className="issue-license-v2__actions">
 										<TotalCost selectedLicenses={ selectedLicenses } />
@@ -118,8 +118,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 										</Button>
 									</div>
 								</div>
-							) }
-						</Actions>
+							</Actions>
+						) }
 					</LayoutHeader>
 
 					<LayoutNavigation selectedText={ selectedText }>
