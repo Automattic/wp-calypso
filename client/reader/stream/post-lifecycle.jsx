@@ -84,7 +84,7 @@ class PostLifecycle extends Component {
 
 		if ( postKey.isRecommendationBlock ) {
 			// We are temporarily disabling these from our feeds while investigating issues with
-			// irrelevant mature content.
+			// irrelevant mature content. https://github.com/Automattic/wp-calypso/pull/85045
 			return null;
 		} else if ( postKey.isPromptBlock ) {
 			return (
