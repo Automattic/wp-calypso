@@ -74,7 +74,11 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 					'jetpack-cloud-layout__sticky-header': showStickyContent && hasCrossed,
 				} ) }
 			>
-				<div className={ classNames( 'jetpack-cloud-layout__header' ) }>
+				<div
+					className={ classNames( 'jetpack-cloud-layout__header', {
+						'has-actions': !! headerActions,
+					} ) }
+				>
 					<div className="jetpack-cloud-layout__header-main">
 						{ headerTitle }
 						{ headerSubtitle }
