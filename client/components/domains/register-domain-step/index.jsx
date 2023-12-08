@@ -1053,6 +1053,7 @@ class RegisterDomainStep extends Component {
 					const status = get( result, 'status', error );
 					const mappable = get( result, 'mappable' );
 					const domainChecked = get( result, 'domain_name', domain );
+
 					const {
 						AVAILABLE,
 						AVAILABLE_PREMIUM,
@@ -1463,7 +1464,6 @@ class RegisterDomainStep extends Component {
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
-
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
 						status,
@@ -1506,7 +1506,6 @@ class RegisterDomainStep extends Component {
 		} = this.state;
 
 		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
-
 		const availableDomain =
 			[ domainAvailability.AVAILABLE, domainAvailability.REGISTERED ].includes(
 				lastDomainStatus

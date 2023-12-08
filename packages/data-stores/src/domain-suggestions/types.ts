@@ -22,7 +22,7 @@ export interface DomainSuggestionQuery {
 	/**
 	 * True to include domains registered with wpcom in the response
 	 */
-	include_internal_move_eligible: boolean;
+	include_internal_move_eligible?: boolean;
 
 	/**
 	 * Localizes domain results, e.g., price format
