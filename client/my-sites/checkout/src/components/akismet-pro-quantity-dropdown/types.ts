@@ -2,13 +2,17 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 
 export type OnChangeAkProQuantity = (
 	uuid: Readonly< string >,
-	productSlug: Readonly< string >,
-	productId: Readonly< number >,
-	prevQuantity: Readonly< number | null >,
-	newQuantity: number
+	productSlug: string,
+	productId: number,
+	prevQuantity: number | null,
+	newQuantity: number | null
 ) => void;
 
 export interface AkismetProQuantityDropDownProps {
+	id: string;
 	responseCart: ResponseCart;
-	onChangeAkProQuantity?: OnChangeAkProQuantity;
+	setForceShowAkQuantityDropdown: React.Dispatch< React.SetStateAction< boolean > >;
+	onChangeAkProQuantity: OnChangeAkProQuantity;
+	toggle: ( id: string | null ) => void;
+	isOpen: boolean;
 }

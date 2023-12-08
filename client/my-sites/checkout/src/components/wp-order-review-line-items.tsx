@@ -267,13 +267,7 @@ export function WPOrderReviewLineItems( {
 	} );
 
 	const [ initialProducts ] = useState( () => responseCart.products );
-
-	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
-	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	// Clamp the credits display value to the total
-	const creditsForDisplay = isFullCredits
-		? responseCart.sub_total_with_taxes_integer
-		: responseCart.credits_integer;
+	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
 	const isAkismetProMultipleLicensesCart = useMemo( () => {
 		if ( ! config.isEnabled( 'akismet/checkout-quantity-dropdown' ) ) {
@@ -289,6 +283,40 @@ export function WPOrderReviewLineItems( {
 			)
 		);
 	}, [ responseCart.products ] );
+
+	const [ variantOpenId, setVariantOpenId ] = useState< string | null >( null );
+	const [ akQuantityOpenId, setAkQuantityOpenId ] = useState< string | null >( null );
+
+	const handleVariantToggle = useCallback(
+		( id: string | null ) => {
+			if ( isAkismetProMultipleLicensesCart ) {
+				// Close Akismet quantity dropdown if it's open.
+				if ( akQuantityOpenId === id ) {
+					setAkQuantityOpenId( null );
+				}
+			}
+			setVariantOpenId( variantOpenId !== id ? id : null );
+		},
+		[ akQuantityOpenId, isAkismetProMultipleLicensesCart, variantOpenId ]
+	);
+
+	const handleAkQuantityToggle = useCallback(
+		( id: string | null ) => {
+			// Close Variant picker if it's open.
+			if ( variantOpenId === id ) {
+				setVariantOpenId( null );
+			}
+			setAkQuantityOpenId( akQuantityOpenId !== id ? id : null );
+		},
+		[ akQuantityOpenId, variantOpenId ]
+	);
+
+	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart );
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	// Clamp the credits display value to the total
+	const creditsForDisplay = isFullCredits
+		? responseCart.sub_total_with_taxes_integer
+		: responseCart.credits_integer;
 
 	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
 		( uuid, productSlug, productId, prevQuantity, newQuantity ) => {
@@ -335,8 +363,13 @@ export function WPOrderReviewLineItems( {
 							);
 						} )?.months_per_bill_period
 					}
-					isAkPro500Cart={ isAkismetProMultipleLicensesCart }
+					toggleVariantSelector={ handleVariantToggle }
+					variantOpenId={ variantOpenId }
+					isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
+					setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
 					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
+					toggleAkQuantityDropdown={ handleAkQuantityToggle }
+					akQuantityOpenId={ akQuantityOpenId }
 				/>
 			) ) }
 			{ ! hasCheckoutVersion( '2' ) && couponLineItem && (
@@ -389,8 +422,13 @@ function LineItemWrapper( {
 	hasPartnerCoupon,
 	isDisabled,
 	initialVariantTerm,
+	toggleVariantSelector,
+	variantOpenId,
 	isAkPro500Cart,
+	setForceShowAkQuantityDropdown,
 	onChangeAkProQuantity,
+	toggleAkQuantityDropdown,
+	akQuantityOpenId,
 }: {
 	product: ResponseCartProduct;
 	isSummary?: boolean;
@@ -405,8 +443,13 @@ function LineItemWrapper( {
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
-	isAkPro500Cart?: boolean;
-	onChangeAkProQuantity?: OnChangeAkProQuantity;
+	toggleVariantSelector: ( key: string | null ) => void;
+	variantOpenId: string | null;
+	isAkPro500Cart: boolean;
+	setForceShowAkQuantityDropdown: React.Dispatch< React.SetStateAction< boolean > >;
+	onChangeAkProQuantity: OnChangeAkProQuantity;
+	toggleAkQuantityDropdown: ( key: string | null ) => void;
+	akQuantityOpenId: string | null;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -481,16 +524,23 @@ function LineItemWrapper( {
 			>
 				{ areThereVariants && shouldShowVariantSelector && onChangeSelection && (
 					<ItemVariationPicker
+						id={ product.uuid }
 						selectedItem={ product }
 						onChangeItemVariant={ onChangeSelection }
 						isDisabled={ isDisabled }
 						variants={ variants }
+						toggle={ toggleVariantSelector }
+						isOpen={ variantOpenId === product.uuid }
 					/>
 				) }
 				{ isAkPro500Cart && (
 					<AkismetProQuantityDropDown
+						id={ product.uuid }
 						responseCart={ responseCart }
+						setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
 						onChangeAkProQuantity={ onChangeAkProQuantity }
+						toggle={ toggleAkQuantityDropdown }
+						isOpen={ akQuantityOpenId === product.uuid }
 					/>
 				) }
 			</LineItem>
