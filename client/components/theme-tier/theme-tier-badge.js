@@ -15,6 +15,17 @@ import useThemeTier from './use-theme-tier';
 
 import './theme-tier-badge.scss';
 
+// This component can be used to record a Tracks event once, only when we actually display an upgrade label.
+function ThemeTierBadgeTracker( { themeId } ) {
+	useEffect( () => {
+		recordTracksEvent( 'calypso_upgrade_nudge_impression', {
+			cta_name: 'theme-upsell',
+			theme: themeId,
+		} );
+	}, [ themeId ] );
+	return null;
+}
+
 export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -27,37 +38,6 @@ export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
 	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
-
-	useEffect( () => {
-		if ( BUNDLED_THEME === themeType && bundleSettings && legacyCanUseTheme ) {
-			return;
-		}
-		if ( isThemeAllowedOnSite && ! isLockedStyleVariation ) {
-			return;
-		}
-		if ( DOT_ORG_THEME === themeType && legacyCanUseTheme ) {
-			return;
-		}
-		if (
-			( 'partner' === themeTier.slug || MARKETPLACE_THEME === themeType ) &&
-			isPartnerThemePurchased
-		) {
-			return;
-		}
-		recordTracksEvent( 'calypso_upgrade_nudge_impression', {
-			cta_name: 'theme-upsell',
-			theme: themeId,
-		} );
-	}, [
-		bundleSettings,
-		isLockedStyleVariation,
-		isPartnerThemePurchased,
-		isThemeAllowedOnSite,
-		legacyCanUseTheme,
-		themeId,
-		themeTier.slug,
-		themeType,
-	] );
 
 	const badgeClassName = 'theme-tier-badge';
 	const badgeProps = {
@@ -92,6 +72,7 @@ export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 
 		return (
 			<div className={ badgeClassName }>
+				<ThemeTierBadgeTracker themeId={ themeId } />
 				<PremiumBadge { ...badgeProps } labelText={ translate( 'Upgrade' ) } />
 				<BundledBadge { ...badgeProps } { ...bundleBadgeProps }>
 					{ bundleSettings.name }
@@ -103,6 +84,7 @@ export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 	if ( isLockedStyleVariation ) {
 		return (
 			<div className={ badgeClassName }>
+				<ThemeTierBadgeTracker themeId={ themeId } />
 				<PremiumBadge { ...badgeProps } labelText={ translate( 'Upgrade' ) } />
 			</div>
 		);
@@ -118,6 +100,7 @@ export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 		}
 		return (
 			<div className={ badgeClassName }>
+				<ThemeTierBadgeTracker themeId={ themeId } />
 				<PremiumBadge { ...badgeProps } labelText={ translate( 'Upgrade' ) } />
 			</div>
 		);
@@ -134,12 +117,14 @@ export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 		if ( isThemeAllowedOnSite ) {
 			return (
 				<div className={ badgeClassName }>
+					<ThemeTierBadgeTracker themeId={ themeId } />
 					<PremiumBadge { ...badgeProps } labelText={ translate( 'Subscribe' ) } />
 				</div>
 			);
 		}
 		return (
 			<div className={ badgeClassName }>
+				<ThemeTierBadgeTracker themeId={ themeId } />
 				<PremiumBadge { ...badgeProps } labelText={ translate( 'Upgrade and Subscribe' ) } />
 			</div>
 		);
@@ -155,6 +140,7 @@ export default function ThemeTierBadge( { isLockedStyleVariation, themeId } ) {
 
 	return (
 		<div className={ badgeClassName }>
+			<ThemeTierBadgeTracker themeId={ themeId } />
 			<PremiumBadge { ...badgeProps } labelText={ translate( 'Upgrade' ) } />
 		</div>
 	);
