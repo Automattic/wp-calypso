@@ -56,7 +56,6 @@ import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import { getPathWithUpdatedQueryString } from './utils';
-import withFeatureGating from './with-feature-gating';
 
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -613,4 +612,4 @@ export default connect(
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
-)( localize( withFeatureGating( StatsSite, true ) ) );
+)( localize( StatsSite ) );
