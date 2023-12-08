@@ -1469,7 +1469,8 @@ class RegisterDomainStep extends Component {
 						status,
 						this.props.analyticsSection
 					);
-					if ( status ) {
+
+					if ( status && status !== domainAvailability.REGISTERED ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
