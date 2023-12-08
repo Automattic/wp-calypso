@@ -209,6 +209,7 @@ button {
 }
 
 .button.is-borderless.license-bundle-dropdown__button {
+	text-overflow: clip;
 	padding: 4px;
 	max-height: 24px;
 	&:hover,
