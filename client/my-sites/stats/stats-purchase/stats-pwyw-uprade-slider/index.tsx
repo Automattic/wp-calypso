@@ -4,29 +4,6 @@ import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrad
 import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';
 import './styles.scss';
 
-// TODO: Remove test data.
-// Currently used as a fallback if no plan info is provided.
-// Better approach is to require plan info and do some form of validation on it.
-function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
-	// From $0 to $20, in $1 increments.
-	let tiers: any[] = [];
-	for ( let i = 0; i <= 28; i++ ) {
-		tiers.push( {
-			price: formatCurrency( ( minPrice + i * stepPrice ) / 100, 'USD' ),
-			raw: minPrice + i * stepPrice,
-		} );
-	}
-	tiers = tiers.map( ( tier ) => {
-		const emoji = tier.raw < 500 ? ':|' : ':)';
-		return {
-			...tier,
-			lhValue: tier.price,
-			rhValue: emoji,
-		};
-	} );
-	return tiers;
-}
-
 function useTranslatedStrings() {
 	const translate = useTranslate();
 	const limits = translate( 'Your monthly contribution', {
@@ -90,7 +67,7 @@ function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: str
 }
 
 type StatsPWYWUpgradeSliderProps = {
-	settings?: StatsPWYWSliderSettings;
+	settings: StatsPWYWSliderSettings;
 	currencyCode?: string;
 	onSliderChange: ( index: number ) => void;
 };
@@ -104,14 +81,10 @@ function StatsPWYWUpgradeSlider( {
 	// 1. Transforming the slider settings into tiers that the slider can use.
 	// 2. Preparing the UI strings for the slider.
 	// 3. Rendering the slider.
-	// 4. Nofiying the parent component when the slider changes.
+	// 4. Notifiying the parent component when the slider changes.
 
 	const uiStrings = useTranslatedStrings();
-
-	let steps = getPWYWPlanTiers( 0, 50 );
-	if ( settings !== undefined ) {
-		steps = stepsFromSettings( settings, currencyCode || '' );
-	}
+	const steps = stepsFromSettings( settings, currencyCode || '' );
 	const marks = [ 0, steps.length - 1 ];
 
 	const handleSliderChanged = ( index: number ) => {
