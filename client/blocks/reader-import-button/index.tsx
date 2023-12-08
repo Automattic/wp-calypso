@@ -31,7 +31,7 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		if ( disabled ) {
-			event.preventDefault();
+			event?.preventDefault();
 		}
 	};
 

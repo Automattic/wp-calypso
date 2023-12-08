@@ -14,6 +14,7 @@ interface Props {
 	attachedAt: string | null;
 	revokedAt: string | null;
 	licenseType: LicenseType;
+	isChildLicense?: boolean;
 }
 
 export default function LicenseActions( {
@@ -23,13 +24,20 @@ export default function LicenseActions( {
 	attachedAt,
 	revokedAt,
 	licenseType,
+	isChildLicense,
 }: Props ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
 
-	const licenseActions = useLicenseActions( siteUrl, attachedAt, revokedAt, licenseType );
+	const licenseActions = useLicenseActions(
+		siteUrl,
+		attachedAt,
+		revokedAt,
+		licenseType,
+		isChildLicense
+	);
 
 	const handleActionClick = ( action: LicenseAction ) => {
 		action.onClick();
@@ -70,6 +78,7 @@ export default function LicenseActions( {
 					product={ product }
 					siteUrl={ siteUrl }
 					onClose={ () => setShowRevokeDialog( false ) }
+					isChildLicense={ isChildLicense }
 				/>
 			) }
 		</>

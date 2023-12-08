@@ -23,6 +23,7 @@ $track-height: 4px;
 	--gray-gray-5: #dcdcde;
 
 	margin-top: 42px;
+	margin-bottom: 24px;
 	background-color: $slider-bg-color;
 
 	border: 1px solid var(--gray-gray-5);
@@ -71,6 +72,11 @@ $track-height: 4px;
 			margin: 0 $track-extra-width;
 			bottom: calc(50% - (math.div($mark-diameter, 2) + $mark-border-width));
 		}
+
+		.jp-components-pricing-slider__mark--selected {
+			background-color: var(--jp-green-40);
+			border-color: var(--jp-green-40);
+		}
 	}
 }
 
@@ -78,6 +84,13 @@ $track-height: 4px;
 .stats-purchase-page--is-wpcom {
 	.jp-components-pricing-slider__thumb.tier-upgrade-slider__thumb {
 		background-color: var(--color-primary);
+	}
+
+	.jp-components-pricing-slider__control {
+		.jp-components-pricing-slider__mark--selected {
+			background-color: var(--color-primary);
+			border-color: var(--color-primary);
+		}
 	}
 }
 
@@ -107,6 +120,7 @@ $track-height: 4px;
 
 .tier-upgrade-slider__extension-popover-wrapper {
 	max-width: 245px;
+	margin-left: 15px;
 }
 
 .tier-upgrade-slider__extension-popover-content {

@@ -32,6 +32,7 @@ export interface ImportError {
 export interface ImportJob {
 	importerId: string;
 	importerState: string;
+	importerFileType: 'content' | 'playground' | 'jetpack_backup';
 	statusMessage?: string;
 	type: string;
 	site: { ID: number };

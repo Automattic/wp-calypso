@@ -214,11 +214,7 @@ const designFirst: Flow = {
 							)( dispatch, state );
 						}
 
-						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
-
-						return window.location.assign(
-							`/setup/design-first/launchpad?siteSlug=${ currentSiteSlug }`
-						);
+						return window.location.assign( `/setup/design-first/launchpad?siteId=${ site?.ID }` );
 					}
 
 					return navigate( 'plans' );
