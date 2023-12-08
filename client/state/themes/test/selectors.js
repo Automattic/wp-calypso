@@ -52,6 +52,7 @@ import {
 	getIsLoadingCart,
 	getIsLivePreviewSupported,
 	getThemeTiers,
+	getThemeTier,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -3421,5 +3422,20 @@ describe( '#getThemeTiers', () => {
 	test( 'should return the tier object if it exists', () => {
 		const themeTiers = getThemeTiers( { themes: { themeTiers: { free: {} } } } );
 		expect( themeTiers ).toEqual( { free: {} } );
+	} );
+} );
+describe( '#getThemeTier', () => {
+	const state = { themes: { themeTiers: { free: { foo: 'bar' } } } };
+	test( 'should return an empty object if the state is empty', () => {
+		const themeTiers = getThemeTier( {}, 'free' );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return an empty object if the tier is empty', () => {
+		const themeTiers = getThemeTier( state, null );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const themeTiers = getThemeTier( state, 'free' );
+		expect( themeTiers ).toEqual( { foo: 'bar' } );
 	} );
 } );
