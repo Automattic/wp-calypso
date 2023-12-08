@@ -1,12 +1,11 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Button, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { Button, Gridicon, LoadingPlaceholder, PlanPrice } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { NavigatorHeader } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import useGlobalStylesUpgradeTranslations from 'calypso/components/premium-global-styles-upgrade-modal/use-global-styles-upgrade-translations';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
