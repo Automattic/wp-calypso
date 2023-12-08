@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
-import { setPlanExperiment } from '@automattic/calypso-products/src/plans-list';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
@@ -18,7 +16,6 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
-import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -82,13 +79,6 @@ const LayoutLoggedOut = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
 	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
-	const [ isLoading, experimentAssignment ] = useExperiment( 'wpcom_plan_name_change' );
-
-	useEffect( () => {
-		if ( ! isLoading ) {
-			setPlanExperiment( 'wpcom_plan_name_change', experimentAssignment?.variationName );
-		}
-	}, [ isLoading ] );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
