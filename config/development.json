@@ -31,6 +31,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"akismet/checkout-quantity-dropdown": true,
 		"bloganuary": true,
 		"calypso/ai-blogging-prompts": true,
 		"calypso/ai-assembler": true,

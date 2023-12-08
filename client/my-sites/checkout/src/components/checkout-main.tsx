@@ -419,7 +419,7 @@ export default function CheckoutMain( {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
-		[ replaceProductInCart, reduxDispatch ]
+		[ reduxDispatch, replaceProductInCart ]
 	);
 
 	const addItemAndLog: ( item: MinimalRequestCartProduct ) => void = useCallback(

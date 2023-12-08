@@ -264,6 +264,7 @@ export default function WPCheckout( {
 		responseCart,
 		applyCoupon,
 		updateLocation,
+		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -504,6 +505,7 @@ export default function WPCheckout( {
 							completeStepContent={
 								<WPCheckoutOrderReview
 									removeProductFromCart={ removeProductFromCart }
+									replaceProductInCart={ replaceProductInCart }
 									couponFieldStateProps={ couponFieldStateProps }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }
