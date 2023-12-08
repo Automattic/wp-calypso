@@ -34,7 +34,6 @@ describe( 'ThemeTypeBadge', () => {
 					? [ { blog_id: 123, product_type: 'theme', meta: 'premium/test' } ]
 					: [],
 			},
-			productsList: { items: [] },
 		};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );

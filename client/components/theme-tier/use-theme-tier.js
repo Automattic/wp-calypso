@@ -3,8 +3,8 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { getThemeTier } from 'calypso/state/themes/selectors/get-theme-tier';
 
-export default function useThemeTier( siteId, themeSlug ) {
-	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', themeSlug ) );
+export default function useThemeTier( siteId, themeId ) {
+	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', themeId ) );
 	const tier = useSelector( ( state ) => getThemeTier( state, theme?.theme_tier ) );
 	const isThemeAllowedOnSite = useSelector( ( state ) =>
 		tier?.feature ? siteHasFeature( state, siteId, tier.feature ) : true

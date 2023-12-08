@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
 import {
 	FREE_THEME,
@@ -13,8 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
-import useThemeTier from 'calypso/state/themes/hooks/use-theme-tier';
-import { getThemeType, isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors';
+import { getThemeType } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
 
 import './style.scss';
@@ -37,11 +35,6 @@ const ThemeTypeBadge = ( {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const bundleSettings = useBundleSettings( themeId );
-
-	const isPartnerThemePurchased = useSelector( ( state ) =>
-		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
-	);
-	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
 	useEffect( () => {
 		if ( type === FREE_THEME && ! isLockedStyleVariation ) {
@@ -69,44 +62,6 @@ const ThemeTypeBadge = ( {
 		focusOnShow: false,
 		isClickable: true,
 	};
-
-	if ( isEnabled( 'themes/tiers' ) && Object.keys( themeTier ).length ) {
-		const tieredBadgeContentProps = {
-			...badgeContentProps,
-			labelText: translate( 'Upgrade' ),
-		};
-
-		let badgeContent;
-		if ( isLockedStyleVariation ) {
-			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
-		} else if ( 'partner' === themeTier.slug ) {
-			if ( isPartnerThemePurchased ) {
-				badgeContent = <>{ translate( 'Included in my plan' ) }</>;
-			} else if ( isThemeAllowedOnSite ) {
-				badgeContent = (
-					<PremiumBadge
-						{ ...badgeContentProps }
-						className={ classNames( badgeContentProps.className, 'is-marketplace' ) }
-						labelText={ translate( 'Subscribe' ) }
-					/>
-				);
-			} else {
-				badgeContent = (
-					<PremiumBadge
-						{ ...badgeContentProps }
-						className={ classNames( badgeContentProps.className, 'is-marketplace' ) }
-						labelText={ translate( 'Upgrade and Subscribe' ) }
-					/>
-				);
-			}
-		} else if ( isThemeAllowedOnSite ) {
-			badgeContent = <>{ siteId ? translate( 'Included in my plan' ) : translate( 'Free' ) }</>;
-		} else {
-			badgeContent = <PremiumBadge { ...tieredBadgeContentProps } />;
-		}
-
-		return <div className="theme-type-badge">{ badgeContent }</div>;
-	}
 
 	let badgeContent;
 	if ( type === BUNDLED_THEME ) {
