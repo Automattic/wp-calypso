@@ -20,16 +20,6 @@ export const initialBundleSteps: StepperStep[] = [
 ];
 
 /**
- * Steps that will run for each plugin bundle.
- */
-export const customBundleSteps: Record< string, StepperStep[] > = {
-	'woo-on-plans': [
-		{ slug: 'storeAddress', component: StoreAddress },
-		{ slug: 'businessInfo', component: BusinessInfo },
-	],
-};
-
-/**
  * Steps that will run before the custom bundle steps.
  */
 export const beforeCustomBundleSteps: StepperStep[] = [
@@ -49,13 +39,22 @@ export const afterCustomBundleSteps: StepperStep[] = [
 
 interface BundleStepsSettings {
 	[ key: string ]: {
+		customSteps: StepperStep[];
 		goBack: ( currentStep: string, navigate: Navigate< StepperStep[] > ) => boolean | void;
 		checkForActivePlugins: string[];
 	};
 }
 
+/**
+ * Steps settings for each plugin bundle.
+ */
 export const bundleStepsSettings: BundleStepsSettings = {
 	'woo-on-plans': {
+		customSteps: [
+			{ slug: 'storeAddress', component: StoreAddress },
+			{ slug: 'businessInfo', component: BusinessInfo },
+		],
+		/** It needs to be customized only for custom steps of the flow. The default steps have their logic already. */
 		goBack: ( currentStep, navigate ) => {
 			switch ( currentStep ) {
 				case 'businessInfo':
@@ -72,4 +71,4 @@ export const bundleStepsSettings: BundleStepsSettings = {
 	},
 };
 
-export type BundledPlugin = keyof typeof customBundleSteps;
+export type BundledPlugin = keyof typeof bundleStepsSettings;

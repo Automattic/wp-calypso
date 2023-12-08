@@ -24,7 +24,6 @@ import {
 } from './internals/types';
 import {
 	initialBundleSteps,
-	customBundleSteps,
 	beforeCustomBundleSteps,
 	afterCustomBundleSteps,
 	bundleStepsSettings,
@@ -41,10 +40,10 @@ const pluginBundleFlow: Flow = {
 
 		let bundlePluginSteps: StepperStep[] = [];
 
-		if ( pluginSlug && customBundleSteps.hasOwnProperty( pluginSlug ) ) {
+		if ( pluginSlug && bundleStepsSettings.hasOwnProperty( pluginSlug ) ) {
 			bundlePluginSteps = [
 				...beforeCustomBundleSteps,
-				...customBundleSteps[ pluginSlug ],
+				...bundleStepsSettings[ pluginSlug ].customSteps,
 				...afterCustomBundleSteps,
 			];
 		}
