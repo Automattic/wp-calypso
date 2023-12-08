@@ -19,7 +19,7 @@ export function useToSFoldableCard(): 'loading' | 'treatment' | 'control' {
 		! isJetpackNotAtomic;
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'wp_web_checkout_tos_foldable_card_v1',
+		'wp_web_checkout_tos_foldable_card_v1_attempt_2',
 		{ isEligible: isWPcomCheckout }
 	);
 
