@@ -82,7 +82,7 @@
 		"@wordpress/date": "^4.47.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^4.30.0",
 		"@wordpress/dom-ready": "^3.47.0",
-		"@wordpress/edit-post": "^7.24.0",
+		"@wordpress/edit-post": "^7.24.1",
 		"@wordpress/element": "^5.24.0",
 		"@wordpress/env": "^8.13.0",
 		"@wordpress/escape-html": "^2.47.0",
