@@ -111,22 +111,20 @@ const PluginsDiscoveryPage = ( props ) => {
 
 	const isEligibleForOneClickCheckout = useIsEligibleForOneClickCheckout();
 
-	// TODO: Uncomment when experiment is ready for testing
-	// const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-	// 	'calypso_plugins_page_business_plan_one_click_upsell',
-	// 	{
-	// 		isEligible: translate.localeSlug === 'en',
-	// 	}
-	// );
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_plugins_page_business_plan_one_click_upsell',
+		{
+			isEligible: translate.localeSlug === 'en',
+		}
+	);
 
 	// TODO: Account for loading state
-	// if ( isEligibleForOneClickCheckout.isLoading || isLoadingExperiment ) {
-	// 	return <Loader />
-	// }
+	if ( isEligibleForOneClickCheckout.isLoading || isLoadingExperiment ) {
+		// render loader
+	}
 
-	const canDisplayPurchaseModal = isEligibleForOneClickCheckout.result;
-	// TODO: Uncomment when experiment is ready for testing
-	// && experimentAssignment?.variationName === 'treatment';
+	const canDisplayPurchaseModal =
+		isEligibleForOneClickCheckout.result && experimentAssignment?.variationName === 'treatment';
 
 	return (
 		<>
