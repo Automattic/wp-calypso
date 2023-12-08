@@ -20,6 +20,11 @@ export interface DomainSuggestionQuery {
 	include_wordpressdotcom: boolean;
 
 	/**
+	 * True to include domains registered with wpcom in the response
+	 */
+	include_internal_move_eligible: boolean;
+
+	/**
 	 * Localizes domain results, e.g., price format
 	 */
 	locale?: string;

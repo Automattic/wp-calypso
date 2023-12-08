@@ -1053,7 +1053,6 @@ class RegisterDomainStep extends Component {
 					const status = get( result, 'status', error );
 					const mappable = get( result, 'mappable' );
 					const domainChecked = get( result, 'domain_name', domain );
-
 					const {
 						AVAILABLE,
 						AVAILABLE_PREMIUM,
@@ -1062,8 +1061,9 @@ class RegisterDomainStep extends Component {
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
+						REGISTERED,
 					} = domainAvailability;
-					const isDomainAvailable = [ AVAILABLE, UNKNOWN ].includes( status );
+					const isDomainAvailable = [ AVAILABLE, UNKNOWN, REGISTERED ].includes( status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
@@ -1082,11 +1082,10 @@ class RegisterDomainStep extends Component {
 
 					// Mapped status always overrides other statuses.
 					const availabilityStatus = isDomainMapped ? mappable : status;
-
 					this.setState( {
 						exactMatchDomain: domainChecked,
 						lastDomainTld: result.tld,
-						lastDomainStatus: availabilityStatus,
+						lastDomainStatus: REGISTERED === status ? REGISTERED : availabilityStatus,
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
 					if ( isDomainAvailable || isAvailableSupportedPremiumDomain ) {
@@ -1131,7 +1130,6 @@ class RegisterDomainStep extends Component {
 
 	getDomainsSuggestions = ( domain, timestamp ) => {
 		const suggestionQuantity = SUGGESTION_QUANTITY - this.getFreeSubdomainSuggestionsQuantity();
-
 		const query = {
 			query: domain,
 			quantity: suggestionQuantity,
@@ -1144,6 +1142,7 @@ class RegisterDomainStep extends Component {
 				.replace( ' ', ',' )
 				.toLocaleLowerCase(),
 			...this.getActiveFiltersForAPI(),
+			include_internal_move_eligible: 'onboarding' === this.props.flowName,
 		};
 
 		debug( 'Fetching domains suggestions with the following query', query );
@@ -1464,6 +1463,7 @@ class RegisterDomainStep extends Component {
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
+
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
 						status,
@@ -1506,9 +1506,11 @@ class RegisterDomainStep extends Component {
 		} = this.state;
 
 		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
+
 		const availableDomain =
-			lastDomainStatus === domainAvailability.AVAILABLE &&
-			find( this.state.searchResults, matchesSearchedDomain );
+			[ domainAvailability.AVAILABLE, domainAvailability.REGISTERED ].includes(
+				lastDomainStatus
+			) && find( this.state.searchResults, matchesSearchedDomain );
 		const onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
 		const suggestions = this.getSuggestionsFromProps();

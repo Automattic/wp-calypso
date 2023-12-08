@@ -70,6 +70,7 @@ class DomainSearchResults extends Component {
 			translate,
 			isDomainOnly,
 		} = this.props;
+
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
 			'domain-search-results__domain-not-available': ! availableDomain,
