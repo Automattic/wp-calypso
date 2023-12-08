@@ -70,7 +70,7 @@ export const getDesignPreviewUrl = (
 };
 
 export const getAssemblerDesign = () => {
-	if ( isEnabled( 'pattern-assembler/v2' ) ) {
+	if ( isEnabled( 'pattern-assembler/v2' ) && ! isEnabled( 'themes/assembler-first' ) ) {
 		return ASSEMBLER_V2_DESIGN;
 	}
 	return DEFAULT_ASSEMBLER_DESIGN;
