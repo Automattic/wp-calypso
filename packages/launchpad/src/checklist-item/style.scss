@@ -230,8 +230,8 @@
 	font-weight: 500;
 	padding: 11px;
 	margin-top: 12px;
-	background-color: var(--color-primary);
-	border-color: var(--color-primary);
+	background-color: var(--color-accent);
+	border-color: var(--color-accent);
 	border-radius: 4px;
 	color: var(--color-text-inverted);
 	justify-content: center;
@@ -240,14 +240,14 @@
 	line-height: 22px;
 
 	&:hover:not([disabled]) {
-		background-color: var(--color-primary-60);
-		border-color: var(--color-primary-60);
+		background-color: var(--color-accent-60);
+		border-color: var(--color-accent-60);
 		color: var(--color-text-inverted);
 	}
 
 	&[disabled] {
-		background-color: var(--color-primary-10);
-		border-color: var(--color-primary-10);
+		background-color: var(--color-accent-10);
+		border-color: var(--color-accent-10);
 		color: var(--color-text-inverted);
 	}
 

@@ -60,6 +60,8 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 
 	const recurType = useQuery().get( 'recur' );
 
+	document?.querySelector( 'body' )?.classList.add( 'is-classic-dark' );
+
 	if ( flow.name === ECOMMERCE_FLOW ) {
 		const isValidRecurType =
 			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );

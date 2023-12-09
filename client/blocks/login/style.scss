@@ -144,6 +144,11 @@
 		&.is-error {
 			margin-bottom: 0;
 		}
+
+		&:focus,
+		&:focus:hover {
+			box-shadow: 0 0 0 2px var(--color-accent-10);
+		}
 	}
 }
 
@@ -446,13 +451,13 @@
 }
 
 .is-wpcom-migration.main {
-	--color-accent: var(--studio-blue);
-	--color-accent-light: var(--studio-blue-20);
-	--color-accent-dark: var(--studio-blue-60);
-	--color-accent-60: var(--studio-blue-60);
-	--color-primary: var(--studio-blue-40);
-	--color-primary-light: var(--studio-blue-20);
-	--color-primary-dark: var(--studio-blue-60);
+	// --color-accent: var(--studio-blue);
+	// --color-accent-light: var(--studio-blue-20);
+	// --color-accent-dark: var(--studio-blue-60);
+	// --color-accent-60: var(--studio-blue-60);
+	// --color-primary: var(--studio-blue-40);
+	// --color-primary-light: var(--studio-blue-20);
+	// --color-primary-dark: var(--studio-blue-60);
 
 	max-width: 472px !important;
 	$login-border-radius: 4px;

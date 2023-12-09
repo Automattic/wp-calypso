@@ -28,10 +28,15 @@ $font-body-small: 14px !default;
 	&.is-primary {
 		border-radius: 4px;
 		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-		background-color: #117ac9;
-		border-color: #117ac9;
+		background-color: var(--color-accent);
+		border-color: var(--color-accent);
 		color: var(--color-text-inverted);
 		padding: 8px 14px;
+
+		&:hover {
+			background-color: var(--color-accent-60);
+			border-color: var(--color-accent-60);
+		}
 	}
 }
 

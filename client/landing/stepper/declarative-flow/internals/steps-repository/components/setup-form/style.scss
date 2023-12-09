@@ -40,7 +40,7 @@
 		background-position: 95%;
 		&:focus {
 			border-color: var(--studio-gray-10);
-			box-shadow: 0 0 0 2px var(--color-primary-10);
+			box-shadow: 0 0 0 2px var(--color-accent-10);
 			outline: none;
 		}
 	}
@@ -77,7 +77,7 @@
 
 		&:focus {
 			border-color: var(--studio-gray-10);
-			box-shadow: 0 0 0 2px var(--color-primary-10);
+			box-shadow: 0 0 0 2px var(--color-accent-10);
 			outline: none;
 		}
 	}
@@ -92,14 +92,14 @@
 		&.disabled:focus,
 		&.disabled:hover,
 		&:disabled {
-			background: var(--studio-blue-20);
+			// background: var(--studio-blue-20);
 			cursor: default;
 		}
 		&:focus {
 			box-shadow: none;
-			outline: 2px solid var(--studio-blue-60);
+			// outline: 2px solid var(--studio-blue-60);
 			outline-offset: 1px;
-			background: var(--studio-blue-60);
+			// background: var(--studio-blue-60);
 		}
 	}
 }

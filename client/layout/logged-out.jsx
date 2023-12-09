@@ -137,6 +137,7 @@ const LayoutLoggedOut = ( {
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
+		'is-classic-dark': config.isEnabled( 'me/account/color-scheme-picker' ),
 	};
 
 	let masterbar = null;

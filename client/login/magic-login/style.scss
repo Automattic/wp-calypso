@@ -268,6 +268,11 @@
 
 		.get-apps__card-text {
 			padding: 0 20px 0 0;
+
+			a,
+			a:visited {
+				color: var(--color-accent);
+			}
 		}
 	}
 }
