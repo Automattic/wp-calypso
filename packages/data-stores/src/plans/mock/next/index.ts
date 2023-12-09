@@ -1,1 +1,1 @@
-export * from './store/site-plans';
+export * from './store/plans';

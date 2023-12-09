@@ -1,6 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
+import {
+	ASSEMBLER_V2_DESIGN,
+	DEFAULT_ASSEMBLER_DESIGN,
+	DEFAULT_VIEWPORT_HEIGHT,
+} from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
 
 function encodeParenthesesInText( text: string ) {
@@ -62,6 +67,13 @@ export const getDesignPreviewUrl = (
 	}
 
 	return url;
+};
+
+export const getAssemblerDesign = () => {
+	if ( isEnabled( 'pattern-assembler/v2' ) && ! isEnabled( 'themes/assembler-first' ) ) {
+		return ASSEMBLER_V2_DESIGN;
+	}
+	return DEFAULT_ASSEMBLER_DESIGN;
 };
 
 export const isAssemblerDesign = ( design?: Design ) => design?.design_type === 'assembler';

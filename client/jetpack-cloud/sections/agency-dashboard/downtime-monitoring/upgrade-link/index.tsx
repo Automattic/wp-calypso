@@ -19,7 +19,9 @@ export default function UpgradeLink( { isInline = false } ) {
 		( product ) => product.slug === 'jetpack-monitor' && product.price_interval === 'month'
 	);
 
-	const price = monthlyProduct && formatCurrency( monthlyProduct.amount, monthlyProduct.currency );
+	const price =
+		monthlyProduct &&
+		formatCurrency( parseFloat( monthlyProduct.amount ), monthlyProduct.currency );
 
 	const handleOnClick = () => {
 		recordEvent( 'downtime_monitoring_upgrade_link_click' );

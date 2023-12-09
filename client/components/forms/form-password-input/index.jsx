@@ -1,4 +1,5 @@
-import { Gridicon } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { seen, unseen } from '@wordpress/icons';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 import { createRef, Component } from 'react';
@@ -48,7 +49,7 @@ class FormPasswordInput extends Component {
 				/>
 
 				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
-					{ this.hidden() ? <Gridicon icon="not-visible" /> : <Gridicon icon="visible" /> }
+					{ this.hidden() ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
 				</span>
 			</div>
 		);

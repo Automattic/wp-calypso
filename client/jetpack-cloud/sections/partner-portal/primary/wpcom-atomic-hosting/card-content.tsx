@@ -109,7 +109,13 @@ export default function CardContent( {
 		return {
 			title: plan?.getTitle?.().toString() || '',
 			description: getProductTagline( planSlug ) || '',
-			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
+			price: formatCurrency(
+				parseFloat( agencyProduct?.amount as string ) || 0,
+				agencyProduct?.currency || 'USD',
+				{
+					stripZeros: true,
+				}
+			),
 			interval: 'month',
 			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
 				text: ( feature?.getTitle?.() as string ) || '',

@@ -14,4 +14,5 @@ export interface FoldableNavItem {
 	link: string;
 	title: TranslateResult;
 	trackEventName: string;
+	isExternalLink?: boolean;
 }

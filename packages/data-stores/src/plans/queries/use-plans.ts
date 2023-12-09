@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback } from '@wordpress/element';
 import wpcomRequest from 'wpcom-proxy-request';
+import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPIPlan, PlanNext } from '../types';
 
@@ -8,6 +9,9 @@ interface PlansIndex {
 	[ planSlug: string ]: PlanNext;
 }
 
+/**
+ * Plans from `/plans` endpoint, indexed by `plan_slug`
+ */
 function usePlans() {
 	const queryKeys = useQueryKeysFactory();
 
@@ -26,6 +30,7 @@ function usePlans() {
 						planSlug: plan.product_slug,
 						productSlug: plan.product_slug,
 						productId: plan.product_id,
+						introOffer: unpackIntroOffer( plan ),
 						productNameShort: plan.product_name_short,
 						billPeriod: plan.bill_period,
 						currencyCode: plan.currency_code,
