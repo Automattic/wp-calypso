@@ -348,8 +348,9 @@ export function getRedirectFromPendingPage( {
 	saasRedirectUrl,
 	fromSiteSlug,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
-	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
+	const checkoutUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
+	const defaultFailUrl = `/checkout/thank-you-failed-purchases`;
 
 	// If SaaS Product Redirect URL was passed then just return as redirect instruction so that
 	// we can redirect user immediately to vendor application.
@@ -429,7 +430,7 @@ export function getRedirectFromPendingPage( {
 	// A HTTP error occured; we will send the user back to checkout.
 	if ( error ) {
 		return {
-			url: defaultFailUrl,
+			url: checkoutUrl,
 			isError: true,
 		};
 	}
