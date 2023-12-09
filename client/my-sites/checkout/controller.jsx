@@ -32,6 +32,7 @@ import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
 import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
+import FailedPurchaseDetails from './checkout-thank-you/failed-purchase-details';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearPlanThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
@@ -45,6 +46,12 @@ import UpsellNudge, {
 import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
+
+export function checkoutFailedPurchases( context, next ) {
+	context.primary = <FailedPurchaseDetails />;
+
+	next();
+}
 
 export function checkoutJetpackSiteless( context, next ) {
 	const connectAfterCheckout = context.query?.connect_after_checkout === 'true';

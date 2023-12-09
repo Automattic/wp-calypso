@@ -27,6 +27,7 @@ import {
 	akismetCheckoutThankYou,
 	hundredYearCheckoutThankYou,
 	transferDomainToAnyUser,
+	checkoutFailedPurchases,
 } from './controller';
 
 export default function () {
@@ -204,6 +205,8 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/checkout/thank-you-failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
 
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
