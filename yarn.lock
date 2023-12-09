@@ -94,7 +94,7 @@ __metadata:
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -186,7 +186,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     utility-types: "npm:^3.10.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -206,7 +206,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
@@ -221,7 +221,7 @@ __metadata:
     debug: "npm:^4.3.3"
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     uuid: "npm:^8.3.2"
   languageName: unknown
   linkType: soft
@@ -297,7 +297,7 @@ __metadata:
     stream-browserify: "npm:^3.0.0"
     terser-webpack-plugin: "npm:^5.3.9"
     thread-loader: "npm:^3.0.4"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack-cli: "npm:^4.10.0"
   peerDependencies:
     postcss: ^8.4.5
@@ -332,7 +332,7 @@ __metadata:
     "@types/node": "npm:^20.8.6"
     cookie: "npm:^0.4.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -370,7 +370,7 @@ __metadata:
     node-fetch: "npm:^2.6.7"
     playwright: "npm:^1.37"
     totp-generator: "npm:^0.0.12"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -441,7 +441,7 @@ __metadata:
     "@automattic/shopping-cart": "workspace:^"
     i18n-calypso: "workspace:^"
     react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     react: ^18.2.0
   languageName: unknown
@@ -463,7 +463,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -500,7 +500,7 @@ __metadata:
     debug: "npm:^4.3.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -516,7 +516,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     photon: "workspace:^"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -564,7 +564,7 @@ __metadata:
     react-router-dom: "npm:^6.10.0"
     react-slider: "npm:^2.0.5"
     resize-observer-polyfill: "npm:^1.5.1"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     utility-types: "npm:^3.10.0"
     uuid: "npm:^8.3.2"
     wpcom-proxy-request: "workspace:^"
@@ -596,7 +596,7 @@ __metadata:
     prop-types: "npm:^15.7.2"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -610,7 +610,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     cookie: "npm:^0.4.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -639,7 +639,7 @@ __metadata:
     qs: "npm:^6.9.1"
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     use-debounce: "npm:^3.1.0"
     utility-types: "npm:^3.10.0"
     validator: "npm:^13.5.2"
@@ -669,7 +669,7 @@ __metadata:
     redux: "npm:^4.2.1"
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.89.0"
     wpcom-proxy-request: "workspace:^"
@@ -711,7 +711,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.89.0"
   peerDependencies:
@@ -745,7 +745,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     "@wordpress/element": ^5.24.0
@@ -780,7 +780,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     use-debounce: "npm:^3.1.0"
     uuid: "npm:^8.3.2"
   peerDependencies:
@@ -816,7 +816,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-intersection-observer: "npm:^9.4.3"
     resize-observer-polyfill: "npm:^1.5.1"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
@@ -867,7 +867,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:>=2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -878,7 +878,7 @@ __metadata:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -888,7 +888,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -897,7 +897,7 @@ __metadata:
   resolution: "@automattic/generate-password@workspace:packages/generate-password"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -925,7 +925,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-intersection-observer: "npm:^9.4.3"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^9.17.0
@@ -961,7 +961,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-draggable: "npm:^4.4.4"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^9.17.0
@@ -988,7 +988,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-test-renderer: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -1016,7 +1016,7 @@ __metadata:
     "@types/allure-js-commons": "npm:^0.0.1"
     "@types/node": "npm:^20.8.6"
     allure-js-commons: "npm:2.0.0-beta.9"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -1025,7 +1025,7 @@ __metadata:
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -1041,7 +1041,7 @@ __metadata:
     "@wordpress/components": "npm:^25.13.0"
     "@wordpress/i18n": "npm:^4.47.0"
     "@wordpress/react-i18n": "npm:^3.45.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     react: ^18.2.0
@@ -1063,7 +1063,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
   languageName: unknown
   linkType: soft
@@ -1096,7 +1096,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1126,7 +1126,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.89.0"
     wpcom-proxy-request: "workspace:^"
@@ -1177,7 +1177,7 @@ __metadata:
     debug: "npm:^4.3.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@emotion/react": ^11.4.1
     redux: ^4.2.1
@@ -1345,7 +1345,7 @@ __metadata:
     sass-loader: "npm:^10.1.1"
     style-loader: "npm:^1.3.0"
     tslib: "npm:^2.5.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1375,7 +1375,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     resize-observer-polyfill: "npm:1.5.1"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     react: ^18.2.0
@@ -1400,7 +1400,7 @@ __metadata:
     classnames: "npm:^2.3.2"
     prop-types: "npm:^15.7.2"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     "@wordpress/element": ^5.24.0
@@ -1437,7 +1437,7 @@ __metadata:
     classnames: "npm:^2.3.2"
     postcss: "npm:^8.4.5"
     require-from-string: "npm:^2.0.2"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
   peerDependencies:
     react: ^18.2.0
@@ -1498,7 +1498,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
   peerDependencies:
     react: ^18.2.0
@@ -1514,7 +1514,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:^14.1.2"
     debug: "npm:^4.3.3"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1533,7 +1533,7 @@ __metadata:
     "@wordpress/i18n": "npm:^4.47.0"
     "@wordpress/icons": "npm:^9.38.0"
     classnames: "npm:^2.3.2"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     react: ^18.2.0
@@ -1549,7 +1549,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:^14.1.2"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     react: ^18.2.0
@@ -1576,7 +1576,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
   peerDependencies:
     "@babel/runtime": ^7.23.2
@@ -1599,7 +1599,7 @@ __metadata:
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -1625,7 +1625,7 @@ __metadata:
     classnames: "npm:^2.3.2"
     debug: "npm:^4.3.4"
     react-popper: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     react: ^18.2.0
@@ -1658,7 +1658,7 @@ __metadata:
     classnames: "npm:^2.3.2"
     debug: "npm:^4.3.4"
     react-popper: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     react: ^18.2.0
@@ -1673,7 +1673,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -1703,7 +1703,7 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -1773,7 +1773,7 @@ __metadata:
     "@wordpress/keycodes": "npm:^3.47.0"
     "@wordpress/react-i18n": "npm:^3.45.0"
     classnames: "npm:^2.3.2"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1878,7 +1878,7 @@ __metadata:
     prop-types: "npm:^15.7.2"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@emotion/react": ^11.4.1
     redux: ^4.2.1
@@ -1993,7 +1993,7 @@ __metadata:
     "@wordpress/url": "npm:^3.48.0"
     i18n-calypso: "workspace:^"
     social-logos: "npm:^2.5.2"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   peerDependencies:
     "@wordpress/data": ^9.17.0
     react: ^18.2.0
@@ -24566,7 +24566,7 @@ __metadata:
     crc32: "npm:^0.2.2"
     debug: "npm:^4.3.3"
     seed-random: "npm:^2.2.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -30777,23 +30777,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.2.2":
-  version: 5.2.2
-  resolution: "typescript@npm:5.2.2"
+"typescript@npm:^5.3.2":
+  version: 5.3.3
+  resolution: "typescript@npm:5.3.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 91ae3e6193d0ddb8656d4c418a033f0f75dec5e077ebbc2bd6d76439b93f35683936ee1bdc0e9cf94ec76863aa49f27159b5788219b50e1cd0cd6d110aa34b07
+  checksum: e33cef99d82573624fc0f854a2980322714986bc35b9cb4d1ce736ed182aeab78e2cb32b385efa493b2a976ef52c53e20d6c6918312353a91850e2b76f1ea44f
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>":
-  version: 5.2.2
-  resolution: "typescript@patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"
+"typescript@patch:typescript@npm%3A^5.3.2#optional!builtin<compat/typescript>":
+  version: 5.3.3
+  resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 062c1cee1990e6b9419ce8a55162b8dc917eb87f807e4de0327dbc1c2fa4e5f61bc0dd4e034d38ff541d1ed0479b53bcee8e4de3a4075c51a1724eb6216cb6f5
+  checksum: 1d0a5f4ce496c42caa9a30e659c467c5686eae15d54b027ee7866744952547f1be1262f2d40de911618c242b510029d51d43ff605dba8fb740ec85ca2d3f9500
   languageName: node
   linkType: hard
 
@@ -32416,7 +32416,7 @@ __metadata:
     stylelint: "npm:^14.16.1"
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
     webpack-bundle-analyzer: "npm:^4.10.1"
     webpack-cli: "npm:^4.10.0"
