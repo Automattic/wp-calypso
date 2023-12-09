@@ -8415,7 +8415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^6.13.0, @typescript-eslint/eslint-plugin@npm:^6.4.1":
+"@typescript-eslint/eslint-plugin@npm:^6.13.1, @typescript-eslint/eslint-plugin@npm:^6.4.1":
   version: 6.13.2
   resolution: "@typescript-eslint/eslint-plugin@npm:6.13.2"
   dependencies:
@@ -8456,7 +8456,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^6.13.0, @typescript-eslint/parser@npm:^6.4.1":
+"@typescript-eslint/parser@npm:^6.13.1, @typescript-eslint/parser@npm:^6.4.1":
   version: 6.13.2
   resolution: "@typescript-eslint/parser@npm:6.13.2"
   dependencies:
@@ -32326,8 +32326,8 @@ __metadata:
     "@types/uuid": "npm:^8.3.4"
     "@types/validator": "npm:^13.7.1"
     "@types/webpack-env": "npm:^1.18.4"
-    "@typescript-eslint/eslint-plugin": "npm:^6.13.0"
-    "@typescript-eslint/parser": "npm:^6.13.0"
+    "@typescript-eslint/eslint-plugin": "npm:^6.13.1"
+    "@typescript-eslint/parser": "npm:^6.13.1"
     "@wordpress/base-styles": "npm:^4.38.0"
     "@wordpress/commands": "npm:^0.18.0"
     "@wordpress/components": "npm:^25.13.0"
