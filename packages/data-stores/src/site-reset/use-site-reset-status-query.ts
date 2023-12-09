@@ -3,7 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { APIError } from './use-site-reset-mutation';
 
 export type SiteResetStatus = {
-	status: 'in-progress' | 'ready';
+	status: string;
 };
 
 export const useSiteResetStatusQuery = (

@@ -25,6 +25,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { useDispatch, useSelector } from 'calypso/state';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -117,33 +118,50 @@ function SiteResetCard( {
 	const dispatch = useDispatch();
 
 	const { data } = useSiteResetContentSummaryQuery( siteId );
-	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
-	let resetStatus = 'ready';
-	if ( status ) {
-		resetStatus = status.status;
-	}
+	const {
+		data: status,
+		refetch: refetchResetStatus,
+		isFetching: isFetchingResetStatus,
+	} = useSiteResetStatusQuery( siteId );
+	const [ resetStatus, setResetStatus ] = useState( status?.status ?? 'completed' );
+	const [ wasResetting, setWasReseting ] = useState( false );
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
-	const [ resetProgress, setResetProgress ] = useState( 1 );
-
-	if ( resetStatus !== 'ready' && resetProgress === 1 ) {
-		//it's already in progress on load
-		setResetProgress( 0 );
-	}
+	const [ resetProgress, setResetProgress ] = useState( 0.1 );
 
 	useEffect( () => {
 		let interval = 1;
-		if ( resetProgress !== 1 ) {
+		if ( ! siteId || resetStatus === 'completed' ) {
+			return;
+		}
+		if ( ! isFetchingResetStatus ) {
 			interval = setInterval( async () => {
 				const {
 					data: { status: latestStatus },
 				} = await refetchResetStatus();
-				if ( latestStatus === 'ready' ) {
-					setResetProgress( 1 );
-				}
+				setResetStatus( latestStatus );
 			}, 3000 );
 		}
 		return () => clearInterval( interval );
-	}, [ resetProgress ] );
+	}, [ isFetchingResetStatus, refetchResetStatus, resetStatus, siteId ] );
+
+	useEffect( () => {
+		setResetProgress( ( prevProgress ) => {
+			switch ( resetStatus ) {
+				case null:
+					return 0.1;
+				case transferStates.RELOCATING_REVERT:
+				case transferStates.ACTIVE:
+					return 0.5;
+				case transferStates.PROVISIONED:
+					return 0.6;
+				case transferStates.REVERTED:
+				case transferStates.RELOCATING:
+					return 0.85;
+				default:
+					return prevProgress + 0.05;
+			}
+		} );
+	}, [ resetStatus ] );
 
 	const handleError = () => {
 		dispatch(
@@ -154,32 +172,7 @@ function SiteResetCard( {
 		);
 	};
 
-	const handleResult = ( result ) => {
-		setResetProgress( 0 );
-		if ( result.success ) {
-			if ( isAtomic ) {
-				dispatch(
-					successNotice( translate( 'Your site will be reset. ' ), {
-						id: 'site-reset-success-notice',
-						duration: 6000,
-					} )
-				);
-			} else {
-				dispatch(
-					successNotice( translate( 'Your site has been reset.' ), {
-						id: 'site-reset-success-notice',
-						duration: 4000,
-					} )
-				);
-				setResetProgress( 1 );
-			}
-		} else {
-			handleError();
-		}
-	};
-
 	const { resetSite, isLoading } = useSiteResetMutation( {
-		onSuccess: handleResult,
 		onError: handleError,
 	} );
 
@@ -236,6 +229,9 @@ function SiteResetCard( {
 		if ( ! isDomainConfirmed ) {
 			return;
 		}
+		setResetStatus( null );
+		setWasReseting( true );
+		setResetProgress( 0.1 );
 		resetSite( siteId );
 		setDomainConfirmed( false );
 	};
@@ -271,7 +267,29 @@ function SiteResetCard( {
 				}
 		  );
 
-	const isResetInProgress = resetProgress < 1;
+	const isSiteResetComplete = resetStatus === 'completed';
+
+	const isResetInProgress = ! isSiteResetComplete && ( resetStatus !== null || wasResetting );
+
+	useEffect( () => {
+		if ( wasResetting && isSiteResetComplete && ! isLoading ) {
+			dispatch(
+				successNotice( translate( 'Your site has been reset.' ), {
+					id: 'site-reset-success-notice',
+					duration: 4000,
+				} )
+			);
+		}
+	}, [ dispatch, isSiteResetComplete, translate, wasResetting, isLoading ] );
+
+	useEffect( () => {
+		// if user navigates away or reset the page while reset in progress
+		// we continue show progress bar when user comes back
+		// if reset is incomplete and siteId is present;
+		if ( ! wasResetting && ! isSiteResetComplete && siteId ) {
+			setWasReseting( true );
+		}
+	}, [ wasResetting, isSiteResetComplete, siteId ] );
 
 	return (
 		<Main className="site-settings__reset-site">
@@ -291,10 +309,10 @@ function SiteResetCard( {
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
 				<h1>{ translate( 'Site Reset' ) }</h1>
 			</HeaderCake>
-			{ isResetInProgress ? (
+			{ isResetInProgress && isAtomic ? (
 				<ActionPanel style={ { margin: 0 } }>
 					<ActionPanelBody>
-						<LoadingBar progress={ resetProgress / 100 } />
+						<LoadingBar progress={ resetProgress } />
 						<p className="reset-site__in-progress-message">
 							{ translate( "We're resetting your site. We'll email you once it's ready." ) }
 						</p>
