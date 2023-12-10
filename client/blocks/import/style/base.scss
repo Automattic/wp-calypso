@@ -54,13 +54,13 @@
 
 		.onboarding-title {
 			@include onboarding-import-heading-text;
-			margin-bottom: 20px;
+			margin-bottom: rem(12px);
 		}
 
 		.onboarding-subtitle {
-			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.4444em;
+			font-size: 1rem;
+			line-height: 1.5;
+			color: var(--studio-gray-60);
 
 			@include break-small {
 				width: 600px;
