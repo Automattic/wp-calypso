@@ -38,6 +38,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	const progressClassNames = classNames( 'plan-usage-progress', {
 		'is-over-limit': isOverLimit,
 	} );
+	const progressWidthInPercentage = limit ? ( usage / limit ) * 100 : 0;
 
 	// 0, 1, 2, or greater than 2
 	let overLimitMonthsText = '';
@@ -77,6 +78,10 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 		<div className="plan-usage">
 			<h3 className="plan-usage-heading">{ translate( 'Your Stats plan usage' ) }</h3>
 			<div className={ progressClassNames }>
+				<div
+					className="plan-usage-progress-bar"
+					style={ { width: `${ progressWidthInPercentage }%` } }
+				></div>
 				<div>
 					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views this month', {
 						args: {
