@@ -1,6 +1,6 @@
 import { BundledBadge, PremiumBadge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -9,7 +9,7 @@ import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
 export default function ThemeTierBundledBadge( { themeId } ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const bundleSettings = useBundleSettings( themeId );
+	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const legacyCanUseTheme = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
