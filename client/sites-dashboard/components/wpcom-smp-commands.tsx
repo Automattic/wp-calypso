@@ -1009,6 +1009,20 @@ export const useCommandsArrayWpcom = ( {
 			icon: peopleIcon,
 		},
 		{
+			name: 'changePlan',
+			label: __( 'Change plan on your site' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/plans/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
+			},
+			icon: uploadIcon,
+		},
+		{
 			name: 'addNewUser',
 			label: __( 'Add new user' ),
 			searchLabel: [
