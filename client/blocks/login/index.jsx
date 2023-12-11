@@ -610,9 +610,9 @@ class Login extends Component {
 	}
 
 	renderToS() {
-		const { isSocialFirst, translate } = this.props;
+		const { isSocialFirst, translate, twoFactorEnabled } = this.props;
 
-		if ( ! isSocialFirst ) {
+		if ( ! isSocialFirst || twoFactorEnabled ) {
 			return null;
 		}
 
