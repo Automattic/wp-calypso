@@ -21,7 +21,6 @@ import {
 	postComments as postCommentsIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
-	upload as uploadIcon,
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -1088,7 +1087,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/import/${ site.slug }` );
 				},
 			},
-			icon: uploadIcon,
+			icon: downloadIcon,
 		},
 		{
 			name: 'manageSettingsGeneral',
