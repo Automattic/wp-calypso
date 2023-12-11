@@ -1,4 +1,4 @@
-import { Button, Gridicon, PressableLogo } from '@automattic/components';
+import { Button, PressableLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -143,8 +143,6 @@ const PressablePromoBanner = ( {
 					target="_blank"
 				>
 					{ translate( 'See Pressable Plans' ) }
-					&nbsp;
-					<Gridicon icon="external" />
 				</CtaButton>
 			</CtaContainer>
 		</Banner>
