@@ -57,7 +57,7 @@ export default function FailedPurchaseDetails( {
 						"If the problem persists, please don't hesitate to {{a}}contact support{{/a}}.",
 					{
 						components: {
-							a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+							a: <a href={ CALYPSO_CONTACT } />,
 						},
 					}
 				) }
