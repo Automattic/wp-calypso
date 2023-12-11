@@ -343,11 +343,6 @@ export class Login extends Component {
 			usernameOrEmail,
 		} = this.props;
 
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
-
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
 		}
@@ -358,6 +353,11 @@ export class Login extends Component {
 				return null;
 			}
 		}
+
+		// use '?signup_url' if explicitly passed as URL query param
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
 
 		return (
 			<a
@@ -426,7 +426,7 @@ export class Login extends Component {
 
 		const footer = (
 			<>
-				{ isSocialFirst && isWhiteLogin ? (
+				{ isSocialFirst ? (
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
 				) : (
 					shouldRenderFooter && (

@@ -77,8 +77,8 @@
 	}
 }
 
-.is-white-login .auth-form__social,
-.is-white-signup .auth-form__social {
+.is-white-login .auth-form__social:not(.is-social-first),
+.is-white-signup .auth-form__social:not(.is-social-first) {
 	.social-buttons__button {
 		> svg {
 			padding: 12px;
@@ -93,7 +93,7 @@
 
 	.social-buttons__button {
 		display: flex;
-		height: 48px;
+		height: 48px !important;
 		padding: 4px 16px !important;
 		justify-content: center;
 		align-items: center;
