@@ -71,6 +71,7 @@ RUN node --version && yarn --version && npm --version
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
+RUN git status
 RUN yarn run build 2>&1 | tee /tmp/build_log.txt
 
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.

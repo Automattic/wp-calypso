@@ -16,6 +16,8 @@ const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 
+console.log( 'Server build started...' );
+
 /**
  * Internal variables
  */

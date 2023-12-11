@@ -53,6 +53,8 @@ const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 
+console.log( 'Client build started...' );
+
 // Readonly cache prevents writing to the cache directory, which is good for performance.
 // However, on trunk (and when generating cache images), we want to write to the cache
 // so that we can then update the cache to use in subsequent builds. While this costs
@@ -207,11 +209,7 @@ const webpackConfig = {
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
-		minimizer: Minify( {
-			terserOptions: {
-				cache: true,
-			},
-		} ),
+		minimizer: Minify(),
 	},
 	module: {
 		strictExportPresence: true,
