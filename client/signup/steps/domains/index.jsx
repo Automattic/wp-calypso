@@ -158,6 +158,7 @@ export class RenderDomainsStep extends Component {
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
 		const suggestedDomain = get( props, 'signupDependencies.suggestedDomain' );
+		const siteUrl = get( props, 'signupDependencies.siteUrl' );
 
 		// If we landed anew from `/domains` and it's the `new-flow` variation
 		// or there's a suggestedDomain from previous steps, always rerun the search.
@@ -202,10 +203,12 @@ export class RenderDomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
-			wpcomSubdomainSelected: false,
+			wpcomSubdomainSelected:
+				siteUrl && siteUrl.indexOf( '.wordpress.com' ) !== -1 ? { domain_name: siteUrl } : null,
 			domainRemovalQueue: [],
 			isGoingToNextStep: false,
 			temporaryCart: [],
+			replaceDomainFailedMessage: null,
 		};
 	}
 
@@ -277,7 +280,20 @@ export class RenderDomainsStep extends Component {
 			suggestion?.is_premium
 		);
 		await this.props.saveSignupStep( stepData );
-		await this.submitWithDomain( { signupDomainOrigin, position } );
+
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
+			await this.handleDomainToDomainCart();
+
+			// If we already have a free selection in place, let's enforce that as a free site suggestion
+			if ( this.state.wpcomSubdomainSelected ) {
+				await this.props.saveSignupStep( {
+					stepName: this.props.stepName,
+					suggestion: this.state.wpcomSubdomainSelected,
+				} );
+			}
+		} else {
+			await this.submitWithDomain( { signupDomainOrigin, position } );
+		}
 	};
 
 	handleDomainMappingError = ( domain_name ) => {
@@ -390,12 +406,9 @@ export class RenderDomainsStep extends Component {
 	};
 
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
-		const { step, flowName } = this.props;
+		const { step } = this.props;
 		const { suggestion } = step;
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) && suggestion ) {
-			return this.handleDomainToDomainCart();
-		}
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -632,6 +645,7 @@ export class RenderDomainsStep extends Component {
 				)
 			) {
 				this.setState( ( state ) => ( {
+					isCartPendingUpdateDomain: { domain_name: suggestion.domain_name },
 					temporaryCart: [
 						...( state.temporaryCart || [] ),
 						{
@@ -655,7 +669,18 @@ export class RenderDomainsStep extends Component {
 			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
 			// Replace the products in the cart with the freshly sorted products.
-			await this.props.shoppingCartManager.replaceProductsInCart( sortedProducts );
+			await this.props.shoppingCartManager
+				.replaceProductsInCart( sortedProducts )
+				.then( () => {
+					this.setState( { replaceDomainFailedMessage: null } );
+				} )
+				.catch( () => {
+					this.handleReplaceProductsInCartError(
+						this.props.translate(
+							'Sorry, there was a problem adding that domain. Please try again later.'
+						)
+					);
+				} );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
@@ -722,10 +747,14 @@ export class RenderDomainsStep extends Component {
 			this.props.shoppingCartManager
 				.replaceProductsInCart( productsToKeep )
 				.then( () => {
-					this.setState( { isCartPendingUpdateDomain: null } );
+					this.setState( { replaceDomainFailedMessage: null } );
 				} )
 				.catch( () => {
-					this.setState( { isCartPendingUpdateDomain: null } );
+					this.handleReplaceProductsInCartError(
+						this.props.translate(
+							'Sorry, there was a problem removing that domain. Please try again later.'
+						)
+					);
 				} )
 				.finally( () => {
 					this.setState( ( prevState ) => ( {
@@ -736,6 +765,17 @@ export class RenderDomainsStep extends Component {
 				} );
 		}
 	}
+
+	handleReplaceProductsInCartError = ( errorMessage ) => {
+		const errors = this.props.shoppingCartManager.responseCart.messages?.errors;
+		if ( errors && errors.length === 0 ) {
+			this.setState( {
+				replaceDomainFailedMessage: errorMessage,
+			} );
+		}
+		this.setState( () => ( { temporaryCart: [] } ) );
+		this.props.shoppingCartManager.reloadFromServer();
+	};
 
 	goToNext = () => {
 		this.setState( { isGoingToNextStep: true } );
@@ -753,7 +793,8 @@ export class RenderDomainsStep extends Component {
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
 		const siteUrl =
 			suggestion &&
-			( isPurchasingItem
+			// If we have a free domain in the cart, we want to use it as the siteUrl
+			( isPurchasingItem && ! this.state.wpcomSubdomainSelected
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
@@ -766,6 +807,10 @@ export class RenderDomainsStep extends Component {
 				productSlug: selectedDomain?.product_slug,
 			} );
 		}
+
+		const signupDomainOrigin = isPurchasingItem
+			? SIGNUP_DOMAIN_ORIGIN.CUSTOM
+			: SIGNUP_DOMAIN_ORIGIN.FREE;
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -782,7 +827,8 @@ export class RenderDomainsStep extends Component {
 			Object.assign(
 				{ domainItem, domainCart },
 				useThemeHeadstartItem,
-				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				signupDomainOrigin ? { signupDomainOrigin } : {},
+				{ siteUrl: suggestion?.domain_name },
 				lastDomainSearched ? { lastDomainSearched } : {},
 				{ domainCart }
 			)
@@ -870,8 +916,47 @@ export class RenderDomainsStep extends Component {
 			);
 		};
 
+		const FreeDomain = () => (
+			<div key="row-free" className="domains__domain-cart-row">
+				<div>
+					<div className="domains__domain-cart-domain">
+						<BoldTLD domain={ this.state.wpcomSubdomainSelected.domain_name } />
+					</div>
+					<div className="domain-product-price__price">
+						<span className="domains__price-free">{ this.props.translate( 'Free' ) }</span>
+					</div>
+				</div>
+				<div>
+					<Button
+						borderless
+						className="button domains__domain-cart-remove"
+						onClick={ () => {
+							this.setState( { wpcomSubdomainSelected: false } );
+							this.props.saveSignupStep( {
+								stepName: this.props.stepName,
+								suggestion: {
+									domain_name: false,
+								},
+							} );
+							this.props.submitSignupStep(
+								Object.assign( {
+									stepName: this.props.stepName,
+								} ),
+								Object.assign( { siteUrl: false } )
+							);
+						} }
+					>
+						{ this.props.translate( 'Remove' ) }
+					</Button>
+				</div>
+			</div>
+		);
+
 		const DomainsInCart = () => {
-			if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) || cartIsLoading ) {
+			if (
+				! shouldUseMultipleDomainsInCart( this.props.flowName ) ||
+				( cartIsLoading && domainsInCart.length === 0 )
+			) {
 				return null;
 			}
 			const domainCount =
@@ -928,6 +1013,7 @@ export class RenderDomainsStep extends Component {
 					>
 						<div className="domains__domain-side-content domains__domain-cart">
 							<div className="domains__domain-cart-rows">
+								{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
 								{ domainsInCart.map( ( domain, i ) => (
 									<div key={ `row${ i }` } className="domains__domain-cart-row">
 										<DomainNameAndCost domain={ domain } />
@@ -945,29 +1031,7 @@ export class RenderDomainsStep extends Component {
 						{ this.props.translate( 'Your domains' ) }
 					</div>
 					<div className="domains__domain-cart-rows">
-						{ this.state.wpcomSubdomainSelected && (
-							<div key="row-free" className="domains__domain-cart-row">
-								<div>
-									<div className="domains__domain-cart-domain">
-										<BoldTLD domain={ this.state.wpcomSubdomainSelected.domain_name } />
-									</div>
-									<div className="domain-product-price__price">
-										<span className="domains__price-free">{ this.props.translate( 'Free' ) }</span>
-									</div>
-								</div>
-								<div>
-									<Button
-										borderless
-										className="button domains__domain-cart-remove"
-										onClick={ () => {
-											this.setState( { wpcomSubdomainSelected: false } );
-										} }
-									>
-										{ this.props.translate( 'Remove' ) }
-									</Button>
-								</div>
-							</div>
-						) }
+						{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
 						{ domainsInCart.map( ( domain, i ) => (
 							<div key={ `row${ i }` } className="domains__domain-cart-row">
 								<DomainNameAndCost domain={ domain } />
@@ -1005,7 +1069,7 @@ export class RenderDomainsStep extends Component {
 							borderless
 							className="domains__domain-cart-choose-later"
 							onClick={ () => {
-								this.handleSkip( undefined, false );
+								this.handleSkip( undefined, false, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
 							} }
 						>
 							{ this.props.translate( 'Choose my domain later' ) }
@@ -1153,10 +1217,16 @@ export class RenderDomainsStep extends Component {
 						hasPendingRequests={ isLoadingExperiment }
 						temporaryCart={ this.state.temporaryCart }
 						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
+						replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
+						dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
 					/>
 				) }
 			</ProvideExperimentData>
 		);
+	};
+
+	dismissReplaceDomainFailed = () => {
+		this.setState( { replaceDomainFailedMessage: null } );
 	};
 
 	onUseMyDomainConnect = ( { domain } ) => {

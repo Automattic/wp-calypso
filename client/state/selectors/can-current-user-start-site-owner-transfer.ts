@@ -5,6 +5,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import isSiteWpcomStaging from './is-site-wpcom-staging';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -31,7 +32,8 @@ export default function canCurrentUserStartSiteOwnerTransfer(
 		isNonAtomicJetpackSite ||
 		isSiteP2Hub( state, siteId ) ||
 		isSiteWPForTeams( state, siteId ) ||
-		isVipSite( state, siteId )
+		isVipSite( state, siteId ) ||
+		isSiteWpcomStaging( state, siteId )
 	) {
 		return false;
 	}

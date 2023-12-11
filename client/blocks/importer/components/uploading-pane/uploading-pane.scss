@@ -1,8 +1,8 @@
 .uploading-pane {
 	cursor: pointer;
 	position: relative;
-	height: 180px;
-	margin-bottom: 40px;
+	height: 200px;
+	margin-bottom: 1rem;
 
 	background-color: transparent;
 	border: 1px dashed var(--studio-gray-10);
@@ -70,9 +70,13 @@
 			content: "\A";
 		}
 
+		&:hover {
+			color: var(--studio-gray-100);
+		}
+
 		white-space: pre;
 		text-decoration: underline;
-		color: var(--studio-gray-100);
+		color: inherit;
 	}
 }
 

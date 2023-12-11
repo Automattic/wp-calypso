@@ -51,13 +51,13 @@ import './style.scss';
 
 const PageGrid = styled.div`
 	display: grid;
-	grid-template-columns: 1fr;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	row-gap: 20px;
-	column-gap: 35px;
+	column-gap: 15px;
 	margin: 0 0 30px;
 
-	@media ( min-width: 960px ) and ( max-width: 1200px ) {
-		grid-template-columns: 1fr 1fr;
+	@media ( min-width: 600px ) and ( max-width: 750px ) {
+		grid-template-columns: 1fr;
 		column-gap: 15px;
 		row-gap: 25px;
 	}
@@ -69,7 +69,7 @@ const PageGrid = styled.div`
 	}
 
 	@media ( max-width: 600px ) {
-		margin: 0 0 145px;
+		margin: 0 0 200px;
 	}
 `;
 
@@ -93,11 +93,11 @@ const CellLabelContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	font-size: 14px;
+	font-size: 12px;
 	gap: 8px;
-
-	width: 222px;
+	width: 100%;
 	@media ( min-width: 960px ) {
+		font-size: 14px;
 		justify-content: left;
 	}
 
@@ -418,7 +418,7 @@ function DIFMPagePicker( props: StepProps ) {
 
 	const subHeaderText = isStoreFlow
 		? translate(
-				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.' +
+				'Click on the thumbnails to select or deselect pages. Your site build includes up to %(freePageCount)s pages, and you can add more for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each. After checkout, you will have the opportunity to submit your content.' +
 					'{{br}}{{/br}}{{br}}{{/br}}A cart and checkout are also included with your site.{{br}}{{/br}}You can add products later with the WordPress editor.',
 				{
 					components: {
@@ -444,7 +444,7 @@ function DIFMPagePicker( props: StepProps ) {
 				}
 		  )
 		: translate(
-				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
+				'Click on the thumbnails to select or deselect pages. Your site build includes up to %(freePageCount)s pages, and you can add more for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each. After checkout, you will have the opportunity to submit your content.',
 				{
 					components: {
 						br: <br />,

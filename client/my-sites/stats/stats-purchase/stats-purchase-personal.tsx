@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PricingSlider,
 	RenderThumbFunction,
@@ -11,6 +12,8 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
+import StatsPWYWUpgradeSlider from './stats-pwyw-uprade-slider';
+import { StatsPWYWSliderSettings } from './types';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
@@ -20,13 +23,7 @@ interface PersonalPurchaseProps {
 	currencyCode: string;
 	siteId: number | null;
 	siteSlug: string;
-	sliderSettings: {
-		sliderStepPrice: number;
-		minSliderPrice: number;
-		maxSliderPrice: number;
-		uiEmojiHeartTier: number;
-		uiImageCelebrationTier: number;
-	};
+	sliderSettings: StatsPWYWSliderSettings;
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
@@ -94,6 +91,17 @@ const PersonalPurchase = ( {
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	const handleSliderChanged = ( index: number ) => {
+		// TODO: Remove state from caller.
+		// Caller expects an index but doesn't do anything with it.
+		// Value is used below to determine tier price.
+		setSubscriptionValue( index );
+	};
+	// TODO: Remove old slider code paths.
+	const showOldSlider = ! isTierUpgradeSliderEnabled;
+	// const showOldSlider = true;
+
 	return (
 		<div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
@@ -107,22 +115,34 @@ const PersonalPurchase = ( {
 				) }
 			</div>
 
-			<PricingSlider
-				className={ `${ COMPONENT_CLASS_NAME }__slider` }
-				value={ subscriptionValue }
-				renderThumb={ sliderLabel }
-				onChange={ setSubscriptionValue }
-				maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
-				minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
-			/>
+			{ showOldSlider && (
+				<>
+					<PricingSlider
+						className={ `${ COMPONENT_CLASS_NAME }__slider` }
+						value={ subscriptionValue }
+						renderThumb={ sliderLabel }
+						onChange={ setSubscriptionValue }
+						maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
+						minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
+					/>
 
-			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
-				{ translate( 'Our users pay %(value)s per month on average', {
-					args: {
-						value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
-					},
-				} ) }
-			</p>
+					<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
+						{ translate( 'Our users pay %(value)s per month on average', {
+							args: {
+								value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
+							},
+						} ) }
+					</p>
+				</>
+			) }
+
+			{ isTierUpgradeSliderEnabled && (
+				<StatsPWYWUpgradeSlider
+					settings={ sliderSettings }
+					currencyCode={ currencyCode }
+					onSliderChange={ handleSliderChanged }
+				/>
+			) }
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 				<ul>

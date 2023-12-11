@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -94,13 +95,22 @@ export class ReaderListFollowedSites extends Component {
 
 		return (
 			<>
-				<h2>
-					{ translate( 'Subscriptions' ) }{ ' ' }
-					<a href="/read/subscriptions">{ translate( 'Manage' ) }</a>
-				</h2>
+				{ ! isMobile() ? (
+					<h2>
+						{ translate( 'Subscriptions' ) }{ ' ' }
+						<a href="/read/subscriptions">{ translate( 'Manage' ) }</a>
+					</h2>
+				) : null }
 				{ sites.length >= searchThreshold && (
 					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />
 				) }
+
+				{ isMobile() ? (
+					<h2>
+						<a href="/read/subscriptions">{ translate( 'Manage your subscriptions' ) }</a>
+					</h2>
+				) : null }
+
 				<ul>
 					{ this.renderSites( sitesToShow ) }
 					{ ! allSitesLoaded && (
