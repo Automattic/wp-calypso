@@ -1,4 +1,4 @@
-@import "~calypso/blocks/import/style/base";
+@import "@automattic/onboarding/styles/mixins";
 
 .import__onboarding-page.step-container {
 	@include onboarding-block-margin;

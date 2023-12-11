@@ -8,6 +8,11 @@
 @import "@automattic/components/src/styles/typography";
 
 /**
+ * Importers styles
+ */
+@import "~calypso/blocks/import/style/base";
+
+/**
  * General onboarding styling
  */
 body {
