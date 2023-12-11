@@ -4,24 +4,28 @@
 
 .site-picker {
 	.step-container__header {
-		margin-top: 74px;
-	}
-	.step-container__content {
+		margin: 44px 24px 24px;
+
+		@include break-small {
+			margin-top: 74px;
+		}
+
 		.formatted-header {
 			.formatted-header__title {
 				font-size: rem(32px);
+				text-align: left;
 				@include break-small {
 					font-size: rem(44px);
+					text-align: center;
 				}
 			}
-			margin: 32px 24px 0 24px;
-			@include break-small {
-				margin-top: 72px;
-			}
 		}
+	}
 
+	.step-container__content {
 		.site-picker__container {
 			width: 100%;
+			max-height: calc(100vh - 240px);
 			display: flex;
 			justify-content: center;
 			@include break-small {
@@ -89,14 +93,6 @@
 }
 
 .start-writing.site-picker {
-	.formatted-header {
-		.formatted-header__title {
-			font-size: rem(32px);
-			@include break-small {
-				font-size: rem(36px);
-			}
-		}
-	}
 	.signup-header {
 		.wordpress-logo {
 			position: absolute;

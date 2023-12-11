@@ -37,6 +37,7 @@ import {
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 	JETPACK_STARTER_UPGRADE_MAP,
 	is100Year,
+	isJetpackAISlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -1203,6 +1204,15 @@ class ManagePurchase extends Component<
 
 		if ( ! purchase ) {
 			return '';
+		}
+
+		if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
+			return translate( '%(productName)s (%(quantity)d requests per month)', {
+				args: {
+					productName: getDisplayName( purchase ),
+					quantity: purchase.purchaseRenewalQuantity,
+				},
+			} );
 		}
 
 		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {

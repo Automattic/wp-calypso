@@ -26,6 +26,7 @@ interface Props {
 	) => void | null;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
+	quantity?: number;
 }
 
 export default function LicenseMultiProductCard( props: Props ) {
@@ -37,6 +38,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 		onSelectProduct,
 		suggestedProduct,
 		hideDiscount,
+		quantity,
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -159,6 +161,15 @@ export default function LicenseMultiProductCard( props: Props ) {
 									shouldShuffleAnswers={ false }
 								/>
 
+								<div className="license-product-card__pricing is-compact">
+									<ProductPriceWithDiscount
+										product={ product }
+										hideDiscount={ hideDiscount }
+										quantity={ quantity }
+										compact
+									/>
+								</div>
+
 								<div className="license-product-card__description">{ productDescription }</div>
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
@@ -173,16 +184,13 @@ export default function LicenseMultiProductCard( props: Props ) {
 								{ isSelected && <Gridicon icon="checkmark" /> }
 							</div>
 						</div>
-
-						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
-						</div>
 					</div>
 				</div>
 			</div>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ product }
+					quantity={ quantity }
 					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }

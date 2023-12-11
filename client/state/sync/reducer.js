@@ -108,7 +108,12 @@ export const isSyncingInProgress = ( state = false, action ) => {
 		case IS_SYNCING_IN_PROGRESS:
 			return action.isSyncingInProgress || false;
 		case SET_STATUS:
-			return ( action.status && action.status !== SiteSyncStatus.COMPLETED ) || false;
+			return (
+				( action.status &&
+					action.status !== SiteSyncStatus.COMPLETED &&
+					action.status !== SiteSyncStatus.ALLOW_RETRY ) ||
+				false
+			);
 		case REQUEST_STATUS_FAILURE:
 			return false;
 		default:
@@ -140,6 +145,9 @@ export const progress = withPersistence( ( state = 0, action ) => {
 					break;
 				case SiteSyncStatus.COMPLETED:
 					newStatus = Math.max( newStatus, SiteSyncStatusProgress.COMPLETED );
+					break;
+				case SiteSyncStatus.ALLOW_RETRY:
+					newStatus = Math.max( newStatus, SiteSyncStatusProgress.ALLOW_RETRY );
 					break;
 				case SiteSyncStatus.FAILED:
 					newStatus = SiteSyncStatusProgress.FAILED;

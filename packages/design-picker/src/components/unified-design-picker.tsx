@@ -6,8 +6,9 @@ import classnames from 'classnames';
 import photon from 'photon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SHOW_ALL_SLUG, DEFAULT_ASSEMBLER_DESIGN } from '../constants';
+import { SHOW_ALL_SLUG } from '../constants';
 import {
+	getAssemblerDesign,
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
@@ -254,7 +255,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						className={ classnames( 'design-picker__design-your-own-button', {
 							'design-picker__design-your-own-button-without-categories': ! hasCategories,
 						} ) }
-						onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }
+						onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
 					>
 						{ assemblerCtaData.title }
 					</Button>
@@ -269,7 +270,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 					return (
 						<DesignCard
-							key={ index }
+							key={ design.recipe?.slug ?? design.slug ?? index }
 							category={ categorization?.selection }
 							design={ design }
 							locale={ locale }
@@ -281,7 +282,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
-				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN ) } />
+				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
 			</div>
 		</div>
 	);

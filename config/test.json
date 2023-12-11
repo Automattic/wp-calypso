@@ -24,6 +24,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"akismet/checkout-quantity-dropdown": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
@@ -38,6 +39,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
+		"domains/glue-records": true,
 		"domains/transfer-to-any-user": true,
 		"cookie-banner": false,
 		"google-my-business": false,
