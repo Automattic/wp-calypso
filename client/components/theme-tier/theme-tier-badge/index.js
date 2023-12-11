@@ -29,7 +29,7 @@ export default function ThemeTierBadge( {
 		}
 
 		if ( isLockedStyleVariation ) {
-			return <ThemeTierStyleVariationBadge themeId={ themeId } />;
+			return <ThemeTierStyleVariationBadge />;
 		}
 
 		if ( DOT_ORG_THEME === themeType ) {
