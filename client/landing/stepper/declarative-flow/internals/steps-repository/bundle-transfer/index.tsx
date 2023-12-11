@@ -54,7 +54,13 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
-		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
+		let eventName = 'calypso_bundle_dashboard_snag_error';
+
+		if ( 'woo-on-plans' === softwareSet ) {
+			eventName = 'calypso_woocommerce_dashboard_snag_error';
+		}
+
+		recordTracksEvent( eventName, {
 			action: failureInfo.type,
 			site: site?.URL,
 			code: failureInfo.code,
@@ -69,7 +75,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 			blog_id: siteId,
 			properties: {
 				env: config( 'env_id' ),
-				type: 'calypso_woocommerce_dashboard_snag_error',
+				type: eventName,
 				action: failureInfo.type,
 				site: site?.URL,
 				code: failureInfo.code,

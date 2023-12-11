@@ -11,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 import {
 	AUTOMATED_ELIGIBILITY_STORE,
 	SITE_STORE,
@@ -46,6 +47,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	const { __ } = useI18n();
 	const site = useSite();
 	const siteId = site && site?.ID;
+	const pluginSlug = useSitePluginSlug();
 	const isAtomicSite = useSelect(
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
 		[ siteId ]
@@ -253,7 +255,13 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 						<StyledNextButton
 							disabled={ isTransferringBlocked || ! isDataReady }
 							onClick={ () => {
-								recordTracksEvent( 'calypso_woocommerce_dashboard_confirm_submit', {
+								let eventName = 'calypso_bundle_dashboard_confirm_submit';
+
+								if ( 'woo-on-plans' === pluginSlug ) {
+									eventName = 'calypso_woocommerce_dashboard_confirm_submit';
+								}
+
+								recordTracksEvent( eventName, {
 									site: wpcomDomain,
 									upgrade_required: siteUpgrading.required,
 								} );
