@@ -17,7 +17,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
-	// TODO: Consolidate this with the usage section in the Traffic page.
+	// TODO: Consolidate the query here with the usage section on the Traffic page.
 	const { data } = usePlanUsageQuery( siteId );
 	const currentUsage = data?.current_usage.views_count || 0;
 	const tierLimit = data?.views_limit || null;
