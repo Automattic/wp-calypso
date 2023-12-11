@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -304,30 +304,31 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
-			isJetpack,
-			isWhiteLogin,
-			isJetpackWooCommerceFlow,
+			action,
+			currentQuery,
+			fromSite,
+			isAnchorFmSignup,
 			isFromMigrationPlugin,
-			isP2Login,
-			wccomFrom,
+			isGravPoweredClient,
+			isGravPoweredLoginPage,
+			isJetpack,
+			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
+			isP2Login,
+			isPartnerSignup,
+			isSignupExistingAccount,
+			isSocialFirst,
+			isWhiteLogin,
+			isWoo,
+			isWooCoreProfilerFlow,
 			linkingSocialService,
+			locale,
 			oauth2Client,
 			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
-			fromSite,
-			isAnchorFmSignup,
-			isPartnerSignup,
-			isWoo,
-			action,
-			currentQuery,
-			isGravPoweredClient,
-			isGravPoweredLoginPage,
-			isWooCoreProfilerFlow,
-			isSignupExistingAccount,
-			isSocialFirst,
+			wccomFrom,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -335,7 +336,10 @@ class Login extends Component {
 		let postHeader = null;
 
 		if ( isSocialFirst ) {
-			headerText = translate( 'Log into WordPress.com' );
+			headerText =
+				englishLocales.includes( locale ) || i18n.hasTranslation( 'Log into WordPress.com' )
+					? translate( 'Log into WordPress.com' )
+					: translate( 'Log in to WordPress.com' );
 		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
