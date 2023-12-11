@@ -131,7 +131,7 @@ const PressablePromoBanner = ( {
 	return (
 		<Banner>
 			<LogoContainer>
-				<PressableLogo height={ 10 } width={ 69 } />
+				<PressableLogo height={ 40 } width={ 40 } />
 			</LogoContainer>
 			<TextContainer>
 				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
