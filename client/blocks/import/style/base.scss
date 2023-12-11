@@ -21,6 +21,21 @@
 		}
 	}
 
+	.onboarding-title {
+		@include onboarding-import-heading-text;
+		margin-bottom: rem(12px);
+	}
+
+	.onboarding-subtitle {
+		font-size: 1rem;
+		line-height: 1.5;
+		color: var(--studio-gray-60);
+
+		@include break-small {
+			width: 600px;
+		}
+	}
+
 	.import__header {
 		@include onboarding-heading-padding;
 		display: flex;
@@ -50,21 +65,6 @@
 		strong {
 			font-weight: 500;
 			color: var(--studio-gray-100);
-		}
-
-		.onboarding-title {
-			@include onboarding-import-heading-text;
-			margin-bottom: rem(12px);
-		}
-
-		.onboarding-subtitle {
-			font-size: 1rem;
-			line-height: 1.5;
-			color: var(--studio-gray-60);
-
-			@include break-small {
-				width: 600px;
-			}
 		}
 
 		.formatted-header__subtitle {
