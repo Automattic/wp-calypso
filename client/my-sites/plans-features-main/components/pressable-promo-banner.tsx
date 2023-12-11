@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
 
 const Banner = styled.div`
+	background-color: var( --studio-white );
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
