@@ -40,15 +40,17 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 		if ( typeof tier.price === 'string' ) {
 			price = tier.price;
 		}
+
 		// View should be a number but the current mock data
 		// includes a string for the final tier.
 		// Special case that scenario for now.
 		let views = '';
-		if ( typeof tier.views === 'number' ) {
-			views = formatNumber( tier.views );
-		} else if ( typeof tier.views === 'string' ) {
+		if ( tier.views === null ) {
 			views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
+		} else {
+			views = formatNumber( tier.views );
 		}
+
 		// Return the new step with string values.
 		return {
 			lhValue: views,
