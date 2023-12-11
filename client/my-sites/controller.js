@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import {
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_FREE,
+	PLAN_JETPACK_FREE,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
@@ -85,6 +89,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -293,12 +298,16 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	// Check the possibly expired plan to ensure it's a trial plan.
+	const maybeExpiredPlanSlug = selectedSite?.plan?.product_slug;
 	// Use getSitePlanSlug() as it ignores expired plans.
 	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
-	// If we had a trial plan, and the user doesn't have an active paid plan, redirect to fullpage trial expired page.
+	// If we had a trial plan, and the user doesn't have a paid plan (active or expired),
+	// redirect to full-page trial expired page.
 	if (
 		wasTrialSite( state, selectedSite.ID ) &&
+		PLAN_ECOMMERCE_TRIAL_MONTHLY === maybeExpiredPlanSlug &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
 		const permittedPathPrefixes = [
