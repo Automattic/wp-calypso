@@ -984,6 +984,43 @@ export const useCommandsArrayWpcom = ( {
 			icon: pluginsIcon,
 		},
 		{
+			name: 'changePlan',
+			label: __( 'Change plan on a site' ),
+			searchLabel: [
+				_x( 'upgrade plan', 'Keyword for the Change plan on your site command' ),
+				_x( 'change plan', 'Keyword for the Change plan on your site command' ),
+				_x( 'add plan', 'Keyword for the Change plan on your site command' ),
+			].join( ' ' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/plans/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
+			},
+			icon: creditCardIcon,
+		},
+		{
+			name: 'manageMyPlan',
+			label: __( 'Manage plan on a site' ),
+			searchLabel: [
+				_x( 'upgrade plan', 'Keyword for the Manage plan on a site command' ),
+				_x( 'manage plan', 'Keyword for the Manage plan on a site command' ),
+				_x( 'plan features', 'Keyword for the Manage plan on a site command' ),
+			].join( ' ' ),
+			callback: setStateCallback( 'manageMyPlan', __( 'Select site to manage your plan' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/plans/my-plan/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
+			},
+			icon: creditCardIcon,
+		},
+		{
 			name: 'manageUsers',
 			label: __( 'Manage users' ),
 			searchLabel: [
@@ -1007,25 +1044,6 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: peopleIcon,
-		},
-		{
-			name: 'changePlan',
-			label: __( 'Change plan on your site' ),
-			searchLabel: [
-				_x( 'upgrade plan', 'Keyword for the Change plan on your site command' ),
-				_x( 'change plan', 'Keyword for the Change plan on your site command' ),
-				_x( 'add plan', 'Keyword for the Change plan on your site command' ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/plans/${ site.slug }` );
-				},
-				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
-			},
-			icon: creditCardIcon,
 		},
 		{
 			name: 'addNewUser',
