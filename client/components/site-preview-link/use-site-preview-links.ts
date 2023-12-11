@@ -13,23 +13,23 @@ export type PreviewLinksResponse = PreviewLink[];
 
 interface UseSitePreviewLinksOptions {
 	siteId: SiteId;
-	onSuccess?: ( previewLinks: PreviewLink[] | undefined ) => void;
 	isEnabled: boolean;
 }
 
 export const SITE_PREVIEW_LINKS_QUERY_KEY = 'site-preview-links';
 
 export function useSitePreviewLinks( options: UseSitePreviewLinksOptions ) {
-	const { siteId, onSuccess, isEnabled = false } = options;
+	const { siteId, isEnabled = false } = options;
 	return useQuery< PreviewLinksResponse, unknown, PreviewLink[] >( {
 		queryKey: [ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ],
-		queryFn: () =>
-			wpcom.req.get( {
+		queryFn: async () => {
+			const response = await wpcom.req.get( {
 				path: `/sites/${ siteId }/preview-links`,
 				apiNamespace: 'wpcom/v2',
-			} ),
+			} );
+			return response;
+		},
 		enabled: isEnabled && !! siteId,
 		meta: { persist: false },
-		onSuccess,
 	} );
 }
