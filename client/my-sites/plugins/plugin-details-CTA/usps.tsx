@@ -10,7 +10,7 @@ import {
 import { Gridicon } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
@@ -148,20 +148,24 @@ export const PlanUSPS: React.FC< Props > = ( {
 	switch ( requiredPlan ) {
 		case PLAN_PERSONAL:
 		case PLAN_PERSONAL_MONTHLY:
-			planText = isEnglishLocale
-				? translate( 'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):', {
-						args: {
-							personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() as string,
-							cost: planDisplayCost as string,
-							periodicity: periodicityLabel,
-						},
-				  } )
-				: translate( 'Included in the Personal plan (%(cost)s/%(periodicity)s):', {
-						args: {
-							cost: planDisplayCost as string,
-							periodicity: periodicityLabel,
-						},
-				  } );
+			planText =
+				isEnglishLocale ||
+				i18n.hasTranslation(
+					'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):'
+				)
+					? translate( 'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):', {
+							args: {
+								personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() as string,
+								cost: planDisplayCost as string,
+								periodicity: periodicityLabel,
+							},
+					  } )
+					: translate( 'Included in the Personal plan (%(cost)s/%(periodicity)s):', {
+							args: {
+								cost: planDisplayCost as string,
+								periodicity: periodicityLabel,
+							},
+					  } );
 			break;
 		case PLAN_BUSINESS:
 		case PLAN_BUSINESS_MONTHLY:
