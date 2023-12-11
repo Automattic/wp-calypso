@@ -12,7 +12,7 @@ const Banner = styled.div`
 	min-height: 80px;
 	border-radius: 4px;
 	border: 1px solid #dcdcde;
-	margin: 24px 20px 24px 20px;
+	margin: 60px 20px 60px 20px;
 	padding: 24px;
 	align-items: center;
 	gap: 32px;
