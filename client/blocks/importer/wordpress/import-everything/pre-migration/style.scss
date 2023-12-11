@@ -8,11 +8,6 @@
 	padding: 0 rem(20px);
 	max-width: 100%;
 
-	> div {
-		text-align: center;
-		margin: rem(20px) auto rem(40px) auto !important;
-	}
-
 	.pre-migration__form-container {
 		display: flex;
 		flex-wrap: wrap;
@@ -101,6 +96,9 @@
 	}
 
 	.pre-migration__credentials {
+		text-align: center;
+		margin-bottom: rem(40px);
+
 		button {
 			vertical-align: baseline;
 			font-size: 1rem;
