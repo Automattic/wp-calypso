@@ -433,7 +433,13 @@ class RegisterDomainStep extends Component {
 	}
 
 	render() {
-		const { isSignupStep, showAlreadyOwnADomain, isDomainAndPlanPackageFlow } = this.props;
+		const {
+			isSignupStep,
+			showAlreadyOwnADomain,
+			isDomainAndPlanPackageFlow,
+			replaceDomainFailedMessage,
+			dismissReplaceDomainFailed,
+		} = this.props;
 
 		const {
 			availabilityError,
@@ -499,6 +505,14 @@ class RegisterDomainStep extends Component {
 							text={ suggestionMessage }
 							status={ `is-${ suggestionSeverity }` }
 							showDismiss={ false }
+						/>
+					) }
+					{ replaceDomainFailedMessage && (
+						<Notice
+							status="is-error"
+							text={ replaceDomainFailedMessage }
+							showDismiss={ true }
+							onDismissClick={ dismissReplaceDomainFailed }
 						/>
 					) }
 					{ this.renderFilterContent() }
