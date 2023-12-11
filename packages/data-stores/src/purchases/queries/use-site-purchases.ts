@@ -13,6 +13,14 @@ interface Props< T > {
 	select?: ( data: PurchasesIndex ) => T;
 }
 
+/**
+ * Fetches all purchases for a given site, transformed into a map of purchaseId => Purchase
+ * - The generic T allows to define generic select functions that can be used to select a subset of the data
+ * @param {Object} props - The properties for the function
+ * @param props.siteId Site ID
+ * @param props.select Optional selector function to subscribe to a subset of the data
+ * @returns Query result
+ */
 function useSitePurchases< T >( { siteId, select }: Props< T > ) {
 	const queryKeys = useQueryKeysFactory();
 
