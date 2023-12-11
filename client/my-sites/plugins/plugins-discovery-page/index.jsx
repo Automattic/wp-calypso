@@ -1,3 +1,5 @@
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ProductsList } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -98,17 +100,6 @@ const PluginsDiscoveryPage = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const translate = useTranslate();
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-
-	// TODO: Do we need this temp function?
-	const onCloseModal = () => {
-		setShowPurchaseModal( false );
-	};
-
-	const businessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle' ),
-		[]
-	);
-
 	const isEligibleForOneClickCheckout = useIsEligibleForOneClickCheckout();
 
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
@@ -118,17 +109,30 @@ const PluginsDiscoveryPage = ( props ) => {
 		}
 	);
 
+	const businessPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_BUSINESS ),
+		[]
+	);
+
 	// TODO: Account for loading state
 	if ( isEligibleForOneClickCheckout.isLoading || isLoadingExperiment ) {
 		// render loader
 	}
 
-	const canDisplayPurchaseModal =
-		isEligibleForOneClickCheckout.result && experimentAssignment?.variationName === 'treatment';
+	const showOneClickUpsellExperiment = experimentAssignment?.variationName === 'treatment';
+	const handleUpsellNudgeClick = ( e ) => {
+		e.preventDefault();
+
+		if ( isEligibleForOneClickCheckout ) {
+			setShowPurchaseModal( true );
+		}
+
+		page( `/checkout/${ PLAN_BUSINESS }/${ props.siteSlug }` );
+	};
 
 	return (
 		<>
-			{ canDisplayPurchaseModal && (
+			{ showOneClickUpsellExperiment && (
 				<CalypsoShoppingCartProvider>
 					<StripeHookProvider
 						fetchStripeConfiguration={ getStripeConfiguration }
@@ -137,7 +141,9 @@ const PluginsDiscoveryPage = ( props ) => {
 						{ showPurchaseModal && (
 							<PurchaseModal
 								productToAdd={ businessPlanProduct }
-								onClose={ onCloseModal }
+								onClose={ () => {
+									setShowPurchaseModal( false );
+								} }
 								siteSlug={ props.siteSlug }
 							/>
 						) }
@@ -147,7 +153,8 @@ const PluginsDiscoveryPage = ( props ) => {
 			<UpgradeNudge
 				{ ...props }
 				paidPlugins={ true }
-				setShowPurchaseModal={ setShowPurchaseModal }
+				showOneClickUpsellExperiment={ showOneClickUpsellExperiment }
+				handleUpsellNudgeClick={ handleUpsellNudgeClick }
 			/>
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
