@@ -42,7 +42,7 @@ $left-margin: 36px;
 	width: 100%;
 	flex-direction: column;
 	gap: 12px;
-	@include break-small {
+	@include break-medium {
 		gap: 36px;
 		flex-direction: row;
 	}
@@ -54,7 +54,7 @@ $left-margin: 36px;
 	flex-direction: column;
 	max-width: 100%;
 	padding: 16px;
-	@include break-small {
+	@include break-medium {
 		padding: 45px 36px;
 		.has-feature-list & {
 			padding: 45px 0 45px 36px;
@@ -64,7 +64,10 @@ $left-margin: 36px;
 
 .purchase-modal__features {
 	background: var(--gray-gray-0, #f6f7f7);
-	padding: 45px 64px 45px 36px;
+	padding: 45px 36px;
+	@include break-medium {
+		padding: 45px 64px 45px 36px;
+	}
 	&.is-placeholder {
 		flex: 1;
 	}
@@ -174,14 +177,14 @@ $left-margin: 36px;
 	flex-wrap: wrap;
 
 	padding-inline-end: 18px;
-	@include break-small {
+	@include break-medium {
 		padding-inline-end: 0;
 	}
 
 	> dt {
 		width: 60%;
 		margin-inline-start: 18px;
-		@include break-small {
+		@include break-medium {
 			margin-inline-start: $left-margin;
 		}
 	}
@@ -217,7 +220,7 @@ $left-margin: 36px;
 	font-size: 1rem;
 
 	margin: 24px 18px 0 18px;
-	@include break-small {
+	@include break-medium {
 		margin: 24px 0 0 36px;
 	}
 
