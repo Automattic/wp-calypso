@@ -1,5 +1,7 @@
+import { useCallback } from '@wordpress/element';
 import useSitePurchases from '../queries/use-site-purchases';
-import { Purchase } from '../types';
+import type { PurchasesIndex } from '../queries/use-site-purchases';
+import type { Purchase } from '../types';
 
 interface Props {
 	purchaseId?: number | null;
@@ -7,11 +9,17 @@ interface Props {
 }
 
 const useSitePurchaseById = ( { siteId, purchaseId }: Props ): Purchase | undefined => {
-	const sitePurchases = useSitePurchases( { siteId } );
+	const sitePurchase = useSitePurchases( {
+		siteId,
+		select: useCallback(
+			( data: PurchasesIndex ) => {
+				return typeof purchaseId === 'number' ? data[ purchaseId ] : undefined;
+			},
+			[ purchaseId ]
+		),
+	} );
 
-	return sitePurchases?.data && typeof purchaseId === 'number'
-		? sitePurchases?.data[ purchaseId ]
-		: undefined;
+	return sitePurchase.data;
 };
 
 export default useSitePurchaseById;
