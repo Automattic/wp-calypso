@@ -20,7 +20,7 @@ declare global {
  */
 export const loadRedditTracker = async (): Promise< void > => {
 	// Are we allowed to track (user consent, e2e, etc.)?
-	if ( ! mayWeInitTracker( 'reddit' ) ) {
+	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
 		throw new Error( 'Tracking is not allowed' );
 	}
 
@@ -39,7 +39,7 @@ export const loadRedditTracker = async (): Promise< void > => {
  * @returns Promise<void>
  */
 export const redditTrackerPageView = async (): Promise< void > => {
-	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
+	if ( ! mayWeInitTracker( 'reddit' ) ) {
 		return;
 	}
 	await loadRedditTracker();
