@@ -1,4 +1,6 @@
 import { Gridicon, JetpackLogo } from '@automattic/components';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import {
 	alignJustify as acitvityLogIcon,
 	arrowDown as arrowDownIcon,
@@ -228,6 +230,8 @@ export const useCommandsArrayWpcom = ( {
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+
 	const commands = [
 		{
 			name: 'viewMySites',
@@ -242,6 +246,14 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'getHelp',
+			label: __( 'Get help' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				setShowHelpCenter( true );
+			},
 		},
 		{
 			name: 'clearCache',
