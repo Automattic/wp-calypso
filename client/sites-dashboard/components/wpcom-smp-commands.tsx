@@ -1,7 +1,6 @@
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import {
 	alignJustify as acitvityLogIcon,
-	arrowDown as arrowDownIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -22,7 +21,6 @@ import {
 	postComments as postCommentsIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
-	upload as uploadIcon,
 	wordpress as wordpressIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -407,7 +405,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/start/import?ref=command-palette` );
 			},
-			icon: arrowDownIcon,
+			icon: downloadIcon,
 		},
 		{
 			name: 'addNewSite',
@@ -1089,7 +1087,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/import/${ site.slug }` );
 				},
 			},
-			icon: uploadIcon,
+			icon: downloadIcon,
 		},
 		{
 			name: 'manageSettingsGeneral',
