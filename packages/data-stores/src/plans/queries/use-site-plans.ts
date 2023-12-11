@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPISitePlan, SitePlan } from '../types';
 
-export interface SitePlansIndex {
+interface SitePlansIndex {
 	[ planSlug: string ]: SitePlan;
 }
 interface PricedAPISitePlansIndex {
@@ -19,14 +19,13 @@ interface Props {
  * Plans from `/sites/[siteId]/plans` endpoint, transformed into a map of planSlug => SitePlan
  * - Plans from `/sites/[siteId]/plans`, unlike `/plans`, are returned indexed by product_id, and do not include that in the plan's payload.
  * - UI works with product/plan slugs everywhere, so returned index is transformed to be keyed by product_slug
- * - The generic T allows to define generic select functions that can be used to select a subset of the data
  */
-function useSitePlans( { siteId }: Props ) {
+function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 	const queryKeys = useQueryKeysFactory();
 
 	return useQuery( {
 		queryKey: queryKeys.sitePlans( siteId ),
-		queryFn: async (): Promise< SitePlansIndex > => {
+		queryFn: async () => {
 			const data: PricedAPISitePlansIndex = await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
 				apiVersion: '1.3',
