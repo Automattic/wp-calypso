@@ -79,13 +79,8 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_WORDPRESS,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
-			STEPS.BUSINESS_INFO,
-			STEPS.STORE_ADDRESS,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.BUNDLE_TRANSFER,
-			STEPS.BUNDLE_INSTALL_PLUGINS,
-			STEPS.BUNDLE_CONFIRM,
 			STEPS.DIFM_STARTING_POINT,
 		];
 	},
@@ -366,32 +361,6 @@ const siteSetupFlow: Flow = {
 					}
 				}
 
-				case 'storeAddress':
-					return navigate( 'businessInfo' );
-
-				case 'businessInfo': {
-					if ( isAtomic ) {
-						return navigate( 'bundleInstallPlugins' );
-					}
-					return navigate( 'bundleConfirm' );
-				}
-
-				case 'bundleConfirm': {
-					const [ checkoutUrl ] = params;
-
-					if ( checkoutUrl ) {
-						window.location.replace( checkoutUrl.toString() );
-					}
-
-					return navigate( 'bundleTransfer' );
-				}
-
-				case 'bundleTransfer':
-					return navigate( 'processing' );
-
-				case 'bundleInstallPlugins':
-					return navigate( 'processing' );
-
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
@@ -472,15 +441,6 @@ const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
-
-				case 'storeAddress':
-					return navigate( 'options' );
-
-				case 'businessInfo':
-					return navigate( 'storeAddress' );
-
-				case 'bundleConfirm':
-					return navigate( 'businessInfo' );
 
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
