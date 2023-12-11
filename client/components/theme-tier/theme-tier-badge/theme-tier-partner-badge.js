@@ -9,12 +9,14 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useThemeTier from '../use-theme-tier';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
+import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
 import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 
-export default function ThemeTierPartnerBadge( { themeId } ) {
+export default function ThemeTierPartnerBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const { themeId } = useThemeTierBadgeContext();
 	const isPartnerThemePurchased = useSelector( ( state ) =>
 		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
 	);
@@ -88,7 +90,7 @@ export default function ThemeTierPartnerBadge( { themeId } ) {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker themeId={ themeId } />
+			<ThemeTierBadgeTracker />
 			<PremiumBadge
 				className="theme-tier-badge__content"
 				focusOnShow={ false }

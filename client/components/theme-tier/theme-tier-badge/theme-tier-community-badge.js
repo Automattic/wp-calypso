@@ -5,12 +5,14 @@ import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
+import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
 import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 
-export default function ThemeTierCommunityBadge( { themeId } ) {
+export default function ThemeTierCommunityBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const { themeId } = useThemeTierBadgeContext();
 	const legacyCanUseTheme = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
@@ -43,7 +45,7 @@ export default function ThemeTierCommunityBadge( { themeId } ) {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker themeId={ themeId } />
+			<ThemeTierBadgeTracker />
 			<PremiumBadge
 				className="theme-tier-badge__content"
 				focusOnShow={ false }
