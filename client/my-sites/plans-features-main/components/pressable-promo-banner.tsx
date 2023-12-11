@@ -85,18 +85,24 @@ const Description = styled.p`
 `;
 
 const CtaButton = styled( Button )`
-	font-size: 14px;
 	font-weight: 500;
 	line-height: 20px;
+	border-radius: 4px;
+	padding: 10px 12px;
+	border: unset;
 	text-align: center;
 	width: 100%;
 	height: 40px;
 	padding: 10px, 24px, 10px, 24px;
-	border: 0;
 	border-radius: 4px;
-	background-color: var( --studio-black );
-	color: var( --studio-white );
-	box-shadow: 0px 1px 2px 0px #0000000d;
+	background-color: var( --studio-gray-80 );
+	color: var( --studio-gray-0 );
+
+	&:focus {
+		box-shadow:
+			0 0 0 2px var( --studio-white ),
+			0 0 0 4px var( --studio-gray-80 );
+	}
 
 	&:hover {
 		opacity: 0.85;
