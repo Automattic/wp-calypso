@@ -12,7 +12,6 @@ describe( 'checkFeatureGating', () => {
 	const mockState = {
 		sites: {
 			features: {
-				// mock site id 123
 				[ siteId ]: {
 					data: {
 						active: [ FEATURE_STATS_PAID ],
