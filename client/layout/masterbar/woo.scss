@@ -508,10 +508,6 @@
 		display: none;
 	}
 
-	.signup-form .auth-form__separator {
-		width: 100%;
-	}
-
 	.auth-form__separator + .auth-form__social.card {
 		clip-path: unset; // unset the rule applied in ./client/blocks/authentication/form-divider/style.scss
 		border-top: 1px solid #e6e6e6;
@@ -597,11 +593,14 @@
 			&::after {
 				left: 58%;
 			}
+		}
+	}
 
-			.auth-form__separator-text {
-				background: #fff;
-				padding: 0 27px;
-			}
+	.signup-form,
+	.login {
+		.auth-form__separator-text {
+			background: #fff;
+			padding: 0 27px;
 		}
 	}
 
