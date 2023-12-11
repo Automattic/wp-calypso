@@ -12,7 +12,7 @@ export default function getSiteAssemblerUrl( {
 	}
 
 	const params = new URLSearchParams( { ref: 'calypshowcase' } );
-	if ( isEnabled( 'themes/assembler-first' ) ) {
+	if ( ! isLoggedIn && isEnabled( 'themes/assembler-first' ) ) {
 		return `/setup/${ ASSEMBLER_FIRST_FLOW }?${ params }`;
 	}
 
