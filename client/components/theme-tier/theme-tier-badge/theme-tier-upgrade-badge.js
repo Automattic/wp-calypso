@@ -17,7 +17,9 @@ export default function ThemeTierUpgradeBadge() {
 	const { themeId } = useThemeTierBadgeContext();
 	const { themeTier } = useThemeTier( siteId, themeId );
 
-	const planName = getPlan( THEME_TIER_TO_PLAN[ themeTier.slug ] )?.getTitle();
+	const mappedPlan = themeTier?.slug;
+	const planName = getPlan( THEME_TIER_TO_PLAN[ mappedPlan ] )?.getTitle();
+	const planPathSlug = getPlan( THEME_TIER_TO_PLAN[ mappedPlan ] )?.getPathSlug();
 
 	const tooltipContent = (
 		<>
@@ -36,7 +38,7 @@ export default function ThemeTierUpgradeBadge() {
 						textOnly: true,
 					} ),
 					{
-						Link: <ThemeTierBadgeCheckoutLink plan="business" />,
+						Link: <ThemeTierBadgeCheckoutLink plan={ planPathSlug } />,
 					}
 				) }
 			</div>
