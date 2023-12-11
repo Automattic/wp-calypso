@@ -3,11 +3,11 @@ import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	// TODO: Return the tier upgrade path according to the current plan tier.
 	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/tier-upgrade-slider&from=${ from }-stats-tier-upgrade-notice&productType=commercial`;
 
 	return purchasePath;
@@ -17,12 +17,12 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
-	// TODO: Use usePlanUsageQuery hook to get the current plan usage and display the notice accordingly.
-	const currentUsage = 9;
-	const tierLimit = 10;
+	const { data } = usePlanUsageQuery( siteId );
+	const currentUsage = data?.current_usage.views_count || 0;
+	const tierLimit = data?.views_limit || null;
 
-	const showNotice = currentUsage / tierLimit >= 0.9;
-	const isOverLimit = currentUsage / tierLimit >= 1;
+	const showNotice = tierLimit ? currentUsage / tierLimit >= 0.9 : false;
+	const isOverLimit = tierLimit ? currentUsage / tierLimit >= 1 : false;
 
 	const bannerTitle = isOverLimit
 		? translate( 'You have reached your monthly views limit' )
