@@ -96,7 +96,6 @@ function StatsCommercialUpgradeSlider( {
 				},
 			}
 		) as string;
-		lastTier.views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
 	}
 
 	const steps = getStepsForTiers( tiers );
