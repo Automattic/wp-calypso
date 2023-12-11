@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { FC, useEffect, useState } from 'react';
 import { ThemeUpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { getUnlock } from './utils';
@@ -26,7 +27,7 @@ export const LivePreviewUpgradeModal: FC< { themeId: string; upgradePlan: () => 
 	);
 
 	/**
-	 * This adds a listener to the `SaveButton`.
+	 * This overrides the `SaveButton` behavior by adding a listener and changing the copy.
 	 * Our objective is to open a custom modal ('ThemeUpgradeModal') instead of proceeding with the default behavior.
 	 * For more context, see the discussion on adding an official customization method: https://github.com/WordPress/gutenberg/pull/56807.
 	 */
@@ -35,12 +36,19 @@ export const LivePreviewUpgradeModal: FC< { themeId: string; upgradePlan: () => 
 			e.stopPropagation();
 			setIsThemeUpgradeModalOpen( true );
 		};
+		const overrideSaveButton = ( selector: string ) => {
+			const button = document.querySelector( selector );
+			if ( button ) {
+				button.textContent = __( 'Upgrade now', 'wpcom-live-preview' );
+				button.addEventListener( 'click', handler );
+			}
+		};
 		if ( canvasMode === 'view' ) {
-			document.querySelector( SAVE_HUB_SAVE_BUTTON_SELECTOR )?.addEventListener( 'click', handler );
+			overrideSaveButton( SAVE_HUB_SAVE_BUTTON_SELECTOR );
 			return;
 		}
 		if ( canvasMode === 'edit' ) {
-			document.querySelector( HEADER_SAVE_BUTTON_SELECTOR )?.addEventListener( 'click', handler );
+			overrideSaveButton( HEADER_SAVE_BUTTON_SELECTOR );
 			return;
 		}
 		return () => {
