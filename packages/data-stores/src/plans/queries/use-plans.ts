@@ -16,7 +16,7 @@ function usePlans(): UseQueryResult< PlansIndex > {
 
 	return useQuery( {
 		queryKey: queryKeys.plans(),
-		queryFn: async () => {
+		queryFn: async (): Promise< PlansIndex > => {
 			const data: PricedAPIPlan[] = await wpcomRequest( {
 				path: `/plans`,
 				apiVersion: '1.5',
