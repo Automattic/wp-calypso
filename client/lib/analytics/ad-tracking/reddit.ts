@@ -12,7 +12,7 @@ declare global {
 		rdt: {
 			callQueue: object[];
 			sendEvent: ( ...args: [ string, string?, object? ] ) => void;
-		};
+		} & ( ( ...args: [ string, string?, object? ] ) => void );
 	}
 }
 
