@@ -1,10 +1,13 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import { useDispatch } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
@@ -50,26 +53,39 @@ interface useCommandPaletteOptions {
 	setSelectedCommandName: ( name: string ) => void;
 }
 
-const siteToAction =
-	( onClickSite: OnClickSiteFunction ) =>
-	( site: SiteExcerptData ): Command => {
-		const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
+const useSiteToAction = () => {
+	const dispatch = useDispatch();
+	const siteToAction = useCallback(
+		( onClickSite: OnClickSiteFunction, selectedCommand: Command ) =>
+			( site: SiteExcerptData ): Command => {
+				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
 
-		return {
-			name: `${ site.ID }`,
-			label: `${ siteName }`,
-			subLabel: `${ site.URL }`,
-			searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
-			callback: ( { close }: { close: CloseFunction } ) => {
-				onClickSite( { site, close } );
+				return {
+					name: `${ site.ID }`,
+					label: `${ siteName }`,
+					subLabel: `${ site.URL }`,
+					searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
+					callback: ( { close }: { close: CloseFunction } ) => {
+						dispatch(
+							recordTracksEvent( 'calypso_command_palette_site_clicked', {
+								site_id: site.ID,
+								command_name: selectedCommand.name,
+							} )
+						);
+						onClickSite( { site, close } );
+					},
+					image: (
+						<FillDefaultIconWhite>
+							<SiteIcon site={ site } size={ 32 } />
+						</FillDefaultIconWhite>
+					),
+				};
 			},
-			image: (
-				<FillDefaultIconWhite>
-					<SiteIcon site={ site } size={ 32 } />
-				</FillDefaultIconWhite>
-			),
-		};
-	};
+		[ dispatch ]
+	);
+
+	return siteToAction;
+};
 
 export const useCommandPalette = ( {
 	selectedCommandName,
@@ -79,6 +95,8 @@ export const useCommandPalette = ( {
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
+	const dispatch = useDispatch();
+	const siteToAction = useSiteToAction();
 
 	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { sitesSorting } = useSitesSorting();
@@ -118,7 +136,18 @@ export const useCommandPalette = ( {
 		} );
 
 	// Create a variable to hold the final result
-	const finalSortedCommands = [ ...sortedCommands ];
+	const finalSortedCommands = sortedCommands.map( ( command ) => ( {
+		...command,
+		callback: ( params: CommandCallBackParams ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_command_palette_command_clicked', {
+					command_name: command.name,
+					has_nested_command: !! command.siteFunctions,
+				} )
+			);
+			command.callback( params );
+		},
+	} ) );
 
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
 	if ( viewMySitesCommand && currentPath !== '/sites' ) {
@@ -139,7 +168,7 @@ export const useCommandPalette = ( {
 				];
 			}
 		}
-		sitesToPick = filteredSites.map( siteToAction( onClick ) );
+		sitesToPick = filteredSites.map( siteToAction( onClick, selectedCommand ) );
 	}
 
 	return { commands: sitesToPick ?? finalSortedCommands };
