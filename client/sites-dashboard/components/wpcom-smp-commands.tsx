@@ -26,6 +26,7 @@ import {
 	tool as toolIcon,
 	upload as uploadIcon,
 	wordpress as wordpressIcon,
+	help as helpIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
@@ -254,6 +255,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				setShowHelpCenter( true );
 			},
+			icon: helpIcon,
 		},
 		{
 			name: 'clearCache',
