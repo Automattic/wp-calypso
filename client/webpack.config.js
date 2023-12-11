@@ -59,9 +59,8 @@ const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 // a minute in the current build, an updated cache saves 2 minutes in many future builds.
 // Note that in local builds, IS_DEFAULT_BRANCH is not set, in which case we should also write to the cache.
 const shouldUseReadonlyCache = ! (
-	process.env.IS_DEFAULT_BRANCH === 'true' ||
-	process.env.GENERATE_CACHE_IMAGE === 'true' ||
-	process.env.IS_DEFAULT_BRANCH === undefined
+	// process.env.IS_DEFAULT_BRANCH === 'true' || // TODO: Disabled until we can fix the cache image generation
+	( process.env.GENERATE_CACHE_IMAGE === 'true' || process.env.IS_DEFAULT_BRANCH === undefined )
 );
 
 const shouldProfile = process.env.PROFILE === 'true';
@@ -208,7 +207,11 @@ const webpackConfig = {
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
-		minimizer: Minify(),
+		minimizer: Minify( {
+			terserOptions: {
+				cache: true,
+			},
+		} ),
 	},
 	module: {
 		strictExportPresence: true,
@@ -420,7 +423,6 @@ const webpackConfig = {
 					cacheDirectory: path.resolve( cachePath, 'webpack' ),
 					profile: true,
 					version: [
-						// No need to add BROWSERSLIST, as it is already part of the cacheDirectory
 						shouldBuildChunksMap,
 						shouldMinify,
 						process.env.ENTRY_LIMIT,
