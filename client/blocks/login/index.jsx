@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

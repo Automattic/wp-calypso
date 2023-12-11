@@ -1,6 +1,6 @@
+import Page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';

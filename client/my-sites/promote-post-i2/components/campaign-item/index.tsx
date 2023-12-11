@@ -1,10 +1,10 @@
+import page from '@automattic/calypso-router';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import { Moment } from 'moment';
-import page from 'page';
 import { Fragment, useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/types';

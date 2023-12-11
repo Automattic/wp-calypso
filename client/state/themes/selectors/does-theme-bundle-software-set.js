@@ -10,6 +10,6 @@ import 'calypso/state/themes/init';
  */
 export function doesThemeBundleSoftwareSet( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
-	const theme_software_set = theme?.taxonomies?.theme_software_set;
-	return theme_software_set && theme_software_set.length > 0;
+	const themeSoftwareSetTaxonomy = theme?.taxonomies?.theme_software_set;
+	return themeSoftwareSetTaxonomy && themeSoftwareSetTaxonomy.length > 0;
 }

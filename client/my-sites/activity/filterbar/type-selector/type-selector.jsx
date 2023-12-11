@@ -1,5 +1,6 @@
 import { Button, Card, Popover, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { createRef, Component, Fragment } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -7,6 +8,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import MobileSelectPortal from '../mobile-select-portal';
 
 export class TypeSelector extends Component {
+	static defaultProps = {
+		variant: 'default',
+	};
+
 	state = {
 		userHasSelected: false,
 		selectedCheckboxes: [],
@@ -66,24 +71,24 @@ export class TypeSelector extends Component {
 				selectedCheckboxes: updatedSelection,
 			} );
 		} else {
-			let updatedSelection = [ ...selectedCheckboxes ];
+			let updatedSelection = new Set( selectedCheckboxes );
 
 			// If it's a parent type, we simply use the parentTypeKey
 			if ( isParentType ) {
-				updatedSelection = [ parentTypeKey ];
+				updatedSelection = new Set( [ parentTypeKey ] );
 			} else {
 				// Find the type object and add its children if it has any
 				const currentType = this.props.types.find( ( typeItem ) => typeItem.key === type );
 				if ( currentType && currentType.children ) {
-					currentType.children.forEach( ( child ) => updatedSelection.push( child.key ) );
+					currentType.children.forEach( ( child ) => updatedSelection.add( child.key ) );
 				}
 				// Always add the type itself to the selection
-				updatedSelection.push( type );
+				updatedSelection.add( type );
 			}
 
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: updatedSelection,
+				selectedCheckboxes: [ ...updatedSelection ],
 			} );
 		}
 	};
@@ -104,8 +109,7 @@ export class TypeSelector extends Component {
 	 *
 	 * It searches the provided `key` through all `types` and its potential children recursively.
 	 * If the key is found, the corresponding name is returned.
-	 * If the key is not found, it returns the key itself as a fallback.k.
-	 *
+	 * If the key is not found, it returns the key itself as a fallback.
 	 * @param {string} key - Activity Type key
 	 * @returns {string} - The resolved display name or the key itself if not found.
 	 */
@@ -273,7 +277,11 @@ export class TypeSelector extends Component {
 	hasSelectedCheckboxes = () => this.getSelectedCheckboxes().length > 0;
 
 	renderTypeSelectorButton = () => {
-		const { isNested, isVisible, showAppliedFiltersCount, title, translate } = this.props;
+		const { isNested, isVisible, showAppliedFiltersCount, title, translate, variant } = this.props;
+
+		const isCompact = variant === 'compact';
+		const isMobile = ! isWithinBreakpoint( '>660px' );
+
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = this.hasSelectedCheckboxes();
 
@@ -282,12 +290,13 @@ export class TypeSelector extends Component {
 			'is-active': isVisible && ! hasSelectedCheckboxes,
 		} );
 
-		// If the type selector is nested, we don't want to display the title
-		// unless there are no selected checkboxes.
-		const shouldDisplayTitle = ! isNested || ( isNested && ! hasSelectedCheckboxes );
+		// Hide the title when is nested with no selected checkboxes, or not nested, has selected checkboxes, and is mobile.
+		const shouldDisplayTitle =
+			( ! isNested || ( isNested && ! hasSelectedCheckboxes ) ) &&
+			! ( isMobile && hasSelectedCheckboxes );
 
-		// If the type selector is not nested and has selected checkboxes, we want to display a delimiter.
-		const shouldDisplayDelimiter = ! isNested && hasSelectedCheckboxes;
+		// Hide the delimiter when is not nested and has selected checkboxes, or is mobile.
+		const shouldDisplayDelimiter = ! isNested && hasSelectedCheckboxes && ! isMobile;
 
 		const activitiesSelectedText = translate( '%(selectedCount)s selected', {
 			args: {
@@ -309,9 +318,12 @@ export class TypeSelector extends Component {
 				onClick={ this.props.onButtonClick }
 				ref={ this.typeButton }
 			>
-				{ shouldDisplayTitle && title }
-				{ shouldDisplayDelimiter && <span>: </span> }
-				{ hasSelectedCheckboxes && selectedCheckboxesContent }
+				<span className="button-label">
+					{ shouldDisplayTitle && title }
+					{ shouldDisplayDelimiter && ': ' }
+					{ hasSelectedCheckboxes && selectedCheckboxesContent }
+				</span>
+				{ isCompact && <Icon icon={ chevronDown } size="16" fill="currentColor" /> }
 			</Button>
 		);
 	};

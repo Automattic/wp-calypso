@@ -7,7 +7,7 @@ import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-c
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { MigrationReady } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-ready';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
-import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
+import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -30,7 +30,7 @@ interface PreMigrationProps {
 	isMigrateFromWp: boolean;
 	isTargetSitePlanCompatible: boolean;
 	startImport: ( props?: StartImportTrackingProps ) => void;
-	onFreeTrialClick: () => void;
+	navigateToVerifyEmailStep: () => void;
 	onContentOnlyClick: () => void;
 	onNotAuthorizedClick: () => void;
 }
@@ -46,7 +46,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isMigrateFromWp,
 		isTrial,
 		startImport,
-		onFreeTrialClick,
+		navigateToVerifyEmailStep,
 		onContentOnlyClick,
 		onNotAuthorizedClick,
 	} = props;
@@ -65,6 +65,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		sourceSiteId,
 		fetchMigrationEnabledStatus,
 		isFetchingData: isFetchingMigrationData,
+		isInitFetchingDone,
 		siteCanMigrate,
 	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
 
@@ -106,8 +107,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		useSiteCredentialsInfo( sourceSiteId );
 
 	const onUpgradeAndMigrateClick = () => {
-		setContinueImport( true );
 		fetchMigrationEnabledStatus();
+		setContinueImport( true );
+		startImport( migrationTrackingProps );
 	};
 
 	/**
@@ -134,9 +136,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 */
 	useEffect( () => {
 		if ( queryTargetSitePlanStatus === 'fetching' && ! isRequestingTargetSitePlans ) {
+			fetchMigrationEnabledStatus();
 			setQueryTargetSitePlanStatus( 'fetched' );
 			setContinueImport( true );
-			fetchMigrationEnabledStatus();
 		}
 	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
 
@@ -157,7 +159,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	 * Decide the render state based on the current component state
 	 */
 	useEffect( () => {
-		if ( requiresPluginUpdate ) {
+		if (
+			! isInitFetchingDone &&
+			( isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched' )
+		) {
+			setRenderState( 'loading' );
+		} else if ( requiresPluginUpdate ) {
 			setRenderState( 'update-plugin' );
 		} else if ( ! isTargetSitePlanCompatible ) {
 			setRenderState( 'upgrade-plan' );
@@ -174,6 +181,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		sourceSiteId,
 		showCredentials,
 		requiresPluginUpdate,
+		isInitFetchingDone,
 		isFetchingCredentials,
 		isFetchingMigrationData,
 		isTargetSitePlanCompatible,
@@ -217,16 +225,16 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return (
 				<>
 					{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
-					<PreMigrationUpgradePlan
-						sourceSiteUrl={ sourceSiteUrl }
-						targetSite={ targetSite }
-						startImport={ onUpgradeAndMigrateClick }
-						onFreeTrialClick={ onFreeTrialClick }
-						onContentOnlyClick={ onContentOnlyClick }
+					<UpgradePlan
+						site={ targetSite }
+						navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
-						migrationTrackingProps={ migrationTrackingProps }
+						ctaText={ translate( 'Upgrade and migrate' ) }
+						onCtaClick={ onUpgradeAndMigrateClick }
+						onContentOnlyClick={ onContentOnlyClick }
+						trackingEventsProps={ migrationTrackingProps }
 					/>
 				</>
 			);

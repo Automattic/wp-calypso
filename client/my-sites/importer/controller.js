@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import SectionImport from 'calypso/my-sites/importer/section-import';
 

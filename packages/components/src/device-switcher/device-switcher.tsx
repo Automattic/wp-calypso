@@ -4,7 +4,7 @@ import { search } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
-import FixedViewport, { useViewportScale } from './fixed-viewport';
+import FixedViewport from './fixed-viewport';
 import DeviceSwitcherToolbar from './toolbar';
 import useZoomOut from './use-zoom-out';
 import type { Device } from './types';
@@ -47,9 +47,6 @@ const DeviceSwitcher = ( {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
 	const timerRef = useRef< null | ReturnType< typeof setTimeout > >( null );
-	const viewportElement = frameRef?.current?.parentElement;
-	const viewportWidth = viewportElement?.clientWidth as number;
-	const viewportScale = useViewportScale( device, viewportWidth );
 	const { zoomOutScale, zoomOutStyles, handleZoomOutScaleChange } =
 		useZoomOut( onZoomOutScaleChange );
 
@@ -76,7 +73,7 @@ const DeviceSwitcher = ( {
 		}, ANIMATION_DURATION );
 
 		return clearAnimationEndTimer;
-	}, [ width, height, viewportScale, isFixedViewport ] );
+	}, [ width, height, isFixedViewport ] );
 
 	let frame = (
 		<div className="device-switcher__frame" ref={ frameRef }>
@@ -90,7 +87,7 @@ const DeviceSwitcher = ( {
 
 	if ( isFixedViewport ) {
 		frame = (
-			<FixedViewport device={ device } frameRef={ frameRef }>
+			<FixedViewport device={ device } viewportWidth={ width ?? 0 }>
 				{ frame }
 			</FixedViewport>
 		);

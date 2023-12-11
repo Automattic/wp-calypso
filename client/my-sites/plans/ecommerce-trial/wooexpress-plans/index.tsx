@@ -6,11 +6,11 @@ import {
 	getPlans,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
@@ -51,14 +51,13 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 
 	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
 	const mediumPlanMonthly = getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ];
-	const mediumPlanPrices = useSelector( ( state ) => ( {
-		annualPlanMonthlyPrice: getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0,
-		monthlyPlanPrice: getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0,
-	} ) );
-
-	const percentageSavings = Math.floor(
-		( 1 - mediumPlanPrices.annualPlanMonthlyPrice / mediumPlanPrices.monthlyPlanPrice ) * 100
+	const annualPlanMonthlyPrice = useSelector(
+		( state ) => getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0
 	);
+	const monthlyPlanPrice = useSelector(
+		( state ) => getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0
+	);
+	const percentageSavings = Math.floor( ( 1 - annualPlanMonthlyPrice / monthlyPlanPrice ) * 100 );
 
 	const planIntervals = useMemo( () => {
 		return [
@@ -141,7 +140,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
 					<div className="enterprise-ecommerce__subtitle">
 						{ translate(
-							'Learn how Woo can support the unique needs of high-volume stores throught dedicated support, discounts, and more.'
+							'Learn how Woo can support the unique needs of high-volume stores through dedicated support, discounts, and more.'
 						) }
 					</div>
 					<div className="enterprise-ecommerce__cta">

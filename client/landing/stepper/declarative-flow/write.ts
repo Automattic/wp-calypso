@@ -1,4 +1,3 @@
-import { LaunchpadNavigator } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, WRITE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -42,7 +41,6 @@ const write: Flow = {
 		setStepProgress( flowProgress );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -82,7 +80,6 @@ const write: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'write',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

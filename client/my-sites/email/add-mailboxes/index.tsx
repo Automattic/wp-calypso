@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { MouseEvent, PropsWithChildren, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';

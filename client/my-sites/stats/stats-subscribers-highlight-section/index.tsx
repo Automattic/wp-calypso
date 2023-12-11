@@ -3,8 +3,8 @@ import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import { useSelector } from 'calypso/state';
-import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import './style.scss';
+import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 
 function useSubscriberHighlights(
 	siteId: number | null,

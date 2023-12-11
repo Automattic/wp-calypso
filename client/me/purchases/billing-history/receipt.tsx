@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';

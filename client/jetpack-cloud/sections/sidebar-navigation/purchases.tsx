@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { chevronLeft, formatListBulletsRTL, payment, receipt, store, tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import NewSidebar from 'calypso/jetpack-cloud/components/sidebar';
@@ -13,7 +14,6 @@ import {
 	JETPACK_MANAGE_PAYMENT_METHODS_LINK,
 	JETPACK_MANAGE_PRICES_LINK,
 } from './lib/constants';
-import { redirectPage } from './lib/sidebar';
 import { MenuItemProps } from './types';
 
 const PurchasesSidebar = ( { path }: { path: string } ) => {
@@ -85,7 +85,7 @@ const PurchasesSidebar = ( { path }: { path: string } ) => {
 						recordTracksEvent( 'calypso_jetpack_sidebar_new_purchases_back_button_click' )
 					);
 
-					redirectPage( JETPACK_MANAGE_DASHBOARD_LINK );
+					page( JETPACK_MANAGE_DASHBOARD_LINK );
 				},
 			} }
 		/>

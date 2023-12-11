@@ -42,6 +42,8 @@ export const JETPACK_SUPPORT = 'https://jetpack.com/support/';
 export const JETPACK_SUPPORT_CONNECTION_ISSUES =
 	'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/';
 export const JETPACK_CONTACT_SUPPORT = 'https://jetpack.com/contact-support/?rel=support';
+export const JETPACK_CONTACT_SUPPORT_NO_ASSISTANT =
+	'https://jetpack.com/contact-support/?rel=support&assistant=false';
 export const JETPACK_PRICING_PAGE = 'https://jetpack.com/pricing/';
 export const JETPACK_SERVICE_VAULTPRESS = 'https://help.vaultpress.com/install-vaultpress/';
 export const JETPACK_SERVICE_AKISMET = 'https://akismet.com/support/';

@@ -34,7 +34,7 @@ const useUserSettingsMutation = () => {
 			return settings;
 		},
 		onMutate: async ( data ) => {
-			await queryClient.cancelQueries( emailSettingsCacheKey );
+			await queryClient.cancelQueries( { queryKey: emailSettingsCacheKey } );
 			const previousSettings =
 				queryClient.getQueryData< SubscriptionManagerUserSettings >( emailSettingsCacheKey );
 
@@ -56,7 +56,9 @@ const useUserSettingsMutation = () => {
 		},
 		onSettled: () => {
 			// pass in a more minimal key, everything to the right will be invalidated
-			queryClient.invalidateQueries( [ 'read', 'email-settings' ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'email-settings' ],
+			} );
 		},
 	} );
 };

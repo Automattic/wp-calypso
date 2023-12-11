@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import { reloadAndRetry } from '../../element-helper';
+import { plansPageUrl } from '../pages';
 
 const selectors = {
 	searchInput: `.search-component__input`,
@@ -81,15 +82,15 @@ export class DomainSearchComponent {
 
 		await target.click();
 
-		await this.page.getByRole( 'button' ).filter( { hasText: 'Continue' } ).waitFor();
-
 		// If multiple domain selections are enabled, the Continue button appears
 		// on the right hand sidebar.
 		// See: 21483-explat-experiment
 		// Note: this page object does not currently support multiple domain selection.
 		await Promise.race( [
-			this.clickButton( 'Continue' ),
-			this.page.waitForURL( /start\/plans/ ),
+			this.page
+				.getByRole( 'button', { name: 'Continue', exact: true } )
+				.click( { timeout: 30 * 1000 } ),
+			this.page.waitForURL( plansPageUrl ),
 		] );
 
 		return selectedDomain;

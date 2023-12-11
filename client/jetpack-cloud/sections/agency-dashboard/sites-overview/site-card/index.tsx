@@ -16,6 +16,7 @@ import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
 import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
+import { SiteHostInfo } from '../site-status-content/site-host-info';
 import type { SiteData, SiteColumns, AllowedTypes } from '../types';
 
 import './style.scss';
@@ -169,6 +170,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 								);
 							}
 						} ) }
+					<SiteHostInfo site={ rows.site.value } />
 					<div className="site-card__expanded-content-list site-card__content-list-no-error">
 						<SitePhpVersion phpVersion={ rows.site.value.php_version_num } />
 					</div>

@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { trim, debounce, random, reject, includes } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component, Fragment } from 'react';

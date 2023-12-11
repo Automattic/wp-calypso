@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { get, isEmpty } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

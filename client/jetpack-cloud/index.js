@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import Debug from 'debug';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { landForPrimarySite, landForSelectedSite } from './sections/landing/controller';

@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

@@ -1,10 +1,11 @@
+import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -26,6 +27,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -611,10 +613,53 @@ const Settings = ( {
 		return null;
 	};
 
+	const renderPendingRegistrationAtRegistryNotice = () => {
+		return (
+			<Notice
+				text={ translate(
+					'We forwarded the domain registration request to Registro.br (.com.br registry). It may take up to 3 days for the request to be evaluated and accepted.'
+				) }
+				icon="info"
+				showDismiss={ false }
+				status="is-warning"
+			>
+				{ /*
+					TO DO: Enable the link when the support page is ready
+					<NoticeAction href={ domain.pendingRegistrationAtRegistryUrl }>
+						{ translate( 'More info' ) }
+					</NoticeAction>
+				*/ }
+			</Notice>
+		);
+	};
+
+	const renderDomainGlueRecordsSection = () => {
+		// We can only create glue records for domains registered with us through KS_RAM
+		if (
+			! config.isEnabled( 'domains/glue-records' ) ||
+			! domain ||
+			domain.type !== domainTypes.REGISTERED ||
+			domain.registrar !== 'KS_RAM' ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return <GlueRecordsCard domain={ domain } />;
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
 			return undefined;
+		}
+		if ( domain.pendingRegistrationAtRegistry ) {
+			return (
+				<>
+					{ renderPendingRegistrationAtRegistryNotice() }
+					{ renderDetailsSection() }
+				</>
+			);
 		}
 		return (
 			<>
@@ -629,6 +674,7 @@ const Settings = ( {
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
+				{ renderDomainGlueRecordsSection() }
 			</>
 		);
 	};

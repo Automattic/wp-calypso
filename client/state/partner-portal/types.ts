@@ -57,6 +57,7 @@ export interface APIPartnerKey {
 	oauth2_token: string;
 	disabled_on: string | null;
 	has_licenses: boolean;
+	latest_invoice: APIInvoice | null;
 }
 
 export interface APIPartnerAddress {
@@ -81,13 +82,22 @@ export interface APIPartner {
 	tos: string;
 	partner_type: string;
 	has_valid_payment_method: boolean;
+	can_issue_licenses: boolean;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
 export interface APILicense {
+	license_id: number;
 	license_key: string;
+	quantity: number | null;
+	parent_jetpack_license_id: string | null;
 	issued_at: string;
 	revoked_at: string | null;
+}
+
+export interface APIProductFamilyProductBundlePrice {
+	quantity: number;
+	amount: string;
 }
 
 export interface APIProductFamilyProduct {
@@ -95,9 +105,10 @@ export interface APIProductFamilyProduct {
 	slug: string;
 	product_id: number;
 	currency: string;
-	amount: number;
+	amount: string;
 	price_interval: string;
 	family_slug: string;
+	supported_bundles: APIProductFamilyProductBundlePrice[];
 }
 
 export interface APIProductFamily {
@@ -122,6 +133,8 @@ export interface APIInvoice {
 	id: string;
 	number: string;
 	due_date: string | null;
+	created: string | null;
+	effective_at: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -140,6 +153,8 @@ export interface Invoice {
 	id: string;
 	number: string;
 	dueDate: string | null;
+	created: string | null;
+	effectiveAt: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -176,6 +191,7 @@ export interface PartnerKey {
 	oAuth2Token: string;
 	disabledOn: string | null;
 	hasLicenses: boolean;
+	latestInvoice: Invoice | null;
 }
 
 export interface PartnerAddress {
@@ -200,6 +216,7 @@ export interface Partner {
 	tos: string;
 	partner_type: string;
 	has_valid_payment_method: boolean;
+	can_issue_licenses: boolean;
 }
 
 export interface PartnerStore {
@@ -225,6 +242,7 @@ export interface License {
 	attachedAt: string | null;
 	revokedAt: string | null;
 	ownerType: string | null;
+	quantity: number | null;
 }
 
 export interface LicenseCounts {

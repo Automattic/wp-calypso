@@ -1,11 +1,11 @@
 import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { addBreadcrumb, initSentry } from '@automattic/calypso-sentry';
 import { getUrlParts } from '@automattic/calypso-url';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
-import page from 'page';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
@@ -53,7 +53,6 @@ const debug = debugFactory( 'calypso' );
 
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 	page( '*', ( context, next ) => {
-		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.canonicalPath );
 		const path = parsed.pathname + parsed.search || null;
 		context.prevPath = path === context.path ? false : path;
@@ -431,7 +430,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 		renderLayout( reduxStore, queryClient );
 	}
 
-	page.start( { decodeURLComponents: false } );
+	page.start();
 };
 
 export const bootApp = async ( appName, registerRoutes ) => {

@@ -1,9 +1,9 @@
 import { Button, Card, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -89,7 +89,7 @@ class Security2faKey extends Component {
 
 		return (
 			<div className="security-2fa-key">
-				<SectionHeader label={ translate( 'Security Key' ) }>
+				<SectionHeader label={ translate( 'Security key' ) }>
 					{ ! addingKey && isBrowserSupported && (
 						<Button
 							compact
@@ -115,23 +115,22 @@ class Security2faKey extends Component {
 						{ isBrowserSupported && (
 							<p>
 								<>
-									{ this.props.translate( 'Use a second factor security key to sign in.' ) }{ ' ' }
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/security/two-step-authentication/security-key-authentication'
-										) }
-										target="_blank"
-										rel="noopener noreferrer"
+									{ this.props.translate(
+										'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser.'
+									) }{ ' ' }
+									<InlineSupportLink
+										showIcon={ false }
+										supportContext="two-step-authentication-security-key"
 									>
 										{ translate( 'Learn more' ) }
-									</a>
+									</InlineSupportLink>
 								</>
 							</p>
 						) }
 						{ ! isBrowserSupported && (
 							<p>
 								{ this.props.translate(
-									"Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browsers like Chrome or Firefox."
+									"Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox."
 								) }
 							</p>
 						) }

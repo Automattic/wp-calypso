@@ -67,7 +67,7 @@ const Option = styled.li< OptionProps >`
 const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
-	margin: 16px 0;
+	margin: ${ hasCheckoutVersion( '2' ) ? '6px 0' : '16px 0' };
 	> ${ Option } {
 		border-radius: 3px;
 	}
@@ -90,14 +90,16 @@ const OptionList = styled.ul`
 `;
 
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
+	id,
 	isDisabled,
 	onChangeItemVariant,
 	selectedItem,
 	variants,
+	toggle,
+	isOpen,
 } ) => {
 	const translate = useTranslate();
 
-	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
 	// Multi-year domain products must be compared by volume because they have the same product id.
@@ -118,9 +120,9 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const handleChange = useCallback(
 		( uuid: string, productSlug: string, productId: number, volume?: number ) => {
 			onChangeItemVariant( uuid, productSlug, productId, volume );
-			setOpen( false );
+			toggle( null );
 		},
-		[ onChangeItemVariant ]
+		[ onChangeItemVariant, toggle ]
 	);
 
 	const selectNextVariant = useCallback( () => {
@@ -137,9 +139,9 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 
 	// reset highlight when dropdown is closed
 	const toggleDropDown = useCallback( () => {
-		setOpen( ! open );
+		toggle( id );
 		setHighlightedVariantIndex( selectedVariantIndex );
-	}, [ open, selectedVariantIndex ] );
+	}, [ id, selectedVariantIndex, toggle ] );
 
 	// arrow keys require onKeyDown for some browsers
 	const handleKeyDown: React.KeyboardEventHandler = useCallback(
@@ -194,12 +196,12 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	}
 
 	return (
-		<Dropdown aria-expanded={ open } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
+		<Dropdown aria-expanded={ isOpen } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
 			<CurrentOption
 				aria-label={ translate( 'Pick a product term' ) }
 				disabled={ isDisabled }
-				onClick={ () => setOpen( ! open ) }
-				open={ open }
+				onClick={ () => toggle( id ) }
+				open={ isOpen }
 				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
@@ -207,9 +209,9 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
-				<Gridicon icon={ open ? 'chevron-up' : 'chevron-down' } />
+				<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 			</CurrentOption>
-			{ open && (
+			{ isOpen && (
 				<ItemVariantOptionList
 					variants={ variants }
 					highlightedVariantIndex={ highlightedVariantIndex }

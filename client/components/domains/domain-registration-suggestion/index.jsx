@@ -66,6 +66,7 @@ class DomainRegistrationSuggestion extends Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
+		renewCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
 		isReskinned: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
@@ -139,9 +140,14 @@ class DomainRegistrationSuggestion extends Component {
 			premiumDomain,
 			isCartPendingUpdateDomain,
 			flowName,
+			temporaryCart,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
+
+		const isAdded =
+			suggestionSelected ||
+			hasDomainInCart( cart, domain ) ||
+			( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) );
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 
@@ -404,6 +410,7 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			suggestion: { domain_name: domain },
 			productCost,
+			renewCost,
 			productSaleCost,
 			premiumDomain,
 			showStrikedOutPrice,
@@ -423,6 +430,7 @@ class DomainRegistrationSuggestion extends Component {
 				premiumDomain={ premiumDomain }
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
+				renewPrice={ renewCost }
 				salePrice={ productSaleCost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
@@ -450,9 +458,11 @@ const mapStateToProps = ( state, props ) => {
 
 	let productCost;
 	let productSaleCost;
+	let renewCost;
 
 	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
+		renewCost = props.premiumDomain?.renew_cost;
 		if ( props.premiumDomain?.sale_cost ) {
 			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
 				stripZeros,
@@ -460,6 +470,8 @@ const mapStateToProps = ( state, props ) => {
 		}
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		// Renew cost is the same as the product cost for non-premium domains
+		renewCost = productCost;
 		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
@@ -472,6 +484,7 @@ const mapStateToProps = ( state, props ) => {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
+		renewCost,
 		productSaleCost,
 		flowName,
 		currentUser: getCurrentUser( state ),

@@ -1,6 +1,8 @@
 import { translate } from 'i18n-calypso';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.svg';
 import { emailManagement } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouLayout from '../redesign-v2/ThankYouLayout';
 import DomainOnlyFooter from '../redesign-v2/sections/footer/DomainOnlyFooter';
 import DefaultThankYouHeader from '../redesign-v2/sections/header/Default';
@@ -13,9 +15,13 @@ interface DomainOnlyThankYouContainerProps {
 }
 
 const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { domains } ) => {
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const backText = translate( 'Back to Home' );
 	const firstDomain = domains[ 0 ];
+
 	return (
-		<ThankYouLayout>
+		<ThankYouLayout masterbarProps={ { siteId, siteSlug, backText } }>
 			<DefaultThankYouHeader>{ translate( 'Your own corner of the web' ) }</DefaultThankYouHeader>
 			<DefaultSubHeader>
 				{ translate(
@@ -27,7 +33,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 				) }
 			</DefaultSubHeader>
 			{ domains.map( ( domain ) => (
-				<ProductDomain shareSite key={ domain } domain={ domain } />
+				<ProductDomain shareSite key={ domain } domain={ domain } siteSlug={ siteSlug } />
 			) ) }
 			<DomainOnlyFooter />
 			<DefaultUpsell
@@ -37,7 +43,7 @@ const DomainOnlyThankYou: React.FC< DomainOnlyThankYouContainerProps > = ( { dom
 				) }
 				meshColor="blue"
 				icon={ emailImage }
-				href={ emailManagement( firstDomain, firstDomain ) }
+				href={ emailManagement( siteSlug ?? firstDomain, firstDomain ) }
 				buttonText={ translate( 'Add email' ) }
 				trackEvent="calypso_domain_only_thank_you_professional_email_click"
 			/>

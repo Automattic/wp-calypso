@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { CompactCard } from '@automattic/components';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

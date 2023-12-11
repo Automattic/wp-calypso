@@ -7,10 +7,10 @@ import {
 	isJetpackProduct,
 	getPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

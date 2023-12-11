@@ -1,5 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button, Gridicon, WordPressLogo } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useContext } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -9,6 +8,7 @@ import SiteBackupStaging from '../site-backup-staging';
 import SiteSelectCheckbox from '../site-select-checkbox';
 import SiteSetFavorite from '../site-set-favorite';
 import { RowMetaData, SiteData } from '../types';
+import { SiteHostInfo } from './site-host-info';
 
 type Props = {
 	rows: SiteData;
@@ -33,13 +33,8 @@ export default function SiteNameColumn( {
 
 	const { link, isExternalLink, tooltip } = metadata;
 
-	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
-		'jetpack/pro-dashboard-wpcom-atomic-hosting'
-	);
-
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
-	const isWPCOMAtomicSite = rows.site.value.is_atomic;
 
 	// Site issues is the sum of scan threats and plugin updates
 	let siteIssuesCount = rows.scan.threats + rows.plugin.updates;
@@ -72,15 +67,6 @@ export default function SiteNameColumn( {
 		);
 	}
 
-	const WPCOMHostedSiteBadgeColumn = isWPCOMAtomicSiteCreationEnabled && (
-		<div className="fixed-host-column">
-			<WordPressLogo
-				className={ classNames( 'wordpress-logo', { 'is-visible': isWPCOMAtomicSite } ) }
-				size={ 18 }
-			/>
-		</div>
-	);
-
 	const handleSiteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_site_link_click' ) );
 	};
@@ -111,14 +97,13 @@ export default function SiteNameColumn( {
 					target={ isExternalLink ? '_blank' : undefined }
 					onClick={ handleSiteClick }
 				>
-					{ WPCOMHostedSiteBadgeColumn }
+					<SiteHostInfo isLargeScreen site={ rows.site.value } />
 					{ siteUrl }
 					<SiteBackupStaging siteId={ siteId } />
 				</Button>
 			) : (
 				<>
 					<span className="sites-overview__row-text">
-						{ WPCOMHostedSiteBadgeColumn }
 						{ siteUrl } <SiteBackupStaging siteId={ siteId } />
 					</span>
 				</>

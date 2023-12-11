@@ -12,30 +12,30 @@ export function getDomainTypeText(
 		switch ( domain.type ) {
 			case domainTypes.MAPPED:
 				if ( context === domainInfoContext.PAGE_TITLE ) {
-					return __( 'Connected Domain', __i18n_text_domain__ );
+					return __( 'Connected domain', __i18n_text_domain__ );
 				}
 
 				return __( 'Registered with an external provider', __i18n_text_domain__ );
 
 			case domainTypes.REGISTERED:
 				if ( domain?.isPremium ) {
-					return __( 'Premium Domain', __i18n_text_domain__ );
+					return __( 'Premium domain', __i18n_text_domain__ );
 				}
 
 				// Registered domains don't show any type text in the domain row component
 				if ( context === domainInfoContext.DOMAIN_ROW ) {
 					return null;
 				}
-				return __( 'Registered Domain', __i18n_text_domain__ );
+				return __( 'Registered domain', __i18n_text_domain__ );
 
 			case domainTypes.SITE_REDIRECT:
-				return __( 'Site Redirect', __i18n_text_domain__ );
+				return __( 'Site redirect', __i18n_text_domain__ );
 
 			case domainTypes.WPCOM:
-				return __( 'Default Site Domain', __i18n_text_domain__ );
+				return __( 'Default site domain', __i18n_text_domain__ );
 
 			case domainTypes.TRANSFER:
-				return __( 'Domain Transfer', __i18n_text_domain__ );
+				return __( 'Domain transfer', __i18n_text_domain__ );
 
 			default:
 				return '';

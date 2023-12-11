@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { Component } from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';

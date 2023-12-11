@@ -6,6 +6,7 @@ import {
 	is100YearPlan,
 	domainProductSlugs,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
@@ -13,7 +14,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
 import { isRTL } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import domainUpsellIllustration from 'calypso/assets/images/customer-home/illustration--feature-domain-upsell.svg';

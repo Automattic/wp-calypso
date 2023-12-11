@@ -409,7 +409,11 @@ $mobile-card-max-width: 440px;
 	}
 
 	@include plans-2023-break-small {
-		border-left: solid 1px #e0e0e0;
+		// The .plan-features-2023-grid__table-item is used to render the plan spotlight which doesn't
+		// use a table layout, but borders are only appropriate in table layout.
+		&:is(td) {
+			border-left: solid 1px #e0e0e0;
+		}
 	}
 }
 
@@ -630,7 +634,9 @@ body.is-section-signup.is-white-signup,
 		border-right: none;
 		background-color: transparent;
 
-		&:first-of-type {
+		// The extra `:is(td)` is needed so this rule is at the same specificity as the rule
+		// which originally added the border-left, which uses an `:is` selector.
+		&:first-of-type:is(td) {
 			border-left: none;
 		}
 

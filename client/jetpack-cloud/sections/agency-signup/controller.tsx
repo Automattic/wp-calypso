@@ -1,4 +1,4 @@
-import page, { type Callback } from 'page';
+import page, { type Callback } from '@automattic/calypso-router';
 import AgencySignUp from 'calypso/jetpack-cloud/sections/agency-signup/primary/agency-signup';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';

@@ -1,4 +1,4 @@
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '../controller', () => ( {
 	overview: jest.fn(),
 	insights: jest.fn(),
@@ -22,7 +22,7 @@ jest.mock( 'calypso/controller', () => ( {
 	render: jest.fn(),
 } ) );
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {

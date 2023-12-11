@@ -15,7 +15,7 @@ export const getCacheKey = ( siteId: number | null ) => [ 'sites', siteId, 'emai
  */
 export const useGetMailboxes = (
 	siteId: number,
-	queryOptions?: UseQueryOptions< any, unknown, UseGetMailboxesQueryData >
+	queryOptions?: Omit< UseQueryOptions< any, unknown, UseGetMailboxesQueryData >, 'queryKey' >
 ) => {
 	return useQuery< any, unknown, UseGetMailboxesQueryData >( {
 		queryKey: getCacheKey( siteId ),

@@ -12,6 +12,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { useExperiment } from 'calypso/lib/explat';
 import useCachedDomainContactDetails from 'calypso/my-sites/checkout/src/hooks/use-cached-domain-contact-details';
 import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 import {
@@ -21,6 +22,9 @@ import {
 	mockCachedContactDetailsEndpoint,
 } from './util';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+
+jest.mock( 'calypso/lib/explat' );
+( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
 
 const initialCart = getEmptyResponseCart();
 const { getCart, setCart } = mockCartEndpoint( initialCart, 'USD', 'US' );

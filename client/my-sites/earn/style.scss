@@ -2,6 +2,15 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
 
+#earn-navigation {
+	margin-bottom: 30px;
+}
+
+// Small override for card component headers
+.is-section-earn .section-header__label {
+	font-weight: 600;
+}
+
 .earn__launchpad {
 	padding: 4px 20px;
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
@@ -97,16 +106,35 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	}
 }
 
-// Override heading/SectionNav styles for Ads Dashboard
+h3.highlight-cards-heading,
+h3.ads__table-header-title {
+	font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+}
+
 .earn__ads-header {
 	margin: 20px 0;
 
 	h2.formatted-header__title {
-		margin: 0 0 20px;
+		margin: 0 0 12px;
+		font-size: $font-size-header-small;
 	}
-}
 
-h3.highlight-cards-heading,
-h3.ads__table-header-title {
-	font-size: 1.25rem;
+	.section-nav {
+		box-shadow: none;
+	}
+
+	.section-nav-tab {
+		&:hover:not(.is-selected) {
+			border-bottom-color: transparent;
+		}
+		&.is-selected {
+			border-bottom: none;
+		}
+		.section-nav-tab__link {
+			padding: 0 20px 10px 0;
+			&:hover {
+				background-color: transparent;
+			}
+		}
+	}
 }

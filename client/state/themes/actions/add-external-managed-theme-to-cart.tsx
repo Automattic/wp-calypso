@@ -3,8 +3,8 @@ import {
 	isWpComMonthlyPlan,
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import page from 'page';
 import 'calypso/state/themes/init';
 import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';

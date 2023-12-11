@@ -38,7 +38,7 @@ jobs:
 
       - name: Build packages
         if: steps.cache.outputs.cache-hit == 'true'
-        run: yarn workspaces foreach --parallel --verbose run postinstall # Needed only when not running yarn install.
+        run: yarn workspaces foreach --all --parallel --verbose run postinstall # Needed only when not running yarn install.
 
       - name: Build JavaScript
         run: yarn build

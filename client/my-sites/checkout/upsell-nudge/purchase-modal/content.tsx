@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import {
@@ -10,15 +11,23 @@ import {
 import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
 import { CheckIcon } from '../../src/components/check-icon';
 import { BEFORE_SUBMIT } from './constants';
-import { formatDate } from './util';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
+
+function formatDate( cardExpiry: string ): string {
+	const expiryDate = new Date( cardExpiry );
+	const formattedDate = expiryDate.toLocaleDateString( 'en-US', {
+		month: '2-digit',
+		year: '2-digit',
+	} );
+
+	return formattedDate;
+}
 
 function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
 	return (

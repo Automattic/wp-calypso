@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';

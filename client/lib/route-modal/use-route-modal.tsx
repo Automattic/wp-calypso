@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
-import page from 'page';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';

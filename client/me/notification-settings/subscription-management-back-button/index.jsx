@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import './style.scss';

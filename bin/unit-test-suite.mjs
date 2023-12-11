@@ -65,7 +65,7 @@ const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1' );
 
 const testWorkspaces = {
 	name: 'yarn',
-	args: 'workspaces foreach --verbose --parallel run storybook --ci --smoke-test',
+	args: 'workspaces foreach -A --verbose --parallel run storybook --ci --smoke-test',
 	testId: 'check_storybook',
 };
 

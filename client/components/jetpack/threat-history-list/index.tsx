@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo, useState } from 'react';
 import * as React from 'react';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';

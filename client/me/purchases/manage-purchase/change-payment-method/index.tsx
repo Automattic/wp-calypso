@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
-import page from 'page';
 import { Fragment, useEffect } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';

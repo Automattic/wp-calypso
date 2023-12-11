@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { ThankYouSectionProps, ThankYouThemeData } from 'calypso/components/thank-you/types';

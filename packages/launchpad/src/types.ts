@@ -50,12 +50,6 @@ export interface LaunchpadStatuses {
 	domain_upsell_deferred?: boolean;
 }
 
-export interface LaunchpadResponse {
-	site_intent: string;
-	launchpad_screen: boolean | string;
-	checklist_statuses: LaunchpadStatuses[];
-}
-
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
 	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;

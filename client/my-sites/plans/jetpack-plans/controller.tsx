@@ -14,7 +14,7 @@ import { StoragePricing } from './storage-pricing';
 import { StoragePricingHeader } from './storage-pricing-header';
 import JetpackUpsellPage from './upsell';
 import type { Duration, QueryArgs } from './types';
-import type { Callback } from 'page';
+import type { Callback } from '@automattic/calypso-router';
 
 function stringToDuration( duration?: string ): Duration | undefined {
 	if ( duration === undefined ) {

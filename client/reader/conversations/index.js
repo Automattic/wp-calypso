@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { conversations, conversationsA8c } from './controller';

@@ -10,7 +10,7 @@ import type {
 	JetpackLegacyPlanSlug,
 	JetpackPurchasableItemSlug,
 } from '@automattic/calypso-products';
-import type { Context } from 'page';
+import type { Context } from '@automattic/calypso-router';
 
 export function getComparePlansFromContext( context: Context ): JetpackPurchasableItemSlug[] {
 	const value = context.query[ COMPARE_PLANS_QUERY_PARAM ] ?? '';

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import {
 	useSyncGlobalStylesUserConfig,
@@ -5,7 +6,13 @@ import {
 	getVariationType,
 } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, isSiteAssemblerFlow, NavigatorScreen } from '@automattic/onboarding';
+import {
+	AI_ASSEMBLER_FLOW,
+	StepContainer,
+	isSiteAssemblerFlow,
+	isWithThemeAssemblerFlow,
+	NavigatorScreen,
+} from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalUseNavigator as useNavigator,
@@ -38,9 +45,9 @@ import {
 	useIsNewSite,
 } from './hooks';
 import withNotices, { NoticesProps } from './notices/notices';
+import PagePreviewList from './pages/page-preview-list';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import PatternPagePreviewList from './pattern-page-preview-list';
 import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
@@ -116,6 +123,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		hasFont: !! fontVariation,
 	} );
 
+	const { pages, pageSlugs, setPageSlugs } = usePatternPages( pageCategoryPatternsMap );
+
 	const currentScreen = useCurrentScreen( { isNewSite, shouldUnlockGlobalStyles } );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
@@ -133,16 +142,24 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
 				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
+				page_slugs: ( pageSlugs || [] ).join( ',' ),
 			} ),
-		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation, numOfSelectedGlobalStyles ]
+		[
+			flow,
+			stepName,
+			intent,
+			stylesheet,
+			colorVariation,
+			fontVariation,
+			numOfSelectedGlobalStyles,
+			pages,
+		]
 	);
 
 	const selectedVariations = useMemo(
 		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ colorVariation, fontVariation ]
 	);
-
-	const { pages, setPages } = usePatternPages();
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
@@ -356,12 +373,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
-						pages: pages
-							.map( ( category ) => pageCategoryPatternsMap[ category ] )
-							.map( ( patterns ) => ( {
-								title: patterns[ 0 ].title,
-								content: patterns[ 0 ].html,
-							} ) ),
+						pages: pages.map( ( page ) => ( {
+							title: page.title,
+							content: page.html,
+						} ) ),
 						globalStyles: syncedGlobalStylesUserConfig,
 						// Newly created sites can have the content replaced when necessary,
 						// e.g. when the homepage has a blog pattern, we replace the posts with the content from theme demo site.
@@ -406,7 +421,21 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	} );
 
 	const getBackLabel = () => {
+		// Exits the Assembler.
+		if ( isSiteAssemblerFlow( flow ) && ! currentScreen.previousScreen ) {
+			if ( flow === AI_ASSEMBLER_FLOW ) {
+				return translate( 'Back' );
+			}
+
+			return translate( 'Back to themes' );
+		}
+
 		if ( ! currentScreen.previousScreen ) {
+			// Go back to the Theme Showcase if people are from the with-theme-assembler flow.
+			if ( isWithThemeAssemblerFlow( flow ) ) {
+				return translate( 'Back to themes' );
+			}
+
 			return undefined;
 		}
 
@@ -415,6 +444,27 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				pageTitle: currentScreen.previousScreen.backLabel || currentScreen.previousScreen.title,
 			},
 		} );
+	};
+
+	const shouldHideBack = () => {
+		// Back button goes to the previous Assembler navigation screen.
+		if ( currentScreen.previousScreen ) {
+			return false;
+		}
+
+		// Back button goes to the Theme Showcase.
+		if ( ! isNewSite ) {
+			return false;
+		}
+
+		// Back button goes to the AI prompt step.
+		if ( flow === AI_ASSEMBLER_FLOW ) {
+			return false;
+		}
+
+		// Don't show the “Back” button if the site is being created by the site assembler flow.
+		// as the previous step is the site creation step that cannot be undone.
+		return isSiteAssemblerFlow( flow );
 	};
 
 	const onBack = () => {
@@ -515,13 +565,13 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		} );
 	};
 
-	const onScreenPagesSelect = ( page: string ) => {
-		if ( pages.includes( page ) ) {
-			setPages( pages.filter( ( item ) => item !== page ) );
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_REMOVE, { page } );
+	const onScreenPagesSelect = ( pageSlug: string ) => {
+		if ( pageSlugs.includes( pageSlug ) ) {
+			setPageSlugs( pageSlugs.filter( ( item ) => item !== pageSlug ) );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_REMOVE, { page: pageSlug } );
 		} else {
-			setPages( [ ...pages, page ] );
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_ADD, { page } );
+			setPageSlugs( [ ...pageSlugs, pageSlug ] );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_ADD, { page: pageSlug } );
 		}
 	};
 
@@ -560,7 +610,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					<ScreenPages
 						categories={ categories }
 						pagesMapByCategory={ pageCategoryPatternsMap }
-						selectedPages={ pages }
+						selectedPageSlugs={ pageSlugs }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
@@ -618,12 +668,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				</NavigatorScreen>
 			</div>
 			{ currentScreen.name === 'pages' ? (
-				<PatternPagePreviewList
+				<PagePreviewList
 					selectedHeader={ header }
 					selectedSections={ sections }
 					selectedFooter={ footer }
 					selectedPages={ pages }
-					pagesMapByCategory={ pageCategoryPatternsMap }
+					selectedPageSlugs={ pageSlugs }
 					isNewSite={ isNewSite }
 				/>
 			) : (
@@ -632,6 +682,13 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					sections={ sections }
 					footer={ footer }
 					activePosition={ activePosition }
+					pages={
+						// Consider the selected pages in the final screen.
+						isEnabled( 'pattern-assembler/add-pages' ) &&
+						( currentScreen.name === 'confirmation' || currentScreen.name === 'activation' )
+							? pages
+							: undefined
+					}
 					onDeleteSection={ onDeleteSection }
 					onMoveUpSection={ onMoveUpSection }
 					onMoveDownSection={ onMoveDownSection }
@@ -649,15 +706,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		<StepContainer
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
-			backLabelText={
-				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
-					? translate( 'Back to themes' )
-					: getBackLabel()
-			}
+			backLabelText={ getBackLabel() }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
+			hideBack={ shouldHideBack() }
 			hideSkip={ true }
 			stepContent={
 				<PatternAssemblerContainer

@@ -122,9 +122,15 @@ const importFlow: Flow = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
-							providedDependencies?.platform as ImporterMainPlatform
-						) !== -1
+						[
+							'blogroll',
+							'ghost',
+							'tumblr',
+							'livejournal',
+							'movabletype',
+							'xanga',
+							'substack',
+						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -138,13 +144,27 @@ const importFlow: Flow = {
 				case 'importerWix':
 				case 'importerBlogger':
 				case 'importerMedium':
-				case 'importerSquarespace':
-				case 'importerWordpress': {
+				case 'importerSquarespace': {
 					if ( providedDependencies?.type === 'redirect' ) {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
 					return navigate( providedDependencies?.url as string );
+				}
+
+				case 'importerWordpress': {
+					if ( providedDependencies?.type === 'redirect' ) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
+						default:
+							return navigate( providedDependencies?.url as string );
+					}
 				}
 
 				case 'designSetup': {
@@ -208,7 +228,7 @@ const importFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 
 				case 'verifyEmail':
-					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {
@@ -227,10 +247,12 @@ const importFlow: Flow = {
 
 						case 'select-site': {
 							const selectedSite = providedDependencies.site as SiteExcerptData;
+							const skipStoringTempTargetSite = urlQueryParams.get( 'skipStoringTempTargetSite' );
 
 							if ( selectedSite && migrationStatus ) {
 								// Store temporary target blog id to source site option
-								selectedSite &&
+								! skipStoringTempTargetSite &&
+									selectedSite &&
 									migrationStatus?.source_blog_id &&
 									addTempSiteToSourceOption( selectedSite.ID, migrationStatus.source_blog_id );
 

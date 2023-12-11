@@ -210,6 +210,7 @@ const WebServerSettingsCard = ( {
 			{
 				label: '8.0',
 				value: '8.0',
+				disabled: true, // EOL 26th November, 2023
 			},
 			{
 				label: translate( '%s (recommended)', {

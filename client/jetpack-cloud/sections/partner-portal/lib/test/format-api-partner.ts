@@ -22,11 +22,14 @@ const TEST_API_PARTNER: APIPartner = {
 			oauth2_token: 'secret-token-1234',
 			disabled_on: null,
 			has_licenses: true,
+			latest_invoice: null,
 		},
 	],
 	tos: 'my tos',
 	partner_type: 'my partner_type value',
 	has_valid_payment_method: false,
+	company_type: '',
+	managed_sites: '',
 };
 
 describe( 'formatApiPartner', () => {

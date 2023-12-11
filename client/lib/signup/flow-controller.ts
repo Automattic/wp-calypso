@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import debugModule from 'debug';
 import { translate } from 'i18n-calypso';
 import {
@@ -15,7 +16,6 @@ import {
 	reject,
 	reduce,
 } from 'lodash';
-import page from 'page';
 import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';

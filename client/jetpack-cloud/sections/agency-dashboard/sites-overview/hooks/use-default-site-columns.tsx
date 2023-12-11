@@ -12,7 +12,7 @@ type SiteColumn = {
 	showInfo?: boolean;
 };
 
-const useDefaultSiteColumns = (): SiteColumns => {
+const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 	const translate = useTranslate();
 	const isBoostEnabled = isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
 	const isPaidMonitorEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
@@ -35,13 +35,14 @@ const useDefaultSiteColumns = (): SiteColumns => {
 		return [
 			{
 				key: 'site',
-				title: isWPCOMAtomicSiteCreationEnabled
-					? ( translate( '{{div}}Host{{/div}} Site', {
-							components: {
-								div: <div className="fixed-host-column" />,
-							},
-					  } ) as string )
-					: translate( 'Site' ),
+				title:
+					isWPCOMAtomicSiteCreationEnabled && isLargeScreen
+						? ( translate( '{{div}}Host{{/div}} Site', {
+								components: {
+									div: <div className="site-host-info" />,
+								},
+						  } ) as string )
+						: translate( 'Site' ),
 				isSortable: true,
 			},
 			{
@@ -77,7 +78,13 @@ const useDefaultSiteColumns = (): SiteColumns => {
 				className: 'width-fit-content',
 			},
 		];
-	}, [ isBoostEnabled, isPaidMonitorEnabled, isWPCOMAtomicSiteCreationEnabled, translate ] );
+	}, [
+		isBoostEnabled,
+		isPaidMonitorEnabled,
+		isWPCOMAtomicSiteCreationEnabled,
+		translate,
+		isLargeScreen,
+	] );
 };
 
 export default useDefaultSiteColumns;

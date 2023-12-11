@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState, useEffect } from 'react';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';

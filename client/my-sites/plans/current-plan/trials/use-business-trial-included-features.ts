@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import advancedDesignTools from 'calypso/assets/images/plans/wpcom/business-trial/advanced-design-tools.svg';
 import beautifulThemes from 'calypso/assets/images/plans/wpcom/business-trial/beautiful-themes.svg';
 import bestInClassHosting from 'calypso/assets/images/plans/wpcom/business-trial/best-in-class-hosting.svg';

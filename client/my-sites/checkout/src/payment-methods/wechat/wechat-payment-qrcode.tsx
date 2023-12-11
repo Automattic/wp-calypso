@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { QRCodeSVG } from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';

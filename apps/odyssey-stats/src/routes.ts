@@ -1,5 +1,5 @@
+import page, { type Callback, type Context } from '@automattic/calypso-router';
 import { SiteDetails } from '@automattic/data-stores';
-import page, { Callback, Context } from 'page';
 import wpcom from 'calypso/lib/wp';
 import {
 	follows,

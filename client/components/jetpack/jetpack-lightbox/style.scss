@@ -78,6 +78,8 @@
 	background-color: var(--studio-gray-0);
 	border-radius: 0 8px 8px 0; /* stylelint-disable-line scales/radii */
 	box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+	overflow-y: auto;
+	max-height: 85vh;
 
 	@include break-medium {
 		box-shadow: none;
@@ -135,6 +137,7 @@
 		box-sizing: border-box;
 		transition: transform 0.2s;
 		transform: translateY(100%);
+		max-height: 100%;
 
 		&.is-expanded {
 			transform: translateY(0);

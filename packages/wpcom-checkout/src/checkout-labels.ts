@@ -13,6 +13,7 @@ import {
 	isYearly,
 	isBiennially,
 	isTriennially,
+	isJetpackAISlug,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
@@ -93,5 +94,16 @@ export function getLabel( product: ResponseCartProduct ): string {
 	if ( product.meta && ( isDomainProduct( product ) || isDomainTransfer( product ) ) ) {
 		return product.meta;
 	}
+
+	if ( isJetpackAISlug( product.product_slug ) && product.quantity ) {
+		return translate( '%(productName)s (%(quantity)d requests per month)', {
+			args: {
+				productName: product.product_name,
+				quantity: product.quantity,
+			},
+			textOnly: true,
+		} );
+	}
+
 	return product.product_name || '';
 }

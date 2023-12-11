@@ -1,5 +1,5 @@
 import { Duration } from './types';
-import type { Context } from 'page';
+import type { Context } from '@automattic/calypso-router';
 
 type Params = {
 	duration: Duration | undefined;

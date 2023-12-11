@@ -1,6 +1,6 @@
+import pageRouter from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Guide } from '@wordpress/components';
-import { default as pageRouter } from 'page';
 import { useSelector, useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

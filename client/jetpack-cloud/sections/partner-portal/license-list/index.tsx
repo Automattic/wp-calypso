@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { PropsWithChildren, useContext, useCallback } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
@@ -83,6 +83,7 @@ export default function LicenseList() {
 					licenses.items.map( ( license ) => (
 						<LicenseTransition key={ license.licenseKey }>
 							<LicensePreview
+								parentLicenseId={ license.licenseId }
 								licenseKey={ license.licenseKey }
 								product={ license.product }
 								username={ license.username }
@@ -92,12 +93,12 @@ export default function LicenseList() {
 								issuedAt={ license.issuedAt }
 								attachedAt={ license.attachedAt }
 								revokedAt={ license.revokedAt }
-								filter={ filter }
 								licenseType={
 									license.ownerType === LicenseType.Standard
 										? LicenseType.Standard
 										: LicenseType.Partner
 								}
+								quantity={ license.quantity }
 							/>
 						</LicenseTransition>
 					) ) }

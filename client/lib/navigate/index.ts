@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
 // Using page() for cross origin navigations would throw a `History.pushState` exception

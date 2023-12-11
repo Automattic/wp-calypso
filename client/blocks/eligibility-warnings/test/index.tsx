@@ -2,15 +2,15 @@
  * @jest-environment jsdom
  */
 
+import page from '@automattic/calypso-router';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import page from 'page';
 import { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import EligibilityWarnings from '..';
 
-jest.mock( 'page', () => ( {
+jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 

@@ -76,9 +76,9 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 	}, [ adminInterface ] );
 
 	return (
-		<Card className="sitewpadmin-card">
+		<Card>
 			<MaterialIcon icon="display_settings" style="filled" size={ 32 } />
-			<CardHeading id="sitewpadmin-card" size={ 20 }>
+			<CardHeading id="admin-interface-style" size={ 20 }>
 				{ translate( 'Admin interface style' ) }
 			</CardHeading>
 			<p>

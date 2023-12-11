@@ -98,6 +98,7 @@ export interface Site {
 	has_paid_agency_monitor: boolean;
 	is_atomic: boolean;
 	has_pending_boost_one_time_score: boolean;
+	active_paid_subscription_slugs: Array< string >;
 }
 export interface SiteNode {
 	value: Site;

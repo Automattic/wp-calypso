@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import {
 	ECOMMERCE_FLOW,
@@ -38,6 +39,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 	} );
 
 	if ( VIDEOPRESS_FLOW === flowName ) {
+		const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
 		let defaultSupportedPlan = supportedPlans.find( ( plan ) => {
 			return plan.periodAgnosticSlug === 'premium';
 		} );
@@ -54,13 +56,21 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			);
 
 			if ( planProductObject ) {
-				// eslint-disable-next-line @wordpress/valid-sprintf
-				videoPressGetStartedText = sprintf(
-					/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
-					__( 'Starts at %s per month, %s billed annually' ),
-					planProductObject.price,
-					planProductObject.annualPrice
-				);
+				videoPressGetStartedText = isTrialEnabled
+					? // eslint-disable-next-line @wordpress/valid-sprintf
+					  sprintf(
+							/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
+							__( 'After trial, plans start as low as %s per month, %s billed annually' ),
+							planProductObject.price,
+							planProductObject.annualPrice
+					  )
+					: // eslint-disable-next-line @wordpress/valid-sprintf
+					  sprintf(
+							/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
+							__( 'Starts at %s per month, %s billed annually' ),
+							planProductObject.price,
+							planProductObject.annualPrice
+					  );
 			}
 		}
 	}
@@ -107,13 +117,14 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		}
 
 		if ( flowName === VIDEOPRESS_FLOW ) {
+			const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
 			return {
 				title: createInterpolateElement(
 					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
 					{ br: <br /> }
 				),
 				secondaryText: videoPressGetStartedText,
-				buttonText: __( 'Get started' ),
+				buttonText: isTrialEnabled ? __( 'Start a free trial' ) : __( 'Get started' ),
 				modal: {
 					buttonText: __( 'Learn more' ),
 					onClick: () => recordTracksEvent( 'calypso_videopress_signup_learn_more_button_clicked' ),

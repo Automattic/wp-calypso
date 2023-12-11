@@ -9,11 +9,11 @@ import {
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
@@ -49,12 +49,18 @@ const WooExpressPlansPage = ( {
 	const annualPlan = getPlans()[ annualPlanSlug ];
 	const monthlyPlan = getPlans()[ monthlyPlanSlug ];
 
-	const planPrices = useSelector( ( state ) => ( {
-		annualPlanPrice: getPlanRawPrice( state, annualPlan.getProductId(), false ) || 0,
-		annualPlanMonthlyPrice: getPlanRawPrice( state, annualPlan.getProductId(), true ) || 0,
-		monthlyPlanPrice: getPlanRawPrice( state, monthlyPlan.getProductId() ) || 0,
-		currencyCode: getPlan( state, annualPlan.getProductId() )?.currency_code || '',
-	} ) );
+	const annualPlanPrice = useSelector(
+		( state ) => getPlanRawPrice( state, annualPlan.getProductId(), false ) || 0
+	);
+	const annualPlanMonthlyPrice = useSelector(
+		( state ) => getPlanRawPrice( state, annualPlan.getProductId(), true ) || 0
+	);
+	const monthlyPlanPrice = useSelector(
+		( state ) => getPlanRawPrice( state, monthlyPlan.getProductId() ) || 0
+	);
+	const currencyCode = useSelector(
+		( state ) => getPlan( state, annualPlan.getProductId() )?.currency_code || ''
+	);
 
 	const isAnnualSubscription = ! isMonthly( currentPlan.productSlug );
 	const activePlan = isAnnualSubscription ? annualPlan : monthlyPlan;
@@ -74,12 +80,10 @@ const WooExpressPlansPage = ( {
 				'{{monthlyPriceWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(annualPrice)s billed annually{{/priceDescription}}',
 				{
 					args: {
-						monthlyPrice: formatCurrency(
-							planPrices.annualPlanMonthlyPrice,
-							planPrices.currencyCode,
-							{ stripZeros: true }
-						),
-						annualPrice: formatCurrency( planPrices.annualPlanPrice, planPrices.currencyCode, {
+						monthlyPrice: formatCurrency( annualPlanMonthlyPrice, currencyCode, {
+							stripZeros: true,
+						} ),
+						annualPrice: formatCurrency( annualPlanPrice, currencyCode, {
 							stripZeros: true,
 						} ),
 					},
@@ -93,7 +97,7 @@ const WooExpressPlansPage = ( {
 				'{{monthlyPriceWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month{{/priceDescription}}',
 				{
 					args: {
-						monthlyPrice: formatCurrency( planPrices.monthlyPlanPrice, planPrices.currencyCode, {
+						monthlyPrice: formatCurrency( monthlyPlanPrice, currencyCode, {
 							stripZeros: true,
 						} ),
 					},

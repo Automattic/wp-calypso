@@ -6,6 +6,7 @@ export type AccordionProps = {
 	subtitle?: string | React.ReactNode;
 	expanded?: boolean;
 	onClose?: () => void;
+	onOpen?: () => void;
 
 	isPlaceholder?: boolean;
 	isDisabled?: boolean;

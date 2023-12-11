@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

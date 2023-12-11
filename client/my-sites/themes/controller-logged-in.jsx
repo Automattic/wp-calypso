@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { setBackPath } from 'calypso/state/themes/actions';

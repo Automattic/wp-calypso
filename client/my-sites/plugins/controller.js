@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { includes, some } from 'lodash';
-import page from 'page';
 import { createElement } from 'react';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

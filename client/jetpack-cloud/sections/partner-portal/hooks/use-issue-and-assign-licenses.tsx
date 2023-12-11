@@ -1,6 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
-import page from 'page';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -9,79 +10,124 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { APIError } from 'calypso/state/partner-portal/types';
+import { type APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
-import useIssueLicenses, { FulfilledIssueLicenseResult } from './use-issue-licenses';
+import useIssueLicenses, {
+	type IssueLicenseRequest,
+	type FulfilledIssueLicenseResult,
+} from './use-issue-licenses';
 
 const NO_OP = () => {
 	/* Do nothing */
 };
 
-const useGetLicenseIssuedMessage = () => {
-	const translate = useTranslate();
-	const products = useProductsQuery();
+// TODO: Rewrite this hook as a const once the feature flag is removed
+let useGetLicenseIssuedMessage: () => (
+	licenses: FulfilledIssueLicenseResult[]
+) => TranslateResult | undefined;
+if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
+	useGetLicenseIssuedMessage = () => {
+		const translate = useTranslate();
+		const products = useProductsQuery();
 
-	return useCallback(
-		( licenses: FulfilledIssueLicenseResult[] ) => {
-			if ( licenses.length === 0 ) {
-				return;
-			}
+		return useCallback(
+			( licenses: FulfilledIssueLicenseResult[] ) => {
+				if ( licenses.length === 0 ) {
+					return;
+				}
 
-			const productNames: string[] = licenses
-				.map( ( { slug } ) => products?.data?.find?.( ( p ) => p.slug === slug )?.name )
-				.filter( ( name ): name is string => Boolean( name ) );
-			const components = {
-				strong: <strong />,
-			};
+				// Only one individual license; let's be more specific
+				if ( licenses.length === 1 && ( licenses[ 0 ].quantity ?? 1 ) === 1 ) {
+					const productName =
+						products?.data?.find?.( ( p ) => p.slug === licenses[ 0 ].slug )?.name ?? '';
+					return translate(
+						'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} license to a website.',
+						{
+							args: {
+								productName,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					);
+				}
 
-			if ( productNames.length === 1 ) {
-				return translate( '{{strong}}%(productName)s{{/strong}} was successfully issued.', {
-					args: {
-						productName: productNames[ 0 ],
-					},
-					components,
-				} );
-			}
-
-			if ( productNames.length === 2 ) {
+				// Multiple licenses and/or bundles? A generic thanks will suffice.
 				return translate(
-					'{{strong}}%(first)s{{/strong}} and {{strong}}%(second)s{{/strong}} were successfully issued.',
+					'Thanks for your purchase! Below you can view and assign your new Jetpack product licenses to your websites.'
+				);
+			},
+			[ products?.data, translate ]
+		);
+	};
+} else {
+	useGetLicenseIssuedMessage = () => {
+		const translate = useTranslate();
+		const products = useProductsQuery();
+
+		return useCallback(
+			( licenses: FulfilledIssueLicenseResult[] ) => {
+				if ( licenses.length === 0 ) {
+					return;
+				}
+
+				const productNames: string[] = licenses
+					.map( ( { slug } ) => products?.data?.find?.( ( p ) => p.slug === slug )?.name )
+					.filter( ( name ): name is string => Boolean( name ) );
+				const components = {
+					strong: <strong />,
+				};
+
+				if ( productNames.length === 1 ) {
+					return translate( '{{strong}}%(productName)s{{/strong}} was successfully issued.', {
+						args: {
+							productName: productNames[ 0 ],
+						},
+						components,
+					} );
+				}
+
+				if ( productNames.length === 2 ) {
+					return translate(
+						'{{strong}}%(first)s{{/strong}} and {{strong}}%(second)s{{/strong}} were successfully issued.',
+						{
+							args: {
+								first: productNames[ 0 ],
+								second: productNames[ 1 ],
+							},
+							comment:
+								'%(first)s and %(second)s are each product names (e.g., "Jetpack Backup," "Jetpack Scan," etc.)',
+							components,
+						}
+					);
+				}
+
+				const initialSeparator = translate( ', ', {
+					comment:
+						'Characters used to separate all but the final item in a list of 3 or more (e.g., the comma and trailing space in "Jetpack Backup, Jetpack Scan, and Jetpack Boost").',
+				} ) as string;
+				const initialProducts = productNames.slice( 0, -1 ).join( initialSeparator );
+				const finalProduct = productNames.at( -1 ) as string;
+
+				return translate(
+					'{{strong}}%(initialProducts)s{{/strong}}, and {{strong}}%(finalProduct)s{{/strong}} were successfully issued.',
 					{
 						args: {
-							first: productNames[ 0 ],
-							second: productNames[ 1 ],
+							initialProducts,
+							finalProduct,
 						},
 						comment:
-							'%(first)s and %(second)s are each product names (e.g., "Jetpack Backup," "Jetpack Scan," etc.)',
+							'%(initialProducts)s is a list of 2+ product names, each separated by list item separator character(s) (e.g., in English, a comma and a trailing space); %(finalProduct)s is the final product name in the list.',
 						components,
 					}
 				);
-			}
-
-			const initialSeparator = translate( ', ', {
-				comment:
-					'Characters used to separate all but the final item in a list of 3 or more (e.g., the comma and trailing space in "Jetpack Backup, Jetpack Scan, and Jetpack Boost").',
-			} ) as string;
-			const initialProducts = productNames.slice( 0, -1 ).join( initialSeparator );
-			const finalProduct = productNames.at( -1 ) as string;
-
-			return translate(
-				'{{strong}}%(initialProducts)s{{/strong}}, and {{strong}}%(finalProduct)s{{/strong}} were successfully issued.',
-				{
-					args: {
-						initialProducts,
-						finalProduct,
-					},
-					comment:
-						'%(initialProducts)s is a list of 2+ product names, each separated by list item separator character(s) (e.g., in English, a comma and a trailing space); %(finalProduct)s is the final product name in the list.',
-					components,
-				}
-			);
-		},
-		[ products?.data, translate ]
-	);
-};
+			},
+			[ products?.data, translate ]
+		);
+	};
+}
 
 type UseIssueAndAssignLicensesOptions = {
 	onIssueError?: ( ( error: APIError ) => void ) | ( () => void );
@@ -107,12 +153,12 @@ function useIssueAndAssignLicenses(
 	return useMemo( () => {
 		const isReady = isIssueReady && isAssignReady;
 
-		const issueAndAssignLicenses = async ( productSlugs: string[] ) => {
-			if ( ! isReady || productSlugs.length === 0 ) {
+		const issueAndAssignLicenses = async ( selectedLicenses: IssueLicenseRequest[] ) => {
+			if ( ! isReady || selectedLicenses.length === 0 ) {
 				return;
 			}
 
-			const issuedLicenses = ( await issueLicenses( productSlugs ) ).filter(
+			const issuedLicenses = ( await issueLicenses( selectedLicenses ) ).filter(
 				( r ): r is FulfilledIssueLicenseResult => r.status === 'fulfilled'
 			);
 
@@ -123,7 +169,9 @@ function useIssueAndAssignLicenses(
 
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_multiple_licenses_issued', {
-					products: issuedLicenses.map( ( { slug } ) => slug ).join( ',' ),
+					products: issuedLicenses
+						.map( ( license ) => `${ license.slug }:${ license.quantity ?? 1 }` )
+						.join( ',' ),
 				} )
 			);
 
@@ -137,6 +185,13 @@ function useIssueAndAssignLicenses(
 			if ( ! selectedSiteId ) {
 				const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
+
+				// When bundle licensing is available, all license purchases
+				// will result in a redirect to the main Licenses page
+				if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
+					page.redirect( partnerPortalBasePath( '/licenses' ) );
+					return;
+				}
 
 				// If this user has no sites, send them to the licenses listing page
 				if ( sitesCount === 0 ) {

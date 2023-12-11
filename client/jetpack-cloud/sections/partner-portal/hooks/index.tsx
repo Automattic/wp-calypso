@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import ensurePartnerPortalReturnUrl from '../lib/ensure-partner-portal-return-url';
@@ -31,7 +31,9 @@ export function useReturnUrl( redirect: boolean ): void {
  * Returns the recent payment methods from the Jetpack Stripe account.
  *
  */
-export function useRecentPaymentMethodsQuery( { enabled = true }: UseQueryOptions = {} ) {
+export function useRecentPaymentMethodsQuery( {
+	enabled = true,
+}: Omit< UseQueryOptions, 'queryKey' > = {} ) {
 	return useQuery( {
 		queryKey: [ 'jetpack-cloud', 'partner-portal', 'recent-cards' ],
 		queryFn: () =>

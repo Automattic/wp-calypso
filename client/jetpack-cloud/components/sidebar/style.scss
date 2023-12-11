@@ -61,9 +61,7 @@
 
 		cursor: pointer;
 
-		// Slightly hacky rule to get around rigid element-based rules
-		// specified in <IconContainer />, for the All Sites icon
-		> div[class*="IconContainer"],
+		.all-sites__icon-container,
 		.site-icon {
 			border-radius: 2px;
 			margin-inline-end: 12px;

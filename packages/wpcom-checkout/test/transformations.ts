@@ -3,7 +3,6 @@ import {
 	getCreditsLineItemFromCart,
 	getTaxLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
-	getSubtotalLineItemFromCart,
 	getCouponLineItemFromCart,
 	getTotalLineItemFromCart,
 	LineItemType,
@@ -114,19 +113,6 @@ describe( 'getCouponLineItemFromCart', function () {
 		};
 
 		expect( getCouponLineItemFromCart( cartWithCoupon ) ).toStrictEqual( expected );
-	} );
-} );
-
-describe( 'getSubtotalLineItemFromCart', function () {
-	it( 'returns line item for subtotal', () => {
-		const expected: LineItemType = {
-			id: 'subtotal',
-			type: 'subtotal',
-			label: 'Subtotal',
-			formattedAmount: '¥75,000',
-		};
-
-		expect( getSubtotalLineItemFromCart( cart ) ).toStrictEqual( expected );
 	} );
 } );
 

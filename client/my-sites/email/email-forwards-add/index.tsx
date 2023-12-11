@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';

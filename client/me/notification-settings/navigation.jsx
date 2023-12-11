@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';

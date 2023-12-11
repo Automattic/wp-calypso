@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import { PureComponent } from 'react';

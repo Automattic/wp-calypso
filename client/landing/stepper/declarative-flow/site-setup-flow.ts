@@ -424,9 +424,15 @@ const siteSetupFlow: Flow = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
-							providedDependencies?.platform as ImporterMainPlatform
-						) !== -1
+						[
+							'blogroll',
+							'ghost',
+							'tumblr',
+							'livejournal',
+							'movabletype',
+							'xanga',
+							'substack',
+						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -440,13 +446,27 @@ const siteSetupFlow: Flow = {
 				case 'importerWix':
 				case 'importerBlogger':
 				case 'importerMedium':
-				case 'importerSquarespace':
-				case 'importerWordpress': {
+				case 'importerSquarespace': {
 					if ( providedDependencies?.type === 'redirect' ) {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
 					return navigate( providedDependencies?.url as string );
+				}
+
+				case 'importerWordpress': {
+					if ( providedDependencies?.type === 'redirect' ) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
+						default:
+							return navigate( providedDependencies?.url as string );
+					}
 				}
 
 				case 'trialAcknowledge': {
@@ -463,7 +483,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'verifyEmail':
-					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint': {
 					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );

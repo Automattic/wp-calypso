@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import debugModule from 'debug';
-import page from 'page';
 import { useEffect, useRef } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import { useSelector } from 'calypso/state';

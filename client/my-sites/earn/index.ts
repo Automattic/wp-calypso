@@ -1,7 +1,12 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import earnController from './controller';
+import {
+	redirectToAdsEarnings,
+	redirectToAdsSettings,
+	redirectToSettings,
+	layout,
+} from './controller';
 
 export default function () {
 	page( '/earn', siteSelection, sites, makeLayout, clientRender );
@@ -22,27 +27,14 @@ export default function () {
 	page( '/earn/refer-a-friend', siteSelection, sites, makeLayout, clientRender );
 
 	// These are legacy URLs to redirect if they are present anywhere on the web.
-	page( '/ads/earnings/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );
-	page( '/ads/settings/:site_id', earnController.redirectToAdsSettings, makeLayout, clientRender );
-	page( '/ads/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );
+	page( '/earn/payments-plans/:site_id', redirectToSettings, makeLayout, clientRender );
+	page( '/ads/earnings/:site_id', redirectToAdsEarnings, makeLayout, clientRender );
+	page( '/ads/settings/:site_id', redirectToAdsSettings, makeLayout, clientRender );
+	page( '/ads/:site_id', redirectToAdsEarnings, makeLayout, clientRender );
 	page( '/ads', '/earn' );
 	page( '/ads/*', '/earn' );
 
-	page(
-		'/earn/:site_id',
-		siteSelection,
-		navigation,
-		earnController.layout,
-		makeLayout,
-		clientRender
-	);
+	page( '/earn/:site_id', siteSelection, navigation, layout, makeLayout, clientRender );
 
-	page(
-		'/earn/:section/:site_id',
-		siteSelection,
-		navigation,
-		earnController.layout,
-		makeLayout,
-		clientRender
-	);
+	page( '/earn/:section/:site_id', siteSelection, navigation, layout, makeLayout, clientRender );
 }

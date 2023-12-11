@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map, pickBy, flowRight } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';

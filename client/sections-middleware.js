@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import * as LoadingError from 'calypso/layout/error';
 import { performanceTrackerStart } from 'calypso/lib/performance-tracking';
 import { bumpStat } from 'calypso/state/analytics/actions';

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import SearchRestyled from '@automattic/search';
@@ -5,7 +6,6 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flow } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -215,7 +215,8 @@ export class SiteSelector extends Component {
 			} );
 		}
 
-		const handledByHost = this.props.onSiteSelect( siteId );
+		const selectedSite = this.props.sites.find( ( site ) => site.ID === siteId );
+		const handledByHost = this.props.onSiteSelect( siteId, selectedSite );
 		this.props.onClose( event, siteId );
 
 		if ( ! this.siteSelectorRef ) {

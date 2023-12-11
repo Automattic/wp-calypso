@@ -8,11 +8,11 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
-import page from 'page';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';

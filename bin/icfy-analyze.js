@@ -3,9 +3,9 @@ const { getViewerData, readStatsFromFile } = require( 'webpack-bundle-analyzer/l
 
 analyzeBundle();
 
-function analyzeBundle() {
+async function analyzeBundle() {
 	console.log( 'Analyze: reading stats.json file' );
-	const stats = readStatsFromFile( 'client/stats.json' );
+	const stats = await readStatsFromFile( 'client/stats.json' );
 	console.log( 'Analyze: analyzing' );
 	const chart = getViewerData( stats, './public/evergreen' );
 	console.log( 'Analyze: writing chart.json file' );

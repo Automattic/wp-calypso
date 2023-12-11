@@ -1,8 +1,8 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { setQueryArgs, updateQueryArgs, getQueryArgs } from '../index';
 
 jest.mock( 'react' );
-jest.mock( 'page' );
+jest.mock( '@automattic/calypso-router' );
 
 describe( '#setQueryArgs', () => {
 	global.window = { location: { href: '' } } as typeof global.window;

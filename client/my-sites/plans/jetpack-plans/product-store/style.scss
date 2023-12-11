@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -18,7 +19,7 @@
 
 			// tablets
 			@media ( max-width: 900px ) {
-				margin-top: 8.5rem + $sale-banner-height + $mobile-offset / 3;
+				margin-top: 8.5rem + $sale-banner-height + math.div($mobile-offset, 3);
 			}
 			// mobiles
 			@media ( max-width: 560px ) {

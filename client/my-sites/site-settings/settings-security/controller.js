@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { createElement } from 'react';
 import SecurityMain from 'calypso/my-sites/site-settings/settings-security/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

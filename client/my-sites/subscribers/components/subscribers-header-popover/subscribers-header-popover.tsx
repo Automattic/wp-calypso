@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -29,6 +30,9 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 	const { grandTotal } = useSubscribersPage();
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
+	const migrationUrl = isEnabled( 'subscription-management/migrate-subscribers' )
+		? '#migrate-subscribers'
+		: `https://wordpress.com/manage/${ siteId }`;
 
 	const onDownloadCsvClick = () => {
 		dispatch(
@@ -74,7 +78,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 					</PopoverMenuItem>
 				) }
 				{ hasMultipleSites && (
-					<PopoverMenuItem href={ `https://wordpress.com/manage/${ siteId }` }>
+					<PopoverMenuItem href={ migrationUrl }>
 						{ translate( 'Migrate subscribers from another WordPress.com site' ) }
 					</PopoverMenuItem>
 				) }

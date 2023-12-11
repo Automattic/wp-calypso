@@ -47,19 +47,14 @@ const StepRoute = ( {
 	return (
 		<div
 			className={ classnames(
+				'step-route',
 				flow.name,
 				flow.variantSlug,
 				flow.classnames,
 				kebabCase( step.slug )
 			) }
 		>
-			{
-				! isEnabled( 'videopress-onboarding-user-intent' ) &&
-					'videopress' === flow.name &&
-					'intro' === step.slug && (
-						<VideoPressIntroBackground />
-					) /* Temporary disbale intro background while we run videopress-onboarding-intent as intro page */
-			}
+			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
 			{ renderProgressBar() }
 			<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
 			{ renderStep( step ) }

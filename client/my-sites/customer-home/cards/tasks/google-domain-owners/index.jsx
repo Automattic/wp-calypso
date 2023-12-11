@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isDesktop } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import googleDomainOwnersMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-google-domain-owners-mobile.svg';
 import googleDomainOwnersDesktopIllustration from 'calypso/assets/images/customer-home/illustration--task-google-domain-owners.svg';

@@ -1,0 +1,34 @@
+{
+	"name": "@automattic/calypso-router",
+	"version": "0.7.0",
+	"description": "Calypso router based on page.js.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"files": [
+		"dist",
+		"src",
+		"types"
+	],
+	"types": "types",
+	"keywords": [
+		"router"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-router"
+	},
+	"license": "MIT",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-router#readme"
+}

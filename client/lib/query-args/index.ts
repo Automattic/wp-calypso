@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { getQueryArgs as wpGetQueryArgs } from '@wordpress/url';
-import page from 'page';
 
 function getRelativeUrlWithParameters(
 	queryArgs: object,

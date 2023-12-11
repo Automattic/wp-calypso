@@ -25,6 +25,7 @@ export * from './theme';
 export * from './user/types';
 export * from './wpcom-plans-ui/types';
 export * from './add-ons/use-add-on-checkout-link';
+export * from './add-ons/use-add-on-feature-slugs';
 export * from './queries/use-launchpad';
 export * from './queries/use-launchpad-navigator';
 export * from './queries/use-all-domains-query';
@@ -32,6 +33,7 @@ export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';
 export * from './mutations/use-domains-bulk-actions-mutation';
 export * from './queries/use-bulk-domain-update-status-query';
+export * from './site-reset';
 
 const { SubscriptionManager } = Reader;
 

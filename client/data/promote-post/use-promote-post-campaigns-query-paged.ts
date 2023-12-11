@@ -29,9 +29,9 @@ const useCampaignsQueryPaged = (
 ) => {
 	const searchQueryParams = getSearchOptionsQueryParams( searchOptions );
 
-	return useInfiniteQuery(
-		[ 'promote-post-campaigns', siteId, searchQueryParams ],
-		async ( { pageParam = 1 } ) => {
+	return useInfiniteQuery( {
+		queryKey: [ 'promote-post-campaigns', siteId, searchQueryParams ],
+		queryFn: async ( { pageParam = 1 } ) => {
 			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=asc&order_by=post_date&page=${ pageParam }${ searchQueryParams }`;
 			const resultQuery = await requestDSPHandleErrors< CampaignQueryResult >(
 				siteId,
@@ -49,23 +49,21 @@ const useCampaignsQueryPaged = (
 				page,
 			};
 		},
-		{
-			...queryOptions,
-			enabled: !! siteId,
-			retryDelay: 3000,
-			keepPreviousData: true,
-			refetchOnWindowFocus: false,
-			meta: {
-				persist: false,
-			},
-			getNextPageParam: ( lastPage ) => {
-				if ( lastPage.has_more_pages ) {
-					return lastPage.page + 1;
-				}
-				return undefined;
-			},
-		}
-	);
+		...queryOptions,
+		enabled: !! siteId,
+		retryDelay: 3000,
+		keepPreviousData: true,
+		refetchOnWindowFocus: false,
+		meta: {
+			persist: false,
+		},
+		getNextPageParam: ( lastPage ) => {
+			if ( lastPage.has_more_pages ) {
+				return lastPage.page + 1;
+			}
+			return undefined;
+		},
+	} );
 };
 
 export default useCampaignsQueryPaged;

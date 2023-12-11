@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import BackButton from 'calypso/components/back-button';
@@ -18,6 +18,7 @@ import './style.scss';
 export class Filterbar extends Component {
 	static defaultProps = {
 		selectorTypes: { dateRange: true, actionType: true, text: true },
+		variant: 'default',
 	};
 
 	state = {
@@ -121,11 +122,23 @@ export class Filterbar extends Component {
 		return true;
 	};
 
+	VARIANT_STYLES = {
+		default: 'filterbar filterbar--default',
+		compact: 'filterbar filterbar--compact',
+	};
+
+	getStylesForVariant = ( variant ) => {
+		return this.VARIANT_STYLES[ variant ] || this.VARIANT_STYLES.default;
+	};
+
 	render() {
-		const { translate, siteId, filter, isLoading, isVisible, selectorTypes } = this.props;
+		const { translate, siteId, filter, isLoading, isVisible, selectorTypes, variant } = this.props;
+
+		const isCompact = variant === 'compact';
+		const rootClassNames = this.getStylesForVariant( variant );
 
 		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
-			return <div className="filterbar is-loading" />;
+			return <div className={ `${ rootClassNames } is-loading` } />;
 		}
 
 		if ( ! isVisible ) {
@@ -134,7 +147,7 @@ export class Filterbar extends Component {
 
 		if ( filter.backButton ) {
 			return (
-				<div className="filterbar" id="filterbar">
+				<div className={ rootClassNames } id="filterbar">
 					<div className="filterbar__wrap card">
 						<BackButton onClick={ this.goBack } />
 					</div>
@@ -143,14 +156,14 @@ export class Filterbar extends Component {
 		}
 
 		return (
-			<div className="filterbar" id="filterbar">
+			<div className={ rootClassNames } id="filterbar">
 				<div className="filterbar__wrap card">
 					{ selectorTypes.text && (
 						<div className="filterbar__text-control">
 							<TextSelector filter={ filter } siteId={ siteId } />
 						</div>
 					) }
-					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+					{ ! isCompact && <span className="filterbar__label">{ translate( 'Filter by:' ) }</span> }
 					<ul className="filterbar__control-list">
 						{ selectorTypes.dateRange && (
 							<li>
@@ -160,6 +173,7 @@ export class Filterbar extends Component {
 									onClose={ this.closeDateRangeSelector }
 									filter={ filter }
 									siteId={ siteId }
+									variant={ variant }
 								/>
 							</li>
 						) }
@@ -171,6 +185,7 @@ export class Filterbar extends Component {
 									isVisible={ this.state.showActivityTypes }
 									onButtonClick={ this.toggleActivityTypesSelector }
 									onClose={ this.closeActivityTypes }
+									variant={ variant }
 								/>
 							</li>
 						) }
@@ -185,7 +200,7 @@ export class Filterbar extends Component {
 								/>
 							</li>
 						) }
-						<li>{ this.renderCloseButton() }</li>
+						{ ! isCompact && <li>{ this.renderCloseButton() }</li> }
 					</ul>
 				</div>
 				<div className="filterbar__mobile-wrap" />

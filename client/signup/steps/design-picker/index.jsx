@@ -1,4 +1,5 @@
 import { PLAN_PREMIUM, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, PremiumBadge } from '@automattic/components';
 import DesignPicker, {
 	isBlankCanvasDesign,
@@ -11,7 +12,6 @@ import { shuffle } from '@automattic/js-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

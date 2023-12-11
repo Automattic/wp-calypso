@@ -37,7 +37,9 @@ export const useAddStagingSiteMutation = (
 		...options,
 		mutationKey: [ ADD_STAGING_SITE_MUTATION_KEY, siteId ],
 		onSuccess: async ( ...args ) => {
-			await queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY, siteId ] );
+			await queryClient.invalidateQueries( {
+				queryKey: [ USE_STAGING_SITE_QUERY_KEY, siteId ],
+			} );
 			options.onSuccess?.( ...args );
 		},
 	} );

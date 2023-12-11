@@ -199,7 +199,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
-			`per month, ${ originalPrice } billed annually, Excl. Taxes`
+			`per month, ${ originalPrice } billed annually, excl. taxes`
 		);
 	} );
 
@@ -231,7 +231,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
-			`per month, ${ originalPrice } billed every two years, Excl. Taxes`
+			`per month, ${ originalPrice } billed every two years, excl. taxes`
 		);
 	} );
 
@@ -263,7 +263,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
-			`per month, ${ originalPrice } billed every three years, Excl. Taxes`
+			`per month, ${ originalPrice } billed every three years, excl. taxes`
 		);
 	} );
 

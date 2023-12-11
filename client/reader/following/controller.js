@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getQueryString } from '@wordpress/url';
 import i18n from 'i18n-calypso';
-import page from 'page';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad, setPageTitle } from 'calypso/reader/controller-helper';

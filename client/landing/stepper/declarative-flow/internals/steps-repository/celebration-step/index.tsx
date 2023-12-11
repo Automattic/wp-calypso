@@ -5,9 +5,9 @@ import { useSelect } from '@wordpress/data';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToSlug } from 'calypso/lib/url';
 import SitePreview from '../../components/site-preview';
 import useCelebrationData from './use-celebration-data';
 import type { Step } from '../../types';
@@ -16,9 +16,10 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const CelebrationStep: Step = ( { flow, navigation } ) => {
-	const siteSlug = useSiteSlugParam() ?? '';
-	const site = useSite();
 	const { submit } = navigation;
+
+	const site = useSite();
+	const siteSlug = urlToSlug( site?.URL ?? '' );
 
 	const selectedDomain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
@@ -45,6 +46,7 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 		flow,
 		siteSlug,
 		isFirstPostPublished: checklistStatuses?.first_post_published,
+		isLaunched: checklistStatuses?.site_launched,
 	} );
 
 	const handleSubmit = ( destinationName: string, destinationUrl: string ) =>

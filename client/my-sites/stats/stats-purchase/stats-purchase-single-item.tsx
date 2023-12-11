@@ -1,13 +1,14 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import StatsCommercialUpgradeSlider from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
 import {
@@ -92,6 +93,7 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -119,21 +121,58 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
+	// TODO: Replace current pricing info with slider.
+	// Currently displaying below the flow to maintain existing behaviour.
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+
+	const handleSliderChanged = ( value: number ) => {
+		setPurchaseTierQuantity( value );
+	};
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
-			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-			<ButtonComponent
-				variant="primary"
-				primary={ isWPCOMSite ? true : undefined }
-				onClick={ () =>
-					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-				}
-			>
-				{ translate( 'Get Stats' ) }
-			</ButtonComponent>
+			{ ! isTierUpgradeSliderEnabled && (
+				<>
+					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+						}
+					>
+						{ translate( 'Get Stats' ) }
+					</ButtonComponent>
+				</>
+			) }
+			{ isTierUpgradeSliderEnabled && (
+				<>
+					<StatsCommercialUpgradeSlider
+						currencyCode={ currencyCode }
+						onSliderChange={ handleSliderChanged }
+					/>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( {
+								from,
+								type: 'commercial',
+								siteSlug,
+								adminUrl,
+								redirectUri,
+								price: undefined,
+								quantity: purchaseTierQuantity,
+							} )
+						}
+					>
+						{ translate( 'Purchase' ) }
+					</ButtonComponent>
+				</>
+			) }
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>

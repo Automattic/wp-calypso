@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useDispatch } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import Main from 'calypso/components/main';

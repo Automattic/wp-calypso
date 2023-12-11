@@ -81,8 +81,14 @@
 	}
 
 	.domain-product-price__price,
-	.domain-product-price__renewal-price {
+	.domain-product-price__regular-price {
 		margin: auto 0;
+	}
+
+	.domain-product-price__renewal-price {
+		line-height: 1.7;
+		font-size: $font-body-small;
+		color: var(--color-text-subtle);
 	}
 
 	&.is-free-domain,
@@ -91,14 +97,21 @@
 		margin-top: 2px;
 
 		.domain-product-price__price,
+		.domain-product-price__regular-price,
 		.domain-product-price__renewal-price {
 			font-size: $font-body-small;
 			color: var(--color-text-subtle);
 		}
 
-		.domain-product-price__renewal-price {
+		.domain-product-price__regular-price {
 			text-decoration: line-through;
 
+			small {
+				font-size: $font-body-small;
+			}
+		}
+
+		.domain-product-price__renewal-price {
 			small {
 				font-size: $font-body-small;
 			}

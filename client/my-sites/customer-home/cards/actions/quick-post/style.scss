@@ -1,0 +1,30 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.layout__primary .customer-home__layout-col .quick-post {
+	box-shadow: none !important;
+	border: 0 !important;
+	background: var(--studio-white) !important;
+	display: flex;
+	gap: 17px;
+	padding: 0 !important;
+	align-items: center;
+	margin-top: 17px;
+
+	@media (max-width: $break-small) {
+		padding: 16px !important;
+		margin: 0 !important;
+	}
+
+
+	&__title {
+		color: var(--p-2-text, #00101c);
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 23px;
+		flex: 1;
+	}
+
+
+}

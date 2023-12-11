@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import pageSpy from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import pageSpy from 'page';
 import { parse } from 'qs';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -16,7 +16,7 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
 } ) );
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( 'calypso/components/sites-popover', () => () => <div data-testid="sites-popover" /> );
 
 const markPostSeen = jest.fn();

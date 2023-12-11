@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Button, FoldableCard } from '@automattic/components';
+import { FoldableCard } from '@automattic/components';
 import { useTyper } from '@automattic/help-center/src/hooks';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -14,6 +14,7 @@ import WapuuThinking from 'calypso/assets/images/odie/wapuu-thinking.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import Button from '../button';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
@@ -43,7 +44,7 @@ const ChatMessage = (
 	ref: React.Ref< HTMLDivElement >
 ) => {
 	const isUser = message.role === 'user';
-	const { botName, extraContactOptions, addMessage } = useOdieAssistantContext();
+	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
@@ -284,6 +285,20 @@ const ChatMessage = (
 							'Below this text are links to sources for the current message received from the bot.',
 						textOnly: true,
 					} ) }
+					onClose={ () =>
+						trackEvent( 'calypso_odie_chat_message_action_sources', {
+							bot_name_slug: botName,
+							action: 'close',
+							message_id: message.message_id,
+						} )
+					}
+					onOpen={ () =>
+						trackEvent( 'calypso_odie_chat_message_action_sources', {
+							bot_name_slug: botName,
+							action: 'open',
+							message_id: message.message_id,
+						} )
+					}
 					screenReaderText="More"
 				>
 					<div className="odie-chatbox-message-sources">

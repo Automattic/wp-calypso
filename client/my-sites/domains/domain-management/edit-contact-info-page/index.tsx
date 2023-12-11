@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';

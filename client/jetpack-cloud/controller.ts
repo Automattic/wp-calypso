@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
-import page from 'page';
 import { createElement } from 'react';
 import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
@@ -16,8 +16,8 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
+import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { UserData } from 'calypso/lib/user/user';
-import type { Context as PageJSContext } from 'page';
 
 /**
  * Parse site slug from path.

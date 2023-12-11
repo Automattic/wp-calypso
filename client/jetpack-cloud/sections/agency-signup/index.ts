@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { agencySignupBasePath, agencySignupLegacyPath } from 'calypso/lib/jetpack/paths';
 import * as controller from './controller';

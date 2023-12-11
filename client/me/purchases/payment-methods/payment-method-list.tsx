@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, CompactCard } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { localize, translate } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

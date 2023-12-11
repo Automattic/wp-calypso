@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -218,7 +218,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( domain?.pendingRegistration ) {
+		if ( domain?.pendingRegistration || domain?.pendingRegistrationAtRegistry ) {
 			return (
 				<TransferUnavailableNotice
 					message={ translate(

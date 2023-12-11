@@ -62,10 +62,12 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
+import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
@@ -262,6 +264,7 @@ export default function WPCheckout( {
 		responseCart,
 		applyCoupon,
 		updateLocation,
+		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -269,6 +272,9 @@ export default function WPCheckout( {
 	const reduxDispatch = useReduxDispatch();
 	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
 
+	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
 	const isGSuiteInCart = hasGoogleApps( responseCart );
@@ -325,7 +331,8 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
@@ -498,6 +505,7 @@ export default function WPCheckout( {
 							completeStepContent={
 								<WPCheckoutOrderReview
 									removeProductFromCart={ removeProductFromCart }
+									replaceProductInCart={ replaceProductInCart }
 									couponFieldStateProps={ couponFieldStateProps }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }
@@ -665,7 +673,15 @@ export default function WPCheckout( {
 					<CheckoutFormSubmit
 						validateForm={ validateForm }
 						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={ <JetpackCheckoutSeals /> }
+						submitButtonFooter={
+							// Temporarily disabling this lint rule until hasCheckoutVersion is removed
+							// eslint-disable-next-line no-nested-ternary
+							hasCartJetpackProductsOnly ? (
+								<JetpackCheckoutSeals />
+							) : hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
+								<CheckoutMoneyBackGuarantee cart={ responseCart } />
+							) : null
+						}
 					/>
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
@@ -827,7 +843,7 @@ function CheckoutTermsAndCheckboxes( {
 	} );
 
 	const translate = useTranslate();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
 	if ( ! shouldCollapseLastStep ) {
 		return null;
@@ -877,15 +893,6 @@ const JetpackCheckoutSeals = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
-
-	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
-
-	if ( ! hasCartJetpackProductsOnly ) {
-		return null;
-	}
-
 	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
 	const show14DayGuarantee = responseCart?.products?.every(
 		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )

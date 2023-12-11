@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { startsWith } from 'lodash';
-import page from 'page';
 import {
 	makeLayout,
 	redirectLoggedOutToSignup,

@@ -7,7 +7,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
+import { buildCheckoutUrl } from 'calypso/blocks/importer/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
@@ -45,7 +45,6 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	const eligibilityErrorCode = migrationTrialEligibility?.error_code;
 
 	const plan = getPlan( PLAN_BUSINESS );
-	const checkoutUrl = useCheckoutUrl( site.ID, siteSlug );
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			navigateToImporterStep();
@@ -61,6 +60,7 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	}
 
 	function navigateToCheckoutPage() {
+		const checkoutUrl = buildCheckoutUrl( siteSlug );
 		const returnUrl = `/setup/${ flowName }/${ stepName }?${ urlQueryParams.toString() }`;
 		const preparedCheckoutUrl = addQueryArgs( checkoutUrl, {
 			redirect_to: returnUrl,

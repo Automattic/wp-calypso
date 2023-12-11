@@ -30,9 +30,16 @@ export enum LicenseType {
 	Partner = 'jetpack_partner_key',
 }
 
+export enum LicenseRole {
+	Parent = 'parent',
+	Child = 'child',
+	Single = 'single',
+}
+
 export interface AssignLicenceProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
+	quantity?: number;
 }
 
 export interface LicenseAction {

@@ -36,8 +36,8 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"copy-webpack-plugin": "^10.1.0",
-		"electron": "26.2.1",
+		"copy-webpack-plugin": "^10.2.4",
+		"electron": "26.2.4",
 		"electron-builder": "23.0.3",
 		"electron-notarize": "^0.1.1",
 		"electron-rebuild": "^2.3.5",
@@ -47,8 +47,8 @@
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"webpack": "^5.68.0",
-		"webpack-cli": "^4.9.2"
+		"webpack": "^5.89.0",
+		"webpack-cli": "^4.10.0"
 	},
 	"dependencies": {
 		"archiver": "^3.1.1",

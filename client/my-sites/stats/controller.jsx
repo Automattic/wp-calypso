@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';

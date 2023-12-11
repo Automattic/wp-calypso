@@ -22,11 +22,11 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 
 	const mutation = useMutation< TData, TError, Variables >( {
 		mutationFn: async ( { reminder, card } ) => {
-			const data = await queryClient.fetchQuery(
-				getCacheKey( siteId ),
-				() => fetchHomeLayout( siteId, query ),
-				{ staleTime: Infinity }
-			);
+			const data = await queryClient.fetchQuery( {
+				queryKey: getCacheKey( siteId ),
+				queryFn: () => fetchHomeLayout( siteId, query ),
+				staleTime: Infinity,
+			} );
 
 			const view_name = ( data as any ).view_name;
 			const multipleCardViews = [ 'VIEW_POST_LAUNCH', 'VIEW_SITE_SETUP' ];

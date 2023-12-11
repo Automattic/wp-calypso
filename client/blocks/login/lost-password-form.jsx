@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { FormInputValidation } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';

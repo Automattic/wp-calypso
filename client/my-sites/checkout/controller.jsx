@@ -1,7 +1,7 @@
 import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
@@ -578,6 +578,7 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
+		'WC',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

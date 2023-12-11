@@ -8,9 +8,9 @@ import {
 	WPCOM_FEATURES_VIDEO_HOSTING,
 	WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';

@@ -24,7 +24,7 @@ export const getCacheKey = ( siteId: number | null, domain: string ) => [
 export const useGetEmailAccountsQuery = (
 	siteId: number | null,
 	domain: string,
-	queryOptions?: UseQueryOptions< any, unknown, UseGetEmailAccountsQueryData >
+	queryOptions?: Omit< UseQueryOptions< any, unknown, UseGetEmailAccountsQueryData >, 'queryKey' >
 ) => {
 	return useQuery< any, unknown, UseGetEmailAccountsQueryData >( {
 		queryKey: getCacheKey( siteId, domain ),

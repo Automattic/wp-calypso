@@ -12,11 +12,11 @@ import {
 	isSiteRedirect,
 	isTitanMail,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { withI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';

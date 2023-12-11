@@ -6,7 +6,6 @@ export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
 /**
  * Merge persisted domain names with unpersisted auth codes.
  * We don't want to persist auth codes due to their sensitive nature.
- *
  * @param state
  * @returns
  */
@@ -42,7 +41,6 @@ export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
-export const getSelectedSiteGeoAffinity = ( state: State ) => state.siteGeoAffinity;
 export const getSelectedSiteLogo = ( state: State ) => state.siteLogo;
 export const getSelectedSiteDescription = ( state: State ) => state.siteDescription;
 export const getSelectedSiteAccentColor = ( state: State ) => state.siteAccentColor;

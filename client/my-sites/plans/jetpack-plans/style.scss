@@ -4,78 +4,28 @@
 /* cyrillic-ext */
 @font-face {
 	font-family: Inter;
+	/* stylelint-disable-next-line scales/font-weights */
+	font-weight: 100 900;
+	font-display: swap;
 	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
+	/* stylelint-disable-next-line property-no-unknown */
+	font-named-instance: "Regular";
 	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-Regular.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-Regular.woff?v=3.19) format("woff");
-}
-@font-face {
-	font-family: Inter;
-	font-style: italic;
-	font-weight: 400;
-	font-display: swap;
-	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-Italic.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-Italic.woff?v=3.19) format("woff");
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2-variations&v=3.19) format("woff2-variations"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
 }
 
 @font-face {
 	font-family: Inter;
-	font-style: normal;
-	font-weight: 500;
+	/* stylelint-disable-next-line scales/font-weights */
+	font-weight: 100 900;
 	font-display: swap;
-	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff?v=3.19) format("woff");
-}
-@font-face {
-	font-family: Inter;
 	font-style: italic;
-	font-weight: 500;
-	font-display: swap;
+	/* stylelint-disable-next-line property-no-unknown */
+	font-named-instance: "Italic";
 	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-MediumItalic.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-MediumItalic.woff?v=3.19) format("woff");
-}
-
-@font-face {
-	font-family: Inter;
-	font-style: normal;
-	font-weight: 600;
-	font-display: swap;
-	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-SemiBold.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-SemiBold.woff?v=3.19) format("woff");
-}
-@font-face {
-	font-family: Inter;
-	font-style: italic;
-	font-weight: 600;
-	font-display: swap;
-	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-SemiBoldItalic.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-SemiBoldItalic.woff?v=3.19) format("woff");
-}
-
-@font-face {
-	font-family: Inter;
-	font-style: normal;
-	font-weight: 700;
-	font-display: swap;
-	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-Bold.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-Bold.woff?v=3.19) format("woff");
-}
-@font-face {
-	font-family: Inter;
-	font-style: italic;
-	font-weight: 700;
-	font-display: swap;
-	src:
-		url(https://s0.wp.com/i/fonts/inter/Inter-BoldItalic.woff2?v=3.19) format("woff2"),
-		url(https://s0.wp.com/i/fonts/inter/Inter-BoldItalic.woff?v=3.19) format("woff");
+		url(https://s0.wp.com/i/fonts/inter/Inter-italic.var.woff2?t=woff2-variations&v=3.19) format("woff2-variations"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-italic.var.woff2?t=woff2&v=3.19) format("woff2");
 }
 
 .selector__main {

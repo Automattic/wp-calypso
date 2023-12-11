@@ -7,9 +7,7 @@
 	justify-content: space-between;
 	box-sizing: border-box;
 
-	width: 100%;
-
-	margin: 0.5rem 0;
+	margin: 0;
 	padding: 1.5rem;
 
 	border: 1px solid var(--studio-gray-10);
@@ -18,15 +16,7 @@
 	user-select: none;
 
 	@include break-xlarge {
-
-		width: calc(50% - 1rem);
-
-		margin: 0.5rem;
 		padding: 1.75rem;
-	}
-
-	@include break-wide {
-		width: calc(33.33% - 1rem);
 	}
 }
 

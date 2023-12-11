@@ -24,12 +24,12 @@ import {
 	isTieredVolumeSpaceAddon,
 	is100Year,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
-import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

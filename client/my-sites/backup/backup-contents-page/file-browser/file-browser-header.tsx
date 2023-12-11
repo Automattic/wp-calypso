@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FunctionComponent } from 'react';
 import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';

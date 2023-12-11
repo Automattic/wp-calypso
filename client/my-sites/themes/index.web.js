@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import page from 'page';
 import {
 	makeLayout,
 	redirectLoggedOut,

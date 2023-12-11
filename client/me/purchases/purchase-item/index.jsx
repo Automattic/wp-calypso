@@ -7,13 +7,13 @@ import {
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';

@@ -1,4 +1,4 @@
-import { LaunchpadNavigator, type OnboardSelect, type UserSelect } from '@automattic/data-stores';
+import { type OnboardSelect, type UserSelect } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
@@ -62,7 +62,6 @@ const free: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -91,9 +90,9 @@ const free: Flow = {
 
 			switch ( _currentStep ) {
 				case 'freeSetup':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'site-creation-step' );
 
-				case 'siteCreationStep':
+				case 'site-creation-step':
 					return navigate( 'processing' );
 
 				case 'processing':
@@ -171,7 +170,6 @@ const free: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'free',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

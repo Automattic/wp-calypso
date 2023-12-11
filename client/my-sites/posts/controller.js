@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
-import page from 'page';
 import { createElement } from 'react';
 import Posts from 'calypso/my-sites/posts/main';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';

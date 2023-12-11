@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useContext } from 'react';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch } from 'calypso/state';
@@ -78,7 +78,9 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		return {
 			onMutate: async ( { siteId, isFavorite }: { siteId: number; isFavorite: boolean } ) => {
 				// Cancel any current refetches, so they don't overwrite our optimistic update
-				await queryClient.cancelQueries( queryKey );
+				await queryClient.cancelQueries( {
+					queryKey,
+				} );
 
 				// Snapshot the previous value
 				const previousSites = queryClient.getQueryData( queryKey );
@@ -123,7 +125,9 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				dispatch( errorNotice( errorMessage ) );
 			},
 			onSettled: () => {
-				queryClient.invalidateQueries( queryKey );
+				queryClient.invalidateQueries( {
+					queryKey,
+				} );
 			},
 		};
 	};

@@ -236,7 +236,6 @@ class Layout extends Component {
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-logged-in': this.props.isLoggedIn,
-			'is-jetpack-new-navigation': this.props.isJetpackNewNavigation,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
@@ -343,6 +342,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'yolo/command-palette' ) && (
+					<AsyncLoad require="calypso/components/command-palette" placeholder={ null } />
+				) }
 			</div>
 		);
 	}
@@ -359,7 +361,6 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
-		const isJetpackNewNavigation = config.isEnabled( 'jetpack/new-navigation' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
@@ -369,14 +370,16 @@ export default withCurrentRoute(
 			isDomainAndPlanPackageFlow ||
 			isReaderTagEmbedPage( window?.location );
 		const noMasterbarForSection =
-			! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName );
+			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
+			! sectionName ||
+			( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
 			noMasterbarForRoute ||
 			isWpMobileApp() ||
 			isWcMobileApp() ||
-			isJetpackNewNavigation;
+			isJetpackCloud();
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -402,7 +405,6 @@ export default withCurrentRoute(
 			masterbarIsHidden,
 			sidebarIsHidden,
 			isJetpack,
-			isJetpackNewNavigation,
 			isJetpackLogin,
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,

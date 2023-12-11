@@ -4,7 +4,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FeedSettings from 'calypso/my-sites/site-settings/feed-settings';
-import PodcastingLink from 'calypso/my-sites/site-settings/podcasting-details/link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { requestPostTypes } from 'calypso/state/post-types/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -33,7 +32,6 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingToggle,
 			handleAutosavingRadio,
 			handleSubmitForm,
-			isPodcastingSupported,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -97,8 +95,6 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 					translate={ translate }
 				/>
-
-				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
 
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
@@ -201,7 +197,6 @@ const getFormSettings = ( settings ) => {
 		'start_of_week',
 		'time_format',
 		'timezone_string',
-		'podcasting_category_id',
 		'wpcom_publish_posts_with_markdown',
 		'featured_image_email_enabled',
 	] );

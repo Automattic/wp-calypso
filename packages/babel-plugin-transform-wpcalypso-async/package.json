@@ -16,7 +16,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@babel/core": "^7.23.2"
+		"@babel/core": "^7.23.3"
 	},
 	"publishConfig": {
 		"access": "public"

@@ -12,6 +12,8 @@ export interface BlockPlan extends Plan {
 	rawPrice: number;
 	price: string;
 	upgradeLabel: string;
+	productNameShort: string;
+	productName: string;
 }
 
 const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
@@ -33,8 +35,10 @@ const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
 				upgradeLabel: sprintf(
 					// translators: %s is the plan name
 					__( 'Upgrade to %s', 'happy-blocks' ),
-					plan.getTitle()
+					apiPlan.product_name_short
 				),
+				productName: apiPlan.product_name,
+				productNameShort: apiPlan.product_name_short,
 			};
 		} );
 };

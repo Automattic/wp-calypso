@@ -9,6 +9,7 @@ const useDashboardShowLargeScreen = (
 ) => {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 
+	const [ overflowingBreakpoint, setOverflowingBreakpoint ] = useState( 0 );
 	const [ isOverflowing, setIsOverflowing ] = useState( false );
 
 	const checkIfOverflowing = useCallback( () => {
@@ -16,12 +17,15 @@ const useDashboardShowLargeScreen = (
 
 		if ( siteTableEle ) {
 			if ( siteTableEle.clientWidth > containerRef?.current?.clientWidth ) {
-				setTimeout( () => {
-					setIsOverflowing( true );
-				}, 1 );
+				// We will need to remember the breakpoint where it overflowed so that we can
+				// check if we are still overflowing when the window is resized to bigger size
+				setOverflowingBreakpoint( siteTableEle.clientWidth );
+				setIsOverflowing( true );
 			}
+		} else if ( overflowingBreakpoint < containerRef?.current?.clientWidth ) {
+			setIsOverflowing( false );
 		}
-	}, [ siteTableRef, containerRef ] );
+	}, [ siteTableRef, overflowingBreakpoint, containerRef ] );
 
 	useEffect( () => {
 		window.addEventListener( 'resize', checkIfOverflowing );

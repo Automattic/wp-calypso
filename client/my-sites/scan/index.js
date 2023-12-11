@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcomAtomicTransfer from 'calypso/lib/jetpack/wpcom-atomic-transfer';

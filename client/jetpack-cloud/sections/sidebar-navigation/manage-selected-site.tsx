@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import {
 	chevronLeft,
 	cloud,
@@ -39,7 +40,6 @@ import {
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
 } from './lib/constants';
-import { redirectPage } from './lib/sidebar';
 
 const useMenuItems = ( {
 	siteId,
@@ -191,7 +191,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 										recordTracksEvent( 'calypso_jetpack_sidebar_site_settings_back_button_click' )
 									);
 
-									redirectPage( '/dashboard' );
+									page( '/dashboard' );
 								},
 						  }
 						: undefined

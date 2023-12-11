@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';

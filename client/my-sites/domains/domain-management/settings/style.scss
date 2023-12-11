@@ -198,6 +198,14 @@ body.edit__body-white.theme-default.color-scheme {
 	}
 }
 
-.is-mobile-app-view .domain-settings-page .breadcrumbs-back {
-	display: none;
+.is-mobile-app-view {
+	&.is-section-domains .focus-content:not(.has-no-sidebar) .layout__content {
+		padding-top: 0;
+	}
+	.domain-settings-page {
+		.navigation-header,
+		.breadcrumbs-back {
+			display: none;
+		}
+	}
 }

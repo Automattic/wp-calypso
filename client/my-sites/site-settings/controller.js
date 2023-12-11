@@ -1,10 +1,11 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import wasBusinessTrialSite from 'calypso/state/selectors/was-business-trial-site';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
@@ -22,6 +23,10 @@ function canDeleteSite( state, siteId ) {
 
 	if ( ! siteId || ! canManageOptions ) {
 		// Current user doesn't have manage options to delete the site
+		return false;
+	}
+
+	if ( isSiteWpcomStaging( state, siteId ) ) {
 		return false;
 	}
 

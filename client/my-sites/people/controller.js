@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getSiteFragment } from 'calypso/lib/route';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';

@@ -12,7 +12,7 @@ import type { ContactsInfoPassedProps, ContactsInfoProps } from './types';
 import './style.scss';
 
 const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
-	const renderForOwner = () => {
+	const renderForOwner = ( readonly = false ) => {
 		const domain = getSelectedDomain( props );
 		if ( ! domain ) {
 			return null;
@@ -23,6 +23,8 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 			contactInfoDisclosed,
 			contactInfoDisclosureAvailable,
 			isPendingIcannVerification,
+			registeredViaTrustee,
+			registeredViaTrusteeUrl,
 		} = domain;
 
 		const canManageConsent =
@@ -38,6 +40,9 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 				contactInfoDisclosed={ contactInfoDisclosed }
 				contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
 				isPendingIcannVerification={ isPendingIcannVerification }
+				readOnly={ readonly }
+				registeredViaTrustee={ registeredViaTrustee }
+				registeredViaTrusteeUrl={ registeredViaTrusteeUrl }
 			/>
 		);
 	};
@@ -51,7 +56,13 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 
 	const domain = getSelectedDomain( props );
 	if ( domain && ! domain.canUpdateContactInfo ) {
-		return <InfoNotice redesigned={ true } text={ domain.cannotUpdateContactInfoReason } />;
+		return (
+			<>
+				<InfoNotice redesigned={ true } text={ domain.cannotUpdateContactInfoReason } />
+				<br />
+				{ renderForOwner( true ) }
+			</>
+		);
 	}
 	return domain?.currentUserCanManage ? renderForOwner() : renderForOthers();
 };

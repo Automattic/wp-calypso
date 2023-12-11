@@ -154,7 +154,7 @@ object CalypsoApps: BuildType({
 				export build_number="%build.number%"
 				export commit_sha="%build.vcs.number%"
 
-				yarn workspaces foreach --verbose --parallel --include "{${'$'}apps}" run teamcity:build-app
+				yarn workspaces foreach --all --verbose --parallel --include "{${'$'}apps}" run teamcity:build-app
 			"""
 		}
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -32,7 +31,7 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			<LayoutTop>
 				<div className="issue-license__step-progress">
 					<AssignLicenseStepProgress currentStep="issueLicense" selectedSite={ selectedSite } />
-					{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) && <TotalCost /> }
+					<TotalCost />
 				</div>
 
 				<LayoutHeader>

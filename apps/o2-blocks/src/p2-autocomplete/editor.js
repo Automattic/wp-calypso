@@ -13,7 +13,7 @@ const COMMON_PREFIXES = /(team|a8c|woo|happiness)/i;
 const stripCommonWords = ( str ) => str.replace( COMMON_PREFIXES, ' ' );
 
 const p2s = apiFetch( {
-	path: '/internal/P2s',
+	path: '/internal/P2s?skip_description=true',
 } ).then( ( result ) =>
 	map( result.list, ( p2, subdomain ) => {
 		const keywords = [ subdomain ];

@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import globalPageInstance from 'page';
+import globalPageInstance from '@automattic/calypso-router';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';

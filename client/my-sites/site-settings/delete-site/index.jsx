@@ -1,7 +1,7 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

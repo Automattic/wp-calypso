@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
-import page from 'page';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

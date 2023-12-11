@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import i18n from 'i18n-calypso';
-import page from 'page';
 import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';

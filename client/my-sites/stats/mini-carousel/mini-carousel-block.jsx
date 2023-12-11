@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';

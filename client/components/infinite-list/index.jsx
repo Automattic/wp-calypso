@@ -1,8 +1,8 @@
 /* eslint-disable react/no-string-refs */
 // TODO: remove string ref usage.
 
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';

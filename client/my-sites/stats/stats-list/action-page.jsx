@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import page from '@automattic/calypso-router';
 import { Icon, chartBar } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 

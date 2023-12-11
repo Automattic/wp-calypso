@@ -1,4 +1,4 @@
-import page, { type Callback } from 'page';
+import page, { type Callback } from '@automattic/calypso-router';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import JetpackComFooter from '../pricing/jpcom-footer';

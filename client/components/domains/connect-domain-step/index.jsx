@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { connect, useDispatch } from 'react-redux';

@@ -168,3 +168,24 @@
 		color: var(--color-text-inverted);
 	}
 }
+
+.layout__primary .customer-home__layout-col-right {
+	.stats__data-item {
+		width: 50%;
+		text-align: left;
+		font-size: rem(14px);
+		padding: 14px;
+
+		&:nth-child(1),
+		&:nth-child(2) {
+			border-bottom: none;
+		}
+		&:nth-child(2) {
+			border-right: 1px solid var(--color-neutral-5);
+		}
+	}
+
+	.stats__all-link {
+		padding: 14px;
+	}
+}

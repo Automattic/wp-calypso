@@ -3,7 +3,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMetrics } from './main';
-import type { Callback } from 'page';
+import type { Callback } from '@automattic/calypso-router';
 
 export const siteMetrics: Callback = ( context, next ) => {
 	context.primary = (

@@ -8,7 +8,7 @@ import { get } from 'lodash';
 import { connect } from 'react-redux';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
+import { EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,7 +22,7 @@ import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
-import { MigrationStatus } from '../types';
+import { MigrationStatus, WPImportOption } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -60,7 +60,7 @@ export class ImportEverything extends SectionMigrate {
 		if ( isMigrateFromWp ) {
 			extraParamsArg[ 'skipCta' ] = true;
 		}
-		stepNavigator?.goToCheckoutPage( extraParamsArg );
+		stepNavigator?.goToCheckoutPage?.( WPImportOption.EVERYTHING, extraParamsArg );
 	};
 
 	resetMigration = () => {
@@ -178,25 +178,26 @@ export class ImportEverything extends SectionMigrate {
 		}
 
 		return (
-			<PreMigrationScreen
-				sourceSite={ sourceSite }
-				targetSite={ targetSite }
-				initImportRun={ this.props.initImportRun }
-				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
-				isMigrateFromWp={ isMigrateFromWp }
-				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-				startImport={ this.startMigration }
-				onContentOnlyClick={ onContentOnlySelection }
-				onFreeTrialClick={ () => {
-					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
-				} }
-				onNotAuthorizedClick={ () => {
-					recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
-						from: 'pre-migration',
-					} );
-					stepNavigator?.goToDashboardPage();
-				} }
-			/>
+			<>
+				<Interval onTick={ this.updateSiteInfo } period={ EVERY_FIVE_SECONDS } />
+				<PreMigrationScreen
+					sourceSite={ sourceSite }
+					targetSite={ targetSite }
+					initImportRun={ this.props.initImportRun }
+					isTrial={ isMigrationTrialSite( this.props.targetSite ) }
+					isMigrateFromWp={ isMigrateFromWp }
+					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+					startImport={ this.startMigration }
+					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
+					onContentOnlyClick={ onContentOnlySelection }
+					onNotAuthorizedClick={ () => {
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+							from: 'pre-migration',
+						} );
+						stepNavigator?.goToDashboardPage();
+					} }
+				/>
+			</>
 		);
 	}
 

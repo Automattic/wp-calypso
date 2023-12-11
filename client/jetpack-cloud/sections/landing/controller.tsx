@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import page, { type Callback, type Context } from '@automattic/calypso-router';
 import debugModule from 'debug';
-import page, { type Callback, type Context } from 'page';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -34,9 +34,7 @@ const landForSiteId = ( siteId: number | null, context: Context, next: () => voi
 		debug( '[landForSiteId]: rendering interstitial Landing page' );
 
 		// To make the UI feel seamless transition, we want to have the sidebar appear on the interstitial page
-		if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-			context.secondary = <ManageSelectedSiteSidebar path={ context.path } />;
-		}
+		context.secondary = <ManageSelectedSiteSidebar path={ context.path } />;
 		context.primary = <Landing siteId={ siteId as number } />;
 		next();
 		return;

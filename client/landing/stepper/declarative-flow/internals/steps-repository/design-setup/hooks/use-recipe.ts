@@ -67,14 +67,8 @@ const useRecipe = (
 		[]
 	);
 
-	const preselectedDesign = useMemo(
-		() =>
-			allDesigns?.designs.find( ( design ) =>
-				design.is_virtual
-					? design.recipe?.slug === preselectedThemeSlug
-					: design.slug === preselectedThemeSlug
-			),
-		[ allDesigns ]
+	const preselectedDesign = allDesigns?.designs?.find(
+		( design ) => ( design.is_virtual ? design.recipe?.slug : design.slug ) === preselectedThemeSlug
 	);
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};

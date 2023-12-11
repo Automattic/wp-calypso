@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import page from 'page';
+import page from '@automattic/calypso-router';
 import {
 	SUCCESS,
 	ERROR,
@@ -15,7 +15,7 @@ import {
 	getRedirectFromPendingPage,
 } from '../lib/pending-page';
 
-jest.mock( 'page' );
+jest.mock( '@automattic/calypso-router' );
 
 // This seems to be the default origin for jsdom + Jest.
 const currentWindowOrigin = 'https://example.com';

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import i18n, { getLocaleSlug, localize, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
