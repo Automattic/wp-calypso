@@ -101,14 +101,12 @@ const PluginsDiscoveryPage = ( props ) => {
 	const translate = useTranslate();
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const isEligibleForOneClickCheckout = useIsEligibleForOneClickCheckout();
-
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calypso_plugins_page_business_plan_one_click_upsell',
 		{
 			isEligible: translate.localeSlug === 'en',
 		}
 	);
-
 	const businessPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_BUSINESS ),
 		[]
@@ -123,11 +121,11 @@ const PluginsDiscoveryPage = ( props ) => {
 	const handleUpsellNudgeClick = ( e ) => {
 		e.preventDefault();
 
-		if ( isEligibleForOneClickCheckout ) {
+		if ( isEligibleForOneClickCheckout.result ) {
 			setShowPurchaseModal( true );
+		} else {
+			page( `/checkout/${ PLAN_BUSINESS }/${ props.siteSlug }` );
 		}
-
-		page( `/checkout/${ PLAN_BUSINESS }/${ props.siteSlug }` );
 	};
 
 	return (
