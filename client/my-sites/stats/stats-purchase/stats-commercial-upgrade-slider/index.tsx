@@ -40,12 +40,14 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 		if ( typeof tier.price === 'string' ) {
 			price = tier.price;
 		}
-		// Views can be a number or a string so address that.
+		// View should be a number but the current mock data
+		// includes a string for the final tier.
+		// Special case that scenario for now.
 		let views = '';
-		if ( typeof tier.views === 'string' ) {
-			views = tier.views;
-		} else if ( typeof tier.views === 'number' ) {
+		if ( typeof tier.views === 'number' ) {
 			views = formatNumber( tier.views );
+		} else if ( typeof tier.views === 'string' ) {
+			views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
 		}
 		// Return the new step with string values.
 		return {
@@ -98,6 +100,7 @@ function StatsCommercialUpgradeSlider( {
 		) as string;
 	}
 
+	// Transform the tiers into a format that the slider can use.
 	const steps = getStepsForTiers( tiers );
 
 	const handleSliderChanged = ( index: number ) => {
