@@ -55,7 +55,6 @@ $breakpoint-mobile: 660px;
 
 
 .auth-form__separator {
-	background: var(--color-surface);
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -64,7 +63,6 @@ $breakpoint-mobile: 660px;
 	@include horizontal-separator;
 
 	.auth-form__separator-text {
-		background: var(--color-surface);
 		text-transform: uppercase;
 		text-align: center;
 		font-size: 0.75rem;
