@@ -58,8 +58,14 @@ function TierUpgradeSlider( {
 		return <div { ...props }>{ thumbSVG }</div>;
 	} ) as RenderThumbFunction;
 
-	// Bounds check the initial index value.
+	// We need at least two steps for the slider to work.
+	let errorMessage = null;
 	const maxIndex = steps.length - 1;
+	if ( maxIndex < 1 ) {
+		errorMessage = <p>Slider has not been configured properly.</p>;
+	}
+
+	// Bounds check the initial index value.
 	let initialIndex = Math.floor( initialValue );
 	if ( initialIndex < 0 ) {
 		initialIndex = 0;
@@ -83,6 +89,10 @@ function TierUpgradeSlider( {
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const rhValue = steps[ currentPlanIndex ]?.rhValue;
+
+	if ( errorMessage !== null ) {
+		return errorMessage;
+	}
 
 	return (
 		<div className={ componentClassNames }>
