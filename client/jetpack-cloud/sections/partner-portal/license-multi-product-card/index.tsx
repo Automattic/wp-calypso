@@ -190,6 +190,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ product }
+					quantity={ quantity }
 					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }
