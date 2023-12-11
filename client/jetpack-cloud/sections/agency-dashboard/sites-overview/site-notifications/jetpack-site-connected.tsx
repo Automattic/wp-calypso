@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
