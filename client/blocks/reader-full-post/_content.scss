@@ -1,6 +1,9 @@
 /* stylelint-disable-next-line scss/at-import-no-partial-leading-underscore */
 @import "calypso/assets/stylesheets/shared/_rendered-blocks.scss";
 
+// Style tiled galleries.
+@import "tiled-gallery.scss";
+
 // Import styles for Jetpack Story block.
 // This is a copy of Jetpack's extensions/blocks/story/player/style.scss, with
 // some unnecessary styles removed.
