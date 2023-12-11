@@ -58,10 +58,19 @@ function TierUpgradeSlider( {
 		return <div { ...props }>{ thumbSVG }</div>;
 	} ) as RenderThumbFunction;
 
+	// Bounds check the initial index value.
+	const maxIndex = steps.length - 1;
+	let initialIndex = Math.floor( initialValue );
+	if ( initialIndex < 0 ) {
+		initialIndex = 0;
+	} else if ( initialIndex > maxIndex ) {
+		initialIndex = maxIndex;
+	}
+
 	// Slider state.
-	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( initialValue );
+	const [ currentPlanIndex, setCurrentPlanIndex ] = useState( initialIndex );
 	const sliderMin = 0;
-	const sliderMax = steps?.length - 1;
+	const sliderMax = maxIndex;
 
 	const handleSliderChange = ( value: number ) => {
 		setCurrentPlanIndex( value );
