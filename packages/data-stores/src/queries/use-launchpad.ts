@@ -20,20 +20,21 @@ interface Task {
 	order?: number;
 }
 
-interface ChecklistStatuses {
+export interface ChecklistStatuses {
 	links_edited?: boolean;
 	site_edited?: boolean;
 	site_launched?: boolean;
 	first_post_published?: boolean;
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
+	plan_selected?: boolean;
 	plan_completed?: boolean;
 	domain_upsell_deferred?: boolean;
 }
 
 type LaunchpadScreen = 'full' | 'off' | 'skipped' | 'minimized';
 
-interface LaunchpadResponse {
+export interface LaunchpadResponse {
 	site_intent?: string | null;
 	launchpad_screen?: LaunchpadScreen | boolean | null | undefined;
 	checklist?: Task[] | null;
