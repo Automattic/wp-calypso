@@ -59,12 +59,19 @@ export interface PlanIntroductoryOffer {
 	isOfferComplete: boolean;
 }
 
-export interface SitePlan {
+export interface PlanPricing {
+	billPeriod: -1 | ( typeof PERIOD_LIST )[ number ];
+	rawPriceInteger: number;
+	origCostInteger: number;
+	currencyCode: string;
+	introOffer?: PlanIntroductoryOffer | null;
+}
+
+export interface SitePlan extends PlanPricing {
 	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;
 	productSlug: PlanSlugFromProducts;
 	productId: number;
-	introOffer?: PlanIntroductoryOffer | null;
 	/* END: Same SitePlan/PlanNext props */
 
 	currentPlan?: boolean;
@@ -85,17 +92,14 @@ export interface SitePlan {
  * This is the new interface for API Plans that will replace the existing Plan interface above.
  * The existing Plan interface will be removed once this interface is fully implemented.
  */
-export interface PlanNext {
+export interface PlanNext extends PlanPricing {
 	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;
 	productSlug: PlanSlugFromProducts;
 	productId: number;
-	introOffer?: PlanIntroductoryOffer | null;
 	/* END: Same SitePlan/PlanNext props */
 
 	productNameShort: string;
-	billPeriod: -1 | ( typeof PERIOD_LIST )[ number ];
-	currencyCode: string;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
@@ -106,17 +110,7 @@ export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_end_date?: string;
 }
 
-/**
- * Item returned from https://public-api.wordpress.com/rest/v1.5/plans response
- * Only the properties that are actually used in the store are typed
- */
-export interface PricedAPIPlan extends PricedAPIPlanIntroductoryOffer {
-	product_id: number;
-	product_name: string;
-	path_slug?: PlanPath;
-	product_slug: StorePlanSlug;
-	product_name_short: string;
-	product_type?: string;
+export interface PricedAPIPlanPricing {
 	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
 
 	/**
@@ -125,24 +119,38 @@ export interface PricedAPIPlan extends PricedAPIPlanIntroductoryOffer {
 	raw_price_integer: number;
 
 	/**
+	 * The orig cost in the currency's smallest unit. Note that orig_cost_integer is never null.
+	 * If the cost of a store product is overridden by a promotion or a coupon, orig_cost_integer
+	 * will return a price identical to raw_price_integer instead.
+	 */
+	orig_cost_integer: number;
+
+	currency_code: string;
+}
+
+/**
+ * Item returned from https://public-api.wordpress.com/rest/v1.5/plans response
+ * Only the properties that are actually used in the store are typed
+ */
+export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntroductoryOffer {
+	product_id: number;
+	product_name: string;
+	path_slug?: PlanPath;
+	product_slug: StorePlanSlug;
+	product_name_short: string;
+	product_type?: string;
+
+	/**
 	 * The product price as a float.
 	 * @deprecated use raw_price_integer as using floats for currency is not safe.
 	 */
 	raw_price: number;
 
 	/**
-	 * The orig cost in the currency's smallest unit. Note that origCostInteger is never null. Although orig_cost
-	 * is undefined if the cost of a store product is overridden by a promotion or a coupon, orig_cost_integer
-	 * is not. origCostInteger will return a price identical to raw_price_integer instead.
-	 */
-	orig_cost_integer: number;
-
-	/**
 	 * The orig cost as a float.
 	 * @deprecated use orig_cost_integer as using floats for currency is not safe.
 	 */
 	orig_cost?: number | null;
-	currency_code: string;
 }
 
 /**
@@ -150,7 +158,7 @@ export interface PricedAPIPlan extends PricedAPIPlanIntroductoryOffer {
  * Only the properties that are actually used in the store are typed
  * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
  */
-export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
+export interface PricedAPISitePlan extends PricedAPIPlanPricing, PricedAPIPlanIntroductoryOffer {
 	/* product_id: number; // not included in the plan's payload */
 	product_slug: StorePlanSlug;
 	current_plan?: boolean;
