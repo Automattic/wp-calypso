@@ -1,3 +1,5 @@
+import { LoadingCheckoutSummaryFeaturesList } from '../../src/components/wp-checkout-order-summary';
+
 function OrderStep() {
 	return (
 		<div className="purchase-modal__step is-placeholder">
@@ -21,14 +23,23 @@ function PayButton() {
 	return <div className="purchase-modal__pay-button is-placeholder">Pay button</div>;
 }
 
-export default function PurchaseModalPlaceHolder() {
+export default function PurchaseModalPlaceHolder( { showFeatureList } ) {
 	return (
-		<>
-			<OrderStep />
-			<OrderStep />
-			<hr />
-			<OrderReview />
-			<PayButton />
-		</>
+		<div className="purchase-modal__wrapper">
+			<div className="purchase-modal__steps">
+				<OrderStep />
+				<OrderStep />
+				<OrderStep />
+				<OrderStep />
+				<hr />
+				<OrderReview />
+				<PayButton />
+			</div>
+			{ showFeatureList && (
+				<div className="purchase-modal__features is-placeholder">
+					<LoadingCheckoutSummaryFeaturesList />
+				</div>
+			) }
+		</div>
 	);
 }

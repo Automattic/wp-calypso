@@ -1,4 +1,10 @@
-import { isMonthly, getPlanByPathSlug, TERM_MONTHLY, Product } from '@automattic/calypso-products';
+import {
+	isMonthly,
+	getPlanByPathSlug,
+	TERM_MONTHLY,
+	Product,
+	isPlan,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -415,6 +421,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 					productToAdd={ this.props.product }
 					onClose={ onCloseModal }
 					siteSlug={ this.props.siteSlug }
+					showFeatureList={
+						!! ( this.props.product && isPlan( { productSlug: this.props.product?.product_slug } ) )
+					}
 				/>
 			</StripeHookProvider>
 		);

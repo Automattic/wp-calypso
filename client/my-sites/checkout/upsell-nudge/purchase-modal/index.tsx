@@ -2,6 +2,7 @@ import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import classNames from 'classnames';
 import { useState, useMemo, useEffect } from 'react';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
@@ -28,6 +29,7 @@ type PurchaseModalProps = {
 	onClose: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
+	showFeatureList: boolean;
 };
 
 export function PurchaseModal( {
@@ -36,12 +38,14 @@ export function PurchaseModal( {
 	isCartUpdating,
 	onClose,
 	siteSlug,
+	showFeatureList,
 }: {
 	cards: StoredPaymentMethodCard[];
 	isCartUpdating: boolean;
 	cart: ResponseCart;
 	onClose: () => void;
 	siteSlug: string;
+	showFeatureList: boolean;
 } ) {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
@@ -56,11 +60,23 @@ export function PurchaseModal( {
 		siteSlug,
 		step,
 		submitTransaction,
+		showFeatureList,
 	};
 
 	return (
-		<Dialog isVisible={ true } baseClassName="purchase-modal dialog" onClose={ onClose }>
-			{ isCartUpdating ? <Placeholder /> : <Content { ...contentProps } /> }
+		<Dialog
+			isVisible={ true }
+			baseClassName="purchase-modal dialog"
+			className={ classNames( {
+				'has-feature-list': showFeatureList,
+			} ) }
+			onClose={ onClose }
+		>
+			{ isCartUpdating ? (
+				<Placeholder showFeatureList={ showFeatureList } />
+			) : (
+				<Content { ...contentProps } />
+			) }
 		</Dialog>
 	);
 }
@@ -74,7 +90,7 @@ export function wrapValueInManagedValue( value: string | undefined ): ManagedVal
 }
 
 export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
-	const { onClose, productToAdd, siteSlug } = props;
+	const { onClose, productToAdd, siteSlug, showFeatureList } = props;
 
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
@@ -181,6 +197,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				cart={ responseCart }
 				onClose={ handleOnClose }
 				siteSlug={ siteSlug }
+				showFeatureList={ showFeatureList }
 			/>
 		</CheckoutProvider>
 	);
