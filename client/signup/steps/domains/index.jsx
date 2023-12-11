@@ -853,6 +853,7 @@ export class RenderDomainsStep extends Component {
 						removeDomainClickHandler={ this.removeDomainClickHandler }
 						isGoingToNextStep={ this.state.isGoingToNextStep }
 						goToNext={ this.goToNext }
+						handleSkip={ this.handleSkip }
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 						freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
 					/>

@@ -242,7 +242,7 @@ class DomainsMiniCart extends Component {
 						borderless
 						className="domains__domain-cart-choose-later"
 						onClick={ () => {
-							this.handleSkip( undefined, false, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
+							this.props.handleSkip( undefined, false, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
 						} }
 					>
 						{ translate( 'Choose my domain later' ) }
