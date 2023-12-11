@@ -598,6 +598,7 @@ export interface ResponseCartProductExtra {
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
+	isMarketplaceSitelessCheckout?: boolean;
 
 	/**
 	 * Marketplace properties
@@ -619,6 +620,7 @@ export interface ResponseCartGiftDetails {
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
 	isAkismetSitelessCheckout?: boolean;
+	isMarketplaceSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;

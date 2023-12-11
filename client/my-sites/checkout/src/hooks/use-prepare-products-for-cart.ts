@@ -118,6 +118,11 @@ export default function usePrepareProductsForCart( {
 		jetpackPurchaseToken,
 		source,
 	} );
+	useAddProductFromBillingIntent( {
+		productAliasFromUrl,
+		dispatch,
+		addHandler,
+	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
 		sitelessCheckoutType, // Akismet products can renew independently of a site
@@ -134,6 +139,7 @@ export default function usePrepareProductsForCart( {
 		! areProductsRetrievedFromUrl ||
 			sitelessCheckoutType === 'jetpack' ||
 			sitelessCheckoutType === 'akismet' ||
+			sitelessCheckoutType === 'marketplace' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -180,7 +186,12 @@ function preparedProductsReducer(
 	}
 }
 
-type AddHandler = 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd' | 'addFromLocalStorage';
+type AddHandler =
+	| 'addProductFromSlug'
+	| 'addRenewalItems'
+	| 'doNotAdd'
+	| 'addFromLocalStorage'
+	| 'addProductFromBillingIntent';
 
 function chooseAddHandler( {
 	isLoading,
@@ -202,6 +213,10 @@ function chooseAddHandler( {
 	// Akismet products can be renewed in a "siteless" context
 	if ( sitelessCheckoutType === 'akismet' && originalPurchaseId ) {
 		return 'addRenewalItems';
+	}
+
+	if ( sitelessCheckoutType === 'marketplace' ) {
+		return 'addProductFromBillingIntent';
 	}
 
 	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
@@ -250,6 +265,51 @@ function useNothingToAdd( {
 		debug( 'nothing to add' );
 		dispatch( { type: 'PRODUCTS_ADD', products: [] } );
 	}, [ addHandler, dispatch ] );
+}
+
+function useAddProductFromBillingIntent( {
+	productAliasFromUrl,
+	dispatch,
+	addHandler,
+}: {
+	productAliasFromUrl?: string;
+	dispatch: ( action: PreparedProductsAction ) => void;
+	addHandler: AddHandler;
+} ) {
+	useEffect( () => {
+		if ( addHandler !== 'addProductFromBillingIntent' ) {
+			return;
+		}
+
+		// TODO:: get billing intent info from backend to add products to the cart.
+		const productsForCart: RequestCartProduct[] = [];
+
+		const { slug, meta } = getProductPartsFromAlias( productAliasFromUrl as string );
+
+		// Some meta values contain slashes, so we decode them
+		const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
+
+		productsForCart.push( {
+			product_slug: slug,
+			meta: cartMeta,
+			extra: {
+				isMarketplaceSitelessCheckout: true,
+			},
+			volume: 0,
+			quantity: null,
+		} );
+
+		if ( productsForCart.length < 1 ) {
+			debug( 'creating products from billing intent failed' );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: 'I tried and failed to create products from signup',
+			} );
+			return;
+		}
+
+		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+	}, [ addHandler, dispatch, productAliasFromUrl ] );
 }
 
 function useAddProductsFromLocalStorage( {
@@ -610,6 +670,7 @@ function createItemToAddToCart( {
 		extra: {
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
+			isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
 			context: 'calypstore',

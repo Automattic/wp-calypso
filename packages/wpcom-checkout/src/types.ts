@@ -592,4 +592,4 @@ export interface CountryListItemWithVat extends CountryListItemBase {
 }
 export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
 
-export type SitelessCheckoutType = 'jetpack' | 'akismet' | undefined;
+export type SitelessCheckoutType = 'jetpack' | 'akismet' | 'marketplace' | undefined;
