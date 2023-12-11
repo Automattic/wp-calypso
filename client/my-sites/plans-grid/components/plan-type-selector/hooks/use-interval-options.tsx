@@ -100,10 +100,3 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Record<
 
 	return optionList;
 }
-
-// if ( termViseMaxDiscount[ key ] ) {
-// 	option.discountText = translate( 'Save %(discount)s', {
-// 		args: { discount: termViseMaxDiscount[ key ] },
-// 		comment: 'Discount percentage',
-// 	} );
-// }
