@@ -1,6 +1,6 @@
 import { loadScript } from '@automattic/load-script';
 import { ResponseCart } from '@automattic/shopping-cart';
-import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import { WpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import { REDDIT_TRACKING_SCRIPT, WPCOM_REDDIT_PIXEL_ID } from './constants';
 
@@ -9,7 +9,10 @@ import { REDDIT_TRACKING_SCRIPT, WPCOM_REDDIT_PIXEL_ID } from './constants';
  */
 declare global {
 	interface Window {
-		rdt: ( T: string, V?: string, W?: object ) => void; //TODO - Temp types for now to pass TS warnings.
+		rdt: {
+			callQueue: object[];
+			sendEvent: ( ...args: [ string, string?, object? ] ) => void;
+		};
 	}
 }
 
@@ -21,29 +24,35 @@ declare global {
 export const loadRedditTracker = async (): Promise< void > => {
 	// Are we allowed to track (user consent, e2e, etc.)?
 	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
-		throw new Error( 'Tracking is not allowed' );
+		return;
 	}
-
-	// Load the Reddit Tracker script
-	await loadScript( REDDIT_TRACKING_SCRIPT );
 
 	const params = {
 		optOut: false,
 		useDecimalCurrencyValues: true,
 	};
+
+	window.rdt =
+		window.rdt ||
+		function ( ...args: [ string, string?, object? ] ) {
+			window.rdt.sendEvent ? window.rdt.sendEvent( ...args ) : window.rdt.callQueue.push( args );
+		};
+
+	window.rdt.callQueue = [];
+
+	await loadScript( REDDIT_TRACKING_SCRIPT );
+
 	window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
 };
 
 /**
  * Tracks a page view in Reddit.
- * @returns Promise<void>
  */
-export const redditTrackerPageView = async (): Promise< void > => {
-	if ( ! mayWeInitTracker( 'reddit' ) ) {
+export const redditTrackerPageView = (): void => {
+	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
 		return;
 	}
-	await loadRedditTracker();
-	window.rdt( 'track', 'PageView' );
+	loadRedditTracker().then( () => window.rdt( 'track', 'PageVisit' ) );
 };
 
 /**

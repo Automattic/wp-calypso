@@ -98,7 +98,6 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
 	clarity: () => 'clarity' in window,
-	reddit: () => 'rdt' in window,
 };
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
