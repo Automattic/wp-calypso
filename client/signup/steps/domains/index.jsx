@@ -725,7 +725,8 @@ export class RenderDomainsStep extends Component {
 		this.props.shoppingCartManager.reloadFromServer();
 	};
 
-	goToNext = () => {
+	goToNext = ( event ) => {
+		event.stopPropagation();
 		this.setState( { isGoingToNextStep: true } );
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation

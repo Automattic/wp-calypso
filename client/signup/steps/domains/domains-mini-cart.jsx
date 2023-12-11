@@ -147,7 +147,7 @@ class DomainsMiniCart extends Component {
 				<Button
 					primary
 					className="domains__domain-cart-continue"
-					onClick={ this.goToNext }
+					onClick={ this.props.goToNext }
 					busy={ this.props.isGoingToNextStep }
 				>
 					{ translate( 'Continue' ) }
