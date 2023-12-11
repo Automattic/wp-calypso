@@ -5,9 +5,10 @@ import ProductPriceWithDiscount from '../primary/product-price-with-discount-inf
 
 type Props = {
 	product: APIProductFamilyProduct;
+	quantity?: number;
 };
 
-const LicenseLightboxPaymentPlan: FunctionComponent< Props > = ( { product } ) => {
+const LicenseLightboxPaymentPlan: FunctionComponent< Props > = ( { product, quantity } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -15,7 +16,7 @@ const LicenseLightboxPaymentPlan: FunctionComponent< Props > = ( { product } ) =
 			<h3 className="license-lightbox__payment-plan-title">{ translate( 'Payment plan:' ) }</h3>
 
 			<div className="license-lightbox__pricing">
-				<ProductPriceWithDiscount product={ product } />
+				<ProductPriceWithDiscount product={ product } quantity={ quantity } />
 			</div>
 		</div>
 	);

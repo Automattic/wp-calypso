@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -25,6 +26,8 @@ export default function ProductPriceWithDiscount( {
 
 	const userProducts = useSelector( ( state ) => getProductsList( state ) );
 	const isDailyPricing = product.price_interval === 'day';
+
+	const isBundle = isEnabled( 'jetpack/bundle-licensing' ) && quantity > 1;
 
 	const { actualCost, discountedCost, discountPercentage } = getProductPricingInfo(
 		userProducts,
@@ -68,8 +71,14 @@ export default function ProductPriceWithDiscount( {
 				}
 			</div>
 			<div className="product-price-with-discount__price-interval">
-				{ isDailyPricing && translate( '/USD per license per day' ) }
-				{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
+				{ isDailyPricing &&
+					( isBundle
+						? translate( '/USD per bundle per day' )
+						: translate( '/USD per license per day' ) ) }
+				{ product.price_interval === 'month' &&
+					( isBundle
+						? translate( '/USD per bundle per month' )
+						: translate( '/USD per license per month' ) ) }
 			</div>
 		</div>
 	);
