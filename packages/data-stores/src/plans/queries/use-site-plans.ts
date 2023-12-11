@@ -25,7 +25,7 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 
 	return useQuery( {
 		queryKey: queryKeys.sitePlans( siteId ),
-		queryFn: async () => {
+		queryFn: async (): Promise< SitePlansIndex > => {
 			const data: PricedAPISitePlansIndex = await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
 				apiVersion: '1.3',
