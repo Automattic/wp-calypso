@@ -4,6 +4,7 @@ import {
 	FEATURE_STYLE_CUSTOMIZATION,
 	getPlans,
 	isFreePlanProduct,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import {
 	updateLaunchpadSettings,
@@ -43,14 +44,14 @@ interface GetEnhancedTasksProps {
 	siteSlug: string | null;
 	site: SiteDetails | null;
 	submit: NavigationControls[ 'submit' ];
-	displayGlobalStylesWarning: boolean;
-	globalStylesMinimumPlan: string;
+	displayGlobalStylesWarning?: boolean;
+	globalStylesMinimumPlan?: string;
 	setShowPlansModal: Dispatch< SetStateAction< boolean > >;
 	queryClient: QueryClient;
 	goToStep?: NavigationControls[ 'goToStep' ];
 	flow: string | null;
-	isEmailVerified: boolean;
-	checklistStatuses: ChecklistStatuses | undefined;
+	isEmailVerified?: boolean;
+	checklistStatuses?: ChecklistStatuses;
 	planCartItem?: MinimalRequestCartProduct | null;
 	domainCartItem?: MinimalRequestCartProduct | null;
 	productCartItems?: MinimalRequestCartProduct[] | null;
@@ -70,11 +71,11 @@ const PLANS_LIST = getPlans();
  */
 export function getEnhancedTasks( {
 	tasks,
-	siteSlug,
-	site,
+	siteSlug = '',
+	site = null,
 	submit,
-	displayGlobalStylesWarning,
-	globalStylesMinimumPlan,
+	displayGlobalStylesWarning = false,
+	globalStylesMinimumPlan = PLAN_PREMIUM,
 	setShowPlansModal,
 	queryClient,
 	goToStep,
