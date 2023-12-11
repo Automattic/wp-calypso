@@ -625,7 +625,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				box-shadow: none;
 				margin: 0;
 
-				@include break-mobile {
+				@include break-medium {
 					padding: 0;
 				}
 			}
