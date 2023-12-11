@@ -1011,6 +1011,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'changePlan',
 			label: __( 'Change plan on your site' ),
+			searchLabel: [
+				_x( 'upgrade plan', 'Keyword for the Change plan on your site command' ),
+				_x( 'change plan', 'Keyword for the Change plan on your site command' ),
+				_x( 'add plan', 'Keyword for the Change plan on your site command' ),
+			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
 			siteFunctions: {
@@ -1018,9 +1023,9 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/plans/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
 			},
-			icon: uploadIcon,
+			icon: creditCardIcon,
 		},
 		{
 			name: 'addNewUser',
