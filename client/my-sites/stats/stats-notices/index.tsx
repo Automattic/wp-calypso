@@ -23,6 +23,7 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 
 const TEAM51_OWNER_ID = 70055110;
 
@@ -87,6 +88,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		wpcomSiteHasPaidPlan;
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
+	const { isRequestingSitePurchases, isCommercialOwned } = useStatsPurchases( siteId );
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -99,6 +102,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isSiteJetpackNotAtomic,
 		statsPurchaseSuccess,
 		isCommercial,
+		isCommercialOwned,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
@@ -109,7 +113,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const hasLoadedPlans =
 		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;
 
-	if ( ! hasLoadedPurchases || ! hasLoadedPlans || isLoading || isError ) {
+	if (
+		! hasLoadedPurchases ||
+		! hasLoadedPlans ||
+		isLoading ||
+		isError ||
+		isRequestingSitePurchases
+	) {
 		return null;
 	}
 

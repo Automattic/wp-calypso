@@ -38,7 +38,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 				}
 		  )
 		: translate(
-				'{{p}}You site is receiving more attention and is close to the monthly view limit provided by your current plan. Consider increasing your tier limit to avoid potential service disruptions.{{/p}}',
+				'{{p}}Your site is receiving more attention and is close to the monthly view limit provided by your current plan. Consider increasing your tier limit to avoid potential service disruptions.{{/p}}',
 				{
 					components: {
 						p: <p />,
