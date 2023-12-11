@@ -516,6 +516,10 @@ export class Login extends Component {
 				} }
 			>
 				{ ( isLoadingExperiment, experimentAssignment ) => {
+					if ( isLoadingExperiment ) {
+						return null;
+					}
+
 					if ( experimentAssignment?.variationName === 'treatment' ) {
 						isSocialFirst = true;
 					}
