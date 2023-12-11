@@ -119,7 +119,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isSiteJetpackNotAtomic,
 			isCommercial,
 		}: StatsNoticeProps ) => {
-			// TODO: Maybe we won't show tier upgrade notice for WPCOM sites for now?
+			// TODO: We don't show the notice for WPCOM sites for now.
 			const showTierUpgradeNoticeForWpcomSites = isWpcom && ! isVip && ! isP2 && ! isOwnedByTeam51;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
@@ -127,9 +127,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			const showTierUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
 			return !! (
-				( showTierUpgradeNoticeOnOdyssey ||
-					showTierUpgradeNoticeForJetpackNotAtomic ||
-					showTierUpgradeNoticeForWpcomSites ) &&
+				! showTierUpgradeNoticeForWpcomSites &&
+				( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
 				config.isEnabled( 'stats/tier-upgrade-slider' ) &&
 				isCommercial &&
 				hasPaidStats
