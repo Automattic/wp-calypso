@@ -78,59 +78,10 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import DomainNameAndCostCustom, { BoldTLD } from './domain-name-and-cost';
 import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
-
-// Referenced from WordAds_Ads_Txt
-const wpcomSubdomains = [
-	'wordpress.com',
-	'art.blog',
-	'business.blog',
-	'car.blog',
-	'code.blog',
-	'data.blog',
-	'design.blog',
-	'family.blog',
-	'fashion.blog',
-	'finance.blog',
-	'fitness.blog',
-	'food.blog',
-	'game.blog',
-	'health.blog',
-	'home.blog',
-	'law.blog',
-	'movie.blog',
-	'music.blog',
-	'news.blog',
-	'photo.blog',
-	'poetry.blog',
-	'politics.blog',
-	'school.blog',
-	'science.blog',
-	'sport.blog',
-	'tech.blog',
-	'travel.blog',
-	'video.blog',
-	'water.blog',
-];
-
-const BoldTLD = ( { domain } ) => {
-	const split = domain.split( '.' );
-	let tld = split.pop();
-	const wp = split.pop();
-
-	if ( wpcomSubdomains.includes( `${ wp }.${ tld }` ) ) {
-		tld = `${ wp }.${ tld }`;
-	}
-
-	return (
-		<>
-			<span>{ domain.replace( `.${ tld }`, '' ) }</span>
-			<b>.{ tld }</b>
-		</>
-	);
-};
 
 export class RenderDomainsStep extends Component {
 	static propTypes = {
@@ -848,7 +799,7 @@ export class RenderDomainsStep extends Component {
 	};
 
 	getSideContent = () => {
-		const { translate, flowName } = this.props;
+		const { flowName } = this.props;
 		const domainsInCart = getDomainRegistrations( this.props.cart );
 
 		const additionalDomains = this.state.temporaryCart
@@ -876,45 +827,6 @@ export class RenderDomainsStep extends Component {
 				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
-
-		const DomainNameAndCost = ( { domain } ) => {
-			const priceText = translate( '%(cost)s/year', {
-				args: { cost: domain.item_original_cost_display },
-			} );
-			const costDifference = domain.item_original_cost - domain.cost;
-			const hasPromotion = costDifference > 0;
-			const isRemoving = this.state.domainRemovalQueue.some(
-				( item ) => item.meta === domain.meta
-			);
-
-			return isRemoving ? null : (
-				<>
-					<div>
-						<div className="domains__domain-cart-domain">
-							<BoldTLD domain={ domain.meta } />
-						</div>
-						<div className="domain-product-price__price">
-							{ hasPromotion && <del>{ priceText }</del> }
-							<span className="domains__price">{ domain.item_subtotal_display }</span>
-						</div>
-					</div>
-					<div>
-						{ hasPromotion && domain.item_subtotal === 0 && (
-							<span className="savings-message">
-								{ translate( 'Free for the first year with annual paid plans.' ) }
-							</span>
-						) }
-						<Button
-							borderless
-							className="domains__domain-cart-remove"
-							onClick={ this.removeDomainClickHandler( domain ) }
-						>
-							{ translate( 'Remove' ) }
-						</Button>
-					</div>
-				</>
-			);
-		};
 
 		const FreeDomain = () => (
 			<div key="row-free" className="domains__domain-cart-row">
@@ -1016,7 +928,13 @@ export class RenderDomainsStep extends Component {
 								{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
 								{ domainsInCart.map( ( domain, i ) => (
 									<div key={ `row${ i }` } className="domains__domain-cart-row">
-										<DomainNameAndCost domain={ domain } />
+										<DomainNameAndCostCustom
+											domain={ domain }
+											isRemoving={ this.state.domainRemovalQueue.some(
+												( item ) => item.meta === domain.meta
+											) }
+											removeDomainClickHandler={ this.removeDomainClickHandler }
+										/>
 									</div>
 								) ) }
 							</div>
@@ -1034,7 +952,13 @@ export class RenderDomainsStep extends Component {
 						{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
 						{ domainsInCart.map( ( domain, i ) => (
 							<div key={ `row${ i }` } className="domains__domain-cart-row">
-								<DomainNameAndCost domain={ domain } />
+								<DomainNameAndCostCustom
+									domain={ domain }
+									isRemoving={ this.state.domainRemovalQueue.some(
+										( item ) => item.meta === domain.meta
+									) }
+									removeDomainClickHandler={ this.removeDomainClickHandler }
+								/>
 							</div>
 						) ) }
 					</div>
