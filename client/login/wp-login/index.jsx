@@ -503,7 +503,8 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isFromMigrationPlugin } = this.props;
+		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
+			this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirstEnabled = config.isEnabled( 'login/social-first' );
 		let isSocialFirst = false;
@@ -512,7 +513,7 @@ export class Login extends Component {
 			<ProvideExperimentData
 				name="wpcom_login_page_emphasise_socials_redesign_202311_v1"
 				options={ {
-					isEligible: isSocialFirstEnabled,
+					isEligible: isSocialFirstEnabled && isWhiteLogin && ! isGravPoweredClient && ! isWoo,
 				} }
 			>
 				{ ( isLoadingExperiment, experimentAssignment ) => {
@@ -558,17 +559,19 @@ export class Login extends Component {
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			locale: getCurrentLocaleSlug( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
 			isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
 			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
+			isWoo: isWooOAuth2Client( oauth2Client ),
 			currentRoute: getCurrentRoute( state ),
 			currentQuery,
 		};

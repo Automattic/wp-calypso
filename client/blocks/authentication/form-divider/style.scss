@@ -5,13 +5,9 @@
 $separator-style: 1px solid #eaeaeb;
 $breakpoint-mobile: 660px;
 
-.auth-form__separator {
-	background: var(--color-surface);
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
+@mixin horizontal-separator {
+	width: 100%;
+	margin: 20px 0;
 	&::before,
 	&::after {
 		position: absolute;
@@ -30,24 +26,50 @@ $breakpoint-mobile: 660px;
 	}
 
 	.auth-form__separator-text {
-		background: var(--color-surface);
-		text-transform: uppercase;
-		text-align: center;
-		padding: 24px 0;
-		font-size: 0.75rem;
-		z-index: 1;
-		color: var(--studio-gray-50);
+		padding: 0 24px;
 	}
 }
 
-// In this case the separator will be horizontal
-.wp-login__main {
-	.auth-form__separator {
-		width: 100%;
+@mixin vertical-separator {
+	width: 24px;
+	margin-left: 40px;
+	margin-right: 40px;
+
+	&::before,
+	&::after {
+		border-inline-start: $separator-style;
+		border-block-start: 0;
+		inset-block-start: 0;
+		inset-inline-start: 50%;
+		height: 40%;
+	}
+
+	&::after {
+		top: 60%;
 	}
 
 	.auth-form__separator-text {
-		padding: 0 24px;
+		padding: 24px 0;
+	}
+}
+
+
+.auth-form__separator {
+	background: var(--color-surface);
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	@include horizontal-separator;
+
+	.auth-form__separator-text {
+		background: var(--color-surface);
+		text-transform: uppercase;
+		text-align: center;
+		font-size: 0.75rem;
+		z-index: 1;
+		color: var(--studio-gray-50);
 	}
 }
 
@@ -55,43 +77,17 @@ $breakpoint-mobile: 660px;
 .signup-form,
 .is-white-login .is-social-first {
 	.auth-form__separator {
+		@include horizontal-separator;
 		width: calc(100% - 32px);
 		margin: 20px 0;
 
-		&::before {
-			border-block-start: $separator-style;
-			border-inline-start: 0;
-			height: 0;
-			inset-block-start: 50%;
-			inset-inline-start: 0;
-			position: absolute;
-			width: 100%;
-		}
-
 		@include break-medium {
-			width: 24px;
-			margin-left: 40px;
-			margin-right: 40px;
-
-			&::before,
-			&::after {
-				border-inline-start: $separator-style;
-				border-block-start: 0;
-				inset-block-start: 0;
-				inset-inline-start: 50%;
-				height: 40%;
-			}
-
-			&::after {
-				top: 60%;
-			}
+			@include vertical-separator;
 		}
 	}
 
-	.auth-form__separator-text {
-		@media screen and (max-width: $breakpoint-mobile ) {
-			padding: 0 24px;
-		}
+	.auth-form__separator.is-horizontal {
+		@include horizontal-separator;
 	}
 }
 

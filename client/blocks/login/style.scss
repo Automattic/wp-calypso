@@ -574,3 +574,9 @@ $breakpoint-mobile: 782px; //Mobile size.
 		display: none;
 	}
 }
+
+.is-white-login.is-gravatar {
+	.login__form-terms {
+		display: block;
+	}
+}
