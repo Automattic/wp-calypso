@@ -4,6 +4,7 @@ import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
+import { updateThemeTiers } from 'calypso/state/themes/actions/theme-tiers';
 import { prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 import {
 	normalizeJetpackTheme,
@@ -69,12 +70,13 @@ export function requestThemes( siteId, query = {}, locale ) {
 		// WP.org returns an `info` object containing a `results` number, so we destructure that
 		// and use it as default value for `found`.
 		return request()
-			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
+			.then( ( { themes: rawThemes, info: { results } = {}, found = results, tiers = {} } ) => {
 				let themes;
 				if ( siteId === 'wporg' ) {
 					themes = map( rawThemes, normalizeWporgTheme );
 				} else if ( siteId === 'wpcom' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
+					dispatch( updateThemeTiers( tiers ) );
 				} else {
 					// Jetpack Site
 					themes = map( rawThemes, normalizeJetpackTheme );
