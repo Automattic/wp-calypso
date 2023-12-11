@@ -8,6 +8,10 @@ import { StatsPlanTierUI } from '../types';
 import useAvailableUpgradeTiers from '../use-available-upgrade-tiers';
 import './styles.scss';
 
+// Special case for per-unit fees over the max tier.
+// In millions.
+const EXTENSION_THRESHOLD = 2;
+
 function useTranslatedStrings() {
 	const translate = useTranslate();
 	const limits = translate( 'Monthly site views limit', {
@@ -79,7 +83,6 @@ function StatsCommercialUpgradeSlider( {
 	const lastTier = tiers.at( -1 );
 	const hasPerUnitFee = !! lastTier?.per_unit_fee;
 	if ( hasPerUnitFee ) {
-		const EXTENSION_THRESHOLD = 2; // in millions
 		const perUnitFee = Number( lastTier?.per_unit_fee );
 		perUnitFeeMessaging = translate(
 			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
