@@ -18,7 +18,7 @@ import type {
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
+const debug = debugFactory( 'calypso:use-cached-domain-contact-details' );
 
 function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
@@ -62,7 +62,7 @@ function useCachedContactDetailsForCheckoutForm(
 	}
 	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
 
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const collapseLastStepStatus = useShouldCollapseLastStep();
 
 	const isMounted = useRef( true );
 	useEffect( () => {
@@ -77,6 +77,10 @@ function useCachedContactDetailsForCheckoutForm(
 	useEffect( () => {
 		// Once this activates, do not do it again.
 		if ( didFillForm.current ) {
+			return;
+		}
+		if ( collapseLastStepStatus === 'loading' ) {
+			debug( 'prepopulating cached contact details waiting on Explat' );
 			return;
 		}
 		// Do nothing if the contact details are loading, or the countries are loading.
@@ -101,7 +105,8 @@ function useCachedContactDetailsForCheckoutForm(
 				if ( cachedContactDetails.countryCode ) {
 					setShouldShowContactDetailsValidationErrors( false );
 					debug( 'Contact details are populated; attempting to skip to payment method step' );
-					if ( shouldCollapseLastStep ) {
+					if ( collapseLastStepStatus === 'collapse' ) {
+						debug( 'also attempting to skip payment method step' );
 						return setStepCompleteStatus( 'payment-method-step' );
 					}
 					return setStepCompleteStatus( 'contact-form' );
@@ -135,7 +140,7 @@ function useCachedContactDetailsForCheckoutForm(
 				} );
 			} );
 	}, [
-		shouldCollapseLastStep,
+		collapseLastStepStatus,
 		setShouldShowContactDetailsValidationErrors,
 		reduxDispatch,
 		setStepCompleteStatus,

@@ -6,6 +6,10 @@ body.business-trial-upgraded {
 	background-color: var(--color-surface);
 	font-family: $font-sf-pro-text;
 
+	&.is-section-plans .layout__content {
+		padding-left: 0 !important;
+	}
+
 	.trial-upgrade-confirmation__header {
 		text-align: center;
 		padding: 20px 0;

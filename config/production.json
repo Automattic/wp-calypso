@@ -21,6 +21,7 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/siteless-checkout": true,
+		"akismet/checkout-quantity-dropdown": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
 		"bilmur-script": true,
@@ -107,6 +108,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
+		"pattern-assembler/v2": false,
 		"pattern-assembler/add-pages": true,
 		"plans/hosting-trial": false,
 		"plans/migration-trial": true,
@@ -179,6 +181,7 @@
 		"themes/text-search-lots": true,
 		"themes/theme-switch-persist-template": false,
 		"themes/assembler-first": false,
+		"themes/tiers": false,
 		"unified-pages/virtual-home-page": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
@@ -191,7 +194,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": false
+		"yolo/command-palette": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

@@ -12,6 +12,7 @@ type SubscribeParams = {
 	onSuccess?: () => void;
 	onError?: () => void;
 	subscriptionId?: number;
+	resubscribed?: boolean;
 };
 
 type SubscribeResponse = {
@@ -98,6 +99,7 @@ const useSiteSubscribeMutation = () => {
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsCacheKey, {
 					...previousSiteSubscriptions,
@@ -105,15 +107,16 @@ const useSiteSubscribeMutation = () => {
 						return {
 							...page,
 							total_subscriptions: page.total_subscriptions - 1,
-							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
-								...siteSubscription,
-								isDeleted:
-									siteSubscription.blog_ID === params.blog_id ? false : siteSubscription.isDeleted,
-								date_subscribed:
-									siteSubscription.blog_ID === params.blog_id
-										? new Date()
-										: siteSubscription.date_subscribed,
-							} ) ),
+							subscriptions: page.subscriptions.map( ( siteSubscription ) =>
+								siteSubscription.blog_ID === params.blog_id
+									? {
+											...siteSubscription,
+											date_subscribed: new Date(),
+											isDeleted: false,
+											resubscribed: params.resubscribed ?? false,
+									  }
+									: siteSubscription
+							),
 						};
 					} ),
 				} );

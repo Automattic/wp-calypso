@@ -1,21 +1,52 @@
 import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
-import { useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
+import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
-import { getDateRangeQueryParam, updateDateRangeQueryParam } from './site-monitoring-filter-params';
+import {
+	getDateRangeQueryParam,
+	updateDateRangeQueryParam,
+	getFilterQueryParam,
+	updateFilterQueryParam,
+} from './site-monitoring-filter-params';
 import type { Moment } from 'moment';
 
 export type LogType = 'php' | 'web';
 
 const DEFAULT_PAGE_SIZE = 50;
+
+export function buildFilterParam(
+	logType: string,
+	severity: string,
+	requestType: string,
+	requestStatus: string
+): FilterType {
+	const filters: FilterType = {};
+
+	if ( logType === 'php' ) {
+		if ( severity ) {
+			filters.severity = [ severity ];
+		}
+	}
+
+	if ( logType === 'web' ) {
+		if ( requestType ) {
+			filters.request_type = [ requestType ];
+		}
+		if ( requestStatus ) {
+			filters.status = [ requestStatus ];
+		}
+	}
+
+	return filters;
+}
 
 export const LogsTab = ( {
 	logType,
@@ -45,6 +76,18 @@ export const LogsTab = ( {
 		};
 	} );
 
+	const [ severity, setSeverity ] = useState( () => {
+		return getFilterQueryParam( 'severity' ) || '';
+	} );
+
+	const [ requestType, setRequestType ] = useState( () => {
+		return getFilterQueryParam( 'request_type' ) || '';
+	} );
+
+	const [ requestStatus, setRequestStatus ] = useState( () => {
+		return getFilterQueryParam( 'request_status' ) || '';
+	} );
+
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
 
 	const autoRefreshCallback = useCallback( () => {
@@ -57,10 +100,23 @@ export const LogsTab = ( {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
+		filter: buildFilterParam( logType, severity, requestType, requestStatus ),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
 	} );
+
+	const [ latestLogType, setLatestLogType ] = useState< LogType | undefined | null >( null );
+	useEffect( () => {
+		if ( ! isFetching && logType !== latestLogType ) {
+			setLatestLogType( logType );
+			if ( latestLogType ) {
+				setSeverity( '' );
+				setRequestType( '' );
+				setRequestStatus( '' );
+			}
+		}
+	}, [ latestLogType, logType, isFetching ] );
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
 		if ( isChecked ) {
@@ -115,6 +171,24 @@ export const LogsTab = ( {
 		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
+	const handleSeverityChange = ( severity: string ) => {
+		setSeverity( severity );
+		setAutoRefresh( false );
+		updateFilterQueryParam( 'severity', severity );
+	};
+
+	const handleRequestTypeChange = ( requestType: string ) => {
+		setRequestType( requestType );
+		setAutoRefresh( false );
+		updateFilterQueryParam( 'request_type', requestType );
+	};
+
+	const handleRequestStatusChange = ( requestStatus: string ) => {
+		setRequestStatus( requestStatus );
+		setAutoRefresh( false );
+		updateFilterQueryParam( 'request_status', requestStatus );
+	};
+
 	const headerTitles =
 		logType === 'php'
 			? [ 'severity', 'timestamp', 'message' ]
@@ -127,6 +201,12 @@ export const LogsTab = ( {
 				startDateTime={ dateRange.startTime }
 				endDateTime={ dateRange.endTime }
 				onDateTimeChange={ handleDateTimeChange }
+				onSeverityChange={ handleSeverityChange }
+				onRequestTypeChange={ handleRequestTypeChange }
+				onRequestStatusChange={ handleRequestStatusChange }
+				severity={ severity }
+				requestType={ requestType }
+				requestStatus={ requestStatus }
 			>
 				<ToggleControl
 					className="site-logs__auto-refresh"
@@ -140,6 +220,7 @@ export const LogsTab = ( {
 				isLoading={ isFetching }
 				headerTitles={ headerTitles }
 				logType={ logType }
+				latestLogType={ latestLogType }
 			/>
 			{ paginationText && (
 				<div className="site-monitoring__pagination-text">{ paginationText }</div>

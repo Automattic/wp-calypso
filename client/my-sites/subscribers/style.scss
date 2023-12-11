@@ -17,6 +17,10 @@
 			display: none;
 		}
 
+		@media ( max-width: $break-medium ) {
+			display: inline-block;
+		}
+
 		@media ( min-width: $break-small ) {
 			.add-subscribers-button-text {
 				display: inline;
