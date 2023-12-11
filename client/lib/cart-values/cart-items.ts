@@ -12,6 +12,7 @@ import {
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
+	isDomainMoveInternal,
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainTransfer,
@@ -838,6 +839,10 @@ export function getDomainPriceRule(
 
 	if ( suggestion?.is_premium ) {
 		return 'PRICE';
+	}
+
+	if ( hasSomeSlug( suggestion ) && isDomainMoveInternal( suggestion ) ) {
+		return 'DOMAIN_MOVE_PRICE';
 	}
 
 	if ( isMonthlyOrFreeFlow( flowName ) ) {
