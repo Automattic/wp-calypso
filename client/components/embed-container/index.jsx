@@ -257,22 +257,20 @@ function embedTiledGallery( domNode ) {
 					const itemImage = item.querySelector( 'img' );
 					const itemLink = item.querySelector( 'a' );
 
-					const imgProps = {
-						id: itemImage?.id || undefined,
-						className: itemImage?.className || undefined,
-						src: itemImage?.src || undefined,
-					};
+					const imageElement = (
+						<img
+							id={ itemImage?.id || undefined }
+							className={ itemImage?.className || undefined }
+							alt={ itemImage?.alt || '' }
+							src={ itemImage?.src || undefined }
+							srcSet={ itemImage?.srcSet || undefined }
+						/>
+					);
 
 					return (
 						<figure className="gallery-item">
 							<div className="gallery-item-wrapper">
-								{ itemLink?.href ? (
-									<a href={ itemLink.href }>
-										<img alt={ itemImage?.alt || '' } { ...imgProps } />
-									</a>
-								) : (
-									<img alt={ itemImage?.alt || '' } { ...imgProps } />
-								) }
+								{ itemLink?.href ? <a href={ itemLink.href }>{ imageElement }</a> : imageElement }
 							</div>
 						</figure>
 					);
