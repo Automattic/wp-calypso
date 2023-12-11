@@ -118,11 +118,10 @@ const assemblerFirstFlow: Flow = {
 				return `/site-editor/${ selectedSiteSlug }?${ params }`;
 			}
 
-			params = new URLSearchParams( {
-				siteSlug: selectedSiteSlug,
-				siteId: selectedSiteId,
-			} );
-
+			// Carry over the current search parameters
+			params = new URLSearchParams( window.location.search );
+			params.set( 'siteSlug', selectedSiteSlug );
+			params.set( 'siteId', selectedSiteId );
 			if ( isNewSite ) {
 				params.set( 'isNewSite', 'true' );
 			}
@@ -235,7 +234,11 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'patternAssembler': {
-					return window.location.assign( `/themes/${ siteSlug }` );
+					const params = new URLSearchParams( window.location.search );
+					params.delete( 'siteSlug' );
+					params.delete( 'siteId' );
+					setSelectedSite( null );
+					return navigate( `site-picker?${ params }` );
 				}
 			}
 		};
@@ -271,7 +274,6 @@ const assemblerFirstFlow: Flow = {
 		// We also need to support both query param and path suffix localized urls
 		// depending on where the user is coming from.
 		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
 		const queryLocaleSlug = getLocaleFromQueryParam();
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;

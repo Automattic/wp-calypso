@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -103,6 +104,8 @@ export default function LicenseProductCard( props: Props ) {
 		setShowLightbox( false );
 	}, [ resetParams ] );
 
+	const isNewCardFormat = isEnabled( 'jetpack/bundle-licensing' );
+
 	return (
 		<>
 			<div
@@ -125,6 +128,17 @@ export default function LicenseProductCard( props: Props ) {
 							<div className="license-product-card__heading">
 								<h3 className="license-product-card__title">{ productTitle }</h3>
 
+								{ isNewCardFormat && (
+									<div className="license-product-card__pricing is-compact">
+										<ProductPriceWithDiscount
+											product={ product }
+											hideDiscount={ hideDiscount }
+											quantity={ quantity }
+											compact
+										/>
+									</div>
+								) }
+
 								<div className="license-product-card__description">{ productDescription }</div>
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
@@ -141,19 +155,22 @@ export default function LicenseProductCard( props: Props ) {
 							</div>
 						</div>
 
-						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount
-								product={ product }
-								hideDiscount={ hideDiscount }
-								quantity={ quantity }
-							/>
-						</div>
+						{ ! isNewCardFormat && (
+							<div className="license-product-card__pricing">
+								<ProductPriceWithDiscount
+									product={ product }
+									hideDiscount={ hideDiscount }
+									quantity={ quantity }
+								/>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ product }
+					quantity={ quantity }
 					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }

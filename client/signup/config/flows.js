@@ -238,13 +238,13 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 }
 
 function getHostingFlowDestination() {
-	const queryArgs = getQueryArgs();
+	const { flow, ...queryArgs } = getQueryArgs();
 
-	if ( queryArgs.flow === 'new-hosted-site' ) {
-		return '/setup/new-hosted-site';
+	if ( flow === 'new-hosted-site' ) {
+		return addQueryArgs( queryArgs, '/setup/new-hosted-site' );
 	}
 
-	if ( queryArgs.flow === 'import-hosted-site' ) {
+	if ( flow === 'import-hosted-site' ) {
 		return '/setup/import-hosted-site';
 	}
 

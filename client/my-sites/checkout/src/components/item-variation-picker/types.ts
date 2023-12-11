@@ -18,11 +18,14 @@ export type WPCOMProductVariant = {
 };
 
 export type ItemVariationPickerProps = {
+	id: string;
 	selectedItem: ResponseCartProduct;
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
 	isLoading?: boolean;
 	variants: WPCOMProductVariant[];
+	toggle: ( id: string | null ) => void;
+	isOpen: boolean;
 };
 
 export type OnChangeItemVariant = (

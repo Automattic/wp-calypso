@@ -8,9 +8,6 @@
 	display: flex;
 	flex-direction: column;
 
-	// todo: remove this testing/design purposes
-	border: 1px dashed var(--color-accent-40);
-
 	@include break-xlarge {
 		display: grid;
 		grid-template-columns: 3fr 1fr;
@@ -20,9 +17,6 @@
 	}
 
 	.right-sidebar {
-
-		// todo: remove this testing/design purposes
-		border: 1px dashed var(--color-accent-40);
 
 		> *:not(:first-child) {
 			margin-top: 40px;

@@ -2,12 +2,16 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
 	FEATURE_STYLE_CUSTOMIZATION,
+	getPlans,
+	isFreePlanProduct,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import {
 	updateLaunchpadSettings,
 	type SiteDetails,
 	type OnboardActions,
 	type SiteActions,
+	type ChecklistStatuses,
 } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
@@ -26,7 +30,6 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
-import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
@@ -34,7 +37,28 @@ import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
+import { LaunchpadChecklist, Task } from './types';
+
+interface GetEnhancedTasksProps {
+	tasks: Task[] | null | undefined;
+	siteSlug: string | null;
+	site: SiteDetails | null;
+	submit: NavigationControls[ 'submit' ];
+	displayGlobalStylesWarning?: boolean;
+	globalStylesMinimumPlan?: string;
+	setShowPlansModal: Dispatch< SetStateAction< boolean > >;
+	queryClient: QueryClient;
+	goToStep?: NavigationControls[ 'goToStep' ];
+	flow: string | null;
+	isEmailVerified?: boolean;
+	checklistStatuses?: ChecklistStatuses;
+	planCartItem?: MinimalRequestCartProduct | null;
+	domainCartItem?: MinimalRequestCartProduct | null;
+	productCartItems?: MinimalRequestCartProduct[] | null;
+	stripeConnectUrl?: string;
+}
+
+const PLANS_LIST = getPlans();
 
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -45,58 +69,55 @@ import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
  * Please ensure that the enhancements you are adding here are attributes that couldn't be
  * generated in the REST API
  */
-export function getEnhancedTasks(
-	tasks: Task[] | null | undefined,
-	siteSlug: string | null,
-	site: SiteDetails | null,
-	submit: NavigationControls[ 'submit' ],
-	displayGlobalStylesWarning: boolean,
-	globalStylesMinimumPlan: string,
-	setShowPlansModal: Dispatch< SetStateAction< boolean > >,
-	queryClient: QueryClient,
-	goToStep?: NavigationControls[ 'goToStep' ],
-	flow: string | null = '',
+export function getEnhancedTasks( {
+	tasks,
+	siteSlug = '',
+	site = null,
+	submit,
+	displayGlobalStylesWarning = false,
+	globalStylesMinimumPlan = PLAN_PREMIUM,
+	setShowPlansModal,
+	queryClient,
+	goToStep,
+	flow = '',
 	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {},
-	planCartItem?: MinimalRequestCartProduct | null,
-	domainCartItem?: MinimalRequestCartProduct | null,
-	productCartItems?: MinimalRequestCartProduct[] | null,
-	stripeConnectUrl?: string
-) {
+	checklistStatuses = {},
+	planCartItem,
+	domainCartItem,
+	productCartItems,
+	stripeConnectUrl,
+}: GetEnhancedTasksProps ) {
 	if ( ! tasks ) {
 		return [];
 	}
 
 	const enhancedTaskList: Task[] = [];
 
-	const productSlug =
-		( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-			? planCartItem?.product_slug
-			: null ) ?? site?.plan?.product_slug;
+	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
+
+	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
 
 	const translatedPlanName = ( productSlug && PLANS_LIST[ productSlug ]?.getTitle() ) || '';
 
-	const firstPostPublished = Boolean(
-		tasks?.find( ( task ) => task.id === 'first_post_published' )?.completed
+	const completedTasks: Record< string, boolean > = tasks.reduce(
+		( acc, cur ) => ( {
+			...acc,
+			[ cur.id ]: cur.completed,
+		} ),
+		{}
 	);
 
-	const setupBlogCompleted =
-		Boolean( tasks?.find( ( task ) => task.id === 'setup_blog' )?.completed ) ||
-		! isStartWritingFlow( flow );
+	const firstPostPublished = completedTasks.first_post_published;
+
+	const setupBlogCompleted = completedTasks.setup_blog || ! isStartWritingFlow( flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
-	const planCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'plan_completed' )?.completed
-	);
+	const planCompleted = completedTasks.plan_completed;
 
-	const videoPressUploadCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
-	);
+	const videoPressUploadCompleted = completedTasks.video_uploaded;
 
-	const setupSiteCompleted = Boolean(
-		tasks?.find( ( task ) => task.id === 'setup_free' )?.completed
-	);
+	const setupSiteCompleted = completedTasks.setup_free;
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -134,6 +155,36 @@ export function getEnhancedTasks(
 		[ planCartItem, domainCartItem, ...( productCartItems ?? [] ) ].filter(
 			Boolean
 		) as MinimalRequestCartProduct[];
+
+	const getPlanTaskSubtitle = ( task: Task ) => {
+		if ( ! displayGlobalStylesWarning ) {
+			return task.subtitle;
+		}
+
+		const removeCustomStyles = translate( 'Or, {{a}}remove your premium styles{{/a}}.', {
+			components: {
+				a: (
+					<ExternalLink
+						children={ null }
+						href={ localizeUrl( 'https://wordpress.com/support/using-styles/#reset-all-styles' ) }
+						onClick={ ( event ) => {
+							event.stopPropagation();
+							recordTracksEvent(
+								'calypso_launchpad_global_styles_gating_plan_selected_reset_styles',
+								{ flow }
+							);
+						} }
+					/>
+				),
+			},
+		} );
+
+		return (
+			<>
+				{ task.subtitle }&nbsp;{ removeCustomStyles }
+			</>
+		);
+	};
 
 	const getLaunchSiteTaskTitle = ( task: Task ) => {
 		const onboardingCartItems = getOnboardingCartItems();
@@ -232,9 +283,10 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/${ flow }/setup-blog`, {
-									...{ siteSlug: siteSlug },
-								} )
+								addQueryArgs(
+									`/setup/${ flow }/setup-blog`,
+									isBlogOnboardingFlow( flow ) ? { siteId: site?.ID } : { siteSlug: siteSlug }
+								)
 							);
 						},
 						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
@@ -286,39 +338,11 @@ export function getEnhancedTasks(
 					};
 
 					const completed = task.completed && ! isVideoPressFlowWithUnsupportedPlan;
-					let subtitle = task.subtitle;
-
-					if ( displayGlobalStylesWarning ) {
-						const removeCustomStyles = translate( 'Or, {{a}}remove your premium styles{{/a}}.', {
-							components: {
-								a: (
-									<ExternalLink
-										children={ null }
-										href={ localizeUrl(
-											'https://wordpress.com/support/using-styles/#reset-all-styles'
-										) }
-										onClick={ ( event ) => {
-											event.stopPropagation();
-											recordTracksEvent(
-												'calypso_launchpad_global_styles_gating_plan_selected_reset_styles',
-												{ flow }
-											);
-										} }
-									/>
-								),
-							},
-						} );
-						subtitle = (
-							<>
-								{ subtitle }&nbsp;{ removeCustomStyles }
-							</>
-						);
-					}
 
 					taskData = {
 						actionDispatch: openPlansPage,
 						completed,
-						subtitle,
+						subtitle: getPlanTaskSubtitle( task ),
 					};
 					/* eslint-enable no-case-declarations */
 					break;
@@ -326,17 +350,16 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, {
-								...{ siteSlug: siteSlug },
-							} );
+							const plansUrl = addQueryArgs(
+								`/setup/${ flow }/plans`,
+								isBlogOnboardingFlow( flow ) ? { siteId: site?.ID } : { siteSlug: siteSlug }
+							);
 
 							window.location.assign( plansUrl );
 						},
-						badge_text: ! task.completed ? null : translatedPlanName,
-						disabled:
-							( task.completed || ! domainUpsellCompleted ) &&
-							! isBlogOnboardingFlow( flow ) &&
-							! isSiteAssemblerFlow( flow ),
+						badge_text: task.completed ? translatedPlanName : task.badge_text,
+						subtitle: getPlanTaskSubtitle( task ),
+						disabled: task.completed && ! isCurrentPlanFree,
 					};
 					break;
 				case 'subscribers_added':
@@ -397,6 +420,20 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/setup/update-design/designSetup`, {
+									siteSlug,
+									flowToReturnTo: flow,
+								} )
+							);
+						},
+					};
+					break;
+				case 'setup_general':
+					taskData = {
+						disabled: false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/update-options/options`, {
 									siteSlug,
 									flowToReturnTo: flow,
 								} )
@@ -521,7 +558,7 @@ export function getEnhancedTasks(
 							if ( isBlogOnboardingFlow( flow ) ) {
 								window.location.assign(
 									addQueryArgs( `/setup/${ flow }/domains`, {
-										siteSlug,
+										siteId: site?.ID,
 										flowToReturnTo: flow,
 										new: site?.name,
 										domainAndPlanPackage: true,
@@ -587,7 +624,7 @@ export function getEnhancedTasks(
 
 function isDomainUpsellCompleted(
 	site: SiteDetails | null,
-	checklistStatuses: LaunchpadStatuses
+	checklistStatuses: ChecklistStatuses
 ): boolean {
 	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }

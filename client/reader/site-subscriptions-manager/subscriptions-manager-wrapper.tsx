@@ -94,7 +94,6 @@ const SubscriptionsManagerWrapper = ( {
 						<SubscriptionsEllipsisMenu
 							toggleTitle={ translate( 'More' ) }
 							popoverClassName="site-subscriptions-manager__import-export-popover"
-							verticalToggle
 						>
 							{ ellipsisMenuItems }
 						</SubscriptionsEllipsisMenu>

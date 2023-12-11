@@ -1,8 +1,11 @@
 import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
 import { Children, PureComponent } from 'react';
 import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import DotPager from 'calypso/components/dot-pager';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 
 const noop = () => {};
@@ -16,6 +19,7 @@ const embedsToLookFor = {
 	'.jetpack-slideshow': embedSlideshow,
 	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
+	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -189,6 +193,34 @@ function embedSlideshow( domNode ) {
 		loadjQueryDependentScriptDesktopWrapper( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
+	}
+}
+
+function embedCarousel( domNode ) {
+	debug( 'processing carousel for ', domNode );
+
+	const carouselItemsWrapper = domNode.querySelector( '.swiper-wrapper' );
+
+	// Inject the DotPager component.
+	if ( carouselItemsWrapper ) {
+		const carouselItems = Array.from( carouselItemsWrapper?.children );
+
+		if ( carouselItems && carouselItems.length ) {
+			createRoot( domNode ).render(
+				<DotPager>
+					{ carouselItems.map( ( item, index ) => {
+						return (
+							<div
+								key={ index }
+								className={ classNames( 'carousel-slide', item?.className ) }
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ { __html: item?.innerHTML } }
+							/>
+						);
+					} ) }
+				</DotPager>
+			);
+		}
 	}
 }
 

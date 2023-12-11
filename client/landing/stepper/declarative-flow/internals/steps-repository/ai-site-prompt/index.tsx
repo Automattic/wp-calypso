@@ -118,7 +118,7 @@ const AISitePrompt: Step = function ( props ) {
 					stepName="site-prompt"
 					className={ `is-step-${ intent }` }
 					skipButtonAlign="top"
-					goBack={ goBack }
+					hideBack
 					goNext={ goNext }
 					isHorizontalLayout={ true }
 					formattedHeader={

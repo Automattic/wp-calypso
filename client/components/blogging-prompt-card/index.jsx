@@ -1,9 +1,9 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import {
 	useAIBloggingPrompts,
@@ -24,6 +24,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
+	const moment = useLocalizedMoment();
 
 	const maxNumberOfPrompts = isBloganuary() ? 31 : 10;
 	const today = moment().format( '--MM-DD' );
@@ -80,7 +81,9 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 			>
 				<Button className="popover__menu-item" onClick={ hidePrompts }>
 					<Gridicon icon="not-visible" className="gridicons-not-visible" />
-					{ translate( 'Hide Daily Prompts' ) }
+					{ isBloganuary()
+						? translate( 'Hide Bloganuary Prompt' )
+						: translate( 'Hide Daily Prompts' ) }
 				</Button>
 				<Button className="popover__menu-item" href={ notificationSettingsLink }>
 					<BellOffIcon />
