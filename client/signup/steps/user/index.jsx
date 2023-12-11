@@ -167,6 +167,10 @@ export class UserStep extends Component {
 
 	getLoginUrl() {
 		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = this.props;
+		const emailAddress =
+			typeof this.props?.step?.form?.email === 'object'
+				? this.props?.step?.form?.email?.value
+				: this.props?.step?.form?.email;
 
 		return login( {
 			isJetpack: 'jetpack-connect' === sectionName,
@@ -177,7 +181,7 @@ export class UserStep extends Component {
 			wccomFrom,
 			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
-			emailAddress: this.props?.step?.form?.email,
+			emailAddress,
 		} );
 	}
 
