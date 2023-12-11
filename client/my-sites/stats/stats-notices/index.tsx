@@ -20,10 +20,10 @@ import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-si
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
-import useStatsPurchases from '../hooks/use-stats-purchases';
 
 const TEAM51_OWNER_ID = 70055110;
 
