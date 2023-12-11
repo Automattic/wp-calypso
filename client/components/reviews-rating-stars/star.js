@@ -1,19 +1,13 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { customProperties } from '@automattic/calypso-color-schemes/js'; // mind the js suffix
 import { forwardRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-// import fireTracksEvent from '../../js/tracks/tracks';
-// import vars from '../../css/global/vars-exported.scss';
 
-// TODO: Get this vars from the proper global CSS file
 const vars = {
-	gray5: '#dcdcde',
-	yellow20: '#f0c930',
-	yellow50: '#9d6e00',
+	gray5: customProperties[ '--color-neutral-5' ],
+	yellow20: customProperties[ '--color-warning-20' ],
+	yellow50: customProperties[ '--color-warning' ],
 };
-
-// TODO: Implement this function calling the correct track events function
-function fireTracksEvent() {
-	// console.log( 'Implement this function' );
-}
 
 const Star = forwardRef( ( props, ref ) => {
 	const {
@@ -25,7 +19,6 @@ const Star = forwardRef( ( props, ref ) => {
 		onClick,
 		onMouseEnter,
 		onMouseLeave,
-		className,
 		tracksEvent,
 		tracksProperties,
 		isChecked,
@@ -35,9 +28,6 @@ const Star = forwardRef( ( props, ref ) => {
 		ariaHidden,
 	} = props;
 
-	const classes = [ 'wccom-star', className ];
-	classes.push( 'wccom-star__' + index );
-
 	function handleOnClick( e, i ) {
 		if ( ! isInteractive ) {
 			return;
@@ -46,7 +36,7 @@ const Star = forwardRef( ( props, ref ) => {
 			if ( tracksEvent ) {
 				const properties = Object.assign( {}, tracksProperties );
 				properties.index = i;
-				fireTracksEvent( tracksEvent, properties );
+				recordTracksEvent( tracksEvent, properties );
 			}
 			if ( 'function' === typeof onClick ) {
 				onClick( e, index );
@@ -55,7 +45,6 @@ const Star = forwardRef( ( props, ref ) => {
 	}
 
 	const svgProps = {
-		className: classes.join( ' ' ),
 		width: size,
 		height: size,
 		viewBox: '0 0 24 24',
@@ -146,7 +135,6 @@ Star.defaultProps = {
 	index: 1,
 	size: 24,
 	onClick: null,
-	className: '',
 	isChecked: false,
 };
 

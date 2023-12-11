@@ -1,3 +1,6 @@
+@import "~@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/variables";
+
 .reviews-ratings-stars__star-bar {
 	align-items: center;
 	display: inline-flex;
@@ -5,22 +8,22 @@
 }
 
 .reviews-ratings-stars__average {
-	color: "#101517"; // $c-gray-100;
+	color: $studio-gray-100;
 	font-size: 2rem;
 	font-weight: 600;
-	margin-right: "12px"; //$grid-unit-15;
+	margin-right: $grid-unit-15;
 }
 
 .reviews-ratings-stars__rating-count {
-	color: "@646970"; // $c-gray-50;
+	color: $studio-gray-50;
 	font-size: 0.875rem;
-	margin-left: "12px"; //$grid-unit-15;
+	margin-left: $grid-unit-15;
 }
 
 .reviews-ratings-stars__selected-rating {
-	color: "#787c82"; // $c-gray-40;
+	color: $studio-gray-40;
 	font-size: 1rem;
-	margin-left: "12px"; //$grid-unit-15;
+	margin-left: $grid-unit-15;
 }
 
 .reviews-ratings-stars__stars {
@@ -47,12 +50,12 @@
 
 	.reviews-ratings-stars__average {
 		font-size: 1.25rem;
-		margin-right: "8px";// $grid-unit-10;
+		margin-right: $grid-unit-10;
 	}
 
 	.reviews-ratings-stars__rating-count {
 		font-size: 0.75rem;
-		margin-left: "8px";// $grid-unit-10;
+		margin-left: $grid-unit-10;
 	}
 }
 
