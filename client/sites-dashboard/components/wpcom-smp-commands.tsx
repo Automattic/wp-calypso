@@ -406,7 +406,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/start/import?ref=command-palette` );
 			},
-			icon: uploadIcon,
+			icon: downloadIcon,
 		},
 		{
 			name: 'addNewSite',
