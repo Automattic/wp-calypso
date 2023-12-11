@@ -67,12 +67,13 @@ export default function SitePreviewLink( {
 	} );
 
 	// Update toggle status if previewLinks have change in another tab
+	const validLinksLength = previewLinks?.filter( ( link ) => ! link.isRemoving ).length || 0;
+	const shouldBeChecked = validLinksLength > 0;
 	useEffect( () => {
-		const validLinksLength = previewLinks?.filter( ( link ) => ! link.isRemoving ).length || 0;
-		if ( validLinksLength > 0 !== checked ) {
-			setChecked( ! checked );
+		if ( shouldBeChecked !== checked ) {
+			setChecked( shouldBeChecked );
 		}
-	}, [ checked, previewLinks ] );
+	}, [ checked, shouldBeChecked ] );
 
 	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
 		siteId,
