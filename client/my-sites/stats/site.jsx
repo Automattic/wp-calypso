@@ -380,7 +380,6 @@ class StatsSite extends Component {
 					<div className={ moduleListClasses }>
 						<StatsModule
 							path="posts"
-							gridArea="posts"
 							moduleStrings={ moduleStrings.posts }
 							period={ this.props.period }
 							query={ query }
@@ -389,7 +388,6 @@ class StatsSite extends Component {
 						/>
 						<StatsModule
 							path="referrers"
-							gridArea="referrers"
 							moduleStrings={ moduleStrings.referrers }
 							period={ this.props.period }
 							query={ query }
@@ -407,7 +405,6 @@ class StatsSite extends Component {
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
 								path="authors"
-								gridArea="authors"
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
 								query={ query }
@@ -419,7 +416,6 @@ class StatsSite extends Component {
 
 						<StatsModule
 							path="searchterms"
-							gridArea="search"
 							moduleStrings={ moduleStrings.search }
 							period={ this.props.period }
 							query={ query }
@@ -429,7 +425,6 @@ class StatsSite extends Component {
 
 						<StatsModule
 							path="clicks"
-							gridArea="clicks"
 							moduleStrings={ moduleStrings.clicks }
 							period={ this.props.period }
 							query={ query }
@@ -439,7 +434,6 @@ class StatsSite extends Component {
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
-								gridArea="videos"
 								moduleStrings={ moduleStrings.videoplays }
 								period={ this.props.period }
 								query={ query }

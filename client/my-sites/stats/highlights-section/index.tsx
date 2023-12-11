@@ -14,7 +14,6 @@ import { getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
 import { updateModuleSettings } from 'calypso/state/stats/module-settings/actions';
-import withFeatureGating from '../with-feature-gating';
 
 function HighlightsSection( { siteId, currentPeriod }: { siteId: number; currentPeriod: string } ) {
 	const dispatch = useDispatch();
@@ -103,4 +102,4 @@ function HighlightsSection( { siteId, currentPeriod }: { siteId: number; current
 		/>
 	);
 }
-export default withFeatureGating( HighlightsSection );
+export default HighlightsSection;

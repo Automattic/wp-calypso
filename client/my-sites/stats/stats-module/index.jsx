@@ -16,7 +16,6 @@ import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
-import withFeatureGating from '../with-feature-gating';
 import StatsModulePlaceholder from './placeholder';
 
 import './style.scss';
@@ -209,4 +208,4 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug,
 	};
-} )( localize( withFeatureGating( StatsModule ) ) );
+} )( localize( StatsModule ) );

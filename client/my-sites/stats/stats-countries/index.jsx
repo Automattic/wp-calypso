@@ -24,7 +24,6 @@ class StatCountries extends Component {
 			<StatsModule
 				query={ query }
 				path="countryviews"
-				gridArea="country"
 				period={ period }
 				showSummaryLink={ ! summary }
 				hideSummaryLink={ !! summary }
