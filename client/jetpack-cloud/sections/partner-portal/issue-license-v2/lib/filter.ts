@@ -13,6 +13,7 @@ export const isProductMatch = ( product: APIProductFamilyProduct, productSearchQ
 
 	if ( product.slug.startsWith( 'jetpack-complete' ) ) {
 		return [
+			product.name,
 			'Jetpack VaultPress Backup',
 			'Jetpack Scan',
 			'Jetpack Akismet Anti-spam',
@@ -27,9 +28,12 @@ export const isProductMatch = ( product: APIProductFamilyProduct, productSearchQ
 	}
 
 	if ( product.slug.startsWith( 'jetpack-security' ) ) {
-		return [ 'Jetpack VaultPress Backup', 'Jetpack Scan', 'Jetpack Akismet Anti-spam' ].some(
-			nameFilter
-		);
+		return [
+			product.name,
+			'Jetpack VaultPress Backup',
+			'Jetpack Scan',
+			'Jetpack Akismet Anti-spam',
+		].some( nameFilter );
 	}
 
 	return nameFilter( product.name );
