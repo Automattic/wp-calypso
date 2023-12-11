@@ -1,0 +1,15 @@
+@import "@automattic/typography/styles/variables";
+
+.theme-tier-badge {
+	display: flex;
+	flex-basis: 100%;
+	color: var(--color-neutral-60);
+	font-size: $font-body-small;
+	line-height: 20px;
+
+	.theme-tier-badge__content {
+		margin: 0 8px 0 0;
+		vertical-align: middle;
+	}
+}
+
