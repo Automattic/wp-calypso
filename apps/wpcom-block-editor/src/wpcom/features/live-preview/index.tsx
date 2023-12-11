@@ -81,7 +81,7 @@ const LivePreviewNoticePlugin = () => {
 		return (
 			<>
 				<LivePreviewUpgradeModal { ...{ themeId: previewingTheme.id as string, upgradePlan } } />
-				<LivePreviewUpgradeNotice { ...{ previewingTheme, upgradePlan, dashboardLink } } />
+				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
 			</>
 		);
 	}
