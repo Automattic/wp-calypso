@@ -32,7 +32,7 @@ import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
 import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
-import FailedPurchaseDetails from './checkout-thank-you/failed-purchase-details';
+import { FailedPurchasePage } from './checkout-thank-you/failed-purchase-page';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearPlanThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
@@ -48,7 +48,7 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkoutFailedPurchases( context, next ) {
-	context.primary = <FailedPurchaseDetails />;
+	context.primary = <FailedPurchasePage />;
 
 	next();
 }
