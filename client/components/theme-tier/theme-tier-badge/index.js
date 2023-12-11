@@ -33,7 +33,7 @@ export default function ThemeTierBadge( {
 		}
 
 		if ( DOT_ORG_THEME === themeType ) {
-			return <ThemeTierCommunityBadge themeId={ themeId } />;
+			return <ThemeTierCommunityBadge />;
 		}
 
 		if ( 'partner' === themeTier.slug || MARKETPLACE_THEME === themeType ) {

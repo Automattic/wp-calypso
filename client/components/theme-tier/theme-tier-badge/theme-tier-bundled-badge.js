@@ -36,24 +36,16 @@ export default function ThemeTierBundledBadge() {
 				}
 			</div>
 			<div data-testid="upsell-message">
-				{ legacyCanUseTheme
-					? // Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-					  translate( 'This %(bundleName)s theme is included in your plan.', {
-							args: { bundleName },
-					  } )
-					: createInterpolateElement(
-							// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-							translate(
-								'This %(bundleName)s theme is included in the <Link>Business plan</Link>.',
-								{
-									args: { bundleName },
-									textOnly: true,
-								}
-							),
-							{
-								Link: <ThemeTierBadgeCheckoutLink plan="business" />,
-							}
-					  ) }
+				{ createInterpolateElement(
+					// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+					translate( 'This %(bundleName)s theme is included in the <Link>Business plan</Link>.', {
+						args: { bundleName },
+						textOnly: true,
+					} ),
+					{
+						Link: <ThemeTierBadgeCheckoutLink plan="business" />,
+					}
+				) }
 			</div>
 		</>
 	);
@@ -85,7 +77,7 @@ export default function ThemeTierBundledBadge() {
 				{ bundleName }
 			</BundledBadge>
 
-			{ !! legacyCanUseTheme && <span>{ translate( 'Included in my plan' ) }</span> }
+			{ legacyCanUseTheme && <span>{ translate( 'Included in my plan' ) }</span> }
 		</div>
 	);
 }
