@@ -66,7 +66,7 @@ export default function SitePreviewLink( {
 		isEnabled: true,
 	} );
 
-	// Update toggle status if previewLinks have change in another tab
+	// Update toggle status if previewLinks have changed in another tab
 	const validLinksLength = previewLinks?.filter( ( link ) => ! link.isRemoving ).length || 0;
 	const shouldBeChecked = validLinksLength > 0;
 	useEffect( () => {
