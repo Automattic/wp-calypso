@@ -1,7 +1,7 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
-import { getThemeType } from 'calypso/state/themes/selectors';
+import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useThemeTier from '../use-theme-tier';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
@@ -21,6 +21,9 @@ export default function ThemeTierBadge( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const isLegacyPremiumPurchased = useSelector( ( state ) =>
+		isThemePurchased( state, themeId, siteId )
+	);
 	const { themeTier, isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
 	const getBadge = () => {
@@ -37,14 +40,14 @@ export default function ThemeTierBadge( {
 		}
 
 		if ( 'partner' === themeTier.slug || MARKETPLACE_THEME === themeType ) {
-			return <ThemeTierPartnerBadge themeId={ themeId } />;
+			return <ThemeTierPartnerBadge />;
 		}
 
-		if ( isThemeAllowedOnSite ) {
+		if ( isThemeAllowedOnSite || ( 'premium' === themeTier.slug && isLegacyPremiumPurchased ) ) {
 			return <span>{ siteId ? translate( 'Included in my plan' ) : translate( 'Free' ) }</span>;
 		}
 
-		return <ThemeTierUpgradeBadge themeId={ themeId } />;
+		return <ThemeTierUpgradeBadge />;
 	};
 
 	return (
