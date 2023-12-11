@@ -23,7 +23,7 @@ function useSitePurchases( { siteId }: Props ): UseQueryResult< PurchasesIndex >
 
 	return useQuery( {
 		queryKey: queryKeys.sitePurchases( siteId ),
-		queryFn: async () => {
+		queryFn: async (): Promise< PurchasesIndex > => {
 			const purchases: RawPurchase[] = await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/purchases`,
 				apiVersion: '1.1',
