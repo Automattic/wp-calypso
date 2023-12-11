@@ -134,7 +134,6 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	const wpcomDomain = site?.URL?.replace( /http[s]*:\/\//, '' );
 	const stagingDomain = wpcomDomain?.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ) || null;
 
-	// TODO: Evaluate this and related logic to make generic.
 	const productName =
 		site?.plan?.features?.available?.woop && site?.plan?.features?.available?.woop[ 0 ];
 	const upgradingPlan = productName ? productsList?.[ productName ] : null;
