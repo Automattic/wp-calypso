@@ -38,7 +38,7 @@ const MOCK_PLAN_DATA = [
 	},
 	{
 		price: '$89.99',
-		views: '1M++',
+		views: null,
 		extension: true,
 		per_unit_fee: 1799,
 		description: '$25/month per million views if views exceed 1M',
