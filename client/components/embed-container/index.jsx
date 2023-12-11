@@ -19,6 +19,7 @@ const embedsToLookFor = {
 	'.jetpack-slideshow': embedSlideshow,
 	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
+	'.embed-tiktok': embedTikTok,
 	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
 };
 
@@ -118,6 +119,11 @@ function embedFacebook( domNode ) {
 function embedReddit( domNode ) {
 	debug( 'processing reddit for ', domNode );
 	loadAndRun( 'https://embed.redditmedia.com/widgets/platform.js', noop );
+}
+
+function embedTikTok( domNode ) {
+	debug( 'processing tiktok for ', domNode );
+	loadAndRun( 'https://www.tiktok.com/embed.js', noop );
 }
 
 let tumblrLoader;
