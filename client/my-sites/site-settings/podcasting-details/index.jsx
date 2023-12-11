@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { pick, flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -209,7 +209,8 @@ class PodcastingDetails extends Component {
 						<UpsellNudge
 							plan={ PLAN_PERSONAL }
 							title={
-								isEnglishLocale
+								isEnglishLocale ||
+								i18n.hasTranslation( 'Upload Audio with WordPress.com %(personalPlanName)s' )
 									? translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
 											args: { personalPlanName: getPlan( PLAN_PERSONAL ).getTitle() },
 									  } )
