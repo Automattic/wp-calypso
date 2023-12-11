@@ -32,7 +32,7 @@
 		color: var(--studio-gray-60);
 
 		@include break-small {
-			width: 600px;
+			max-width: 600px;
 		}
 
 		button {
