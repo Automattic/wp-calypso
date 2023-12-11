@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -177,7 +177,11 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				question={ translate( 'Can I install plugins?' ) }
 				onToggle={ onFaqToggle }
 			>
-				{ isEnglishLocale
+				{ isEnglishLocale ||
+				i18n.hasTranslation(
+					'Yes! When you subscribe to the WordPress.com %(businessPlanName)s or %(ecommercePlanName)s plans, you’ll be able to ' +
+						'search for and install over 50,000 available plugins in the WordPress repository.'
+				)
 					? translate(
 							'Yes! When you subscribe to the WordPress.com %(businessPlanName)s or %(ecommercePlanName)s plans, you’ll be able to ' +
 								'search for and install over 50,000 available plugins in the WordPress repository.',
@@ -198,7 +202,12 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				question={ translate( 'Can I install my own theme?' ) }
 				onToggle={ onFaqToggle }
 			>
-				{ isEnglishLocale
+				{ isEnglishLocale ||
+				i18n.hasTranslation(
+					'Yes! All plans give you access to our directory of free and premium themes that have been ' +
+						'handpicked and reviewed for quality by our team. With the WordPress.com %(businessPlanName)s or ' +
+						"%(ecommercePlanName)s plan, you can upload and install any theme you'd like."
+				)
 					? translate(
 							'Yes! All plans give you access to our directory of free and premium themes that have been ' +
 								'handpicked and reviewed for quality by our team. With the WordPress.com %(businessPlanName)s or ' +
@@ -244,7 +253,15 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				question={ translate( 'Can I talk to a live person?' ) }
 				onToggle={ onFaqToggle }
 			>
-				{ isEnglishLocale
+				{ isEnglishLocale ||
+				i18n.hasTranslation(
+					'We’d love to chat with you! All paid plans include access to one-on-one support from our ' +
+						'team of WordPress experts (we call them Happiness Engineers). The %(personalPlanName)s plan includes ' +
+						'email support while the %(premiumPlanName)s plan and above all include live chat support.{{br /}}{{br /}}' +
+						'If you have pre-purchase questions, we offer live chat on the checkout page. Select the plan ' +
+						'that looks like the best fit for you and click the “Questions? Ask a Happiness Engineer” ' +
+						'link on the next page.'
+				)
 					? translate(
 							'We’d love to chat with you! All paid plans include access to one-on-one support from our ' +
 								'team of WordPress experts (we call them Happiness Engineers). The %(personalPlanName)s plan includes ' +
