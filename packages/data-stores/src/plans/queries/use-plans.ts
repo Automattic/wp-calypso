@@ -4,24 +4,20 @@ import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPIPlan, PlanNext } from '../types';
 
-interface PlansIndex {
+export interface PlansIndex {
 	[ planSlug: string ]: PlanNext;
-}
-
-interface Props< T > {
-	select?: ( data: PlansIndex ) => T;
 }
 
 /**
  * Plans from `/plans` endpoint, transformed into a map of planSlug => PlanNext
  * - The generic T allows to define generic select functions that can be used to select a subset of the data
  */
-function usePlans< T >( { select }: Props< T > = {} ) {
+function usePlans() {
 	const queryKeys = useQueryKeysFactory();
 
 	return useQuery( {
 		queryKey: queryKeys.plans(),
-		queryFn: async () => {
+		queryFn: async (): Promise< PlansIndex > => {
 			const data: PricedAPIPlan[] = await wpcomRequest( {
 				path: `/plans`,
 				apiVersion: '1.5',
@@ -42,7 +38,6 @@ function usePlans< T >( { select }: Props< T > = {} ) {
 				] )
 			);
 		},
-		select,
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	} );
 }

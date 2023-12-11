@@ -4,16 +4,15 @@ import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPISitePlan, SitePlan } from '../types';
 
-interface SitePlansIndex {
+export interface SitePlansIndex {
 	[ planSlug: string ]: SitePlan;
 }
 interface PricedAPISitePlansIndex {
 	[ productId: number ]: PricedAPISitePlan;
 }
 
-interface Props< T > {
+interface Props {
 	siteId?: string | number | null;
-	select?: ( data: SitePlansIndex ) => T;
 }
 
 /**
@@ -22,12 +21,12 @@ interface Props< T > {
  * - UI works with product/plan slugs everywhere, so returned index is transformed to be keyed by product_slug
  * - The generic T allows to define generic select functions that can be used to select a subset of the data
  */
-function useSitePlans< T >( { siteId, select }: Props< T > ) {
+function useSitePlans( { siteId }: Props ) {
 	const queryKeys = useQueryKeysFactory();
 
 	return useQuery( {
 		queryKey: queryKeys.sitePlans( siteId ),
-		queryFn: async () => {
+		queryFn: async (): Promise< SitePlansIndex > => {
 			const data: PricedAPISitePlansIndex = await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
 				apiVersion: '1.3',
@@ -52,7 +51,6 @@ function useSitePlans< T >( { siteId, select }: Props< T > ) {
 				} )
 			);
 		},
-		select,
 		staleTime: 1000 * 60 * 5, // 5 minutes
 		enabled: !! siteId,
 	} );

@@ -3,7 +3,7 @@ import usePlans from '../queries/use-plans';
 import useSitePlans from '../queries/use-site-plans';
 import type { PlanIntroductoryOffer } from '../types';
 
-interface IntroOffersIndex {
+export interface IntroOffersIndex {
 	[ planSlug: string ]: PlanIntroductoryOffer | null;
 }
 
