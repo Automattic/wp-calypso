@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
@@ -636,7 +635,6 @@ const Settings = ( {
 	const renderDomainGlueRecordsSection = () => {
 		// We can only create glue records for domains registered with us through KS_RAM
 		if (
-			! config.isEnabled( 'domains/glue-records' ) ||
 			! domain ||
 			domain.type !== domainTypes.REGISTERED ||
 			domain.registrar !== 'KS_RAM' ||
