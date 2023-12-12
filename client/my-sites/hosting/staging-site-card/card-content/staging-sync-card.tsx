@@ -355,7 +355,7 @@ const SyncCardContainer = ( {
 							icon="mention"
 							showDismiss={ false }
 							text={ translate(
-								'We couldn’t synchronize changes to the %(siteType)s site and will need to manually diagnose the issue. Please contact support.',
+								'We couldn’t synchronize changes to the %(siteType)s site. Please contact support.',
 								{
 									args: {
 										siteType: siteToSync,
