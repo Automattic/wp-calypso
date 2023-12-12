@@ -247,7 +247,7 @@ function SiteResetCard( {
 		sprintf(
 			// translators: %s is the site domain
 			translate(
-				'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. You’ll also lose any modifications you made to your current theme.'
+				"Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL up and running. Keep in mind you'll also lose any modifications you've made to your current theme."
 			),
 			siteDomain
 		),
@@ -259,7 +259,7 @@ function SiteResetCard( {
 	const backupHint = isAtomic
 		? createInterpolateElement(
 				translate(
-					'The site will be automatically backed up before the reset. You can restore it from <a>Activity Log</a>.'
+					"Having second thoughts? Don't fret, we'll automatically back up your site content before the reset and you can restore it any time from the <a>Activity Log</a>."
 				),
 				{
 					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
@@ -267,7 +267,7 @@ function SiteResetCard( {
 		  )
 		: createInterpolateElement(
 				translate(
-					'To keep a copy of your current site, head to the <a>Export page</a> before resetting.'
+					'To keep a copy of your current site, head to the <a>Export page</a> before starting the reset.'
 				),
 				{
 					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
@@ -276,14 +276,17 @@ function SiteResetCard( {
 
 	const isResetInProgress = resetProgress < 1;
 
+	const ctaText =
+		! isAtomic && isLoading ? translate( 'Resetting site' ) : translate( 'Reset site' );
+
 	return (
 		<Main className="site-settings__reset-site">
 			<Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Site Reset' ) }
+				title={ translate( 'Reset your site' ) }
 				subtitle={ translate(
-					"Keep your site's address and theme, but delete all posts, pages, and media to start fresh. {{a}}Learn more.{{/a}}",
+					"Remove all posts, pages, and media to start fresh while keeping your site's address.{{a}}Learn more.{{/a}}",
 					{
 						components: {
 							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
@@ -327,7 +330,9 @@ function SiteResetCard( {
 							{ createInterpolateElement(
 								sprintf(
 									// translators: %s is the site domain
-									translate( 'Enter <strong>%s</strong> to continue' ),
+									translate(
+										"Type <strong>%s</strong> below to confirm you're ready to reset the site:"
+									),
 									siteDomain
 								),
 								{
@@ -352,7 +357,7 @@ function SiteResetCard( {
 								disabled={ isLoading || ! isDomainConfirmed }
 								busy={ isLoading }
 							>
-								{ translate( 'Reset Site' ) }
+								{ ctaText }
 							</Button>
 						</div>
 						{ backupHint && (
