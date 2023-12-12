@@ -1,0 +1,14 @@
+.stats-card-upsell {
+	width: 100%;
+	font-size: $font-body-small;
+
+	.stats-card-upsell__content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		row-gap: 10px;
+	}
+}
+
