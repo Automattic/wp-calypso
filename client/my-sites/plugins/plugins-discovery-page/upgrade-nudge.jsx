@@ -21,7 +21,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSitePlan, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isLoadingExperiment } ) => {
+const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isBusy } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
@@ -145,15 +145,14 @@ const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick, isLoadin
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			className="plugins-discovery-page__upsell"
-			callToAction={
-				isLoadingExperiment ? translate( 'Loading' ) : translate( 'Upgrade to Business' )
-			}
+			callToAction={ translate( 'Upgrade to Business' ) }
 			icon="notice-outline"
 			showIcon={ true }
 			onClick={ handleUpsellNudgeClick }
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
+			isBusy={ isBusy }
 		/>
 	);
 };

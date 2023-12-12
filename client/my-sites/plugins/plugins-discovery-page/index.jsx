@@ -161,7 +161,7 @@ const PluginsDiscoveryPage = ( props ) => {
 			) }
 			<UpgradeNudge
 				{ ...props }
-				isLoadingExperiment={ isLoadingExperiment }
+				isBusy={ isLoadingExperiment || isLoading }
 				paidPlugins={ true }
 				handleUpsellNudgeClick={ ( e ) => {
 					e.preventDefault();
