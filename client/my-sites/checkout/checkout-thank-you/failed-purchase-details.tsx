@@ -1,17 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import type { FailedReceiptPurchase, ReceiptPurchase } from 'calypso/state/receipts/types';
 
 export default function FailedPurchaseDetails( {
 	failedPurchases,
 	purchases,
 }: {
-	failedPurchases?: { productId: string; productName: string; meta?: string }[];
-	purchases?: {
-		productId: string;
-		productName: string;
-		meta?: string;
-	}[];
+	purchases?: ReceiptPurchase[];
+	failedPurchases?: FailedReceiptPurchase[];
 } ) {
 	const translate = useTranslate();
 	const successfulPurchasesForDisplay = purchases && purchases.length > 0 && (
