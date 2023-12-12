@@ -746,9 +746,11 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		height: 0 !important;
 	}
 
+	.site-settings__reset-site-backup-hint a,
+	a.inline-support-link,
 	.action-panel__body a,
 	li a {
-		text-decoration: underline;
+		text-decoration: underline !important;
 	}
 
 	.banner {
