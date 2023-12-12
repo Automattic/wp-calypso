@@ -41,17 +41,19 @@ export default function ThemeTierCommunityBadge() {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker />
 			{ ! legacyCanUseTheme && (
-				<PremiumBadge
-					className="theme-tier-badge__content"
-					focusOnShow={ false }
-					isClickable
-					labelText={ translate( 'Upgrade' ) }
-					tooltipClassName="theme-tier-badge-tooltip"
-					tooltipContent={ tooltipContent }
-					tooltipPosition="top"
-				/>
+				<>
+					<ThemeTierBadgeTracker />
+					<PremiumBadge
+						className="theme-tier-badge__content"
+						focusOnShow={ false }
+						isClickable
+						labelText={ translate( 'Upgrade' ) }
+						tooltipClassName="theme-tier-badge-tooltip"
+						tooltipContent={ tooltipContent }
+						tooltipPosition="top"
+					/>
+				</>
 			) }
 
 			<PremiumBadge
