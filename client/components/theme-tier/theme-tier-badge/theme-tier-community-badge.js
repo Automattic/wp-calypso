@@ -17,10 +17,6 @@ export default function ThemeTierCommunityBadge() {
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
 
-	if ( legacyCanUseTheme ) {
-		return null;
-	}
-
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
@@ -46,14 +42,25 @@ export default function ThemeTierCommunityBadge() {
 	return (
 		<>
 			<ThemeTierBadgeTracker />
+			{ ! legacyCanUseTheme && (
+				<PremiumBadge
+					className="theme-tier-badge__content"
+					focusOnShow={ false }
+					isClickable
+					labelText={ translate( 'Upgrade' ) }
+					tooltipClassName="theme-tier-badge-tooltip"
+					tooltipContent={ tooltipContent }
+					tooltipPosition="top"
+				/>
+			) }
+
 			<PremiumBadge
-				className="theme-tier-badge__content"
+				className="theme-tier-badge__content is-third-party"
 				focusOnShow={ false }
-				isClickable
-				labelText={ translate( 'Upgrade' ) }
-				tooltipClassName="theme-tier-badge-tooltip"
-				tooltipContent={ tooltipContent }
-				tooltipPosition="top"
+				isClickable={ false }
+				labelText={ translate( 'Community' ) }
+				shouldHideIcon
+				shouldHideTooltip
 			/>
 		</>
 	);
