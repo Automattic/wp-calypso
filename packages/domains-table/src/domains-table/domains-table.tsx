@@ -304,9 +304,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	const selectableDomains = ( domains ?? [] ).filter( canBulkUpdate );
 	const canSelectAnyDomains = isAllSitesView
 		? selectableDomains.length > 0
-		: domains &&
-		  ( domains as unknown as DomainData[] ).filter( ( domain ) => ! domain.is_subdomain ).length >
-				1;
+		: ( ( domains as unknown as DomainData[] ) ?? [] ).filter( ( domain ) => ! domain.is_subdomain )
+				.length > 1;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
