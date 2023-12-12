@@ -286,7 +286,7 @@ function SiteResetCard( {
 				navigationItems={ [] }
 				title={ translate( 'Reset your site' ) }
 				subtitle={ translate(
-					"Remove all posts, pages, and media to start fresh while keeping your site's address.{{a}}Learn more.{{/a}}",
+					"Remove all posts, pages, and media to start fresh while keeping your site's address. {{a}}Learn more.{{/a}}",
 					{
 						components: {
 							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
@@ -346,7 +346,7 @@ function SiteResetCard( {
 								aria-required="true"
 								id="confirmResetInput"
 								disabled={ isLoading }
-								style={ { flex: 0.5 } }
+								style={ { flex: 1 } }
 								onChange={ ( event ) =>
 									setDomainConfirmed( event.currentTarget.value.trim() === siteDomain )
 								}
