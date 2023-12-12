@@ -109,25 +109,20 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 	}, [ currentStep, tours.length, endTour ] );
 
 	useEffect( () => {
-		// Function to call nextStep when the target is clicked
-		const handleClick = () => {
-			nextStep();
-		};
-
 		let target: Element | null = null;
 		if ( nextStepOnTargetClick ) {
 			// Find the target element using the nextStepOnTargetClick selector
 			target = document.querySelector( nextStepOnTargetClick );
 			if ( target ) {
 				// Attach the event listener to the target
-				target.addEventListener( 'click', handleClick );
+				target.addEventListener( 'click', nextStep );
 			}
 		}
 
 		// Cleanup function to remove the event listener
 		return () => {
 			if ( target ) {
-				target.removeEventListener( 'click', handleClick );
+				target.removeEventListener( 'click', nextStep );
 			}
 		};
 	}, [ nextStepOnTargetClick, nextStep ] );
