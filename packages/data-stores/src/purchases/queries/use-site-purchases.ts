@@ -36,7 +36,6 @@ function useSitePurchases( { siteId }: Props ): UseQueryResult< PurchasesIndex >
 				} )
 			);
 		},
-		staleTime: 1000 * 60 * 5, // 5 minutes
 		enabled: !! siteId,
 	} );
 }
