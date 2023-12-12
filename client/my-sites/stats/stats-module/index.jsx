@@ -225,10 +225,6 @@ export default connect( ( state, ownProps ) => {
 		needsUpgrade = true;
 	}
 
-	if ( paidStats.includes( statType ) ) {
-		needsUpgrade = true;
-	}
-
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
