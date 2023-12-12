@@ -148,10 +148,13 @@ export async function initSentry( parameters?: SentryOptions ) {
 	// Make sure we don't throw
 	try {
 		// No Sentry loading on the server.
+		if ( typeof document === 'undefined' ) {
+			return 'skipped'; // Previous state: skipped
+		}
+
 		// No double-loading.
 		// No initializing with empty params
 		if (
-			typeof document === 'undefined' ||
 			( state.state === 'initial' && ! parameters ) ||
 			! [ 'initial', 'disabled' ].includes( state.state )
 		) {
