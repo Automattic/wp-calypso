@@ -5,6 +5,7 @@ import {
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	FEATURE_STYLE_CUSTOMIZATION,
+	getPlan,
 } from '@automattic/calypso-products';
 import {
 	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
@@ -16,6 +17,7 @@ import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
+import i18n from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -893,8 +895,9 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
+			locale,
 		} = this.props;
-
+		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
@@ -958,9 +961,15 @@ export class SiteSettingsFormGeneral extends Component {
 							<UpsellNudge
 								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
 								plan={ PLAN_BUSINESS }
-								title={ translate(
-									'Remove the footer credit entirely with WordPress.com Business'
-								) }
+								title={
+									isEnglishLocale || i18n.hasTranslation
+										? translate(
+												'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+
+												{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+										  )
+										: translate( 'Remove the footer credit entirely with WordPress.com Business' )
+								}
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
