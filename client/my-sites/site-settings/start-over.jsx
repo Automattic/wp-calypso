@@ -277,7 +277,7 @@ function SiteResetCard( {
 	const isResetInProgress = resetProgress < 1;
 
 	const ctaText =
-		! isAtomic && isLoading ? translate( 'Resetting Site' ) : translate( 'Reset Site' );
+		! isAtomic && isLoading ? translate( 'Resetting site' ) : translate( 'Reset site' );
 
 	return (
 		<Main className="site-settings__reset-site">
