@@ -1,6 +1,27 @@
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import getProductInfo from '../../lib/get-product-info';
 
-/* check if product matches the search query
+// Helper function to get the product name from the product slug. Only applicable for this filter logic.
+function getProductNameBySlug( slug: string ) {
+	if ( slug.startsWith( 'jetpack_anti_spam' ) ) {
+		return 'Akismet Anti-spam';
+	}
+
+	if ( slug.startsWith( 'jetpack_backup_t1' ) ) {
+		return 'VaultPress Backup 10GB';
+	}
+
+	if ( slug.startsWith( 'jetpack_backup_t2' ) ) {
+		return 'VaultPress Backup 1TB';
+	}
+
+	return slug
+		.replace( /t1|t2|monthly|yearly|jetpack/g, '' )
+		.replace( /_/g, ' ' )
+		.trim();
+}
+
+/* Check if product matches the search query.
  *
  * @param product - product to check
  * @param productSearchQuery - search query to match against
@@ -11,29 +32,12 @@ export const isProductMatch = ( product: APIProductFamilyProduct, productSearchQ
 	const nameFilter = ( name: string ) =>
 		name.toLowerCase().includes( productSearchQuery.toLowerCase() );
 
-	if ( product.slug.startsWith( 'jetpack-complete' ) ) {
-		return [
-			product.name,
-			'Jetpack VaultPress Backup',
-			'Jetpack Scan',
-			'Jetpack Akismet Anti-spam',
-			'Jetpack VideoPress',
-			'Jetpack Boost',
-			'Jetpack Social',
-			'Jetpack Search',
-			'Jetpack Stats',
-			'Jetpack CRM',
-			'Jetpack Creator',
-		].some( nameFilter );
-	}
+	const productInfo = getProductInfo( product.slug );
 
-	if ( product.slug.startsWith( 'jetpack-security' ) ) {
-		return [
-			product.name,
-			'Jetpack VaultPress Backup',
-			'Jetpack Scan',
-			'Jetpack Akismet Anti-spam',
-		].some( nameFilter );
+	if ( productInfo?.productsIncluded?.length ) {
+		return [ product.name, ...productInfo.productsIncluded.map( getProductNameBySlug ) ].some(
+			nameFilter
+		);
 	}
 
 	return nameFilter( product.name );
