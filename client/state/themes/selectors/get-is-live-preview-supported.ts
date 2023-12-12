@@ -82,14 +82,9 @@ const isNotCompatibleThemes = ( themeId: string ) => {
  * - On Simple sites;
  *   - If the theme is externally managed.
  *   - If the theme is a wporg theme.
- *   - If the theme is NOT included in a plan.
- * @see pbxlJb-3Uv-p2
+ *   - If the theme is NOT a Premium and WooCommerce theme, and is NOT included in a plan.
  */
 export const getIsLivePreviewSupported = ( state: AppState, themeId: string, siteId: number ) => {
-	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
-		return false;
-	}
-
 	// The "Live" Preview does NOT make sense for logged out users.
 	if ( ! isUserLoggedIn( state ) ) {
 		return false;
