@@ -297,12 +297,12 @@ const streamApis = {
 			getQueryStringForPoll( extraFields, { ...extraQueryParams, number: 10 } ),
 	},
 	tag: {
-		path: ( { streamKey } ) => `/read/streams/tag/${ streamKeySuffix( streamKey ) }`,
+		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
 		apiNamespace: 'wpcom/v2',
 		dateProperty: 'date',
 	},
 	tag_popular: {
-		path: ( { streamKey } ) => `/read/streams/discover?tags=${ streamKeySuffix( streamKey ) }`,
+		path: ( { streamKey } ) => `/read/streams/tag/${ streamKeySuffix( streamKey ) }`,
 		apiNamespace: 'wpcom/v2',
 		query: ( extras, { streamKey } ) =>
 			getQueryString( {
