@@ -141,13 +141,23 @@ class DomainRegistrationSuggestion extends Component {
 			isCartPendingUpdateDomain,
 			flowName,
 			temporaryCart,
+			domainRemovalQueue,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 
-		const isAdded =
+		let isAdded =
 			suggestionSelected ||
 			hasDomainInCart( cart, domain ) ||
 			( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) );
+
+		// If we're removing this domain, let's instantly show that for the user
+		if (
+			domainRemovalQueue?.length > 0 &&
+			domainRemovalQueue.some( ( item ) => item.meta === domain )
+		) {
+			isAdded = false;
+		}
+
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 

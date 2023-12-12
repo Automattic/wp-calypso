@@ -685,12 +685,6 @@ export class RenderDomainsStep extends Component {
 	}
 
 	removeDomainClickHandler = ( domain ) => () => {
-		this.setState( ( prevState ) => ( {
-			domainRemovalQueue: [
-				...prevState.domainRemovalQueue,
-				{ meta: domain.meta, productSlug: domain.product_slug },
-			],
-		} ) );
 		this.removeDomain( {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,
@@ -703,6 +697,13 @@ export class RenderDomainsStep extends Component {
 				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
 			} ) );
 		}
+
+		this.setState( ( prevState ) => ( {
+			domainRemovalQueue: [
+				...prevState.domainRemovalQueue,
+				{ meta: domain_name, productSlug: product_slug },
+			],
+		} ) );
 
 		const productsToKeep = this.props.cart.products.filter( ( product ) => {
 			// check current item
@@ -1018,6 +1019,7 @@ export class RenderDomainsStep extends Component {
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
 						hasPendingRequests={ isLoadingExperiment }
 						temporaryCart={ this.state.temporaryCart }
+						domainRemovalQueue={ this.state.domainRemovalQueue }
 						forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 						replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 						dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
