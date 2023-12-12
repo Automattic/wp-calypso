@@ -18,7 +18,7 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 			case 'unpack_file':
 			case 'preprocess':
 			case 'process_files':
-				return __( 'Moving your data' );
+				return __( 'Moving your files' );
 
 			case 'recreate_database':
 			case 'postprocess_database':
