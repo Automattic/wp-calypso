@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
+import { noop } from 'calypso/odie/context';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -36,12 +37,44 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
+type ContactOption = 'chat' | 'forum' | 'email';
+const generateContactOnClickEvent = (
+	contactOption: ContactOption,
+	contactOptionEventName?: string,
+	onClick?: () => void
+): ( () => void ) => {
+	if ( ! onClick || ! contactOptionEventName ) {
+		return noop;
+	}
+
+	return () => {
+		recordTracksEvent( contactOptionEventName, {
+			location: 'help-center',
+			contact_option: contactOption,
+		} );
+		onClick();
+	};
+};
+
+/**
+ * This component is used to render the contact page in the help center.
+ * It will render the contact options based on the user's eligibility.
+ * @param hideHeaders - Whether to hide the headers or not (mainly used for embedding the contact page)
+ * @param onClick - Callback to be called when the user clicks on a contact option
+ * @param trackEventName - The name of the event to be tracked when the user clicks on a contact option
+ *
+ * Note: onClick and trackEventName should be both defined, in order to track the event and perform the callback.
+ */
 type HelpCenterContactPageProps = {
 	hideHeaders?: boolean;
+	onClick?: () => void;
+	trackEventName?: string;
 };
 
 export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	hideHeaders = false,
+	onClick,
+	trackEventName,
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -150,6 +183,12 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	} );
 	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
 
+	const contactOptionsEventMap: Record< ContactOption, () => void > = {
+		chat: generateContactOnClickEvent( 'chat', trackEventName, onClick ),
+		forum: generateContactOnClickEvent( 'forum', trackEventName, onClick ),
+		email: generateContactOnClickEvent( 'email', trackEventName, onClick ),
+	};
+
 	return (
 		<div className="help-center-contact-page">
 			{ ! hideHeaders && <BackButton /> }
@@ -166,7 +205,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				/>
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					<Link to={ forumUrl }>
+					<Link to={ forumUrl } onClick={ contactOptionsEventMap[ 'forum' ] }>
 						<div
 							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
 							role="button"
@@ -184,7 +223,11 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 					{ renderChat.render && (
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
-							<ConditionalLink active={ renderChat.state === 'AVAILABLE' } to={ chatUrl }>
+							<ConditionalLink
+								active={ renderChat.state === 'AVAILABLE' }
+								to={ chatUrl }
+								onClick={ contactOptionsEventMap[ 'chat' ] }
+							>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
 										'is-disabled': renderChat.state !== 'AVAILABLE',
@@ -209,7 +252,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					) }
 
 					{ renderEmail.render && (
-						<Link to={ emailUrl }>
+						<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
 								role="button"
