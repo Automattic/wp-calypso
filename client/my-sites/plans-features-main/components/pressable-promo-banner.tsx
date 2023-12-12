@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
+import { plansBreakSmall, plansBreakMedium } from 'calypso/my-sites/plans-grid/media-queries';
 
 const Banner = styled.div`
 	background-color: var( --studio-white );
@@ -72,16 +72,26 @@ const Title = styled.h2`
 	text-align: left;
 	line-height: 26px;
 	color: var( --studio-black );
+	margin-top: 6px;
+	margin-bottom: 6px;
 `;
 
 const Description = styled.p`
-	font-name: SF Pro Text;
-	font-size: 14px;
+	font-size: 1rem;
+	line-height: 24px;
+	color: var( --studio-gray-80 );
 	font-weight: 400;
-	text-align: left;
 	margin: 0;
-	line-height: 20px;
-	color: var( --studio-black );
+
+	${ plansBreakSmall( css`
+		font-size: 0.875rem;
+		line-height: 20px;
+	` ) }
+
+	${ plansBreakMedium( css`
+		font-size: 0.813rem;
+		line-height: 16px;
+	` ) }
 `;
 
 const CtaButton = styled( Button )`
