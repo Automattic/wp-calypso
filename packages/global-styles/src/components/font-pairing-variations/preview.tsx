@@ -29,7 +29,6 @@ const FontPairingVariationPreview = () => {
 	const [ textFontStyle = 'normal' ] = useGlobalStyle( 'typography.fontStyle' );
 	const [ textLetterSpacing = '-0.15px' ] = useGlobalStyle( 'typography.letterSpacing' );
 	const [ textFontWeight = 400 ] = useGlobalStyle( 'typography.fontWeight' );
-	const [ textTextTransform = 'none' ] = useGlobalStyle( 'typography.textTransform' );
 
 	const [ baseHeadingFontFamily = textFontFamily ] = useGlobalStyle(
 		'elements.heading.typography.fontFamily'
@@ -43,9 +42,6 @@ const FontPairingVariationPreview = () => {
 	const [ baseHeadingLetterSpacing = textLetterSpacing ] = useGlobalStyle(
 		'elements.heading.typography.letterSpacing'
 	);
-	const [ baseHeadingTextTransform = textTextTransform ] = useGlobalStyle(
-		'elements.heading.typography.textTransform'
-	);
 
 	const [ headingFontFamily = baseHeadingFontFamily ] = useGlobalStyle(
 		'elements.h1.typography.fontFamily'
@@ -58,9 +54,6 @@ const FontPairingVariationPreview = () => {
 	);
 	const [ headingLetterSpacing = baseHeadingLetterSpacing ] = useGlobalStyle(
 		'elements.h1.typography.letterSpacing'
-	);
-	const [ headingTextTransform = baseHeadingTextTransform ] = useGlobalStyle(
-		'elements.h1.typography.textTransform'
 	);
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();
@@ -140,7 +133,6 @@ const FontPairingVariationPreview = () => {
 										fontWeight: headingFontWeight,
 										fontFamily: headingFontFamily,
 										fontStyle: headingFontStyle,
-										textTransform: headingTextTransform,
 									} }
 								>
 									{ headingFontFamilyName }
