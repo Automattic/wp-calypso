@@ -21,7 +21,7 @@ $break-large-stats-countries: 1280px;
 	@media (min-width: $break-large-stats-countries ) {
 
 		.stats__module-wrapper--countryviews .stats-module,
-		.list-countryviews {
+		.list-countryviews .stats-card__content {
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;

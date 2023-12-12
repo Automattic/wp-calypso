@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -5,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
@@ -12,6 +15,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Geochart from '../geochart';
+import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
@@ -130,6 +134,7 @@ class StatsModule extends Component {
 			additionalColumns,
 			mainItemLabel,
 			listItemClassName,
+			needsUpgrade,
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
@@ -150,7 +155,7 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<StatsListCard
-					className={ className }
+					className={ classNames( className, 'stats-module__card', path ) }
 					moduleType={ path }
 					data={ data }
 					useShortLabel={ useShortLabel }
@@ -180,6 +185,17 @@ class StatsModule extends Component {
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
+					overlay={
+						needsUpgrade &&
+						siteId &&
+						statType && (
+							<StatsCardUpsell
+								className="stats-module__upsell"
+								siteId={ siteId }
+								statType={ statType }
+							/>
+						)
+					}
 				/>
 				{ isAllTime && (
 					<div className={ footerClass }>
@@ -201,11 +217,25 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const { statType, query } = ownProps;
+	const isPaidStatsEnabled = isEnabled( 'stats/paid-wpcom-v2' );
+	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
+	let needsUpgrade = false;
+	const paidStats = [ 'statsSearchTerms', 'statsClicks', 'statsReferrers', 'statsCountryViews' ];
+	if ( isPaidStatsEnabled && ! siteHasPaidStats && paidStats.includes( statType ) ) {
+		needsUpgrade = true;
+	}
+
+	if ( paidStats.includes( statType ) ) {
+		needsUpgrade = true;
+	}
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
 		siteId,
 		siteSlug,
+		isPaidStatsEnabled,
+		siteHasPaidStats,
+		needsUpgrade,
 	};
 } )( localize( StatsModule ) );

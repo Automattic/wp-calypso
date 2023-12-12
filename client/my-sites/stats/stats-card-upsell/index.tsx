@@ -33,7 +33,7 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId } ) =
 				<div className="stats-card-upsell__lock">
 					<Gridicon icon="lock" />
 				</div>
-				<div className="stats-card-upsell__subtitle">
+				<div className="stats-card-upsell__text">
 					{ translate( 'Upgrade your plan to unlock advanced stats.' ) }
 				</div>
 				<Button className="stats-card-upsell__button" onClick={ onClick }>
