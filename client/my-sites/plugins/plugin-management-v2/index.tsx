@@ -138,7 +138,9 @@ export default function PluginManagementV2( {
 		return <div className="plugin-management-v2__no-sites">{ emptyMessage }</div>;
 	}
 	const urlParams = new URLSearchParams( window.location.search );
-	const shouldRenderPluginManagementTour = urlParams.get( 'tour' ) === 'plugin-management';
+	const shouldRenderPluginManagementTour =
+		urlParams.get( 'tour' ) === 'plugin-management' && ! isLoading && plugins.length > 0;
+
 	return (
 		<>
 			<div
