@@ -1,6 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { isEnabled } from '@automattic/calypso-config';
-import { getPatternSourceSiteID } from '@automattic/data-stores/src/site/constants';
+import { getPlaceholderSiteID } from '@automattic/data-stores/src/site/constants';
 import { useMemo } from 'react';
 import StepperLoader from '../../components/stepper-loader';
 import { encodePatternId } from './utils';
@@ -49,7 +49,7 @@ const PatternAssemblerContainer = ( {
 				// Otherwise, we use the current site to display the site-related blocks.
 				// For Horizon, forcing to use the content from Assembler demo site to help testing with any existing site.
 				siteId={
-					isNewSite || isEnabled( 'pattern-assembler/v2' ) ? getPatternSourceSiteID() : siteId
+					isNewSite || isEnabled( 'pattern-assembler/v2' ) ? getPlaceholderSiteID() : siteId
 				}
 				stylesheet={ stylesheet }
 				patternIdsByCategory={ patternIdsByCategory }
