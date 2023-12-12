@@ -35,7 +35,8 @@
 	}
 }
 
-.wpcom-live-preview-upgrade-modal__overlay {
+.dialog__backdrop.wpcom-live-preview-upgrade-modal__overlay {
+	background-color: rgba(var(--color-neutral-70-rgb), 0.8);
 	// Dialog sets `z-index: z-index("root", ".dialog__backdrop")`,
 	// but this modal is used outside of Calypso, so we need to set it manually.
 	z-index: 100000;
