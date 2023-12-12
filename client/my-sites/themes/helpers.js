@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
@@ -160,4 +161,11 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 	}
 
 	return interlacedThemes;
+}
+
+// This should be kept consistent with the theme_tier taxonomy.
+export function getTierRouteParam() {
+	return isEnabled( 'themes/tiers' )
+		? ':tier(free|personal|premium|partner|woocommerce|sensei)?'
+		: ':tier(free|premium|marketplace)?';
 }
