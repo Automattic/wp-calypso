@@ -17,6 +17,7 @@ const DateControlPicker = ( {
 	selectedShortcut,
 	onShortcut,
 	onApply,
+	disabled,
 }: DateControlPickerProps ) => {
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -84,7 +85,11 @@ const DateControlPicker = ( {
 
 	return (
 		<div className="stats-date-control-picker">
-			<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
+			<Button
+				onClick={ togglePopoverVisibility }
+				ref={ infoReferenceElement }
+				disabled={ disabled }
+			>
 				{ buttonLabel }
 				<Icon className="gridicon" icon={ calendar } />
 			</Button>

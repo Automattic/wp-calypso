@@ -3,6 +3,8 @@ interface StatsDateControlProps {
 	queryParams: string;
 	period: 'day' | 'week' | 'month' | 'year';
 	dateRange: any;
+	overlay: JSX.Element;
+	disabled: boolean;
 }
 
 interface DateControlPickerProps {
@@ -10,6 +12,7 @@ interface DateControlPickerProps {
 	dateRange: any;
 	shortcutList: DateControlPickerShortcut[];
 	selectedShortcut: string | undefined;
+	disabled: boolean;
 	onShortcut: ( shortcut: DateControlPickerShortcut ) => void;
 	onApply: ( startDate: string, endDate: string ) => void;
 }
