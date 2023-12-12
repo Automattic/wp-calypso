@@ -1,5 +1,7 @@
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { CustomSelectControl } from '@wordpress/components';
+import { useLayoutEffect, useRef, useState } from 'react';
 import useIntervalOptions from '../hooks/use-interval-options';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 
@@ -35,6 +37,10 @@ const StyledCustomSelectControl = styled( CustomSelectControl )`
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const { intervalType } = props;
+	const dropdownRef = useRef( null );
+	const [ isMobileState, setIsMobileState ] = useState( isMobile() );
+	const [ isDropdownVisible, setIsDropdownVisible ] = useState( true );
+
 	const supportedIntervalType = (
 		[ 'yearly', '2yearly', '3yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -48,11 +54,54 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 			</AddOnOption>
 		),
 	} ) );
+
+	useLayoutEffect( () => {
+		const onResize = () => {
+			setIsMobileState( isMobile() );
+		};
+		addEventListener( 'resize', onResize );
+		return () => {
+			removeEventListener( 'resize', onResize );
+		};
+	}, [] );
+	useLayoutEffect( () => {
+		if ( typeof IntersectionObserver === 'undefined' ) {
+			return;
+		}
+		const observer = new IntersectionObserver(
+			( [ entry ] ) => {
+				if ( entry.intersectionRatio === 1 ) {
+					setIsDropdownVisible( true );
+					return;
+				}
+				setIsDropdownVisible( false );
+			},
+			{
+				rootMargin: `-${ 0 + 1 }px 0px 0px 0px`,
+				threshold: [ 0, 1 ],
+			}
+		);
+
+		if ( dropdownRef.current ) {
+			observer.observe( dropdownRef.current );
+		}
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
+
 	return (
-		<StyledCustomSelectControl
-			label=""
-			options={ selectOptionsList }
-			value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-		/>
+		<div
+			className={ `${ isDropdownVisible }_${ isMobileState }` }
+			style={ { visibility: isDropdownVisible ? 'visible' : 'hidden' } }
+			ref={ dropdownRef }
+		>
+			<StyledCustomSelectControl
+				label=""
+				options={ selectOptionsList }
+				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+			/>
+		</div>
 	);
 };
