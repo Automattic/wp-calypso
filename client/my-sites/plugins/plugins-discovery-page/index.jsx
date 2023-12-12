@@ -129,7 +129,7 @@ const OneClickPurchaseModal = ( { localeSlug, setShowPurchaseModal, siteSlug } )
 						onClose={ () => {
 							setShowPurchaseModal( false );
 						} }
-						showFeatureList={ ! isLoadingBusinessPlan }
+						showFeatureList={ true }
 						siteSlug={ siteSlug }
 					/>
 				</StripeHookProvider>
