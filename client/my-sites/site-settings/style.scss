@@ -733,7 +733,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 }
 
 .site-settings__reset-site {
-	.card {
+	.card.action-panel {
 		margin-bottom: 0;
 		padding: 24px;
 	}
@@ -746,6 +746,11 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 	.banner {
 		margin-top: 16px;
+	}
+
+	.reset-site__in-progress-message {
+		color: var(--gray-gray-100, #101517);
+		margin-top: 8px;
 	}
 }
 
