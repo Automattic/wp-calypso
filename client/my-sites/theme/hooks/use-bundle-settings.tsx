@@ -53,10 +53,10 @@ const useBundleSettings = ( themeId: string ): BundleSettings | null => {
 						i18n.hasTranslation(
 							'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.'
 						)
-							? translate(
+							? ( translate(
 									'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
 									{ args: { businessPlanName } }
-							  )
+							  ) as string )
 							: translate(
 									'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 							  ),
