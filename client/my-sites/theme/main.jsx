@@ -7,7 +7,6 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES,
-	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
@@ -132,24 +131,16 @@ const BannerUpsellDescription = ( {
 
 	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 		if ( ! bundleSettings ) {
-			/* translators: %(planName)s is the short-hand version of the Business plan name */
 			return translate(
-				'This theme comes bundled with a plugin. Upgrade to a %(planName)s plan to select this theme and unlock all its features.',
-				{
-					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-				}
+				'This theme comes bundled with a plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 			);
 		}
 
 		return bundleSettings.bannerUpsellDescription;
 	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
-			/* translators: %(planName)s is the short-hand version of the Business plan name */
 			return translate(
-				'Unlock this theme by upgrading to a %(planName)s plan and subscribing to this theme.',
-				{
-					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-				}
+				'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
 			);
 		}
 		return translate( 'Subscribe to this theme and unlock all its features.' );
@@ -184,35 +175,23 @@ const BannerUpsellTitle = ( {
 
 	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 		if ( ! bundleSettings ) {
-			/* translators: %(planName)s is the short-hand version of the Business plan name */
-			return translate( 'Access this theme with a %(planName)s plan!', {
-				args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-			} );
+			return translate( 'Access this theme with a Business plan!' );
 		}
 
 		const bundleName = bundleSettings.name;
 
-		// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".  %(planName)s is the short-hand version of the Business plan name */
-		return translate( 'Access this %(bundleName)s theme with a %(planName)s plan!', {
-			args: { bundleName, planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+		// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+		return translate( 'Access this %(bundleName)s theme with a Business plan!', {
+			args: { bundleName },
 		} );
 	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
-			/* translators: %(planName)s is the short-hand version of the Business plan name */
-			return translate( 'Upgrade to a %(planName)s plan and subscribe to this theme!', {
-				args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-			} );
+			return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 		}
 		return translate( 'Subscribe to this theme!' );
 	}
 
-	/* translators: %(planName1)s and %(planName2)s the short-hand version of the Premium and Business plan names */
-	return translate( 'Access this theme for FREE with a %(planName1)s or %(planName2)s plan!', {
-		args: {
-			planName1: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
-			planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-		},
-	} );
+	return translate( 'Access this theme for FREE with a Premium or Business plan!' );
 };
 
 class ThemeSheet extends Component {
@@ -1216,10 +1195,7 @@ class ThemeSheet extends Component {
 			return;
 		}
 
-		/* translators: %(planName)s is the short-hand version of the Business plan name */
-		return translate( 'Additional styles require the %(planName)s plan or higher.', {
-			args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-		} );
+		return translate( 'Additional styles require the Business plan or higher.' );
 	};
 
 	handleAddReview = () => {
@@ -1370,19 +1346,10 @@ class ThemeSheet extends Component {
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
 					onClick={ () => this.props.setProductToBeInstalled( themeId, siteSlug ) }
-					title={
-						/* translators: %(planName)s is the short-hand version of the Business plan name */
-						translate( 'Access this third-party theme with the %(planName)s plan!', {
-							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-						} )
-					}
+					title={ translate( 'Access this third-party theme with the Business plan!' ) }
 					description={ preventWidows(
-						/* translators: %(planName)s is the short-hand version of the Business plan name */
 						translate(
-							'Instantly unlock thousands of different themes and install your own when you upgrade to the %(planName)s plan.',
-							{
-								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-							}
+							'Instantly unlock thousands of different themes and install your own when you upgrade to the Business plan.'
 						)
 					) }
 					forceHref
