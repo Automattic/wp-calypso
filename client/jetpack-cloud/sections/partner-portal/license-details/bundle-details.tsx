@@ -10,7 +10,7 @@ interface Props {
 
 export default function BundleDetails( { parentLicenseId }: Props ) {
 	const translate = useTranslate();
-	const { licenses, total, loadMore, fetching } = useBundleLicensesQuery( parentLicenseId );
+	const { licenses, total, loadMore, isLoading } = useBundleLicensesQuery( parentLicenseId );
 
 	return (
 		<div className="bundle-details">
@@ -33,11 +33,11 @@ export default function BundleDetails( { parentLicenseId }: Props ) {
 				/>
 			) ) }
 
-			{ fetching && <LicensePreviewPlaceholder /> }
+			{ isLoading && <LicensePreviewPlaceholder /> }
 
 			{ loadMore && (
 				<CompactCard className="bundle-details__footer">
-					<Button compact onClick={ loadMore } disabled={ fetching }>
+					<Button compact onClick={ loadMore } disabled={ isLoading }>
 						{ translate( 'Load more (%(remainingItems)d)', {
 							args: { remainingItems: total - licenses.length },
 						} ) }

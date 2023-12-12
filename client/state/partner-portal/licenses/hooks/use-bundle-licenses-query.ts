@@ -11,7 +11,6 @@ export default function useBundleLicensesQuery( parentLicenseId: number, perPage
 	const [ licenses, setLicenses ] = useState< License[] >( [] );
 	const [ total, setTotal ] = useState< number >( 0 );
 	const [ page, setPage ] = useState< number >( 1 );
-	const [ fetching, setFetching ] = useState< boolean >( false );
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -36,7 +35,7 @@ export default function useBundleLicensesQuery( parentLicenseId: number, perPage
 		} ),
 	} );
 
-	const { isError, data, isFetched } = query;
+	const { isError, data, isLoading } = query;
 
 	const loadMore = useCallback( () => {
 		setPage( ( page ) => page + 1 );
@@ -52,28 +51,20 @@ export default function useBundleLicensesQuery( parentLicenseId: number, perPage
 					}
 				)
 			);
-			setFetching( false );
 		}
 	}, [ dispatch, translate, isError ] );
 
 	useEffect( () => {
 		if ( data ) {
-			setFetching( false );
 			setTotal( data.total );
 			setLicenses( ( licenses ) => [ ...licenses, ...data.licenses ] );
 		}
 	}, [ data ] );
 
-	useEffect( () => {
-		if ( ! isFetched ) {
-			setFetching( true );
-		}
-	}, [ isFetched ] );
-
 	return {
 		licenses,
 		total,
 		loadMore: licenses.length < total ? loadMore : undefined,
-		fetching,
+		isLoading,
 	};
 }
