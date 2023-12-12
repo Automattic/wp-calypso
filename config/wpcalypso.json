@@ -41,7 +41,6 @@
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"domains/gdpr-consent-page": true,
-		"domains/glue-records": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
