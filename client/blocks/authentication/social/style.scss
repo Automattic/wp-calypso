@@ -109,6 +109,7 @@
 
 		&:focus {
 			background: var(--studio-gray-0, #f6f7f7);
+			box-shadow: none;
 			outline: 2px solid var(--studio-gray-90, #1d2327);
 			outline-offset: 1px;
 		}
