@@ -999,7 +999,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'changePlan',
-			label: __( 'Change plan on a site' ),
+			label: __( 'Change site plan' ),
 			searchLabel: [
 				_x( 'upgrade plan', 'Keyword for the Change plan on your site command' ),
 				_x( 'change plan', 'Keyword for the Change plan on your site command' ),
@@ -1018,7 +1018,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'manageMyPlan',
-			label: __( 'Manage plan on a site' ),
+			label: __( 'Manage site plan' ),
 			searchLabel: [
 				_x( 'upgrade plan', 'Keyword for the Manage plan on a site command' ),
 				_x( 'manage plan', 'Keyword for the Manage plan on a site command' ),
