@@ -8,7 +8,7 @@ const vars = {
 	yellow50: 'var(--color-warning)',
 };
 
-type StarProps = {
+export type StarProps = {
 	index?: number;
 	rating: number;
 	hoverRating: number;

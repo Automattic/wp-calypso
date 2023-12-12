@@ -22,7 +22,7 @@ type Props = {
 
 export const ReviewsModal = ( { isVisible, onClose, slug, productName, productType }: Props ) => {
 	const [ content, setContent ] = useState< string >( '' );
-	const [ rating, setRating ] = useState< string >( '5' );
+	const [ rating, setRating ] = useState< number >( 5 );
 
 	const createReview = useCreateMarketplaceReviewMutation();
 
@@ -80,13 +80,7 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 						value={ content }
 						onChange={ setContent }
 					/>
-					<ReviewsRatingsStars
-						onSelectRating={ setRating }
-						isInteractive
-						showSelectedRating
-						rating={ rating }
-						hoverRating={ rating }
-					/>
+					<ReviewsRatingsStars onSelectRating={ setRating } showSelectedRating rating={ rating } />
 					<div className="marketplace-reviews-modal__buttons-container">
 						<Button
 							className="marketplace-reviews-modal__button-submit"

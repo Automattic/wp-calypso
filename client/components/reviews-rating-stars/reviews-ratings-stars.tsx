@@ -1,12 +1,25 @@
 import { useTranslate } from 'i18n-calypso';
-import { forwardRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Rating from 'calypso/components/rating';
-import Star from './star';
+import Star, { type StarProps } from './star';
 import './reviews-ratings-stars.scss';
 
 export const MAX_RATING = 5;
 
-const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
+type ReviewsRatingsStarsProps = {
+	rating: number;
+	averageRating?: number;
+	numberOfReviews?: number;
+	size?: 'medium' | 'medium-small' | 'medium-large';
+	showSelectedRating?: boolean;
+	children?: React.ReactNode;
+	onMouseEnter?: () => void;
+	onMouseLeave?: () => void;
+	onSelectRating?: ( index: number ) => void;
+	simpleView?: boolean;
+};
+
+const ReviewsRatingsStars = ( props: ReviewsRatingsStarsProps ) => {
 	const {
 		rating,
 		averageRating,
@@ -22,12 +35,12 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 
 	const translate = useTranslate();
 
-	const [ ratingState, setRatingState ] = useState( rating );
+	const [ ratingState, setRatingState ] = useState< number >( rating );
 	const [ hoverRating, setHoverRating ] = useState( rating );
 
-	const onStarMouseEnter = ( index ) => setHoverRating( index );
+	const onStarMouseEnter = ( index: number ) => setHoverRating( index );
 	const onStarMouseLeave = () => setHoverRating( ratingState );
-	const onSaveRating = ( e, index ) => {
+	const onSaveRating = ( _: unknown, index: number ) => {
 		setRatingState( index );
 		if ( onSelectRating ) {
 			onSelectRating( index );
@@ -59,7 +72,7 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 		} );
 	}
 
-	function getStarsNumberSign( numberOfStars ) {
+	function getStarsNumberSign( numberOfStars: number ) {
 		return translate( '%(numberToAdd)d star', '%(numberToAdd)d stars', {
 			count: numberOfStars,
 			args: { numberToAdd: numberOfStars },
@@ -81,9 +94,7 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 			onMouseLeave={ onMouseLeave }
 		>
 			{ simpleView ? (
-				<div ref={ ref }>
-					<Rating rating={ ratingNormalized } />
-				</div>
+				<Rating rating={ ratingNormalized } />
 			) : (
 				<>
 					{ averageRating && (
@@ -100,28 +111,22 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 								const ratingStarsScreenReaderText = translate(
 									'Rate product %(value) star',
 									'Rate product %(value) stars',
-									{ value, args: { value } }
+									{ count: value, args: { value } }
 								);
 
-								const starProps = {
+								const starProps: StarProps & React.RefAttributes< SVGSVGElement > = {
 									rating: ratingState,
 									index: value,
-									key: value,
 									hoverRating,
 									onMouseEnter: onStarMouseEnter,
 									onMouseLeave: onStarMouseLeave,
 									onClick: onSaveRating,
-									className: 'reviews-ratings-stars__star',
 									isInteractive: true,
 									tabIndex: 0,
-									ariaLabel: ratingStarsScreenReaderText,
+									ariaLabel: ratingStarsScreenReaderText as string,
 								};
 
-								if ( 1 === value ) {
-									starProps.ref = ref;
-								}
-
-								return <Star key={ index } { ...starProps } />;
+								return <Star { ...starProps } key={ value } />;
 							} ) }
 					</div>
 					{ numberOfReviewsText && (
@@ -135,6 +140,6 @@ const ReviewsRatingsStars = forwardRef( ( props, ref ) => {
 			{ children && children }
 		</div>
 	);
-} );
+};
 
 export default ReviewsRatingsStars;
