@@ -14,13 +14,13 @@ export default function isJetpackConnectionProblem( state, siteId ) {
 	if ( ! siteId ) {
 		return null;
 	}
-	const connection_data = state.jetpackConnectionHealth?.[ siteId ];
+	const siteState = state.jetpackConnectionHealth[ siteId ];
 
-	if ( ! connection_data ) {
+	if ( ! siteState?.connectionHealth ) {
 		return null;
 	}
 
-	return connection_data.jetpack_connection_problem;
+	return siteState.connectionHealth.jetpack_connection_problem;
 }
 
 /**

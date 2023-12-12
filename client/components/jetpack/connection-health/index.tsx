@@ -1,6 +1,11 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { requestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/actions';
+import getJetpackConnectionHealth from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health';
+import getJetpackConnectionHealthRequestError from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health-request-error';
+import isRequestingJetpackConnectionHealthStatus from 'calypso/state/jetpack-connection-health/selectors/is-requesting-jetpack-connection-health-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	DATABASE_ERROR,
@@ -17,23 +22,42 @@ import {
 	XMLRPC_ERROR,
 } from './constants';
 import { ErrorNotice } from './error-notice';
-import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
 interface Props {
 	siteId: number;
 }
 
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( ! isRequestingJetpackConnectionHealthStatus( getState(), siteId ) ) {
+		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
+	}
+};
+
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteIsAutomatedTransfer = useSelector(
 		( state ) => !! isSiteAutomatedTransfer( state, siteId )
 	);
 
-	const {
-		data: jetpackConnectionHealth,
-		isLoading: isLoadingJetpackConnectionHealth,
-		isError: isErrorCheckJetpackConnectionHealth,
-	} = useCheckJetpackConnectionHealth( siteId );
+	const isErrorCheckJetpackConnectionHealth = useSelector( ( state ) =>
+		getJetpackConnectionHealthRequestError( state, siteId )
+	);
+
+	const isLoadingJetpackConnectionHealth = useSelector( ( state ) =>
+		isRequestingJetpackConnectionHealthStatus( state, siteId )
+	);
+
+	const jetpackConnectionHealth = useSelector( ( state ) =>
+		getJetpackConnectionHealth( state, siteId )
+	);
+
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
 	if (
 		isLoadingJetpackConnectionHealth ||
