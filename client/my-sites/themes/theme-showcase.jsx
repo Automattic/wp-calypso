@@ -584,10 +584,12 @@ class ThemeShowcase extends Component {
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 				/>
-				<ThemeShowcaseSurvey
-					survey={ SurveyType.DECEMBER_2023 }
-					condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
-				/>
+				{ isLoggedIn && (
+					<ThemeShowcaseSurvey
+						survey={ SurveyType.DECEMBER_2023 }
+						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
+					/>
+				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
