@@ -1,6 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLACEHOLDER_SITE_ID } from '@automattic/data-stores/src/site/constants';
+import { getPatternSourceSiteID } from '@automattic/data-stores/src/site/constants';
 import { useMemo } from 'react';
 import StepperLoader from '../../components/stepper-loader';
 import { encodePatternId } from './utils';
@@ -48,7 +48,9 @@ const PatternAssemblerContainer = ( {
 				// For the newly created site, we use the placeholder site to render the content.
 				// Otherwise, we use the current site to display the site-related blocks.
 				// For Horizon, forcing to use the content from Assembler demo site to help testing with any existing site.
-				siteId={ isNewSite || isEnabled( 'pattern-assembler/v2' ) ? PLACEHOLDER_SITE_ID : siteId }
+				siteId={
+					isNewSite || isEnabled( 'pattern-assembler/v2' ) ? getPatternSourceSiteID() : siteId
+				}
 				stylesheet={ stylesheet }
 				patternIdsByCategory={ patternIdsByCategory }
 				// Use siteInfo to overwrite site-related things such as title, and tagline.
