@@ -16,6 +16,7 @@ interface EmptyDomainsListCardSkeletonProps {
 	action: string;
 	secondaryActionURL: string;
 	secondaryAction: string;
+	showIllustration?: boolean;
 }
 
 export const EmptyDomainsListCardSkeleton = ( {
@@ -29,6 +30,7 @@ export const EmptyDomainsListCardSkeleton = ( {
 	action,
 	secondaryActionURL,
 	secondaryAction,
+	showIllustration = true,
 }: EmptyDomainsListCardSkeletonProps ) => {
 	const dispatch = useDispatch();
 
@@ -55,7 +57,9 @@ export const EmptyDomainsListCardSkeleton = ( {
 					'has-title-only': title && ! line,
 				} ) }
 			>
-				<div className="empty-domains-list-card__illustration">{ illustration }</div>
+				{ showIllustration && (
+					<div className="empty-domains-list-card__illustration">{ illustration }</div>
+				) }
 				<div className="empty-domains-list-card__content">
 					<div className="empty-domains-list-card__text">
 						{ title ? <h2>{ title }</h2> : null }
