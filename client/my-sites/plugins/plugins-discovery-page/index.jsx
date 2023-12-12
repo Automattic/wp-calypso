@@ -1,8 +1,7 @@
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { ProductsList } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -108,36 +107,24 @@ const ExperimentLoading = ( { setIsLoadingExperiment } ) => {
 };
 
 const OneClickPurchaseModal = ( { localeSlug, setShowPurchaseModal, siteSlug } ) => {
-	const { result: isEligibleForOneClickCheckout, isLoading } = useIsEligibleForOneClickCheckout();
-	const businessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_BUSINESS ),
-		[]
+	const businessPlanProduct = createRequestCartProduct( {
+		product_slug: PLAN_BUSINESS,
+	} );
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ localeSlug }>
+				<PurchaseModal
+					productToAdd={ businessPlanProduct }
+					onClose={ () => {
+						setShowPurchaseModal( false );
+					} }
+					showFeatureList={ true }
+					siteSlug={ siteSlug }
+				/>
+			</StripeHookProvider>
+		</CalypsoShoppingCartProvider>
 	);
-
-	const isLoadingBusinessPlan = ! businessPlanProduct;
-
-	if ( isEligibleForOneClickCheckout && ! isLoading ) {
-		return (
-			<CalypsoShoppingCartProvider>
-				<StripeHookProvider
-					fetchStripeConfiguration={ getStripeConfiguration }
-					locale={ localeSlug }
-				>
-					<PurchaseModal
-						isLoadingProduct={ isLoadingBusinessPlan }
-						productToAdd={ businessPlanProduct }
-						onClose={ () => {
-							setShowPurchaseModal( false );
-						} }
-						showFeatureList={ true }
-						siteSlug={ siteSlug }
-					/>
-				</StripeHookProvider>
-			</CalypsoShoppingCartProvider>
-		);
-	} else if ( ! isEligibleForOneClickCheckout && ! isLoading ) {
-		return <RedirectToCheckout siteSlug={ siteSlug } />;
-	}
 };
 
 const PluginsDiscoveryPage = ( props ) => {
@@ -152,13 +139,14 @@ const PluginsDiscoveryPage = ( props ) => {
 	const translate = useTranslate();
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const [ isLoadingExperiment, setIsLoadingExperiment ] = useState( false );
+	const { isLoading, result: isEligibleForOneClickCheckout } = useIsEligibleForOneClickCheckout();
 
 	return (
 		<>
 			{ showPurchaseModal && (
 				<Experiment
 					name="calypso_plugins_page_business_plan_one_click_upsell"
-					defaultExperience={ <RedirectToCheckout /> }
+					defaultExperience={ <RedirectToCheckout siteSlug={ props.siteSlug } /> }
 					treatmentExperience={
 						<OneClickPurchaseModal
 							localeSlug={ translate.localeSlug }
@@ -179,11 +167,16 @@ const PluginsDiscoveryPage = ( props ) => {
 					e.preventDefault();
 
 					// Prevent multiple clicks
-					if ( isLoadingExperiment ) {
+					if ( isLoadingExperiment || isLoading ) {
 						return;
 					}
 
-					setShowPurchaseModal( true );
+					if ( isEligibleForOneClickCheckout === true ) {
+						setShowPurchaseModal( true );
+						return;
+					}
+
+					page( `/checkout/${ props.siteSlug }/business` );
 				} }
 			/>
 			<PaidPluginsSection { ...props } />
