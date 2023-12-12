@@ -177,7 +177,7 @@ export async function showDSP(
 				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
-				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
+				uploadImageLabel: isWpMobileApp() || isWcMobileApp() ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
 				source: source,
 				isRunningInJetpack,

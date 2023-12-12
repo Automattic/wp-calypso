@@ -146,7 +146,7 @@ class Document extends Component {
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 						'is-white-signup': sectionName === 'signup',
-						'is-mobile-app-view': app?.isWpMobileApp,
+						'is-mobile-app-view': app?.isWpMobileApp || app?.isWcMobileApp,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
