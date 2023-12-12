@@ -4,19 +4,19 @@ import getProductInfo from '../../lib/get-product-info';
 // Helper function to get the product name from the product slug. Only applicable for this filter logic.
 function getProductNameBySlug( slug: string ) {
 	if ( slug.startsWith( 'jetpack_anti_spam' ) ) {
-		return 'Akismet Anti-spam';
+		return 'Jetpack Akismet Anti-spam';
 	}
 
 	if ( slug.startsWith( 'jetpack_backup_t1' ) ) {
-		return 'VaultPress Backup 10GB';
+		return 'Jetpack VaultPress Backup 10GB';
 	}
 
 	if ( slug.startsWith( 'jetpack_backup_t2' ) ) {
-		return 'VaultPress Backup 1TB';
+		return 'Jetpack VaultPress Backup 1TB';
 	}
 
 	return slug
-		.replace( /t1|t2|monthly|yearly|jetpack/g, '' )
+		.replace( /t1|t2|monthly|yearly/g, '' )
 		.replace( /_/g, ' ' )
 		.trim();
 }
