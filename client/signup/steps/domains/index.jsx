@@ -620,7 +620,13 @@ export class RenderDomainsStep extends Component {
 				} ) );
 			}
 
-			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+			await this.props.shoppingCartManager.addProductsToCart( [ registration ] ).catch( () => {
+				this.handleReplaceProductsInCartError(
+					this.props.translate(
+						'Sorry, there was a problem adding that domain. Please try again later.'
+					)
+				);
+			} );
 
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			const productsToAdd = ! hasPlan( this.props.cart )
