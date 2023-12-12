@@ -245,20 +245,21 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	handleDomainMappingError = ( domain_name ) => {
+	handleDomainMappingError = async ( domain_name ) => {
 		const productToRemove = this.props.cart.products.find(
 			( product ) => product.meta === domain_name
 		);
 
-		this.setState( ( prevState ) => ( {
-			domainRemovalQueue: [
-				...prevState.domainRemovalQueue,
-				{ meta: productToRemove.meta, productSlug: productToRemove.product_slug },
-			],
-		} ) );
-
 		if ( productToRemove ) {
-			this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+			this.setState( ( prevState ) => ( {
+				domainRemovalQueue: [
+					...prevState.domainRemovalQueue,
+					{ meta: productToRemove.meta, productSlug: productToRemove.product_slug },
+				],
+			} ) );
+			this.setState( { isValidatingDomains: true } );
+			await this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+			this.setState( { isValidatingDomains: false } );
 		} else if ( this.state.temporaryCart?.length > 0 ) {
 			this.setState( ( state ) => ( {
 				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
@@ -690,7 +691,7 @@ export class RenderDomainsStep extends Component {
 		} );
 	};
 
-	removeDomain( { domain_name, product_slug } ) {
+	async removeDomain( { domain_name, product_slug } ) {
 		if ( this.state.temporaryCart?.length > 0 ) {
 			this.setState( ( state ) => ( {
 				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
@@ -710,7 +711,7 @@ export class RenderDomainsStep extends Component {
 		} );
 		if ( productsToKeep ) {
 			this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
-			this.props.shoppingCartManager
+			await this.props.shoppingCartManager
 				.replaceProductsInCart( productsToKeep )
 				.then( () => {
 					this.setState( { replaceDomainFailedMessage: null } );
