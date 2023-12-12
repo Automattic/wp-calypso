@@ -99,7 +99,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		}
 	}, [ legacyPlan, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
-	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
+	const { unlinked, purchasetoken, purchaseNonce, site, currency: currencyCode } = urlQueryArgs;
 	const canDoSiteOnlyCheckout = unlinked && !! site && !! ( purchasetoken || purchaseNonce );
 	useEffect( () => {
 		if ( canDoSiteOnlyCheckout ) {
@@ -176,9 +176,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const iterationClassName = getForCurrentCROIteration(
 		( variation: Iterations | null ) => `jetpack-plans__iteration--${ variation ?? 'default' }`
 	);
-
-	const urlParams = new URLSearchParams( window.location.search );
-	const currencyCode = urlParams.get( 'currency' );
 
 	return (
 		<>
