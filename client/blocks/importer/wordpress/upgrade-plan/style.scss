@@ -6,24 +6,6 @@
 $business-plan-color: #7f54b3;
 
 .import__upgrade-plan {
-	.onboarding-title {
-		@include onboarding-font-recoleta;
-		color: var(--studio-gray-100);
-		font-size: 2.75rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 3rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.onboarding-subtitle {
-		button {
-			padding: 0;
-			color: inherit;
-			font-size: inherit;
-			text-decoration: underline;
-		}
-	}
-
 	p {
 		color: var(--studio-gray-40);
 		margin-bottom: 1em;

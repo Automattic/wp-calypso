@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $left-margin: 36px;
 
 @keyframes purchaseModalBackdropfadeIn {
@@ -17,29 +20,54 @@ $left-margin: 36px;
 }
 
 .purchase-modal.dialog__content {
-	--padding: -24px;
-
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	width: 460px;
 	max-width: 100%;
 	box-sizing: border-box;
+	padding: 0;
 
-	@media ( max-width: 480px ) {
-		--padding: -16px;
-		width: unset;
+	width: 460px;
+	&.has-feature-list {
+		width: 800px;
 	}
 
-	> hr {
-		width: calc(100% + var(--padding) * -2);
-		margin: 16px var(--padding);
-		background: var(--color-neutral-5);
+	@media ( min-width: 480px ) {
+		padding: 0;
+	}
+}
 
-		// stylelint-disable-next-line unit-allowed-list
-		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
-			height: 0.5px;
+.purchase-modal__wrapper {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	gap: 12px;
+	@include break-medium {
+		gap: 36px;
+		flex-direction: row;
+	}
+}
+
+.purchase-modal__steps {
+	display: flex;
+	flex-direction: column;
+	max-width: 100%;
+	padding: 16px;
+	@include break-medium {
+		padding: 45px 36px;
+		.has-feature-list & {
+			max-width: 50%;
+			padding: 45px 0 45px 36px;
 		}
+	}
+}
+
+.purchase-modal__features {
+	background: var(--gray-gray-0, #f6f7f7);
+	padding: 45px 36px;
+	flex: 1;
+	@include break-medium {
+		padding: 45px 48px 45px 36px;
 	}
 }
 
@@ -146,9 +174,17 @@ $left-margin: 36px;
 	justify-content: space-between;
 	flex-wrap: wrap;
 
+	padding-inline-end: 18px;
+	@include break-medium {
+		padding-inline-end: 0;
+	}
+
 	> dt {
 		width: 60%;
-		margin-left: $left-margin;
+		margin-inline-start: 18px;
+		@include break-medium {
+			margin-inline-start: $left-margin;
+		}
 	}
 
 	> dd {
@@ -178,13 +214,25 @@ $left-margin: 36px;
  * Pay button
  */
 .purchase-modal__pay-button {
-	align-self: flex-end;
-	margin-top: 24px;
-	min-width: 35%;
+	align-self: stretch;
 	font-size: 1rem;
+
+	margin: 24px 18px 0 18px;
+	@include break-medium {
+		margin: 24px 0 0 36px;
+	}
 
 	&.is-placeholder {
 		@include placeholder();
 		height: 2rem;
 	}
+}
+
+.purchase-modal__features-title {
+	color: var(--gray-gray-70, #3c434a);
+	font-size: 1rem;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	margin-bottom: 10px;
 }

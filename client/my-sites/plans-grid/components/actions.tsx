@@ -43,6 +43,9 @@ type PlanFeaturesActionsButtonProps = {
 	isWpcomEnterpriseGridPlan: boolean;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
+	/**
+	 * @deprecated Site id is not used here to be cleaned up
+	 */
 	siteId?: number | null;
 	isStuck: boolean;
 	isLargeCurrency?: boolean;

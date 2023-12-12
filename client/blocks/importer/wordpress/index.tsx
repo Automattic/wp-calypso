@@ -23,8 +23,6 @@ import { WPImportOption } from './types';
 import { storeMigrateSource, retrieveMigrateSource } from './utils';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-import './style.scss';
-
 interface Props {
 	job?: ImportJob;
 	run?: boolean;
