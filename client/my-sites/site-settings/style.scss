@@ -733,6 +733,10 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 }
 
 .site-settings__reset-site {
+	.card.header-cake {
+		margin-bottom: 0;
+		border-bottom: none;
+	}
 	.card.action-panel {
 		margin-bottom: 0;
 		padding: 24px;
