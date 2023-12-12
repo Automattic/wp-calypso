@@ -10,7 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
-export default function useTermViseMaxDiscounts(
+export default function useMaxDiscountsForPlanTerms(
 	plans: PlanSlug[],
 	urlFriendlyTerms: UrlFriendlyTermType[] = [],
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans
@@ -61,7 +61,7 @@ export default function useTermViseMaxDiscounts(
 		}
 	};
 
-	const termViseMaxDiscount: Record< UrlFriendlyTermType, number > = {} as Record<
+	const termWiseMaxDiscount: Record< UrlFriendlyTermType, number > = {} as Record<
 		UrlFriendlyTermType,
 		number
 	>;
@@ -88,10 +88,10 @@ export default function useTermViseMaxDiscounts(
 
 			return Math.floor( ( ( monthlyPlanCost - variantTermMonthlyCost ) * 100 ) / monthlyPlanCost );
 		} );
-		termViseMaxDiscount[ termMapping.urlFriendlyTerm ] = termDiscounts.length
+		termWiseMaxDiscount[ termMapping.urlFriendlyTerm ] = termDiscounts.length
 			? Math.max( ...termDiscounts )
 			: 0;
 	} );
 
-	return termViseMaxDiscount;
+	return termWiseMaxDiscount;
 }

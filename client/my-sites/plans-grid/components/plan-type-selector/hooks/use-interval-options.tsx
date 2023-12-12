@@ -2,7 +2,7 @@ import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 import generatePath from '../utils';
-import useTermViseMaxDiscounts from './use-term-vise-max-dicounts';
+import useMaxDiscountsForPlanTerms from './use-term-vise-max-dicounts';
 
 const getDiscountText = ( discountPercentage: number, translate: LocalizeProps[ 'translate' ] ) => {
 	if ( ! discountPercentage ) {
@@ -64,25 +64,26 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Record<
 			termInMonths: 1,
 		},
 	};
-	const termViseDiscounts = useTermViseMaxDiscounts(
+	const termWiseMaxDiscount = useMaxDiscountsForPlanTerms(
 		props.plans,
-		Object.keys( optionList ) as Array< UrlFriendlyTermType >,
+		Object.keys( optionList ) as Array< SupportedUrlFriendlyTermType >,
 		props.usePricingMetaForGridPlans
 	);
 
 	const additionalPathProps = {
 		...( props.redirectTo ? { redirect_to: props.redirectTo } : {} ),
-		...( props.selectedPlan ? { plan: props.selectedPlan } : {} ),
-		...( props.selectedFeature ? { feature: props.selectedFeature } : {} ),
 	};
 
-	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
-
-	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
-		'domainAndPlanPackage'
-	);
-
-	const isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+	let isDomainUpsellFlow: string | null = '';
+	let isDomainAndPlanPackageFlow: string | null = '';
+	let isJetpackAppFlow: string | null = '';
+	if ( typeof window !== 'undefined' ) {
+		isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+		isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+			'domainAndPlanPackage'
+		);
+		isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
+	}
 
 	Object.keys( optionList ).forEach( ( key ) => {
 		optionList[ key as SupportedUrlFriendlyTermType ] = {
@@ -94,7 +95,7 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Record<
 				jetpackAppPlans: isJetpackAppFlow,
 				...additionalPathProps,
 			} ),
-			discountText: getDiscountText( termViseDiscounts[ key as UrlFriendlyTermType ], translate ),
+			discountText: getDiscountText( termWiseMaxDiscount[ key as UrlFriendlyTermType ], translate ),
 		};
 	} );
 

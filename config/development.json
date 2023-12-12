@@ -141,7 +141,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-light": false,
 		"onboarding/import-redirect-to-themes": true,
-		"onboarding/interval-dropdown": true,
+		"onboarding/interval-dropdown": false,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"pattern-assembler/v2": false,
