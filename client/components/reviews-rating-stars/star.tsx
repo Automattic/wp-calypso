@@ -1,15 +1,32 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { customProperties } from '@automattic/calypso-color-schemes/js'; // mind the js suffix
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 const vars = {
-	gray5: customProperties[ '--color-neutral-5' ],
-	yellow20: customProperties[ '--color-warning-20' ],
-	yellow50: customProperties[ '--color-warning' ],
+	gray5: 'var(--color-neutral-5)',
+	yellow20: 'var(--color-warning-20)',
+	yellow50: 'var(--color-warning)',
 };
 
-const Star = forwardRef( ( props, ref ) => {
+type StarProps = {
+	index?: number;
+	rating: number;
+	hoverRating: number;
+	size?: number;
+	title?: string;
+	onClick?: ( ( e: React.MouseEvent | React.KeyboardEvent, index: number ) => void ) | null;
+	onMouseEnter?: ( index: number ) => void;
+	onMouseLeave?: () => void;
+	tracksEvent?: string;
+	tracksProperties?: Record< string, unknown >;
+	isChecked?: boolean;
+	isInteractive?: boolean;
+	ariaLabel?: string;
+	tabIndex?: number;
+	ariaHidden?: boolean;
+};
+
+const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 	const {
 		index = 0,
 		rating,
@@ -28,11 +45,11 @@ const Star = forwardRef( ( props, ref ) => {
 		ariaHidden,
 	} = props;
 
-	function handleOnClick( e, i ) {
+	function handleOnClick( e: React.MouseEvent | React.KeyboardEvent, i: number ) {
 		if ( ! isInteractive ) {
 			return;
 		}
-		if ( 'click' === e.type || 'Enter' === e.key ) {
+		if ( 'click' === e.type || ( e as React.KeyboardEvent ).key === 'Enter' ) {
 			if ( tracksEvent ) {
 				const properties = Object.assign( {}, tracksProperties );
 				properties.index = i;
@@ -44,14 +61,14 @@ const Star = forwardRef( ( props, ref ) => {
 		}
 	}
 
-	const svgProps = {
+	const svgProps: React.SVGProps< SVGSVGElement > = {
 		width: size,
 		height: size,
 		viewBox: '0 0 24 24',
 		role: 'img',
 		pointerEvents: 'all',
-		onClick: ( e ) => handleOnClick( e, index ),
-		onKeyDown: ( e ) => handleOnClick( e, index ),
+		onClick: ( e: React.MouseEvent ) => handleOnClick( e, index ),
+		onKeyDown: ( e: React.KeyboardEvent ) => handleOnClick( e, index ),
 		ref,
 		'aria-label': ariaLabel,
 		'aria-hidden': ariaHidden,
