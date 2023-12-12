@@ -16,6 +16,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import ThemeTierDropdown from 'calypso/components/theme-tier/theme-tier-dropdown';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -635,15 +636,23 @@ class ThemeShowcase extends Component {
 									) }
 								</div>
 								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-									<SelectDropdown
-										className="section-nav-tabs__dropdown"
-										onSelect={ this.onTierSelectFilter }
-										selectedText={ translate( 'View: %s', {
-											args: getOptionLabel( tiers, tier ) || '',
-										} ) }
-										options={ tiers }
-										initialSelected={ tier }
-									></SelectDropdown>
+									<>
+										<SelectDropdown
+											className="section-nav-tabs__dropdown"
+											onSelect={ this.onTierSelectFilter }
+											selectedText={ translate( 'View: %s', {
+												args: getOptionLabel( tiers, tier ) || '',
+											} ) }
+											options={ tiers }
+											initialSelected={ tier }
+										></SelectDropdown>
+										{ config.isEnabled( 'themes/tiers' ) && (
+											<ThemeTierDropdown
+												onSelect={ this.onTierSelectFilter }
+												selectedTier={ tier }
+											/>
+										) }
+									</>
 								) }
 							</div>
 							<div className="themes__filters">
