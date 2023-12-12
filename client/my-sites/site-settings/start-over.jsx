@@ -346,7 +346,7 @@ function SiteResetCard( {
 								aria-required="true"
 								id="confirmResetInput"
 								disabled={ isLoading }
-								style={ { flex: 0.5 } }
+								style={ { flex: 1 } }
 								onChange={ ( event ) =>
 									setDomainConfirmed( event.currentTarget.value.trim() === siteDomain )
 								}
