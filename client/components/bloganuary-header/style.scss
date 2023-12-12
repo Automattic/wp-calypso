@@ -13,16 +13,6 @@
 	vertical-align: middle;
 	margin-bottom: 20px;
 
-	.bloganuary-header__title {
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		vertical-align: middle;
-		font-size: 22px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-
-		@include break-small {
-			font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		}
-	}
-
 	.blogging-bloganuary-icon {
 		vertical-align: middle;
 		padding-right: 10px;
@@ -34,5 +24,26 @@
 				fill: var(--studio-white);
 			}
 		}
+	}
+
+	.bloganuary-header__title {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		vertical-align: middle;
+		font-size: 22px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+
+		@include break-small {
+			font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		}
+	}
+
+	.bloganuary-header__button {
+		vertical-align: middle;
+		font-size: 1rem;
+		margin-right: 10px;
+	}
+
+	.bloganuary-header__link {
+		vertical-align: middle;
+		color: var(--studio-white);
 	}
 }
