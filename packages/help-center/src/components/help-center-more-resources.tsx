@@ -7,7 +7,7 @@ import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import { Icon, captureVideo, desktop, formatListNumbered, video, external } from '@wordpress/icons';
+import { Icon, captureVideo, desktop, formatListNumbered, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
@@ -90,21 +90,6 @@ export const HelpCenterMoreResources = () => {
 				{ __( 'More Resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul className="inline-help__more-resources" aria-labelledby="inline-help__more-resources">
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
-							rel="noreferrer"
-							target="_blank"
-							className="inline-help__video"
-							onClick={ () => trackMoreResourcesButtonClick( 'video' ) }
-						>
-							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Video Tutorials', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
