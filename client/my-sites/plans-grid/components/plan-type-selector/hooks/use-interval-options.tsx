@@ -1,4 +1,3 @@
-import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 import generatePath from '../utils';
@@ -13,7 +12,8 @@ const getDiscountText = ( discountPercentage: number, translate: LocalizeProps[ 
 		comment: 'Discount percentage',
 	} );
 };
-export default function useIntervalOptions( props: IntervalTypeProps ): Record<
+
+type IntervalSelectOptionsMap = Record<
 	SupportedUrlFriendlyTermType,
 	{
 		key: string;
@@ -21,11 +21,11 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Record<
 		discountText: TranslateResult;
 		url: string;
 		termInMonths: number;
-		ui?: any;
 	}
-> {
+>;
+export default function useIntervalOptions( props: IntervalTypeProps ): IntervalSelectOptionsMap {
 	const translate = useTranslate();
-	const optionList: Record<
+	let optionList: Record<
 		SupportedUrlFriendlyTermType,
 		{
 			key: string;
@@ -85,7 +85,7 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Record<
 		isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
 	}
 
-	Object.fromEntries(
+	optionList = Object.fromEntries(
 		Object.keys( optionList ).map( ( key ) => [
 			key,
 			{
@@ -98,12 +98,12 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Record<
 					...additionalPathProps,
 				} ),
 				discountText: getDiscountText(
-					termWiseMaxDiscount[ key as UrlFriendlyTermType ],
+					termWiseMaxDiscount[ key as SupportedUrlFriendlyTermType ],
 					translate
 				),
 			},
 		] )
-	);
+	) as IntervalSelectOptionsMap;
 
 	return optionList;
 }
