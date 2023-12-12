@@ -16,7 +16,7 @@ const StatsCardUpsell: React.FC< Props > = ( { className } ) => {
 					<Gridicon icon="lock" />
 				</div>
 				<div className="stats-card-upsell__subtitle">
-					{ translate( 'Upgrade your plan to unlock advanced stats' ) }
+					{ translate( 'Upgrade your plan to unlock advanced stats.' ) }
 				</div>
 				<Button className="stats-card-upsell__button" href="/plans/123456">
 					Unlock
