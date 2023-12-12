@@ -86,7 +86,7 @@ export const redditTrackerPurchase = (
 /**
  * Tracks a lead (free trial) in Reddit.
  */
-export const redditTrackerFreeTrialStarted = (): void => {
+export const redditTrackerFreeTrialStarted = ( trial_flow_name: string ): void => {
 	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
 		return;
 	}
@@ -95,7 +95,7 @@ export const redditTrackerFreeTrialStarted = (): void => {
 		products: [
 			{
 				id: 'wpcom_hosting_trial',
-				name: 'WordPress.com Hosting Trial',
+				name: trial_flow_name,
 				category: 'Free Trial',
 			},
 		],
