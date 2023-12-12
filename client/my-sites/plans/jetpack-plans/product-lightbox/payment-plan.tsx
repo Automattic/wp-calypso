@@ -8,7 +8,6 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compact';
 import ItemPriceMessage from '../product-store/item-price/item-price-message';
-import getCurrencyCode from '../product-store/utils/get-currency-code';
 import { SelectorProduct } from '../types';
 import useItemPrice from '../use-item-price';
 type PaymentPlanProps = {
@@ -35,8 +34,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	);
 
 	const currentPrice = discountedPrice ? discountedPrice : originalPrice;
-	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode );
-	const currencyCode = getCurrencyCode( undefined, userCurrencyCode );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
 	const labelClass = classNames(
 		'product-lightbox__variants-grey-label',

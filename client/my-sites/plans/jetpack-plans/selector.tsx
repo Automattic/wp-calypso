@@ -177,6 +177,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		( variation: Iterations | null ) => `jetpack-plans__iteration--${ variation ?? 'default' }`
 	);
 
+	const urlParams = new URLSearchParams( window.location.search );
+	const currencyCode = urlParams.get( 'currency' );
+
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
@@ -214,8 +217,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					/>
 				</CalypsoShoppingCartProvider>
 
-				<QueryProductsList type="jetpack" />
-				<QueryIntroOffers siteId={ siteId ?? 'none' } />
+				<QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />
+				<QueryIntroOffers siteId={ siteId ?? 'none' } currency={ currencyCode ?? undefined } />
 				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ siteId && <QuerySites siteId={ siteId } /> }

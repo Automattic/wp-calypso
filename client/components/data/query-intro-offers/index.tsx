@@ -5,9 +5,10 @@ import { fetchIntroOffers } from 'calypso/state/sites/intro-offers/actions';
 
 interface OwnProps {
 	siteId?: number | 'none';
+	currency?: string;
 }
 
-const QueryIntroOffers: React.FC< OwnProps > = ( { siteId } ) => {
+const QueryIntroOffers: React.FC< OwnProps > = ( { siteId, currency } ) => {
 	const dispatch = useDispatch();
 	const siteIdKey = siteId && typeof siteId === 'number' && siteId > 0 ? siteId : 'none';
 
@@ -17,9 +18,9 @@ const QueryIntroOffers: React.FC< OwnProps > = ( { siteId } ) => {
 
 	useEffect( () => {
 		if ( introOfferRequestStatus === null ) {
-			dispatch( fetchIntroOffers( siteIdKey ) );
+			dispatch( fetchIntroOffers( siteIdKey, currency ) );
 		}
-	}, [ dispatch, introOfferRequestStatus, siteIdKey ] );
+	}, [ dispatch, introOfferRequestStatus, siteIdKey, currency ] );
 
 	return null;
 };

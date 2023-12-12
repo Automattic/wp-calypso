@@ -6,7 +6,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import useItemPrice from '../../use-item-price';
 import { useItemPriceCompact } from '../hooks/use-item-price-compact';
 import { ItemPriceProps } from '../types';
-import getCurrencyCode from '../utils/get-currency-code';
 import ItemPriceMessage from './item-price-message';
 import './style.scss';
 
@@ -23,9 +22,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 		item,
 		item?.monthlyProductSlug || ''
 	);
-	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode );
-	const currencyCode = getCurrencyCode( item, userCurrencyCode );
-
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
 
@@ -48,7 +45,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 				discountedPriceDuration={ discountedPriceDuration }
 				discountedPrice={ discountedPrice }
 				discountedPriceFirst
-				currencyCode={ currencyCode }
+				currencyCode={ item.displayCurrency || currencyCode }
 				originalPrice={ originalPrice ?? 0 }
 				pricesAreFetching={ isFetching }
 				belowPriceText={ item.belowPriceText }
