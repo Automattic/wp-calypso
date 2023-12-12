@@ -508,12 +508,6 @@
 		display: none;
 	}
 
-	.auth-form__separator {
-		&::before,
-		&::after {
-			content: none;
-		}
-	}
 	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;

@@ -33,7 +33,6 @@ form {
 			.card.auth-form__social {
 				width: 100%;
 				max-width: var(--login-form-column-max-width);
-				padding: 0 16px;
 				margin: 0;
 			}
 
@@ -41,6 +40,7 @@ form {
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
+				padding: 0 16px;
 			}
 		}
 	}
