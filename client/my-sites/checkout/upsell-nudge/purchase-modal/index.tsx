@@ -91,7 +91,7 @@ export function wrapValueInManagedValue( value: string | undefined ): ManagedVal
 }
 
 export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
-	const { onClose, productToAdd, siteSlug, showFeatureList, isLoadingProduct } = props;
+	const { onClose, productToAdd, siteSlug, showFeatureList, isLoadingProduct = false } = props;
 
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
