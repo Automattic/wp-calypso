@@ -14,17 +14,20 @@ const TagButton = ( { title, slug } ) => {
 	const addTag = () => {
 		if ( ! isFollowing ) {
 			dispatch( requestFollowTag( slug ) );
+		} else {
+			dispatch( requestUnfollowTag( slug ) );
 		}
 	};
 
 	return (
 		<FollowButton
-			followLabel={ translate( 'Follow: ' ) + title }
-			followingLabel={ translate( 'Following: ' ) + title }
+			followLabel={ title }
+			followingLabel={ title || translate( 'Following' ) }
 			following={ isFollowing }
 			onFollowToggle={ addTag }
 			followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
 			followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+			hasButtonStyle
 		/>
 	);
 };

@@ -33,8 +33,7 @@ const SiteRecommendations = () => {
 	} );
 
 	return (
-		<>
-			<h1>Recommended Sites</h1>
+		<div className="reader-onboarding-modal__recommended-sites">
 			{ recommendedSites.map( ( site ) => (
 				<ConnectedReaderSubscriptionListItem
 					key={ site.feed_ID }
@@ -49,7 +48,7 @@ const SiteRecommendations = () => {
 					disableSuggestedFollows
 				/>
 			) ) }
-		</>
+		</div>
 	);
 };
 

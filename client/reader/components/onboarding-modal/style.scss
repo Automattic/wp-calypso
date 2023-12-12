@@ -1,0 +1,41 @@
+.reader-onboarding-modal {
+	.components-modal__header .components-modal__header-heading {
+		font-size: $font-headline-small;
+	}
+
+	.reader-onboarding-modal__sub-heading {
+		font-size: $font-title-large;
+	}
+
+	.reader-onboarding-modal__step-description {
+		// font-size: $font-body-large;
+		max-width: 800px;
+		// text-wrap: balance;
+	}
+
+	.reader-onboarding-modal__follow-list {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-evenly;
+		max-width: 1200px;
+		margin: auto;
+
+		.follow-button {
+			margin: 0 5px 5px;
+			width: 200px;
+		}
+	}
+
+	.reader-onboarding-modal__recommended-sites {
+		max-width: 500px;
+		margin: auto;
+	}
+
+	.reader-onboarding-modal__footer {
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		margin-top: 20px;
+	}
+}
+

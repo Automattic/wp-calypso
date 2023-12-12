@@ -10,8 +10,10 @@ import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import SiteRecommendations from './site-recs';
 import TagButton from './tag-button';
 
+import './style.scss';
+
 // 9 for testing purposes, we will probably do 3 to start.
-const MINIMUM_TAG_THRESHOLD = 9;
+const MINIMUM_TAG_THRESHOLD = 900;
 
 function ReaderOnboardingModal( { setIsOpen } ) {
 	const translate = useTranslate();
@@ -39,32 +41,67 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 
 	const pages = [
 		<>
-			<h2>{ translate( 'What are you interested in reading about?' ) }</h2>
-			<p>
+			<h2 className="reader-onboarding-modal__sub-heading">
+				{ translate( 'What are you interested in reading about?' ) }
+			</h2>
+			<p className="reader-onboarding-modal__step-description">
 				{ translate(
-					'Tags represent topics. By selecting some tags to follow, ' +
-						'we will be able to show you more content you may be interested in reading about. ' +
-						'You can find streams for specific tags you are following in the "Tags" section of the navigation sidebar. ' +
-						'The "Discover" section will show popular posts based on the tags you are following. ' +
-						'We recommend following at least 3 tags. Please choose a few below:'
+					'Please select some tags to follow. We recommend following at least 3 tags, but there is no limit! This will:'
 				) }
 			</p>
-			{ interestTags.map( ( tag ) => (
-				<TagButton title={ tag.title } slug={ tag.slug } key={ tag.slug } />
-			) ) }
+			<ul>
+				<li>
+					{ translate(
+						'Populate the "Tags" section of your navigation bar with streams of these topics.'
+					) }
+				</li>
+				<li>
+					{ translate( 'Populate your "Discover" section with content related to these tags.' ) }
+				</li>
+				<li>{ translate( 'Allow us to recommend blogs you may be interested in.' ) }</li>
+			</ul>
+			<p>{ translate( 'Below are some popular tags you may be interested in:' ) }</p>
+			<div className="reader-onboarding-modal__follow-list">
+				{ interestTags.map( ( tag ) => (
+					<TagButton title={ tag.title } slug={ tag.slug } key={ tag.slug } />
+				) ) }
+			</div>
 		</>,
-		<SiteRecommendations />,
+		<>
+			<h2 className="reader-onboarding-modal__sub-heading">
+				{ translate( 'Great Job! Now lets look at subscriptions.' ) }
+			</h2>
+			<p className="reader-onboarding-modal__step-description">
+				{ translate(
+					'Based on the tags you selected, here are some sites that you may be interested in. Subscribing to a site will:'
+				) }
+			</p>
+			<ul>
+				<li>{ translate( 'Populate your "Recent" feed with new posts from these blogs.' ) }</li>
+				<li>{ translate( 'Increase the relevance of your future content suggestions.' ) }</li>
+				<li>
+					{ translate(
+						'List them in your "Manage subscriptions" section, where you can customize settings such as email and notifications.'
+					) }
+				</li>
+			</ul>
+			<SiteRecommendations />
+		</>,
 	];
 
 	return (
 		<Modal
-			title="Reader onboarding modal"
+			title={ translate( 'Welcome to the Reader!' ) }
 			className="reader-onboarding-modal"
+			bodyOpenClassName="reader-onboarding-modal__body"
 			onRequestClose={ () => setIsOpen( false ) }
+			isDismissible={ false }
+			size="fill"
 		>
-			<h1>{ translate( 'Welcome to the Reader!' ) }</h1>
 			{ pages[ currentPage ] }
-			<Button onClick={ () => setCurrentPage( currentPage + 1 ) }>{ translate( 'Next' ) }</Button>
+			<div className="reader-onboarding-modal__footer">
+				<Button onClick={ () => setCurrentPage( currentPage + 1 ) }>{ translate( 'Next' ) }</Button>
+			</div>
 		</Modal>
 	);
 }
