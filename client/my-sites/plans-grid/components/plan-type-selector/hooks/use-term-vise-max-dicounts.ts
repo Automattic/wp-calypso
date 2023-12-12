@@ -10,6 +10,13 @@ import {
 } from '@automattic/calypso-products';
 import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 
+/**
+ * Calculate the maximum discount for each term for a given set of plans
+ * @param plans plans considered
+ * @param urlFriendlyTerms terms calculated for
+ * @param usePricingMetaForGridPlans price calculation hook
+ * @returns A map of term to maximum discount
+ */
 export default function useMaxDiscountsForPlanTerms(
 	plans: PlanSlug[],
 	urlFriendlyTerms: UrlFriendlyTermType[] = [],
@@ -20,9 +27,6 @@ export default function useMaxDiscountsForPlanTerms(
 		term: URL_FRIENDLY_TERMS_MAPPING[ urlFriendlyTerm ],
 	} ) );
 	const terms = termDefinitionsMapping.map( ( { term } ) => term );
-	if ( terms.length !== urlFriendlyTerms.length ) {
-		throw new Error( 'Invalid term passed in:' + JSON.stringify( urlFriendlyTerms ) );
-	}
 
 	const allRelatedPlanSlugs = plans
 		.filter( ( planSlug ) => ! isWpcomEnterpriseGridPlan( planSlug ) )
@@ -67,22 +71,22 @@ export default function useMaxDiscountsForPlanTerms(
 	>;
 	termDefinitionsMapping.forEach( ( termMapping ) => {
 		const termDiscounts = wpcomMonthlyPlanSlugs.map( ( monthlyPlanSlug ) => {
-			const variantPlanSlug = getPlanSlugForTermVariant( monthlyPlanSlug, termMapping.term );
-			if ( ! variantPlanSlug ) {
-				return 0;
-			}
-
 			const monthlyPlanPricing = monthlyPlansPricing?.[ monthlyPlanSlug ];
-			const variantPlanPricing = nonMonthlyPlansPricing?.[ variantPlanSlug ];
-
 			const monthlyPlanCost = monthlyPlanPricing?.originalPrice.full;
-
-			if ( ! monthlyPlanCost || ! variantPlanPricing ) {
+			if ( ! monthlyPlanCost ) {
 				return 0;
 			}
 
+			/**
+			 * Calculate the monthly cost of the term price
+			 */
+			const variantPlanSlug = getPlanSlugForTermVariant( monthlyPlanSlug, termMapping.term ) ?? '';
+			const variantPlanPricing = nonMonthlyPlansPricing?.[ variantPlanSlug ];
 			const variantTermPrice =
-				variantPlanPricing.discountedPrice.full || variantPlanPricing.originalPrice.full || 0;
+				variantPlanPricing?.discountedPrice?.full || variantPlanPricing?.originalPrice?.full || 0;
+			if ( ! variantTermPrice ) {
+				return 0;
+			}
 			const variantTermInMonths = getTermInMonths( termMapping.urlFriendlyTerm );
 			const variantTermMonthlyCost = variantTermPrice / variantTermInMonths;
 
