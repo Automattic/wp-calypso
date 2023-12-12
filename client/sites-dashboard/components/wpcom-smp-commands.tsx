@@ -1001,9 +1001,9 @@ export const useCommandsArrayWpcom = ( {
 			name: 'changePlan',
 			label: __( 'Change site plan' ),
 			searchLabel: [
-				_x( 'upgrade plan', 'Keyword for the Change plan on your site command' ),
-				_x( 'change plan', 'Keyword for the Change plan on your site command' ),
-				_x( 'add plan', 'Keyword for the Change plan on your site command' ),
+				_x( 'upgrade plan', 'Keyword for the Change site plan command' ),
+				_x( 'change plan', 'Keyword for the Change site plan command' ),
+				_x( 'add plan', 'Keyword for the Change site plan command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
@@ -1020,9 +1020,9 @@ export const useCommandsArrayWpcom = ( {
 			name: 'manageMyPlan',
 			label: __( 'Manage site plan' ),
 			searchLabel: [
-				_x( 'upgrade plan', 'Keyword for the Manage plan on a site command' ),
-				_x( 'manage plan', 'Keyword for the Manage plan on a site command' ),
-				_x( 'plan features', 'Keyword for the Manage plan on a site command' ),
+				_x( 'upgrade plan', 'Keyword for the Manage site plan command' ),
+				_x( 'manage plan', 'Keyword for the Manage site plan command' ),
+				_x( 'plan features', 'Keyword for the Manage site plan command' ),
 			].join( ' ' ),
 			callback: setStateCallback( 'manageMyPlan', __( 'Select site to manage your plan' ) ),
 			siteFunctions: {
