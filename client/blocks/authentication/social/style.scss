@@ -103,9 +103,14 @@
 		background: var(--black-white-white, #fff);
 		margin-bottom: 0;
 
-		&:hover,
+		&:hover {
+			background: var(--studio-gray-0, #f6f7f7);
+		}
+
 		&:focus {
 			background: var(--studio-gray-0, #f6f7f7);
+			outline: 2px solid var(--studio-gray-90, #1d2327);
+			outline-offset: 1px;
 		}
 
 		> svg {
