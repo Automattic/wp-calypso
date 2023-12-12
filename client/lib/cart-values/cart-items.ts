@@ -535,6 +535,15 @@ export function getDomainRegistrations( cart: ObjectWithProducts ): ResponseCart
 }
 
 /**
+ * Retrieves all the domain registration items in the specified shopping cart.
+ */
+export function getDomainsInCart( cart: ObjectWithProducts ): ResponseCartProduct[] {
+	return getAllCartItems( cart ).filter(
+		( product ) => isDomainRegistration( product ) || isDomainMoveInternal( product )
+	);
+}
+
+/**
  * Retrieves all the domain mapping items in the specified shopping cart.
  */
 export function getDomainMappings( cart: ObjectWithProducts ): ResponseCartProduct[] {
