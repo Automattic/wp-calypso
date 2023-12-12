@@ -1,9 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	PLAN_FREE,
-	PLAN_JETPACK_FREE,
-} from '@automattic/calypso-products';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
@@ -76,6 +72,7 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import wasTrialSite from 'calypso/state/selectors/was-trial-site';
+import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -298,8 +295,6 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	// Check the possibly expired plan to ensure it's a trial plan.
-	const maybeExpiredPlanSlug = selectedSite?.plan?.product_slug;
 	// Use getSitePlanSlug() as it ignores expired plans.
 	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
@@ -307,7 +302,7 @@ function onSelectedSiteAvailable( context ) {
 	// redirect to full-page trial expired page.
 	if (
 		wasTrialSite( state, selectedSite.ID ) &&
-		PLAN_ECOMMERCE_TRIAL_MONTHLY === maybeExpiredPlanSlug &&
+		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
 		const permittedPathPrefixes = [
