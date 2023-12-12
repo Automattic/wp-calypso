@@ -85,19 +85,25 @@ export default function useIntervalOptions( props: IntervalTypeProps ): Record<
 		isJetpackAppFlow = new URLSearchParams( window.location.search ).get( 'jetpackAppPlans' );
 	}
 
-	Object.keys( optionList ).forEach( ( key ) => {
-		optionList[ key as SupportedUrlFriendlyTermType ] = {
-			...optionList[ key as SupportedUrlFriendlyTermType ],
-			url: generatePath( props, {
-				intervalType: key,
-				domain: isDomainUpsellFlow,
-				domainAndPlanPackage: isDomainAndPlanPackageFlow,
-				jetpackAppPlans: isJetpackAppFlow,
-				...additionalPathProps,
-			} ),
-			discountText: getDiscountText( termWiseMaxDiscount[ key as UrlFriendlyTermType ], translate ),
-		};
-	} );
+	Object.fromEntries(
+		Object.keys( optionList ).map( ( key ) => [
+			key,
+			{
+				...optionList[ key as SupportedUrlFriendlyTermType ],
+				url: generatePath( props, {
+					intervalType: key,
+					domain: isDomainUpsellFlow,
+					domainAndPlanPackage: isDomainAndPlanPackageFlow,
+					jetpackAppPlans: isJetpackAppFlow,
+					...additionalPathProps,
+				} ),
+				discountText: getDiscountText(
+					termWiseMaxDiscount[ key as UrlFriendlyTermType ],
+					translate
+				),
+			},
+		] )
+	);
 
 	return optionList;
 }
