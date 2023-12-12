@@ -366,7 +366,11 @@ function SiteResetCard( {
 					</ActionPanelFooter>
 				</ActionPanel>
 			) }
-			<BuiltByUpsell site={ site } isUnlaunchedSite={ isUnlaunchedSiteProp } />
+			<BuiltByUpsell
+				site={ site }
+				isUnlaunchedSite={ isUnlaunchedSiteProp }
+				urlRef="unlaunched-site-reset"
+			/>{ ' ' }
 		</Main>
 	);
 }
