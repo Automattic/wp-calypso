@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 
-export const PATTERN_SOURCE_SITE_ID = isEnabled( 'pattern-assembler/v2' )
-	? '226765597' // assemblerv2patterns
-	: '174455321'; // dotcompatterns
+export const getPatternSourceSiteID = () =>
+	isEnabled( 'pattern-assembler/v2' )
+		? '226765597' // assemblerv2patterns
+		: '174455321'; // dotcompatterns
+
 export const PUBLIC_API_URL = 'https://public-api.wordpress.com';
 export const SITE_TAGLINE = 'Site Tagline';
 
