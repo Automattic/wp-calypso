@@ -21,12 +21,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSitePlan, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const UpgradeNudge = ( {
-	siteSlug,
-	paidPlugins,
-	handleUpsellNudgeClick,
-	showOneClickUpsellExperiment,
-} ) => {
+const UpgradeNudge = ( { siteSlug, paidPlugins, handleUpsellNudgeClick } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
@@ -146,7 +141,7 @@ const UpgradeNudge = ( {
 	}
 
 	// This banner upsells the ability to install free and paid plugins on a Business plan.
-	return showOneClickUpsellExperiment ? (
+	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			className="plugins-discovery-page__upsell"
@@ -154,18 +149,6 @@ const UpgradeNudge = ( {
 			icon="notice-outline"
 			showIcon={ true }
 			onClick={ handleUpsellNudgeClick }
-			feature={ FEATURE_INSTALL_PLUGINS }
-			plan={ plan }
-			title={ title }
-		/>
-	) : (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			className="plugins-discovery-page__upsell"
-			callToAction={ translate( 'Upgrade to Business' ) }
-			icon="notice-outline"
-			showIcon={ true }
-			href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business` }
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }

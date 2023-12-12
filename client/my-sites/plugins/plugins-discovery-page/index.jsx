@@ -1,12 +1,12 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ProductsList } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { useExperiment } from 'calypso/lib/explat';
+import { Experiment } from 'calypso/lib/explat';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
@@ -89,6 +89,46 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
+const RedirectToCheckout = ( { siteSlug } ) => {
+	useEffect( () => {
+		page( `/checkout/${ PLAN_BUSINESS }/${ siteSlug }` );
+	}, [] );
+
+	return null;
+};
+
+const OneClickPurchaseModal = ( { localeSlug, setShowPurchaseModal, siteSlug } ) => {
+	const businessPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_BUSINESS ),
+		[]
+	);
+	const { result: isEligibleForOneClickCheckout, isLoading } = useIsEligibleForOneClickCheckout();
+
+	// TODO: Fix businessPlanProduct undefined value
+	if ( isEligibleForOneClickCheckout && ! isLoading ) {
+		return (
+			<CalypsoShoppingCartProvider>
+				<StripeHookProvider
+					fetchStripeConfiguration={ getStripeConfiguration }
+					locale={ localeSlug }
+				>
+					<PurchaseModal
+						// isLoading={ true }
+						productToAdd={ businessPlanProduct }
+						onClose={ () => {
+							setShowPurchaseModal( false );
+						} }
+						showFeatureList={ !! ( businessPlanProduct && isPlan( businessPlanProduct ) ) }
+						siteSlug={ siteSlug }
+					/>
+				</StripeHookProvider>
+			</CalypsoShoppingCartProvider>
+		);
+	} else if ( ! isEligibleForOneClickCheckout && ! isLoading ) {
+		return <RedirectToCheckout siteSlug={ siteSlug } />;
+	}
+};
+
 const PluginsDiscoveryPage = ( props ) => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
@@ -100,64 +140,35 @@ const PluginsDiscoveryPage = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const translate = useTranslate();
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-	const isEligibleForOneClickCheckout = useIsEligibleForOneClickCheckout();
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_plugins_page_business_plan_one_click_upsell',
-		{
-			isEligible: translate.localeSlug === 'en',
-		}
-	);
-	const businessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_BUSINESS ),
-		[]
-	);
-
-	// TODO: Account for loading state
-	if ( isEligibleForOneClickCheckout.isLoading || isLoadingExperiment ) {
-		// render loader
-	}
-
-	const showOneClickUpsellExperiment = experimentAssignment?.variationName === 'treatment';
-	const handleUpsellNudgeClick = ( e ) => {
-		e.preventDefault();
-
-		if ( isEligibleForOneClickCheckout.result ) {
-			setShowPurchaseModal( true );
-		} else {
-			page( `/checkout/${ PLAN_BUSINESS }/${ props.siteSlug }` );
-		}
-	};
 
 	return (
 		<>
-			{ showOneClickUpsellExperiment && (
-				<CalypsoShoppingCartProvider>
-					<StripeHookProvider
-						fetchStripeConfiguration={ getStripeConfiguration }
-						locale={ translate.localeSlug }
-					>
-						{ showPurchaseModal && (
-							<PurchaseModal
-								productToAdd={ businessPlanProduct }
-								onClose={ () => {
-									setShowPurchaseModal( false );
-								} }
-								siteSlug={ props.siteSlug }
-							/>
-						) }
-					</StripeHookProvider>
-				</CalypsoShoppingCartProvider>
+			{ showPurchaseModal && (
+				<Experiment
+					name="calypso_plugins_page_business_plan_one_click_upsell"
+					defaultExperience={ <RedirectToCheckout /> }
+					treatmentExperience={
+						<OneClickPurchaseModal
+							localeSlug={ translate.localeSlug }
+							setShowPurchaseModal={ setShowPurchaseModal }
+							siteSlug={ props.siteSlug }
+						/>
+					}
+					// Fix loading experience
+					loadingExperience={ <div>Hello world</div> }
+				/>
 			) }
 			<UpgradeNudge
 				{ ...props }
 				paidPlugins={ true }
-				showOneClickUpsellExperiment={ showOneClickUpsellExperiment }
-				handleUpsellNudgeClick={ handleUpsellNudgeClick }
+				handleUpsellNudgeClick={ ( e ) => {
+					e.preventDefault();
+					setShowPurchaseModal( true );
+				} }
 			/>
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
-			<UpgradeNudge { ...props } />
 			{ ! isLoggedIn && <InPageCTASection /> }
 			<FeaturedPluginsSection
 				{ ...props }
