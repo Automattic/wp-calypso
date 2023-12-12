@@ -300,18 +300,23 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		}
 	};
 
+	getProductToAdd = () => {
+		let productToAdd = this.props.product;
+		if ( PROFESSIONAL_EMAIL_UPSELL === this.props.upsellType && this.state.cartItem ) {
+			productToAdd = this.state.cartItem;
+		}
+		return productToAdd;
+	};
+
 	handleClickAccept = async ( buttonAction: string ) => {
-		const { product, siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
+		const { siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
 		debug( 'accept upsell clicked' );
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
-		let productToAdd = product;
-		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType && this.state.cartItem ) {
-			productToAdd = this.state.cartItem;
-		}
+		const productToAdd = this.getProductToAdd();
 
 		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd ) {
 			debug( 'accept upsell allows one-click, has a product, and a stored card' );
@@ -411,14 +416,16 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			this.setState( { showPurchaseModal: false } );
 		};
 
-		if ( ! this.props.siteSlug || ! this.props.product ) {
+		const productToAdd = this.getProductToAdd();
+
+		if ( ! this.props.siteSlug || ! productToAdd ) {
 			return null;
 		}
 
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
 				<PurchaseModal
-					productToAdd={ this.props.product }
+					productToAdd={ productToAdd }
 					onClose={ onCloseModal }
 					siteSlug={ this.props.siteSlug }
 					showFeatureList={
