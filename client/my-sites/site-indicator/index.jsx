@@ -8,11 +8,7 @@ import Animate from 'calypso/components/animate';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
+import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -30,7 +26,6 @@ export class SiteIndicator extends Component {
 		siteIsJetpack: PropTypes.bool,
 		siteUpdates: PropTypes.object,
 		siteIsConnected: PropTypes.bool,
-		recordGoogleEvent: PropTypes.func,
 		recordTracksEvent: PropTypes.func,
 	};
 
@@ -60,9 +55,6 @@ export class SiteIndicator extends Component {
 		this.setState( {
 			expand: ! this.state.expand,
 		} );
-
-		const action = ! this.state.expand ? 'Expand' : 'Collapse';
-		this.props.recordGoogleEvent( 'Site-Indicator', `Clicked to ${ action } the Site Indicator` );
 	};
 
 	updatesAvailable() {
@@ -134,10 +126,7 @@ export class SiteIndicator extends Component {
 
 		return (
 			<span>
-				<WPAdminLink
-					onClick={ this.handleGenericUpdate }
-					href={ site.options?.admin_url + 'update-core.php' }
-				>
+				<WPAdminLink href={ site.options?.admin_url + 'update-core.php' }>
 					{ translate( 'There is an update available.', 'There are updates available.', {
 						count: siteUpdates.total,
 					} ) }
@@ -146,10 +135,9 @@ export class SiteIndicator extends Component {
 		);
 	}
 
-	recordEvent( event, total ) {
+	recordEvent() {
 		window.scrollTo( 0, 0 );
 		this.setState( { expand: false } );
-		this.props.recordGoogleEvent( 'Site-Indicator', event, 'Total Updates', total );
 	}
 
 	handlePluginsUpdate = () => {
@@ -176,17 +164,6 @@ export class SiteIndicator extends Component {
 		const { siteUpdates } = this.props;
 		this.recordEvent(
 			'Clicked updates available link for multiple updates',
-			siteUpdates && siteUpdates.total
-		);
-	};
-
-	// General case with updates of multiple types (plugins, themes, translations, ...) available
-	handleGenericUpdate = () => {
-		const { siteUpdates } = this.props;
-		this.props.recordGoogleEvent(
-			'Site-Indicator',
-			'Clicked updates available link to wp-admin updates',
-			'Total Updates',
 			siteUpdates && siteUpdates.total
 		);
 	};
@@ -313,15 +290,8 @@ export default connect(
 		};
 	},
 	{
-		recordGoogleEvent,
 		recordTracksEvent,
 		trackSiteDisconnect: () =>
-			composeAnalytics(
-				recordGoogleEvent(
-					'Jetpack',
-					'Clicked in site indicator to start Jetpack Disconnect flow'
-				),
-				recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
-			),
+			composeAnalytics( recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' ) ),
 	}
 )( localize( SiteIndicator ) );
