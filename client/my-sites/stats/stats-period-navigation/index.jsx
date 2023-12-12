@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -174,7 +175,24 @@ class StatsPeriodNavigation extends PureComponent {
 				<div className="stats-period-navigation__children">{ children }</div>
 				{ isWithNewDateControl ? (
 					<div className="stats-period-navigation__date-control">
-						<StatsDateControl slug={ slug } queryParams={ queryParams } dateRange={ dateRange } />
+						<StatsDateControl
+							slug={ slug }
+							queryParams={ queryParams }
+							dateRange={ dateRange }
+							overlay={
+								<div
+									style={ {
+										position: 'absolute',
+										top: -12,
+										right: -12,
+										zIndex: 1,
+									} }
+								>
+									<Gridicon icon="lock" />
+								</div>
+							}
+							disabled={ true }
+						/>
 						<div className="stats-period-navigation__period-control">
 							{ this.props.activeTab && (
 								<Legend

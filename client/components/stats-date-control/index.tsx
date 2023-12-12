@@ -11,7 +11,13 @@ import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlProps ) => {
+const StatsDateControl = ( {
+	slug,
+	queryParams,
+	dateRange,
+	overlay,
+	disabled,
+}: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
 	// consistent with the custom ranges.
@@ -141,7 +147,11 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 	};
 
 	return (
-		<div className={ COMPONENT_CLASS_NAME }>
+		<div
+			className={ COMPONENT_CLASS_NAME }
+			style={ { position: overlay ? 'relative' : 'initial' } }
+		>
+			{ overlay }
 			<DateControlPicker
 				buttonLabel={ getButtonLabel() }
 				dateRange={ dateRange }
@@ -149,6 +159,7 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 				selectedShortcut={ getShortcutForRange()?.id }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }
+				disabled={ disabled }
 			/>
 		</div>
 	);
