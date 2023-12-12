@@ -43,6 +43,7 @@
 		"@automattic/global-styles": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/jetpack-ai-calypso": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/language-picker": "workspace:^",
 		"@automattic/languages": "workspace:^",
