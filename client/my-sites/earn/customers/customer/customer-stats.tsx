@@ -15,7 +15,7 @@ const CustomerStats = ( { customer }: CustomerStatsProps ) => {
 			<div className="customer__stats-list highlight-cards-list">
 				<Card className="highlight-card customer__stats-card">
 					<div className="highlight-card-icon customer__stats-card-icon">{ payment }</div>
-					<div className="highlight-card-heading customer__stats-card-heading">Last 30 Days</div>
+					<div className="highlight-card-heading customer__stats-card-heading">Last Payment</div>
 					<div className="highlight-card-count customer__stats-card-count">
 						<span
 							className="highlight-card-count-value customer__stats-card-value"
