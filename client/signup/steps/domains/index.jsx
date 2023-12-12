@@ -155,6 +155,7 @@ export class RenderDomainsStep extends Component {
 				siteUrl && siteUrl.indexOf( '.wordpress.com' ) !== -1 ? { domain_name: siteUrl } : null,
 			domainRemovalQueue: [],
 			isGoingToNextStep: false,
+			isValidatingDomains: false,
 			temporaryCart: [],
 			replaceDomainFailedMessage: null,
 		};
@@ -598,6 +599,7 @@ export class RenderDomainsStep extends Component {
 		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			this.setState( { isValidatingDomains: true } );
 			if (
 				! this.state.temporaryCart ||
 				! this.state.temporaryCart.some(
@@ -643,6 +645,8 @@ export class RenderDomainsStep extends Component {
 						)
 					);
 				} );
+
+			this.setState( { isValidatingDomains: false } );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
@@ -866,6 +870,7 @@ export class RenderDomainsStep extends Component {
 						flowName={ this.props.flowName }
 						removeDomainClickHandler={ this.removeDomainClickHandler }
 						isGoingToNextStep={ this.state.isGoingToNextStep }
+						isValidatingDomains={ this.state.isValidatingDomains }
 						goToNext={ this.goToNext }
 						handleSkip={ this.handleSkip }
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }

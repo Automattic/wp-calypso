@@ -149,6 +149,7 @@ class DomainsMiniCart extends Component {
 					className="domains__domain-cart-continue"
 					onClick={ this.props.goToNext }
 					busy={ this.props.isGoingToNextStep }
+					disabled={ this.props.isValidatingDomains }
 				>
 					{ translate( 'Continue' ) }
 				</Button>
@@ -234,6 +235,7 @@ class DomainsMiniCart extends Component {
 					className="domains__domain-cart-continue"
 					onClick={ this.props.goToNext }
 					busy={ this.props.isGoingToNextStep }
+					disabled={ this.props.isValidatingDomains }
 				>
 					{ translate( 'Continue' ) }
 				</Button>
