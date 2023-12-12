@@ -742,6 +742,10 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		padding: 24px;
 	}
 
+	.action-panel__footer::before {
+		height: 0 !important;
+	}
+
 	.action-panel__body a,
 	li a {
 		color: var(--gray-gray-100, #101517);
