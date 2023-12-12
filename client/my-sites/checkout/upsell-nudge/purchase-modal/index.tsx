@@ -30,18 +30,19 @@ type PurchaseModalProps = {
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
 	showFeatureList: boolean;
+	isLoadingProduct: boolean;
 };
 
 export function PurchaseModal( {
 	cart,
 	cards,
-	isCartUpdating,
+	isLoading,
 	onClose,
 	siteSlug,
 	showFeatureList,
 }: {
 	cards: StoredPaymentMethodCard[];
-	isCartUpdating: boolean;
+	isLoading: boolean;
 	cart: ResponseCart;
 	onClose: () => void;
 	siteSlug: string;
@@ -72,7 +73,7 @@ export function PurchaseModal( {
 			} ) }
 			onClose={ onClose }
 		>
-			{ isCartUpdating ? (
+			{ isLoading ? (
 				<Placeholder showFeatureList={ showFeatureList } />
 			) : (
 				<Content { ...contentProps } />
@@ -90,7 +91,7 @@ export function wrapValueInManagedValue( value: string | undefined ): ManagedVal
 }
 
 export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
-	const { onClose, productToAdd, siteSlug, showFeatureList } = props;
+	const { onClose, productToAdd, siteSlug, showFeatureList, isLoadingProduct } = props;
 
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
@@ -193,7 +194,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			{ countries?.length === 0 && <QueryPaymentCountries /> }
 			<PurchaseModal
 				cards={ cards }
-				isCartUpdating={ isPendingUpdate || ! countries?.length }
+				isLoading={ isPendingUpdate || ! countries?.length || isLoadingProduct }
 				cart={ responseCart }
 				onClose={ handleOnClose }
 				siteSlug={ siteSlug }

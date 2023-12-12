@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS, isPlan } from '@automattic/calypso-products';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ProductsList } from '@automattic/data-stores';
@@ -108,13 +108,14 @@ const ExperimentLoading = ( { setIsLoadingExperiment } ) => {
 };
 
 const OneClickPurchaseModal = ( { localeSlug, setShowPurchaseModal, siteSlug } ) => {
+	const { result: isEligibleForOneClickCheckout, isLoading } = useIsEligibleForOneClickCheckout();
 	const businessPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_BUSINESS ),
 		[]
 	);
-	const { result: isEligibleForOneClickCheckout, isLoading } = useIsEligibleForOneClickCheckout();
 
-	// TODO: Fix businessPlanProduct undefined value
+	const isLoadingBusinessPlan = ! businessPlanProduct;
+
 	if ( isEligibleForOneClickCheckout && ! isLoading ) {
 		return (
 			<CalypsoShoppingCartProvider>
@@ -123,12 +124,12 @@ const OneClickPurchaseModal = ( { localeSlug, setShowPurchaseModal, siteSlug } )
 					locale={ localeSlug }
 				>
 					<PurchaseModal
-						// isLoading={ true }
+						isLoadingProduct={ isLoadingBusinessPlan }
 						productToAdd={ businessPlanProduct }
 						onClose={ () => {
 							setShowPurchaseModal( false );
 						} }
-						showFeatureList={ !! ( businessPlanProduct && isPlan( businessPlanProduct ) ) }
+						showFeatureList={ ! isLoadingBusinessPlan }
 						siteSlug={ siteSlug }
 					/>
 				</StripeHookProvider>
@@ -176,6 +177,12 @@ const PluginsDiscoveryPage = ( props ) => {
 				paidPlugins={ true }
 				handleUpsellNudgeClick={ ( e ) => {
 					e.preventDefault();
+
+					// Prevent multiple clicks
+					if ( isLoadingExperiment ) {
+						return;
+					}
+
 					setShowPurchaseModal( true );
 				} }
 			/>
