@@ -1,3 +1,8 @@
+@import "@automattic/typography/styles/variables";
+
+.dialog__content.site-address-changer {
+	padding: 24px 24px 0;
+}
 
 .site-address-changer__dialog {
 	text-align: left;
@@ -62,6 +67,25 @@
 
 .site-address-changer__details {
 	margin-top: 20px;
+
+	.form-input-validation.email-not-verified {
+		padding-bottom: 0;
+
+		&.already-sent {
+			padding-bottom: 16px;
+		}
+	}
+
+	.site-address-changer__resend-email-link {
+		margin-left: 33px;
+		margin-bottom: 16px;
+
+		button {
+			color: var(--color-link);
+			cursor: pointer;
+			font-size: $font-body-small;
+		}
+	}
 }
 
 .site-address-changer__only-owner-info {
@@ -83,6 +107,8 @@
 }
 
 .site-address-changer__content {
+	max-width: 800px;
+
 	@include breakpoint-deprecated( "<480px" ) {
 		.form-text-input-with-affixes__suffix {
 			padding-left: 8px;

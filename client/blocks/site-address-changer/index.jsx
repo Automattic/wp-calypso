@@ -12,6 +12,8 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	clearValidationError,
@@ -54,6 +56,7 @@ export class SiteAddressChanger extends Component {
 		step: 0,
 		domainFieldValue: '',
 		newDomainSuffix: this.props.currentDomainSuffix,
+		confirmEmailSent: 0,
 	};
 
 	componentDidMount() {
@@ -255,6 +258,22 @@ export class SiteAddressChanger extends Component {
 			: validationMessage || serverValidationMessage;
 	}
 
+	resendConfirmationLink() {
+		const { sendVerifyEmail } = this.props;
+		sendVerifyEmail();
+		this.setState( {
+			confirmEmailSent: 1,
+		} );
+	}
+
+	getConfirmEmailMessage() {
+		return this.state.confirmEmailSent
+			? this.props.translate( 'Please check your inbox for a confirmation email.' )
+			: this.props.translate(
+					'You need to confirm your email in order to change the site address.'
+			  );
+	}
+
 	renderDomainSuffix() {
 		const { currentDomainSuffix } = this.props;
 		if ( currentDomainSuffix === '.wordpress.com' ) {
@@ -291,7 +310,7 @@ export class SiteAddressChanger extends Component {
 	};
 
 	getStepButtons = () => {
-		const { translate } = this.props;
+		const { translate, isEmailVerified } = this.props;
 
 		if ( 0 === this.state.step ) {
 			const { isAvailabilityPending, isAvailable, isSiteAddressChangeRequesting } = this.props;
@@ -304,15 +323,22 @@ export class SiteAddressChanger extends Component {
 			const isDisabled =
 				( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
 				! isAvailable ||
-				this.isUnsyncedAtomicSite();
+				this.isUnsyncedAtomicSite() ||
+				! isEmailVerified;
 
 			return [
+				{
+					action: 'cancel',
+					onClick: this.onClose,
+					isPrimary: false,
+					label: translate( 'Cancel' ),
+				},
 				{
 					action: 'confirm',
 					additionalClassNames: [ isBusy ? 'is-busy' : '' ],
 					isPrimary: true,
 					disabled: isDisabled,
-					label: translate( 'Change site address' ),
+					label: translate( 'Next' ),
 					onClick: this.onSubmit,
 				},
 			];
@@ -344,6 +370,7 @@ export class SiteAddressChanger extends Component {
 			translate,
 			isAtomicSite,
 			hasNonWpcomDomains,
+			isEmailVerified,
 		} = this.props;
 
 		if ( isAtomicSite ) {
@@ -372,11 +399,12 @@ export class SiteAddressChanger extends Component {
 			);
 		}
 
-		const { domainFieldValue } = this.state;
+		const { domainFieldValue, confirmEmailSent } = this.state;
 		const currentDomainName = get( currentDomain, 'name', '' );
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();
+		const confirmEmailMessage = this.getConfirmEmailMessage();
 
 		const addDomainPath = '/domains/add/' + selectedSiteSlug;
 
@@ -410,6 +438,19 @@ export class SiteAddressChanger extends Component {
 					</p>
 				</div>
 				<div className="site-address-changer__details">
+					<FormInputValidation
+						isHidden={ isEmailVerified }
+						isError={ true }
+						text={ confirmEmailMessage || '\u00A0' }
+						className={ `email-not-verified ${ confirmEmailSent ? 'already-sent' : '' }` }
+					/>
+					{ ! isEmailVerified && ! confirmEmailSent && (
+						<div className="site-address-changer__resend-email-link">
+							<button onClick={ () => this.resendConfirmationLink() }>
+								{ translate( 'Click here to receive another confirmation email' ) }
+							</button>
+						</div>
+					) }
 					<FormLabel htmlFor="site-address-changer__text-input">
 						{ translate( 'Enter your new site address' ) }
 					</FormLabel>
@@ -421,6 +462,7 @@ export class SiteAddressChanger extends Component {
 						onChange={ this.onFieldChange }
 						placeholder={ currentDomainPrefix }
 						isError={ shouldShowValidationMessage && ! isAvailable }
+						disabled={ ! isEmailVerified }
 						noWrap
 					/>
 					<FormInputValidation
@@ -538,6 +580,7 @@ export default connect(
 			isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 			isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
 			validationError: getSiteAddressValidationError( state, siteId ),
+			isEmailVerified: isCurrentUserEmailVerified( state ),
 		};
 	},
 	{
@@ -545,5 +588,6 @@ export default connect(
 		requestSiteAddressAvailability,
 		clearValidationError,
 		recordTracksEvent,
+		sendVerifyEmail: verifyEmail,
 	}
 )( localize( SiteAddressChanger ) );
