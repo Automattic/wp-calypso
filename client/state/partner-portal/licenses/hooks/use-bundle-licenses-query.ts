@@ -1,21 +1,23 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { License } from 'calypso/state/partner-portal/types';
 import { errorNotice } from '../../../notices/actions';
 import { formatLicenses } from '../handlers';
 
-export default function useBundleLicensesQuery(
-	parentLicenseId: number,
-	perPage: number = 100
-): UseQueryResult< License[] > {
+export default function useBundleLicensesQuery( parentLicenseId: number, perPage: number = 25 ) {
+	const [ licenses, setLicenses ] = useState< License[] >( [] );
+	const [ total, setTotal ] = useState< number >( 0 );
+	const [ page, setPage ] = useState< number >( 1 );
+	const [ fetching, setFetching ] = useState< boolean >( false );
+
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const query = useQuery( {
-		queryKey: [ 'partner-portal', 'bundle-licenses', parentLicenseId, perPage ],
+		queryKey: [ 'partner-portal', 'bundle-licenses', parentLicenseId, perPage, page ],
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -24,13 +26,21 @@ export default function useBundleLicensesQuery(
 				},
 				{
 					parent_id: parentLicenseId,
+					page,
 					per_page: perPage,
 				}
 			),
-		select: ( data ) => formatLicenses( data.items ),
+		select: ( data ) => ( {
+			total: data.total_items,
+			licenses: formatLicenses( data.items ),
+		} ),
 	} );
 
-	const { isError } = query;
+	const { isError, data, isFetched } = query;
+
+	const loadMore = useCallback( () => {
+		setPage( ( page ) => page + 1 );
+	}, [] );
 
 	useEffect( () => {
 		if ( isError ) {
@@ -42,8 +52,28 @@ export default function useBundleLicensesQuery(
 					}
 				)
 			);
+			setFetching( false );
 		}
 	}, [ dispatch, translate, isError ] );
 
-	return query;
+	useEffect( () => {
+		if ( data ) {
+			setFetching( false );
+			setTotal( data.total );
+			setLicenses( ( licenses ) => [ ...licenses, ...data.licenses ] );
+		}
+	}, [ data ] );
+
+	useEffect( () => {
+		if ( ! isFetched ) {
+			setFetching( true );
+		}
+	}, [ isFetched ] );
+
+	return {
+		licenses,
+		total,
+		loadMore: licenses.length < total ? loadMore : undefined,
+		fetching,
+	};
 }
