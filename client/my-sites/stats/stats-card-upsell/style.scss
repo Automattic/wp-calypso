@@ -1,6 +1,6 @@
 .stats-card-upsell {
 	width: 100%;
-	height: 100%;
+	font-size: $font-body-small;
 
 	.stats-card-upsell__content {
 		display: flex;
@@ -8,8 +8,7 @@
 		justify-content: center;
 		align-items: center;
 		height: 100%;
-		row-gap: 15px;
+		row-gap: 10px;
 	}
-
 }
 
