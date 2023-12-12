@@ -30,7 +30,7 @@ type PurchaseModalProps = {
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
 	showFeatureList: boolean;
-	isLoadingProduct: boolean;
+	isLoadingProduct?: boolean;
 };
 
 export function PurchaseModal( {
