@@ -6,7 +6,7 @@ import {
 	useSiteResetStatusQuery,
 } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -23,6 +23,7 @@ import { LoadingBar } from 'calypso/components/loading-bar';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -130,20 +131,22 @@ function SiteResetCard( {
 		setResetProgress( 0 );
 	}
 
-	useEffect( () => {
-		let interval = 1;
+	const checkStatus = async () => {
 		if ( resetProgress !== 1 ) {
-			interval = setInterval( async () => {
-				const {
-					data: { status: latestStatus },
-				} = await refetchResetStatus();
-				if ( latestStatus === 'ready' ) {
-					setResetProgress( 1 );
-				}
-			}, 3000 );
+			const {
+				data: { status: latestStatus },
+			} = await refetchResetStatus();
+			if ( latestStatus === 'ready' ) {
+				setResetProgress( 1 );
+				dispatch(
+					successNotice( translate( 'Your site has been reset.' ), {
+						id: 'site-reset-success-notice',
+						duration: 4000,
+					} )
+				);
+			}
 		}
-		return () => clearInterval( interval );
-	}, [ resetProgress ] );
+	};
 
 	const handleError = () => {
 		dispatch(
@@ -275,6 +278,7 @@ function SiteResetCard( {
 
 	return (
 		<Main className="site-settings__reset-site">
+			<Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } />
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ translate( 'Site Reset' ) }
