@@ -13,8 +13,6 @@ import { BASE_ROUTE } from '../import/config';
 import { getFinalImporterUrl } from '../import/helper';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-import './style.scss';
-
 const ImportReadyPreview: Step = function ImportStep( props ) {
 	const { navigation } = props;
 	const siteSlug = useSiteSlugParam();

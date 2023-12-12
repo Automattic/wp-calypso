@@ -1,10 +1,13 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+
 /**
  * Common importer integration styles
  */
 .import-hosted-site,
 .site-setup,
 .import-focused {
-	.importer-wrapper:not(.importer-wrapper__wordpress) {
+	.step-container__content > div[class^="importer-"] {
 		max-width: 700px;
 		margin: auto;
 	}

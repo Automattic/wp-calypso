@@ -42,7 +42,6 @@
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
-		"domains/glue-records": false,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
@@ -90,6 +89,7 @@
 		"livechat_solution": true,
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
+		"login/social-first": true,
 		"mailchimp": true,
 		"marketplace-add-review": false,
 		"marketplace-domain-bundle": false,
@@ -108,6 +108,7 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/import-redirect-to-themes": true,
+		"onboarding/interval-dropdown": false,
 		"p2/p2-plus": true,
 		"pattern-assembler/v2": false,
 		"pattern-assembler/add-pages": true,
@@ -195,7 +196,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": false
+		"yolo/command-palette": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

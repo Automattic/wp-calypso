@@ -1,4 +1,5 @@
 import { createContext, useContext } from '@wordpress/element';
+import { GridContextProps } from './types';
 import type {
 	GridPlan,
 	PlansIntent,
@@ -16,21 +17,13 @@ interface PlansGridContext {
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
 
-interface PlansGridContextProviderProps {
-	intent?: PlansIntent;
-	gridPlans: GridPlan[];
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	allFeaturesList: FeatureList;
-	children: React.ReactNode;
-}
-
 const PlansGridContextProvider = ( {
 	intent,
 	gridPlans,
 	usePricingMetaForGridPlans,
 	allFeaturesList,
 	children,
-}: PlansGridContextProviderProps ) => {
+}: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
 			...acc,

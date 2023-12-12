@@ -3,7 +3,6 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import {
 	alignJustify as acitvityLogIcon,
-	arrowDown as arrowDownIcon,
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
@@ -24,7 +23,6 @@ import {
 	postComments as postCommentsIcon,
 	settings as accountSettingsIcon,
 	tool as toolIcon,
-	upload as uploadIcon,
 	wordpress as wordpressIcon,
 	help as helpIcon,
 } from '@wordpress/icons';
@@ -421,7 +419,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/start/import?ref=command-palette` );
 			},
-			icon: arrowDownIcon,
+			icon: downloadIcon,
 		},
 		{
 			name: 'addNewSite',
@@ -586,6 +584,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'openActivityLog',
 			label: __( 'Open activity log' ),
+			searchLabel: [
+				_x( 'open activity log', 'Keyword for the Open activity log command' ),
+				_x( 'jetpack activity log', 'Keyword for the Open activity log command' ),
+				_x( 'audit log', 'Keyword for the Open activity log command' ),
+			].join( ' ' ),
 			callback: setStateCallback( 'openActivityLog', __( 'Select site to open activity log' ) ),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
@@ -1140,7 +1143,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/import/${ site.slug }` );
 				},
 			},
-			icon: uploadIcon,
+			icon: downloadIcon,
 		},
 		{
 			name: 'manageSettingsGeneral',

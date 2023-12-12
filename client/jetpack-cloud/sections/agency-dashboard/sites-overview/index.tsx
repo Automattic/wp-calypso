@@ -36,6 +36,7 @@ import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
+import SiteNotifications from './site-notifications';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import type { Site } from '../sites-overview/types';
@@ -276,6 +277,7 @@ export default function SitesOverview() {
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
+			<SiteNotifications />
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">

@@ -308,7 +308,9 @@ const useGridPlans = ( {
 		term,
 		intent,
 	} );
-	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: availablePlanSlugs } );
+	const planUpgradeability = usePlanUpgradeabilityCheck?.( {
+		planSlugs: availablePlanSlugs,
+	} );
 
 	// only fetch highlights for the plans that are available for the intent
 	const highlightLabels = useHighlightLabels( {

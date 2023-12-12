@@ -17,6 +17,7 @@ export interface StatsNoticeProps {
 	isSiteJetpackNotAtomic?: boolean;
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
+	isCommercialOwned?: boolean;
 }
 
 export interface NoticeBodyProps {
