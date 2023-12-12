@@ -83,7 +83,7 @@ const LayoutLoggedOut = ( {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isCheckoutFailed =
-		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/thank-you-failed-purchases' );
+		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/failed-purchases' );
 	const isJetpackCheckout =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack' );
 

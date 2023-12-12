@@ -9,7 +9,7 @@ export function FailedPurchasePage() {
 	const translate = useTranslate();
 	return (
 		<div className="failed-purchases-page">
-			<PageViewTracker path="/checkout/thank-you-failed-purchases" title="Failed purchases" />
+			<PageViewTracker path="/checkout/failed-purchases" title="Failed purchases" />
 			<DocumentHead title={ translate( 'Checkout' ) } />
 			<FailedPurchaseDetails />
 		</div>

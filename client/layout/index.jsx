@@ -220,7 +220,7 @@ class Layout extends Component {
 
 		const isCheckoutFailed =
 			this.props.sectionName === 'checkout' &&
-			this.props.currentRoute.startsWith( '/checkout/thank-you-failed-purchases' );
+			this.props.currentRoute.startsWith( '/checkout/failed-purchases' );
 
 		return (
 			<MasterbarComponent

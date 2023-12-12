@@ -206,7 +206,7 @@ export default function () {
 		clientRender
 	);
 
-	page( '/checkout/thank-you-failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
+	page( '/checkout/failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
 
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
