@@ -53,17 +53,17 @@ $grid-vertical-gutters: 32px;
 		padding: 0 16px;
 	}
 
-	.stats__module-wrapper--followers,
+	.stats-module__wrapper--followers,
 	.list-followers {
 		grid-area: followers;
 	}
 
-	.stats__module-wrapper--publicize,
+	.stats-module__wrapper--publicize,
 	.list-publicize {
 		grid-area: publicize;
 	}
 
-	.stats__module-wrapper--emails,
+	.stats-module__wrapper--emails,
 	.list-emails {
 		grid-area: emails;
 	}
@@ -102,27 +102,23 @@ $grid-vertical-gutters: 32px;
 		5
 	);
 
-	.stats__module-wrapper--tags-categories,
-	.list-tags-categories {
+	.stats-module__wrapper--tags-categories {
 		grid-area: tags-categories;
 	}
 
-	.stats__module-wrapper--comments,
 	.list-comments {
 		grid-area: comments;
 	}
 
-	.stats__module-wrapper--shares,
+	.stats-module__wrapper--shares {
+		grid-area: shares;
+	}
+
 	.list-shares {
 		grid-area: shares;
 	}
 
-	.stats__module-wrapper--total-followers,
-	.list-total-followers {
-		grid-area: social-followers;
-	}
-
-	.stats__module-wrapper--latest-post-summary {
+	.stats-module__wrapper--latest-post-summary {
 		grid-area: latest-post-summary;
 	}
 }
@@ -142,18 +138,18 @@ $grid-vertical-gutters: 32px;
 	// which would make different gaps for sites.
 	@include stats-desktop-grid(
 		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-		"country country country country country country country country country country country country"
-		"authors authors authors authors search search search search clicks clicks clicks clicks"
-		"videos videos videos videos videos videos emails emails emails emails emails emails"
+		"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+		"authors authors authors authors searchterms searchterms searchterms searchterms clicks clicks clicks clicks"
+		"videoplays videoplays videoplays videoplays videoplays videoplays emails emails emails emails emails emails"
 		"downloads downloads downloads downloads downloads downloads x x x x x x",
 		6
 	);
 
 	@include stats-tablet-grid(
 		"posts posts posts posts referrers referrers referrers referrers"
-		"country country country country country country country country"
-		"authors authors authors authors search search search search"
-		"clicks clicks clicks clicks videos videos videos videos"
+		"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+		"authors authors authors authors searchterms searchterms searchterms searchterms"
+		"clicks clicks clicks clicks videoplays videoplays videoplays videoplays"
 		"emails emails emails emails emails emails emails emails"
 		"downloads downloads downloads downloads downloads downloads downloads downloads",
 		7
@@ -162,11 +158,11 @@ $grid-vertical-gutters: 32px;
 	@include stats-mobile-grid(
 		"posts posts posts posts"
 		"referrers referrers referrers referrers"
-		"country country country country"
+		"countryviews countryviews countryviews countryviews"
 		"authors authors authors authors"
-		"search search search search"
+		"searchterms searchterms searchterms searchterms"
 		"clicks clicks clicks clicks"
-		"videos videos videos videos"
+		"videoplays videoplays videoplays videoplays"
 		"emails emails emails emails"
 		"downloads downloads downloads downloads",
 		10
@@ -179,8 +175,8 @@ $grid-vertical-gutters: 32px;
 		// which would make different gaps for sites.
 		@include stats-desktop-grid(
 			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-			"country country country country country country country country country country country country"
-			"search search search search clicks clicks clicks clicks videos videos videos videos"
+			"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+			"searchterms searchterms searchterms searchterms clicks clicks clicks clicks videoplays videoplays videoplays videoplays"
 			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
 			5
 		);
@@ -188,9 +184,9 @@ $grid-vertical-gutters: 32px;
 		// Keep Emails occupying the whole row.
 		@include stats-tablet-grid(
 			"posts posts posts posts referrers referrers referrers referrers"
-			"country country country country country country country country"
-			"search search search search clicks clicks clicks clicks"
-			"videos videos videos videos videos videos videos videos"
+			"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+			"searchterms searchterms searchterms searchterms clicks clicks clicks clicks"
+			"videoplays videoplays videoplays videoplays videoplays videoplays videoplays videoplays"
 			"emails emails emails emails emails emails emails emails"
 			"downloads downloads downloads downloads downloads downloads downloads downloads",
 			6
@@ -199,24 +195,24 @@ $grid-vertical-gutters: 32px;
 		@include stats-mobile-grid(
 			"posts posts posts posts"
 			"referrers referrers referrers referrers"
-			"country country country country"
-			"search search search search"
+			"countryviews countryviews countryviews countryviews"
+			"searchterms searchterms searchterms searchterms"
 			"clicks clicks clicks clicks"
-			"videos videos videos videos"
+			"videoplays videoplays videoplays videoplays"
 			"emails emails emails emails"
 			"downloads downloads downloads downloads",
 			8
 		);
 	}
 
-	// Hide the Videos module.
+	// Hide the videoplays module.
 	&.stats__module-list--traffic-no-videos {
 		// @TODO: Avoid using grid-gap by increasing `grid-template-rows` to add the divider for the next section,
 		// which would make different gaps for sites.
 		@include stats-desktop-grid(
 			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-			"country country country country country country country country country country country country"
-			"authors authors authors authors search search search search clicks clicks clicks clicks"
+			"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+			"authors authors authors authors searchterms searchterms searchterms searchterms clicks clicks clicks clicks"
 			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
 			5
 		);
@@ -224,8 +220,8 @@ $grid-vertical-gutters: 32px;
 		// Keep Emails occupying the whole row.
 		@include stats-tablet-grid(
 			"posts posts posts posts referrers referrers referrers referrers"
-			"country country country country country country country country"
-			"authors authors authors authors search search search search"
+			"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+			"authors authors authors authors searchterms searchterms searchterms searchterms"
 			"clicks clicks clicks clicks clicks clicks clicks clicks"
 			"emails emails emails emails emails emails emails emails"
 			"downloads downloads downloads downloads downloads downloads downloads downloads",
@@ -235,9 +231,9 @@ $grid-vertical-gutters: 32px;
 		@include stats-mobile-grid(
 			"posts posts posts posts"
 			"referrers referrers referrers referrers"
-			"country country country country"
+			"countryviews countryviews countryviews countryviews"
 			"authors authors authors authors"
-			"search search search search"
+			"searchterms searchterms searchterms searchterms"
 			"clicks clicks clicks clicks"
 			"emails emails emails emails"
 			"downloads downloads downloads downloads",
@@ -251,16 +247,16 @@ $grid-vertical-gutters: 32px;
 		// which would make different gaps for sites.
 		@include stats-desktop-grid(
 			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
-			"country country country country country country country country country country country country"
-			"search search search search search search clicks clicks clicks clicks clicks clicks"
+			"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+			"searchterms searchterms searchterms searchterms searchterms searchterms clicks clicks clicks clicks clicks clicks"
 			"emails emails emails emails emails emails downloads downloads downloads downloads downloads downloads",
 			5
 		);
 
 		@include stats-tablet-grid(
 			"posts posts posts posts referrers referrers referrers referrers"
-			"country country country country country country country country"
-			"search search search search clicks clicks clicks clicks"
+			"countryviews countryviews countryviews countryviews countryviews countryviews countryviews countryviews"
+			"searchterms searchterms searchterms searchterms clicks clicks clicks clicks"
 			"emails emails emails emails emails emails emails emails"
 			"downloads downloads downloads downloads downloads downloads downloads downloads",
 			5
@@ -269,8 +265,8 @@ $grid-vertical-gutters: 32px;
 		@include stats-mobile-grid(
 			"posts posts posts posts"
 			"referrers referrers referrers referrers"
-			"country country country country"
-			"search search search search"
+			"countryviews countryviews countryviews countryviews"
+			"searchterms searchterms searchterms searchterms"
 			"clicks clicks clicks clicks"
 			"emails emails emails emails"
 			"downloads downloads downloads downloads",
@@ -282,76 +278,67 @@ $grid-vertical-gutters: 32px;
 		margin-bottom: 0;
 	}
 
-	.stats__module-wrapper,
+	.stats-module__wrapper,
 	.stats-card {
 		width: 100%;
 	}
 
-	.stats__module-wrapper {
-		display: flex;
-		flex-flow: column nowrap;
+	.stats-module__wrapper {
+
+		.stats-card--header-and-body {
+			display: flex;
+			flex-flow: column nowrap;
+			flex-grow: 1;
+		}
 
 		.stats-module,
 		.stats-module__header {
 			width: 100%;
 		}
-
-		.stats-module {
-			flex-grow: 1;
-		}
 	}
 
-	.stats__module-wrapper--posts,
-	.list-posts {
+	.stats-module__wrapper--posts {
 		grid-area: posts;
 	}
 
-	.stats__module-wrapper--referrers,
-	.list-referrers {
+	.stats-module__wrapper--referrers {
 		grid-area: referrers;
 	}
 
-	.stats__module-wrapper--countryviews,
-	.list-countryviews {
-		grid-area: country;
+	.stats-module__wrapper--countryviews {
+		grid-area: countryviews;
 	}
 
-	.stats__module-wrapper--authors,
-	.list-authors {
+	.stats-module__wrapper--authors {
 		grid-area: authors;
 	}
 
-	.stats__module-wrapper--searchterms,
-	.list-searchterms {
-		grid-area: search;
+	.stats-module__wrapper--searchterms {
+		grid-area: searchterms;
 	}
 
-	.stats__module-wrapper--clicks,
-	.list-clicks {
+	.stats-module__wrapper--clicks {
 		grid-area: clicks;
 	}
 
-	.stats__module-wrapper--videoplays,
-	.list-videoplays {
-		grid-area: videos;
+	.stats-module__wrapper--videoplays {
+		grid-area: videoplays;
 
 		// Downloads module is disabled for Jetpack sites.
-		// Expand the Videos module to take up the entire row.
+		// Expand the videoplays module to take up the entire row.
 		&:last-child {
-			grid-row-start: videos;
+			grid-row-start: videoplays;
 			grid-row-end: downloads;
-			grid-column-start: videos;
+			grid-column-start: videoplays;
 			grid-column-end: downloads;
 		}
 	}
 
-	.stats__module-wrapper--filedownloads,
-	.list-filedownloads {
+	.stats-module__wrapper--filedownloads {
 		grid-area: downloads;
 	}
 
-	.stats__module-wrapper--emails,
-	.list-emails {
+	.stats-module__wrapper--emails {
 		grid-area: emails;
 	}
 }

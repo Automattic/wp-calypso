@@ -701,3 +701,23 @@ ul.module-header-actions {
 	justify-content: center;
 	flex-direction: column;
 }
+
+.stats-module__wrapper--needs-upgrade {
+	display: grid;
+
+	.stats-module__card,
+	.stats-module__upsell {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.stats-module__card {
+		filter: blur(5px);
+		z-index: 0;
+	}
+
+	.stats-module__upsell {
+		background: rgba(255, 255, 255, 0.5);
+		z-index: 1;
+	}
+}
