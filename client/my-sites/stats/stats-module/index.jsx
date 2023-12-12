@@ -192,7 +192,13 @@ class StatsModule extends Component {
 						showLeftIcon={ path === 'authors' }
 						listItemClassName={ listItemClassName }
 					/>
-					{ needsUpgrade && <StatsCardUpsell className="stats-module__upsell" /> }
+					{ needsUpgrade && siteId && statType && (
+						<StatsCardUpsell
+							className="stats-module__upsell"
+							siteId={ siteId }
+							statType={ statType }
+						/>
+					) }
 				</div>
 				{ isAllTime && (
 					<div className={ footerClass }>
