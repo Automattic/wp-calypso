@@ -67,7 +67,6 @@ import {
 	getDomainSuggestionSearch,
 	getTld,
 } from 'calypso/lib/domains';
-import { preCheckDomainAvailability } from 'calypso/lib/domains/check-domain-availability';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -1016,29 +1015,29 @@ class RegisterDomainStep extends Component {
 			} ) );
 	};
 
-	// preCheckDomainAvailability = ( domain ) => {
-	// 	return new Promise( ( resolve ) => {
-	// 		checkDomainAvailability(
-	// 			{
-	// 				domainName: domain,
-	// 				blogId: get( this.props, 'selectedSite.ID', null ),
-	// 				isCartPreCheck: true,
-	// 			},
-	// 			( error, result ) => {
-	// 				const status = get( result, 'status', error );
-	// 				const isAvailable = domainAvailability.AVAILABLE === status;
-	// 				const isAvailableSupportedPremiumDomain =
-	// 					config.isEnabled( 'domains/premium-domain-purchases' ) &&
-	// 					domainAvailability.AVAILABLE_PREMIUM === status &&
-	// 					result?.is_supported_premium_domain;
-	// 				resolve( {
-	// 					status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
-	// 					trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
-	// 				} );
-	// 			}
-	// 		);
-	// 	} );
-	// };
+	preCheckDomainAvailability = ( domain ) => {
+		return new Promise( ( resolve ) => {
+			checkDomainAvailability(
+				{
+					domainName: domain,
+					blogId: get( this.props, 'selectedSite.ID', null ),
+					isCartPreCheck: true,
+				},
+				( error, result ) => {
+					const status = get( result, 'status', error );
+					const isAvailable = domainAvailability.AVAILABLE === status;
+					const isAvailableSupportedPremiumDomain =
+						config.isEnabled( 'domains/premium-domain-purchases' ) &&
+						domainAvailability.AVAILABLE_PREMIUM === status &&
+						result?.is_supported_premium_domain;
+					resolve( {
+						status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
+						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
+					} );
+				}
+			);
+		} );
+	};
 
 	checkDomainAvailability = ( domain, timestamp ) => {
 		if (
@@ -1473,34 +1472,34 @@ class RegisterDomainStep extends Component {
 			// For Multi-domain flows, add the domain first, than check availability
 			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 				await this.props.onAddDomain( suggestion, position );
-			} else {
-				preCheckDomainAvailability( domain )
-					.catch( () => [] )
-					.then( ( { status, trademarkClaimsNoticeInfo } ) => {
-						this.setState( { pendingCheckSuggestion: null } );
-						this.props.recordDomainAddAvailabilityPreCheck(
-							domain,
-							status,
-							this.props.analyticsSection
-						);
-						if ( status ) {
-							this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
-							this.showAvailabilityErrorMessage( domain, status, {
-								availabilityPreCheck: true,
-							} );
-							this.props.onMappingError( domain, status );
-						} else if ( trademarkClaimsNoticeInfo ) {
-							this.setState( {
-								trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
-								selectedSuggestion: suggestion,
-								selectedSuggestionPosition: position,
-							} );
-							this.props.onMappingError( domain, status );
-						} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-							this.props.onAddDomain( suggestion, position );
-						}
-					} );
 			}
+
+			this.preCheckDomainAvailability( domain )
+				.catch( () => [] )
+				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
+					this.setState( { pendingCheckSuggestion: null } );
+					this.props.recordDomainAddAvailabilityPreCheck(
+						domain,
+						status,
+						this.props.analyticsSection
+					);
+					if ( status ) {
+						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
+						this.showAvailabilityErrorMessage( domain, status, {
+							availabilityPreCheck: true,
+						} );
+						this.props.onMappingError( domain, status );
+					} else if ( trademarkClaimsNoticeInfo ) {
+						this.setState( {
+							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
+							selectedSuggestion: suggestion,
+							selectedSuggestionPosition: position,
+						} );
+						this.props.onMappingError( domain, status );
+					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+						this.props.onAddDomain( suggestion, position );
+					}
+				} );
 		} else {
 			this.props.onAddDomain( suggestion, position );
 		}

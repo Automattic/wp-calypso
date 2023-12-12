@@ -36,7 +36,6 @@ import {
 	getDomainSuggestionSearch,
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
-import { preCheckDomainAvailability } from 'calypso/lib/domains/check-domain-availability';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { ProvideExperimentData, useExperiment } from 'calypso/lib/explat';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -246,19 +245,23 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleDomainMappingError = ( domain_name ) => {
-		console.log( 'handle mapping error for domain: ', domain_name );
-
-		if ( this.state.temporaryCart?.length > 0 ) {
-			this.setState( ( state ) => ( {
-				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
-			} ) );
-		}
-
 		const productToRemove = this.props.cart.products.find(
 			( product ) => product.meta === domain_name
 		);
+
+		this.setState( ( prevState ) => ( {
+			domainRemovalQueue: [
+				...prevState.domainRemovalQueue,
+				{ meta: productToRemove.meta, productSlug: productToRemove.product_slug },
+			],
+		} ) );
+
 		if ( productToRemove ) {
 			this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
+		} else if ( this.state.temporaryCart?.length > 0 ) {
+			this.setState( ( state ) => ( {
+				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
+			} ) );
 		}
 	};
 
@@ -614,70 +617,31 @@ export class RenderDomainsStep extends Component {
 				} ) );
 			}
 
-			const blogId = get( this.props, 'selectedSite.ID', null );
-			console.log( 'blogId: ', blogId );
+			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
 
-			preCheckDomainAvailability( domain, blogId )
-				.catch( () => [] )
-				.then( async ( { status, trademarkClaimsNoticeInfo } ) => {
-					console.log( 'status: ', status );
-					console.log( 'trademarkClaimsNoticeInfo: ', trademarkClaimsNoticeInfo );
-					this.setState( { pendingCheckSuggestion: null } );
-					// this.props.recordDomainAddAvailabilityPreCheck(
-					// 	domain,
-					// 	status,
-					// 	this.props.analyticsSection
-					// );
-					if ( status ) {
-						// this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
-						// this.showAvailabilityErrorMessage( domain, status, {
-						// 	availabilityPreCheck: true,
-						// } );
-						this.handleDomainMappingError( domain, status );
-					} else if ( trademarkClaimsNoticeInfo ) {
-						// this.setState( {
-						// 	trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
-						// 	selectedSuggestion: suggestion,
-						// 	// selectedSuggestionPosition: position,
-						// } );
-						this.handleDomainMappingError( domain, status );
-					} else {
-						await this.props.shoppingCartManager
-							.addProductsToCart( [ registration ] )
-							.catch( () => {
-								console.log( 'failed on add domain: ', registration );
-								// this.handleReplaceProductsInCartError(
-								// 	this.props.translate(
-								// 		'Sorry, there was a problem adding that domain. Please try again later.'
-								// 	)
-								// );
-							} );
+			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
+			const productsToAdd = ! hasPlan( this.props.cart )
+				? [ registration, this.props.multiDomainDefaultPlan ]
+				: [ registration ];
 
-						// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
-						const productsToAdd = ! hasPlan( this.props.cart )
-							? [ registration, this.props.multiDomainDefaultPlan ]
-							: [ registration ];
+			// Add productsToAdd to productsInCart.
+			const productsInCart = [ ...this.props.cart.products, ...productsToAdd ];
 
-						// Add productsToAdd to productsInCart.
-						const productsInCart = [ ...this.props.cart.products, ...productsToAdd ];
+			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
+			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
-						// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-						const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
-
-						// Replace the products in the cart with the freshly sorted products.
-						await this.props.shoppingCartManager
-							.replaceProductsInCart( sortedProducts )
-							.then( () => {
-								this.setState( { replaceDomainFailedMessage: null } );
-							} )
-							.catch( () => {
-								this.handleReplaceProductsInCartError(
-									this.props.translate(
-										'Sorry, there was a problem adding that domain. Please try again later.'
-									)
-								);
-							} );
-					}
+			// Replace the products in the cart with the freshly sorted products.
+			await this.props.shoppingCartManager
+				.replaceProductsInCart( sortedProducts )
+				.then( () => {
+					this.setState( { replaceDomainFailedMessage: null } );
+				} )
+				.catch( () => {
+					this.handleReplaceProductsInCartError(
+						this.props.translate(
+							'Sorry, there was a problem adding that domain. Please try again later.'
+						)
+					);
 				} );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
