@@ -18,7 +18,7 @@ export default function ThemeTierCommunityBadge() {
 	);
 
 	if ( legacyCanUseTheme ) {
-		return <span>{ translate( 'Included in my plan' ) }</span>;
+		return null;
 	}
 
 	const tooltipContent = (

@@ -76,8 +76,6 @@ export default function ThemeTierBundledBadge() {
 			>
 				{ bundleName }
 			</BundledBadge>
-
-			{ legacyCanUseTheme && <span>{ translate( 'Included in my plan' ) }</span> }
 		</div>
 	);
 }
