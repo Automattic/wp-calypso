@@ -11,8 +11,6 @@ import {
 	LAUNCHPAD_INTENT_WRITE,
 	LAUNCHPAD_PRE_LAUNCH,
 	LAUNCHPAD_LEGACY_SITE_SETUP,
-	LAUNCHPAD_LEGACY_SITE_SETUP_HOSTED,
-	LAUNCHPAD_LEGACY_SITE_SETUP_WRITE,
 	NOTICE_CELEBRATE_SITE_CREATION,
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_MIGRATION,
@@ -58,11 +56,7 @@ import {
 } from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
 import LaunchpadPreLaunch from 'calypso/my-sites/customer-home/cards/launchpad/pre-launch';
-import {
-	LaunchpadSiteSetup,
-	LaunchpadSiteSetupHosted,
-	LaunchpadSiteSetupWrite,
-} from 'calypso/my-sites/customer-home/cards/launchpad/site-setup';
+import { LaunchpadSiteSetup } from 'calypso/my-sites/customer-home/cards/launchpad/site-setup';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -144,8 +138,6 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
 	[ LAUNCHPAD_PRE_LAUNCH ]: LaunchpadPreLaunch,
 	[ LAUNCHPAD_LEGACY_SITE_SETUP ]: LaunchpadSiteSetup,
-	[ LAUNCHPAD_LEGACY_SITE_SETUP_HOSTED ]: LaunchpadSiteSetupHosted,
-	[ LAUNCHPAD_LEGACY_SITE_SETUP_WRITE ]: LaunchpadSiteSetupWrite,
 	[ NOTICE_READER_FIRST_POSTS ]: ReaderFirstPosts,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_LEARN_GROW ]: LearnGrow,
