@@ -10,6 +10,8 @@ import {
 	isExternallyManagedTheme,
 	canUseTheme,
 	isSiteEligibleForManagedExternalThemes,
+	isThemeWooCommerce,
+	isThemePremium,
 } from '.';
 
 /**
@@ -151,11 +153,23 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 
 		/**
 		 * Disable Live Preview for themes that are NOT included in a plan.
-		 * This should be updated as we implement the flow for them.
-		 * Note that BTP works on Atomic sites if a theme is installed.
-		 * @see https://github.com/Automattic/wp-calypso/issues/79223
 		 */
 		if ( ! canUseTheme( state, siteId, themeId ) ) {
+			/**
+			 * Enable Live Preview for Premium and WooCommerce themes.
+			 * @see https://github.com/Automattic/wp-calypso/issues/79223
+			 */
+			if (
+				config.isEnabled( 'themes/block-theme-previews-premium-and-woo' ) &&
+				( isThemePremium( state, themeId ) || isThemeWooCommerce( state, themeId ) )
+			) {
+				return true;
+			}
+
+			/**
+			 * Handling Bundle themes except for WooCommerce themes here.
+			 * We can enable Live Preview for Bundle themes by supporting them on the Live Preview notices.
+			 */
 			return false;
 		}
 	}
