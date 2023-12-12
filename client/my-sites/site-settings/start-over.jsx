@@ -286,7 +286,7 @@ function SiteResetCard( {
 				navigationItems={ [] }
 				title={ translate( 'Reset your site' ) }
 				subtitle={ translate(
-					"Remove all posts, pages, and media to start fresh while keeping your site's address.{{a}}Learn more.{{/a}}",
+					"Remove all posts, pages, and media to start fresh while keeping your site's address. {{a}}Learn more.{{/a}}",
 					{
 						components: {
 							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
