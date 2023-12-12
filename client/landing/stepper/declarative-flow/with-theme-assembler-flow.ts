@@ -1,5 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import { DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
+import { getAssemblerDesign } from '@automattic/design-picker';
 import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -24,7 +24,7 @@ const withThemeAssemblerFlow: Flow = {
 			[]
 		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
+		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		// We have to query theme for the Jetpack site.

@@ -1,8 +1,11 @@
 import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
 import { Children, PureComponent } from 'react';
 import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import DotPager from 'calypso/components/dot-pager';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 
 const noop = () => {};
@@ -16,6 +19,9 @@ const embedsToLookFor = {
 	'.jetpack-slideshow': embedSlideshow,
 	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
+	'.embed-tiktok': embedTikTok,
+	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
+	'.wp-block-jetpack-tiled-gallery': embedTiledGallery,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -116,6 +122,11 @@ function embedReddit( domNode ) {
 	loadAndRun( 'https://embed.redditmedia.com/widgets/platform.js', noop );
 }
 
+function embedTikTok( domNode ) {
+	debug( 'processing tiktok for ', domNode );
+	loadAndRun( 'https://www.tiktok.com/embed.js', noop );
+}
+
 let tumblrLoader;
 function embedTumblr( domNode ) {
 	debug( 'processing tumblr for', domNode );
@@ -192,6 +203,34 @@ function embedSlideshow( domNode ) {
 	}
 }
 
+function embedCarousel( domNode ) {
+	debug( 'processing carousel for ', domNode );
+
+	const carouselItemsWrapper = domNode.querySelector( '.swiper-wrapper' );
+
+	// Inject the DotPager component.
+	if ( carouselItemsWrapper ) {
+		const carouselItems = Array.from( carouselItemsWrapper?.children );
+
+		if ( carouselItems && carouselItems.length ) {
+			createRoot( domNode ).render(
+				<DotPager>
+					{ carouselItems.map( ( item, index ) => {
+						return (
+							<div
+								key={ index }
+								className={ classNames( 'carousel-slide', item?.className ) }
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ { __html: item?.innerHTML } }
+							/>
+						);
+					} ) }
+				</DotPager>
+			);
+		}
+	}
+}
+
 function embedStory( domNode ) {
 	debug( 'processing story for ', domNode );
 
@@ -201,6 +240,43 @@ function embedStory( domNode ) {
 	// Open story in a new tab
 	if ( storyLink ) {
 		storyLink.setAttribute( 'target', '_blank' );
+	}
+}
+
+function embedTiledGallery( domNode ) {
+	debug( 'processing tiled gallery for', domNode );
+	const galleryItems = domNode.getElementsByClassName( 'tiled-gallery__item' );
+
+	if ( galleryItems && galleryItems.length ) {
+		const imageItems = Array.from( galleryItems );
+
+		// Replace the gallery with updated markup
+		createRoot( domNode ).render(
+			<div className="gallery-container">
+				{ imageItems.map( ( item ) => {
+					const itemImage = item.querySelector( 'img' );
+					const itemLink = item.querySelector( 'a' );
+
+					const imageElement = (
+						<img
+							id={ itemImage?.id || undefined }
+							className={ itemImage?.className || undefined }
+							alt={ itemImage?.alt || '' }
+							src={ itemImage?.src || undefined }
+							srcSet={ itemImage?.srcSet || undefined }
+						/>
+					);
+
+					return (
+						<figure className="gallery-item">
+							<div className="gallery-item-wrapper">
+								{ itemLink?.href ? <a href={ itemLink.href }>{ imageElement }</a> : imageElement }
+							</div>
+						</figure>
+					);
+				} ) }
+			</div>
+		);
 	}
 }
 

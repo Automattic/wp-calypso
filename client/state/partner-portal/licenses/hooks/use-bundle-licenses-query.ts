@@ -1,20 +1,22 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { License } from 'calypso/state/partner-portal/types';
 import { errorNotice } from '../../../notices/actions';
 import { formatLicenses } from '../handlers';
 
-export default function useBundleLicensesQuery(
-	parentLicenseId: number
-): UseQueryResult< License[] > {
+export default function useBundleLicensesQuery( parentLicenseId: number, perPage: number = 25 ) {
+	const [ licenses, setLicenses ] = useState< License[] >( [] );
+	const [ total, setTotal ] = useState< number >( 0 );
+	const [ page, setPage ] = useState< number >( 1 );
+
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const query = useQuery( {
-		queryKey: [ 'partner-portal', 'bundle-licenses', parentLicenseId ],
+		queryKey: [ 'partner-portal', 'bundle-licenses', parentLicenseId, perPage, page ],
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -23,12 +25,21 @@ export default function useBundleLicensesQuery(
 				},
 				{
 					parent_id: parentLicenseId,
+					page,
+					per_page: perPage,
 				}
 			),
-		select: ( data ) => formatLicenses( data.items ),
+		select: ( data ) => ( {
+			total: data.total_items,
+			licenses: formatLicenses( data.items ),
+		} ),
 	} );
 
-	const { isError } = query;
+	const { isError, data, isLoading } = query;
+
+	const loadMore = useCallback( () => {
+		setPage( ( page ) => page + 1 );
+	}, [] );
 
 	useEffect( () => {
 		if ( isError ) {
@@ -43,5 +54,17 @@ export default function useBundleLicensesQuery(
 		}
 	}, [ dispatch, translate, isError ] );
 
-	return query;
+	useEffect( () => {
+		if ( data ) {
+			setTotal( data.total );
+			setLicenses( ( licenses ) => [ ...licenses, ...data.licenses ] );
+		}
+	}, [ data ] );
+
+	return {
+		licenses,
+		total,
+		loadMore: licenses.length < total ? loadMore : undefined,
+		isLoading,
+	};
 }

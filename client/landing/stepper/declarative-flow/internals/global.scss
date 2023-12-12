@@ -8,6 +8,11 @@
 @import "@automattic/components/src/styles/typography";
 
 /**
+ * Importers styles
+ */
+@import "~calypso/blocks/import/style/base";
+
+/**
  * General onboarding styling
  */
 body {
@@ -94,6 +99,7 @@ button {
 .use-my-domain,
 .domain-transfer,
 .update-design,
+.update-options,
 .hundred-year-plan,
 .link-in-bio-tld {
 	box-sizing: border-box;
@@ -114,11 +120,6 @@ button {
 		}
 	}
 
-	.import-step,
-	.importer-step {
-		@include onboarding-block-margin;
-	}
-
 	&.step-route {
 		padding: 60px 0 0;
 
@@ -133,6 +134,13 @@ button {
 			&.new-or-existing-site {
 				margin-top: -60px;
 			}
+		}
+
+		// Importer flows
+		&.import-focused,
+		&.import-hosted-site,
+		&.site-setup[class*=" import"] {
+			padding: 3.75rem 0;
 		}
 	}
 
@@ -176,7 +184,6 @@ button {
  	 * Step Container
  	 */
 	.step-container {
-
 		.form-fieldset {
 			label {
 				text-transform: none;

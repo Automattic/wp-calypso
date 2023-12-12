@@ -26,6 +26,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -631,6 +632,20 @@ const Settings = ( {
 		);
 	};
 
+	const renderDomainGlueRecordsSection = () => {
+		// We can only create glue records for domains registered with us through KS_RAM
+		if (
+			! domain ||
+			domain.type !== domainTypes.REGISTERED ||
+			domain.registrar !== 'KS_RAM' ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return <GlueRecordsCard domain={ domain } />;
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
@@ -657,6 +672,7 @@ const Settings = ( {
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
+				{ renderDomainGlueRecordsSection() }
 			</>
 		);
 	};

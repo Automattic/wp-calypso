@@ -154,6 +154,10 @@ export const isSiteAssemblerFlow = ( flowName: string | null ) => {
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };
 
+export const isWithThemeAssemblerFlow = ( flowName: string | null ) => {
+	return !! flowName && WITH_THEME_ASSEMBLER_FLOW === flowName;
+};
+
 export const isWithThemeFlow = ( flowName: string | null ) => {
 	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW, WITH_THEME_ASSEMBLER_FLOW ];
 

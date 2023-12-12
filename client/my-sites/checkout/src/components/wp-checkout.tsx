@@ -264,6 +264,7 @@ export default function WPCheckout( {
 		responseCart,
 		applyCoupon,
 		updateLocation,
+		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -330,8 +331,8 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
@@ -504,6 +505,7 @@ export default function WPCheckout( {
 							completeStepContent={
 								<WPCheckoutOrderReview
 									removeProductFromCart={ removeProductFromCart }
+									replaceProductInCart={ replaceProductInCart }
 									couponFieldStateProps={ couponFieldStateProps }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }
@@ -841,7 +843,7 @@ function CheckoutTermsAndCheckboxes( {
 	} );
 
 	const translate = useTranslate();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
 	if ( ! shouldCollapseLastStep ) {
 		return null;

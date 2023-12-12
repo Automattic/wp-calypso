@@ -22,7 +22,12 @@ import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ResponseCart, RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	RemoveProductFromCart,
+	ReplaceProductInCart,
+	CouponStatus,
+} from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
@@ -72,6 +77,7 @@ const SitePreviewWrapper = styled.div`
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
+	replaceProductInCart,
 	couponFieldStateProps,
 	onChangeSelection,
 	siteUrl,
@@ -80,6 +86,7 @@ export default function WPCheckoutOrderReview( {
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
+	replaceProductInCart?: ReplaceProductInCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
 	siteUrl?: string;
@@ -166,6 +173,7 @@ export default function WPCheckoutOrderReview( {
 				<WPOrderReviewSection>
 					<WPOrderReviewLineItems
 						removeProductFromCart={ removeProductFromCart }
+						replaceProductInCart={ replaceProductInCart }
 						removeCoupon={ removeCouponAndClearField }
 						onChangeSelection={ onChangeSelection }
 						isSummary={ isSummary }

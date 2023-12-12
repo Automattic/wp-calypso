@@ -33,6 +33,6 @@ export default function usePlanUsageQuery(
 		queryKey: [ 'stats', 'usage', siteId ],
 		queryFn: () => queryPlanUsage( siteId ),
 		select: selectPlanUsage,
-		staleTime: 1000 * 60 * 5, // 5 minutes
+		// staleTime: 1000 * 60 * 5, // 5 minutes
 	} );
 }

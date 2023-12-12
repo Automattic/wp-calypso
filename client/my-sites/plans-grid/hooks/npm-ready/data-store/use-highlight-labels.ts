@@ -43,6 +43,8 @@ const useHighlightLabels = ( {
 			let label;
 			if ( isCurrentPlan ) {
 				label = translate( 'Your plan' );
+			} else if ( ! isPlanAvailableForUpgrade ) {
+				label = null;
 			} else if ( isSuggestedPlan ) {
 				label = translate( 'Suggested' );
 			} else if ( 'plans-newsletter' === intent ) {

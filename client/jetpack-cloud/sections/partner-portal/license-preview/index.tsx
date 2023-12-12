@@ -24,6 +24,7 @@ import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/p
 import { getSite } from 'calypso/state/sites/selectors';
 import BundleDetails from '../license-details/bundle-details';
 import LicenseActions from './license-actions';
+import LicenseBundleDropDown from './license-bundle-dropdown';
 
 import './style.scss';
 
@@ -119,7 +120,7 @@ export default function LicensePreview( {
 	const isSiteAtomic =
 		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
-	const showBundleDetails = isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
+	const isParentLicense = isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
 
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" type="info">
@@ -225,7 +226,7 @@ export default function LicensePreview( {
 				) }
 
 				<div className="license-preview__badge-container">
-					{ showBundleDetails
+					{ isParentLicense
 						? bundleCountContent
 						: LicenseType.Standard === licenseType && (
 								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
@@ -233,6 +234,13 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
+					{ isParentLicense && (
+						<LicenseBundleDropDown
+							product={ product }
+							licenseKey={ licenseKey }
+							bundleSize={ quantity }
+						/>
+					) }
 					{ isSiteAtomic ? (
 						<LicenseActions
 							siteUrl={ siteUrl }
@@ -241,6 +249,7 @@ export default function LicensePreview( {
 							attachedAt={ attachedAt }
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
+							isChildLicense={ isChildLicense }
 						/>
 					) : (
 						<Button onClick={ open } className="license-preview__toggle" borderless>
@@ -251,7 +260,7 @@ export default function LicensePreview( {
 			</LicenseListItem>
 
 			{ isOpen &&
-				( showBundleDetails ? (
+				( isParentLicense ? (
 					<BundleDetails parentLicenseId={ parentLicenseId } />
 				) : (
 					<LicenseDetails
@@ -266,6 +275,7 @@ export default function LicensePreview( {
 						revokedAt={ revokedAt }
 						onCopyLicense={ onCopyLicense }
 						licenseType={ licenseType }
+						isChildLicense={ isChildLicense }
 					/>
 				) ) }
 		</div>

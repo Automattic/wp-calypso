@@ -1,9 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { useSiteResetMutation } from '@automattic/data-stores';
-import { isSiteAtomic } from '@automattic/data-stores/src/site/selectors';
+import {
+	useSiteResetContentSummaryQuery,
+	useSiteResetMutation,
+	useSiteResetStatusQuery,
+} from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -16,16 +19,27 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { BuiltByUpsell } from './built-by-upsell-banner';
 
-const StartOver = ( { translate, selectedSiteSlug, siteDomain, isAtomic } ) => {
+const StartOver = ( {
+	translate,
+	selectedSiteSlug,
+	siteDomain,
+	isAtomic,
+	site,
+	isUnlaunchedSite: isUnlaunchedSiteProp,
+} ) => {
 	const localizeUrl = useLocalizeUrl();
 	if ( isEnabled( 'settings/self-serve-site-reset' ) ) {
 		return (
@@ -34,6 +48,8 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain, isAtomic } ) => {
 				selectedSiteSlug={ selectedSiteSlug }
 				siteDomain={ siteDomain }
 				isAtomic={ isAtomic }
+				site={ site }
+				isUnlaunchedSite={ isUnlaunchedSiteProp }
 			/>
 		);
 	}
@@ -90,9 +106,47 @@ const StartOver = ( { translate, selectedSiteSlug, siteDomain, isAtomic } ) => {
 	);
 };
 
-function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) {
+function SiteResetCard( {
+	translate,
+	selectedSiteSlug,
+	siteDomain,
+	isAtomic,
+	isUnlaunchedSite: isUnlaunchedSiteProp,
+	site,
+} ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
+
+	const { data } = useSiteResetContentSummaryQuery( siteId );
+	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
+	let resetStatus = 'ready';
+	if ( status ) {
+		resetStatus = status.status;
+	}
+	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
+	const [ resetProgress, setResetProgress ] = useState( 1 );
+
+	if ( resetStatus !== 'ready' && resetProgress === 1 ) {
+		//it's already in progress on load
+		setResetProgress( 0 );
+	}
+
+	const checkStatus = async () => {
+		if ( resetProgress !== 1 ) {
+			const {
+				data: { status: latestStatus },
+			} = await refetchResetStatus();
+			if ( latestStatus === 'ready' ) {
+				setResetProgress( 1 );
+				dispatch(
+					successNotice( translate( 'Your site has been reset.' ), {
+						id: 'site-reset-success-notice',
+						duration: 4000,
+					} )
+				);
+			}
+		}
+	};
 
 	const handleError = () => {
 		dispatch(
@@ -104,13 +158,24 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 	};
 
 	const handleResult = ( result ) => {
+		setResetProgress( 0 );
 		if ( result.success ) {
-			dispatch(
-				successNotice( translate( 'Your site has been reset.' ), {
-					id: 'site-reset-success-notice',
-					duration: 4000,
-				} )
-			);
+			if ( isAtomic ) {
+				dispatch(
+					successNotice( translate( 'Your site will be reset. ' ), {
+						id: 'site-reset-success-notice',
+						duration: 6000,
+					} )
+				);
+			} else {
+				dispatch(
+					successNotice( translate( 'Your site has been reset.' ), {
+						id: 'site-reset-success-notice',
+						duration: 4000,
+					} )
+				);
+				setResetProgress( 1 );
+			}
 		} else {
 			handleError();
 		}
@@ -121,52 +186,107 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 		onError: handleError,
 	} );
 
-	const contentInfo = [
-		translate( 'posts' ),
-		translate( 'pages' ),
-		translate( 'user installed plugins' ),
-		translate( 'user themes' ),
-	];
+	const contentInfo = () => {
+		const result = [];
 
-	const handleReset = () => {
-		resetSite( siteId );
+		if ( data?.post_count > 0 ) {
+			const message =
+				data.post_count === 1
+					? translate( '1 post' )
+					: sprintf( translate( '%d posts' ), data.post_count );
+			result.push( {
+				message,
+				url: `/posts/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.page_count > 0 ) {
+			const message =
+				data.page_count === 1
+					? translate( '1 page' )
+					: sprintf( translate( '%d pages' ), data.page_count );
+			result.push( {
+				message,
+				url: `/pages/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.media_count > 0 ) {
+			const message =
+				data.media_count === 1
+					? translate( '1 media item' )
+					: sprintf( translate( '%d media items' ), data.media_count );
+			result.push( {
+				message,
+				url: `/media/${ siteDomain }`,
+			} );
+		}
+
+		if ( data?.plugin_count > 0 ) {
+			const message =
+				data.plugin_count === 1
+					? translate( '1 plugin' )
+					: sprintf( translate( '%d plugins' ), data.plugin_count );
+			result.push( {
+				message,
+				url: `https://${ siteDomain }/wp-admin/plugins.php`,
+			} );
+		}
+		return result;
 	};
 
-	const instructions = ! isAtomic
+	const handleReset = async () => {
+		if ( ! isDomainConfirmed ) {
+			return;
+		}
+		resetSite( siteId );
+		setDomainConfirmed( false );
+	};
+
+	const instructions = createInterpolateElement(
+		sprintf(
+			// translators: %s is the site domain
+			translate(
+				"Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL up and running. Keep in mind you'll also lose any modifications you've made to your current theme."
+			),
+			siteDomain
+		),
+		{
+			strong: <strong />,
+		}
+	);
+
+	const backupHint = isAtomic
 		? createInterpolateElement(
-				sprintf(
-					// translators: %s is the site domain
-					translate(
-						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. ' +
-							'If you want to keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
-					),
-					siteDomain
+				translate(
+					"Having second thoughts? Don't fret, we'll automatically back up your site content before the reset and you can restore it any time from the <a>Activity Log</a>."
 				),
 				{
-					strong: <strong />,
-					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
+					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
 				}
 		  )
 		: createInterpolateElement(
-				sprintf(
-					// translators: %s is the site domain
-					translate(
-						'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. '
-					),
-					siteDomain
+				translate(
+					'To keep a copy of your current site, head to the <a>Export page</a> before starting the reset.'
 				),
 				{
-					strong: <strong />,
+					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
 				}
 		  );
 
+	const isResetInProgress = resetProgress < 1;
+
+	const ctaText =
+		! isAtomic && isLoading ? translate( 'Resetting site' ) : translate( 'Reset site' );
+
 	return (
 		<Main className="site-settings__reset-site">
+			<Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Site Reset' ) }
+				title={ translate( 'Reset your site' ) }
 				subtitle={ translate(
-					"Keep your site's address and theme, but delete all posts, pages, and media to start fresh. {{a}}Learn more.{{/a}}",
+					"Remove all posts, pages, and media to start fresh while keeping your site's address. {{a}}Learn more.{{/a}}",
 					{
 						components: {
 							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
@@ -178,48 +298,79 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
 				<h1>{ translate( 'Site Reset' ) }</h1>
 			</HeaderCake>
-			<ActionPanel style={ { margin: 0 } }>
-				<ActionPanelBody>
-					<p>{ instructions }</p>
-					<p>{ translate( 'The following content will be removed:' ) }</p>
-					<ul>
-						{ contentInfo.map( ( content ) => (
-							<li key={ content }>{ content }</li>
-						) ) }
-					</ul>
-				</ActionPanelBody>
-				<ActionPanelFooter>
-					<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
-						{ createInterpolateElement(
-							sprintf(
-								// translators: %s is the site domain
-								translate( 'Enter <strong>%s</strong> to continue' ),
-								siteDomain
-							),
-							{
-								strong: <strong />,
-							}
+			{ isResetInProgress ? (
+				<ActionPanel style={ { margin: 0 } }>
+					<ActionPanelBody>
+						<LoadingBar progress={ resetProgress / 100 } />
+						<p className="reset-site__in-progress-message">
+							{ translate( "We're resetting your site. We'll email you once it's ready." ) }
+						</p>
+					</ActionPanelBody>
+				</ActionPanel>
+			) : (
+				<ActionPanel style={ { margin: 0 } }>
+					<ActionPanelBody>
+						<p>{ instructions }</p>
+						<p>{ translate( 'The following content will be removed:' ) }</p>
+						<ul>
+							{ contentInfo().map( ( { message, url } ) => {
+								if ( url ) {
+									return (
+										<li key={ message }>
+											<a href={ url }>{ message }</a>
+										</li>
+									);
+								}
+								return <li key={ message }>{ message }</li>;
+							} ) }
+						</ul>
+					</ActionPanelBody>
+					<ActionPanelFooter>
+						<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %s is the site domain
+									translate(
+										"Type <strong>%s</strong> below to confirm you're ready to reset the site:"
+									),
+									siteDomain
+								),
+								{
+									strong: <strong />,
+								}
+							) }
+						</FormLabel>
+						<div className="site-settings__reset-site-controls">
+							<FormTextInput
+								autoCapitalize="off"
+								aria-required="true"
+								id="confirmResetInput"
+								disabled={ isLoading }
+								style={ { flex: 1 } }
+								onChange={ ( event ) =>
+									setDomainConfirmed( event.currentTarget.value.trim() === siteDomain )
+								}
+							/>
+							<Button
+								primary // eslint-disable-line wpcalypso/jsx-classname-namespace
+								onClick={ handleReset }
+								disabled={ isLoading || ! isDomainConfirmed }
+								busy={ isLoading }
+							>
+								{ ctaText }
+							</Button>
+						</div>
+						{ backupHint && (
+							<p className="site-settings__reset-site-backup-hint">{ backupHint }</p>
 						) }
-					</FormLabel>
-					<div className="site-settings__reset-site-controls">
-						<FormTextInput
-							autoCapitalize="off"
-							aria-required="true"
-							id="confirmResetInput"
-							disabled={ isLoading }
-							style={ { flex: 0.5 } }
-						/>
-						<Button
-							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
-							onClick={ handleReset }
-							disabled={ isLoading }
-							busy={ isLoading }
-						>
-							{ translate( 'Reset Site' ) }
-						</Button>
-					</div>
-				</ActionPanelFooter>
-			</ActionPanel>
+					</ActionPanelFooter>
+				</ActionPanel>
+			) }
+			<BuiltByUpsell
+				site={ site }
+				isUnlaunchedSite={ isUnlaunchedSiteProp }
+				urlRef="unlaunched-site-reset"
+			/>{ ' ' }
 		</Main>
 	);
 }
@@ -227,9 +378,12 @@ function SiteResetCard( { translate, selectedSiteSlug, siteDomain, isAtomic } ) 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteDomain = getSiteDomain( state, siteId );
+	const site = getSite( state, siteId );
 	return {
 		siteDomain,
+		site,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
-		isAtomic: isSiteAtomic( state, siteId ),
+		isAtomic: isJetpackSite( state, siteId ),
+		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 	};
 } )( localize( StartOver ) );

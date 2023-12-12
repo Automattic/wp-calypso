@@ -20,6 +20,7 @@ import {
 	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
 } from '../../constants';
+import { isProductMatch } from '../../lib/filter';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // Plans and Products that we can merged into 1 card.
@@ -164,8 +165,8 @@ export default function useProductAndPlans( {
 
 		// Filter products based on the search term
 		if ( productSearchQuery ) {
-			filteredProductsAndBundles = filteredProductsAndBundles.filter(
-				( product ) => product.name?.toLowerCase().includes( productSearchQuery.toLowerCase() )
+			filteredProductsAndBundles = filteredProductsAndBundles.filter( ( product ) =>
+				isProductMatch( product, productSearchQuery )
 			);
 		}
 

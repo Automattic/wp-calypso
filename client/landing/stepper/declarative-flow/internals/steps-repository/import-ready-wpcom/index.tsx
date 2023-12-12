@@ -7,7 +7,6 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { ImportWrapper } from '../import';
 import { BASE_ROUTE } from '../import/config';
 import { generateStepPath } from '../import/helper';
-import './style.scss';
 
 const ImportReadyNot: Step = function ImportStep( props ) {
 	const { navigation } = props;
