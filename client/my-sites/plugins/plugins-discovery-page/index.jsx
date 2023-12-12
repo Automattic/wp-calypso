@@ -97,6 +97,16 @@ const RedirectToCheckout = ( { siteSlug } ) => {
 	return null;
 };
 
+const ExperimentLoading = ( { setIsLoadingExperiment } ) => {
+	useEffect( () => {
+		setIsLoadingExperiment( true );
+
+		return () => setIsLoadingExperiment( false );
+	}, [] );
+
+	return null;
+};
+
 const OneClickPurchaseModal = ( { localeSlug, setShowPurchaseModal, siteSlug } ) => {
 	const businessPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_BUSINESS ),
@@ -140,6 +150,7 @@ const PluginsDiscoveryPage = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const translate = useTranslate();
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
+	const [ isLoadingExperiment, setIsLoadingExperiment ] = useState( false );
 
 	return (
 		<>
@@ -154,12 +165,14 @@ const PluginsDiscoveryPage = ( props ) => {
 							siteSlug={ props.siteSlug }
 						/>
 					}
-					// Fix loading experience
-					loadingExperience={ <div>Hello world</div> }
+					loadingExperience={
+						<ExperimentLoading setIsLoadingExperiment={ setIsLoadingExperiment } />
+					}
 				/>
 			) }
 			<UpgradeNudge
 				{ ...props }
+				isLoadingExperiment={ isLoadingExperiment }
 				paidPlugins={ true }
 				handleUpsellNudgeClick={ ( e ) => {
 					e.preventDefault();
