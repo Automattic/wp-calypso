@@ -33,7 +33,7 @@ export function Credentials( props: Props ) {
 
 	return (
 		<div className="import__pre-migration import__import-everything import__import-everything--redesign">
-			<div className="import__heading-title">
+			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'You are ready to migrate' ) }</Title>
 			</div>
 

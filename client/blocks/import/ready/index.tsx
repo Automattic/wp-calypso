@@ -157,7 +157,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( "Your existing content can't be imported" ) }</Title>
 					<SubTitle>
 						{ __(
@@ -215,7 +215,7 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Your content is ready for its new home' ) }</Title>
 					<SubTitle>
 						{ sprintf(
@@ -314,7 +314,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Your site is already on WordPress.com' ) }</Title>
 					<SubTitle>
 						{ createInterpolateElement(
