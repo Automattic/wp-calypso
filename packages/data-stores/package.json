@@ -33,6 +33,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
+		"@automattic/js-utils": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^4.36.1",
 		"@wordpress/api-fetch": "^6.44.0",

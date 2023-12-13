@@ -419,6 +419,7 @@ const siteSetupFlow: Flow = {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
 
+				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 
