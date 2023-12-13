@@ -15,7 +15,13 @@ import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
 import { updateModuleSettings } from 'calypso/state/stats/module-settings/actions';
 
-function HighlightsSection( { siteId, currentPeriod }: { siteId: number; currentPeriod: string } ) {
+export default function HighlightsSection( {
+	siteId,
+	currentPeriod,
+}: {
+	siteId: number;
+	currentPeriod: string;
+} ) {
 	const dispatch = useDispatch();
 
 	// Request new highlights whenever site ID changes.
@@ -102,4 +108,3 @@ function HighlightsSection( { siteId, currentPeriod }: { siteId: number; current
 		/>
 	);
 }
-export default HighlightsSection;
