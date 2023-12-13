@@ -61,8 +61,8 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import { useHideCheckoutUpsellNudge } from '../hooks/use-hide-checkout-upsell-nudge';
 import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
-import { useShowCheckoutUpsellNudge } from '../hooks/use-show-checkout-upsell-nudge';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -479,7 +479,7 @@ export default function WPCheckout( {
 								/>
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
 									<>
-										{ shouldShowCheckoutUpsellNudge && <CheckoutSidebarPlanUpsell /> }
+										{ ! shouldHideCheckoutUpsellNudge && <CheckoutSidebarPlanUpsell /> }
 										<JetpackAkismetCheckoutSidebarPlanUpsell />
 									</>
 								) }
