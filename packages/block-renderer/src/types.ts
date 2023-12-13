@@ -23,4 +23,5 @@ export type RenderedPatterns = {
 export type SiteInfo = {
 	title?: string;
 	tagline?: string;
+	pages?: string[];
 };

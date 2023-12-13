@@ -9,7 +9,7 @@ const fetchRenderedPatterns = (
 	patternIds: string[],
 	siteInfo: SiteInfo
 ): Promise< RenderedPatterns > => {
-	const { title, tagline } = siteInfo;
+	const { title, tagline, pages } = siteInfo;
 	const params = new URLSearchParams( {
 		stylesheet,
 		category,
@@ -23,6 +23,10 @@ const fetchRenderedPatterns = (
 
 	if ( tagline ) {
 		params.set( 'site_tagline', tagline );
+	}
+
+	if ( pages ) {
+		params.set( 'pages', pages.join( ',' ) );
 	}
 
 	return wpcomRequest( {
