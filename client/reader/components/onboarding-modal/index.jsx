@@ -104,7 +104,6 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 		<Modal
 			title={ translate( 'Welcome to the Reader!' ) }
 			className="reader-onboarding-modal"
-			bodyOpenClassName="reader-onboarding-modal__body"
 			onRequestClose={ () => setIsOpen( false ) }
 			isDismissible={ false }
 			size="fill"
@@ -112,7 +111,9 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 		>
 			{ pages[ currentPage ] }
 			<div className="reader-onboarding-modal__footer">
-				<Button onClick={ () => setCurrentPage( currentPage + 1 ) }>{ translate( 'Next' ) }</Button>
+				<Button onClick={ () => setCurrentPage( currentPage + 1 ) } primary>
+					{ translate( 'Continue' ) }
+				</Button>
 			</div>
 		</Modal>
 	);

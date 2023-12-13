@@ -1,6 +1,37 @@
+$reader-modal-header-height: 100px;
+
 .reader-onboarding-modal {
-	.components-modal__header .components-modal__header-heading {
-		font-size: $font-headline-small;
+	position: relative;
+
+	.components-modal__content {
+		// to accomodate the absolute positioned footer, we need extra padding in the bottom of the
+		// content so everything can be scrolled into view.
+		padding-bottom: 75px;
+
+		margin-top: $reader-modal-header-height;
+	}
+
+	.reader-onboarding-modal__footer {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		box-sizing: border-box;
+		width: 100%;
+		background: var(--color-surface);
+		margin-top: 20px;
+		padding: 15px;
+		border-top: 1px solid #ddd;
+	}
+
+	.components-modal__header {
+		height: $reader-modal-header-height;
+
+		.components-modal__header-heading {
+			font-size: $font-headline-small;
+		}
 	}
 
 	.reader-onboarding-modal__sub-heading {
@@ -8,9 +39,7 @@
 	}
 
 	.reader-onboarding-modal__step-description {
-		// font-size: $font-body-large;
 		max-width: 800px;
-		// text-wrap: balance;
 	}
 
 	.reader-onboarding-modal__follow-list {
@@ -39,13 +68,6 @@
 			margin-left: 15px;
 			margin-right: 15px;
 		}
-	}
-
-	.reader-onboarding-modal__footer {
-		display: flex;
-		align-items: flex-end;
-		justify-content: flex-end;
-		margin-top: 20px;
 	}
 }
 
