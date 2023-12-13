@@ -6,8 +6,7 @@
  * External dependencies
  */
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/dom';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 /**
  * Internal dependencies
  */
