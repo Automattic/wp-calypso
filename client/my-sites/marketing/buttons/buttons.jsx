@@ -8,11 +8,13 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -26,7 +28,7 @@ import {
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ButtonsAppearance from './appearance';
-import ButtonsBlockMessage from './components/buttons-block-appearance';
+import ButtonsBlockAppearance from './components/buttons-block-appearance';
 import ButtonsOptions from './options';
 import { useSharingButtonsQuery, useSaveSharingButtonsMutation } from './use-sharing-buttons-query';
 
@@ -123,27 +125,16 @@ class SharingButtons extends Component {
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
 	}
 
-	getNotice() {
-		const { isPrivate, siteId, siteSlug, translate } = this.props;
+	showSharingButtonsBlockAppearance() {
+		const { isJetpack, isBlockTheme, queryArgs } = this.props;
+
+		const skipShow = !! queryArgs.hasOwnProperty( 'no-block-apperance' );
+
 		return (
-			<Notice
-				status="is-warning"
-				showDismiss={ false }
-				text={
-					isPrivate
-						? translate( 'Adding sharing buttons requires your site to be marked as Public.' )
-						: translate(
-								'Adding sharing buttons needs the Sharing Buttons module from Jetpack to be enabled.'
-						  )
-				}
-			>
-				<NoticeAction
-					href={ isPrivate ? '/settings/general/' + siteSlug + '#site-privacy-settings' : null }
-					onClick={ isPrivate ? null : () => this.props.activateModule( siteId, 'sharedaddy' ) }
-				>
-					{ isPrivate ? translate( 'Change settings' ) : translate( 'Enable' ) }
-				</NoticeAction>
-			</Notice>
+			isJetpack &&
+			! skipShow &&
+			isBlockTheme &&
+			isEnabled( 'jetpack/sharing-buttons-block-enabled' )
 		);
 	}
 
@@ -157,25 +148,17 @@ class SharingButtons extends Component {
 			siteId,
 			isSharingButtonsModuleActive,
 			isFetchingModules,
+			isPrivate,
+			siteSlug,
+			translate,
 		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 		const isSaving = isSavingSettings || isSavingButtons;
 		const shouldShowNotice = isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive;
 
-		const showSharingButtonsBlockMessage =
-			isJetpack && isEnabled( 'jetpack/sharing-buttons-block-enabled' );
-
-		// const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
-		// const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
-
-		if ( showSharingButtonsBlockMessage ) {
-			return (
-				<>
-					{ shouldShowNotice && this.getNotice() }
-					<ButtonsBlockMessage />
-				</>
-			);
+		if ( this.showSharingButtonsBlockAppearance() ) {
+			return <ButtonsBlockAppearance siteId={ siteId } />;
 		}
 
 		return (
@@ -192,7 +175,26 @@ class SharingButtons extends Component {
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ /* Rendering notice in a separate function */ }
-				{ shouldShowNotice && this.getNotice() }
+				{ shouldShowNotice && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={
+							isPrivate
+								? translate( 'Adding sharing buttons requires your site to be marked as Public.' )
+								: translate(
+										'Adding sharing buttons needs the Sharing Buttons module from Jetpack to be enabled.'
+								  )
+						}
+					>
+						<NoticeAction
+							href={ isPrivate ? '/settings/general/' + siteSlug + '#site-privacy-settings' : null }
+							onClick={ isPrivate ? null : () => this.props.activateModule( siteId, 'sharedaddy' ) }
+						>
+							{ isPrivate ? translate( 'Change settings' ) : translate( 'Enable' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 
 				<ButtonsOptions
 					buttons={ buttons }
@@ -222,6 +224,8 @@ const withSharingButtons = createHigherOrderComponent(
 			isLoading: isSavingButtons,
 			isSuccess: isSaveButtonsSuccessful,
 		} = useSaveSharingButtonsMutation( siteId );
+		const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+		const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 
 		return (
 			<Wrapped
@@ -230,6 +234,7 @@ const withSharingButtons = createHigherOrderComponent(
 				saveSharingButtons={ saveSharingButtons }
 				isSavingButtons={ isSavingButtons }
 				isSaveButtonsSuccessful={ isSaveButtonsSuccessful }
+				isBlockTheme={ isBlockTheme }
 			/>
 		);
 	},
@@ -249,6 +254,7 @@ const connectComponent = connect(
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isPrivate = isPrivateSite( state, siteId );
 		const path = getCurrentRouteParameterized( state, siteId );
+		const queryArgs = getCurrentQueryArguments( state );
 
 		return {
 			isJetpack,
@@ -262,6 +268,7 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			path,
+			queryArgs,
 		};
 	},
 	{
