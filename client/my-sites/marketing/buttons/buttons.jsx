@@ -128,7 +128,7 @@ class SharingButtons extends Component {
 	showSharingButtonsBlockAppearance() {
 		const { isBlockTheme, queryArgs } = this.props;
 
-		const skipShow = !! queryArgs.hasOwnProperty( 'no-block-appearance' );
+		const skipShow = !! queryArgs[ 'no-block-appearance' ];
 
 		return ! skipShow && isBlockTheme && isEnabled( 'jetpack/sharing-buttons-block-enabled' );
 	}
