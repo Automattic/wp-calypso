@@ -151,6 +151,7 @@ const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
+	const [ lastEnteredSearch, setLastEnteredSearch ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { close, toggle } = {
 		close: () => setIsOpen( false ),
@@ -172,7 +173,7 @@ const CommandPalette = () => {
 
 	const reset = () => {
 		setPlaceholderOverride( '' );
-		setSearch( '' );
+		setSearch( selectedCommandName ? lastEnteredSearch : '' );
 		setSelectedCommandName( '' );
 	};
 	const closeAndReset = () => {
@@ -229,7 +230,12 @@ const CommandPalette = () => {
 						) }
 						<CommandInput
 							search={ search }
-							setSearch={ setSearch }
+							setSearch={ ( value ) => {
+								setSearch( value );
+								if ( ! selectedCommandName ) {
+									setLastEnteredSearch( value );
+								}
+							} }
 							isOpen={ isOpen }
 							placeholder={ placeHolderOverride }
 						/>
