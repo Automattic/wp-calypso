@@ -15,6 +15,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Geochart from '../geochart';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
@@ -134,7 +135,7 @@ class StatsModule extends Component {
 			additionalColumns,
 			mainItemLabel,
 			listItemClassName,
-			needsUpgrade,
+			isGatedStats,
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
@@ -186,7 +187,7 @@ class StatsModule extends Component {
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
 					overlay={
-						needsUpgrade &&
+						isGatedStats &&
 						siteId &&
 						statType && (
 							<StatsCardUpsell
@@ -219,11 +220,7 @@ export default connect( ( state, ownProps ) => {
 	const { statType, query } = ownProps;
 	const isPaidStatsEnabled = isEnabled( 'stats/paid-wpcom-v2' );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
-	let needsUpgrade = false;
-	const paidStats = [ 'statsSearchTerms', 'statsClicks', 'statsReferrers', 'statsCountryViews' ];
-	if ( isPaidStatsEnabled && ! siteHasPaidStats && paidStats.includes( statType ) ) {
-		needsUpgrade = true;
-	}
+	const isGatedStats = shouldGateStats( state, siteId, statType );
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
@@ -232,6 +229,6 @@ export default connect( ( state, ownProps ) => {
 		siteSlug,
 		isPaidStatsEnabled,
 		siteHasPaidStats,
-		needsUpgrade,
+		isGatedStats,
 	};
 } )( localize( StatsModule ) );
