@@ -57,7 +57,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 };
 
 /*
- * Check if a stat feature can be accessed for wpcom paid stats.
+ * Check if a statType is gated wpcom paid stats.
  */
 export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
