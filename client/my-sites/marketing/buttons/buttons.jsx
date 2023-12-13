@@ -26,7 +26,7 @@ import {
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ButtonsAppearance from './appearance';
-import ButtonsBlockMessage from './buttons-block-message';
+import ButtonsBlockMessage from './components/buttons-block-appearance';
 import ButtonsOptions from './options';
 import { useSharingButtonsQuery, useSaveSharingButtonsMutation } from './use-sharing-buttons-query';
 

@@ -1,5 +1,6 @@
 import { localize } from 'i18n-calypso';
-import SharingButtonsPreviewButtons from './preview-buttons';
+import SharingButtonsPreviewButtons from '../preview-buttons';
+import './style.scss';
 
 const buttons = [
 	{ ID: 'facebook', name: 'Facebook', shortname: 'facebook' },
@@ -8,7 +9,7 @@ const buttons = [
 	{ ID: 'pinterest', name: 'Pinterest', shortname: 'pinterest' },
 ];
 
-const ButtonsBlockMessage = ( { translate } ) => {
+const ButtonsBlockAppearance = ( { translate } ) => {
 	return (
 		<>
 			<div className="sharing-buttons__panel sharing-buttons-appearance">
@@ -17,21 +18,20 @@ const ButtonsBlockMessage = ( { translate } ) => {
 						'Allow readers to easily share your posts with others by adding sharing buttons throughout your site.'
 					) }
 				</p>
-				<div>
-					<button className="button sharing-buttons__submit">
+				<div className="sharing-buttons__buttons-wrapper">
+					<button className="button is-primary sharing-buttons__button-site-editor">
 						{ translate( 'Go to the Site Editor' ) }
 					</button>
 
-					<button className="button sharing-buttons__submit">
+					<button className="button sharing-buttons__button-learn-more">
 						{ translate( 'Learn how to add Sharing Buttons' ) }
 					</button>
 				</div>
-				<p>{ translate( 'Sharing Buttons example:' ) }</p>
-
+				<p className="sharing-buttons__example-text">{ translate( 'Sharing Buttons example:' ) }</p>
 				<SharingButtonsPreviewButtons buttons={ buttons } style="icon-text" />
 			</div>
 		</>
 	);
 };
 
-export default localize( ButtonsBlockMessage );
+export default localize( ButtonsBlockAppearance );
