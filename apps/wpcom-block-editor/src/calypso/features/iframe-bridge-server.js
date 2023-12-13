@@ -522,6 +522,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinks = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
+		'.components-snackbar-list a.components-snackbar__action', // View Post link in success snackbar. Added for Gutenberg 17.2, and possibly earlier.
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 		'.wpcom-block-editor-post-published-sharing-modal__view-post-link', // View Post button in sharing modal
