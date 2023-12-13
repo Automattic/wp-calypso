@@ -162,9 +162,7 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const shouldShowMyThemesFilter =
-			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
-			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
+		const shouldShowMyThemesFilter = !! this.props.isLoggedIn;
 
 		return {
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
@@ -528,7 +526,6 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 			isCollectionView,
-			isJetpackSite,
 			lastNonEditorRoute,
 		} = this.props;
 		const tier = this.props.tier || 'all';
@@ -559,7 +556,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
-			source: isJetpackSite && this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
 		};
 
 		const tabFilters = this.getTabFilters();

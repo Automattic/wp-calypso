@@ -15,7 +15,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
@@ -289,7 +289,6 @@ export const ConnectedThemesSelection = connect(
 		state,
 		{ filter, page, search, tier, vertical, siteId, source, forceWpOrgSearch, tabFilter }
 	) => {
-		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
 		const hiddenFilters = getThemeHiddenFilters( state, siteId );
@@ -304,7 +303,7 @@ export const ConnectedThemesSelection = connect(
 		if ( source === 'wpcom' || source === 'wporg' ) {
 			sourceSiteId = source;
 		} else {
-			sourceSiteId = siteId && isJetpack ? siteId : 'wpcom';
+			sourceSiteId = siteId ? siteId : 'wpcom';
 		}
 
 		if ( isAtomic && ! hasUnlimitedPremiumThemes ) {
