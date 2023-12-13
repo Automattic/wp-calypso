@@ -14,7 +14,6 @@ import Notice from 'calypso/components/notice';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 
@@ -324,7 +323,6 @@ ReauthRequired.propTypes = {
 export default connect(
 	( state ) => ( {
 		currentUserId: getCurrentUserId( state ),
-		userSettings: getUserSettings( state ),
 	} ),
 	{
 		redirectToLogout,
