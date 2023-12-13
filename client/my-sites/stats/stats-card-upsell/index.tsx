@@ -36,7 +36,7 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId } ) =
 				<div className="stats-card-upsell__text">
 					{ translate( 'Upgrade your plan to unlock advanced stats.' ) }
 				</div>
-				<Button className="stats-card-upsell__button" onClick={ onClick }>
+				<Button primary className="stats-card-upsell__button" onClick={ onClick }>
 					Unlock
 				</Button>
 			</div>
