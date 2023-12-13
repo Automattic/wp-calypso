@@ -86,6 +86,7 @@
 		"individual-subscriber-stats": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/ai-assistant-request-limit": true,
+		"jetpack/ai-logo-generator": true,
 		"jetpack/api-cache": true,
 		"jetpack/backup-contents-page": true,
 		"jetpack/backup-messaging-i3": true,

@@ -31,34 +31,15 @@ import {
 	PLAN_MONTHLY_FREQUENCY,
 	PLAN_ONE_TIME_FREQUENCY,
 } from '../memberships/constants';
-
-type Subscriber = {
-	id: string;
-	status: string;
-	start_date: string;
-	end_date: string;
-	// appears as both subscriber.user_email & subscriber.user.user_email in this file
-	user_email: string;
-	user: {
-		ID: string;
-		name: string;
-		user_email: string;
-	};
-	plan: {
-		connected_account_product_id: string;
-		title: string;
-		renewal_price: number;
-		currency: string;
-		renew_interval: string;
-	};
-	renew_interval: string;
-	all_time_total: number;
-};
+import { Subscriber } from '../types';
+import Customer from './customer/index';
 
 function CustomerSection() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
+	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
+
 	const [ cancelledSubscriber, setCancelledSubscriber ] = useState< Subscriber | null >( null );
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
@@ -273,13 +254,9 @@ function CustomerSection() {
 	function renderSubscriberActions( subscriber: Subscriber ) {
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
-				<PopoverMenuItem
-					target="_blank"
-					rel="noopener norefferer"
-					href={ `https://dashboard.stripe.com/search?query=metadata%3A${ subscriber.user.ID }` }
-				>
-					<Gridicon size={ 18 } icon="external" />
-					{ translate( 'See transactions in Stripe Dashboard' ) }
+				<PopoverMenuItem href={ `/earn/supporters/${ site?.slug }?subscriber=${ subscriber.id }` }>
+					<Gridicon size={ 18 } icon="visible" />
+					{ translate( 'View' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem onClick={ () => setCancelledSubscriber( subscriber ) }>
 					<Gridicon size={ 18 } icon="cross" />
@@ -328,12 +305,24 @@ function CustomerSection() {
 		);
 	}
 
+	function getSingleSubscriber( subscriberId: string ) {
+		const subscriberList = Object.values( subscribers );
+		return subscriberList.filter( ( subscriber ) => subscriber.id === subscriberId )[ 0 ];
+	}
+
 	useEffect( () => {
 		fetchNextSubscriberPage( true );
 	}, [ fetchNextSubscriberPage ] );
 
 	if ( ! site ) {
 		return <LoadingEllipsis />;
+	}
+
+	if ( subscriberId ) {
+		const subscriber = getSingleSubscriber( subscriberId );
+		if ( subscriber ) {
+			return <Customer customer={ subscriber } />;
+		}
 	}
 
 	return (

@@ -1076,8 +1076,13 @@ class RegisterDomainStep extends Component {
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
+						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
-					const isDomainAvailable = [ AVAILABLE, UNKNOWN ].includes( status );
+					const isDomainAvailable = [
+						AVAILABLE,
+						UNKNOWN,
+						REGISTERED_OTHER_SITE_SAME_USER,
+					].includes( status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
@@ -1158,6 +1163,7 @@ class RegisterDomainStep extends Component {
 				.replace( ' ', ',' )
 				.toLocaleLowerCase(),
 			...this.getActiveFiltersForAPI(),
+			include_internal_move_eligible: 'onboarding' === this.props.flowName,
 		};
 
 		debug( 'Fetching domains suggestions with the following query', query );
@@ -1483,7 +1489,7 @@ class RegisterDomainStep extends Component {
 						status,
 						this.props.analyticsSection
 					);
-					if ( status ) {
+					if ( status && status !== domainAvailability.REGISTERED_OTHER_SITE_SAME_USER ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
@@ -1521,8 +1527,9 @@ class RegisterDomainStep extends Component {
 
 		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
 		const availableDomain =
-			lastDomainStatus === domainAvailability.AVAILABLE &&
-			find( this.state.searchResults, matchesSearchedDomain );
+			[ domainAvailability.AVAILABLE, domainAvailability.REGISTERED_OTHER_SITE_SAME_USER ].includes(
+				lastDomainStatus
+			) && find( this.state.searchResults, matchesSearchedDomain );
 		const onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
 		const suggestions = this.getSuggestionsFromProps();

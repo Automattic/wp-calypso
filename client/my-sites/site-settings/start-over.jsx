@@ -284,12 +284,12 @@ function SiteResetCard( {
 			<Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Reset your site' ) }
+				title={ translate( 'Site Reset' ) }
 				subtitle={ translate(
 					"Remove all posts, pages, and media to start fresh while keeping your site's address. {{a}}Learn more.{{/a}}",
 					{
 						components: {
-							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
+							a: <InlineSupportLink supportContext="site-reset" showIcon={ false } />,
 						},
 					}
 				) }
@@ -370,7 +370,7 @@ function SiteResetCard( {
 				site={ site }
 				isUnlaunchedSite={ isUnlaunchedSiteProp }
 				urlRef="unlaunched-site-reset"
-			/>{ ' ' }
+			/>
 		</Main>
 	);
 }
