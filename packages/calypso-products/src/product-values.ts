@@ -55,6 +55,7 @@ export { isCustomDesign } from './is-custom-design';
 export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
 export { isDIFMProduct } from './is-difm-product';
 export { isDomainMapping } from './is-domain-mapping';
+export { isDomainMoveInternal } from './is-domain-move-internal';
 export { isDomainProduct } from './is-domain-product';
 export { isDomainRedemption } from './is-domain-redemption';
 export { isDomainRegistration } from './is-domain-registration';

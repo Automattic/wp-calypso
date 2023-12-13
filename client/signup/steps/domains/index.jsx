@@ -24,12 +24,12 @@ import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
-	getDomainRegistrations,
 	updatePrivacyForDomain,
 	hasDomainInCart,
 	planItem,
 	hasPlan,
 	hasDomainRegistration,
+	getDomainsInCart,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -126,7 +126,7 @@ export class RenderDomainsStep extends Component {
 			const productSlug = getDomainProductSlug( domain );
 			const domainItem = domainRegistration( { productSlug, domain } );
 			const domainCart = shouldUseMultipleDomainsInCart( props.flowName )
-				? getDomainRegistrations( this.props.cart )
+				? getDomainsInCart( this.props.cart )
 				: {};
 
 			props.submitSignupStep(
@@ -736,7 +736,7 @@ export class RenderDomainsStep extends Component {
 		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
-		const domainCart = getDomainRegistrations( this.props.cart );
+		const domainCart = getDomainsInCart( this.props.cart );
 		const { suggestion } = step;
 		const isPurchasingItem =
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
@@ -814,7 +814,7 @@ export class RenderDomainsStep extends Component {
 
 	getSideContent = () => {
 		const { flowName } = this.props;
-		const domainsInCart = getDomainRegistrations( this.props.cart );
+		const domainsInCart = getDomainsInCart( this.props.cart );
 
 		const additionalDomains = this.state.temporaryCart
 			.map( ( cartDomain ) => {
