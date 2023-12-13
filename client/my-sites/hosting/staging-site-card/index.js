@@ -173,7 +173,7 @@ export const StagingSiteCard = ( {
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
 		}
-	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, siteId, stagingSiteStatus ] );
+	}, [ dispatch, queryClient, __, siteId, stagingSiteStatus ] );
 
 	useEffect( () => {
 		// If we are done with the transfer, and we have not errored we want to set the action to NONE, and display a success notice.
