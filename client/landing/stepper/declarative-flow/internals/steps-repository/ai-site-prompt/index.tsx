@@ -73,10 +73,7 @@ const AISitePrompt: Step = function ( props ) {
 						currentSearchParams.set( 'pattern_ids', response.pages[ 0 ].patterns.join( ',' ) );
 						currentSearchParams.set(
 							'pages',
-							response.pages
-								.map( ( page: any ) => page?.title )
-								.filter()
-								.join( ',' )
+							response.pages.map( ( page: any ) => page.title ).join( ',' )
 						);
 						// These 2 params were introduced in the V5 of the AI endpoint.
 						// TODO: Remove the checks once we settle on the endpoint.
