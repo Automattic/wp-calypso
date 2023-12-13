@@ -214,7 +214,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	useEffect( () => {
 		// If the user has manually entered a name that should be left as-is, don't overwrite it
-		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
+		if ( editedProductName && editedProductName !== defaultNames[ `${ editedSchedule }` ] ) {
 			return;
 		}
 		const name = editedPostIsTier ? defaultNameTier : defaultNames[ `${ editedSchedule }` ] ?? '';
