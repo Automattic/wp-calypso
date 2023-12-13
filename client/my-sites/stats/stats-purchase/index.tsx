@@ -133,13 +133,17 @@ const StatsPurchasePage = ( {
 				path="/stats/purchase/:site"
 				title="Stats > Purchase"
 				from={ query.from ?? '' }
-				properties={ {
-					variant:
-						( ! isForceProductRedirect && isCommercial ) || redirectToCommercial
-							? 'commercial'
-							: 'personal',
-					is_upgrade: isCommercialOwned,
-				} }
+				properties={
+					isTierUpgradeSliderEnabled
+						? {
+								variant:
+									( ! isForceProductRedirect && isCommercial ) || redirectToCommercial
+										? 'commercial'
+										: 'personal',
+								is_upgrade: isCommercialOwned,
+						  }
+						: null
+				}
 			/>
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {
