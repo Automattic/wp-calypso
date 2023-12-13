@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { RETIRED_THEME_SLUGS_SET } from 'calypso/state/themes/constants';
 
@@ -163,9 +164,8 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 	return interlacedThemes;
 }
 
-// This should be kept consistent with the theme_tier taxonomy.
 export function getTierRouteParam() {
 	return isEnabled( 'themes/tiers' )
-		? ':tier(free|personal|premium|partner|woocommerce|sensei)?'
+		? `:tier(${ Object.keys( THEME_TIERS ).join( '|' ) })?`
 		: ':tier(free|premium|marketplace)?';
 }
