@@ -22,6 +22,7 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import Security2faEnhancedSecuritySetting from '../security-2fa-enhanced-security-setting';
 
 import './style.scss';
 
@@ -89,8 +90,15 @@ class TwoStep extends Component {
 		return <Security2faBackupCodes />;
 	};
 
+	renderEnhancedSecuritySetting = () => {
+		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
+			return null;
+		}
+		return <Security2faEnhancedSecuritySetting />;
+	};
+
 	render() {
-		const { path, translate } = this.props;
+		const { path, translate, userSettings } = this.props;
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
@@ -113,8 +121,9 @@ class TwoStep extends Component {
 
 				<Card>{ this.renderTwoStepSection() }</Card>
 
+				{ this.renderEnhancedSecuritySetting() }
 				{ this.render2faKey() }
-				{ this.renderBackupCodes() }
+				{ ! userSettings?.two_step_enhanced_security ? this.renderBackupCodes() : null }
 				{ this.renderApplicationPasswords() }
 			</Main>
 		);

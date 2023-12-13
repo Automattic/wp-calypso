@@ -14,6 +14,7 @@ import Notice from 'calypso/components/notice';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 
@@ -233,6 +234,7 @@ class ReauthRequired extends Component {
 	}
 
 	renderDialog() {
+		const enhancedSecurity = this.props.twoStepAuthorization.data?.two_step_enhanced_security;
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
 			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
@@ -245,6 +247,8 @@ class ReauthRequired extends Component {
 		const hasSmsRecoveryNumber =
 			!! this.props?.twoStepAuthorization?.data?.two_step_sms_last_four?.length;
 
+		const currentAuthType = enhancedSecurity ? 'webauthn' : twoFactorAuthType;
+
 		return (
 			<Dialog
 				autoFocus={ false }
@@ -252,7 +256,7 @@ class ReauthRequired extends Component {
 				isFullScreen={ false }
 				isVisible={ this.props?.twoStepAuthorization.isReauthRequired() }
 			>
-				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
+				{ isSecurityKeySupported && currentAuthType === 'webauthn' ? (
 					<SecurityKeyForm
 						loginUserWithSecurityKey={ this.loginUserWithSecurityKey }
 						onComplete={ this.refreshNonceOnFailure }
@@ -261,7 +265,7 @@ class ReauthRequired extends Component {
 					this.renderVerificationForm()
 				) }
 				<TwoFactorActions
-					twoFactorAuthType={ twoFactorAuthType }
+					twoFactorAuthType={ currentAuthType }
 					onChange={ this.handleAuthSwitch }
 					isSmsSupported={
 						method === 'sms' || ( method === 'authenticator' && hasSmsRecoveryNumber )
@@ -269,6 +273,7 @@ class ReauthRequired extends Component {
 					isAuthenticatorSupported={ method !== 'sms' }
 					isSmsAllowed={ shouldEnableSmsButton }
 					isSecurityKeySupported={ isSecurityKeySupported }
+					requireSecurityKeyOnly={ enhancedSecurity }
 				/>
 			</Dialog>
 		);
@@ -319,6 +324,7 @@ ReauthRequired.propTypes = {
 export default connect(
 	( state ) => ( {
 		currentUserId: getCurrentUserId( state ),
+		userSettings: getUserSettings( state ),
 	} ),
 	{
 		redirectToLogout,
