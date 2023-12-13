@@ -8,8 +8,11 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 
-const reviewsApiBase = '/sites/marketplace.wordpress.com/comments';
+const apiBase = '/sites/marketplace.wordpress.com';
+const reviewsApiBase = `${ apiBase }/comments`;
 const reviewsApiNamespace = 'wp/v2';
+const reviewsStatsApiBase = `${ apiBase }/marketplace/reviews`;
+const reviewsStatsNamespace = 'wpcom/v2';
 const queryKeyBase: QueryKey = [ 'marketplace-reviews' ];
 
 export type ProductType = 'plugin' | 'theme';
@@ -59,6 +62,11 @@ export type MarketplaceReviewResponse = {
 	};
 };
 
+export type MarketplaceReviewsStatsResponse = {
+	ratings_average: number;
+	ratings_count: number;
+};
+
 export type ErrorResponse = {
 	code: string;
 	message: string;
@@ -69,6 +77,11 @@ export type ErrorResponse = {
 
 type MarketplaceReviewsQueryOptions = Pick<
 	UseQueryOptions< MarketplaceReviewResponse[] >,
+	'enabled' | 'staleTime' | 'refetchOnMount'
+>;
+
+type MarketplaceReviewsStatsQueryOptions = Pick<
+	UseQueryOptions< MarketplaceReviewsStatsResponse >,
 	'enabled' | 'staleTime' | 'refetchOnMount'
 >;
 
@@ -143,6 +156,16 @@ const deleteReview = ( {
 	} );
 };
 
+const fetchMarketplaceReviewsStats = ( {
+	productType,
+	slug,
+}: ProductProps ): Promise< MarketplaceReviewsStatsResponse > => {
+	return wpcom.req.get( {
+		path: `${ reviewsStatsApiBase }/${ productType }/${ slug }/stats`,
+		apiNamespace: reviewsStatsNamespace,
+	} );
+};
+
 export const useMarketplaceReviewsQuery = (
 	{ productType, slug, page, perPage }: MarketplaceReviewsQueryProps,
 	{
@@ -183,5 +206,24 @@ export const useDeleteMarketplaceReviewMutation = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
 		},
+	} );
+};
+
+export const useMarketplaceReviewsStatsQuery = (
+	productProps: ProductProps,
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: MarketplaceReviewsStatsQueryOptions = {}
+) => {
+	const queryKey: QueryKey = [ queryKeyBase, productProps ];
+	const queryFn = () => fetchMarketplaceReviewsStats( productProps );
+	return useQuery( {
+		queryKey,
+		queryFn,
+		enabled,
+		staleTime,
+		refetchOnMount,
 	} );
 };
