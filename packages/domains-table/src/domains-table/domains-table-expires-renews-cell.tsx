@@ -17,7 +17,7 @@ function getNotice( {
 }: {
 	isAutoRenewing: boolean;
 	isExpired: boolean;
-	expiryDate: string | null;
+	expiryDate: string;
 } ): string {
 	if ( isExpired ) {
 		return sprintf(
@@ -60,7 +60,9 @@ export const DomainsTableExpiresRenewsOnCell = ( {
 
 	const isAutoRenewing = Boolean( domain.auto_renewing );
 
-	const isExpired = domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() );
+	const isExpired = Boolean(
+		domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() )
+	);
 
 	return (
 		<Element className="domains-table-row__renews-on-cell">
