@@ -6,6 +6,8 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -156,6 +158,13 @@ const CommandPalette = () => {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
 	};
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( isOpen ) {
+			dispatch( recordTracksEvent( 'calypso_hosting_command_palette_open' ) );
+		}
+	}, [ dispatch, isOpen ] );
 
 	// Cmd+K shortcut
 	useEffect( () => {
