@@ -216,7 +216,7 @@ export default compose( [
 				cloneUrl,
 				showChangeAddress: ! isJetpack && ! isVip && ! isP2,
 				showClone: 'active' === rewindState.state && ! isAtomic,
-				showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
+				showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
 				showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 				showManageConnection: isJetpack && ! isAtomic,
 				showStartSiteTransfer,
