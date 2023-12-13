@@ -13,7 +13,7 @@ export default function ThemeTierCommunityBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
-	const legacyCanUseTheme = useSelector(
+	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
 
@@ -41,7 +41,7 @@ export default function ThemeTierCommunityBadge() {
 
 	return (
 		<>
-			{ ! legacyCanUseTheme && (
+			{ ! isThemeIncluded && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge
