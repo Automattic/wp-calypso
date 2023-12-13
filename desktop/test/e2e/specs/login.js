@@ -90,7 +90,7 @@ describe( 'User Can log in', () => {
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
-	it( 'Log in', async function () {
+	it( 'Log in', async () => {
 		await mainWindow.fill( '#usernameOrEmail', process.env.E2EGUTENBERGUSER );
 		await mainWindow.keyboard.press( 'Enter' );
 		await mainWindow.fill( '#password', process.env.E2EPASSWORD );
