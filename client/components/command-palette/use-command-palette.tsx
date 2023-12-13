@@ -80,7 +80,7 @@ const useSiteToAction = () => {
 								command_name: selectedCommand.name,
 								has_nested_commands: false,
 								list_count: filteredSitesLength,
-								currentPath,
+								current_path: currentPath,
 								search_is_empty: ! search,
 								search_text: search,
 								site_id: site.ID,
