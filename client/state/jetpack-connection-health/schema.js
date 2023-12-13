@@ -2,10 +2,6 @@ export const requestError = {
 	type: [ 'string', 'null' ],
 };
 
-export const isLoading = {
-	type: 'boolean',
-};
-
 export const lastRequestTime = {
 	type: 'number',
 };
@@ -29,7 +25,6 @@ export const jetpacConnectionHealth = {
 	properties: {
 		connectionHealth,
 		requestError,
-		isLoading,
 		lastRequestTime,
 	},
 };
