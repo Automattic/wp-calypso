@@ -7,7 +7,8 @@ import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question'
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription, useURLQueryParams } from '../hooks';
-import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../lib';
+import { LICENSE_INFO_MODAL_ID } from '../lib';
+import getProductShortTitle from '../lib/get-product-short-title';
 import getProductVariantShortTitle from '../lib/get-product-variant-short-title';
 import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
@@ -150,7 +151,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 						<div className="license-product-card__main">
 							<div className="license-product-card__heading">
 								<h3 className="license-product-card__title">
-									{ getProductTitle( product.name, true ) }
+									{ getProductShortTitle( product, true ) }
 								</h3>
 
 								<MultipleChoiceQuestion
@@ -174,7 +175,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
 									<LicenseLightboxLink
-										productName={ getProductTitle( product.name ) }
+										productName={ getProductShortTitle( product ) }
 										onClick={ onShowLightbox }
 									/>
 								) }
@@ -190,6 +191,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ product }
+					quantity={ quantity }
 					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }

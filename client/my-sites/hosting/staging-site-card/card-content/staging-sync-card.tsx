@@ -354,11 +354,14 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate( 'We couldn’t synchronize changes to the %(siteType)s site.', {
-								args: {
-									siteType: siteToSync,
-								},
-							} ) }
+							text={ translate(
+								'We couldn’t synchronize changes to the %(siteType)s site. Please contact support.',
+								{
+									args: {
+										siteType: siteToSync,
+									},
+								}
+							) }
 						>
 							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
 						</Notice>

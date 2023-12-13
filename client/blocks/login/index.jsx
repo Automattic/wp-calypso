@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -303,34 +304,43 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
-			isJetpack,
-			isWhiteLogin,
-			isJetpackWooCommerceFlow,
+			action,
+			currentQuery,
+			fromSite,
+			isAnchorFmSignup,
 			isFromMigrationPlugin,
-			isP2Login,
-			wccomFrom,
+			isGravPoweredClient,
+			isGravPoweredLoginPage,
+			isJetpack,
+			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
+			isP2Login,
+			isPartnerSignup,
+			isSignupExistingAccount,
+			isSocialFirst,
+			isWhiteLogin,
+			isWoo,
+			isWooCoreProfilerFlow,
 			linkingSocialService,
+			locale,
 			oauth2Client,
 			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
-			fromSite,
-			isAnchorFmSignup,
-			isPartnerSignup,
-			isWoo,
-			action,
-			currentQuery,
-			isGravPoweredClient,
-			isGravPoweredLoginPage,
-			isWooCoreProfilerFlow,
-			isSignupExistingAccount,
+			wccomFrom,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
+
+		if ( isSocialFirst ) {
+			headerText =
+				englishLocales.includes( locale ) || i18n.hasTranslation( 'Log into WordPress.com' )
+					? translate( 'Log into WordPress.com' )
+					: translate( 'Log in to WordPress.com' );
+		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
 			headerText = translate( 'Log in to update your payment details and renew your subscription' );
@@ -603,6 +613,39 @@ class Login extends Component {
 		);
 	}
 
+	renderToS() {
+		const { isSocialFirst, translate, twoFactorEnabled } = this.props;
+
+		if ( ! isSocialFirst || twoFactorEnabled ) {
+			return null;
+		}
+
+		const tos = translate(
+			'Just a little reminder that by continuing with any of the options below, ' +
+				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			{
+				components: {
+					tosLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					privacyLink: (
+						<a
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
+
+		return <div className="login__form-subheader-terms">{ tos }</div>;
+	}
+
 	renderNotice() {
 		const { requestNotice } = this.props;
 
@@ -642,6 +685,8 @@ class Login extends Component {
 			currentQuery,
 			isGravPoweredLoginPage,
 			isSignupExistingAccount,
+			isSocialFirst,
+			loginButtons,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -773,6 +818,8 @@ class Login extends Component {
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
+				isSocialFirst={ isSocialFirst }
+				loginButtons={ loginButtons }
 			/>
 		);
 	}
@@ -783,6 +830,7 @@ class Login extends Component {
 
 	render() {
 		const { isJetpack, oauth2Client, locale } = this.props;
+
 		return (
 			<div
 				className={ classNames( 'login', {
@@ -795,6 +843,8 @@ class Login extends Component {
 				<ErrorNotice locale={ locale } />
 
 				{ this.renderNotice() }
+
+				{ this.renderToS() }
 
 				{ this.renderContent() }
 

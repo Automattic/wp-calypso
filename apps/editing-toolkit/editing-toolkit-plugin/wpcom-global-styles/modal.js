@@ -1,10 +1,13 @@
 /* global wpcomGlobalStyles */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { usePlans } from '@automattic/data-stores/src/plans';
+import { PLAN_PREMIUM } from '@automattic/data-stores/src/plans/constants';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf, hasTranslation } from '@wordpress/i18n';
 import React from 'react';
 import image from './image.svg';
 import { useCanvas } from './use-canvas';
@@ -14,6 +17,8 @@ import './modal.scss';
 const GlobalStylesModal = () => {
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 	const { viewCanvasPath } = useCanvas();
+	const isEnglishLocale = useIsEnglishLocale();
+	const plans = usePlans();
 
 	const isVisible = useSelect(
 		( select ) => {
@@ -61,10 +66,24 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
-	const description = __(
-		"Change all of your site's fonts, colors and more. Available on the Premium plan.",
-		'full-site-editing'
-	);
+	const description =
+		isEnglishLocale ||
+		hasTranslation(
+			"Change all of your site's fonts, colors and more. Available on the %s plan.",
+			'full-site-editing'
+		)
+			? sprintf(
+					/* translators: %s is the short-form Premium plan name */
+					__(
+						"Change all of your site's fonts, colors and more. Available on the %s plan.",
+						'full-site-editing'
+					),
+					plans.data?.[ PLAN_PREMIUM ]?.productNameShort || ''
+			  )
+			: __(
+					"Change all of your site's fonts, colors and more. Available on the Premium plan.",
+					'full-site-editing'
+			  );
 
 	return (
 		<Modal

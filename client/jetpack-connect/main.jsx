@@ -81,7 +81,10 @@ export class JetpackConnectMain extends Component {
 		// Track that connection was started by button-click, so we can auto-approve at auth step.
 		persistSession( this.state.currentUrl );
 
-		if ( this.props.isRequestingSites ) {
+		// Set state to show spinner only if we're installing.
+		// We don't want to show a spinner if user tries to connect a
+		// site that's already connected before fetching sites.
+		if ( this.props.isRequestingSites && this.isInstall() ) {
 			this.setState( { waitingForSites: true } );
 		} else {
 			this.checkUrl( this.state.currentUrl );

@@ -1,12 +1,9 @@
 import { PLAN_PERSONAL, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, FoldableCard, Spinner } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
+import { Spinner } from '@automattic/components';
 import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { isMobile } from '@automattic/viewport';
-import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -27,12 +24,12 @@ import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
-	getDomainRegistrations,
 	updatePrivacyForDomain,
 	hasDomainInCart,
 	planItem,
 	hasPlan,
 	hasDomainRegistration,
+	getDomainsInCart,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -78,59 +75,10 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import DomainsMiniCart from './domains-mini-cart';
 import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 
 import './style.scss';
-
-// Referenced from WordAds_Ads_Txt
-const wpcomSubdomains = [
-	'wordpress.com',
-	'art.blog',
-	'business.blog',
-	'car.blog',
-	'code.blog',
-	'data.blog',
-	'design.blog',
-	'family.blog',
-	'fashion.blog',
-	'finance.blog',
-	'fitness.blog',
-	'food.blog',
-	'game.blog',
-	'health.blog',
-	'home.blog',
-	'law.blog',
-	'movie.blog',
-	'music.blog',
-	'news.blog',
-	'photo.blog',
-	'poetry.blog',
-	'politics.blog',
-	'school.blog',
-	'science.blog',
-	'sport.blog',
-	'tech.blog',
-	'travel.blog',
-	'video.blog',
-	'water.blog',
-];
-
-const BoldTLD = ( { domain } ) => {
-	const split = domain.split( '.' );
-	let tld = split.pop();
-	const wp = split.pop();
-
-	if ( wpcomSubdomains.includes( `${ wp }.${ tld }` ) ) {
-		tld = `${ wp }.${ tld }`;
-	}
-
-	return (
-		<>
-			<span>{ domain.replace( `.${ tld }`, '' ) }</span>
-			<b>.{ tld }</b>
-		</>
-	);
-};
 
 export class RenderDomainsStep extends Component {
 	static propTypes = {
@@ -178,7 +126,7 @@ export class RenderDomainsStep extends Component {
 			const productSlug = getDomainProductSlug( domain );
 			const domainItem = domainRegistration( { productSlug, domain } );
 			const domainCart = shouldUseMultipleDomainsInCart( props.flowName )
-				? getDomainRegistrations( this.props.cart )
+				? getDomainsInCart( this.props.cart )
 				: {};
 
 			props.submitSignupStep(
@@ -777,7 +725,8 @@ export class RenderDomainsStep extends Component {
 		this.props.shoppingCartManager.reloadFromServer();
 	};
 
-	goToNext = () => {
+	goToNext = ( event ) => {
+		event.stopPropagation();
 		this.setState( { isGoingToNextStep: true } );
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
@@ -787,7 +736,7 @@ export class RenderDomainsStep extends Component {
 		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
-		const domainCart = getDomainRegistrations( this.props.cart );
+		const domainCart = getDomainsInCart( this.props.cart );
 		const { suggestion } = step;
 		const isPurchasingItem =
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
@@ -847,9 +796,25 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
+	freeDomainRemoveClickHandler = () => {
+		this.setState( { wpcomSubdomainSelected: false } );
+		this.props.saveSignupStep( {
+			stepName: this.props.stepName,
+			suggestion: {
+				domain_name: false,
+			},
+		} );
+		this.props.submitSignupStep(
+			Object.assign( {
+				stepName: this.props.stepName,
+			} ),
+			Object.assign( { siteUrl: false } )
+		);
+	};
+
 	getSideContent = () => {
-		const { translate, flowName } = this.props;
-		const domainsInCart = getDomainRegistrations( this.props.cart );
+		const { flowName } = this.props;
+		const domainsInCart = getDomainsInCart( this.props.cart );
 
 		const additionalDomains = this.state.temporaryCart
 			.map( ( cartDomain ) => {
@@ -877,220 +842,31 @@ export class RenderDomainsStep extends Component {
 			</div>
 		) : null;
 
-		const DomainNameAndCost = ( { domain } ) => {
-			const priceText = translate( '%(cost)s/year', {
-				args: { cost: domain.item_original_cost_display },
-			} );
-			const costDifference = domain.item_original_cost - domain.cost;
-			const hasPromotion = costDifference > 0;
-			const isRemoving = this.state.domainRemovalQueue.some(
-				( item ) => item.meta === domain.meta
-			);
-
-			return isRemoving ? null : (
-				<>
-					<div>
-						<div className="domains__domain-cart-domain">
-							<BoldTLD domain={ domain.meta } />
-						</div>
-						<div className="domain-product-price__price">
-							{ hasPromotion && <del>{ priceText }</del> }
-							<span className="domains__price">{ domain.item_subtotal_display }</span>
-						</div>
-					</div>
-					<div>
-						{ hasPromotion && domain.item_subtotal === 0 && (
-							<span className="savings-message">
-								{ translate( 'Free for the first year with annual paid plans.' ) }
-							</span>
-						) }
-						<Button
-							borderless
-							className="domains__domain-cart-remove"
-							onClick={ this.removeDomainClickHandler( domain ) }
-						>
-							{ translate( 'Remove' ) }
-						</Button>
-					</div>
-				</>
-			);
-		};
-
-		const FreeDomain = () => (
-			<div key="row-free" className="domains__domain-cart-row">
-				<div>
-					<div className="domains__domain-cart-domain">
-						<BoldTLD domain={ this.state.wpcomSubdomainSelected.domain_name } />
-					</div>
-					<div className="domain-product-price__price">
-						<span className="domains__price-free">{ this.props.translate( 'Free' ) }</span>
-					</div>
-				</div>
-				<div>
-					<Button
-						borderless
-						className="button domains__domain-cart-remove"
-						onClick={ () => {
-							this.setState( { wpcomSubdomainSelected: false } );
-							this.props.saveSignupStep( {
-								stepName: this.props.stepName,
-								suggestion: {
-									domain_name: false,
-								},
-							} );
-							this.props.submitSignupStep(
-								Object.assign( {
-									stepName: this.props.stepName,
-								} ),
-								Object.assign( { siteUrl: false } )
-							);
-						} }
-					>
-						{ this.props.translate( 'Remove' ) }
-					</Button>
-				</div>
-			</div>
-		);
-
-		const DomainsInCart = () => {
-			if (
-				! shouldUseMultipleDomainsInCart( this.props.flowName ) ||
-				( cartIsLoading && domainsInCart.length === 0 )
-			) {
-				return null;
-			}
-			const domainCount =
-				domainsInCart.length +
-				( this.state.wpcomSubdomainSelected ? 1 : 0 ) -
-				this.state.domainRemovalQueue.length;
-
-			if ( isMobile() ) {
-				const MobileHeader = (
-					<div className="domains__domain-cart-title">
-						<div className="domains__domain-cart-total">
-							<div key="rowtotal" className="domains__domain-cart-total-items">
-								{ this.props.translate( '%d domain', '%d domains', {
-									count: domainCount,
-									args: [ domainCount ],
-								} ) }
-							</div>
-							<div key="rowtotalprice" className="domains__domain-cart-total-price">
-								{ formatCurrency(
-									domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
-								) }
-							</div>
-						</div>
-						<Button
-							primary
-							className="domains__domain-cart-continue"
-							onClick={ this.goToNext }
-							busy={ this.state.isGoingToNextStep }
-						>
-							{ this.props.translate( 'Continue' ) }
-						</Button>
-					</div>
-				);
-
-				return (
-					<FoldableCard
-						clickableHeader
-						className="domains__domain-side-content domains__domain-cart-foldable-card"
-						header={ MobileHeader }
-						expanded={ false }
-						actionButton={
-							<button className="foldable-card__action foldable-card__expand">
-								<span className="screen-reader-text">More</span>
-								<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
-							</button>
-						}
-						actionButtonExpanded={
-							<button className="foldable-card__action foldable-card__expand">
-								<span className="screen-reader-text">More</span>
-								<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
-							</button>
-						}
-					>
-						<div className="domains__domain-side-content domains__domain-cart">
-							<div className="domains__domain-cart-rows">
-								{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
-								{ domainsInCart.map( ( domain, i ) => (
-									<div key={ `row${ i }` } className="domains__domain-cart-row">
-										<DomainNameAndCost domain={ domain } />
-									</div>
-								) ) }
-							</div>
-						</div>
-					</FoldableCard>
-				);
-			}
-
-			return (
-				<div className="domains__domain-side-content domains__domain-cart">
-					<div className="domains__domain-cart-title">
-						{ this.props.translate( 'Your domains' ) }
-					</div>
-					<div className="domains__domain-cart-rows">
-						{ this.state.wpcomSubdomainSelected && <FreeDomain /> }
-						{ domainsInCart.map( ( domain, i ) => (
-							<div key={ `row${ i }` } className="domains__domain-cart-row">
-								<DomainNameAndCost domain={ domain } />
-							</div>
-						) ) }
-					</div>
-					<div className="domains__domain-cart-total">
-						<div key="rowtotal" className="domains__domain-cart-count">
-							{ this.props.translate( '%d domain', '%d domains', {
-								count: domainCount,
-								args: [ domainCount ],
-							} ) }
-						</div>
-						<div key="rowtotalprice" className="domains__domain-cart-total-price">
-							<strong>
-								{ domainsInCart.some( ( domain ) => domain.temporary )
-									? '...'
-									: formatCurrency(
-											domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-											domainsInCart.length ? domainsInCart[ 0 ].currency : 'USD'
-									  ) }
-							</strong>
-						</div>
-					</div>
-					<Button
-						primary
-						className="domains__domain-cart-continue"
-						onClick={ this.goToNext }
-						busy={ this.state.isGoingToNextStep }
-					>
-						{ this.props.translate( 'Continue' ) }
-					</Button>
-					{ this.props.flowName !== 'domain' && (
-						<Button
-							borderless
-							className="domains__domain-cart-choose-later"
-							onClick={ () => {
-								this.handleSkip( undefined, false, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
-							} }
-						>
-							{ this.props.translate( 'Choose my domain later' ) }
-						</Button>
-					) }
-				</div>
-			);
-		};
-
 		return (
 			<div className="domains__domain-side-content-container">
-				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected
-					? DomainsInCart()
-					: ! this.shouldHideDomainExplainer() &&
-					  this.props.isPlanSelectionAvailableLaterInFlow && (
-							<ChooseDomainLater
-								step={ this.props.step }
-								flowName={ this.props.flowName }
-								handleDomainExplainerClick={ this.handleDomainExplainerClick }
-							/>
-					  ) }
+				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
+					<DomainsMiniCart
+						domainsInCart={ domainsInCart }
+						domainRemovalQueue={ this.state.domainRemovalQueue }
+						cartIsLoading={ cartIsLoading }
+						flowName={ this.props.flowName }
+						removeDomainClickHandler={ this.removeDomainClickHandler }
+						isGoingToNextStep={ this.state.isGoingToNextStep }
+						goToNext={ this.goToNext }
+						handleSkip={ this.handleSkip }
+						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+						freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
+					/>
+				) : (
+					! this.shouldHideDomainExplainer() &&
+					this.props.isPlanSelectionAvailableLaterInFlow && (
+						<ChooseDomainLater
+							step={ this.props.step }
+							flowName={ this.props.flowName }
+							handleDomainExplainerClick={ this.handleDomainExplainerClick }
+						/>
+					)
+				) }
 				{ useYourDomain }
 				{ this.shouldDisplayDomainOnlyExplainer() && (
 					<div className="domains__domain-side-content">

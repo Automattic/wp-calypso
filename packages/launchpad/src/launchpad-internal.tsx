@@ -10,6 +10,7 @@ export interface LaunchpadInternalProps {
 	makeLastTaskPrimaryAction?: boolean;
 	taskFilter?: ( tasks: Task[] ) => Task[];
 	useLaunchpadOptions?: UseLaunchpadOptions;
+	launchpadContext?: string | undefined;
 }
 
 /**
@@ -22,8 +23,14 @@ const LaunchpadInternal = ( {
 	taskFilter,
 	makeLastTaskPrimaryAction,
 	useLaunchpadOptions = {},
+	launchpadContext,
 }: LaunchpadInternalProps ) => {
-	const launchpadData = useLaunchpad( siteSlug || '', checklistSlug, useLaunchpadOptions );
+	const launchpadData = useLaunchpad(
+		siteSlug || '',
+		checklistSlug,
+		useLaunchpadOptions,
+		launchpadContext
+	);
 	const { isFetchedAfterMount, data } = launchpadData;
 	const tasks = useRef< Task[] >( [] );
 

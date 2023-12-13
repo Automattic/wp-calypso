@@ -927,7 +927,11 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 				{ this.enhancedOwnershipSettings() }
-				<BuiltByUpsell site={ site } isUnlaunchedSite={ propsisUnlaunchedSite } />
+				<BuiltByUpsell
+					site={ site }
+					isUnlaunchedSite={ propsisUnlaunchedSite }
+					urlRef="unlaunched-settings"
+				/>
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">

@@ -82,6 +82,10 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
 		useState< ResponseDomain | null >( null );
 
+	// If a site contains more than one domain that is not a subdomain.
+	const showManageAllDomainsCTA =
+		( data?.domains ?? [] ).filter( ( domain ) => ! domain.is_subdomain ).length > 1;
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
@@ -147,7 +151,9 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 									hasNonWpcomDomains={ hasNonWpcomDomains }
 								/>
 							) }
-							<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+							{ showManageAllDomainsCTA && (
+								<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+							) }
 						</>
 					}
 					fetchAllDomains={ fetchAllDomains }

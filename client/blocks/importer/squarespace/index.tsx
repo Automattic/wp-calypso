@@ -91,7 +91,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
+			<div className={ classnames( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( ! job ) {
 						return;

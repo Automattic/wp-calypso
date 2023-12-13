@@ -1,8 +1,9 @@
-import { PATTERN_SOURCE_SITE_ID } from './constants';
+import { isEnabled } from '@automattic/calypso-config';
+import { getPatternSourceSiteID } from './constants';
 import type { Pattern, Category } from './types';
 
 export const encodePatternId = ( patternId: number ) =>
-	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
+	`${ patternId }-${ getPatternSourceSiteID() }`;
 
 export const decodePatternId = ( encodedPatternId: number | string ) =>
 	`${ encodedPatternId }`.split( '-' )[ 0 ];
@@ -29,6 +30,6 @@ export const injectCategoryToPattern = (
 };
 
 export const isPriorityPattern = ( { tags: { assembler_priority } }: Pattern ) =>
-	!! assembler_priority;
+	isEnabled( 'pattern-assembler/v2' ) ? true : Boolean( assembler_priority );
 
 export const isPagePattern = ( { tags: { assembler_page } }: Pattern ) => !! assembler_page;

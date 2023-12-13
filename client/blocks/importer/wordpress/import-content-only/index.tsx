@@ -121,7 +121,11 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderProgress() {
-		return <ProgressScreen job={ job } />;
+		return (
+			<div className="import-layout__center">
+				<ProgressScreen job={ job } />
+			</div>
+		);
 	}
 
 	function renderImportDrag() {

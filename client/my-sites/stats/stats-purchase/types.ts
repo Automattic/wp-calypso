@@ -13,7 +13,7 @@ export type PriceTierListItemProps = {
 export type StatsPlanTierUI = {
 	price: string | undefined;
 	description?: string;
-	views: string | number | undefined;
+	views: number | null;
 	extension?: boolean;
 	per_unit_fee?: number;
 };

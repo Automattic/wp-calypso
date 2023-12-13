@@ -1,7 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { useSiteResetMutation, useSiteResetContentSummaryQuery } from '@automattic/data-stores';
-import { isSiteAtomic } from '@automattic/data-stores/src/site/selectors';
+import {
+	useSiteResetContentSummaryQuery,
+	useSiteResetMutation,
+	useSiteResetStatusQuery,
+} from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -16,14 +19,16 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { BuiltByUpsell } from './built-by-upsell-banner';
 
@@ -113,7 +118,35 @@ function SiteResetCard( {
 	const dispatch = useDispatch();
 
 	const { data } = useSiteResetContentSummaryQuery( siteId );
+	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
+	let resetStatus = 'ready';
+	if ( status ) {
+		resetStatus = status.status;
+	}
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
+	const [ resetProgress, setResetProgress ] = useState( 1 );
+
+	if ( resetStatus !== 'ready' && resetProgress === 1 ) {
+		//it's already in progress on load
+		setResetProgress( 0 );
+	}
+
+	const checkStatus = async () => {
+		if ( resetProgress !== 1 ) {
+			const {
+				data: { status: latestStatus },
+			} = await refetchResetStatus();
+			if ( latestStatus === 'ready' ) {
+				setResetProgress( 1 );
+				dispatch(
+					successNotice( translate( 'Your site has been reset.' ), {
+						id: 'site-reset-success-notice',
+						duration: 4000,
+					} )
+				);
+			}
+		}
+	};
 
 	const handleError = () => {
 		dispatch(
@@ -125,16 +158,14 @@ function SiteResetCard( {
 	};
 
 	const handleResult = ( result ) => {
+		setResetProgress( 0 );
 		if ( result.success ) {
 			if ( isAtomic ) {
 				dispatch(
-					successNotice(
-						translate( 'Your site will be reset. It can take up to one minute to complete. ' ),
-						{
-							id: 'site-reset-success-notice',
-							duration: 6000,
-						}
-					)
+					successNotice( translate( 'Your site will be reset. ' ), {
+						id: 'site-reset-success-notice',
+						duration: 6000,
+					} )
 				);
 			} else {
 				dispatch(
@@ -143,6 +174,7 @@ function SiteResetCard( {
 						duration: 4000,
 					} )
 				);
+				setResetProgress( 1 );
 			}
 		} else {
 			handleError();
@@ -203,18 +235,19 @@ function SiteResetCard( {
 		return result;
 	};
 
-	const handleReset = () => {
+	const handleReset = async () => {
 		if ( ! isDomainConfirmed ) {
 			return;
 		}
 		resetSite( siteId );
+		setDomainConfirmed( false );
 	};
 
 	const instructions = createInterpolateElement(
 		sprintf(
 			// translators: %s is the site domain
 			translate(
-				'Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL active. You’ll also lose any modifications you made to your current theme.'
+				"Resetting <strong>%s</strong> will remove all of its content but keep the site and its URL up and running. Keep in mind you'll also lose any modifications you've made to your current theme."
 			),
 			siteDomain
 		),
@@ -226,7 +259,7 @@ function SiteResetCard( {
 	const backupHint = isAtomic
 		? createInterpolateElement(
 				translate(
-					'The site will be automatically backed up before the reset. You can restore it from <a>Activity Log</a>.'
+					"Having second thoughts? Don't fret, you'll be able to restore your site using the most recent backup in the <a>Activity Log</a>."
 				),
 				{
 					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
@@ -234,23 +267,29 @@ function SiteResetCard( {
 		  )
 		: createInterpolateElement(
 				translate(
-					'To keep a copy of your current site, head to the <a>Export page</a> before reseting your site.'
+					'To keep a copy of your current site, head to the <a>Export page</a> before starting the reset.'
 				),
 				{
 					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
 				}
 		  );
 
+	const isResetInProgress = resetProgress < 1;
+
+	const ctaText =
+		! isAtomic && isLoading ? translate( 'Resetting site' ) : translate( 'Reset site' );
+
 	return (
 		<Main className="site-settings__reset-site">
+			<Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } />
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ translate( 'Site Reset' ) }
 				subtitle={ translate(
-					"Keep your site's address and theme, but delete all posts, pages, and media to start fresh. {{a}}Learn more.{{/a}}",
+					"Remove all posts, pages, and media to start fresh while keeping your site's address. {{a}}Learn more.{{/a}}",
 					{
 						components: {
-							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
+							a: <InlineSupportLink supportContext="site-reset" showIcon={ false } />,
 						},
 					}
 				) }
@@ -259,60 +298,79 @@ function SiteResetCard( {
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
 				<h1>{ translate( 'Site Reset' ) }</h1>
 			</HeaderCake>
-			<ActionPanel style={ { margin: 0 } }>
-				<ActionPanelBody>
-					<p>{ instructions }</p>
-					<p>{ translate( 'The following content will be removed:' ) }</p>
-					<ul>
-						{ contentInfo().map( ( { message, url } ) => {
-							if ( url ) {
-								return (
-									<li key={ message }>
-										<a href={ url }>{ message }</a>
-									</li>
-								);
-							}
-							return <li key={ message }>{ message }</li>;
-						} ) }
-					</ul>
-				</ActionPanelBody>
-				<ActionPanelFooter>
-					<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
-						{ createInterpolateElement(
-							sprintf(
-								// translators: %s is the site domain
-								translate( 'Enter <strong>%s</strong> to continue' ),
-								siteDomain
-							),
-							{
-								strong: <strong />,
-							}
+			{ isResetInProgress ? (
+				<ActionPanel style={ { margin: 0 } }>
+					<ActionPanelBody>
+						<LoadingBar progress={ resetProgress / 100 } />
+						<p className="reset-site__in-progress-message">
+							{ translate( "We're resetting your site. We'll email you once it's ready." ) }
+						</p>
+					</ActionPanelBody>
+				</ActionPanel>
+			) : (
+				<ActionPanel style={ { margin: 0 } }>
+					<ActionPanelBody>
+						<p>{ instructions }</p>
+						<p>{ translate( 'The following content will be removed:' ) }</p>
+						<ul>
+							{ contentInfo().map( ( { message, url } ) => {
+								if ( url ) {
+									return (
+										<li key={ message }>
+											<a href={ url }>{ message }</a>
+										</li>
+									);
+								}
+								return <li key={ message }>{ message }</li>;
+							} ) }
+						</ul>
+					</ActionPanelBody>
+					<ActionPanelFooter>
+						<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
+							{ createInterpolateElement(
+								sprintf(
+									// translators: %s is the site domain
+									translate(
+										"Type <strong>%s</strong> below to confirm you're ready to reset the site:"
+									),
+									siteDomain
+								),
+								{
+									strong: <strong />,
+								}
+							) }
+						</FormLabel>
+						<div className="site-settings__reset-site-controls">
+							<FormTextInput
+								autoCapitalize="off"
+								aria-required="true"
+								id="confirmResetInput"
+								disabled={ isLoading }
+								style={ { flex: 1 } }
+								onChange={ ( event ) =>
+									setDomainConfirmed( event.currentTarget.value.trim() === siteDomain )
+								}
+							/>
+							<Button
+								primary // eslint-disable-line wpcalypso/jsx-classname-namespace
+								onClick={ handleReset }
+								disabled={ isLoading || ! isDomainConfirmed }
+								busy={ isLoading }
+							>
+								{ ctaText }
+							</Button>
+						</div>
+						{ backupHint && (
+							<p className="site-settings__reset-site-backup-hint">{ backupHint }</p>
 						) }
-					</FormLabel>
-					<div className="site-settings__reset-site-controls">
-						<FormTextInput
-							autoCapitalize="off"
-							aria-required="true"
-							id="confirmResetInput"
-							disabled={ isLoading }
-							style={ { flex: 0.5 } }
-							onChange={ ( event ) =>
-								setDomainConfirmed( event.currentTarget.value.trim() === siteDomain )
-							}
-						/>
-						<Button
-							primary // eslint-disable-line wpcalypso/jsx-classname-namespace
-							onClick={ handleReset }
-							disabled={ isLoading || ! isDomainConfirmed }
-							busy={ isLoading }
-						>
-							{ translate( 'Reset Site' ) }
-						</Button>
-					</div>
-					{ backupHint && <p className="site-settings__reset-site-backup-hint">{ backupHint }</p> }
-				</ActionPanelFooter>
-			</ActionPanel>
-			<BuiltByUpsell site={ site } isUnlaunchedSite={ isUnlaunchedSiteProp } />
+					</ActionPanelFooter>
+				</ActionPanel>
+			) }
+			<BuiltByUpsell
+				site={ site }
+				isUnlaunchedSite={ isUnlaunchedSiteProp }
+				urlRef="unlaunched-site-reset"
+			/>
 		</Main>
 	);
 }
@@ -325,7 +383,7 @@ export default connect( ( state ) => {
 		siteDomain,
 		site,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
-		isAtomic: isSiteAtomic( state, siteId ),
+		isAtomic: isJetpackSite( state, siteId ),
 		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 	};
 } )( localize( StartOver ) );

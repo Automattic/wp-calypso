@@ -2,13 +2,15 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useI18n } from '@wordpress/react-i18n';
 import builtByLogo from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import { Banner } from 'calypso/components/banner';
+import { addQueryArgs } from 'calypso/lib/url';
 
 type Props = {
 	site: SiteDetails;
 	isUnlaunchedSite: boolean;
+	urlRef: string;
 };
 
-export function BuiltByUpsell( { site, isUnlaunchedSite }: Props ) {
+export function BuiltByUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
 	const { __ } = useI18n();
 	// Do not show for launched sites
 	if ( ! isUnlaunchedSite ) {
@@ -26,7 +28,12 @@ export function BuiltByUpsell( { site, isUnlaunchedSite }: Props ) {
 	if ( Date.now() - siteCreatedAt < FOUR_DAYS_IN_MILLISECONDS ) {
 		return null;
 	}
-
+	const url = addQueryArgs(
+		{
+			ref: urlRef,
+		},
+		'https://wordpress.com/website-design-service/'
+	);
 	return (
 		<Banner
 			className="site-settings__built-by-upsell"
@@ -35,7 +42,7 @@ export function BuiltByUpsell( { site, isUnlaunchedSite }: Props ) {
 				'Leave the heavy lifting to us and let our professional builders craft your compelling website.'
 			) }
 			callToAction={ __( 'Get started' ) }
-			href="https://wordpress.com/website-design-service/?ref=unlaunched-settings"
+			href={ url }
 			target="_blank"
 			iconPath={ builtByLogo }
 			disableCircle={ true }

@@ -68,7 +68,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 	return (
 		<div className="import__upgrade-plan">
-			<div className="import__heading-center">
+			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
 					{ subTitleText ||
