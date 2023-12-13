@@ -1,5 +1,6 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -55,6 +56,17 @@ interface useCommandPaletteOptions {
 	search: string;
 }
 
+interface SiteToActionParameters {
+	onClickSite: OnClickSiteFunction;
+	properties: {
+		selectedCommand: Command;
+		filteredSitesLength: number;
+		listVisibleCount: number;
+		search: string;
+		currentSiteId: number | null;
+	};
+}
+
 const useSiteToAction = () => {
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
@@ -62,11 +74,14 @@ const useSiteToAction = () => {
 
 	const siteToAction = useCallback(
 		(
-			onClickSite: OnClickSiteFunction,
-			selectedCommand: Command,
-			filteredSitesLength: number,
-			search: string,
-			currentSiteId: number | null
+			onClickSite: SiteToActionParameters[ 'onClickSite' ],
+			{
+				selectedCommand,
+				filteredSitesLength,
+				listVisibleCount,
+				search,
+				currentSiteId,
+			}: SiteToActionParameters[ 'properties' ]
 		) =>
 			( site: SiteExcerptData ): Command => {
 				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
@@ -81,6 +96,7 @@ const useSiteToAction = () => {
 								command_name: selectedCommand.name,
 								has_nested_commands: false,
 								list_count: filteredSitesLength,
+								list_visible_count: listVisibleCount,
 								current_route: currentRoute,
 								search_is_empty: ! search,
 								search_text: search,
@@ -128,6 +144,8 @@ export const useCommandPalette = ( {
 	const dispatch = useDispatch();
 	const siteToAction = useSiteToAction();
 
+	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
+
 	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { sitesSorting } = useSitesSorting();
 	const sortedSites = useSitesListSorting( allSites, sitesSorting );
@@ -174,6 +192,7 @@ export const useCommandPalette = ( {
 					command_name: command.name,
 					has_nested_commands: !! command.siteFunctions,
 					list_count: commands.length,
+					list_visible_count: listVisibleCount,
 					current_route: currentRoute,
 					search_is_empty: ! search,
 					search_text: search,
@@ -203,7 +222,13 @@ export const useCommandPalette = ( {
 			}
 		}
 		sitesToPick = filteredSites.map(
-			siteToAction( onClick, selectedCommand, filteredSites.length, search, currentSiteId )
+			siteToAction( onClick, {
+				selectedCommand,
+				filteredSitesLength: filteredSites.length,
+				listVisibleCount,
+				search,
+				currentSiteId,
+			} )
 		);
 	}
 
