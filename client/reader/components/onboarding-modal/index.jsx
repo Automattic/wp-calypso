@@ -3,7 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
@@ -19,6 +19,7 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const modalFrameRef = useRef();
 
 	// TODO extract this to a reusable hook as we do the same thing in discover-stream.js
 	// maybe move this to HOC to start fetch earlier...
@@ -38,6 +39,16 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 			return data.interests;
 		},
 	} );
+
+	// Reset scroll position on page change.
+	useEffect( () => {
+		const scrollWindow = modalFrameRef.current?.querySelector(
+			'.reader-onboarding-modal .components-modal__content.has-scrolled-content'
+		);
+		if ( scrollWindow && scrollWindow.scrollTop !== 0 ) {
+			scrollWindow.scrollTop = 0;
+		}
+	}, [ currentPage ] );
 
 	const pages = [
 		<>
@@ -81,7 +92,7 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 				<li>{ translate( 'Increase the relevance of your future content suggestions.' ) }</li>
 				<li>
 					{ translate(
-						'List them in your "Manage subscriptions" section, where you can customize settings such as email and notifications.'
+						'Add it to your "Manage subscriptions" section, where you can customize settings such as email and notifications.'
 					) }
 				</li>
 			</ul>
@@ -97,6 +108,7 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 			onRequestClose={ () => setIsOpen( false ) }
 			isDismissible={ false }
 			size="fill"
+			ref={ modalFrameRef }
 		>
 			{ pages[ currentPage ] }
 			<div className="reader-onboarding-modal__footer">
