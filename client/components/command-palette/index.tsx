@@ -6,8 +6,9 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -72,6 +73,7 @@ export function CommandMenuGroup( {
 	const { commands } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
+		search,
 	} );
 
 	if ( ! commands.length ) {
@@ -158,13 +160,18 @@ const CommandPalette = () => {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
 	};
+	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
 	const dispatch = useDispatch();
 
 	useEffect( () => {
 		if ( isOpen ) {
-			dispatch( recordTracksEvent( 'calypso_hosting_command_palette_open' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_command_palette_open', {
+					current_path: currentPath,
+				} )
+			);
 		}
-	}, [ dispatch, isOpen ] );
+	}, [ currentPath, dispatch, isOpen ] );
 
 	// Cmd+K shortcut
 	useEffect( () => {

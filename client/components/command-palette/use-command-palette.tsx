@@ -1,13 +1,14 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
-import { useDispatch } from 'calypso/state';
+import { isCustomDomain, isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
@@ -51,15 +52,23 @@ interface Command {
 interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	search: string;
 }
 
 const useSiteToAction = () => {
 	const dispatch = useDispatch();
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
+
 	const siteToAction = useCallback(
-		( onClickSite: OnClickSiteFunction, selectedCommand: Command ) =>
+		(
+			onClickSite: OnClickSiteFunction,
+			selectedCommand: Command,
+			filteredSitesLength: number,
+			search: string
+		) =>
 			( site: SiteExcerptData ): Command => {
 				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
-
 				return {
 					name: `${ site.ID }`,
 					label: `${ siteName }`,
@@ -68,8 +77,26 @@ const useSiteToAction = () => {
 					callback: ( { close }: { close: CloseFunction } ) => {
 						dispatch(
 							recordTracksEvent( 'calypso_command_palette_site_clicked', {
-								site_id: site.ID,
 								command_name: selectedCommand.name,
+								list_count: filteredSitesLength,
+								currentPath,
+								search_is_empty: ! search,
+								search_text: search,
+								site_id: site.ID,
+								has_nested_commands: false,
+								has_custom_domain: isCustomDomain( site.slug ),
+								plan_product_id: site.plan?.product_id,
+								plan_product_slug: site.plan?.product_slug,
+								plan_is_expired: Boolean( site.plan?.expired ),
+								is_jetpack_no_atomic: isNotAtomicJetpack( site ),
+								is_atomic: Boolean( site.is_wpcom_atomic ),
+								is_p2: Boolean( isP2Site( site ) ),
+								is_staging: Boolean( site.is_wpcom_staging_site ),
+								is_free_plan: Boolean( site.plan?.is_free ),
+								is_site_owner: site.site_owner === userId,
+								is_coming_soon: site.is_coming_soon,
+								is_private: site.is_private,
+								launch_status: site.launch_status,
 							} )
 						);
 						onClickSite( { site, close } );
@@ -81,7 +108,7 @@ const useSiteToAction = () => {
 					),
 				};
 			},
-		[ dispatch ]
+		[ currentPath, dispatch, userId ]
 	);
 
 	return siteToAction;
@@ -90,6 +117,7 @@ const useSiteToAction = () => {
 export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
+	search,
 }: useCommandPaletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -142,7 +170,11 @@ export const useCommandPalette = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_command_palette_command_clicked', {
 					command_name: command.name,
-					has_nested_command: !! command.siteFunctions,
+					has_nested_commands: !! command.siteFunctions,
+					list_count: commands.length,
+					current_path: currentPath,
+					search_is_empty: ! search,
+					search_text: search,
 				} )
 			);
 			command.callback( params );
@@ -168,7 +200,9 @@ export const useCommandPalette = ( {
 				];
 			}
 		}
-		sitesToPick = filteredSites.map( siteToAction( onClick, selectedCommand ) );
+		sitesToPick = filteredSites.map(
+			siteToAction( onClick, selectedCommand, filteredSites.length, search )
+		);
 	}
 
 	return { commands: sitesToPick ?? finalSortedCommands };
