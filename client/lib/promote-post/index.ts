@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { initSentry, closeSentry, captureException } from '@automattic/calypso-sentry';
+import { initSentry, captureException } from '@automattic/calypso-sentry';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
@@ -68,7 +68,6 @@ declare global {
 				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
 			} ) => void;
-			cleanup: () => void;
 			strings: any;
 		};
 	}
@@ -129,9 +128,6 @@ export const getDSPOrigin = () => {
 	return 'calypso';
 };
 
-// Module flag to check if we should cleanup the Sentry instance on widget close
-let cleanupSentryInstance = false;
-
 export async function showDSP(
 	siteSlug: string | null,
 	siteId: number | string,
@@ -148,10 +144,7 @@ export async function showDSP(
 	dispatch?: Dispatch
 ): Promise< boolean > {
 	// Increase Sentry sample rate to 100% for DSP widget
-	const state = await initSentry( { sampleRate: 1.0 } );
-
-	// We need to cleanup the Sentry instance if it was previously disabled
-	cleanupSentryInstance = state === 'disabled';
+	await initSentry( { sampleRate: 1.0 } );
 
 	// Loading the DSP widget JS assets
 	await loadDSPWidgetJS();
@@ -217,16 +210,6 @@ export async function showDSP(
 			reject( false );
 		}
 	} );
-}
-
-export async function cleanupDSP() {
-	if ( cleanupSentryInstance ) {
-		closeSentry();
-	}
-
-	if ( window.BlazePress ) {
-		window.BlazePress.cleanup?.();
-	}
 }
 
 /**

@@ -148,17 +148,9 @@ export async function initSentry( parameters?: SentryOptions ) {
 	// Make sure we don't throw
 	try {
 		// No Sentry loading on the server.
-		if ( typeof document === 'undefined' ) {
-			return 'skipped'; // Previous state: skipped
-		}
-
-		// No double-loading.
-		// No initializing with empty params
-		if (
-			( state.state === 'initial' && ! parameters ) ||
-			! [ 'initial', 'disabled' ].includes( state.state )
-		) {
-			return 'enabled'; // Previous state: enabled -> We're already running [loading, loaded, error]
+		// No double-loading. (Abort if the existind state is loading, loaded, or error.)
+		if ( typeof document === 'undefined' || ! [ 'initial', 'disabled' ].includes( state.state ) ) {
+			return;
 		}
 
 		// We use previous invocation parameters here, allowing the user to override any of them
@@ -166,7 +158,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 		const params =
 			state.state === 'initial'
 				? ( parameters as SentryOptions ) // We know it's not undefined because of the check above
-				: { ...state.params, sampleRate: 0.1, ...parameters };
+				: { ...state.params, ...parameters };
 
 		const { beforeSend, userId, sampleRate = 0.1 } = params;
 
@@ -177,7 +169,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 			state = { state: 'disabled', params };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
-			return 'disabled'; // Previous state: disabled -> We were not running [initial, disabled]
+			return;
 		}
 
 		// eslint-disable-next-line no-console
@@ -247,17 +239,5 @@ export async function initSentry( parameters?: SentryOptions ) {
 		// Clear queues. We've either drained them or errored trying to load Sentry.
 		// Either way they don't serve a purpose.
 		clearQueues();
-	}
-
-	return 'disabled'; // Previous state: disabled -> We were not running [initial, disabled]
-}
-
-/**
- * Sentry cleanup function.
- * It will close the Sentry instance if it was successfully initialized.
- */
-export function closeSentry() {
-	if ( state.state === 'loaded' ) {
-		state.sentry.close();
 	}
 }

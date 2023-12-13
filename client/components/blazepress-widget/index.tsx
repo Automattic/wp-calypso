@@ -9,12 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import {
-	showDSP,
-	usePromoteWidget,
-	PromoteWidgetStatus,
-	cleanupDSP,
-} from 'calypso/lib/promote-post';
+import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
@@ -64,13 +59,6 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 			window.scrollTo( 0, 0 );
 		}
 	}, [ isVisible ] );
-
-	useEffect( () => {
-		return () => {
-			// Execute Widget Cleanup function
-			cleanupDSP();
-		};
-	}, [] );
 
 	const handleShowCancel = ( show: boolean ) => setShowCancelButton( show );
 	const handleShowTopBar = ( show: boolean ) => {
