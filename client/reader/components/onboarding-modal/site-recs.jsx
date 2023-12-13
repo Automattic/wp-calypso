@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
@@ -38,6 +39,7 @@ const SiteRecommendations = () => {
 
 	return (
 		<div className="reader-onboarding-modal__recommended-sites">
+			{ recommendedSites.length === 0 && <LoadingPlaceholder /> }
 			<div className="reader-onboarding-modal__recommended-sites-list">
 				{ sitesList1.map( ( site ) => (
 					<ConnectedReaderSubscriptionListItem

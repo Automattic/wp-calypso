@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, ConfettiAnimation, LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
@@ -12,10 +12,9 @@ import TagButton from './tag-button';
 
 import './style.scss';
 
-// 9 for testing purposes, we will probably do 3 to start.
-const MINIMUM_TAG_THRESHOLD = 900;
+const MINIMUM_TAG_THRESHOLD = 3;
 
-function ReaderOnboardingModal( { setIsOpen } ) {
+function ReaderOnboardingModal( { setIsOpen, followedTags } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const [ currentPage, setCurrentPage ] = useState( 0 );
@@ -76,6 +75,7 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 				{ interestTags.map( ( tag ) => (
 					<TagButton title={ tag.title } slug={ tag.slug } key={ tag.slug } />
 				) ) }
+				{ interestTags.length === 0 && <LoadingPlaceholder /> }
 			</div>
 		</>,
 		<>
@@ -183,22 +183,34 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 					</a>
 				</li>
 			</ul>
+			<ConfettiAnimation />
 		</>,
 	];
+
+	const onContinue = () => {
+		if ( currentPage < pages.length - 1 ) {
+			return setCurrentPage( currentPage + 1 );
+		}
+		// We should also set a calypso preference to check, to prevent this from being shown again
+		// after completion.
+		return setIsOpen( false );
+	};
+
+	const shouldDisableButton = currentPage === 0 && followedTags.length < MINIMUM_TAG_THRESHOLD;
 
 	return (
 		<Modal
 			title={ translate( 'Welcome to the Reader!' ) }
 			className="reader-onboarding-modal"
-			onRequestClose={ () => setIsOpen( false ) }
+			// onRequestClose={ () => setIsOpen( false ) }
 			isDismissible={ false }
 			size="fill"
 			ref={ modalFrameRef }
 		>
 			{ pages[ currentPage ] }
 			<div className="reader-onboarding-modal__footer">
-				<Button onClick={ () => setCurrentPage( currentPage + 1 ) } primary>
-					{ translate( 'Continue' ) }
+				<Button onClick={ onContinue } primary disabled={ shouldDisableButton }>
+					{ currentPage < pages.length - 1 ? translate( 'Continue' ) : translate( 'Close window' ) }
 				</Button>
 			</div>
 		</Modal>
@@ -222,5 +234,5 @@ export default function ReaderOnboardingModalOuter() {
 		return null;
 	}
 
-	return <ReaderOnboardingModal setIsOpen={ setIsOpen } followedTags={ followedTags } />;
+	return <ReaderOnboardingModal setIsOpen={ setIsOpen } followedTags={ followedTags || [] } />;
 }
