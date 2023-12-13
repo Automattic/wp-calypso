@@ -55,6 +55,22 @@ function getWebpackConfig(
 			// disable module concatenation so that instances of `__()` are not renamed
 			concatenateModules: false,
 		},
+		module: {
+			...webpackConfig.module,
+			rules: [
+				...webpackConfig.module.rules,
+				{
+					// Add target files here to replace Gridicons with WordPress Icons.
+					test: /theme-upgrade-modal\/index\.tsx?$/,
+					exclude: /node_modules\//,
+					use: [
+						{
+							loader: './gridicons-to-wordpress-icons.js',
+						},
+					],
+				},
+			],
+		},
 		plugins: [
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
@@ -62,10 +78,6 @@ function getWebpackConfig(
 			new webpack.DefinePlugin( {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
-			// Replace the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
-			// The sprite is loaded separately in `apps/wpcom-block-editor/src/wpcom/features/live-preview/upgrade-modal.tsx`.
-			new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
-			new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
 			new DependencyExtractionWebpackPlugin( {
 				requestToExternal( request ) {
 					if ( request === 'tinymce/tinymce' ) {

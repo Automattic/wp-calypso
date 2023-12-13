@@ -33,6 +33,15 @@
 	.theme-upgrade-modal__close {
 		padding: 8px 14px;
 	}
+
+	// This overrides the style to match the original modal,
+	// since `wpcom-block-editor` replaces Gridicons with WordPress icons on build time.
+	.theme-upgrade-modal__included-item .gridicon {
+		width: 24px;
+		height: 24px;
+		margin-right: 4px;
+		margin-top: 0;
+	}
 }
 
 .dialog__backdrop.wpcom-live-preview-upgrade-modal__overlay {
