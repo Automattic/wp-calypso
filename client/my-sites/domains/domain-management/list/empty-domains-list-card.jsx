@@ -1,7 +1,7 @@
 import { PLAN_100_YEARS, domainProductSlugs, isFreePlan } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { useTranslate, hasTranslation } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
@@ -20,7 +20,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 
 	const siteHasHundredYearPlan = selectedSite?.plan?.product_slug === PLAN_100_YEARS;
 
-	let title = hasTranslation( 'Get your free domain' )
+	let title = i18n.hasTranslation( 'Get your free domain' )
 		? translate( 'Get your free domain' )
 		: translate( 'Get your domain' );
 	let line = translate(
