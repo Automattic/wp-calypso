@@ -263,6 +263,33 @@ export const planWithoutDomain: ResponseCartProduct = {
 	months_per_bill_period: 12,
 };
 
+export const planWithoutDomainYearly: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+	currency: 'INR',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	product_id: 1009,
+	volume: 1,
+	item_original_cost_integer: 2400,
+	item_subtotal_integer: 1920,
+	bill_period: '365',
+	months_per_bill_period: 12,
+	item_original_subtotal_integer: 2400,
+	cost_overrides: [
+		{
+			old_subtotal_integer: 240000,
+			new_subtotal_integer: 192000,
+			override_code: 'first-year-promotional-discounts',
+			does_override_original_cost: false,
+			human_readable_reason: 'First-year promotional discount',
+		},
+	],
+};
+
 export const planWithoutDomainMonthly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal Monthly',
@@ -1330,6 +1357,28 @@ export function getBasicCart(): ResponseCart {
 		total_tax_integer: 700,
 		total_cost_integer: 15600,
 		sub_total_integer: 15600,
+		coupon_discounts_integer: [],
+	};
+}
+
+export function getPromoCart(): ResponseCart {
+	const cart = getEmptyResponseCart();
+	return {
+		...cart,
+		coupon: '',
+		coupon_savings_total_integer: 0,
+		currency: 'INR',
+		locale: 'en-IN',
+		is_coupon_applied: false,
+		products: [ planWithoutDomainYearly ],
+		tax: {
+			display_taxes: true,
+			location: {},
+		},
+		allowed_payment_methods: normalAllowedPaymentMethods,
+		total_tax_integer: 170.4,
+		total_cost_integer: 2090.4,
+		sub_total_integer: 1920,
 		coupon_discounts_integer: [],
 	};
 }

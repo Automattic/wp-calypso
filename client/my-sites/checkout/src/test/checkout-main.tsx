@@ -23,6 +23,7 @@ import {
 	getActivePersonalPlanDataForType,
 	countryList,
 	getBasicCart,
+	getPromoCart,
 	mockMatchMediaOnWindow,
 	mockGetPaymentMethodsEndpoint,
 	mockGetVatInfoEndpoint,
@@ -668,5 +669,12 @@ describe( 'CheckoutMain', () => {
 			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the promo code field', async () => {
+		render( <MockCheckout initialCart={ getPromoCart() } setCart={ mockSetCartEndpoint } /> );
+		await waitFor( () => {
+			expect( screen.getByText( /First-year promotional discount/ ) ).toBeInTheDocument();
+		} );
 	} );
 } );
