@@ -48,12 +48,17 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	let overLimitMonthsText = '';
 
 	const gotoPurchase = () => {
-		if ( upgradeEvent ) {
-			recordTracksEvent( upgradeEvent );
-		}
+		if ( upgradeLink ) {
+			if ( ! upgradeEvent ) {
+				page( upgradeLink );
+			}
 
-		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => page( upgradeLink ), 250 );
+			// if upgradeEvent is undefined page() will redirect
+			recordTracksEvent( upgradeEvent as string );
+
+			// Allow some time for the event to be recorded before redirecting.
+			setTimeout( () => page( upgradeLink ), 250 );
+		}
 	};
 
 	if ( overLimitMonths && overLimitMonths === 1 ) {
