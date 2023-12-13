@@ -20,7 +20,7 @@ const SiteRecommendations = () => {
 				},
 				{
 					tags: followedTagSlugs,
-					site_recs_per_card: 10,
+					site_recs_per_card: 20,
 					tag_recs_per_card: 0,
 				}
 			),
@@ -32,22 +32,44 @@ const SiteRecommendations = () => {
 		},
 	} );
 
+	const halfSize = Math.ceil( recommendedSites.length / 2 );
+	const sitesList1 = recommendedSites.slice( 0, halfSize );
+	const sitesList2 = recommendedSites.slice( halfSize );
+
 	return (
 		<div className="reader-onboarding-modal__recommended-sites">
-			{ recommendedSites.map( ( site ) => (
-				<ConnectedReaderSubscriptionListItem
-					key={ site.feed_ID }
-					feedId={ site.feed_ID }
-					siteId={ site.blog_ID }
-					site={ site }
-					url={ site.URL }
-					showLastUpdatedDate={ false }
-					showNotificationSettings={ false }
-					showFollowedOnDate={ false }
-					followSource="reader-onboarding-modal"
-					disableSuggestedFollows
-				/>
-			) ) }
+			<div className="reader-onboarding-modal__recommended-sites-list">
+				{ sitesList1.map( ( site ) => (
+					<ConnectedReaderSubscriptionListItem
+						key={ site.feed_ID }
+						feedId={ site.feed_ID }
+						siteId={ site.blog_ID }
+						site={ site }
+						url={ site.URL }
+						showLastUpdatedDate={ false }
+						showNotificationSettings={ false }
+						showFollowedOnDate={ false }
+						followSource="reader-onboarding-modal"
+						disableSuggestedFollows
+					/>
+				) ) }
+			</div>
+			<div className="reader-onboarding-modal__recommended-sites-list">
+				{ sitesList2.map( ( site ) => (
+					<ConnectedReaderSubscriptionListItem
+						key={ site.feed_ID }
+						feedId={ site.feed_ID }
+						siteId={ site.blog_ID }
+						site={ site }
+						url={ site.URL }
+						showLastUpdatedDate={ false }
+						showNotificationSettings={ false }
+						showFollowedOnDate={ false }
+						followSource="reader-onboarding-modal"
+						disableSuggestedFollows
+					/>
+				) ) }
+			</div>
 		</div>
 	);
 };

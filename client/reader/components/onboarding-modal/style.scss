@@ -27,8 +27,18 @@
 	}
 
 	.reader-onboarding-modal__recommended-sites {
-		max-width: 500px;
+		max-width: 1200px;
 		margin: auto;
+		display: flex;
+		justify-content: space-around;
+		// align-items: center;
+		flex-wrap: wrap;
+
+		.reader-onboarding-modal__recommended-sites-list {
+			max-width: 450px;
+			margin-left: 15px;
+			margin-right: 15px;
+		}
 	}
 
 	.reader-onboarding-modal__footer {
