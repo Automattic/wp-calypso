@@ -1032,7 +1032,12 @@ function handleSiteEditorBackButton( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleAppBannerShowing( calypsoPort ) {
-	const isWelcomeGuideShown = select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown();
+	const welcomeGuideStore = select( 'automattic/wpcom-welcome-guide' );
+	if ( ! welcomeGuideStore || ! welcomeGuideStore.isWelcomeGuideShown ) {
+		return;
+	}
+
+	const isWelcomeGuideShown = welcomeGuideStore.isWelcomeGuideShown();
 	if ( ! isWelcomeGuideShown ) {
 		return;
 	}
