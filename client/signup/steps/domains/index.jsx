@@ -364,7 +364,17 @@ export class RenderDomainsStep extends Component {
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
-		if ( hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
+		const domainInAddingQueue = this.state.domainAddingQueue.find(
+			( item ) => item.meta === suggestion.domain_name
+		);
+
+		const domainInCart = hasDomainInCart( this.props.cart, suggestion.domain_name );
+
+		const domainInRemovalQueue = this.state.domainRemovalQueue.find(
+			( item ) => item.meta === suggestion.domain_name
+		);
+
+		if ( ( domainInAddingQueue || domainInCart ) && ! domainInRemovalQueue ) {
 			this.removeDomain( suggestion );
 		} else {
 			await this.addDomain( suggestion );

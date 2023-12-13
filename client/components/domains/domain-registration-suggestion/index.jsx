@@ -218,6 +218,15 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, primary: false, disabled: false, busy: false };
 		}
 
+		const isDomainAtRemovalQueue = domainRemovalQueue?.some( ( item ) => item.meta === domain );
+		const isDomainAtAddingQueue = temporaryCart?.some( ( item ) => item.meta === domain );
+
+		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+			if ( isDomainAtRemovalQueue && isDomainAtAddingQueue ) {
+				buttonStyles = { ...buttonStyles, busy: true };
+			}
+		}
+
 		return {
 			buttonContent,
 			buttonStyles,
