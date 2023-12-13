@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -97,6 +97,92 @@ function ReaderOnboardingModal( { setIsOpen } ) {
 				</li>
 			</ul>
 			<SiteRecommendations />
+		</>,
+		<>
+			<h2 className="reader-onboarding-modal__sub-heading">{ translate( 'Congratulations!' ) }</h2>
+			<p className="reader-onboarding-modal__step-description">
+				{ translate(
+					'You have followed some tags and subscribed to some blogs. ' +
+						'You can continue to add more as you explore the reader and find content that interests you. ' +
+						'Here are some links to where you can learn more about the reader:'
+				) }
+			</p>
+			<ul>
+				<li>
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/reader/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'About the reader' ) }
+					</a>
+				</li>
+				<li>
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/reader/reader-lists/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Lists' ) }
+					</a>
+				</li>
+				<li>
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/reader/topics/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Topics' ) }
+					</a>
+				</li>
+				<li>
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/subscribe-to-blogs/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Blogs' ) }
+					</a>
+				</li>
+				<li>
+					<a
+						href={ localizeUrl(
+							'https://wordpress.com/support/reader/algorithms-search-and-recommendations/'
+						) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Search and recommendations' ) }
+					</a>
+				</li>
+				<li>
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/reblogs/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Reblogs' ) }
+					</a>
+				</li>
+				<li>
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/likes/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Likes' ) }
+					</a>
+				</li>
+				<li>
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/notifications/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Notifications' ) }
+					</a>
+				</li>
+			</ul>
 		</>,
 	];
 
