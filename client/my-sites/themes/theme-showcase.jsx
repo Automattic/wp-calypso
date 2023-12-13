@@ -16,7 +16,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import ThemeTierDropdown from 'calypso/components/theme-tier/theme-tier-dropdown';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -42,6 +42,7 @@ import {
 	getThemeFilterToTermTable,
 	prependThemeFilterKeys,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
+	getThemeTiers,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
@@ -86,7 +87,9 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: config.isEnabled( 'themes/tiers' )
+			? PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] )
+			: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
@@ -180,7 +183,18 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		const { isSiteWooExpressOrEcomFreeTrial } = this.props;
+		const { isSiteWooExpressOrEcomFreeTrial, themeTiers } = this.props;
+
+		if ( config.isEnabled( 'themes/tiers' ) ) {
+			return [
+				{ value: 'all', label: translate( 'All' ) },
+				...Object.keys( themeTiers ).map( ( tier ) => ( {
+					value: tier,
+					label: THEME_TIERS[ tier ]?.label || tier,
+				} ) ),
+			];
+		}
+
 		const tiers = [
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
@@ -646,12 +660,6 @@ class ThemeShowcase extends Component {
 											options={ tiers }
 											initialSelected={ tier }
 										></SelectDropdown>
-										{ config.isEnabled( 'themes/tiers' ) && (
-											<ThemeTierDropdown
-												onSelect={ this.onTierSelectFilter }
-												selectedTier={ tier }
-											/>
-										) }
 									</>
 								) }
 							</div>
@@ -727,6 +735,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
 		lastNonEditorRoute: getLastNonEditorRoute( state ),
+		themeTiers: getThemeTiers( state ),
 	};
 };
 
