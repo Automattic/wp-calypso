@@ -89,7 +89,7 @@ export const lastRequestTime = withPersistence( ( state = null, action ) => {
  * @param {Object} action - action
  * @returns {Object} updated state
  */
-export const isLoading = withPersistence( ( state = false, action ) => {
+export const isLoading = ( state = false, action ) => {
 	switch ( action.type ) {
 		case JETPACK_CONNECTION_HEALTH_REQUEST:
 			return true;
@@ -99,7 +99,7 @@ export const isLoading = withPersistence( ( state = false, action ) => {
 		default:
 			return state;
 	}
-} );
+};
 
 export const reducer = combineReducers( {
 	requestError,
