@@ -158,6 +158,7 @@ export class RenderDomainsStep extends Component {
 			disableMiniCartGoNext: false,
 			temporaryCart: [],
 			replaceDomainFailedMessage: null,
+			domainAddingQueue: [],
 		};
 	}
 
@@ -620,13 +621,9 @@ export class RenderDomainsStep extends Component {
 				} ) );
 			}
 
-			await this.props.shoppingCartManager.addProductsToCart( [ registration ] ).catch( () => {
-				this.handleReplaceProductsInCartError(
-					this.props.translate(
-						'Sorry, there was a problem adding that domain. Please try again later.'
-					)
-				);
-			} );
+			await this.setState( ( prevState ) => ( {
+				domainAddingQueue: [ ...prevState.domainAddingQueue, registration ],
+			} ) );
 
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			const productsToAdd = ! hasPlan( this.props.cart )
@@ -636,6 +633,15 @@ export class RenderDomainsStep extends Component {
 			// Add productsToAdd to productsInCart.
 			const productsInCart = [ ...this.props.cart.products, ...productsToAdd ];
 
+			// Only add domains that are not already in the cart.
+			this.state.domainAddingQueue.forEach( ( domainInQueue ) => {
+				const domainToAdd = productsInCart.find( ( item ) => item.meta === domainInQueue.meta );
+
+				if ( ! domainToAdd ) {
+					productsInCart.push( domainInQueue );
+				}
+			} );
+
 			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
 			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
 
@@ -644,6 +650,13 @@ export class RenderDomainsStep extends Component {
 				.replaceProductsInCart( sortedProducts )
 				.then( () => {
 					this.setState( { replaceDomainFailedMessage: null } );
+					if ( this.state.domainAddingQueue?.length > 0 ) {
+						this.setState( ( state ) => ( {
+							domainAddingQueue: state.domainAddingQueue.filter(
+								( domainInQueue ) => domainInQueue.meta !== domain
+							),
+						} ) );
+					}
 				} )
 				.catch( () => {
 					this.handleReplaceProductsInCartError(
