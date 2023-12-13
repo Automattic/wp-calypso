@@ -31,7 +31,10 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
-import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import {
+	getStagingSiteStatus,
+	getIsStagingSiteStatusComplete,
+} from 'calypso/state/staging-site/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
@@ -108,17 +111,10 @@ export const StagingSiteCard = ( {
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && ! isLoadingLockQuery;
 
 	const stagingSiteStatus = useSelector( ( state ) => getStagingSiteStatus( state, siteId ) );
+	const isStagingSiteTransferComplete = useSelector( ( state ) =>
+		getIsStagingSiteStatusComplete( state, siteId )
+	);
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id, hasCompletedInitialLoading );
-
-	const isStagingSiteTransferComplete = useMemo( () => {
-		return (
-			stagingSiteStatus === StagingSiteStatus.COMPLETE ||
-			stagingSiteStatus === StagingSiteStatus.REVERTED ||
-			stagingSiteStatus === StagingSiteStatus.NONE ||
-			stagingSiteStatus === StagingSiteStatus.UNSET
-		);
-	}, [ stagingSiteStatus ] );
-
 	const hasSiteAccess =
 		! hasCompletedInitialLoading ||
 		! stagingSite.id ||
