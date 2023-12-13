@@ -13,7 +13,7 @@ export default function getProductShortTitle(
 ): string {
 	const title = getProductTitle( product, removeVariant );
 
-	if ( title.startsWith( 'VaultPress Backup' ) ) {
+	if ( title.startsWith( 'VaultPress Backup Add-on' ) ) {
 		return getProductVariantShortTitle( title );
 	}
 
