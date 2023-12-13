@@ -11,13 +11,7 @@ import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton
 
 import './empty-domains-list-card-styles.scss';
 
-function EmptyDomainsListCard( {
-	selectedSite,
-	hasDomainCredit,
-	isCompact,
-	hasNonWpcomDomains,
-	showIllustration = true,
-} ) {
+function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNonWpcomDomains } ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -101,7 +95,6 @@ function EmptyDomainsListCard( {
 				actionURL={ actionURL }
 				secondaryAction={ secondaryAction }
 				secondaryActionURL={ secondaryActionURL }
-				showIllustration={ showIllustration }
 			/>
 		</>
 	);
@@ -114,7 +107,6 @@ EmptyDomainsListCard.propTypes = {
 	domains: PropTypes.array,
 	dispatchRecordTracksEvent: PropTypes.func,
 	hasNonWpcomDomains: PropTypes.bool,
-	showIllustration: PropTypes.bool,
 };
 
 export default EmptyDomainsListCard;

@@ -149,7 +149,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 									hasDomainCredit={ !! hasDomainCredit }
 									isCompact={ hasNonWpcomDomains }
 									hasNonWpcomDomains={ hasNonWpcomDomains }
-									showIllustration={ false }
 								/>
 							) }
 							{ showManageAllDomainsCTA && (
