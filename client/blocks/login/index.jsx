@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -322,7 +322,6 @@ class Login extends Component {
 			isWoo,
 			isWooCoreProfilerFlow,
 			linkingSocialService,
-			locale,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -336,10 +335,7 @@ class Login extends Component {
 		let postHeader = null;
 
 		if ( isSocialFirst ) {
-			headerText =
-				englishLocales.includes( locale ) || i18n.hasTranslation( 'Log into WordPress.com' )
-					? translate( 'Log into WordPress.com' )
-					: translate( 'Log in to WordPress.com' );
+			headerText = translate( 'Log in to WordPress.com' );
 		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
