@@ -162,7 +162,7 @@ const CommandPalette = () => {
 		setIsOpen( true );
 		dispatch(
 			recordTracksEvent( 'calypso_hosting_command_palette_open', {
-				location: currentRoute,
+				current_route: currentRoute,
 			} )
 		);
 	}, [ dispatch, currentRoute ] );
