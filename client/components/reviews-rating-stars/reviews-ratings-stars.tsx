@@ -66,7 +66,7 @@ const ReviewsRatingsStars = ( props: ReviewsRatingsStarsProps ) => {
 	// Show numberOfReviews if the prop was passed
 	let numberOfReviewsText;
 	if ( numberOfReviews ) {
-		numberOfReviewsText = translate( '%(numberOfReviews) review', '%(numberOfReviews) reviews', {
+		numberOfReviewsText = translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 			count: numberOfReviews,
 			args: { numberOfReviews },
 		} );
@@ -99,7 +99,7 @@ const ReviewsRatingsStars = ( props: ReviewsRatingsStarsProps ) => {
 				<>
 					{ averageRating && (
 						<div className="reviews-ratings-stars__average">
-							<span className="screen-reader-text">{ translate( 'Average rating ' ) }</span>
+							<span className="screen-reader-text">{ translate( 'Average rating' ) }</span>
 							{ averageRating }
 						</div>
 					) }
@@ -107,16 +107,16 @@ const ReviewsRatingsStars = ( props: ReviewsRatingsStarsProps ) => {
 						{ Array( MAX_RATING )
 							.fill( null )
 							.map( ( _, index ) => {
-								const value = index + 1;
+								const starValue = index + 1;
 								const ratingStarsScreenReaderText = translate(
-									'Rate product %(value) star',
-									'Rate product %(value) stars',
-									{ count: value, args: { value } }
+									'Rate product %(value)d star',
+									'Rate product %(value)d stars',
+									{ count: starValue, args: { value: starValue } }
 								);
 
-								const starProps: StarProps & React.RefAttributes< SVGSVGElement > = {
+								const starProps: StarProps = {
 									rating: ratingState,
-									index: value,
+									index: starValue,
 									hoverRating,
 									onMouseEnter: onStarMouseEnter,
 									onMouseLeave: onStarMouseLeave,
@@ -126,7 +126,7 @@ const ReviewsRatingsStars = ( props: ReviewsRatingsStarsProps ) => {
 									ariaLabel: ratingStarsScreenReaderText as string,
 								};
 
-								return <Star { ...starProps } key={ value } />;
+								return <Star { ...starProps } key={ starValue } />;
 							} ) }
 					</div>
 					{ numberOfReviewsText && (
@@ -137,7 +137,7 @@ const ReviewsRatingsStars = ( props: ReviewsRatingsStarsProps ) => {
 					) }
 				</>
 			) }
-			{ children && children }
+			{ children }
 		</div>
 	);
 };
