@@ -48,6 +48,7 @@ interface Command {
 interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	search: string;
 }
 
 const siteToAction =
@@ -74,6 +75,7 @@ const siteToAction =
 export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
+	search,
 }: useCommandPaletteOptions ): { commands: Command[] } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
@@ -94,35 +96,49 @@ export const useCommandPalette = ( {
 
 	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
 
-	// Filter out commands that have context
-	const commandHasContext = ( paths: string[] = [] ): boolean =>
-		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
+	let finalSortedCommands = [];
+	if ( search && ! selectedCommandName ) {
+		const searchLowerCase = search.toLowerCase();
+		const commandLabelMatch = commands.filter( ( command ) =>
+			command.label.toLowerCase().includes( searchLowerCase )
+		);
+		const commandSearchLabelMatch = commands.filter(
+			( command ) =>
+				command.searchLabel?.toLowerCase().includes( searchLowerCase ) &&
+				! commandLabelMatch.includes( command )
+		);
 
-	// Find and store the "viewMySites" command
-	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
+		finalSortedCommands = [ ...commandLabelMatch, ...commandSearchLabelMatch ];
+	} else {
+		// Filter out commands that have context
+		const commandHasContext = ( paths: string[] = [] ): boolean =>
+			paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
 
-	// Sort the commands with the contextual commands ranking higher than general in a given context
-	const sortedCommands = commands
-		.filter( ( command ) => ! ( command === viewMySitesCommand ) )
-		.sort( ( a, b ) => {
-			const hasContextCommand = commandHasContext( a.context );
-			const hasNoContext = commandHasContext( b.context );
+		// Find and store the "viewMySites" command
+		const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
 
-			if ( hasContextCommand && ! hasNoContext ) {
-				return -1; // commands with context come first if there is a context match
-			} else if ( ! hasContextCommand && hasNoContext ) {
-				return 1; // commands without context set
-			}
+		// Sort the commands with the contextual commands ranking higher than general in a given context
+		const sortedCommands = commands
+			.filter( ( command ) => ! ( command === viewMySitesCommand ) )
+			.sort( ( a, b ) => {
+				const hasContextCommand = commandHasContext( a.context );
+				const hasNoContext = commandHasContext( b.context );
 
-			return 0; // no change in order
-		} );
+				if ( hasContextCommand && ! hasNoContext ) {
+					return -1; // commands with context come first if there is a context match
+				} else if ( ! hasContextCommand && hasNoContext ) {
+					return 1; // commands without context set
+				}
 
-	// Create a variable to hold the final result
-	const finalSortedCommands = [ ...sortedCommands ];
+				return 0; // no change in order
+			} );
 
-	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
-	if ( viewMySitesCommand && currentPath !== '/sites' ) {
-		finalSortedCommands.unshift( viewMySitesCommand );
+		// Create a variable to hold the final result
+		finalSortedCommands = [ ...sortedCommands ];
+		// Add the "viewMySites" command to the beginning in all contexts except "/sites"
+		if ( viewMySitesCommand && currentPath !== '/sites' ) {
+			finalSortedCommands.unshift( viewMySitesCommand );
+		}
 	}
 
 	const selectedCommand = finalSortedCommands.find( ( c ) => c.name === selectedCommandName );

@@ -70,6 +70,7 @@ export function CommandMenuGroup( {
 	const { commands } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
+		search,
 	} );
 
 	if ( ! commands.length ) {
@@ -214,7 +215,11 @@ const CommandPalette = () => {
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
+				<Command
+					label={ __( 'Command palette' ) }
+					onKeyDown={ onKeyDown }
+					shouldFilter={ !! selectedCommandName }
+				>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton
