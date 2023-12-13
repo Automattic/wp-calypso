@@ -43,6 +43,11 @@ if ( process.platform === 'linux' ) {
 	app.disableHardwareAcceleration();
 }
 
+// May help with resource issues in TeamCity. See https://github.com/electron/electron/issues/4280
+if ( process.platform === 'darwin' || process.platform === 'linux' ) {
+	process.setFdLimit( 8192 );
+}
+
 // Force sandbox: true for all BrowserWindow instances
 app.enableSandbox();
 
