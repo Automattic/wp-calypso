@@ -10,7 +10,10 @@
 		"*.scss"
 	],
 	"keywords": [
-		"wordpress"
+		"wordpress",
+		"jetpack",
+		"ai",
+		"utilities"
 	],
 	"author": "Automattic Inc.",
 	"contributors": [],
