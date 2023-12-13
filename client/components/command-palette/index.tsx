@@ -175,6 +175,7 @@ const CommandPalette = () => {
 		setPlaceholderOverride( '' );
 		setSearch( selectedCommandName ? lastEnteredSearch : '' );
 		setSelectedCommandName( '' );
+		setLastEnteredSearch( '' );
 	};
 	const closeAndReset = () => {
 		reset();
