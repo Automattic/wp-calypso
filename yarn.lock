@@ -1032,7 +1032,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    typescript: "npm:^5.2.2"
+    typescript: "npm:^5.3.2"
     webpack: "npm:^5.89.0"
   peerDependencies:
     "@babel/runtime": ^7.23.2
