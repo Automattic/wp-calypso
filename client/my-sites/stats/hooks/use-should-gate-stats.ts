@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -16,44 +17,50 @@ const trafficPaidStats = [
 const featureFlags = [ 'stats/date-control' ];
 
 /*
+ * Check if a site has access to a paid stats feature in wpcom.
  * Utility function intended to be used with useSelector or redux connect mapStateToProps.
  * For example in mapStateToProps:
- * const hasPaidStatsFeature = hasPaidStatsFeature( state, siteId, 'statsSearchTerms' );
+ * const isGatedStats = shouldGateStats( state, siteId, 'statsSearchTerms' );
  */
-export const checkPaidStatsFeature = (
-	state: object,
-	siteId: number | null,
-	featureType: string
-) => {
+export const shouldGateStats = ( state: object, siteId: number | null, statType: string ) => {
+	if ( ! siteId ) {
+		return true;
+	}
+
 	const isPaidStatsEnabled = isEnabled( 'stats/paid-wpcom-v2' );
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const jetpackSite = isJetpackSite( state, siteId );
+	const atomicSite = isAtomicSite( state, siteId );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
-	// check feature flags
-	if ( ! isPaidStatsEnabled || isOdysseyStats ) {
-		return false;
-	}
 	// check site type
-	if ( jetpackSite ) {
-		return false;
-	}
-	// check site feature access
-	if ( ! siteHasPaidStats ) {
+	if ( jetpackSite || atomicSite ) {
 		return false;
 	}
 
-	// check if the featureType is part of paid stats
-	return [ ...trafficPaidStats, ...featureFlags ].includes( featureType );
+	// check if the site has paid stats feature
+	if ( siteHasPaidStats ) {
+		return false;
+	}
+
+	// check feature flags
+	if ( ! isPaidStatsEnabled ) {
+		return false;
+	}
+	if ( isOdysseyStats ) {
+		// don't gate stats if using Odyssey stats
+		return false;
+	}
+
+	// site cannot acesss paid stats, gate stats accordingly
+	return [ ...trafficPaidStats, ...featureFlags ].includes( statType );
 };
 
 /*
  * Check if a stat feature can be accessed for wpcom paid stats.
  */
-export const useWpcomPaidStats = ( featureType: string ) => {
+export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const hasPaidStatsFeature = useSelector( ( state ) =>
-		checkPaidStatsFeature( state, siteId, featureType )
-	);
-	return { hasPaidStatsFeature };
+	const isGatedStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
+	return { isGatedStats };
 };
