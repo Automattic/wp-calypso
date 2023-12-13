@@ -3,7 +3,7 @@ import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding'
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+import './style.scss';
 
 interface Props {
 	onBackToStart?: () => void;
@@ -22,7 +22,7 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	}, [] );
 
 	return (
-		<div className="import-layout__center">
+		<div className="import__not-authorized import-layout__center">
 			<div className="import__header">
 				<div className="import__heading  import__heading-center">
 					<Title>{ __( 'You are not authorized to import content' ) }</Title>

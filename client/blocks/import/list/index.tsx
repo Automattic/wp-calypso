@@ -73,7 +73,7 @@ export default function ListStep( props: Props ) {
 
 	return (
 		<>
-			<div className="import-layout list__wrapper">
+			<div className="list__wrapper">
 				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Import content from another platform' ) }</Title>
 					<SubTitle>{ __( 'Select the platform where your content lives' ) }</SubTitle>

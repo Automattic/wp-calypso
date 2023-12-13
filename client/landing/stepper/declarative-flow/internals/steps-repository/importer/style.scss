@@ -1,21 +1,24 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+
 /**
  * Common importer integration styles
  */
 .import-hosted-site,
 .site-setup,
 .import-focused {
-	.importer-wrapper:not(.importer-wrapper__wordpress) {
+	.step-container__content > div[class^="importer-"] {
 		max-width: 700px;
 		margin: auto;
 	}
 
 	.import__onboarding-page {
 		.onboarding-progress {
-			max-width: 500px;
+			min-width: auto;
 			margin: auto;
 
 			@include break-small {
-				min-width: 465px;
+				min-width: 530px;
 			}
 		}
 
