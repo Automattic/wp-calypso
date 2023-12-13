@@ -23,9 +23,16 @@ function getDescription( plan, translate ) {
 	}
 
 	if ( isWpComBusinessPlan( plan ) ) {
+		const businessPlan = getPlan( plan );
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-				'directly to your site — the Business Plan has 200 GB storage.'
+				'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
+			{
+				args: {
+					planName: businessPlan.getTitle(),
+					storageLimit: 50,
+				},
+			}
 		);
 	}
 	if ( isProPlan( plan ) ) {
@@ -55,9 +62,16 @@ function getDescription( plan, translate ) {
 		);
 	}
 	if ( isWpComEcommercePlan( plan ) ) {
+		const eCommercePlan = getPlan( plan );
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-				'directly to your site — the Ecommerce Plan has 200 GB storage.'
+				'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
+			{
+				args: {
+					planName: eCommercePlan.getTitle(),
+					storageLimit: 50,
+				},
+			}
 		);
 	}
 
