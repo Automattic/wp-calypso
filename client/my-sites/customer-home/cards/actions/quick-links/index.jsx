@@ -1,5 +1,6 @@
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
+import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -243,6 +244,7 @@ export const QuickLinks = ( {
 					/>
 				</>
 			) }
+			<GeneratorModal />
 			{ isAtomic && hasBoost && (
 				<ActionBox
 					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
