@@ -1021,7 +1021,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/jetpack-ai-calypso@workspace:^, @automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso":
+"@automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso"
   dependencies:
@@ -12011,7 +12011,6 @@ __metadata:
     "@automattic/global-styles": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/jetpack-ai-calypso": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/language-picker": "workspace:^"
     "@automattic/languages": "workspace:^"
