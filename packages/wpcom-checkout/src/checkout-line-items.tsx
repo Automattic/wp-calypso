@@ -853,7 +853,7 @@ function FetchOverrideCode( { product }: { product: ResponseCartProduct } ) {
 		//return the override code
 		return overrideCode.human_readable_reason;
 	}
-	return null;
+	return '';
 }
 
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
@@ -879,7 +879,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 		return null;
 	}
 	const readableCode = FetchOverrideCode( { product } );
-	if ( isMonthlyProduct( product ) ) {
+	if ( isMonthlyProduct( product ) && readableCode ) {
 		return (
 			<>
 				{ translate( '%(readableCode)s : %(upgradeCredit)s applied in first month only.', {
@@ -899,7 +899,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 		);
 	}
 
-	if ( isYearly( product ) ) {
+	if ( isYearly( product ) && readableCode ) {
 		return (
 			<>
 				{ translate( '%(readableCode)s : %(upgradeCredit)s applied in first month only.', {
