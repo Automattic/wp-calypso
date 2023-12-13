@@ -211,7 +211,7 @@ class DomainSearchResults extends Component {
 							}
 					  )
 					: translate(
-							'%(rootDomain)s is already registered. Do you own %(rootDomain)s and want to {{a}}{{strong}}connect %(domain)s{{/strong}} with WordPress.com?{{/a}}',
+							'{{strong}}%(rootDomain)s{{/strong}} is already registered. Do you own {{strong}}%(rootDomain)s{{/strong}} and want to {{a}}{{strong}}connect %(domain)s{{/strong}}{{/a}} with WordPress.com?',
 							{
 								args: { rootDomain, domain },
 								components: {
