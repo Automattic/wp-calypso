@@ -110,7 +110,7 @@ object E2ETests : BuildType({
 				cd desktop
 
 				# Run tests
-				yarn run test:e2e --reporters=jest-teamcity --reporters=default
+				yarn run test:e2e --reporters=jest-teamcity --reporters=default --detectOpenHandles
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
