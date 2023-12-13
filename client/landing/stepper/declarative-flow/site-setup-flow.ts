@@ -541,14 +541,12 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					return navigate( 'import' );
-
 				case 'importerWix':
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
 				case 'importerWordpress':
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'options':
 					return navigate( 'goals' );
