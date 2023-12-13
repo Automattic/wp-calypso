@@ -14,11 +14,11 @@
 
 	.import__onboarding-page {
 		.onboarding-progress {
-			max-width: 500px;
+			min-width: auto;
 			margin: auto;
 
 			@include break-small {
-				min-width: 465px;
+				min-width: 530px;
 			}
 		}
 
