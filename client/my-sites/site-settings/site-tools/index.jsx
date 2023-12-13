@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
@@ -92,6 +93,10 @@ class SiteTools extends Component {
 		const startSiteTransferText = translate(
 			'Transfer your site and plan to another WordPress.com user.'
 		);
+		const resetSiteTitle = translate( 'Reset your site' );
+		const resetSiteText = translate(
+			"Remove all posts, pages, and media to start fresh while keeping your site's address."
+		);
 
 		return (
 			<div className="site-tools">
@@ -124,6 +129,13 @@ class SiteTools extends Component {
 						href={ startSiteTransferLink }
 						title={ startSiteTransferTitle }
 						description={ startSiteTransferText }
+					/>
+				) }
+				{ isEnabled( 'settings/self-serve-site-reset' ) && (
+					<SiteToolsLink
+						title={ resetSiteTitle }
+						description={ resetSiteText }
+						href={ startOverLink }
 					/>
 				) }
 				{ showDeleteContent && (
