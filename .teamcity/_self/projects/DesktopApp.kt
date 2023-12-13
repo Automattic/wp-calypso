@@ -2,6 +2,7 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
+import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -52,6 +53,10 @@ object E2ETests : BuildType({
 	}
 
 	steps {
+		// Since the calypso.live image includes trunk, make sure any
+		// tests in this build also run with trunk changes.
+		mergeTrunk( skipIfConflict = true )
+
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
