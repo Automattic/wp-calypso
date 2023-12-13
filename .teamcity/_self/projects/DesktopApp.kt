@@ -17,7 +17,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.retryBuild
 
 object DesktopApp : Project({
 	id("WpDesktop")
-	name = "Desktop app"
+	name = "Linux Desktop App"
 	buildType(E2ETests)
 
 	params {
@@ -32,7 +32,7 @@ object DesktopApp : Project({
 
 object E2ETests : BuildType({
 	id("WpDesktop_DesktopE2ETests")
-	name = "Run e2e tests"
+	name = "Electron E2E Smoke Test"
 	description = "Run wp-desktop e2e tests in Linux"
 
 	dependencies {
