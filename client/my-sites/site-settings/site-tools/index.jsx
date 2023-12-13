@@ -68,10 +68,9 @@ class SiteTools extends Component {
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
 		const changeSiteAddress = translate( 'Change your site address' );
-		const startOver = translate( 'Delete your content' );
+		const startOver = translate( 'Reset your site' );
 		const startOverText = translate(
-			"Keep your site's address and current theme, but remove all posts, " +
-				'pages, and media so you can start fresh.'
+			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
