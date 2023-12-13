@@ -14,6 +14,7 @@ import LayoutNavigation, {
 	LayoutNavigationTabs as NavigationTabs,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import PartnerPortalSidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
@@ -107,6 +108,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 				title={ translate( 'Issue a new License' ) }
 				wide
 				withBorder
+				sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
 			>
 				<LayoutTop>
 					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
