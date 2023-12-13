@@ -4,7 +4,6 @@ import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getCurrentPlan,
 	getPlanDiscountedRawPrice,
-	getPlanRawDiscount,
 	getPlansBySite,
 	getPlansBySiteId,
 	getSitePlan,
@@ -397,83 +396,6 @@ describe( 'selectors', () => {
 				returnMonthly: true,
 			} );
 			expect( discountPrice ).toBeNull();
-		} );
-	} );
-
-	describe( '#getPlanRawDiscount()', () => {
-		const plans = {
-			data: [
-				{
-					currentPlan: false,
-					productSlug: 'business-bundle',
-					rawPrice: 299,
-					rawDiscount: 0,
-				},
-				{
-					currentPlan: false,
-					productSlug: 'value_bundle',
-					rawPrice: 199,
-					rawDiscount: 0,
-				},
-				{
-					currentPlan: true,
-					productSlug: 'personal-bundle',
-					rawPrice: 99,
-					rawDiscount: 100,
-				},
-				{
-					currentPlan: false,
-					productSlug: 'value_bundle-2y',
-					rawPrice: 240,
-					rawDiscount: 240,
-				},
-				{
-					currentPlan: false,
-					productSlug: 'jetpack_premium_monthly',
-					rawPrice: 30,
-					rawDiscount: 240,
-				},
-			],
-		};
-
-		const state = {
-			sites: {
-				plans: {
-					77203074: plans,
-				},
-			},
-		};
-		test( 'should return a raw discount', () => {
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'personal-bundle' );
-			expect( planRawDiscount ).toEqual( 100 );
-		} );
-
-		test( 'should return a monthly raw discount - annual term', () => {
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'personal-bundle', {
-				returnMonthly: true,
-			} );
-			expect( planRawDiscount ).toEqual( 8.33 );
-		} );
-
-		test( 'should return a monthly raw discount - biennial term', () => {
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle-2y', {
-				returnMonthly: true,
-			} );
-			expect( planRawDiscount ).toEqual( 10 );
-		} );
-
-		test( 'should return a monthly raw discount - monthly term', () => {
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'jetpack_premium_monthly', {
-				returnMonthly: true,
-			} );
-			expect( planRawDiscount ).toEqual( 240 );
-		} );
-
-		test( 'should return null, if no raw discount is available', () => {
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle', {
-				returnMonthly: true,
-			} );
-			expect( planRawDiscount ).toBeNull();
 		} );
 	} );
 

@@ -77,7 +77,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -622,11 +621,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation
-						onConfirm={ onConfirm }
-						surveyDismissed={ surveyDismissed }
-						setSurveyDismissed={ setSurveyDismissed }
-					/>
+					<ScreenConfirmation onConfirm={ onConfirm } />
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
