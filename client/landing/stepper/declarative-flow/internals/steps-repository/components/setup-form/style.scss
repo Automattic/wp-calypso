@@ -92,14 +92,11 @@
 		&.disabled:focus,
 		&.disabled:hover,
 		&:disabled {
-			// background: var(--studio-blue-20);
 			cursor: default;
 		}
 		&:focus {
 			box-shadow: none;
-			// outline: 2px solid var(--studio-blue-60);
 			outline-offset: 1px;
-			// background: var(--studio-blue-60);
 		}
 	}
 }
