@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
-import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
@@ -355,10 +355,9 @@ export class Login extends Component {
 		}
 
 		// use '?signup_url' if explicitly passed as URL query param
-		const signup_url_en = this.props.signupUrl
+		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
-		const signupUrl = addLocaleToPath( signup_url_en, locale );
 
 		return (
 			<a
