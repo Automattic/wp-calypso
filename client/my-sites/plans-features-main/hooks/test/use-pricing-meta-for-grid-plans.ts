@@ -18,10 +18,6 @@ jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isPlanAvailableForPurchase: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getByPurchaseId: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
 		usePlans: jest.fn(),
@@ -29,12 +25,14 @@ jest.mock( '@automattic/data-stores', () => ( {
 		useIntroOffers: jest.fn(),
 		useCurrentPlan: jest.fn(),
 	},
+	Purchases: {
+		useSitePurchaseById: jest.fn(),
+	},
 } ) );
 
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { Plans, Purchases } from '@automattic/data-stores';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
@@ -49,7 +47,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			isFetching: false,
 			data: null,
 		} ) );
-		getByPurchaseId.mockImplementation( () => undefined );
+		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.usePlans.mockImplementation( () => ( {
 			isFetching: false,
 			data: {
