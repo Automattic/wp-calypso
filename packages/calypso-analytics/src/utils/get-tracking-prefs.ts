@@ -23,6 +23,15 @@ const prefsDisallowAll: TrackingPrefs = {
 	},
 };
 
+const prefsAllowAnalyticsGdpr: TrackingPrefs = {
+	ok: false, // false is important so the cookie banner is shown
+	buckets: {
+		essential: true,
+		analytics: true, // in GDPR zone, analytics is opt-out
+		advertising: false, // in GDPR zone, advertising is opt-in
+	},
+};
+
 const prefsAllowAll: TrackingPrefs = {
 	ok: true,
 	buckets: {
@@ -78,8 +87,8 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		return prefsAllowAll;
 	}
 
-	// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
-	const defaultPrefs = isCountryGdpr ? prefsDisallowAll : prefsAllowAll;
+	// default tracking mechanism for GDPR is opt-in for marketing and opt-out for anaytics, for CCPA is opt-out:
+	const defaultPrefs = isCountryGdpr ? prefsAllowAnalyticsGdpr : prefsAllowAll;
 
 	const { ok, buckets } = parseTrackingPrefs(
 		cookies[ TRACKING_PREFS_COOKIE_V2 ],
