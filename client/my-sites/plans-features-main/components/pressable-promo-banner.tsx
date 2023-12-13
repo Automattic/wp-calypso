@@ -74,6 +74,10 @@ const Title = styled.h2`
 	color: var( --studio-black );
 	margin-top: 6px;
 	margin-bottom: 6px;
+
+	${ plansBreakSmall( css`
+		font-size: 16px;
+	` ) }
 `;
 
 const Description = styled.p`
