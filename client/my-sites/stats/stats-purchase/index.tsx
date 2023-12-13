@@ -138,7 +138,7 @@ const StatsPurchasePage = ( {
 						( ! isForceProductRedirect && isCommercial ) || redirectToCommercial
 							? 'commercial'
 							: 'personal',
-					isUpgrade: isCommercialOwned,
+					is_upgrade: isCommercialOwned,
 				} }
 			/>
 			<div

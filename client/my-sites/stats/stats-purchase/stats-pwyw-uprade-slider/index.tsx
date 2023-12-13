@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -94,12 +93,14 @@ function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: str
 type StatsPWYWUpgradeSliderProps = {
 	settings?: StatsPWYWSliderSettings;
 	currencyCode?: string;
+	analyticsEventName?: string;
 	onSliderChange: ( index: number ) => void;
 };
 
 function StatsPWYWUpgradeSlider( {
 	settings,
 	currencyCode,
+	analyticsEventName,
 	onSliderChange,
 }: StatsPWYWUpgradeSliderProps ) {
 	// Responsible for:
@@ -107,8 +108,6 @@ function StatsPWYWUpgradeSlider( {
 	// 2. Preparing the UI strings for the slider.
 	// 3. Rendering the slider.
 	// 4. Nofiying the parent component when the slider changes.
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-
 	const uiStrings = useTranslatedStrings();
 
 	let steps = getPWYWPlanTiers( 0, 50 );
@@ -119,13 +118,12 @@ function StatsPWYWUpgradeSlider( {
 	const initialValue = ( steps.length - 1 ) / 2;
 
 	const handleSliderChanged = ( index: number ) => {
-		recordTracksEvent(
-			`${ isOdysseyStats ? 'jetpack_odyssey' : 'calypso' }_stats_purchase_pwyw_slider_clicked`,
-			{
+		if ( analyticsEventName ) {
+			recordTracksEvent( analyticsEventName, {
 				step: index,
 				default_changed: index !== Math.floor( initialValue ), // match slider's manipulation of the initial value
-			}
-		);
+			} );
+		}
 
 		onSliderChange( index );
 	};

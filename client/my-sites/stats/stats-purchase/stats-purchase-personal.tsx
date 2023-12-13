@@ -87,6 +87,7 @@ const PersonalPurchase = ( {
 	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
 		handlePlanSwap( e );
 
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -140,6 +141,9 @@ const PersonalPurchase = ( {
 				<StatsPWYWUpgradeSlider
 					settings={ sliderSettings }
 					currencyCode={ currencyCode }
+					analyticsEventName={ `${
+						isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+					}_stats_purchase_pwyw_slider_clicked` }
 					onSliderChange={ handleSliderChanged }
 				/>
 			) }

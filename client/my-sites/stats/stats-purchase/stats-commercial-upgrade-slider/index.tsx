@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
@@ -64,11 +63,13 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 
 type StatsCommercialUpgradeSliderProps = {
 	currencyCode: string;
+	analyticsEventName?: string;
 	onSliderChange: ( quantity: number ) => void;
 };
 
 function StatsCommercialUpgradeSlider( {
 	currencyCode,
+	analyticsEventName,
 	onSliderChange,
 }: StatsCommercialUpgradeSliderProps ) {
 	// Responsible for:
@@ -80,7 +81,6 @@ function StatsCommercialUpgradeSlider( {
 
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
 
@@ -110,15 +110,12 @@ function StatsCommercialUpgradeSlider( {
 	const steps = getStepsForTiers( tiers );
 
 	const handleSliderChanged = ( index: number ) => {
-		recordTracksEvent(
-			`${
-				isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
-			}_stats_purchase_commercial_slider_clicked`,
-			{
+		if ( analyticsEventName ) {
+			recordTracksEvent( analyticsEventName, {
 				tier_views: tiers[ index ]?.views,
 				default_changed: index !== 0, // 0 is the default initialVlaue value for <TierUpgradeSlider />
-			}
-		);
+			} );
+		}
 
 		onSliderChange( tiers[ index ]?.views as number );
 	};
