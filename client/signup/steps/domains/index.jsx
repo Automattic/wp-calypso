@@ -155,7 +155,7 @@ export class RenderDomainsStep extends Component {
 				siteUrl && siteUrl.indexOf( '.wordpress.com' ) !== -1 ? { domain_name: siteUrl } : null,
 			domainRemovalQueue: [],
 			isGoingToNextStep: false,
-			isValidatingDomains: false,
+			disableMiniCartGoNext: false,
 			temporaryCart: [],
 			replaceDomainFailedMessage: null,
 		};
@@ -257,9 +257,9 @@ export class RenderDomainsStep extends Component {
 					{ meta: productToRemove.meta, productSlug: productToRemove.product_slug },
 				],
 			} ) );
-			this.setState( { isValidatingDomains: true } );
+			this.setState( { disableMiniCartGoNext: true } );
 			await this.removeDomain( { domain_name, product_slug: productToRemove.product_slug } );
-			this.setState( { isValidatingDomains: false } );
+			this.setState( { disableMiniCartGoNext: false } );
 		} else if ( this.state.temporaryCart?.length > 0 ) {
 			this.setState( ( state ) => ( {
 				temporaryCart: state.temporaryCart.filter( ( domain ) => domain.meta !== domain_name ),
@@ -600,7 +600,7 @@ export class RenderDomainsStep extends Component {
 		registration.item_subtotal_integer = ( suggestion.sale_cost ?? suggestion.raw_price ) * 100;
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-			this.setState( { isValidatingDomains: true } );
+			this.setState( { disableMiniCartGoNext: true } );
 			if (
 				! this.state.temporaryCart ||
 				! this.state.temporaryCart.some(
@@ -653,7 +653,7 @@ export class RenderDomainsStep extends Component {
 					);
 				} );
 
-			this.setState( { isValidatingDomains: false } );
+			this.setState( { disableMiniCartGoNext: false } );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
@@ -684,11 +684,13 @@ export class RenderDomainsStep extends Component {
 		} );
 	}
 
-	removeDomainClickHandler = ( domain ) => () => {
-		this.removeDomain( {
+	removeDomainClickHandler = ( domain ) => async () => {
+		this.setState( { disableMiniCartGoNext: true } );
+		await this.removeDomain( {
 			domain_name: domain.meta,
 			product_slug: domain.product_slug,
 		} );
+		this.setState( { disableMiniCartGoNext: false } );
 	};
 
 	async removeDomain( { domain_name, product_slug } ) {
@@ -878,7 +880,7 @@ export class RenderDomainsStep extends Component {
 						flowName={ this.props.flowName }
 						removeDomainClickHandler={ this.removeDomainClickHandler }
 						isGoingToNextStep={ this.state.isGoingToNextStep }
-						isValidatingDomains={ this.state.isValidatingDomains }
+						disableMiniCartGoNext={ this.state.disableMiniCartGoNext }
 						goToNext={ this.goToNext }
 						handleSkip={ this.handleSkip }
 						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
