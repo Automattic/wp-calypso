@@ -143,7 +143,7 @@ const Home = () => {
 							args: {
 								premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
 								businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
-								commerce: getPlan( PLAN_ECOMMERCE )?.getTitle() || '',
+								commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '',
 							},
 						}
 				  )

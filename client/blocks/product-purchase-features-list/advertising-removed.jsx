@@ -8,7 +8,11 @@ import PurchaseDetail from 'calypso/components/purchase-detail';
 export default localize( ( { isEligiblePlan, selectedSite, translate } ) => {
 	const isEnglishLocale = useIsEnglishLocale();
 	const uneligiblePlanDescription =
-		isEnglishLocale || i18n.hasTranslation
+		isEnglishLocale ||
+		i18n.hasTranslation(
+			'All WordPress.com advertising has been removed from your site. Upgrade to %(businessPlanName)s ' +
+				'to remove the WordPress.com footer credit.'
+		)
 			? translate(
 					'All WordPress.com advertising has been removed from your site. Upgrade to %(businessPlanName)s ' +
 						'to remove the WordPress.com footer credit.',

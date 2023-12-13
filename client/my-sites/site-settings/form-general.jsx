@@ -962,7 +962,10 @@ export class SiteSettingsFormGeneral extends Component {
 								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
 								plan={ PLAN_BUSINESS }
 								title={
-									isEnglishLocale || i18n.hasTranslation
+									isEnglishLocale ||
+									i18n.hasTranslation(
+										'Remove the footer credit entirely with WordPress.com %(businessPlanName)s'
+									)
 										? translate(
 												'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
 
