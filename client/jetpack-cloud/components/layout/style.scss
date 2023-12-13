@@ -89,7 +89,7 @@
 }
 
 .jetpack-cloud-layout__header.has-actions > .jetpack-cloud-layout__header-main {
-	@include breakpoint-deprecated( "<1280px" ) {
+	@include breakpoint-deprecated( "660px-1280px" ) {
 		margin-block-end: 16px;
 	}
 }
