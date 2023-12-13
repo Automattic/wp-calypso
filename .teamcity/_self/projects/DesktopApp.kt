@@ -103,7 +103,7 @@ object E2ETests : BuildType({
 				export WP_DESKTOP_BASE_URL="${'$'}URL"
 
 				# Start framebuffer
-				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
+				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 -ac -nolisten tcp -nolisten unix &
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 

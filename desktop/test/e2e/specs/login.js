@@ -97,7 +97,7 @@ describe( 'User Can log in', () => {
 
 		// Wait for response from the Login endpoint.
 		const [ response ] = await Promise.all( [
-			mainWindow.waitForResponse( '**/wp-login.php?action=login-endpoint' ),
+			mainWindow.waitForResponse( '**/wp-login.php?action=login-endpoint' ), // wait for response.
 			mainWindow.click( 'button:has-text("Log In")' ),
 		] );
 
