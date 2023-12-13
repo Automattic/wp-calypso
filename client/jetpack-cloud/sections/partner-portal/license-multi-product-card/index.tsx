@@ -151,7 +151,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 						<div className="license-product-card__main">
 							<div className="license-product-card__heading">
 								<h3 className="license-product-card__title">
-									{ getProductShortTitle( product.name, true ) }
+									{ getProductShortTitle( product, true ) }
 								</h3>
 
 								<MultipleChoiceQuestion
@@ -175,7 +175,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
 									<LicenseLightboxLink
-										productName={ getProductShortTitle( product.name ) }
+										productName={ getProductShortTitle( product ) }
 										onClick={ onShowLightbox }
 									/>
 								) }

@@ -1,3 +1,4 @@
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getProductTitle from './get-product-title';
 import getProductVariantShortTitle from './get-product-variant-short-title';
 
@@ -8,12 +9,12 @@ import getProductVariantShortTitle from './get-product-variant-short-title';
  * @returns Product title
  */
 export default function getProductShortTitle(
-	product: string,
+	product: APIProductFamilyProduct,
 	removeVariant: boolean = false
 ): string {
-	const title = getProductTitle( product, removeVariant );
+	const title = getProductTitle( product.name, removeVariant );
 
-	if ( title.startsWith( 'VaultPress Backup Add-on' ) ) {
+	if ( product.family_slug === 'jetpack-backup-storage' ) {
 		return getProductVariantShortTitle( title );
 	}
 

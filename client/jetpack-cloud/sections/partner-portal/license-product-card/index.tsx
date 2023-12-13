@@ -46,7 +46,7 @@ export default function LicenseProductCard( props: Props ) {
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
 	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
 	const productTitle = isNewCardFormat
-		? getProductShortTitle( product.name )
+		? getProductShortTitle( product )
 		: getProductTitle( product.name );
 	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
 	const translate = useTranslate();
