@@ -9,7 +9,7 @@ import { isCustomDomain, isNotAtomicJetpack, isP2Site } from 'calypso/sites-dash
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getCurrentRouteGeneric } from 'calypso/state/selectors/get-current-route-generic';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 
@@ -58,7 +58,7 @@ interface useCommandPaletteOptions {
 const useSiteToAction = () => {
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
+	const currentRoute = useSelector( ( state: object ) => getCurrentRouteGeneric( state ) );
 
 	const siteToAction = useCallback(
 		(
@@ -80,7 +80,7 @@ const useSiteToAction = () => {
 								command_name: selectedCommand.name,
 								has_nested_commands: false,
 								list_count: filteredSitesLength,
-								current_path: currentPath,
+								current_route: currentRoute,
 								search_is_empty: ! search,
 								search_text: search,
 								site_id: site.ID,
@@ -108,7 +108,7 @@ const useSiteToAction = () => {
 					),
 				};
 			},
-		[ currentPath, dispatch, userId ]
+		[ currentRoute, dispatch, userId ]
 	);
 
 	return siteToAction;
@@ -138,11 +138,11 @@ export const useCommandPalette = ( {
 		setSelectedCommandName,
 	} );
 
-	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
+	const currentRoute = useSelector( ( state: object ) => getCurrentRouteGeneric( state ) );
 
 	// Filter out commands that have context
 	const commandHasContext = ( paths: string[] = [] ): boolean =>
-		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
+		paths.some( ( path ) => currentRoute.includes( path ) ) ?? false;
 
 	// Find and store the "viewMySites" command
 	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
@@ -172,7 +172,7 @@ export const useCommandPalette = ( {
 					command_name: command.name,
 					has_nested_commands: !! command.siteFunctions,
 					list_count: commands.length,
-					current_path: currentPath,
+					current_route: currentRoute,
 					search_is_empty: ! search,
 					search_text: search,
 				} )
@@ -182,7 +182,7 @@ export const useCommandPalette = ( {
 	} ) );
 
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
-	if ( viewMySitesCommand && currentPath !== '/sites' ) {
+	if ( viewMySitesCommand && currentRoute !== '/sites' ) {
 		finalSortedCommands.unshift( viewMySitesCommand );
 	}
 
