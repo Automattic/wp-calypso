@@ -118,7 +118,7 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 	return breadcrumb;
 }
 
-function shouldEnableSentry( sampleRate: number ): boolean {
+function shouldEnableSentry( sampleRate: number = 0.1 ): boolean {
 	// This flag overrides the other settings, always enabling Sentry:
 	if ( config.isEnabled( 'always-enable-sentry' ) ) {
 		return true;
@@ -142,33 +142,22 @@ interface SentryOptions {
  * It can be called multiple times, but it will only initialize Sentry once, if the sampleRate is met (default 10%).
  * It stores the previous execution parameters, and will use them as default if the function is called again.
  * @param parameters Initialization parameters
- * @returns A promise that resolves to the previous state of Sentry (enabled/disabled)
  */
 export async function initSentry( parameters?: SentryOptions ) {
 	// Make sure we don't throw
 	try {
 		// No Sentry loading on the server.
-		if ( typeof document === 'undefined' ) {
-			return 'skipped'; // Previous state: skipped
-		}
-
 		// No double-loading.
-		// No initializing with empty params
-		if (
-			( state.state === 'initial' && ! parameters ) ||
-			! [ 'initial', 'disabled' ].includes( state.state )
-		) {
-			return 'enabled'; // Previous state: enabled -> We're already running [loading, loaded, error]
+		if ( typeof document === 'undefined' || ! [ 'initial', 'disabled' ].includes( state.state ) ) {
+			return;
 		}
 
 		// We use previous invocation parameters here, allowing the user to override any of them
 		// We need this because some of the params are initialized at app boot, and can't be recreated when the app is already running
 		const params =
-			state.state === 'initial'
-				? ( parameters as SentryOptions ) // We know it's not undefined because of the check above
-				: { ...state.params, sampleRate: 0.1, ...parameters };
+			state.state === 'initial' ? parameters || {} : { ...state.params, ...parameters };
 
-		const { beforeSend, userId, sampleRate = 0.1 } = params;
+		const { beforeSend, userId, sampleRate } = params;
 
 		state = { state: 'loading', params };
 
@@ -177,7 +166,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 			state = { state: 'disabled', params };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
-			return 'disabled'; // Previous state: disabled -> We were not running [initial, disabled]
+			return;
 		}
 
 		// eslint-disable-next-line no-console
@@ -247,17 +236,5 @@ export async function initSentry( parameters?: SentryOptions ) {
 		// Clear queues. We've either drained them or errored trying to load Sentry.
 		// Either way they don't serve a purpose.
 		clearQueues();
-	}
-
-	return 'disabled'; // Previous state: disabled -> We were not running [initial, disabled]
-}
-
-/**
- * Sentry cleanup function.
- * It will close the Sentry instance if it was successfully initialized.
- */
-export function closeSentry() {
-	if ( state.state === 'loaded' ) {
-		state.sentry.close();
 	}
 }
