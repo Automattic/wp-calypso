@@ -18,7 +18,6 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
-	getDomainRegistrations,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
@@ -211,19 +210,14 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if (
-			( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) ||
-			temporaryCart?.length > 0
-		) {
-			buttonStyles = { ...buttonStyles, primary: false, disabled: false, busy: false };
-		}
-
-		const isDomainAtRemovalQueue = domainRemovalQueue?.some( ( item ) => item.meta === domain );
-		const isDomainAtAddingQueue = temporaryCart?.some( ( item ) => item.meta === domain );
-
 		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-			if ( isDomainAtRemovalQueue && isDomainAtAddingQueue ) {
-				buttonStyles = { ...buttonStyles, busy: true };
+			const isDomainAtRemovalQueue = domainRemovalQueue?.some( ( item ) => item.meta === domain );
+			const isDomainAtAddingQueue = temporaryCart?.some( ( item ) => item.meta === domain );
+
+			if ( isDomainAtRemovalQueue || isDomainAtAddingQueue ) {
+				buttonStyles = { ...buttonStyles, primary: false, busy: true, disabled: true };
+			} else {
+				buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
 			}
 		}
 

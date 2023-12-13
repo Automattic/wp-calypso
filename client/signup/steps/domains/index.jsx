@@ -368,13 +368,15 @@ export class RenderDomainsStep extends Component {
 			( item ) => item.meta === suggestion.domain_name
 		);
 
-		const domainInCart = hasDomainInCart( this.props.cart, suggestion.domain_name );
-
 		const domainInRemovalQueue = this.state.domainRemovalQueue.find(
 			( item ) => item.meta === suggestion.domain_name
 		);
 
-		if ( ( domainInAddingQueue || domainInCart ) && ! domainInRemovalQueue ) {
+		if ( domainInAddingQueue || domainInRemovalQueue ) {
+			return false;
+		}
+
+		if ( hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.removeDomain( suggestion );
 		} else {
 			await this.addDomain( suggestion );
@@ -670,6 +672,13 @@ export class RenderDomainsStep extends Component {
 						this.setState( ( state ) => ( {
 							domainAddingQueue: state.domainAddingQueue.filter(
 								( domainInQueue ) => domainInQueue.meta !== domain
+							),
+						} ) );
+					}
+					if ( this.state.temporaryCart?.length > 0 ) {
+						this.setState( ( state ) => ( {
+							temporaryCart: state.temporaryCart.filter(
+								( temporaryCart ) => temporaryCart.meta !== domain
 							),
 						} ) );
 					}
