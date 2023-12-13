@@ -49,7 +49,6 @@ $left-margin: 36px;
 }
 
 .purchase-modal__steps {
-	flex: 1;
 	display: flex;
 	flex-direction: column;
 	max-width: 100%;
@@ -57,6 +56,7 @@ $left-margin: 36px;
 	@include break-medium {
 		padding: 45px 36px;
 		.has-feature-list & {
+			max-width: 50%;
 			padding: 45px 0 45px 36px;
 		}
 	}
@@ -65,11 +65,9 @@ $left-margin: 36px;
 .purchase-modal__features {
 	background: var(--gray-gray-0, #f6f7f7);
 	padding: 45px 36px;
+	flex: 1;
 	@include break-medium {
-		padding: 45px 64px 45px 36px;
-	}
-	&.is-placeholder {
-		flex: 1;
+		padding: 45px 48px 45px 36px;
 	}
 }
 

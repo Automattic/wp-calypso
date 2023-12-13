@@ -88,6 +88,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 			this.setState( { url, status } );
 
+			const source = queryArgs?.source;
+
 			if (
 				( status === NOT_CONNECTED_JETPACK || status === NOT_CONNECTED_USER ) &&
 				this.isCurrentUrlFetched() &&
@@ -95,13 +97,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! this.state.redirecting
 			) {
 				debug( `Redirecting to remote_auth ${ this.props.siteHomeUrl }` );
-				this.redirect( 'remote_auth', this.props.siteHomeUrl );
+				this.redirect( 'remote_auth', this.props.siteHomeUrl, null, source ? { source } : null );
 			}
 
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
 				const currentPlan = retrievePlan();
 				clearPlan();
-				if ( currentPlan ) {
+				if ( source === 'jetpack-manage' ) {
+					this.setState( { status: ALREADY_CONNECTED } );
+				} else if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {
 						debug( `Redirecting to wpadmin` );
 						return navigate( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );

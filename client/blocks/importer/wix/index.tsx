@@ -136,7 +136,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
+			<div className={ classnames( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( checkIsFailed() ) {
 						return (

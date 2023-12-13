@@ -6,7 +6,7 @@ export const useContactFormTitle = (
 ): {
 	formTitle: string;
 	trayText?: string;
-	formDisclaimer?: string;
+	formDisclaimer?: string | React.ReactElement | undefined;
 	buttonLabel: string;
 	buttonSubmittingLabel: string;
 	buttonLoadingLabel?: string;
@@ -26,9 +26,12 @@ export const useContactFormTitle = (
 		},
 		FORUM: {
 			formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
-			formDisclaimer: __(
-				'Please do not provide financial or contact information when submitting this form.',
-				__i18n_text_domain__
+			formDisclaimer: (
+				<>
+					{ __( 'Your question and any answers will be public.', __i18n_text_domain__ ) }
+					<br />
+					{ __( 'Please do not share financial or contact information.', __i18n_text_domain__ ) }
+				</>
 			),
 			buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
 			buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),

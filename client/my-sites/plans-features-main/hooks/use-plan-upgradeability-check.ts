@@ -16,6 +16,12 @@ type PlanUpgradeability = {
  * Note that if there is no selectedSiteId, then we assume that we are in onboarding or
  * signup, which will, by default, make the plan purchaseable.
  */
+
+// TODO: The term "upgrade" is only relevant in the context of a selected site. Because
+// this hook handles situations where both a site is selected and is not selected,
+// "upgrade" doesn't make sense. Let's rename this hook to something like
+// usePlanAvailabilityCheck, or update the hook to only handle the case where a site is
+// selected.
 const usePlanUpgradeabilityCheck = ( { planSlugs }: Props ): PlanUpgradeability => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const planUpgradeability = useSelector( ( state ) => {

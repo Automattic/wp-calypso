@@ -1,6 +1,6 @@
 import { useEffect } from '@wordpress/element';
 import * as React from 'react';
-import { IntervalTypeToggle } from './components/interval-type-toggle';
+import { IntervalTypeSelector } from './components/interval-type-selector';
 import { PlanTypeSelectorProps } from './types';
 
 import './style.scss';
@@ -18,7 +18,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	if ( kind === 'interval' ) {
 		return (
 			<div className="plan-type-selector">
-				<IntervalTypeToggle { ...props } />
+				<IntervalTypeSelector { ...props } />
 			</div>
 		);
 	}
