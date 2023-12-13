@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -25,6 +26,7 @@ import {
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ButtonsAppearance from './appearance';
+import ButtonsBlockMessage from './buttons-block-message';
 import ButtonsOptions from './options';
 import { useSharingButtonsQuery, useSaveSharingButtonsMutation } from './use-sharing-buttons-query';
 
@@ -95,6 +97,7 @@ class SharingButtons extends Component {
 			) {
 				this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
 				this.props.markSaved();
+				// eslint-disable-next-line react/no-did-update-set-state
 				this.setState( {
 					values: {},
 					buttonsPendingSave: null,
@@ -120,23 +123,60 @@ class SharingButtons extends Component {
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
 	}
 
+	getNotice() {
+		const { isPrivate, siteId, siteSlug, translate } = this.props;
+		return (
+			<Notice
+				status="is-warning"
+				showDismiss={ false }
+				text={
+					isPrivate
+						? translate( 'Adding sharing buttons requires your site to be marked as Public.' )
+						: translate(
+								'Adding sharing buttons needs the Sharing Buttons module from Jetpack to be enabled.'
+						  )
+				}
+			>
+				<NoticeAction
+					href={ isPrivate ? '/settings/general/' + siteSlug + '#site-privacy-settings' : null }
+					onClick={ isPrivate ? null : () => this.props.activateModule( siteId, 'sharedaddy' ) }
+				>
+					{ isPrivate ? translate( 'Change settings' ) : translate( 'Enable' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	}
+
 	render() {
 		const {
 			buttons,
 			isJetpack,
-			isPrivate,
 			isSavingSettings,
 			isSavingButtons,
 			settings,
 			siteId,
-			siteSlug,
 			isSharingButtonsModuleActive,
 			isFetchingModules,
-			translate,
 		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 		const isSaving = isSavingSettings || isSavingButtons;
+		const shouldShowNotice = isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive;
+
+		const showSharingButtonsBlockMessage =
+			isJetpack && isEnabled( 'jetpack/sharing-buttons-block-enabled' );
+
+		// const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+		// const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+
+		if ( showSharingButtonsBlockMessage ) {
+			return (
+				<>
+					{ shouldShowNotice && this.getNotice() }
+					<ButtonsBlockMessage />
+				</>
+			);
+		}
 
 		return (
 			<form
@@ -150,26 +190,10 @@ class SharingButtons extends Component {
 				/>
 				<QuerySiteSettings siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={
-							isPrivate
-								? translate( 'Adding sharing buttons requires your site to be marked as Public.' )
-								: translate(
-										'Adding sharing buttons needs the Sharing Buttons module from Jetpack to be enabled.'
-								  )
-						}
-					>
-						<NoticeAction
-							href={ isPrivate ? '/settings/general/' + siteSlug + '#site-privacy-settings' : null }
-							onClick={ isPrivate ? null : () => this.props.activateModule( siteId, 'sharedaddy' ) }
-						>
-							{ isPrivate ? translate( 'Change settings' ) : translate( 'Enable' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+
+				{ /* Rendering notice in a separate function */ }
+				{ shouldShowNotice && this.getNotice() }
+
 				<ButtonsOptions
 					buttons={ buttons }
 					settings={ updatedSettings }
