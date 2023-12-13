@@ -846,6 +846,16 @@ const UpgradeCreditHelpIconLink = () => {
 	);
 };
 
+function FetchOverrideCode( { product }: { product: ResponseCartProduct } ) {
+	//inspect the contents of the product object to see if "cost_overrides" array is not empty
+	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
+		const overrideCode = product.cost_overrides[ 0 ];
+		//return the override code
+		return overrideCode.human_readable_reason;
+	}
+	return null;
+}
+
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const origCost = product.item_original_subtotal_integer;
@@ -868,14 +878,16 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	) {
 		return null;
 	}
+	const readableCode = FetchOverrideCode( { product } );
 	if ( isMonthlyProduct( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+				{ translate( '%(readableCode)s : %(upgradeCredit)s applied in first month only.', {
 					comment:
 						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
 						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 					args: {
+						readableCode: readableCode,
 						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
@@ -890,11 +902,12 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isYearly( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+				{ translate( '%(readableCode)s : %(upgradeCredit)s applied in first month only.', {
 					comment:
 						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
 						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 					args: {
+						readableCode: readableCode,
 						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
@@ -909,11 +922,12 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+				{ translate( '%(readableCode)s : %(discount)s applied in first term only', {
 					comment:
 						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
 						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
 					args: {
+						readableCode: readableCode,
 						discount: formatCurrency( upgradeCredit, product.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
