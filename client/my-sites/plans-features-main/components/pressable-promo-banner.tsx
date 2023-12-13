@@ -17,10 +17,31 @@ const Banner = styled.div`
 	padding: 24px;
 	align-items: center;
 	gap: 32px;
+	max-width: 392px;
 
 	${ plansBreakSmall( css`
 		flex-direction: row;
 	` ) }
+
+	@media ( min-width: 440px ) {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@media ( min-width: 780px ) {
+		width: 620px;
+		max-width: none;
+	}
+
+	@media ( min-width: 1024px ) {
+		width: 812px;
+	}
+
+	@media ( min-width: 1200px ) {
+		width: auto;
+		margin-left: 20px;
+		margin-right: 20px;
+	}
 `;
 
 const LogoContainer = styled.div`
