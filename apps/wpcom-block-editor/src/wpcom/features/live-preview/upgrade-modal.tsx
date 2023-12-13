@@ -36,7 +36,8 @@ export const LivePreviewUpgradeModal: FC< { themeId: string; upgradePlan: () => 
 			e.stopPropagation();
 			setIsThemeUpgradeModalOpen( true );
 		};
-		const overrideSaveButton = ( selector: string ) => {
+
+		const overrideSaveButtonClick = ( selector: string ) => {
 			const button = document.querySelector( selector );
 			if ( button ) {
 				button.textContent = __( 'Upgrade now', 'wpcom-live-preview' );
@@ -44,13 +45,22 @@ export const LivePreviewUpgradeModal: FC< { themeId: string; upgradePlan: () => 
 			}
 		};
 		if ( canvasMode === 'view' ) {
-			overrideSaveButton( SAVE_HUB_SAVE_BUTTON_SELECTOR );
+			overrideSaveButtonClick( SAVE_HUB_SAVE_BUTTON_SELECTOR );
 			return;
 		}
 		if ( canvasMode === 'edit' ) {
-			overrideSaveButton( HEADER_SAVE_BUTTON_SELECTOR );
+			overrideSaveButtonClick( HEADER_SAVE_BUTTON_SELECTOR );
 			return;
 		}
+
+		// Override the keyboard shortcut (⌘S) for saving.
+		document.addEventListener( 'keydown', function ( event ) {
+			if ( event.key === 's' && ( event.metaKey || event.ctrlKey ) ) {
+				event.preventDefault();
+				handler( event );
+			}
+		} );
+
 		return () => {
 			document
 				.querySelector( SAVE_HUB_SAVE_BUTTON_SELECTOR )
