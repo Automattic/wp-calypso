@@ -167,8 +167,16 @@ const CommandPalette = () => {
 		);
 	}, [ dispatch, currentRoute ] );
 	const close = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_close', {
+				command_name: selectedCommandName,
+				current_route: currentRoute,
+				search_is_empty: ! search,
+				search_text: search,
+			} )
+		);
 		setIsOpen( false );
-	}, [] );
+	}, [ currentRoute, dispatch, search, selectedCommandName ] );
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 
 	// Cmd+K shortcut
@@ -194,6 +202,19 @@ const CommandPalette = () => {
 		close();
 	};
 
+	const goBackToRootCommands = ( fromKeyboard: boolean ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
+				command_name: selectedCommandName,
+				current_route: currentRoute,
+				search_is_empty: ! search,
+				search_text: search,
+				from_keyboard: fromKeyboard,
+			} )
+		);
+		reset();
+	};
+
 	if ( ! isOpen ) {
 		return false;
 	}
@@ -210,11 +231,11 @@ const CommandPalette = () => {
 			event.preventDefault();
 		}
 		if (
-			( event.key === 'Escape' && selectedCommandName ) ||
-			( event.key === 'Backspace' && ! search )
+			selectedCommandName &&
+			( event.key === 'Escape' || ( event.key === 'Backspace' && ! search ) )
 		) {
 			event.preventDefault();
-			reset();
+			goBackToRootCommands( true );
 		}
 	};
 
@@ -233,7 +254,7 @@ const CommandPalette = () => {
 						{ selectedCommandName ? (
 							<BackButton
 								type="button"
-								onClick={ reset }
+								onClick={ () => goBackToRootCommands( false ) }
 								aria-label={ __( 'Go back to the previous screen' ) }
 							>
 								<Icon icon={ backIcon } />
