@@ -259,7 +259,7 @@ function SiteResetCard( {
 	const backupHint = isAtomic
 		? createInterpolateElement(
 				translate(
-					"Having second thoughts? Don't fret, we'll automatically back up your site content before the reset and you can restore it any time from the <a>Activity Log</a>."
+					"Having second thoughts? Don't fret, you'll be able to restore your site using the most recent backup in the <a>Activity Log</a>."
 				),
 				{
 					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
