@@ -17,7 +17,7 @@ function getNotice( {
 }: {
 	isAutoRenewing: boolean;
 	isExpired: boolean;
-	expiryDate?: string;
+	expiryDate: string | null;
 } ): string {
 	if ( isExpired ) {
 		return sprintf(
@@ -58,13 +58,9 @@ export const DomainsTableExpiresRenewsOnCell = ( {
 			  )
 			: null;
 
-	const isExpired = domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() );
+	const isAutoRenewing = Boolean( domain.auto_renewing );
 
-	const notice = getNotice( {
-		expiryDate,
-		isAutoRenewing: Boolean( domain.auto_renewing ),
-		isExpired,
-	} );
+	const isExpired = domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() );
 
 	return (
 		<Element className="domains-table-row__renews-on-cell">
@@ -74,7 +70,7 @@ export const DomainsTableExpiresRenewsOnCell = ( {
 						<Gridicon icon={ isExpired ? 'notice-outline' : 'reblog' } size={ 18 } />
 					) }
 
-					{ notice }
+					{ getNotice( { expiryDate, isAutoRenewing, isExpired } ) }
 				</>
 			) : (
 				'-'
