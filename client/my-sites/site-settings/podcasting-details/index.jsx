@@ -1,7 +1,11 @@
-import { PLAN_PERSONAL, WPCOM_FEATURES_UPLOAD_AUDIO_FILES } from '@automattic/calypso-products';
+import {
+	PLAN_PERSONAL,
+	WPCOM_FEATURES_UPLOAD_AUDIO_FILES,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { pick, flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -181,6 +185,9 @@ class PodcastingDetails extends Component {
 			'is-disabled': ! error && ! isPodcastingEnabled,
 		} );
 
+		const currentLocale = getLocaleSlug();
+		const isEnglishLocale = currentLocale === 'en' || currentLocale === 'en-gb';
+
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Podcasting' ) } />
@@ -201,7 +208,14 @@ class PodcastingDetails extends Component {
 					{ ! error && plansDataLoaded && (
 						<UpsellNudge
 							plan={ PLAN_PERSONAL }
-							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
+							title={
+								isEnglishLocale ||
+								i18n.hasTranslation( 'Upload Audio with WordPress.com %(personalPlanName)s' )
+									? translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
+											args: { personalPlanName: getPlan( PLAN_PERSONAL ).getTitle() },
+									  } )
+									: translate( 'Upload Audio with WordPress.com Personal' )
+							}
 							description={ translate(
 								'Embed podcast episodes directly from your media library.'
 							) }

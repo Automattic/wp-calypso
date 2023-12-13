@@ -23,7 +23,7 @@ const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading-center">
+				<div className="import__heading import__heading-center">
 					<Title>{ translate( 'Oops, something went wrong' ) }</Title>
 					<SubTitle>
 						{ translate( 'Please try again soon or {{a}}contact support{{/a}} for help.', {

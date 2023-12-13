@@ -34,8 +34,7 @@ const Launchpad = ( {
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
-
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 	const tasklistCompleted = checklist?.every( ( task: Task ) => task.completed ) || false;
@@ -119,6 +118,7 @@ const Launchpad = ( {
 				checklistSlug={ checklistSlug }
 				taskFilter={ taskFilter }
 				useLaunchpadOptions={ launchpadOptions }
+				launchpadContext={ launchpadContext }
 			/>
 		</>
 	);

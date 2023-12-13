@@ -8,6 +8,10 @@ import { StatsPlanTierUI } from '../types';
 import useAvailableUpgradeTiers from '../use-available-upgrade-tiers';
 import './styles.scss';
 
+// Special case for per-unit fees over the max tier.
+// In millions.
+const EXTENSION_THRESHOLD = 2;
+
 function useTranslatedStrings() {
 	const translate = useTranslate();
 	const limits = translate( 'Monthly site views limit', {
@@ -36,13 +40,17 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 		if ( typeof tier.price === 'string' ) {
 			price = tier.price;
 		}
-		// Views can be a number or a string so address that.
+
+		// View should be a number but the current mock data
+		// includes a string for the final tier.
+		// Special case that scenario for now.
 		let views = '';
-		if ( typeof tier.views === 'string' ) {
-			views = tier.views;
-		} else if ( typeof tier.views === 'number' ) {
+		if ( tier.views === null ) {
+			views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
+		} else {
 			views = formatNumber( tier.views );
 		}
+
 		// Return the new step with string values.
 		return {
 			lhValue: views,
@@ -79,7 +87,6 @@ function StatsCommercialUpgradeSlider( {
 	const lastTier = tiers.at( -1 );
 	const hasPerUnitFee = !! lastTier?.per_unit_fee;
 	if ( hasPerUnitFee ) {
-		const EXTENSION_THRESHOLD = 2; // in millions
 		const perUnitFee = Number( lastTier?.per_unit_fee );
 		perUnitFeeMessaging = translate(
 			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
@@ -93,9 +100,9 @@ function StatsCommercialUpgradeSlider( {
 				},
 			}
 		) as string;
-		lastTier.views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
 	}
 
+	// Transform the tiers into a format that the slider can use.
 	const steps = getStepsForTiers( tiers );
 
 	const handleSliderChanged = ( index: number ) => {

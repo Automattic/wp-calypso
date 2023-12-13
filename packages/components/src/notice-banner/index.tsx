@@ -1,4 +1,4 @@
-import { danger } from '@automattic/components/src/icons';
+import { alert } from '@automattic/components/src/icons';
 import { Icon, warning, info, check, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import React from 'react';
@@ -27,7 +27,7 @@ type NoticeBannerProps = {
 const getIconByLevel = ( level: NoticeBannerProps[ 'level' ] ) => {
 	switch ( level ) {
 		case 'error':
-			return danger;
+			return alert;
 		case 'warning':
 			return info;
 		case 'info':
@@ -41,7 +41,6 @@ const getIconByLevel = ( level: NoticeBannerProps[ 'level' ] ) => {
 
 /**
  * NoticeBanner component
- *
  * @param {Object} props                    - The component properties.
  * @param {string} props.level              - The notice level: error, warning, info, success.
  * @param {boolean} props.hideCloseButton   - Whether to hide the close button.
