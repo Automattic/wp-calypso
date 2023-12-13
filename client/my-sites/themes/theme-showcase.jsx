@@ -85,7 +85,7 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: PropTypes.oneOf( [ '', 'free', 'personal', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
@@ -184,6 +184,10 @@ class ThemeShowcase extends Component {
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
 		];
+
+		if ( config.isEnabled( 'themes/tiers' ) ) {
+			tiers.push( { value: 'personal', label: this.props.translate( 'Personal' ) } );
+		}
 
 		if ( ! isSiteWooExpressOrEcomFreeTrial ) {
 			tiers.push( { value: 'premium', label: this.props.translate( 'Premium' ) } );

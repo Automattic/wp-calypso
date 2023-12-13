@@ -20,12 +20,12 @@ export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
 	const showcaseRoutes = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:tier(free|personal|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:tier(free|personal|premium|marketplace)?/filter/:filter?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all)?/:tier(free|personal|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all)?/:tier(free|personal|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|personal|premium|marketplace)?/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|personal|premium|marketplace)?/filter/:filter/:view(collection)?`,
 	];
 
 	router(
@@ -45,15 +45,15 @@ export default function ( router ) {
 	router(
 		[
 			'/themes/:site?/search/:search',
-			'/themes/:site?/type/:tier(free|premium|marketplace)',
-			'/themes/:site?/search/:search/type/:tier(free|premium|marketplace)',
+			'/themes/:site?/type/:tier(free|personal|premium|marketplace)',
+			'/themes/:site?/search/:search/type/:tier(free|personal|premium|marketplace)',
 		],
 		redirectSearchAndType
 	);
 	router(
 		[
 			'/themes/:site?/filter/:filter',
-			'/themes/:site?/filter/:filter/type/:tier(free|premium|marketplace)',
+			'/themes/:site?/filter/:filter/type/:tier(free|personal|premium|marketplace)',
 		],
 		redirectFilterAndType
 	);
