@@ -10,6 +10,7 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
@@ -971,6 +972,7 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	showRefundPeriod,
 	planTypeSelectorProps,
+	isDropDownExperimentActive,
 }: ComparisonGridProps ) => {
 	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1099,8 +1101,10 @@ const ComparisonGrid = ( {
 			<Grid isInSignup={ isInSignup }>
 				<StickyContainer
 					disabled={ isBottomHeaderInView }
-					stickyClass="is-sticky-header-row"
-					stickyOffset={ stickyRowOffset }
+					stickyClass="is-sticky-header-row plan-comparison-header-sticky-container"
+					stickyOffset={
+						isDropDownExperimentActive && isMobile() ? stickyRowOffset + 48 : stickyRowOffset
+					}
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader

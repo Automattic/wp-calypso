@@ -243,6 +243,8 @@ const PlansFeaturesMain = ( {
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 }: PlansFeaturesMainProps ) => {
+	const isVariant = config.isEnabled( 'onboarding/interval-dropdown' );
+
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
@@ -824,7 +826,10 @@ const PlansFeaturesMain = ( {
 					<>
 						{ ! hidePlanSelector && (
 							<div className="plans-features-main__plan-type-selector">
-								<PlanTypeSelector { ...planTypeSelectorProps } />
+								<PlanTypeSelector
+									{ ...planTypeSelectorProps }
+									isDropDownExperimentActive={ true }
+								/>
 							</div>
 						) }
 						<div
@@ -897,7 +902,10 @@ const PlansFeaturesMain = ( {
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
 												<div className="plans-features-main__plan-type-selector">
-													<PlanTypeSelector { ...planTypeSelectorProps } />
+													<PlanTypeSelector
+														{ ...planTypeSelectorProps }
+														isDropDownExperimentActive={ isVariant }
+													/>
 												</div>
 											) }
 											<ComparisonGrid
@@ -922,6 +930,7 @@ const PlansFeaturesMain = ( {
 												planTypeSelectorProps={
 													! hidePlanSelector ? planTypeSelectorProps : undefined
 												}
+												isDropDownExperimentActive={ isVariant }
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

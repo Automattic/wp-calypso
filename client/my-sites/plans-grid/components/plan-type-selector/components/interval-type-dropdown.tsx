@@ -14,9 +14,10 @@ const AddOnOption = styled.a`
 	.discount {
 		color: var( --studio-green-40 );
 		display: inline-block;
-		font-size: 0.7rem;
+		font-size: 14px;
 	}
 	.name {
+		font-size: 14px;
 		margin-right: 4px;
 	}
 `;
@@ -28,10 +29,38 @@ const StyledCustomSelectControl = styled( CustomSelectControl )`
 		color: var( --color-text );
 	}
 	.components-custom-select-control__button {
-		min-width: 225px;
+		min-width: 246px;
 	}
 	.components-custom-select-control__menu {
 		margin: 0;
+		z-index: 3;
+	}
+	div.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop {
+		border: 1px solid var( --studio-gray-10 );
+	}
+
+	.components-input-control__container {
+		padding: 8px;
+	}
+`;
+
+const FixedCustomSelectControl = styled( CustomSelectControl )`
+	.components-flex {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 48px;
+		z-index: 2;
+	}
+
+	.components-custom-select-control__menu {
+		position: fixed;
+		left: 0;
+		top: 47px;
+		width: 100%;
+		margin: 0;
+		z-index: 3;
 	}
 `;
 
@@ -39,7 +68,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const { intervalType } = props;
 	const dropdownRef = useRef( null );
 	const [ isMobileState, setIsMobileState ] = useState( isMobile() );
-	const [ isDropdownVisible, setIsDropdownVisible ] = useState( true );
+	const [ isDropDownFixed, setIsDropDownFixed ] = useState( false );
 
 	const supportedIntervalType = (
 		[ 'yearly', '2yearly', '3yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly'
@@ -70,11 +99,17 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		}
 		const observer = new IntersectionObserver(
 			( [ entry ] ) => {
-				if ( entry.intersectionRatio === 1 ) {
-					setIsDropdownVisible( true );
+				if ( ! isMobileState ) {
+					if ( isDropDownFixed ) {
+						setIsDropDownFixed( false );
+					}
 					return;
 				}
-				setIsDropdownVisible( false );
+				if ( entry.intersectionRatio === 1 ) {
+					setIsDropDownFixed( false );
+					return;
+				}
+				setIsDropDownFixed( true );
 			},
 			{
 				rootMargin: `-${ 0 + 1 }px 0px 0px 0px`,
@@ -89,19 +124,28 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		return () => {
 			observer.disconnect();
 		};
-	}, [] );
+	}, [ isDropDownFixed, isMobileState ] );
 
 	return (
-		<div
-			className={ `${ isDropdownVisible }_${ isMobileState }` }
-			style={ { visibility: isDropdownVisible ? 'visible' : 'hidden' } }
-			ref={ dropdownRef }
-		>
-			<StyledCustomSelectControl
-				label=""
-				options={ selectOptionsList }
-				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-			/>
-		</div>
+		<>
+			<div className={ `${ isDropDownFixed }_${ isMobileState }` } ref={ dropdownRef }>
+				{ ! isDropDownFixed && (
+					<StyledCustomSelectControl
+						isDropDownFixed={ isDropDownFixed }
+						label=""
+						options={ selectOptionsList }
+						value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+					/>
+				) }
+			</div>
+			{ isDropDownFixed && (
+				<FixedCustomSelectControl
+					isDropDownFixed={ isDropDownFixed }
+					label=""
+					options={ selectOptionsList }
+					value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				/>
+			) }
+		</>
 	);
 };

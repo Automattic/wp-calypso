@@ -75,6 +75,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 export interface ComparisonGridProps extends CommonGridProps {
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
+	isDropDownExperimentActive?: boolean;
 }
 
 export type GridContextProps = {

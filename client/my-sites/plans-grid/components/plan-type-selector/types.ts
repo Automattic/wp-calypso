@@ -26,6 +26,7 @@ export type PlanTypeSelectorProps = {
 	 * Whether to render the selector along with a title if passed.
 	 */
 	title?: TranslateResult;
+	isDropDownExperimentActive?: boolean;
 };
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
@@ -42,6 +43,7 @@ export type IntervalTypeProps = Pick<
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
 	| 'title'
+	| 'isDropDownExperimentActive'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<
