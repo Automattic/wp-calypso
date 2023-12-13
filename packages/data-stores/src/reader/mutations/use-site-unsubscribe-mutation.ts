@@ -91,6 +91,7 @@ const useSiteUnsubscribeMutation = () => {
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
+
 			// remove blog from site subscriptions
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsQueryKey, {
@@ -99,14 +100,16 @@ const useSiteUnsubscribeMutation = () => {
 						return {
 							...page,
 							total_subscriptions: page.total_subscriptions - 1,
-							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
-								...siteSubscription,
-								isDeleted:
-									Number( siteSubscription.ID ) === params.subscriptionId ||
-									( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
-										? true
-										: siteSubscription.isDeleted,
-							} ) ),
+							subscriptions: page.subscriptions.map( ( siteSubscription ) =>
+								Number( siteSubscription.ID ) === params.subscriptionId ||
+								( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
+									? {
+											...siteSubscription,
+											isDeleted: true,
+											resubscribed: false,
+									  }
+									: siteSubscription
+							),
 						};
 					} ),
 				} );

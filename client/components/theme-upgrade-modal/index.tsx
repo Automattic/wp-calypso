@@ -166,6 +166,7 @@ export const ThemeUpgradeModal = ( {
 				<p>
 					{ bundledPluginMessage }{ ' ' }
 					{ translate(
+						// translators: %s is the business plan price.
 						'Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
 						{
 							args: businessPlanPrice,

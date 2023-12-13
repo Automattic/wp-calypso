@@ -42,6 +42,7 @@ export default function ShowcaseThemeCollection( {
 		themes,
 		isActive,
 		isInstalling,
+		isLivePreviewStarted,
 		siteId,
 		getThemeType,
 		filterString,
@@ -101,6 +102,7 @@ export default function ShowcaseThemeCollection( {
 								index={ index }
 								isActive={ isActive }
 								isInstalling={ isInstalling }
+								isLivePreviewStarted={ isLivePreviewStarted }
 								siteId={ siteId }
 								theme={ theme }
 								onMoreButtonClick={ recordThemeClick }

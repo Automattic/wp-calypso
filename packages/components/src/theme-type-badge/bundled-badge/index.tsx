@@ -13,6 +13,7 @@ interface Props {
 	tooltipPosition?: string;
 	focusOnShow?: boolean;
 	isClickable?: boolean;
+	shouldHideTooltip?: boolean;
 	children?: React.ReactNode;
 }
 
@@ -25,6 +26,7 @@ const BundledBadge: FunctionComponent< Props > = ( {
 	tooltipPosition = 'bottom right',
 	focusOnShow,
 	isClickable,
+	shouldHideTooltip,
 	children,
 } ) => {
 	const divRef = useRef( null );
@@ -78,15 +80,17 @@ const BundledBadge: FunctionComponent< Props > = ( {
 		>
 			{ icon && <span className="bundled-badge__icon">{ icon }</span> }
 			<span>{ children }</span>
-			<Popover
-				className={ classNames( 'bundled-badge__popover', tooltipClassName ) }
-				context={ divRef.current }
-				isVisible={ isPopoverVisible }
-				position={ tooltipPosition }
-				focusOnShow={ focusOnShow }
-			>
-				{ tooltipContent }
-			</Popover>
+			{ ! shouldHideTooltip && (
+				<Popover
+					className={ classNames( 'bundled-badge__popover', tooltipClassName ) }
+					context={ divRef.current }
+					isVisible={ isPopoverVisible }
+					position={ tooltipPosition }
+					focusOnShow={ focusOnShow }
+				>
+					{ tooltipContent }
+				</Popover>
+			) }
 		</div>
 	);
 };

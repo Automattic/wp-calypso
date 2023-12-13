@@ -241,6 +241,8 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 
 	const allowedHostsForRedirect = [
 		'wordpress.com',
+		'wpcalypso.wordpress.com',
+		'horizon.wordpress.com',
 		'calypso.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
@@ -267,6 +269,11 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 			) {
 				return false;
 			}
+			return true;
+		}
+
+		// Return true for *.calypso.live urls.
+		if ( /^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ) {
 			return true;
 		}
 

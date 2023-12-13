@@ -25,6 +25,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TIERS_UPDATE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -61,6 +62,7 @@ import {
 	livePreview,
 	redirectToLivePreview,
 	installAndLivePreview,
+	updateThemeTiers,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
 
@@ -1420,6 +1422,7 @@ describe( 'actions', () => {
 		);
 		const livePreviewStartAction = {
 			type: 'LIVE_PREVIEW_START',
+			themeId: 'pendant',
 			meta: {
 				analytics: [
 					{
@@ -1698,6 +1701,21 @@ describe( 'actions', () => {
 					themeId: 'solarone',
 					error: expect.objectContaining( { message: 'Unknown theme' } ),
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#updateThemeTiers()', () => {
+		test( 'without a tiers param, should return an action with an empty object tiers property', () => {
+			expect( updateThemeTiers() ).toEqual( {
+				type: THEME_TIERS_UPDATE,
+				tiers: {},
+			} );
+		} );
+		test( 'with a tiers param, should return an action with a tiers property containing the same value', () => {
+			expect( updateThemeTiers( { free: {} } ) ).toEqual( {
+				type: THEME_TIERS_UPDATE,
+				tiers: { free: {} },
 			} );
 		} );
 	} );

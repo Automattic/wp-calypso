@@ -38,6 +38,11 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
+	FREE_POST_SETUP: {
+		slug: 'freePostSetup',
+		asyncComponent: () => import( './steps-repository/free-post-setup' ),
+	},
+
 	FREE_SETUP: {
 		slug: 'freeSetup',
 		asyncComponent: () => import( './steps-repository/free-setup' ),
@@ -124,6 +129,8 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
 
+	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
+
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),
@@ -132,6 +139,11 @@ export const STEPS = {
 	SITE_CREATION_STEP: {
 		slug: 'site-creation-step',
 		asyncComponent: () => import( './steps-repository/site-creation-step' ),
+	},
+
+	SITE_LAUNCH: {
+		slug: 'site-launch',
+		asyncComponent: () => import( './steps-repository/site-launch' ),
 	},
 
 	SITE_PICKER: {

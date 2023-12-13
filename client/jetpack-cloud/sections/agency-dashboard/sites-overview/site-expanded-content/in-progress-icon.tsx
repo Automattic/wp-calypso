@@ -1,7 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Tooltip } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 export default function InProgressIcon() {
 	const translate = useTranslate();

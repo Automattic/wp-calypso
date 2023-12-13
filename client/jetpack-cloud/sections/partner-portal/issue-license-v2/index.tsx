@@ -77,6 +77,29 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			? translate( 'Single license' )
 			: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string );
 
+	const selectedCount = selectedLicenses.filter( ( license ) => license.quantity === selectedSize )
+		?.length;
+
+	const navItems = availableSizes.map( ( size ) => {
+		const count = selectedLicenses.filter( ( license ) => license.quantity === size ).length;
+		return {
+			label:
+				size === 1
+					? translate( 'Single license' )
+					: ( translate( '%(size)d licenses', {
+							args: { size },
+					  } ) as string ),
+			selected: selectedSize === size,
+			onClick: () => setSelectedSize( size ),
+			...( count && { count } ),
+		};
+	} );
+
+	const selectedItemProps = {
+		selectedText,
+		...( selectedCount && { selectedCount } ),
+	};
+
 	return (
 		<>
 			<Layout
@@ -93,8 +116,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						<Subtitle>
 							{ translate( 'Select single product licenses or save when you issue in bulk' ) }
 						</Subtitle>
-						<Actions>
-							{ selectedLicenses.length > 0 && (
+						{ selectedLicenses.length > 0 && (
+							<Actions>
 								<div className="issue-license-v2__controls">
 									<div className="issue-license-v2__actions">
 										<TotalCost selectedLicenses={ selectedLicenses } />
@@ -118,24 +141,12 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 										</Button>
 									</div>
 								</div>
-							) }
-						</Actions>
+							</Actions>
+						) }
 					</LayoutHeader>
 
-					<LayoutNavigation selectedText={ selectedText }>
-						<NavigationTabs
-							selectedText={ selectedText }
-							items={ availableSizes.map( ( size ) => ( {
-								label:
-									size === 1
-										? translate( 'Single license' )
-										: ( translate( '%(size)d licenses', {
-												args: { size },
-										  } ) as string ),
-								selected: selectedSize === size,
-								onClick: () => setSelectedSize( size ),
-							} ) ) }
-						/>
+					<LayoutNavigation { ...selectedItemProps }>
+						<NavigationTabs { ...selectedItemProps } items={ navItems } />
 					</LayoutNavigation>
 				</LayoutTop>
 

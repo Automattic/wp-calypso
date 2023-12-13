@@ -17,7 +17,7 @@ describe( 'useCurrentPlan selector', () => {
 	it( 'should bring back current plan when one exists in Site Plans', () => {
 		useSitePlans.mockImplementation( () => ( {
 			data: {
-				[ MockData.NEXT_STORE_SITE_PLAN_FREE.planSlug ]: MockData.NEXT_STORE_SITE_PLAN_FREE,
+				[ MockData.NEXT_STORE_SITE_PLAN_PERSONAL.planSlug ]: MockData.NEXT_STORE_SITE_PLAN_PERSONAL,
 				[ MockData.NEXT_STORE_SITE_PLAN_BUSINESS_CURRENT.planSlug ]:
 					MockData.NEXT_STORE_SITE_PLAN_BUSINESS_CURRENT,
 			},
@@ -31,7 +31,7 @@ describe( 'useCurrentPlan selector', () => {
 	it( 'should bring back undefined if no current plan exists in Site Plans', () => {
 		useSitePlans.mockImplementation( () => ( {
 			data: {
-				[ MockData.NEXT_STORE_SITE_PLAN_FREE.planSlug ]: MockData.NEXT_STORE_SITE_PLAN_FREE,
+				[ MockData.NEXT_STORE_SITE_PLAN_PERSONAL.planSlug ]: MockData.NEXT_STORE_SITE_PLAN_PERSONAL,
 				[ MockData.NEXT_STORE_SITE_PLAN_BUSINESS.planSlug ]: MockData.NEXT_STORE_SITE_PLAN_BUSINESS,
 			},
 		} ) );

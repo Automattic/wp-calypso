@@ -11,8 +11,14 @@ const FONT_API_BASE = 'https://fonts-api.wp.com/css2';
 
 const FONT_AXIS = 'ital,wght@0,400;0,700;1,400;1,700';
 
-// Fix to avoid error in Google Fonts API
-const removeSingleQuotes = ( fontFamily: string ) => fontFamily.replaceAll( "'", '' );
+/**
+ * Supports the following formats:
+ * - Albert Sans
+ * - 'Albert Sans'
+ * - "Albert Sans", sans-serif
+ */
+const normalizeFontFamily = ( fontFamily: string ) =>
+	fontFamily.split( ',' )[ 0 ].replaceAll( "'", '' ).replaceAll( '"', '' ).trim();
 
 const FontFamiliesLoader = ( { fontFamilies, onLoad }: Props ) => {
 	const params = useMemo(
@@ -20,11 +26,11 @@ const FontFamiliesLoader = ( { fontFamilies, onLoad }: Props ) => {
 			new URLSearchParams( [
 				...fontFamilies.map( ( { fontFamily } ) => [
 					'family',
-					`${ removeSingleQuotes( fontFamily ) }:${ FONT_AXIS }`,
+					`${ normalizeFontFamily( fontFamily ) }:${ FONT_AXIS }`,
 				] ),
 				[ 'display', 'swap' ],
 			] ),
-		fontFamilies
+		[ fontFamilies ]
 	);
 
 	if ( ! params.getAll( 'family' ).length ) {

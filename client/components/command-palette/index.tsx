@@ -6,15 +6,12 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { useSelector } from 'calypso/state';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
-	isContextual?: boolean;
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
@@ -63,7 +60,6 @@ const SubLabel = styled( Label )( {
 } );
 
 export function CommandMenuGroup( {
-	isContextual,
 	search,
 	close,
 	setSearch,
@@ -71,11 +67,9 @@ export function CommandMenuGroup( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
-	const currentPath = useSelector( ( state ) => getCurrentRoute( state ) );
 	const { commands } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
-		filter: isContextual ? ( command ) => command.context?.includes( currentPath ) : undefined,
 	} );
 
 	if ( ! commands.length ) {
@@ -245,7 +239,6 @@ const CommandPalette = () => {
 							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
 						) }
 						<CommandMenuGroup
-							isContextual={ ! search && ! selectedCommandName }
 							search={ search }
 							close={ closeAndReset }
 							setSearch={ setSearch }

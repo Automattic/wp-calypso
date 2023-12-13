@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { HTMLProps } from 'react';
 import ReactSlider from 'react-slider';
 import { RenderThumbFunction, PricingSliderProps } from './types';
 import './style.scss';
@@ -52,6 +52,16 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 				return <div { ...props }>{ state.valueNow }</div>;
 		  } ) as RenderThumbFunction );
 
+	const renderMarks = ( props: HTMLProps< HTMLSpanElement > ) => (
+		<span
+			{ ...props }
+			className={ classNames( props?.className, {
+				[ 'jp-components-pricing-slider__mark--selected' ]:
+					( ( props?.key as number ) ?? 0 ) <= ( value ?? 0 ),
+			} ) }
+		/>
+	);
+
 	return (
 		<div className={ componentClassName } data-testid="pricing-slider">
 			<ReactSlider
@@ -60,6 +70,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 				thumbActiveClassName="jp-components-pricing-slider__thumb--is-active"
 				trackClassName="jp-components-pricing-slider__track"
 				marks={ marks }
+				renderMark={ renderMarks }
 				value={ value }
 				max={ maxValue }
 				min={ minValue }

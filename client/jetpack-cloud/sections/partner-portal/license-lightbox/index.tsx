@@ -23,6 +23,7 @@ export type LicenseLightBoxProps = {
 	product: APIProductFamilyProduct;
 	extraAsideContent?: JSX.Element;
 	className?: string;
+	quantity?: number;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -34,6 +35,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	product,
 	extraAsideContent,
 	className,
+	quantity,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -59,7 +61,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 			</JetpackLightboxMain>
 
 			<JetpackLightboxAside ref={ sidebarRef }>
-				<LicenseLightboxPaymentPlan product={ product } />
+				<LicenseLightboxPaymentPlan product={ product } quantity={ quantity } />
 
 				<Button
 					className="license-lightbox__cta-button"

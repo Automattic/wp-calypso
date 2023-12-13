@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Badge, CircularProgressBar, Gridicon } from '@automattic/components';
+import { Badge, CircularProgressBar, Gridicon, Tooltip } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { LaunchpadInternal } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
@@ -8,9 +8,9 @@ import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Tooltip from 'calypso/components/tooltip';
 import { type NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -90,15 +90,20 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		[]
 	);
 
-	const enhancedTasks: Task[] | null =
-		site &&
-		getEnhancedTasks(
-			launchpadChecklist,
+	const displayGlobalStylesWarning = globalStylesInUse && shouldLimitGlobalStyles;
+
+	const enhancedTasks: Task[] | null = useMemo( () => {
+		if ( ! site ) {
+			return null;
+		}
+
+		return getEnhancedTasks( {
+			tasks: launchpadChecklist,
 			siteSlug,
 			site,
 			submit,
-			globalStylesInUse && shouldLimitGlobalStyles,
-			PLAN_PREMIUM,
+			displayGlobalStylesWarning,
+			globalStylesMinimumPlan: PLAN_PREMIUM,
 			setShowPlansModal,
 			queryClient,
 			goToStep,
@@ -108,8 +113,25 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			planCartItem,
 			domainCartItem,
 			productCartItems,
-			stripeConnectUrl
-		);
+			stripeConnectUrl,
+		} );
+	}, [
+		site,
+		launchpadChecklist,
+		siteSlug,
+		submit,
+		displayGlobalStylesWarning,
+		setShowPlansModal,
+		queryClient,
+		goToStep,
+		flow,
+		isEmailVerified,
+		checklistStatuses,
+		planCartItem,
+		domainCartItem,
+		productCartItems,
+		stripeConnectUrl,
+	] );
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );

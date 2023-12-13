@@ -14,11 +14,21 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
 import { CheckIcon } from '../../src/components/check-icon';
+import { CheckoutSummaryFeaturesList } from '../../src/components/wp-checkout-order-summary';
 import { BEFORE_SUBMIT } from './constants';
-import { formatDate } from './util';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
+
+function formatDate( cardExpiry: string ): string {
+	const expiryDate = new Date( cardExpiry );
+	const formattedDate = expiryDate.toLocaleDateString( 'en-US', {
+		month: '2-digit',
+		year: '2-digit',
+	} );
+
+	return formattedDate;
+}
 
 function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
 	return (
@@ -200,6 +210,7 @@ export default function PurchaseModalContent( {
 	siteSlug,
 	step,
 	submitTransaction,
+	showFeatureList,
 }: {
 	cards: StoredPaymentMethodCard[];
 	cart: ResponseCart;
@@ -207,6 +218,7 @@ export default function PurchaseModalContent( {
 	siteSlug: string;
 	step: string;
 	submitTransaction(): void;
+	showFeatureList: boolean;
 } ) {
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( cart );
@@ -214,40 +226,52 @@ export default function PurchaseModalContent( {
 	const firstCard = cards.length > 0 ? cards[ 0 ] : undefined;
 
 	return (
-		<>
-			<Button
-				borderless
-				className="purchase-modal__close"
-				aria-label={ translate( 'Close dialog' ) }
-				onClick={ onClose }
-			>
-				<Gridicon icon="cross-small" />
-			</Button>
-			{ firstProduct && <OrderStep siteSlug={ siteSlug } product={ firstProduct } /> }
-			{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
-			<CheckoutTerms cart={ cart } />
-			<hr />
-			<OrderReview
-				creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
-				shouldDisplayTax={ cart.tax.display_taxes }
-				total={ formatCurrency( cart.total_cost_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-				tax={ formatCurrency( cart.total_tax_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-			/>
-			<PayButton
-				busy={ BEFORE_SUBMIT !== step }
-				onClick={ submitTransaction }
-				totalCost={ cart.total_cost_integer }
-				totalCostDisplay={ formatCurrency( cart.total_cost_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-			/>
-		</>
+		<div className="purchase-modal__wrapper">
+			<div className="purchase-modal__steps">
+				<Button
+					borderless
+					className="purchase-modal__close"
+					aria-label={ translate( 'Close dialog' ) }
+					onClick={ onClose }
+				>
+					<Gridicon icon="cross-small" />
+				</Button>
+				{ firstProduct && <OrderStep siteSlug={ siteSlug } product={ firstProduct } /> }
+				{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
+				<CheckoutTerms cart={ cart } />
+				<OrderReview
+					creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
+					shouldDisplayTax={ cart.tax.display_taxes }
+					total={ formatCurrency( cart.total_cost_integer, cart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+					tax={ formatCurrency( cart.total_tax_integer, cart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				/>
+				<PayButton
+					busy={ BEFORE_SUBMIT !== step }
+					onClick={ submitTransaction }
+					totalCost={ cart.total_cost_integer }
+					totalCostDisplay={ formatCurrency( cart.total_cost_integer, cart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				/>
+			</div>
+			{ showFeatureList && (
+				<div className="purchase-modal__features">
+					<h3 className="purchase-modal__features-title">
+						{ translate( 'Included with your purchase' ) }
+					</h3>
+					<CheckoutSummaryFeaturesList
+						siteId={ cart.blog_id }
+						nextDomainIsFree={ cart.next_domain_is_free }
+					/>
+				</div>
+			) }
+		</div>
 	);
 }

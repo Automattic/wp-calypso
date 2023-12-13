@@ -2,6 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
+import { isAssemblerSupported } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -15,6 +17,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
@@ -22,13 +25,16 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
+import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
@@ -365,6 +371,23 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
+	onDesignYourOwnClick = () => {
+		const { isLoggedIn, site: selectedSite, siteEditorUrl } = this.props;
+		const shouldGoToAssemblerStep = isAssemblerSupported();
+		recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_top_button_click', {
+			is_logged_in: isLoggedIn,
+		} );
+
+		const destinationUrl = getSiteAssemblerUrl( {
+			isLoggedIn,
+			selectedSite,
+			shouldGoToAssemblerStep,
+			siteEditorUrl,
+		} );
+
+		window.location.assign( destinationUrl );
+	};
+
 	shouldShowCollections = () => {
 		const { category, search, filter, isCollectionView, tier } = this.props;
 
@@ -527,6 +550,7 @@ class ThemeShowcase extends Component {
 			isSiteWooExpressOrEcomFreeTrial,
 			isCollectionView,
 			isJetpackSite,
+			lastNonEditorRoute,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -581,6 +605,12 @@ class ThemeShowcase extends Component {
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 				/>
+				{ isLoggedIn && (
+					<ThemeShowcaseSurvey
+						survey={ SurveyType.DECEMBER_2023 }
+						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
+					/>
+				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
@@ -615,17 +645,27 @@ class ThemeShowcase extends Component {
 									></SelectDropdown>
 								) }
 							</div>
-							{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
-								<ThemesToolbarGroup
-									items={ Object.values( tabFilters ) }
-									selectedKey={ this.getSelectedTabFilter().key }
-									onSelect={ ( key ) =>
-										this.onFilterClick(
-											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-										)
-									}
-								/>
-							) }
+							<div className="themes__filters">
+								{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+									<ThemesToolbarGroup
+										items={ Object.values( tabFilters ) }
+										selectedKey={ this.getSelectedTabFilter().key }
+										onSelect={ ( key ) =>
+											this.onFilterClick(
+												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+											)
+										}
+									/>
+								) }
+								{ tabFilters && (
+									<Button
+										className="themes__pattern-assembler-top-button"
+										onClick={ this.onDesignYourOwnClick }
+									>
+										{ translate( 'Design your own' ) }
+									</Button>
+								) }
+							</div>
 						</div>
 					) }
 					{ isCollectionView && (
@@ -664,7 +704,9 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
+		site: getSite( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
+		siteEditorUrl: getSiteEditorUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
@@ -679,6 +721,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
+		lastNonEditorRoute: getLastNonEditorRoute( state ),
 	};
 };
 

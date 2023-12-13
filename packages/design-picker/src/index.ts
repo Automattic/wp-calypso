@@ -14,6 +14,7 @@ export {
 } from './components/pattern-assembler-cta';
 export {
 	availableDesignsConfig,
+	getAssemblerDesign,
 	getAvailableDesigns,
 	getFontTitle,
 	getDesignUrl,

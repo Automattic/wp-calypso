@@ -8,8 +8,10 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { useQuery } from '../hooks/use-query';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -116,6 +118,8 @@ const hosting: Flow = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const reduxDispatch = useReduxDispatch();
+		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -123,22 +127,34 @@ const hosting: Flow = {
 		);
 
 		useLayoutEffect( () => {
+			const queryParams = Object.fromEntries( query );
+
+			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
+
 			if ( ! userIsLoggedIn ) {
-				window.location.assign( '/start/hosting' );
+				window.location.assign(
+					addQueryArgs( '/start/hosting', {
+						...queryParams,
+						flow: 'new-hosted-site',
+					} )
+				);
 			}
 
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
-				window.location.assign( '/setup/new-hosted-site' );
+				window.location.assign( urlWithQueryParams );
 			}
-		}, [ userIsLoggedIn, isEligible, currentStepSlug ] );
+		}, [ userIsLoggedIn, isEligible, currentStepSlug, query ] );
 
 		useEffect(
 			() => {
 				if ( currentStepSlug === undefined ) {
 					resetOnboardStore();
+					if ( query.get( 'campaign' ) === 'reddit' ) {
+						reduxDispatch( savePreference( 'hosting-trial-campaign', 'reddit' ) );
+					}
 				}
 			},
-			// We only need to reset the store when the flow is mounted.
+			// We only need to reset the store and/or check the `campaign` param when the flow is mounted.
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			[]
 		);

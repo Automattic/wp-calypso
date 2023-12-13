@@ -22,14 +22,16 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<Hooray>
-			<Title>{ __( 'Hooray!' ) }</Title>
-			<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
-			<DoneButton
-				siteId={ siteId }
-				job={ job as ImportJob }
-				resetImport={ resetImport }
-				onSiteViewClick={ onSiteViewClick }
-			/>
+			<div className="import__heading import__heading-center">
+				<Title>{ __( 'Hooray!' ) }</Title>
+				<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
+				<DoneButton
+					siteId={ siteId }
+					job={ job as ImportJob }
+					resetImport={ resetImport }
+					onSiteViewClick={ onSiteViewClick }
+				/>
+			</div>
 		</Hooray>
 	);
 };

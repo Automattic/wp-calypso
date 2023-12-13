@@ -285,7 +285,7 @@
 			align-items: flex-start;
 		}
 
-		.social-buttons__button {
+		button.social-buttons__button.button {
 			border: 0;
 			text-align: left;
 			padding-bottom: 0;
@@ -560,8 +560,36 @@
 		display: none;
 	}
 
-	.auth-form__separator .auth-form__separator-text {
-		padding: 0 27px;
+	.signup-form {
+		padding-top: 32px;
+
+		.auth-form__separator {
+			width: 100%;
+			margin-left: 0;
+			margin-right: 0;
+
+			&::before,
+			&::after {
+				position: absolute;
+				border-inline-start: 0;
+				border-block-start: 1px solid #eaeaeb;
+				inset-block-start: 50%;
+				inset-inline-start: 0;
+				width: 42%;
+			}
+
+			&::after {
+				left: 58%;
+			}
+		}
+	}
+
+	.signup-form,
+	.login {
+		.auth-form__separator-text {
+			background: #fff;
+			padding: 0 27px !important;
+		}
 	}
 
 	.wp-login__footer--oauth {
@@ -642,10 +670,6 @@
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
-	}
-
-	.signup-form {
-		padding-top: 32px;
 	}
 
 	&.is-section-signup::before,
