@@ -206,15 +206,6 @@ export class RenderDomainsStep extends Component {
 			suggestion,
 		};
 
-		if (
-			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
-			suggestion?.isSubDomainSuggestion
-		) {
-			this.setState( { wpcomSubdomainSelected: suggestion } );
-			this.props.saveSignupStep( stepData );
-			return;
-		}
-
 		const signupDomainOrigin = suggestion?.is_free
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
@@ -229,7 +220,22 @@ export class RenderDomainsStep extends Component {
 			position,
 			suggestion?.is_premium
 		);
+
 		await this.props.saveSignupStep( stepData );
+
+		if (
+			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
+			suggestion?.isSubDomainSuggestion
+		) {
+			if ( this.state.wpcomSubdomainSelected ) {
+				this.freeDomainRemoveClickHandler();
+			} else {
+				this.setState( { wpcomSubdomainSelected: suggestion } );
+				this.props.saveSignupStep( stepData );
+			}
+
+			return;
+		}
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
 			await this.handleDomainToDomainCart();
