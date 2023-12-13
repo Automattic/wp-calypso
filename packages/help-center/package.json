@@ -54,7 +54,7 @@
 		"@storybook/addon-backgrounds": "^7.5.3",
 		"@storybook/cli": "^7.5.3",
 		"@storybook/react": "^7.5.3",
-		"typescript": "^5.2.2"
+		"typescript": "^5.3.2"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
