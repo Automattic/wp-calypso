@@ -44,7 +44,7 @@ const StyledCustomSelectControl = styled( CustomSelectControl )`
 	}
 `;
 
-const FixedCustomSelectControl = styled( CustomSelectControl )`
+const StickyDropdown = styled( CustomSelectControl )`
 	.components-flex {
 		position: fixed;
 		top: 0;
@@ -61,6 +61,12 @@ const FixedCustomSelectControl = styled( CustomSelectControl )`
 		width: 100%;
 		margin: 0;
 		z-index: 3;
+
+		border: 1px solid #e0e0e0;
+	}
+	.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop {
+		border: none;
+		border-bottom: 1px solid #e0e0e0;
 	}
 `;
 
@@ -68,7 +74,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const { intervalType } = props;
 	const dropdownRef = useRef( null );
 	const [ isMobileState, setIsMobileState ] = useState( isMobile() );
-	const [ isDropDownFixed, setIsDropDownFixed ] = useState( false );
+	const [ isStickyDropdownVisible, setIsStickyDropdownVisible ] = useState( false );
 
 	const supportedIntervalType = (
 		[ 'yearly', '2yearly', '3yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly'
@@ -83,7 +89,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 			</AddOnOption>
 		),
 	} ) );
-
+	setIsStickyDropdownVisible;
 	useLayoutEffect( () => {
 		const onResize = () => {
 			setIsMobileState( isMobile() );
@@ -100,16 +106,22 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		const observer = new IntersectionObserver(
 			( [ entry ] ) => {
 				if ( ! isMobileState ) {
-					if ( isDropDownFixed ) {
-						setIsDropDownFixed( false );
+					// If the viewport is mobile, the sticky dropdown will be disabled
+					if ( isStickyDropdownVisible ) {
+						setIsStickyDropdownVisible( false );
 					}
 					return;
 				}
 				if ( entry.intersectionRatio === 1 ) {
-					setIsDropDownFixed( false );
+					// If the original dropdown is fully visible in the viewport, the sticky dropdown will be hidden
+					setIsStickyDropdownVisible( false );
+					return;
+				} else if ( entry.boundingClientRect.top > 0 ) {
+					// If the original dropdown is below the viewport, the sticky dropdown will be hidden
+					setIsStickyDropdownVisible( false );
 					return;
 				}
-				setIsDropDownFixed( true );
+				setIsStickyDropdownVisible( true );
 			},
 			{
 				rootMargin: `-${ 0 + 1 }px 0px 0px 0px`,
@@ -124,23 +136,23 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		return () => {
 			observer.disconnect();
 		};
-	}, [ isDropDownFixed, isMobileState ] );
+	}, [ isStickyDropdownVisible, isMobileState ] );
 
 	return (
 		<>
-			<div className={ `${ isDropDownFixed }_${ isMobileState }` } ref={ dropdownRef }>
-				{ ! isDropDownFixed && (
+			<div className={ `${ isStickyDropdownVisible }_${ isMobileState }` } ref={ dropdownRef }>
+				{ ! isStickyDropdownVisible && (
 					<StyledCustomSelectControl
-						isDropDownFixed={ isDropDownFixed }
+						isStickyDropdownVisible={ isStickyDropdownVisible }
 						label=""
 						options={ selectOptionsList }
 						value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
 					/>
 				) }
 			</div>
-			{ isDropDownFixed && (
-				<FixedCustomSelectControl
-					isDropDownFixed={ isDropDownFixed }
+			{ isStickyDropdownVisible && (
+				<StickyDropdown
+					isStickyDropdownVisible={ isStickyDropdownVisible }
 					label=""
 					options={ selectOptionsList }
 					value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
