@@ -5,7 +5,7 @@ import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/i
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentRouteGeneric } from 'calypso/state/selectors/get-current-route-generic';
@@ -156,22 +156,20 @@ const CommandPalette = () => {
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const { close, toggle } = {
-		close: () => setIsOpen( false ),
-		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
-	};
 	const currentRoute = useSelector( ( state: object ) => getCurrentRouteGeneric( state ) );
 	const dispatch = useDispatch();
-
-	useEffect( () => {
-		if ( isOpen ) {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_command_palette_open', {
-					current_route: currentRoute,
-				} )
-			);
-		}
-	}, [ currentRoute, dispatch, isOpen ] );
+	const open = useCallback( () => {
+		setIsOpen( true );
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_open', {
+				location: currentRoute,
+			} )
+		);
+	}, [ dispatch, currentRoute ] );
+	const close = useCallback( () => {
+		setIsOpen( false );
+	}, [] );
+	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 
 	// Cmd+K shortcut
 	useEffect( () => {
