@@ -92,7 +92,7 @@ const useSiteToAction = () => {
 					searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
 					callback: ( { close }: { close: CloseFunction } ) => {
 						dispatch(
-							recordTracksEvent( 'calypso_command_palette_site_clicked', {
+							recordTracksEvent( 'calypso_hosting_command_palette_site_clicked', {
 								command_name: selectedCommand.name,
 								has_nested_commands: false,
 								list_count: filteredSitesLength,
@@ -188,7 +188,7 @@ export const useCommandPalette = ( {
 		...command,
 		callback: ( params: CommandCallBackParams ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_command_palette_command_clicked', {
+				recordTracksEvent( 'calypso_hosting_command_palette_command_clicked', {
 					command_name: command.name,
 					has_nested_commands: !! command.siteFunctions,
 					list_count: commands.length,
