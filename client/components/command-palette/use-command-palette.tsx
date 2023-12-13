@@ -65,7 +65,8 @@ const useSiteToAction = () => {
 			onClickSite: OnClickSiteFunction,
 			selectedCommand: Command,
 			filteredSitesLength: number,
-			search: string
+			search: string,
+			currentSiteId: number | null
 		) =>
 			( site: SiteExcerptData ): Command => {
 				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
@@ -84,6 +85,7 @@ const useSiteToAction = () => {
 								search_is_empty: ! search,
 								search_text: search,
 								site_id: site.ID,
+								site_id_matches_current_site_id: site.ID === currentSiteId,
 								site_has_custom_domain: isCustomDomain( site.slug ),
 								site_plan_product_id: site.plan?.product_id,
 								site_plan_product_slug: site.plan?.product_slug,
@@ -201,7 +203,7 @@ export const useCommandPalette = ( {
 			}
 		}
 		sitesToPick = filteredSites.map(
-			siteToAction( onClick, selectedCommand, filteredSites.length, search )
+			siteToAction( onClick, selectedCommand, filteredSites.length, search, currentSiteId )
 		);
 	}
 
