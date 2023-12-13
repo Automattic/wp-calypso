@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { includes, find, isEmpty, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
