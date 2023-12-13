@@ -20,7 +20,7 @@ export const connectionHealth = {
 		},
 	},
 };
-export const jetpacConnectionHealth = {
+export const jetpackConnectionHealth = {
 	type: 'object',
 	properties: {
 		connectionHealth,
@@ -32,6 +32,6 @@ export const jetpacConnectionHealth = {
 export const schema = {
 	type: 'object',
 	patternProperties: {
-		'^\\d+$': jetpacConnectionHealth,
+		'^\\d+$': jetpackConnectionHealth,
 	},
 };
