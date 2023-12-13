@@ -1,3 +1,3 @@
-## v1.0.0 (2023-12-11)
+## v1.0.0-alpha.0
 
 - Initial release with basic structure
