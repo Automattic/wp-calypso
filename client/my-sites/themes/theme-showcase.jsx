@@ -162,7 +162,7 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const shouldShowMyThemesFilter = !! this.props.isLoggedIn;
+		const shouldShowMyThemesFilter = config.isEnabled( 'themes/tiers' ) && !! this.props.isLoggedIn;
 
 		return {
 			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
