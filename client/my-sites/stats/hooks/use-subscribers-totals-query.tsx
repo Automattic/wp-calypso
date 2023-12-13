@@ -2,12 +2,9 @@ import { useQueries } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 const querySubscribersTotals = ( siteId: number | null ): Promise< any > => {
-	return wpcom.req.get(
-		{
-			path: `/sites/${ siteId }/stats/followers`,
-		},
-		{ type: 'all' }
-	);
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/stats/followers`,
+	} );
 };
 
 const queryMore = ( siteId: number | null ): Promise< any > => {
@@ -23,7 +20,6 @@ const selectSubscribers = ( payload: {
 	total_wpcom: number;
 } ) => {
 	return {
-		total: payload.total,
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
 	};
@@ -66,7 +62,7 @@ export default function useSubscribersTotalsQueries( siteId: number | null ) {
 		data: {
 			total_email: queries[ 0 ]?.data?.total_email,
 			total_wpcom: queries[ 0 ]?.data?.total_wpcom,
-			total: queries[ 0 ]?.data?.total,
+			total: queries[ 1 ]?.data?.email_subscribers,
 			paid_subscribers: queries[ 1 ]?.data?.paid_subscribers,
 			free_subscribers:
 				queries[ 1 ]?.data?.email_subscribers !== undefined &&
