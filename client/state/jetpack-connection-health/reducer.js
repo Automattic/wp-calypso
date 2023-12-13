@@ -58,7 +58,7 @@ export const connectionHealth = withPersistence( ( state = {}, action ) => {
 export const requestError = withPersistence( ( state = '', action ) => {
 	switch ( action.type ) {
 		case JETPACK_CONNECTION_HEALTH_REQUEST:
-			return '';
+			return null;
 		case JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE:
 			return action.error;
 		default:

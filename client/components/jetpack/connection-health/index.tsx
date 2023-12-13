@@ -27,12 +27,6 @@ interface Props {
 	siteId: number;
 }
 
-const request = ( siteId ) => ( dispatch, getState ) => {
-	if ( ! isRequestingJetpackConnectionHealthStatus( getState(), siteId ) ) {
-		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
-	}
-};
-
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -53,10 +47,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	);
 
 	useEffect( () => {
-		if ( ! siteId ) {
-			return;
-		}
-		dispatch( request( siteId ) );
+		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
 	}, [ dispatch, siteId ] );
 
 	if (
