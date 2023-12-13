@@ -70,10 +70,23 @@ export interface PlanIntroductoryOffer {
 
 export interface PlanPricing {
 	billPeriod: -1 | ( typeof PERIOD_LIST )[ number ];
-	rawPriceInteger: number;
-	origCostInteger: number;
 	currencyCode: string;
 	introOffer?: PlanIntroductoryOffer | null;
+	/**
+	 * This is the original cost as defined for the associated billing plan.
+	 */
+	originalPrice: {
+		monthly: number | null;
+		full: number | null;
+	};
+	/**
+	 * This is the original cost as defined for the associated billing plan,
+	 * minus any discounts stemming from either currency conversion and/or prorated credits (in the case of Site Plans).
+	 */
+	discountedPrice: {
+		monthly: number | null;
+		full: number | null;
+	};
 }
 
 export interface SitePlan extends PlanPricing {
