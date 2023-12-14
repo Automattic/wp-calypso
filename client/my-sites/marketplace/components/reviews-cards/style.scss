@@ -78,6 +78,7 @@ $cards-gap: 20px;
 	color: var(--studio-gray-60);
 	font-size: $font-body-extra-small;
 	line-height: 20px;
+	font-weight: 500;
 
 	.marketplace-reviews-card__author-name {
 		color: var(--studio-black);
@@ -98,6 +99,7 @@ $cards-gap: 20px;
 		font-family: "SF Pro Text", $sans;
 		color: var(--studio-gray-100);
 		font-size: $font-body;
+		font-weight: 500;
 		line-height: 24px;
 	}
 }
