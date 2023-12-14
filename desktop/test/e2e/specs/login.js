@@ -85,19 +85,20 @@ describe( 'User Can log in', () => {
 
 	// eslint-disable-next-line jest/expect-expect
 	it( 'Log in', async () => {
-		await window.screenshot( { path: SCREENSHOT_PATH } );
+		await window.screenshot( { path: path.join( RESULTS_PATH, '01.png' ) } );
 
 		await window.getByLabel( 'Email Address or Username' ).fill( process.env.E2EGUTENBERGUSER );
-		await window.screenshot( { path: SCREENSHOT_PATH } );
+		await window.screenshot( { path: path.join( RESULTS_PATH, '02.png' ) } );
 
 		await window.getByRole( 'button', { name: 'Continue' } ).click();
-		await window.screenshot( { path: SCREENSHOT_PATH } );
+		await window.screenshot( { path: path.join( RESULTS_PATH, '03.png' ) } );
 
 		await window.getByLabel( 'Password' ).fill( process.env.E2EPASSWORD );
-		await window.screenshot( { path: SCREENSHOT_PATH } );
+		await window.screenshot( { path: path.join( RESULTS_PATH, '04.png' ) } );
 
 		const responsePromise = window.waitForResponse( '**/wp-login.php?action=login-endpoint' );
 		await window.getByRole( 'button', { name: 'Log In' } ).click();
+		await window.screenshot( { path: path.join( RESULTS_PATH, '05.png' ) } );
 
 		// If the account credentials are rejected, throw an error containing the text of
 		// the validation error.
