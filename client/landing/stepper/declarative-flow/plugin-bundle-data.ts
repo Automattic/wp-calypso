@@ -95,6 +95,10 @@ export const bundleStepsSettings: BundleStepsSettings = {
 		},
 		checkForActivePlugins: [ 'woocommerce' ],
 	},
+	sensei: {
+		customSteps: [],
+		checkForActivePlugins: [ 'sensei-lms' ],
+	},
 };
 
 export type BundledPlugin = keyof typeof bundleStepsSettings & string;
