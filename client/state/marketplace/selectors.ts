@@ -79,7 +79,7 @@ export function canPublishProductReviews(
 		return canPublishThemeReview( state, productSlug );
 	}
 	if ( productType === 'plugin' ) {
-		throw new Error( `Selector nnt implemented for plugins` );
+		throw new Error( `Selector not implemented for plugins` );
 	}
 	throw new Error( `Unknown product type: ${ productType }` );
 }
