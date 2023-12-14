@@ -4,35 +4,37 @@ const { mkdir } = require( 'fs/promises' );
 const path = require( 'path' );
 const { _electron: electron } = require( 'playwright' );
 
+const RELEASE_PATH = path.join( __dirname, '../../../release' );
+
 let APP_PATH;
 
 switch ( process.platform ) {
 	case 'linux':
-		APP_PATH = path.join( __dirname, '../../../release/linux-unpacked/wpcom' );
+		APP_PATH = path.join( RELEASE_PATH, '/linux-unpacked/wpcom' );
 		break;
 	case 'darwin':
 		// On Apple Silicon, the output file is under a separate directory.
 		if ( process.arch.includes( 'arm' ) ) {
 			APP_PATH = path.join(
-				__dirname,
-				'../../../release/mac-arm64/WordPress.com.app/Contents/MacOS/WordPress.com'
+				RELEASE_PATH,
+				'/mac-arm64/WordPress.com.app/Contents/MacOS/WordPress.com'
 			);
 			break;
 		}
 		// Codepath for Intel architecture.
-		APP_PATH = path.join(
-			__dirname,
-			'../../../release/mac/WordPress.com.app/Contents/MacOS/WordPress.com'
-		);
+		APP_PATH = path.join( RELEASE_PATH, '/mac/WordPress.com.app/Contents/MacOS/WordPress.com' );
 		break;
 	default:
 		throw new Error( 'unsupported platform' );
 }
 
-const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
-const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
-const HAR_PATH = path.join( __dirname, '../results/network.har' );
-const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
+const RESULTS_PATH = path.join( __dirname, '../results' );
+
+const CONSOLE_PATH = path.join( RESULTS_PATH, '/console.log' );
+const SCREENSHOT_PATH = path.join( RESULTS_PATH, '/screenshot.png' );
+const RECORD_VIDEO_DIR = path.join( RESULTS_PATH, '/record_video' );
+const HAR_PATH = path.join( RESULTS_PATH, '/network.har' );
+const WP_DEBUG_LOG = path.resolve( RESULTS_PATH, '/app.log' );
 
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
 
@@ -55,7 +57,7 @@ describe( 'User Can log in', () => {
 				path: HAR_PATH,
 			},
 			recordVideo: {
-				dir: SCREENSHOT_PATH + '/screen_record',
+				dir: RECORD_VIDEO_DIR,
 			},
 			env: {
 				...process.env,
