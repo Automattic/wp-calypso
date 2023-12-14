@@ -175,7 +175,14 @@ const wooexpress: Flow = {
 
 					if ( providedDependencies?.pluginsInstalled ) {
 						recordGTMDatalayerEvent( 'free trial processing' );
-						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to the wc admin page after.
+						const redirectTo = encodeURIComponent(
+							`${ adminUrl as string }admin.php?page=wc-admin`
+						);
+
+						return exitFlow(
+							`//${ siteSlug }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`
+						);
 					}
 
 					return navigate( 'assignTrialPlan', { siteSlug } );
