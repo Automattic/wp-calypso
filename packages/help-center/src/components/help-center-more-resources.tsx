@@ -7,14 +7,7 @@ import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import {
-	Icon,
-	captureVideo,
-	desktop,
-	formatListNumbered,
-	external,
-	institution,
-} from '@wordpress/icons';
+import { Icon, captureVideo, formatListNumbered, external, institution } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
@@ -107,22 +100,7 @@ export const HelpCenterMoreResources = () => {
 							onClick={ () => trackMoreResourcesButtonClick( 'support-documentation' ) }
 						>
 							<Icon icon={ formatListNumbered } size={ 24 } />
-							<span>{ __( 'Support Documentation', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
-						<a
-							href="https://wordpress.com/learn/"
-							rel="noreferrer"
-							target="_blank"
-							className="inline-help__desktop"
-							onClick={ () => trackMoreResourcesButtonClick( 'starting-guide' ) }
-						>
-							<Icon icon={ desktop } size={ 24 } />
-							<span>{ __( 'Starting Guide', __i18n_text_domain__ ) }</span>
+							<span>{ __( 'Support Guides', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -165,7 +143,7 @@ export const HelpCenterMoreResources = () => {
 							className="inline-help__new-releases"
 						>
 							<Icon icon={ <NewReleases /> } size={ 24 } />
-							<span>{ __( "What's new", __i18n_text_domain__ ) }</span>
+							<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
 							{ showWhatsNewDot && (
 								<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
 							) }
