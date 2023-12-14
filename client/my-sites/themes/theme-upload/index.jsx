@@ -3,6 +3,7 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_PLUGINS,
 	PLAN_ECOMMERCE,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
@@ -209,7 +210,11 @@ class Upload extends Component {
 		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
 
 		let upsellPlan = PLAN_BUSINESS;
-		let title = translate( 'Upgrade to the Business plan to access the theme install features' );
+		let title =
+			/* translators: %(planName)s the short-hand version of the Business plan name */
+			translate( 'Upgrade to the %(planName)s plan to access the theme install features', {
+				args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+			} );
 		let upgradeUrl = `/checkout/${ siteSlug }/business?redirect_to=${ redirectTo }`;
 
 		if ( isCommerceTrial ) {

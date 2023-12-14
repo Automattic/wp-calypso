@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { SENSEI_FLOW } from '@automattic/onboarding';
+import { SENSEI_FLOW, setThemeOnSite } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,6 +7,7 @@ import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
 import { Progress } from '../components/sensei-step-progress';
+import { wait } from '../sensei-launch/launch-completion-tasks';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import type { StyleVariation } from 'calypso/../packages/design-picker';
 
@@ -97,6 +98,8 @@ export const useCreateSenseiSite = () => {
 		} );
 
 		if ( siteId ) {
+			await setThemeOnSite( siteId.toString(), COURSE_THEME );
+			wait( 1200 );
 			const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
 			const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
 				getStyleVariations( siteId, COURSE_THEME ),
@@ -111,6 +114,7 @@ export const useCreateSenseiSite = () => {
 			if ( styleVariation && userGlobalStylesId ) {
 				await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
 			}
+			wait( 1200 );
 		}
 		setProgress( {
 			percentage: 100,

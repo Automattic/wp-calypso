@@ -1,6 +1,9 @@
 import {
 	WPCOM_FEATURES_UPLOAD_AUDIO_FILES,
 	WPCOM_FEATURES_UPLOAD_VIDEO_FILES,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	getPlan,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,21 +12,33 @@ import ListPlanPromo from './list-plan-promo';
 
 function getTitle( filter, translate ) {
 	if ( filter === 'audio' ) {
-		return translate( 'Upgrade to the Personal Plan to Enable Audio Uploads' );
+		/* translators: %(planName)s is the short-hand version of the Personal plan name */
+		return translate( 'Upgrade to the %(planName)s Plan to Enable Audio Uploads', {
+			args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+		} );
 	}
-
-	return translate( 'Upgrade to the Premium Plan to Enable VideoPress' );
+	/* translators: %(planName)s is the short-hand version of the Premium plan name */
+	return translate( 'Upgrade to the %(planName)s Plan to Enable VideoPress', {
+		args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
+	} );
 }
 
 function getSubtitle( filter, translate ) {
 	if ( filter === 'audio' ) {
 		return translate(
-			"By upgrading to the Personal plan, you'll enable audio upload support on your site."
+			/* translators: %(planName)s is the short-hand version of the Personal plan name */
+			"By upgrading to the %(planName)s plan, you'll enable audio upload support on your site.",
+			{
+				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+			}
 		);
 	}
-
+	/* translators: %(planName)s is the short-hand version of the Premium plan name */
 	return translate(
-		"By upgrading to the Premium plan, you'll enable VideoPress support on your site."
+		"By upgrading to the %(planName)s plan, you'll enable VideoPress support on your site.",
+		{
+			args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
+		}
 	);
 }
 

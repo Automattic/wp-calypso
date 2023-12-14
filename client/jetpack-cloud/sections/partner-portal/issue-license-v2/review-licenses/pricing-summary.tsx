@@ -50,7 +50,12 @@ export default function PricingSummary( {
 				</span>
 				<div className="review-licenses__pricing-interval">{ translate( '/month' ) }</div>
 			</div>
-			<Button primary className="review-licenses__cta-button" onClick={ handleCTAClick }>
+			<Button
+				primary
+				className="review-licenses__cta-button"
+				onClick={ handleCTAClick }
+				busy={ ! isFormReady }
+			>
 				{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 					context: 'button label',
 					count: selectedLicenseCount,

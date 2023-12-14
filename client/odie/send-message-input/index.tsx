@@ -108,6 +108,11 @@ export const OdieSendMessageButton = ( {
 
 	const divContainerHeight = divContainerRef?.current?.clientHeight;
 
+	const userHasAskedToContactHE = chat.messages.some(
+		( message ) => message.context?.flags?.forward_to_human_support === true
+	);
+	const userHasNegativeFeedback = chat.messages.some( ( message ) => message.liked === false );
+
 	return (
 		<>
 			<JumpToRecent
@@ -118,10 +123,17 @@ export const OdieSendMessageButton = ( {
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize
-						placeholder={ translate( 'Ask your question', {
-							context: 'Placeholder text for the message input field (chat)',
-							textOnly: true,
-						} ) }
+						placeholder={
+							userHasAskedToContactHE || userHasNegativeFeedback
+								? translate( 'Continue chatting with Wapuu', {
+										context: 'Placeholder text for the message input field (chat)',
+										textOnly: true,
+								  } )
+								: translate( 'Ask your question', {
+										context: 'Placeholder text for the message input field (chat)',
+										textOnly: true,
+								  } )
+						}
 						className="odie-send-message-input"
 						rows={ 1 }
 						value={ messageString }
