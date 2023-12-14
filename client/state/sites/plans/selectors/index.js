@@ -1,6 +1,5 @@
 export { getCurrentPlan } from './get-current-plan';
 export { getPlanDiscountedRawPrice } from './get-plan-discounted-raw-price';
-export { getPlanRawDiscount } from './get-plan-raw-discount';
 export { getPlansBySite, getPlansBySiteId } from './get-plans-by-site';
 export { getSitePlan } from './get-site-plan';
 export { getSitePlanRawPrice } from './get-site-plan-raw-price';

@@ -2,10 +2,13 @@ import {
 	findFirstSimilarPlanKey,
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
+	getPlan,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
+import i18n from 'i18n-calypso';
 import { useEffect } from 'react';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -38,9 +41,17 @@ const GoogleAnalyticsSimpleForm = ( {
 	translate,
 } ) => {
 	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
-	const nudgeTitle = translate(
-		'Connect your site to Google Analytics in seconds with the Premium plan'
-	);
+	const isEnglishLocale = useIsEnglishLocale();
+	const nudgeTitle =
+		isEnglishLocale ||
+		i18n.hasTranslation(
+			'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan'
+		)
+			? translate(
+					'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
+					{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
+			  )
+			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
 
 	useEffect( () => {
 		if ( fields?.wga?.code ) {

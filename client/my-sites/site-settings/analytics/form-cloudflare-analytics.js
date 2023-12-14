@@ -3,9 +3,12 @@ import {
 	TYPE_PREMIUM,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS,
+	getPlan,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
+import i18n from 'i18n-calypso';
 import { pick } from 'lodash';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -41,6 +44,8 @@ export function CloudflareAnalyticsSettings( {
 	uniqueEventTracker,
 	showUpgradeNudge,
 	site,
+	locale,
+	premiumPlanName,
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ isCloudflareEnabled, setIsCloudflareEnabled ] = useState( false );
@@ -115,8 +120,14 @@ export function CloudflareAnalyticsSettings( {
 
 	const renderForm = () => {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
+		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
 
-		const nudgeTitle = translate( 'Available with Premium plans or higher' );
+		const nudgeTitle =
+			isEnglishLocale || i18n.hasTranslation( 'Available with %(premiumPlanName)s plans or higher' )
+				? translate( 'Available with %(premiumPlanName)s plans or higher', {
+						args: { premiumPlanName },
+				  } )
+				: translate( 'Available with Premium plans or higher' );
 
 		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
 			type: TYPE_PREMIUM,
@@ -243,6 +254,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		showUpgradeNudge: ! isAnalyticsEligible,
 		enableForm: isAnalyticsEligible,
+		premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle(),
 	};
 };
 

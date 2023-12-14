@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -29,6 +30,7 @@ import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
@@ -405,15 +407,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		! isJetpack &&
 		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
 
-	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
-		<ThemeTypeBadge
-			canGoToCheckout={ false }
-			isLockedStyleVariation={ isLockedStyleVariation }
-			siteId={ site?.ID ?? null }
-			siteSlug={ siteSlug }
-			themeId={ themeId }
-		/>
-	);
+	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) =>
+		isEnabled( 'themes/tiers' ) ? (
+			<ThemeTierBadge
+				canGoToCheckout={ false }
+				isLockedStyleVariation={ isLockedStyleVariation }
+				themeId={ themeId }
+			/>
+		) : (
+			<ThemeTypeBadge
+				canGoToCheckout={ false }
+				isLockedStyleVariation={ isLockedStyleVariation }
+				siteId={ site?.ID ?? null }
+				siteSlug={ siteSlug }
+				themeId={ themeId }
+			/>
+		);
 
 	function upgradePlan() {
 		if ( selectedDesign ) {
