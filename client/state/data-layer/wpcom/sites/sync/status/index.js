@@ -42,6 +42,10 @@ export const receiveStatus =
 			// Update the site object to reflect the new status
 			dispatch( requestSite( siteId ) );
 		}
+		if ( status === SiteSyncStatus.ALLOW_RETRY ) {
+			// Update the site object to reflect the new status
+			dispatch( requestSite( siteId ) );
+		}
 		if ( status === SiteSyncStatus.FAILED ) {
 			dispatch(
 				siteSyncFailure( {

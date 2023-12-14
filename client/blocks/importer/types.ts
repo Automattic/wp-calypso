@@ -1,4 +1,5 @@
 import { UrlData } from 'calypso/blocks/import/types';
+import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export type Importer = 'blogger' | 'medium' | 'squarespace' | 'wix' | 'wordpress';
@@ -13,7 +14,7 @@ export type StepNavigator = {
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;
 	goToDashboardPage?: () => void;
-	goToCheckoutPage?: () => void;
+	goToCheckoutPage?: ( option: WPImportOption, queryArgs?: object ) => void;
 	goToWpAdminImportPage?: () => void;
 	goToWpAdminWordPressPluginPage?: () => void;
 	navigate?: ( path: string ) => void;
@@ -31,10 +32,22 @@ export interface ImportError {
 export interface ImportJob {
 	importerId: string;
 	importerState: string;
+	importerFileType: 'content' | 'playground' | 'jetpack_backup';
 	statusMessage?: string;
 	type: string;
 	site: { ID: number };
-	customData: { [ key: string ]: any };
+	customData: {
+		[ key: string ]: any;
+		current_step?:
+			| 'convert_to_atomic'
+			| 'download_archive'
+			| 'unpack_file'
+			| 'preprocess'
+			| 'process_files'
+			| 'recreate_database'
+			| 'postprocess_database'
+			| 'clean_up';
+	};
 	errorData: {
 		type: string;
 		description: string;

@@ -173,7 +173,7 @@ function CheckoutSummaryPriceList() {
 	);
 }
 
-function LoadingCheckoutSummaryFeaturesList() {
+export function LoadingCheckoutSummaryFeaturesList() {
 	return (
 		<>
 			<LoadingCopy />
@@ -361,7 +361,7 @@ export function CheckoutSummaryRefundWindows( {
 	);
 }
 
-function CheckoutSummaryFeaturesList( props: {
+export function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
 	nextDomainIsFree: boolean;
 } ) {

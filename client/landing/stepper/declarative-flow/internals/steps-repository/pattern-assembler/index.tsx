@@ -6,7 +6,13 @@ import {
 	getVariationType,
 } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, isSiteAssemblerFlow, NavigatorScreen } from '@automattic/onboarding';
+import {
+	AI_ASSEMBLER_FLOW,
+	StepContainer,
+	isSiteAssemblerFlow,
+	isWithThemeAssemblerFlow,
+	NavigatorScreen,
+} from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalUseNavigator as useNavigator,
@@ -71,7 +77,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -415,7 +420,21 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	} );
 
 	const getBackLabel = () => {
+		// Exits the Assembler.
+		if ( isSiteAssemblerFlow( flow ) && ! currentScreen.previousScreen ) {
+			if ( flow === AI_ASSEMBLER_FLOW ) {
+				return translate( 'Back' );
+			}
+
+			return translate( 'Back to themes' );
+		}
+
 		if ( ! currentScreen.previousScreen ) {
+			// Go back to the Theme Showcase if people are from the with-theme-assembler flow.
+			if ( isWithThemeAssemblerFlow( flow ) ) {
+				return translate( 'Back to themes' );
+			}
+
 			return undefined;
 		}
 
@@ -424,6 +443,27 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				pageTitle: currentScreen.previousScreen.backLabel || currentScreen.previousScreen.title,
 			},
 		} );
+	};
+
+	const shouldHideBack = () => {
+		// Back button goes to the previous Assembler navigation screen.
+		if ( currentScreen.previousScreen ) {
+			return false;
+		}
+
+		// Back button goes to the Theme Showcase.
+		if ( ! isNewSite ) {
+			return false;
+		}
+
+		// Back button goes to the AI prompt step.
+		if ( flow === AI_ASSEMBLER_FLOW ) {
+			return false;
+		}
+
+		// Don't show the “Back” button if the site is being created by the site assembler flow.
+		// as the previous step is the site creation step that cannot be undone.
+		return isSiteAssemblerFlow( flow );
 	};
 
 	const onBack = () => {
@@ -581,11 +621,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation
-						onConfirm={ onConfirm }
-						surveyDismissed={ surveyDismissed }
-						setSurveyDismissed={ setSurveyDismissed }
-					/>
+					<ScreenConfirmation onConfirm={ onConfirm } />
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
@@ -665,20 +701,12 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		<StepContainer
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
-			backLabelText={
-				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
-					? translate( 'Back to themes' )
-					: getBackLabel()
-			}
+			backLabelText={ getBackLabel() }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
-			hideBack={
-				isSiteAssemblerFlow( flow ) &&
-				navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN ) &&
-				isNewSite
-			}
+			hideBack={ shouldHideBack() }
 			hideSkip={ true }
 			stepContent={
 				<PatternAssemblerContainer

@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { QueryClient } from '@tanstack/react-query';
 import { getEnhancedTasks } from '../task-helper';
 import { buildTask } from './lib/fixtures';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 const queryClient = new QueryClient( {
 	defaultOptions: {},
@@ -12,6 +14,15 @@ const queryClient = new QueryClient( {
 
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
+		const defaultProps = {
+			site: null,
+			siteSlug: 'fake.wordpress.com',
+			flow: '',
+			queryClient,
+			submit: noop,
+			setShowPlansModal: noop,
+		};
+
 		describe( 'when a task should not be enhanced', () => {
 			it( 'then it is not enhanced', () => {
 				const fakeTasks = [
@@ -20,18 +31,10 @@ describe( 'Task Helpers', () => {
 					buildTask( { id: 'fake-task-3' } ),
 				];
 				expect(
-					getEnhancedTasks(
-						fakeTasks,
-						'fake.wordpress.com',
-						null,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						false,
-						PLAN_PREMIUM,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						queryClient
-					)
+					getEnhancedTasks( {
+						...defaultProps,
+						tasks: fakeTasks,
+					} )
 				).toEqual( fakeTasks );
 			} );
 		} );
@@ -40,22 +43,12 @@ describe( 'Task Helpers', () => {
 				it( 'marks the task as complete', () => {
 					const fakeTasks = [ buildTask( { id: 'verify_email', completed: false } ) ];
 					const isEmailVerified = true;
-					const enhancedTasks = getEnhancedTasks(
-						fakeTasks,
-						'fake.wordpress.com',
-						null,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						false,
-						PLAN_PREMIUM,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						queryClient,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						'newsletter',
-						isEmailVerified
-					);
+					const enhancedTasks = getEnhancedTasks( {
+						...defaultProps,
+						tasks: fakeTasks,
+						flow: 'newsletter',
+						isEmailVerified,
+					} );
 					expect( enhancedTasks[ 0 ].completed ).toEqual( true );
 				} );
 			} );
@@ -64,21 +57,11 @@ describe( 'Task Helpers', () => {
 			describe( 'and the flow is start-writing', () => {
 				it( 'disable the click link so the user will not get distracted going back to the post', () => {
 					const fakeTasks = [ buildTask( { id: 'first_post_published', completed: true } ) ];
-					const enhancedTasks = getEnhancedTasks(
-						fakeTasks,
-						'fake.wordpress.com',
-						null,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						false,
-						PLAN_PREMIUM,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						queryClient,
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						() => {},
-						'start-writing'
-					);
+					const enhancedTasks = getEnhancedTasks( {
+						...defaultProps,
+						tasks: fakeTasks,
+						flow: 'start-writing',
+					} );
 					expect( enhancedTasks[ 0 ].disabled ).toEqual( true );
 				} );
 			} );

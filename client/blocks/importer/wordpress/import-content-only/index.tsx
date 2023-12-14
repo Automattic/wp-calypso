@@ -1,20 +1,27 @@
 import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
-import { Importer, ImportJob, ImportJobParams, StepNavigator } from 'calypso/blocks/importer/types';
-import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
+import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
+import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
+import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import { useDispatch } from 'calypso/state';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import CompleteScreen from '../../components/complete-screen';
 import ErrorMessage from '../../components/error-message';
-import GettingStartedVideo from '../../components/getting-started-video';
 import ImporterDrag from '../../components/importer-drag';
 import { getImportDragConfig } from '../../components/importer-drag/config';
 import ProgressScreen from '../../components/progress-screen';
 import type { SiteDetails } from '@automattic/data-stores';
+import type {
+	Importer,
+	ImportJob,
+	ImportJobParams,
+	StepNavigator,
+} from 'calypso/blocks/importer/types';
 
 import './style.scss';
 
@@ -28,12 +35,14 @@ interface Props {
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	/**
 	 ↓ Fields
 	 */
 	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
+	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
 
 	/**
 	 ↓ Effects
@@ -80,8 +89,11 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		return job?.importerState === appStates.IMPORT_FAILURE;
 	}
 
-	function showVideoComponent() {
-		return checkProgress() || checkIsSuccess();
+	function checkUpgradePlan() {
+		return (
+			! isSiteCompatible &&
+			( job?.importerFileType === 'playground' || job?.importerFileType === 'jetpack_backup' )
+		);
 	}
 
 	/**
@@ -109,7 +121,11 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderProgress() {
-		return <ProgressScreen job={ job } />;
+		return (
+			<div className="import-layout__center">
+				<ProgressScreen job={ job } />
+			</div>
+		);
 	}
 
 	function renderImportDrag() {
@@ -125,27 +141,49 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
+	function renderUpgradePlan() {
+		return (
+			siteItem && (
+				<UpgradePlan
+					site={ siteItem }
+					ctaText={ translate( 'Get Business' ) }
+					subTitleText={ translate( 'Importing a backup file requires a Business plan' ) }
+					isBusy={ false }
+					onCtaClick={ () => {
+						stepNavigator?.goToCheckoutPage?.( WPImportOption.CONTENT_ONLY );
+					} }
+					navigateToVerifyEmailStep={ () => {
+						stepNavigator?.goToVerifyEmailPage?.();
+					} }
+				/>
+			)
+		);
+	}
+
 	return (
-		<>
-			<div className={ classnames( 'import__import-content-only' ) }>
-				{ ( () => {
-					if ( checkIsSuccess() ) {
-						return renderHooray();
-					} else if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
-							/>
-						);
-					} else if ( checkProgress() ) {
-						return renderProgress();
-					}
-					return renderImportDrag();
-				} )() }
-			</div>
-			{ showVideoComponent() && <GettingStartedVideo /> }
-		</>
+		<div
+			className={ classnames( 'import__import-content-only', {
+				'import__error-message': checkIsFailed(),
+			} ) }
+		>
+			{ ( () => {
+				if ( checkIsSuccess() ) {
+					return renderHooray();
+				} else if ( checkIsFailed() ) {
+					return (
+						<ErrorMessage
+							onStartBuilding={ stepNavigator?.goToIntentPage }
+							onBackToStart={ stepNavigator?.goToImportCapturePage }
+						/>
+					);
+				} else if ( checkProgress() ) {
+					return renderProgress();
+				} else if ( checkUpgradePlan() ) {
+					return renderUpgradePlan();
+				}
+				return renderImportDrag();
+			} )() }
+		</div>
 	);
 };
 

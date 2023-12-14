@@ -81,16 +81,10 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				<FormLabel htmlFor="comment_follow_email_message">
 					{ translate( 'Comment follow email message' ) }
 				</FormLabel>
-				<FormTextarea
-					name="comment_follow_email_message"
-					id="comment_follow_email_message"
-					value={ value?.comment_follow }
-					onChange={ updateSubscriptionOptions( 'comment_follow' ) }
-					disabled={ disabled }
-					autoCapitalize="none"
-				/>
 				<FormSettingExplanation>
-					{ translate( 'The email sent out when someone follows one of your posts.' ) }
+					{ translate(
+						'The ability to customize the comment follow email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
+					) }
 				</FormSettingExplanation>
 
 				<FormLabel htmlFor="confirmation_email_message">

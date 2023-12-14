@@ -1,62 +1,30 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+
 /**
  * Common importer integration styles
  */
 .import-hosted-site,
 .site-setup,
 .import-focused {
-	.importer-wrapper:not(.importer-wrapper__wordpress) {
+	.step-container__content > div[class^="importer-"] {
 		max-width: 700px;
 		margin: auto;
 	}
 
 	.import__onboarding-page {
 		.onboarding-progress {
-			max-width: 465px;
+			min-width: auto;
 			margin: auto;
 
 			@include break-small {
-				min-width: 465px;
+				min-width: 530px;
 			}
 		}
 
 		.wpcom__loading-ellipsis {
 			display: block;
 			margin: auto;
-		}
-	}
-}
-
-/**
- * Formatted Header
- */
-.formatted-header {
-	margin: 0 !important;
-	flex-grow: 1;
-
-	.formatted-header__title {
-		@include onboarding-font-recoleta;
-		color: var(--studio-gray-100);
-		letter-spacing: 0.2px;
-		font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
-		font-weight: 400;
-		padding: 0;
-		margin: 0;
-
-		@include break-xlarge {
-			font-size: 2.75rem;
-		}
-	}
-
-	.formatted-header__subtitle {
-		padding: 0;
-		text-align: left;
-		color: var(--studio-gray-60);
-		font-size: 1rem;
-		margin-top: 16px;
-		line-height: 24px;
-
-		@include break-small {
-			margin-top: 8px;
 		}
 	}
 }

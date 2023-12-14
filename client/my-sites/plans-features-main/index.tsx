@@ -14,11 +14,11 @@ import {
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
+	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -80,7 +80,6 @@ import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
-import type { IntervalType } from './types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
@@ -138,8 +137,8 @@ export interface PlansFeaturesMainProps {
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
-	intervalType?: IntervalType;
-	planTypeSelector?: 'customer' | 'interval';
+	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
+	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
@@ -247,7 +246,6 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -517,8 +515,7 @@ const PlansFeaturesMain = ( {
 		}, [] as GridPlan[] );
 	}, [ filteredPlansForPlanFeatures, planFeaturesForFeaturesGrid ] );
 
-	// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
-	let hidePlanSelector = 'customer' === planTypeSelector && isDisplayingPlansNeededForFeature();
+	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
@@ -850,7 +847,6 @@ const PlansFeaturesMain = ( {
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									selectedPlan={ selectedPlan }
 									siteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -904,10 +900,6 @@ const PlansFeaturesMain = ( {
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
-												gridPlanForSpotlight={ gridPlanForSpotlight }
-												paidDomainName={ paidDomainName }
-												generatedWPComSubdomain={ resolvedSubdomainName }
-												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
@@ -919,7 +911,6 @@ const PlansFeaturesMain = ( {
 												currentSitePlanSlug={ sitePlanSlug }
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
-												showLegacyStorageFeature={ showLegacyStorageFeature }
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ masterbarHeight }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
@@ -946,7 +937,7 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
-						{ isEnglishLocale && showPressablePromoBanner && (
+						{ showPressablePromoBanner && (
 							<AsyncLoad
 								require="./components/pressable-promo-banner"
 								onShow={ onShowPressablePromoBanner }

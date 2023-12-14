@@ -22,6 +22,7 @@ class FoldableCard extends Component {
 		expanded: PropTypes.bool,
 		headerTagName: PropTypes.string,
 		icon: PropTypes.string,
+		iconSize: PropTypes.number,
 		onClick: PropTypes.func,
 		onClose: PropTypes.func,
 		onOpen: PropTypes.func,
@@ -40,6 +41,7 @@ class FoldableCard extends Component {
 		cardKey: '',
 		headerTagName: 'span',
 		icon: 'chevron-down',
+		iconSize: 24,
 		expanded: false,
 		screenReaderText: false,
 		smooth: false,
@@ -96,7 +98,6 @@ class FoldableCard extends Component {
 			);
 		}
 		if ( this.props.children ) {
-			const iconSize = 24;
 			const screenReaderText = this.props.screenReaderText || this.props.translate( 'More' );
 			return (
 				<button
@@ -107,7 +108,7 @@ class FoldableCard extends Component {
 					onClick={ clickAction }
 				>
 					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
-					<Gridicon icon={ this.props.icon } size={ iconSize } />
+					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
 				</button>
 			);
 		}

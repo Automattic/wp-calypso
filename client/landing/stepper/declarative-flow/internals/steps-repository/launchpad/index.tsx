@@ -8,9 +8,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -30,15 +32,18 @@ type LaunchpadProps = {
 const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
-	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
+	const siteIdParam = useSiteIdParam();
+	const siteSlugParam = useSiteSlugParam();
+	const siteSlug = urlToSlug( site?.URL ?? '' ) || siteSlugParam || '';
+	const launchpadKey = siteIdParam || site?.ID || siteSlugParam || '';
 	const siteIntentOption = site?.options?.site_intent;
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const {
 		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
-	} = useLaunchpad( siteSlug, siteIntentOption );
+	} = useLaunchpad( launchpadKey.toString(), siteIntentOption );
 
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
@@ -49,7 +54,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		[]
 	);
 
-	if ( ! siteSlug || fetchingSiteError?.error || launchpadFetchError ) {
+	if ( ( ! siteSlugParam && ! siteIdParam ) || fetchingSiteError?.error || launchpadFetchError ) {
 		window.location.replace( '/home' );
 	}
 

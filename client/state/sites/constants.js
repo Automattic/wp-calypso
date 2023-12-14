@@ -76,7 +76,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_creation_flow',
 	'site_source_slug',
 	'is_difm_lite_in_progress',
-	'difm_lite_site_options',
 	'site_intent',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',

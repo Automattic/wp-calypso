@@ -29,7 +29,7 @@
 		"@wordpress/blocks": "^12.24.0",
 		"@wordpress/components": "^25.13.0",
 		"@wordpress/data": "^9.17.0",
-		"@wordpress/editor": "^13.24.0",
+		"@wordpress/editor": "^13.24.1",
 		"@wordpress/element": "^5.24.0",
 		"@wordpress/hooks": "^3.47.0",
 		"@wordpress/i18n": "^4.47.0",

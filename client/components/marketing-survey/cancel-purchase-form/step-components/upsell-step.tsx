@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import formatCurrency from '@automattic/format-currency';
 import { useChatWidget } from '@automattic/help-center/src/hooks';
@@ -240,15 +240,24 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 			return (
 				<Upsell
 					title={ translate( 'Switch to a more affordable plan' ) }
-					acceptButtonText={ translate( 'Switch to the Personal plan' ) }
+					/* translators: %(plan)s is WordPress.com Personal or another plan */
+					acceptButtonText={ translate( 'Switch to the %(plan)s plan', {
+						args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgSwitchPlan }
 				>
 					<>
-						{ translate(
-							'WordPress.com Personal still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.'
-						) }{ ' ' }
+						{
+							/* translators: %(plan)s is WordPress.com Personal or another plan */
+							translate(
+								'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
+								{
+									args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+								}
+							)
+						}{ ' ' }
 						{ refundAmount &&
 							translate(
 								'You can downgrade and get a partial refund of %(amount)s or ' +

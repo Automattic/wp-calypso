@@ -42,6 +42,7 @@ const StatsPurchasePage = ( {
 } ) => {
 	const translate = useTranslate();
 	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -54,8 +55,13 @@ const StatsPurchasePage = ( {
 		getSiteOption( state, siteId, 'is_commercial' )
 	) as boolean;
 
-	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, supportCommercialUse } =
-		useStatsPurchases( siteId );
+	const {
+		isRequestingSitePurchases,
+		isFreeOwned,
+		isPWYWOwned,
+		isCommercialOwned,
+		supportCommercialUse,
+	} = useStatsPurchases( siteId );
 
 	useEffect( () => {
 		if ( ! siteSlug ) {
@@ -107,15 +113,18 @@ const StatsPurchasePage = ( {
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
 	// Redirect to commercial is there is the query param is set and the site doesn't have commercial license yet
-	const redirectToCommercial = query?.productType === 'commercial' && ! supportCommercialUse;
+	const redirectToCommercial = ! isTierUpgradeSliderEnabled
+		? query?.productType === 'commercial' && ! supportCommercialUse
+		: query?.productType === 'commercial'; // allow multiple visit to upgrade commercial tier.
 	// Redirect to personal is there is the query param is set, the site doesn't have personal license yet, and it's not redirecting to commercial
 	const redirectToPersonal =
 		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
 	// Whether it's forced to redirect to a product
 	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
+	const allowCommercialTierUpgrade = isTierUpgradeSliderEnabled && isCommercialOwned;
 	// We show purchase page if there is no plan owned or if we are forcing a product redirect
-	const showPurchasePage = noPlanOwned || isForceProductRedirect;
+	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
 
 	return (
 		<Main fullWidthLayout>

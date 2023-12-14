@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { LogType } from '../../logs-tab';
@@ -15,6 +15,7 @@ type SiteLogs = SiteLogsData[ 'logs' ];
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
 	logType?: LogType;
+	latestLogType?: LogType | null;
 	isLoading?: boolean;
 	headerTitles: string[];
 }
@@ -42,6 +43,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	isLoading,
 	headerTitles,
 	logType,
+	latestLogType,
 }: SiteLogsTableProps ) {
 	const { __ } = useI18n();
 	const columns = useSiteColumns( logs, headerTitles );
@@ -50,13 +52,6 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	const logsWithKeys = useMemo( () => {
 		return generateRowKeys( logs );
 	}, [ logs ] );
-
-	const [ latestLogType, setLatestLogType ] = useState< LogType | undefined | null >( null );
-	useEffect( () => {
-		if ( ! isLoading && logType !== latestLogType ) {
-			setLatestLogType( logType );
-		}
-	}, [ latestLogType, logType, isLoading ] );
 
 	if ( isLoading && logType !== latestLogType ) {
 		const skeletonClassName =
