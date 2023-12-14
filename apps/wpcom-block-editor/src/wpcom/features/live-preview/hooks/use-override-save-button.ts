@@ -113,13 +113,7 @@ export const useOverrideSaveButton = ( {
 				setIsThemeUpgradeModalOpen( true );
 			}
 		};
-		document.addEventListener( 'keydown', ( e: KeyboardEvent ) => {
-			if ( e.key === 's' && ( e.metaKey || e.ctrlKey ) ) {
-				e.preventDefault();
-				e.stopPropagation();
-				setIsThemeUpgradeModalOpen( true );
-			}
-		} );
+		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
 		return () => {
 			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
 		};
