@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQueries } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { RenderedPattern, RenderedPatterns, SiteInfo } from '../types';
@@ -41,7 +42,7 @@ const useRenderedPatterns = (
 	const queries = Object.entries( patternIdsByCategory ).map( ( [ category, patternIds ] ) => ( {
 		queryKey: [ 'rendered-patterns', siteId, stylesheet, category, patternIds, siteInfo ],
 		queryFn: () => fetchRenderedPatterns( siteId, stylesheet, category, patternIds, siteInfo ),
-		staleTime: 1000 * 60 * 5, // 5 minutes
+		staleTime: isEnabled( 'pattern-assembler/skip-rendered-pattern-cache' ) ? 0 : 1000 * 60 * 5, // 5 minutes
 		refetchOnWindowFocus: false,
 	} ) );
 

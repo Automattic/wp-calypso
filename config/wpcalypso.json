@@ -119,6 +119,7 @@
 		"p2/p2-plus": true,
 		"pattern-assembler/v2": true,
 		"pattern-assembler/add-pages": true,
+		"pattern-assembler/skip-rendered-pattern-cache": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
