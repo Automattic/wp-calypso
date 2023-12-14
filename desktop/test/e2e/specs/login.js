@@ -70,9 +70,6 @@ describe( 'User Can log in', () => {
 				CI: true,
 			},
 		} );
-		// Increase the file descriptor limit to avoid ERR_INSUFFICIENT_RESOURCES errors.
-		// See https://github.com/electron/electron/issues/4280#issue-129919093
-		electronApp.process().setFdLimit( 8192 );
 
 		// Find main window. Playwright has problems identifying the main window
 		// when using `firstWindow`, so we find it by URL.
