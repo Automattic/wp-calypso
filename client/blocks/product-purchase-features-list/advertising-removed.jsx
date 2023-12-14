@@ -24,6 +24,12 @@ export default localize( ( { isEligiblePlan, selectedSite, translate } ) => {
 					'All WordPress.com advertising has been removed from your site. Upgrade to Business ' +
 						'to remove the WordPress.com footer credit.'
 			  );
+	const buttonText =
+		isEnglishLocale || i18n.hasTranslation( 'Upgrade to %(planName)s' )
+			? translate( 'Upgrade to %(planName)s', {
+					args: { planName: getPlan( PLAN_BUSINESS ).getTitle() },
+			  } )
+			: translate( 'Upgrade to Business' );
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -36,7 +42,7 @@ export default localize( ( { isEligiblePlan, selectedSite, translate } ) => {
 						  )
 						: uneligiblePlanDescription
 				}
-				buttonText={ ! isEligiblePlan ? translate( 'Upgrade to Business' ) : null }
+				buttonText={ ! isEligiblePlan ? buttonText : null }
 				href={ ! isEligiblePlan ? '/checkout/' + selectedSite.slug + '/business' : null }
 			/>
 		</div>
