@@ -171,7 +171,6 @@ const CommandPalette = () => {
 			recordTracksEvent( 'calypso_hosting_command_palette_close', {
 				command: selectedCommandName,
 				current_route: currentRoute,
-				search_is_empty: ! search,
 				search_text: search,
 			} )
 		);
@@ -207,7 +206,6 @@ const CommandPalette = () => {
 			recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
 				command: selectedCommandName,
 				current_route: currentRoute,
-				search_is_empty: ! search,
 				search_text: search,
 				from_keyboard: fromKeyboard,
 			} )

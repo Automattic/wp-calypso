@@ -98,7 +98,6 @@ const useSiteToAction = () => {
 								list_count: filteredSitesLength,
 								list_visible_count: listVisibleCount,
 								current_route: currentRoute,
-								search_is_empty: ! search,
 								search_text: search,
 								site_id: site.ID,
 								site_id_matches_current_site_id: site.ID === currentSiteId,
@@ -194,7 +193,6 @@ export const useCommandPalette = ( {
 					list_count: commands.length,
 					list_visible_count: listVisibleCount,
 					current_route: currentRoute,
-					search_is_empty: ! search,
 					search_text: search,
 				} )
 			);
