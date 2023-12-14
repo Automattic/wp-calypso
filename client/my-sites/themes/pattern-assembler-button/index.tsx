@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import './pattern-assembler-button.scss';
+import './style.scss';
 
 type Props = {
 	isPrimary?: boolean;
