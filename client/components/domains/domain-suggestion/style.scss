@@ -222,6 +222,10 @@
 	}
 }
 
+.domain-registration-suggestion__domain-title-tld {
+	word-break: break-word;
+}
+
 .domain-suggestion__price-container,
 .domain-suggestion__action-container {
 	flex: 0 0 auto;
