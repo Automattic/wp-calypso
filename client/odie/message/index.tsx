@@ -231,6 +231,21 @@ const ChatMessage = (
 		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>
 			<div className={ messageClasses }>
 				{ messageHeader }
+				{ message.type === 'error' && (
+					<>
+						<AsyncLoad
+							require="react-markdown"
+							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
+							transformLinkUri={ uriTransformer }
+							components={ {
+								a: CustomALink,
+							} }
+						>
+							{ message.content }
+						</AsyncLoad>
+						{ extraContactOptions }
+					</>
+				) }
 				{ ( message.type === 'message' || ! message.type ) && (
 					<>
 						<AsyncLoad
