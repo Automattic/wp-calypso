@@ -642,6 +642,7 @@ export class RenderDomainsStep extends Component {
 			// Replace the products in the cart with the freshly sorted products.
 			clearTimeout( this.state.addDomainTimeout );
 
+			// Avoid too much API calls for Multi-domains flow
 			this.state.addDomainTimeout = setTimeout( async () => {
 				await this.props.shoppingCartManager.reloadFromServer();
 
@@ -740,6 +741,8 @@ export class RenderDomainsStep extends Component {
 
 		this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
 		clearTimeout( this.state.removeDomainTimeout );
+
+		// Avoid too much API calls for Multi-domains flow
 		this.state.removeDomainTimeout = setTimeout( async () => {
 			await this.props.shoppingCartManager.reloadFromServer();
 
