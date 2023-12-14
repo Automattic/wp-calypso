@@ -9,7 +9,7 @@ interface Props {
 }
 
 type PlanAvailabilityForPurchase = {
-	[ planSlug in PlanSlug ]: boolean;
+	[ planSlug in PlanSlug ]?: boolean;
 };
 
 /**
