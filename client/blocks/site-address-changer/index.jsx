@@ -4,6 +4,7 @@ import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Banner from 'calypso/components/banner';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -258,13 +259,13 @@ export class SiteAddressChanger extends Component {
 			: validationMessage || serverValidationMessage;
 	}
 
-	resendConfirmationLink() {
+	resendConfirmationLink = () => {
 		const { sendVerifyEmail } = this.props;
 		sendVerifyEmail();
 		this.setState( {
 			confirmEmailSent: 1,
 		} );
-	}
+	};
 
 	getConfirmEmailMessage() {
 		return this.state.confirmEmailSent
@@ -414,43 +415,31 @@ export class SiteAddressChanger extends Component {
 					eventName="calypso_siteaddresschange_form_view"
 					eventProperties={ { blog_id: siteId } }
 				/>
+				{ ! isEmailVerified && (
+					<Banner
+						title=""
+						className="site-address-changer__email-confirmation-banner"
+						callToAction={ ! confirmEmailSent ? translate( 'Resend email' ) : null }
+						description={ confirmEmailMessage }
+						icon="info-outline"
+						onClick={ ! confirmEmailSent ? this.resendConfirmationLink : null }
+						disableHref
+					/>
+				) }
 				<FormSectionHeading>
 					<strong>{ translate( 'Change your site address' ) }</strong>
 				</FormSectionHeading>
 				<div className="site-address-changer__info">
 					<p>
-						{ hasNonWpcomDomains
-							? translate(
-									'Once you change your site address, %(currentDomainName)s will no longer be available.',
-									{
-										args: { currentDomainName },
-									}
-							  )
-							: translate(
-									'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
-									{
-										args: { currentDomainName },
-										components: {
-											a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
-										},
-									}
-							  ) }
+						{ translate(
+							'Once you change your site address, %(currentDomainName)s will no longer be available.',
+							{
+								args: { currentDomainName },
+							}
+						) }
 					</p>
 				</div>
 				<div className="site-address-changer__details">
-					<FormInputValidation
-						isHidden={ isEmailVerified }
-						isError={ true }
-						text={ confirmEmailMessage || '\u00A0' }
-						className={ `email-not-verified ${ confirmEmailSent ? 'already-sent' : '' }` }
-					/>
-					{ ! isEmailVerified && ! confirmEmailSent && (
-						<div className="site-address-changer__resend-email-link">
-							<button onClick={ () => this.resendConfirmationLink() }>
-								{ translate( 'Click here to receive another confirmation email' ) }
-							</button>
-						</div>
-					) }
 					<FormLabel htmlFor="site-address-changer__text-input">
 						{ translate( 'Enter your new site address' ) }
 					</FormLabel>
@@ -465,11 +454,16 @@ export class SiteAddressChanger extends Component {
 						disabled={ ! isEmailVerified }
 						noWrap
 					/>
-					<FormInputValidation
-						isHidden={ ! shouldShowValidationMessage }
-						isError={ ! isAvailable }
-						text={ validationMessage || '\u00A0' }
-					/>
+					{ shouldShowValidationMessage && (
+						<FormInputValidation isError={ ! isAvailable } text={ validationMessage || '\u00A0' } />
+					) }
+					{ ! hasNonWpcomDomains && (
+						<div className="site-address-changer__info-custom-domain">
+							<a href={ addDomainPath } onClick={ this.handleAddDomainClick }>
+								{ translate( 'Did you want to add a custom domain instead?' ) }
+							</a>
+						</div>
+					) }
 				</div>
 			</div>
 		);
