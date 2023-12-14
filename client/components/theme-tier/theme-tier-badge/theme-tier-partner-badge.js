@@ -25,10 +25,6 @@ export default function ThemeTierPartnerBadge() {
 	);
 	const { isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
-	if ( isPartnerThemePurchased && isThemeAllowedOnSite ) {
-		return <span>{ translate( 'Included in my plan' ) }</span>;
-	}
-
 	const labelText = isThemeAllowedOnSite
 		? translate( 'Subscribe' )
 		: translate( 'Upgrade and Subscribe' );
@@ -90,15 +86,28 @@ export default function ThemeTierPartnerBadge() {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker />
+			{ ( ! isPartnerThemePurchased || ! isThemeAllowedOnSite ) && (
+				<>
+					<ThemeTierBadgeTracker />
+					<PremiumBadge
+						className="theme-tier-badge__content"
+						focusOnShow={ false }
+						isClickable
+						labelText={ labelText }
+						tooltipClassName="theme-tier-badge-tooltip"
+						tooltipContent={ tooltipContent }
+						tooltipPosition="top"
+					/>
+				</>
+			) }
+
 			<PremiumBadge
-				className="theme-tier-badge__content"
+				className="theme-tier-badge__content is-third-party"
 				focusOnShow={ false }
-				isClickable
-				labelText={ labelText }
-				tooltipClassName="theme-tier-badge-tooltip"
-				tooltipContent={ tooltipContent }
-				tooltipPosition="top"
+				isClickable={ false }
+				labelText={ translate( 'Partner' ) }
+				shouldHideIcon
+				shouldHideTooltip
 			/>
 		</>
 	);
