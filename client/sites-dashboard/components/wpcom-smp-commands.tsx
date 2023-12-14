@@ -470,6 +470,16 @@ export const useCommandsArrayWpcom = ( {
 			icon: creditCardIcon,
 		},
 		{
+			name: 'registerDomain',
+			label: __( 'Register domain' ),
+			context: [ '/sites' ],
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				navigate( `/start/domain/domain-only?ref=command-palette` );
+			},
+			icon: domainsIcon,
+		},
+		{
 			name: 'manageDomains',
 			label: __( 'Manage domains' ),
 			searchLabel: [
@@ -570,16 +580,6 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: statsIcon,
-		},
-		{
-			name: 'registerDomain',
-			label: __( 'Register domain' ),
-			context: [ '/sites' ],
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				navigate( `/start/domain/domain-only?ref=command-palette` );
-			},
-			icon: domainsIcon,
 		},
 		{
 			name: 'openActivityLog',
