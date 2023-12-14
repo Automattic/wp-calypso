@@ -86,8 +86,9 @@ export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookR
 						'This theme comes bundled with Sensei. Create and sell courses that your students will love.'
 					),
 					bannerUpsellDescription: translate(
-						'This theme comes bundled with the Sensei plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-					),
+						'This theme comes bundled with the Sensei plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
+						{ args: { businessPlanName } }
+					) as string,
 					bundledPluginMessage: translate(
 						'This theme comes bundled with {{link}}Sensei{{/link}} plugin.',
 						{
