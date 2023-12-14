@@ -62,7 +62,7 @@ describe( 'User Can log in', () => {
 				WP_DESKTOP_BASE_URL: BASE_URL,
 				WP_DEBUG_LOG, // This will override logging path from the Electron main process.
 				// Ensure other CI-specific overrides (such as disabling the auto-updater)
-				DEBUG: true,
+				DEBUG: 'pw:api',
 				CI: true,
 			},
 		} );
