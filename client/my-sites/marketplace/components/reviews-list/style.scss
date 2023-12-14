@@ -80,6 +80,24 @@ $border-color: #eee;
 				p {
 					margin-bottom: 0;
 				}
+
+				&.edting {
+					background-color: var(--studio-gray-0);
+					padding: 16px;
+				}
+			}
+
+			.marketplace-reviews-list__editor {
+				color: var(--studio-gray-100);
+				background-color: var(--studio-gray-0);
+				border-radius: 4px;
+				font-size: $font-body-small;
+				margin-top: 16px;
+				padding: 16px;
+
+				p {
+					margin-bottom: 0;
+				}
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { LegacyRef, forwardRef } from 'react';
+import { LegacyRef, forwardRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import {
@@ -34,6 +34,9 @@ export const MarketplaceReviewsList = forwardRef<
 			deleteReviewMutation?.isError && alert( ( deleteReviewMutation.error as Error ).message );
 		}
 	};
+
+	const [ isEditing, setIsEditing ] = useState( false );
+
 	// TODO: Get the proper value as a URL to the profile picture
 	const authorProfilePic = null;
 
@@ -98,20 +101,25 @@ export const MarketplaceReviewsList = forwardRef<
 								</div>
 							</div>
 
-							<div
-								// sanitized with sanitizeSectionContent
-								// eslint-disable-next-line react/no-danger
-								dangerouslySetInnerHTML={ {
-									__html: sanitizeSectionContent( review.content.rendered ),
-								} }
-								className="marketplace-reviews-list__content"
-							></div>
+							{ isEditing && review.author === currentUserId ? (
+								<div className="marketplace-reviews-list__editor">Editing...</div>
+							) : (
+								<div
+									// sanitized with sanitizeSectionContent
+									// eslint-disable-next-line react/no-danger
+									dangerouslySetInnerHTML={ {
+										__html: sanitizeSectionContent( review.content.rendered ),
+									} }
+									className="marketplace-reviews-list__content"
+								></div>
+							) }
+
 							<div className="marketplace-reviews-list__review-actions">
 								{ review.author === currentUserId && (
 									<div className="marketplace-reviews-list__review-actions-editable">
 										<button
 											className="marketplace-reviews-list__review-actions-editable-button"
-											onClick={ () => alert( 'Not implemented yet' ) }
+											onClick={ () => setIsEditing( ! isEditing ) }
 										>
 											{ translate( 'Update my review' ) }
 										</button>
