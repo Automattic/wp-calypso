@@ -107,7 +107,7 @@ export const useCommandsArrayWpcom = ( {
 				null,
 				{
 					button: __( 'Manage Hosting Configuration' ),
-					onClick: () => navigate( `/hosting-config/${ siteSlug }` ),
+					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
 				}
 			);
 			return;
@@ -137,7 +137,7 @@ export const useCommandsArrayWpcom = ( {
 				null,
 				{
 					button: __( 'Manage Hosting Configuration' ),
-					onClick: () => navigate( `/hosting-config/${ siteSlug }` ),
+					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
 				}
 			);
 			return;
