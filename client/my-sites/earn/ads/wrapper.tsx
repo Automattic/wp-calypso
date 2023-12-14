@@ -3,9 +3,11 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
 	FEATURE_WORDADS_INSTANT,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -62,6 +64,8 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const adsProgramName = useSelector( ( state ) =>
 		isJetpackSite( state, site?.ID ) ? 'Ads' : 'WordAds'
 	);
+
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const canActivateWordadsInstant =
 		! site?.options?.wordads && canActivateWordAds && hasWordAdsFeature;
@@ -213,11 +217,33 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			<UpsellNudge
 				callToAction={ translate( 'Upgrade' ) }
 				plan={ PLAN_PREMIUM }
-				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
-				description={ translate(
-					"By upgrading to the Premium plan, you'll be able to monetize your site through the <a href='%(url)s'>WordAds program</>.",
-					{ args: { url: 'https://wordads.co/' } }
-				) }
+				title={
+					isEnglishLocale ||
+					i18n.hasTranslation( 'Upgrade to the %(premiumPlanName)s plan and start earning' )
+						? translate( 'Upgrade to the %(premiumPlanName)s plan and start earning', {
+								args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
+						  } )
+						: translate( 'Upgrade to the Premium plan and start earning' )
+				}
+				description={
+					isEnglishLocale ||
+					i18n.hasTranslation(
+						"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the <a href='%(url)s'>WordAds program</>."
+					)
+						? translate(
+								"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the <a href='%(url)s'>WordAds program</>.",
+								{
+									args: {
+										url: 'https://wordads.co/',
+										premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
+									},
+								}
+						  )
+						: translate(
+								"By upgrading to the Premium plan, you'll be able to monetize your site through the <a href='%(url)s'>WordAds program</>.",
+								{ args: { url: 'https://wordads.co/' } }
+						  )
+				}
 				feature={ WPCOM_FEATURES_WORDADS }
 				href={ bannerURL }
 				showIcon
@@ -280,7 +306,14 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 					forceDisplay={ true }
 					callToAction={ translate( 'Upgrade' ) }
 					plan={ PLAN_PREMIUM }
-					title={ translate( 'Upgrade to the Premium plan to continue earning' ) }
+					title={
+						isEnglishLocale ||
+						i18n.hasTranslation( 'Upgrade to the %(premiumPlanName)s plan to continue earning' )
+							? translate( 'Upgrade to the %(premiumPlanName)s plan to continue earning', {
+									args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
+							  } )
+							: translate( 'Upgrade to the Premium plan to continue earning' )
+					}
 					description={ translate(
 						'WordAds is disabled for this site because it does not have an eligible plan. You are no longer earning ad revenue, but you can view your earning and payment history. To restore access to WordAds please upgrade to an eligible plan.'
 					) }
