@@ -907,7 +907,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isYearly( product ) && humanReadableCode ) {
 		return (
 			<>
-				{ translate( '%(humanReadableCode)s : %(upgradeCredit)s applied in first month only.', {
+				{ translate( '%(humanReadableCode)s : %(upgradeCredit)s applied in first year only.', {
 					comment:
 						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
 						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
