@@ -731,13 +731,16 @@ export class RenderDomainsStep extends Component {
 			} ) );
 		}
 
-		this.setState( ( prevState ) => ( {
-			isMiniCartContinueButtonBusy: true,
-			domainRemovalQueue: [
-				...prevState.domainRemovalQueue,
-				{ meta: domain_name, productSlug: product_slug },
-			],
-		} ) );
+		// check if the domain is alreay in the domainRemovalQueue queue
+		if ( ! this.state.domainRemovalQueue.find( ( domain ) => domain.meta === domain_name ) ) {
+			this.setState( ( prevState ) => ( {
+				isMiniCartContinueButtonBusy: true,
+				domainRemovalQueue: [
+					...prevState.domainRemovalQueue,
+					{ meta: domain_name, productSlug: product_slug },
+				],
+			} ) );
+		}
 
 		this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
 		clearTimeout( this.state.removeDomainTimeout );
@@ -916,6 +919,7 @@ export class RenderDomainsStep extends Component {
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
+						temporaryCart={ this.state.temporaryCart }
 						domainRemovalQueue={ this.state.domainRemovalQueue }
 						cartIsLoading={ cartIsLoading }
 						flowName={ this.props.flowName }
