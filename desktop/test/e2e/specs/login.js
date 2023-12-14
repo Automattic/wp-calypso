@@ -55,7 +55,7 @@ describe( 'User Can log in', () => {
 				path: HAR_PATH,
 			},
 			recordVideo: {
-				dir: SCREENSHOT_PATH,
+				dir: SCREENSHOT_PATH + '/screen_record',
 			},
 			env: {
 				...process.env,
