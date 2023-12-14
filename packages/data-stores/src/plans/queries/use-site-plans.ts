@@ -1,3 +1,4 @@
+import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
@@ -34,6 +35,14 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 			return Object.fromEntries(
 				Object.keys( data ).map( ( productId ) => {
 					const plan = data[ Number( productId ) ];
+					const originalPriceMonthly =
+						calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price_integer ) ?? null;
+					const discountedPriceFull = plan.raw_discount_integer
+						? plan.raw_price_integer + plan.raw_discount_integer
+						: null;
+					const discountedPriceMonthly = discountedPriceFull
+						? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
+						: null;
 
 					return [
 						plan.product_slug,
@@ -41,10 +50,21 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 							planSlug: plan.product_slug,
 							productSlug: plan.product_slug,
 							productId: Number( productId ),
-							introOffer: unpackIntroOffer( plan ),
 							expiry: plan.expiry,
 							currentPlan: plan.current_plan,
 							purchaseId: plan.id ? Number( plan.id ) : undefined,
+							pricing: {
+								currencyCode: plan.currency_code,
+								introOffer: unpackIntroOffer( plan ),
+								originalPrice: {
+									monthly: originalPriceMonthly,
+									full: plan.raw_price_integer,
+								},
+								discountedPrice: {
+									monthly: discountedPriceMonthly,
+									full: discountedPriceFull,
+								},
+							},
 						},
 					];
 				} )
