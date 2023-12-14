@@ -1,13 +1,16 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BloganuaryIcon from 'calypso/components/blogging-prompt-card/bloganuary-icon';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { Tag } from 'calypso/reader/list-manage/types';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice } from 'calypso/state/notices/actions';
-import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
+import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { toggleReaderSidebarTags } from 'calypso/state/reader-ui/sidebar/actions';
 import { isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -21,34 +24,39 @@ const BloganuaryHeader = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags ) as Tag[];
-	const prevIsFollowingBloganuary = useRef( containsBloganuary( followedTags ) );
 	const isFollowingBloganuary = containsBloganuary( followedTags );
 	const isTagsSidebarOpen = useSelector( isTagsOpen );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_reader_bloganuary_banner_view' ) );
-	}, [ dispatch ] );
-
-	// Handle successfully subscribing to 'bloganuary' the redux-y way
-	// Errors are handled in client/state/data-layer/wpcom/read/tags/mine/new/index.js:receiveError
-	useEffect( () => {
-		// tripple equals check is needed because 'undefined' means the value has not been loaded yet.
-		if ( prevIsFollowingBloganuary.current === false && isFollowingBloganuary ) {
-			dispatch( successNotice( translate( 'Subscribed to bloganuary tag' ) ) );
-		}
-		prevIsFollowingBloganuary.current = isFollowingBloganuary;
-	}, [ isFollowingBloganuary, prevIsFollowingBloganuary, dispatch, translate ] );
+		recordTracksEvent( 'calypso_bloganuary_banner_view' );
+	}, [] );
 
 	const trackBloganuaryMoreInfoClick = () => {
-		dispatch( recordTracksEvent( 'calypso_reader_bloganuary_banner_more_info_click' ) );
+		recordTracksEvent( 'calypso_bloganuary_banner_more_info_click' );
 	};
 
-	const subscribeToBloganuaryTag = () => {
+	const followBloganuaryTag = () => {
 		dispatch( requestFollowTag( 'bloganuary' ) );
 		if ( ! isTagsSidebarOpen ) {
 			dispatch( toggleReaderSidebarTags() );
 		}
-		dispatch( recordTracksEvent( 'calypso_reader_bloganuary_banner_subscribe_to_tag' ) );
+		recordTracksEvent( 'calypso_bloganuary_banner_follow_tag' );
+	};
+
+	const unfollowBloganuaryTag = () => {
+		dispatch( requestUnfollowTag( 'bloganuary' ) );
+		if ( ! isTagsSidebarOpen ) {
+			dispatch( toggleReaderSidebarTags() );
+		}
+		recordTracksEvent( 'calypso_bloganuary_banner_unfollow_tag' );
+	};
+
+	const toggleFollowBloganuary = () => {
+		if ( isFollowingBloganuary ) {
+			unfollowBloganuaryTag();
+		} else {
+			followBloganuaryTag();
+		}
 	};
 
 	return (
@@ -59,14 +67,21 @@ const BloganuaryHeader = () => {
 			</div>
 			<div>
 				<Button
-					className="bloganuary-header__button"
-					onClick={ subscribeToBloganuaryTag }
-					disabled={ isFollowingBloganuary }
+					className={ classNames( 'bloganuary-header__button', {
+						'is-following': isFollowingBloganuary,
+					} ) }
+					onClick={ toggleFollowBloganuary }
+					disabled={ isFollowingBloganuary === undefined }
 				>
-					{ isFollowingBloganuary ? translate( 'Subscribed' ) : translate( 'Subscribe' ) }
+					{ isFollowingBloganuary
+						? ReaderFollowingFeedIcon( { iconSize: 20 } )
+						: ReaderFollowFeedIcon( { iconSize: 20 } ) }
+					<span className="bloganuary-header__follow-label">
+						{ isFollowingBloganuary ? translate( 'Following' ) : translate( 'Follow' ) }
+					</span>
 				</Button>
 				<a
-					href="https://wordpress.com/bloganuary"
+					href={ localizeUrl( 'https://wordpress.com/bloganuary' ) }
 					className="bloganuary-header__link"
 					target="_blank"
 					rel="noopener noreferrer"

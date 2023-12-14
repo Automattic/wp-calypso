@@ -40,6 +40,26 @@
 		vertical-align: middle;
 		font-size: 1rem;
 		margin-right: 10px;
+
+		&.is-following {
+			color: var(--color-success);
+			.following-icon-background {
+				fill: var(--color-success);
+			}
+			.following-icon-tick {
+				stroke: var(--color-success);
+			}
+		}
+
+		.reader-follow-feed,
+		.reader-following-feed {
+			vertical-align: middle;
+			margin-right: 5px;
+		}
+
+		.bloganuary-header__follow-label {
+			vertical-align: middle;
+		}
 	}
 
 	.bloganuary-header__link {
