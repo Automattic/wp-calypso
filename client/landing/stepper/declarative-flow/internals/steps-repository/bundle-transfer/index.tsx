@@ -54,33 +54,50 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
-		let eventName = 'calypso_bundle_dashboard_snag_error';
-
-		if ( 'woo-on-plans' === softwareSet ) {
-			eventName = 'calypso_woocommerce_dashboard_snag_error';
-		}
-
-		recordTracksEvent( eventName, {
+		const eventProperties = {
 			action: failureInfo.type,
 			site: site?.URL,
 			code: failureInfo.code,
 			error: failureInfo.error,
 			intent: getIntent(),
-		} );
+		};
 
-		logToLogstash( {
-			feature: 'calypso_client',
+		const logstashProperties = {
+			feature: 'calypso_client' as 'calypso_client' | 'calypso_ssr',
 			message: failureInfo.error,
 			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 			blog_id: siteId,
 			properties: {
 				env: config( 'env_id' ),
-				type: eventName,
+				type: 'calypso_bundle_dashboard_snag_error',
 				action: failureInfo.type,
 				site: site?.URL,
 				code: failureInfo.code,
 			},
+		};
+
+		recordTracksEvent( 'calypso_bundle_dashboard_snag_error', {
+			...eventProperties,
+			software_set: softwareSet,
 		} );
+
+		logToLogstash( {
+			...logstashProperties,
+			properties: { ...logstashProperties.properties, software_set: softwareSet },
+		} );
+
+		// For backward compatibility with existing event. When it's not used anymore, it can be removed.
+		if ( 'woo-on-plans' === softwareSet ) {
+			recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', eventProperties );
+
+			logToLogstash( {
+				...logstashProperties,
+				properties: {
+					...logstashProperties.properties,
+					type: 'calypso_woocommerce_dashboard_snag_error',
+				},
+			} );
+		}
 	};
 
 	useEffect( () => {

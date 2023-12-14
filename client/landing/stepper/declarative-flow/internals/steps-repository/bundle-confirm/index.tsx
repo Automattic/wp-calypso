@@ -273,16 +273,23 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 						<StyledNextButton
 							disabled={ isTransferringBlocked || ! isDataReady }
 							onClick={ () => {
-								let eventName = 'calypso_bundle_dashboard_confirm_submit';
-
-								if ( 'woo-on-plans' === pluginSlug ) {
-									eventName = 'calypso_woocommerce_dashboard_confirm_submit';
-								}
-
-								recordTracksEvent( eventName, {
+								const eventProperties = {
 									site: wpcomDomain,
 									upgrade_required: siteUpgrading.required,
+								};
+
+								recordTracksEvent( 'calypso_bundle_dashboard_confirm_submit', {
+									...eventProperties,
+									software_set: pluginSlug,
 								} );
+
+								// For backward compatibility with existing event. When it's not used anymore, it can be removed.
+								if ( 'woo-on-plans' === pluginSlug ) {
+									recordTracksEvent(
+										'calypso_woocommerce_dashboard_confirm_submit',
+										eventProperties
+									);
+								}
 
 								const providedDependencies = {
 									checkoutUrl: siteUpgrading.checkoutUrl,
