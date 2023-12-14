@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -95,6 +96,10 @@ class ThemePreview extends Component {
 	};
 
 	shouldShowUnlockStyleButton = () => {
+		if ( isEnabled( 'themes/tiers' ) ) {
+			return false;
+		}
+
 		const { options, shouldLimitGlobalStyles, themeOptions } = this.props;
 		if ( ! themeOptions ) {
 			return false;
@@ -177,6 +182,10 @@ class ThemePreview extends Component {
 	};
 
 	renderPrimaryButton = () => {
+		if ( isEnabled( 'themes/tiers' ) ) {
+			return null;
+		}
+
 		const primaryOption = this.getPrimaryOption();
 		if ( ! primaryOption ) {
 			return;
@@ -195,6 +204,10 @@ class ThemePreview extends Component {
 	};
 
 	renderSecondaryButton = () => {
+		if ( isEnabled( 'themes/tiers' ) ) {
+			return null;
+		}
+
 		const secondaryButton = this.getSecondaryOption();
 		if ( ! secondaryButton ) {
 			return;
