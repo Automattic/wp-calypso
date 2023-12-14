@@ -118,12 +118,24 @@ export default function LicensesForm( {
 			if ( index === -1 ) {
 				// Item doesn't exist, add it
 				setSelectedLicenses( [ ...selectedLicenses, productBundle ] );
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_select_product', {
+						product: product.slug,
+						quantity,
+					} )
+				);
 			} else {
 				// Item exists, remove it
 				setSelectedLicenses( selectedLicenses.filter( ( _, i ) => i !== index ) );
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_unselect_product', {
+						product: product.slug,
+						quantity,
+					} )
+				);
 			}
 		},
-		[ quantity, selectedLicenses, setSelectedLicenses ]
+		[ dispatch, quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
 	const onSelectProduct = useCallback(
@@ -145,11 +157,26 @@ export default function LicensesForm( {
 						return item;
 					} )
 				);
+
+				// Unselecting the current selected variant
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_unselect_product', {
+						product: replace.slug,
+						quantity,
+					} )
+				);
+
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_select_product', {
+						product: product.slug,
+						quantity,
+					} )
+				);
 			} else {
 				handleSelectBundleLicense( product );
 			}
 		},
-		[ handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
+		[ dispatch, handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
@@ -184,6 +211,17 @@ export default function LicensesForm( {
 		[ dispatch ]
 	);
 
+	const onClickVariantOption = useCallback(
+		( product: APIProductFamilyProduct ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_variant_option_click', {
+					product: product.slug,
+				} )
+			);
+		},
+		[ dispatch ]
+	);
+
 	const trackClickCallback = useCallback(
 		( component: string ) => () =>
 			dispatch( recordTracksEvent( `calypso_partner_portal_issue_license_${ component }_click` ) ),
@@ -199,6 +237,7 @@ export default function LicensesForm( {
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ productOption }
 					onSelectProduct={ onSelectOrReplaceProduct }
+					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
 					selectedOption={ productOption.find( ( option ) =>
 						selectedLicenses.find(
