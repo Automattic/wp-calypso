@@ -33,6 +33,7 @@ const RESULTS_PATH = path.join( __dirname, '../results' );
 const CONSOLE_PATH = path.join( RESULTS_PATH, '/console.log' );
 const SCREENSHOT_PATH = path.join( RESULTS_PATH, '/screenshot.png' );
 const RECORD_VIDEO_DIR = path.join( RESULTS_PATH, '/record_video' );
+const TRACE_DIR = path.join( RESULTS_PATH, '/trace' );
 const HAR_PATH = path.join( RESULTS_PATH, '/network.har' );
 const WP_DEBUG_LOG = path.resolve( RESULTS_PATH, '/app.log' );
 
@@ -59,6 +60,7 @@ describe( 'User Can log in', () => {
 			recordVideo: {
 				dir: RECORD_VIDEO_DIR,
 			},
+			tracesDir: TRACE_DIR,
 			env: {
 				...process.env,
 				WP_DESKTOP_BASE_URL: BASE_URL,
