@@ -51,7 +51,6 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		suggestedProductSlugs,
-		allSelectableProducts,
 	} = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,
@@ -68,7 +67,9 @@ export default function LicensesForm( {
 			? ( parsedItems
 					.map( ( item ) => {
 						// Add licenses & bundles that are supported
-						const product = allSelectableProducts.find( ( product ) => product.slug === item.slug );
+						const product = filteredProductsAndBundles.find(
+							( product ) => product.slug === item.slug
+						);
 						const quantity = availableSizes.find( ( size ) => size === item.quantity );
 						if ( product && quantity ) {
 							return {
@@ -84,7 +85,7 @@ export default function LicensesForm( {
 		if ( allProductsAndBundles ) {
 			setSelectedLicenses( allProductsAndBundles );
 		}
-	}, [ allSelectableProducts, setSelectedLicenses, data ] );
+	}, [ filteredProductsAndBundles, setSelectedLicenses, data ] );
 
 	useEffect( () => {
 		if ( isLoadingProducts ) {
