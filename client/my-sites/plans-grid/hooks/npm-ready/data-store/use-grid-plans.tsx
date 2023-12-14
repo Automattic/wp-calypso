@@ -329,7 +329,7 @@ const useGridPlans = ( {
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
-	if ( ! pricingMeta || pricedAPIPlans.isFetching ) {
+	if ( ! pricingMeta || pricedAPIPlans.isLoading ) {
 		return null;
 	}
 
