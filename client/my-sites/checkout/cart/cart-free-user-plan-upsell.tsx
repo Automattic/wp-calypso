@@ -35,7 +35,7 @@ import type { AppState } from 'calypso/types';
 export interface CartFreeUserPlanUpsellProps {
 	cart: Pick< ResponseCart, 'products' >;
 	isCartPendingUpdate?: boolean;
-	planName: string;
+	planName?: string | null | undefined;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 }
 
