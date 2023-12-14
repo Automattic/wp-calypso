@@ -39,7 +39,7 @@ const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
 
-	let mainWindow;
+	let page;
 	let electronApp;
 	let consoleStream;
 
@@ -72,43 +72,44 @@ describe( 'User Can log in', () => {
 		for ( const window of electronApp.windows() ) {
 			const windowUrl = window.url();
 			if ( windowUrl.startsWith( BASE_URL ) ) {
-				mainWindow = window;
+				page = window;
 				break;
 			}
 		}
-		if ( ! mainWindow ) {
-			mainWindow = await electronApp.firstWindow();
+		if ( ! page ) {
+			page = await electronApp.firstWindow();
 		}
 
 		// Capture console
-		mainWindow.on( 'console', ( data ) =>
+		page.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
 		);
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
 	it( 'Log in', async () => {
-		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
-		await mainWindow.fill( '#usernameOrEmail', process.env.E2EGUTENBERGUSER );
-		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
-		await mainWindow.keyboard.press( 'Enter' );
-		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
-		await mainWindow.fill( '#password', process.env.E2EPASSWORD );
-		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
+		await page.screenshot( { path: SCREENSHOT_PATH } );
 
-		// Wait for response from the Login endpoint.
-		const [ response ] = await Promise.all( [
-			mainWindow.waitForResponse( '**/wp-login.php?action=login-endpoint' ), // wait for response.
-			mainWindow.click( 'button:has-text("Log In")' ),
-		] );
+		await page.getByLabel( 'Email Address or Username' ).fill( process.env.E2EGUTENBERGUSER );
+		await page.screenshot( { path: SCREENSHOT_PATH } );
+
+		await page.getByRole( 'button', { name: 'Continue' } ).click();
+		await page.screenshot( { path: SCREENSHOT_PATH } );
+
+		await page.getByLabel( 'Password' ).fill( process.env.E2EPASSWORD );
+		await page.screenshot( { path: SCREENSHOT_PATH } );
+
+		const responsePromise = page.waitForResponse( '**/wp-login.php?action=login-endpoint' );
+		await page.getByRole( 'button', { name: 'Log In' } ).click();
 
 		// If the account credentials are rejected, throw an error containing the text of
 		// the validation error.
 		// Credentaials can be rejected for any number of reasons:
 		// 	- closed account
 		//	- wrong password
+		const response = await responsePromise;
 		if ( response.status() === 400 ) {
-			throw new Error( await mainWindow.locator( 'div.is-error' ).innerText() );
+			throw new Error( await page.getByRole( 'alert' ).innerText() );
 		}
 
 		expect( response.status() ).toBe( 200 );
@@ -119,8 +120,8 @@ describe( 'User Can log in', () => {
 			consoleStream.end();
 		}
 
-		if ( mainWindow ) {
-			await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
+		if ( page ) {
+			await page.screenshot( { path: SCREENSHOT_PATH } );
 		}
 
 		if ( electronApp ) {
