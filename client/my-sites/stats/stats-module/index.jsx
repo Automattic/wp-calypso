@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -7,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
@@ -43,6 +40,7 @@ class StatsModule extends Component {
 		mainItemLabel: PropTypes.string,
 		additionalColumns: PropTypes.object,
 		listItemClassName: PropTypes.string,
+		gateStats: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -135,7 +133,7 @@ class StatsModule extends Component {
 			additionalColumns,
 			mainItemLabel,
 			listItemClassName,
-			isGatedStats,
+			gateStats,
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
@@ -187,9 +185,9 @@ class StatsModule extends Component {
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
 					overlay={
-						isGatedStats &&
 						siteId &&
-						statType && (
+						statType &&
+						gateStats && (
 							<StatsCardUpsell
 								className="stats-module__upsell"
 								siteId={ siteId }
@@ -218,17 +216,13 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const { statType, query } = ownProps;
-	const isPaidStatsEnabled = isEnabled( 'stats/paid-wpcom-v2' );
-	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
-	const isGatedStats = shouldGateStats( state, siteId, statType );
+	const gateStats = shouldGateStats( state, siteId, statType );
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
 		siteId,
 		siteSlug,
-		isPaidStatsEnabled,
-		siteHasPaidStats,
-		isGatedStats,
+		gateStats,
 	};
 } )( localize( StatsModule ) );
