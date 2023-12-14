@@ -1,10 +1,8 @@
 import {
-	isAkismetProduct,
 	isGoogleWorkspaceExtraLicence,
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 } from '@automattic/calypso-products';
-import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import {
 	hasDomainRegistration,
 	hasTransferProduct,
@@ -36,17 +34,6 @@ export default function getContactDetailsType( responseCart: ResponseCart ): Con
 
 	if ( hasNewGSuite && ! hasOnlyRenewals ) {
 		return 'gsuite';
-	}
-
-	const isPurchaseFree = responseCart.total_cost_integer === 0;
-	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	const isAkismetPurchase = responseCart.products.some( ( product ) => {
-		return isAkismetProduct( product );
-	} );
-
-	// Akismet free purchases still need contact information if logged out
-	if ( isPurchaseFree && ! isAkismetPurchase && ! isFullCredits ) {
-		return 'none';
 	}
 
 	return 'tax';
