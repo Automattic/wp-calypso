@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import {
 	useMarketplaceReviewsQuery,
@@ -24,13 +25,25 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 
 	return (
 		<div className="marketplace-reviews-cards__container">
-			<div className="marketplace-reviews-cards__no-reviews">
-				<h2 className="marketplace-reviews-cards__no-reviews-title">
+			<div className="marketplace-reviews-cards__reviews">
+				<h2 className="marketplace-reviews-cards__reviews-title">
 					{ translate( 'Customer reviews' ) }
 				</h2>
-				<h3 className="marketplace-reviews-cards__no-reviews-subtitle">
+				<h3 className="marketplace-reviews-cards__reviews-subtitle">
 					{ translate( 'What other users are saying' ) }
 				</h3>
+
+				<div className="marketplace-reviews-cards__read-all">
+					<Button
+						className="is-link"
+						borderless
+						primary
+						onClick={ () => alert( 'Not implemented yet!' ) }
+						href=""
+					>
+						{ translate( 'Read all reviews' ) }
+					</Button>
+				</div>
 			</div>
 
 			<div className="marketplace-reviews-cards__content">

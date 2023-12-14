@@ -1,20 +1,29 @@
 $border-color: #eee;
 
 .marketplace-reviews-cards__container {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
 
-	.marketplace-reviews-cards__no-reviews-title {
+	.marketplace-reviews-cards__reviews-title {
 		font-family: Recoleta, $sans;
 		color: var(--studio-gray-80);
 		font-size: $font-title-medium;
 	}
 
-	.marketplace-reviews-cards__no-reviews-subtitle {
+	.marketplace-reviews-cards__reviews-subtitle {
 		font-family: "SF Pro Text", $sans;
 		color: var(--studio-gray-60);
 		font-size: $font-body-small;
+	}
+
+	.marketplace-reviews-cards__read-all {
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-small;
+		position: absolute;
+		right: 0;
+		top: 25px;
 	}
 
 	.marketplace-reviews-cards__content {
