@@ -955,6 +955,7 @@ class ThemeSheet extends Component {
 			isPremium,
 			isThemePurchased,
 			translate,
+			isBundledSoftwareSet,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
@@ -971,7 +972,11 @@ class ThemeSheet extends Component {
 				</span>
 			);
 		} else if ( isLoggedIn && siteId ) {
-			if ( isPremium && ! isThemePurchased && ! isExternallyManagedTheme ) {
+			if (
+				( isPremium || isBundledSoftwareSet ) &&
+				! isThemePurchased &&
+				! isExternallyManagedTheme
+			) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
 					comment:
@@ -1520,7 +1525,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'subscribe';
 	} else if ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
-	} else if ( isPremium && ! isThemePurchased && isBundledSoftwareSet ) {
+	} else if ( ! isThemePurchased && isBundledSoftwareSet ) {
 		defaultOption = 'upgradePlanForBundledThemes';
 	} else {
 		defaultOption = 'activate';
