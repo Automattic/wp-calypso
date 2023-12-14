@@ -193,7 +193,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
 	 * - `pricedAPISitePlans` being a dependent query will only get fetching status when enabled (when `siteId` exists)
 	 */
-	if ( pricedAPISitePlans.isFetching || pricedAPIPlans.isFetching ) {
+
+	if ( ( selectedSiteId && pricedAPISitePlans.isLoading ) || pricedAPIPlans.isLoading ) {
 		return null;
 	}
 
