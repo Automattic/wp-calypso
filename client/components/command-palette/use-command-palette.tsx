@@ -6,10 +6,9 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
-import { isCustomDomain, isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
+import { isCustomDomain } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
@@ -63,13 +62,11 @@ interface SiteToActionParameters {
 		filteredSitesLength: number;
 		listVisibleCount: number;
 		search: string;
-		currentSiteId: number | null;
 	};
 }
 
 const useSiteToAction = () => {
 	const dispatch = useDispatch();
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
 	const siteToAction = useCallback(
@@ -80,7 +77,6 @@ const useSiteToAction = () => {
 				filteredSitesLength,
 				listVisibleCount,
 				search,
-				currentSiteId,
 			}: SiteToActionParameters[ 'properties' ]
 		) =>
 			( site: SiteExcerptData ): Command => {
@@ -94,26 +90,13 @@ const useSiteToAction = () => {
 						dispatch(
 							recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
 								command: selectedCommand.name,
-								has_nested_commands: false,
 								list_count: filteredSitesLength,
 								list_visible_count: listVisibleCount,
 								current_route: currentRoute,
 								search_text: search,
-								site_id: site.ID,
-								site_id_matches_current_site_id: site.ID === currentSiteId,
-								site_has_custom_domain: isCustomDomain( site.slug ),
-								site_plan_product_id: site.plan?.product_id,
-								site_plan_product_slug: site.plan?.product_slug,
-								site_plan_is_expired: Boolean( site.plan?.expired ),
-								site_is_jetpack_no_atomic: isNotAtomicJetpack( site ),
-								site_is_atomic: Boolean( site.is_wpcom_atomic ),
-								site_is_p2: Boolean( isP2Site( site ) ),
-								site_is_staging: Boolean( site.is_wpcom_staging_site ),
-								site_is_free_plan: Boolean( site.plan?.is_free ),
-								site_is_site_owner: site.site_owner === userId,
-								site_is_coming_soon: site.is_coming_soon,
-								site_is_private: site.is_private,
-								site_launch_status: site.launch_status,
+								command_site_id: site.ID,
+								command_site_has_custom_domain: isCustomDomain( site.slug ),
+								command_site_plan_id: site.plan?.product_id,
 							} )
 						);
 						onClickSite( { site, close } );
@@ -125,7 +108,7 @@ const useSiteToAction = () => {
 					),
 				};
 			},
-		[ currentRoute, dispatch, userId ]
+		[ currentRoute, dispatch ]
 	);
 
 	return siteToAction;
@@ -225,7 +208,6 @@ export const useCommandPalette = ( {
 				filteredSitesLength: filteredSites.length,
 				listVisibleCount,
 				search,
-				currentSiteId,
 			} )
 		);
 	}
