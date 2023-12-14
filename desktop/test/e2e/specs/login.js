@@ -86,6 +86,14 @@ describe( 'User Can log in', () => {
 
 		// Start tracing
 		window.context().tracing.start( { screenshots: true, snapshots: true } );
+
+		// Ensure that the CSP report endpoint is mocked to avoid
+		// ERR_INSUFFICIENT_RESOURCES errors.
+		await window.route( '**/cspreport', ( route ) => {
+			route.fulfill( {
+				status: 200,
+			} );
+		} );
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
