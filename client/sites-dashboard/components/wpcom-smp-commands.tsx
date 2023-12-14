@@ -38,7 +38,7 @@ import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import { isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
+import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 
 interface useCommandsArrayWpcomOptions {
 	setSelectedCommandName: ( name: string ) => void;
@@ -157,7 +157,7 @@ export const useCommandsArrayWpcom = ( {
 					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
 					apiNamespace: 'wpcom/v2',
 				} );
-				displayNotice( __( 'Succesfully cleared cache.' ) );
+				displayNotice( __( 'Successfully cleared cache.' ) );
 			} else {
 				// If global edge cache is not active, clear WordPress cache
 				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
@@ -768,11 +768,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/post-new.php`
-							: `/post/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/post',
+						wpAdmin: '/post-new.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -789,11 +788,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/edit.php`
-							: `/posts/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/posts',
+						wpAdmin: '/edit.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -810,11 +808,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/upload.php`
-							: `/media/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/media',
+						wpAdmin: '/upload.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -827,11 +824,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/media-new.php`
-							: `/media/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/media',
+						wpAdmin: '/media-new.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -849,11 +845,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/edit.php?post_type=page`
-							: `/pages/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/pages',
+						wpAdmin: '/edit.php?post_type=page',
+					} );
 					navigate( link );
 				},
 			},
@@ -872,11 +867,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/post-new.php?post_type=page`
-							: `/page/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/page',
+						wpAdmin: '/post-new.php?post_type=page',
+					} );
 					navigate( link );
 				},
 			},
@@ -894,11 +888,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/edit-comments.php`
-							: `/comments/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/comments',
+						wpAdmin: '/edit-comments.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -917,11 +910,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/themes.php`
-							: `/themes/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/themes',
+						wpAdmin: '/themes.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
@@ -940,11 +932,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/theme-install.php`
-							: `/themes/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/themes',
+						wpAdmin: '/theme-install.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => site?.jetpack,
@@ -966,11 +957,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/plugins.php`
-							: `/plugins/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/plugins',
+						wpAdmin: '/plugins.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
@@ -989,11 +979,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/plugin-install.php`
-							: `/plugins/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/plugins',
+						wpAdmin: '/plugin-install.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => site?.jetpack,
@@ -1052,11 +1041,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/users.php`
-							: `/people/team/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/people/team',
+						wpAdmin: '/users.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -1074,11 +1062,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/user-new.php`
-							: `/people/new/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/people/new',
+						wpAdmin: '/user-new.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -1156,11 +1143,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/options-general.php`
-							: `/settings/general/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/general',
+						wpAdmin: '/options-general.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -1177,11 +1163,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/options-writing.php`
-							: `/settings/writing/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/writing',
+						wpAdmin: '/options-writing.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -1198,11 +1183,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/options-reading.php`
-							: `/settings/reading/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/reading',
+						wpAdmin: '/options-reading.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -1219,11 +1203,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link =
-						( site.jetpack && ! site.is_wpcom_atomic ) ||
-						'wp-admin' === site.options?.wpcom_admin_interface
-							? `${ site.URL }/wp-admin/options-discussion.php`
-							: `/settings/discussion/${ site.slug }`;
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/discussion',
+						wpAdmin: '/options-discussion.php',
+					} );
 					navigate( link );
 				},
 			},

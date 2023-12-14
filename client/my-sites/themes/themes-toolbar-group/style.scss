@@ -13,10 +13,6 @@
 		justify-content: space-between;
 		padding: 0;
 
-		@include break-large {
-			justify-content: flex-start;
-		}
-
 		> div {
 			&:first-of-type {
 				margin-left: 0;
