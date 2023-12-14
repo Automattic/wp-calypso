@@ -89,6 +89,8 @@ describe( 'User Can log in', () => {
 
 	// eslint-disable-next-line jest/expect-expect
 	it( 'Log in', async () => {
+		console.log( window.url() );
+
 		await window.screenshot( { path: path.join( RESULTS_PATH, '01.png' ) } );
 
 		await window.getByLabel( 'Email Address or Username' ).fill( process.env.E2EGUTENBERGUSER );
