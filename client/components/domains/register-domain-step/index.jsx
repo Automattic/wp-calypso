@@ -114,6 +114,7 @@ class RegisterDomainStep extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		includeWordPressDotCom: PropTypes.bool,
+		includeOwnedDomainInSuggestions: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		onSave: PropTypes.func,
@@ -157,6 +158,7 @@ class RegisterDomainStep extends Component {
 		deemphasiseTlds: [],
 		includeDotBlogSubdomain: false,
 		includeWordPressDotCom: false,
+		includeOwnedDomainInSuggestions: false,
 		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
@@ -1080,11 +1082,14 @@ class RegisterDomainStep extends Component {
 						UNKNOWN,
 						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
-					const isDomainAvailable = [
-						AVAILABLE,
-						UNKNOWN,
-						REGISTERED_OTHER_SITE_SAME_USER,
-					].includes( status );
+
+					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
+
+					if ( this.props.includeOwnedDomainInSuggestions ) {
+						availableDomainStatuses.push( REGISTERED_OTHER_SITE_SAME_USER );
+					}
+
+					const isDomainAvailable = availableDomainStatuses.includes( status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
@@ -1101,8 +1106,12 @@ class RegisterDomainStep extends Component {
 						result.is_premium = true;
 					}
 
-					// Mapped status always overrides other statuses.
-					const availabilityStatus = isDomainMapped ? mappable : status;
+					let availabilityStatus = status;
+
+					// Mapped status always overrides other statuses, unless the domain is owned by the current user.
+					if ( isDomainMapped && status !== REGISTERED_OTHER_SITE_SAME_USER ) {
+						availabilityStatus = mappable;
+					}
 
 					this.setState( {
 						exactMatchDomain: domainChecked,
@@ -1165,7 +1174,7 @@ class RegisterDomainStep extends Component {
 				.replace( ' ', ',' )
 				.toLocaleLowerCase(),
 			...this.getActiveFiltersForAPI(),
-			include_internal_move_eligible: 'onboarding' === this.props.flowName,
+			include_internal_move_eligible: this.props.includeOwnedDomainInSuggestions,
 		};
 
 		debug( 'Fetching domains suggestions with the following query', query );
@@ -1462,6 +1471,8 @@ class RegisterDomainStep extends Component {
 	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
+		const { includeOwnedDomainInSuggestions } = this.props;
+		const { REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
@@ -1491,7 +1502,12 @@ class RegisterDomainStep extends Component {
 						status,
 						this.props.analyticsSection
 					);
-					if ( status && status !== domainAvailability.REGISTERED_OTHER_SITE_SAME_USER ) {
+
+					const skipAvailabilityErrors =
+						! status ||
+						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions );
+
+					if ( skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
@@ -1705,12 +1721,17 @@ class RegisterDomainStep extends Component {
 			TRANSFERRABLE,
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
+			REGISTERED_OTHER_SITE_SAME_USER,
 		} = domainAvailability;
+
+		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
+
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
-			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
+			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
+			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error )
 		) {
 			return;
 		}
