@@ -14,6 +14,7 @@ import LayoutNavigation, {
 	LayoutNavigationTabs as NavigationTabs,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import PartnerPortalSidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
@@ -77,6 +78,29 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			? translate( 'Single license' )
 			: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string );
 
+	const selectedCount = selectedLicenses.filter( ( license ) => license.quantity === selectedSize )
+		?.length;
+
+	const navItems = availableSizes.map( ( size ) => {
+		const count = selectedLicenses.filter( ( license ) => license.quantity === size ).length;
+		return {
+			label:
+				size === 1
+					? translate( 'Single license' )
+					: ( translate( '%(size)d licenses', {
+							args: { size },
+					  } ) as string ),
+			selected: selectedSize === size,
+			onClick: () => setSelectedSize( size ),
+			...( count && { count } ),
+		};
+	} );
+
+	const selectedItemProps = {
+		selectedText,
+		...( selectedCount && { selectedCount } ),
+	};
+
 	return (
 		<>
 			<Layout
@@ -84,6 +108,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 				title={ translate( 'Issue a new License' ) }
 				wide
 				withBorder
+				sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
 			>
 				<LayoutTop>
 					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
@@ -122,20 +147,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						) }
 					</LayoutHeader>
 
-					<LayoutNavigation selectedText={ selectedText }>
-						<NavigationTabs
-							selectedText={ selectedText }
-							items={ availableSizes.map( ( size ) => ( {
-								label:
-									size === 1
-										? translate( 'Single license' )
-										: ( translate( '%(size)d licenses', {
-												args: { size },
-										  } ) as string ),
-								selected: selectedSize === size,
-								onClick: () => setSelectedSize( size ),
-							} ) ) }
-						/>
+					<LayoutNavigation { ...selectedItemProps }>
+						<NavigationTabs { ...selectedItemProps } items={ navItems } />
 					</LayoutNavigation>
 				</LayoutTop>
 

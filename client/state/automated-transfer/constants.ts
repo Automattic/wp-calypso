@@ -27,6 +27,14 @@ export const transferStates = {
 	REQUEST_FAILURE: 'request_failure',
 } as const;
 
+export const transferInProgress = [
+	transferStates.PENDING,
+	transferStates.ACTIVE,
+	transferStates.PROVISIONED,
+] as const;
+
+export const transferRevertingInProgress = [ transferStates.RELOCATING_REVERT ] as const;
+
 export type TransferStates = ( typeof transferStates )[ keyof typeof transferStates ];
 
 export const eligibilityHolds = {

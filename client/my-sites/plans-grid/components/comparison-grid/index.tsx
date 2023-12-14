@@ -49,7 +49,7 @@ import type {
 	GridPlan,
 	TransformedFeatureObject,
 } from '../../hooks/npm-ready/data-store/use-grid-plans';
-import type { PlanActionOverrides } from '../../types';
+import type { ComparisonGridProps, PlanActionOverrides } from '../../types';
 import type {
 	FeatureObject,
 	Feature,
@@ -323,24 +323,6 @@ const FeatureFootnote = styled.span`
 		left: 0;
 	}
 `;
-
-type ComparisonGridProps = {
-	intervalType: string;
-	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
-	currentSitePlanSlug?: string | null;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-	siteId?: number | null;
-	planActionOverrides?: PlanActionOverrides;
-	selectedPlan?: string;
-	selectedFeature?: string;
-	showLegacyStorageFeature?: boolean;
-	showUpgradeableStorage: boolean;
-	stickyRowOffset: number;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	showRefundPeriod?: boolean;
-	planTypeSelectorProps?: PlanTypeSelectorProps;
-};
 
 type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];

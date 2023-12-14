@@ -2,6 +2,8 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	WPCOM_PREMIUM_PLANS,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	getPlan,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -26,14 +28,20 @@ const getUpgradeBannerForPlan = ( planSlug ) => {
 				event="calypso_themes_list_install_themes"
 				feature={ FEATURE_UPLOAD_THEMES }
 				plan={ PLAN_BUSINESS }
-				title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
+				title={
+					/* translators: %(planName1)s and %(planName2)s the short-hand version of the Business and Commerce plan names */
+					translate( 'Upload your own themes with our %(planName1)s and %(planName2)s plans!', {
+						args: {
+							planName1: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+							planName2: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+						},
+					} )
+				}
 				callToAction={ translate( 'Upgrade now' ) }
 				showIcon={ true }
 			/>
 		);
 	}
-
-	return null;
 };
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {

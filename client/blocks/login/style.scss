@@ -2,6 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/p2-extends";
 
+$breakpoint-mobile: 782px; //Mobile size.
+
 .layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	.login.is-jetpack {
 		.button.is-primary {
@@ -542,5 +544,41 @@
 				box-shadow: 0 0 0 2px var(--color-accent) !important;
 			}
 		}
+	}
+}
+
+.login__form-subheader-terms {
+	display: none;
+}
+
+.is-white-login {
+	.is-social-first {
+		.login__form-subheader-terms {
+			display: block;
+			max-width: 420px;
+			margin: 0 auto;
+
+			color: var(--studio-gray-50, #646970);
+			text-align: center;
+			font-size: $font-body-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px;
+
+			a {
+				color: var(--studio-gray-50, #646970);
+				text-decoration: underline;
+			}
+		}
+
+		.login__form-terms {
+			display: none;
+		}
+	}
+}
+
+.is-white-login.is-gravatar {
+	.login__form-terms {
+		display: block;
 	}
 }

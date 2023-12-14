@@ -1,4 +1,6 @@
 import { Gridicon, JetpackLogo } from '@automattic/components';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import {
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
@@ -22,6 +24,7 @@ import {
 	settings as accountSettingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
+	help as helpIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
@@ -226,6 +229,8 @@ export const useCommandsArrayWpcom = ( {
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+
 	const commands = [
 		{
 			name: 'viewMySites',
@@ -240,6 +245,15 @@ export const useCommandsArrayWpcom = ( {
 				navigate( `/sites` );
 			},
 			icon: wordpressIcon,
+		},
+		{
+			name: 'getHelp',
+			label: __( 'Get help' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				setShowHelpCenter( true );
+			},
+			icon: helpIcon,
 		},
 		{
 			name: 'clearCache',
@@ -985,6 +999,43 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) => site?.jetpack,
 			},
 			icon: pluginsIcon,
+		},
+		{
+			name: 'changePlan',
+			label: __( 'Change site plan' ),
+			searchLabel: [
+				_x( 'upgrade plan', 'Keyword for the Change site plan command' ),
+				_x( 'change plan', 'Keyword for the Change site plan command' ),
+				_x( 'add plan', 'Keyword for the Change site plan command' ),
+			].join( ' ' ),
+			context: [ '/sites' ],
+			callback: setStateCallback( 'changePlan', __( 'Select site to change plan' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/plans/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
+			},
+			icon: creditCardIcon,
+		},
+		{
+			name: 'manageMyPlan',
+			label: __( 'Manage site plan' ),
+			searchLabel: [
+				_x( 'upgrade plan', 'Keyword for the Manage site plan command' ),
+				_x( 'manage plan', 'Keyword for the Manage site plan command' ),
+				_x( 'plan features', 'Keyword for the Manage site plan command' ),
+			].join( ' ' ),
+			callback: setStateCallback( 'manageMyPlan', __( 'Select site to manage your plan' ) ),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/plans/my-plan/${ site.slug }` );
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! site?.is_wpcom_staging_site,
+			},
+			icon: creditCardIcon,
 		},
 		{
 			name: 'manageUsers',

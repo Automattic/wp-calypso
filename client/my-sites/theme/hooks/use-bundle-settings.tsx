@@ -1,5 +1,7 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
 import { type FC, useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { getThemeSoftwareSet } from 'calypso/state/themes/selectors';
@@ -30,6 +32,8 @@ const WooOnPlansIcon = () => (
 const useBundleSettings = ( themeId: string ): BundleSettings | null => {
 	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
 	const bundleSettings = useMemo( () => {
 		// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
@@ -44,9 +48,18 @@ const useBundleSettings = ( themeId: string ): BundleSettings | null => {
 					designPickerBadgeTooltip: translate(
 						'This theme comes bundled with WooCommerce, the best way to sell online.'
 					),
-					bannerUpsellDescription: translate(
-						'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-					),
+					bannerUpsellDescription:
+						isEnglishLocale ||
+						i18n.hasTranslation(
+							'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.'
+						)
+							? ( translate(
+									'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
+									{ args: { businessPlanName } }
+							  ) as string )
+							: translate(
+									'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+							  ),
 					bundledPluginMessage: translate(
 						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin.',
 						{
@@ -60,7 +73,7 @@ const useBundleSettings = ( themeId: string ): BundleSettings | null => {
 			default:
 				return null;
 		}
-	}, [ translate, themeSoftwareSet ] );
+	}, [ translate, businessPlanName, themeSoftwareSet ] );
 
 	return bundleSettings;
 };

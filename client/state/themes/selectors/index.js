@@ -68,6 +68,7 @@ export { isThemeActive } from 'calypso/state/themes/selectors/is-theme-active';
 export { isThemeGutenbergFirst } from 'calypso/state/themes/selectors/is-theme-gutenberg-first';
 export { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 export { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+export { isThemeWooCommerce } from 'calypso/state/themes/selectors/is-theme-woo-commerce';
 export { isThemesLastPageForQuery } from 'calypso/state/themes/selectors/is-themes-last-page-for-query';
 export { isUpsellCardDisplayed } from 'calypso/state/themes/selectors/is-upsell-card-displayed';
 export { isValidThemeFilterTerm } from 'calypso/state/themes/selectors/is-valid-theme-filter-term';
