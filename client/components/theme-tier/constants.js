@@ -6,32 +6,41 @@ import {
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 
-// This should be kept consistent with the theme_tier taxonomy.
+/**
+ * @typedef {Object} THEME_TIER
+ * @property {Object} [tier] A theme tier mapped to UI-related properties.
+ * @description This map has to be kept consistent with the theme_tier taxonomy.
+ */
+/**
+ * @typedef {Object} tier
+ * @property {string} label The translated label of the theme tier.
+ * @property {string} minimumUpsellPlan The minimum plan required to activate a theme belonging to the tier. Used for upselling purposes.
+ */
 export const THEME_TIERS = {
 	free: {
 		label: translate( 'Free' ),
-		plan: PLAN_FREE,
+		minimumUpsellPlan: PLAN_FREE,
 	},
 	personal: {
 		label: translate( 'Personal' ),
-		plan: PLAN_PERSONAL,
+		minimumUpsellPlan: PLAN_PERSONAL,
 	},
 	premium: {
 		label: translate( 'Premium' ),
-		plan: PLAN_PREMIUM,
+		minimumUpsellPlan: PLAN_PREMIUM,
 	},
 	partner: {
 		label: translate( 'Partner', {
 			context: 'This theme is developed and supported by a theme partner',
 		} ),
-		plan: PLAN_BUSINESS,
+		minimumUpsellPlan: PLAN_BUSINESS,
 	},
 	woocommerce: {
 		label: translate( 'WooCommerce' ),
-		plan: PLAN_BUSINESS,
+		minimumUpsellPlan: PLAN_BUSINESS,
 	},
 	sensei: {
 		label: translate( 'Sensei' ),
-		plan: PLAN_BUSINESS,
+		minimumUpsellPlan: PLAN_BUSINESS,
 	},
 };
