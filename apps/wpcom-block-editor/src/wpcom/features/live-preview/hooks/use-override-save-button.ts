@@ -16,7 +16,7 @@ const unlock = getUnlock();
 export const useOverrideSaveButton = ( {
 	setIsThemeUpgradeModalOpen,
 }: {
-	setIsThemeUpgradeModalOpen: any;
+	setIsThemeUpgradeModalOpen: ( isThemeUpgradeModalOpen: boolean ) => void;
 } ) => {
 	const canvasMode = useSelect(
 		( select ) =>
@@ -26,6 +26,7 @@ export const useOverrideSaveButton = ( {
 
 	useEffect( () => {
 		const saveButtonClickHandler: EventListener = ( e ) => {
+			e.preventDefault();
 			e.stopPropagation();
 			setIsThemeUpgradeModalOpen( true );
 		};
@@ -81,16 +82,6 @@ export const useOverrideSaveButton = ( {
 			return;
 		}
 
-		// This overrides the keyboard shortcut (⌘S) for saving.
-		const overrideSaveButtonKeyboardShortcut = ( e: KeyboardEvent ) => {
-			if ( e.key === 's' && ( e.metaKey || e.ctrlKey ) ) {
-				e.preventDefault();
-				e.stopPropagation();
-				setIsThemeUpgradeModalOpen( true );
-			}
-		};
-		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
-
 		return () => {
 			document
 				.querySelector( SAVE_HUB_SAVE_BUTTON_SELECTOR )
@@ -110,7 +101,27 @@ export const useOverrideSaveButton = ( {
 			document
 				.querySelector( HEADER_SAVE_BUTTON_SELECTOR )
 				?.removeEventListener( 'mouseout', stopObserver );
-			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
 		};
 	}, [ canvasMode, setIsThemeUpgradeModalOpen ] );
+
+	useEffect( () => {
+		// This overrides the keyboard shortcut (⌘S) for saving.
+		const overrideSaveButtonKeyboardShortcut = ( e: KeyboardEvent ) => {
+			if ( e.key === 's' && ( e.metaKey || e.ctrlKey ) ) {
+				e.preventDefault();
+				e.stopPropagation();
+				setIsThemeUpgradeModalOpen( true );
+			}
+		};
+		document.addEventListener( 'keydown', ( e: KeyboardEvent ) => {
+			if ( e.key === 's' && ( e.metaKey || e.ctrlKey ) ) {
+				e.preventDefault();
+				e.stopPropagation();
+				setIsThemeUpgradeModalOpen( true );
+			}
+		} );
+		return () => {
+			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
+		};
+	}, [ setIsThemeUpgradeModalOpen ] );
 };
