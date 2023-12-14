@@ -35,8 +35,8 @@ import type { AppState } from 'calypso/types';
 export interface CartFreeUserPlanUpsellProps {
 	cart: Pick< ResponseCart, 'products' >;
 	isCartPendingUpdate?: boolean;
-	planName?: string | null | undefined;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
+	upsellPlan?: ReturnType< typeof getPlan >;
 }
 
 interface CartFreeUserPlanUpsellHocProps {
@@ -67,8 +67,9 @@ class CartFreeUserPlanUpsell extends Component<
 	};
 
 	getUpgradeText() {
-		const { cart, planPrice, planName, translate } = this.props;
+		const { cart, planPrice, translate, upsellPlan } = this.props;
 		const firstDomain = cart.products.find( this.isRegistrationOrTransfer );
+		const planName = upsellPlan?.getTitle() ?? '';
 
 		if ( planPrice && firstDomain && planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
@@ -185,9 +186,9 @@ const mapStateToProps = ( state: AppState, { cart }: CartFreeUserPlanUpsellProps
 			selectedSiteId &&
 			upsellPlan &&
 			getPlanPrice( state, selectedSiteId, upsellPlan, false ),
-		planName: upsellPlan?.getTitle() ?? '',
 		selectedSite,
 		showPlanUpsell: !! selectedSiteId,
+		upsellPlan,
 	};
 };
 
