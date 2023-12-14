@@ -60,12 +60,12 @@ const SubLabel = styled( Label )( {
 } );
 
 const StyledFilterNotice = styled.div( {
-	fontSize: '0.8em',
-	paddingLeft: '.5em',
-	paddingRight: '.5em',
-	paddingBottom: '.75em',
-	color: 'var(--studio-gray-90)',
-	fontStyle: 'italic',
+	fontSize: '0.75rem',
+	paddingTop: '.25em',
+	paddingLeft: '.75em',
+	paddingRight: '.75em',
+	paddingBottom: '1em',
+	color: 'var(--studio-gray-50)',
 } );
 
 export function CommandMenuGroup( {
