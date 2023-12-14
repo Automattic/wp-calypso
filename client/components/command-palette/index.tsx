@@ -59,6 +59,15 @@ const SubLabel = styled( Label )( {
 	},
 } );
 
+const StyledFilterNotice = styled.div( {
+	fontSize: '0.8em',
+	paddingLeft: '.5em',
+	paddingRight: '.5em',
+	paddingBottom: '.75em',
+	color: 'var(--studio-gray-90)',
+	fontStyle: 'italic',
+} );
+
 export function CommandMenuGroup( {
 	search,
 	close,
@@ -67,7 +76,7 @@ export function CommandMenuGroup( {
 	selectedCommandName,
 	setSelectedCommandName,
 }: CommandMenuGroupProps ) {
-	const { commands } = useCommandPalette( {
+	const { commands, filterNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 	} );
@@ -78,6 +87,7 @@ export function CommandMenuGroup( {
 
 	return (
 		<Command.Group about="WPCOM">
+			{ filterNotice && <StyledFilterNotice>{ filterNotice }</StyledFilterNotice> }
 			{ commands.map( ( command ) => {
 				const itemValue = command.searchLabel ?? command.label;
 				return (

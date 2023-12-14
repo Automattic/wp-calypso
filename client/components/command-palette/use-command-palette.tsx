@@ -27,6 +27,7 @@ type OnClickSiteFunction = ( {
 interface SiteFunctions {
 	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
+	filterNotice?: string;
 }
 export interface CommandCallBackParams {
 	close: CloseFunction;
@@ -74,7 +75,7 @@ const siteToAction =
 export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
-}: useCommandPaletteOptions ): { commands: Command[] } => {
+}: useCommandPaletteOptions ): { commands: Command[]; filterNotice: string | undefined } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
@@ -127,8 +128,10 @@ export const useCommandPalette = ( {
 
 	const selectedCommand = finalSortedCommands.find( ( c ) => c.name === selectedCommandName );
 	let sitesToPick = null;
+	let filterNotice = undefined;
 	if ( selectedCommand?.siteFunctions ) {
 		const { onClick, filter } = selectedCommand.siteFunctions;
+		filterNotice = selectedCommand.siteFunctions?.filterNotice;
 		let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
 		if ( currentSiteId ) {
 			const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
@@ -142,5 +145,5 @@ export const useCommandPalette = ( {
 		sitesToPick = filteredSites.map( siteToAction( onClick ) );
 	}
 
-	return { commands: sitesToPick ?? finalSortedCommands };
+	return { commands: sitesToPick ?? finalSortedCommands, filterNotice };
 };
