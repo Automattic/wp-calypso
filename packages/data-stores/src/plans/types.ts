@@ -80,20 +80,20 @@ export interface PlanPricing {
 	};
 }
 
-export interface SitePlan extends PlanPricing {
+export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {}
+
+export interface SitePlan {
 	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;
 	productSlug: PlanSlugFromProducts;
 	productId: number;
+	pricing: SitePlanPricing;
 	/* END: Same SitePlan/PlanNext props */
-
 	currentPlan?: boolean;
-
 	/**
 	 * This value is only returned for the current plan on the site.
 	 */
 	expiry?: string;
-
 	/**
 	 * This is only set when `currentPlan` is true (so for the current plan on the site).
 	 * It is sent through as `id` from the endpoint and remapped here to avoid confusion e.g. with `productId`.
@@ -105,13 +105,13 @@ export interface SitePlan extends PlanPricing {
  * This is the new interface for API Plans that will replace the existing Plan interface above.
  * The existing Plan interface will be removed once this interface is fully implemented.
  */
-export interface PlanNext extends PlanPricing {
+export interface PlanNext {
 	/* START: Same SitePlan/PlanNext props */
 	planSlug: PlanSlugFromProducts;
 	productSlug: PlanSlugFromProducts;
 	productId: number;
+	pricing: PlanPricing;
 	/* END: Same SitePlan/PlanNext props */
-
 	productNameShort: string;
 }
 
@@ -139,6 +139,11 @@ export interface PricedAPIPlanPricing {
 	orig_cost_integer: number;
 
 	currency_code: string;
+}
+
+export interface PricedAPISitePlanPricing
+	extends Omit< PricedAPIPlanPricing, 'orig_cost_integer' | 'bill_period' > {
+	raw_discount_integer: number;
 }
 
 /**
@@ -171,7 +176,9 @@ export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntrod
  * Only the properties that are actually used in the store are typed
  * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
  */
-export interface PricedAPISitePlan extends PricedAPIPlanPricing, PricedAPIPlanIntroductoryOffer {
+export interface PricedAPISitePlan
+	extends PricedAPISitePlanPricing,
+		PricedAPIPlanIntroductoryOffer {
 	/* product_id: number; // not included in the plan's payload */
 	product_slug: StorePlanSlug;
 	current_plan?: boolean;
