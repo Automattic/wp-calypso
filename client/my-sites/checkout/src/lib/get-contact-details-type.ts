@@ -1,5 +1,4 @@
 import {
-	isAkismetProduct,
 	isGoogleWorkspaceExtraLicence,
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
@@ -40,12 +39,24 @@ export default function getContactDetailsType( responseCart: ResponseCart ): Con
 
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	const isAkismetPurchase = responseCart.products.some( ( product ) => {
-		return isAkismetProduct( product );
-	} );
+	const doesCartContainOnlyOneTimePurchases = responseCart.products.every(
+		( product ) => product.is_one_time_purchase
+	);
+	const isLoggedOutCart =
+		responseCart.cart_key === 'no-user' || responseCart.cart_key === 'no-site';
 
-	// Akismet free purchases still need contact information if logged out
-	if ( isPurchaseFree && ! isAkismetPurchase && ! isFullCredits ) {
+	// Hide contact step entirely for free purchases (that are not free because
+	// of credits) for carts that contain only one-time purchases. In that
+	// situation, there's no need to collect tax information since we will not
+	// be charging the user now or ever. However, we must still show the
+	// contact step for logged-out carts because in those cases we need to
+	// collect an email address that is part of the tax form.
+	if (
+		isPurchaseFree &&
+		doesCartContainOnlyOneTimePurchases &&
+		! isFullCredits &&
+		! isLoggedOutCart
+	) {
 		return 'none';
 	}
 
