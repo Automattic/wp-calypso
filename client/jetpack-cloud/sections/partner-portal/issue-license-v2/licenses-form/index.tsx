@@ -4,7 +4,8 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
 import { parseQueryStringProducts } from '../../lib/querystring-products';
 import LicenseMultiProductCard from '../../license-multi-product-card';
@@ -31,6 +32,7 @@ export default function LicensesForm( {
 	quantity = 1,
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { selectedLicenses, setSelectedLicenses } = useContext( IssueLicenseContext );
 
@@ -165,15 +167,27 @@ export default function LicensesForm( {
 	const onProductFilterSelect = useCallback(
 		( value: string | null ) => {
 			setSelectedProductFilter( value );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_filter_submit', { value } )
+			);
 		},
-		[ setSelectedProductFilter ]
+		[ dispatch ]
 	);
 
 	const onProductSearch = useCallback(
 		( value: string ) => {
 			setProductSearchQuery( value );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_search_submit', { value } )
+			);
 		},
-		[ setProductSearchQuery ]
+		[ dispatch ]
+	);
+
+	const trackClickCallback = useCallback(
+		( component: string ) => () =>
+			dispatch( recordTracksEvent( `calypso_partner_portal_issue_license_${ component }_click` ) ),
+		[ dispatch ]
 	);
 
 	const isSingleLicenseView = quantity === 1;
@@ -227,10 +241,14 @@ export default function LicensesForm( {
 			<QueryProductsList type="jetpack" currency="USD" />
 
 			<div className="licenses-form__actions">
-				<ProductFilterSearch onProductSearch={ onProductSearch } />
+				<ProductFilterSearch
+					onProductSearch={ onProductSearch }
+					onClick={ trackClickCallback( 'search' ) }
+				/>
 				<ProductFilterSelect
 					selectedProductFilter={ selectedProductFilter }
 					onProductFilterSelect={ onProductFilterSelect }
+					onClick={ trackClickCallback( 'filter' ) }
 					isSingleLicense={ isSingleLicenseView }
 				/>
 			</div>
