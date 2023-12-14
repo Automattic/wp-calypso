@@ -889,8 +889,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 			<>
 				{ translate( '%(humanReadableCode)s : %(upgradeCredit)s applied in first month only.', {
 					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						'The reason for the discounted price, It will be applied only once in the first month',
 					args: {
 						humanReadableCode: humanReadableCode,
 						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
@@ -909,8 +908,7 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 			<>
 				{ translate( '%(humanReadableCode)s : %(upgradeCredit)s applied in first year only.', {
 					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						'The reason for the discounted price, It will be applied only once in the first year',
 					args: {
 						humanReadableCode: humanReadableCode,
 						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
@@ -924,13 +922,31 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 		);
 	}
 
-	if ( isBiennially( product ) || isTriennially( product ) ) {
+	if ( isBiennially( product ) ) {
 		return (
 			<>
-				{ translate( '%(humanReadableCode)s : %(discount)s applied in first term only', {
+				{ translate( '%(humanReadableCode)s : %(discount)s applied in first two years only', {
 					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						'The reason for the discounted price, It will be applied only once in the first two years',
+					args: {
+						humanReadableCode: humanReadableCode,
+						discount: formatCurrency( upgradeCredit, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+				<UpgradeCreditHelpIconLink />
+			</>
+		);
+	}
+
+	if ( isTriennially( product ) ) {
+		return (
+			<>
+				{ translate( '%(humanReadableCode)s : %(discount)s applied in first three years only', {
+					comment:
+						'The reason for the discounted price, It will be applied only once in the first three years',
 					args: {
 						humanReadableCode: humanReadableCode,
 						discount: formatCurrency( upgradeCredit, product.currency, {
