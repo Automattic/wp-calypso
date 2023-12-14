@@ -53,7 +53,7 @@ export default function PricingBreakdown( {
 			<div className="review-licenses__pricing-breakdown">
 				{ selectedLicenses.map( ( license ) => (
 					<LicenseItem
-						key={ `license-item-${ license.product_id }` }
+						key={ `license-item-${ license.product_id }-${ license.quantity }` }
 						license={ license }
 						userProducts={ userProducts }
 					/>
