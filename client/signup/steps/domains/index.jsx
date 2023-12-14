@@ -25,7 +25,6 @@ import {
 	domainMapping,
 	domainTransfer,
 	updatePrivacyForDomain,
-	hasDomainInCart,
 	planItem,
 	hasPlan,
 	hasDomainRegistration,
@@ -158,6 +157,8 @@ export class RenderDomainsStep extends Component {
 			temporaryCart: [],
 			replaceDomainFailedMessage: null,
 			domainAddingQueue: [],
+			removeDomainTimeout: 0,
+			addDomainTimeout: 0,
 		};
 	}
 
@@ -199,7 +200,7 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	handleAddDomain = async ( suggestion, position ) => {
+	handleAddDomain = async ( suggestion, position, previousState ) => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -209,7 +210,19 @@ export class RenderDomainsStep extends Component {
 			? SIGNUP_DOMAIN_ORIGIN.FREE
 			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
 
-		if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+			const domainInAddingQueue = this.state.domainAddingQueue.find(
+				( item ) => item.meta === suggestion.domain_name
+			);
+
+			const domainInRemovalQueue = this.state.domainRemovalQueue.find(
+				( item ) => item.meta === suggestion.domain_name
+			);
+
+			if ( domainInAddingQueue || domainInRemovalQueue ) {
+				// return false;
+			}
+		} else {
 			this.setState( { isCartPendingUpdateDomain: suggestion } );
 		}
 
@@ -237,7 +250,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
-			await this.handleDomainToDomainCart();
+			await this.handleDomainToDomainCart( previousState );
 
 			// If we already have a free selection in place, let's enforce that as a free site suggestion
 			if ( this.state.wpcomSubdomainSelected ) {
@@ -352,7 +365,7 @@ export class RenderDomainsStep extends Component {
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 	};
 
-	handleDomainToDomainCart = async () => {
+	handleDomainToDomainCart = async ( previousState ) => {
 		const { step } = this.props;
 
 		const { suggestion } = step;
@@ -363,19 +376,7 @@ export class RenderDomainsStep extends Component {
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
 
-		const domainInAddingQueue = this.state.domainAddingQueue.find(
-			( item ) => item.meta === suggestion.domain_name
-		);
-
-		const domainInRemovalQueue = this.state.domainRemovalQueue.find(
-			( item ) => item.meta === suggestion.domain_name
-		);
-
-		if ( domainInAddingQueue || domainInRemovalQueue ) {
-			return false;
-		}
-
-		if ( hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
+		if ( previousState ) {
 			this.removeDomain( suggestion );
 		} else {
 			await this.addDomain( suggestion );
@@ -643,54 +644,58 @@ export class RenderDomainsStep extends Component {
 			} ) );
 
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
+			// TODO: remove productsToAdd
 			const productsToAdd = ! hasPlan( this.props.cart )
 				? [ registration, this.props.multiDomainDefaultPlan ]
 				: [ registration ];
 
-			// Add productsToAdd to productsInCart.
-			const productsInCart = [ ...this.props.cart.products, ...productsToAdd ];
-
-			// Only add domains that are not already in the cart.
-			this.state.domainAddingQueue.forEach( ( domainInQueue ) => {
-				const domainToAdd = productsInCart.find( ( item ) => item.meta === domainInQueue.meta );
-
-				if ( ! domainToAdd ) {
-					productsInCart.push( domainInQueue );
-				}
-			} );
-
-			// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-			const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
-
 			// Replace the products in the cart with the freshly sorted products.
-			await this.props.shoppingCartManager
-				.replaceProductsInCart( sortedProducts )
-				.then( () => {
-					this.setState( { replaceDomainFailedMessage: null } );
-					if ( this.state.domainAddingQueue?.length > 0 ) {
-						this.setState( ( state ) => ( {
-							domainAddingQueue: state.domainAddingQueue.filter(
-								( domainInQueue ) => domainInQueue.meta !== domain
-							),
-						} ) );
-					}
-					if ( this.state.temporaryCart?.length > 0 ) {
-						this.setState( ( state ) => ( {
-							temporaryCart: state.temporaryCart.filter(
-								( temporaryCart ) => temporaryCart.meta !== domain
-							),
-						} ) );
-					}
-				} )
-				.catch( () => {
-					this.handleReplaceProductsInCartError(
-						this.props.translate(
-							'Sorry, there was a problem adding that domain. Please try again later.'
-						)
-					);
-				} );
+			clearTimeout( this.state.addDomainTimeout );
 
-			this.setState( { isMiniCartContinueButtonBusy: false } );
+			this.state.addDomainTimeout = setTimeout( async () => {
+				await this.props.shoppingCartManager.reloadFromServer();
+
+				// Add productsToAdd to productsInCart.
+				const productsInCart = [
+					...this.props.cart.products,
+					...productsToAdd,
+					...this.state.domainAddingQueue,
+				];
+
+				// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
+				const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
+
+				await this.props.shoppingCartManager
+					.replaceProductsInCart( sortedProducts )
+					.then( () => {
+						this.setState( { replaceDomainFailedMessage: null } );
+						if ( this.state.domainAddingQueue?.length > 0 ) {
+							this.setState( ( state ) => ( {
+								domainAddingQueue: state.domainAddingQueue.filter(
+									( domainInQueue ) =>
+										! sortedProducts.find( ( item ) => item.meta === domainInQueue.meta )
+								),
+							} ) );
+						}
+						if ( this.state.temporaryCart?.length > 0 ) {
+							this.setState( ( state ) => ( {
+								temporaryCart: state.temporaryCart.filter(
+									( temporaryCart ) =>
+										! sortedProducts.find( ( item ) => item.meta === temporaryCart.meta )
+								),
+							} ) );
+						}
+					} )
+					.catch( () => {
+						this.handleReplaceProductsInCartError(
+							this.props.translate(
+								'Sorry, there was a problem adding that domain. Please try again later.'
+							)
+						);
+					} );
+
+				this.setState( { isMiniCartContinueButtonBusy: false } );
+			}, 500 );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
 		}
@@ -743,19 +748,23 @@ export class RenderDomainsStep extends Component {
 			],
 		} ) );
 
-		const productsToKeep = this.props.cart.products.filter( ( product ) => {
-			// check current item
-			if ( product.meta === domain_name && product.product_slug === product_slug ) {
-				// this is to be removed
-				return false;
-			}
-			// check removal queue
-			return ! this.state.domainRemovalQueue.find(
-				( domain ) => product.meta === domain.meta && product.product_slug === domain.productSlug
-			);
-		} );
-		if ( productsToKeep ) {
-			this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
+		this.setState( { isCartPendingUpdateDomain: { domain_name: domain_name } } );
+		clearTimeout( this.state.removeDomainTimeout );
+		this.state.removeDomainTimeout = setTimeout( async () => {
+			await this.props.shoppingCartManager.reloadFromServer();
+
+			const productsToKeep = this.props.cart.products.filter( ( product ) => {
+				// check current item
+				if ( product.meta === domain_name && product.product_slug === product_slug ) {
+					// this is to be removed
+					return false;
+				}
+				// check removal queue
+				return ! this.state.domainRemovalQueue.find(
+					( domain ) => product.meta === domain.meta && product.product_slug === domain.productSlug
+				);
+			} );
+
 			await this.props.shoppingCartManager
 				.replaceProductsInCart( productsToKeep )
 				.then( () => {
@@ -769,14 +778,16 @@ export class RenderDomainsStep extends Component {
 					);
 				} )
 				.finally( () => {
-					this.setState( ( prevState ) => ( {
-						domainRemovalQueue: prevState.domainRemovalQueue.filter(
-							( item ) => item.meta !== domain_name
-						),
-					} ) );
+					if ( this.state.domainRemovalQueue?.length > 0 ) {
+						this.setState( ( state ) => ( {
+							domainRemovalQueue: state.domainRemovalQueue.filter( ( domainInQueue ) =>
+								productsToKeep.find( ( item ) => item.meta === domainInQueue.meta )
+							),
+						} ) );
+					}
 				} );
-		}
-		this.setState( { isMiniCartContinueButtonBusy: false } );
+			this.setState( { isMiniCartContinueButtonBusy: false } );
+		}, 500 );
 	}
 
 	handleReplaceProductsInCartError = ( errorMessage ) => {
@@ -993,7 +1004,7 @@ export class RenderDomainsStep extends Component {
 						key="domainForm"
 						path={ this.props.path }
 						initialState={ initialState }
-						onAddDomain={ async ( suggestion, position ) => {
+						onAddDomain={ async ( suggestion, position, previousState ) => {
 							if (
 								experimentAssignment?.variationName === 'treatment' &&
 								isFreeWordPressComDomain( suggestion )
@@ -1005,7 +1016,7 @@ export class RenderDomainsStep extends Component {
 									severity: 'error',
 								} );
 							}
-							await this.handleAddDomain( suggestion, position );
+							await this.handleAddDomain( suggestion, position, previousState );
 						} }
 						onMappingError={ this.handleDomainMappingError }
 						isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
