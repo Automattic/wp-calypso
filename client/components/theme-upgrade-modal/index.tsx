@@ -33,11 +33,10 @@ import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
-import { useSelector } from 'calypso/state';
+import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
-import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import { ThemeSoftwareSet } from 'calypso/types';
 import './style.scss';
 
 interface UpgradeModalProps {
@@ -73,11 +72,15 @@ export const ThemeUpgradeModal = ( {
 	const isDesktop = useBreakpoint( '>782px' );
 
 	// Check current theme: Does it have a plugin bundled?
-	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
-	const showBundleVersion = theme_software_set;
-	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
+	const themeSoftwareSet = theme?.data?.taxonomies?.theme_software_set as
+		| ThemeSoftwareSet[]
+		| undefined;
+	const showBundleVersion = themeSoftwareSet?.length;
+	const isExternallyManaged = theme?.data?.theme_type === 'managed-external';
 
-	const bundleSettings = useBundleSettingsByTheme( slug );
+	// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
+	const firstThemeSoftwareSet = themeSoftwareSet?.[ 0 ];
+	const bundleSettings = useBundleSettings( firstThemeSoftwareSet?.slug );
 
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
