@@ -74,6 +74,7 @@ const assemblerFirstFlow: Flow = {
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
 			STEPS.PLANS,
+			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
 		];
@@ -87,7 +88,7 @@ const assemblerFirstFlow: Flow = {
 		);
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { siteSlug, siteId } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -215,6 +216,19 @@ const assemblerFirstFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
+				case 'domains': {
+					await updateLaunchpadSettings( siteSlug, {
+						checklist_statuses: { domain_upsell_deferred: true },
+					} );
+
+					if ( providedDependencies?.freeDomain && providedDependencies?.domainName ) {
+						// We have to use the site id since the domain is changed.
+						return navigate( `launchpad?siteId=${ site?.ID }` );
+					}
+
+					return navigate( 'launchpad' );
+				}
+
 				case 'site-launch':
 					return navigate( 'processing' );
 
@@ -229,7 +243,8 @@ const assemblerFirstFlow: Flow = {
 					return navigate( 'new-or-existing-site' );
 				}
 
-				case 'freePostSetup': {
+				case 'freePostSetup':
+				case 'domains': {
 					return navigate( 'launchpad' );
 				}
 

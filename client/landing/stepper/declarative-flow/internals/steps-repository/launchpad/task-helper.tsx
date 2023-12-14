@@ -555,10 +555,11 @@ export function getEnhancedTasks( {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 
-							if ( isBlogOnboardingFlow( flow ) ) {
+							if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 								window.location.assign(
 									addQueryArgs( `/setup/${ flow }/domains`, {
 										siteId: site?.ID,
+										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,
 										domainAndPlanPackage: true,
@@ -578,7 +579,7 @@ export function getEnhancedTasks( {
 							window.location.assign( destinationUrl );
 						},
 						badge_text:
-							domainUpsellCompleted || isBlogOnboardingFlow( flow )
+							domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
 								? ''
 								: translate( 'Upgrade plan' ),
 					};

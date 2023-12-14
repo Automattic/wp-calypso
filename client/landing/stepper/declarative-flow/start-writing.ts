@@ -1,7 +1,7 @@
-import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch, dispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -16,10 +16,8 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useLoginUrl } from '../utils/path';
 
@@ -82,10 +80,6 @@ const startWriting: Flow = {
 		const siteId = useSiteIdParam();
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
-		const state = useSelect(
-			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
-			[]
-		).getState();
 		const site = useSite();
 
 		// This flow clear the site_intent when flow is completed.
@@ -173,23 +167,6 @@ const startWriting: Flow = {
 					}
 
 					if ( providedDependencies?.freeDomain ) {
-						const freeDomainSuffix = '.wordpress.com';
-						const newDomainName = String( providedDependencies?.domainName ).replace(
-							freeDomainSuffix,
-							''
-						);
-
-						if ( providedDependencies?.domainName ) {
-							await requestSiteAddressChange(
-								site?.ID,
-								newDomainName,
-								'wordpress.com',
-								siteSlug,
-								freeSiteAddressType.BLOG,
-								true,
-								false
-							)( dispatch, state );
-						}
 						return window.location.assign( `/setup/start-writing/launchpad?siteId=${ site?.ID }` );
 					}
 
