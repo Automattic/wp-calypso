@@ -192,7 +192,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					{
 						/* translators: %(discountRate)d%% is a discount percentage like 20% or 25%, followed by an escaped percentage sign %% */
 						translate(
-							'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com Business plan? ' +
+							'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? ' +
 								'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
 								'Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
 							{
@@ -200,7 +200,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 									numberOfPluginsThemes,
 									discountRate,
 									couponCode,
-									planName: businessPlanName,
+									businessPlanName,
 								},
 								components: { b: <strong /> },
 							}
