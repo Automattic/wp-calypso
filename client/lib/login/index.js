@@ -159,7 +159,11 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `${ signupUrl }/account?${ params.toString() }`;
 	}
 
-	return addLocaleToPath( signupUrl, locale );
+	if ( locale && locale !== 'en' ) {
+		return addLocaleToPath( signupUrl, locale );
+	}
+
+	return signupUrl;
 }
 
 export const isReactLostPasswordScreenEnabled = () => {
