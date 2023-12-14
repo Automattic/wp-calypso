@@ -30,3 +30,5 @@ export function getDiscountedRawPrice(
 	const price = returnSmallestUnit ? plan.raw_price_integer : rawPrice;
 	return returnMonthly ? calculateMonthlyPriceForPlan( plan.product_slug, price ) : price;
 }
+
+// TODO: return raw_price_integer OR null if undefined/null
