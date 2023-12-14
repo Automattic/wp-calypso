@@ -82,17 +82,21 @@ export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
 	return site?.options?.wpcom_admin_interface;
 };
 
+export interface InterfaceURLFragment {
+	calypso: `/${ string }`;
+	wpAdmin: `/${ string }`;
+}
+
 export const generateSiteInterfaceLink = (
 	site: SiteExcerptData,
-	calypsoBase: string,
-	wpAdminBase: string
+	urlFragment: InterfaceURLFragment
 ) => {
 	const isWpAdminDefault =
 		( site.jetpack && ! site.is_wpcom_atomic ) || siteDefaultInterface( site ) === 'wp-admin';
 
 	const targetLink = isWpAdminDefault
-		? `${ site.URL }/wp-admin/${ wpAdminBase }`
-		: `/${ calypsoBase }/${ site.slug }`;
+		? `${ site.URL }/wp-admin${ urlFragment.wpAdmin }`
+		: `${ urlFragment.calypso }/${ site.slug }`;
 
 	return targetLink;
 };

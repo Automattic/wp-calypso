@@ -619,7 +619,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'post', 'post-new.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/post',
+						wpAdmin: '/post-new.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -636,7 +639,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'posts', 'edit.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/posts',
+						wpAdmin: '/edit.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -653,7 +659,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'media', 'upload.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/media',
+						wpAdmin: '/upload.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -666,7 +675,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'media', 'media-new.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/media',
+						wpAdmin: '/media-new.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -684,7 +696,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'pages', 'edit.php?post_type=page' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/pages',
+						wpAdmin: '/edit.php?post_type=page',
+					} );
 					navigate( link );
 				},
 			},
@@ -703,7 +718,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'page', 'post-new.php?post_type=page' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/page',
+						wpAdmin: '/post-new.php?post_type=page',
+					} );
 					navigate( link );
 				},
 			},
@@ -721,7 +739,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'comments', 'edit-comments.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/comments',
+						wpAdmin: '/edit-comments.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -740,7 +761,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'themes', 'themes.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/themes',
+						wpAdmin: '/themes.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
@@ -759,7 +783,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'themes', 'theme-install.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/themes',
+						wpAdmin: '/theme-install.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => site?.jetpack,
@@ -781,7 +808,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'plugins', 'plugins.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/plugins',
+						wpAdmin: '/plugins.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ),
@@ -800,7 +830,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'plugins', 'plugin-install.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/plugins',
+						wpAdmin: '/plugin-install.php',
+					} );
 					navigate( link );
 				},
 				filter: ( site: SiteExcerptData ) => site?.jetpack,
@@ -822,7 +855,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'people/team', 'users.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/people/team',
+						wpAdmin: '/users.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -840,7 +876,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'people/new', 'user-new.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/people/new',
+						wpAdmin: '/user-new.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -918,7 +957,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'settings/general', 'options-general.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/general',
+						wpAdmin: '/options-general.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -935,7 +977,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'settings/writing', 'options-writing.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/writing',
+						wpAdmin: '/options-writing.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -952,7 +997,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink( site, 'settings/reading', 'options-reading.php' );
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/reading',
+						wpAdmin: '/options-reading.php',
+					} );
 					navigate( link );
 				},
 			},
@@ -969,11 +1017,10 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					const link = generateSiteInterfaceLink(
-						site,
-						'settings/discussion',
-						'options-discussion.php'
-					);
+					const link = generateSiteInterfaceLink( site, {
+						calypso: '/settings/discussion',
+						wpAdmin: '/options-discussion.php',
+					} );
 					navigate( link );
 				},
 			},
