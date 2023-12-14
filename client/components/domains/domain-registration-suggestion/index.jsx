@@ -105,7 +105,7 @@ class DomainRegistrationSuggestion extends Component {
 		}
 	}
 
-	onButtonClick = () => {
+	onButtonClick = ( previousState ) => {
 		const { suggestion, railcarId, uiPosition } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
@@ -119,7 +119,7 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 		}
 
-		this.props.onButtonClick( suggestion, uiPosition );
+		this.props.onButtonClick( suggestion, uiPosition, previousState );
 	};
 
 	isUnavailableDomain = ( domain ) => {
@@ -152,7 +152,8 @@ class DomainRegistrationSuggestion extends Component {
 		// If we're removing this domain, let's instantly show that for the user
 		if (
 			domainRemovalQueue?.length > 0 &&
-			domainRemovalQueue.some( ( item ) => item.meta === domain )
+			domainRemovalQueue.some( ( item ) => item.meta === domain ) &&
+			! ( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) )
 		) {
 			isAdded = false;
 		}
@@ -211,19 +212,13 @@ class DomainRegistrationSuggestion extends Component {
 		}
 
 		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-			const isDomainAtRemovalQueue = domainRemovalQueue?.some( ( item ) => item.meta === domain );
-			const isDomainAtAddingQueue = temporaryCart?.some( ( item ) => item.meta === domain );
-
-			if ( isDomainAtRemovalQueue || isDomainAtAddingQueue ) {
-				buttonStyles = { ...buttonStyles, primary: false, busy: true, disabled: true };
-			} else {
-				buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
-			}
+			buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
 		}
 
 		return {
 			buttonContent,
 			buttonStyles,
+			isAdded,
 		};
 	}
 

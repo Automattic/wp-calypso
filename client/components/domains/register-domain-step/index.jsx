@@ -1457,7 +1457,7 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = async ( suggestion, position ) => {
+	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 
@@ -1477,7 +1477,7 @@ class RegisterDomainStep extends Component {
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			// For Multi-domain flows, add the domain first, than check availability
 			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-				await this.props.onAddDomain( suggestion, position );
+				await this.props.onAddDomain( suggestion, position, previousState );
 			}
 
 			this.preCheckDomainAvailability( domain )
@@ -1503,11 +1503,11 @@ class RegisterDomainStep extends Component {
 						} );
 						this.props.onMappingError( domain, status );
 					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-						this.props.onAddDomain( suggestion, position );
+						this.props.onAddDomain( suggestion, position, previousState );
 					}
 				} );
 		} else {
-			this.props.onAddDomain( suggestion, position );
+			this.props.onAddDomain( suggestion, position, previousState );
 		}
 	};
 
