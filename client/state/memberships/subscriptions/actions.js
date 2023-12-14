@@ -23,7 +23,7 @@ export const requestSubscriptionStop = ( subscriptionId ) => {
 			.post( `/me/memberships/subscriptions/${ subscriptionId }/cancel` )
 			.then( ( response ) => {
 				if ( response.check_url && response.redirect ) {
-					fetch( response.check_url ).then( () => {
+					fetch( response.check_url, { method: 'HEAD' } ).then( () => {
 						window.location( response.redirect );
 					} );
 				} else {
