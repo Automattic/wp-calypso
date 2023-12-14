@@ -139,7 +139,6 @@ export const defaultSiteDetails: SiteDetails = {
 		was_created_with_blank_canvas_design: false,
 		videopress_storage_used: 0,
 		is_difm_lite_in_progress: false,
-		difm_lite_site_options: {},
 		site_intent: 'link-in-bio',
 		site_vertical_id: null,
 		launchpad_screen: 'full',

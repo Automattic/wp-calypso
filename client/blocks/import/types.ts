@@ -57,7 +57,8 @@ export type ImporterPlatformOther =
 	| 'livejournal'
 	| 'movabletype'
 	| 'tumblr'
-	| 'xanga';
+	| 'xanga'
+	| 'substack';
 export type ImporterPlatformExtra = 'godaddy-central';
 export type ImporterPlatform =
 	| ImporterMainPlatform

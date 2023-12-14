@@ -4,6 +4,10 @@ import { getQueryArg } from '@wordpress/url';
 export const WOOCOMMERCE_THEME = 'woocommerce';
 export const PREMIUM_THEME = 'premium';
 
+/**
+ * Get unlock API from Gutenberg.
+ * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
+ */
 export const getUnlock = () => {
 	/**
 	 * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
@@ -42,7 +46,7 @@ export function isPreviewingTheme() {
 
 export function currentlyPreviewingTheme() {
 	if ( isPreviewingTheme() ) {
-		return getQueryArg( window.location.href, 'wp_theme_preview' );
+		return getQueryArg( window.location.href, 'wp_theme_preview' ) as string;
 	}
-	return null;
+	return undefined;
 }

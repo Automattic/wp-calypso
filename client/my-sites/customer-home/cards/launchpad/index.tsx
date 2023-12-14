@@ -28,7 +28,7 @@ const CustomerHomeLaunchpad = ( {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const {
 		data: { checklist, is_dismissed: initialIsChecklistDismissed, title },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug );
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	useEffect( () => {
 		setIsDismissed( initialIsChecklistDismissed );

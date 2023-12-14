@@ -112,8 +112,11 @@ module.exports = ( {
 	extractComments = true,
 } = {} ) => {
 	terserOptions = {
+		compress: true,
+		mangle: {
+			reserved: [ '__', '_n', '_nx', '_x' ],
+		},
 		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
-		ie8: false,
 		safari10: supportedBrowsers.some(
 			( browser ) => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
 		),
@@ -125,7 +128,13 @@ module.exports = ( {
 	};
 
 	return [
-		new TerserPlugin( { parallel, extractComments, terserOptions } ),
+		new TerserPlugin( {
+			// SWC handles parallelization internally.
+			parallel,
+			extractComments,
+			terserOptions,
+			minify: TerserPlugin.swcMinify,
+		} ),
 		new CssMinimizerPlugin( { parallel, minimizerOptions: cssMinimizerOptions } ),
 	];
 };

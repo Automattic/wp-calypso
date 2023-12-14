@@ -1,4 +1,4 @@
-import { LaunchpadNavigator, type UserSelect } from '@automattic/data-stores';
+import { type UserSelect } from '@automattic/data-stores';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -69,7 +69,6 @@ const linkInBio: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		setStepProgress( flowProgress );
 
@@ -162,7 +161,6 @@ const linkInBio: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'link-in-bio',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

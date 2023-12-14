@@ -26,7 +26,7 @@ object DesktopApp : Project({
 		password("DESKTOP_SECRETS_ENCRYPTION_KEY", "credentialsJSON:15357c22-385b-456a-a18a-10cb42b9adc1", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
 		// For the root user, see the `desktopAppUser` entry in `calypso-e2e/src/secrets`.
 		password("E2EGUTENBERGUSER", "credentialsJSON:aea14d11-dc0e-41fa-9887-6a979ee66785", display = ParameterDisplay.HIDDEN)
-		password("E2EPASSWORD", "credentialsJSON:3b242d15-0954-452d-8077-249acc79e44e", display = ParameterDisplay.HIDDEN)
+		password("E2EPASSWORD", "credentialsJSON:1b787674-1c6f-41c5-9b39-41768fa1aa0c", display = ParameterDisplay.HIDDEN)
 	}
 })
 

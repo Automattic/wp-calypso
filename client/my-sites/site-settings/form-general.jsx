@@ -5,6 +5,7 @@ import {
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	FEATURE_STYLE_CUSTOMIZATION,
+	getPlan,
 } from '@automattic/calypso-products';
 import {
 	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
@@ -16,13 +17,12 @@ import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
+import i18n from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
-import builtByLogo from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import Banner from 'calypso/components/banner';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -66,6 +66,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { BuiltByUpsell } from './built-by-upsell-banner';
 import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
 import TrialUpsellNotice from './trial-upsell-notice';
@@ -879,45 +880,6 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
-	builtByUpsell() {
-		const { translate, site, isUnlaunchedSite: propsisUnlaunchedSite } = this.props;
-
-		// Do not show for launched sites
-		if ( ! propsisUnlaunchedSite ) {
-			return;
-		}
-
-		// Do not show if we don't know when the site was created
-		if ( ! site?.options?.created_at ) {
-			return;
-		}
-
-		// Do not show if the site is less than 4 days old
-		const siteCreatedAt = Date.parse( site?.options?.created_at );
-		const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
-		if ( Date.now() - siteCreatedAt < FOUR_DAYS_IN_MILLISECONDS ) {
-			return;
-		}
-
-		return (
-			<Banner
-				className="site-settings__built-by-upsell"
-				title={ translate( 'We’ll build your site for you' ) }
-				description={ translate(
-					'Leave the heavy lifting to us and let our professional builders craft your compelling website.'
-				) }
-				callToAction={ translate( 'Get started' ) }
-				href="https://wordpress.com/website-design-service/?ref=unlaunched-settings"
-				target="_blank"
-				iconPath={ builtByLogo }
-				disableCircle={ true }
-				event="settings_bb_upsell"
-				tracksImpressionName="calypso_settings_bb_upsell_impression"
-				tracksClickName="calypso_settings_bb_upsell_cta_click"
-			/>
-		);
-	}
-
 	render() {
 		const {
 			customizerUrl,
@@ -932,8 +894,10 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
+			isUnlaunchedSite: propsisUnlaunchedSite,
+			locale,
 		} = this.props;
-
+		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
@@ -966,7 +930,11 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 				{ this.enhancedOwnershipSettings() }
-				{ this.builtByUpsell() }
+				<BuiltByUpsell
+					site={ site }
+					isUnlaunchedSite={ propsisUnlaunchedSite }
+					urlRef="unlaunched-settings"
+				/>
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
@@ -993,9 +961,18 @@ export class SiteSettingsFormGeneral extends Component {
 							<UpsellNudge
 								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
 								plan={ PLAN_BUSINESS }
-								title={ translate(
-									'Remove the footer credit entirely with WordPress.com Business'
-								) }
+								title={
+									isEnglishLocale ||
+									i18n.hasTranslation(
+										'Remove the footer credit entirely with WordPress.com %(businessPlanName)s'
+									)
+										? translate(
+												'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+
+												{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+										  )
+										: translate( 'Remove the footer credit entirely with WordPress.com Business' )
+								}
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }

@@ -6,6 +6,7 @@ import * as LaunchpadNavigator from './launchpad-navigator';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
+import * as Purchases from './purchases';
 import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
@@ -33,6 +34,7 @@ export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';
 export * from './mutations/use-domains-bulk-actions-mutation';
 export * from './queries/use-bulk-domain-update-status-query';
+export * from './site-reset';
 
 const { SubscriptionManager } = Reader;
 
@@ -44,6 +46,7 @@ export {
 	LaunchpadNavigator,
 	Site,
 	Plans,
+	Purchases,
 	WpcomPlansUI,
 	Onboard,
 	ProductsList,

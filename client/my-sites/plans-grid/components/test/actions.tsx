@@ -73,7 +73,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 			freePlan: false,
 			isInSignup: false,
 			onUpgradeClick: jest.fn(),
-			flowName: 'foo-flow',
 			isWpcomEnterpriseGridPlan: false,
 			isStuck: false,
 			showMonthlyPrice: true,

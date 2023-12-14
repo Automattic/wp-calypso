@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -29,6 +30,7 @@ import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
@@ -49,11 +51,11 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
-import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { goToCheckout } from '../../../../utils/checkout';
 import {
 	getDesignEventProps,
 	getDesignTypeProps,
@@ -118,8 +120,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 	const [ showEligibility, setShowEligibility ] = useState( false );
 
-	const { goToCheckout } = useCheckout();
-
 	const isJetpack = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
 		[ site ]
@@ -157,7 +157,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! (
 							design.is_premium ||
 							design.is_externally_managed ||
-							design.is_bundled_with_woo_commerce
+							( design.software_sets && design.software_sets.length > 0 )
 						)
 				)
 				.map( ( design ) => {
@@ -390,13 +390,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
+	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
-		( ! isPluginBundleEligible && isBundledWithWooCommerce );
+		( ! isPluginBundleEligible && isBundled );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -407,15 +407,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		! isJetpack &&
 		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
 
-	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
-		<ThemeTypeBadge
-			canGoToCheckout={ false }
-			isLockedStyleVariation={ isLockedStyleVariation }
-			siteId={ site?.ID ?? null }
-			siteSlug={ siteSlug }
-			themeId={ themeId }
-		/>
-	);
+	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) =>
+		isEnabled( 'themes/tiers' ) ? (
+			<ThemeTierBadge
+				canGoToCheckout={ false }
+				isLockedStyleVariation={ isLockedStyleVariation }
+				themeId={ themeId }
+			/>
+		) : (
+			<ThemeTypeBadge
+				canGoToCheckout={ false }
+				isLockedStyleVariation={ isLockedStyleVariation }
+				siteId={ site?.ID ?? null }
+				siteSlug={ siteSlug }
+				themeId={ themeId }
+			/>
+		);
 
 	function upgradePlan() {
 		if ( selectedDesign ) {
@@ -442,12 +449,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		setShowUpgradeModal( false );
 	}
 	function navigateToCheckout() {
-		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
-			( set ) => set.slug === 'woo-on-plans'
-		);
+		const themeHasBundle = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 		let plan;
-		if ( themeHasWooCommerce ) {
+		if ( themeHasBundle ) {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
@@ -816,7 +821,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					previewUrl={ previewUrl }
 					splitDefaultVariation={
 						! selectedDesign.is_premium &&
-						! isBundledWithWooCommerce &&
+						! isBundled &&
 						! isPremiumThemeAvailable &&
 						! didPurchaseSelectedTheme &&
 						! isPluginBundleEligible &&

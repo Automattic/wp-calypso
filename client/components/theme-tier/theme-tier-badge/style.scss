@@ -1,0 +1,49 @@
+@import "@automattic/typography/styles/variables";
+
+.theme-tier-badge {
+	color: var(--color-neutral-60);
+	display: flex;
+	flex-basis: 100%;
+	font-size: $font-body-small;
+	line-height: 20px;
+
+	.theme-tier-badge__content {
+		margin: 0 8px 0 0;
+		vertical-align: middle;
+
+		&.is-third-party {
+			background-color: var(--color-neutral-5);
+			color: var(--color-neutral-70);
+		}
+	}
+}
+
+.theme-tier-badge-tooltip,
+.theme-tier-badge-tooltip.premium-badge__popover.popover,
+.theme-tier-badge-tooltip.bundled-badge__popover {
+	.popover__inner {
+		background: var(--studio-white);
+		border: 0;
+		border-radius: 4px;
+		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+		color: var(--color-neutral-50);
+		font-size: $font-body-small;
+		max-width: 245px;
+		padding: 24px;
+		text-align: left;
+	}
+
+	.popover__arrow {
+		display: none;
+	}
+
+	.theme-tier-badge-tooltip__header {
+		color: var(--color-neutral-100);
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	.components-button {
+		font-size: inherit;
+	}
+}

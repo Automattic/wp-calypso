@@ -3,7 +3,7 @@ import { LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { trailingslashit } from 'calypso/lib/route';
 import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -63,12 +63,17 @@ export default function SitePreviewLink( {
 
 	const { data: previewLinks, isLoading: isFirstLoading } = useSitePreviewLinks( {
 		siteId,
-		onSuccess: ( linksResponse ) => {
-			const validLinksLength = linksResponse?.filter( ( link ) => ! link.isRemoving ).length || 0;
-			setChecked( validLinksLength > 0 );
-		},
 		isEnabled: true,
 	} );
+
+	// Update toggle status if previewLinks have changed in another tab
+	const validLinksLength = previewLinks?.filter( ( link ) => ! link.isRemoving ).length || 0;
+	const shouldBeChecked = validLinksLength > 0;
+	useEffect( () => {
+		if ( shouldBeChecked !== checked ) {
+			setChecked( shouldBeChecked );
+		}
+	}, [ checked, shouldBeChecked ] );
 
 	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
 		siteId,

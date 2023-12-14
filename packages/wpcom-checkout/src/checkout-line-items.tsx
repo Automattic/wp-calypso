@@ -659,7 +659,10 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	}
 
 	if ( isTieredVolumeSpaceAddon( product ) ) {
-		const spaceQuantity = product?.quantity ?? 1;
+		const productQuantity = product?.quantity ?? 1;
+		const currentQuantity = product?.current_quantity ?? 1;
+		const spaceQuantity = productQuantity > 1 ? productQuantity : currentQuantity;
+
 		return (
 			<>
 				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
@@ -1079,6 +1082,7 @@ function CheckoutLineItem( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
+	isAkPro500Cart,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1091,6 +1095,7 @@ function CheckoutLineItem( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
+	isAkPro500Cart?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1122,25 +1127,30 @@ function CheckoutLineItem( {
 	const productSlug = product?.product_slug;
 
 	const label = getLabel( product );
-
-	const originalAmountDisplay = formatCurrency(
-		product.item_original_subtotal_integer,
-		product.currency,
-		{ isSmallestUnit: true, stripZeros: true }
-	);
-	const originalAmountInteger = product.item_original_subtotal_integer;
+	const originalAmountInteger =
+		isAkPro500Cart && product.quantity
+			? product.item_original_cost_for_quantity_one_integer
+			: product.item_original_subtotal_integer;
+	const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const itemSubtotalInteger =
+		isAkPro500Cart && product.quantity
+			? product.item_subtotal_integer / product.quantity
+			: product.item_subtotal_integer;
 
 	// Introductory offers have their renewal price returned as the original
 	// cost property, and we don't want to show that as the item's cost before
 	// discounts, so we calculate that separately here.
 	const costBeforeDiscounts = getCostBeforeDiscounts( product );
 
-	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
+	const actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
 	const isDiscounted = Boolean(
-		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
+		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
 
 	const isEmail =

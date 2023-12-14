@@ -11,6 +11,7 @@
 		margin: 0;
 		overflow: visible;
 		min-height: auto;
+		transform: scale(var(--scaled-block-renderer-scale, 1));
 
 		iframe {
 			max-width: initial;

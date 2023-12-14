@@ -163,7 +163,7 @@ export function redirect( type, url, product = null, queryArgs = {} ) {
 	}
 
 	if ( type === 'remote_auth' ) {
-		urlRedirect = addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH );
+		urlRedirect = addQueryArgs( queryArgs, addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
 		navigate( urlRedirect );
 	}
 

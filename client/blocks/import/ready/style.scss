@@ -2,6 +2,13 @@
 @import "@wordpress/base-styles/mixins";
 
 .import__onboarding-page {
+	&.ready,
+	&.importReadyNot {
+		.onboarding-title {
+			max-width: 500px;
+		}
+	}
+
 	.import__preview {
 		width: 100%;
 		max-width: 100%;
@@ -9,7 +16,6 @@
 		padding-left: 0;
 
 		@include break-wide {
-			width: calc(100% - 163px);
 			margin: 100px auto 0;
 		}
 

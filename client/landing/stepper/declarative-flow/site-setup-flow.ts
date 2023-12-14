@@ -419,14 +419,21 @@ const siteSetupFlow: Flow = {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
 
+				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
-							providedDependencies?.platform as ImporterMainPlatform
-						) !== -1
+						[
+							'blogroll',
+							'ghost',
+							'tumblr',
+							'livejournal',
+							'movabletype',
+							'xanga',
+							'substack',
+						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -534,14 +541,12 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					return navigate( 'import' );
-
 				case 'importerWix':
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
 				case 'importerWordpress':
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'options':
 					return navigate( 'goals' );

@@ -10,6 +10,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
+import PatternTooltipDeadClick from './pattern-tooltip-dead-click';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-large-preview.scss';
@@ -77,8 +78,6 @@ const PatternLargePreview = ( {
 	}, 300 );
 
 	const [ activeElement, setActiveElement ] = useState< HTMLElement | null >( null );
-
-	const tooltipRef = useRef< HTMLDivElement | null >( null );
 	const [ shouldShowTooltip, setShouldShowTooltip ] = useState( false );
 
 	const popoverAnchor = useMemo( () => {
@@ -100,19 +99,6 @@ const PatternLargePreview = ( {
 			},
 		};
 	}, [ activeElement ] );
-
-	const tooltipAnchor = useMemo( () => {
-		return {
-			getBoundingClientRect() {
-				if ( ! tooltipRef.current || ! shouldShowTooltip ) {
-					return new window.DOMRect();
-				}
-
-				const { width, height } = tooltipRef.current.getBoundingClientRect();
-				return new window.DOMRect( 0, 0, width, height );
-			},
-		};
-	}, [] );
 
 	const transformPatternHtml = useCallback(
 		( patternHtml: string ) => {
@@ -138,15 +124,7 @@ const PatternLargePreview = ( {
 				return;
 			}
 
-			if ( tooltipRef.current ) {
-				const { clientX, clientY } = event;
-				const { height, width } = tooltipRef.current.getBoundingClientRect();
-				const x = Math.min( clientX, window.innerWidth - ( width + 32 ) );
-				const y = Math.min( clientY, window.innerHeight - ( height + 32 ) );
-
-				tooltipRef.current.style.transform = `translate( ${ x }px, ${ y }px )`;
-				setShouldShowTooltip( true );
-			}
+			setShouldShowTooltip( true );
 		};
 
 		const handleMouseEnter = ( event: React.MouseEvent< HTMLElement > ) => {
@@ -299,27 +277,6 @@ const PatternLargePreview = ( {
 		};
 	}, [ frameRef, hasSelectedPattern, setActiveElement, setShouldShowTooltip ] );
 
-	// Tooltip follows the mouse cursor.
-	useEffect( () => {
-		const handleMouseMove = ( event: MouseEvent ) => {
-			if ( ! tooltipRef.current || ! shouldShowTooltip ) {
-				return;
-			}
-
-			const { clientX, clientY } = event;
-			const { height, width } = tooltipRef.current.getBoundingClientRect();
-			const x = Math.min( clientX, window.innerWidth - ( width + 32 ) );
-			const y = Math.min( clientY, window.innerHeight - ( height + 32 ) );
-
-			tooltipRef.current.style.transform = `translate( ${ x }px, ${ y }px )`;
-		};
-
-		frameRef.current?.addEventListener( 'mousemove', handleMouseMove );
-		return () => {
-			frameRef.current?.removeEventListener( 'mousemove', handleMouseMove );
-		};
-	}, [ frameRef, tooltipRef, shouldShowTooltip ] );
-
 	return (
 		<DeviceSwitcher
 			className="pattern-large-preview"
@@ -360,24 +317,7 @@ const PatternLargePreview = ( {
 				</div>
 			) }
 			{ activeElement && (
-				<Popover
-					className="pattern-assembler__tooltip"
-					animate={ false }
-					focusOnMount={ false }
-					resize={ false }
-					anchor={ tooltipAnchor }
-					placement="bottom-end"
-					variant="unstyled"
-				>
-					<div
-						className={ classnames( 'pattern-assembler__tooltip-content', {
-							'pattern-assembler__tooltip-content--visible': shouldShowTooltip,
-						} ) }
-						ref={ tooltipRef }
-					>
-						{ translate( 'You can edit your content later in the Site Editor' ) }
-					</div>
-				</Popover>
+				<PatternTooltipDeadClick targetRef={ frameRef } isVisible={ shouldShowTooltip } />
 			) }
 		</DeviceSwitcher>
 	);

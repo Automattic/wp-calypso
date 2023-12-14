@@ -1,38 +1,61 @@
-import { Button, Gridicon, PressableLogo } from '@automattic/components';
+import { Button, PressableLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
+import { plansBreakSmall, plansBreakMedium } from 'calypso/my-sites/plans-grid/media-queries';
 
 const Banner = styled.div`
+	background-color: var( --studio-white );
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	min-height: 128px;
-	padding: 0px, 24px, 0px, 0px;
+	min-height: 80px;
 	border-radius: 4px;
 	border: 1px solid #dcdcde;
-	margin: 24px 20px 24px 20px;
-	padding: 24px 20px 24px 20px;
+	margin: 60px 20px 60px 20px;
+	padding: 24px;
 	align-items: center;
-	gap: 16px;
+	gap: 32px;
+	max-width: 392px;
 
 	${ plansBreakSmall( css`
 		flex-direction: row;
-		padding: 0 20px 0 20px;
 	` ) }
+
+	@media ( min-width: 440px ) {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@media ( min-width: 780px ) {
+		width: 620px;
+		max-width: none;
+	}
+
+	@media ( min-width: 1024px ) {
+		width: 812px;
+	}
+
+	@media ( min-width: 1200px ) {
+		width: auto;
+		margin-left: 20px;
+		margin-right: 20px;
+	}
 `;
 
 const LogoContainer = styled.div`
 	display: none;
-	height: 18px;
 
 	${ plansBreakSmall( css`
 		display: inherit;
-		flex-basis: 120px;
+		background-color: #f9f9f9;
+		border-radius: 4px;
+		height: 100px;
+		flex-basis: 100px;
 		flex-shrink: 0;
-		background-color: var( --studio-white );
+		align-items: center;
+		justify-content: center;
 	` ) }
 `;
 
@@ -55,36 +78,66 @@ const CtaContainer = styled.div`
 `;
 
 const Subtitle = styled.h4`
+	font-name: SF Pro Text;
 	font-size: 12px;
 	font-weight: 400;
 	text-align: left;
+	line-height: 20px;
+	color: var( --studio-gray-50 );
 `;
 
 const Title = styled.h2`
+	font-name: SF Pro Display;
 	font-size: 20px;
 	font-weight: 500;
 	text-align: left;
+	line-height: 26px;
+	color: var( --studio-black );
+	margin-top: 6px;
+	margin-bottom: 6px;
+
+	${ plansBreakSmall( css`
+		font-size: 16px;
+	` ) }
 `;
 
 const Description = styled.p`
-	font-size: 14px;
+	font-size: 1rem;
+	line-height: 24px;
+	color: var( --studio-gray-80 );
 	font-weight: 400;
-	text-align: left;
 	margin: 0;
+
+	${ plansBreakSmall( css`
+		font-size: 0.875rem;
+		line-height: 20px;
+	` ) }
+
+	${ plansBreakMedium( css`
+		font-size: 0.813rem;
+		line-height: 16px;
+	` ) }
 `;
 
 const CtaButton = styled( Button )`
-	font-size: 14px;
 	font-weight: 500;
 	line-height: 20px;
+	border-radius: 4px;
+	padding: 10px 12px;
+	border: unset;
 	text-align: center;
 	width: 100%;
 	height: 40px;
 	padding: 10px, 24px, 10px, 24px;
 	border-radius: 4px;
-	background-color: var( --studio-black );
-	color: var( --studio-white );
-	box-shadow: 0px 1px 2px 0px #0000000d;
+	background-color: var( --studio-gray-80 );
+	color: var( --studio-gray-0 );
+
+	&:focus {
+		box-shadow:
+			0 0 0 2px var( --studio-white ),
+			0 0 0 4px var( --studio-gray-80 );
+	}
 
 	&:hover {
 		opacity: 0.85;
@@ -113,7 +166,7 @@ const PressablePromoBanner = ( {
 	return (
 		<Banner>
 			<LogoContainer>
-				<PressableLogo />
+				<PressableLogo height={ 40 } width={ 40 } />
 			</LogoContainer>
 			<TextContainer>
 				<Subtitle>{ translate( 'Hosting partner' ) }</Subtitle>
@@ -131,7 +184,6 @@ const PressablePromoBanner = ( {
 					target="_blank"
 				>
 					{ translate( 'See Pressable Plans' ) }
-					<Gridicon icon="external" />
 				</CtaButton>
 			</CtaContainer>
 		</Banner>

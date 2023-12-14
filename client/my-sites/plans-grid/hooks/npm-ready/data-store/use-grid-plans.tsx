@@ -308,7 +308,9 @@ const useGridPlans = ( {
 		term,
 		intent,
 	} );
-	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs: availablePlanSlugs } );
+	const planUpgradeability = usePlanUpgradeabilityCheck?.( {
+		planSlugs: availablePlanSlugs,
+	} );
 
 	// only fetch highlights for the plans that are available for the intent
 	const highlightLabels = useHighlightLabels( {
@@ -327,7 +329,7 @@ const useGridPlans = ( {
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
-	if ( ! pricingMeta || pricedAPIPlans.isFetching ) {
+	if ( ! pricingMeta || pricedAPIPlans.isLoading ) {
 		return null;
 	}
 

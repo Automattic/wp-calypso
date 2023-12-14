@@ -1,8 +1,4 @@
-import {
-	LaunchpadNavigator,
-	OnboardSelect,
-	updateLaunchpadSettings,
-} from '@automattic/data-stores';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
@@ -91,7 +87,6 @@ const startWriting: Flow = {
 			[]
 		).getState();
 		const site = useSite();
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -141,7 +136,7 @@ const startWriting: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
-					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
+					if ( ! providedDependencies?.isLaunched && providedDependencies?.siteSlug ) {
 						setSelectedSite( providedDependencies?.siteId );
 						await Promise.all( [
 							setIntentOnSite( providedDependencies?.siteSlug, START_WRITING_FLOW ),
@@ -157,7 +152,7 @@ const startWriting: Flow = {
 						);
 					}
 
-					if ( providedDependencies?.blogLaunched ) {
+					if ( providedDependencies?.isLaunched ) {
 						// Remove the site_intent so that it doesn't affect the editor.
 						await setIntentOnSite( providedDependencies?.siteSlug, '' );
 						return navigate( 'celebration-step' );
@@ -195,12 +190,7 @@ const startWriting: Flow = {
 								false
 							)( dispatch, state );
 						}
-
-						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
-
-						return window.location.assign(
-							`/setup/start-writing/launchpad?siteSlug=${ currentSiteSlug }`
-						);
+						return window.location.assign( `/setup/start-writing/launchpad?siteId=${ site?.ID }` );
 					}
 
 					return navigate( 'plans' );
@@ -246,7 +236,6 @@ const startWriting: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'start-writing',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

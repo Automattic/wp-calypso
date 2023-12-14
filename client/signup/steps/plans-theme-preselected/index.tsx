@@ -3,7 +3,7 @@ import {
 	FREE_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { isDesktop } from '@automattic/viewport';
@@ -32,7 +32,7 @@ function getHidePlanPropsBasedOnSignupDependencies(
 	if (
 		signupDependencies.themeType === DOT_ORG_THEME ||
 		signupDependencies.themeType === MARKETPLACE_THEME ||
-		signupDependencies.themeType === WOOCOMMERCE_THEME
+		signupDependencies.themeType === BUNDLED_THEME
 	) {
 		return { hidePremiumPlan: true, hidePersonalPlan: true, hideFreePlan: true };
 	}

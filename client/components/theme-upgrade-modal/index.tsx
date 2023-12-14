@@ -18,18 +18,22 @@ import {
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
+import { usePlans } from '@automattic/data-stores/src/plans';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { ExternalLink, Tooltip } from '@wordpress/components';
+import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
-import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
@@ -48,10 +52,10 @@ interface UpgradeModalProps {
 }
 
 interface UpgradeModalContent {
-	header: JSX.Element;
-	text: JSX.Element;
+	header: JSX.Element | null;
+	text: JSX.Element | null;
 	price: JSX.Element | null;
-	action: JSX.Element;
+	action: JSX.Element | null;
 }
 
 export const ThemeUpgradeModal = ( {
@@ -73,6 +77,8 @@ export const ThemeUpgradeModal = ( {
 	const showBundleVersion = theme_software_set;
 	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
 
+	const bundleSettings = useBundleSettings( slug );
+
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
 		[]
@@ -85,6 +91,7 @@ export const ThemeUpgradeModal = ( {
 		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
 		[]
 	);
+	const plans = usePlans();
 
 	//Wait until we have theme and product data to show content
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
@@ -100,15 +107,31 @@ export const ThemeUpgradeModal = ( {
 			),
 			text: (
 				<p>
-					{ translate(
-						'Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It’s {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: planPrice,
-						}
-					) }
+					{ isEnglishLocale ||
+					i18n.hasTranslation(
+						'Get access to our Premium themes, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.'
+					)
+						? translate(
+								'Get access to our Premium themes, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										planPrice: planPrice || '',
+										premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '',
+									},
+								}
+						  )
+						: translate(
+								'Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It’s {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: planPrice,
+								}
+						  ) }
 				</p>
 			),
 			price: null,
@@ -131,30 +154,59 @@ export const ThemeUpgradeModal = ( {
 
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
 		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+
+		if ( ! bundleSettings ) {
+			return {
+				header: null,
+				text: null,
+				price: null,
+				action: null,
+			};
+		}
+
+		const bundleName = bundleSettings.name;
+		const bundledPluginMessage = bundleSettings.bundledPluginMessage;
+		const color = bundleSettings.color;
+		const Icon = bundleSettings.iconComponent;
+
 		return {
 			header: (
 				<>
-					<img
-						src={ wooCommerceImage }
-						alt="WooCommerce"
-						className="theme-upgrade-modal__woo-logo"
-					/>
+					<div className="theme-upgrade-modal__logo" style={ { backgroundColor: color } }>
+						<Icon />
+					</div>
 					<h1 className="theme-upgrade-modal__heading bundle">
-						{ translate( 'Unlock this WooCommerce theme' ) }
+						{
+							// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+							translate( 'Unlock this %(bundleName)s theme', { args: { bundleName } } )
+						}
 					</h1>
 				</>
 			),
 			text: (
 				<p>
-					{ translate(
-						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
-						{
-							components: {
-								link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
-							},
-							args: businessPlanPrice,
-						}
-					) }
+					{ bundledPluginMessage }{ ' ' }
+					{ isEnglishLocale ||
+					i18n.hasTranslation(
+						'Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features. It’s %(businessPlanPrice)s per year with a 14-day money-back guarantee.'
+					)
+						? translate(
+								// translators: %s is the business plan price.
+								'Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features. It’s %(businessPlanPrice)s per year with a 14-day money-back guarantee.',
+								{
+									args: {
+										businessPlanPrice: businessPlanPrice || '',
+										businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+									},
+								}
+						  )
+						: translate(
+								// translators: %s is the business plan price.
+								'Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
+								{
+									args: businessPlanPrice,
+								}
+						  ) }
 				</p>
 			),
 			price: null,
@@ -200,9 +252,22 @@ export const ThemeUpgradeModal = ( {
 			text: (
 				<>
 					<p>
-						{ translate(
-							'This partner theme is only available to buy on the Business or eCommerce plans.'
-						) }
+						{ isEnglishLocale ||
+						i18n.hasTranslation(
+							'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.'
+						)
+							? translate(
+									'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
+									{
+										args: {
+											businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+											commercePlanName: plans.data?.[ PLAN_ECOMMERCE ]?.productNameShort || '',
+										},
+									}
+							  )
+							: translate(
+									'This partner theme is only available to buy on the Business or eCommerce plans.'
+							  ) }
 					</p>
 					<div>
 						<label>
@@ -220,7 +285,15 @@ export const ThemeUpgradeModal = ( {
 							) }
 							{ isMarketplacePlanSubscriptionNeeeded && (
 								<div className="theme-upgrade-modal__price-item">
-									<label>{ translate( 'Business plan' ) }</label>
+									<label>
+										{ isEnglishLocale || i18n.hasTranslation( '%(businessPlanName)s plan' )
+											? translate( '%(businessPlanName)s plan', {
+													args: {
+														businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '',
+													},
+											  } )
+											: translate( 'Business plan' ) }
+									</label>
 									<label className="theme-upgrade-modal__price-value">
 										<strong>{ businessPlanPriceText }</strong>
 									</label>
@@ -301,23 +374,29 @@ export const ThemeUpgradeModal = ( {
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
 		featureListHeader =
-			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
-				? translate( 'Included with your Business plan' )
-				: translate( 'Included with your purchase' );
+			isEnglishLocale || i18n.hasTranslation( 'Included with your %(businessPlanName)s plan' )
+				? translate( 'Included with your %(businessPlanName)s plan', {
+						args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+				  } )
+				: translate( 'Included with your Business plan' );
 	} else if ( isExternallyManaged ) {
 		modalData = getExternallyManagedPurchaseModalData();
 		featureList = getExternallyManagedFeatureList();
 		featureListHeader =
-			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
-				? translate( 'Included with your Business plan' )
-				: translate( 'Included with your purchase' );
+			isEnglishLocale || i18n.hasTranslation( 'Included with your %(businessPlanName)s plan' )
+				? translate( 'Included with your %(businessPlanName)s plan', {
+						args: { businessPlanName: plans.data?.[ PLAN_BUSINESS ]?.productNameShort || '' },
+				  } )
+				: translate( 'Included with your Business plan' );
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
 		featureListHeader =
-			isEnglishLocale || i18n.hasTranslation( 'Included with your Premium plan' )
-				? translate( 'Included with your Premium plan' )
-				: translate( 'Included with your purchase' );
+			isEnglishLocale || i18n.hasTranslation( 'Included with your %(premiumPlanName)s plan' )
+				? translate( 'Included with your %(premiumPlanName)s plan', {
+						args: { premiumPlanName: plans.data?.[ PLAN_PREMIUM ]?.productNameShort || '' },
+				  } )
+				: translate( 'Included with your Premium plan' );
 	}
 
 	const features =

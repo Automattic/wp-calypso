@@ -80,14 +80,21 @@ const importHostedSiteFlow: Flow = {
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 			switch ( _currentStep ) {
+				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
-							providedDependencies?.platform as ImporterMainPlatform
-						) !== -1
+						[
+							'blogroll',
+							'ghost',
+							'tumblr',
+							'livejournal',
+							'movabletype',
+							'xanga',
+							'substack',
+						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}

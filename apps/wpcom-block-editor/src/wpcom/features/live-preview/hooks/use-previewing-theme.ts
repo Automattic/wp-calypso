@@ -1,3 +1,4 @@
+import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { currentlyPreviewingTheme, PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
@@ -22,38 +23,37 @@ const getThemeType = ( theme?: Theme ) => {
 };
 
 export const usePreviewingTheme = () => {
-	const previewingThemeSlug = currentlyPreviewingTheme();
-	const previewingThemeId =
-		( previewingThemeSlug as string )?.split( '/' )?.[ 1 ] || previewingThemeSlug;
-	const [ previewingThemeName, setPreviewingThemeName ] = useState< string >(
-		previewingThemeSlug as string
-	);
-	const [ previewingThemeType, setPreviewingThemeType ] = useState< string >();
+	const previewingThemeSlug = useSelect( ( select ) => {
+		// Subscribe to the core store, so that we can recompute `previewingThemeSlug` when the active theme changes.
+		// This is a workaround because we're not listening to the changes to the `wp_theme_preview` param in the URL.
+		select( 'core' );
+		return currentlyPreviewingTheme();
+	}, [] );
+	const [ previewingTheme, setPreviewingTheme ] = useState< Theme | undefined >( undefined );
+
+	const previewingThemeName = previewingTheme?.name || previewingThemeSlug;
+	const previewingThemeType = previewingTheme ? getThemeType( previewingTheme ) : undefined;
 	const previewingThemeTypeDisplay =
 		previewingThemeType === WOOCOMMERCE_THEME ? 'WooCommerce' : 'Premium';
 
 	useEffect( () => {
-		wpcom.req
-			.get( `/themes/${ previewingThemeId }`, { apiVersion: '1.2' } )
-			.then( ( theme: Theme ) => {
-				const name = theme?.name;
-				if ( name ) {
-					setPreviewingThemeName( name );
-				}
-				return theme;
-			} )
-			.then( ( theme: Theme ) => {
-				const type = getThemeType( theme );
-				if ( ! type ) {
-					return;
-				}
-				setPreviewingThemeType( type );
-			} )
-			.catch( () => {
-				// do nothing
-			} );
+		const previewingThemeId =
+			( previewingThemeSlug as string )?.split( '/' )?.[ 1 ] || previewingThemeSlug;
+
+		if ( previewingThemeId ) {
+			wpcom.req
+				.get( `/themes/${ previewingThemeId }`, { apiVersion: '1.2' } )
+				.then( ( theme: Theme ) => {
+					setPreviewingTheme( theme );
+				} )
+				.catch( () => {
+					// do nothing
+				} );
+		} else {
+			setPreviewingTheme( undefined );
+		}
 		return;
-	}, [ previewingThemeId ] );
+	}, [ previewingThemeSlug ] );
 
 	return {
 		name: previewingThemeName,

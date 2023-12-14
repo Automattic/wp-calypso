@@ -211,7 +211,7 @@
 	text-align: right;
 }
 
-.license-product-card__pricing {
+.license-product-card__pricing:not(.is-compact) {
 	white-space: nowrap;
 	@include license-product-card-block__pricing;
 
@@ -232,6 +232,10 @@
 	}
 }
 
+.license-product-card__pricing.is-compact {
+	margin: 1rem 0 0;
+}
+
 .license-product-card--with-background {
 	.license-product-card__inner {
 		background-image: url(./gradient.svg);
@@ -241,7 +245,7 @@
 
 .license-product-card .multiple-choice-question {
 	margin-block-start: 16px;
-	margin-block-end: 8px;
+	margin-block-end: 0;
 
 	.form-legend {
 		display: none;
@@ -252,6 +256,10 @@
 		gap: 36px;
 	}
 
+	.multiple-choice-question__answer-item-content {
+		margin: 0;
+	}
+
 	.form-label {
 		font-size: 1rem;
 		line-height: 1.2;
@@ -260,13 +268,5 @@
 
 	.form-radio:checked::before {
 		background: var(--studio-green-50);
-	}
-}
-
-.license-product-card--with-variant .license-product-card__inner {
-	cursor: default;
-
-	.license-product-card__select-button {
-		cursor: pointer;
 	}
 }

@@ -6,6 +6,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import prependTitleBlockToPagePattern from '../html-transformers/prepend-title-block-to-page-pattern';
+import PatternTooltipDeadClick from '../pattern-tooltip-dead-click';
 import { encodePatternId, isPagePattern } from '../utils';
 import type { Pattern } from '../types';
 import './page-preview.scss';
@@ -67,12 +68,15 @@ const PatternPagePreview = ( {
 	onFullscreenLeave,
 	...pageProps
 }: PagePreviewProps ) => {
-	const { slug, title, patterns } = pageProps;
+	const { slug, title } = pageProps;
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const [ isFullscreenEnter, setIsFullscreenEnter ] = useState( false );
 	const [ isFullscreenLeave, setIsFullscreenLeave ] = useState( false );
+	const [ shouldShowTooltip, setShouldShowTooltip ] = useState( false );
+
 	const [ frameStyles, setFrameStyles ] = useState( {} );
 	const ref = useRef< HTMLDivElement >( null );
+	const frameRef = useRef( null );
 
 	const calculateFrameStyles = useCallback( () => {
 		if ( ! ref.current ) {
@@ -95,6 +99,10 @@ const PatternPagePreview = ( {
 			// The timeout delay should match the CSS transition timing of the element.
 			setIsFullscreenEnter( true );
 			setTimeout( () => setIsFullscreenEnter( false ), 200 );
+
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
+				page_slug: slug,
+			} );
 		}
 	};
 
@@ -110,12 +118,16 @@ const PatternPagePreview = ( {
 		}
 	}, [ isFullscreen, onFullscreenLeave ] );
 
-	const handleClick = () => {
-		handleFullscreenEnter();
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_PAGES_PAGE_PREVIEW_CLICK, {
-			pattern_names: patterns.map( ( pattern ) => pattern.name ).join( ',' ),
-			page_slug: slug,
-		} );
+	const handleMouseDown = () => {
+		if ( isFullscreen ) {
+			setShouldShowTooltip( true );
+		}
+	};
+
+	const handleMouseLeave = () => {
+		if ( isFullscreen ) {
+			setShouldShowTooltip( false );
+		}
 	};
 
 	useEffect( () => {
@@ -146,15 +158,21 @@ const PatternPagePreview = ( {
 					{ ...composite }
 					role="option"
 					as="button"
+					ref={ frameRef }
 					className="pattern-assembler__preview-frame"
 					style={ frameStyles }
 					aria-label={ title }
-					onClick={ handleClick }
+					onClick={ handleFullscreenEnter }
+					onMouseDown={ handleMouseDown }
+					onMouseLeave={ handleMouseLeave }
 				>
 					<Page className="pattern-assembler__preview-frame-content" { ...pageProps } />
 				</CompositeItem>
 				<div className="pattern-assembler__preview-title">{ title }</div>
 			</div>
+			{ isFullscreen && (
+				<PatternTooltipDeadClick targetRef={ frameRef } isVisible={ shouldShowTooltip } />
+			) }
 		</div>
 	);
 };

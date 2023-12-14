@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import StatsCommercialUpgradeSlider from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
 import {
@@ -15,14 +16,12 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
-import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
-import { PriceTierListItemProps } from './types';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -34,7 +33,6 @@ interface StatsCommercialPurchaseProps {
 	redirectUri: string;
 	from: string;
 	showClassificationDispute?: boolean;
-	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -45,7 +43,6 @@ interface StatsSingleItemPagePurchaseProps {
 	from: string;
 	siteId: number | null;
 	isCommercial: boolean | null;
-	priceTiers: [ PriceTierListItemProps ];
 }
 
 interface StatsSingleItemPersonalPurchasePageProps {
@@ -86,7 +83,6 @@ const StatsCommercialPurchase = ( {
 	adminUrl,
 	redirectUri,
 	showClassificationDispute = true,
-	priceTiers,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -97,6 +93,7 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -128,23 +125,53 @@ Thanks\n\n`;
 	// Currently displaying below the flow to maintain existing behaviour.
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
+	const handleSliderChanged = ( value: number ) => {
+		setPurchaseTierQuantity( value );
+	};
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
-			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-			<ButtonComponent
-				variant="primary"
-				primary={ isWPCOMSite ? true : undefined }
-				onClick={ () =>
-					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-				}
-			>
-				{ translate( 'Get Stats' ) }
-			</ButtonComponent>
+			{ ! isTierUpgradeSliderEnabled && (
+				<>
+					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+						}
+					>
+						{ translate( 'Get Stats' ) }
+					</ButtonComponent>
+				</>
+			) }
 			{ isTierUpgradeSliderEnabled && (
-				<TierUpgradeSlider priceTiers={ priceTiers } currencyCode={ currencyCode } />
+				<>
+					<StatsCommercialUpgradeSlider
+						currencyCode={ currencyCode }
+						onSliderChange={ handleSliderChanged }
+					/>
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( {
+								from,
+								type: 'commercial',
+								siteSlug,
+								adminUrl,
+								redirectUri,
+								price: undefined,
+								quantity: purchaseTierQuantity,
+							} )
+						}
+					>
+						{ translate( 'Purchase' ) }
+					</ButtonComponent>
+				</>
 			) }
 
 			{ showClassificationDispute && (
@@ -314,7 +341,6 @@ const StatsSingleItemPagePurchase = ( {
 	from,
 	siteId,
 	isCommercial,
-	priceTiers,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -329,7 +355,6 @@ const StatsSingleItemPagePurchase = ( {
 				redirectUri={ redirectUri }
 				from={ from }
 				showClassificationDispute={ !! isCommercial }
-				priceTiers={ priceTiers }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);

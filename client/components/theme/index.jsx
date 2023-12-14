@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
@@ -10,6 +11,7 @@ import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
+import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -43,8 +45,8 @@ export class Theme extends Component {
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
-		// If true, the theme is being installed
-		installing: PropTypes.bool,
+		// If true, highlight this theme in a loading state
+		loading: PropTypes.bool,
 		// If true, render a placeholder
 		isPlaceholder: PropTypes.bool,
 		// URL the screenshot link points to
@@ -107,7 +109,7 @@ export class Theme extends Component {
 		return (
 			nextProps.theme.id !== this.props.theme.id ||
 			nextProps.active !== this.props.active ||
-			nextProps.installing !== this.props.installing ||
+			nextProps.loading !== this.props.loading ||
 			! isEqual(
 				Object.keys( nextProps.buttonContents ),
 				Object.keys( this.props.buttonContents )
@@ -287,6 +289,14 @@ export class Theme extends Component {
 		const isLockedStyleVariation =
 			this.props.shouldLimitGlobalStyles &&
 			! isDefaultGlobalStylesVariationSlug( this.props.selectedStyleVariation?.slug );
+		if ( isEnabled( 'themes/tiers' ) ) {
+			return (
+				<ThemeTierBadge
+					themeId={ this.props.theme.id }
+					isLockedStyleVariation={ isLockedStyleVariation }
+				/>
+			);
+		}
 		return (
 			<ThemeTypeBadge
 				siteId={ this.props.siteId }
@@ -320,7 +330,7 @@ export class Theme extends Component {
 				selectedStyleVariation={ selectedStyleVariation }
 				optionsMenu={ this.renderMoreButton() }
 				isActive={ this.props.active }
-				isInstalling={ this.props.installing }
+				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
 				isShowDescriptionOnImageHover
 				onClick={ this.setBookmark }

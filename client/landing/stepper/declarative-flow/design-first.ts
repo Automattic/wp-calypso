@@ -1,8 +1,4 @@
-import {
-	OnboardSelect,
-	LaunchpadNavigator,
-	updateLaunchpadSettings,
-} from '@automattic/data-stores';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
@@ -93,7 +89,6 @@ const designFirst: Flow = {
 			[]
 		).getState();
 		const site = useSite();
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -148,7 +143,7 @@ const designFirst: Flow = {
 				case 'processing': {
 					// If we just created a new site.
 					const siteSlug = providedDependencies?.siteSlug;
-					if ( ! providedDependencies?.blogLaunched && siteSlug ) {
+					if ( ! providedDependencies?.isLaunched && siteSlug ) {
 						const siteId = providedDependencies?.siteId;
 						setSelectedSite( siteId );
 						setIntentOnSite( siteSlug, DESIGN_FIRST_FLOW );
@@ -175,7 +170,7 @@ const designFirst: Flow = {
 					}
 
 					// If the user's site has just been launched.
-					if ( providedDependencies?.blogLaunched && siteSlug ) {
+					if ( providedDependencies?.isLaunched && siteSlug ) {
 						await Promise.all( [
 							// We set launchpad_screen to off because users can choose to
 							// complete the first_post_published checklist task or not.
@@ -219,11 +214,7 @@ const designFirst: Flow = {
 							)( dispatch, state );
 						}
 
-						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
-
-						return window.location.assign(
-							`/setup/design-first/launchpad?siteSlug=${ currentSiteSlug }`
-						);
+						return window.location.assign( `/setup/design-first/launchpad?siteId=${ site?.ID }` );
 					}
 
 					return navigate( 'plans' );
@@ -262,7 +253,6 @@ const designFirst: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: site?.options?.site_intent,
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );
@@ -313,7 +303,7 @@ const designFirst: Flow = {
 				isSiteCreationStep &&
 				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
 			) {
-				redirect( '/setup/design-first/site-creation-step' );
+				redirect( `/setup/design-first/site-creation-step${ window.location.search }` );
 			}
 		}, [] );
 

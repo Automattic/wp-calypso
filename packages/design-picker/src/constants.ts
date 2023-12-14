@@ -77,8 +77,17 @@ export const DEFAULT_ASSEMBLER_DESIGN = {
 	design_type: 'assembler',
 } as Design;
 
+export const ASSEMBLER_V2_DESIGN = {
+	slug: 'assembler',
+	title: 'Assembler',
+	recipe: {
+		stylesheet: 'pub/assembler',
+	},
+	design_type: 'assembler',
+} as Design;
+
 export const FREE_THEME = 'free';
 export const PREMIUM_THEME = 'premium';
 export const DOT_ORG_THEME = 'dot-org';
-export const WOOCOMMERCE_THEME = 'woocommerce';
+export const BUNDLED_THEME = 'bundled';
 export const MARKETPLACE_THEME = 'marketplace';

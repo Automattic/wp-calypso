@@ -27,7 +27,7 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<>
-			<div className="import__header">
+			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'Where will you import from?' ) }</Title>
 			</div>
 			<div className="import__capture-container">
