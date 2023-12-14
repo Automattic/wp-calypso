@@ -101,15 +101,14 @@ export const isLoading = ( state = false, action ) => {
 	}
 };
 
-export const reducer = combineReducers( {
-	requestError,
-	isLoading,
-	connectionHealth,
-	lastRequestTime,
-} );
+export const reducer = keyedReducer(
+	'siteId',
+	combineReducers( {
+		requestError,
+		isLoading,
+		connectionHealth,
+		lastRequestTime,
+	} )
+);
 
-// state is a map of transfer sub-states
-// keyed by the associated site id
-const validatedReducer = withSchemaValidation( schema, keyedReducer( 'siteId', reducer ) );
-
-export default withStorageKey( 'jetpackConnectionHealth', validatedReducer );
+export default withStorageKey( 'jetpackConnectionHealth', withSchemaValidation( schema, reducer ) );

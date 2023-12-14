@@ -3,7 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import { merge } from 'lodash';
-import { jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
+import { reducer as jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackConnectionHealthBanner } from '..';
 import {
@@ -21,17 +21,6 @@ import {
 	REST_API_ERROR,
 } from '../constants';
 
-const mockError = jest.fn().mockReturnValue( UNKNOWN_ERROR );
-
-jest.mock(
-	'calypso/components/jetpack/connection-health/use-check-jetpack-connection-health',
-	() => ( {
-		useCheckJetpackConnectionHealth: jest.fn( () => ( {
-			data: { is_healthy: false, error: mockError() },
-		} ) ),
-	} )
-);
-
 const initialReduxState = {
 	sites: {
 		items: { 1: { ID: 1, title: 'Test Site', jetpack: true } },
@@ -48,9 +37,18 @@ const render = ( el, options = {} ) =>
 describe( 'JetpackConnectionHealthBanner', () => {
 	describe( 'component rendering', () => {
 		test( 'shows generic message', () => {
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							error: UNKNOWN_ERROR,
+							jetpack_connection_problem: true,
+						},
+					},
 				},
 			};
 
@@ -61,11 +59,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows a database connection error message', () => {
-			mockError.mockReturnValue( DATABASE_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = DATABASE_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							jetpack_connection_problem: true,
+							error,
+						},
+					},
 				},
 			};
 
@@ -78,11 +85,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows fatal error message', () => {
-			mockError.mockReturnValue( FATAL_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = FATAL_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							jetpack_connection_problem: true,
+							error,
+						},
+					},
 				},
 			};
 
@@ -97,11 +113,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows dns error message', () => {
-			mockError.mockReturnValue( DNS_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = DNS_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							jetpack_connection_problem: true,
+							error,
+						},
+					},
 				},
 			};
 
@@ -112,11 +137,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows user token error message', () => {
-			mockError.mockReturnValue( USER_TOKEN_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = USER_TOKEN_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							jetpack_connection_problem: true,
+							error,
+						},
+					},
 				},
 			};
 
@@ -131,11 +165,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows blog token error message', () => {
-			mockError.mockReturnValue( BLOG_TOKEN_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = BLOG_TOKEN_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							jetpack_connection_problem: true,
+							error,
+						},
+					},
 				},
 			};
 
@@ -150,11 +193,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows http error message', () => {
-			mockError.mockReturnValue( HTTP_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = HTTP_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							error,
+							jetpack_connection_problem: true,
+						},
+					},
 				},
 			};
 
@@ -169,11 +221,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows inactivity error message', () => {
-			mockError.mockReturnValue( INACTIVITY_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = INACTIVITY_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							jetpack_connection_problem: true,
+							error,
+						},
+					},
 				},
 			};
 
@@ -188,11 +249,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows an XML-RPC error message', () => {
-			mockError.mockReturnValue( XMLRPC_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = XMLRPC_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							jetpack_connection_problem: true,
+							error,
+						},
+					},
 				},
 			};
 
@@ -207,11 +277,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows a REST API error message', () => {
-			mockError.mockReturnValue( REST_API_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = REST_API_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							error,
+							jetpack_connection_problem: true,
+						},
+					},
 				},
 			};
 
@@ -226,11 +305,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows plugin error message', () => {
-			mockError.mockReturnValue( PLUGIN_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = PLUGIN_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							error,
+							jetpack_connection_problem: true,
+						},
+					},
 				},
 			};
 
@@ -245,11 +333,20 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows generic error message', () => {
-			mockError.mockReturnValue( GENERIC_ERROR );
+			jest.useFakeTimers().setSystemTime( Date.now() );
+			const lastRequestTime = Date.now() - 1000 * 60 * 4;
+			const error = GENERIC_ERROR;
 
 			const initialState = {
 				jetpackConnectionHealth: {
-					1: { jetpack_connection_problem: true },
+					1: {
+						requestError: null,
+						lastRequestTime,
+						connectionHealth: {
+							error,
+							jetpack_connection_problem: true,
+						},
+					},
 				},
 			};
 
