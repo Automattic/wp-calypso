@@ -9,7 +9,7 @@ import { OdieSendMessageButton } from './send-message-input';
 import './style.scss';
 
 export const WAPUU_ERROR_MESSAGE = i18n.translate(
-	"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support. They're on the ball and ready to assist!",
+	"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
 	{ comment: 'Error message when Wapuu fails to send a message', textOnly: true }
 );
 
