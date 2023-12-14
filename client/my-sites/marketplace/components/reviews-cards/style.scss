@@ -1,4 +1,5 @@
 $border-color: #eee;
+$cards-gap: 20px;
 
 .marketplace-reviews-cards__container {
 	position: relative;
@@ -28,7 +29,7 @@ $border-color: #eee;
 
 	.marketplace-reviews-cards__content {
 		display: flex;
-		gap: 20px;
+		gap: $cards-gap;
 	}
 
 	.rating .rating__overlay .is-empty,
@@ -55,7 +56,8 @@ $border-color: #eee;
 .marketplace-reviews-card__leave-a-review {
 	border: 1px solid $border-color;
 	border-radius: 4px;
-	width: 50%;
+	width: calc((100% - $cards-gap)/2); // Half of the available space
+	box-sizing: border-box;
 }
 
 .marketplace-reviews-card__review-data {
