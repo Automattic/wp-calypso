@@ -52,7 +52,7 @@ export const usePreviewingTheme = () => {
 			setPreviewingTheme( undefined );
 		}
 		return;
-	}, [ previewingThemeId, previewingThemeSlug ] );
+	}, [ previewingThemeId ] );
 
 	return {
 		id: previewingThemeId,
