@@ -1507,7 +1507,7 @@ class RegisterDomainStep extends Component {
 						! status ||
 						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions );
 
-					if ( skipAvailabilityErrors ) {
+					if ( ! skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
