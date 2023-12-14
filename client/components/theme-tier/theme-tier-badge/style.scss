@@ -10,6 +10,11 @@
 	.theme-tier-badge__content {
 		margin: 0 8px 0 0;
 		vertical-align: middle;
+
+		&.is-third-party {
+			background-color: var(--color-neutral-5);
+			color: var(--color-neutral-70);
+		}
 	}
 }
 

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,11 +8,13 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -25,6 +28,7 @@ import {
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ButtonsAppearance from './appearance';
+import ButtonsBlockAppearance from './components/buttons-block-appearance';
 import ButtonsOptions from './options';
 import { useSharingButtonsQuery, useSaveSharingButtonsMutation } from './use-sharing-buttons-query';
 
@@ -95,6 +99,7 @@ class SharingButtons extends Component {
 			) {
 				this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
 				this.props.markSaved();
+				// eslint-disable-next-line react/no-did-update-set-state
 				this.setState( {
 					values: {},
 					buttonsPendingSave: null,
@@ -120,23 +125,36 @@ class SharingButtons extends Component {
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
 	}
 
+	showSharingButtonsBlockAppearance() {
+		const { isBlockTheme, queryArgs } = this.props;
+
+		const skipShow = !! queryArgs[ 'no-block-appearance' ];
+
+		return ! skipShow && isBlockTheme && isEnabled( 'jetpack/sharing-buttons-block-enabled' );
+	}
+
 	render() {
 		const {
 			buttons,
 			isJetpack,
-			isPrivate,
 			isSavingSettings,
 			isSavingButtons,
 			settings,
 			siteId,
-			siteSlug,
 			isSharingButtonsModuleActive,
 			isFetchingModules,
+			isPrivate,
+			siteSlug,
 			translate,
 		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 		const isSaving = isSavingSettings || isSavingButtons;
+		const shouldShowNotice = isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive;
+
+		if ( this.showSharingButtonsBlockAppearance() ) {
+			return <ButtonsBlockAppearance siteId={ siteId } />;
+		}
 
 		return (
 			<form
@@ -150,7 +168,9 @@ class SharingButtons extends Component {
 				/>
 				<QuerySiteSettings siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive && (
+
+				{ /* Rendering notice in a separate function */ }
+				{ shouldShowNotice && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -170,6 +190,7 @@ class SharingButtons extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
+
 				<ButtonsOptions
 					buttons={ buttons }
 					settings={ updatedSettings }
@@ -198,6 +219,8 @@ const withSharingButtons = createHigherOrderComponent(
 			isLoading: isSavingButtons,
 			isSuccess: isSaveButtonsSuccessful,
 		} = useSaveSharingButtonsMutation( siteId );
+		const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+		const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 
 		return (
 			<Wrapped
@@ -206,6 +229,7 @@ const withSharingButtons = createHigherOrderComponent(
 				saveSharingButtons={ saveSharingButtons }
 				isSavingButtons={ isSavingButtons }
 				isSaveButtonsSuccessful={ isSaveButtonsSuccessful }
+				isBlockTheme={ isBlockTheme }
 			/>
 		);
 	},
@@ -225,6 +249,7 @@ const connectComponent = connect(
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isPrivate = isPrivateSite( state, siteId );
 		const path = getCurrentRouteParameterized( state, siteId );
+		const queryArgs = getCurrentQueryArguments( state );
 
 		return {
 			isJetpack,
@@ -238,6 +263,7 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			path,
+			queryArgs,
 		};
 	},
 	{

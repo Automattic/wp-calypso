@@ -61,39 +61,38 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 
 	return (
 		<>
-			<div className="import__header">
-				<div className="import__heading import__heading-center">
-					<Title>{ __( 'Your content is ready for its brand new home' ) }</Title>
-					<SubTitle>
-						{ createInterpolateElement(
-							sprintf(
-								/* translators: the website could be any domain (eg: "yourname.com") that is built with a platform (eg: Wix, Squarespace, Blogger, etc.) */
-								__(
-									'It looks like <strong>%(website)s</strong> is built with %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
-								),
-								{
-									website: convertToFriendlyWebsiteName( urlData.url ),
-									platform: convertPlatformName( urlData.platform ),
-								}
+			<div className="import__heading import__heading-center">
+				<Title>{ __( 'Your content is ready for its brand new home' ) }</Title>
+				<SubTitle>
+					{ createInterpolateElement(
+						sprintf(
+							/* translators: the website could be any domain (eg: "yourname.com") that is built with a platform (eg: Wix, Squarespace, Blogger, etc.) */
+							__(
+								'It looks like <strong>%(website)s</strong> is built with %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 							),
-							{ strong: createElement( 'strong' ) }
-						) }
-					</SubTitle>
+							{
+								website: convertToFriendlyWebsiteName( urlData.url ),
+								platform: convertPlatformName( urlData.platform ),
+							}
+						),
+						{ strong: createElement( 'strong' ) }
+					) }
+				</SubTitle>
 
-					<div className="import__buttons-group">
-						<NextButton onClick={ () => goToImporterPage( urlData.platform ) }>
-							{ __( 'Import your content' ) }
-						</NextButton>
-						{ coveredPlatforms.includes( urlData.platform ) && (
-							<div>
-								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
-									{ __( 'What can be imported?' ) }
-								</BackButton>
-							</div>
-						) }
-					</div>
+				<div className="import__buttons-group">
+					<NextButton onClick={ () => goToImporterPage( urlData.platform ) }>
+						{ __( 'Import your content' ) }
+					</NextButton>
+					{ coveredPlatforms.includes( urlData.platform ) && (
+						<div>
+							<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
+								{ __( 'What can be imported?' ) }
+							</BackButton>
+						</div>
+					) }
 				</div>
 			</div>
+
 			<div className="import__content">
 				<ImportPreview website={ urlData.url } />
 			</div>

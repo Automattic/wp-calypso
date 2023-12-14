@@ -1,10 +1,14 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import {
+	recordTracksEvent,
+	getTrackingPrefs,
+	setTrackingPrefs,
+	isRegionInCcpaZone,
+} from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
-import isRegionInCcpaZone from './is-region-in-ccpa-zone';
-import { getTrackingPrefs, refreshCountryCodeCookieGdpr, setTrackingPrefs } from '.';
+import { refreshCountryCodeCookieGdpr } from '.';
 
 export default () => {
 	const [ shouldSeeDoNotSell, setShouldSeeDoNotSell ] = useState( false );
