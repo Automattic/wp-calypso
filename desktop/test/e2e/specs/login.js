@@ -33,7 +33,6 @@ const RESULTS_PATH = path.join( __dirname, '../results' );
 const CONSOLE_PATH = path.join( RESULTS_PATH, '/console.log' );
 const SCREENSHOT_PATH = path.join( RESULTS_PATH, '/screenshot.png' );
 const RECORD_VIDEO_DIR = path.join( RESULTS_PATH, '/record_video' );
-const TRACE_DIR = path.join( RESULTS_PATH, '/trace' );
 const HAR_PATH = path.join( RESULTS_PATH, '/network.har' );
 const WP_DEBUG_LOG = path.resolve( RESULTS_PATH, '/app.log' );
 
@@ -48,7 +47,6 @@ describe( 'User Can log in', () => {
 
 	beforeAll( async () => {
 		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
-		await mkdir( path.dirname( TRACE_DIR ), { recursive: true } );
 
 		consoleStream = createWriteStream( CONSOLE_PATH );
 
@@ -62,7 +60,7 @@ describe( 'User Can log in', () => {
 			recordVideo: {
 				dir: RECORD_VIDEO_DIR,
 			},
-			tracesDir: TRACE_DIR,
+			tracesDir: RESULTS_PATH,
 			env: {
 				...process.env,
 				WP_DESKTOP_BASE_URL: BASE_URL,
@@ -85,6 +83,9 @@ describe( 'User Can log in', () => {
 		window.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
 		);
+
+		// Start tracing
+		window.context().tracing.start( { screenshots: true, snapshots: true } );
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
@@ -125,6 +126,7 @@ describe( 'User Can log in', () => {
 		}
 
 		if ( window ) {
+			await window.context().tracing.stop( { path: path.join( RESULTS_PATH, 'trace.zip' ) } );
 			await window.screenshot( { path: SCREENSHOT_PATH } );
 		}
 
