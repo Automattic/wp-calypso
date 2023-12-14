@@ -25,7 +25,7 @@ switch ( process.platform ) {
 		APP_PATH = path.join( RELEASE_PATH, '/mac/WordPress.com.app/Contents/MacOS/WordPress.com' );
 		break;
 	default:
-		throw new Error( 'unsupported platform' );
+		throw new Error( `Unsupported platform: ${ process.platform }` );
 }
 
 const RESULTS_PATH = path.join( __dirname, '../results' );
