@@ -168,7 +168,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	const siteInfo = {
 		title: searchParams.get( 'site_title' ) || site?.name,
-		tagline: searchParams.get( 'site_tagline' ) || SITE_TAGLINE,
+		tagline: searchParams.get( 'site_tagline' ) || site?.description || SITE_TAGLINE,
 	};
 
 	const getPatterns = ( patternType?: string | null ) => {
