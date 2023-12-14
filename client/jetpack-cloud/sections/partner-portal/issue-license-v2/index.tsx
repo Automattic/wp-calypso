@@ -95,7 +95,14 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 							args: { size },
 					  } ) as string ),
 			selected: selectedSize === size,
-			onClick: () => setSelectedSize( size ),
+			onClick: () => {
+				setSelectedSize( size );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_agency_issue_license_bundle_tab_click', {
+						bundle_size: size,
+					} )
+				);
+			},
 			...( count && { count } ),
 		};
 	} );
