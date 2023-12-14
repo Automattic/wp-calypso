@@ -91,9 +91,13 @@ describe( 'User Can log in', () => {
 
 	// eslint-disable-next-line jest/expect-expect
 	it( 'Log in', async () => {
+		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
 		await mainWindow.fill( '#usernameOrEmail', process.env.E2EGUTENBERGUSER );
+		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
 		await mainWindow.keyboard.press( 'Enter' );
+		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
 		await mainWindow.fill( '#password', process.env.E2EPASSWORD );
+		await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
 
 		// Wait for response from the Login endpoint.
 		const [ response ] = await Promise.all( [
