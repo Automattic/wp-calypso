@@ -51,6 +51,7 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		suggestedProductSlugs,
+		allSelectableProducts,
 	} = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,

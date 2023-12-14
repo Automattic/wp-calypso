@@ -183,20 +183,27 @@ export default function useProductAndPlans( {
 			?.toString()
 			.split( ',' );
 
+		const plans = getDisplayablePlans( filteredProductsAndBundles );
+		const products = getDisplayableProducts( filteredProductsAndBundles );
+		const backupAddons = getProductsAndPlansByFilter(
+			PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
+			filteredProductsAndBundles
+		);
+		const wooExtensions = getProductsAndPlansByFilter(
+			PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+			filteredProductsAndBundles
+		);
+
 		return {
 			isLoadingProducts,
 			filteredProductsAndBundles,
-			plans: getDisplayablePlans( filteredProductsAndBundles ),
-			products: getDisplayableProducts( filteredProductsAndBundles ),
-			backupAddons: getProductsAndPlansByFilter(
-				PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
-				filteredProductsAndBundles
-			),
-			wooExtensions: getProductsAndPlansByFilter(
-				PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
-				filteredProductsAndBundles
-			),
+			plans,
+			products,
+			backupAddons,
+			wooExtensions,
 			suggestedProductSlugs,
+			// We need to merge all the products and plans that we are displaying in the UI
+			allSelectableProducts: [ ...plans, ...products, ...backupAddons, ...wooExtensions ],
 		};
 	}, [
 		addedPlanAndProducts,
