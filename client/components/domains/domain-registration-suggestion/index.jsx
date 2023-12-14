@@ -174,7 +174,7 @@ class DomainRegistrationSuggestion extends Component {
 
 				buttonContent = translate( '{{checkmark/}} Selected', {
 					context: 'Domain is already added to shopping cart',
-					components: { checkmark: <Gridicon icon="checkmark" /> },
+					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
 				} );
 			}
 		} else {
