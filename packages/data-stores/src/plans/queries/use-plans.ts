@@ -1,3 +1,4 @@
+import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
@@ -23,18 +24,38 @@ function usePlans(): UseQueryResult< PlansIndex > {
 			} );
 
 			return Object.fromEntries(
-				data.map( ( plan ) => [
-					plan.product_slug,
-					{
-						planSlug: plan.product_slug,
-						productSlug: plan.product_slug,
-						productId: plan.product_id,
-						introOffer: unpackIntroOffer( plan ),
-						productNameShort: plan.product_name_short,
-						billPeriod: plan.bill_period,
-						currencyCode: plan.currency_code,
-					},
-				] )
+				data.map( ( plan ) => {
+					const originalPriceMonthly =
+						calculateMonthlyPriceForPlan( plan.product_slug, plan.orig_cost_integer ) ?? null;
+					const discountedPriceFull =
+						plan.orig_cost_integer !== plan.raw_price_integer ? plan.raw_price_integer : null;
+					const discountedPriceMonthly = discountedPriceFull
+						? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
+						: null;
+
+					return [
+						plan.product_slug,
+						{
+							planSlug: plan.product_slug,
+							productSlug: plan.product_slug,
+							productId: plan.product_id,
+							productNameShort: plan.product_name_short,
+							pricing: {
+								billPeriod: plan.bill_period,
+								currencyCode: plan.currency_code,
+								introOffer: unpackIntroOffer( plan ),
+								originalPrice: {
+									monthly: originalPriceMonthly,
+									full: plan.orig_cost_integer,
+								},
+								discountedPrice: {
+									monthly: discountedPriceMonthly,
+									full: discountedPriceFull,
+								},
+							},
+						},
+					];
+				} )
 			);
 		},
 	} );
