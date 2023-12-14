@@ -3,7 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
@@ -16,6 +16,8 @@ import LayoutNavigation, {
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
 import PartnerPortalSidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
@@ -30,6 +32,7 @@ import './style.scss';
 
 export default function IssueLicenseV2( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize();
 
@@ -103,6 +106,14 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 	};
 
 	const showBundle = ! selectedSite;
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_issue_license_visit', {
+				bundle_size: selectedSize,
+			} )
+		);
+	}, [ dispatch, selectedSize ] );
 
 	return (
 		<>
