@@ -20,9 +20,6 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 		return null;
 	}
 
-	// TODO: In the future there should a form of catching and displaying an error
-	// But as currently we returns errors for products without reviews,
-	// its better to just avoid rendering the component at all
 	if ( ! Array.isArray( reviews ) || ! reviews || 'message' in reviews ) {
 		return null;
 	}
