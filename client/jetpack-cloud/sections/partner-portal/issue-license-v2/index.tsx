@@ -51,13 +51,22 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		.map( ( license ) => license.quantity )
 		.reduce( ( a, b ) => a + b, 0 );
 
-	const handleShowLicenseOverview = useCallback( () => {
+	const onShowReviewLicensesModal = useCallback( () => {
 		setShowReviewLicenses( true );
-	}, [] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_show', {
+				total_licenses: selectedLicenseCount,
+				items: selectedLicenses
+					?.map( ( license ) => `${ license.slug } x ${ license.quantity }` )
+					.join( ',' ),
+			} )
+		);
+	}, [ dispatch, selectedLicenseCount, selectedLicenses ] );
 
-	const onClickIssueLicenses = useCallback( () => {
-		handleShowLicenseOverview();
-	}, [ handleShowLicenseOverview ] );
+	const onDismissReviewLicensesModal = useCallback( () => {
+		setShowReviewLicenses( false );
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_dimiss' ) );
+	}, [ dispatch ] );
 
 	const showStickyContent = useBreakpoint( '>660px' ) && selectedLicenses.length > 0;
 
@@ -156,7 +165,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 											primary
 											className="issue-license-v2__select-license"
 											busy={ ! isReady }
-											onClick={ onClickIssueLicenses }
+											onClick={ onShowReviewLicensesModal }
 										>
 											{ translate(
 												'Review %(numLicenses)d license',
@@ -195,7 +204,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			</Layout>
 			{ showReviewLicenses && (
 				<ReviewLicenses
-					onClose={ () => setShowReviewLicenses( false ) }
+					onClose={ onDismissReviewLicensesModal }
 					selectedLicenses={ getGroupedLicenses() }
 					selectedSite={ selectedSite }
 				/>
