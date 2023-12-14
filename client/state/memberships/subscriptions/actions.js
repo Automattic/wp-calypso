@@ -22,12 +22,9 @@ export const requestSubscriptionStop = ( subscriptionId ) => {
 		return wpcom.req
 			.post( `/me/memberships/subscriptions/${ subscriptionId }/cancel` )
 			.then( ( response ) => {
-				if ( response.redirect ) {
-					fetch( response.redirect ).then( () => {
-						dispatch( {
-							type: MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
-							subscriptionId,
-						} );
+				if ( response.check_url && response.redirect ) {
+					fetch( response.check_url ).then( () => {
+						window.location( response.redirect );
 					} );
 				} else {
 					dispatch( {
