@@ -108,11 +108,7 @@ describe( 'User Can log in', () => {
 		// 	- closed account
 		//	- wrong password
 		if ( response.status() === 400 ) {
-			throw new Error(
-				await mainWindow
-					.waitForSelector( 'div.is-error' )
-					.then( ( element ) => element.innerText() )
-			);
+			throw new Error( await mainWindow.locator( 'div.is-error' ).innerText() );
 		}
 
 		expect( response.status() ).toBe( 200 );
