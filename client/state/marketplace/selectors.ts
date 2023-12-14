@@ -8,6 +8,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { default as isVipSite } from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { canPublishThemeReview } from 'calypso/state/themes/selectors/can-publish-theme-review';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -31,6 +32,8 @@ const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ): boolean 
 	const isVip = isVipSite( state, siteId );
 	return ! canInstallPurchasedPlugins && ! isStandaloneJetpack && ! isVip;
 };
+
+export default shouldUpgradeCheck;
 
 /*
  * hasOrIntendsToBuyLiveSupport:
@@ -67,4 +70,16 @@ export const hasOrIntendsToBuyLiveSupport = ( state: IAppState ): boolean => {
 	return hasLiveSupport;
 };
 
-export default shouldUpgradeCheck;
+export function canPublishProductReviews(
+	state: IAppState,
+	productType: string,
+	productSlug: string
+) {
+	if ( productType === 'theme' ) {
+		return canPublishThemeReview( state, productSlug );
+	}
+	if ( productType === 'plugin' ) {
+		throw new Error( `Selector not implemented for plugins` );
+	}
+	throw new Error( `Unknown product type: ${ productType }` );
+}
