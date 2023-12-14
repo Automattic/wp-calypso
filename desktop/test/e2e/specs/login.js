@@ -90,7 +90,7 @@ describe( 'User Can log in', () => {
 		await window.getByLabel( 'Email Address or Username' ).fill( process.env.E2EGUTENBERGUSER );
 		await window.screenshot( { path: path.join( RESULTS_PATH, '02.png' ) } );
 
-		await window.getByRole( 'button', { name: 'Continue' } ).click();
+		await window.getByRole( 'button', { name: 'Continue', exact: true } ).click();
 		await window.screenshot( { path: path.join( RESULTS_PATH, '03.png' ) } );
 
 		await window.getByLabel( 'Password' ).fill( process.env.E2EPASSWORD );
