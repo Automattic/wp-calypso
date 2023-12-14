@@ -82,9 +82,7 @@ export const useCommandPalette = ( {
 
 	// Sort sites in the nested commands to be consistent with site switcher and /sites page
 	const { sitesSorting } = useSitesSorting();
-	const sortedSites = useSitesListSorting( allSites, sitesSorting ).filter(
-		( s ) => ! s.URL.includes( 'jurssic.ninja' ) && ! s.URL.includes( 'cftp2' )
-	);
+	const sortedSites = useSitesListSorting( allSites, sitesSorting );
 
 	// Get current site ID to rank it to the top of the sites list
 	const { currentSiteId } = useCurrentSiteRankTop();
