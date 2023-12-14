@@ -31,41 +31,6 @@ $border-color: #eee;
 		gap: 20px;
 	}
 
-	.marketplace-reviews-card__container {
-		padding: 24px 30px;
-		border: 1px solid $border-color;
-		border-radius: 4px;
-		width: 50%;
-
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.marketplace-reviews-card__review-data {
-		font-family: "SF Pro Text", $sans;
-		color: var(--studio-gray-80);
-		font-size: $font-body-small;
-		line-height: 20px;
-
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	.marketplace-reviews-card__author {
-		font-family: "SF Pro Text", $sans;
-		color: var(--studio-gray-60);
-		font-size: $font-body-extra-small;
-		line-height: 20px;
-
-		.marketplace-reviews-card__author-name {
-			color: var(--studio-black);
-			font-family: Inter, $sans;
-		}
-	}
-
 	.rating .rating__overlay .is-empty,
 	.rating .rating__star-outline .is-empty {
 		fill: var(--studio-yellow-20);
@@ -74,5 +39,62 @@ $border-color: #eee;
 	.rating .rating__overlay .gridicon,
 	.rating .rating__star-outline .gridicon {
 		fill: var(--studio-yellow-20);
+	}
+}
+
+
+.marketplace-reviews-card__container {
+	padding: 24px 30px;
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.marketplace-reviews-card__container,
+.marketplace-reviews-card__leave-a-review {
+	border: 1px solid $border-color;
+	border-radius: 4px;
+	width: 50%;
+}
+
+.marketplace-reviews-card__review-data {
+	font-family: "SF Pro Text", $sans;
+	color: var(--studio-gray-80);
+	font-size: $font-body-small;
+	line-height: 20px;
+
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.marketplace-reviews-card__author {
+	font-family: "SF Pro Text", $sans;
+	color: var(--studio-gray-60);
+	font-size: $font-body-extra-small;
+	line-height: 20px;
+
+	.marketplace-reviews-card__author-name {
+		color: var(--studio-black);
+		font-family: Inter, $sans;
+	}
+}
+
+.marketplace-reviews-card__leave-a-review {
+	display: flex;
+	gap: 8px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 40px;
+	cursor: pointer;
+
+	.marketplace-reviews-card__leave-a-review-message {
+		font-family: "SF Pro Text", $sans;
+		color: var(--studio-gray-100);
+		font-size: $font-body;
+		line-height: 24px;
 	}
 }

@@ -1,15 +1,19 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import {
 	useMarketplaceReviewsQuery,
 	ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
-import './style.scss';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { IAppState } from 'calypso/state/types';
 import { MarketplaceReviewCard } from './review-card';
+import './style.scss';
 
 export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 	const translate = useTranslate();
+	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
 	const { data: reviews } = useMarketplaceReviewsQuery( { ...props, perPage: 2, page: 1 } );
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
@@ -19,9 +23,14 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 	// TODO: In the future there should a form of catching and displaying an error
 	// But as currently we returns errors for products without reviews,
 	// its better to just avoid rendering the component at all
-	if ( ! Array.isArray( reviews ) && ( ! reviews || reviews.message ) ) {
+	if ( ! Array.isArray( reviews ) || ! reviews || 'message' in reviews ) {
 		return null;
 	}
+
+	// Add a review card if the user has not left a review yet
+	const hasReview =
+		Array.isArray( reviews ) && reviews?.some( ( review ) => review.author === currentUserId );
+	const addLeaveAReviewCard = ! hasReview && reviews.length < 2;
 
 	return (
 		<div className="marketplace-reviews-cards__container">
@@ -49,6 +58,7 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 			<div className="marketplace-reviews-cards__content">
 				{ Array.isArray( reviews ) &&
 					reviews.map( ( review ) => <MarketplaceReviewCard review={ review } /> ) }
+				{ addLeaveAReviewCard && <MarketplaceReviewCard leaveAReview={ true } /> }
 			</div>
 		</div>
 	);
