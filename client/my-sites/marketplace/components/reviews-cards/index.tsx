@@ -29,6 +29,8 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 		Array.isArray( reviews ) && reviews?.some( ( review ) => review.author === currentUserId );
 	const addLeaveAReviewCard = ! hasReview && reviews.length < 2;
 
+	const addEmptyCard = reviews.length === 0;
+
 	return (
 		<div className="marketplace-reviews-cards__container">
 			<div className="marketplace-reviews-cards__reviews">
@@ -55,6 +57,7 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 			<div className="marketplace-reviews-cards__content">
 				{ Array.isArray( reviews ) &&
 					reviews.map( ( review ) => <MarketplaceReviewCard review={ review } /> ) }
+				{ addEmptyCard && <MarketplaceReviewCard empty={ true } /> }
 				{ addLeaveAReviewCard && <MarketplaceReviewCard leaveAReview={ true } /> }
 			</div>
 		</div>

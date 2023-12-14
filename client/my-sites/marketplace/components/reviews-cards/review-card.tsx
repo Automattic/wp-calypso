@@ -6,11 +6,25 @@ import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-con
 type MarketplaceReviewCardProps = {
 	review?: MarketplaceReviewResponse;
 	leaveAReview?: boolean;
+	empty?: boolean;
 };
 
 export const MarketplaceReviewCard = ( props: MarketplaceReviewCardProps ) => {
 	const translate = useTranslate();
-	const { review, leaveAReview } = props;
+	const { review, leaveAReview, empty } = props;
+
+	if ( empty ) {
+		return (
+			<div className="marketplace-reviews-card__empty-container">
+				<h2 className="marketplace-reviews-card__empty-title">{ translate( 'No reviews yet' ) }</h2>
+				<h3 className="marketplace-reviews-card__empty-subtitle">
+					{ translate(
+						'There are no reviews for this plugin at the moment. Your feedback could be the first to guide others.'
+					) }
+				</h3>
+			</div>
+		);
+	}
 
 	if ( leaveAReview || ! review ) {
 		return (

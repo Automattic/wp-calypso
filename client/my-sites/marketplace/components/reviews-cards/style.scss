@@ -53,7 +53,8 @@ $cards-gap: 20px;
 }
 
 .marketplace-reviews-card__container,
-.marketplace-reviews-card__leave-a-review {
+.marketplace-reviews-card__leave-a-review,
+.marketplace-reviews-card__empty-container {
 	border: 1px solid $border-color;
 	border-radius: 4px;
 	width: calc((100% - $cards-gap)/2); // Half of the available space
@@ -98,5 +99,26 @@ $cards-gap: 20px;
 		color: var(--studio-gray-100);
 		font-size: $font-body;
 		line-height: 24px;
+	}
+}
+
+.marketplace-reviews-card__empty-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 30px;
+
+	.marketplace-reviews-card__empty-title {
+		font-family: Recoleta, $sans;
+		color: var(--studio-gray-100);
+		font-size: $font-title-medium;
+	}
+
+	.marketplace-reviews-card__empty-subtitle {
+		font-family: "SF Pro Text", $sans;
+		color: var(--studio-gray-60);
+		font-size: $font-body-small;
+		text-align: center;
 	}
 }
