@@ -19,7 +19,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -247,7 +246,6 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -849,7 +847,6 @@ const PlansFeaturesMain = ( {
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									selectedPlan={ selectedPlan }
 									siteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -903,10 +900,6 @@ const PlansFeaturesMain = ( {
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
-												gridPlanForSpotlight={ gridPlanForSpotlight }
-												paidDomainName={ paidDomainName }
-												generatedWPComSubdomain={ resolvedSubdomainName }
-												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
@@ -918,7 +911,6 @@ const PlansFeaturesMain = ( {
 												currentSitePlanSlug={ sitePlanSlug }
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
-												showLegacyStorageFeature={ showLegacyStorageFeature }
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ masterbarHeight }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
@@ -945,7 +937,7 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
-						{ isEnglishLocale && showPressablePromoBanner && (
+						{ showPressablePromoBanner && (
 							<AsyncLoad
 								require="./components/pressable-promo-banner"
 								onShow={ onShowPressablePromoBanner }

@@ -1,11 +1,11 @@
-import { type PlanSlug } from '@automattic/calypso-products';
+import { UrlFriendlyTermType, type PlanSlug } from '@automattic/calypso-products';
 import { type TranslateResult } from 'i18n-calypso';
 import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval';
 	basePlansPath?: string | null;
-	intervalType: string;
+	intervalType: UrlFriendlyTermType;
 	customerType: string;
 	withDiscount?: string;
 	siteSlug?: string | null;
@@ -42,4 +42,9 @@ export type IntervalTypeProps = Pick<
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
 	| 'title'
+>;
+
+export type SupportedUrlFriendlyTermType = Extract<
+	UrlFriendlyTermType,
+	'yearly' | '2yearly' | '3yearly' | 'monthly'
 >;

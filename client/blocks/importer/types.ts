@@ -36,7 +36,18 @@ export interface ImportJob {
 	statusMessage?: string;
 	type: string;
 	site: { ID: number };
-	customData: { [ key: string ]: any };
+	customData: {
+		[ key: string ]: any;
+		current_step?:
+			| 'convert_to_atomic'
+			| 'download_archive'
+			| 'unpack_file'
+			| 'preprocess'
+			| 'process_files'
+			| 'recreate_database'
+			| 'postprocess_database'
+			| 'clean_up';
+	};
 	errorData: {
 		type: string;
 		description: string;

@@ -7,7 +7,12 @@ import { License } from 'calypso/state/partner-portal/types';
 import { errorNotice } from '../../../notices/actions';
 import { formatLicenses } from '../handlers';
 
-export default function useBundleLicensesQuery( parentLicenseId: number, perPage: number = 25 ) {
+export default function useBundleLicensesQuery(
+	parentLicenseId: number,
+	perPage: number = 25,
+	sortField: string = 'status',
+	sortDirection: string = 'asc'
+) {
 	const [ licenses, setLicenses ] = useState< License[] >( [] );
 	const [ total, setTotal ] = useState< number >( 0 );
 	const [ page, setPage ] = useState< number >( 1 );
@@ -16,7 +21,15 @@ export default function useBundleLicensesQuery( parentLicenseId: number, perPage
 	const dispatch = useDispatch();
 
 	const query = useQuery( {
-		queryKey: [ 'partner-portal', 'bundle-licenses', parentLicenseId, perPage, page ],
+		queryKey: [
+			'partner-portal',
+			'bundle-licenses',
+			parentLicenseId,
+			perPage,
+			page,
+			sortField,
+			sortDirection,
+		],
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -27,6 +40,8 @@ export default function useBundleLicensesQuery( parentLicenseId: number, perPage
 					parent_id: parentLicenseId,
 					page,
 					per_page: perPage,
+					sort_field: sortField,
+					sort_direction: sortDirection,
 				}
 			),
 		select: ( data ) => ( {

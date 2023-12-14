@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
@@ -7,6 +8,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteData } from '../hooks/use-site-data';
@@ -69,6 +71,7 @@ const withAIAssemblerFlow: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.SITE_PROMPT,
 			STEPS.PATTERN_ASSEMBLER,
+			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
@@ -87,7 +90,7 @@ const withAIAssemblerFlow: Flow = {
 
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { siteSlug } = useSiteData();
+		const { siteSlug, siteId } = useSiteData();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -162,6 +165,10 @@ const withAIAssemblerFlow: Flow = {
 					return handleSelectSite( providedDependencies );
 				}
 
+				case 'freePostSetup': {
+					return navigate( 'launchpad' );
+				}
+
 				case 'site-prompt': {
 					return navigate( 'patternAssembler' );
 				}
@@ -231,6 +238,10 @@ const withAIAssemblerFlow: Flow = {
 					return navigate( 'new-or-existing-site' );
 				}
 
+				case 'freePostSetup': {
+					return navigate( 'launchpad' );
+				}
+
 				case 'patternAssembler': {
 					return navigate( 'site-prompt' );
 				}
@@ -242,6 +253,14 @@ const withAIAssemblerFlow: Flow = {
 				case 'site-prompt': {
 					return navigate( 'patternAssembler' );
 				}
+
+				case 'launchpad':
+					skipLaunchpad( {
+						checklistSlug: AI_ASSEMBLER_FLOW,
+						siteId,
+						siteSlug,
+					} );
+					return;
 			}
 		};
 
@@ -249,6 +268,10 @@ const withAIAssemblerFlow: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
+		if ( ! config.isEnabled( 'calypso/ai-assembler' ) ) {
+			window.location.assign( '/setup/assembler-first' );
+		}
+
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );

@@ -543,6 +543,7 @@ export const SubmitButtonWrapper = styled.div`
 
 	.checkout__step-wrapper--last-step & {
 		position: fixed;
+		box-shadow: 0 -3px 10px 0 #0000001f;
 	}
 
 	.rtl & {
@@ -561,6 +562,7 @@ export const SubmitButtonWrapper = styled.div`
 
 		.checkout__step-wrapper--last-step & {
 			position: relative;
+			box-shadow: none;
 		}
 
 		.checkout__step-wrapper & {

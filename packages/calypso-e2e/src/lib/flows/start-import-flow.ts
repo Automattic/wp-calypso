@@ -274,7 +274,7 @@ export class StartImportFlow {
 	async selectImporterFromList( index: number ): Promise< void > {
 		await this.page.click( selectors.importerListButton( index ) );
 		await this.page
-			.locator( selectors.startBuildingHeader( 'Your content is ready for its new home' ) )
+			.locator( selectors.startBuildingHeader( 'Import content from WordPress' ) )
 			.waitFor();
 	}
 

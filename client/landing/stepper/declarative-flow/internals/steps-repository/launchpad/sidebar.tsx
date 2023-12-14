@@ -1,6 +1,10 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Badge, CircularProgressBar, Gridicon, Tooltip } from '@automattic/components';
-import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
+import {
+	OnboardSelect,
+	sortLaunchpadTasksByCompletionStatus,
+	useLaunchpad,
+} from '@automattic/data-stores';
 import { LaunchpadInternal } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
@@ -62,7 +66,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
-	} = useLaunchpad( siteSlug, siteIntentOption );
+	} = useLaunchpad( siteSlug, siteIntentOption, {
+		onSuccess: sortLaunchpadTasksByCompletionStatus,
+	} );
 
 	const selectedDomain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
