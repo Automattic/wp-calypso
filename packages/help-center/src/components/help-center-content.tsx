@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { OdieAssistantProvider } from 'calypso/odie/context';
+import { clearOdieStorage } from 'calypso/odie/data';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -87,7 +88,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 							enabled={ isWapuuEnabled }
 							isMinimized={ isMinimized }
 							initialUserMessage={ searchTerm }
-							extraContactOptions={ <HelpCenterContactPage hideHeaders /> }
+							extraContactOptions={
+								<HelpCenterContactPage
+									hideHeaders
+									trackEventName="calypso_odie_extra_contact_option"
+									onClick={ () => clearOdieStorage( 'chat_id' ) }
+								/>
+							}
 						>
 							<HelpCenterOdie />
 						</OdieAssistantProvider>

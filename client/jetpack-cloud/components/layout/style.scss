@@ -11,8 +11,6 @@
 	padding-inline: 0;
 
 	header.current-section {
-		padding: 0 16px;
-
 		button {
 			padding: 20px 8px;
 		}
@@ -89,7 +87,7 @@
 }
 
 .jetpack-cloud-layout__header.has-actions > .jetpack-cloud-layout__header-main {
-	@include breakpoint-deprecated( "<1280px" ) {
+	@include breakpoint-deprecated( "660px-1280px" ) {
 		margin-block-end: 16px;
 	}
 }

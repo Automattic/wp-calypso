@@ -15,7 +15,7 @@ export default function ThemeTierBundledBadge() {
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
 	const bundleSettings = useBundleSettingsByTheme( themeId );
-	const legacyCanUseTheme = useSelector(
+	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
 
@@ -52,7 +52,7 @@ export default function ThemeTierBundledBadge() {
 
 	return (
 		<div className="theme-tier-badge">
-			{ ! legacyCanUseTheme && (
+			{ ! isThemeIncluded && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge
@@ -76,8 +76,6 @@ export default function ThemeTierBundledBadge() {
 			>
 				{ bundleName }
 			</BundledBadge>
-
-			{ legacyCanUseTheme && <span>{ translate( 'Included in my plan' ) }</span> }
 		</div>
 	);
 }
