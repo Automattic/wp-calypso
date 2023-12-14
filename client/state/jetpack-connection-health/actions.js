@@ -33,6 +33,11 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
 	errorCode,
 } );
 
+/**
+ * Requests the Jetpack connection status from the server
+ * @param {number} siteId The site id to which the status belongs
+ * @returns {Function} Action thunk
+ */
 export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, getState ) => {
 	const currentState = getState();
 	const lastRequestTime = currentState.jetpackConnectionHealth[ siteId ]?.lastRequestTime;

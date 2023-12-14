@@ -1,12 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/actions';
 import getJetpackConnectionHealth from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health';
 import getJetpackConnectionHealthRequestError from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health-request-error';
 import isRequestingJetpackConnectionHealthStatus from 'calypso/state/jetpack-connection-health/selectors/is-requesting-jetpack-connection-health-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { AppState } from 'calypso/types';
 import {
 	DATABASE_ERROR,
 	FATAL_ERROR,
@@ -35,18 +36,20 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	);
 
 	const isErrorCheckJetpackConnectionHealth = useSelector( ( state ) =>
-		getJetpackConnectionHealthRequestError( state, siteId )
+		getJetpackConnectionHealthRequestError( state as AppState, siteId )
 	);
 
 	const isLoadingJetpackConnectionHealth = useSelector( ( state ) =>
-		isRequestingJetpackConnectionHealthStatus( state, siteId )
+		isRequestingJetpackConnectionHealthStatus( state as AppState, siteId )
 	);
 
 	const jetpackConnectionHealth = useSelector( ( state ) =>
-		getJetpackConnectionHealth( state, siteId )
+		getJetpackConnectionHealth( state as AppState, siteId )
 	);
 
 	useEffect( () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
 	}, [ dispatch, siteId ] );
 
