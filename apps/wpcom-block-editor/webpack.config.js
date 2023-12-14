@@ -55,22 +55,6 @@ function getWebpackConfig(
 			// disable module concatenation so that instances of `__()` are not renamed
 			concatenateModules: false,
 		},
-		module: {
-			...webpackConfig.module,
-			rules: [
-				...webpackConfig.module.rules,
-				{
-					// Add target files here to replace Gridicons with WordPress Icons.
-					test: /theme-upgrade-modal\/index\.tsx?$/,
-					exclude: /node_modules\//,
-					use: [
-						{
-							loader: './gridicons-to-wordpress-icons.js',
-						},
-					],
-				},
-			],
-		},
 		plugins: [
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
