@@ -366,23 +366,13 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleDomainToDomainCart = async ( previousState ) => {
-		const { step } = this.props;
-
-		const { suggestion } = step;
-		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
-		const siteUrl =
-			suggestion &&
-			( isPurchasingItem
-				? suggestion.domain_name
-				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
+		const { suggestion } = this.props.step;
 
 		if ( previousState ) {
 			this.removeDomain( suggestion );
 		} else {
 			await this.addDomain( suggestion );
 			this.props.setDesignType( this.getDesignType() );
-			// Start the username suggestion process.
-			siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 		}
 	};
 
