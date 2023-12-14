@@ -59,6 +59,10 @@ interface UpgradeModalContent {
 	action: JSX.Element | null;
 }
 
+/**
+ * - This component provides users with details about a specific theme and outlines the plan they need to upgrade to.
+ * - It is also used outside of Calypso, currently in `apps/wpcom-block-editor`, so refrain from incorporating Calypso state, Gridicons, or any logic that relies on Calypso dependencies.
+ */
 export const ThemeUpgradeModal = ( {
 	additionalClassNames,
 	additionalOverlayClassNames,
