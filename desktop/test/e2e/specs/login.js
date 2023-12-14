@@ -45,7 +45,7 @@ describe( 'User Can log in', () => {
 
 	beforeAll( async () => {
 		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
-		consoleStream = await createWriteStream( CONSOLE_PATH );
+		consoleStream = createWriteStream( CONSOLE_PATH );
 
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
@@ -69,8 +69,8 @@ describe( 'User Can log in', () => {
 
 		// Find main window. Playwright has problems identifying the main window when using `firstWindow`, so we
 		// iterate over all windows and find it by URL.
-		for ( const window of await electronApp.windows() ) {
-			const windowUrl = await window.url();
+		for ( const window of electronApp.windows() ) {
+			const windowUrl = window.url();
 			if ( windowUrl.startsWith( BASE_URL ) ) {
 				mainWindow = window;
 				break;
