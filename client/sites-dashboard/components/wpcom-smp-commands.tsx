@@ -157,7 +157,7 @@ export const useCommandsArrayWpcom = ( {
 					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
 					apiNamespace: 'wpcom/v2',
 				} );
-				displayNotice( __( 'Succesfully cleared cache.' ) );
+				displayNotice( __( 'Successfully cleared cache.' ) );
 			} else {
 				// If global edge cache is not active, clear WordPress cache
 				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
