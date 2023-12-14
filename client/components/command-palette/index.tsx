@@ -169,7 +169,7 @@ const CommandPalette = () => {
 	const close = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_hosting_command_palette_close', {
-				command_name: selectedCommandName,
+				command: selectedCommandName,
 				current_route: currentRoute,
 				search_is_empty: ! search,
 				search_text: search,
@@ -205,7 +205,7 @@ const CommandPalette = () => {
 	const goBackToRootCommands = ( fromKeyboard: boolean ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
-				command_name: selectedCommandName,
+				command: selectedCommandName,
 				current_route: currentRoute,
 				search_is_empty: ! search,
 				search_text: search,

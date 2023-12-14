@@ -93,7 +93,7 @@ const useSiteToAction = () => {
 					callback: ( { close }: { close: CloseFunction } ) => {
 						dispatch(
 							recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
-								command_name: selectedCommand.name,
+								command: selectedCommand.name,
 								has_nested_commands: false,
 								list_count: filteredSitesLength,
 								list_visible_count: listVisibleCount,
@@ -189,7 +189,7 @@ export const useCommandPalette = ( {
 		callback: ( params: CommandCallBackParams ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
-					command_name: command.name,
+					command: command.name,
 					has_nested_commands: !! command.siteFunctions,
 					list_count: commands.length,
 					list_visible_count: listVisibleCount,
