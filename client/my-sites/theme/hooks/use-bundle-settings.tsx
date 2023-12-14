@@ -9,12 +9,16 @@ import { getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 interface BundleSettings {
 	/** Name field is a label for the bundle name, which can be used isolated or in the middle of a sentence. Many times used as "{name} theme". */
 	name: string;
+	/** Software name field is a label for the product name, which can be used isolated or in the middle of a sentence, like: "Installing {softwareName}" */
+	softwareName: string;
 	iconComponent: FC;
 	color: string;
 	designPickerBadgeTooltip: string;
 	bannerUpsellDescription: string;
 	bundledPluginMessage: TranslateResult;
 }
+
+export type BundleSettingsHookReturn = BundleSettings | null;
 
 const WooOnPlansIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -25,24 +29,17 @@ const WooOnPlansIcon = () => (
 	</svg>
 );
 
-/**
- * Hook to get the bundle settings for a software set.
- */
-export const useBundleSettingsFromThemeSoftwareSet = (
-	themeSoftwareSet: string[] = []
-): BundleSettings | null => {
+export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookReturn {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
 	const bundleSettings = useMemo( () => {
-		// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
-		const themeSoftware = themeSoftwareSet[ 0 ];
-
 		switch ( themeSoftware ) {
 			case 'woo-on-plans':
 				return {
 					name: 'WooCommerce',
+					softwareName: 'WooCommerce',
 					iconComponent: WooOnPlansIcon,
 					color: '#7f54b3',
 					designPickerBadgeTooltip: translate(
@@ -73,18 +70,20 @@ export const useBundleSettingsFromThemeSoftwareSet = (
 			default:
 				return null;
 		}
-	}, [ translate, businessPlanName, themeSoftwareSet ] );
+	}, [ themeSoftware, translate, isEnglishLocale, businessPlanName ] );
 
 	return bundleSettings;
-};
+}
 
 /**
  * Hook to get the bundle settings for a given theme.
- * If the theme doesn't have a software set defined, it returns `null`.
+ * If the theme doesn't have a sotfware set defined, it returns `null`.
  */
-const useBundleSettings = ( themeId: string ): BundleSettings | null => {
+export function useBundleSettingsByTheme( themeId: string ): BundleSettingsHookReturn {
 	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
-	return useBundleSettingsFromThemeSoftwareSet( themeSoftwareSet );
-};
+	// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
+	const themeSoftware = themeSoftwareSet[ 0 ];
+	const bundleSettings = useBundleSettings( themeSoftware );
 
-export default useBundleSettings;
+	return bundleSettings;
+}
