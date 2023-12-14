@@ -48,6 +48,8 @@ describe( 'User Can log in', () => {
 
 	beforeAll( async () => {
 		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
+		await mkdir( path.dirname( TRACE_DIR ), { recursive: true } );
+
 		consoleStream = createWriteStream( CONSOLE_PATH );
 
 		electronApp = await electron.launch( {
