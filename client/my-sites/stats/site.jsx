@@ -541,7 +541,9 @@ class StatsSite extends Component {
 
 		return (
 			<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
-				<QuerySiteFeatures siteIds={ [ siteId ] } />
+				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && (
+					<QuerySiteFeatures siteIds={ [ siteId ] } />
+				) }
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
