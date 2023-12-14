@@ -84,12 +84,6 @@ describe( 'User Can log in', () => {
 		mainWindow.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
 		);
-
-		// Wait for everythingm to be loaded before starting
-		await mainWindow.waitForLoadState();
-		for ( const [ , frame ] of mainWindow.frames().entries() ) {
-			await frame.waitForLoadState();
-		}
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
