@@ -339,6 +339,7 @@ export class Login extends Component {
 			oauth2Client,
 			pathname,
 			query,
+			currentQuery,
 			translate,
 			usernameOrEmail,
 		} = this.props;
@@ -357,7 +358,7 @@ export class Login extends Component {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
+			: getSignupUrl( query || currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
 			<a
