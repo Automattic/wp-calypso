@@ -103,14 +103,14 @@ object E2ETests : BuildType({
 				export WP_DESKTOP_BASE_URL="${'$'}URL"
 
 				# Start framebuffer
-				# Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 -ac -nolisten tcp -nolisten unix &
+				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 -ac -nolisten tcp -nolisten unix &
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 
 				cd desktop
 
 				# Run tests
-				xvfb-run yarn run test:e2e --reporters=jest-teamcity --reporters=default --detectOpenHandles
+				yarn run test:e2e --reporters=jest-teamcity --reporters=default --detectOpenHandles
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
