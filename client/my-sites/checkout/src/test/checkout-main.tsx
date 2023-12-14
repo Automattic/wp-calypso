@@ -671,10 +671,10 @@ describe( 'CheckoutMain', () => {
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the promo code field', async () => {
+	it( 'renders the promotional code in a human readable way', async () => {
 		render( <MockCheckout initialCart={ getPromoCart() } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
-			expect( screen.getByText( /First-year promotional discount/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /First-year promotional discount/ ) ).toBeVisible();
 		} );
 	} );
 } );
