@@ -1,3 +1,4 @@
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -29,7 +30,7 @@ export function useProductBundleSize() {
 
 	const supportedBundleSizes = getSupportedBundleSizes( products );
 
-	const { setParams, resetParams, getParamValue } = useURLQueryParams();
+	const { resetParams, getParamValue } = useURLQueryParams();
 
 	const [ selectedSize, setSelectedSize ] = useState< number | undefined >( undefined );
 
@@ -45,16 +46,23 @@ export function useProductBundleSize() {
 			if ( size === 1 ) {
 				resetParams( [ BUNDLE_SIZE_PARAM_KEY ] );
 			} else {
-				setParams( [
-					{
-						key: BUNDLE_SIZE_PARAM_KEY,
-						value: `${ size }`,
-					},
-				] );
+				/* Ideally we would like to use setParams from useURLQueryParams hook but
+				 * for a reason it causes the Page context to throw exception when
+				 * popping the history stack (browser back button). This implementation is
+				 * a workaround for that issue.
+				 */
+				window.history.pushState(
+					null,
+					'',
+					addQueryArgs( '', {
+						...getQueryArgs( window.location.href ),
+						[ BUNDLE_SIZE_PARAM_KEY ]: `${ size }`,
+					} )
+				);
 			}
 			setSelectedSize( size );
 		},
-		[ resetParams, setParams ]
+		[ resetParams ]
 	);
 
 	return useMemo( () => {
