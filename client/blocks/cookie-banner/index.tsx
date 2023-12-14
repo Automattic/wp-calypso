@@ -1,12 +1,11 @@
+import { getTrackingPrefs, setTrackingPrefs } from '@automattic/calypso-analytics';
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	refreshCountryCodeCookieGdpr,
-	setTrackingPrefs,
 	shouldSeeCookieBanner,
-	getTrackingPrefs,
 	useDoNotSell,
 } from 'calypso/lib/analytics/utils';
 import { useSelector, useDispatch } from 'calypso/state';
