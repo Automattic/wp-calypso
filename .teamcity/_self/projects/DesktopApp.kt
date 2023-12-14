@@ -111,6 +111,7 @@ object E2ETests : BuildType({
 
 				# Run tests
 				yarn run test:e2e --reporters=jest-teamcity --reporters=default --detectOpenHandles
+				pkill Xvfb
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
