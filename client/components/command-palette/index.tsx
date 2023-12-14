@@ -8,7 +8,7 @@ import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentRouteGeneric } from 'calypso/state/selectors/get-current-route-generic';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -156,7 +156,7 @@ const CommandPalette = () => {
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const currentRoute = useSelector( ( state: object ) => getCurrentRouteGeneric( state ) );
+	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const dispatch = useDispatch();
 	const open = useCallback( () => {
 		setIsOpen( true );

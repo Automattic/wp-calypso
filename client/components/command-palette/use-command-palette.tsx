@@ -10,7 +10,7 @@ import { isCustomDomain, isNotAtomicJetpack, isP2Site } from 'calypso/sites-dash
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getCurrentRouteGeneric } from 'calypso/state/selectors/get-current-route-generic';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useCurrentSiteRankTop } from './use-current-site-rank-top';
 
@@ -70,7 +70,7 @@ interface SiteToActionParameters {
 const useSiteToAction = () => {
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const currentRoute = useSelector( ( state: object ) => getCurrentRouteGeneric( state ) );
+	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
 	const siteToAction = useCallback(
 		(
@@ -157,11 +157,11 @@ export const useCommandPalette = ( {
 		setSelectedCommandName,
 	} );
 
-	const currentRoute = useSelector( ( state: object ) => getCurrentRouteGeneric( state ) );
+	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
 	// Filter out commands that have context
 	const commandHasContext = ( paths: string[] = [] ): boolean =>
-		paths.some( ( path ) => currentRoute.includes( path ) ) ?? false;
+		paths.some( ( path ) => currentRoute?.includes( path ) ) ?? false;
 
 	// Find and store the "viewMySites" command
 	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
