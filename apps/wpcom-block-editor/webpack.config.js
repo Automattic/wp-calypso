@@ -59,6 +59,10 @@ function getWebpackConfig(
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
+			/**
+			 * This is needed for import-ing ThemeUpgradeModal,
+			 * which is directly due to the use of NODE_DEBUG in the package called `util`.
+			 */
 			new webpack.DefinePlugin( {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
