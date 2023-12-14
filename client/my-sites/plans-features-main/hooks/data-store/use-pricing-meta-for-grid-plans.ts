@@ -62,7 +62,10 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	const pricedAPISitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
-	const purchasedPlan = Purchases.useSitePurchaseById( {} );
+	const purchasedPlan = Purchases.useSitePurchaseById( {
+		siteId: selectedSiteId,
+		purchaseId: currentPlan?.purchaseId,
+	} );
 
 	const selectedStorageOptions = useSelect( ( select ) => {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();

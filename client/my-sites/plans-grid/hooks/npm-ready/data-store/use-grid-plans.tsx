@@ -336,7 +336,12 @@ const useGridPlans = ( {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const planObject = pricedAPIPlans.data?.[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
-		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
+		/**
+		 * TODO: checking isInSignup below seems redundant. We should be able to remove it.
+		 * - double check whether Stepper does something else with a site ID and current plan
+		 * while still in Signup flow
+		 */
+		const availableForPurchase = !! ( isInSignup || plansAvailabilityForPurchase?.[ planSlug ] );
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
