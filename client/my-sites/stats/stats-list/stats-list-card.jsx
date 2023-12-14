@@ -36,6 +36,7 @@ const StatsListCard = ( {
 	showLeftIcon,
 	isLinkUnderlined,
 	listItemClassName,
+	overlay,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -140,6 +141,7 @@ const StatsListCard = ( {
 			mainItemLabel={ mainItemLabel }
 			additionalHeaderColumns={ additionalColumns?.header }
 			toggleControl={ toggleControl }
+			overlay={ overlay }
 		>
 			{ !! loader && loader }
 			{ !! error && error }
