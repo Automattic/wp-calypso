@@ -54,6 +54,9 @@ describe( 'User Can log in', () => {
 			recordHar: {
 				path: HAR_PATH,
 			},
+			recordVideo: {
+				dir: SCREENSHOT_PATH,
+			},
 			env: {
 				...process.env,
 				WP_DESKTOP_BASE_URL: BASE_URL,
