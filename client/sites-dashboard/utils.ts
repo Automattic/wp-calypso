@@ -3,7 +3,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
+import { SiteExcerptData, SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 
 export const TRACK_SOURCE_NAME = 'sites-dashboard';
 
@@ -80,6 +80,21 @@ export const isTrialSite = ( site: SiteExcerptNetworkData ) => {
 
 export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
 	return site?.options?.wpcom_admin_interface;
+};
+
+export const generateSiteInterfaceLink = (
+	site: SiteExcerptData,
+	calypsoBase: string,
+	wpAdminBase: string
+) => {
+	const isWpAdminDefault =
+		( site.jetpack && ! site.is_wpcom_atomic ) || siteDefaultInterface( site ) === 'wp-admin';
+
+	const targetLink = isWpAdminDefault
+		? `${ site.URL }/wp-admin/${ wpAdminBase }`
+		: `/${ calypsoBase }/${ site.slug }`;
+
+	return targetLink;
 };
 
 export const getSiteWpAdminUrl = ( site: SiteExcerptNetworkData ) => {
