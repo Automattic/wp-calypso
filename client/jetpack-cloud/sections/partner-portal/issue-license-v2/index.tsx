@@ -116,7 +116,15 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>
 						<Subtitle>
-							{ translate( 'Select single product licenses or save when you issue in bulk' ) }
+							{ selectedSite?.domain
+								? translate(
+										'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
+										{
+											args: { selectedSiteDomain: selectedSite.domain },
+											components: { strong: <strong /> },
+										}
+								  )
+								: translate( 'Select single product licenses or save when you issue in bulk' ) }
 						</Subtitle>
 						{ selectedLicenses.length > 0 && (
 							<Actions>
