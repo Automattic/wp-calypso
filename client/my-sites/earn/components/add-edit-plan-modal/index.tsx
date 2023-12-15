@@ -2,7 +2,7 @@ import { Dialog, FormInputValidation, FoldableCard } from '@automattic/component
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState, useEffect, useMemo } from 'react';
+import { ChangeEvent, useState, useEffect, useMemo, useRef } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -139,6 +139,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedSchedule, setEditedSchedule ] = useState(
 		product?.renewal_schedule ?? PLAN_MONTHLY_FREQUENCY
 	);
+	const previousScheduleRef = useRef( product?.renewal_schedule ?? PLAN_MONTHLY_FREQUENCY );
+
 	const [ focusedName, setFocusedName ] = useState( false );
 
 	const [ editedPrice, setEditedPrice ] = useState( false );
@@ -214,12 +216,17 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	useEffect( () => {
 		// If the user has manually entered a name that should be left as-is, don't overwrite it
-		if ( editedProductName && editedProductName !== defaultNames[ `${ editedSchedule }` ] ) {
+		if (
+			editedProductName &&
+			editedProductName !== defaultNames[ `${ previousScheduleRef.current }` ]
+		) {
+			previousScheduleRef.current = editedSchedule;
 			return;
 		}
 		const name = editedPostIsTier ? defaultNameTier : defaultNames[ `${ editedSchedule }` ] ?? '';
 
 		setEditedProductName( name );
+		previousScheduleRef.current = editedSchedule;
 	}, [ editedSchedule, editedPostIsTier ] );
 
 	const getAnnualProductDetailsFromProduct = ( productDetails: Product ): Product => ( {
