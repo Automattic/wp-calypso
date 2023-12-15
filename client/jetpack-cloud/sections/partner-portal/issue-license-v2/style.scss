@@ -35,3 +35,9 @@
 	@include licensing-portal-bottom-action-bar;
 	padding: 14px;
 }
+
+.issue-license-v2.without-bundle {
+	.jetpack-cloud-layout__header-subtitle {
+		padding-block-end: 16px;
+	}
+}

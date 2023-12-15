@@ -2,22 +2,38 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { LegacyRef, forwardRef } from 'react';
+import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsQuery,
 	MarketplaceReviewResponse,
 	MarketplaceReviewsQueryProps,
+	useDeleteMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { IAppState } from 'calypso/state/types';
 
 export const MarketplaceReviewsList = forwardRef<
 	HTMLDivElement,
 	MarketplaceReviewsQueryProps & { innerRef: LegacyRef< HTMLDivElement > }
 >( ( props, ref ) => {
 	const translate = useTranslate();
-	const { data: reviews } = useMarketplaceReviewsQuery( props );
+	const { data: reviews, refetch: reviewsRefetch, error } = useMarketplaceReviewsQuery( props );
 
+	// ...
+	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
+	const deleteReviewMutation = useDeleteMarketplaceReviewMutation();
+	const deleteReview = ( reviewId: number ) => {
+		if ( confirm( translate( 'Are you sure you want to delete your review?' ) ) ) {
+			deleteReviewMutation.mutate( {
+				reviewId: reviewId,
+			} );
+			deleteReviewMutation?.isSuccess && reviewsRefetch();
+			deleteReviewMutation?.isError && alert( ( deleteReviewMutation.error as Error ).message );
+		}
+	};
 	// TODO: Get the proper value as a URL to the profile picture
 	const authorProfilePic = null;
 
@@ -28,7 +44,7 @@ export const MarketplaceReviewsList = forwardRef<
 	// TODO: In the future there should a form of catching and displaying an error
 	// But as currently we returns errors for products without reviews,
 	// its better to just avoid rendering the component at all
-	if ( ! Array.isArray( reviews ) && ( ! reviews || reviews.message ) ) {
+	if ( ! Array.isArray( reviews ) || error ) {
 		return null;
 	}
 
@@ -90,6 +106,24 @@ export const MarketplaceReviewsList = forwardRef<
 								} }
 								className="marketplace-reviews-list__content"
 							></div>
+							<div className="marketplace-reviews-list__review-actions">
+								{ review.author === currentUserId && (
+									<div className="marketplace-reviews-list__review-actions-editable">
+										<button
+											className="marketplace-reviews-list__review-actions-editable-button"
+											onClick={ () => alert( 'Not implemented yet' ) }
+										>
+											{ translate( 'Update my review' ) }
+										</button>
+										<button
+											className="marketplace-reviews-list__review-actions-editable-button"
+											onClick={ () => deleteReview( review.id ) }
+										>
+											{ translate( 'Delete my review' ) }
+										</button>
+									</div>
+								) }
+							</div>
 						</div>
 					) ) }
 			</div>

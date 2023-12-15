@@ -14,7 +14,7 @@ const trafficPaidStats = [
 	'statsCountryViews',
 ];
 
-const featureFlags = [ 'stats/date-control' ];
+const featureFlags = [ 'stats/date-control', 'download-csv' ];
 
 /*
  * Check if a site has access to a paid stats feature in wpcom.

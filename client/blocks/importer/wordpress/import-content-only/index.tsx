@@ -77,6 +77,11 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
+	function onBackToStartClick() {
+		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
+		stepNavigator?.goToImportCapturePage?.();
+	}
+
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -101,7 +106,10 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	 */
 	function renderHooray() {
 		function onSiteViewClick() {
-			if ( isEnabled( 'onboarding/import-redirect-to-themes' ) ) {
+			if (
+				job?.importerFileType !== 'playground' &&
+				isEnabled( 'onboarding/import-redirect-to-themes' )
+			) {
 				stepNavigator?.navigate?.( 'designSetup' );
 			} else {
 				stepNavigator?.goToSiteViewPage?.();
@@ -112,6 +120,9 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				siteId={ siteItem?.ID as number }
 				siteSlug={ siteSlug }
 				job={ job as ImportJob }
+				buttonLabel={
+					job?.importerFileType === 'playground' ? translate( 'View site' ) : undefined
+				}
 				resetImport={ () => {
 					dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 				} }
@@ -173,7 +184,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					return (
 						<ErrorMessage
 							onStartBuilding={ stepNavigator?.goToIntentPage }
-							onBackToStart={ stepNavigator?.goToImportCapturePage }
+							onBackToStart={ onBackToStartClick }
 						/>
 					);
 				} else if ( checkProgress() ) {

@@ -1,11 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
-	PLAN_PREMIUM,
-	PLAN_ECOMMERCE,
+	WPCOM_PREMIUM_PLANS,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 	getPlan,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -20,40 +20,32 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
-const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
-	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
-		props;
-
-	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip && siteId;
-	const upsellUrl = `/plans/${ siteSlug }`;
-	let upsellBanner = null;
-	if ( displayUpsellBanner ) {
-		const commonProps = {
-			className: 'themes__showcase-banner',
-			event: 'calypso_themes_list_install_themes',
-			feature: FEATURE_UPLOAD_THEMES,
-			plan: PLAN_BUSINESS,
-			title:
-				/* translators: %(planName1)s and %(planName2)s the short-hand version of the Business and Commerce plan names */
-				translate( 'Upload your own themes with our %(planName1)s and %(planName2)s plans!', {
-					args: {
-						planName1: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-						planName2: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-					},
-				} ),
-			callToAction: translate( 'Upgrade now' ),
-			showIcon: true,
-		};
-
-		if ( isEnabled( 'themes/premium' ) ) {
-			if ( currentPlan.productSlug === PLAN_PREMIUM ) {
-				upsellBanner = <UpsellNudge { ...commonProps } />;
-			}
-		} else {
-			upsellBanner = <UpsellNudge { ...commonProps } />;
-		}
+const getUpgradeBannerForPlan = ( planSlug ) => {
+	if ( WPCOM_PREMIUM_PLANS.includes( planSlug ) ) {
+		return (
+			<UpsellNudge
+				className="themes__showcase-banner"
+				event="calypso_themes_list_install_themes"
+				feature={ FEATURE_UPLOAD_THEMES }
+				plan={ PLAN_BUSINESS }
+				title={
+					/* translators: %(planName1)s and %(planName2)s the short-hand version of the Business and Commerce plan names */
+					translate( 'Upload your own themes with our %(planName1)s and %(planName2)s plans!', {
+						args: {
+							planName1: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+							planName2: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+						},
+					} )
+				}
+				callToAction={ translate( 'Upgrade now' ) }
+				showIcon={ true }
+			/>
+		);
 	}
+};
 
+const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
+	const { currentPlan, currentThemeId, siteId, siteSlug } = props;
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
 	return (
@@ -65,8 +57,8 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 			<ThemeShowcase
 				{ ...props }
-				upsellUrl={ upsellUrl }
-				upsellBanner={ upsellBanner }
+				upsellUrl={ `/plans/${ siteSlug }` }
+				upsellBanner={ getUpgradeBannerForPlan( currentPlan?.productSlug ) }
 				siteId={ siteId }
 			/>
 		</Main>

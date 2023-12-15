@@ -94,6 +94,24 @@ $border-color: #eee;
 	}
 }
 
+.marketplace-reviews-list__review-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-top: 15px;
+	font-size: $font-body-small;
+
+	.marketplace-reviews-list__review-actions-editable {
+		display: flex;
+
+		.marketplace-reviews-list__review-actions-editable-button {
+			color: var(--studio-blue-50);
+			margin-right: 15px;
+			cursor: pointer;
+		}
+	}
+}
+
 .marketplace-reviews-list__no-reviews,
 .marketplace-reviews-list__customer-reviews {
 	margin-top: 10px;

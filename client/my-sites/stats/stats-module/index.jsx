@@ -12,8 +12,11 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Geochart from '../geochart';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
+import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
+import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';
@@ -38,6 +41,8 @@ class StatsModule extends Component {
 		mainItemLabel: PropTypes.string,
 		additionalColumns: PropTypes.object,
 		listItemClassName: PropTypes.string,
+		gateStats: PropTypes.bool,
+		gateDownloads: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -130,6 +135,8 @@ class StatsModule extends Component {
 			additionalColumns,
 			mainItemLabel,
 			listItemClassName,
+			gateStats,
+			gateDownloads,
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
@@ -150,7 +157,7 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<StatsListCard
-					className={ className }
+					className={ classNames( className, 'stats-module__card', path ) }
 					moduleType={ path }
 					data={ data }
 					useShortLabel={ useShortLabel }
@@ -180,16 +187,31 @@ class StatsModule extends Component {
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
+					overlay={
+						siteId &&
+						statType &&
+						gateStats && (
+							<StatsCardUpsell
+								className="stats-module__upsell"
+								siteId={ siteId }
+								statType={ statType }
+							/>
+						)
+					}
 				/>
 				{ isAllTime && (
 					<div className={ footerClass }>
-						<DownloadCsv
-							statType={ statType }
-							query={ query }
-							path={ path }
-							borderless
-							period={ period }
-						/>
+						{ gateDownloads ? (
+							<DownloadCsvUpsell statType={ statType } siteId={ siteId } borderless />
+						) : (
+							<DownloadCsv
+								statType={ statType }
+								query={ query }
+								path={ path }
+								borderless
+								period={ period }
+							/>
+						) }
 					</div>
 				) }
 			</>
@@ -201,11 +223,15 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const { statType, query } = ownProps;
+	const gateStats = shouldGateStats( state, siteId, statType );
+	const gateDownloads = shouldGateStats( state, siteId, 'download-csv' );
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
 		siteId,
 		siteSlug,
+		gateStats,
+		gateDownloads,
 	};
 } )( localize( StatsModule ) );

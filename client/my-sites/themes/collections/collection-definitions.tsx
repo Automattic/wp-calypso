@@ -32,4 +32,19 @@ export const THEME_COLLECTIONS = {
 		description: translate( 'Professional themes designed and developed by our partners.' ),
 		seeAllLink: '/themes/marketplace',
 	},
+	partner: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: 'partner',
+		},
+		title: translate( 'Partner Themes' ),
+		fullTitle: translate( 'Partner Themes' ),
+		collectionSlug: 'partner-themes',
+		description: translate( 'Professional themes designed and developed by our partners.' ),
+		seeAllLink: '/themes/partner',
+	},
 };
