@@ -121,6 +121,7 @@ const ReviewsRatingsStars = ( props: ReviewsRatingsStarsProps ) => {
 									onMouseEnter: onStarMouseEnter,
 									onMouseLeave: onStarMouseLeave,
 									onClick: onSaveRating,
+									className: 'reviews-ratings-stars__star',
 									isInteractive: true,
 									tabIndex: 0,
 									ariaLabel: ratingStarsScreenReaderText as string,

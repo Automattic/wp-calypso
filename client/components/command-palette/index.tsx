@@ -158,6 +158,14 @@ const CommandPalette = () => {
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
 	};
 
+	const commandListRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( commandListRef.current !== null ) {
+			commandListRef.current.scrollTop = 0;
+		}
+	}, [ selectedCommandName ] );
+
 	// Cmd+K shortcut
 	useEffect( () => {
 		const down = ( e: KeyboardEvent ) => {
@@ -239,7 +247,7 @@ const CommandPalette = () => {
 							placeholder={ placeHolderOverride }
 						/>
 					</div>
-					<Command.List>
+					<Command.List ref={ commandListRef }>
 						{ search && ! isLoading && (
 							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
 						) }

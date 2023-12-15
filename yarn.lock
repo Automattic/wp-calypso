@@ -622,6 +622,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/js-utils": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": "npm:^1.5.0"
     "@tanstack/react-query": "npm:^4.36.1"

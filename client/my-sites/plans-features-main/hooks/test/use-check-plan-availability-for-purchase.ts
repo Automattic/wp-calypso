@@ -1,16 +1,30 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react';
-import { useSelector } from 'react-redux';
-import usePlanUpgradeabilityCheck from '../use-plan-upgradeability-check';
-
+/**
+ * Default mock implementations
+ */
 jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn(),
 } ) );
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	Plans: {
+		useCurrentPlan: jest.fn(),
+	},
+} ) );
 
-describe( 'usePlanUpgradeabilityCheck', () => {
-	const businessPlanSlug = 'business-bundle';
+import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
+import { renderHook } from '@testing-library/react';
+import { useSelector } from 'react-redux';
+import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
+
+describe( 'useCheckPlanAvailabilityForPurchase', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		Plans.useCurrentPlan.mockImplementation( () => ( { [ PLAN_PREMIUM ]: {} } ) );
+	} );
 
 	describe( 'when a site is selected', () => {
 		const selectedSiteId = 123123;
@@ -21,12 +35,12 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 				is_free: true,
 				product_id: 1,
 				product_name_short: 'Free',
-				product_slug: 'free_plan',
+				product_slug: PLAN_FREE,
 				user_is_owner: false,
 			};
 
 			describe( 'and the plan being evaluated is a higher tier plan', () => {
-				it( 'marks the plan as upgradeable', () => {
+				it( 'marks the plan as available for purchase', () => {
 					useSelector.mockImplementation( ( selector ) =>
 						selector( {
 							ui: { selectedSiteId },
@@ -39,13 +53,13 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 										data: [
 											{
 												productName: 'WordPress.com Free',
-												productSlug: 'free_plan',
+												productSlug: PLAN_FREE,
 												currentPlan: true,
 												userIsOwner: true,
 											},
 											{
 												productName: 'WordPress.com Business',
-												productSlug: 'business-bundle',
+												productSlug: PLAN_BUSINESS,
 												currentPlan: false,
 												userIsOwner: false,
 											},
@@ -56,10 +70,10 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 						} )
 					);
 					const { result } = renderHook( () =>
-						usePlanUpgradeabilityCheck( { planSlugs: [ businessPlanSlug ] } )
+						useCheckPlanAvailabilityForPurchase( { planSlugs: [ PLAN_BUSINESS ] } )
 					);
 
-					expect( result.current ).toEqual( { [ businessPlanSlug ]: true } );
+					expect( result.current ).toEqual( { [ PLAN_BUSINESS ]: true } );
 				} );
 			} );
 		} );
@@ -67,7 +81,7 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 		describe( 'and the selected site is on a higher tier plan', () => {
 			const businessPlan = {
 				product_id: 1008,
-				product_slug: 'business-bundle',
+				product_slug: PLAN_BUSINESS,
 				product_name_short: 'Business',
 				expired: false,
 				user_is_owner: true,
@@ -75,7 +89,7 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 			};
 
 			describe( 'and the plan being evaluated is a lower tier plan', () => {
-				it( 'marks the plan as not upgradeable', () => {
+				it( 'marks the plan as not purchasable', () => {
 					useSelector.mockImplementation( ( selector ) =>
 						selector( {
 							ui: { selectedSiteId },
@@ -88,13 +102,13 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 										data: [
 											{
 												productName: 'WordPress.com Free',
-												productSlug: 'free_plan',
+												productSlug: PLAN_FREE,
 												currentPlan: false,
 												userIsOwner: false,
 											},
 											{
 												productName: 'WordPress.com Business',
-												productSlug: 'business-bundle',
+												productSlug: PLAN_BUSINESS,
 												currentPlan: true,
 												useIsOwner: true,
 											},
@@ -105,17 +119,17 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 						} )
 					);
 					const { result } = renderHook( () =>
-						usePlanUpgradeabilityCheck( { planSlugs: [ businessPlanSlug ] } )
+						useCheckPlanAvailabilityForPurchase( { planSlugs: [ PLAN_BUSINESS ] } )
 					);
 
-					expect( result.current ).toEqual( { [ businessPlanSlug ]: false } );
+					expect( result.current ).toEqual( { [ PLAN_BUSINESS ]: false } );
 				} );
 			} );
 		} );
 	} );
 
 	describe( 'when a site is not selected', () => {
-		it( 'assumes that the hook is being called from onboarding or signup and marks the plan as upgradeable', () => {
+		it( 'assumes that the hook is being called from onboarding or signup and marks the plan as purchasable', () => {
 			useSelector.mockImplementation( ( selector ) =>
 				selector( {
 					ui: { selectedSiteId: undefined },
@@ -123,10 +137,10 @@ describe( 'usePlanUpgradeabilityCheck', () => {
 				} )
 			);
 			const { result } = renderHook( () =>
-				usePlanUpgradeabilityCheck( { planSlugs: [ businessPlanSlug ] } )
+				useCheckPlanAvailabilityForPurchase( { planSlugs: [ PLAN_BUSINESS ] } )
 			);
 
-			expect( result.current ).toEqual( { [ businessPlanSlug ]: true } );
+			expect( result.current ).toEqual( { [ PLAN_BUSINESS ]: true } );
 		} );
 	} );
 } );

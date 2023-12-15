@@ -13,13 +13,9 @@ export default function ThemeTierCommunityBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
-	const legacyCanUseTheme = useSelector(
+	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
-
-	if ( legacyCanUseTheme ) {
-		return <span>{ translate( 'Included in my plan' ) }</span>;
-	}
 
 	const tooltipContent = (
 		<>
@@ -45,15 +41,28 @@ export default function ThemeTierCommunityBadge() {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker />
+			{ ! isThemeIncluded && (
+				<>
+					<ThemeTierBadgeTracker />
+					<PremiumBadge
+						className="theme-tier-badge__content"
+						focusOnShow={ false }
+						isClickable
+						labelText={ translate( 'Upgrade' ) }
+						tooltipClassName="theme-tier-badge-tooltip"
+						tooltipContent={ tooltipContent }
+						tooltipPosition="top"
+					/>
+				</>
+			) }
+
 			<PremiumBadge
-				className="theme-tier-badge__content"
+				className="theme-tier-badge__content is-third-party"
 				focusOnShow={ false }
-				isClickable
-				labelText={ translate( 'Upgrade' ) }
-				tooltipClassName="theme-tier-badge-tooltip"
-				tooltipContent={ tooltipContent }
-				tooltipPosition="top"
+				isClickable={ false }
+				labelText={ translate( 'Community' ) }
+				shouldHideIcon
+				shouldHideTooltip
 			/>
 		</>
 	);
