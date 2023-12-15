@@ -134,6 +134,7 @@ class RegisterDomainStep extends Component {
 		useProvidedProductsList: PropTypes.bool,
 		otherManagedSubdomains: PropTypes.array,
 		forceExactSuggestion: PropTypes.bool,
+		checkDomainAvailabilityPromises: PropTypes.array,
 
 		/**
 		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
@@ -1481,7 +1482,7 @@ class RegisterDomainStep extends Component {
 				this.props.onAddDomain( suggestion, position, previousState );
 			}
 
-			this.preCheckDomainAvailability( domain )
+			const promise = this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
@@ -1507,6 +1508,7 @@ class RegisterDomainStep extends Component {
 						this.props.onAddDomain( suggestion, position, previousState );
 					}
 				} );
+			this.props.checkDomainAvailabilityPromises.push( promise );
 		} else {
 			this.props.onAddDomain( suggestion, position, previousState );
 		}

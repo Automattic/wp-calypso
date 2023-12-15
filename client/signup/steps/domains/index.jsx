@@ -157,6 +157,8 @@ export class RenderDomainsStep extends Component {
 			temporaryCart: [],
 			replaceDomainFailedMessage: null,
 			domainAddingQueue: [],
+			domainsWithMappingError: [],
+			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
 		};
@@ -265,6 +267,7 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleDomainMappingError = async ( domain_name ) => {
+		this.state.domainsWithMappingError.push( domain_name );
 		const productToRemove = this.props.cart.products.find(
 			( product ) => product.meta === domain_name
 		);
@@ -644,48 +647,52 @@ export class RenderDomainsStep extends Component {
 
 			// Avoid too much API calls for Multi-domains flow
 			this.state.addDomainTimeout = setTimeout( async () => {
-				await this.props.shoppingCartManager.reloadFromServer();
+				// Only saves after all domain are checked.
+				Promise.all( this.state.checkDomainAvailabilityPromises ).then( async () => {
+					await this.props.shoppingCartManager.reloadFromServer();
 
-				// Add productsToAdd to productsInCart.
-				const productsInCart = [
-					...this.props.cart.products,
-					...productsToAdd,
-					...this.state.domainAddingQueue,
-				];
-
-				// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-				const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
-
-				await this.props.shoppingCartManager
-					.replaceProductsInCart( sortedProducts )
-					.then( () => {
-						this.setState( { replaceDomainFailedMessage: null } );
-						if ( this.state.domainAddingQueue?.length > 0 ) {
-							this.setState( ( state ) => ( {
-								domainAddingQueue: state.domainAddingQueue.filter(
-									( domainInQueue ) =>
-										! sortedProducts.find( ( item ) => item.meta === domainInQueue.meta )
-								),
-							} ) );
-						}
-						if ( this.state.temporaryCart?.length > 0 ) {
-							this.setState( ( state ) => ( {
-								temporaryCart: state.temporaryCart.filter(
-									( temporaryCart ) =>
-										! sortedProducts.find( ( item ) => item.meta === temporaryCart.meta )
-								),
-							} ) );
-						}
-					} )
-					.catch( () => {
-						this.handleReplaceProductsInCartError(
-							this.props.translate(
-								'Sorry, there was a problem adding that domain. Please try again later.'
-							)
-						);
+					// Add productsToAdd to productsInCart.
+					let productsInCart = [
+						...this.props.cart.products,
+						...productsToAdd,
+						...this.state.domainAddingQueue,
+					];
+					// Remove domains with domainsWithMappingError from productsInCart.
+					productsInCart = productsInCart.filter( ( product ) => {
+						return ! this.state.domainsWithMappingError.includes( product.meta );
 					} );
-
-				this.setState( { isMiniCartContinueButtonBusy: false } );
+					// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
+					const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
+					this.props.shoppingCartManager
+						.replaceProductsInCart( sortedProducts )
+						.then( () => {
+							this.setState( { replaceDomainFailedMessage: null } );
+							if ( this.state.domainAddingQueue?.length > 0 ) {
+								this.setState( ( state ) => ( {
+									domainAddingQueue: state.domainAddingQueue.filter(
+										( domainInQueue ) =>
+											! sortedProducts.find( ( item ) => item.meta === domainInQueue.meta )
+									),
+								} ) );
+							}
+							if ( this.state.temporaryCart?.length > 0 ) {
+								this.setState( ( state ) => ( {
+									temporaryCart: state.temporaryCart.filter(
+										( temporaryCart ) =>
+											! sortedProducts.find( ( item ) => item.meta === temporaryCart.meta )
+									),
+								} ) );
+							}
+						} )
+						.catch( () => {
+							this.handleReplaceProductsInCartError(
+								this.props.translate(
+									'Sorry, there was a problem adding that domain. Please try again later.'
+								)
+							);
+						} );
+					this.setState( { isMiniCartContinueButtonBusy: false } );
+				} );
 			}, 500 );
 		} else {
 			await this.props.shoppingCartManager.addProductsToCart( registration );
@@ -1016,6 +1023,7 @@ export class RenderDomainsStep extends Component {
 							await this.handleAddDomain( suggestion, position, previousState );
 						} }
 						onMappingError={ this.handleDomainMappingError }
+						checkDomainAvailabilityPromises={ this.state.checkDomainAvailabilityPromises }
 						isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 						isCartPendingUpdateDomain={ this.state.isCartPendingUpdateDomain }
 						products={ this.props.productsList }
