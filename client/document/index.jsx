@@ -147,7 +147,6 @@ class Document extends Component {
 						[ 'is-section-' + sectionName ]: sectionName,
 						'is-white-signup': sectionName === 'signup',
 						'is-mobile-app-view': app?.isWpMobileApp,
-						'is-classic-dark': true,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
