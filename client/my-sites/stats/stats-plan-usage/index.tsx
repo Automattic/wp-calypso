@@ -1,5 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import page from '@automattic/calypso-router';
 import { formattedNumber } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -14,7 +12,6 @@ interface PlanUsageProps {
 	daysToReset?: number;
 	overLimitMonths?: number | null;
 	upgradeLink?: string;
-	upgradeEvent?: string;
 }
 interface StatsPlanUsageProps {
 	siteId: number;
@@ -34,7 +31,6 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	daysToReset = 30,
 	overLimitMonths = 0,
 	upgradeLink,
-	upgradeEvent,
 } ) => {
 	const translate = useTranslate();
 
@@ -46,20 +42,6 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 
 	// 0, 1, 2, or greater than 2
 	let overLimitMonthsText = '';
-
-	const gotoPurchase = () => {
-		if ( upgradeLink ) {
-			if ( ! upgradeEvent ) {
-				page( upgradeLink );
-			}
-
-			// if upgradeEvent is undefined page() will redirect
-			recordTracksEvent( upgradeEvent as string );
-
-			// Allow some time for the event to be recorded before redirecting.
-			setTimeout( () => page( upgradeLink ), 250 );
-		}
-	};
 
 	if ( overLimitMonths && overLimitMonths === 1 ) {
 		overLimitMonthsText = translate(
@@ -84,17 +66,10 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	}
 
 	const upgradeNote = translate(
-		'{{span}}Do you want to increase your monthly views limit?{{/span}} {{buttonLink}}Upgrade now{{/buttonLink}}',
+		'Do you want to increase your monthly views limit? {{link}}Upgrade now{{/link}}',
 		{
 			components: {
-				span: <span />,
-				buttonLink: (
-					<button
-						type="button"
-						className="plan-udage-note__action-button"
-						onClick={ gotoPurchase }
-					/>
-				),
+				link: <a href={ upgradeLink } />,
 			},
 		}
 	);
@@ -125,8 +100,9 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 				</div>
 			</div>
 			<div className="plan-usage-note">
-				<span>{ overLimitMonthsText }</span>
-				{ upgradeNote }
+				<span>
+					{ overLimitMonthsText } { upgradeNote }
+				</span>
 			</div>
 		</div>
 	);
@@ -134,9 +110,6 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 
 const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId, isOdysseyStats } ) => {
 	const upgradeLink = getStatsPurchaseURL( siteId, isOdysseyStats );
-	const upgradeEvent = `${
-		isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
-	}_stats_tier_usage_bar_upgrade_button_clicked`;
 
 	const { data } = usePlanUsageQuery( siteId );
 
@@ -154,7 +127,6 @@ const StatsPlanUsage: React.FC< StatsPlanUsageProps > = ( { siteId, isOdysseySta
 				daysToReset={ data?.current_usage?.days_to_reset }
 				overLimitMonths={ data?.over_limit_months }
 				upgradeLink={ upgradeLink }
-				upgradeEvent={ upgradeEvent }
 			/>
 		</div>
 	);
