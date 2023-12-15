@@ -1508,7 +1508,7 @@ class RegisterDomainStep extends Component {
 						this.props.onAddDomain( suggestion, position, previousState );
 					}
 				} );
-			this.props.checkDomainAvailabilityPromises.push( promise );
+			this.props.checkDomainAvailabilityPromises?.push( promise );
 		} else {
 			this.props.onAddDomain( suggestion, position, previousState );
 		}
