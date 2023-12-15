@@ -7,7 +7,7 @@ import {
 import { translate } from 'i18n-calypso';
 
 /**
- * @typedef {Object} THEME_TIER
+ * @typedef {Object} THEME_TIERS
  * @property {Object} [tier] A theme tier mapped to UI-related properties.
  * @description This map has to be kept consistent with the theme_tier taxonomy.
  */
