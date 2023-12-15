@@ -271,12 +271,12 @@
 
 .badge.launchpad__domain-upgrade-badge {
 	margin-left: auto;
-	background-color: var(--studio-blue-5);
-	color: var(--studio-blue-80);
+	background-color: var(--color-accent-5);
+	color: var(--color-accent-80);
 	font-size: $font-body-extra-small;
 
 	&:hover {
-		background: var(--studio-blue-10);
+		background: var(--color-accent-10);
 	}
 
 }

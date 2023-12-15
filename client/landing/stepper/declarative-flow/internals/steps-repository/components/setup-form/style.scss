@@ -92,11 +92,15 @@
 		&.disabled:focus,
 		&.disabled:hover,
 		&:disabled {
+			background: var(--color-accent-20);
 			cursor: default;
+			color: #fff;
 		}
 		&:focus {
 			box-shadow: none;
+			outline: 2px solid var(--color-accent-60);
 			outline-offset: 1px;
+			background: var(--color-accent-60);
 		}
 	}
 }

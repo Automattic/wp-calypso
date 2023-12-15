@@ -297,29 +297,29 @@ button {
 					outline: none;
 
 					svg {
-						fill: var(--studio-blue-50);
+						fill: var(--color-accent-50);
 					}
 
 					span {
 						font-size: $font-body-extra-small;
 
 						&.add {
-							color: var(--studio-blue-50);
+							color: var(--color-accent-50);
 						}
 
 						&.replace {
-							color: var(--studio-blue-50);
+							color: var(--color-accent-50);
 						}
 					}
 				}
 				&:focus {
-					background-color: var(--studio-blue-50);
+					background-color: var(--color-accent-50);
 					box-shadow: none;
 					svg {
 						fill: #fff;
 					}
 					span {
-						color: var(--studio-blue-50);
+						color: var(--color-accent-50);
 					}
 				}
 			}

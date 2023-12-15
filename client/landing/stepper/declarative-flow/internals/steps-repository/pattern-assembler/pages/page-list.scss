@@ -16,14 +16,14 @@
 
 	&:hover {
 		&__label {
-			color: var(--studio-blue-50);
+			color: var(--color-accent-50);
 		}
 	}
 
 
 	&--selected &__icon {
-		background-color: var(--studio-blue-50);
-		border-color: var(--studio-blue-50);
+		background-color: var(--color-accent-50);
+		border-color: var(--color-accent-50);
 	}
 
 	&--disabled {
