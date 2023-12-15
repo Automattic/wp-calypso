@@ -85,7 +85,8 @@ export default function LicenseMultiProductCard( props: Props ) {
 				onSelect();
 			}
 		}
-	}, [ onSelect, product.slug, suggestedProduct ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ product.slug, suggestedProduct ] );
 
 	const onShowLightbox = useCallback(
 		( e: React.MouseEvent< HTMLElement > ) => {
