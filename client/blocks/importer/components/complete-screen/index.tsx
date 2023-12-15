@@ -10,11 +10,12 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	resetImport: ( siteId: number, importerId: string ) => void;
+	buttonLabel?: string;
 	onSiteViewClick?: () => void;
 }
 const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { job, siteId, resetImport, onSiteViewClick } = props;
+	const { job, siteId, buttonLabel, resetImport, onSiteViewClick } = props;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_start_import_success' );
@@ -29,6 +30,7 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 					siteId={ siteId }
 					job={ job as ImportJob }
 					resetImport={ resetImport }
+					label={ buttonLabel }
 					onSiteViewClick={ onSiteViewClick }
 				/>
 			</div>
