@@ -34,7 +34,8 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize();
+	const { selectedSize, setSelectedSize, availableSizes, fetchingAvailableSizes } =
+		useProductBundleSize();
 
 	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
 	// track if the user purchases a different set of products.
@@ -124,12 +125,14 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 	const showBundle = ! selectedSite;
 
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_agency_issue_license_visit', {
-				bundle_size: selectedSize,
-			} )
-		);
-	}, [ dispatch, selectedSize ] );
+		if ( ! fetchingAvailableSizes ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_agency_issue_license_visit', {
+					bundle_size: selectedSize,
+				} )
+			);
+		}
+	}, [ dispatch, fetchingAvailableSizes, selectedSize ] );
 
 	return (
 		<>
