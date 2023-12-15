@@ -426,20 +426,24 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
+		const themeCollection = config.isEnabled( 'themes/tiers' )
+			? THEME_COLLECTIONS.partner
+			: THEME_COLLECTIONS.marketplace;
+
 		return (
 			<div className="theme-showcase__all-themes">
 				<ThemesSelection { ...themesSelectionProps }>
 					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
-								{ ...THEME_COLLECTIONS.marketplace }
+								{ ...themeCollection }
 								getOptions={ this.getThemeOptions }
 								getScreenshotUrl={ this.getScreenshotUrl }
 								getActionLabel={ this.getActionLabel }
 								onSeeAll={ () =>
 									this.onCollectionSeeAll( {
-										tier: THEME_COLLECTIONS.marketplace.query.tier,
-										filter: THEME_COLLECTIONS.marketplace.query.filter,
+										tier: themeCollection.query.tier,
+										filter: themeCollection.query.filter,
 									} )
 								}
 							/>
