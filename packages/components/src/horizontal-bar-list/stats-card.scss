@@ -115,6 +115,7 @@
 	}
 
 	.stats-card__content {
+		overflow: hidden;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
