@@ -35,13 +35,8 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 			return Object.fromEntries(
 				Object.keys( data ).map( ( productId ) => {
 					const plan = data[ Number( productId ) ];
-					const originalPriceMonthly =
-						calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price_integer ) ?? null;
 					const discountedPriceFull = plan.raw_discount_integer
 						? plan.raw_price_integer + plan.raw_discount_integer
-						: null;
-					const discountedPriceMonthly = discountedPriceFull
-						? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
 						: null;
 
 					return [
@@ -57,11 +52,15 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 								currencyCode: plan.currency_code,
 								introOffer: unpackIntroOffer( plan ),
 								originalPrice: {
-									monthly: originalPriceMonthly,
+									monthly:
+										calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price_integer ) ??
+										null,
 									full: plan.raw_price_integer,
 								},
 								discountedPrice: {
-									monthly: discountedPriceMonthly,
+									monthly: discountedPriceFull
+										? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
+										: null,
 									full: discountedPriceFull,
 								},
 							},
