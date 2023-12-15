@@ -333,13 +333,13 @@ export class Login extends Component {
 	renderSignUpLink( signupLinkText ) {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
+			currentQuery,
 			currentRoute,
 			isP2Login,
 			locale,
 			oauth2Client,
 			pathname,
 			query,
-			currentQuery,
 			translate,
 			usernameOrEmail,
 		} = this.props;
