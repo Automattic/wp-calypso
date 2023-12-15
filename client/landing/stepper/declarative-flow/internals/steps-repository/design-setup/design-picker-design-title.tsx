@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge, BundledBadge } from '@automattic/components';
 import { useSelect } from '@wordpress/data';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { SiteSelect } from '@automattic/data-stores';
@@ -30,7 +30,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 		)
 	);
 
-	const bundleSettings = useBundleSettings( selectedDesign.slug );
+	const bundleSettings = useBundleSettingsByTheme( selectedDesign.slug );
 
 	let badge: React.ReactNode = null;
 	if ( selectedDesign.software_sets && selectedDesign.software_sets.length > 0 ) {
