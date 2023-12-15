@@ -96,19 +96,11 @@ class DomainsMiniCart extends Component {
 	};
 
 	domainCount = () => {
-		let result = this.props.domainsInCart.length + ( this.props.wpcomSubdomainSelected ? 1 : 0 );
-
-		// Only deduct a removal domain if it's on removal queue and is at the temporarycart
-		// This avoids the case where a domain is removed from the temporarycart but is still on the removal queue
-		if ( this.props.temporaryCart?.length > 0 && this.props.domainRemovalQueue?.length > 0 ) {
-			this.props.domainRemovalQueue.forEach( ( item ) => {
-				if ( this.props.temporaryCart.some( ( domain ) => domain.meta === item.meta ) ) {
-					result--;
-				}
-			} );
-		}
-
-		return result;
+		return (
+			this.props.domainsInCart.length +
+			( this.props.wpcomSubdomainSelected ? 1 : 0 ) -
+			this.props.domainRemovalQueue.length
+		);
 	};
 
 	freeDomain = () => {
@@ -156,7 +148,7 @@ class DomainsMiniCart extends Component {
 					primary
 					className="domains__domain-cart-continue"
 					onClick={ this.props.goToNext }
-					busy={ this.props.isMiniCartContinueButtonBusy }
+					busy={ this.props.isGoingToNextStep }
 				>
 					{ translate( 'Continue' ) }
 				</Button>
@@ -241,7 +233,7 @@ class DomainsMiniCart extends Component {
 					primary
 					className="domains__domain-cart-continue"
 					onClick={ this.props.goToNext }
-					busy={ this.props.isMiniCartContinueButtonBusy }
+					busy={ this.props.isGoingToNextStep }
 				>
 					{ translate( 'Continue' ) }
 				</Button>

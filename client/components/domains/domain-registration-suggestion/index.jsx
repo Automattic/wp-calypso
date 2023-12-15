@@ -18,6 +18,7 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
+	getDomainRegistrations,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
@@ -105,7 +106,7 @@ class DomainRegistrationSuggestion extends Component {
 		}
 	}
 
-	onButtonClick = ( previousState ) => {
+	onButtonClick = () => {
 		const { suggestion, railcarId, uiPosition } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
@@ -119,7 +120,7 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 		}
 
-		this.props.onButtonClick( suggestion, uiPosition, previousState );
+		this.props.onButtonClick( suggestion, uiPosition );
 	};
 
 	isUnavailableDomain = ( domain ) => {
@@ -140,24 +141,13 @@ class DomainRegistrationSuggestion extends Component {
 			isCartPendingUpdateDomain,
 			flowName,
 			temporaryCart,
-			domainRemovalQueue,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 
-		let isAdded =
+		const isAdded =
 			suggestionSelected ||
 			hasDomainInCart( cart, domain ) ||
 			( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) );
-
-		// If we're removing this domain, let's instantly show that for the user
-		if (
-			domainRemovalQueue?.length > 0 &&
-			domainRemovalQueue.some( ( item ) => item.meta === domain ) &&
-			! ( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) )
-		) {
-			isAdded = false;
-		}
-
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 
@@ -174,7 +164,7 @@ class DomainRegistrationSuggestion extends Component {
 
 				buttonContent = translate( '{{checkmark/}} Selected', {
 					context: 'Domain is already added to shopping cart',
-					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
+					components: { checkmark: <Gridicon icon="checkmark" /> },
 				} );
 			}
 		} else {
@@ -211,14 +201,13 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-			buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
+		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
+			buttonStyles = { ...buttonStyles, primary: false };
 		}
 
 		return {
 			buttonContent,
 			buttonStyles,
-			isAdded,
 		};
 	}
 

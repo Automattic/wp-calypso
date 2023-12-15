@@ -23,7 +23,6 @@ export class FeaturedDomainSuggestions extends Component {
 		products: PropTypes.object,
 		isCartPendingUpdateDomain: PropTypes.object,
 		temporaryCart: PropTypes.array,
-		domainRemovalQueue: PropTypes.array,
 	};
 
 	getChildProps() {
@@ -40,7 +39,6 @@ export class FeaturedDomainSuggestions extends Component {
 			'unavailableDomains',
 			'domainAndPlanUpsellFlow',
 			'temporaryCart',
-			'domainRemovalQueue',
 		];
 		return pick( this.props, childKeys );
 	}

@@ -134,7 +134,6 @@ class RegisterDomainStep extends Component {
 		useProvidedProductsList: PropTypes.bool,
 		otherManagedSubdomains: PropTypes.array,
 		forceExactSuggestion: PropTypes.bool,
-		checkDomainAvailabilityPromises: PropTypes.array,
 
 		/**
 		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
@@ -261,7 +260,6 @@ class RegisterDomainStep extends Component {
 			trademarkClaimsNoticeInfo: null,
 			selectedSuggestion: null,
 			isInitialQueryActive: !! props.suggestion,
-			checkAvailabilityTimeout: null,
 		};
 	}
 
@@ -1459,7 +1457,7 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = async ( suggestion, position, previousState ) => {
+	onAddDomain = async ( suggestion, position ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 
@@ -1479,10 +1477,10 @@ class RegisterDomainStep extends Component {
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			// For Multi-domain flows, add the domain first, than check availability
 			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-				this.props.onAddDomain( suggestion, position, previousState );
+				await this.props.onAddDomain( suggestion, position );
 			}
 
-			const promise = this.preCheckDomainAvailability( domain )
+			this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
@@ -1505,12 +1503,11 @@ class RegisterDomainStep extends Component {
 						} );
 						this.props.onMappingError( domain, status );
 					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-						this.props.onAddDomain( suggestion, position, previousState );
+						this.props.onAddDomain( suggestion, position );
 					}
 				} );
-			this.props.checkDomainAvailabilityPromises?.push( promise );
 		} else {
-			this.props.onAddDomain( suggestion, position, previousState );
+			this.props.onAddDomain( suggestion, position );
 		}
 	};
 
@@ -1597,7 +1594,6 @@ class RegisterDomainStep extends Component {
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
-				domainRemovalQueue={ this.props.domainRemovalQueue }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&
