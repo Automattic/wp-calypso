@@ -151,7 +151,7 @@ interface Props {
 	hideEnterprisePlan?: boolean;
 	isInSignup?: boolean;
 	useCheckPlanAvailabilityForPurchase?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-		[ key: string ]: boolean;
+		[ planSlug in PlanSlug ]?: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
 
