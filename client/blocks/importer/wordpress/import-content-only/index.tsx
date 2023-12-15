@@ -7,7 +7,7 @@ import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/bl
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import { useDispatch } from 'calypso/state';
-import { startImport, resetImport } from 'calypso/state/imports/actions';
+import { startImport, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import CompleteScreen from '../../components/complete-screen';
@@ -61,6 +61,14 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
 			dispatch( importSite( prepareImportParams() ) );
 		}
+		// If the file type is a playground and the upload was successful, start the import process
+		else if (
+			isSiteCompatible &&
+			job?.importerState === appStates.UPLOAD_SUCCESS &&
+			job?.importerFileType === 'playground'
+		) {
+			dispatch( startImporting( job ) );
+		}
 	}
 
 	function prepareImportParams(): ImportJobParams {
@@ -83,7 +91,12 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function checkProgress() {
-		return job?.importerState === appStates.IMPORTING;
+		return (
+			( isSiteCompatible &&
+				job?.importerState === appStates.UPLOAD_SUCCESS &&
+				job?.importerFileType === 'playground' ) ||
+			job?.importerState === appStates.IMPORTING
+		);
 	}
 
 	function checkIsSuccess() {
@@ -178,7 +191,9 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 			} ) }
 		>
 			{ ( () => {
-				if ( checkIsSuccess() ) {
+				if ( checkProgress() ) {
+					return renderProgress();
+				} else if ( checkIsSuccess() ) {
 					return renderHooray();
 				} else if ( checkIsFailed() ) {
 					return (
@@ -187,8 +202,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 							onBackToStart={ onBackToStartClick }
 						/>
 					);
-				} else if ( checkProgress() ) {
-					return renderProgress();
 				} else if ( checkUpgradePlan() ) {
 					return renderUpgradePlan();
 				}
