@@ -27,7 +27,7 @@ function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
 	return tiers;
 }
 
-function useTranslatedStrings( defaultAveragePayment: number ) {
+function useTranslatedStrings( defaultAveragePayment: number, currencyCode: string ) {
 	const translate = useTranslate();
 	const limits = translate( 'Your monthly contribution', {
 		comment: 'Heading for Stats PWYW Upgrade slider. The monthly payment amount.',
@@ -38,7 +38,7 @@ function useTranslatedStrings( defaultAveragePayment: number ) {
 	const strategy = translate( 'The average person pays %(value)s per month, billed yearly', {
 		comment: 'Stats PWYW Upgrade slider message. The billing strategy.',
 		args: {
-			value: formatCurrency( defaultAveragePayment, '', { stripZeros: true } ),
+			value: formatCurrency( defaultAveragePayment, currencyCode, { stripZeros: true } ),
 		},
 	} ) as string;
 
@@ -108,7 +108,7 @@ function StatsPWYWUpgradeSlider( {
 	// 4. Nofiying the parent component when the slider changes.
 
 	const defaultAveragePayment = defaultStartingValue * settings.sliderStepPrice;
-	const uiStrings = useTranslatedStrings( defaultAveragePayment );
+	const uiStrings = useTranslatedStrings( defaultAveragePayment, currencyCode );
 
 	let steps = getPWYWPlanTiers( 0, 50 );
 	if ( settings !== undefined ) {
