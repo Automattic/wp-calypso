@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
 import { isAssemblerSupported } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -46,6 +45,7 @@ import {
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
 import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
+import PatternAssemblerButton from './pattern-assembler-button';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
@@ -604,6 +604,7 @@ class ThemeShowcase extends Component {
 					vertical={ this.props.vertical }
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
+					onPatternAssemblerButtonClick={ this.onDesignYourOwnClick }
 				/>
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
@@ -657,13 +658,8 @@ class ThemeShowcase extends Component {
 										}
 									/>
 								) }
-								{ tabFilters && (
-									<Button
-										className="themes__pattern-assembler-top-button"
-										onClick={ this.onDesignYourOwnClick }
-									>
-										{ translate( 'Design your own' ) }
-									</Button>
+								{ ! isLoggedIn && tabFilters && (
+									<PatternAssemblerButton onClick={ this.onDesignYourOwnClick } />
 								) }
 							</div>
 						</div>

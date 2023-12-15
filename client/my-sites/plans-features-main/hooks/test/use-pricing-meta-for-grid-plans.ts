@@ -44,12 +44,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		Plans.useSitePlans.mockImplementation( () => ( {
-			isFetching: false,
+			isLoading: false,
 			data: null,
 		} ) );
 		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.usePlans.mockImplementation( () => ( {
-			isFetching: false,
+			isLoading: false,
 			data: {
 				[ PLAN_PREMIUM ]: {
 					billPeriod: 365,

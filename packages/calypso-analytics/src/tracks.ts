@@ -7,6 +7,7 @@ import { getPageViewParams } from './page-view-params';
 import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
 import getDoNotTrack from './utils/do-not-track';
+import getTrackingPrefs from './utils/get-tracking-prefs';
 
 declare global {
 	interface Window {
@@ -186,6 +187,16 @@ export function signalUserFromAnotherProduct( userId: string, userIdType: string
 
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
+
+	const trackingPrefs = getTrackingPrefs();
+	if ( ! trackingPrefs?.buckets.analytics ) {
+		debug(
+			'Analytics has been disabled - Ignoring event "%s" with actual props %o',
+			eventName,
+			eventProperties
+		);
+		return;
+	}
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		if (

@@ -23,6 +23,15 @@ const prefsDisallowAll: TrackingPrefs = {
 	},
 };
 
+const prefsAllowAnalyticsGdpr: TrackingPrefs = {
+	ok: false, // false is important so the cookie banner is shown
+	buckets: {
+		essential: true,
+		analytics: true, // in GDPR zone, analytics is opt-out
+		advertising: false, // in GDPR zone, advertising is opt-in
+	},
+};
+
 const prefsAllowAll: TrackingPrefs = {
 	ok: true,
 	buckets: {
@@ -60,12 +69,14 @@ export const parseTrackingPrefs = (
 /**
  * Returns consents for every Cookie Jar bucket based on privacy driven approach
  *
- * WARNING: this function only works on the client side.
+ * WARNING: this function is meant to work on the client side. If not called
+ *          from the client side then it defaults to allow all
  * @returns Whether we may track the current user
  */
 export default function getTrackingPrefs(): TrackingPrefs {
 	if ( typeof document === 'undefined' ) {
-		throw new Error( 'getTrackingPrefs() can only be called on the client side' );
+		//throw new Error( 'getTrackingPrefs() can only be called on the client side' );
+		return prefsAllowAll;
 	}
 
 	const cookies = cookie.parse( document.cookie );
@@ -76,8 +87,8 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		return prefsAllowAll;
 	}
 
-	// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
-	const defaultPrefs = isCountryGdpr ? prefsDisallowAll : prefsAllowAll;
+	// default tracking mechanism for GDPR is opt-in for marketing and opt-out for anaytics, for CCPA is opt-out:
+	const defaultPrefs = isCountryGdpr ? prefsAllowAnalyticsGdpr : prefsAllowAll;
 
 	const { ok, buckets } = parseTrackingPrefs(
 		cookies[ TRACKING_PREFS_COOKIE_V2 ],

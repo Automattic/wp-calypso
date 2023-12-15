@@ -28,6 +28,10 @@ export function getFinalImporterUrl(
 			importerUrl = addQueryArgs( importerUrl, {
 				option: WPImportOption.CONTENT_ONLY,
 			} );
+		} else if ( platform === 'wix' && fromSite ) {
+			importerUrl = addQueryArgs( importerUrl, {
+				run: true,
+			} );
 		}
 	} else {
 		importerUrl = getWpOrgImporterUrl( targetSlug, platform );

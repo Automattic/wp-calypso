@@ -45,19 +45,12 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Effects
 	 */
-	useEffect( handleImporterReadiness, [] );
 	useEffect( handleRunFlagChange, [ run ] );
 	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function handleImporterReadiness() {
-		if ( ! checkIsImporterReady() ) {
-			stepNavigator?.goToImportCapturePage?.();
-		}
-	}
-
 	function handleJobStateTransition() {
 		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
@@ -95,10 +88,6 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 			supportedContent: [],
 			unsupportedContent: [],
 		};
-	}
-
-	function checkIsImporterReady() {
-		return job || run;
 	}
 
 	function checkProgress() {

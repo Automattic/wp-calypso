@@ -97,9 +97,7 @@ export class FormPatternsFlow implements BlockFlow {
 		const editorParent = await context.editorPage.getEditorParent();
 		await editorParent
 			.getByRole( 'dialog', { name: 'Choose a pattern' } )
-			// The a11y is a little bit messed up here -- the right label isn't directly assocaited with the option element.
-			.locator( `[aria-label="${ this.configurationData.patternName }"]` )
-			.getByRole( 'option' )
+			.getByRole( 'option', { name: this.configurationData.patternName } )
 			// These patterns can load in quite slowly, messing with animation wait checks, so let's give extra time.
 			.click( { timeout: 30 * 1000 } );
 	}
