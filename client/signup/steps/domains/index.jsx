@@ -1047,6 +1047,7 @@ export class RenderDomainsStep extends Component {
 						includeWordPressDotCom={
 							experimentAssignment?.variationName === 'treatment' ? false : includeWordPressDotCom
 						}
+						includeOwnedDomainInSuggestions={ ! this.props.isDomainOnly }
 						includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 						isSignupStep
 						isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
