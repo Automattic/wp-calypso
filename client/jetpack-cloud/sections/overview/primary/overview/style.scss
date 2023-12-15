@@ -1,13 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.content-sidebar {
-	.overview {
-		width: 100%;
-	}
-	.overview__content-block {
-		margin: 0 0 16px 0;
-		max-width: 100%;
-		background-color: var(--studio-white);
+.overview > .card {
+	margin-bottom: 32px;
+	@include break-xlarge {
+		margin-bottom: 16px;
 	}
 }
