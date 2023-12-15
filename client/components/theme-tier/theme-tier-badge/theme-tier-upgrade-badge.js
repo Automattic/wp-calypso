@@ -1,5 +1,6 @@
 import { getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
+import { usePlans } from '@automattic/data-stores/src/plans';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -19,8 +20,11 @@ export default function ThemeTierUpgradeBadge() {
 
 	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
 	const mappedPlan = getPlan( tierMinimumUpsellPlan );
-	const planName = mappedPlan?.getTitle();
 	const planPathSlug = mappedPlan?.getPathSlug();
+
+	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
+	const plans = usePlans();
+	const planName = plans?.data?.[ THEME_TIERS[ mappedPlan ] ]?.productNameShort;
 
 	const tooltipContent = (
 		<>
