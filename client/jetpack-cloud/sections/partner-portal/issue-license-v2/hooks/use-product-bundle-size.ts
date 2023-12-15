@@ -11,7 +11,7 @@ const parseLocationHash = ( supportedBundleSizes: number[], value: string ) => {
 	return supportedBundleSizes.find( ( size ) => value === `${ size }` ) || 1;
 };
 
-const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
+export const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
 	if ( ! products ) {
 		return [ 1 ];
 	}
@@ -63,6 +63,7 @@ export function useProductBundleSize() {
 			selectedSize: selectedSize ?? 1,
 			setSelectedSize: setSelectedSizeAndLocationHash,
 			availableSizes: supportedBundleSizes,
+			fetchingAvailableSizes: ! selectedSize, // We know we are still fetching if our selected size is undefined.
 		};
 	}, [ selectedSize, setSelectedSizeAndLocationHash, supportedBundleSizes ] );
 }

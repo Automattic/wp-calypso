@@ -7,7 +7,7 @@ const getDiscountText = ( discountPercentage: number, translate: LocalizeProps[ 
 	if ( ! discountPercentage ) {
 		return '';
 	}
-	return translate( 'upto %(discount)d% off', {
+	return translate( 'up to %(discount)d% off', {
 		args: { discount: discountPercentage },
 		comment: 'Discount percentage',
 	} );
