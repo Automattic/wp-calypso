@@ -1,5 +1,6 @@
-import './style.scss';
 import React from 'react';
+
+import './style.scss';
 
 type Props = {
 	mainContent: React.ReactNode;
@@ -8,9 +9,9 @@ type Props = {
 
 const ContentSidebar = ( { mainContent, rightSidebar }: Props ) => {
 	return (
-		<div className="jetpack-cloud-content-sidebar">
-			<div className="main-content">{ mainContent }</div>
-			<aside className="right-sidebar">{ rightSidebar }</aside>
+		<div className="content-sidebar">
+			<div className="content-sidebar__main-content">{ mainContent }</div>
+			<aside className="content-sidebar__right-sidebar">{ rightSidebar }</aside>
 		</div>
 	);
 };

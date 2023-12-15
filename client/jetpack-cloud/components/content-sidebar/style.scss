@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.jetpack-cloud-content-sidebar {
+.content-sidebar {
 
 	margin: 40px auto auto;
 
@@ -14,12 +14,5 @@
 		column-gap: 32px;
 		min-height: calc(100vh - 123px);
 		max-width: 1500px;
-	}
-
-	.right-sidebar {
-
-		> *:not(:first-child) {
-			margin-top: 40px;
-		}
 	}
 }
