@@ -15,6 +15,7 @@ interface CommandMenuGroupProps
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	setFooterMessage?: ( message: string ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -59,12 +60,13 @@ const SubLabel = styled( Label )( {
 	},
 } );
 
-const StyledFilterNotice = styled.div( {
+const StyledCommandsFooter = styled.div( {
 	fontSize: '0.75rem',
-	paddingTop: '.25em',
-	paddingLeft: '.75em',
-	paddingRight: '.75em',
-	paddingBottom: '1em',
+	paddingTop: '12px',
+	paddingLeft: '16px',
+	paddingRight: '16px',
+	paddingBottom: '12px',
+	borderTop: '1px solid var(--studio-gray-5)',
 	color: 'var(--studio-gray-50)',
 } );
 
@@ -75,11 +77,16 @@ export function CommandMenuGroup( {
 	setPlaceholderOverride,
 	selectedCommandName,
 	setSelectedCommandName,
+	setFooterMessage,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 	} );
+
+	useEffect( () => {
+		setFooterMessage?.( filterNotice ?? '' );
+	}, [ setFooterMessage, filterNotice ] );
 
 	if ( ! commands.length ) {
 		return null;
@@ -87,7 +94,6 @@ export function CommandMenuGroup( {
 
 	return (
 		<Command.Group about="WPCOM">
-			{ filterNotice && <StyledFilterNotice>{ filterNotice }</StyledFilterNotice> }
 			{ commands.map( ( command ) => {
 				const itemValue = command.searchLabel ?? command.label;
 				return (
@@ -162,6 +168,7 @@ const CommandPalette = () => {
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
+	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const { close, toggle } = {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
@@ -263,9 +270,11 @@ const CommandPalette = () => {
 							setPlaceholderOverride={ setPlaceholderOverride }
 							selectedCommandName={ selectedCommandName }
 							setSelectedCommandName={ setSelectedCommandName }
+							setFooterMessage={ setFooterMessage }
 						/>
 					</Command.List>
 				</Command>
+				{ footerMessage && <StyledCommandsFooter>{ footerMessage }</StyledCommandsFooter> }
 			</StyledCommandsMenuContainer>
 		</Modal>
 	);
