@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
@@ -25,6 +25,8 @@ import type {
 
 import './style.scss';
 
+type RenderState = 'idle' | 'progress' | 'upgrade-plan' | 'error' | 'success';
+
 interface Props {
 	job?: ImportJob;
 	importer: Importer;
@@ -41,18 +43,28 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
+	const [ renderState, setRenderState ] = useState< RenderState >( 'idle' );
 	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
 
 	/**
-	 ↓ Effects
+	 ↓ Callbacks
 	 */
-	useEffect( handleJobStateTransition, [ job ] );
+	const prepareImportParams = useCallback( () => {
+		const targetSiteUrl = siteSlug.startsWith( 'http' ) ? siteSlug : 'https://' + siteSlug;
 
-	/**
-	 ↓ Methods
-	 */
-	function handleJobStateTransition() {
+		return {
+			engine: importer,
+			importerStatus: job as ImportJob,
+			params: { engine: importer },
+			site: { ID: siteItem?.ID as number },
+			targetSiteUrl,
+			supportedContent: [],
+			unsupportedContent: [],
+		} as ImportJobParams;
+	}, [ siteItem, siteSlug, importer, job ] );
+
+	const handleJobStateTransition = useCallback( () => {
 		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
 			dispatch( startImport( siteItem?.ID, getImporterTypeForEngine( importer ) ) );
@@ -69,105 +81,80 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		) {
 			dispatch( startImporting( job ) );
 		}
-	}
+	}, [ job ] );
 
-	function prepareImportParams(): ImportJobParams {
-		const targetSiteUrl = siteSlug.startsWith( 'http' ) ? siteSlug : 'https://' + siteSlug;
-
-		return {
-			engine: importer,
-			importerStatus: job as ImportJob,
-			params: { engine: importer },
-			site: { ID: siteItem?.ID as number },
-			targetSiteUrl,
-			supportedContent: [],
-			unsupportedContent: [],
-		};
-	}
-
-	function onBackToStartClick() {
-		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
-		stepNavigator?.goToImportCapturePage?.();
-	}
-
-	function checkProgress() {
-		return (
+	const decideRenderState = useCallback( () => {
+		if (
+			job?.importerState === appStates.IMPORTING ||
+			// If the file type is a playground and the upload was successful, show the progress screen
 			( isSiteCompatible &&
 				job?.importerState === appStates.UPLOAD_SUCCESS &&
-				job?.importerFileType === 'playground' ) ||
-			job?.importerState === appStates.IMPORTING
-		);
-	}
-
-	function checkIsSuccess() {
-		return job?.importerState === appStates.IMPORT_SUCCESS;
-	}
-
-	function checkIsFailed() {
-		return job?.importerState === appStates.IMPORT_FAILURE;
-	}
-
-	function checkUpgradePlan() {
-		return (
+				job?.importerFileType === 'playground' )
+		) {
+			setRenderState( 'progress' );
+		} else if ( job?.importerState === appStates.IMPORT_SUCCESS ) {
+			setRenderState( 'success' );
+		} else if ( job?.importerState === appStates.IMPORT_FAILURE ) {
+			setRenderState( 'error' );
+		} else if (
 			! isSiteCompatible &&
 			( job?.importerFileType === 'playground' || job?.importerFileType === 'jetpack_backup' )
-		);
-	}
+		) {
+			setRenderState( 'upgrade-plan' );
+		} else {
+			setRenderState( 'idle' );
+		}
+	}, [ job, isSiteCompatible ] );
+
+	const onCompleteSiteViewClick = useCallback( () => {
+		if (
+			job?.importerFileType !== 'playground' &&
+			isEnabled( 'onboarding/import-redirect-to-themes' )
+		) {
+			stepNavigator?.navigate?.( 'designSetup' );
+		} else {
+			stepNavigator?.goToSiteViewPage?.();
+		}
+	}, [ job ] );
+
+	const onBackToStartClick = useCallback( () => {
+		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
+		stepNavigator?.goToImportCapturePage?.();
+	}, [ siteItem, job ] );
+
+	/**
+	 ↓ Effects
+	 */
+	useEffect( decideRenderState, [ decideRenderState ] );
+	useEffect( handleJobStateTransition, [ handleJobStateTransition ] );
 
 	/**
 	 ↓ HTML Renders
 	 */
-	function renderHooray() {
-		function onSiteViewClick() {
-			if (
-				job?.importerFileType !== 'playground' &&
-				isEnabled( 'onboarding/import-redirect-to-themes' )
-			) {
-				stepNavigator?.navigate?.( 'designSetup' );
-			} else {
-				stepNavigator?.goToSiteViewPage?.();
-			}
-		}
-		return (
-			<CompleteScreen
-				siteId={ siteItem?.ID as number }
-				siteSlug={ siteSlug }
-				job={ job as ImportJob }
-				buttonLabel={
-					job?.importerFileType === 'playground' ? translate( 'View site' ) : undefined
-				}
-				resetImport={ () => {
-					dispatch( resetImport( siteItem?.ID, job?.importerId ) );
-				} }
-				onSiteViewClick={ onSiteViewClick }
-			/>
-		);
+	if ( ! siteItem ) {
+		return null;
 	}
 
-	function renderProgress() {
-		return (
-			<div className="import-layout__center">
-				<ProgressScreen job={ job } />
-			</div>
-		);
-	}
+	return (
+		<div
+			className={ classnames( 'import__import-content-only', {
+				'import__error-message': renderState === 'error',
+			} ) }
+		>
+			{ renderState === 'progress' && (
+				<div className="import-layout__center">
+					<ProgressScreen job={ job } />
+				</div>
+			) }
 
-	function renderImportDrag() {
-		return (
-			job && (
-				<ImporterDrag
-					site={ siteItem }
-					urlData={ siteAnalyzedData }
-					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
-					importerStatus={ job }
+			{ renderState === 'error' && (
+				<ErrorMessage
+					onStartBuilding={ stepNavigator?.goToIntentPage }
+					onBackToStart={ onBackToStartClick }
 				/>
-			)
-		);
-	}
+			) }
 
-	function renderUpgradePlan() {
-		return (
-			siteItem && (
+			{ renderState === 'upgrade-plan' && (
 				<UpgradePlan
 					site={ siteItem }
 					ctaText={ translate( 'Get Business' ) }
@@ -180,33 +167,31 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 						stepNavigator?.goToVerifyEmailPage?.();
 					} }
 				/>
-			)
-		);
-	}
+			) }
 
-	return (
-		<div
-			className={ classnames( 'import__import-content-only', {
-				'import__error-message': checkIsFailed(),
-			} ) }
-		>
-			{ ( () => {
-				if ( checkProgress() ) {
-					return renderProgress();
-				} else if ( checkIsSuccess() ) {
-					return renderHooray();
-				} else if ( checkIsFailed() ) {
-					return (
-						<ErrorMessage
-							onStartBuilding={ stepNavigator?.goToIntentPage }
-							onBackToStart={ onBackToStartClick }
-						/>
-					);
-				} else if ( checkUpgradePlan() ) {
-					return renderUpgradePlan();
-				}
-				return renderImportDrag();
-			} )() }
+			{ renderState === 'idle' && job && (
+				<ImporterDrag
+					site={ siteItem }
+					urlData={ siteAnalyzedData }
+					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
+					importerStatus={ job }
+				/>
+			) }
+
+			{ renderState === 'success' && (
+				<CompleteScreen
+					siteId={ siteItem.ID }
+					siteSlug={ siteSlug }
+					job={ job as ImportJob }
+					buttonLabel={
+						job?.importerFileType === 'playground' ? translate( 'View site' ) : undefined
+					}
+					resetImport={ () => {
+						dispatch( resetImport( siteItem?.ID, job?.importerId ) );
+					} }
+					onSiteViewClick={ onCompleteSiteViewClick }
+				/>
+			) }
 		</div>
 	);
 };
