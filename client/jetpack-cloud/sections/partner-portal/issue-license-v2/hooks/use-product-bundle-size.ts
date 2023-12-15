@@ -63,6 +63,7 @@ export function useProductBundleSize() {
 			selectedSize: selectedSize ?? 1,
 			setSelectedSize: setSelectedSizeAndLocationHash,
 			availableSizes: supportedBundleSizes,
+			fetchingAvailableSizes: ! selectedSize, // We know we are still fetching if our selected size is undefined.
 		};
 	}, [ selectedSize, setSelectedSizeAndLocationHash, supportedBundleSizes ] );
 }

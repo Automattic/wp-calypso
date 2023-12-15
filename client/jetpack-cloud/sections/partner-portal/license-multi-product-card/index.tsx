@@ -25,6 +25,7 @@ interface Props {
 		value: APIProductFamilyProduct,
 		replace?: APIProductFamilyProduct
 	) => void | null;
+	onVariantChange?: ( value: APIProductFamilyProduct ) => void;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
 	quantity?: number;
@@ -38,6 +39,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 		isSelected,
 		isDisabled,
 		onSelectProduct,
+		onVariantChange,
 		suggestedProduct,
 		hideDiscount,
 		quantity,
@@ -132,8 +134,9 @@ export default function LicenseMultiProductCard( props: Props ) {
 			}
 
 			setProduct( selectedProduct );
+			onVariantChange?.( selectedProduct );
 		},
-		[ isDisabled, isSelected, onSelectProduct, product, products ]
+		[ isDisabled, isSelected, onSelectProduct, onVariantChange, product, products ]
 	);
 
 	useEffect( () => {

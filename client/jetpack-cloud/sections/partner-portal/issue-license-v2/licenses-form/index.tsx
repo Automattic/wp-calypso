@@ -4,7 +4,8 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
 import { parseQueryStringProducts } from '../../lib/querystring-products';
 import LicenseMultiProductCard from '../../license-multi-product-card';
@@ -31,6 +32,7 @@ export default function LicensesForm( {
 	quantity = 1,
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { selectedLicenses, setSelectedLicenses } = useContext( IssueLicenseContext );
 
@@ -116,12 +118,24 @@ export default function LicensesForm( {
 			if ( index === -1 ) {
 				// Item doesn't exist, add it
 				setSelectedLicenses( [ ...selectedLicenses, productBundle ] );
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_select_product', {
+						product: product.slug,
+						quantity,
+					} )
+				);
 			} else {
 				// Item exists, remove it
 				setSelectedLicenses( selectedLicenses.filter( ( _, i ) => i !== index ) );
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_unselect_product', {
+						product: product.slug,
+						quantity,
+					} )
+				);
 			}
 		},
-		[ quantity, selectedLicenses, setSelectedLicenses ]
+		[ dispatch, quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
 	const onSelectProduct = useCallback(
@@ -143,11 +157,26 @@ export default function LicensesForm( {
 						return item;
 					} )
 				);
+
+				// Unselecting the current selected variant
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_unselect_product', {
+						product: replace.slug,
+						quantity,
+					} )
+				);
+
+				dispatch(
+					recordTracksEvent( 'calypso_partner_portal_issue_license_select_product', {
+						product: product.slug,
+						quantity,
+					} )
+				);
 			} else {
 				handleSelectBundleLicense( product );
 			}
 		},
-		[ handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
+		[ dispatch, handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
@@ -165,15 +194,38 @@ export default function LicensesForm( {
 	const onProductFilterSelect = useCallback(
 		( value: string | null ) => {
 			setSelectedProductFilter( value );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_filter_submit', { value } )
+			);
 		},
-		[ setSelectedProductFilter ]
+		[ dispatch ]
 	);
 
 	const onProductSearch = useCallback(
 		( value: string ) => {
 			setProductSearchQuery( value );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_search_submit', { value } )
+			);
 		},
-		[ setProductSearchQuery ]
+		[ dispatch ]
+	);
+
+	const onClickVariantOption = useCallback(
+		( product: APIProductFamilyProduct ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_variant_option_click', {
+					product: product.slug,
+				} )
+			);
+		},
+		[ dispatch ]
+	);
+
+	const trackClickCallback = useCallback(
+		( component: string ) => () =>
+			dispatch( recordTracksEvent( `calypso_partner_portal_issue_license_${ component }_click` ) ),
+		[ dispatch ]
 	);
 
 	const isSingleLicenseView = quantity === 1;
@@ -185,6 +237,7 @@ export default function LicensesForm( {
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ productOption }
 					onSelectProduct={ onSelectOrReplaceProduct }
+					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
 					selectedOption={ productOption.find( ( option ) =>
 						selectedLicenses.find(
@@ -227,10 +280,14 @@ export default function LicensesForm( {
 			<QueryProductsList type="jetpack" currency="USD" />
 
 			<div className="licenses-form__actions">
-				<ProductFilterSearch onProductSearch={ onProductSearch } />
+				<ProductFilterSearch
+					onProductSearch={ onProductSearch }
+					onClick={ trackClickCallback( 'search' ) }
+				/>
 				<ProductFilterSelect
 					selectedProductFilter={ selectedProductFilter }
 					onProductFilterSelect={ onProductFilterSelect }
+					onClick={ trackClickCallback( 'filter' ) }
 					isSingleLicense={ isSingleLicenseView }
 				/>
 			</div>
