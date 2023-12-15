@@ -1,19 +1,24 @@
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
+import { parseQueryStringProducts } from '../../lib/querystring-products';
 import LicenseMultiProductCard from '../../license-multi-product-card';
 import { PRODUCT_FILTER_ALL } from '../constants';
 import IssueLicenseContext from '../context';
+import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
 import useSubmitForm from '../hooks/use-submit-form';
 import useProductAndPlans from './hooks/use-product-and-plans';
 import ProductFilterSearch from './product-filter-search';
 import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
 import type { AssignLicenceProps } from '../../types';
+import type { SelectedLicenseProp } from '../types';
 import type {
 	APIProductFamilyProduct,
 	PartnerPortalStore,
@@ -36,6 +41,8 @@ export default function LicensesForm( {
 		PRODUCT_FILTER_ALL
 	);
 
+	const { data } = useProductsQuery();
+
 	const {
 		filteredProductsAndBundles,
 		isLoadingProducts,
@@ -51,20 +58,49 @@ export default function LicensesForm( {
 		productSearchQuery,
 	} );
 
-	// useEffect( () => {
-	// 	const productsQueryArg = getQueryArg( window.location.href, 'products' )?.toString?.();
-	// 	if ( ! productsQueryArg ) {
-	// 		return;
-	// 	}
+	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
+	const filteredProductsAndBundlesRef = useRef( filteredProductsAndBundles );
 
-	// 	if ( isLoadingProducts ) {
-	// 		return;
-	// 	}
+	// Update the ref whenever `filteredProductsAndBundles` changes.
+	useEffect( () => {
+		filteredProductsAndBundlesRef.current = filteredProductsAndBundles;
+	}, [ filteredProductsAndBundles ] );
 
-	// 	const parsedItems = parseQueryStringProducts( productsQueryArg );
-	// 	// TODO: Validate parsed items from the query string exist and are selectable;
-	// 	// then, set them as selected items on the page
-	// }, [ isLoadingProducts ] );
+	const preSelectProducts = useCallback( () => {
+		const productsQueryArg = getQueryArg( window.location.href, 'products' )?.toString?.();
+		const parsedItems = parseQueryStringProducts( productsQueryArg );
+		const availableSizes = getSupportedBundleSizes( data );
+
+		const allProductsAndBundles = parsedItems?.length
+			? ( parsedItems
+					.map( ( item ) => {
+						// Add licenses & bundles that are supported
+						const product = filteredProductsAndBundlesRef.current.find(
+							( product ) => product.slug === item.slug
+						);
+						const quantity = availableSizes.find( ( size ) => size === item.quantity );
+						if ( product && quantity ) {
+							return {
+								...product,
+								quantity,
+							};
+						}
+						return null;
+					} )
+					.filter( Boolean ) as SelectedLicenseProp[] )
+			: null;
+
+		if ( allProductsAndBundles ) {
+			setSelectedLicenses( allProductsAndBundles );
+		}
+	}, [ setSelectedLicenses, data ] );
+
+	useEffect( () => {
+		if ( isLoadingProducts ) {
+			return;
+		}
+		preSelectProducts();
+	}, [ isLoadingProducts, preSelectProducts ] );
 
 	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
 		getDisabledProductSlugs( state, filteredProductsAndBundles ?? [] )
@@ -144,9 +180,7 @@ export default function LicensesForm( {
 
 	const isSingleLicenseView = quantity === 1;
 
-	const getProductCards = (
-		products: ( APIProductFamilyProduct | APIProductFamilyProduct[] )[]
-	) => {
+	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
 		return products.map( ( productOption, i ) =>
 			Array.isArray( productOption ) ? (
 				<LicenseMultiProductCard
@@ -154,6 +188,9 @@ export default function LicensesForm( {
 					products={ productOption }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
+					selectedOption={ productOption.find( ( option ) =>
+						selectedLicenses.find( ( license ) => license.slug === option.slug )
+					) }
 					isDisabled={ ! isReady }
 					tabIndex={ 100 + i }
 					hideDiscount={ isSingleLicenseView }

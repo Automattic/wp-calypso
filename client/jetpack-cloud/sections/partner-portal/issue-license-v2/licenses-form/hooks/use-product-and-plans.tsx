@@ -85,7 +85,7 @@ const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduc
 		return ! MERGABLE_PLANS.some( ( filter ) => slug.startsWith( filter ) );
 	} );
 
-	return [ ...filteredPlans, ...restOfPlans ];
+	return [ ...filteredPlans, ...restOfPlans ] as APIProductFamilyProduct[];
 };
 
 // This function gets the displayable Products based on how it should be arranged in the listing.
@@ -110,7 +110,7 @@ const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyPro
 		const product_a = Array.isArray( a ) ? a[ 0 ].name : a.name;
 		const product_b = Array.isArray( b ) ? b[ 0 ].name : b.name;
 		return product_a.localeCompare( product_b );
-	} );
+	} ) as APIProductFamilyProduct[];
 };
 
 export default function useProductAndPlans( {
