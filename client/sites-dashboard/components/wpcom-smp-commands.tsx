@@ -60,9 +60,12 @@ export const useCommandsArrayWpcom = ( {
 	const displayNotice = (
 		message: string,
 		noticeType: NoticeStatus = 'is-success',
-		duration = 5000
+		duration: undefined | number | null = 5000,
+		additionalOptions: { button?: string; onClick?: () => void } = {}
 	) => {
-		const { notice } = dispatch( createNotice( noticeType, message, { duration } ) );
+		const { notice } = dispatch(
+			createNotice( noticeType, message, { duration, ...additionalOptions } )
+		);
 		return {
 			removeNotice: () => dispatch( removeNotice( notice.noticeId ) ),
 		};
@@ -98,7 +101,16 @@ export const useCommandsArrayWpcom = ( {
 
 		if ( ! sshUser ) {
 			removeLoadingNotice();
-			return navigate( `/hosting-config/${ siteSlug }` );
+			displayNotice(
+				__( 'SFTP/SSH credentials must be created before SSH connection string can be copied.' ),
+				'is-error',
+				null,
+				{
+					button: __( 'Manage Hosting Configuration' ),
+					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
+				}
+			);
+			return;
 		}
 
 		const textToCopy = copyType === 'username' ? sshUser : `ssh ${ sshUser }@sftp.wp.com`;
@@ -111,14 +123,24 @@ export const useCommandsArrayWpcom = ( {
 
 	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
 		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Resetting SSH/SFTP password…' ),
+			__( 'Resetting SFTP/SSH password…' ),
 			'is-plain',
 			5000
 		);
 		const sshUser = await fetchSshUser( siteId );
 
 		if ( ! sshUser ) {
-			return navigate( `/hosting-config/${ siteSlug }` );
+			removeLoadingNotice();
+			displayNotice(
+				__( 'SFTP/SSH credentials must be created before SFTP/SSH password can be reset.' ),
+				'is-error',
+				null,
+				{
+					button: __( 'Manage Hosting Configuration' ),
+					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
+				}
+			);
+			return;
 		}
 
 		const response = await wpcom.req.post( {
@@ -130,12 +152,13 @@ export const useCommandsArrayWpcom = ( {
 
 		if ( ! sshPassword ) {
 			removeLoadingNotice();
-			return navigate( `/hosting-config/${ siteSlug }` );
+			displayNotice( __( 'Unexpected error resetting SFTP/SSH password.' ), 'is-error', 5000 );
+			return;
 		}
 
 		navigator.clipboard.writeText( sshPassword );
 		removeLoadingNotice();
-		displayNotice( __( 'SSH/SFTP password reset and copied to clipboard.' ) );
+		displayNotice( __( 'SFTP/SSH password reset and copied to clipboard.' ) );
 	};
 
 	const getEdgeCacheStatus = async ( siteId: number ) => {
