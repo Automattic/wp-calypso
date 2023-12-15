@@ -209,14 +209,15 @@ const pluginBundleFlow: Flow = {
 					}
 
 					// Custom end of flow.
-					const endReturn = bundleStepsSettings[ pluginSlug ]?.endFlow?.( {
+					const settings = bundleStepsSettings[ pluginSlug ];
+					const endReturn = settings?.endFlow?.( {
 						intent,
 						storeType,
 						adminUrl,
 						dispatch,
 						exitFlow,
 					} );
-					if ( false !== endReturn ) {
+					if ( settings?.endFlow && false !== endReturn ) {
 						return endReturn;
 					}
 
