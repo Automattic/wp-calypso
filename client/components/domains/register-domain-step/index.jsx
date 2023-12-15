@@ -1481,36 +1481,32 @@ class RegisterDomainStep extends Component {
 				this.props.onAddDomain( suggestion, position, previousState );
 			}
 
-			// Avoid too much API calls for Multi-domains flow
-			clearTimeout( this.state.checkAvailabilityTimeout );
-			this.state.checkAvailabilityTimeout = setTimeout( () => {
-				this.preCheckDomainAvailability( domain )
-					.catch( () => [] )
-					.then( ( { status, trademarkClaimsNoticeInfo } ) => {
-						this.setState( { pendingCheckSuggestion: null } );
-						this.props.recordDomainAddAvailabilityPreCheck(
-							domain,
-							status,
-							this.props.analyticsSection
-						);
-						if ( status && status !== domainAvailability.REGISTERED_OTHER_SITE_SAME_USER ) {
-							this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
-							this.showAvailabilityErrorMessage( domain, status, {
-								availabilityPreCheck: true,
-							} );
-							this.props.onMappingError( domain, status );
-						} else if ( trademarkClaimsNoticeInfo ) {
-							this.setState( {
-								trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
-								selectedSuggestion: suggestion,
-								selectedSuggestionPosition: position,
-							} );
-							this.props.onMappingError( domain, status );
-						} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-							this.props.onAddDomain( suggestion, position, previousState );
-						}
-					} );
-			}, 500 );
+			this.preCheckDomainAvailability( domain )
+				.catch( () => [] )
+				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
+					this.setState( { pendingCheckSuggestion: null } );
+					this.props.recordDomainAddAvailabilityPreCheck(
+						domain,
+						status,
+						this.props.analyticsSection
+					);
+					if ( status && status !== domainAvailability.REGISTERED_OTHER_SITE_SAME_USER ) {
+						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
+						this.showAvailabilityErrorMessage( domain, status, {
+							availabilityPreCheck: true,
+						} );
+						this.props.onMappingError( domain, status );
+					} else if ( trademarkClaimsNoticeInfo ) {
+						this.setState( {
+							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
+							selectedSuggestion: suggestion,
+							selectedSuggestionPosition: position,
+						} );
+						this.props.onMappingError( domain, status );
+					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+						this.props.onAddDomain( suggestion, position, previousState );
+					}
+				} );
 		} else {
 			this.props.onAddDomain( suggestion, position, previousState );
 		}
