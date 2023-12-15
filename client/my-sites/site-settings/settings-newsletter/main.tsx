@@ -108,14 +108,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		);
 	} );
 
-	const shouldShowSubscriptionOnCommentModule = useSelector( ( state ) => {
-		const isJetpackSite = isJetpackSiteSelector( state, siteId, {
-			treatAtomicAsJetpackSite: true,
-		} );
-
-		return ! isJetpackSite;
-	} );
-
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 	const savedSubscriptionOptions = settings?.subscription_options;
 
@@ -147,15 +139,13 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					value={ sm_enabled }
 				/>
 			</Card>
-			{ shouldShowSubscriptionOnCommentModule && (
-				<Card className="site-settings__card">
-					<SubscribeModalOnCommentSetting
-						disabled={ disabled }
-						handleToggle={ handleToggle }
-						value={ jetpack_verbum_subscription_modal }
-					/>
-				</Card>
-			) }
+			<Card className="site-settings__card">
+				<SubscribeModalOnCommentSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_verbum_subscription_modal }
+				/>
+			</Card>
 
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
