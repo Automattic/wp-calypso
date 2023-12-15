@@ -84,7 +84,7 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			)
 				? translate(
 						"You've chosen premium styles which are exclusive to the %(premiumPlanName)s plan or higher.",
-						{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort } }
+						{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort || '' } }
 				  )
 				: translate(
 						"You've chosen premium styles which are exclusive to the Premium plan or higher."
