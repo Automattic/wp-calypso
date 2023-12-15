@@ -105,6 +105,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const categories = usePatternCategories( site?.ID );
 	// Fetching curated patterns and categories from PTK api
 	const dotcomPatterns = useDotcomPatterns( locale );
+
 	const { allCategoryPatternsMap, layoutCategoryPatternsMap, pageCategoryPatternsMap } =
 		useCategoryPatternsMap( dotcomPatterns );
 	const {
@@ -127,7 +128,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		hasFont: !! fontVariation,
 	} );
 
-	const { pages, pageSlugs, setPageSlugs } = usePatternPages( pageCategoryPatternsMap );
+	const { pages, pageSlugs, setPageSlugs, pagesToShow } = usePatternPages(
+		pageCategoryPatternsMap,
+		categories
+	);
 
 	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );
 
@@ -667,9 +671,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.PAGES } partialMatch>
 					<ScreenPages
-						categories={ categories }
-						pagesMapByCategory={ pageCategoryPatternsMap }
-						selectedPageSlugs={ pageSlugs }
+						pagesToShow={ pagesToShow }
 						onSelect={ onScreenPagesSelect }
 						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
