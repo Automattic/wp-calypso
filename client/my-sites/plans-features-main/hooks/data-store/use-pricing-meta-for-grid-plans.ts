@@ -7,8 +7,6 @@ import {
 import { Plans, WpcomPlansUI, Purchases } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
-import { getPlanPrices } from 'calypso/state/plans/selectors';
-import { PlanPrices } from 'calypso/state/plans/types';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
@@ -25,19 +23,8 @@ interface Props {
 	storageAddOns?: ( AddOnMeta | null )[] | null;
 }
 
-function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
-	const totalPrices = { ...planPrices };
-	let key: keyof PlanPrices;
-
-	for ( key in totalPrices ) {
-		const price = totalPrices[ key ];
-
-		if ( price !== null ) {
-			totalPrices[ key ] = price + addOnPrice;
-		}
-	}
-
-	return totalPrices;
+function getTotalPrice( planPrice: number | null, addOnPrice = 0 ): number | null {
+	return null !== planPrice ? planPrice + addOnPrice : null;
 }
 
 /*
@@ -56,10 +43,11 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	// TODO: pass this in as a prop to uncouple the dependency
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
 
-	// pricedAPIPlans - should have a definition for all plans, being the main source of API data
-	const pricedAPIPlans = Plans.usePlans();
-	// pricedAPISitePlans - unclear if all plans are included
-	const pricedAPISitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	// plans - should have a definition for all plans, being the main source of API data
+	const plans = Plans.usePlans();
+	// sitePlans - unclear if all plans are included
+	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
@@ -85,21 +73,6 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						: selectedStorageAddOn?.prices;
 				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
-
-				const planPricesMonthly = getPlanPrices( state, {
-					planSlug,
-					siteId: selectedSiteId || null,
-					returnMonthly: true,
-					returnSmallestUnit: true,
-				} );
-				const planPricesFull = getPlanPrices( state, {
-					planSlug,
-					siteId: selectedSiteId || null,
-					returnMonthly: false,
-					returnSmallestUnit: true,
-				} );
-				const totalPricesMonthly = getTotalPrices( planPricesMonthly, storageAddOnPriceMonthly );
-				const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
 
 				/**
 				 * 1. Original prices only for current site's plan.
@@ -153,17 +126,36 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						...acc,
 						[ planSlug ]: {
 							originalPrice: {
-								monthly: totalPricesMonthly.rawPrice,
-								full: totalPricesFull.rawPrice,
+								monthly: getTotalPrice(
+									plans[ planSlug ].pricing.originalPrice.monthly,
+									storageAddOnPriceMonthly
+								),
+								full: getTotalPrice(
+									plans[ planSlug ].pricing.originalPrice.full,
+									storageAddOnPriceYearly
+								),
 							},
 							discountedPrice: {
-								monthly: withoutProRatedCredits
-									? totalPricesMonthly.discountedRawPrice
-									: totalPricesMonthly.planDiscountedRawPrice ||
-									  totalPricesMonthly.discountedRawPrice,
-								full: withoutProRatedCredits
-									? totalPricesFull.discountedRawPrice
-									: totalPricesFull.planDiscountedRawPrice || totalPricesFull.discountedRawPrice,
+								monthly:
+									selectedSiteId && ! withoutProRatedCredits
+										? getTotalPrice(
+												sitePlans[ planSlug ].pricing.discountedPrice.monthly,
+												storageAddOnPriceMonthly
+										  )
+										: getTotalPrice(
+												plans[ planSlug ].pricing.discountedPrice.monthly,
+												storageAddOnPriceMonthly
+										  ),
+								full:
+									selectedSiteId && ! withoutProRatedCredits
+										? getTotalPrice(
+												sitePlans[ planSlug ].pricing.discountedPrice.full,
+												storageAddOnPriceYearly
+										  )
+										: getTotalPrice(
+												plans[ planSlug ].pricing.discountedPrice.full,
+												storageAddOnPriceYearly
+										  ),
 							},
 						},
 					};
@@ -176,8 +168,14 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					...acc,
 					[ planSlug ]: {
 						originalPrice: {
-							monthly: totalPricesMonthly.rawPrice,
-							full: totalPricesFull.rawPrice,
+							monthly: getTotalPrice(
+								plans[ planSlug ].pricing.originalPrice.monthly,
+								storageAddOnPriceMonthly
+							),
+							full: getTotalPrice(
+								plans[ planSlug ].pricing.originalPrice.full,
+								storageAddOnPriceYearly
+							),
 						},
 						discountedPrice: {
 							monthly: null,
@@ -196,10 +194,10 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	 * Return null until all data is ready, at least in initial state.
 	 * - For now a simple loader is shown until these are resolved
 	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
-	 * - `pricedAPISitePlans` being a dependent query will only get fetching status when enabled (when `siteId` exists)
+	 * - `sitePlans` being a dependent query will only get fetching status when enabled (when `siteId` exists)
 	 */
 
-	if ( ( selectedSiteId && pricedAPISitePlans.isLoading ) || pricedAPIPlans.isLoading ) {
+	if ( ( selectedSiteId && sitePlans.isLoading ) || plans.isLoading ) {
 		return null;
 	}
 
@@ -209,9 +207,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 			[ planSlug ]: {
 				originalPrice: planPrices[ planSlug ]?.originalPrice,
 				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-				billingPeriod: pricedAPIPlans.data?.[ planSlug ]?.billPeriod,
-				currencyCode: pricedAPIPlans.data?.[ planSlug ]?.currencyCode,
-				expiry: pricedAPISitePlans.data?.[ planSlug ]?.expiry,
+				billingPeriod: plans.data?.[ planSlug ]?.pricing.billPeriod,
+				currencyCode: plans.data?.[ planSlug ]?.pricing.currencyCode,
+				expiry: sitePlans.data?.[ planSlug ]?.expiry,
 				introOffer: introOffers?.[ planSlug ],
 			},
 		} ),
