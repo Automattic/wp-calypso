@@ -140,6 +140,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 
 	const [ focusedName, setFocusedName ] = useState( false );
+	const [ nameWasEdited, setNameWasEdited ] = useState( false );
 
 	const [ editedPrice, setEditedPrice ] = useState( false );
 
@@ -196,8 +197,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		};
 	const handlePayWhatYouWant = ( newValue: boolean ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue: boolean ) => setEditedMultiplePerUser( newValue );
-	const onNameChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+	const onNameChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		setNameWasEdited( true );
 		setEditedProductName( event.target.value );
+	};
 	const onSelectSchedule = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedSchedule( event.target.value );
 
@@ -216,6 +219,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		// If the user has manually entered a name that should be left as-is, don't overwrite it
 		if (
 			product.ID ||
+			nameWasEdited ||
 			( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) )
 		) {
 			return;
@@ -223,7 +227,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		const name = editedPostIsTier ? defaultNameTier : defaultNames[ `${ editedSchedule }` ] ?? '';
 
 		setEditedProductName( name );
-	}, [ editedSchedule, editedPostIsTier, product ] );
+	}, [ editedSchedule, editedPostIsTier, product, nameWasEdited ] );
 
 	const getAnnualProductDetailsFromProduct = ( productDetails: Product ): Product => ( {
 		...productDetails,
