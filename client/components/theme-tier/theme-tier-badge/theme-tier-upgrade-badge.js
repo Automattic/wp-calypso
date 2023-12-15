@@ -17,9 +17,10 @@ export default function ThemeTierUpgradeBadge() {
 	const { themeId } = useThemeTierBadgeContext();
 	const { themeTier } = useThemeTier( siteId, themeId );
 
-	const mappedPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
-	const planName = getPlan( mappedPlan )?.getTitle();
-	const planPathSlug = getPlan( mappedPlan )?.getPathSlug();
+	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
+	const mappedPlan = getPlan( tierMinimumUpsellPlan );
+	const planName = mappedPlan?.getTitle();
+	const planPathSlug = mappedPlan?.getPathSlug();
 
 	const tooltipContent = (
 		<>
