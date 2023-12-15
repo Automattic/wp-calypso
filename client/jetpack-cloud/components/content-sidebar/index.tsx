@@ -1,4 +1,5 @@
 import React from 'react';
+import Main from 'calypso/components/main';
 
 import './style.scss';
 
@@ -9,10 +10,11 @@ type Props = {
 
 const ContentSidebar = ( { mainContent, rightSidebar }: Props ) => {
 	return (
-		<div className="content-sidebar">
+		// todo: We have to add here the header for the mobile menu
+		<Main wideLayout className="content-sidebar">
 			<div className="content-sidebar__main-content">{ mainContent }</div>
 			<aside className="content-sidebar__right-sidebar">{ rightSidebar }</aside>
-		</div>
+		</Main>
 	);
 };
 
