@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription, useURLQueryParams } from '../hooks';
 import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../lib';
+import getProductShortTitle from '../lib/get-product-short-title';
 import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
 import ProductPriceWithDiscount from '../primary/product-price-with-discount-info';
@@ -40,9 +41,13 @@ export default function LicenseProductCard( props: Props ) {
 		withBackground,
 		quantity,
 	} = props;
+	const isNewCardFormat = isEnabled( 'jetpack/bundle-licensing' );
+
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
 	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
-	const productTitle = getProductTitle( product.name );
+	const productTitle = isNewCardFormat
+		? getProductShortTitle( product )
+		: getProductTitle( product.name );
 	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -103,8 +108,6 @@ export default function LicenseProductCard( props: Props ) {
 		resetParams( [ LICENSE_INFO_MODAL_ID ] );
 		setShowLightbox( false );
 	}, [ resetParams ] );
-
-	const isNewCardFormat = isEnabled( 'jetpack/bundle-licensing' );
 
 	return (
 		<>

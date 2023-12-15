@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -167,10 +169,10 @@ $design-button-primary-hover-color: var(--color-primary-60);
 	.theme-upgrade-modal__close {
 		color: var(--color-text-subtle);
 		position: absolute;
-		top: 0;
-		right: 8px;
+		top: 12px;
+		right: 12px;
 
-		.gridicon {
+		.wpicon {
 			fill: var(--color-text-subtle);
 		}
 	}
@@ -238,11 +240,10 @@ $design-button-primary-hover-color: var(--color-primary-60);
 			}
 		}
 
-		.gridicon {
+		.wpicon {
 			fill: var(--studio-green-50);
 			flex-shrink: 0;
-			margin-right: 10px;
-			margin-top: 4px;
+			margin-inline-end: 4px;
 		}
 
 		.components-popover.components-tooltip .components-popover__content {

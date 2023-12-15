@@ -1,7 +1,7 @@
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -23,6 +23,7 @@ export interface Tour {
 		| 'bottom left'
 		| 'left'
 		| 'top left';
+	nextStepOnTargetClick?: string;
 }
 
 interface Props {
@@ -74,7 +75,8 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, target, popoverPosition } = tours[ currentStep ];
+	const { title, description, target, popoverPosition, nextStepOnTargetClick } =
+		tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
 
@@ -89,22 +91,41 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 		}
 	}, [ dispatch, isDismissed, preferenceName, targetElement, hasFetched ] );
 
-	const endTour = () => {
+	const endTour = useCallback( () => {
 		dispatch( savePreference( preferenceName, { ...preference, dismiss: true } ) );
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_cloud_end_tour', {
 				tour: preferenceName,
 			} )
 		);
-	};
+	}, [ dispatch, preferenceName, preference ] );
 
-	const nextStep = () => {
+	const nextStep = useCallback( () => {
 		if ( currentStep < tours.length - 1 ) {
 			setCurrentStep( currentStep + 1 );
 		} else {
 			endTour();
 		}
-	};
+	}, [ currentStep, tours.length, endTour ] );
+
+	useEffect( () => {
+		let target: Element | null = null;
+		if ( nextStepOnTargetClick ) {
+			// Find the target element using the nextStepOnTargetClick selector
+			target = document.querySelector( nextStepOnTargetClick );
+			if ( target ) {
+				// Attach the event listener to the target
+				target.addEventListener( 'click', nextStep );
+			}
+		}
+
+		// Cleanup function to remove the event listener
+		return () => {
+			if ( target ) {
+				target.removeEventListener( 'click', nextStep );
+			}
+		};
+	}, [ nextStepOnTargetClick, nextStep ] );
 
 	if ( isDismissed ) {
 		return null;
@@ -135,17 +156,21 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 					}
 				</div>
 				<div className="guided-tour__popover-footer-right-content">
-					{
-						// Show the skip button if there are multiple steps and we're not on the last step
-						tours.length > 1 && currentStep < tours.length - 1 && (
-							<Button borderless onClick={ endTour }>
-								{ translate( 'Skip' ) }
+					{ ! nextStepOnTargetClick && (
+						<>
+							{
+								// Show the skip button if there are multiple steps and we're not on the last step
+								tours.length > 1 && currentStep < tours.length - 1 && (
+									<Button borderless onClick={ endTour }>
+										{ translate( 'Skip' ) }
+									</Button>
+								)
+							}
+							<Button onClick={ nextStep }>
+								{ currentStep === tours.length - 1 ? lastTourLabel : translate( 'Next' ) }
 							</Button>
-						)
-					}
-					<Button onClick={ nextStep }>
-						{ currentStep === tours.length - 1 ? lastTourLabel : translate( 'Next' ) }
-					</Button>
+						</>
+					) }
 				</div>
 			</div>
 		</Popover>

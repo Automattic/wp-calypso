@@ -7,6 +7,7 @@ import './style.scss';
 
 type Props = {
 	children: ReactNode;
+	sidebarNavigation?: ReactNode;
 	className?: string;
 	title: ReactNode;
 	wide?: boolean;
@@ -19,6 +20,7 @@ export default function Layout( {
 	title,
 	wide = false,
 	withBorder = false,
+	sidebarNavigation,
 }: Props ) {
 	return (
 		<Main
@@ -29,6 +31,7 @@ export default function Layout( {
 			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
 		>
 			<DocumentHead title={ title } />
+			{ sidebarNavigation }
 
 			<div className="jetpack-cloud-layout__container">{ children }</div>
 		</Main>

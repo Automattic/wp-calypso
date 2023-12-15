@@ -12,6 +12,7 @@ import {
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
+	isDomainMoveInternal,
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainTransfer,
@@ -534,6 +535,15 @@ export function getDomainRegistrations( cart: ObjectWithProducts ): ResponseCart
 }
 
 /**
+ * Retrieves all the domain registration items in the specified shopping cart.
+ */
+export function getDomainsInCart( cart: ObjectWithProducts ): ResponseCartProduct[] {
+	return getAllCartItems( cart ).filter(
+		( product ) => isDomainRegistration( product ) || isDomainMoveInternal( product )
+	);
+}
+
+/**
  * Retrieves all the domain mapping items in the specified shopping cart.
  */
 export function getDomainMappings( cart: ObjectWithProducts ): ResponseCartProduct[] {
@@ -838,6 +848,10 @@ export function getDomainPriceRule(
 
 	if ( suggestion?.is_premium ) {
 		return 'PRICE';
+	}
+
+	if ( hasSomeSlug( suggestion ) && isDomainMoveInternal( suggestion ) ) {
+		return 'DOMAIN_MOVE_PRICE';
 	}
 
 	if ( isMonthlyOrFreeFlow( flowName ) ) {

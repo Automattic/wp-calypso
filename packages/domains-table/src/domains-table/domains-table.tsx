@@ -47,7 +47,7 @@ type OnDomainAction = (
 ) => DomainActionDescription | void;
 
 interface BaseDomainsTableProps {
-	domains: PartialDomainData[] | undefined;
+	domains: PartialDomainData[] | DomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;
@@ -302,7 +302,10 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 	const hasSelectedDomains = selectedDomains.size > 0;
 	const selectableDomains = ( domains ?? [] ).filter( canBulkUpdate );
-	const canSelectAnyDomains = selectableDomains.length > 0;
+	const canSelectAnyDomains = isAllSitesView
+		? selectableDomains.length > 0
+		: ( ( domains as unknown as DomainData[] ) ?? [] ).filter( ( domain ) => ! domain.is_subdomain )
+				.length > 1;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {

@@ -10,7 +10,7 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { getThemeType } from 'calypso/state/themes/selectors';
 import ThemeTypeBadgeTooltip from './tooltip';
@@ -34,7 +34,7 @@ const ThemeTypeBadge = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const bundleSettings = useBundleSettings( themeId );
+	const bundleSettings = useBundleSettingsByTheme( themeId );
 
 	useEffect( () => {
 		if ( type === FREE_THEME && ! isLockedStyleVariation ) {

@@ -1,5 +1,7 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
 import { type FC, useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { getThemeSoftwareSet } from 'calypso/state/themes/selectors';
@@ -7,12 +9,16 @@ import { getThemeSoftwareSet } from 'calypso/state/themes/selectors';
 interface BundleSettings {
 	/** Name field is a label for the bundle name, which can be used isolated or in the middle of a sentence. Many times used as "{name} theme". */
 	name: string;
+	/** Software name field is a label for the product name, which can be used isolated or in the middle of a sentence, like: "Installing {softwareName}" */
+	softwareName: string;
 	iconComponent: FC;
 	color: string;
 	designPickerBadgeTooltip: string;
 	bannerUpsellDescription: string;
 	bundledPluginMessage: TranslateResult;
 }
+
+export type BundleSettingsHookReturn = BundleSettings | null;
 
 const WooOnPlansIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -23,30 +29,34 @@ const WooOnPlansIcon = () => (
 	</svg>
 );
 
-/**
- * Hook to get the bundle settings for a given theme.
- * If the theme doesn't have a sotfware set defined, it returns `null`.
- */
-const useBundleSettings = ( themeId: string ): BundleSettings | null => {
-	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookReturn {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
 	const bundleSettings = useMemo( () => {
-		// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
-		const themeSoftware = themeSoftwareSet[ 0 ];
-
 		switch ( themeSoftware ) {
 			case 'woo-on-plans':
 				return {
 					name: 'WooCommerce',
+					softwareName: 'WooCommerce',
 					iconComponent: WooOnPlansIcon,
 					color: '#7f54b3',
 					designPickerBadgeTooltip: translate(
 						'This theme comes bundled with WooCommerce, the best way to sell online.'
 					),
-					bannerUpsellDescription: translate(
-						'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-					),
+					bannerUpsellDescription:
+						isEnglishLocale ||
+						i18n.hasTranslation(
+							'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.'
+						)
+							? ( translate(
+									'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
+									{ args: { businessPlanName } }
+							  ) as string )
+							: translate(
+									'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+							  ),
 					bundledPluginMessage: translate(
 						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin.',
 						{
@@ -60,9 +70,20 @@ const useBundleSettings = ( themeId: string ): BundleSettings | null => {
 			default:
 				return null;
 		}
-	}, [ translate, themeSoftwareSet ] );
+	}, [ themeSoftware, translate, isEnglishLocale, businessPlanName ] );
 
 	return bundleSettings;
-};
+}
 
-export default useBundleSettings;
+/**
+ * Hook to get the bundle settings for a given theme.
+ * If the theme doesn't have a sotfware set defined, it returns `null`.
+ */
+export function useBundleSettingsByTheme( themeId: string ): BundleSettingsHookReturn {
+	const themeSoftwareSet = useSelector( ( state ) => getThemeSoftwareSet( state, themeId ) );
+	// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
+	const themeSoftware = themeSoftwareSet[ 0 ];
+	const bundleSettings = useBundleSettings( themeSoftware );
+
+	return bundleSettings;
+}
