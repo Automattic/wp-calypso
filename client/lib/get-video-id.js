@@ -6,6 +6,16 @@ import _getEmbedMetadata from 'get-video-id';
  * commit at the time of writing is almost a year old ... and it's HACK week ;)
  */
 export default function getEmbedMetadata( url ) {
+	// Check if a Pocket Cast URL
+	if ( url.indexOf( 'pca.st' ) !== -1 ) {
+		const id = url.split( '/' ).pop();
+		if ( id.length > 0 ) {
+			return {
+				id,
+				service: 'pocketcast',
+			};
+		}
+	}
 	// Fake the video domain for video.wordpress.com to look like videopress.com so the external library recognizes it.
 	return _getEmbedMetadata( url.replace( 'video.wordpress', 'videopress' ) );
 }
