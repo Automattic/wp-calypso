@@ -80,6 +80,7 @@ const importHostedSiteFlow: Flow = {
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 			switch ( _currentStep ) {
+				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 

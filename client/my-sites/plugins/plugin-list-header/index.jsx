@@ -154,6 +154,7 @@ export class PluginsListHeader extends PureComponent {
 					compact
 					disabled={ ! this.hasSelectedPlugins() }
 					onClick={ this.props.updatePluginNotice }
+					id="plugin-list-header__buttons-update-button"
 				>
 					{ translate( 'Update Plugins' ) }
 				</Button>
@@ -198,6 +199,7 @@ export class PluginsListHeader extends PureComponent {
 					disabled={ ! this.hasSelectedPlugins() }
 					compact
 					onClick={ this.props.autoupdateEnablePluginNotice }
+					id="plugin-list-header__buttons-autoupdate-button"
 				>
 					{ translate( 'Autoupdate' ) }
 				</Button>

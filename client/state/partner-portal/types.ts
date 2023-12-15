@@ -243,6 +243,7 @@ export interface License {
 	revokedAt: string | null;
 	ownerType: string | null;
 	quantity: number | null;
+	parentLicenseId: number | null;
 }
 
 export interface LicenseCounts {

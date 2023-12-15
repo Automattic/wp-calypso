@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { initSentry, captureException } from '@automattic/calypso-sentry';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
@@ -67,6 +68,7 @@ declare global {
 				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
 			} ) => void;
+			cleanup: () => void;
 			strings: any;
 		};
 	}
@@ -98,6 +100,7 @@ export async function loadDSPWidgetJS(): Promise< boolean > {
 		return true;
 	} catch ( error ) {
 		debug( 'loadDSPWidgetJS: [Load Error] the script failed to load: ', error );
+		captureException( error );
 		return false;
 	}
 }
@@ -140,7 +143,11 @@ export async function showDSP(
 	locale?: string,
 	jetpackVersion?: string,
 	dispatch?: Dispatch
-) {
+): Promise< boolean > {
+	// Increase Sentry sample rate to 100% for DSP widget
+	await initSentry( { sampleRate: 1.0 } );
+
+	// Loading the DSP widget JS assets
 	await loadDSPWidgetJS();
 
 	return new Promise( ( resolve, reject ) => {
@@ -196,6 +203,7 @@ export async function showDSP(
 			debug( 'showDSP: [Widget started]' );
 		} catch ( error ) {
 			debug( 'showDSP: [Widget start error] the widget render method execution failed: ', error );
+			captureException( error );
 
 			dispatch?.(
 				recordTracksEvent( 'calypso_dsp_widget_failed_to_start', { origin: getDSPOrigin() } )
@@ -203,6 +211,12 @@ export async function showDSP(
 			reject( false );
 		}
 	} );
+}
+
+export async function cleanupDSP() {
+	if ( window.BlazePress ) {
+		window.BlazePress.cleanup?.();
+	}
 }
 
 /**

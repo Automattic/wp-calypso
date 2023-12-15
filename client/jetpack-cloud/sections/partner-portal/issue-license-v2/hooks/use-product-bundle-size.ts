@@ -1,7 +1,7 @@
+import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import { useURLQueryParams } from '../../hooks';
 
 const BUNDLE_SIZE_PARAM_KEY = 'bundle_size';
 
@@ -11,7 +11,7 @@ const parseLocationHash = ( supportedBundleSizes: number[], value: string ) => {
 	return supportedBundleSizes.find( ( size ) => value === `${ size }` ) || 1;
 };
 
-const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
+export const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
 	if ( ! products ) {
 		return [ 1 ];
 	}
@@ -29,32 +29,33 @@ export function useProductBundleSize() {
 
 	const supportedBundleSizes = getSupportedBundleSizes( products );
 
-	const { setParams, resetParams, getParamValue } = useURLQueryParams();
-
 	const [ selectedSize, setSelectedSize ] = useState< number | undefined >( undefined );
 
 	// When products are changed, we need to reevaluate if selected bundle size is still valid
 	useEffect( () => {
-		setSelectedSize(
-			parseLocationHash( supportedBundleSizes, getParamValue( BUNDLE_SIZE_PARAM_KEY ) )
-		);
-	}, [ getParamValue, supportedBundleSizes ] );
+		const { [ BUNDLE_SIZE_PARAM_KEY ]: bundleSize } = getQueryArgs( window.location.href );
+		setSelectedSize( parseLocationHash( supportedBundleSizes, bundleSize?.toString() ) );
+	}, [ supportedBundleSizes ] );
 
 	const setSelectedSizeAndLocationHash = useCallback(
 		( size: number ) => {
-			if ( size === 1 ) {
-				resetParams( [ BUNDLE_SIZE_PARAM_KEY ] );
-			} else {
-				setParams( [
-					{
-						key: BUNDLE_SIZE_PARAM_KEY,
-						value: `${ size }`,
-					},
-				] );
+			if ( size === selectedSize ) {
+				return;
 			}
+
+			const queryArgs =
+				size === 1
+					? removeQueryArgs( window.location.href, BUNDLE_SIZE_PARAM_KEY )
+					: addQueryArgs( window.location.href, {
+							...getQueryArgs( window.location.href ),
+							[ BUNDLE_SIZE_PARAM_KEY ]: `${ size }`,
+					  } );
+
+			window.history.pushState( null, '', queryArgs );
+
 			setSelectedSize( size );
 		},
-		[ resetParams, setParams ]
+		[ selectedSize ]
 	);
 
 	return useMemo( () => {
@@ -62,6 +63,7 @@ export function useProductBundleSize() {
 			selectedSize: selectedSize ?? 1,
 			setSelectedSize: setSelectedSizeAndLocationHash,
 			availableSizes: supportedBundleSizes,
+			fetchingAvailableSizes: ! selectedSize, // We know we are still fetching if our selected size is undefined.
 		};
 	}, [ selectedSize, setSelectedSizeAndLocationHash, supportedBundleSizes ] );
 }

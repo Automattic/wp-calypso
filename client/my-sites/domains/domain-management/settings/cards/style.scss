@@ -442,6 +442,16 @@
 }
 
 .domain-glue-records-card__accordion {
+	.form-text-input-with-affixes__suffix {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.form-label {
+			margin-bottom: 0;
+		}
+	}
+
 	.domain-glue-records-card__error-field {
 		height: 20px;
 	}

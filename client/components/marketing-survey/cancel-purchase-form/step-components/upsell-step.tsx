@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan } from '@automattic/calypso-products';
+import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import formatCurrency from '@automattic/format-currency';
 import { useChatWidget } from '@automattic/help-center/src/hooks';
+import { englishLocales } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate, numberFormat, getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
 import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
@@ -108,6 +110,7 @@ type StepProps = {
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = 25;
@@ -115,6 +118,17 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 	const { openChatWidget } = useChatWidget();
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
+	const hasAtomicCtaTranslation =
+		englishLocales.includes( String( getLocaleSlug() ) ) ||
+		hasTranslation( 'I want the %(businessPlanName)s plan' );
+	const hasAtomicUpsellTranslation =
+		englishLocales.includes( String( getLocaleSlug() ) ) ||
+		hasTranslation(
+			'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? ' +
+				'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
+				'Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}'
+		);
 
 	switch ( upsell ) {
 		case 'live-chat:plans':
@@ -178,7 +192,11 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'Go further with %(numberOfPluginsThemes)s plugins and themes', {
 						args: { numberOfPluginsThemes },
 					} ) }
-					acceptButtonText={ translate( 'I want the Business plan' ) }
+					acceptButtonText={
+						hasAtomicCtaTranslation
+							? translate( 'I want the %(businessPlanName)s plan', { args: { businessPlanName } } )
+							: translate( 'I want the Business plan' )
+					}
 					acceptButtonUrl={ `/checkout/${ site.slug }/business?coupon=${ couponCode }` }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
@@ -188,15 +206,30 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 				>
 					{
 						/* translators: %(discountRate)d%% is a discount percentage like 20% or 25%, followed by an escaped percentage sign %% */
-						translate(
-							'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com Business plan? ' +
-								'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
-								'Claim a %(discountRate)d%% discount when you renew your Business plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
-							{
-								args: { numberOfPluginsThemes, discountRate, couponCode },
-								components: { b: <strong /> },
-							}
-						)
+						hasAtomicUpsellTranslation
+							? translate(
+									'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? ' +
+										'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
+										'Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
+									{
+										args: {
+											numberOfPluginsThemes,
+											discountRate,
+											couponCode,
+											businessPlanName,
+										},
+										components: { b: <strong /> },
+									}
+							  )
+							: translate(
+									'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com Business plan? ' +
+										'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
+										'Claim a %(discountRate)d%% discount when you renew your Business plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
+									{
+										args: { numberOfPluginsThemes, discountRate, couponCode },
+										components: { b: <strong /> },
+									}
+							  )
 					}
 				</Upsell>
 			);
@@ -240,15 +273,24 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 			return (
 				<Upsell
 					title={ translate( 'Switch to a more affordable plan' ) }
-					acceptButtonText={ translate( 'Switch to the Personal plan' ) }
+					/* translators: %(plan)s is WordPress.com Personal or another plan */
+					acceptButtonText={ translate( 'Switch to the %(plan)s plan', {
+						args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgSwitchPlan }
 				>
 					<>
-						{ translate(
-							'WordPress.com Personal still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.'
-						) }{ ' ' }
+						{
+							/* translators: %(plan)s is WordPress.com Personal or another plan */
+							translate(
+								'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
+								{
+									args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+								}
+							)
+						}{ ' ' }
 						{ refundAmount &&
 							translate(
 								'You can downgrade and get a partial refund of %(amount)s or ' +

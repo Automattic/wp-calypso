@@ -69,6 +69,7 @@ export type StatsCardProps = {
 	mainItemLabel?: React.ReactNode;
 	additionalHeaderColumns?: React.ReactNode;
 	toggleControl?: React.ReactNode;
+	overlay?: React.ReactNode;
 };
 
 export type StatsCardAvatarProps = {

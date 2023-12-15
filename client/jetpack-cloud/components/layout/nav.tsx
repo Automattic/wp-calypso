@@ -66,6 +66,7 @@ export default function LayoutNavigation( {
 					{ Number.isInteger( selectedCount ) && <Count count={ selectedCount } compact /> }
 				</span>
 			}
+			selectedCount={ selectedCount }
 		>
 			{ children }
 		</SectionNav>

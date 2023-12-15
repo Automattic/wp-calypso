@@ -19,6 +19,7 @@ const useDotcomPatterns = (
 					isEnabled( 'pattern-assembler/v2' )
 						? {
 								site: getPatternSourceSiteID(),
+								post_type: 'wp_block',
 						  }
 						: {
 								tags:
@@ -26,6 +27,7 @@ const useDotcomPatterns = (
 									// There are more pages tagged with assembler_page that still aren't offered in Assembler.
 									'assembler,assembler_priority',
 								categories: PATTERN_CATEGORIES.join( ',' ),
+								post_type: 'post',
 						  }
 				).toString(),
 			} );

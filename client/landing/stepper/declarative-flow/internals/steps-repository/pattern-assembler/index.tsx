@@ -21,6 +21,7 @@ import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -77,7 +78,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -96,6 +96,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
 	const isNewSite = useIsNewSite( flow );
+	const [ searchParams ] = useSearchParams();
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -166,8 +167,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	useSyncNavigatorScreen();
 
 	const siteInfo = {
-		title: site?.name,
-		tagline: site?.description || SITE_TAGLINE,
+		title: searchParams.get( 'site_title' ) || site?.name,
+		tagline: searchParams.get( 'site_tagline' ) || site?.description || SITE_TAGLINE,
 	};
 
 	const getPatterns = ( patternType?: string | null ) => {
@@ -622,11 +623,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation
-						onConfirm={ onConfirm }
-						surveyDismissed={ surveyDismissed }
-						setSurveyDismissed={ setSurveyDismissed }
-					/>
+					<ScreenConfirmation onConfirm={ onConfirm } />
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">

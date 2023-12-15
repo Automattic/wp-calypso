@@ -259,7 +259,7 @@ function SiteResetCard( {
 	const backupHint = isAtomic
 		? createInterpolateElement(
 				translate(
-					"Having second thoughts? Don't fret, we'll automatically back up your site content before the reset and you can restore it any time from the <a>Activity Log</a>."
+					"Having second thoughts? Don't fret, you'll be able to restore your site using the most recent backup in the <a>Activity Log</a>."
 				),
 				{
 					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
@@ -284,12 +284,12 @@ function SiteResetCard( {
 			<Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Reset your site' ) }
+				title={ translate( 'Site Reset' ) }
 				subtitle={ translate(
 					"Remove all posts, pages, and media to start fresh while keeping your site's address. {{a}}Learn more.{{/a}}",
 					{
 						components: {
-							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
+							a: <InlineSupportLink supportContext="site-reset" showIcon={ false } />,
 						},
 					}
 				) }
@@ -370,7 +370,7 @@ function SiteResetCard( {
 				site={ site }
 				isUnlaunchedSite={ isUnlaunchedSiteProp }
 				urlRef="unlaunched-site-reset"
-			/>{ ' ' }
+			/>
 		</Main>
 	);
 }
