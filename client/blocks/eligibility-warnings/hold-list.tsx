@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import i18n, { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
@@ -18,16 +19,25 @@ function getHoldMessages(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ],
 	billingPeriod?: string,
-	isMarketplace?: boolean
+	isMarketplace?: boolean,
+	isEnglishLocale?: boolean
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
 				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
-					return translate( 'Upgrade to a Personal plan' );
+					return isEnglishLocale || i18n.hasTranslation( 'Upgrade to a %(personalPlanName)s plan' )
+						? translate( 'Upgrade to a %(personalPlanName)s plan', {
+								args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+						  } )
+						: translate( 'Upgrade to a Personal plan' );
 				}
 
-				return translate( 'Upgrade to a Business plan' );
+				return isEnglishLocale || i18n.hasTranslation( 'Upgrade to a %(businessPlanName)s plan' )
+					? translate( 'Upgrade to a %(businessPlanName)s plan', {
+							args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					  } )
+					: translate( 'Upgrade to a Business plan' );
 			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
@@ -214,7 +224,14 @@ export const HardBlockingNotice = ( {
 
 export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages( context, translate, billingPeriod, isMarketplace );
+	const isEnglishLocale = useIsEnglishLocale();
+	const holdMessages = getHoldMessages(
+		context,
+		translate,
+		billingPeriod,
+		isMarketplace,
+		isEnglishLocale
+	);
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
