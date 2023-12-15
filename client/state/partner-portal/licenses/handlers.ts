@@ -38,6 +38,7 @@ interface APILicense {
 	revoked_at: string | null;
 	owner_type: string | null;
 	quantity: number | null;
+	parent_license_id: number | null;
 }
 
 interface APIPaginatedItems< T > {
@@ -113,6 +114,7 @@ export function formatLicenses( items: APILicense[] ): License[] {
 		revokedAt: item.revoked_at,
 		ownerType: item.owner_type,
 		quantity: item.quantity,
+		parentLicenseId: item.parent_license_id,
 	} ) );
 }
 

@@ -1,7 +1,7 @@
 import { BundledBadge, PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,7 +14,7 @@ export default function ThemeTierBundledBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
-	const bundleSettings = useBundleSettings( themeId );
+	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);

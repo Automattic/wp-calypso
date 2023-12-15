@@ -281,8 +281,9 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 								>
 									{ translate( 'Go back' ) }
 								</Button>
-
-								<CheckoutFormSubmit />
+								<span className="payment-method-add__submit-button">
+									<CheckoutFormSubmit />
+								</span>
 							</div>
 						</div>
 						<div className="payment-method-add__image">

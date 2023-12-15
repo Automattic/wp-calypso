@@ -150,9 +150,8 @@ interface Props {
 	sitePlanSlug?: PlanSlug | null;
 	hideEnterprisePlan?: boolean;
 	isInSignup?: boolean;
-	// whether plan is upgradable from current plan (used in logged-in state)
-	usePlanUpgradeabilityCheck?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-		[ key: string ]: boolean;
+	useCheckPlanAvailabilityForPurchase?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+		[ planSlug in PlanSlug ]?: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
 
@@ -277,7 +276,7 @@ const useGridPlans = ( {
 	sitePlanSlug,
 	hideEnterprisePlan,
 	isInSignup,
-	usePlanUpgradeabilityCheck,
+	useCheckPlanAvailabilityForPurchase,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
@@ -308,7 +307,7 @@ const useGridPlans = ( {
 		term,
 		intent,
 	} );
-	const planUpgradeability = usePlanUpgradeabilityCheck?.( {
+	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase?.( {
 		planSlugs: availablePlanSlugs,
 	} );
 
@@ -318,7 +317,7 @@ const useGridPlans = ( {
 		planSlugs: planSlugsForIntent,
 		currentSitePlanSlug: sitePlanSlug,
 		selectedPlan,
-		planUpgradeability,
+		plansAvailabilityForPurchase,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
@@ -337,7 +336,12 @@ const useGridPlans = ( {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const planObject = pricedAPIPlans.data?.[ planSlug ];
 		const isMonthlyPlan = isMonthly( planSlug );
-		const availableForPurchase = !! ( isInSignup || planUpgradeability?.[ planSlug ] );
+		/**
+		 * TODO: checking isInSignup below seems redundant. We should be able to remove it.
+		 * - double check whether Stepper does something else with a site ID and current plan
+		 * while still in Signup flow
+		 */
+		const availableForPurchase = !! ( isInSignup || plansAvailabilityForPurchase?.[ planSlug ] );
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
