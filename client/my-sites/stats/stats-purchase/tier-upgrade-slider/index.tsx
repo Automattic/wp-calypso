@@ -90,6 +90,12 @@ function TierUpgradeSlider( {
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const rhValue = steps[ currentPlanIndex ]?.rhValue;
 
+	const secondaryCalloutIsHidden = rhValue === '';
+	const secondaryCalloutClassnames = classNames(
+		'tier-upgrade-slider__step-callout right-aligned',
+		{ 'hide-callout': secondaryCalloutIsHidden }
+	);
+
 	if ( errorMessage !== null ) {
 		return errorMessage;
 	}
@@ -101,7 +107,7 @@ function TierUpgradeSlider( {
 					<h2>{ uiStrings.limits }</h2>
 					<p>{ lhValue }</p>
 				</div>
-				<div className="tier-upgrade-slider__step-callout right-aligned">
+				<div className={ secondaryCalloutClassnames }>
 					<h2>{ uiStrings.price }</h2>
 					<p ref={ infoReferenceElement }>{ rhValue }</p>
 				</div>
