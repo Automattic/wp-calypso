@@ -39,6 +39,11 @@ describe( 'getSignupUrl', () => {
 		expect( getSignupUrl( undefined, currentRoute, null, 'en', '' ) ).toEqual( '/start' );
 	} );
 
+	test( 'should localize the /log-in route', () => {
+		const currentRoute = '/log-in';
+		expect( getSignupUrl( undefined, currentRoute, null, 'de', '' ) ).toEqual( '/start/de' );
+	} );
+
 	test( 'should work for /log-in route with redirect_to', () => {
 		const currentQuery = {
 			redirect_to: '/me/',
