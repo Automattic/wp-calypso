@@ -220,11 +220,21 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			category_count: categories.length,
 			pattern_count: patterns.length,
 		} );
+
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
 				pattern_category: category?.name,
+			} );
+		} );
+
+		pages.forEach( ( { ID, name, categories = {} } ) => {
+			const category_slug = Object.keys( categories )[ 0 ];
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
+				page_id: ID,
+				page_name: name,
+				...( category_slug && { page_category: category_slug } ),
 			} );
 		} );
 	};
