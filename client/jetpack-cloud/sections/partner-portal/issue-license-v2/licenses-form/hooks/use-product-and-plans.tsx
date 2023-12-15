@@ -1,17 +1,12 @@
 import { getQueryArg } from '@wordpress/url';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
-	isJetpackBundle,
 	isWooCommerceProduct,
 	isWpcomHostingProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
-import {
-	addSelectedProductSlugs,
-	clearSelectedProductSlugs,
-} from 'calypso/state/partner-portal/products/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
 	PRODUCT_FILTER_ALL,
@@ -120,28 +115,6 @@ export default function useProductAndPlans( {
 	productSearchQuery,
 }: Props ) {
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		// If the user comes from the flow for adding a new payment method during an attempt to issue a license
-		// after the payment method is added, we will make an attempt to issue the chosen license automatically.
-		const defaultProductSlugs = getQueryArg( window.location.href, 'products' )
-			?.toString()
-			.split( ',' );
-		// Select the slugs included in the URL
-		defaultProductSlugs &&
-			dispatch(
-				addSelectedProductSlugs(
-					// Filter the bundles and select only individual products
-					defaultProductSlugs.filter( ( slug ) => ! isJetpackBundle( slug ) )
-				)
-			);
-
-		// Clear all selected slugs when navigating away from the page to avoid persisting the data.
-		return () => {
-			dispatch( clearSelectedProductSlugs() );
-		};
-	}, [ dispatch ] );
 
 	const addedPlanAndProducts = useSelector( ( state ) =>
 		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
@@ -185,6 +158,7 @@ export default function useProductAndPlans( {
 
 		return {
 			isLoadingProducts,
+			data,
 			filteredProductsAndBundles,
 			plans: getDisplayablePlans( filteredProductsAndBundles ),
 			products: getDisplayableProducts( filteredProductsAndBundles ),
