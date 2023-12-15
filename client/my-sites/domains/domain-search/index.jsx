@@ -9,6 +9,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import getColorSchemesData from 'calypso/blocks/color-scheme-picker/constants';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
@@ -123,6 +124,18 @@ class DomainSearch extends Component {
 		this.checkSiteIsUpgradeable();
 
 		this.isMounted = true;
+
+		// add is-classic-dark to body and remove other
+		const colorSchemeData = getColorSchemesData( this.props.translate );
+		colorSchemeData.forEach( ( scheme ) => {
+			if ( scheme.thumbnail.cssClass !== 'is-classic-dark' ) {
+				document.body.classList.remove( scheme.thumbnail.cssClass );
+			}
+		} );
+
+		if ( ! document.body.classList.contains( 'is-classic-dark' ) ) {
+			document.body.classList.add( 'is-classic-dark' );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {

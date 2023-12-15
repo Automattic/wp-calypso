@@ -7,7 +7,8 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useMemo } from 'react';
+import { Fragment, useCallback, useEffect, useMemo } from 'react';
+import getColorSchemesData from 'calypso/blocks/color-scheme-picker/constants';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -725,6 +726,23 @@ export default function CheckoutMain( {
 			),
 		[ responseCart.products ]
 	);
+
+	useEffect( () => {
+		// If checkout page, remove all colorScheme body classes except is-classic-dark
+		const isCheckoutPage = window.location.pathname.startsWith( '/checkout' );
+		if ( isCheckoutPage ) {
+			const colorSchemeData = getColorSchemesData( translate );
+			colorSchemeData.forEach( ( scheme ) => {
+				if ( scheme.thumbnail.cssClass !== 'is-classic-dark' ) {
+					document.body.classList.remove( scheme.thumbnail.cssClass );
+				}
+			} );
+
+			if ( ! document.body.classList.contains( 'is-classic-dark' ) ) {
+				document.body.classList.add( 'is-classic-dark' );
+			}
+		}
+	}, [] );
 
 	return (
 		<Fragment>

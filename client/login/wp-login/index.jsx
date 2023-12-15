@@ -82,6 +82,11 @@ export class Login extends Component {
 
 	componentDidMount() {
 		this.recordPageView();
+
+		const body = document.querySelector( 'body' );
+		if ( body && ! body.classList.contains( 'is-classic-dark' ) ) {
+			body.classList.add( 'is-classic-dark' );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
