@@ -34,7 +34,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
 	// check site type
-	if ( jetpackSite || atomicSite ) {
+	if ( jetpackSite && ! atomicSite ) {
 		return false;
 	}
 
