@@ -24,6 +24,7 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 		return null;
 	}
 
+	// TODO: Double check this verification according what's being sent from the server
 	// Add a review card if the user has not left a review yet
 	const hasReview = reviews?.some( ( review ) => review.author === currentUserId );
 	const addLeaveAReviewCard = ! hasReview && reviews.length < 2;
