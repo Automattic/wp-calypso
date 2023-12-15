@@ -25,8 +25,7 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 	}
 
 	// Add a review card if the user has not left a review yet
-	const hasReview =
-		Array.isArray( reviews ) && reviews?.some( ( review ) => review.author === currentUserId );
+	const hasReview = reviews?.some( ( review ) => review.author === currentUserId );
 	const addLeaveAReviewCard = ! hasReview && reviews.length < 2;
 
 	const addEmptyCard = reviews.length === 0;
@@ -55,10 +54,13 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 			</div>
 
 			<div className="marketplace-reviews-cards__content">
-				{ Array.isArray( reviews ) &&
-					reviews.map( ( review ) => <MarketplaceReviewCard review={ review } /> ) }
-				{ addEmptyCard && <MarketplaceReviewCard empty={ true } /> }
-				{ addLeaveAReviewCard && <MarketplaceReviewCard leaveAReview={ true } /> }
+				{ reviews.map( ( review ) => (
+					<MarketplaceReviewCard review={ review } key={ review.id } />
+				) ) }
+				{ addEmptyCard && <MarketplaceReviewCard empty={ true } key="empty-card" /> }
+				{ addLeaveAReviewCard && (
+					<MarketplaceReviewCard leaveAReview={ true } key="leave-a-review-card" />
+				) }
 			</div>
 		</div>
 	);
