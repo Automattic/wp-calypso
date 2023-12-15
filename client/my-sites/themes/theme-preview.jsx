@@ -96,10 +96,6 @@ class ThemePreview extends Component {
 	};
 
 	shouldShowUnlockStyleButton = () => {
-		if ( isEnabled( 'themes/tiers' ) ) {
-			return false;
-		}
-
 		const { options, shouldLimitGlobalStyles, themeOptions } = this.props;
 		if ( ! themeOptions ) {
 			return false;
@@ -182,10 +178,6 @@ class ThemePreview extends Component {
 	};
 
 	renderPrimaryButton = () => {
-		if ( isEnabled( 'themes/tiers' ) ) {
-			return null;
-		}
-
 		const primaryOption = this.getPrimaryOption();
 		if ( ! primaryOption ) {
 			return;
@@ -204,10 +196,6 @@ class ThemePreview extends Component {
 	};
 
 	renderSecondaryButton = () => {
-		if ( isEnabled( 'themes/tiers' ) ) {
-			return null;
-		}
-
 		const secondaryButton = this.getSecondaryOption();
 		if ( ! secondaryButton ) {
 			return;
@@ -263,12 +251,16 @@ class ThemePreview extends Component {
 						externalUrl={ demoUrl }
 						belowToolbar={ this.props.belowToolbar }
 					>
-						{ showActionIndicator && <PulsingDot active={ true } /> }
-						{ ! showActionIndicator && this.renderSecondaryButton() }
-						{ ! showActionIndicator &&
-							( this.shouldShowUnlockStyleButton()
-								? this.renderUnlockStyleButton()
-								: this.renderPrimaryButton() ) }
+						{ ! isEnabled( 'themes/tiers' ) && (
+							<>
+								{ showActionIndicator && <PulsingDot active={ true } /> }
+								{ ! showActionIndicator && this.renderSecondaryButton() }
+								{ ! showActionIndicator &&
+									( this.shouldShowUnlockStyleButton()
+										? this.renderUnlockStyleButton()
+										: this.renderPrimaryButton() ) }
+							</>
+						) }
 					</WebPreview>
 				) }
 				{ showUnlockStyleUpgradeModal && (
