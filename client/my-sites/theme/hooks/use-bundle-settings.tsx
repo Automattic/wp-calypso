@@ -70,7 +70,7 @@ export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookR
 			default:
 				return null;
 		}
-	}, [ translate, businessPlanName, themeSoftware, isEnglishLocale ] );
+	}, [ themeSoftware, translate, isEnglishLocale, businessPlanName ] );
 
 	return bundleSettings;
 }

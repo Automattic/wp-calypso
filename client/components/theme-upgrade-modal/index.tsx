@@ -22,13 +22,14 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
+import { Button, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { usePlans } from '@automattic/data-stores/src/plans';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { Icon as WpIcon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -40,6 +41,8 @@ import { ThemeSoftwareSet } from 'calypso/types';
 import './style.scss';
 
 interface UpgradeModalProps {
+	additionalClassNames?: string;
+	additionalOverlayClassNames?: string;
 	/* Theme slug */
 	slug: string;
 	isOpen: boolean;
@@ -57,7 +60,13 @@ interface UpgradeModalContent {
 	action: JSX.Element | null;
 }
 
+/**
+ * - This component provides users with details about a specific theme and outlines the plan they need to upgrade to.
+ * - It is also used outside of Calypso, currently in `apps/wpcom-block-editor`, so refrain from incorporating Calypso state, Gridicons, or any logic that relies on Calypso dependencies.
+ */
 export const ThemeUpgradeModal = ( {
+	additionalClassNames,
+	additionalOverlayClassNames,
 	slug,
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
@@ -411,7 +420,7 @@ export const ThemeUpgradeModal = ( {
 						<li key={ i } className="theme-upgrade-modal__included-item">
 							<Tooltip text={ feature.getDescription?.() as string } position="top left">
 								<div>
-									<Gridicon icon="checkmark" size={ 16 } />
+									<WpIcon className="wpicon" icon={ check } size={ 24 } />
 									{ feature.getTitle() }
 								</div>
 							</Tooltip>
@@ -423,6 +432,8 @@ export const ThemeUpgradeModal = ( {
 
 	return (
 		<Dialog
+			additionalClassNames={ additionalClassNames }
+			additionalOverlayClassNames={ additionalOverlayClassNames }
 			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
 			onClose={ () => closeModal() }
@@ -441,7 +452,7 @@ export const ThemeUpgradeModal = ( {
 					</div>
 					<div className="theme-upgrade-modal__col">{ features }</div>
 					<Button className="theme-upgrade-modal__close" borderless onClick={ () => closeModal() }>
-						<Gridicon icon="cross" size={ 12 } />
+						<WpIcon className="wpicon" icon={ close } size={ 24 } />
 						<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 					</Button>
 				</>
