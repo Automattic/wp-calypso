@@ -18,6 +18,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSiteOnECommerceTrial, isSiteOnWooExpress } from 'calypso/state/sites/plans/selectors';
 import { getSiteThemeInstallUrl } from 'calypso/state/sites/selectors';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -130,9 +131,9 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ tabFilter !== 'my-themes' && props.themes.length > 0 && (
-				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
-			) }
+			{ ! ( props.isSiteWooExpressOrEcomFreeTrial && props.tier === 'free' ) &&
+				tabFilter !== 'my-themes' &&
+				props.themes.length > 0 && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
 			{ props.children }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
@@ -165,6 +166,7 @@ ThemesList.propTypes = {
 	] ),
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
+	tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 	upsellCardDisplayed: PropTypes.func,
 	children: PropTypes.node,
 };
@@ -412,9 +414,13 @@ function LoadingPlaceholders( { placeholderCount } ) {
 	} );
 }
 
-const mapStateToProps = ( state ) => ( {
-	themesBookmark: getThemesBookmark( state ),
-} );
+const mapStateToProps = ( state, { siteId } ) => {
+	return {
+		themesBookmark: getThemesBookmark( state ),
+		isSiteWooExpressOrEcomFreeTrial:
+			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+	};
+};
 
 const mapDispatchToProps = {
 	upsellCardDisplayed: upsellCardDisplayedAction,
