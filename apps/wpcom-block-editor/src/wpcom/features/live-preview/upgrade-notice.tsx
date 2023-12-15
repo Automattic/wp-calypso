@@ -21,21 +21,13 @@ const unlock = getUnlock();
 
 const LivePreviewUpgradeNoticeView: FC< {
 	noticeText: string;
-	upgradePlan: () => void;
-} > = ( { noticeText, upgradePlan } ) => {
+} > = ( { noticeText } ) => {
 	return (
 		<Notice
 			status="warning"
 			isDismissible={ false }
 			className="wpcom-live-preview-upgrade-notice-view"
-			actions={ [
-				{
-					// TODO: Add the tracking event.
-					label: __( 'Upgrade now', 'wpcom-live-preview' ),
-					onClick: upgradePlan,
-					variant: 'primary',
-				},
-			] }
+			// TODO: Add the tracking event.
 		>
 			{ noticeText }
 		</Notice>
@@ -45,8 +37,7 @@ const LivePreviewUpgradeNoticeView: FC< {
 export const LivePreviewUpgradeNotice: FC< {
 	dashboardLink?: string;
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
-	upgradePlan: () => void;
-} > = ( { dashboardLink, previewingTheme, upgradePlan } ) => {
+} > = ( { dashboardLink, previewingTheme } ) => {
 	const [ isRendered, setIsRendered ] = useState( false );
 	const { createWarningNotice } = useDispatch( 'core/notices' );
 	const canvasMode = useSelect(
@@ -75,11 +66,6 @@ export const LivePreviewUpgradeNotice: FC< {
 			isDismissible: false,
 			__unstableHTML: true,
 			actions: [
-				{
-					label: __( 'Upgrade now', 'wpcom-live-preview' ),
-					onClick: upgradePlan,
-					variant: 'primary',
-				},
 				...( dashboardLink
 					? [
 							{
@@ -91,7 +77,7 @@ export const LivePreviewUpgradeNotice: FC< {
 					: [] ),
 			],
 		} );
-	}, [ createWarningNotice, dashboardLink, noticeText, upgradePlan ] );
+	}, [ createWarningNotice, dashboardLink, noticeText ] );
 
 	/**
 	 * Show the notice when the canvas mode is 'view'.
@@ -119,13 +105,10 @@ export const LivePreviewUpgradeNotice: FC< {
 			container.insertBefore( noticeContainer, saveHub );
 		}
 
-		render(
-			<LivePreviewUpgradeNoticeView noticeText={ noticeText } upgradePlan={ upgradePlan } />,
-			noticeContainer
-		);
+		render( <LivePreviewUpgradeNoticeView noticeText={ noticeText } />, noticeContainer );
 
 		setIsRendered( true );
-	}, [ canvasMode, isRendered, noticeText, upgradePlan ] );
+	}, [ canvasMode, isRendered, noticeText ] );
 
 	return null;
 };
