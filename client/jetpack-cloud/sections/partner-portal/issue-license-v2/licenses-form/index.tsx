@@ -5,7 +5,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
 import { parseQueryStringProducts } from '../../lib/querystring-products';
 import LicenseMultiProductCard from '../../license-multi-product-card';
@@ -41,8 +40,6 @@ export default function LicensesForm( {
 		PRODUCT_FILTER_ALL
 	);
 
-	const { data } = useProductsQuery();
-
 	const {
 		filteredProductsAndBundles,
 		isLoadingProducts,
@@ -51,6 +48,7 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		suggestedProductSlugs,
+		data,
 	} = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,

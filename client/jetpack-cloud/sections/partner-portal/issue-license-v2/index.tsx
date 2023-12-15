@@ -155,9 +155,11 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						) }
 					</LayoutHeader>
 
-					<LayoutNavigation { ...selectedItemProps }>
-						<NavigationTabs { ...selectedItemProps } items={ navItems } />
-					</LayoutNavigation>
+					{ ! selectedSite && (
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
+					) }
 				</LayoutTop>
 
 				<LayoutBody>
@@ -174,6 +176,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 				<ReviewLicenses
 					onClose={ () => setShowReviewLicenses( false ) }
 					selectedLicenses={ getGroupedLicenses() }
+					selectedSite={ selectedSite }
 				/>
 			) }
 		</>

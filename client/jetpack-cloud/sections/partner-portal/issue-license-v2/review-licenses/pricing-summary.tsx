@@ -8,11 +8,14 @@ import useSubmitForm from '../hooks/use-submit-form';
 import { getTotalInvoiceValue } from '../lib/pricing';
 import PricingBreakdown from './pricing-breakdown';
 import type { SelectedLicenseProp } from '../types';
+import type { SiteDetails } from '@automattic/data-stores';
 
 export default function PricingSummary( {
 	selectedLicenses,
+	selectedSite,
 }: {
 	selectedLicenses: SelectedLicenseProp[];
+	selectedSite?: SiteDetails | null;
 } ) {
 	const translate = useTranslate();
 
@@ -23,9 +26,7 @@ export default function PricingSummary( {
 		.map( ( license ) => license.quantity )
 		.reduce( ( a, b ) => a + b, 0 );
 
-	// NOTE: Because we're now able to issue multiple licenses, we may need to
-	// re-spec the behavior for when a specific site is selected
-	const { isReady: isFormReady, submitForm } = useSubmitForm( null );
+	const { isReady: isFormReady, submitForm } = useSubmitForm( selectedSite );
 	const handleCTAClick = useCallback( () => {
 		if ( ! isFormReady ) {
 			return;
@@ -75,7 +76,11 @@ export default function PricingSummary( {
 					}
 				) }
 			</div>
-			<PricingBreakdown userProducts={ userProducts } selectedLicenses={ selectedLicenses } />
+			<PricingBreakdown
+				userProducts={ userProducts }
+				selectedLicenses={ selectedLicenses }
+				selectedSite={ selectedSite }
+			/>
 		</>
 	);
 }
