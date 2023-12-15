@@ -1,6 +1,6 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
@@ -58,6 +58,14 @@ export default function LicensesForm( {
 		productSearchQuery,
 	} );
 
+	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
+	const filteredProductsAndBundlesRef = useRef( filteredProductsAndBundles );
+
+	// Update the ref whenever `filteredProductsAndBundles` changes.
+	useEffect( () => {
+		filteredProductsAndBundlesRef.current = filteredProductsAndBundles;
+	}, [ filteredProductsAndBundles ] );
+
 	const preSelectProducts = useCallback( () => {
 		const productsQueryArg = getQueryArg( window.location.href, 'products' )?.toString?.();
 		const parsedItems = parseQueryStringProducts( productsQueryArg );
@@ -67,7 +75,7 @@ export default function LicensesForm( {
 			? ( parsedItems
 					.map( ( item ) => {
 						// Add licenses & bundles that are supported
-						const product = filteredProductsAndBundles.find(
+						const product = filteredProductsAndBundlesRef.current.find(
 							( product ) => product.slug === item.slug
 						);
 						const quantity = availableSizes.find( ( size ) => size === item.quantity );
@@ -85,7 +93,7 @@ export default function LicensesForm( {
 		if ( allProductsAndBundles ) {
 			setSelectedLicenses( allProductsAndBundles );
 		}
-	}, [ filteredProductsAndBundles, setSelectedLicenses, data ] );
+	}, [ setSelectedLicenses, data ] );
 
 	useEffect( () => {
 		if ( isLoadingProducts ) {
