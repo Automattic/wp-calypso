@@ -161,6 +161,7 @@ export async function showDSP(
 
 		try {
 			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+			const isMobileApp = isWpMobileApp() || isWcMobileApp();
 
 			window.BlazePress.render( {
 				siteSlug: siteSlug,
@@ -184,8 +185,8 @@ export async function showDSP(
 				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
-				uploadImageLabel: isWpMobileApp() || isWcMobileApp() ? __( 'Tap to add image' ) : undefined,
-				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
+				uploadImageLabel: isMobileApp ? __( 'Tap to add image' ) : undefined,
+				showGetStartedMessage: ! isMobileApp, // Don't show the GetStartedMessage in the mobile app.
 				source: source,
 				isRunningInJetpack,
 				jetpackXhrParams: isRunningInJetpack
