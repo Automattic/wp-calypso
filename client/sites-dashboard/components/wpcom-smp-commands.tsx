@@ -272,6 +272,11 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'getHelp',
 			label: __( 'Get help' ),
+			searchLabel: [
+				_x( 'get help', 'Keyword for the Get help command' ),
+				_x( 'contact support', 'Keyword for the Get help command' ),
+				_x( 'help center', 'Keyword for the Get help command' ),
+			].join( ' ' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				setShowHelpCenter( true );

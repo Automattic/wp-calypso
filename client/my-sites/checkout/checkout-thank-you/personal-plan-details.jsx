@@ -1,5 +1,10 @@
-import { isPersonal, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
+import {
+	isPersonal,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	getPlan,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
+import i18n, { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -8,8 +13,9 @@ import PurchaseDetail from 'calypso/components/purchase-detail';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 
-const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
+const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases, locale } ) => {
 	const plan = find( sitePlans.data, isPersonal );
+	const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (
@@ -35,10 +41,22 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } 
 			<PurchaseDetail
 				icon={ <img alt="" src={ adsRemovedImage } /> }
 				title={ translate( 'Advertising Removed' ) }
-				description={ translate(
-					'With your plan, all WordPress.com advertising has been removed from your site. ' +
-						'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
-				) }
+				description={
+					isEnglishLocale ||
+					i18n.hasTranslation(
+						'With your plan, all WordPress.com advertising has been removed from your site. ' +
+							'You can upgrade to a %(businessPlanName)s plan to also remove the WordPress.com footer credit.'
+					)
+						? translate(
+								'With your plan, all WordPress.com advertising has been removed from your site. ' +
+									'You can upgrade to a %(businessPlanName)s plan to also remove the WordPress.com footer credit.',
+								{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() } }
+						  )
+						: translate(
+								'With your plan, all WordPress.com advertising has been removed from your site. ' +
+									'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+						  )
+				}
 			/>
 		</div>
 	);

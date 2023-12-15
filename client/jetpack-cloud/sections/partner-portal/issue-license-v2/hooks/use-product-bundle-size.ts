@@ -11,7 +11,7 @@ const parseLocationHash = ( supportedBundleSizes: number[], value: string ) => {
 	return supportedBundleSizes.find( ( size ) => value === `${ size }` ) || 1;
 };
 
-const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
+export const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) => {
 	if ( ! products ) {
 		return [ 1 ];
 	}

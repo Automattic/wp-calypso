@@ -8,9 +8,8 @@ import {
 	TYPE_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
-import { useLocale } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
@@ -51,13 +50,11 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 	);
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const pluginsPlansPage = `/plugins/plans/yearly/${ selectedSite?.slug }`;
 
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
-	const locale = useLocale();
-
 	if (
 		jetpackNonAtomic ||
 		! selectedSite?.ID ||
@@ -128,24 +125,31 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 		);
 	}
 
-	let title = translate( 'You need to upgrade your plan to install plugins.' );
-	if (
-		'en' === locale ||
-		hasTranslation(
-			'You need to upgrade to a Business Plan to install plugins. Get a free domain with an annual plan.'
+	const title =
+		isEnglishLocale ||
+		i18n.hasTranslation(
+			'You need to upgrade to a %(businessPlanName)s Plan to install plugins. Get a free domain with an annual plan.'
 		)
-	) {
-		title = translate(
-			'You need to upgrade to a Business Plan to install plugins. Get a free domain with an annual plan.'
-		);
-	}
+			? translate(
+					'You need to upgrade to a %(businessPlanName)s Plan to install plugins. Get a free domain with an annual plan.',
+					{ args: { businessPlanName: getPlan( plan )?.getTitle() } }
+			  )
+			: translate(
+					'You need to upgrade to a Business Plan to install plugins. Get a free domain with an annual plan.'
+			  );
 
 	// This banner upsells the ability to install free and paid plugins on a Business plan.
 	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			className="plugins-discovery-page__upsell"
-			callToAction={ translate( 'Upgrade to Business' ) }
+			callToAction={
+				isEnglishLocale || i18n.hasTranslation( 'Upgrade to %(planName)s' )
+					? translate( 'Upgrade to %(planName)s', {
+							args: { planName: getPlan( plan )?.getTitle() },
+					  } )
+					: translate( 'Upgrade to Business' )
+			}
 			icon="notice-outline"
 			showIcon={ true }
 			href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business` }
