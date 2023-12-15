@@ -1,6 +1,6 @@
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -38,6 +38,7 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	const hasEnTranslation = useHasEnTranslation();
 	const urlQueryParams = useQuery();
 	const { user, site, siteSlug, flowName, stepName, submit } = props;
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
 		useCheckEligibilityMigrationTrialPlan( site?.ID );
@@ -94,9 +95,20 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 				<Title>{ __( 'You already have an active free trial' ) }</Title>
 				<SubTitle>
 					{ createInterpolateElement(
-						__(
-							"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the Business plan."
-						),
+						isEnglishLocale ||
+							hasEnTranslation(
+								"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the %(planName)s plan."
+							)
+							? sprintf(
+									/* translators: the planName is the short-from of the Business plan */
+									__(
+										"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the %(planName)s plan."
+									),
+									{ planName: plan?.getTitle() }
+							  )
+							: __(
+									"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the Business plan."
+							  ),
 						{ br: <br /> }
 					) }
 				</SubTitle>

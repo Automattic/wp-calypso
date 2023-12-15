@@ -15,6 +15,7 @@ export type StarProps = {
 	size?: number;
 	title?: string;
 	onClick?: ( ( e: React.MouseEvent | React.KeyboardEvent, index: number ) => void ) | null;
+	className?: string;
 	onMouseEnter?: ( index: number ) => void;
 	onMouseLeave?: () => void;
 	tracksEvent?: string;
@@ -34,6 +35,7 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 		size = 24,
 		title,
 		onClick,
+		className,
 		onMouseEnter,
 		onMouseLeave,
 		tracksEvent,
@@ -44,6 +46,9 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 		tabIndex,
 		ariaHidden,
 	} = props;
+
+	const classes = [ 'wccom-star', className ];
+	classes.push( 'wccom-star__' + index );
 
 	function handleOnClick( e: React.MouseEvent | React.KeyboardEvent, i: number ) {
 		if ( ! isInteractive ) {
@@ -62,6 +67,7 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 	}
 
 	const svgProps: React.SVGProps< SVGSVGElement > = {
+		className: classes.join( ' ' ),
 		width: size,
 		height: size,
 		viewBox: '0 0 24 24',

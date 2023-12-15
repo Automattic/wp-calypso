@@ -53,7 +53,9 @@ async function overridePreviewButtonUrl() {
 	} );
 
 	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
-	popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+	if ( popoverSlotElem ) {
+		popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+	}
 }
 
 overridePreviewButtonUrl();

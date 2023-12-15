@@ -37,7 +37,7 @@ type UpdateMarketplaceReviewProps = {
 
 type DeleteMarketplaceReviewProps = {
 	reviewId: number;
-} & ProductProps;
+};
 
 export type MarketplaceReviewResponse = {
 	id: number;
