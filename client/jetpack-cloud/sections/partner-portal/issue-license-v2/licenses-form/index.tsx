@@ -187,7 +187,9 @@ export default function LicensesForm( {
 					onSelectProduct={ onSelectOrReplaceProduct }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
 					selectedOption={ productOption.find( ( option ) =>
-						selectedLicenses.find( ( license ) => license.slug === option.slug )
+						selectedLicenses.find(
+							( license ) => license.slug === option.slug && license.quantity === quantity
+						)
 					) }
 					isDisabled={ ! isReady }
 					tabIndex={ 100 + i }
