@@ -18,13 +18,13 @@
 		grid-gap: 32px;
 		grid-column-gap: 24px;
 	}
-	.content-sidebar__main-content {
+	&__main-content {
 		@include break-xlarge {
 			grid-column: 1 / span 8;
 		}
 	}
 
-	.content-sidebar__right-sidebar {
+	&__right-sidebar {
 		@include break-xlarge {
 			grid-column: 9 / span 4;
 		}
