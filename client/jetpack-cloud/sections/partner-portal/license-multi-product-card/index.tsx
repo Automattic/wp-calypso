@@ -85,6 +85,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 				onSelect();
 			}
 		}
+		// Do not add onSelect to the dependency array as it will cause an infinite loop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ product.slug, suggestedProduct ] );
 
