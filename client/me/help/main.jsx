@@ -56,7 +56,7 @@ class Help extends PureComponent {
 				link: localizeUrl( 'https://wordpress.com/support/plugins/install-a-plugin/' ),
 				title: this.props.translate( 'Install a Plugin' ),
 				description: this.props.translate(
-					'Learn more about installing plugin using the Business plan.'
+					'Learn more about installing a plugin using the Business plan.'
 				),
 				image: helpPlugins,
 			},
