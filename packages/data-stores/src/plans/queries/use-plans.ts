@@ -25,13 +25,8 @@ function usePlans(): UseQueryResult< PlansIndex > {
 
 			return Object.fromEntries(
 				data.map( ( plan ) => {
-					const originalPriceMonthly =
-						calculateMonthlyPriceForPlan( plan.product_slug, plan.orig_cost_integer ) ?? null;
 					const discountedPriceFull =
 						plan.orig_cost_integer !== plan.raw_price_integer ? plan.raw_price_integer : null;
-					const discountedPriceMonthly = discountedPriceFull
-						? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
-						: null;
 
 					return [
 						plan.product_slug,
@@ -45,11 +40,15 @@ function usePlans(): UseQueryResult< PlansIndex > {
 								currencyCode: plan.currency_code,
 								introOffer: unpackIntroOffer( plan ),
 								originalPrice: {
-									monthly: originalPriceMonthly,
+									monthly:
+										calculateMonthlyPriceForPlan( plan.product_slug, plan.orig_cost_integer ) ??
+										null,
 									full: plan.orig_cost_integer,
 								},
 								discountedPrice: {
-									monthly: discountedPriceMonthly,
+									monthly: discountedPriceFull
+										? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
+										: null,
 									full: discountedPriceFull,
 								},
 							},
