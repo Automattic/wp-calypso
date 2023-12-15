@@ -475,7 +475,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/me/account` );
 			},
-			icon: accountSettingsIcon,
+			icon: profileIcon,
 		},
 		{
 			name: 'accessPurchases',
