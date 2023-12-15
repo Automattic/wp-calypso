@@ -133,7 +133,7 @@
 			.plugins-browser-item__incompatible {
 				margin-bottom: 16px;
 				font-size: $font-body-small;
-				color: $studio-blue-40;
+				color: #2f63e6;
 			}
 
 			*:not(.plugins-browser-item__incompatible) {
@@ -190,7 +190,7 @@
 }
 
 .plugins-browser-item__author-name {
-	color: var(--studio-blue-50);
+	color: #3858e9;
 }
 
 .plugins-browser-item__last-updated,

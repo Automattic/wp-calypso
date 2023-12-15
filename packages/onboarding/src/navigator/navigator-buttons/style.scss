@@ -20,7 +20,7 @@
 
 	&:hover,
 	&:focus-visible {
-		color: var(--studio-blue-50);
+		color: var(--color-accent-50);
 	}
 
 	&:focus {
@@ -33,7 +33,7 @@
 	}
 
 	&:active {
-		background-color: var(--studio-blue-0);
+		background-color: var(--color-accent-0);
 	}
 
 	.navigator-item__text {
@@ -41,7 +41,7 @@
 	}
 
 	&--active {
-		background-color: var(--studio-blue-0);
-		color: var(--studio-blue-50);
+		background-color: var(--color-accent-0);
+		color: var(--color-accent-50);
 	}
 }

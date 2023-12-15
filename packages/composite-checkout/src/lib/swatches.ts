@@ -4,6 +4,12 @@ export type Swatches = {
 	wordpressBlue50: string;
 	wordpressBlue60: string;
 	wordpressBlue80: string;
+	wordpressBlueberry5: string;
+	wordpressBlueberry30: string;
+	wordpressBlueberry40: string;
+	wordpressBlueberry50: string;
+	wordpressBlueberry60: string;
+	wordpressBlueberry80: string;
 	blue5: string;
 	blue30: string;
 	blue40: string;
@@ -33,6 +39,12 @@ export const swatches: Swatches = {
 	wordpressBlue50: '#006088',
 	wordpressBlue60: '#004E6E',
 	wordpressBlue80: '#002C40',
+	wordpressBlueberry5: '#3858E9',
+	wordpressBlueberry30: '#5882EB',
+	wordpressBlueberry40: '#2F63E6',
+	wordpressBlueberry50: '#3858E9',
+	wordpressBlueberry60: '#2145E6',
+	wordpressBlueberry80: '#0E2D7C',
 	blue5: '#BBE0FA',
 	blue30: '#399CE3',
 	blue40: '#1689DB',
