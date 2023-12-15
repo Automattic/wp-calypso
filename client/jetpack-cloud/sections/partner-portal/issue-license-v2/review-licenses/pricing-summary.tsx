@@ -35,7 +35,8 @@ export default function PricingSummary( {
 		submitForm( selectedLicenses );
 	}, [ isFormReady, selectedLicenses, submitForm ] );
 
-	const link = '#link'; // TODO: Add link
+	const learnMoreLink =
+		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs';
 
 	const currency = selectedLicenses[ 0 ].currency; // FIXME: Fix if multiple currencies are supported
 
@@ -69,7 +70,7 @@ export default function PricingSummary( {
 					'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
 					{
 						components: {
-							a: <a href={ link } target="_blank" rel="noopener noreferrer" />,
+							a: <a href={ learnMoreLink } target="_blank" rel="noopener noreferrer" />,
 						},
 					}
 				) }
