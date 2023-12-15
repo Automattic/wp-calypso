@@ -50,15 +50,15 @@ describe( 'VideoAudioPosts should use proper description', () => {
 		},
 	};
 
-	test.each( [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ] )( `for business plan %s`, ( plan ) => {
-		render( <VideoAudioPosts { ...props } plan={ plan } /> );
-		expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent( /Business Plan/ );
-	} );
-
-	test.each( [ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ] )( `for ecommerce plan %s`, ( plan ) => {
-		render( <VideoAudioPosts { ...props } plan={ plan } /> );
-		expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent( /Ecommerce Plan/ );
-	} );
+	test.each( [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ] )(
+		`for business plan %s`,
+		( plan ) => {
+			render( <VideoAudioPosts { ...props } plan={ plan } /> );
+			expect( screen.queryByTestId( 'purchase-detail' ) ).toHaveTextContent(
+				/the %\(planName\)s Plan has %\(storageLimit\)d GB storage/
+			);
+		}
+	);
 
 	test.each( [ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ] )( `for premium plan %s`, ( plan ) => {
 		render( <VideoAudioPosts { ...props } plan={ plan } /> );

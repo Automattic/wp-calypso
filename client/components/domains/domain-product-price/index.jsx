@@ -165,7 +165,7 @@ class DomainProductPrice extends Component {
 		return (
 			<div className={ className }>
 				<span>
-					{ translate( 'Move your existing domain registration to your new site.', {
+					{ translate( 'Move your existing domain.', {
 						context: 'Line item description in cart.',
 					} ) }
 				</span>

@@ -4,7 +4,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { THEME_TIER_TO_PLAN } from '../constants';
+import { THEME_TIERS } from '../constants';
 import useThemeTier from '../use-theme-tier';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
@@ -17,9 +17,10 @@ export default function ThemeTierUpgradeBadge() {
 	const { themeId } = useThemeTierBadgeContext();
 	const { themeTier } = useThemeTier( siteId, themeId );
 
-	const mappedPlan = themeTier?.slug;
-	const planName = getPlan( THEME_TIER_TO_PLAN[ mappedPlan ] )?.getTitle();
-	const planPathSlug = getPlan( THEME_TIER_TO_PLAN[ mappedPlan ] )?.getPathSlug();
+	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
+	const mappedPlan = getPlan( tierMinimumUpsellPlan );
+	const planName = mappedPlan?.getTitle();
+	const planPathSlug = mappedPlan?.getPathSlug();
 
 	const tooltipContent = (
 		<>

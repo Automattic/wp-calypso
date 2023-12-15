@@ -649,7 +649,9 @@ export class RenderDomainsStep extends Component {
 			this.state.addDomainTimeout = setTimeout( async () => {
 				// Only saves after all domain are checked.
 				Promise.all( this.state.checkDomainAvailabilityPromises ).then( async () => {
-					await this.props.shoppingCartManager.reloadFromServer();
+					if ( this.props.currentUser ) {
+						await this.props.shoppingCartManager.reloadFromServer();
+					}
 
 					// Add productsToAdd to productsInCart.
 					let productsInCart = [
@@ -754,7 +756,9 @@ export class RenderDomainsStep extends Component {
 
 		// Avoid too much API calls for Multi-domains flow
 		this.state.removeDomainTimeout = setTimeout( async () => {
-			await this.props.shoppingCartManager.reloadFromServer();
+			if ( this.props.currentUser ) {
+				await this.props.shoppingCartManager.reloadFromServer();
+			}
 
 			const productsToKeep = this.props.cart.products.filter( ( product ) => {
 				// check current item
@@ -1043,6 +1047,7 @@ export class RenderDomainsStep extends Component {
 						includeWordPressDotCom={
 							experimentAssignment?.variationName === 'treatment' ? false : includeWordPressDotCom
 						}
+						includeOwnedDomainInSuggestions={ ! this.props.isDomainOnly }
 						includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 						isSignupStep
 						isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
