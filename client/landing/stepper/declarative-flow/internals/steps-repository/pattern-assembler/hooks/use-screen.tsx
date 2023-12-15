@@ -1,3 +1,5 @@
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { usePlans } from '@automattic/data-stores/src/plans';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
@@ -23,6 +25,7 @@ export type Screen = {
 const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Screen => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
+	const plans = usePlans();
 	const screens: Record< ScreenName, Screen > = {
 		main: {
 			name: 'main',
@@ -76,9 +79,16 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		upsell: {
 			name: 'upsell',
 			title: translate( 'Premium styles' ),
-			description: translate(
-				"You've chosen premium styles which are exclusive to the Premium plan or higher."
-			),
+			description: hasEnTranslation(
+				"You've chosen premium styles which are exclusive to the %(premiumPlanName)s plan or higher."
+			)
+				? translate(
+						"You've chosen premium styles which are exclusive to the %(premiumPlanName)s plan or higher.",
+						{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort } }
+				  )
+				: translate(
+						"You've chosen premium styles which are exclusive to the Premium plan or higher."
+				  ),
 			continueLabel: translate( 'Continue' ),
 			backLabel: hasEnTranslation( 'premium styles' ) ? translate( 'premium styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.UPSELL,
