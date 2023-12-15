@@ -77,6 +77,11 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
+	function onBackToStartClick() {
+		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
+		stepNavigator?.goToImportCapturePage?.();
+	}
+
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -173,7 +178,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					return (
 						<ErrorMessage
 							onStartBuilding={ stepNavigator?.goToIntentPage }
-							onBackToStart={ stepNavigator?.goToImportCapturePage }
+							onBackToStart={ onBackToStartClick }
 						/>
 					);
 				} else if ( checkProgress() ) {
