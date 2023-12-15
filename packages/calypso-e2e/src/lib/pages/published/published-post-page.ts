@@ -96,7 +96,7 @@ export class PublishedPostPage {
 		await this.anchor.getByRole( 'button', { name: 'Subscribe' } ).click();
 
 		// The popup dialog is in its own iframe.
-		const iframe = this.page.frameLocator( 'iframe[id="TB_iframeContent"]' );
+		const iframe = this.page.frameLocator( 'iframe[id="memberships-modal-iframe"]' );
 
 		// This handler is required because if the site owner has set up any
 		// paid plans, the modal will first show a list of plans the user

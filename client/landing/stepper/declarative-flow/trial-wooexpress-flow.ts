@@ -1,8 +1,10 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -111,6 +113,30 @@ const wooexpress: Flow = {
 		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
+			// Log when profiler data does not contain valid data.
+			let isValidProfile = false;
+			try {
+				if ( profilerData ) {
+					const data = JSON.parse( decodeURIComponent( escape( window.atob( profilerData ) ) ) );
+					isValidProfile = [ 'woocommerce_onboarding_profile', 'blogname' ].every(
+						( key ) => key in data
+					);
+				}
+			} catch {}
+			if ( ! isValidProfile ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'calypso_stepper_wooexpress_invalid_profiler_data',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					properties: {
+						env: config( 'env_id' ),
+					},
+					extra: {
+						'profiler-data': profilerData,
+					},
+				} );
+			}
+
 			if ( ! userIsLoggedIn ) {
 				const logInUrl = getStartUrl();
 				window.location.assign( logInUrl );

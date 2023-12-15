@@ -35,13 +35,13 @@ type PurchaseModalProps = {
 export function PurchaseModal( {
 	cart,
 	cards,
-	isCartUpdating,
+	isLoading,
 	onClose,
 	siteSlug,
 	showFeatureList,
 }: {
 	cards: StoredPaymentMethodCard[];
-	isCartUpdating: boolean;
+	isLoading: boolean;
 	cart: ResponseCart;
 	onClose: () => void;
 	siteSlug: string;
@@ -72,7 +72,7 @@ export function PurchaseModal( {
 			} ) }
 			onClose={ onClose }
 		>
-			{ isCartUpdating ? (
+			{ isLoading ? (
 				<Placeholder showFeatureList={ showFeatureList } />
 			) : (
 				<Content { ...contentProps } />
@@ -193,7 +193,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			{ countries?.length === 0 && <QueryPaymentCountries /> }
 			<PurchaseModal
 				cards={ cards }
-				isCartUpdating={ isPendingUpdate || ! countries?.length }
+				isLoading={ isPendingUpdate || ! countries?.length }
 				cart={ responseCart }
 				onClose={ handleOnClose }
 				siteSlug={ siteSlug }

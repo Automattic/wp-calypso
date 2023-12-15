@@ -99,6 +99,7 @@ export default function LicenseList() {
 										: LicenseType.Partner
 								}
 								quantity={ license.quantity }
+								isChildLicense={ !! license.parentLicenseId }
 							/>
 						</LicenseTransition>
 					) ) }
