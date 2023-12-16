@@ -664,7 +664,10 @@ export function getRenewalItemFromCartItem< T extends MinimalRequestCartProduct 
 
 export function hasDomainInCart( cart: ObjectWithProducts, domain: string ): boolean {
 	return getAllCartItems( cart ).some( ( product ) => {
-		return product.is_domain_registration === true && product.meta === domain;
+		return (
+			product.meta === domain &&
+			( isDomainRegistration( product ) || isDomainMoveInternal( product ) )
+		);
 	} );
 }
 

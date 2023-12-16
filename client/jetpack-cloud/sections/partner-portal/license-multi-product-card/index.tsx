@@ -25,9 +25,11 @@ interface Props {
 		value: APIProductFamilyProduct,
 		replace?: APIProductFamilyProduct
 	) => void | null;
+	onVariantChange?: ( value: APIProductFamilyProduct ) => void;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
 	quantity?: number;
+	selectedOption: APIProductFamilyProduct;
 }
 
 export default function LicenseMultiProductCard( props: Props ) {
@@ -37,9 +39,11 @@ export default function LicenseMultiProductCard( props: Props ) {
 		isSelected,
 		isDisabled,
 		onSelectProduct,
+		onVariantChange,
 		suggestedProduct,
 		hideDiscount,
 		quantity,
+		selectedOption,
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -85,7 +89,9 @@ export default function LicenseMultiProductCard( props: Props ) {
 				onSelect();
 			}
 		}
-	}, [ onSelect, product.slug, suggestedProduct ] );
+		// Do not add onSelect to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ product.slug, suggestedProduct ] );
 
 	const onShowLightbox = useCallback(
 		( e: React.MouseEvent< HTMLElement > ) => {
@@ -128,9 +134,16 @@ export default function LicenseMultiProductCard( props: Props ) {
 			}
 
 			setProduct( selectedProduct );
+			onVariantChange?.( selectedProduct );
 		},
-		[ isDisabled, isSelected, onSelectProduct, product, products ]
+		[ isDisabled, isSelected, onSelectProduct, onVariantChange, product, products ]
 	);
+
+	useEffect( () => {
+		if ( selectedOption ) {
+			setProduct( selectedOption );
+		}
+	}, [ selectedOption ] );
 
 	return (
 		<>

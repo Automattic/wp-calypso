@@ -1,4 +1,15 @@
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
+import { useEffect, useState } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { Experiment } from 'calypso/lib/explat';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
+import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal/use-is-eligible-for-one-click-checkout';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import EducationFooter from '../education-footer';
@@ -77,6 +88,45 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
+const RedirectToCheckout = ( { siteSlug } ) => {
+	useEffect( () => {
+		page( `/checkout/${ PLAN_BUSINESS }/${ siteSlug }` );
+	}, [] );
+
+	return null;
+};
+
+const ExperimentLoading = ( { setIsLoadingExperiment } ) => {
+	useEffect( () => {
+		setIsLoadingExperiment( true );
+
+		return () => setIsLoadingExperiment( false );
+	}, [] );
+
+	return null;
+};
+
+const OneClickPurchaseModal = ( { localeSlug, setShowPurchaseModal, siteSlug } ) => {
+	const businessPlanProduct = createRequestCartProduct( {
+		product_slug: PLAN_BUSINESS,
+	} );
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ localeSlug }>
+				<PurchaseModal
+					productToAdd={ businessPlanProduct }
+					onClose={ () => {
+						setShowPurchaseModal( false );
+					} }
+					showFeatureList={ true }
+					siteSlug={ siteSlug }
+				/>
+			</StripeHookProvider>
+		</CalypsoShoppingCartProvider>
+	);
+};
+
 const PluginsDiscoveryPage = ( props ) => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
@@ -86,14 +136,52 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const translate = useTranslate();
+	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
+	const [ isLoadingExperiment, setIsLoadingExperiment ] = useState( false );
+	const { isLoading, result: isEligibleForOneClickCheckout } = useIsEligibleForOneClickCheckout();
 
 	return (
 		<>
-			<UpgradeNudge { ...props } paidPlugins={ true } />
+			{ showPurchaseModal && (
+				<Experiment
+					name="calypso_plugins_page_business_plan_one_click_upsell"
+					defaultExperience={ <RedirectToCheckout siteSlug={ props.siteSlug } /> }
+					treatmentExperience={
+						<OneClickPurchaseModal
+							localeSlug={ translate.localeSlug }
+							setShowPurchaseModal={ setShowPurchaseModal }
+							siteSlug={ props.siteSlug }
+						/>
+					}
+					loadingExperience={
+						<ExperimentLoading setIsLoadingExperiment={ setIsLoadingExperiment } />
+					}
+				/>
+			) }
+			<UpgradeNudge
+				{ ...props }
+				isBusy={ isLoadingExperiment || isLoading }
+				paidPlugins={ true }
+				handleUpsellNudgeClick={ ( e ) => {
+					e.preventDefault();
+
+					// Prevent multiple clicks
+					if ( isLoadingExperiment || isLoading ) {
+						return;
+					}
+
+					if ( isEligibleForOneClickCheckout === true ) {
+						setShowPurchaseModal( true );
+						return;
+					}
+
+					page( `/checkout/${ props.siteSlug }/business` );
+				} }
+			/>
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
-			<UpgradeNudge { ...props } />
 			{ ! isLoggedIn && <InPageCTASection /> }
 			<FeaturedPluginsSection
 				{ ...props }
