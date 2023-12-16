@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPreflightStatus } from '../selectors'; // Adjust the import path as necessary
-import { PreflightTestStatus } from '../types'; // Adjust the import path as necessary
+import { getPreflightStatus } from '../selectors';
+import { PreflightTestStatus } from '../types';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
