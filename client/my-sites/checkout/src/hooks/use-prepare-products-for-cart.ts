@@ -303,7 +303,7 @@ function useAddProductFromBillingIntent( {
 			debug( 'creating products from billing intent failed' );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: 'I tried and failed to create products from signup',
+				message: 'I tried and failed to create products from a billing intent',
 			} );
 			return;
 		}
