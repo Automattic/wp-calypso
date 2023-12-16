@@ -27,7 +27,6 @@ describe( 'preflightReducer', () => {
 	it( 'should not alter the state when JETPACK_BACKUP_PREFLIGHT_TESTS_SET is dispatched with an empty payload', () => {
 		const action = {
 			type: JETPACK_BACKUP_PREFLIGHT_TESTS_SET,
-			payload: {},
 		};
 		const expectedState = {
 			...initialState,
@@ -57,7 +56,7 @@ describe( 'preflightReducer', () => {
 		// Action to update the state
 		const action = {
 			type: JETPACK_BACKUP_PREFLIGHT_TESTS_SET,
-			payload: { tests: updatedTests },
+			tests: updatedTests,
 		};
 
 		// Expected new state

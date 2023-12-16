@@ -11,11 +11,11 @@ const initialState: PreflightState = {
 const preflightReducer = ( state = initialState, action: AnyAction ): PreflightState => {
 	switch ( action.type ) {
 		case JETPACK_BACKUP_PREFLIGHT_TESTS_SET:
-			if ( action.payload && Array.isArray( action.payload.tests ) ) {
+			if ( action.tests && Array.isArray( action.tests ) ) {
 				return {
 					...state,
-					tests: action.payload.tests,
-					overallStatus: calculateOverallStatus( action.payload.tests ),
+					tests: action.tests,
+					overallStatus: calculateOverallStatus( action.tests ),
 				};
 			}
 			return state;
