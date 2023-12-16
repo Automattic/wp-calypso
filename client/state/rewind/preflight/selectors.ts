@@ -3,11 +3,11 @@ import { AppState } from 'calypso/types';
 import { PreflightTestStatus } from './types';
 
 // Selector to get the preflight overall status
-export const getPreflightStatus = ( state: AppState ) => {
+export const getPreflightStatus = ( state: AppState, siteId: number ) => {
 	// If the preflight check is disabled, return FAILED
 	if ( ! config.isEnabled( 'jetpack/backup-restore-preflight-check' ) ) {
 		return PreflightTestStatus.FAILED;
 	}
 
-	return state.preflight.overallStatus;
+	return state.rewind[ siteId ].preflight.overallStatus;
 };
