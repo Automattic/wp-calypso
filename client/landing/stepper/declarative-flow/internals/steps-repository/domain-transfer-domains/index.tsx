@@ -1,8 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
+import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TransferDomains from './domains';
 import type { Step } from '../../types';
@@ -12,8 +12,6 @@ import './styles.scss';
 const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
-
-	usePresalesChat( 'wpcom' );
 
 	const handleSubmit = () => {
 		submit?.();
@@ -48,6 +46,7 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
 			showJetpackPowered={ false }
+			customizedActionButtons={ <ChatButton chatIntent="SUPPORT" initialMessage="Test" /> }
 		/>
 	);
 };
