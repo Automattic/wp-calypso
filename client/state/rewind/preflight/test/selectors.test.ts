@@ -19,12 +19,16 @@ const mockPreflightFeatureFlag = ( isEnabledValue: boolean ) => {
 };
 
 const mockState = {
-	preflight: {
-		overallStatus: PreflightTestStatus.IN_PROGRESS,
-		tests: [
-			{ test: 'test1', status: PreflightTestStatus.SUCCESS },
-			{ test: 'test2', status: PreflightTestStatus.IN_PROGRESS },
-		],
+	rewind: {
+		123: {
+			preflight: {
+				overallStatus: PreflightTestStatus.IN_PROGRESS,
+				tests: [
+					{ test: 'test1', status: PreflightTestStatus.SUCCESS },
+					{ test: 'test2', status: PreflightTestStatus.IN_PROGRESS },
+				],
+			},
+		},
 	},
 };
 
@@ -35,13 +39,13 @@ describe( 'getPreflightStatus', () => {
 
 	it( 'should return the correct overall preflight status from the state when feature flag is enabled', () => {
 		mockPreflightFeatureFlag( true );
-		const selectedStatus = getPreflightStatus( mockState );
+		const selectedStatus = getPreflightStatus( mockState, 123 );
 		expect( selectedStatus ).toEqual( PreflightTestStatus.IN_PROGRESS );
 	} );
 
 	it( 'should return overall preflight status as failed when the feature flag is not enabled', () => {
 		mockPreflightFeatureFlag( false );
-		const selectedStatus = getPreflightStatus( mockState );
+		const selectedStatus = getPreflightStatus( mockState, 123 );
 		expect( selectedStatus ).toEqual( PreflightTestStatus.FAILED );
 	} );
 } );
