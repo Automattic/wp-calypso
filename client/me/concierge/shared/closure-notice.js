@@ -21,8 +21,8 @@ const ClosureNotice = ( { closesAt, displayAt, reopensAt } ) => {
 	if ( currentDate.isBefore( closesAt ) ) {
 		message = translate(
 			'{{strong}}Notice:{{/strong}} Quick Start sessions will be closed from %(closesAt)s until %(reopensAt)s. ' +
-				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
-				'get to it as fast as we can. Thank you!',
+				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} ' +
+				'and we’ll get to it as fast as we can. Thank you!',
 			{
 				args: {
 					closesAt: moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
