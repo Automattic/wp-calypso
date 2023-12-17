@@ -38,7 +38,6 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 				__i18n_text_domain__
 			),
 			{
-				closes_at: format( DATE_FORMAT_LONG, closesAtDate ),
 				reopens_at: format( DATE_FORMAT_LONG, reopensAtDate ),
 			}
 		),
@@ -65,7 +64,7 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 	const heading = sprintf(
 		/* translators: closes and reopens are dates */
 		__(
-			'Live chat will be closed from %(closes)s – %(reopens)s for the Christmas holiday',
+			'Live chat will be closed from %(closes)s – %(reopens)s for the New Year’s holiday',
 			__i18n_text_domain__
 		),
 		{
