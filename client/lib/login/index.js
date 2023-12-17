@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import cookie from 'cookie';
 import { get, includes, startsWith } from 'lodash';
 import {
@@ -156,6 +157,10 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			redirect_to: redirectTo,
 		} );
 		return `${ signupUrl }/account?${ params.toString() }`;
+	}
+
+	if ( ! isDefaultLocale( locale ) ) {
+		return addLocaleToPath( signupUrl, locale );
 	}
 
 	return signupUrl;
