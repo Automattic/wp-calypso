@@ -27,6 +27,8 @@ jest.mock( '@automattic/calypso-config', () => ( {
 		switch ( key ) {
 			case 'signup_url':
 				return '/start';
+			case 'i18n_default_locale_slug':
+				return 'en';
 			default:
 				return null;
 		}
