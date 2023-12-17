@@ -94,14 +94,42 @@ export const useCommandPalette = ( {
 
 	const currentPath = useSelector( ( state: object ) => getCurrentRoute( state ) );
 
+	// Logic for selected command (sites)
+	if ( selectedCommandName ) {
+		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
+		let sitesToPick = null;
+
+		if ( selectedCommand?.siteFunctions ) {
+			const { onClick, filter } = selectedCommand.siteFunctions;
+			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+
+			if ( currentSiteId ) {
+				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
+
+				if ( currentSite ) {
+					// Move current site to the top of the list
+					filteredSites = [
+						currentSite,
+						...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
+					];
+				}
+			}
+
+			// Map filtered sites to actions using the onClick function
+			sitesToPick = filteredSites.map( siteToAction( onClick ) );
+		}
+
+		return { commands: sitesToPick ?? [] };
+	}
+
+	// Logic for root commands
 	// Filter out commands that have context
 	const commandHasContext = ( paths: string[] = [] ): boolean =>
 		paths.some( ( path ) => currentPath.includes( path ) ) ?? false;
 
-	// Find and store the "viewMySites" command
 	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
 
-	// Sort the commands with the contextual commands ranking higher than general in a given context
+	// Sort commands with contextual commands ranking higher than general in a given context
 	const sortedCommands = commands
 		.filter( ( command ) => ! ( command === viewMySitesCommand ) )
 		.sort( ( a, b ) => {
@@ -117,7 +145,7 @@ export const useCommandPalette = ( {
 			return 0; // no change in order
 		} );
 
-	// Create a variable to hold the final result
+	// Initialize the final result with sorted commands
 	const finalSortedCommands = [ ...sortedCommands ];
 
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
@@ -125,22 +153,6 @@ export const useCommandPalette = ( {
 		finalSortedCommands.unshift( viewMySitesCommand );
 	}
 
-	const selectedCommand = finalSortedCommands.find( ( c ) => c.name === selectedCommandName );
-	let sitesToPick = null;
-	if ( selectedCommand?.siteFunctions ) {
-		const { onClick, filter } = selectedCommand.siteFunctions;
-		let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
-		if ( currentSiteId ) {
-			const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
-			if ( currentSite ) {
-				filteredSites = [
-					currentSite,
-					...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
-				];
-			}
-		}
-		sitesToPick = filteredSites.map( siteToAction( onClick ) );
-	}
-
-	return { commands: sitesToPick ?? finalSortedCommands };
+	// Return the sorted commands
+	return { commands: finalSortedCommands };
 };
