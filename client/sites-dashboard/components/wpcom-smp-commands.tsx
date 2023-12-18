@@ -73,9 +73,16 @@ export const useCommandsArrayWpcom = ( {
 		ref: 'command-palette',
 	} );
 
-	const filterHostingEnabled = {
-		filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
-		filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+	const siteFilters = {
+		hostingEnabled: {
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+		},
+		hostingEnabledAndPublic: {
+			filter: ( site: SiteExcerptData ) =>
+				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+		},
 	};
 
 	const fetchSshUser = async ( siteId: number ) => {
@@ -296,7 +303,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					clearEdgeCache( site.ID );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
 		},
@@ -309,9 +316,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					enableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
-				filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+				...siteFilters.hostingEnabledAndPublic,
 			},
 			icon: cacheIcon,
 		},
@@ -324,9 +329,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					disableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
-				filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+				...siteFilters.hostingEnabledAndPublic,
 			},
 			icon: cacheIcon,
 		},
@@ -398,7 +401,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await openPhpMyAdmin( site.ID );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},
@@ -569,7 +572,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -585,7 +588,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -601,7 +604,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					resetSshSftpPassword( site.ID, site.slug );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -662,7 +665,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: statsIcon,
 		},
@@ -682,7 +685,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/php` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -705,7 +708,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/web` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -729,7 +732,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#staging-site` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -742,7 +745,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -766,7 +769,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#cache` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
 		},
@@ -789,7 +792,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#admin-interface-style` );
 				},
-				...filterHostingEnabled,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},
