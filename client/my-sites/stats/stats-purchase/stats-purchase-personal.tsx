@@ -140,6 +140,7 @@ const PersonalPurchase = ( {
 				<StatsPWYWUpgradeSlider
 					settings={ sliderSettings }
 					currencyCode={ currencyCode }
+					defaultStartingValue={ defaultStartingValue }
 					onSliderChange={ handleSliderChanged }
 				/>
 			) }
