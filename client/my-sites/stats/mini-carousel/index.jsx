@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n, { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
@@ -17,7 +18,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MiniCarouselBlock from './mini-carousel-block';
 import { isBlockDismissed } from './selectors';
-
 import './style.scss';
 
 const EVENT_TRAFFIC_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
@@ -57,6 +57,8 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
 
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	const isEnglishLocale = useIsEnglishLocale();
 
 	// Private site banner.
 	const showPrivateSiteBanner =
@@ -189,9 +191,21 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 				dismissEvent={ EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS }
 				image={ <img src={ GoogleAnalyticsLogo } alt="" width={ 45 } height={ 45 } /> }
 				headerText={ translate( 'Connect your site to Google Analytics' ) }
-				contentText={ translate(
-					'Linking Google Analytics to your account is effortless with our Premium plan – no coding required. Gain valuable insights in seconds.'
-				) }
+				contentText={
+					isEnglishLocale ||
+					i18n.hasTranslation(
+						'Linking Google Analytics to your account is effortless with our %(premiumPlanName)s plan – no coding required. Gain valuable insights in seconds.'
+					)
+						? translate(
+								'Linking Google Analytics to your account is effortless with our %(premiumPlanName)s plan – no coding required. Gain valuable insights in seconds.',
+								{
+									args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() },
+								}
+						  )
+						: translate(
+								'Linking Google Analytics to your account is effortless with our Premium plan – no coding required. Gain valuable insights in seconds.'
+						  )
+				}
 				ctaText={ translate( 'Get Premium' ) }
 				href={ `/checkout/premium/${ slug || '' }` }
 				key="google-analytics"
