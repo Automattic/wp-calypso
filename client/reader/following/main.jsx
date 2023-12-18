@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
+import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
@@ -18,6 +19,7 @@ function FollowingStream( { ...props } ) {
 				className="following"
 				streamSidebar={ () => <ReaderListFollowedSites path={ window.location.pathname } /> }
 			>
+				<BloganuaryHeader />
 				<NavigationHeader
 					title={ translate( 'Recent' ) }
 					subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
