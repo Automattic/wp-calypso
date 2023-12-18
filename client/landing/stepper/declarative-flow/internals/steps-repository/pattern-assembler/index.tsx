@@ -51,7 +51,6 @@ import withNotices, { NoticesProps } from './notices/notices';
 import PagePreviewList from './pages/page-preview-list';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
@@ -129,7 +128,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	const { pages, pageSlugs, setPageSlugs } = usePatternPages( pageCategoryPatternsMap );
 
-	const currentScreen = useCurrentScreen( { isNewSite, shouldUnlockGlobalStyles } );
+	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
@@ -440,7 +439,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const globalStylesUpgradeProps = useGlobalStylesUpgradeProps( {
 		flowName: flow,
 		stepName,
-		nextScreenName: isNewSite ? 'confirmation' : 'activation',
+		nextScreenName: 'confirmation',
 		onUpgradeLater: onContinue,
 		recordTracksEvent,
 	} );
@@ -497,7 +496,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			return false;
 		}
 
-		if ( currentScreen.name === 'confirmation' || currentScreen.name === 'activation' ) {
+		if ( currentScreen.name === 'confirmation' ) {
 			return false;
 		}
 
@@ -554,11 +553,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 		resetRecipe();
 		goBack?.();
-	};
-
-	const onActivate = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
-		onContinue();
 	};
 
 	const onConfirm = () => {
@@ -679,12 +673,13 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
-					<ScreenActivation onActivate={ onActivate } />
-				</NavigatorScreen>
-
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation onConfirm={ onConfirm } />
+					<ScreenConfirmation
+						siteId={ site?.ID }
+						isNewSite={ isNewSite }
+						selectedDesign={ selectedDesign }
+						onConfirm={ onConfirm }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
