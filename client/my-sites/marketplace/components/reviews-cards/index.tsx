@@ -62,7 +62,11 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 				) ) }
 				{ addEmptyCard && <MarketplaceReviewCard empty={ true } key="empty-card" /> }
 				{ addLeaveAReviewCard && (
-					<MarketplaceReviewCard leaveAReview={ true } key="leave-a-review-card" />
+					<MarketplaceReviewCard
+						leaveAReview={ true }
+						key="leave-a-review-card"
+						showMarketplaceReviews={ props.showMarketplaceReviews }
+					/>
 				) }
 			</div>
 		</div>

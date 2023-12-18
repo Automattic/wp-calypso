@@ -1,5 +1,5 @@
 import { Dialog } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import Rating from 'calypso/components/rating';
 import {
 	ProductProps,
@@ -37,18 +37,25 @@ export const ReviewsModal = ( props: Props ) => {
 			</div>
 
 			<div className="marketplace-reviews-modal__content">
-				{ averageRating && numberOfReviews && (
+				{ averageRating !== undefined && numberOfReviews !== undefined && (
 					<div className="marketplace-reviews-modal__stats">
-						<div className="marketplace-reviews-modal__ratings-average"> { averageRating }</div>
+						<div className="marketplace-reviews-modal__ratings-average">
+							{ averageRating.toLocaleString( getLocaleSlug() ?? 'default', {
+								minimumFractionDigits: 1,
+								maximumFractionDigits: 1,
+							} ) }
+						</div>
 						<div className="marketplace-reviews-modal__ratings">
 							<Rating rating={ normalizedRating } />
 							<div className="marketplace-reviews-modal__ratings-count">
-								{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
-									count: numberOfReviews,
-									args: {
-										numberOfReviews,
-									},
-								} ) }
+								{ numberOfReviews > 0 &&
+									translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
+										count: numberOfReviews,
+										args: {
+											numberOfReviews,
+										},
+									} ) }
+								{ numberOfReviews === 0 && translate( 'No reviews' ) }
 							</div>
 						</div>
 					</div>
