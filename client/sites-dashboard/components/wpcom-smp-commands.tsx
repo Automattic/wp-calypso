@@ -251,7 +251,13 @@ export const useCommandsArrayWpcom = ( {
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+	// Create URLSearchParams for email
+	const emailUrlSearchParams = new URLSearchParams( {
+		mode: 'EMAIL',
+	} );
+	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
+
+	const { setInitialRoute, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const commands = [
 		{
@@ -1270,6 +1276,16 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: settingsIcon,
+		},
+		{
+			name: 'sendFeedback',
+			label: __( 'Send feedback' ),
+			callback: ( { close }: { close: () => void } ) => {
+				close();
+				setInitialRoute( emailUrl );
+				setShowHelpCenter( true );
+			},
+			icon: helpIcon,
 		},
 	];
 
