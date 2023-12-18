@@ -99,7 +99,7 @@ export const bundleStepsSettings: BundleStepsSettings = {
 		customSteps: [],
 		checkForActivePlugins: [ 'sensei-lms' ],
 		endFlow: ( { adminUrl, exitFlow } ) => {
-			return exitFlow( `${ adminUrl }admin.php?page=sensei_setup_wizard&step=welcome` );
+			return exitFlow( `${ adminUrl }admin.php?page=sensei_setup_wizard` );
 		},
 	},
 };
