@@ -141,11 +141,6 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
-			props: {
-				plans: {
-					showPressablePromoBanner: true,
-				},
-			},
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',

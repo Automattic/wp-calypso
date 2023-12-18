@@ -82,4 +82,3 @@ export { default as VIPLogo } from './logos/vip-logo';
 export { default as WooLogo } from './logos/woo-logo';
 export { default as WordPressLogo } from './wordpress-logo';
 export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
-export { default as PressableLogo } from './logos/pressable-logo';

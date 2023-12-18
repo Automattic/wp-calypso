@@ -34,7 +34,6 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -177,7 +176,6 @@ export interface PlansFeaturesMainProps {
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
-	showPressablePromoBanner?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
 }
@@ -237,7 +235,6 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
-	showPressablePromoBanner = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 }: PlansFeaturesMainProps ) => {
@@ -414,20 +411,6 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
-
-	const onShowPressablePromoBanner = useCallback( () => {
-		recordTracksEvent( 'calypso_multisite_promo_banner_impression', {
-			service: 'pressable',
-			flow: flowName,
-		} );
-	}, [] );
-
-	const onClickPressablePromoBannerCta = useCallback( () => {
-		recordTracksEvent( 'calypso_multisite_promo_banner_cta_click', {
-			service: 'pressable',
-			flow: flowName,
-		} );
-	}, [] );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -933,14 +916,6 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
-						{ showPressablePromoBanner && (
-							<AsyncLoad
-								require="./components/pressable-promo-banner"
-								onShow={ onShowPressablePromoBanner }
-								onClick={ onClickPressablePromoBannerCta }
-								placeholder={ <LoadingPlaceholder /> }
-							/>
-						) }
 					</>
 				) }
 			</div>
