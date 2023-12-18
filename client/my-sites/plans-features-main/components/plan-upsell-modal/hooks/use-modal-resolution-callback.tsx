@@ -1,6 +1,5 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { useCallback } from '@wordpress/element';
-import { DataResponse } from 'calypso/my-sites/plans-grid/types';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
@@ -8,8 +7,7 @@ import {
 	PAID_PLAN_IS_REQUIRED_DIALOG,
 } from '..';
 type Props = {
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
-	isPlanUpsellEnabledOnFreeDomain: DataResponse< boolean >;
+	isCustomDomainAllowedOnFreePlan?: boolean | null;
 	flowName?: string | null;
 	paidDomainName?: string | null;
 	intent?: string | null;
@@ -20,7 +18,6 @@ type Props = {
  */
 export function useModalResolutionCallback( {
 	isCustomDomainAllowedOnFreePlan,
-	isPlanUpsellEnabledOnFreeDomain,
 	flowName,
 	paidDomainName,
 	intent,
@@ -28,31 +25,22 @@ export function useModalResolutionCallback( {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
 			if ( currentSelectedPlan && isFreePlan( currentSelectedPlan ) ) {
-				if ( isPlanUpsellEnabledOnFreeDomain.result ) {
+				if ( isCustomDomainAllowedOnFreePlan ) {
+					if ( paidDomainName ) {
+						return FREE_PLAN_PAID_DOMAIN_DIALOG;
+					}
 					return FREE_PLAN_FREE_DOMAIN_DIALOG;
-				}
-
-				if ( isCustomDomainAllowedOnFreePlan.result ) {
-					return FREE_PLAN_PAID_DOMAIN_DIALOG;
 				}
 
 				if (
 					paidDomainName &&
-					( flowName === 'onboarding' ||
-						flowName === 'onboarding-pm' ||
-						intent === 'plans-jetpack-app-site-creation' )
+					( flowName === 'onboarding' || intent === 'plans-jetpack-app-site-creation' )
 				) {
 					return PAID_PLAN_IS_REQUIRED_DIALOG;
 				}
 			}
 			return null;
 		},
-		[
-			flowName,
-			isCustomDomainAllowedOnFreePlan.result,
-			isPlanUpsellEnabledOnFreeDomain.result,
-			paidDomainName,
-			intent,
-		]
+		[ isCustomDomainAllowedOnFreePlan, flowName, paidDomainName, intent ]
 	);
 }

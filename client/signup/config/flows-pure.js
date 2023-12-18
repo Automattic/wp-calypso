@@ -176,7 +176,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
-			lastModified: '2023-07-18',
+			lastModified: '2023-12-16',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 			props: {
@@ -188,6 +188,7 @@ export function generateFlows( {
 					 * - Show only Personal, Premium, Business, and eCommerce plans (Hide free, enterprise)
 					 */
 					intent: 'plans-paid-media',
+					isCustomDomainAllowedOnFreePlan: true,
 				},
 			},
 		},
