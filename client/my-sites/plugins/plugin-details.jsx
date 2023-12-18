@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -21,6 +21,7 @@ import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
+import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -115,6 +116,7 @@ function PluginDetails( props ) {
 				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 				: canCurrentUserManagePlugins( state ) )
 	);
+	const [ isReviewsModalVisible, setIsReviewsModalVisible ] = useState( false );
 
 	// Site type.
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -369,6 +371,11 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
+			<ReviewsModal
+				isVisible={ isReviewsModalVisible }
+				onClose={ () => setIsReviewsModalVisible( false ) }
+				productName={ fullPlugin.name }
+			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
@@ -459,7 +466,11 @@ function PluginDetails( props ) {
 			</div>
 			{ isEnabled( 'marketplace-reviews-show' ) && ! showPlaceholder && (
 				<div className="plugin-details__reviews">
-					<MarketplaceReviewsCards slug={ fullPlugin.slug } productType="plugin" />
+					<MarketplaceReviewsCards
+						slug={ fullPlugin.slug }
+						productType="plugin"
+						showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
+					/>
 				</div>
 			) }
 			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }

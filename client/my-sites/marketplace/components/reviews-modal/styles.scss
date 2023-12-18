@@ -1,0 +1,26 @@
+$border-color: #eee;
+
+.marketplace-reviews-modal {
+	width: 850px;
+
+	.marketplace-reviews-modal-header {
+		padding: 16px 24px;
+		border-bottom: 1px solid $border-color;
+
+		.marketplace-reviews-modal-title {
+			font-family: "SF Pro Text", $sans;
+			font-weight: 500;
+			color: var(--studio-gray-100);
+			font-size: $font-body;
+		}
+	}
+
+	&.dialog__content {
+		padding: 0;
+	}
+}
+
+.dialog__action-buttons-close {
+	padding: 16px 24px 5px 5px;
+	color: var(--studio-gray-50);
+}

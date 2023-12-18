@@ -11,7 +11,9 @@ import { IAppState } from 'calypso/state/types';
 import { MarketplaceReviewCard } from './review-card';
 import './style.scss';
 
-export const MarketplaceReviewsCards = ( props: ProductProps ) => {
+type MarketplaceReviewsCardsProps = { showMarketplaceReviews?: () => void } & ProductProps;
+
+export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) => {
 	const translate = useTranslate();
 	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
 	const { data: reviews, error } = useMarketplaceReviewsQuery( { ...props, perPage: 2, page: 1 } );
@@ -46,7 +48,7 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 						className="is-link"
 						borderless
 						primary
-						onClick={ () => alert( 'Not implemented yet!' ) }
+						onClick={ () => props.showMarketplaceReviews && props.showMarketplaceReviews() }
 						href=""
 					>
 						{ translate( 'Read all reviews' ) }
