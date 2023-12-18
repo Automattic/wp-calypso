@@ -64,6 +64,17 @@ type StatsCommercialUpgradeSliderProps = {
 	onSliderChange: ( quantity: number ) => void;
 };
 
+const getTierQuentity = ( tiers: StatsPlanTierUI, isTierUpgradeSliderEnabled: boolean ) => {
+	if ( isTierUpgradeSliderEnabled ) {
+		if ( tiers?.views === null && tiers?.transform_quantity_divide_by ) {
+			// handle extension an tier by muliplying the limit of the highest tier
+			return EXTENSION_THRESHOLD * tiers.transform_quantity_divide_by; // TODO: this will use a dynamic multiplier (#85246)
+		}
+		return tiers?.views;
+	}
+	return 0;
+};
+
 function StatsCommercialUpgradeSlider( {
 	currencyCode,
 	onSliderChange,
@@ -88,6 +99,7 @@ function StatsCommercialUpgradeSlider( {
 	const hasPerUnitFee = !! lastTier?.per_unit_fee;
 	if ( hasPerUnitFee ) {
 		const perUnitFee = Number( lastTier?.per_unit_fee );
+
 		perUnitFeeMessaging = translate(
 			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
 			{
@@ -106,7 +118,9 @@ function StatsCommercialUpgradeSlider( {
 	const steps = getStepsForTiers( tiers );
 
 	const handleSliderChanged = ( index: number ) => {
-		onSliderChange( tiers[ index ]?.views as number );
+		const quantity = getTierQuentity( tiers[ index ], true );
+
+		onSliderChange( quantity as number );
 	};
 
 	return (
@@ -121,4 +135,4 @@ function StatsCommercialUpgradeSlider( {
 	);
 }
 
-export default StatsCommercialUpgradeSlider;
+export { StatsCommercialUpgradeSlider as default, StatsCommercialUpgradeSlider, getTierQuentity };

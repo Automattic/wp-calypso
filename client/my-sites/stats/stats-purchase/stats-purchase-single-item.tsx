@@ -8,7 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
-import StatsCommercialUpgradeSlider from './stats-commercial-upgrade-slider';
+import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
 import {
@@ -96,9 +96,8 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
-	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState(
-		isTierUpgradeSliderEnabled && !! tiers?.length ? ( tiers[ 0 ]?.views as number ) : 0
-	);
+	const startingTierQuantity = getTierQuentity( tiers[ 0 ], isTierUpgradeSliderEnabled );
+	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
