@@ -9,6 +9,7 @@ import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { Tag } from 'calypso/reader/list-manage/types';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { toggleReaderSidebarTags } from 'calypso/state/reader-ui/sidebar/actions';
@@ -25,7 +26,7 @@ const BloganuaryHeader = () => {
 	const followedTags = useSelector( getReaderFollowedTags ) as Tag[];
 	const isFollowingBloganuary = containsBloganuary( followedTags );
 	const isTagsSidebarOpen = useSelector( isTagsOpen );
-
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	useEffect( () => {
 		recordTracksEvent( 'calypso_bloganuary_banner_view' );
 	}, [] );
@@ -65,17 +66,19 @@ const BloganuaryHeader = () => {
 				<span className="bloganuary-header__title">{ translate( 'Bloganuary' ) }</span>
 			</div>
 			<div>
-				<FollowButton
-					followLabel={ translate( 'Follow' ) }
-					followingLabel={ translate( 'Following' ) }
-					iconSize={ 24 }
-					following={ isFollowingBloganuary }
-					onFollowToggle={ toggleFollowBloganuary }
-					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-					followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-					className="bloganuary-header__button"
-					disabled={ isFollowingBloganuary === undefined }
-				/>
+				{ isLoggedIn && (
+					<FollowButton
+						followLabel={ translate( 'Follow' ) }
+						followingLabel={ translate( 'Following' ) }
+						iconSize={ 24 }
+						following={ isFollowingBloganuary }
+						onFollowToggle={ toggleFollowBloganuary }
+						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+						className="bloganuary-header__button"
+						disabled={ isFollowingBloganuary === undefined }
+					/>
+				) }
 				<a
 					href={ localizeUrl( 'https://wordpress.com/bloganuary' ) }
 					className="bloganuary-header__link"
