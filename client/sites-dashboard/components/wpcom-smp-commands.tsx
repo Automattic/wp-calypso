@@ -252,7 +252,7 @@ export const useCommandsArrayWpcom = ( {
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
-	// Create URLSearchParams for email
+	// Create URLSearchParams for send feedback by email command
 	const emailUrlSearchParams = new URLSearchParams( {
 		mode: 'EMAIL',
 	} );
