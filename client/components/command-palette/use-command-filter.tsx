@@ -1,6 +1,8 @@
+export const MAGIC_SEPARATOR = '||';
+
 export const useCommandFilter = () => {
 	const commandFilter = ( value: string, search: string ) => {
-		const [ beforeSeparator, afterSeparator ] = value.split( '||' );
+		const [ beforeSeparator, afterSeparator ] = value.split( MAGIC_SEPARATOR );
 
 		// Check if the search matches the part before the separator
 		if ( beforeSeparator.includes( search ) ) {

@@ -6,7 +6,7 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { useCommandFilter } from './use-command-filter';
+import { MAGIC_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -80,7 +80,9 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
-				const itemValue = [ command.label, command.searchLabel ].filter( Boolean ).join( '||' );
+				const itemValue = [ command.label, command.searchLabel ]
+					.filter( Boolean )
+					.join( MAGIC_SEPARATOR );
 				return (
 					<Command.Item
 						key={ command.name }
