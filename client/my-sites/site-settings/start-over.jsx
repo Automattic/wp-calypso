@@ -156,6 +156,7 @@ function SiteResetCard( {
 						duration: 6000,
 					} )
 				);
+				refetchResetStatus();
 			} else {
 				dispatch(
 					successNotice( translate( 'Your site has been reset.' ), {
