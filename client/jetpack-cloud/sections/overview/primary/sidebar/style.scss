@@ -1,8 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.jetpack-cloud-content-sidebar {
-	.right-sidebar {
+.content-sidebar {
+	&__right-sidebar {
+
+		> *:not(:first-child) {
+			margin-top: 40px;
+		}
+
 		.foldable-card__expand {
 			width: 24px;
 		}
