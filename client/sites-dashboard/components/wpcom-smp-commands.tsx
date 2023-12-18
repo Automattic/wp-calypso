@@ -73,6 +73,18 @@ export const useCommandsArrayWpcom = ( {
 		ref: 'command-palette',
 	} );
 
+	const siteFilters = {
+		hostingEnabled: {
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+		},
+		hostingEnabledAndPublic: {
+			filter: ( site: SiteExcerptData ) =>
+				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+		},
+	};
+
 	const fetchSshUser = async ( siteId: number ) => {
 		const response = await wpcom.req.get( {
 			path: `/sites/${ siteId }/hosting/ssh-users`,
@@ -291,7 +303,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					clearEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
 		},
@@ -304,8 +316,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					enableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+				...siteFilters.hostingEnabledAndPublic,
 			},
 			icon: cacheIcon,
 		},
@@ -318,8 +329,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					disableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+				...siteFilters.hostingEnabledAndPublic,
 			},
 			icon: cacheIcon,
 		},
@@ -371,6 +381,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: settingsIcon,
 		},
@@ -390,7 +401,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await openPhpMyAdmin( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},
@@ -545,6 +556,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) =>
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with DNS management available.' ),
 			},
 			icon: domainsIcon,
 		},
@@ -560,7 +572,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -576,7 +588,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -592,7 +604,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					resetSshSftpPassword( site.ID, site.slug );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -623,6 +635,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/activity-log/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: acitvityLogIcon,
 		},
@@ -636,6 +649,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/backup/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
 			},
 			icon: backupIcon,
 		},
@@ -651,7 +665,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: statsIcon,
 		},
@@ -671,7 +685,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/php` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -694,7 +708,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/web` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -718,7 +732,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#staging-site` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -731,7 +745,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -755,7 +769,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#cache` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
 		},
@@ -778,7 +792,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#admin-interface-style` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},

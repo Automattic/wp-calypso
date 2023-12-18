@@ -31,6 +31,7 @@ type OnClickSiteFunction = ( {
 interface SiteFunctions {
 	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
+	filterNotice?: string;
 }
 export interface CommandCallBackParams {
 	close: CloseFunction;
@@ -118,7 +119,7 @@ export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
-}: useCommandPaletteOptions ): { commands: Command[] } => {
+}: useCommandPaletteOptions ): { commands: Command[]; filterNotice: string | undefined } => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
@@ -138,7 +139,7 @@ export const useCommandPalette = ( {
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommandsArrayWpcom( {
 		setSelectedCommandName,
-	} );
+	} ) as Command[];
 
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
@@ -146,9 +147,10 @@ export const useCommandPalette = ( {
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 		let sitesToPick = null;
-
+		let filterNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { onClick, filter } = selectedCommand.siteFunctions;
+			filterNotice = selectedCommand.siteFunctions?.filterNotice;
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
 
 			if ( currentSiteId ) {
@@ -174,7 +176,7 @@ export const useCommandPalette = ( {
 			);
 		}
 
-		return { commands: sitesToPick ?? [] };
+		return { commands: sitesToPick ?? [], filterNotice };
 	}
 
 	// Logic for root commands
@@ -224,5 +226,5 @@ export const useCommandPalette = ( {
 	}
 
 	// Return the sorted commands
-	return { commands: finalSortedCommands };
+	return { commands: finalSortedCommands, filterNotice: undefined };
 };
