@@ -32,6 +32,7 @@ export function useModalResolutionCallback( {
 					return FREE_PLAN_FREE_DOMAIN_DIALOG;
 				}
 
+				// TODO: look into decoupling the flowName from here as well.
 				if (
 					paidDomainName &&
 					( flowName === 'onboarding' || intent === 'plans-jetpack-app-site-creation' )
