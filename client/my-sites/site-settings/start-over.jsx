@@ -129,7 +129,7 @@ function SiteResetCard( {
 
 			if ( latestStatus === 'completed' ) {
 				dispatch(
-					successNotice( translate( 'Your site has been reset.' ), {
+					successNotice( translate( 'Your site was successfully reset.' ), {
 						id: 'site-reset-success-notice',
 						duration: 4000,
 					} )
@@ -159,7 +159,7 @@ function SiteResetCard( {
 				refetchResetStatus();
 			} else {
 				dispatch(
-					successNotice( translate( 'Your site has been reset.' ), {
+					successNotice( translate( 'Your site was successfully reset.' ), {
 						id: 'site-reset-success-notice',
 						duration: 4000,
 					} )
