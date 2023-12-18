@@ -7,12 +7,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 // TODO: define shared variables
-const trafficPaidStats = [
-	'statsSearchTerms',
-	'statsClicks',
-	'statsReferrers',
-	'statsCountryViews',
-];
+const trafficPaidStats = [ 'statsSearchTerms', 'statsClicks', 'statsReferrers' ];
 
 const featureFlags = [ 'stats/date-control', 'download-csv' ];
 
