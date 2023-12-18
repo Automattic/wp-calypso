@@ -9,6 +9,7 @@ import {
 	redirectToThemeDetails,
 } from './controller';
 import { renderThemes } from './controller-logged-in';
+import { getTierRouteParam } from './helpers';
 import { validateFilters, validateVertical } from './validate-filters';
 
 export default function ( router ) {
@@ -18,14 +19,15 @@ export default function ( router ) {
 	} );
 
 	const langParam = getLanguageRouteParam();
+	const tierParam = getTierRouteParam();
 
 	const showcaseRoutes = [
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:view(collection)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/${ tierParam }/:view(collection)?`,
+		`/${ langParam }/themes/${ tierParam }/filter/:filter?/:view(collection)?`,
+		`/${ langParam }/themes/:category(all)?/${ tierParam }/:view(collection)?`,
+		`/${ langParam }/themes/:category(all)?/${ tierParam }/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/${ tierParam }/:view(collection)?`,
+		`/${ langParam }/themes/:vertical?/${ tierParam }/filter/:filter/:view(collection)?`,
 	];
 
 	router(
@@ -45,16 +47,13 @@ export default function ( router ) {
 	router(
 		[
 			'/themes/:site?/search/:search',
-			'/themes/:site?/type/:tier(free|premium|marketplace)',
-			'/themes/:site?/search/:search/type/:tier(free|premium|marketplace)',
+			`/themes/:site?/type/${ tierParam }`,
+			`/themes/:site?/search/:search/type/${ tierParam }`,
 		],
 		redirectSearchAndType
 	);
 	router(
-		[
-			'/themes/:site?/filter/:filter',
-			'/themes/:site?/filter/:filter/type/:tier(free|premium|marketplace)',
-		],
+		[ '/themes/:site?/filter/:filter', `/themes/:site?/filter/:filter/type/${ tierParam }` ],
 		redirectFilterAndType
 	);
 	router(

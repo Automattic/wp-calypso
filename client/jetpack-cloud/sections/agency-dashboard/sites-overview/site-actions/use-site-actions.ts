@@ -66,7 +66,7 @@ export default function useSiteActions(
 					: undefined,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
-				isEnabled: partnerCanIssueLicense && ! siteError,
+				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic,
 			},
 			{
 				name: translate( 'View activity' ),

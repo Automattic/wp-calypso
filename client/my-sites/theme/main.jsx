@@ -46,7 +46,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -128,7 +128,7 @@ const BannerUpsellDescription = ( {
 	isSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed,
 } ) => {
-	const bundleSettings = useBundleSettings( themeId );
+	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isEnglishLocale = useIsEnglishLocale();
 
 	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
@@ -189,7 +189,7 @@ const BannerUpsellTitle = ( {
 	isSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed,
 } ) => {
-	const bundleSettings = useBundleSettings( themeId );
+	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isEnglishLocale = useIsEnglishLocale();
 
 	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {

@@ -1,12 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { SUPPORT_URL } from './const';
+import { SUPPORT_URL, UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL } from './const';
 
 export default function () {
 	const statsStrings = {};
 
 	statsStrings.posts = {
-		title: translate( 'Posts & pages', { context: 'Stats: title of module' } ),
+		title: translate( 'Posts & pages', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
 		empty: translate(
@@ -22,7 +22,7 @@ export default function () {
 	};
 
 	statsStrings.referrers = {
-		title: translate( 'Referrers', { context: 'Stats: title of module' } ),
+		title: translate( 'Referrers', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Referrer', { context: 'Stats: module row header for post referrer.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of post views by referrer.',
@@ -40,7 +40,7 @@ export default function () {
 	};
 
 	statsStrings.clicks = {
-		title: translate( 'Clicks', { context: 'Stats: title of module' } ),
+		title: translate( 'Clicks', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Link', { context: 'Stats: module row header for links in posts.' } ),
 		value: translate( 'Clicks', {
 			context: 'Stats: module row header for number of clicks on a given link in a post.',
@@ -48,14 +48,14 @@ export default function () {
 		empty: translate( 'Your most {{link}}clicked external links{{/link}} will display here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+				link: <a href={ localizeUrl( `${ UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL }#clicks` ) } />,
 			},
 			context: 'Stats: Info box label when the Clicks module is empty',
 		} ),
 	};
 
 	statsStrings.countries = {
-		title: translate( 'Countries', { context: 'Stats: title of module' } ),
+		title: translate( 'Countries', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Country', { context: 'Stats: module row header for views by country.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views from a country.',
@@ -73,7 +73,7 @@ export default function () {
 	};
 
 	statsStrings.search = {
-		title: translate( 'Search terms', { context: 'Stats: title of module' } ),
+		title: translate( 'Search terms', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Search term', {
 			context: 'Stats: module row header for search in search terms.',
 		} ),
@@ -83,14 +83,14 @@ export default function () {
 		empty: translate( 'See {{link}}terms that visitors search{{/link}} to find your site, here. ', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
+				link: <a href={ localizeUrl( `${ UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL }#search-terms` ) } />,
 			},
 			context: 'Stats: Info box label when the Search Terms module is empty',
 		} ),
 	};
 
 	statsStrings.authors = {
-		title: translate( 'Authors', { context: 'Stats: title of module' } ),
+		title: translate( 'Authors', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Author', { context: 'Stats: module row header for authors.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per author.',
@@ -105,7 +105,7 @@ export default function () {
 	};
 
 	statsStrings.videoplays = {
-		title: translate( 'Videos', { context: 'Stats: title of module' } ),
+		title: translate( 'Videos', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Video', { context: 'Stats: module row header for videos.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per video.',
@@ -113,14 +113,14 @@ export default function () {
 		empty: translate( 'Your most viewed {{link}}video stats{{/link}} will show up here.', {
 			comment: '{{link}} links to support documentation.',
 			components: {
-				link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
+				link: <a href={ localizeUrl( `${ UNDERSTAND_YOUR_TRAFFIC_SUPPORT_URL }#videos` ) } />,
 			},
 			context: 'Stats: Info box label when the Videos module is empty',
 		} ),
 	};
 
 	statsStrings.filedownloads = {
-		title: translate( 'File downloads', { context: 'Stats: title of module' } ),
+		title: translate( 'File downloads', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Files', { context: 'Stats: module row header for file downloads.' } ),
 		value: translate( 'downloads', {
 			context: 'Stats: module row header for number of downloads per file.',
@@ -135,7 +135,7 @@ export default function () {
 	};
 
 	statsStrings.tags = {
-		title: translate( 'Tags & categories', { context: 'Stats: title of module' } ),
+		title: translate( 'Tags & categories', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Topic', { context: 'Stats: module row header for tags and categories.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per tag or category.',
@@ -150,7 +150,7 @@ export default function () {
 	};
 
 	statsStrings.publicize = {
-		title: translate( 'Publicize', { context: 'Stats: title of module' } ),
+		title: translate( 'Publicize', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Service', { context: 'Stats: module row header for publicize service.' } ),
 		value: translate( 'Subscribers', {
 			context: 'Stats: module row header for number of subscribers on the service.',
@@ -161,7 +161,7 @@ export default function () {
 	};
 
 	statsStrings.emails = {
-		title: translate( 'Emails', { context: 'Stats: title of module' } ),
+		title: translate( 'Emails', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Opens', { context: 'Stats: module row header for number of email opens.' } ),
 		empty: translate( 'Stats from {{link}}your emails{{/link}} will display here.', {
@@ -174,7 +174,7 @@ export default function () {
 	};
 
 	statsStrings.emailsClickStats = {
-		title: translate( 'Email clicks', { context: 'Stats: title of module' } ),
+		title: translate( 'Email clicks', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Clicks', {
 			context: 'Stats: module row header for number of email clicks.',
@@ -185,7 +185,7 @@ export default function () {
 	};
 
 	statsStrings.devices = {
-		title: translate( 'Devices', { context: 'Stats: title of module' } ),
+		title: translate( 'Devices', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Device', { context: 'Stats: module row header for views by country.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views from a country.',
@@ -196,7 +196,7 @@ export default function () {
 	};
 
 	statsStrings.clients = {
-		title: translate( 'Clients', { context: 'Stats: title of module' } ),
+		title: translate( 'Clients', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Client', { context: 'Stats: module row header for views by country.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views from a country.',
@@ -207,7 +207,7 @@ export default function () {
 	};
 
 	statsStrings.links = {
-		title: translate( 'Links', { context: 'Stats: title of module' } ),
+		title: translate( 'Links', { context: 'Stats: title of module', textOnly: true } ),
 		item: translate( 'Link', { context: 'Stats: module row header for links in posts.' } ),
 		value: translate( 'Clicks', {
 			context: 'Stats: module row header for number of clicks on a given link in a post.',

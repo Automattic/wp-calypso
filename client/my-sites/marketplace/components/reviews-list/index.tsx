@@ -20,7 +20,7 @@ export const MarketplaceReviewsList = forwardRef<
 	MarketplaceReviewsQueryProps & { innerRef: LegacyRef< HTMLDivElement > }
 >( ( props, ref ) => {
 	const translate = useTranslate();
-	const { data: reviews, refetch: reviewsRefetch } = useMarketplaceReviewsQuery( props );
+	const { data: reviews, refetch: reviewsRefetch, error } = useMarketplaceReviewsQuery( props );
 
 	// ...
 	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
@@ -47,7 +47,7 @@ export const MarketplaceReviewsList = forwardRef<
 	// TODO: In the future there should a form of catching and displaying an error
 	// But as currently we returns errors for products without reviews,
 	// its better to just avoid rendering the component at all
-	if ( ! Array.isArray( reviews ) && ( ! reviews || reviews.message ) ) {
+	if ( ! Array.isArray( reviews ) || error ) {
 		return null;
 	}
 

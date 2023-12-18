@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -30,9 +29,7 @@ export function usePatternAssemblerCtaData(): PatternAssemblerCtaData {
 			<ul>
 				<li>{ translate( 'Select patterns to create your homepage layout.' ) }</li>
 				<li>{ translate( 'Style it up with premium colors and font pairings.' ) }</li>
-				{ isEnabled( 'pattern-assembler/add-pages' ) && (
-					<li>{ translate( 'Add powerful pages to fill out your site.' ) } </li>
-				) }
+				<li>{ translate( 'Add powerful pages to fill out your site.' ) }</li>
 				<li>{ translate( 'Bring your site to life with your own content.' ) }</li>
 			</ul>
 		) : (

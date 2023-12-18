@@ -16,6 +16,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -41,6 +42,7 @@ import {
 	getThemeFilterToTermTable,
 	prependThemeFilterKeys,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
+	getThemeTiers,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
@@ -85,7 +87,9 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: config.isEnabled( 'themes/tiers' )
+			? PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] )
+			: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
@@ -179,7 +183,18 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		const { isSiteWooExpressOrEcomFreeTrial } = this.props;
+		const { isSiteWooExpressOrEcomFreeTrial, themeTiers } = this.props;
+
+		if ( config.isEnabled( 'themes/tiers' ) ) {
+			return [
+				{ value: 'all', label: translate( 'All' ) },
+				...Object.keys( themeTiers ).map( ( tier ) => ( {
+					value: tier,
+					label: THEME_TIERS[ tier ]?.label || tier,
+				} ) ),
+			];
+		}
+
 		const tiers = [
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
@@ -411,20 +426,24 @@ class ThemeShowcase extends Component {
 			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
 		};
 
+		const themeCollection = config.isEnabled( 'themes/tiers' )
+			? THEME_COLLECTIONS.partner
+			: THEME_COLLECTIONS.marketplace;
+
 		return (
 			<div className="theme-showcase__all-themes">
 				<ThemesSelection { ...themesSelectionProps }>
 					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
-								{ ...THEME_COLLECTIONS.marketplace }
+								{ ...themeCollection }
 								getOptions={ this.getThemeOptions }
 								getScreenshotUrl={ this.getScreenshotUrl }
 								getActionLabel={ this.getActionLabel }
 								onSeeAll={ () =>
 									this.onCollectionSeeAll( {
-										tier: THEME_COLLECTIONS.marketplace.query.tier,
-										filter: THEME_COLLECTIONS.marketplace.query.filter,
+										tier: themeCollection.query.tier,
+										filter: themeCollection.query.filter,
 									} )
 								}
 							/>
@@ -635,15 +654,17 @@ class ThemeShowcase extends Component {
 									) }
 								</div>
 								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-									<SelectDropdown
-										className="section-nav-tabs__dropdown"
-										onSelect={ this.onTierSelectFilter }
-										selectedText={ translate( 'View: %s', {
-											args: getOptionLabel( tiers, tier ) || '',
-										} ) }
-										options={ tiers }
-										initialSelected={ tier }
-									></SelectDropdown>
+									<>
+										<SelectDropdown
+											className="section-nav-tabs__dropdown"
+											onSelect={ this.onTierSelectFilter }
+											selectedText={ translate( 'View: %s', {
+												args: getOptionLabel( tiers, tier ) || '',
+											} ) }
+											options={ tiers }
+											initialSelected={ tier }
+										></SelectDropdown>
+									</>
 								) }
 							</div>
 							<div className="themes__filters">
@@ -718,6 +739,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
 		lastNonEditorRoute: getLastNonEditorRoute( state ),
+		themeTiers: getThemeTiers( state ),
 	};
 };
 
