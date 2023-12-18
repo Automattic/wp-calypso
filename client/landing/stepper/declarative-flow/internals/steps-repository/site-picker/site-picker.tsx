@@ -87,7 +87,6 @@ const SitePicker = function SitePicker( props: Props ) {
 										isLoading={ isLoading }
 										sites={ paginatedSites }
 										siteSelectorMode={ true }
-										showLinkInBioBanner={ false }
 										onSiteSelectBtnClick={ onSelectSite }
 									/>
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (

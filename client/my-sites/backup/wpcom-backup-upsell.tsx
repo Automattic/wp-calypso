@@ -1,7 +1,12 @@
-import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -22,7 +27,6 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
@@ -80,6 +84,7 @@ const BackupUpsellBody = () => {
 	const postCheckoutUrl = window.location.pathname + window.location.search;
 	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
+	const isEnglishLocale = useIsEnglishLocale();
 	const isWPcomSite = ! isJetpack || isAtomic;
 	const onUpgradeClick = useTrackCallback(
 		undefined,
@@ -129,7 +134,12 @@ const BackupUpsellBody = () => {
 				{ isAdmin && isWPcomSite && (
 					<PromoCardCTA
 						cta={ {
-							text: translate( 'Upgrade to Business Plan' ),
+							text:
+								isEnglishLocale || i18n.hasTranslation( 'Upgrade to %(planName)s Plan' )
+									? translate( 'Upgrade to %(planName)s Plan', {
+											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+									  } )
+									: translate( 'Upgrade to Business Plan' ),
 							action: {
 								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
@@ -157,7 +167,11 @@ const BackupUpsellBody = () => {
 			{ isWPcomSite && ! hasFullActivityLogFeature && (
 				<>
 					<h2 className="backup__subheader">
-						{ translate( 'Also included in the Business Plan' ) }
+						{ isEnglishLocale || i18n.hasTranslation( 'Also included in the %(planName)s Plan' )
+							? translate( 'Also included in the %(planName)s Plan', {
+									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							  } )
+							: translate( 'Also included in the Business Plan' ) }
 					</h2>
 
 					<PromoSection { ...promos } />

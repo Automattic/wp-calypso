@@ -46,6 +46,7 @@ export interface ImportJob {
 			| 'process_files'
 			| 'recreate_database'
 			| 'postprocess_database'
+			| 'verify_site_integrity'
 			| 'clean_up';
 	};
 	errorData: {

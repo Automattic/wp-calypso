@@ -1,6 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
+import {
+	isPremium,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	getPlan,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -25,6 +31,8 @@ const PremiumPlanDetails = ( {
 	const plan = find( sitePlans.data, isPremium );
 	const isPremiumPlan = isPremium( selectedSite.plan );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
+
+	const isEnglishLocale = useIsEnglishLocale();
 
 	return (
 		<div>
@@ -108,10 +116,22 @@ const PremiumPlanDetails = ( {
 					<img alt={ translate( 'Add Media to Your Posts Illustration' ) } src={ mediaPostImage } />
 				}
 				title={ translate( 'Video and audio posts' ) }
-				description={ translate(
-					'Enrich your posts with video and audio, uploaded directly on your site. ' +
-						'No ads. The Premium plan offers 13GB of file storage.'
-				) }
+				description={
+					isEnglishLocale ||
+					i18n.hasTranslation(
+						'Enrich your posts with video and audio, uploaded directly on your site. ' +
+							'No ads. The %(premiumPlanName)s plan offers 13GB of file storage.'
+					)
+						? translate(
+								'Enrich your posts with video and audio, uploaded directly on your site. ' +
+									'No ads. The %(premiumPlanName)s plan offers 13GB of file storage.',
+								{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
+						  )
+						: translate(
+								'Enrich your posts with video and audio, uploaded directly on your site. ' +
+									'No ads. The Premium plan offers 13GB of file storage.'
+						  )
+				}
 				buttonText={ translate( 'Start a new post' ) }
 				href={ newPost( selectedSite ) }
 			/>

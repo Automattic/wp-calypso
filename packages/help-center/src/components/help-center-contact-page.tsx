@@ -197,9 +197,9 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				) }
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
 				<GMClosureNotice
-					displayAt="2023-11-06 00:00Z"
-					closesAt="2023-11-11 00:00Z"
-					reopensAt="2023-11-21 07:00Z"
+					displayAt="2023-12-18 00:00Z"
+					closesAt="2023-12-24 00:00Z"
+					reopensAt="2023-12-26 07:00Z"
 					enabled={ renderChat.render }
 				/>
 

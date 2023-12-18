@@ -1,6 +1,6 @@
 import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
 	PRODUCT_FILTER_ALL,
 	PRODUCT_FILTER_PLANS,
@@ -11,6 +11,7 @@ import {
 
 type Props = {
 	selectedProductFilter: string | null;
+	onClick?: () => void;
 	onProductFilterSelect: ( value: string | null ) => void;
 	isSingleLicense?: boolean;
 };
@@ -26,6 +27,7 @@ const getOptionByValue = ( options: Option[], value: string | null ): Option => 
 
 export default function ProductFilterSelect( {
 	selectedProductFilter,
+	onClick,
 	onProductFilterSelect,
 	isSingleLicense,
 }: Props ) {
@@ -75,6 +77,15 @@ export default function ProductFilterSelect( {
 		comment: 'productFilter is the selected filter type.',
 	} );
 
+	const onToggle = useCallback(
+		( { open }: { open: boolean } ) => {
+			if ( open ) {
+				onClick?.();
+			}
+		},
+		[ onClick ]
+	);
+
 	useEffect( () => {
 		if (
 			! isSingleLicense &&
@@ -90,6 +101,7 @@ export default function ProductFilterSelect( {
 			className="licenses-form__product-filter-select"
 			selectedText={ selectedText }
 			options={ productFilterOptions }
+			onToggle={ onToggle }
 			onSelect={ ( option: { value: string | null } ) => onProductFilterSelect( option.value ) }
 			compact
 		/>
