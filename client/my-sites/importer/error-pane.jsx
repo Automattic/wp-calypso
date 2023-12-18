@@ -1,4 +1,3 @@
-import Page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -26,19 +25,22 @@ class ImporterError extends PureComponent {
 	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( '/help' );
+		window.location.href = '/help';
 	};
 
 	installPlugin = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( '/plugins/all-in-one-wp-migration' );
+		window.location.href = '/plugins/all-in-one-wp-migration';
 	};
 
 	everythingImport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( addQueryArgs( { siteSlug: this.props.siteSlug }, '/setup/site-setup/import' ) );
+		window.location.href = addQueryArgs(
+			{ siteSlug: this.props.siteSlug },
+			'/setup/site-setup/import'
+		);
 	};
 
 	getImportError = () => {
