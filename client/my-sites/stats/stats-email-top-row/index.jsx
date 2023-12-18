@@ -13,8 +13,14 @@ import {
 import TopCard from './top-card';
 import './style.scss';
 
-export default function StatsEmailTopRow( { siteId, postId, statType, className } ) {
+// The date the Unique Opens box was released.
+// We only show the Unique Opens box if the email was sent after that date.
+const uniqueOpenReleaseDate = new Date( '2023-12-13' );
+
+export default function StatsEmailTopRow( { siteId, postId, statType, postDate, className } ) {
 	const translate = useTranslate();
+	const emailSentDate = useMemo( () => new Date( postDate ) );
+	const shouldShowUniqueOpens = emailSentDate > uniqueOpenReleaseDate;
 
 	const counts = useSelector( ( state ) =>
 		getEmailStatsNormalizedData( state, siteId, postId, PERIOD_ALL_TIME, statType, '', 'rate' )
@@ -34,7 +40,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
 							icon={ <Gridicon icon="mail" /> }
 						/>
-						{ counts?.unique_opens ? (
+						{ counts?.unique_opens && shouldShowUniqueOpens ? (
 							<TopCard
 								heading={ translate( 'Unique opens' ) }
 								value={ counts.unique_opens }
