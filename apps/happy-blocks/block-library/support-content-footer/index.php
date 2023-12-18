@@ -11,7 +11,8 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
+$image_dir       = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
+$subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="Just one moment..."]';
 ?>
 
 <div class="happy-blocks-support-content-footer">
@@ -80,18 +81,15 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			require WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
 		?>
 		<div class="support-content-subscribe">
-			<p><?php esc_html_e( 'Sign up for educational resources updates:', 'happy-blocks' ); ?></p>
-			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" data-blog="<?php echo get_current_blog_id(); ?>" data-post_access_level="everybody" id="subscribe-blog">
-				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Type your email', 'happy-blocks' ); ?>"  id="subscribe-field">
-				<input type="hidden" name="action" value="subscribe">
-				<input type="hidden" name="blog_id" value="<?php echo get_current_blog_id(); ?>">
-				<input type="hidden" name="sub-type" value="subscribe-block">
-				<input type="hidden" name="redirect_fragment" value="subscribe-blog">
-				<input type="hidden" id="_wpnonce" name="_wpnonce" value="cfa1e9a8e2">
-				<button class="support-content-subscribe-submit" type="submit">
-					<?php esc_html_e( 'Subscribe', 'happy-blocks' ); ?>
-				</button>
-			</form>
+			<p><?php esc_html_e( 'Get the latest learning in your inbox:', 'happy-blocks' ); ?></p>
+			<div class="subscribe-shortcode-wrapper">
+				<div class="support-content-subscribe-email">
+					<?php esc_html_e( 'Discover new learning updates', 'happy-blocks' ); ?>
+				</div>
+				<div class="support-content-subscribe-submit" type="submit">
+					<?php echo do_shortcode( $subscribe_block ); ?>
+				</div>
+			</div>
 			<p class="support-content-subscribe-disclaimer">
 				<?php
 					// translators: %s: 'WordPress.com privacy policy'.
