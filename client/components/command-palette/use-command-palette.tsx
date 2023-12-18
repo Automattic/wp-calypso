@@ -139,7 +139,7 @@ export const useCommandPalette = ( {
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommandsArrayWpcom( {
 		setSelectedCommandName,
-	} );
+	} ) as Command[];
 
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
