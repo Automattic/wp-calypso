@@ -41,14 +41,16 @@ function usePlans(): UseQueryResult< PlansIndex > {
 								introOffer: unpackIntroOffer( plan ),
 								originalPrice: {
 									monthly:
-										calculateMonthlyPriceForPlan( plan.product_slug, plan.orig_cost_integer ) ??
-										null,
+										typeof plan.orig_cost_integer === 'number'
+											? calculateMonthlyPriceForPlan( plan.product_slug, plan.orig_cost_integer )
+											: null,
 									full: plan.orig_cost_integer,
 								},
 								discountedPrice: {
-									monthly: discountedPriceFull
-										? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
-										: null,
+									monthly:
+										typeof discountedPriceFull === 'number'
+											? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
+											: null,
 									full: discountedPriceFull,
 								},
 							},
