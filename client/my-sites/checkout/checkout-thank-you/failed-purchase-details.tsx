@@ -1,9 +1,17 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import type { FailedReceiptPurchase, ReceiptPurchase } from 'calypso/state/receipts/types';
 
-const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
-	const successfulPurchases = purchases.length > 0 && (
+export default function FailedPurchaseDetails( {
+	failedPurchases,
+	purchases,
+}: {
+	purchases?: ReceiptPurchase[];
+	failedPurchases?: FailedReceiptPurchase[];
+} ) {
+	const translate = useTranslate();
+	const successfulPurchasesForDisplay = purchases && purchases.length > 0 && (
 		<div>
 			<p>{ translate( 'These items were added successfully:' ) }</p>
 			<ul className="checkout-thank-you__failed-purchases-details-list">
@@ -19,9 +27,8 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 			<hr />
 		</div>
 	);
-	const description = (
-		<div>
-			{ successfulPurchases }
+	const failedPurchasesForDisplay = failedPurchases ? (
+		<>
 			<p>{ translate( 'These items could not be added:' ) }</p>
 			<ul className="checkout-thank-you__failed-purchases-details-list">
 				{ failedPurchases.map( ( item, index ) => {
@@ -33,13 +40,21 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 					);
 				} ) }
 			</ul>
+		</>
+	) : (
+		<p>{ translate( 'Some items failed to be purchased.' ) }</p>
+	);
+	const description = (
+		<div>
+			{ successfulPurchasesForDisplay }
+			{ failedPurchasesForDisplay }
 			<p>
 				{ translate(
 					'We added credits to your account, so you can try adding these items again. ' +
 						"If the problem persists, please don't hesitate to {{a}}contact support{{/a}}.",
 					{
 						components: {
-							a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+							a: <a href={ CALYPSO_CONTACT } />,
 						},
 					}
 				) }
@@ -60,6 +75,4 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 			</div>
 		</div>
 	);
-};
-
-export default localize( FailedPurchaseDetails );
+}
