@@ -13,6 +13,8 @@ import getContactDetailsType from 'calypso/my-sites/checkout/src/lib/get-contact
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useStoredPaymentMethods } from '../../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../../src/lib/update-cart-contact-details-for-checkout';
@@ -99,10 +101,23 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	} );
 	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
+
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
+
+	// Set the selected site if it is not set already.
+	// This is necessary for the cart and post-purchase actions to function correctly.
+	const hasSelectedSiteId = selectedSite?.slug && siteSlug === selectedSite.slug;
+	useEffect( () => {
+		if ( ! hasSelectedSiteId && siteId ) {
+			reduxDispatch( setSelectedSiteId( siteId ) );
+		}
+	}, [ hasSelectedSiteId, reduxDispatch, siteId ] );
+
 	const cartKey = useCartKey();
 	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate } =
 		useShoppingCart( cartKey );
-	const selectedSite = useSelector( getSelectedSite );
+
 	const paymentMethodsState = useStoredPaymentMethods( {
 		type: 'card',
 	} );
@@ -145,7 +160,13 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	useEffect( () => {
 		let isUpdatingCart = false;
 
-		if ( storedCard && countries?.length && ! isUpdatingCart ) {
+		if (
+			storedCard &&
+			countries?.length &&
+			hasSelectedSiteId &&
+			responseCart.blog_id &&
+			! isUpdatingCart
+		) {
 			const vatDetails: VatDetails = {
 				country: storedCard.tax_location?.country_code,
 				id: storedCard.tax_location?.vat_id,
@@ -174,7 +195,16 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		// This hook updates cart values which also changes the `responseCart` variable.
 		// We do not want this effect to run when `responseCart` is updated to avoid an infinite loop.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ replaceProductsInCart, updateLocation, storedCard, productToAdd, countries ] );
+	}, [
+		replaceProductsInCart,
+		updateLocation,
+		storedCard,
+		productToAdd,
+		countries,
+		selectedSite,
+		responseCart.blog_id,
+		hasSelectedSiteId,
+	] );
 
 	const handleOnClose = () => {
 		Promise.all( [ updateLocation( { countryCode: '' } ), replaceProductsInCart( [] ) ] ).catch();
@@ -200,7 +230,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			{ countries?.length === 0 && <QueryPaymentCountries /> }
 			<PurchaseModal
 				cards={ cards }
-				isLoading={ isPendingUpdate || ! countries?.length }
+				isLoading={ isPendingUpdate || ! countries?.length || ! responseCart.products.length }
 				cart={ responseCart }
 				onClose={ handleOnClose }
 				siteSlug={ siteSlug }

@@ -14,6 +14,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
 import { CheckIcon } from '../../src/components/check-icon';
+import CheckoutNextSteps from '../../src/components/checkout-next-steps';
 import { CheckoutSummaryFeaturesList } from '../../src/components/wp-checkout-order-summary';
 import { BEFORE_SUBMIT } from './constants';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -61,8 +62,7 @@ function LineItemIntroductoryOffer( { product }: { product: ResponseCartProduct 
 	);
 }
 
-function OrderStep( { siteSlug, product }: { siteSlug: string; product: ResponseCartProduct } ) {
-	const translate = useTranslate();
+function OrderStepRow( { product }: { product: ResponseCartProduct } ) {
 	const originalAmountDisplay = formatCurrency(
 		product.item_original_subtotal_integer,
 		product.currency,
@@ -77,29 +77,46 @@ function OrderStep( { siteSlug, product }: { siteSlug: string; product: Response
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
+	return (
+		<div className="purchase-modal__order-step-row">
+			<div className="purchase-modal__step-content-row">
+				<span className="purchase-modal__product-name">{ product.product_name }</span>
+				<span className="purchase-modal__product-cost">
+					{ isDiscounted && originalAmountDisplay ? (
+						<>
+							<s>{ originalAmountDisplay }</s> { actualAmountDisplay }
+						</>
+					) : (
+						actualAmountDisplay
+					) }
+				</span>
+			</div>
+
+			<div className="purchase-modal__step-content-row">
+				<LineItemSublabelAndPrice product={ product } />
+				<LineItemIntroductoryOffer product={ product } />
+			</div>
+		</div>
+	);
+}
+
+function OrderStep( {
+	siteSlug,
+	products,
+}: {
+	siteSlug: string;
+	products: ResponseCartProduct[];
+} ) {
+	const translate = useTranslate();
 
 	return (
-		<PurchaseModalStep id={ product.product_slug }>
+		<PurchaseModalStep id="test">
 			<div className="purchase-modal__step-title">{ translate( 'Your order' ) }</div>
 			<div className="purchase-modal__step-content">
 				<div>{ translate( 'Site: %(siteSlug)s', { args: { siteSlug } } ) }</div>
-				<div className="purchase-modal__step-content-row">
-					<span className="purchase-modal__product-name">{ product.product_name }</span>
-					<span className="purchase-modal__product-cost">
-						{ isDiscounted && originalAmountDisplay ? (
-							<>
-								<s>{ originalAmountDisplay }</s> { actualAmountDisplay }
-							</>
-						) : (
-							actualAmountDisplay
-						) }
-					</span>
-				</div>
-
-				<div className="purchase-modal__step-content-row">
-					<LineItemSublabelAndPrice product={ product } />
-					<LineItemIntroductoryOffer product={ product } />
-				</div>
+				{ products.map( ( product ) => (
+					<OrderStepRow key={ product.product_id } product={ product } />
+				) ) }
 			</div>
 		</PurchaseModalStep>
 	);
@@ -222,7 +239,6 @@ export default function PurchaseModalContent( {
 } ) {
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( cart );
-	const firstProduct = cart.products.length > 0 ? cart.products[ 0 ] : undefined;
 	const firstCard = cards.length > 0 ? cards[ 0 ] : undefined;
 
 	return (
@@ -236,7 +252,7 @@ export default function PurchaseModalContent( {
 				>
 					<Gridicon icon="cross-small" />
 				</Button>
-				{ firstProduct && <OrderStep siteSlug={ siteSlug } product={ firstProduct } /> }
+				{ cart.products?.length && <OrderStep siteSlug={ siteSlug } products={ cart.products } /> }
 				{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
 				<CheckoutTerms cart={ cart } />
 				<OrderReview
@@ -270,6 +286,7 @@ export default function PurchaseModalContent( {
 						siteId={ cart.blog_id }
 						nextDomainIsFree={ cart.next_domain_is_free }
 					/>
+					<CheckoutNextSteps responseCart={ cart } />
 				</div>
 			) }
 		</div>
