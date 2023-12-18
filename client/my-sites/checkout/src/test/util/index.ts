@@ -246,6 +246,24 @@ export const planWithBundledDomain: ResponseCartProduct = {
 	months_per_bill_period: 12,
 };
 
+export const oneTimePurchase: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Premium Theme',
+	product_slug: 'premium_theme',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	is_one_time_purchase: true,
+	product_id: 1009,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
 export const planWithoutDomain: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
@@ -1468,6 +1486,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'bundle',
 			raw_price: 48,
 			raw_price_integer: 4800,
+			orig_cost_integer: 4800,
 		},
 		{
 			product_id: planWithoutDomainMonthly.product_id,
@@ -1479,6 +1498,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'bundle',
 			raw_price: 7,
 			raw_price_integer: 700,
+			orig_cost_integer: 700,
 		},
 		{
 			product_id: planWithoutDomainBiannual.product_id,
@@ -1490,6 +1510,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'bundle',
 			raw_price: 84,
 			raw_price_integer: 8400,
+			orig_cost_integer: 8400,
 		},
 		{
 			product_id: planLevel2.product_id,
@@ -1501,6 +1522,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'bundle',
 			raw_price: 300,
 			raw_price_integer: 30000,
+			orig_cost_integer: 30000,
 		},
 		{
 			product_id: planLevel2Monthly.product_id,
@@ -1512,6 +1534,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'bundle',
 			raw_price: 33,
 			raw_price_integer: 3300,
+			orig_cost_integer: 3300,
 		},
 		{
 			product_id: planLevel2Biannual.product_id,
@@ -1523,6 +1546,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'bundle',
 			raw_price: 499,
 			raw_price_integer: 49900,
+			orig_cost_integer: 49900,
 		},
 		{
 			product_id: jetpackMonthly.product_id,
@@ -1534,6 +1558,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'product',
 			raw_price: 14.95,
 			raw_price_integer: 1495,
+			orig_cost_integer: 1495,
 		},
 		{
 			product_id: jetpackYearly.product_id,
@@ -1545,6 +1570,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'product',
 			raw_price: 119.4,
 			raw_price_integer: 11940,
+			orig_cost_integer: 11940,
 		},
 		{
 			product_id: jetpackBiannual.product_id,
@@ -1556,6 +1582,7 @@ export function getPlansItemsState(): PricedAPIPlan[] {
 			product_type: 'product',
 			raw_price: 238.8,
 			raw_price_integer: 23880,
+			orig_cost_integer: 23880,
 		},
 	];
 }

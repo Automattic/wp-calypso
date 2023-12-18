@@ -21,6 +21,7 @@ interface Props {
 	previousPath?: string;
 	siteSlug?: string;
 	isLeavingAllowed?: boolean;
+	shouldClearCartWhenLeaving?: boolean;
 	loadHelpCenterIcon?: boolean;
 }
 
@@ -30,6 +31,7 @@ const CheckoutMasterbar = ( {
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
+	shouldClearCartWhenLeaving,
 	loadHelpCenterIcon,
 }: Props ) => {
 	const translate = useTranslate();
@@ -61,7 +63,7 @@ const CheckoutMasterbar = ( {
 		} );
 
 	const clickClose = () => {
-		if ( responseCart.products.length > 0 ) {
+		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
 			setIsModalVisible( true );
 			return;
 		}
