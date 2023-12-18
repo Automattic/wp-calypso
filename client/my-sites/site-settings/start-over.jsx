@@ -119,25 +119,15 @@ function SiteResetCard( {
 
 	const { data } = useSiteResetContentSummaryQuery( siteId );
 	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
-	let resetStatus = 'ready';
-	if ( status ) {
-		resetStatus = status.status;
-	}
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
-	const [ resetProgress, setResetProgress ] = useState( 1 );
-
-	if ( resetStatus !== 'ready' && resetProgress === 1 ) {
-		//it's already in progress on load
-		setResetProgress( 0 );
-	}
 
 	const checkStatus = async () => {
-		if ( resetProgress !== 1 ) {
+		if ( status?.status !== 'completed' && isAtomic ) {
 			const {
 				data: { status: latestStatus },
 			} = await refetchResetStatus();
-			if ( latestStatus === 'ready' ) {
-				setResetProgress( 1 );
+
+			if ( latestStatus === 'completed' ) {
 				dispatch(
 					successNotice( translate( 'Your site has been reset.' ), {
 						id: 'site-reset-success-notice',
@@ -158,7 +148,6 @@ function SiteResetCard( {
 	};
 
 	const handleResult = ( result ) => {
-		setResetProgress( 0 );
 		if ( result.success ) {
 			if ( isAtomic ) {
 				dispatch(
@@ -167,6 +156,7 @@ function SiteResetCard( {
 						duration: 6000,
 					} )
 				);
+				refetchResetStatus();
 			} else {
 				dispatch(
 					successNotice( translate( 'Your site has been reset.' ), {
@@ -174,7 +164,6 @@ function SiteResetCard( {
 						duration: 4000,
 					} )
 				);
-				setResetProgress( 1 );
 			}
 		} else {
 			handleError();
@@ -274,7 +263,7 @@ function SiteResetCard( {
 				}
 		  );
 
-	const isResetInProgress = resetProgress < 1;
+	const isResetInProgress = status?.status === 'in-progress' && isAtomic;
 
 	const ctaText =
 		! isAtomic && isLoading ? translate( 'Resetting site' ) : translate( 'Reset site' );
@@ -301,7 +290,7 @@ function SiteResetCard( {
 			{ isResetInProgress ? (
 				<ActionPanel style={ { margin: 0 } }>
 					<ActionPanelBody>
-						<LoadingBar progress={ resetProgress / 100 } />
+						<LoadingBar progress={ status?.progress } />
 						<p className="reset-site__in-progress-message">
 							{ translate( "We're resetting your site. We'll email you once it's ready." ) }
 						</p>
