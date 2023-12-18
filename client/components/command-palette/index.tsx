@@ -5,7 +5,10 @@ import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/i
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -70,6 +73,7 @@ export function CommandMenuGroup( {
 	const { commands } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
+		search,
 	} );
 
 	if ( ! commands.length ) {
@@ -84,7 +88,13 @@ export function CommandMenuGroup( {
 					<Command.Item
 						key={ command.name }
 						value={ itemValue }
-						onSelect={ () => command.callback( { close, setSearch, setPlaceholderOverride } ) }
+						onSelect={ () =>
+							command.callback( {
+								close: () => close( command.name, true ),
+								setSearch,
+								setPlaceholderOverride,
+							} )
+						}
 						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
@@ -160,10 +170,33 @@ const CommandPalette = () => {
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const { close, toggle } = {
-		close: () => setIsOpen( false ),
-		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
-	};
+	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
+	const dispatch = useDispatch();
+	const open = useCallback( () => {
+		setIsOpen( true );
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_open', {
+				current_route: currentRoute,
+			} )
+		);
+	}, [ dispatch, currentRoute ] );
+	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
+		( commandName = '', isExecuted = false ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_command_palette_close', {
+					// For nested commands the command.name would be the siteId
+					// For root commands the selectedCommandName would be empty
+					command: selectedCommandName || commandName,
+					current_route: currentRoute,
+					search_text: search,
+					is_executed: isExecuted,
+				} )
+			);
+			setIsOpen( false );
+		},
+		[ currentRoute, dispatch, search, selectedCommandName ]
+	);
+	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 
 	const commandListRef = useRef< HTMLDivElement >( null );
 
@@ -196,6 +229,18 @@ const CommandPalette = () => {
 		close();
 	};
 
+	const goBackToRootCommands = ( fromKeyboard: boolean ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
+				command: selectedCommandName,
+				current_route: currentRoute,
+				search_text: search,
+				from_keyboard: fromKeyboard,
+			} )
+		);
+		reset();
+	};
+
 	if ( ! isOpen ) {
 		return false;
 	}
@@ -212,11 +257,11 @@ const CommandPalette = () => {
 			event.preventDefault();
 		}
 		if (
-			( event.key === 'Escape' && selectedCommandName ) ||
-			( event.key === 'Backspace' && ! search )
+			selectedCommandName &&
+			( event.key === 'Escape' || ( event.key === 'Backspace' && ! search ) )
 		) {
 			event.preventDefault();
-			reset();
+			goBackToRootCommands( true );
 		}
 	};
 
@@ -235,7 +280,7 @@ const CommandPalette = () => {
 						{ selectedCommandName ? (
 							<BackButton
 								type="button"
-								onClick={ reset }
+								onClick={ () => goBackToRootCommands( false ) }
 								aria-label={ __( 'Go back to the previous screen' ) }
 							>
 								<Icon icon={ backIcon } />
@@ -257,7 +302,10 @@ const CommandPalette = () => {
 						) }
 						<CommandMenuGroup
 							search={ search }
-							close={ closeAndReset }
+							close={ ( commandName, isExecuted ) => {
+								close( commandName, isExecuted );
+								reset();
+							} }
 							setSearch={ setSearch }
 							setPlaceholderOverride={ setPlaceholderOverride }
 							selectedCommandName={ selectedCommandName }
