@@ -33,6 +33,7 @@ import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		getSelectedSiteId.mockImplementation( () => 100 );
 		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.useIntroOffers.mockImplementation( () => ( {
 			[ PLAN_PREMIUM ]: null,
@@ -84,7 +85,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PREMIUM,
 			planSlug: PLAN_PREMIUM,
 		} ) );
-		getSelectedSiteId.mockImplementation( () => 100 );
 		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
 			return {
 				[ PLAN_PREMIUM ]: true,
@@ -122,7 +122,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PREMIUM,
 			planSlug: PLAN_PREMIUM,
 		} ) );
-		getSelectedSiteId.mockImplementation( () => 100 );
 		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
 			return {
 				[ PLAN_PREMIUM ]: false,
@@ -160,7 +159,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
 		} ) );
-		getSelectedSiteId.mockImplementation( () => 100 );
 		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
 			return {
 				[ PLAN_PERSONAL ]: true,
@@ -199,7 +197,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
 		} ) );
-		getSelectedSiteId.mockImplementation( () => 100 );
 		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
 			return {
 				[ PLAN_PREMIUM ]: true,
