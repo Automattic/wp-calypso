@@ -375,6 +375,8 @@ function PluginDetails( props ) {
 				isVisible={ isReviewsModalVisible }
 				onClose={ () => setIsReviewsModalVisible( false ) }
 				productName={ fullPlugin.name }
+				slug={ fullPlugin.slug }
+				productType="plugin"
 			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 			<div className="plugin-details__page">
