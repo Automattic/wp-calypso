@@ -233,13 +233,12 @@ const CommandPalette = () => {
 				<Command
 					label={ __( 'Command palette' ) }
 					onKeyDown={ onKeyDown }
-					//filter={ ( label, search ) => {
-					//	if ( label.includes( search ) ) {
-					//		return 1;
-					//	}
-					//	return 0;
-					//</StyledCommandsMenuContainer>} }
-					shouldFilter={ false }
+					filter={ ( label, search ) => {
+						if ( label.includes( search ) ) {
+							return 1;
+						}
+						return 0;
+					} }
 				>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
