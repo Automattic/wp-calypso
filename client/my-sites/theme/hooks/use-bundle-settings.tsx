@@ -67,7 +67,7 @@ export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookR
 									'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 							  ),
 					bundledPluginMessage: translate(
-						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin.',
+						'This theme comes bundled with the {{link}}WooCommerce{{/link}} plugin.',
 						{
 							components: {
 								link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
@@ -90,7 +90,7 @@ export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookR
 						{ args: { businessPlanName } }
 					) as string,
 					bundledPluginMessage: translate(
-						'This theme comes bundled with {{link}}Sensei{{/link}} plugin.',
+						'This theme comes bundled with the {{link}}Sensei{{/link}} plugin.',
 						{
 							components: {
 								link: <ExternalLink children={ null } href="https://senseilms.com/" />,
