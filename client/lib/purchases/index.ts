@@ -231,7 +231,11 @@ export function getSubscriptionsBySite(
 			site.subscriptions = [ ...site.subscriptions, currentValue ];
 			return result;
 		}, [] )
-		.sort( ( a, b ) => ( a.name?.toLowerCase() > b.name?.toLowerCase() ? 1 : -1 ) );
+		.sort( ( a, b ) => {
+			const aName = typeof a.name === 'string' ? a.name.toLowerCase() : '';
+			const bName = typeof b.name === 'string' ? b.name.toLowerCase() : '';
+			return aName > bName ? 1 : -1;
+		} );
 }
 
 export function getName( purchase: Purchase ): string {
