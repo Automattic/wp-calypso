@@ -129,7 +129,7 @@ function SiteResetCard( {
 
 			if ( latestStatus === 'completed' ) {
 				dispatch(
-					successNotice( translate( 'Your site has been reset.' ), {
+					successNotice( translate( 'Your site was successfully reset' ), {
 						id: 'site-reset-success-notice',
 						duration: 4000,
 					} )
@@ -140,7 +140,7 @@ function SiteResetCard( {
 
 	const handleError = () => {
 		dispatch(
-			errorNotice( translate( 'We were unable to reset your site.' ), {
+			errorNotice( translate( 'We were unable to reset your site' ), {
 				id: 'site-reset-failure-notice',
 				duration: 6000,
 			} )
@@ -151,7 +151,7 @@ function SiteResetCard( {
 		if ( result.success ) {
 			if ( isAtomic ) {
 				dispatch(
-					successNotice( translate( 'Your site will be reset. ' ), {
+					successNotice( translate( 'Your site will be reset' ), {
 						id: 'site-reset-success-notice',
 						duration: 6000,
 					} )
@@ -159,7 +159,7 @@ function SiteResetCard( {
 				refetchResetStatus();
 			} else {
 				dispatch(
-					successNotice( translate( 'Your site has been reset.' ), {
+					successNotice( translate( 'Your site was successfully reset' ), {
 						id: 'site-reset-success-notice',
 						duration: 4000,
 					} )
