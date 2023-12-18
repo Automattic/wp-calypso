@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
-import PurchaseModalPlaceholder from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal/placeholder';
 import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal/use-is-eligible-for-one-click-checkout';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -88,28 +87,20 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
-const OneClickPurchaseModal = ( { isLoading, localeSlug, setShowPurchaseModal, siteSlug } ) => {
+const OneClickPurchaseModal = ( { setShowPurchaseModal, siteSlug } ) => {
 	const businessPlanProduct = createRequestCartProduct( {
 		product_slug: PLAN_BUSINESS,
 	} );
 
 	return (
-		<CalypsoShoppingCartProvider>
-			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ localeSlug }>
-				{ isLoading ? (
-					<PurchaseModalPlaceholder showFeatureList={ true } />
-				) : (
-					<PurchaseModal
-						productToAdd={ businessPlanProduct }
-						onClose={ () => {
-							setShowPurchaseModal( false );
-						} }
-						showFeatureList={ true }
-						siteSlug={ siteSlug }
-					/>
-				) }
-			</StripeHookProvider>
-		</CalypsoShoppingCartProvider>
+		<PurchaseModal
+			productToAdd={ businessPlanProduct }
+			onClose={ () => {
+				setShowPurchaseModal( false );
+			} }
+			showFeatureList={ true }
+			siteSlug={ siteSlug }
+		/>
 	);
 };
 
@@ -128,14 +119,21 @@ const PluginsDiscoveryPage = ( props ) => {
 
 	return (
 		<>
-			{ showPurchaseModal && (
-				<OneClickPurchaseModal
-					localeSlug={ translate.localeSlug }
-					setShowPurchaseModal={ setShowPurchaseModal }
-					siteSlug={ props.siteSlug }
-					isLoading={ isLoading }
-				/>
-			) }
+			<CalypsoShoppingCartProvider>
+				<StripeHookProvider
+					fetchStripeConfiguration={ getStripeConfiguration }
+					locale={ translate.localeSlug }
+				>
+					{ showPurchaseModal && (
+						<OneClickPurchaseModal
+							localeSlug={ translate.localeSlug }
+							setShowPurchaseModal={ setShowPurchaseModal }
+							siteSlug={ props.siteSlug }
+							isLoading={ isLoading }
+						/>
+					) }
+				</StripeHookProvider>
+			</CalypsoShoppingCartProvider>
 			<UpgradeNudge
 				{ ...props }
 				isBusy={ isLoading }
