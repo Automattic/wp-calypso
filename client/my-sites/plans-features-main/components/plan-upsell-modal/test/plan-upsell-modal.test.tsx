@@ -3,8 +3,6 @@
  */
 import { PLAN_FREE, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { screen, renderHook } from '@testing-library/react';
-import useIsFreeDomainFreePlanUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-domain-free-plan-upsell-enabled';
-import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
@@ -18,23 +16,16 @@ function MockPlansFeaturesMain( {
 	selectedPlan,
 	paidDomainName,
 	intent,
+	isCustomDomainAllowedOnFreePlan = false,
 }: {
-	flowName: string;
+	flowName?: string;
 	selectedPlan: string;
 	paidDomainName?: string | null;
 	intent?: string | null;
+	isCustomDomainAllowedOnFreePlan?: boolean | null;
 } ) {
-	const isCustomDomainAllowedOnFreePlan = useIsFreePlanCustomDomainUpsellEnabled(
-		flowName,
-		paidDomainName
-	);
-	const isPlanUpsellEnabledOnFreeDomain = useIsFreeDomainFreePlanUpsellEnabled(
-		flowName,
-		paidDomainName
-	);
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
-		isPlanUpsellEnabledOnFreeDomain,
 		flowName,
 		paidDomainName,
 		intent,
@@ -44,10 +35,11 @@ function MockPlansFeaturesMain( {
 
 describe( 'PlanUpsellModal tests', () => {
 	describe( 'Mocked PlansFeaturesMain tests', () => {
-		test( 'A paid domain on the onboarding-pm flow should show the FREE_PLAN_PAID_DOMAIN_DIALOG', () => {
+		test( 'A paid domain + the Free plan should show the FREE_PLAN_PAID_DOMAIN_DIALOG when custom domains are enabled for the Free plan', () => {
 			renderWithProvider(
 				<MockPlansFeaturesMain
 					flowName="onboarding-pm"
+					isCustomDomainAllowedOnFreePlan={ true }
 					selectedPlan={ PLAN_FREE }
 					paidDomainName="yourgroovydomain.com"
 				/>
@@ -57,9 +49,12 @@ describe( 'PlanUpsellModal tests', () => {
 			);
 		} );
 
-		test( 'A free domain on the onboarding-pm flow should show the FREE_PLAN_FREE_DOMAIN_DIALOG', () => {
+		test( 'A free domain should show the FREE_PLAN_FREE_DOMAIN_DIALOG when custom domains are enabled for the Free plan', () => {
 			renderWithProvider(
-				<MockPlansFeaturesMain flowName="onboarding-pm" selectedPlan={ PLAN_FREE } />
+				<MockPlansFeaturesMain
+					isCustomDomainAllowedOnFreePlan={ true }
+					selectedPlan={ PLAN_FREE }
+				/>
 			);
 			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
 				FREE_PLAN_FREE_DOMAIN_DIALOG
@@ -73,7 +68,7 @@ describe( 'PlanUpsellModal tests', () => {
 			expect( screen.queryByText( /DIALOG/i ) ).toBeNull();
 		} );
 
-		test( 'A paid domain on the onboarding flow should show the PAID_PLAN_IS_REQUIRED_DIALOG', () => {
+		test( 'A paid domain should show the PAID_PLAN_IS_REQUIRED_DIALOG without custom domains enabled for the Free plan', () => {
 			renderWithProvider(
 				<MockPlansFeaturesMain
 					flowName="onboarding"
@@ -160,8 +155,7 @@ describe( 'PlanUpsellModal tests', () => {
 		test( 'Free plan and free domain selection should not show any modals on the onboarding flow when all other modals are hidden', () => {
 			const { result } = renderHook( () =>
 				useModalResolutionCallback( {
-					isCustomDomainAllowedOnFreePlan: { result: false, isLoading: false },
-					isPlanUpsellEnabledOnFreeDomain: { result: false, isLoading: false },
+					isCustomDomainAllowedOnFreePlan: false,
 					flowName: 'Onboarding',
 					paidDomainName: null,
 					intent: null,
