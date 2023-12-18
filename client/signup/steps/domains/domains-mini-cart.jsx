@@ -51,8 +51,10 @@ export function BoldTLD( { domain } ) {
 
 	return (
 		<>
-			<span>{ domain.replace( `.${ tld }`, '' ) }</span>
-			<b>.{ tld }</b>
+			<span>
+				{ domain.replace( `.${ tld }`, '' ) }
+				<b>.{ tld }</b>
+			</span>
 		</>
 	);
 }

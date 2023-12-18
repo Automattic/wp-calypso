@@ -175,9 +175,7 @@
 				font-size: $font-body-small;
 
 				span {
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
+					word-break: break-all;
 				}
 
 				width: 0;
