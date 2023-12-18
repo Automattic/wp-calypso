@@ -144,29 +144,26 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 			 * - If prorated credits are needed, then pick the discounted price from sitePlan (site context) if one exists.
 			 */
 			if ( availableForPurchase ) {
+				const originalPrice = {
+					monthly: getTotalPrice( plan.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
+					full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
+				};
+				const discountedPrice = {
+					monthly:
+						sitePlan && ! withoutProRatedCredits
+							? getTotalPrice( sitePlan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly )
+							: getTotalPrice( plan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
+					full:
+						sitePlan && ! withoutProRatedCredits
+							? getTotalPrice( sitePlan.pricing.discountedPrice.full, storageAddOnPriceYearly )
+							: getTotalPrice( plan.pricing.discountedPrice.full, storageAddOnPriceYearly ),
+				};
+
 				return [
 					planSlug,
 					{
-						originalPrice: {
-							monthly: getTotalPrice(
-								plan.pricing.originalPrice.monthly,
-								storageAddOnPriceMonthly
-							),
-							full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
-						},
-						discountedPrice: {
-							monthly:
-								sitePlan && ! withoutProRatedCredits
-									? getTotalPrice(
-											sitePlan.pricing.discountedPrice.monthly,
-											storageAddOnPriceMonthly
-									  )
-									: getTotalPrice( plan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
-							full:
-								sitePlan && ! withoutProRatedCredits
-									? getTotalPrice( sitePlan.pricing.discountedPrice.full, storageAddOnPriceYearly )
-									: getTotalPrice( plan.pricing.discountedPrice.full, storageAddOnPriceYearly ),
-						},
+						originalPrice,
+						discountedPrice,
 					},
 				];
 			}
