@@ -381,7 +381,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
-				filterNotice: __( 'Only listing sites with hosting features available.' ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: settingsIcon,
 		},
