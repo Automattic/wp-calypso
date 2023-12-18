@@ -57,6 +57,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
 
+	/**
+	 * Projected prices as needed for the plan-grid UI.
+	 */
 	const planPrices: {
 		[ planSlug in PlanSlug ]?: {
 			originalPrice: Plans.PlanPricing[ 'originalPrice' ];
@@ -80,7 +83,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 			const sitePlan = sitePlans.data?.[ planSlug ];
 
 			/**
-			 * 0. No plan or sitePlan: planSlug is for a priceless plan.
+			 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
 			 */
 			if ( ! plan || ( selectedSiteId && ! sitePlan ) ) {
 				return [
@@ -125,8 +128,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					planSlug,
 					{
 						originalPrice: {
-							monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
-							full: fullPrice ? fullPrice + storageAddOnPriceYearly : null,
+							monthly: getTotalPrice( monthlyPrice ?? null, storageAddOnPriceMonthly ),
+							full: getTotalPrice( fullPrice ?? null, storageAddOnPriceYearly ),
 						},
 						discountedPrice: {
 							monthly: null,
@@ -138,6 +141,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 
 			/**
 			 * 2. Original and Discounted prices for plan available for purchase.
+			 * - If prorated credits are needed, then pick the discounted price from sitePlan (site context) if one exists.
 			 */
 			if ( availableForPurchase ) {
 				return [
