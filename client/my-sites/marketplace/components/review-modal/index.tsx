@@ -20,7 +20,7 @@ type Props = {
 	productType: ProductType;
 };
 
-export const ReviewsModal = ( { isVisible, onClose, slug, productName, productType }: Props ) => {
+export const ReviewModal = ( { isVisible, onClose, slug, productName, productType }: Props ) => {
 	const [ content, setContent ] = useState< string >( '' );
 	const [ rating, setRating ] = useState< number >( 5 );
 
@@ -29,7 +29,7 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 	if ( createReview.isSuccess ) {
 		return (
 			<Dialog
-				className="marketplace-reviews-modal"
+				className="marketplace-review-modal"
 				isVisible={ isVisible }
 				onClose={ onClose }
 				showCloseIcon
@@ -50,12 +50,12 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 
 	return (
 		<Dialog
-			className="marketplace-reviews-modal"
+			className="marketplace-review-modal"
 			isVisible={ isVisible }
 			onClose={ onClose }
 			showCloseIcon
 		>
-			<Card className="marketplace-reviews-modal__card">
+			<Card className="marketplace-review-modal__card">
 				<CardHeading tagName="h1" size={ 21 }>
 					{ translate( 'Add New Review for %(productName)s', { args: { productName } } ) }
 				</CardHeading>
@@ -80,9 +80,9 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 						onChange={ setContent }
 					/>
 					<ReviewsRatingsStars onSelectRating={ setRating } showSelectedRating rating={ rating } />
-					<div className="marketplace-reviews-modal__buttons-container">
+					<div className="marketplace-review-modal__buttons-container">
 						<Button
-							className="marketplace-reviews-modal__button-submit"
+							className="marketplace-review-modal__button-submit"
 							primary
 							type="submit"
 							disabled={ createReview.isLoading }
@@ -94,7 +94,7 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 					</div>
 				</form>
 				{ createReview.isError && (
-					<span className="marketplace-reviews-modal__error">
+					<span className="marketplace-review-modal__error">
 						{ ( createReview.error as ErrorResponse ).message }
 					</span>
 				) }
