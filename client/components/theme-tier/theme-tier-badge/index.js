@@ -1,5 +1,4 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
-import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -18,7 +17,6 @@ export default function ThemeTierBadge( {
 	isLockedStyleVariation,
 	themeId,
 } ) {
-	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const isLegacyPremiumPurchased = useSelector( ( state ) =>
@@ -44,7 +42,7 @@ export default function ThemeTierBadge( {
 		}
 
 		if ( isThemeAllowedOnSite || ( 'premium' === themeTier.slug && isLegacyPremiumPurchased ) ) {
-			return <span>{ siteId ? translate( 'Included in my plan' ) : translate( 'Free' ) }</span>;
+			return null;
 		}
 
 		return <ThemeTierUpgradeBadge />;

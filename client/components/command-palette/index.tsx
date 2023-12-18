@@ -121,20 +121,28 @@ interface CommandInputProps {
 	isOpen: boolean;
 	search: string;
 	setSearch: ( search: string ) => void;
+	selectedCommandName: string;
 	placeholder?: string;
 }
 
-function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputProps ) {
+function CommandInput( {
+	isOpen,
+	search,
+	setSearch,
+	placeholder,
+	selectedCommandName,
+}: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
 
 	useEffect( () => {
-		// Focus the command palette input when mounting the modal.
-		if ( isOpen ) {
+		// Focus the command palette input when mounting the modal,
+		// or when a command is selected.
+		if ( isOpen || selectedCommandName ) {
 			commandMenuInput.current?.focus();
 		}
-	}, [ isOpen ] );
+	}, [ isOpen, selectedCommandName ] );
 
 	return (
 		<Command.Input
@@ -156,6 +164,14 @@ const CommandPalette = () => {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
 	};
+
+	const commandListRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( commandListRef.current !== null ) {
+			commandListRef.current.scrollTop = 0;
+		}
+	}, [ selectedCommandName ] );
 
 	// Cmd+K shortcut
 	useEffect( () => {
@@ -228,13 +244,14 @@ const CommandPalette = () => {
 							<Icon icon={ inputIcon } />
 						) }
 						<CommandInput
+							selectedCommandName={ selectedCommandName }
 							search={ search }
 							setSearch={ setSearch }
 							isOpen={ isOpen }
 							placeholder={ placeHolderOverride }
 						/>
 					</div>
-					<Command.List>
+					<Command.List ref={ commandListRef }>
 						{ search && ! isLoading && (
 							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
 						) }

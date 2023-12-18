@@ -114,6 +114,7 @@ class RegisterDomainStep extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		includeWordPressDotCom: PropTypes.bool,
+		includeOwnedDomainInSuggestions: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		onSave: PropTypes.func,
@@ -134,6 +135,7 @@ class RegisterDomainStep extends Component {
 		useProvidedProductsList: PropTypes.bool,
 		otherManagedSubdomains: PropTypes.array,
 		forceExactSuggestion: PropTypes.bool,
+		checkDomainAvailabilityPromises: PropTypes.array,
 
 		/**
 		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
@@ -156,6 +158,7 @@ class RegisterDomainStep extends Component {
 		deemphasiseTlds: [],
 		includeDotBlogSubdomain: false,
 		includeWordPressDotCom: false,
+		includeOwnedDomainInSuggestions: false,
 		isDomainOnly: false,
 		onAddDomain: noop,
 		onAddMapping: noop,
@@ -260,6 +263,7 @@ class RegisterDomainStep extends Component {
 			trademarkClaimsNoticeInfo: null,
 			selectedSuggestion: null,
 			isInitialQueryActive: !! props.suggestion,
+			checkAvailabilityTimeout: null,
 		};
 	}
 
@@ -329,7 +333,7 @@ class RegisterDomainStep extends Component {
 		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
-			// We used to run the initial search here, it's now triggered on mount in a useEffect inside <Search />
+			this.onSearch( query );
 
 			// Delete the stored query once it is consumed.
 			globalThis?.sessionStorage?.removeItem( SESSION_STORAGE_QUERY_KEY );
@@ -1078,11 +1082,14 @@ class RegisterDomainStep extends Component {
 						UNKNOWN,
 						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
-					const isDomainAvailable = [
-						AVAILABLE,
-						UNKNOWN,
-						REGISTERED_OTHER_SITE_SAME_USER,
-					].includes( status );
+
+					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
+
+					if ( this.props.includeOwnedDomainInSuggestions ) {
+						availableDomainStatuses.push( REGISTERED_OTHER_SITE_SAME_USER );
+					}
+
+					const isDomainAvailable = availableDomainStatuses.includes( status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
@@ -1099,8 +1106,12 @@ class RegisterDomainStep extends Component {
 						result.is_premium = true;
 					}
 
-					// Mapped status always overrides other statuses.
-					const availabilityStatus = isDomainMapped ? mappable : status;
+					let availabilityStatus = status;
+
+					// Mapped status always overrides other statuses, unless the domain is owned by the current user.
+					if ( isDomainMapped && status !== REGISTERED_OTHER_SITE_SAME_USER ) {
+						availabilityStatus = mappable;
+					}
 
 					this.setState( {
 						exactMatchDomain: domainChecked,
@@ -1163,7 +1174,7 @@ class RegisterDomainStep extends Component {
 				.replace( ' ', ',' )
 				.toLocaleLowerCase(),
 			...this.getActiveFiltersForAPI(),
-			include_internal_move_eligible: 'onboarding' === this.props.flowName,
+			include_internal_move_eligible: this.props.includeOwnedDomainInSuggestions,
 		};
 
 		debug( 'Fetching domains suggestions with the following query', query );
@@ -1356,8 +1367,9 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
+	onSearch = async ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
+
 		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 
 		this.setState(
@@ -1457,9 +1469,11 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = async ( suggestion, position ) => {
+	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
+		const { includeOwnedDomainInSuggestions } = this.props;
+		const { REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
@@ -1477,10 +1491,10 @@ class RegisterDomainStep extends Component {
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			// For Multi-domain flows, add the domain first, than check availability
 			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-				await this.props.onAddDomain( suggestion, position );
+				this.props.onAddDomain( suggestion, position, previousState );
 			}
 
-			this.preCheckDomainAvailability( domain )
+			const promise = this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
 					this.setState( { pendingCheckSuggestion: null } );
@@ -1489,7 +1503,12 @@ class RegisterDomainStep extends Component {
 						status,
 						this.props.analyticsSection
 					);
-					if ( status && status !== domainAvailability.REGISTERED_OTHER_SITE_SAME_USER ) {
+
+					const skipAvailabilityErrors =
+						! status ||
+						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions );
+
+					if ( ! skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
 						this.showAvailabilityErrorMessage( domain, status, {
 							availabilityPreCheck: true,
@@ -1503,11 +1522,12 @@ class RegisterDomainStep extends Component {
 						} );
 						this.props.onMappingError( domain, status );
 					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-						this.props.onAddDomain( suggestion, position );
+						this.props.onAddDomain( suggestion, position, previousState );
 					}
 				} );
+			this.props.checkDomainAvailabilityPromises?.push( promise );
 		} else {
-			this.props.onAddDomain( suggestion, position );
+			this.props.onAddDomain( suggestion, position, previousState );
 		}
 	};
 
@@ -1594,6 +1614,7 @@ class RegisterDomainStep extends Component {
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
+				domainRemovalQueue={ this.props.domainRemovalQueue }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&
@@ -1701,12 +1722,17 @@ class RegisterDomainStep extends Component {
 			TRANSFERRABLE,
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
+			REGISTERED_OTHER_SITE_SAME_USER,
 		} = domainAvailability;
+
+		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
+
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
-			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
+			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
+			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error )
 		) {
 			return;
 		}

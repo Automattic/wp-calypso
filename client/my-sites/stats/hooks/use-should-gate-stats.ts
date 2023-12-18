@@ -7,14 +7,9 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 // TODO: define shared variables
-const trafficPaidStats = [
-	'statsSearchTerms',
-	'statsClicks',
-	'statsReferrers',
-	'statsCountryViews',
-];
+const trafficPaidStats = [ 'statsSearchTerms', 'statsClicks', 'statsReferrers' ];
 
-const featureFlags = [ 'stats/date-control' ];
+const featureFlags = [ 'stats/date-control', 'download-csv' ];
 
 /*
  * Check if a site has access to a paid stats feature in wpcom.
@@ -34,7 +29,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
 	// check site type
-	if ( jetpackSite || atomicSite ) {
+	if ( jetpackSite && ! atomicSite ) {
 		return false;
 	}
 

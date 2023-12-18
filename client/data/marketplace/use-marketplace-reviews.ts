@@ -37,7 +37,7 @@ type UpdateMarketplaceReviewProps = {
 
 type DeleteMarketplaceReviewProps = {
 	reviewId: number;
-} & ProductProps;
+};
 
 export type MarketplaceReviewResponse = {
 	id: number;
@@ -68,7 +68,7 @@ export type ErrorResponse = {
 };
 
 type MarketplaceReviewsQueryOptions = Pick<
-	UseQueryOptions< MarketplaceReviewResponse[] | ErrorResponse >,
+	UseQueryOptions< MarketplaceReviewResponse[] >,
 	'enabled' | 'staleTime' | 'refetchOnMount'
 >;
 
@@ -77,7 +77,7 @@ const fetchMarketplaceReviews = (
 	productSlug: string,
 	page: number = 1,
 	perPage: number = 10
-): Promise< MarketplaceReviewResponse[] | ErrorResponse > => {
+): Promise< MarketplaceReviewResponse[] > => {
 	return wpcom.req.get(
 		{
 			path: reviewsApiBase,
@@ -97,7 +97,7 @@ const createReview = ( {
 	slug,
 	content,
 	rating,
-}: MarketplaceReviewBody ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
+}: MarketplaceReviewBody ): Promise< MarketplaceReviewResponse > => {
 	return wpcom.req.post(
 		reviewsApiBase,
 		{
@@ -118,7 +118,7 @@ const updateReview = ( {
 	slug,
 	content,
 	rating,
-}: UpdateMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
+}: UpdateMarketplaceReviewProps ): Promise< MarketplaceReviewResponse > => {
 	return wpcom.req.post(
 		`${ reviewsApiBase }/${ reviewId }`,
 		{
@@ -135,7 +135,7 @@ const updateReview = ( {
 
 const deleteReview = ( {
 	reviewId,
-}: DeleteMarketplaceReviewProps ): Promise< MarketplaceReviewResponse | ErrorResponse > => {
+}: DeleteMarketplaceReviewProps ): Promise< MarketplaceReviewResponse > => {
 	return wpcom.req.post( {
 		method: 'DELETE',
 		path: `${ reviewsApiBase }/${ reviewId }`,
@@ -153,13 +153,7 @@ export const useMarketplaceReviewsQuery = (
 ) => {
 	const queryKey: QueryKey = [ queryKeyBase, productType, slug, page, perPage ];
 	const queryFn = () => fetchMarketplaceReviews( productType, slug, page, perPage );
-	return useQuery( {
-		queryKey,
-		queryFn,
-		enabled,
-		staleTime,
-		refetchOnMount,
-	} );
+	return useQuery( { queryKey, queryFn, enabled, staleTime, refetchOnMount } );
 };
 
 export const useCreateMarketplaceReviewMutation = () => {

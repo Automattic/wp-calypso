@@ -1,7 +1,9 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { BundledBadge, PremiumBadge } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import i18n, { useTranslate } from 'i18n-calypso';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,10 +16,12 @@ export default function ThemeTierBundledBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
-	const bundleSettings = useBundleSettings( themeId );
-	const legacyCanUseTheme = useSelector(
+	const bundleSettings = useBundleSettingsByTheme( themeId );
+	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
+
+	const isEnglishLocale = useIsEnglishLocale();
 
 	if ( ! bundleSettings ) {
 		return;
@@ -37,11 +41,26 @@ export default function ThemeTierBundledBadge() {
 			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
-					// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-					translate( 'This %(bundleName)s theme is included in the <Link>Business plan</Link>.', {
-						args: { bundleName },
-						textOnly: true,
-					} ),
+					isEnglishLocale ||
+						i18n.hasTranslation(
+							'This %(bundleName)s theme is included in the <Link>%(businessPlanName)s plan</Link>.'
+						)
+						? // Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+						  translate(
+								'This %(bundleName)s theme is included in the <Link>%(businessPlanName)s plan</Link>.',
+								{
+									args: { bundleName },
+									textOnly: true,
+									businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+								}
+						  )
+						: translate(
+								'This %(bundleName)s theme is included in the <Link>Business plan</Link>.',
+								{
+									args: { bundleName },
+									textOnly: true,
+								}
+						  ),
 					{
 						Link: <ThemeTierBadgeCheckoutLink plan="business" />,
 					}
@@ -52,7 +71,7 @@ export default function ThemeTierBundledBadge() {
 
 	return (
 		<div className="theme-tier-badge">
-			{ ! legacyCanUseTheme && (
+			{ ! isThemeIncluded && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge
@@ -76,8 +95,6 @@ export default function ThemeTierBundledBadge() {
 			>
 				{ bundleName }
 			</BundledBadge>
-
-			{ legacyCanUseTheme && <span>{ translate( 'Included in my plan' ) }</span> }
 		</div>
 	);
 }

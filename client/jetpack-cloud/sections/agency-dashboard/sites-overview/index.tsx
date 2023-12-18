@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -26,6 +27,7 @@ import {
 import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import { serializeQueryStringProducts } from '../../partner-portal/lib/querystring-products';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
@@ -202,16 +204,31 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
+	const isBundleUIEnabled = isEnabled( 'jetpack/bundle-licensing' );
+
+	let serializedLicenses = selectedLicenses
+		?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
+		// If multiple products are selected, pass them as a comma-separated list.
+		.join( ',' );
+
+	if ( isBundleUIEnabled ) {
+		const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
+			slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
+			quantity: 1,
+		} ) );
+
+		serializedLicenses = serializeQueryStringProducts( selectedProducts );
+	}
+
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			product_slug: selectedLicenses
-				?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-				// If multiple products are selected, pass them as a comma-separated list.
-				.join( ',' ),
+			...( isBundleUIEnabled
+				? { products: serializedLicenses }
+				: { product_slug: serializedLicenses } ),
 			source: 'dashboard',
 		} );
-	}, [ selectedLicensesSiteId, selectedLicenses ] );
+	}, [ isBundleUIEnabled, selectedLicensesSiteId, serializedLicenses ] );
 
 	const renderIssueLicenseButton = () => {
 		return (
@@ -231,10 +248,7 @@ export default function SitesOverview() {
 						dispatch(
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
 								site_id: selectedLicensesSiteId,
-								products: selectedLicenses
-									?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-									// If multiple products are selected, pass them as a comma-separated list.
-									.join( ',' ),
+								products: serializedLicenses,
 							} )
 						)
 					}

@@ -2,13 +2,16 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsQuery,
 	type ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
+import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
 import './styles.scss';
+import { type IAppState } from 'calypso/state/types';
 
 type Props = ProductProps & {
 	productName: string;
@@ -22,6 +25,11 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 		productType,
 		slug,
 	} );
+
+	const userCanPublishReviews = useSelector( ( state: IAppState ) =>
+		canPublishProductReviews( state, productType, slug )
+	);
+
 	// TODO: The averageRating will come from the server. Calculating it here temporarily.
 	let averageRating = null;
 	let numberOfReviews = null;
@@ -65,7 +73,9 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 						</Button>
 					</div>
 				) }
-				<Button onClick={ () => setIsVisible( true ) }>{ translate( 'Add Review' ) }</Button>
+				{ userCanPublishReviews && (
+					<Button onClick={ () => setIsVisible( true ) }>{ translate( 'Add Review' ) }</Button>
+				) }
 			</div>
 		</>
 	);

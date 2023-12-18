@@ -49,7 +49,7 @@
 }
 
 .dialog__backdrop.live-preview-modal__overlay {
-	background-color: rgba(0, 0, 0, 0.7);
+	background-color: rgba(var(--color-neutral-70-rgb), 0.8);
 	// Dialog sets `z-index: z-index("root", ".dialog__backdrop")`,
 	// but this modal is used outside of Calypso, so we need to set it manually.
 	// We can refactor to use Modal from `@wordpress/components` instead of Dialog.
