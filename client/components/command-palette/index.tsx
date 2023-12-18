@@ -79,7 +79,7 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
-				const itemValue = command.searchLabel ?? command.label;
+				const itemValue = command.label ?? command.searchLabel;
 				return (
 					<Command.Item
 						key={ command.name }
