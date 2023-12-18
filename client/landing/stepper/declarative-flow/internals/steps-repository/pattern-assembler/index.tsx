@@ -143,7 +143,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
 				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
-				page_slugs: ( pageSlugs || [] ).join( ',' ),
 			} ),
 		[
 			flow,
@@ -219,6 +218,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
+			page_slugs: ( pageSlugs || [] ).join( ',' ),
 		} );
 
 		patterns.forEach( ( { ID, name, category } ) => {
