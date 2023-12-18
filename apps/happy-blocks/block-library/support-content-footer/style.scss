@@ -157,11 +157,22 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			width: 100%;
 			min-height: 40px;
 			margin: 8px 0;
+			gap: 10px;
 
 			.wpcom-guides-learn-button {
 				cursor: pointer;
+
 				&.busy {
 					color: #7f8389;
+				}
+			}
+
+			@media screen and (max-width: 782px) {
+				flex-direction: column;
+				align-items: flex-start;
+
+				.wpcom-guides-learn-button {
+					margin-top: 8px;
 				}
 			}
 		}
