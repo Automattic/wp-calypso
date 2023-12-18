@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -64,6 +65,17 @@ class ImporterError extends PureComponent {
 			'Oops! We ran into an unexpected error while uploading your file.'
 		);
 		const { description = '' } = this.props;
+
+		if ( isEnabled( 'importer/site-backups' ) ) {
+			return this.props.translate(
+				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
+				{
+					components: {
+						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					},
+				}
+			);
+		}
 
 		return this.props.translate(
 			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
