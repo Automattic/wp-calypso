@@ -5,11 +5,21 @@ import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	STATS_SUBTYPE_DATE_CONTROL,
+	STATS_SUBTYPE_DOWNLOAD_CSV,
+	STAT_TYPE_STATS_CLICKS,
+	STAT_TYPE_STATS_REFERRERS,
+	STAT_TYPE_STATS_SEARCH_TERMS,
+} from '../constants';
 
-// TODO: define shared variables
-const trafficPaidStats = [ 'statsSearchTerms', 'statsClicks', 'statsReferrers' ];
+const paidStats = [
+	STAT_TYPE_STATS_SEARCH_TERMS,
+	STAT_TYPE_STATS_CLICKS,
+	STAT_TYPE_STATS_REFERRERS,
+];
 
-const featureFlags = [ 'stats/date-control', 'download-csv' ];
+const granularControlForPaidStats = [ STATS_SUBTYPE_DATE_CONTROL, STATS_SUBTYPE_DOWNLOAD_CSV ];
 
 /*
  * Check if a site has access to a paid stats feature in wpcom.
@@ -48,7 +58,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	}
 
 	// site cannot acesss paid stats, gate stats accordingly
-	return [ ...trafficPaidStats, ...featureFlags ].includes( statType );
+	return [ ...paidStats, ...granularControlForPaidStats ].includes( statType );
 };
 
 /*
