@@ -1,0 +1,54 @@
+@import "~@wordpress/base-styles/breakpoints";
+@import "~@wordpress/base-styles/mixins";
+
+.bloganuary-header {
+	background-color: var(--studio-gray-100);
+	color: var(--studio-white);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 20px 40px;
+	vertical-align: middle;
+	margin-bottom: 20px;
+
+	.blogging-bloganuary-icon {
+		vertical-align: middle;
+		padding-right: 10px;
+		display: inline-block;
+
+		> svg {
+			width: 44px;
+			height: 44px;
+			> path {
+				fill: var(--studio-white);
+			}
+		}
+	}
+
+	.bloganuary-header__title {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		vertical-align: middle;
+		font-size: 22px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+
+		@include break-small {
+			font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		}
+	}
+
+	.bloganuary-header__button {
+		vertical-align: middle;
+		font-size: 1rem;
+		margin-right: 10px;
+		background-color: var(--color-surface);
+		display: inline-flex;
+		padding: 8px 14px;
+		border: 1px solid var(--color-neutral-10);
+	}
+
+	.bloganuary-header__link {
+		vertical-align: middle;
+		color: var(--studio-white);
+	}
+}
