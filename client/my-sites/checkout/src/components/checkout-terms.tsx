@@ -60,7 +60,7 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 		}
 	`;
 
-	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
+	const showToSFoldableCard = useToSFoldableCard();
 
 	const shouldShowBundledDomainNotice = showBundledDomainNotice( cart );
 	const shouldShowRefundPolicy = isNotJetpackOrAkismetCheckout;
