@@ -226,7 +226,9 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		margin-bottom: initial;
 
 		@include break-wide {
-			flex-direction: row;
+			&:not(.domain-registration-suggestion__larger-domain) {
+				flex-direction: row;
+			}
 		}
 	}
 
