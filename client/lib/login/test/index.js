@@ -27,6 +27,8 @@ jest.mock( '@automattic/calypso-config', () => ( {
 		switch ( key ) {
 			case 'signup_url':
 				return '/start';
+			case 'i18n_default_locale_slug':
+				return 'en';
 			default:
 				return null;
 		}
@@ -37,6 +39,11 @@ describe( 'getSignupUrl', () => {
 	test( 'should work for /log-in route', () => {
 		const currentRoute = '/log-in';
 		expect( getSignupUrl( undefined, currentRoute, null, 'en', '' ) ).toEqual( '/start' );
+	} );
+
+	test( 'should localize the /log-in route', () => {
+		const currentRoute = '/log-in';
+		expect( getSignupUrl( undefined, currentRoute, null, 'de', '' ) ).toEqual( '/start/de' );
 	} );
 
 	test( 'should work for /log-in route with redirect_to', () => {

@@ -1,4 +1,5 @@
-import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { usePlans } from '@automattic/data-stores/src/plans';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import i18n, { useTranslate } from 'i18n-calypso';
 
@@ -9,8 +10,9 @@ interface Props {
 const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: Props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const plan = getPlan( PLAN_PREMIUM );
-	const planTitle = plan?.getTitle() ?? '';
+	const plans = usePlans();
+	const planTitle = plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '';
+
 	const features = [
 		<strong>{ translate( 'Free domain for one year' ) }</strong>,
 		<strong>{ translate( 'Premium themes' ) }</strong>,

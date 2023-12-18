@@ -125,20 +125,28 @@ interface CommandInputProps {
 	isOpen: boolean;
 	search: string;
 	setSearch: ( search: string ) => void;
+	selectedCommandName: string;
 	placeholder?: string;
 }
 
-function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputProps ) {
+function CommandInput( {
+	isOpen,
+	search,
+	setSearch,
+	placeholder,
+	selectedCommandName,
+}: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
 
 	useEffect( () => {
-		// Focus the command palette input when mounting the modal.
-		if ( isOpen ) {
+		// Focus the command palette input when mounting the modal,
+		// or when a command is selected.
+		if ( isOpen || selectedCommandName ) {
 			commandMenuInput.current?.focus();
 		}
-	}, [ isOpen ] );
+	}, [ isOpen, selectedCommandName ] );
 
 	return (
 		<Command.Input
@@ -269,6 +277,7 @@ const CommandPalette = () => {
 							<Icon icon={ inputIcon } />
 						) }
 						<CommandInput
+							selectedCommandName={ selectedCommandName }
 							search={ search }
 							setSearch={ setSearch }
 							isOpen={ isOpen }
