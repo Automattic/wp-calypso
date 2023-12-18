@@ -1,26 +1,29 @@
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import getProductInfo from '../../lib/get-product-info';
 
-/* Helper function to get the product slug. Some of lower tier products is replaced with higher tier products.
- * For example, jetpack-social-basic is replaced with jetpack-social-advanced.
+/* Helper function to transform a Partner product slug to match User product slug for backward compatibility checking.
+ * Tiered products information such as t1 and t2 are removed while some are replaced with higher tier.
+ * For examples:
+ *  - jetpack-backup-t1 is replaced with jetpack-backup.
+ *  - jetpack-social-basic is replaced with jetpack_social_advanced.
  *
  * @param product
  * @returns product slug
  * */
 function getProductSlug( product: APIProductFamilyProduct ) {
 	if ( product.slug === 'jetpack-social-basic' ) {
-		return 'jetpack-social-advanced';
+		return 'jetpack_social_advanced';
 	}
 
-	if ( product.slug.startsWith( 'jetpack-backup' ) ) {
-		return 'jetpack-backup-t2';
+	if ( product.slug.startsWith( 'jetpack-backup-t' ) ) {
+		return 'jetpack_backup';
 	}
 
 	if ( product.slug.startsWith( 'jetpack-security' ) ) {
-		return 'jetpack-security-t2';
+		return 'jetpack_security';
 	}
 
-	return product.slug;
+	return product.slug.replaceAll( /-/g, '_' );
 }
 
 /* Helper function to check if the selected product is included in the product.
@@ -37,8 +40,8 @@ function isProductIncluded(
 	const productInfo = getProductInfo( product.slug );
 
 	return productInfo?.productsIncluded
-		?.map( ( slug ) => slug.replace( /_(monthly|yearly)$/, '' ) )
-		.includes( getProductSlug( selectedProduct ).replaceAll( /-/g, '_' ) );
+		?.map( ( slug ) => slug.replace( /_(monthly|yearly|t[0-9])/g, '' ) )
+		.includes( getProductSlug( selectedProduct ) );
 }
 
 /* Return list of incompatible products based on the selected products.
