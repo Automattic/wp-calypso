@@ -24,7 +24,7 @@ export default function ThemeTierUpgradeBadge() {
 
 	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
 	const plans = usePlans();
-	const planName = plans?.data?.[ THEME_TIERS[ mappedPlan ] ]?.productNameShort;
+	const planName = plans?.data?.[ mappedPlan.getStoreSlug() ]?.productNameShort;
 
 	const tooltipContent = (
 		<>
