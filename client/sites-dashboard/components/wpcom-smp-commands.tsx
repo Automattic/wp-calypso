@@ -25,6 +25,7 @@ import {
 	wordpress as wordpressIcon,
 	reusableBlock as cacheIcon,
 	help as helpIcon,
+	comment as feedbackIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
@@ -1285,7 +1286,7 @@ export const useCommandsArrayWpcom = ( {
 				setInitialRoute( emailUrl );
 				setShowHelpCenter( true );
 			},
-			icon: helpIcon,
+			icon: feedbackIcon,
 		},
 	];
 
