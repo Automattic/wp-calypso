@@ -155,7 +155,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			font-size: 1rem;
 			padding: 8px;
 			width: 100%;
-			height: 40px;
+			min-height: 40px;
 			margin: 8px 0;
 
 			.wpcom-guides-learn-button {
