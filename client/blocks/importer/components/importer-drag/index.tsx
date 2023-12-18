@@ -57,6 +57,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 					description={ errorData.description }
 					siteSlug={ site?.slug }
 					code={ errorData.code }
+					importerEngine={ importerData?.engine }
 				/>
 			) }
 			{ includes( importingStates, importerState ) && (

@@ -21,6 +21,7 @@ class ImporterError extends PureComponent {
 		retryImport: PropTypes.func,
 		siteSlug: PropTypes.string,
 		code: PropTypes.string,
+		importerEngine: PropTypes.string,
 	};
 
 	contactSupport = ( event ) => {
@@ -66,7 +67,7 @@ class ImporterError extends PureComponent {
 		);
 		const { description = '' } = this.props;
 
-		if ( isEnabled( 'importer/site-backups' ) ) {
+		if ( isEnabled( 'importer/site-backups' ) && this.props.importerEngine === 'wordpress' ) {
 			return this.props.translate(
 				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
 				{
