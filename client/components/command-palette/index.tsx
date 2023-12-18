@@ -230,7 +230,17 @@ const CommandPalette = () => {
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
+				<Command
+					label={ __( 'Command palette' ) }
+					onKeyDown={ onKeyDown }
+					//filter={ ( label, search ) => {
+					//	if ( label.includes( search ) ) {
+					//		return 1;
+					//	}
+					//	return 0;
+					//</StyledCommandsMenuContainer>} }
+					shouldFilter={ false }
+				>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton
