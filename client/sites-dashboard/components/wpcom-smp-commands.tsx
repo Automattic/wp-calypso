@@ -635,7 +635,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/activity-log/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
-				filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: acitvityLogIcon,
 		},
