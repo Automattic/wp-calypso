@@ -79,7 +79,7 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
-				const itemValue = command.label ?? command.searchLabel;
+				const itemValue = [ command.label, command.searchLabel ].filter( Boolean ).join( '||' );
 				return (
 					<Command.Item
 						key={ command.name }
@@ -233,10 +233,20 @@ const CommandPalette = () => {
 				<Command
 					label={ __( 'Command palette' ) }
 					onKeyDown={ onKeyDown }
-					filter={ ( label, search ) => {
-						if ( label.includes( search ) ) {
+					filter={ ( value, search ) => {
+						const [ beforeSeparator, afterSeparator ] = value.split( '||' );
+
+						// Check if the search matches the part before the separator
+						if ( beforeSeparator.includes( search ) ) {
 							return 1;
 						}
+
+						// Check if there is an afterSeparator and the search matches it
+						if ( afterSeparator && afterSeparator.includes( search ) ) {
+							return 0.5;
+						}
+
+						// No match
 						return 0;
 					} }
 				>
