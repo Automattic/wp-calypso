@@ -51,9 +51,13 @@ export default function RevokeLicenseDialog( {
 	}, [ onClose, mutation.isLoading ] );
 
 	const revoke = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_revoke_dialog_revoke' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_license_list_revoke_dialog_revoke', {
+				license_role: licenseRole,
+			} )
+		);
 		mutation.mutate( { licenseKey } );
-	}, [ dispatch, licenseKey, mutation ] );
+	}, [ dispatch, licenseKey, licenseRole, mutation ] );
 
 	const isParentLicense = licenseRole === LicenseRole.Parent;
 	const isAssignedChildLicense = licenseRole === LicenseRole.Child && siteUrl;

@@ -19,6 +19,7 @@ class DomainSuggestion extends Component {
 		domain: PropTypes.string,
 		hidePrice: PropTypes.bool,
 		showChevron: PropTypes.bool,
+		isAdded: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -82,7 +83,9 @@ class DomainSuggestion extends Component {
 		return (
 			<div
 				className={ classes }
-				onClick={ this.props.onButtonClick }
+				onClick={ () => {
+					this.props.onButtonClick( isAdded );
+				} }
 				data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 				role="button"
 				data-e2e-domain={ this.props.domain }

@@ -1,6 +1,11 @@
-import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n, { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
@@ -17,7 +22,6 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';
@@ -29,6 +33,7 @@ export default function WPCOMUpsellPage() {
 	const isAdmin = useSelector( ( state ) =>
 		canCurrentUser( state, siteId ?? 0, 'manage_options' )
 	);
+	const isEnglishLocale = useIsEnglishLocale();
 	const hasFullActivityLogFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
 	);
@@ -69,14 +74,29 @@ export default function WPCOMUpsellPage() {
 				{ ! isAdmin && (
 					<Notice
 						status="is-warning"
-						text={ translate( 'Only site administrators can upgrade to the Business plan.' ) }
+						text={
+							isEnglishLocale ||
+							i18n.hasTranslation(
+								'Only site administrators can upgrade to the %(businessPlanName)s plan.'
+							)
+								? translate(
+										'Only site administrators can upgrade to the %(businessPlanName)s plan.',
+										{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+								  )
+								: translate( 'Only site administrators can upgrade to the Business plan.' )
+						}
 						showDismiss={ false }
 					/>
 				) }
 				{ isAdmin && (
 					<PromoCardCTA
 						cta={ {
-							text: translate( 'Upgrade to Business Plan' ),
+							text:
+								isEnglishLocale || i18n.hasTranslation( 'Upgrade to %(planName)s Plan' )
+									? translate( 'Upgrade to %(planName)s Plan', {
+											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+									  } )
+									: translate( 'Upgrade to Business Plan' ),
 							action: {
 								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
@@ -90,7 +110,11 @@ export default function WPCOMUpsellPage() {
 			{ ! hasFullActivityLogFeature && (
 				<>
 					<h2 className="backup__subheader">
-						{ translate( 'Also included in the Business Plan' ) }
+						{ isEnglishLocale || i18n.hasTranslation( 'Also included in the %(planName)s Plan' )
+							? translate( 'Also included in the %(planName)s Plan', {
+									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							  } )
+							: translate( 'Also included in the Business Plan' ) }
 					</h2>
 
 					<PromoSection { ...promos } />

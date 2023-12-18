@@ -112,7 +112,7 @@ export class EditorBlockToolbarComponent {
 			const editorParent = await this.editor.parent();
 			const locator = editorParent
 				.locator( parentSelector )
-				.getByRole( 'button', { name: `Select ${ expectedParentBlockName }` } );
+				.getByRole( 'button', { name: `Select parent block: ${ expectedParentBlockName }` } );
 			await locator.click();
 			await locator.waitFor( { state: 'detached' } );
 		} else {

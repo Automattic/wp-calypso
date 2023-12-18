@@ -28,12 +28,36 @@ describe( 'shouldGateStats in Calypso', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should not gate stats when site is atomic', () => {
+	it( 'should gate stats when site is atomic without site feature', () => {
 		const mockState = {
 			sites: {
 				items: {
 					[ siteId ]: {
 						jetpack: true, // true for atomic sites
+						options: {
+							is_wpcom_atomic: true,
+						},
+					},
+				},
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
+		expect( isGatedStats ).toBe( true );
+	} );
+
+	it( 'should not gate stats when site is atomic and has paid stat feature', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [ FEATURE_STATS_PAID ],
+						},
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: true,
 						options: {
 							is_wpcom_atomic: true,
 						},
@@ -158,13 +182,37 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should not gate stats for jetpack sites', () => {
+	it( 'should not gate stats for jetpack sites with feature', () => {
 		const mockState = {
 			sites: {
 				features: {
 					[ siteId ]: {
 						data: {
 							active: [ FEATURE_STATS_PAID ],
+						},
+					},
+				},
+				items: {
+					[ siteId ]: {
+						jetpack: true,
+						options: {
+							is_wpcom_atomic: false,
+						},
+					},
+				},
+			},
+		};
+		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
+		expect( isGatedStats ).toBe( false );
+	} );
+
+	it( 'should not gate stats for jetpack sites without feature', () => {
+		const mockState = {
+			sites: {
+				features: {
+					[ siteId ]: {
+						data: {
+							active: [],
 						},
 					},
 				},
