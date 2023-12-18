@@ -20,7 +20,7 @@ const FillDefaultIconWhite = styled.div( {
 	},
 } );
 
-type CloseFunction = () => void;
+type CloseFunction = ( commandName?: string, isExecuted?: boolean ) => void;
 type OnClickSiteFunction = ( {
 	close,
 	site,

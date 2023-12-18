@@ -88,7 +88,13 @@ export function CommandMenuGroup( {
 					<Command.Item
 						key={ command.name }
 						value={ itemValue }
-						onSelect={ () => command.callback( { close, setSearch, setPlaceholderOverride } ) }
+						onSelect={ () =>
+							command.callback( {
+								close: () => close( command.name, true ),
+								setSearch,
+								setPlaceholderOverride,
+							} )
+						}
 						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
@@ -174,16 +180,22 @@ const CommandPalette = () => {
 			} )
 		);
 	}, [ dispatch, currentRoute ] );
-	const close = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_hosting_command_palette_close', {
-				command: selectedCommandName,
-				current_route: currentRoute,
-				search_text: search,
-			} )
-		);
-		setIsOpen( false );
-	}, [ currentRoute, dispatch, search, selectedCommandName ] );
+	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
+		( commandName = '', isExecuted = false ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_command_palette_close', {
+					// For nested commands the command.name would be the siteId
+					// For root commands the selectedCommandName would be empty
+					command: selectedCommandName || commandName,
+					current_route: currentRoute,
+					search_text: search,
+					is_executed: isExecuted,
+				} )
+			);
+			setIsOpen( false );
+		},
+		[ currentRoute, dispatch, search, selectedCommandName ]
+	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 
 	const commandListRef = useRef< HTMLDivElement >( null );
@@ -290,7 +302,10 @@ const CommandPalette = () => {
 						) }
 						<CommandMenuGroup
 							search={ search }
-							close={ closeAndReset }
+							close={ ( commandName, isExecuted ) => {
+								close( commandName, isExecuted );
+								reset();
+							} }
 							setSearch={ setSearch }
 							setPlaceholderOverride={ setPlaceholderOverride }
 							selectedCommandName={ selectedCommandName }
