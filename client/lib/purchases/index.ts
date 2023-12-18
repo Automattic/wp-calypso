@@ -231,7 +231,7 @@ export function getSubscriptionsBySite(
 			site.subscriptions = [ ...site.subscriptions, currentValue ];
 			return result;
 		}, [] )
-		.sort( ( a, b ) => ( a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 ) );
+		.sort( ( a, b ) => ( a.name?.toLowerCase() > b.name?.toLowerCase() ? 1 : -1 ) );
 }
 
 export function getName( purchase: Purchase ): string {
