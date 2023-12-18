@@ -10,12 +10,12 @@ type FireOptions = {
 	scalar?: number;
 };
 
-function fireConfetti( colors?: string[] ) {
+function fireConfetti( colors: string[] ) {
 	const count = 60;
 	const scale = 2;
 	const defaults = {
 		origin: { y: 0.4 },
-		colors: colors ?? COLORS,
+		colors,
 		scalar: scale,
 		spread: 180,
 		gravity: 6,
@@ -58,7 +58,7 @@ function fireConfetti( colors?: string[] ) {
 	} );
 }
 
-const ConfettiAnimation = ( { trigger = true, delay = 0, colors = [] } ) => {
+const ConfettiAnimation = ( { trigger = true, delay = 0, colors = COLORS } ) => {
 	useEffect( () => {
 		if ( trigger ) {
 			setTimeout( () => fireConfetti( colors ), delay );
