@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import {
 	useSyncGlobalStylesUserConfig,
@@ -681,8 +680,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					activePosition={ activePosition }
 					pages={
 						// Consider the selected pages in the final screen.
-						isEnabled( 'pattern-assembler/add-pages' ) &&
-						( currentScreen.name === 'confirmation' || currentScreen.name === 'activation' )
+						currentScreen.name === 'confirmation' || currentScreen.name === 'activation'
 							? pages
 							: undefined
 					}
