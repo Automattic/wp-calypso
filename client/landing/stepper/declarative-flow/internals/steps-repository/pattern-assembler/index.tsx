@@ -232,9 +232,9 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		pages.forEach( ( { ID, name, categories = {} } ) => {
 			const category_slug = Object.keys( categories )[ 0 ];
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
-				page_id: ID,
-				page_name: name,
-				...( category_slug && { page_category: category_slug } ),
+				pattern_id: ID,
+				pattern_name: name,
+				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
 	};
