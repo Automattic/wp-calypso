@@ -333,6 +333,7 @@ export class Login extends Component {
 	renderSignUpLink( signupLinkText ) {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
+			currentQuery,
 			currentRoute,
 			isP2Login,
 			locale,
@@ -357,7 +358,7 @@ export class Login extends Component {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
+			: getSignupUrl( query || currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
 			<a
