@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_BUSINESS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { usePlans } from '@automattic/data-stores/src/plans';
 import {
 	BUNDLED_THEME,
 	DOT_ORG_THEME,
@@ -71,6 +72,8 @@ const ThemeTypeBadgeTooltip = ( {
 	themeId,
 }: Props ) => {
 	const translate = useTranslate();
+	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
+	const plans = usePlans();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isIncludedCurrentPlan = useSelector(
@@ -148,7 +151,7 @@ const ThemeTypeBadgeTooltip = ( {
 			)
 				? translate(
 						'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.',
-						{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
+						{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
 				  )
 				: translate(
 						'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
@@ -166,7 +169,7 @@ const ThemeTypeBadgeTooltip = ( {
 					)
 					? ( translate(
 							'This premium theme is included in the <Link>%(premiumPlanName)s plan</Link>.',
-							{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
+							{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
 					  ) as string )
 					: translate( 'This premium theme is included in the <Link>Premium plan</Link>.' ),
 				{
@@ -190,7 +193,11 @@ const ThemeTypeBadgeTooltip = ( {
 						)
 						? ( translate(
 								'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
-								{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+								{
+									args: {
+										businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+									},
+								}
 						  ) as string )
 						: translate(
 								'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
@@ -226,7 +233,7 @@ const ThemeTypeBadgeTooltip = ( {
 								{
 									args: {
 										bundleName,
-										businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+										businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
 									},
 									textOnly: true,
 								}
@@ -259,7 +266,7 @@ const ThemeTypeBadgeTooltip = ( {
 				)
 					? translate(
 							'You have a subscription for this theme, and it will be usable as long as you keep a %(businessPlanName)s plan or higher on your site.',
-							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+							{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
 					  )
 					: translate(
 							'You have a subscription for this theme, and it will be usable as long as you keep a Business plan or higher on your site.'
@@ -272,7 +279,7 @@ const ThemeTypeBadgeTooltip = ( {
 					)
 					? ( translate(
 							'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
-							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+							{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
 					  ) as string )
 					: translate(
 							'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
@@ -311,7 +318,7 @@ const ThemeTypeBadgeTooltip = ( {
 								args: {
 									annualPrice: subscriptionPrices.year ?? '',
 									monthlyPrice: subscriptionPrices.month ?? '',
-									businessNamePlan: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									businessNamePlan: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
 								},
 							}
 					  ) as string )
