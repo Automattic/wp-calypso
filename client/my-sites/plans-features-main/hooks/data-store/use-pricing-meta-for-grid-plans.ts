@@ -7,7 +7,6 @@ import {
 import { Plans, WpcomPlansUI, Purchases } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
-import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
 import type { AddOnMeta } from '@automattic/data-stores';
@@ -15,7 +14,6 @@ import type {
 	UsePricingMetaForGridPlans,
 	PricingMetaForGridPlan,
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
-import type { IAppState } from 'calypso/state/types';
 
 interface Props {
 	planSlugs: PlanSlug[];
@@ -59,136 +57,134 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
 	}, [] );
 
-	const planPrices = useSelector( ( state: IAppState ) => {
-		return planSlugs.reduce(
-			( acc, planSlug ) => {
-				const availableForPurchase = planAvailabilityForPurchase[ planSlug ];
-				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-				const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
-					return selectedStorageOption && addOn?.featureSlugs?.includes( selectedStorageOption );
-				} );
-				const storageAddOnPrices =
-					selectedStorageAddOn?.purchased || selectedStorageAddOn?.exceedsSiteStorageLimits
-						? null
-						: selectedStorageAddOn?.prices;
-				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
-				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
+	const planPrices: {
+		[ planSlug in PlanSlug ]?: {
+			originalPrice: Plans.PlanPricing[ 'originalPrice' ];
+			discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
+		};
+	} = Object.fromEntries(
+		planSlugs.map( ( planSlug ) => {
+			const availableForPurchase = planAvailabilityForPurchase[ planSlug ];
+			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+			const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
+				return selectedStorageOption && addOn?.featureSlugs?.includes( selectedStorageOption );
+			} );
+			const storageAddOnPrices =
+				selectedStorageAddOn?.purchased || selectedStorageAddOn?.exceedsSiteStorageLimits
+					? null
+					: selectedStorageAddOn?.prices;
+			const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
+			const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
 
-				/**
-				 * 1. Original prices only for current site's plan.
-				 */
-				if ( selectedSiteId && currentPlan?.planSlug === planSlug ) {
-					let monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-						returnMonthly: true,
-						returnSmallestUnit: true,
-					} );
-					let fullPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-						returnMonthly: false,
-						returnSmallestUnit: true,
-					} );
+			const plan = plans.data?.[ planSlug ];
+			const sitePlan = sitePlans.data?.[ planSlug ];
 
-					/**
-					 * Ensure the spotlight plan shows the price with which the plans was purchased.
-					 */
-					if ( purchasedPlan ) {
-						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
-
-						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
-							monthlyPrice = purchasedPlan.priceInteger;
-							fullPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
-						} else if ( fullPrice !== purchasedPlan.priceInteger ) {
-							const term = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
-							monthlyPrice = calculateMonthlyPrice( term, purchasedPlan.priceInteger );
-							fullPrice = purchasedPlan.priceInteger;
-						}
-					}
-
-					return {
-						...acc,
-						[ planSlug ]: {
-							originalPrice: {
-								monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
-								full: fullPrice ? fullPrice + storageAddOnPriceYearly : null,
-							},
-							discountedPrice: {
-								monthly: null,
-								full: null,
-							},
-						},
-					};
-				}
-
-				/**
-				 * 2. Original and Discounted prices for plan available for purchase.
-				 */
-				if ( availableForPurchase ) {
-					return {
-						...acc,
-						[ planSlug ]: {
-							originalPrice: {
-								monthly: getTotalPrice(
-									plans[ planSlug ].pricing.originalPrice.monthly,
-									storageAddOnPriceMonthly
-								),
-								full: getTotalPrice(
-									plans[ planSlug ].pricing.originalPrice.full,
-									storageAddOnPriceYearly
-								),
-							},
-							discountedPrice: {
-								monthly:
-									selectedSiteId && ! withoutProRatedCredits
-										? getTotalPrice(
-												sitePlans[ planSlug ].pricing.discountedPrice.monthly,
-												storageAddOnPriceMonthly
-										  )
-										: getTotalPrice(
-												plans[ planSlug ].pricing.discountedPrice.monthly,
-												storageAddOnPriceMonthly
-										  ),
-								full:
-									selectedSiteId && ! withoutProRatedCredits
-										? getTotalPrice(
-												sitePlans[ planSlug ].pricing.discountedPrice.full,
-												storageAddOnPriceYearly
-										  )
-										: getTotalPrice(
-												plans[ planSlug ].pricing.discountedPrice.full,
-												storageAddOnPriceYearly
-										  ),
-							},
-						},
-					};
-				}
-
-				/**
-				 * 3. Original prices only for plan not available for purchase.
-				 */
-				return {
-					...acc,
-					[ planSlug ]: {
+			/**
+			 * 0. No plan or sitePlan: planSlug is for a priceless plan.
+			 */
+			if ( ! plan || ( selectedSiteId && ! sitePlan ) ) {
+				return [
+					planSlug,
+					{
 						originalPrice: {
-							monthly: getTotalPrice(
-								plans[ planSlug ].pricing.originalPrice.monthly,
-								storageAddOnPriceMonthly
-							),
-							full: getTotalPrice(
-								plans[ planSlug ].pricing.originalPrice.full,
-								storageAddOnPriceYearly
-							),
+							monthly: null,
+							full: null,
 						},
 						discountedPrice: {
 							monthly: null,
 							full: null,
 						},
 					},
-				};
-			},
-			{} as {
-				[ planSlug: string ]: Pick< PricingMetaForGridPlan, 'originalPrice' | 'discountedPrice' >;
+				];
 			}
-		);
-	} );
+
+			/**
+			 * 1. Original prices only for current site's plan.
+			 */
+			if ( selectedSiteId && currentPlan?.planSlug === planSlug ) {
+				let monthlyPrice = sitePlan?.pricing.originalPrice.monthly;
+				let fullPrice = sitePlan?.pricing.originalPrice.full;
+
+				/**
+				 * Ensure the spotlight plan shows the price with which the plans was purchased.
+				 */
+				if ( purchasedPlan ) {
+					const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
+
+					if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
+						monthlyPrice = purchasedPlan.priceInteger;
+						fullPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
+					} else if ( fullPrice !== purchasedPlan.priceInteger ) {
+						const term = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+						monthlyPrice = calculateMonthlyPrice( term, purchasedPlan.priceInteger );
+						fullPrice = purchasedPlan.priceInteger;
+					}
+				}
+
+				return [
+					planSlug,
+					{
+						originalPrice: {
+							monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
+							full: fullPrice ? fullPrice + storageAddOnPriceYearly : null,
+						},
+						discountedPrice: {
+							monthly: null,
+							full: null,
+						},
+					},
+				];
+			}
+
+			/**
+			 * 2. Original and Discounted prices for plan available for purchase.
+			 */
+			if ( availableForPurchase ) {
+				return [
+					planSlug,
+					{
+						originalPrice: {
+							monthly: getTotalPrice(
+								plan.pricing.originalPrice.monthly,
+								storageAddOnPriceMonthly
+							),
+							full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
+						},
+						discountedPrice: {
+							monthly:
+								sitePlan && ! withoutProRatedCredits
+									? getTotalPrice(
+											sitePlan.pricing.discountedPrice.monthly,
+											storageAddOnPriceMonthly
+									  )
+									: getTotalPrice( plan.pricing.discountedPrice.monthly, storageAddOnPriceMonthly ),
+							full:
+								sitePlan && ! withoutProRatedCredits
+									? getTotalPrice( sitePlan.pricing.discountedPrice.full, storageAddOnPriceYearly )
+									: getTotalPrice( plan.pricing.discountedPrice.full, storageAddOnPriceYearly ),
+						},
+					},
+				];
+			}
+
+			/**
+			 * 3. Original prices only for plan not available for purchase.
+			 */
+			return [
+				planSlug,
+				{
+					originalPrice: {
+						monthly: getTotalPrice( plan.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
+						full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
+					},
+					discountedPrice: {
+						monthly: null,
+						full: null,
+					},
+				},
+			];
+		} )
+	);
 
 	/*
 	 * Return null until all data is ready, at least in initial state.
@@ -213,7 +209,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				introOffer: introOffers?.[ planSlug ],
 			},
 		} ),
-		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
+		{} as { [ planSlug in PlanSlug ]?: PricingMetaForGridPlan }
 	);
 };
 
