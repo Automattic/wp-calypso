@@ -6,7 +6,6 @@ import {
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
-	cog as settingsIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	download as downloadIcon,
@@ -21,14 +20,14 @@ import {
 	plugins as pluginsIcon,
 	plus as plusIcon,
 	postComments as postCommentsIcon,
-	settings as accountSettingsIcon,
+	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
+	reusableBlock as cacheIcon,
 	help as helpIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
-import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -294,7 +293,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: <MaterialIcon icon="autorenew" />,
+			icon: cacheIcon,
 		},
 		{
 			name: 'enableEdgeCache',
@@ -308,7 +307,7 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) =>
 					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
 			},
-			icon: <MaterialIcon icon="autorenew" />,
+			icon: cacheIcon,
 		},
 		{
 			name: 'disableEdgeCache',
@@ -322,7 +321,7 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) =>
 					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
 			},
-			icon: <MaterialIcon icon="autorenew" />,
+			icon: cacheIcon,
 		},
 		{
 			name: 'openSiteDashboard',
@@ -476,7 +475,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/me/account` );
 			},
-			icon: accountSettingsIcon,
+			icon: profileIcon,
 		},
 		{
 			name: 'accessPurchases',
@@ -758,7 +757,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
-			icon: toolIcon,
+			icon: cacheIcon,
 		},
 		{
 			name: 'changeAdminInterfaceStyle',

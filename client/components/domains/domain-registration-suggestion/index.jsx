@@ -272,6 +272,7 @@ class DomainRegistrationSuggestion extends Component {
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
 				this.props.showStrikedOutPrice && ! this.props.isFeatured,
+			'domain-registration-suggestion__larger-domain': name.length > 15 ? true : false,
 		} );
 
 		return (
