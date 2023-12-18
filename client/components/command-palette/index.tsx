@@ -6,6 +6,7 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
+import { useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -164,6 +165,7 @@ const CommandPalette = () => {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
 	};
+	const [ commandFilter ] = useCommandFilter();
 
 	const commandListRef = useRef< HTMLDivElement >( null );
 
@@ -230,26 +232,7 @@ const CommandPalette = () => {
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command
-					label={ __( 'Command palette' ) }
-					onKeyDown={ onKeyDown }
-					filter={ ( value, search ) => {
-						const [ beforeSeparator, afterSeparator ] = value.split( '||' );
-
-						// Check if the search matches the part before the separator
-						if ( beforeSeparator.includes( search ) ) {
-							return 1;
-						}
-
-						// Check if there is an afterSeparator and the search matches it
-						if ( afterSeparator && afterSeparator.includes( search ) ) {
-							return 0.5;
-						}
-
-						// No match
-						return 0;
-					} }
-				>
+				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown } filter={ commandFilter }>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton
