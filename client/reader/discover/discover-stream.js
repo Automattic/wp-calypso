@@ -52,7 +52,7 @@ const DiscoverStream = ( props ) => {
 	} );
 
 	const promptSlug = isBloganuary() ? 'bloganuary' : 'dailyprompt';
-	const promptTitle = isBloganuary() ? 'Bloganuary' : 'Daily prompts';
+	const promptTitle = isBloganuary() ? translate( 'Bloganuary' ) : translate( 'Daily prompts' );
 	// Add dailyprompt to the front of interestTags if not present.
 	const hasPromptTab = interestTags.filter( ( tag ) => tag.slug === promptSlug ).length;
 	if ( ! hasPromptTab ) {
