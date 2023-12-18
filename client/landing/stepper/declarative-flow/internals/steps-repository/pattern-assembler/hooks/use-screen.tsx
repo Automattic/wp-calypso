@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
@@ -22,7 +21,6 @@ export type Screen = {
 };
 
 const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Screen => {
-	const isAddPagesEnabled = isEnabled( 'pattern-assembler/add-pages' );
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const screens: Record< ScreenName, Screen > = {
@@ -56,9 +54,7 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				  ),
-			continueLabel: isAddPagesEnabled
-				? translate( 'Select pages' )
-				: translate( 'Save and continue' ),
+			continueLabel: translate( 'Select pages' ),
 			backLabel: hasEnTranslation( 'styles' ) ? translate( 'styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.STYLES_COLORS,
 		},
@@ -107,36 +103,14 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		main: null,
 		styles: screens.main,
 		pages: screens.styles,
-		upsell: isAddPagesEnabled ? screens.pages : screens.styles,
-		activation: ( () => {
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return isAddPagesEnabled ? screens.pages : screens.styles;
-		} )(),
-		confirmation: ( () => {
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return isAddPagesEnabled ? screens.pages : screens.styles;
-		} )(),
+		upsell: screens.pages,
+		activation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.pages,
+		confirmation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.pages,
 	};
 
 	const nextScreens = {
 		main: screens.styles,
-		styles: ( () => {
-			if ( isAddPagesEnabled ) {
-				return screens.pages;
-			}
-
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return options.isNewSite ? screens.confirmation : screens.activation;
-		} )(),
+		styles: screens.pages,
 		pages: ( () => {
 			if ( options.shouldUnlockGlobalStyles ) {
 				return screens.upsell;
