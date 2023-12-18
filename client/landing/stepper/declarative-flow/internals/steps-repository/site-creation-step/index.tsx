@@ -156,7 +156,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
-	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
+	const useThemeHeadstart =
+		! isStartWritingFlow( flow ) &&
+		! isNewHostedSiteCreationFlow( flow ) &&
+		! isSiteAssemblerFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {

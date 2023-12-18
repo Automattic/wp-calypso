@@ -105,6 +105,7 @@ function StatsPWYWUpgradeSlider( {
 	// 3. Rendering the slider.
 	// 4. Nofiying the parent component when the slider changes.
 
+	// TODO: Figure out how to get the actual average payment from the API in the future.
 	const defaultAveragePayment = defaultStartingValue * settings.sliderStepPrice;
 	const uiStrings = useTranslatedStrings( defaultAveragePayment, currencyCode );
 

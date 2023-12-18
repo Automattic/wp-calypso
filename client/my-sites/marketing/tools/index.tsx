@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n, { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { Fragment, FunctionComponent } from 'react';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
@@ -28,6 +29,7 @@ export const MarketingTools: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
@@ -124,14 +126,32 @@ export const MarketingTools: FunctionComponent = () => {
 				{ ! facebookPluginInstalled && (
 					<MarketingToolsFeature
 						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
-						description={ translate(
-							'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and Commerce plans{{/em}}.',
-							{
-								components: {
-									em: <em />,
-								},
-							}
-						) }
+						description={
+							isEnglishLocale ||
+							i18n.hasTranslation(
+								'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on %(businessPlanName)s and %(commercePlanName)s plans{{/em}}.'
+							)
+								? translate(
+										'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on %(businessPlanName)s and %(commercePlanName)s plans{{/em}}.',
+										{
+											components: {
+												em: <em />,
+											},
+											args: {
+												businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+												commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+											},
+										}
+								  )
+								: translate(
+										'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. {{em}}Available on Business and Commerce plans{{/em}}.',
+										{
+											components: {
+												em: <em />,
+											},
+										}
+								  )
+						}
 						imagePath={ facebookLogo }
 						imageAlt={ translate( 'Facebook logo' ) }
 					>
