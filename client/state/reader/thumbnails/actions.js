@@ -1,6 +1,5 @@
 import debugModule from 'debug';
 import { get } from 'lodash';
-import readerPocketCastImage from 'calypso/assets/images/reader/reader-pocket-cast.svg';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 
@@ -98,7 +97,7 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 					.fetch( fetchUrl )
 					.then( handleFetchResponse )
 					.then( ( json ) => {
-						const thumbnailUrl = get( json, [ 0, 'thumbnail_url' ] ) ?? readerPocketCastImage;
+						const thumbnailUrl = get( json, [ 0, 'thumbnail_url' ] );
 						if ( thumbnailUrl ) {
 							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 						}

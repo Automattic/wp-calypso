@@ -6,6 +6,7 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import playIconImage from 'calypso/assets/images/reader/play-icon.png';
+import readerPocketCastImage from 'calypso/assets/images/reader/reader-pocket-cast.svg';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
 import EmbedHelper from 'calypso/reader/embed-helper';
@@ -107,7 +108,9 @@ class ReaderFeaturedVideo extends Component {
 			hasExcerpt,
 		} = this.props;
 
-		const classNames = classnames( className, 'reader-featured-video' );
+		const classNames = classnames( className, 'reader-featured-video', {
+			'is-pocketcast': videoEmbed.type === 'pocketcasts',
+		} );
 
 		if ( ! isExpanded && thumbnailUrl ) {
 			return (
@@ -173,11 +176,15 @@ const checkEmbedSizeDimensions = ( embed ) => {
 const mapStateToProps = ( state, ownProps ) => {
 	// Check if width and height are set for the embed
 	const videoEmbed = checkEmbedSizeDimensions( ownProps.videoEmbed );
+	let thumbnailUrl = getThumbnailForIframe( state, videoEmbed.src );
+	if ( thumbnailUrl === undefined && videoEmbed.type === 'pocketcasts' ) {
+		thumbnailUrl = readerPocketCastImage;
+	}
 	return {
 		videoEmbed: videoEmbed,
 		iframe: checkEmbedSizeDimensions( ownProps.iframe )?.outerHTML,
 		autoplayIframe: checkEmbedSizeDimensions( ownProps.autoplayIframe )?.outerHTML,
-		thumbnailUrl: getThumbnailForIframe( state, videoEmbed.src ),
+		thumbnailUrl: thumbnailUrl,
 	};
 };
 
