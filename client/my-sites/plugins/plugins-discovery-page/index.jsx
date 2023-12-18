@@ -87,23 +87,6 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
-const OneClickPurchaseModal = ( { setShowPurchaseModal, siteSlug } ) => {
-	const businessPlanProduct = createRequestCartProduct( {
-		product_slug: PLAN_BUSINESS,
-	} );
-
-	return (
-		<PurchaseModal
-			productToAdd={ businessPlanProduct }
-			onClose={ () => {
-				setShowPurchaseModal( false );
-			} }
-			showFeatureList={ true }
-			siteSlug={ siteSlug }
-		/>
-	);
-};
-
 const PluginsDiscoveryPage = ( props ) => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
@@ -117,6 +100,10 @@ const PluginsDiscoveryPage = ( props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const { isLoading, result: isEligibleForOneClickCheckout } = useIsEligibleForOneClickCheckout();
 
+	const businessPlanProduct = createRequestCartProduct( {
+		product_slug: PLAN_BUSINESS,
+	} );
+
 	return (
 		<>
 			<CalypsoShoppingCartProvider>
@@ -125,11 +112,13 @@ const PluginsDiscoveryPage = ( props ) => {
 					locale={ translate.localeSlug }
 				>
 					{ showPurchaseModal && (
-						<OneClickPurchaseModal
-							localeSlug={ translate.localeSlug }
-							setShowPurchaseModal={ setShowPurchaseModal }
+						<PurchaseModal
+							productToAdd={ businessPlanProduct }
+							onClose={ () => {
+								setShowPurchaseModal( false );
+							} }
+							showFeatureList={ true }
 							siteSlug={ props.siteSlug }
-							isLoading={ isLoading }
 						/>
 					) }
 				</StripeHookProvider>
