@@ -45,7 +45,7 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 			{ shouldRenderDashboardTour && (
 				<GuidedTour
 					className="sites-overview__dashboard-guided-tour"
-					preferenceName="jetpack-cloud-sites-overview__dashboard-overview__dashboard-guided-tour"
+					preferenceName="jetpack-cloud-sites-overview-dashboard-walkthrough-tour"
 					tours={ [
 						{
 							target: "a.section-nav-tab__link[tabindex='0']",
