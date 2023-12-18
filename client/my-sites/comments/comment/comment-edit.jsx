@@ -13,7 +13,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PostSchedule from 'calypso/components/post-schedule';
 import { decodeEntities } from 'calypso/lib/formatting';
-import CommentHtmlEditor from 'calypso/my-sites/comments/comment/comment-html-editor';
+// import CommentHtmlEditor from 'calypso/my-sites/comments/comment/comment-html-editor';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -25,6 +25,7 @@ import { getSiteComment } from 'calypso/state/comments/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { CommentBlockEditor } from './comment-block-editor';
 
 const noop = () => {};
 
@@ -199,7 +200,7 @@ export class CommentEdit extends Component {
 						</Popover>
 					</FormFieldset>
 
-					<CommentHtmlEditor
+					<CommentBlockEditor
 						commentContent={ commentContent }
 						onChange={ this.setCommentContentValue }
 					/>
