@@ -153,7 +153,14 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 			position={ popoverPosition }
 		>
 			<h2 className="guided-tour__popover-heading">{ title }</h2>
-			<p className="guided-tour__popover-description">{ description }</p>
+			<p className="guided-tour__popover-description">
+				{ description.split( '\n' ).map( ( line, index ) => (
+					<>
+						{ line }
+						{ index < description.split( '\n' ).length - 1 && <br /> }
+					</>
+				) ) }
+			</p>
 			<div className="guided-tour__popover-footer">
 				<div>
 					{
