@@ -27,6 +27,7 @@ import {
 	akismetCheckoutThankYou,
 	hundredYearCheckoutThankYou,
 	transferDomainToAnyUser,
+	checkoutMarketplaceSiteless,
 } from './controller';
 
 export default function () {
@@ -102,6 +103,15 @@ export default function () {
 		'/checkout/100-year/thank-you/:site/:receiptId',
 		loggedInSiteSelection,
 		hundredYearCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/marketplace/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
 		makeLayout,
 		clientRender
 	);
