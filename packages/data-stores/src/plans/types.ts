@@ -80,8 +80,12 @@ export interface PlanPricing {
 		full: number | null;
 	};
 	/**
-	 * This is the original cost as defined for the associated billing plan,
-	 * minus any discounts stemming from either currency conversion and/or prorated credits (in the case of Site Plans).
+	 * This is the original cost as defined for the associated billing plan, minus any discounts
+	 * stemming from either currency conversion and/or prorated credits (in the case of Site Plans).
+	 *   1. If a concrete value exists for `Plan` (derived from `usePlans`),
+	 * then it refers to a technical discount due to currency conversion.
+	 *   2. If a concrete value exists for `SitePlan` (derived from `useSitePlans`),
+	 * then it refers to a credit-based discount on the plan price (e.g. from proration).
 	 */
 	discountedPrice: {
 		monthly: number | null;
