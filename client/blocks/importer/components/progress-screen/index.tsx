@@ -22,6 +22,7 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 
 			case 'recreate_database':
 			case 'postprocess_database':
+			case 'verify_site_integrity':
 			case 'clean_up':
 				return __( 'Migrating your data' );
 
