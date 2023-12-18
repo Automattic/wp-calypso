@@ -305,7 +305,7 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: url } );
 	} );
 
-	it( 'returns a checkout url if the transaction has an error', () => {
+	it( 'returns a failure url if the transaction has an error', () => {
 		const actual = getRedirectFromPendingPage( {
 			redirectTo: '/home',
 			siteSlug: 'example.com',
@@ -315,7 +315,7 @@ describe( 'getRedirectFromPendingPage', () => {
 				processingStatus: ERROR,
 			},
 		} );
-		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
+		expect( actual ).toEqual( { url: '/checkout/failed-purchases', isError: true } );
 	} );
 
 	it( 'returns a checkout url if the transaction fails', () => {
@@ -331,7 +331,7 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
 	} );
 
-	it( 'returns a root url if the transaction has an error and there is no site', () => {
+	it( 'returns a failure url if the transaction has an error and there is no site', () => {
 		const actual = getRedirectFromPendingPage( {
 			redirectTo: '/home',
 			transaction: {
@@ -340,10 +340,10 @@ describe( 'getRedirectFromPendingPage', () => {
 				processingStatus: ERROR,
 			},
 		} );
-		expect( actual ).toEqual( { url: '/', isError: true } );
+		expect( actual ).toEqual( { url: '/checkout/failed-purchases', isError: true } );
 	} );
 
-	it( 'returns a root url if the transaction fails and there is no site', () => {
+	it( 'returns a checkout url if the transaction fails and there is no site', () => {
 		const actual = getRedirectFromPendingPage( {
 			redirectTo: '/home',
 			transaction: {
@@ -352,10 +352,10 @@ describe( 'getRedirectFromPendingPage', () => {
 				processingStatus: FAILURE,
 			},
 		} );
-		expect( actual ).toEqual( { url: '/', isError: true } );
+		expect( actual ).toEqual( { url: '/checkout/no-site', isError: true } );
 	} );
 
-	it( 'returns a checkout url if there was an error', () => {
+	it( 'returns a checkout url if there was an HTTP error', () => {
 		const actual = getRedirectFromPendingPage( {
 			redirectTo: '/home',
 			siteSlug: 'example.com',
