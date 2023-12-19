@@ -21,7 +21,7 @@ const granularControlForPaidStats = [ STATS_FEATURE_DATE_CONTROL, STATS_FEATURE_
  * Check if a site has access to a paid stats feature in wpcom.
  * Utility function intended to be used with useSelector or redux connect mapStateToProps.
  * For example in mapStateToProps:
- * const isGatedStats = shouldGateStats( state, siteId, 'statsSearchTerms' );
+ * const isGatedStats = shouldGateStats( state, siteId, STAT_TYPE_SEARCH_TERMS );
  */
 export const shouldGateStats = ( state: object, siteId: number | null, statType: string ) => {
 	if ( ! siteId ) {
