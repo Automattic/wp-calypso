@@ -39,7 +39,7 @@ export interface CommonGridProps {
 	/**
 	 * Site id may not be used in ComparisonGrid, but need to be investigated further
 	 */
-	siteId?: number | null;
+	selectedSiteId?: number | null;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
@@ -81,6 +81,7 @@ export type GridContextProps = {
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
+	selectedSiteId?: number | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	children: React.ReactNode;
 	coupon?: string;

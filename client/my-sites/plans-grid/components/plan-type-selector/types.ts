@@ -4,6 +4,7 @@ import { type UsePricingMetaForGridPlans } from '../../hooks/npm-ready/data-stor
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval';
+	selectedSiteId?: number | null;
 	basePlansPath?: string | null;
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
@@ -38,6 +39,7 @@ export type PlanTypeSelectorProps = {
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
+	| 'selectedSiteId'
 	| 'plans'
 	| 'isInSignup'
 	| 'eligibleForWpcomMonthlyPlans'

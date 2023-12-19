@@ -528,6 +528,7 @@ const PlansFeaturesMain = ( {
 			usePricingMetaForGridPlans,
 			recordTracksEvent,
 			coupon,
+			selectedSiteId: siteId,
 		};
 	}, [
 		_customerType,
@@ -546,6 +547,7 @@ const PlansFeaturesMain = ( {
 		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
 		coupon,
+		siteId,
 	] );
 
 	/**
@@ -812,7 +814,7 @@ const PlansFeaturesMain = ( {
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									siteId={ siteId }
+									selectedSiteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									currentSitePlanSlug={ sitePlanSlug }
@@ -873,7 +875,7 @@ const PlansFeaturesMain = ( {
 												onUpgradeClick={ handleUpgradeClick }
 												selectedFeature={ selectedFeature }
 												selectedPlan={ selectedPlan }
-												siteId={ siteId }
+												selectedSiteId={ siteId }
 												intervalType={ intervalType }
 												hideUnavailableFeatures={ hideUnavailableFeatures }
 												currentSitePlanSlug={ sitePlanSlug }

@@ -20,7 +20,8 @@ import { UsePricingMetaForGridPlans } from 'calypso/my-sites/plans-grid/hooks/np
 export default function useMaxDiscountsForPlanTerms(
 	plans: PlanSlug[],
 	urlFriendlyTerms: UrlFriendlyTermType[] = [],
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans
+	usePricingMetaForGridPlans: UsePricingMetaForGridPlans,
+	selectedSiteId?: number | null
 ): Record< UrlFriendlyTermType, number > {
 	const termDefinitionsMapping = urlFriendlyTerms.map( ( urlFriendlyTerm ) => ( {
 		urlFriendlyTerm,
@@ -40,15 +41,19 @@ export default function useMaxDiscountsForPlanTerms(
 		( planSlug ) => ! isMonthly( planSlug )
 	);
 
+	// TODO clk pricing
 	const monthlyPlansPricing = usePricingMetaForGridPlans( {
 		planSlugs: wpcomMonthlyPlanSlugs,
 		withoutProRatedCredits: true,
 		storageAddOns: null,
+		selectedSiteId,
 	} );
+	// TODO clk pricing
 	const nonMonthlyPlansPricing = usePricingMetaForGridPlans( {
 		planSlugs: wpcomNonMonthlyPlans,
 		withoutProRatedCredits: true,
 		storageAddOns: null,
+		selectedSiteId,
 	} );
 
 	const getTermInMonths = ( term: UrlFriendlyTermType ): number => {
