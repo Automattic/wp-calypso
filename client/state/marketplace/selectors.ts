@@ -2,6 +2,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_LIVE_SUPPORT,
 } from '@automattic/calypso-products';
+import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -78,7 +79,7 @@ export function canPublishProductReviews(
 	state: IAppState,
 	productType: string,
 	productSlug: string,
-	variations?: []
+	variations?: PluginPeriodVariations
 ) {
 	if ( productType === 'theme' ) {
 		return canPublishThemeReview( state, productSlug );
@@ -92,14 +93,23 @@ export function canPublishProductReviews(
 export function canPublishPluginReview(
 	state: IAppState,
 	pluginSlug: string,
-	variations: [] = []
+	variations?: PluginPeriodVariations
 ) {
 	const isMarketplacePlugin = isMarketplaceProduct( state, pluginSlug );
 	const isLoggedIn = isUserLoggedIn( state );
 
+	const hasActiveSubscription = hasActivePluginSubscription( state, variations );
+
+	return isLoggedIn && ( ! isMarketplacePlugin || hasActiveSubscription );
+}
+
+export function hasActivePluginSubscription(
+	state: IAppState,
+	variations?: PluginPeriodVariations
+) {
 	const purchases = getUserPurchases( state );
 	const purchasedPlugin = getPluginPurchased( { variations }, purchases || [] );
 	const hasActiveSubscription = !! purchasedPlugin;
 
-	return isLoggedIn && ( ! isMarketplacePlugin || hasActiveSubscription );
+	return hasActiveSubscription;
 }

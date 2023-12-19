@@ -1,29 +1,41 @@
+import page from '@automattic/calypso-router';
 import { Dialog, Button } from '@automattic/components';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
+import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
 import {
 	ProductProps,
 	useMarketplaceReviewsQuery,
 	useMarketplaceReviewsStatsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
+import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { MarketplaceReviewsList } from 'calypso/my-sites/marketplace/components/reviews-list';
 import './styles.scss';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
+import {
+	canPublishProductReviews,
+	hasActivePluginSubscription,
+} from 'calypso/state/marketplace/selectors';
+import { getProductsList, isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 
 type Props = {
 	isVisible: boolean;
 	onClose: () => void;
 	productName: string;
-	variations?: [];
+	variations?: PluginPeriodVariations;
 } & ProductProps;
 
 export const ReviewsModal = ( props: Props ) => {
 	const translate = useTranslate();
-	const { isVisible, onClose, productName, productType, slug } = props;
+	const { isVisible, onClose, productName, productType, slug, variations } = props;
 	const currentUser = useSelector( getCurrentUser );
+	const selectedSite = useSelector( getSelectedSite );
+	const isMarketplacePlugin = useSelector(
+		( state ) => productType === 'plugin' && isMarketplaceProduct( state, slug )
+	);
 
 	const { data: userReviews } = useMarketplaceReviewsQuery( {
 		productType,
@@ -38,12 +50,21 @@ export const ReviewsModal = ( props: Props ) => {
 
 	const userHasReviewed = !! userReviews?.length;
 	const canPublishReview = useSelector( ( state: AppState ) =>
-		canPublishProductReviews( state, productType, slug, props.variations )
+		canPublishProductReviews( state, productType, slug, variations )
+	);
+	const hasActiveSubscription = useSelector( ( state: AppState ) =>
+		hasActivePluginSubscription( state, variations )
 	);
 	const askForReview = canPublishReview && ! userHasReviewed;
 
 	const { ratings_average: averageRating, ratings_count: numberOfReviews } = reviewsStats || {};
 	const normalizedRating = ( ( averageRating ?? 0 ) * 100 ) / 5; // Normalize to 100
+
+	// Purchase Marketplace Plugin
+	const productsList = useSelector( getProductsList );
+	const variationPeriod = 'monthly';
+	const variation = variations?.[ variationPeriod ];
+	const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
 
 	return (
 		<Dialog
@@ -81,9 +102,24 @@ export const ReviewsModal = ( props: Props ) => {
 							</div>
 						</div>
 						{ askForReview && (
-							<div className="marketplace-reviews-modal__leave-review">
+							<div className="marketplace-reviews-modal__summary-button">
 								<Button primary onClick={ () => alert( 'Not implemented yet' ) }>
 									{ translate( 'Leave my review' ) }
+								</Button>
+							</div>
+						) }
+						{ /* TODO: Add theme purchase */ }
+						{ ! askForReview && ! hasActiveSubscription && isMarketplacePlugin && (
+							<div className="marketplace-reviews-modal__summary-button">
+								<Button
+									primary
+									onClick={ () =>
+										page(
+											`/checkout/${ selectedSite?.slug || '' }/${ marketplaceProductSlug }?#step2`
+										)
+									}
+								>
+									{ translate( 'Purchase and activate this plugin' ) }
 								</Button>
 							</div>
 						) }
@@ -91,7 +127,6 @@ export const ReviewsModal = ( props: Props ) => {
 				) }
 
 				{ /* TODO: Add the review creation section */ }
-
 				<div className="marketplace-reviews-modal__reviews-list">
 					<MarketplaceReviewsList productType={ productType } slug={ slug } />
 				</div>
