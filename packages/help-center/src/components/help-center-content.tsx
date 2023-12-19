@@ -25,7 +25,9 @@ import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
-const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
+const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string } > = (
+	currentRoute
+) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -73,7 +75,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Routes>
-				<Route path="/" element={ <HelpCenterSearch onSearchChange={ setSearchTerm } /> } />
+				<Route
+					path="/"
+					element={
+						<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
+					}
+				/>
 				<Route path="/post" element={ <HelpCenterEmbedResult /> } />
 				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 				<Route path="/contact-form" element={ <HelpCenterContactForm /> } />

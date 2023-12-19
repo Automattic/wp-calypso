@@ -89,7 +89,7 @@ function SidebarScrollSynchronizer() {
 	return null;
 }
 
-function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
+function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
 	const handleClose = useCallback( () => {
@@ -105,6 +105,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 			require="@automattic/help-center"
 			placeholder={ null }
 			handleClose={ handleClose }
+			currentRoute={ currentRoute }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>
@@ -269,6 +270,7 @@ class Layout extends Component {
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
+					currentRoute={ this.props.currentRoute }
 				/>
 				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
@@ -430,6 +432,7 @@ export default withCurrentRoute(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
+			currentRoute,
 		};
 	} )( Layout )
 );
