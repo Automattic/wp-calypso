@@ -587,7 +587,11 @@ function DIFMPagePicker( props: StepProps ) {
 				</StyledButton>
 			}
 			headerContent={
-				<ShoppingCartForDIFM selectedPages={ selectedPages } isStoreFlow={ isStoreFlow } />
+				<ShoppingCartForDIFM
+					selectedPages={ selectedPages }
+					isStoreFlow={ isStoreFlow }
+					isExistingSite={ isExistingSite }
+				/>
 			}
 			{ ...props }
 		/>
