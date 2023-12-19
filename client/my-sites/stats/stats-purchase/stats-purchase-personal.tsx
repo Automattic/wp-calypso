@@ -144,6 +144,7 @@ const PersonalPurchase = ( {
 					analyticsEventName={ `${
 						isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
 					}_stats_purchase_pwyw_slider_clicked` }
+					defaultStartingValue={ defaultStartingValue }
 					onSliderChange={ handleSliderChanged }
 				/>
 			) }

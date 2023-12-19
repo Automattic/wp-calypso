@@ -16,7 +16,7 @@ interface Props {
 	planSlugs: PlanSlug[];
 	currentSitePlanSlug?: PlanSlug | null;
 	selectedPlan?: PlanSlug; // Value of the `?plan=` query param, so we can highlight a given plan.
-	planUpgradeability?: {
+	plansAvailabilityForPurchase?: {
 		[ key: string ]: boolean;
 	};
 }
@@ -27,7 +27,7 @@ const useHighlightLabels = ( {
 	planSlugs,
 	currentSitePlanSlug,
 	selectedPlan,
-	planUpgradeability,
+	plansAvailabilityForPurchase,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -36,14 +36,14 @@ const useHighlightLabels = ( {
 			const isCurrentPlan = currentSitePlanSlug
 				? isSamePlan( currentSitePlanSlug, planSlug )
 				: false;
-			const isPlanAvailableForUpgrade = planUpgradeability?.[ planSlug ];
+			const isPlanAvailableForPurchase = plansAvailabilityForPurchase?.[ planSlug ];
 			const isSuggestedPlan =
-				selectedPlan && planLevelsMatch( planSlug, selectedPlan ) && isPlanAvailableForUpgrade;
+				selectedPlan && planLevelsMatch( planSlug, selectedPlan ) && isPlanAvailableForPurchase;
 
 			let label;
 			if ( isCurrentPlan ) {
 				label = translate( 'Your plan' );
-			} else if ( ! isPlanAvailableForUpgrade ) {
+			} else if ( ! isPlanAvailableForPurchase ) {
 				label = null;
 			} else if ( isSuggestedPlan ) {
 				label = translate( 'Suggested' );

@@ -333,9 +333,14 @@ export default function WPCheckout( {
 	const paymentMethod = usePaymentMethod();
 	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
 	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
+	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
-		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+		return responseCart?.products
+			?.filter(
+				( p ) => ! ( p.product_slug && excluded3PDAccountProductSlugs.includes( p.product_slug ) )
+			)
+			.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
 	} );
 
 	const has100YearPlan = cartHas100YearPlan( responseCart );

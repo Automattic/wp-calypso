@@ -4,6 +4,7 @@ import { APIError } from './use-site-reset-mutation';
 
 export type SiteResetStatus = {
 	status: 'in-progress' | 'ready';
+	progress: number;
 };
 
 export const useSiteResetStatusQuery = (
