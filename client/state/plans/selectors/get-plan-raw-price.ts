@@ -37,5 +37,3 @@ export function getPlanRawPrice(
 		? calculateMonthlyPriceForPlan( plan?.product_slug ?? '', price ?? 0 )
 		: price ?? null;
 }
-
-// TODO: return orig_cost_integer OR null if undefined/null
