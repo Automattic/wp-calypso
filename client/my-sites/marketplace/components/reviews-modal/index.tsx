@@ -109,20 +109,23 @@ export const ReviewsModal = ( props: Props ) => {
 							</div>
 						) }
 						{ /* TODO: Add theme purchase */ }
-						{ ! askForReview && ! hasActiveSubscription && isMarketplacePlugin && (
-							<div className="marketplace-reviews-modal__summary-button">
-								<Button
-									primary
-									onClick={ () =>
-										page(
-											`/checkout/${ selectedSite?.slug || '' }/${ marketplaceProductSlug }?#step2`
-										)
-									}
-								>
-									{ translate( 'Purchase and activate this plugin' ) }
-								</Button>
-							</div>
-						) }
+						{ ! askForReview &&
+							! hasActiveSubscription &&
+							isMarketplacePlugin &&
+							selectedSite?.slug && (
+								<div className="marketplace-reviews-modal__summary-button">
+									<Button
+										primary
+										onClick={ () =>
+											page(
+												`/checkout/${ selectedSite.slug || '' }/${ marketplaceProductSlug }?#step2`
+											)
+										}
+									>
+										{ translate( 'Purchase and activate this plugin' ) }
+									</Button>
+								</div>
+							) }
 					</div>
 				) }
 
