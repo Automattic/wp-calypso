@@ -62,7 +62,7 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 								discountedPrice: {
 									monthly:
 										typeof discountedPriceFull === 'number'
-											? calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price_integer )
+											? calculateMonthlyPriceForPlan( plan.product_slug, discountedPriceFull )
 											: null,
 									full: discountedPriceFull,
 								},
