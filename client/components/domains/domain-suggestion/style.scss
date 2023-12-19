@@ -251,7 +251,6 @@
 	min-width: 120px;
 	text-align: center;
 	padding: 0.25em 3em;
-	transition: all 0.1s ease-in-out;
 	margin-top: 10px;
 
 	&:focus {
@@ -279,10 +278,20 @@
 	&.is-borderless {
 		color: var(--color-primary);
 		padding: 0;
+		display: flex;
+		align-items: center;
 
 		&:focus {
 			box-shadow: none !important;
 			border-color: transparent !important;
+		}
+
+		/* Checkmark for selected domains */
+		svg {
+			height: 20px;
+			top: 0;
+			left: -2px;
+			margin-right: 4px;
 		}
 	}
 
