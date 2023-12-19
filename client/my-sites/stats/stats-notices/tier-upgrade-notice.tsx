@@ -33,6 +33,14 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 		postponeNoticeAsync();
 	};
 
+	const gotoJetpackStatsProduct = () => {
+		isOdysseyStats
+			? recordTracksEvent( 'jetpack_odyssey_stats_tier_upgrade_notice_upgrade_button_clicked' )
+			: recordTracksEvent( 'calypso_stats_tier_upgrade_notice_upgrade_button_clicked' );
+		// Allow some time for the event to be recorded before redirecting.
+		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
+	};
+
 	// TODO: Consolidate the query here with the usage section on the Traffic page.
 	const { data } = usePlanUsageQuery( siteId );
 	const currentUsage = data?.current_usage.views_count || 0;
@@ -61,14 +69,6 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 					},
 				}
 		  );
-
-	const gotoJetpackStatsProduct = () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_tier_upgrade_notice_upgrade_button_clicked' )
-			: recordTracksEvent( 'calypso_stats_tier_upgrade_notice_upgrade_button_clicked' );
-		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
-	};
 
 	if ( noticeDismissed || ! showNotice ) {
 		return null;
