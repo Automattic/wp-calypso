@@ -32,18 +32,13 @@ export default function DefineNewestSite( items: Array< object > ) {
 		getPreference( state, 'jetpack-cloud-site-sites-list' )
 	);
 
-	let shouldShowNewSiteAddedTour = false;
 	let newSites: string[] = [];
 	if ( showNewSiteAddedTourPreference && Array.isArray( showNewSiteAddedTourPreference ) ) {
 		newSites = siteList.filter( ( x: string ) => ! showNewSiteAddedTourPreference.includes( x ) );
 	}
 
-	if ( newSites.length >= 1 ) {
-		shouldShowNewSiteAddedTour = true;
-	}
-
 	let newestSite: string = '';
-	if ( shouldShowNewSiteAddedTour && Array.isArray( newSites ) ) {
+	if ( newSites.length >= 1 && Array.isArray( newSites ) ) {
 		newestSite = newSites[ 0 ];
 	}
 
@@ -51,7 +46,7 @@ export default function DefineNewestSite( items: Array< object > ) {
 	if ( tableRows.length > 0 ) {
 		for ( let i = 0; i < tableRows.length; i++ ) {
 			const href = tableRows[ i ].getAttribute( 'href' );
-			if ( href === '/activity-log/' + newSites ) {
+			if ( href === '/activity-log/' + newestSite ) {
 				tableRows[ i ].classList.add( 'newest-site-added' );
 			}
 		}
