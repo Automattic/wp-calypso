@@ -20,7 +20,7 @@ const selectors = {
 		}
 		return `button.is-${ name.toLowerCase() }-plan:visible`;
 	},
-	selectModalUpsellPlanButton: ( name: 'Free' | 'Personal' ) => {
+	selectModalUpsellPlanButton: ( name: 'Free' | 'Starter' ) => {
 		if ( name === 'Free' ) {
 			return `button.is-upsell-modal-free-plan:visible`;
 		}
@@ -101,7 +101,7 @@ export class PlansPage {
 	 * @param {Plans} plan Plan to select.
 	 */
 	async selectModalUpsellPlan( plan: Plans ): Promise< void > {
-		if ( plan !== 'Free' && plan !== 'Personal' ) {
+		if ( plan !== 'Free' && plan !== 'Starter' ) {
 			throw Error( `Unsupported plan to be selected in modal upsell: ${ plan }` );
 		}
 
@@ -177,7 +177,7 @@ export class PlansPage {
 	 * Click a plan action button (on the plan cards on the "Plans" tab) based on expected plan name and button text.
 	 *
 	 * @param {Object} param0 Object containing plan name and button text
-	 * @param {Plans} param0.plan Name of the plan (e.g. "Premium")
+	 * @param {Plans} param0.plan Name of the plan (e.g. "Explorer")
 	 * @param {PlanActionButton} param0.buttonText Expected action button text (e.g. "Upgrade")
 	 */
 	async clickPlanActionButton( {
