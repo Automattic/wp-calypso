@@ -352,33 +352,31 @@ export const useCommandsArrayWpcom = ( {
 			icon: dashboardIcon,
 		},
 		{
-			name: 'manageHostingConfiguration',
-			label: __( 'Manage hosting configuration' ),
+			name: 'openHostingConfiguration',
+			label: __( 'Open hosting configuration' ),
 			searchLabel: [
-				_x(
-					'manage hosting configuration',
-					'Keyword for the Manage hosting configuration command'
-				),
-				_x( 'admin interface style', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'cache', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'database', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'global edge cache', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'hosting', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'mysql', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'phpmyadmin', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'php version', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'sftp/ssh credentials', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'wp-cli', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'open hosting configuration', 'Keyword for the Open hosting configuration command' ),
+				_x( 'manage hosting configuration', 'Keyword for the Open hosting configuration command' ),
+				_x( 'admin interface style', 'Keyword for the Open hosting configuration command' ),
+				_x( 'cache', 'Keyword for the Open hosting configuration command' ),
+				_x( 'database', 'Keyword for the Open hosting configuration command' ),
+				_x( 'global edge cache', 'Keyword for the Open hosting configuration command' ),
+				_x( 'hosting', 'Keyword for the Open hosting configuration command' ),
+				_x( 'mysql', 'Keyword for the Open hosting configuration command' ),
+				_x( 'phpmyadmin', 'Keyword for the Open hosting configuration command' ),
+				_x( 'php version', 'Keyword for the Open hosting configuration command' ),
+				_x( 'sftp/ssh credentials', 'Keyword for the Open hosting configuration command' ),
+				_x( 'wp-cli', 'Keyword for the Open hosting configuration command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback(
-				'manageHostingConfiguration',
+				'openHostingConfiguration',
 				__( 'Select site to open hosting configuration' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
+					navigate( `/hosting-config/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
@@ -509,7 +507,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'registerDomain',
-			label: __( 'Register domain' ),
+			label: __( 'Register new domain' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
