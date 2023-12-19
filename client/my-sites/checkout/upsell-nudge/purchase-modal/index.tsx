@@ -5,6 +5,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { useState, useMemo, useEffect } from 'react';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
@@ -180,6 +181,12 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		// We don't need to wait for the result of the above.
 		onClose();
 	};
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_oneclick_upsell_modal_view', {
+			product_slug: productToAdd.product_slug,
+		} );
+	}, [ productToAdd.product_slug ] );
 
 	return (
 		<CheckoutProvider

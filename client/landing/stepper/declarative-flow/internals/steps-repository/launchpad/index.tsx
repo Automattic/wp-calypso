@@ -37,13 +37,13 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const siteIdParam = useSiteIdParam();
 	const siteSlugParam = useSiteSlugParam();
 	const siteSlug = urlToSlug( site?.URL ?? '' ) || siteSlugParam || '';
-	const launchpadKey = siteIdParam || site?.ID || siteSlugParam || '';
+	const launchpadKey = String( siteIdParam || site?.ID || siteSlugParam || '' );
 	const siteIntentOption = site?.options?.site_intent;
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const {
 		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
-	} = useLaunchpad( launchpadKey.toString(), siteIntentOption );
+	} = useLaunchpad( launchpadKey, siteIntentOption );
 
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
@@ -107,6 +107,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 				hideBack={ true }
 				stepContent={
 					<StepContent
+						launchpadKey={ launchpadKey }
 						siteSlug={ siteSlug }
 						submit={ navigation.submit }
 						goNext={ navigation.goNext }

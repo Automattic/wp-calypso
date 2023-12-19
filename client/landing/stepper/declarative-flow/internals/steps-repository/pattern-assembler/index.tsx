@@ -78,7 +78,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit } = navigation;
-	const { assembleSite } = useDispatch( SITE_STORE );
+	const { assembleSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
@@ -397,6 +397,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					} )
 				)
 		);
+
+		const siteTitleFromUrl = ( searchParams.get( 'site_title' ) || '' ).trim();
+		const siteTaglineFromUrl = searchParams.get( 'site_tagline' ) || '';
+
+		// Save site title/description passed to the Assembler.
+		if ( siteTitleFromUrl || siteTaglineFromUrl ) {
+			saveSiteSettings( siteSlugOrId, {
+				...( siteTitleFromUrl && { blogname: siteTitleFromUrl } ),
+				...( siteTaglineFromUrl && { blogdescription: siteTaglineFromUrl } ),
+			} );
+		}
 
 		recordSelectedDesign( { flow, intent, design } );
 		trackSubmit();
