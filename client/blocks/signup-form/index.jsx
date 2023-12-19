@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -1088,6 +1089,27 @@ class SignupForm extends Component {
 			: formState.getFieldValue( this.state.form, 'email' );
 	};
 
+	getPasswordlessFromProps = () => {
+		const { isGravatar, isWoo } = this.props;
+
+		if ( isGravatar ) {
+			return {
+				inputPlaceholder: this.props.translate( 'Enter your email address' ),
+				submitButtonLabel: this.props.translate( 'Continue' ),
+				submitButtonLoadingLabel: this.props.translate( 'Continue' ),
+			};
+		}
+
+		if ( isWoo ) {
+			return {
+				submitButtonLabel: this.props.translate( 'Get Started' ),
+				submitButtonLoadingLabel: <Spinner />,
+			};
+		}
+
+		return {};
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1204,19 +1226,11 @@ class SignupForm extends Component {
 			);
 		}
 
-		const isGravatar = this.props.isGravatar;
+		const { isGravatar, isWoo, isPasswordless, flowName } = this.props;
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
-		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
-			const gravatarProps = isGravatar
-				? {
-						inputPlaceholder: this.props.translate( 'Enter your email address' ),
-						submitButtonLabel: this.props.translate( 'Continue' ),
-						submitButtonLoadingLabel: this.props.translate( 'Continue' ),
-				  }
-				: {};
-
+		if ( ( isPasswordless && 'wpcc' !== flowName ) || isGravatar || isWoo ) {
 			return (
 				<div
 					className={ classNames( 'signup-form', this.props.className, {
@@ -1235,7 +1249,7 @@ class SignupForm extends Component {
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
-						{ ...gravatarProps }
+						{ ...this.getPasswordlessFromProps() }
 					/>
 
 					{ ! isGravatar && (
@@ -1243,13 +1257,18 @@ class SignupForm extends Component {
 							{ showSeparator && <FormDivider /> }
 
 							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
-								<SocialSignupForm
-									handleResponse={ this.props.handleSocialResponse }
-									socialService={ this.props.socialService }
-									socialServiceResponse={ this.props.socialServiceResponse }
-									isReskinned={ this.props.isReskinned }
-									redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
-								/>
+								<>
+									{ this.props.isWoo && <FormDivider /> }
+									<SocialSignupForm
+										handleResponse={ this.props.handleSocialResponse }
+										socialService={ this.props.socialService }
+										socialServiceResponse={ this.props.socialServiceResponse }
+										isReskinned={ this.props.isReskinned }
+										flowName={ this.props.flowName }
+										compact={ this.props.isWoo }
+										redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+									/>
+								</>
 							) }
 							{ this.props.footerLink || this.footerLink() }
 						</>

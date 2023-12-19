@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import MailIcon from 'calypso/components/social-icons/mail';
@@ -52,6 +52,24 @@ const SignupFormSocialFirst = ( {
 	const isWoo = isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow;
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
+	const getPasswordlessSignupFormProps = () => {
+		if ( isGravatar ) {
+			return {
+				inputPlaceholder: __( 'Enter your email address' ),
+				submitButtonLoadingLabel: __( 'Continue' ),
+			};
+		}
+
+		if ( isWoo ) {
+			return {
+				submitButtonLabel: __( 'Get Started' ),
+				submitButtonLoadingLabel: <Spinner />,
+			};
+		}
+
+		return {};
+	};
+
 	const renderContent = () => {
 		if ( currentStep === 'initial' ) {
 			return (
@@ -78,13 +96,6 @@ const SignupFormSocialFirst = ( {
 				</>
 			);
 		} else if ( currentStep === 'email' ) {
-			const gravatarProps = isGravatar
-				? {
-						inputPlaceholder: __( 'Enter your email address' ),
-						submitButtonLoadingLabel: __( 'Continue' ),
-				  }
-				: {};
-
 			return (
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
@@ -97,7 +108,7 @@ const SignupFormSocialFirst = ( {
 						labelText={ __( 'Your email' ) }
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
-						{ ...gravatarProps }
+						{ ...getPasswordlessSignupFormProps() }
 					/>
 					<Button
 						onClick={ () => setCurrentStep( 'initial' ) }

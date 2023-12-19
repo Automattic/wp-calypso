@@ -508,7 +508,7 @@
 		display: none;
 	}
 
-	.auth-form__social,
+	.auth-form__social.card,
 	.two-factor-authentication__actions {
 		background: initial;
 		border-top: $woo-form-divider-border;
@@ -565,8 +565,7 @@
 
 		.auth-form__separator {
 			width: 100%;
-			margin-left: 0;
-			margin-right: 0;
+			margin: -10px 0;
 
 			&::before,
 			&::after {
@@ -607,6 +606,10 @@
 			color: $gray-50;
 			font-size: inherit;
 		}
+	}
+
+	.step-wrapper__navigation-link.forward {
+		display: none;
 	}
 
 	.login .login__form-forgot-password {
@@ -690,6 +693,47 @@
 
 	.signup-form__woo-wrapper .gridicon {
 		color: var(--color-primary);
+	}
+
+	.signup-form-social-first {
+		.auth-form__social.card {
+			border-top: 0;
+		}
+
+		.auth-form__social {
+			max-width: 400px;
+			align-items: stretch;
+		}
+
+		.auth-form__social-buttons button.social-buttons__button.button {
+			width: 100%;
+
+			svg {
+				border: 0;
+				border-radius: 0;
+			}
+		}
+
+		.back-button {
+			color: #1d2327;
+			text-align: center;
+			font-size: 0.875rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 20px;
+			display: block;
+			margin: 0 auto;
+			text-underline-offset: 5px;
+			margin-bottom: 16px;
+		}
+
+		.logged-out-form {
+			margin: 0;
+		}
+	}
+
+	.signup-form-social-first__tos-link {
+		text-align: center;
 	}
 
 	.auth-form__social {
