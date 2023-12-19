@@ -9,6 +9,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
+import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -99,7 +100,9 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
-				const itemValue = command.searchLabel ?? command.label;
+				const itemValue = [ command.label, command.searchLabel ]
+					.filter( Boolean )
+					.join( COMMAND_SEPARATOR );
 				return (
 					<Command.Item
 						key={ command.name }
@@ -214,6 +217,7 @@ const CommandPalette = () => {
 		[ currentRoute, dispatch, search, selectedCommandName ]
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
+	const commandFilter = useCommandFilter();
 
 	const commandListRef = useRef< HTMLDivElement >( null );
 
@@ -292,7 +296,7 @@ const CommandPalette = () => {
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
+				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown } filter={ commandFilter }>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton

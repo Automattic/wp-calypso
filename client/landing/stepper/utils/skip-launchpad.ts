@@ -9,18 +9,22 @@ type SkipLaunchpadProps = {
 };
 
 export const skipLaunchpad = async ( { checklistSlug, siteId, siteSlug }: SkipLaunchpadProps ) => {
-	if ( siteSlug ) {
+	const siteIdOrSlug = siteId || siteSlug;
+	if ( siteIdOrSlug ) {
 		// Only set the active checklist if we have the checklist slug AND the feature is enabled.
 		if ( checklistSlug && isEnabled( 'launchpad/navigator' ) ) {
 			// If we're making both API calls, allow them to happen concurrently.
 			await Promise.allSettled( [
-				updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } ),
-				dispatch( LaunchpadNavigator.store ).setActiveChecklist( siteSlug, checklistSlug ),
+				updateLaunchpadSettings( siteIdOrSlug, { launchpad_screen: 'skipped' } ),
+				dispatch( LaunchpadNavigator.store ).setActiveChecklist(
+					String( siteIdOrSlug ),
+					checklistSlug
+				),
 			] );
 		} else {
-			await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+			await updateLaunchpadSettings( siteIdOrSlug, { launchpad_screen: 'skipped' } );
 		}
 	}
 
-	return window.location.assign( `/home/${ siteId ? siteId : siteSlug }` );
+	return window.location.assign( `/home/${ siteIdOrSlug }` );
 };

@@ -25,6 +25,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	body,
 	badge,
 	actions,
+	variation,
 } ) => {
 	const cta = actions?.cta;
 	const learnMoreLink = actions?.learnMoreLink;
@@ -45,6 +46,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 			image={ image }
 			badge={ badge }
 			icon={ icon }
+			variation={ variation }
 		>
 			<p>{ body }</p>
 			{ ctaComponent }

@@ -22,7 +22,7 @@ import {
 	ThemesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, getNewPlanName } from '../shared';
 
 declare const browser: Browser;
 
@@ -33,6 +33,7 @@ declare const browser: Browser;
  */
 describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Premium';
+	const newPlanName = getNewPlanName( planName );
 	let themeSlug: string | null = null;
 
 	const testUser = DataHelper.getNewTestUser( {
@@ -98,7 +99,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 		it( 'See secure payment', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` );
 		} );
 
 		it( 'Apply coupon', async function () {
@@ -158,7 +159,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			purchasesPage = new PurchasesPage( page );
 
 			await purchasesPage.clickOnPurchase(
-				`WordPress.com ${ planName }`,
+				`WordPress.com ${ newPlanName }`,
 				newSiteDetails.blog_details.site_slug
 			);
 			await purchasesPage.purchaseAction( 'Cancel plan' );
