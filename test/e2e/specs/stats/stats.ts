@@ -36,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 
 		testAccount = new TestAccount( accountName );
 		if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
-			// eCommerce plan sites attempt to load Calypso, but with
+			// Entrepreneur plan sites attempt to load Calypso, but with
 			// third-party cookies disabled the fallback route to WP-Admin
 			// kicks in after some time.
 			await testAccount.authenticate( page, { url: /wp-admin/ } );
@@ -103,7 +103,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		} );
 	} );
 
-	// The Store tab is not present unless Business or higher plan is on the site and the
+	// The Store tab is not present unless Creator or higher plan is on the site and the
 	// site has gone AT.
 	skipDescribeIf( accountName !== 'jetpackAtomicEcommPlanUser' )( 'Store', function () {
 		it( 'Click on the Store tab', async function () {

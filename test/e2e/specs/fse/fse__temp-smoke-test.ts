@@ -71,7 +71,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 
 		testAccount = new TestAccount( accountName );
 		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-			// eCommerce plan sites attempt to load Calypso, but with
+			// Entrepreneur plan sites attempt to load Calypso, but with
 			// third-party cookies disabled the fallback route to WP-Admin
 			// kicks in after some time.
 			await testAccount.authenticate( page, { url: /wp-admin/ } );
@@ -83,7 +83,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	it( 'Navigate to Full Site Editor', async function () {
 		fullSiteEditorPage = new FullSiteEditorPage( page );
 
-		// eCommerce plan loads WP-Admin for home dashboard,
+		// Entrepreneur plan loads WP-Admin for home dashboard,
 		// so instead navigate straight to the FSE page.
 		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
 			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );

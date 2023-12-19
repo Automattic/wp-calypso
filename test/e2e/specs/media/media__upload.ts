@@ -49,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 		testAccount = new TestAccount( accountName );
 		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-			// Switching to or logging into eCommerce plan sites inevitably
+			// Switching to or logging into Entrepreneur plan sites inevitably
 			// loads WP-Admin instead of Calypso, but the rediret occurs
 			// only after Calypso attempts to load.
 			await testAccount.authenticate( page, { url: /wp-admin/ } );
@@ -61,7 +61,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	} );
 
 	it( 'Navigate to Media', async function () {
-		// eCommerce plan loads WP-Admin for home dashboard,
+		// Entrepreneur plan loads WP-Admin for home dashboard,
 		// so instead navigate straight to the Media page.
 		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
 			await mediaPage.visit( testAccount.credentials.testSites?.primary.url as string );

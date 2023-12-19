@@ -20,7 +20,7 @@ declare const browser: Browser;
 /**
  * Quick test to verify various SEO text fields and previews render.
  *
- * This is a feature exclusive to Business plans and higher.
+ * This is a feature exclusive to Creator plans and higher.
  *
  * Keywords: Jetpack, SEO, Traffic, Marketing.
  */

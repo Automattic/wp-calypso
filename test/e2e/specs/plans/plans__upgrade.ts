@@ -28,7 +28,7 @@ const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase()
 
 describe(
 	DataHelper.createSuiteTitle(
-		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Premium'
+		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Explorer'
 	),
 	function () {
 		const blogName = DataHelper.getBlogName();

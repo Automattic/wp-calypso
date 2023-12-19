@@ -31,7 +31,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	const features = envToFeatureKey( envVariables );
 
-	// Default to `defaultUser` as it has WordPress.com Premium enabled, which is required
+	// Default to `defaultUser` as it has WordPress.com Explorer enabled, which is required
 	// for VideoPress block testing.
 	const accountName = getTestAccountByFeature( features, [
 		{
@@ -120,7 +120,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 			await fileBlock.upload( testFiles.audio.fullpath );
 		} );
 
-		// If this starts failing, check whether Premium or higher plan is enabled.
+		// If this starts failing, check whether Explorer or higher plan is enabled.
 		it( `${ VideoPressBlock.blockName } block: upload video file`, async function () {
 			await editorPage.addBlockFromSidebar(
 				VideoPressBlock.blockName,

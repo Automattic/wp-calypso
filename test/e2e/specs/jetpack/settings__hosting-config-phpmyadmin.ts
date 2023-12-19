@@ -38,7 +38,7 @@ skipDescribeIf( ! envVariables.TEST_ON_ATOMIC )(
 			testAccount = new TestAccount( accountName );
 
 			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-				// Switching to or logging into eCommerce plan sites inevitably
+				// Switching to or logging into Entrepreneur plan sites inevitably
 				// loads WP-Admin instead of Calypso, but the rediret occurs
 				// only after Calypso attempts to load.
 				await testAccount.authenticate( page, { url: /wp-admin/ } );
