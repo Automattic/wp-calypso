@@ -33,28 +33,20 @@ export default function ThemeTierBundledBadge() {
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{
-					// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-					translate( '%(bundleName)s theme', { textOnly: true, args: { bundleName } } )
-				}
-			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
 					isEnglishLocale ||
 						i18n.hasTranslation(
-							'This %(bundleName)s theme is included in the <Link>%(businessPlanName)s plan</Link>.'
+							'This theme is included in the <Link>%(businessPlanName)s plan</Link>.'
 						)
-						? // Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-						  translate(
-								'This %(bundleName)s theme is included in the <Link>%(businessPlanName)s plan</Link>.',
-								{
-									args: { bundleName },
-									textOnly: true,
+						? translate( 'This theme is included in the <Link>%(businessPlanName)s plan</Link>.', {
+								args: {
 									businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-								}
-						  )
-						: translate(
+								},
+								textOnly: true,
+						  } )
+						: // Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+						  translate(
 								'This %(bundleName)s theme is included in the <Link>Business plan</Link>.',
 								{
 									args: { bundleName },
