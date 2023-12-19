@@ -1,3 +1,18 @@
-.message {
-	font-weight: bold;
+.jetpack-ai-logo-generator-modal {
+	.components-modal__header {
+		border-bottom: 1px solid var(--studio-gray-5);
+		padding: 20px 24px;
+	}
+
+	.components-modal__content {
+		padding: 32px;
+	}
+
+	&__body {
+		width: 100%;
+
+		@media (min-width: 699px) {
+			width: 699px;
+		}
+	}
 }
