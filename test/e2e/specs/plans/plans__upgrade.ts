@@ -32,7 +32,7 @@ describe(
 	),
 	function () {
 		const blogName = DataHelper.getBlogName();
-		const planName = 'Premium';
+		const planName = 'Explorer';
 		const publishedPosts: PostResponse[] = [];
 		let testMediaFile: TestFile;
 		let siteCreatedFlag: boolean;
@@ -96,7 +96,7 @@ describe(
 			} );
 
 			it( `Click button to upgrade to WordPress.com ${ planName }`, async function () {
-				await plansPage.selectPlan( 'Premium' );
+				await plansPage.selectPlan( planName );
 			} );
 
 			it( `WordPress.com ${ planName } is added to cart`, async function () {
@@ -136,7 +136,7 @@ describe(
 
 			it( `Plans page states user is on WordPress.com ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
-				await plansPage.validateActivePlan( 'Premium' );
+				await plansPage.validateActivePlan( planName );
 			} );
 		} );
 

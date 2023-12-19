@@ -43,9 +43,9 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		await sidebarComponent.navigate( 'Upgrades', 'Plans' );
 	} );
 
-	it( 'Add WordPress.com Business plan to cart', async function () {
+	it( 'Add WordPress.com Creator plan to cart', async function () {
 		const plansPage = new PlansPage( page );
-		await Promise.all( [ page.waitForURL( /.*checkout.*/ ), plansPage.selectPlan( 'Business' ) ] );
+		await Promise.all( [ page.waitForURL( /.*checkout.*/ ), plansPage.selectPlan( 'Creator' ) ] );
 	} );
 
 	describe.each( DataHelper.getMag16Locales() )(

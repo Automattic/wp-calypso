@@ -18,7 +18,7 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
-	const planName = 'Premium';
+	const planName = 'Explorer';
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 	let plansPage: PlansPage;
@@ -77,7 +77,7 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	} );
 
 	it( `Click button to upgrade to WordPress.com ${ planName }`, async function () {
-		await plansPage.selectPlan( 'Premium' );
+		await plansPage.selectPlan( 'Explorer' );
 	} );
 
 	it( `WordPress.com ${ planName } is added to cart`, async function () {
