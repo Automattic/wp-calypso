@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { requestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/actions';
 import getJetpackConnectionHealth from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health';
 import getJetpackConnectionHealthRequestError from 'calypso/state/jetpack-connection-health/selectors/get-jetpack-connection-health-request-error';
-import isRequestingJetpackConnectionHealthStatus from 'calypso/state/jetpack-connection-health/selectors/is-requesting-jetpack-connection-health-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { AppState } from 'calypso/types';
 import {
@@ -39,29 +38,19 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		getJetpackConnectionHealthRequestError( state as AppState, siteId )
 	);
 
-	const isLoadingJetpackConnectionHealth = useSelector( ( state ) =>
-		isRequestingJetpackConnectionHealthStatus( state as AppState, siteId )
-	);
-
 	const jetpackConnectionHealth = useSelector( ( state ) =>
 		getJetpackConnectionHealth( state as AppState, siteId )
 	);
 
 	useEffect( () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	if (
-		isLoadingJetpackConnectionHealth ||
-		isErrorCheckJetpackConnectionHealth ||
-		jetpackConnectionHealth?.is_healthy
-	) {
+	if ( isErrorCheckJetpackConnectionHealth || jetpackConnectionHealth?.is_healthy ) {
 		return;
 	}
 
-	const errorType = jetpackConnectionHealth?.error ?? '';
+	const errorType = jetpackConnectionHealth?.error;
 
 	if ( errorType === DNS_ERROR ) {
 		return (

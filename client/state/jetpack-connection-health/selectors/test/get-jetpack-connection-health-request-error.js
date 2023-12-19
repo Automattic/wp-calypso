@@ -19,6 +19,6 @@ describe( 'getJetpackConnectionHealthRequestError()', () => {
 		};
 		const siteId = 123456;
 		const output = getJetpackConnectionHealthRequestError( stateIn, siteId );
-		expect( output ).toBe( null );
+		expect( output ).toBe( '' );
 	} );
 } );

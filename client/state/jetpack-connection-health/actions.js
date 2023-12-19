@@ -5,7 +5,6 @@ import {
 	JETPACK_CONNECTION_UNHEALTHY,
 	JETPACK_CONNECTION_HEALTH_REQUEST,
 	JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
-	JETPACK_CONNECTION_HEALTH_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 
@@ -59,10 +58,6 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
 			apiNamespace: 'wpcom/v2',
 		} )
 		.then( ( response ) => {
-			dispatch( {
-				type: JETPACK_CONNECTION_HEALTH_REQUEST_SUCCESS,
-				siteId,
-			} );
 			const { isHealthy, error } = response;
 			if ( isHealthy && reduxIsUnhealthy ) {
 				dispatch( setJetpackConnectionHealthy( siteId ) );

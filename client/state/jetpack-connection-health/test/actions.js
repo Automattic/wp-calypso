@@ -4,7 +4,6 @@ import {
 	JETPACK_CONNECTION_MAYBE_UNHEALTHY,
 	JETPACK_CONNECTION_UNHEALTHY,
 	JETPACK_CONNECTION_HEALTH_REQUEST,
-	JETPACK_CONNECTION_HEALTH_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import {
 	setJetpackConnectionHealthy,
@@ -84,10 +83,6 @@ describe( 'action', () => {
 				lastRequestTime: expect.any( Number ),
 			} );
 			expect( dispatchSpy ).toHaveBeenNthCalledWith( 2, {
-				type: JETPACK_CONNECTION_HEALTH_REQUEST_SUCCESS,
-				siteId: 1,
-			} );
-			expect( dispatchSpy ).toHaveBeenNthCalledWith( 3, {
 				type: JETPACK_CONNECTION_HEALTHY,
 				siteId: 1,
 			} );
@@ -116,10 +111,6 @@ describe( 'action', () => {
 				lastRequestTime: expect.any( Number ),
 			} );
 			expect( dispatchSpy ).toHaveBeenNthCalledWith( 2, {
-				type: JETPACK_CONNECTION_HEALTH_REQUEST_SUCCESS,
-				siteId: 1,
-			} );
-			expect( dispatchSpy ).toHaveBeenNthCalledWith( 3, {
 				type: JETPACK_CONNECTION_UNHEALTHY,
 				siteId: 1,
 				errorCode: 'foo_bar',
