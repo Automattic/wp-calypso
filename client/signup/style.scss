@@ -759,11 +759,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			text-underline-offset: 5px;
 
 			&:hover {
-				color: var(--studio-blue-50, #0675c4);
+				color: var(--color-accent-50, #0675c4);
 			}
 
 			&:focus {
-				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline: 1px dashed var(--color-accent-50, #0675c4);
 				outline-offset: 3px;
 				box-shadow: none;
 				border-radius: 0;
