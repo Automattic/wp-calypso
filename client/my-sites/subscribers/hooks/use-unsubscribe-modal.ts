@@ -29,7 +29,7 @@ const useUnsubscribeModal = (
 	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
-			navigate( `/earn/supporters/${ selectedSiteSlug }` );
+			navigate( `/earn/supporters/${ selectedSiteSlug ?? '' }` );
 		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
 			mutate( subscriber, {
 				onSuccess: () => {
