@@ -6,7 +6,6 @@ import {
 	backup as backupIcon,
 	brush as brushIcon,
 	chartBar as statsIcon,
-	cog as settingsIcon,
 	commentAuthorAvatar as profileIcon,
 	commentAuthorName as subscriberIcon,
 	download as downloadIcon,
@@ -21,14 +20,14 @@ import {
 	plugins as pluginsIcon,
 	plus as plusIcon,
 	postComments as postCommentsIcon,
-	settings as accountSettingsIcon,
+	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
+	reusableBlock as cacheIcon,
 	help as helpIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
-import MaterialIcon from 'calypso/components/material-icon';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -73,6 +72,18 @@ export const useCommandsArrayWpcom = ( {
 	const createSiteUrl = useAddNewSiteUrl( {
 		ref: 'command-palette',
 	} );
+
+	const siteFilters = {
+		hostingEnabled: {
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+		},
+		hostingEnabledAndPublic: {
+			filter: ( site: SiteExcerptData ) =>
+				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+		},
+	};
 
 	const fetchSshUser = async ( siteId: number ) => {
 		const response = await wpcom.req.get( {
@@ -292,9 +303,9 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					clearEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
-			icon: <MaterialIcon icon="autorenew" />,
+			icon: cacheIcon,
 		},
 		{
 			name: 'enableEdgeCache',
@@ -305,10 +316,9 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					enableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+				...siteFilters.hostingEnabledAndPublic,
 			},
-			icon: <MaterialIcon icon="autorenew" />,
+			icon: cacheIcon,
 		},
 		{
 			name: 'disableEdgeCache',
@@ -319,10 +329,9 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					disableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+				...siteFilters.hostingEnabledAndPublic,
 			},
-			icon: <MaterialIcon icon="autorenew" />,
+			icon: cacheIcon,
 		},
 		{
 			name: 'openSiteDashboard',
@@ -372,6 +381,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: settingsIcon,
 		},
@@ -391,7 +401,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await openPhpMyAdmin( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},
@@ -476,7 +486,7 @@ export const useCommandsArrayWpcom = ( {
 				close();
 				navigate( `/me/account` );
 			},
-			icon: accountSettingsIcon,
+			icon: profileIcon,
 		},
 		{
 			name: 'accessPurchases',
@@ -546,6 +556,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) =>
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with DNS management available.' ),
 			},
 			icon: domainsIcon,
 		},
@@ -561,7 +572,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -577,7 +588,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -593,7 +604,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					resetSshSftpPassword( site.ID, site.slug );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -624,6 +635,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/activity-log/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: acitvityLogIcon,
 		},
@@ -637,6 +649,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/backup/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
 			},
 			icon: backupIcon,
 		},
@@ -652,7 +665,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: statsIcon,
 		},
@@ -672,7 +685,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/php` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -695,7 +708,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/web` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -719,7 +732,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#staging-site` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -732,7 +745,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -756,9 +769,9 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#cache` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
-			icon: toolIcon,
+			icon: cacheIcon,
 		},
 		{
 			name: 'changeAdminInterfaceStyle',
@@ -779,7 +792,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#admin-interface-style` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},

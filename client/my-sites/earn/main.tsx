@@ -187,7 +187,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const getEarnSectionNav = () => {
 		return (
 			<div id="earn-navigation">
-				<SectionNav selectedText={ getEarnSelectedText() }>
+				<SectionNav selectedText={ getEarnSelectedText() } variation="minimal">
 					<NavTabs>
 						{ getEarnTabs().map( ( tabItem ) => {
 							return (

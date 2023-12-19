@@ -82,6 +82,8 @@ const LayoutLoggedOut = ( {
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
+	const isCheckoutFailed =
+		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/failed-purchases' );
 	const isJetpackCheckout =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack' );
 
@@ -204,6 +206,7 @@ const LayoutLoggedOut = ( {
 				sectionName={ sectionName }
 				isCheckout={ isCheckout }
 				isCheckoutPending={ isCheckoutPending }
+				isCheckoutFailed={ isCheckoutFailed }
 				redirectUri={ redirectUri }
 			/>
 		);
