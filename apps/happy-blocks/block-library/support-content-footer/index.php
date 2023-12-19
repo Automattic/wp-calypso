@@ -13,7 +13,7 @@ if ( ! isset( $args ) ) {
 
 $image_dir       = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
 $subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="' . __( 'Just a moment...', 'happy-blocks' ) . '"]';
-$signup_url      = localized_wpcom_url( 'https://wordpress.com/start/account/user?redirect_to=https%3A%2F%2Fwordpress.com%learn' );
+$signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2Flearn' );
 ?>
 
 <div class="happy-blocks-support-content-footer">
