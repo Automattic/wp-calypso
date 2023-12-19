@@ -7,7 +7,13 @@ import Swipeable from '../swipeable';
 
 import './style.scss';
 
-const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setCurrentPage } ) => {
+const Controls = ( {
+	showControlLabels = false,
+	currentPage,
+	numberOfPages,
+	setCurrentPage,
+	navArrowSize,
+} ) => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
 	if ( numberOfPages < 2 ) {
@@ -42,7 +48,7 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 					{ /* The arrowLeft icon isn't as bold as arrowRight, so using the same icon and flipping to make sure they match */ }
 					<Icon
 						icon={ arrowRight }
-						size={ 18 }
+						size={ navArrowSize }
 						fill="currentColor"
 						style={
 							/* Flip the icon for languages with LTR direction. */
@@ -62,7 +68,7 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 					{ showControlLabels && translate( 'Next' ) }
 					<Icon
 						icon={ arrowRight }
-						size={ 18 }
+						size={ navArrowSize }
 						fill="currentColor"
 						style={
 							/* Flip the icon for languages with RTL direction. */
@@ -83,6 +89,7 @@ export const DotPager = ( {
 	onPageSelected = null,
 	isClickEnabled = false,
 	rotateTime = 0,
+	navArrowSize = 18,
 	...props
 } ) => {
 	// Filter out the empty children
@@ -120,6 +127,7 @@ export const DotPager = ( {
 				currentPage={ currentPage }
 				numberOfPages={ numPages }
 				setCurrentPage={ handleSelectPage }
+				navArrowSize={ navArrowSize }
 			/>
 			<Swipeable
 				hasDynamicHeight={ hasDynamicHeight }

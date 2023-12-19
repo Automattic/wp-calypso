@@ -55,11 +55,6 @@
 .dot-pager__control-prev,
 .dot-pager__control-next {
 	display: inline-flex;
-
-	svg {
-		width: 18px;
-		height: 18px;
-	}
 	background-color: transparent;
 	color: var(--studio-gray-80);
 
