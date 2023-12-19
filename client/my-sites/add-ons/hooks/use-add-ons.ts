@@ -168,12 +168,24 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
+
+	// TODO clk: move to data-stores/queries
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
-	const selectedSite = useSelector( getSelectedSite ) ?? null;
-	const activeAddOns = useActiveAddOnsDefs( selectedSite );
-	const productsList = useSelector( getProductsList );
+
+	// TODO clk: move to data-stores/queries
 	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
+
+	// TODO clk: maybe move to data-stores, otherwise pass in as a prop
+	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
+
+	// TODO clk: same as siteId?
+	const selectedSite = useSelector( getSelectedSite ) ?? null;
+
+	// TODO clk: fine
+	const activeAddOns = useActiveAddOnsDefs( selectedSite );
+
+	// TODO clk: add a query to data-stores/products-list
+	const productsList = useSelector( getProductsList );
 
 	return useMemo(
 		() =>
