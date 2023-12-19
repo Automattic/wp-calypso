@@ -209,7 +209,7 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'plans': {
-					await updateLaunchpadSettings( siteSlug, {
+					await updateLaunchpadSettings( siteId, {
 						checklist_statuses: { plan_completed: true },
 					} );
 
@@ -217,7 +217,7 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'domains': {
-					await updateLaunchpadSettings( siteSlug, {
+					await updateLaunchpadSettings( siteId, {
 						checklist_statuses: { domain_upsell_deferred: true },
 					} );
 
