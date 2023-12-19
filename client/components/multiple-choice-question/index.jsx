@@ -21,6 +21,7 @@ const shuffleAnswers = memoize(
 const MultipleChoiceQuestion = ( {
 	disabled,
 	answers,
+	name,
 	onAnswerChange,
 	question,
 	selectedAnswerId,
@@ -40,6 +41,7 @@ const MultipleChoiceQuestion = ( {
 			<div className="multiple-choice-question__answers">
 				{ shuffledAnswers.map( ( answer ) => (
 					<MultipleChoiceAnswer
+						name={ name }
 						key={ answer.id }
 						answer={ answer }
 						disabled={ disabled }
@@ -68,6 +70,7 @@ MultipleChoiceQuestion.propTypes = {
 		} )
 	).isRequired,
 	disabled: PropTypes.bool,
+	name: PropTypes.string,
 	onAnswerChange: PropTypes.func.isRequired,
 	question: PropTypes.string.isRequired,
 	selectedAnswerId: PropTypes.string,
