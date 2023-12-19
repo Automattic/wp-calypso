@@ -5,6 +5,7 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
+import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 import type { FC } from 'react';
 
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
@@ -32,6 +33,18 @@ function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
 		case 'SUPPORT':
 		default:
 			return 'wpcom_messaging';
+	}
+}
+
+function getConfigNameForIntent( chatIntent: ChatIntent ): ZendeskConfigName {
+	switch ( chatIntent ) {
+		case 'PRESALES':
+			return 'zendesk_presales_chat_key';
+
+		case 'PRECANCELLATION':
+		case 'SUPPORT':
+		default:
+			return 'zendesk_support_chat_key';
 	}
 }
 
@@ -85,7 +98,8 @@ const ChatButton: FC< Props > = ( {
 		}
 	}
 
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
+	const configName = getConfigNameForIntent( chatIntent );
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget( configName );
 
 	const handleClick = () => {
 		if ( canConnectToZendesk ) {
