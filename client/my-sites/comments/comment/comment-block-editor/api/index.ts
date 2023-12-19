@@ -2,7 +2,7 @@ import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
 import defaultFetchHandler from './default';
 
-export function addApiMiddleware() {
+export function addApiMiddleware( siteId: number ) {
 	apiFetch.setFetchHandler( ( options ) => {
 		const { path } = options;
 
@@ -11,11 +11,9 @@ export function addApiMiddleware() {
 			const embedUrl = url.searchParams.get( 'url' );
 
 			return wpcomRequest( {
-				path: '/verbum/embed',
-				query: `embed_url=${ embedUrl }&embed_nonce=${ encodeURIComponent(
-					VerbumComments.embedNonce
-				) }`,
-				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ encodeURIComponent( siteId ) }/proxy`,
+				query: `url=${ embedUrl }`,
+				apiNamespace: 'oembed/1.0',
 			} );
 		}
 
