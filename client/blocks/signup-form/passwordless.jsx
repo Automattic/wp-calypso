@@ -27,7 +27,7 @@ class PasswordlessSignupForm extends Component {
 		locale: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
-		submitButtonLoadingLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 		userEmail: PropTypes.string,
 	};
 
