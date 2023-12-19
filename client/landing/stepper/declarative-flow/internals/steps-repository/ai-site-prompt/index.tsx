@@ -71,6 +71,21 @@ const AISitePrompt: Step = function ( props ) {
 						currentSearchParams.set( 'header_pattern_id', response.header_pattern );
 						currentSearchParams.set( 'footer_pattern_id', response.footer_pattern );
 						currentSearchParams.set( 'pattern_ids', response.pages[ 0 ].patterns.join( ',' ) );
+						// These 2 params were introduced in the V5 of the AI endpoint.
+						// TODO: Remove the checks once we settle on the endpoint.
+						if ( response?.site?.site_title ) {
+							currentSearchParams.set( 'site_title', response.site.site_title );
+						}
+						if ( response?.site?.site_tagline ) {
+							currentSearchParams.set( 'site_tagline', response.site.site_tagline );
+						}
+
+						// This was introduced in the V5 of the AI endpoint.
+						const pageSlugs = response.pages.map( ( page: any ) => page?.slug ).filter( Boolean );
+						if ( pageSlugs.length ) {
+							currentSearchParams.set( 'page_slugs', pageSlugs.join( ',' ) );
+						}
+
 						return currentSearchParams;
 					},
 					{ replace: true }

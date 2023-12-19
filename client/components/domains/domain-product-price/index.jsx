@@ -155,6 +155,24 @@ class DomainProductPrice extends Component {
 		);
 	}
 
+	renderDomainMovePrice() {
+		const { showStrikedOutPrice, translate } = this.props;
+
+		const className = classnames( 'domain-product-price', {
+			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
+		} );
+
+		return (
+			<div className={ className }>
+				<span>
+					{ translate( 'Move your existing domain.', {
+						context: 'Line item description in cart.',
+					} ) }
+				</span>
+			</div>
+		);
+	}
+
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
@@ -223,6 +241,8 @@ class DomainProductPrice extends Component {
 			case 'INCLUDED_IN_HIGHER_PLAN':
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
 				return this.renderFreeWithPlan();
+			case 'DOMAIN_MOVE_PRICE':
+				return this.renderDomainMovePrice();
 			case 'PRICE':
 			default:
 				return this.renderPrice();

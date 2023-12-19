@@ -1,12 +1,13 @@
-import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	PatternAssemblerCta,
 	usePatternAssemblerCtaData,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -244,6 +245,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		getSiteThemeInstallUrl( state, selectedSite?.ID )
 	);
 	const assemblerCtaData = usePatternAssemblerCtaData();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const options = [];
 
@@ -306,9 +308,18 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		options.push( {
 			title: translate( 'Upload a theme' ),
 			icon: cloudUpload,
-			description: translate(
-				'With a Business plan, you can upload and install third-party themes, including your own themes.'
-			),
+			description:
+				isEnglishLocale ||
+				i18n.hasTranslation(
+					'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.'
+				)
+					? translate(
+							'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() } }
+					  )
+					: translate(
+							'With a Business plan, you can upload and install third-party themes, including your own themes.'
+					  ),
 			onClick: () =>
 				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
 					site_plan: sitePlan,
@@ -338,9 +349,18 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		options.push( {
 			title: translate( 'Upload a theme' ),
 			icon: cloudUpload,
-			description: translate(
-				'With a Business plan, you can upload and install third-party themes, including your own themes.'
-			),
+			description:
+				isEnglishLocale ||
+				i18n.hasTranslation(
+					'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.'
+				)
+					? translate(
+							'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() } }
+					  )
+					: translate(
+							'With a Business plan, you can upload and install third-party themes, including your own themes.'
+					  ),
 			onClick: () =>
 				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
 					site_plan: sitePlan,

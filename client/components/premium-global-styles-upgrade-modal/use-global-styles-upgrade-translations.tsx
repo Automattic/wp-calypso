@@ -1,5 +1,7 @@
-import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { usePlans } from '@automattic/data-stores/src/plans';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import i18n, { useTranslate } from 'i18n-calypso';
 
 interface Props {
 	numOfSelectedGlobalStyles?: number;
@@ -7,8 +9,10 @@ interface Props {
 
 const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: Props ) => {
 	const translate = useTranslate();
-	const plan = getPlan( PLAN_PREMIUM );
-	const planTitle = plan?.getTitle() ?? '';
+	const isEnglishLocale = useIsEnglishLocale();
+	const plans = usePlans();
+	const planTitle = plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '';
+
 	const features = [
 		<strong>{ translate( 'Free domain for one year' ) }</strong>,
 		<strong>{ translate( 'Premium themes' ) }</strong>,
@@ -20,7 +24,12 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 
 	return {
 		planTitle,
-		featuresTitle: translate( 'Included with your Premium plan' ),
+		featuresTitle:
+			isEnglishLocale || i18n.hasTranslation( 'Included with your %(planTitle)s plan' )
+				? translate( 'Included with your %(planTitle)s plan', {
+						args: { planTitle },
+				  } )
+				: translate( 'Included with your Premium plan' ),
 		features: features,
 		description: translate(
 			'You’ve selected a premium style that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',

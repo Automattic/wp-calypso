@@ -8,6 +8,7 @@ import {
 import { Icon, tag, file } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -36,6 +37,7 @@ const StatsListCard = ( {
 	showLeftIcon,
 	isLinkUnderlined,
 	listItemClassName,
+	overlay,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -140,6 +142,7 @@ const StatsListCard = ( {
 			mainItemLabel={ mainItemLabel }
 			additionalHeaderColumns={ additionalColumns?.header }
 			toggleControl={ toggleControl }
+			overlay={ overlay }
 		>
 			{ !! loader && loader }
 			{ !! error && error }
@@ -178,4 +181,4 @@ const StatsListCard = ( {
 	);
 };
 
-export default StatsListCard;
+export default localize( StatsListCard );

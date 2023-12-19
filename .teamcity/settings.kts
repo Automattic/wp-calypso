@@ -47,7 +47,6 @@ version = "2023.05"
 project {
 
 	vcsRoot(WpCalypso)
-	subProject(_self.projects.DesktopApp)
 	subProject(_self.projects.WPComPlugins)
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)

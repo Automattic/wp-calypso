@@ -1,6 +1,6 @@
 import { memoize, pick, shuffle, values } from 'lodash';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import MultipleChoiceAnswer from './answer';
@@ -29,6 +29,11 @@ const MultipleChoiceQuestion = ( {
 } ) => {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
 	const shuffledAnswers = shouldShuffleAnswers ? shuffleAnswers( answers ) : answers;
+
+	useEffect( () => {
+		setSelectedAnswer( selectedAnswerId );
+	}, [ selectedAnswerId ] );
+
 	return (
 		<FormFieldset className="multiple-choice-question" onClick={ ( e ) => e.stopPropagation() }>
 			<FormLegend>{ question }</FormLegend>

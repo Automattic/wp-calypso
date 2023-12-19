@@ -1,6 +1,8 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import {
 	isMarketplaceThemeSubscribed,
@@ -17,6 +19,7 @@ export default function ThemeTierPartnerBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
+	const isEnglishLocale = useIsEnglishLocale();
 	const isPartnerThemePurchased = useSelector( ( state ) =>
 		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
 	);
@@ -25,10 +28,6 @@ export default function ThemeTierPartnerBadge() {
 	);
 	const { isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
-	if ( isPartnerThemePurchased && isThemeAllowedOnSite ) {
-		return <span>{ translate( 'Included in my plan' ) }</span>;
-	}
-
 	const labelText = isThemeAllowedOnSite
 		? translate( 'Subscribe' )
 		: translate( 'Upgrade and Subscribe' );
@@ -36,9 +35,17 @@ export default function ThemeTierPartnerBadge() {
 	const getTooltipMessage = () => {
 		if ( isPartnerThemePurchased && ! isThemeAllowedOnSite ) {
 			return createInterpolateElement(
-				translate(
-					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
-				),
+				isEnglishLocale ||
+					i18n.hasTranslation(
+						'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.'
+					)
+					? translate(
+							'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+					  )
+					: translate(
+							'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
+					  ),
 				{
 					Link: <ThemeTierBadgeCheckoutLink plan="business" />,
 				}
@@ -58,16 +65,30 @@ export default function ThemeTierPartnerBadge() {
 		}
 		if ( ! isPartnerThemePurchased && ! isThemeAllowedOnSite ) {
 			return createInterpolateElement(
-				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
-				translate(
-					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
-					{
-						args: {
-							annualPrice: subscriptionPrices.year ?? '',
-							monthlyPrice: subscriptionPrices.month ?? '',
-						},
-					}
-				),
+				isEnglishLocale ||
+					/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
+					i18n.hasTranslation(
+						'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.'
+					)
+					? translate(
+							'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
+							{
+								args: {
+									annualPrice: subscriptionPrices.year ?? '',
+									monthlyPrice: subscriptionPrices.month ?? '',
+									businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+								},
+							}
+					  )
+					: translate(
+							'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
+							{
+								args: {
+									annualPrice: subscriptionPrices.year ?? '',
+									monthlyPrice: subscriptionPrices.month ?? '',
+								},
+							}
+					  ),
 				{
 					Link: <ThemeTierBadgeCheckoutLink plan="business" />,
 				}
@@ -90,15 +111,28 @@ export default function ThemeTierPartnerBadge() {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker />
+			{ ( ! isPartnerThemePurchased || ! isThemeAllowedOnSite ) && (
+				<>
+					<ThemeTierBadgeTracker />
+					<PremiumBadge
+						className="theme-tier-badge__content"
+						focusOnShow={ false }
+						isClickable
+						labelText={ labelText }
+						tooltipClassName="theme-tier-badge-tooltip"
+						tooltipContent={ tooltipContent }
+						tooltipPosition="top"
+					/>
+				</>
+			) }
+
 			<PremiumBadge
-				className="theme-tier-badge__content"
+				className="theme-tier-badge__content is-third-party"
 				focusOnShow={ false }
-				isClickable
-				labelText={ labelText }
-				tooltipClassName="theme-tier-badge-tooltip"
-				tooltipContent={ tooltipContent }
-				tooltipPosition="top"
+				isClickable={ false }
+				labelText={ translate( 'Partner' ) }
+				shouldHideIcon
+				shouldHideTooltip
 			/>
 		</>
 	);

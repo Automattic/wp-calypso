@@ -5,9 +5,7 @@ import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
-import { useDispatch } from 'calypso/state';
-import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
-import type { GoToStep, ImporterPlatform } from '../types';
+import type { ImporterPlatform } from '../types';
 import './style.scss';
 
 const trackEventName = 'calypso_signup_step_start';
@@ -23,13 +21,14 @@ interface ImporterOption {
 }
 
 interface Props {
-	goToStep: GoToStep;
+	siteSlug: string | null;
+	submit?: ( dependencies: Record< string, unknown > ) => void;
+	getFinalImporterUrl: ( siteSlug: string, fromSite: string, platform: ImporterPlatform ) => string;
 }
 
 export default function ListStep( props: Props ) {
-	const dispatch = useDispatch();
 	const { __ } = useI18n();
-	const { goToStep } = props;
+	const { siteSlug, submit, getFinalImporterUrl } = props;
 
 	const primaryListOptions: ImporterOption[] = [
 		{ value: 'wordpress', label: 'WordPress', icon: 'wordpress' },
@@ -49,26 +48,14 @@ export default function ListStep( props: Props ) {
 	];
 
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
-		dispatch(
-			urlDataUpdate( {
-				url: '',
-				platform,
-				meta: {
-					favicon: null,
-					title: null,
-				},
-			} )
-		);
-		goToStep( `ready` );
+		const importerUrl = getFinalImporterUrl( siteSlug ?? '', '', platform );
+		submit?.( { platform, url: importerUrl } );
 	};
 
 	const recordImportList = () => {
 		recordTracksEvent( trackEventName, trackEventParams );
 	};
 
-	/**
-	 ↓ Effects
-	 */
 	useEffect( recordImportList, [] );
 
 	return (
@@ -98,7 +85,7 @@ export default function ListStep( props: Props ) {
 						selectedText={ __( 'Select other platform' ) }
 						options={ secondaryListOptions }
 						onSelect={ ( x: ImporterOption ) => onImporterSelect( x.value ) }
-					></SelectDropdown>
+					/>
 				</div>
 			</div>
 		</>

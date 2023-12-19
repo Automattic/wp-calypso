@@ -6,6 +6,7 @@ import * as LaunchpadNavigator from './launchpad-navigator';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
+import * as Purchases from './purchases';
 import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
@@ -45,6 +46,7 @@ export {
 	LaunchpadNavigator,
 	Site,
 	Plans,
+	Purchases,
 	WpcomPlansUI,
 	Onboard,
 	ProductsList,

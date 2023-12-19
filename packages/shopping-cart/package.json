@@ -45,6 +45,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^6.1.5",
 		"@testing-library/react": "^14.1.2",
-		"typescript": "^5.2.2"
+		"typescript": "^5.3.2"
 	}
 }

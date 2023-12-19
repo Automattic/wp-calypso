@@ -3,7 +3,7 @@
 	margin: 0 auto;
 }
 
-.import-light__capture {
+.import__capture {
 	.form-label {
 		font-size: 0.875rem;
 		font-weight: 500;
@@ -57,7 +57,9 @@
 
 	.action-buttons__importer-list {
 		font-size: 0.875rem;
+		font-weight: 400;
 		text-align: center;
+		text-decoration: none;
 		color: var(--studio-gray-90);
 		margin-top: 1rem;
 

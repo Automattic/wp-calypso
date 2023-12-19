@@ -1,8 +1,9 @@
 import { Dialog, Button, Card, Spinner } from '@automattic/components';
-import { TextControl, TextareaControl } from '@wordpress/components';
+import { TextareaControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	ProductType,
 	ErrorResponse,
@@ -13,23 +14,15 @@ import './styles.scss';
 
 type Props = {
 	isVisible: boolean;
-	buttons: React.ReactElement[];
 	onClose: () => void;
 	slug: string;
 	productName: string;
 	productType: ProductType;
 };
 
-export const ReviewsModal = ( {
-	isVisible,
-	buttons,
-	onClose,
-	slug,
-	productName,
-	productType,
-}: Props ) => {
+export const ReviewsModal = ( { isVisible, onClose, slug, productName, productType }: Props ) => {
 	const [ content, setContent ] = useState< string >( '' );
-	const [ rating, setRating ] = useState< string >( '5' );
+	const [ rating, setRating ] = useState< number >( 5 );
 
 	const createReview = useCreateMarketplaceReviewMutation();
 
@@ -38,17 +31,16 @@ export const ReviewsModal = ( {
 			<Dialog
 				className="marketplace-reviews-modal"
 				isVisible={ isVisible }
-				buttons={ buttons }
 				onClose={ onClose }
 				showCloseIcon
 			>
-				<Card className="marketplace-reviews-modal__card">
-					<CardHeading tagName="h1" size={ 21 }>
-						{ translate( 'Review submitted for %(productName)s', { args: { productName } } ) }
+				<Card className="marketplace-reviews-modal__card-success">
+					<CardHeading className="marketplace-reviews-modal__card-success-title" tagName="h1">
+						{ translate( 'Thank you for your feedback!' ) }
 					</CardHeading>
-					<CardHeading tagName="h2">
+					<CardHeading className="marketplace-reviews-modal__card-success-body" tagName="p">
 						{ translate(
-							'Thank you for your contribution. It will be published following a review from our team.'
+							'Your review it‘s currently under moderation for adherence to our guidelines and will be published soon.'
 						) }
 					</CardHeading>
 				</Card>
@@ -60,15 +52,13 @@ export const ReviewsModal = ( {
 		<Dialog
 			className="marketplace-reviews-modal"
 			isVisible={ isVisible }
-			buttons={ buttons }
 			onClose={ onClose }
 			showCloseIcon
 		>
 			<Card className="marketplace-reviews-modal__card">
 				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'Reviews for %(productName)s', { args: { productName } } ) }
+					{ translate( 'Add New Review for %(productName)s', { args: { productName } } ) }
 				</CardHeading>
-				<CardHeading tagName="h2">{ translate( 'Add new review' ) }</CardHeading>
 				<form
 					onSubmit={ ( e ) => {
 						e.preventDefault();
@@ -89,15 +79,7 @@ export const ReviewsModal = ( {
 						value={ content }
 						onChange={ setContent }
 					/>
-					<TextControl
-						label="Rating"
-						name="rating"
-						type="number"
-						min={ 1 }
-						max={ 5 }
-						value={ rating }
-						onChange={ setRating }
-					/>
+					<ReviewsRatingsStars onSelectRating={ setRating } showSelectedRating rating={ rating } />
 					<div className="marketplace-reviews-modal__buttons-container">
 						<Button
 							className="marketplace-reviews-modal__button-submit"

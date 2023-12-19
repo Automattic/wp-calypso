@@ -242,6 +242,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/',
 		post_id: 102743,
 	},
+	'site-reset': {
+		link: 'https://wordpress.com/support/reset-your-site/',
+		post_id: 296649,
+	},
 	'site-verification': {
 		link: 'https://wordpress.com/support/site-verification-services/',
 		post_id: 5022,
