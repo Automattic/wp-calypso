@@ -324,6 +324,30 @@ export const useCommandsArrayWpcom = ( {
 			icon: cacheIcon,
 		},
 		{
+			name: 'manageCacheSettings',
+			label: __( 'Manage cache settings' ),
+			searchLabel: [
+				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
+				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
+			].join( ' ' ),
+			callback: setStateCallback(
+				'manageCacheSettings',
+				__( 'Select site to manage cache settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#cache` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			},
+			icon: cacheIcon,
+		},
+		{
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
 			searchLabel: [
@@ -734,30 +758,6 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			},
 			icon: toolIcon,
-		},
-		{
-			name: 'manageCacheSettings',
-			label: __( 'Manage cache settings' ),
-			searchLabel: [
-				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
-				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
-			].join( ' ' ),
-			callback: setStateCallback(
-				'manageCacheSettings',
-				__( 'Select site to manage cache settings' )
-			),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#cache` );
-				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
-			},
-			icon: cacheIcon,
 		},
 		{
 			name: 'changeAdminInterfaceStyle',
