@@ -405,7 +405,7 @@ function OneClickPurchaseModal( {
 				<PurchaseModal
 					productToAdd={ product }
 					onClose={ onClose }
-					showFeatureList={ true }
+					showFeatureList={ false }
 					siteSlug={ siteSlug }
 				/>
 			</StripeHookProvider>
