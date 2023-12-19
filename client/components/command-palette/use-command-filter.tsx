@@ -18,5 +18,5 @@ export const useCommandFilter = () => {
 		return 0;
 	};
 
-	return [ commandFilter ];
+	return commandFilter;
 };
