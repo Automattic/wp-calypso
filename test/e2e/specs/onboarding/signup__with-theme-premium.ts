@@ -159,7 +159,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			purchasesPage = new PurchasesPage( page );
 
 			await purchasesPage.clickOnPurchase(
-				`WordPress.com ${ planName }`,
+				`WordPress.com ${ newPlanName }`,
 				newSiteDetails.blog_details.site_slug
 			);
 			await purchasesPage.purchaseAction( 'Cancel plan' );

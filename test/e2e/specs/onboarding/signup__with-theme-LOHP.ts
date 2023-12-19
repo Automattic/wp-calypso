@@ -164,7 +164,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			purchasesPage = new PurchasesPage( page );
 
 			await purchasesPage.clickOnPurchase(
-				`WordPress.com ${ planName }`,
+				`WordPress.com ${ newPlanName }`,
 				newSiteDetails.blog_details.site_slug
 			);
 			await purchasesPage.purchaseAction( 'Cancel plan' );
