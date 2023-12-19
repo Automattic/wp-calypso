@@ -11,6 +11,7 @@ const stepNameToModuleName = {
 	'creds-confirm': 'creds-confirm',
 	'creds-complete': 'creds-complete',
 	'creds-permission': 'creds-permission',
+	'oauth2-confirm-email': 'oauth2-confirm-email',
 	domains: 'domains',
 	'domain-only': 'domains',
 	'domains-launch': 'domains',

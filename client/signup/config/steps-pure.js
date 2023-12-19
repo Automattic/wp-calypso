@@ -784,6 +784,11 @@ export function generateSteps( {
 			stepName: 'p2-get-started',
 		},
 
+		'oauth2-confirm-email': {
+			stepName: 'oauth2-confirm-email',
+			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
+
 		'p2-confirm-email': {
 			stepName: 'p2-confirm-email',
 			fulfilledStepCallback: excludeStepIfEmailVerified,

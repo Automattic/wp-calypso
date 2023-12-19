@@ -313,10 +313,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'wpcc',
-			steps: [ 'oauth2-user' ],
+			steps: [ 'oauth2-user', 'oauth2-confirm-email' ],
 			destination: getRedirectDestination,
 			description: 'WordPress.com Connect signup flow',
-			lastModified: '2017-08-24',
+			lastModified: '2023-12-19',
+			providesDependenciesInQuery: [ 'oauth2_client_id', 'oauth2_redirect' ],
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 			showRecaptcha: true,
 		},

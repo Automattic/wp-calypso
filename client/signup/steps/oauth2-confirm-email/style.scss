@@ -1,0 +1,65 @@
+@import "@wordpress/base-styles/colors";
+
+.wpcc-confirm-email {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.confirm-email__user {
+		width: 404px;
+		height: 176px;
+		border-radius: 4px;
+		border: 1px solid #c3c4c7;
+		background: #fff;
+		display: flex;
+		padding: 24px;
+		align-items: center;
+		gap: 16px;
+		flex-direction: column;
+		box-sizing: border-box;
+		margin: 48px 0;
+	}
+
+	.confirm-email-user__gravatar {
+		width: 60px;
+		height: 60px;
+	}
+
+	.confirm-email-user__username {
+		color: #101517;
+		text-align: center;
+		font-size: 1rem;
+		font-style: normal;
+		font-weight: 500;
+		line-height: 24px; /* 150% */
+	}
+
+	.confirm-email-user__email {
+		color: $gray-700;
+		text-align: center;
+		font-size: 1rem;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 24px; /* 150% */
+	}
+
+	.confirm-email__resend-email {
+		color: #50575e;
+		text-align: center;
+		font-size: 1rem;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 24px; /* 150% */
+		letter-spacing: -0.1px;
+
+		a {
+			color: #674399;
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 24px;
+			letter-spacing: -0.1px;
+			text-decoration: none;
+		}
+	}
+}
