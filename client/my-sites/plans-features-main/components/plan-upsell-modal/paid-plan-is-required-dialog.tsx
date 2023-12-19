@@ -1,5 +1,5 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useEffect, useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -43,8 +43,7 @@ export default function PaidPlanIsRequiredDialog( {
 		onFreePlanSelected();
 	}
 
-	const localeSlug = useLocale();
-	const isEnglish = localeSlug && localeSlug.startsWith( 'en' );
+	const isEnglish = useIsEnglishLocale();
 	const upsellDescription =
 		isEnglish ||
 		hasTranslation(
