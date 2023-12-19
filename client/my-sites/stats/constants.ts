@@ -35,5 +35,5 @@ export const STAT_TYPE_USERS_LIST = 'usersList';
 export const STAT_TYPE_WPCOM_PLUGINS_LIST = 'wpcomPluginsList';
 
 // Subtypes are for more granular control
-export const STATS_SUBTYPE_DATE_CONTROL = 'StatsDateControl';
-export const STATS_SUBTYPE_DOWNLOAD_CSV = 'StatsDownloadCsv';
+export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';
+export const STATS_FEATURE_DOWNLOAD_CSV = 'StatsDownloadCsv';
