@@ -1,5 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { StepContainer, isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -9,6 +10,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
+import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -18,6 +20,11 @@ const SitesChecker: Step = function SitePicker( { navigation, flow } ) {
 	const { submit } = navigation;
 	const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
 	const allSites = useSelector( ( state ) => getSites( state ) );
+	const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+	useEffect( () => {
+		resetOnboardStore();
+	}, [] );
 
 	useEffect( () => {
 		if ( hasAllSitesFetched ) {
@@ -30,7 +37,7 @@ const SitesChecker: Step = function SitePicker( { navigation, flow } ) {
 			submit?.( { filteredSitesCount: filteredSites.length } );
 			return;
 		}
-	} );
+	}, [ hasAllSitesFetched, allSites ] );
 
 	return (
 		<>
