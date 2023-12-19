@@ -5,11 +5,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { render, fireEvent, screen } from '@testing-library/react';
 import React from 'react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 import useSubscriptionPlans from '../../../hooks/use-subscription-plans';
 import { SubscriberRow } from '../subscriber-row';
 
 jest.mock( '@automattic/calypso-config' );
 jest.mock( '../../../hooks/use-subscription-plans' );
+
+const mockStore = configureStore();
+const store = mockStore( {} );
 
 describe( 'SubscriberRow', () => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +45,13 @@ describe( 'SubscriberRow', () => {
 		( isEnabled as jest.MockedFunction< typeof isEnabled > ).mockReturnValue( true );
 
 		render(
-			<SubscriberRow { ...commonProps } onView={ mockOnView } onUnsubscribe={ mockOnUnsubscribe } />
+			<Provider store={ store }>
+				<SubscriberRow
+					{ ...commonProps }
+					onView={ mockOnView }
+					onUnsubscribe={ mockOnUnsubscribe }
+				/>
+			</Provider>
 		);
 	} );
 
@@ -78,9 +89,9 @@ describe( 'SubscriberRow', () => {
 	it( 'should render the subscriber profile correctly', () => {
 		expect( screen.getByText( commonProps.subscriber.display_name ) ).toBeInTheDocument();
 		expect( screen.getByText( commonProps.subscriber.email_address ) ).toBeInTheDocument();
-		expect( screen.getByAltText( 'Profile pic' ) ).toHaveAttribute(
+		expect( screen.getByRole( 'img' ) ).toHaveAttribute(
 			'src',
-			commonProps.subscriber.avatar
+			'https://i0.wp.com/example.com/avatar.png?resize=96%2C96'
 		);
 	} );
 
