@@ -13,7 +13,7 @@ if ( ! isset( $args ) ) {
 
 $image_dir       = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
 $subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="' . __( 'Just a moment...', 'happy-blocks' ) . '"]';
-$signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2Flearn' );
+$signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2Flearn%23support-content-subscribe' );
 ?>
 
 <div class="happy-blocks-support-content-footer">
@@ -81,7 +81,7 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 		<?php
 			require WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
 		?>
-		<div class="support-content-subscribe">
+		<div name="support-content-subscribe" class="support-content-subscribe">
 			<p><?php esc_html_e( 'Get the latest learning in your inbox:', 'happy-blocks' ); ?></p>
 			<div class="subscribe-shortcode-wrapper">
 				<?php if ( is_user_logged_in() ) : ?>
