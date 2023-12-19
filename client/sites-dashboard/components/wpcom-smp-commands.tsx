@@ -380,7 +380,6 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open hosting configuration' ),
 			searchLabel: [
 				_x( 'open hosting configuration', 'Keyword for the Open hosting configuration command' ),
-				_x( 'manage hosting configuration', 'Keyword for the Open hosting configuration command' ),
 				_x( 'admin interface style', 'Keyword for the Open hosting configuration command' ),
 				_x( 'cache', 'Keyword for the Open hosting configuration command' ),
 				_x( 'database', 'Keyword for the Open hosting configuration command' ),
