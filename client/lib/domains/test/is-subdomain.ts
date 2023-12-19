@@ -14,6 +14,7 @@ describe( 'isSubdomain', () => {
 
 	test( 'should return the correct value for subdomains', () => {
 		expect( isSubdomain( 'test.example.com' ) ).toEqual( true );
+		expect( isSubdomain( 'www.example.com' ) ).toEqual( true );
 		expect( isSubdomain( 'sub2.sub1.example.com' ) ).toEqual( true );
 		expect( isSubdomain( 'sub3.sub2.sub1.example.co.uk' ) ).toEqual( true );
 		expect( isSubdomain( 'sub.example.co.uk' ) ).toEqual( true );
