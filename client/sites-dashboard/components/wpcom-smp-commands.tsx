@@ -507,7 +507,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'registerDomain',
-			label: __( 'Register domain' ),
+			label: __( 'Register new domain' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
