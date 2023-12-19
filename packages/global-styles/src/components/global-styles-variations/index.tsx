@@ -1,3 +1,4 @@
+import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
@@ -103,7 +104,8 @@ const GlobalStylesVariations = ( {
 }: GlobalStylesVariationsProps ) => {
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const premiumStylesDescription = translate(
-		'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
+		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+		{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
 	);
 
 	const baseGlobalStyles = useMemo(
