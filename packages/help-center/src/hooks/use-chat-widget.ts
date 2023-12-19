@@ -13,14 +13,15 @@ import { HELP_CENTER_STORE } from '../stores';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 
 export default function useChatWidget(
-	configName: ZendeskConfigName = 'zendesk_support_chat_key'
+	configName: ZendeskConfigName = 'zendesk_support_chat_key',
+	enabled = true
 ) {
 	const sectionName = useSelector( getSectionName );
 	const { isLoading: isSubmittingZendeskUserFields, mutateAsync: submitZendeskUserFields } =
 		useUpdateZendeskUserFieldsMutation();
 	const { setShowHelpCenter, resetStore } = useDispatch( HELP_CENTER_STORE );
 
-	const { isMessagingScriptLoaded } = useZendeskMessaging( configName, true, true );
+	const { isMessagingScriptLoaded } = useZendeskMessaging( configName, enabled, enabled );
 
 	const openChatWidget = (
 		message: string | undefined,

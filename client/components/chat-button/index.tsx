@@ -99,7 +99,10 @@ const ChatButton: FC< Props > = ( {
 	}
 
 	const configName = getConfigNameForIntent( chatIntent );
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget( configName );
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+		configName,
+		shouldShowChatButton()
+	);
 
 	const handleClick = () => {
 		if ( canConnectToZendesk ) {

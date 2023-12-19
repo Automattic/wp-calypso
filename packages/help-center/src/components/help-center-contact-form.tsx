@@ -95,7 +95,6 @@ export const HelpCenterContactForm = () => {
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -124,6 +123,10 @@ export const HelpCenterContactForm = () => {
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
 	} = useChatStatus();
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats
+	);
 	useZendeskMessaging(
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats,
