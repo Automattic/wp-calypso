@@ -204,7 +204,7 @@ const BannerUpsellTitle = ( {
 
 		const bundleName = bundleSettings.name;
 
-		/* Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special", %(businessPlanName) is the short-form of the Business plan name.*/
+		/* Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special", %(businessPlanName)s is the short-form of the Business plan name.*/
 		return isEnglishLocale ||
 			i18n.hasTranslation( 'Access this %(bundleName)s theme with a %(businessPlanName)s plan!' )
 			? translate( 'Access this %(bundleName)s theme with a %(businessPlanName)s plan!', {
