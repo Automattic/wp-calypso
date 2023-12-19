@@ -93,6 +93,7 @@ const PageList = ( {
 							onClick={ () => onSelectPage( name ) }
 						>
 							<PageListItem
+								// Show only the first page in that category
 								label={ pagesMapByCategory[ name ][ 0 ].title }
 								isSelected={ isSelected }
 							/>
