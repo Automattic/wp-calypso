@@ -110,7 +110,7 @@ function OrderStep( {
 	const translate = useTranslate();
 
 	return (
-		<PurchaseModalStep id="test">
+		<PurchaseModalStep id="purchase-modal-step">
 			<div className="purchase-modal__step-title">{ translate( 'Your order' ) }</div>
 			<div className="purchase-modal__step-content">
 				<div>{ translate( 'Site: %(siteSlug)s', { args: { siteSlug } } ) }</div>
@@ -252,7 +252,9 @@ export default function PurchaseModalContent( {
 				>
 					<Gridicon icon="cross-small" />
 				</Button>
-				{ cart.products?.length && <OrderStep siteSlug={ siteSlug } products={ cart.products } /> }
+				{ cart.products?.length ? (
+					<OrderStep siteSlug={ siteSlug } products={ cart.products } />
+				) : null }
 				{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
 				<CheckoutTerms cart={ cart } />
 				<OrderReview

@@ -432,6 +432,8 @@ function DIFMPagePicker( props: StepProps ) {
 	);
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
 
+	const isExistingSite = newOrExistingSiteChoice === 'existing-site' || siteSlug;
+
 	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
 	const {
 		isCartLoading,
@@ -440,7 +442,7 @@ function DIFMPagePicker( props: StepProps ) {
 		isProductsLoading,
 		isFormattedCurrencyLoading,
 		effectiveCurrencyCode,
-	} = useCartForDIFM( selectedPages, isStoreFlow );
+	} = useCartForDIFM( selectedPages, isStoreFlow, isExistingSite );
 
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	let difmTieredPriceDetails = null;
@@ -457,8 +459,6 @@ function DIFMPagePicker( props: StepProps ) {
 		isLoading: isLoadingIsEligibleForOneClickCheckout,
 		result: isEligibleForOneClickCheckout,
 	} = useIsEligibleForOneClickCheckout();
-
-	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
 
 	const submitPickedPages = async () => {
 		if ( ! isCheckoutPressed ) {
