@@ -253,11 +253,11 @@ export default function CompanyDetailsForm( {
 							value={ managedSites.length === 0 ? '1-5' : managedSites }
 							onChange={ handleSetManagedSites }
 						>
-							<option value="1-5">{ translate( '1-5' ) }</option>
-							<option value="6-20">{ translate( '6-20' ) }</option>
-							<option value="21-50">{ translate( '21-50' ) }</option>
-							<option value="51-100">{ translate( '51-100' ) }</option>
-							<option value="101-500">{ translate( '101-500' ) }</option>
+							<option value="1-5">{ translate( '1–5' ) }</option>
+							<option value="6-20">{ translate( '6–20' ) }</option>
+							<option value="21-50">{ translate( '21–50' ) }</option>
+							<option value="51-100">{ translate( '51–100' ) }</option>
+							<option value="101-500">{ translate( '101–500' ) }</option>
 							<option value="500+">{ translate( '500+' ) }</option>
 						</FormSelect>
 					</FormFieldset>
