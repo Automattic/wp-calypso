@@ -98,7 +98,11 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 					.fetch( fetchUrl )
 					.then( handleFetchResponse )
 					.then( ( json ) => {
-						const thumbnailUrl = get( json, [ 0, 'thumbnail_url' ] ) ?? readerPocketCastImage;
+						const thumbnailWidth = get( json, [ 'thumbnail_width' ] ) ?? 220;
+						const thumbnailHeight = get( json, [ 'thumbnail_height' ] ) ?? 80;
+						// append the width and height to the thumbnail url
+						let thumbnailUrl = get( json, [ 'thumbnail_url' ] ) ?? readerPocketCastImage;
+						thumbnailUrl += `?w=${ thumbnailWidth }&h=${ thumbnailHeight }`;
 						if ( thumbnailUrl ) {
 							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 						}
