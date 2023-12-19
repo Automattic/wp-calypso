@@ -20,7 +20,7 @@ import {
 	PurchasesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, getNewPlanName } from '../shared';
 
 declare const browser: Browser;
 
@@ -31,6 +31,7 @@ declare const browser: Browser;
  */
 describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Premium';
+	const newPlanName = getNewPlanName( planName );
 	let themeSlug: string | null = null;
 
 	const testUser = DataHelper.getNewTestUser( {
@@ -107,7 +108,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 
 		it( 'See secure payment', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` );
 		} );
 
 		it( 'Apply coupon', async function () {
