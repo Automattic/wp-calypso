@@ -28,6 +28,7 @@ interface GlobalStylesVariationsProps {
 	description?: TranslateResult;
 	showOnlyHoverViewDefaultVariation?: boolean;
 	splitDefaultVariation?: boolean;
+	needsUpgrade?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -96,8 +97,9 @@ const GlobalStylesVariations = ( {
 	selectedGlobalStylesVariation,
 	description,
 	showOnlyHoverViewDefaultVariation,
-	onSelect,
 	splitDefaultVariation = true,
+	needsUpgrade = true,
+	onSelect,
 }: GlobalStylesVariationsProps ) => {
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const premiumStylesDescription = translate(
@@ -148,7 +150,7 @@ const GlobalStylesVariations = ( {
 					<div className="global-styles-variations__header">
 						<h2>
 							<span>{ headerText }</span>
-							{ ! splitDefaultVariation && (
+							{ ! splitDefaultVariation && ! needsUpgrade && (
 								<PremiumBadge
 									shouldHideTooltip
 									shouldCompactWithAnimation
