@@ -32,7 +32,7 @@ declare const browser: Browser;
  * Keywords: Onboarding, Store Checkout, Coupon, Signup, Plan, Subscription, Cancel
  */
 describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscription', function () {
-	const planName = 'Premium';
+	const planName = 'Explorer';
 	let themeSlug: string | null = null;
 
 	const testUser = DataHelper.getNewTestUser( {
