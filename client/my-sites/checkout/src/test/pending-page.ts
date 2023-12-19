@@ -322,6 +322,31 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: url } );
 	} );
 
+	it( 'returns a failure url if the transaction has an error and there is a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			receiptId: 12345,
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: ERROR,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/failed-purchases', isError: true } );
+	} );
+
+	it( 'returns nothing if the transaction is loading and there is a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: true,
+			receiptId: 12345,
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toBeUndefined();
+	} );
+
 	it( 'returns a failure url if the transaction has an error', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
