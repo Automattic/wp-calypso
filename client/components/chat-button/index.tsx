@@ -72,7 +72,7 @@ const ChatButton: FC< Props > = ( {
 	} = useChatStatus( messagingGroup );
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	function shouldShowChatButton() {
+	function shouldShowChatButton(): boolean {
 		if ( isEligibleForChat && hasActiveChats ) {
 			return true;
 		}
@@ -96,6 +96,8 @@ const ChatButton: FC< Props > = ( {
 		if ( isEligibleForChat && isChatAvailable ) {
 			return true;
 		}
+
+		return false;
 	}
 
 	const configName = getConfigNameForIntent( chatIntent );
