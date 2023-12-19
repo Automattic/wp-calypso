@@ -9,6 +9,7 @@ import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteSort from '../site-sort';
 import SiteTableRow from '../site-table-row';
+import defineNewestSite from './newest-site';
 import type { SiteData, SiteColumns } from '../types';
 
 interface Props {
@@ -38,6 +39,8 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 		} );
 		showLicenseInfo( license );
 	};
+
+	const newestSite = defineNewestSite( items );
 
 	return (
 		<table ref={ ref } className="site-table__table">
@@ -104,6 +107,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 								key={ `table-row-${ blogId }` }
 								isExpanded={ expandedRow === blogId }
 								setExpanded={ () => setExpanded( blogId ) }
+								newestSite={ newestSite }
 							/>
 						);
 					} )

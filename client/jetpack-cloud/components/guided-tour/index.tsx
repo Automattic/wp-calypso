@@ -24,6 +24,7 @@ export interface Tour {
 		| 'left'
 		| 'top left';
 	nextStepOnTargetClick?: string;
+	redirectOnButtonClick?: string;
 }
 
 interface Props {
@@ -75,8 +76,14 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, target, popoverPosition, nextStepOnTargetClick } =
-		tours[ currentStep ];
+	const {
+		title,
+		description,
+		target,
+		popoverPosition,
+		nextStepOnTargetClick,
+		redirectOnButtonClick,
+	} = tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
 
@@ -98,6 +105,9 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 				tour: preferenceName,
 			} )
 		);
+		if ( redirectOnButtonClick ) {
+			window.location.href = redirectOnButtonClick?.toString() || '';
+		}
 	}, [ dispatch, preferenceName, preference ] );
 
 	const nextStep = useCallback( () => {

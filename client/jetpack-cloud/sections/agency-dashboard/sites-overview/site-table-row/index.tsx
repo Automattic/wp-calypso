@@ -1,6 +1,8 @@
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
+import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import { useDispatch, useSelector } from 'calypso/state';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
@@ -8,6 +10,7 @@ import {
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import useDefaultSiteColumns from '../hooks/use-default-site-columns';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
@@ -25,10 +28,20 @@ interface Props {
 	item: SiteData;
 	setExpanded: () => void;
 	isExpanded: boolean;
+	newestSite: string;
 }
 
-export default function SiteTableRow( { index, columns, item, setExpanded, isExpanded }: Props ) {
+export default function SiteTableRow( {
+	index,
+	columns,
+	item,
+	setExpanded,
+	isExpanded,
+	newestSite,
+}: Props ) {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
+
 	const defaultSiteColumnKeys = useDefaultSiteColumns().map( ( { key } ) => key );
 
 	const site = item.site;
@@ -53,6 +66,12 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
 
+	const addNewSitePreference = useSelector( ( state ) =>
+		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour' )
+	);
+
+	const currentSiteMatchesNewSite = site.value.url === newestSite ? true : false;
+
 	return (
 		<Fragment>
 			<tr
@@ -72,6 +91,24 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					event.preventDefault();
 				} }
 			>
+				{ addNewSitePreference && currentSiteMatchesNewSite && (
+					<GuidedTour
+						className="jetpack-cloud-site-dashboard-new-site-added__guided-tour"
+						preferenceName="jetpack-cloud-site-dashboard-new-site-added-tour"
+						tours={ [
+							{
+								target: '.site-table__table-row .newest-site-added',
+								popoverPosition: 'bottom right',
+								title: translate( 'Your new site is here' ),
+								description: translate(
+									'Check out your new site here. That was straightforward, right? ' +
+										"You're now equipped to connect all your new sites to the site management view."
+								),
+								redirectOnButtonClick: '/overview',
+							},
+						] }
+					/>
+				) }
 				{ columns.map( ( column ) => {
 					const row = item[ column.key ];
 					if ( hasSiteConnectionError && column.key !== 'site' ) {
