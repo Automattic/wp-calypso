@@ -227,9 +227,14 @@
 	}
 
 	.magic-login__form-action .button.is-primary:not([disabled]) {
-		background-color: #3858e9;
-		border-color: #3858e9;
+		background-color: var(--color-accent);
+		border-color: var(--color-accent);
 		color: var(--studio-white);
+
+		&:hover {
+			background-color: var(--color-accent-60);
+			border-color: var(--color-accent-60);
+		}
 	}
 }
 .is-section-login .app-promo.magic-link-app-promo {
