@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
@@ -244,7 +245,7 @@ export const QuickLinks = ( {
 					/>
 				</>
 			) }
-			<GeneratorModal />
+			{ config.isEnabled( 'jetpack/ai-logo-generator' ) && <GeneratorModal /> }
 			{ isAtomic && hasBoost && (
 				<ActionBox
 					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
