@@ -25,9 +25,9 @@ import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
-const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string } > = (
-	currentRoute
-) => {
+const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string } > = ( {
+	currentRoute,
+} ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const location = useLocation();
 	const navigate = useNavigate();
