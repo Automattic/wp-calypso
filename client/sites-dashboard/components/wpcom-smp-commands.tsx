@@ -352,9 +352,10 @@ export const useCommandsArrayWpcom = ( {
 			icon: dashboardIcon,
 		},
 		{
-			name: 'manageHostingConfiguration',
-			label: __( 'Manage hosting configuration' ),
+			name: 'openHostingConfiguration',
+			label: __( 'Open hosting configuration' ),
 			searchLabel: [
+				_x( 'open hosting configuration', 'Keyword for the Manage hosting configuration command' ),
 				_x(
 					'manage hosting configuration',
 					'Keyword for the Manage hosting configuration command'
