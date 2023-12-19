@@ -1281,6 +1281,7 @@ export const useCommandsArrayWpcom = ( {
 		{
 			name: 'sendFeedback',
 			label: __( 'Send feedback' ),
+			searchLabel: _x( 'suggest command', 'Keyword for the Send feedback command' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
 				setInitialRoute( emailUrl );
