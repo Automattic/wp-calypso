@@ -77,7 +77,9 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '' );
+	const [ managedSites, setManagedSites ] = useState(
+		initialValues.managedSites ?? ( showSignupFields ? '1-5' : '' )
+	);
 	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
 
 	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
@@ -246,11 +248,7 @@ export default function CompanyDetailsForm( {
 						<FormSelect
 							name="managed_sites"
 							id="managed_sites"
-							// We check for an empty "managedSites" here (instead of defining it as the fallback
-							// state value) so we do not set "managed sites" to "1-5" for all older partners
-							// when they update their company details which would otherwise happen since we
-							// pass all inputs as the payload no matter what page is being used.
-							value={ managedSites.length === 0 ? '1-5' : managedSites }
+							value={ managedSites }
 							onChange={ handleSetManagedSites }
 						>
 							<option value="1-5">{ translate( '1–5' ) }</option>
