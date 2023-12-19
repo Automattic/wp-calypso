@@ -1,5 +1,11 @@
 import page from '@automattic/calypso-router';
-import { SUCCESS, ERROR, FAILURE } from 'calypso/state/order-transactions/constants';
+import {
+	SUCCESS,
+	ERROR,
+	FAILURE,
+	PROCESSING,
+	ASYNC_PENDING,
+} from 'calypso/state/order-transactions/constants';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
@@ -361,6 +367,12 @@ export function getRedirectFromPendingPage( {
 		};
 	}
 
+	// We can't make any other decisions until we've loaded the order because
+	// we need that to know how to proceed.
+	if ( isLoadingOrder ) {
+		return undefined;
+	}
+
 	// If there is a receipt ID and the order is not loading and does not exist
 	// (eg: for free purchases which do not use Orders), then the order must
 	// already be complete. In that case, we can redirect immediately.
@@ -423,6 +435,13 @@ export function getRedirectFromPendingPage( {
 		};
 	}
 
+	if (
+		transaction?.processingStatus === PROCESSING ||
+		transaction?.processingStatus === ASYNC_PENDING
+	) {
+		return undefined;
+	}
+
 	// A HTTP or other unknown error occured; we will send the user back to
 	// checkout.
 	if ( error ) {
@@ -432,5 +451,8 @@ export function getRedirectFromPendingPage( {
 		};
 	}
 
-	return undefined;
+	return {
+		url: checkoutUrl,
+		isUnknown: true,
+	};
 }
