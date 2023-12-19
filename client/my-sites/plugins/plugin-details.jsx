@@ -12,6 +12,7 @@ import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -346,6 +347,7 @@ function PluginDetails( props ) {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
+			<QueryUserPurchases />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
@@ -376,6 +378,7 @@ function PluginDetails( props ) {
 				onClose={ () => setIsReviewsModalVisible( false ) }
 				productName={ fullPlugin.name }
 				slug={ fullPlugin.slug }
+				variations={ fullPlugin.variations }
 				productType="plugin"
 			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />

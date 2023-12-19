@@ -20,6 +20,7 @@ export type ProductType = 'plugin' | 'theme';
 export type ProductProps = {
 	productType: ProductType;
 	slug: string;
+	author?: number;
 };
 
 export type PaginationProps = {
@@ -89,7 +90,8 @@ const fetchMarketplaceReviews = (
 	productType: ProductType,
 	productSlug: string,
 	page: number = 1,
-	perPage: number = 10
+	perPage: number = 10,
+	author?: number
 ): Promise< MarketplaceReviewResponse[] > => {
 	return wpcom.req.get(
 		{
@@ -101,6 +103,7 @@ const fetchMarketplaceReviews = (
 			product_slug: productSlug,
 			page,
 			per_page: perPage,
+			...( author ? { author } : {} ),
 		}
 	);
 };
@@ -167,15 +170,15 @@ const fetchMarketplaceReviewsStats = ( {
 };
 
 export const useMarketplaceReviewsQuery = (
-	{ productType, slug, page, perPage }: MarketplaceReviewsQueryProps,
+	{ productType, slug, page, perPage, author }: MarketplaceReviewsQueryProps,
 	{
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
 	}: MarketplaceReviewsQueryOptions = {}
 ) => {
-	const queryKey: QueryKey = [ queryKeyBase, productType, slug, page, perPage ];
-	const queryFn = () => fetchMarketplaceReviews( productType, slug, page, perPage );
+	const queryKey: QueryKey = [ queryKeyBase, productType, slug, author, page, perPage ];
+	const queryFn = () => fetchMarketplaceReviews( productType, slug, page, perPage, author );
 	return useQuery( { queryKey, queryFn, enabled, staleTime, refetchOnMount } );
 };
 

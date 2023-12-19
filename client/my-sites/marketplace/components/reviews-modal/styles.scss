@@ -51,6 +51,12 @@ $border-color: #eee;
 		}
 	}
 
+	.marketplace-reviews-modal__summary {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
 	.marketplace-reviews-modal__reviews-list {
 		margin-top: 32px;
 	}
@@ -68,4 +74,5 @@ $border-color: #eee;
 
 .dialog__action-buttons-close {
 	padding: 16px 24px 5px 5px;
+	background-color: #fff;
 }
