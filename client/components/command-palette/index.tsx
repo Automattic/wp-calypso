@@ -26,6 +26,10 @@ const StyledCommandsMenuContainer = styled.div( {
 	'[cmdk-root] > [cmdk-list]': {
 		overflowX: 'hidden',
 	},
+	'[cmdk-root] > [cmdk-list] [cmdk-empty]': {
+		paddingLeft: '24px',
+		paddingRight: '24px',
+	},
 } );
 
 const BackButton = styled.button( {
