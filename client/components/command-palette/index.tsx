@@ -6,7 +6,7 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { MAGIC_SEPARATOR, useCommandFilter } from './use-command-filter';
+import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -82,7 +82,7 @@ export function CommandMenuGroup( {
 			{ commands.map( ( command ) => {
 				const itemValue = [ command.label, command.searchLabel ]
 					.filter( Boolean )
-					.join( MAGIC_SEPARATOR );
+					.join( COMMAND_SEPARATOR );
 				return (
 					<Command.Item
 						key={ command.name }
@@ -167,7 +167,7 @@ const CommandPalette = () => {
 		close: () => setIsOpen( false ),
 		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
 	};
-	const [ commandFilter ] = useCommandFilter();
+	const commandFilter = useCommandFilter();
 
 	const commandListRef = useRef< HTMLDivElement >( null );
 
