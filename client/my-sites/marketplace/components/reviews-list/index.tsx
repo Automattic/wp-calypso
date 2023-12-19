@@ -10,6 +10,7 @@ import {
 	useDeleteMarketplaceReviewMutation,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
+import { getAvatarURL } from 'calypso/data/marketplace/utils';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -30,8 +31,6 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 			deleteReviewMutation?.isError && alert( ( deleteReviewMutation.error as Error ).message );
 		}
 	};
-	// TODO: Get the proper value as a URL to the profile picture
-	const authorProfilePic = null;
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
 		return null;
@@ -70,10 +69,10 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						>
 							<div className="marketplace-reviews-list__review-container-header">
 								<div className="marketplace-reviews-list__profile-picture">
-									{ authorProfilePic ? (
+									{ getAvatarURL( review ) ? (
 										<img
 											className="marketplace-reviews-list__profile-picture-img"
-											src={ authorProfilePic }
+											src={ getAvatarURL( review ) }
 											alt={ translate( "%(reviewer)s's profile picture", {
 												comment: 'Alt description for the profile picture of a reviewer',
 												args: { reviewer: review.author_name },
