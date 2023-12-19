@@ -77,13 +77,13 @@ export const useCommandsArrayWpcom = ( {
 		hostingEnabled: {
 			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
-			noSitesNotice: __( "You don't have any sites with hosting features enabled." ),
+			emptyListNotice: __( "You don't have any sites with hosting features enabled." ),
 		},
 		hostingEnabledAndPublic: {
 			filter: ( site: SiteExcerptData ) =>
 				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
 			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
-			noSitesNotice: __( "You don't have any sites with hosting features enabled." ),
+			emptyListNotice: __( "You don't have any sites with hosting features enabled." ),
 		},
 	};
 
