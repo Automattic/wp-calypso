@@ -1,6 +1,6 @@
 // statTypes referred from
 // https://github.com/Automattic/wp-calypso/blob/trunk/packages/wpcom.js/src/lib/runtime/site.get.js
-// subTypes are newly defined in this file, based on component names
+// stat features are newly defined in this file
 
 export const STAT_TYPE_CATEGORIES_LIST = 'categoriesList';
 export const STAT_TYPE_COMMENTS_LIST = 'commentsList';
@@ -34,6 +34,6 @@ export const STAT_TYPE_TAGS_LIST = 'tagsList';
 export const STAT_TYPE_USERS_LIST = 'usersList';
 export const STAT_TYPE_WPCOM_PLUGINS_LIST = 'wpcomPluginsList';
 
-// Subtypes are for more granular control
+// stats feature are for more granular control, string value is based on component name
 export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';
 export const STATS_FEATURE_DOWNLOAD_CSV = 'StatsDownloadCsv';
