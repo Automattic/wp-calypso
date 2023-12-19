@@ -19,6 +19,7 @@ interface CommandMenuGroupProps
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
+	setEmptyListNotice?: ( message: string ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -81,8 +82,9 @@ export function CommandMenuGroup( {
 	selectedCommandName,
 	setSelectedCommandName,
 	setFooterMessage,
+	setEmptyListNotice,
 }: CommandMenuGroupProps ) {
-	const { commands, filterNotice } = useCommandPalette( {
+	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
@@ -91,6 +93,10 @@ export function CommandMenuGroup( {
 	useEffect( () => {
 		setFooterMessage?.( filterNotice ?? '' );
 	}, [ setFooterMessage, filterNotice ] );
+
+	useEffect( () => {
+		setEmptyListNotice?.( emptyListNotice ?? '' );
+	}, [ setEmptyListNotice, emptyListNotice ] );
 
 	if ( ! commands.length ) {
 		return null;
@@ -187,6 +193,7 @@ const CommandPalette = () => {
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ footerMessage, setFooterMessage ] = useState( '' );
+	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const dispatch = useDispatch();
 	const open = useCallback( () => {
@@ -314,8 +321,8 @@ const CommandPalette = () => {
 						/>
 					</div>
 					<Command.List ref={ commandListRef }>
-						{ search && ! isLoading && (
-							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
+						{ ! isLoading && (
+							<Command.Empty>{ emptyListNotice || __( 'No results found.' ) }</Command.Empty>
 						) }
 						<CommandMenuGroup
 							search={ search }
@@ -328,6 +335,7 @@ const CommandPalette = () => {
 							selectedCommandName={ selectedCommandName }
 							setSelectedCommandName={ setSelectedCommandName }
 							setFooterMessage={ setFooterMessage }
+							setEmptyListNotice={ setEmptyListNotice }
 						/>
 					</Command.List>
 				</Command>
