@@ -195,7 +195,8 @@ export default function useCreatePaymentCompleteCallback( {
 				receiptId &&
 				transactionResult &&
 				'purchases' in transactionResult &&
-				transactionResult.purchases
+				transactionResult.purchases &&
+				transactionResult.success
 			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
