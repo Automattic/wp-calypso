@@ -169,19 +169,12 @@
 			}
 
 			.domains__domain-cart-domain {
-				display: flex;
-				align-items: center;
 				color: var(--studio-gray-50);
 				font-size: $font-body-small;
-
+				overflow: auto;
 				span {
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
+					overflow-wrap: break-word;
 				}
-
-				width: 0;
-				flex-grow: 1;
 			}
 
 			.domains__domain-cart-remove {

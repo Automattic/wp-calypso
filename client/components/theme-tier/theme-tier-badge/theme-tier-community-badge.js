@@ -1,6 +1,8 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -13,13 +15,10 @@ export default function ThemeTierCommunityBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
-	const legacyCanUseTheme = useSelector(
+	const isEnglishLocale = useIsEnglishLocale();
+	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
-
-	if ( legacyCanUseTheme ) {
-		return <span>{ translate( 'Included in my plan' ) }</span>;
-	}
 
 	const tooltipContent = (
 		<>
@@ -32,9 +31,17 @@ export default function ThemeTierCommunityBadge() {
 			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
-					translate(
-						'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
-					),
+					isEnglishLocale ||
+						i18n.hasTranslation(
+							'This community theme can only be installed if you have the <Link>%(businessNamePlan)s plan</Link> or higher on your site.'
+						)
+						? translate(
+								'This community theme can only be installed if you have the <Link>%(businessNamePlan)s plan</Link> or higher on your site.',
+								{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+						  )
+						: translate(
+								'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
+						  ),
 					{
 						Link: <ThemeTierBadgeCheckoutLink plan="business" />,
 					}
@@ -45,15 +52,28 @@ export default function ThemeTierCommunityBadge() {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker />
+			{ ! isThemeIncluded && (
+				<>
+					<ThemeTierBadgeTracker />
+					<PremiumBadge
+						className="theme-tier-badge__content"
+						focusOnShow={ false }
+						isClickable
+						labelText={ translate( 'Upgrade' ) }
+						tooltipClassName="theme-tier-badge-tooltip"
+						tooltipContent={ tooltipContent }
+						tooltipPosition="top"
+					/>
+				</>
+			) }
+
 			<PremiumBadge
-				className="theme-tier-badge__content"
+				className="theme-tier-badge__content is-third-party"
 				focusOnShow={ false }
-				isClickable
-				labelText={ translate( 'Upgrade' ) }
-				tooltipClassName="theme-tier-badge-tooltip"
-				tooltipContent={ tooltipContent }
-				tooltipPosition="top"
+				isClickable={ false }
+				labelText={ translate( 'Community' ) }
+				shouldHideIcon
+				shouldHideTooltip
 			/>
 		</>
 	);
