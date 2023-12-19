@@ -38,7 +38,7 @@
 	}
 }
 
-.license-product-card:focus .license-product-card__select-button {
+.license-product-card:focus-visible .license-product-card__select-button {
 	outline: var(--studio-gray-10) solid 2px;
 }
 
