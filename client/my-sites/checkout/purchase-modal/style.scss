@@ -158,16 +158,33 @@ $left-margin: 36px;
 /**
  * Checkout Terms
  */
-.purchase-modal .checkout__terms {
-	margin: 1em 0 4px;
-	padding-left: $left-margin;
-	font-size: $font-body-extra-small;
-}
-.purchase-modal .checkout__terms-item {
-	margin-bottom: 4px;
-	margin-left: 12px;
-	margin-top: 4px;
-}
+
+ .purchase-modal {
+	& .checkout__terms-foldable-card, .foldable-card.card.is-expanded {
+		margin: .5rem 0 .5rem 20px;
+		box-shadow: none;
+
+		& .foldable-card__expand {
+			top: 0;
+		}
+	}
+	& .foldable-card.is-expanded .foldable-card__content {
+		border-top: none;
+
+		& .checkout__terms-item {
+			margin-left: 0;
+		}
+	}
+	& .checkout__terms {
+		margin: 1em 0 4px;
+		padding-left: $left-margin;
+	}
+	& .checkout__terms-item {
+		margin-bottom: .5rem;
+		margin-left: 36px;
+		margin-top: .5rem;
+	}
+ }
 
 /**
  * Taxes and cost
