@@ -4,16 +4,38 @@ import {
 	getTermFromDuration,
 	calculateMonthlyPrice,
 } from '@automattic/calypso-products';
-import { Plans, WpcomPlansUI, Purchases } from '@automattic/data-stores';
+import { Plans, WpcomPlansUI, Purchases, type AddOnMeta } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
-import type { AddOnMeta } from '@automattic/data-stores';
-import type {
-	UsePricingMetaForGridPlans,
-	PricingMetaForGridPlan,
-} from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+
+export interface PricingMetaForGridPlan {
+	billingPeriod?: Plans.PlanPricing[ 'billPeriod' ];
+	currencyCode?: Plans.PlanPricing[ 'currencyCode' ];
+	originalPrice: Plans.PlanPricing[ 'originalPrice' ];
+	/**
+	 * If discounted prices are provided (not null), they will take precedence over originalPrice.
+	 * UI will show original with a strikethrough or grayed out
+	 */
+	discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
+	/**
+	 * Intro offers override billing and pricing shown in the UI
+	 * they are currently defined off the site plans (so not defined when siteId is not available)
+	 */
+	introOffer?: Plans.PlanPricing[ 'introOffer' ];
+	expiry?: Plans.SitePlan[ 'expiry' ];
+}
+
+export type UsePricingMetaForGridPlans = ( {
+	planSlugs,
+	withoutProRatedCredits,
+	storageAddOns,
+}: {
+	planSlugs: PlanSlug[];
+	withoutProRatedCredits?: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
+} ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 interface Props {
 	planSlugs: PlanSlug[];
@@ -28,8 +50,7 @@ function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): 
 
 /*
  * Returns the pricing metadata needed for the plans-ui components.
- * - see PricingMetaForGridPlan type for details
- * - will migrate to data-store once dependencies are resolved (when site & plans data-stores more complete)
+ * - see `PricingMetaForGridPlan` type for details
  */
 const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
