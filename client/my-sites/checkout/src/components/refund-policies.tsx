@@ -8,6 +8,7 @@ import {
 	isTriennially,
 	isCentennially,
 	isYearly,
+	isDomainTransfer,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -43,6 +44,7 @@ export enum RefundPolicy {
 	PlanYearlyBundle,
 	PlanYearlyRenewal,
 	PremiumTheme,
+	DomainNameTransfer,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
@@ -80,6 +82,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 				return RefundPolicy.DomainNameRenewal;
 			}
 			return RefundPolicy.DomainNameRegistration;
+		}
+
+		if ( isDomainTransfer( product ) ) {
+			return RefundPolicy.DomainNameTransfer;
 		}
 
 		if ( product.product_slug === 'premium_theme' ) {
@@ -187,6 +193,7 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 			case RefundPolicy.DomainNameRegistration:
 			case RefundPolicy.DomainNameRegistrationBundled:
 			case RefundPolicy.DomainNameRenewal:
+			case RefundPolicy.DomainNameTransfer:
 				return 4;
 
 			case RefundPolicy.GenericMonthly:
@@ -248,6 +255,13 @@ function RefundPolicyItem( {
 		case RefundPolicy.DomainNameRegistration:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.DomainNameTransfer:
+			text = translate(
+				'You understand that {{refundsSupportPage}}domain name transfers are non-refundable{{/refundsSupportPage}} unless the process is canceled before the transfer is completed.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
