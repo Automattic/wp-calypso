@@ -676,7 +676,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
 					<ScreenConfirmation
 						siteId={ site?.ID }
-						isNewSite={ isNewSite }
 						selectedDesign={ selectedDesign }
 						onConfirm={ onConfirm }
 					/>

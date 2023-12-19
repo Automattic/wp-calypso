@@ -12,20 +12,17 @@ import { useSelector } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
-import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import './screen-confirmation.scss';
 
 interface Props {
 	siteId?: number;
-	isNewSite: boolean;
 	selectedDesign?: Design;
 	onConfirm: () => void;
 }
 
-const ScreenConfirmation = ( { siteId = 0, isNewSite, selectedDesign, onConfirm }: Props ) => {
+const ScreenConfirmation = ( { siteId = 0, selectedDesign, onConfirm }: Props ) => {
 	const translate = useTranslate();
-	const { title } = useScreen( 'confirmation' );
 
 	const currentThemeId = useSelector( ( state: IAppState ) => getActiveTheme( state, siteId ) );
 	const currentTheme = useSelector( ( state: IAppState ) =>
@@ -33,42 +30,21 @@ const ScreenConfirmation = ( { siteId = 0, isNewSite, selectedDesign, onConfirm 
 	);
 	const willThemeChange = currentThemeId !== selectedDesign?.slug;
 
+	let title;
 	let description;
 	let list;
 	let continueLabel;
 
-	if ( isNewSite ) {
-		description = translate( 'Time to add some content and bring your site to life!' );
-		list = [
-			{
-				icon: image,
-				title: translate( 'Upload images' ),
-				description: translate( 'Showcase your photos in their best light.' ),
-			},
-			{
-				icon: verse,
-				title: translate( 'Start writing' ),
-				description: translate( 'Get things going and share your insights.' ),
-			},
-			{
-				icon: layout,
-				title: translate( 'Customize every detail' ),
-				description: translate( 'Make your site even more unique.' ),
-			},
-		];
-		continueLabel = translate( 'Start adding content' );
-	} else if ( willThemeChange ) {
+	if ( willThemeChange ) {
+		title = translate( 'Ready to activate?' );
 		description = translate( 'The following will change in your site.' );
 		list = [
 			{
 				icon: layout,
 				title: translate( 'Active theme' ),
 				description: translate(
-					'This will change your active theme from %(oldThemeName)s to {{strong}}%(newThemeName)s{{/strong}}.',
+					'This will change your active theme from %(oldThemeName)s to %(newThemeName)s.',
 					{
-						components: {
-							strong: <strong />,
-						},
 						args: {
 							oldThemeName: currentTheme?.name ?? '',
 							newThemeName: selectedDesign?.title ?? '',
@@ -95,11 +71,28 @@ const ScreenConfirmation = ( { siteId = 0, isNewSite, selectedDesign, onConfirm 
 				),
 			},
 		];
-		continueLabel = translate( 'Confirm' );
+		continueLabel = translate( 'Activate this theme' );
 	} else {
-		description = translate( 'You can further customize your site in the Site Editor.' );
-		list = [] as any[];
-		continueLabel = translate( 'Confirm' );
+		title = translate( 'Great job!' );
+		description = translate( 'Time to add some content and bring your site to life!' );
+		list = [
+			{
+				icon: image,
+				title: translate( 'Upload images' ),
+				description: translate( 'Showcase your photos in their best light.' ),
+			},
+			{
+				icon: verse,
+				title: translate( 'Start writing' ),
+				description: translate( 'Get things going and share your insights.' ),
+			},
+			{
+				icon: layout,
+				title: translate( 'Customize every detail' ),
+				description: translate( 'Make your site even more unique.' ),
+			},
+		];
+		continueLabel = translate( 'Start adding content' );
 	}
 
 	return (
