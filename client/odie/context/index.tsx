@@ -115,10 +115,17 @@ const OdieAssistantProvider = ( {
 	}, [ existingChat, existingChat.chat_id ] );
 
 	const trackEvent = useCallback(
-		( event: string, properties?: Record< string, unknown > ) => {
-			dispatch( recordTracksEvent( event, properties ) );
+		( event: string, properties: Record< string, unknown > = {} ) => {
+			dispatch(
+				recordTracksEvent( event, {
+					...properties,
+					chat_id: chat?.chat_id,
+					bot_name_slug: botNameSlug,
+					bot_setting: botSetting,
+				} )
+			);
 		},
-		[ dispatch ]
+		[ botNameSlug, botSetting, chat?.chat_id, dispatch ]
 	);
 
 	const clearChat = useCallback( () => {

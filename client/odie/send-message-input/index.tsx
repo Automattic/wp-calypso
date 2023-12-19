@@ -22,8 +22,7 @@ export const OdieSendMessageButton = ( {
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { botNameSlug, initialUserMessage, chat, isLoading, trackEvent } =
-		useOdieAssistantContext();
+	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const translate = useTranslate();
 
@@ -35,9 +34,7 @@ export const OdieSendMessageButton = ( {
 
 	const sendMessage = async () => {
 		try {
-			trackEvent( 'calypso_odie_chat_message_action_send', {
-				bot_name_slug: botNameSlug,
-			} );
+			trackEvent( 'calypso_odie_chat_message_action_send' );
 
 			const message = {
 				content: messageString,
@@ -47,14 +44,11 @@ export const OdieSendMessageButton = ( {
 
 			await sendOdieMessage( { message } );
 
-			trackEvent( 'calypso_odie_chat_message_action_receive', {
-				bot_name_slug: botNameSlug,
-			} );
+			trackEvent( 'calypso_odie_chat_message_action_receive' );
 		} catch ( e ) {
 			const error = e as Error;
 			trackEvent( 'calypso_odie_chat_message_error', {
 				error: error?.message,
-				bot_name_slug: botNameSlug,
 			} );
 		}
 	};
