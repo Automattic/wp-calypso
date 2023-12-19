@@ -24,6 +24,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
@@ -1211,24 +1212,41 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
 	}
+	switch ( nextProps.flowName ) {
+		case 'wpcc':
+			if (
+				// Exclude the step if:
+				// 1. If user is not from WooCommerce
+				// 2. User signed up via OAuth2 (e.g. Google)
+				// 3. User is already verified.
+				! isWooOAuth2Client( nextProps.oauth2Client ) ||
+				nextProps.progress[ 'oauth2-user' ]?.oauth2Signup ||
+				nextProps.isEmailVerified
+			) {
+				nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+				flows.excludeStep( stepName );
+			}
+			break;
+		default:
+			/* For the P2 signup flow, if we displayed the email verification step before,
+				we need to display it again when the user comes back to the flow
+				after verification. */
+			if ( nextProps?.progress[ stepName ]?.status === 'in-progress' ) {
+				debug( 'User email verification is in progress, do not skip this step' );
+				return;
+			}
 
-	/* For the P2 signup flow, if we displayed the email verification step before,
-	   we need to display it again when the user comes back to the flow
-	   after verification. */
-	if ( nextProps.flowName === 'p2' && nextProps?.progress[ stepName ]?.status === 'in-progress' ) {
-		debug( 'User email verification is in progress, do not skip this step' );
-		return;
+			debug( 'User email is verified: %s', nextProps?.isEmailVerified );
+			if ( ! nextProps.isEmailVerified ) {
+				return;
+			}
+
+			debug( 'Skipping P2 email confirmation step' );
+			recordTracksEvent( 'calypso_signup_p2_confirm_email_autoskip' );
+
+			nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+			flows.excludeStep( stepName );
 	}
-
-	debug( 'User email is verified: %s', nextProps?.isEmailVerified );
-	if ( ! nextProps.isEmailVerified ) {
-		return;
-	}
-
-	debug( 'Skipping P2 email confirmation step' );
-	recordTracksEvent( 'calypso_signup_p2_confirm_email_autoskip' );
-	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-	flows.excludeStep( stepName );
 }
 
 export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {

@@ -47,6 +47,7 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
+import { isWpccFlow } from 'calypso/signup/utils';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -711,6 +712,11 @@ class Signup extends Component {
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
+		// Call processFulfilledSteps before redirecting to the next step because we don't want to show the email confirmation screen if it's not necessary.
+		if ( isWpccFlow( nextFlowName ) && nextStepName ) {
+			this.processFulfilledSteps( nextStepName, this.props );
+		}
+
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
 
@@ -874,6 +880,7 @@ class Signup extends Component {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}
+
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
