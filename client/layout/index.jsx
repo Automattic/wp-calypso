@@ -218,11 +218,16 @@ class Layout extends Component {
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
 
+		const isCheckoutFailed =
+			this.props.sectionName === 'checkout' &&
+			this.props.currentRoute.startsWith( '/checkout/failed-purchases' );
+
 		return (
 			<MasterbarComponent
 				section={ this.props.sectionGroup }
 				isCheckout={ this.props.sectionName === 'checkout' }
 				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
+				isCheckoutFailed={ isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
 		);

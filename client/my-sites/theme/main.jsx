@@ -779,14 +779,16 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { styleVariations } = this.props;
+		const { isPremium, isThemePurchased, shouldLimitGlobalStyles, styleVariations } = this.props;
 
 		const splitDefaultVariation =
 			! this.props.isExternallyManagedTheme &&
-			! this.props.isThemePurchased &&
 			! this.props.isBundledSoftwareSet &&
-			! this.props.isPremium &&
-			this.props.shouldLimitGlobalStyles;
+			! isThemePurchased &&
+			! isPremium &&
+			shouldLimitGlobalStyles;
+
+		const needsUpgrade = shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
 
 		return (
 			styleVariations.length > 0 && (
@@ -795,6 +797,7 @@ class ThemeSheet extends Component {
 					splitDefaultVariation={ splitDefaultVariation }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
+					needsUpgrade={ needsUpgrade }
 					onClick={ this.onStyleVariationClick }
 				/>
 			)
