@@ -71,7 +71,7 @@
 	}
 }
 
-.earn .promo-card {
+.earn .promo-section__promos .promo-card {
 	@include breakpoint-deprecated( ">1280px" ) {
 		width: calc(33% - 1em);
 	}
