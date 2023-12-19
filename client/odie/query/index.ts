@@ -40,49 +40,68 @@ function odieWpcomSendSupportMessage( message: Message, path: string ) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content, client_message_id: message.client_message_id },
+		body: { message: message.content },
 	} );
 }
 
-// It will post a new message using the current chat_id
+/**
+ * It will post a new message using the current chat_id.
+ * The message object should be in the format of Message type. The mutator will take
+ * care of adding placeholders and error messages to the chat.
+ * @returns UseMutationResult
+ * @example
+ * const { mutate, isLoading } = useOdieSendMessage();
+ * mutate( { message: { content: 'Hello' } } );
+ */
 export const useOdieSendMessage = (): UseMutationResult<
-	{ chat_id: string; messages: Message[]; client_message_id: string },
+	{ chat_id: string; messages: Message[] },
 	unknown,
-	{ message: Message }
+	{ message: Message },
+	{ internal_message_id: string }
 > => {
 	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage } = useOdieAssistantContext();
-
-	const client_message_id = uuid();
-
-	return useMutation( {
+	return useMutation<
+		{ chat_id: string; messages: Message[] },
+		unknown,
+		{ message: Message },
+		{ internal_message_id: string }
+	>( {
 		mutationFn: ( { message }: { message: Message } ) => {
+			return buildSendChatMessage( { ...message }, botNameSlug, chat.chat_id );
+		},
+		onMutate: ( { message } ) => {
+			const internal_message_id = uuid();
 			addMessage( [
 				message,
 				{
-					client_message_id,
+					internal_message_id,
 					content: '...',
 					role: 'bot',
 					type: 'placeholder',
 				},
 			] );
-
-			return buildSendChatMessage( { ...message, client_message_id }, botNameSlug, chat.chat_id );
+			setIsLoading( true );
+			return { internal_message_id };
 		},
-		onSuccess: ( data ) => {
-			const received_client_message_id = data.client_message_id;
+		onSuccess: ( data, _, context ) => {
+			if ( ! context ) {
+				throw new Error( 'Context is undefined' );
+			}
+			const { internal_message_id } = context;
 
-			if ( ! data.messages || ! data.messages[ 0 ].content || ! received_client_message_id ) {
-				updateMessage( received_client_message_id, {
+			if ( ! data.messages || ! data.messages[ 0 ].content ) {
+				updateMessage( {
 					content: WAPUU_ERROR_MESSAGE,
+					internal_message_id,
 					role: 'bot',
-					type: 'message',
-					client_message_id: received_client_message_id,
+					type: 'error',
 				} );
 
 				return;
 			}
-
-			updateMessage( received_client_message_id, {
+			updateMessage( {
+				message_id: data.messages[ 0 ].message_id,
+				internal_message_id,
 				content: data.messages[ 0 ].content,
 				role: 'bot',
 				simulateTyping: data.messages[ 0 ].simulateTyping,
@@ -92,21 +111,19 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 			setOdieStorage( 'chat_id', data.chat_id );
 		},
-		onMutate: () => {
-			setIsLoading( true );
-		},
 		onSettled: () => {
 			setIsLoading( false );
 		},
-		onError: ( e ) => {
-			const error = e as Record< string, unknown >;
-			const returned_client_message_id = error[ 'client_message_id' ] as string;
-
-			updateMessage( returned_client_message_id, {
+		onError: ( _, __, context ) => {
+			if ( ! context ) {
+				throw new Error( 'Context is undefined' );
+			}
+			const { internal_message_id } = context;
+			updateMessage( {
 				content: WAPUU_ERROR_MESSAGE,
+				internal_message_id,
 				role: 'bot',
-				type: 'message',
-				client_message_id: returned_client_message_id,
+				type: 'error',
 			} );
 		},
 	} );
@@ -142,6 +159,12 @@ function odieWpcomGetChat( path: string ): Promise< Chat > {
 	} ) as Promise< Chat >;
 }
 
+/**
+ * It will get the chat messages using the current chat_id.
+ * @returns UseQueryResult
+ * @example
+ * const { data, isLoading } = useOdieGetChat();
+ */
 export const useOdieGetChat = (
 	botNameSlug: OdieAllowedBots,
 	chatId: number | undefined | null,
@@ -202,7 +225,14 @@ const odieWpcomSendMessageFeedback = (
 	} );
 };
 
-// It will post a new message using the current chat_id
+/**
+ * It will post a new message using the current chat_id.
+ * This mutator is intended to shend feedback (thumbs up or down) for a message.
+ * @returns UseMutationResult
+ * @example
+ * const { mutate, isLoading } = useOdieSendMessageFeedback();
+ * mutate( { rating_value: 1, message: { message_id: 123 } } );
+ */
 export const useOdieSendMessageFeedback = (): UseMutationResult<
 	number,
 	unknown,

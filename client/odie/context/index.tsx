@@ -39,7 +39,7 @@ interface OdieAssistantContextInterface {
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
-	updateMessage: ( client_message_id: string, message: Message ) => void;
+	updateMessage: ( message: Message ) => void;
 }
 
 const defaultContextInterfaceValues = {
@@ -184,21 +184,16 @@ const OdieAssistantProvider = ( {
 		} );
 	};
 
-	// Update the message, passing the client_message_id and properties to update
-	const updateMessage = ( client_message_id: string, message: Partial< Message > ) => {
+	const updateMessage = ( message: Partial< Message > ) => {
 		setChat( ( prevChat ) => {
-			const messageIndex = prevChat.messages.findIndex(
-				( m ) => m.client_message_id === client_message_id
+			const updatedMessages = prevChat.messages.map( ( m ) =>
+				( message.internal_message_id && m.internal_message_id === message.internal_message_id ) ||
+				( message.message_id && m.message_id === message.message_id )
+					? { ...m, ...message }
+					: m
 			);
-			const updatedMessage = { ...prevChat.messages[ messageIndex ], ...message };
-			return {
-				...prevChat,
-				messages: [
-					...prevChat.messages.slice( 0, messageIndex ),
-					updatedMessage,
-					...prevChat.messages.slice( messageIndex + 1 ),
-				],
-			};
+
+			return { ...prevChat, messages: updatedMessages };
 		} );
 	};
 
