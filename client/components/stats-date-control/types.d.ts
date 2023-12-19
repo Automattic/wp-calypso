@@ -32,7 +32,7 @@ interface DateControlPickerShortcut {
 	statType: string;
 	isGated: boolean;
 	onGatedClick: (
-		shorcut: DateControlPickerShortcut,
+		shortcut: DateControlPickerShortcut,
 		event_from: 'jetpack_odyssey' | 'calypso'
 	) => void;
 }
