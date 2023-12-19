@@ -4,7 +4,8 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
+import { useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import type { Moment } from 'moment/moment';
@@ -18,6 +19,7 @@ export default function useBannerSubtitle(
 	isEcommerceTrial?: boolean
 ): string {
 	const locale = useLocale();
+	const isEn = useIsEnglishLocale();
 	const translate = useTranslate();
 	const [ bannerSubtitle, setBannerSubtitle ] = useState( '' );
 	// moment.js doesn't have a format option to display the long form in a localized way without the year
@@ -32,8 +34,31 @@ export default function useBannerSubtitle(
 	useEffect( () => {
 		// this may need updating for intro offers with singly counted units e.g. 1 month|year
 		let introOfferSubtitle;
-		if ( isEcommerceTrial && anyWooExpressIntroOffer ) {
-			if ( 'month' === anyWooExpressIntroOffer.intervalUnit ) {
+		if (
+			isEcommerceTrial &&
+			anyWooExpressIntroOffer &&
+			'month' === anyWooExpressIntroOffer.intervalUnit
+		) {
+			if (
+				trialDaysLeftToDisplay < 1 &&
+				( isEn ||
+					hasTranslation(
+						'Your free trial ends today. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
+							'— any Woo Express plan for just %(introOfferFormattedPrice)s a month for your first %(introOfferIntervalCount)d months.'
+					) )
+			) {
+				introOfferSubtitle = translate(
+					'Your free trial ends today. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
+						'— any Woo Express plan for just %(introOfferFormattedPrice)s a month for your first %(introOfferIntervalCount)d months.',
+					{
+						args: {
+							expirationdate: readableExpirationDate as string,
+							introOfferFormattedPrice: anyWooExpressIntroOffer.formattedPrice,
+							introOfferIntervalCount: anyWooExpressIntroOffer.intervalCount,
+						},
+					}
+				);
+			} else {
 				introOfferSubtitle = translate(
 					'Your free trial will end in %(daysLeft)d day. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
 						'— any Woo Express plan for just %(introOfferFormattedPrice)s for your first %(introOfferIntervalCount)d months.',
@@ -61,6 +86,21 @@ export default function useBannerSubtitle(
 					);
 				} else if ( introOfferSubtitle ) {
 					subtitle = introOfferSubtitle;
+				} else if (
+					trialDaysLeftToDisplay < 1 &&
+					( isEn ||
+						hasTranslation(
+							'Your free trial ends today. Upgrade to a plan by %(expirationdate)s to unlock new features and launch your migrated website.'
+						) )
+				) {
+					subtitle = translate(
+						'Your free trial ends today. Upgrade to a plan by %(expirationdate)s to unlock new features and launch your migrated website.',
+						{
+							args: {
+								expirationdate: readableExpirationDate as string,
+							},
+						}
+					);
 				} else {
 					subtitle = translate(
 						'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and launch your migrated website.',
@@ -79,6 +119,21 @@ export default function useBannerSubtitle(
 				if ( trialExpired ) {
 					subtitle = translate(
 						'Your free trial has expired. Upgrade to a plan to continue using advanced features.'
+					);
+				} else if (
+					trialDaysLeftToDisplay < 1 &&
+					( isEn ||
+						hasTranslation(
+							'Your free trial ends today. Upgrade to a plan by %(expirationdate)s to continue using advanced features.'
+						) )
+				) {
+					subtitle = translate(
+						'Your free trial ends today. Upgrade to a plan by %(expirationdate)s to continue using advanced features.',
+						{
+							args: {
+								expirationdate: readableExpirationDate as string,
+							},
+						}
 					);
 				} else {
 					subtitle = translate(
@@ -101,6 +156,21 @@ export default function useBannerSubtitle(
 					);
 				} else if ( introOfferSubtitle ) {
 					subtitle = introOfferSubtitle;
+				} else if (
+					trialDaysLeftToDisplay < 1 &&
+					( isEn ||
+						hasTranslation(
+							'Your free trial ends today. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.'
+						) )
+				) {
+					subtitle = translate(
+						'Your free trial ends today. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
+						{
+							args: {
+								expirationdate: readableExpirationDate as string,
+							},
+						}
+					);
 				} else {
 					subtitle = translate(
 						'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
@@ -126,6 +196,7 @@ export default function useBannerSubtitle(
 		anyWooExpressIntroOffer,
 		isEcommerceTrial,
 		translate,
+		isEn,
 	] );
 
 	return bannerSubtitle;
