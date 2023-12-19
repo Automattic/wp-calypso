@@ -5,7 +5,7 @@
 	box-shadow: none;
 }
 
-.marketplace-reviews-modal__card-success {
+.marketplace-review-modal__card-successs {
 	box-shadow: none;
 	padding: 26px 40px;
 	display: flex;
@@ -13,7 +13,7 @@
 	align-items: center;
 	margin-bottom: 0;
 
-	& .marketplace-reviews-modal__card-success-title {
+	& .marketplace-review-modal__card-successs-title {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
 		font-weight: 400;
@@ -21,7 +21,7 @@
 		margin: 0;
 	}
 
-	& .marketplace-reviews-modal__card-success-body {
+	& .marketplace-review-modal__card-successs-body {
 		max-width: 400px;
 		font-size: $font-body-small;
 		text-align: center;

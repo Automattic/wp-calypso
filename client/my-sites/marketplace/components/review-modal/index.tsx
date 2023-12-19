@@ -34,11 +34,11 @@ export const ReviewModal = ( { isVisible, onClose, slug, productName, productTyp
 				onClose={ onClose }
 				showCloseIcon
 			>
-				<Card className="marketplace-reviews-modal__card-success">
-					<CardHeading className="marketplace-reviews-modal__card-success-title" tagName="h1">
+				<Card className="marketplace-review-modal__card-success">
+					<CardHeading className="marketplace-review-modal__card-success-title" tagName="h1">
 						{ translate( 'Thank you for your feedback!' ) }
 					</CardHeading>
-					<CardHeading className="marketplace-reviews-modal__card-success-body" tagName="p">
+					<CardHeading className="marketplace-review-modal__card-success-body" tagName="p">
 						{ translate(
 							'Your review it‘s currently under moderation for adherence to our guidelines and will be published soon.'
 						) }
