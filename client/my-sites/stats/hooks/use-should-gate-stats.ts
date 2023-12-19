@@ -5,22 +5,23 @@ import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_DOWNLOAD_CSV,
+	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_CLICKS,
+	STAT_TYPE_REFERRERS,
+} from '../constants';
 
-// TODO: define shared variables
-const trafficPaidStats = [
-	'statsSearchTerms',
-	'statsClicks',
-	'statsReferrers',
-	'statsCountryViews',
-];
+const paidStats = [ STAT_TYPE_SEARCH_TERMS, STAT_TYPE_CLICKS, STAT_TYPE_REFERRERS ];
 
-const featureFlags = [ 'stats/date-control', 'download-csv' ];
+const granularControlForPaidStats = [ STATS_FEATURE_DATE_CONTROL, STATS_FEATURE_DOWNLOAD_CSV ];
 
 /*
  * Check if a site has access to a paid stats feature in wpcom.
  * Utility function intended to be used with useSelector or redux connect mapStateToProps.
  * For example in mapStateToProps:
- * const isGatedStats = shouldGateStats( state, siteId, 'statsSearchTerms' );
+ * const isGatedStats = shouldGateStats( state, siteId, STAT_TYPE_SEARCH_TERMS );
  */
 export const shouldGateStats = ( state: object, siteId: number | null, statType: string ) => {
 	if ( ! siteId ) {
@@ -34,7 +35,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
 	// check site type
-	if ( jetpackSite || atomicSite ) {
+	if ( jetpackSite && ! atomicSite ) {
 		return false;
 	}
 
@@ -53,7 +54,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	}
 
 	// site cannot acesss paid stats, gate stats accordingly
-	return [ ...trafficPaidStats, ...featureFlags ].includes( statType );
+	return [ ...paidStats, ...granularControlForPaidStats ].includes( statType );
 };
 
 /*

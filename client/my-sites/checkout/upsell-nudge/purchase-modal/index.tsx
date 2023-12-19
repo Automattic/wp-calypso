@@ -5,6 +5,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { useState, useMemo, useEffect } from 'react';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
@@ -35,13 +36,13 @@ type PurchaseModalProps = {
 export function PurchaseModal( {
 	cart,
 	cards,
-	isCartUpdating,
+	isLoading,
 	onClose,
 	siteSlug,
 	showFeatureList,
 }: {
 	cards: StoredPaymentMethodCard[];
-	isCartUpdating: boolean;
+	isLoading: boolean;
 	cart: ResponseCart;
 	onClose: () => void;
 	siteSlug: string;
@@ -72,7 +73,7 @@ export function PurchaseModal( {
 			} ) }
 			onClose={ onClose }
 		>
-			{ isCartUpdating ? (
+			{ isLoading ? (
 				<Placeholder showFeatureList={ showFeatureList } />
 			) : (
 				<Content { ...contentProps } />
@@ -181,6 +182,12 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		onClose();
 	};
 
+	useEffect( () => {
+		recordTracksEvent( 'calypso_oneclick_upsell_modal_view', {
+			product_slug: productToAdd.product_slug,
+		} );
+	}, [ productToAdd.product_slug ] );
+
 	return (
 		<CheckoutProvider
 			paymentMethods={ [] }
@@ -193,7 +200,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			{ countries?.length === 0 && <QueryPaymentCountries /> }
 			<PurchaseModal
 				cards={ cards }
-				isCartUpdating={ isPendingUpdate || ! countries?.length }
+				isLoading={ isPendingUpdate || ! countries?.length }
 				cart={ responseCart }
 				onClose={ handleOnClose }
 				siteSlug={ siteSlug }

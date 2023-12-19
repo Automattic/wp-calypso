@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
+import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -82,6 +83,7 @@ class TagStreamHeader extends Component {
 
 		return (
 			<div className={ classes }>
+				<BloganuaryHeader />
 				<NavigationHeader title={ titleText } subtitle={ subtitleText } />
 				{ ( showSort || showFollow ) && (
 					<div className="tag-stream__header-controls">

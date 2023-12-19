@@ -9,6 +9,10 @@ import playIconImage from 'calypso/assets/images/reader/play-icon.png';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
 import EmbedHelper from 'calypso/reader/embed-helper';
+import {
+	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
+	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
+} from 'calypso/state/reader/posts/sizes';
 import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 
 import './style.scss';
@@ -103,7 +107,9 @@ class ReaderFeaturedVideo extends Component {
 			hasExcerpt,
 		} = this.props;
 
-		const classNames = classnames( className, 'reader-featured-video' );
+		const classNames = classnames( className, 'reader-featured-video', {
+			'is-pocketcasts': videoEmbed.type === 'pocketcasts',
+		} );
 
 		if ( ! isExpanded && thumbnailUrl ) {
 			return (
@@ -150,8 +156,31 @@ class ReaderFeaturedVideo extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	thumbnailUrl: getThumbnailForIframe( state, ownProps.videoEmbed.src ),
-} );
+const checkEmbedSizeDimensions = ( embed ) => {
+	let _embed = embed;
+	// convert frame to a DOM element if frame is a string
+	if ( _embed && typeof _embed === 'string' ) {
+		_embed = new DOMParser().parseFromString( _embed, 'text/html' )?.body?.firstChild;
+	}
+	// set width and height to max width and height if they are not set
+	if ( _embed.width === 0 && _embed.height === 0 ) {
+		_embed.width = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
+		_embed.height = READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
+		_embed.aspectRatio =
+			READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH / READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
+	}
+	return _embed;
+};
+
+const mapStateToProps = ( state, ownProps ) => {
+	// Check if width and height are set for the embed
+	const videoEmbed = checkEmbedSizeDimensions( ownProps.videoEmbed );
+	return {
+		videoEmbed: videoEmbed,
+		iframe: checkEmbedSizeDimensions( ownProps.iframe )?.outerHTML,
+		autoplayIframe: checkEmbedSizeDimensions( ownProps.autoplayIframe )?.outerHTML,
+		thumbnailUrl: getThumbnailForIframe( state, videoEmbed.src ),
+	};
+};
 
 export default connect( mapStateToProps )( localize( ReaderFeaturedVideo ) );

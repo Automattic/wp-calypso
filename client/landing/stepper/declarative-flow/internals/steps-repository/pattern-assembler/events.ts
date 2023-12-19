@@ -13,6 +13,7 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	 */
 	MAIN_ITEM_SELECT: 'calypso_signup_pattern_assembler_main_item_select',
 	BACK_CLICK: 'calypso_signup_pattern_assembler_back_click',
+	PAGE_FINAL_SELECT: 'calypso_signup_pattern_assembler_page_final_select',
 	PATTERN_FINAL_SELECT: 'calypso_signup_pattern_assembler_pattern_final_select',
 	CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
 

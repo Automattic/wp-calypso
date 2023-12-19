@@ -80,6 +80,7 @@ export const UpsellNudge = ( {
 	tracksImpressionProperties,
 	displayAsLink,
 	isSiteWooExpressOrEcomFreeTrial,
+	isBusy,
 } ) => {
 	const shouldNotDisplay =
 		isVip ||
@@ -163,6 +164,7 @@ export const UpsellNudge = ( {
 			tracksImpressionName={ tracksImpressionName }
 			tracksImpressionProperties={ tracksImpressionProperties }
 			displayAsLink={ displayAsLink }
+			isBusy={ isBusy }
 		/>
 	);
 };
