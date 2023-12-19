@@ -1,8 +1,6 @@
 $border-color: #eee;
 
 .marketplace-reviews-modal {
-	width: 850px;
-
 	&.dialog__content {
 		padding: 0;
 	}
@@ -75,4 +73,12 @@ $border-color: #eee;
 .dialog__action-buttons-close {
 	padding: 16px 24px 5px 5px;
 	background-color: #fff;
+}
+
+.dialog.card {
+	max-width: 850px;
+
+	@include breakpoint-deprecated( "<1040px" ) {
+		max-height: 100%;
+	}
 }
