@@ -87,6 +87,10 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
+const businessPlanProduct = createRequestCartProduct( {
+	product_slug: PLAN_BUSINESS,
+} );
+
 const PluginsDiscoveryPage = ( props ) => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
@@ -100,18 +104,14 @@ const PluginsDiscoveryPage = ( props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const { isLoading, result: isEligibleForOneClickCheckout } = useIsEligibleForOneClickCheckout();
 
-	const businessPlanProduct = createRequestCartProduct( {
-		product_slug: PLAN_BUSINESS,
-	} );
-
 	return (
 		<>
-			<CalypsoShoppingCartProvider>
-				<StripeHookProvider
-					fetchStripeConfiguration={ getStripeConfiguration }
-					locale={ translate.localeSlug }
-				>
-					{ showPurchaseModal && (
+			{ showPurchaseModal && (
+				<CalypsoShoppingCartProvider>
+					<StripeHookProvider
+						fetchStripeConfiguration={ getStripeConfiguration }
+						locale={ translate.localeSlug }
+					>
 						<PurchaseModal
 							productToAdd={ businessPlanProduct }
 							onClose={ () => {
@@ -120,9 +120,9 @@ const PluginsDiscoveryPage = ( props ) => {
 							showFeatureList={ true }
 							siteSlug={ props.siteSlug }
 						/>
-					) }
-				</StripeHookProvider>
-			</CalypsoShoppingCartProvider>
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			) }
 			<UpgradeNudge
 				{ ...props }
 				isBusy={ isLoading }
