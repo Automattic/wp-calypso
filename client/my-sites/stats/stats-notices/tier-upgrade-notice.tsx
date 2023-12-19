@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { StatsNoticeProps } from './types';
 
@@ -16,6 +17,21 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'tier_upgrade',
+		'postponed',
+		7 * 24 * 3600
+	);
+
+	const dismissNotice = () => {
+		isOdysseyStats
+			? recordTracksEvent( 'jetpack_odyssey_stats_tier_upgrade_notice_dismissed' )
+			: recordTracksEvent( 'calypso_stats_tier_upgrade_notice_dismissed' );
+
+		setNoticeDismissed( true );
+		postponeNoticeAsync();
+	};
 
 	// TODO: Consolidate the query here with the usage section on the Traffic page.
 	const { data } = usePlanUsageQuery( siteId );
@@ -53,8 +69,6 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
 	};
-
-	const dismissNotice = () => setNoticeDismissed( true );
 
 	if ( noticeDismissed || ! showNotice ) {
 		return null;
