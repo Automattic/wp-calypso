@@ -93,7 +93,7 @@ const PageList = ( {
 							onClick={ () => onSelectPage( name ) }
 						>
 							<PageListItem
-								// Show only the first page in that category
+								// Show the latest-updated page per category
 								label={ pagesMapByCategory[ name ][ 0 ].title }
 								isSelected={ isSelected }
 							/>
