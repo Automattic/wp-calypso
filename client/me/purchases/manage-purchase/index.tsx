@@ -327,6 +327,16 @@ class ManagePurchase extends Component<
 		return hasSetupAds && purchase && isPlan( purchase );
 	}
 
+	isPendingDomainRegistration( purchase: Purchase ): boolean {
+		if ( isDomainRegistration( purchase ) ) {
+			const domain = this.props.domainsDetails[ purchase.siteId ].find(
+				( domain ) => domain.name === purchase.meta
+			);
+			return domain?.pendingRegistrationAtRegistry ?? false;
+		}
+		return false;
+	}
+
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -339,6 +349,11 @@ class ManagePurchase extends Component<
 			isAkismetFreeProduct( purchase ) ||
 			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
+			return null;
+		}
+
+		// Hide renew button for pending registration domains
+		if ( this.isPendingDomainRegistration( purchase ) ) {
 			return null;
 		}
 
@@ -1346,7 +1361,9 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
-						{ preventRenewal && this.renderSelectNewNavItem() }
+						{ preventRenewal &&
+							! this.isPendingDomainRegistration( purchase ) &&
+							this.renderSelectNewNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1418,6 +1435,10 @@ class ManagePurchase extends Component<
 		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
 			preventRenewal = ! isRenewable( purchase );
+		}
+
+		if ( this.isPendingDomainRegistration( purchase ) ) {
+			preventRenewal = true;
 		}
 
 		return (
