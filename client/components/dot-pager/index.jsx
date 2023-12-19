@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
@@ -90,8 +91,14 @@ export const DotPager = ( {
 	isClickEnabled = false,
 	rotateTime = 0,
 	navArrowSize = 18,
+	includePreviousButton = false,
+	includeNextButton = false,
+	includeFinishButton = false,
+	onFinish = () => {},
 	...props
 } ) => {
+	const translate = useTranslate();
+
 	// Filter out the empty children
 	const normalizedChildren = Children.toArray( children ).filter( Boolean );
 
@@ -139,6 +146,30 @@ export const DotPager = ( {
 			>
 				{ normalizedChildren }
 			</Swipeable>
+			{ includePreviousButton && currentPage !== 0 && (
+				<Button
+					className="dot-pager__button dot-pager__button_previous"
+					onClick={ () => setCurrentPage( currentPage - 1 ) }
+				>
+					{ translate( 'Previous' ) }
+				</Button>
+			) }
+			{ includeNextButton && currentPage < numPages - 1 && (
+				<Button
+					className="dot-pager__button dot-pager__button_next is-primary"
+					onClick={ () => setCurrentPage( currentPage + 1 ) }
+				>
+					{ translate( 'Next' ) }
+				</Button>
+			) }
+			{ includeFinishButton && currentPage === numPages - 1 && (
+				<Button
+					className="dot-pager__button dot-pager__button_finish is-primary"
+					onClick={ onFinish }
+				>
+					{ translate( 'Done' ) }
+				</Button>
+			) }
 		</div>
 	);
 };

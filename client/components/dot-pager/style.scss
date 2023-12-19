@@ -77,3 +77,9 @@
 		background-color: var(--studio-gray-80);
 	}
 }
+
+.dot-pager {
+	&__button {
+		margin-right: 10px;
+	}
+}
