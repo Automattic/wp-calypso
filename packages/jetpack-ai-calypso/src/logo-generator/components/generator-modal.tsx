@@ -12,7 +12,7 @@ import './generator-modal.scss';
 
 export const GeneratorModal: React.FC = () => {
 	const [ modalIsOpen, setModalIsOpen ] = React.useState( false );
-	// const { message } = useLogo( {} );
+	const { message } = useLogo( {} );
 
 	/**
 	 * TODO:
@@ -30,7 +30,7 @@ export const GeneratorModal: React.FC = () => {
 			</div>
 			{ modalIsOpen && (
 				<Modal onRequestClose={ () => setModalIsOpen( false ) } className="launched__modal">
-					Some content
+					{ message }
 				</Modal>
 			) }
 		</CompactCard>
