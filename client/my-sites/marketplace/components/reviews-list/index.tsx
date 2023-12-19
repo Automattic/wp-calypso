@@ -12,14 +12,22 @@ import {
 import './style.scss';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { IAppState } from 'calypso/state/types';
 
 export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) => {
 	const translate = useTranslate();
-	const { data: reviews, refetch: reviewsRefetch, error } = useMarketplaceReviewsQuery( props );
+	const currentUserId = useSelector( getCurrentUserId );
+	const {
+		data: reviews,
+		refetch: reviewsRefetch,
+		error,
+	} = useMarketplaceReviewsQuery( { ...props, author_exclude: currentUserId ?? undefined } );
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+		...props,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
 
 	// ...
-	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation();
 	const deleteReview = ( reviewId: number ) => {
 		if ( confirm( translate( 'Are you sure you want to delete your review?' ) ) ) {
@@ -62,66 +70,65 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	return (
 		<div className="marketplace-reviews-list__container">
 			<div className="marketplace-reviews-list__customer-reviews">
-				{ Array.isArray( reviews ) &&
-					reviews.map( ( review: MarketplaceReviewResponse ) => (
-						<div
-							className="marketplace-reviews-list__review-container"
-							key={ `review-${ review.id }` }
-						>
-							<div className="marketplace-reviews-list__review-container-header">
-								<div className="marketplace-reviews-list__profile-picture">
-									{ authorProfilePic ? (
-										<img
-											className="marketplace-reviews-list__profile-picture-img"
-											src={ authorProfilePic }
-											alt={ translate( "%(reviewer)s's profile picture", {
-												comment: 'Alt description for the profile picture of a reviewer',
-												args: { reviewer: review.author_name },
-											} ).toString() }
-										/>
-									) : (
-										<div className="marketplace-reviews-list__profile-picture-placeholder" />
-									) }
-								</div>
-
-								<div className="marketplace-reviews-list__rating-data">
-									<div className="marketplace-reviews-list__author">{ review.author_name }</div>
-
-									<Rating rating={ review.meta.wpcom_marketplace_rating * 20 } />
-								</div>
-								<div className="marketplace-reviews-list__date">
-									{ moment( review.date ).format( 'll' ) }
-								</div>
-							</div>
-
-							<div
-								// sanitized with sanitizeSectionContent
-								// eslint-disable-next-line react/no-danger
-								dangerouslySetInnerHTML={ {
-									__html: sanitizeSectionContent( review.content.rendered ),
-								} }
-								className="marketplace-reviews-list__content"
-							></div>
-							<div className="marketplace-reviews-list__review-actions">
-								{ review.author === currentUserId && (
-									<div className="marketplace-reviews-list__review-actions-editable">
-										<button
-											className="marketplace-reviews-list__review-actions-editable-button"
-											onClick={ () => alert( 'Not implemented yet' ) }
-										>
-											{ translate( 'Update my review' ) }
-										</button>
-										<button
-											className="marketplace-reviews-list__review-actions-editable-button"
-											onClick={ () => deleteReview( review.id ) }
-										>
-											{ translate( 'Delete my review' ) }
-										</button>
-									</div>
+				{ [ ...userReviews, ...reviews ].map( ( review: MarketplaceReviewResponse ) => (
+					<div
+						className="marketplace-reviews-list__review-container"
+						key={ `review-${ review.id }` }
+					>
+						<div className="marketplace-reviews-list__review-container-header">
+							<div className="marketplace-reviews-list__profile-picture">
+								{ authorProfilePic ? (
+									<img
+										className="marketplace-reviews-list__profile-picture-img"
+										src={ authorProfilePic }
+										alt={ translate( "%(reviewer)s's profile picture", {
+											comment: 'Alt description for the profile picture of a reviewer',
+											args: { reviewer: review.author_name },
+										} ).toString() }
+									/>
+								) : (
+									<div className="marketplace-reviews-list__profile-picture-placeholder" />
 								) }
 							</div>
+
+							<div className="marketplace-reviews-list__rating-data">
+								<div className="marketplace-reviews-list__author">{ review.author_name }</div>
+
+								<Rating rating={ review.meta.wpcom_marketplace_rating * 20 } />
+							</div>
+							<div className="marketplace-reviews-list__date">
+								{ moment( review.date ).format( 'll' ) }
+							</div>
 						</div>
-					) ) }
+
+						<div
+							// sanitized with sanitizeSectionContent
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ {
+								__html: sanitizeSectionContent( review.content.rendered ),
+							} }
+							className="marketplace-reviews-list__content"
+						></div>
+						<div className="marketplace-reviews-list__review-actions">
+							{ review.author === currentUserId && (
+								<div className="marketplace-reviews-list__review-actions-editable">
+									<button
+										className="marketplace-reviews-list__review-actions-editable-button"
+										onClick={ () => alert( 'Not implemented yet' ) }
+									>
+										{ translate( 'Update my review' ) }
+									</button>
+									<button
+										className="marketplace-reviews-list__review-actions-editable-button"
+										onClick={ () => deleteReview( review.id ) }
+									>
+										{ translate( 'Delete my review' ) }
+									</button>
+								</div>
+							) }
+						</div>
+					</div>
+				) ) }
 			</div>
 		</div>
 	);
