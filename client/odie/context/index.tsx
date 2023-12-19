@@ -19,7 +19,6 @@ interface OdieAssistantContextInterface {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
-	botSetting?: string;
 	chat: Chat;
 	clearChat: () => void;
 	initialUserMessage: string | null | undefined;
@@ -79,7 +78,6 @@ const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 const OdieAssistantProvider = ( {
 	botName = 'Wapuu assistant',
 	botNameSlug = 'wpcom-support-chat',
-	botSetting = 'wapuu',
 	initialUserMessage,
 	isMinimized = false,
 	extraContactOptions,
@@ -88,7 +86,6 @@ const OdieAssistantProvider = ( {
 }: {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
-	botSetting?: string;
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
@@ -121,11 +118,10 @@ const OdieAssistantProvider = ( {
 					...properties,
 					chat_id: chat?.chat_id,
 					bot_name_slug: botNameSlug,
-					bot_setting: botSetting,
 				} )
 			);
 		},
-		[ botNameSlug, botSetting, chat?.chat_id, dispatch ]
+		[ botNameSlug, chat?.chat_id, dispatch ]
 	);
 
 	const clearChat = useCallback( () => {
@@ -214,7 +210,6 @@ const OdieAssistantProvider = ( {
 				addMessage,
 				botName,
 				botNameSlug,
-				botSetting,
 				chat,
 				clearChat,
 				extraContactOptions,
