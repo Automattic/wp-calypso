@@ -46,6 +46,7 @@ const PlanFooter = () => {
 				) }
 				buttonText={ translate( 'Explore support resources' ) }
 				href="/support"
+				target="_blank"
 				onClick={ () => recordTracksEvent( 'calypso_plan_thank_you_support_click' ) }
 			/>
 		</div>
