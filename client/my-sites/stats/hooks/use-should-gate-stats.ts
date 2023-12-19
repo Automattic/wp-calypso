@@ -6,16 +6,23 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
-	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_DOWNLOAD_CSV,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_CLICKS,
 	STAT_TYPE_REFERRERS,
+	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
+	STATS_FEATURE_DATE_CONTROL,
 } from '../constants';
 
 const paidStats = [ STAT_TYPE_SEARCH_TERMS, STAT_TYPE_CLICKS, STAT_TYPE_REFERRERS ];
 
-const granularControlForPaidStats = [ STATS_FEATURE_DATE_CONTROL, STATS_FEATURE_DOWNLOAD_CSV ];
+const granularControlForPaidStats = [
+	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
+	STATS_FEATURE_DOWNLOAD_CSV,
+];
 
 /*
  * Check if a site has access to a paid stats feature in wpcom.
