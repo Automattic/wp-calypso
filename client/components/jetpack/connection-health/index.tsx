@@ -50,7 +50,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return;
 	}
 
-	const errorType = jetpackConnectionHealth?.error;
+	const errorType = jetpackConnectionHealth?.error || '';
 
 	if ( errorType === DNS_ERROR ) {
 		return (
