@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, isDefaultLocale, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
+import { hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -70,6 +71,7 @@ const SignupFormSocialFirst = ( {
 	const isWooCoreProfilerFlow = useSelector( isWooCommerceCoreProfilerFlow );
 	const isWoo = isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow;
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
+	const locale = useLocale();
 
 	const renderTermsOfService = () => {
 		let tosText;
@@ -118,11 +120,29 @@ const SignupFormSocialFirst = ( {
 
 	const renderEmailStepTermsOfService = () => {
 		if ( currentStep === 'email' ) {
+			if (
+				isDefaultLocale( locale ) ||
+				hasTranslation(
+					'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+				)
+			) {
+				return (
+					<p className="signup-form-social-first__email-tos-link">
+						{ createInterpolateElement(
+							__(
+								'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+							),
+							options
+						) }
+					</p>
+				);
+			}
+
 			return (
-				<p className="signup-form-social-first__tos-link">
+				<p className="signup-form-social-first__email-tos-link">
 					{ createInterpolateElement(
 						__(
-							'By clicking "Continue", you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+							'By creating an account you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
 						),
 						options
 					) }
