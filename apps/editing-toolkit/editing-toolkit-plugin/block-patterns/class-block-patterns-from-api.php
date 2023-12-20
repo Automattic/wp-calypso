@@ -317,8 +317,8 @@ class Block_Patterns_From_API {
 			if ( $post_content_offset !== false ) {
 				unregister_block_pattern( $pattern['name'] );
 
-				$pattern['blockTypes'] = array_splice( $pattern['blockTypes'], $post_content_offset, 1 );
-				$pattern_name          = $pattern['name'];
+				array_splice( $pattern['blockTypes'], $post_content_offset, 1 );
+				$pattern_name = $pattern['name'];
 				unset( $pattern['name'] );
 				register_block_pattern( $pattern_name, $pattern );
 			}

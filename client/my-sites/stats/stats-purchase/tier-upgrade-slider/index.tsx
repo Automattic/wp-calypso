@@ -84,6 +84,7 @@ function TierUpgradeSlider( {
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const rhValue = steps[ currentPlanIndex ]?.rhValue;
+	const secondaryCalloutIsHidden = rhValue === '';
 
 	return (
 		<div className={ componentClassNames }>
@@ -92,10 +93,12 @@ function TierUpgradeSlider( {
 					<h2>{ uiStrings.limits }</h2>
 					<p>{ lhValue }</p>
 				</div>
-				<div className="tier-upgrade-slider__step-callout right-aligned">
-					<h2>{ uiStrings.price }</h2>
-					<p ref={ infoReferenceElement }>{ rhValue }</p>
-				</div>
+				{ ! secondaryCalloutIsHidden && (
+					<div className="tier-upgrade-slider__step-callout right-aligned">
+						<h2>{ uiStrings.price }</h2>
+						<p ref={ infoReferenceElement }>{ rhValue }</p>
+					</div>
+				) }
 			</div>
 			{ steps.length > 1 && (
 				<PricingSlider

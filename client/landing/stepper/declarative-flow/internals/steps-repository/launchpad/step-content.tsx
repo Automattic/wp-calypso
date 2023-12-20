@@ -12,6 +12,7 @@ import { getLaunchpadTranslations } from './translations';
 import type { SiteSelect } from '@automattic/data-stores';
 
 type StepContentProps = {
+	launchpadKey: string;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
@@ -23,7 +24,14 @@ function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: R
 	return domainObjectA.registrationDate > domainObjectB.registrationDate ? -1 : 1;
 }
 
-const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
+const StepContent = ( {
+	launchpadKey,
+	siteSlug,
+	submit,
+	goNext,
+	goToStep,
+	flow,
+}: StepContentProps ) => {
 	const { flowName } = getLaunchpadTranslations( flow );
 	const site = useSite();
 	const adminUrl = useSelect(
@@ -59,6 +67,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 			<div className="launchpad__content">
 				<Sidebar
 					sidebarDomain={ sidebarDomain }
+					launchpadKey={ launchpadKey }
 					siteSlug={ siteSlug }
 					submit={ submit }
 					goNext={ goNext }

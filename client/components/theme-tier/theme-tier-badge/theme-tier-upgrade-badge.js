@@ -29,16 +29,10 @@ export default function ThemeTierUpgradeBadge() {
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{
-					// Translators: %(planName)s is the name of the plan that includes this theme. Examples: "Personal" or "Premium".
-					translate( '%(planName)s theme', { textOnly: true, args: { planName } } )
-				}
-			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
 					// Translators: %(planName)s is the name of the plan that includes this theme. Examples: "Personal" or "Premium".
-					translate( 'This %(planName)s theme is included in the <Link>%(planName)s plan</Link>.', {
+					translate( 'This theme is included in the <Link>%(planName)s plan</Link>.', {
 						args: { planName },
 						textOnly: true,
 					} ),

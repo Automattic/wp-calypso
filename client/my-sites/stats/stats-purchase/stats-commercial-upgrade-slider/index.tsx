@@ -1,6 +1,7 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -55,12 +56,14 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 		return {
 			lhValue: views,
 			rhValue: price,
+			tierViews: tier.views === null ? EXTENSION_THRESHOLD * 1000000 : tier.views,
 		};
 	} );
 }
 
 type StatsCommercialUpgradeSliderProps = {
 	currencyCode: string;
+	analyticsEventName?: string;
 	onSliderChange: ( quantity: number ) => void;
 };
 
@@ -77,6 +80,7 @@ const getTierQuentity = ( tiers: StatsPlanTierUI, isTierUpgradeSliderEnabled: bo
 
 function StatsCommercialUpgradeSlider( {
 	currencyCode,
+	analyticsEventName,
 	onSliderChange,
 }: StatsCommercialUpgradeSliderProps ) {
 	// Responsible for:
@@ -119,6 +123,13 @@ function StatsCommercialUpgradeSlider( {
 
 	const handleSliderChanged = ( index: number ) => {
 		const quantity = getTierQuentity( tiers[ index ], true );
+
+		if ( analyticsEventName ) {
+			recordTracksEvent( analyticsEventName, {
+				tier_views: quantity,
+				default_changed: index !== 0, // 0 is the default initialVlaue value for <TierUpgradeSlider />
+			} );
+		}
 
 		onSliderChange( quantity as number );
 	};
