@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { useOdieAssistantContext } from '../context';
+import { useOdieAssistantContext } from '../../context';
 
 import './style.scss';
 

@@ -1,9 +1,9 @@
 import i18n from 'i18n-calypso';
 import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import ChatMessage from './components/message';
+import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext } from './context';
-import ChatMessage from './message';
-import { OdieSendMessageButton } from './send-message-input';
 
 import './style.scss';
 

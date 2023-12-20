@@ -1,11 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import ArrowUp from '../assets/arrow-up.svg';
-import { useOdieAssistantContext } from '../context';
+import ArrowUp from '../../assets/arrow-up.svg';
+import { useOdieAssistantContext } from '../../context';
+import { useOdieSendMessage } from '../../query';
+import { Message } from '../../types';
 import { JumpToRecent } from '../message/jump-to-recent';
-import { useOdieSendMessage } from '../query';
-import { Message } from '../types';
 
 import './style.scss';
 

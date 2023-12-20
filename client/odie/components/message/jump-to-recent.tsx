@@ -1,7 +1,7 @@
 import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useOdieAssistantContext } from '../context';
+import { useOdieAssistantContext } from '../../context';
 
 /**
  * This might be synced with CSS in client/odie/message/style.scss, which is half of the height for the gradient.

@@ -1,9 +1,9 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { noop, useOdieAssistantContext } from '../context';
-import { useOdieSendMessageFeedback } from '../query';
+import { noop, useOdieAssistantContext } from '../../context';
+import { useOdieSendMessageFeedback } from '../../query';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
-import type { Message } from '../types';
+import type { Message } from '../../types';
 
 import './style.scss';
 

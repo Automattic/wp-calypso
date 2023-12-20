@@ -10,16 +10,16 @@ import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import MaximizeIcon from '../assets/maximize-icon.svg';
-import MinimizeIcon from '../assets/minimize-icon.svg';
-import WapuuAvatar from '../assets/wapuu-squared-avatar.svg';
-import WapuuThinking from '../assets/wapuu-thinking.svg';
+import MaximizeIcon from '../../assets/maximize-icon.svg';
+import MinimizeIcon from '../../assets/minimize-icon.svg';
+import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
+import WapuuThinking from '../../assets/wapuu-thinking.svg';
+import { useOdieAssistantContext } from '../../context';
 import Button from '../button';
-import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { Message, Source } from '../types';
+import type { Message, Source } from '../../types';
 
 import './style.scss';
 
