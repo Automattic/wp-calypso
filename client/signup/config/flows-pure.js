@@ -43,8 +43,8 @@ export function generateFlows( {
 				return translate( 'Create an account' );
 			},
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
+			providesDependenciesInQuery: [ 'toStepper', 'coupon' ],
+			optionalDependenciesInQuery: [ 'toStepper', 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -54,6 +54,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -63,6 +65,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -72,6 +76,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
