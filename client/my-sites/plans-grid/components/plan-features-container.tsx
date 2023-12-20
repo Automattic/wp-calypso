@@ -14,7 +14,7 @@ const PlanFeaturesContainer: React.FC< {
 	translate: LocalizeProps[ 'translate' ];
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	selectedFeature?: string;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
+	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
 } > = ( {
 	plansWithFeatures,

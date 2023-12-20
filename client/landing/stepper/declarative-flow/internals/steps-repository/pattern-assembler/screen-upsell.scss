@@ -53,8 +53,8 @@
 			margin-top: 8px;
 			gap: 16px;
 
-			/** Highlight the “Premium styles” feature */
-			&:nth-child(2) strong {
+			/** Highlight the “Free domain for one year” feature */
+			&:first-child strong {
 				font-weight: 600;
 			}
 		}

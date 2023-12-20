@@ -4,6 +4,7 @@ import backups from './backups/reducer';
 import browser from './browser/reducer';
 import capabilities from './capabilities/reducer';
 import policies from './policies/reducer';
+import preflight from './preflight/reducer';
 import size from './size/reducer';
 import staging from './staging/reducer';
 import state from './state/reducer';
@@ -18,6 +19,7 @@ const rewind = combineReducers( {
 	state,
 	storage,
 	staging,
+	preflight,
 } );
 
 const reducer = keyedReducer( 'siteId', rewind );

@@ -28,7 +28,7 @@ const LoginButtons = ( {
 }: LoginButtonsProps ) => {
 	const translate = useTranslate();
 
-	const { query, wccomFrom, isJetpackWooCommerceFlow, currentRoute } = useSelector( ( state ) => {
+	const { query, isJetpackWooCommerceFlow, currentRoute } = useSelector( ( state ) => {
 		const query = getCurrentQueryArguments( state );
 
 		return {
@@ -41,9 +41,7 @@ const LoginButtons = ( {
 	const dispatch = useDispatch();
 
 	const getMagicLoginPageLink = () => {
-		if (
-			! canDoMagicLogin( twoFactorAuthType, oauth2Client, wccomFrom, isJetpackWooCommerceFlow )
-		) {
+		if ( ! canDoMagicLogin( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) ) {
 			return null;
 		}
 

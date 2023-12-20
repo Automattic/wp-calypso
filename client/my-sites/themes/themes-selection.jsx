@@ -208,6 +208,7 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
+			tier,
 		} = this.props;
 
 		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
@@ -239,6 +240,7 @@ class ThemesSelection extends Component {
 					siteId={ siteId }
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
+					tier={ tier }
 				>
 					{ this.props.children }
 				</ThemesList>
