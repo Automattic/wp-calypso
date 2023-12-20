@@ -108,7 +108,7 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 		if ( redirectOnButtonClick ) {
 			window.location.href = redirectOnButtonClick?.toString() || '';
 		}
-	}, [ dispatch, preferenceName, preference ] );
+	}, [ dispatch, preferenceName, preference, redirectOnButtonClick ] );
 
 	const nextStep = useCallback( () => {
 		if ( currentStep < tours.length - 1 ) {
