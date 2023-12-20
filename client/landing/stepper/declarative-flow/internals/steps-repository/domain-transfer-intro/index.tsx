@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
+import MaterialIcon from 'calypso/components/material-icon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep from './intro';
 import type { Step } from '../../types';
@@ -47,7 +48,16 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 			showHeaderWooCommercePowered={ false }
 			showVideoPressPowered={ false }
 			showJetpackPowered={ false }
-			customizedActionButtons={ <ChatButton chatIntent="SUPPORT" initialMessage="Test" /> }
+			customizedActionButtons={
+				<ChatButton
+					chatIntent="SUPPORT"
+					initialMessage="User is contacting us from the domains-transfer flow"
+					className="domains-transfer-chat-button"
+				>
+					<MaterialIcon icon="chat_bubble" />
+					{ __( 'Need help? Chat with us' ) }
+				</ChatButton>
+			}
 		/>
 	);
 };
