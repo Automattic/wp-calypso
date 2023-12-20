@@ -44,7 +44,9 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 				>
 					<div className="jetpack-ai-logo-generator-modal__body">
 						{ message }
-						<Button variant="primary" onClick={ handleIncreaseCount }></Button>
+						<Button variant="primary" onClick={ handleIncreaseCount }>
+							Increase
+						</Button>
 						<pre>{ JSON.stringify( aiData, null, 2 ) }</pre>
 					</div>
 				</Modal>
