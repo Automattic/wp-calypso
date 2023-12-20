@@ -153,7 +153,13 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 						{
 							target: '.site-table__table th:first-of-type',
 							popoverPosition: 'bottom right',
-							title: translate( '🎉 Your new site is here' ),
+							title: String(
+								translate( '%(celebrationEmoji)s Your new site is here!', {
+									args: {
+										celebrationEmoji: String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */,
+									},
+								} )
+							),
 							description:
 								translate( 'Check out your new site here. That was straightforward, right? ' ) +
 								'\n\n' +
