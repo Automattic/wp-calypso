@@ -72,9 +72,7 @@ const ScreenConfirmation = ( { isNewSite, siteId = 0, selectedDesign, onConfirm 
 				),
 			},
 		];
-		continueLabel = translate( 'Activate %(themeName)s', {
-			args: { themeName: selectedDesign?.title ?? '' },
-		} );
+		continueLabel = translate( 'Activate your theme' );
 	} else {
 		title = translate( 'Great job!' );
 		description = translate( 'Time to add some content and bring your site to life!' );
