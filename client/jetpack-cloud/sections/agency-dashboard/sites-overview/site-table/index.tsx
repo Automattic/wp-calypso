@@ -5,8 +5,7 @@ import { useContext, useState, forwardRef, Ref, useEffect } from 'react';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
-import { useDispatch, useSelector } from 'calypso/state';
-import { savePreference } from 'calypso/state/preferences/actions';
+import { useSelector } from 'calypso/state';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -23,7 +22,6 @@ interface Props {
 }
 
 const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const { isBulkManagementActive, showLicenseInfo } = useContext( SitesOverviewContext );
@@ -50,18 +48,21 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 	useEffect( () => {
 		const urlParams = new URLSearchParams( window.location.search );
 		if ( urlParams.get( 'tour' ) === 'add-new-site' ) {
-			dispatch(
-				savePreference( 'jetpack-cloud-site-dashboard-add-new-site-tour-site-count', items.length )
+			localStorage.setItem(
+				'jetpack-cloud-site-dashboard-add-new-site-tour-site-count',
+				JSON.stringify( items.length )
 			);
 		}
-	}, [ dispatch, items ] );
+	}, [ items ] );
 
 	const hasAddNewSiteTourPreference = useSelector( ( state ) =>
 		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour' )
 	);
-	const addNewSiteTourSiteCount = useSelector( ( state ) =>
-		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-site-count' )
-	);
+	const addNewSiteTourSiteCount =
+		parseInt(
+			localStorage.getItem( 'jetpack-cloud-site-dashboard-add-new-site-tour-site-count' ) ?? '0',
+			10
+		) ?? 0;
 	const shouldRenderAddSiteTourStep2 =
 		! isLoading && hasAddNewSiteTourPreference && addNewSiteTourSiteCount < items.length;
 
