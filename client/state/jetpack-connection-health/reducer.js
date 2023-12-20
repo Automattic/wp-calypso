@@ -8,9 +8,9 @@ import {
 } from 'calypso/state/action-types';
 import {
 	combineReducers,
-	withSchemaValidation,
 	keyedReducer,
 	withPersistence,
+	withSchemaValidation,
 } from 'calypso/state/utils';
 import { schema } from './schema';
 
@@ -18,7 +18,7 @@ import { schema } from './schema';
  * `Reducer` function which handles Jetpack connection health state changes
  * @param {Object} state - current state
  * @param {Object} action - action
- * @returns {Object} updated state
+ * @returns {{ is_healthy?: boolean, error?: string, jetpack_connection_problem?: boolean }} updated state - Jetpack connection health
  */
 export const connectionHealth = withPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -54,10 +54,10 @@ export const connectionHealth = withPersistence( ( state = {}, action ) => {
 } );
 
 /**
- * `Reducer` function which handles request/response actions concerning Jetpack connection requests
+ * `Reducer` function which handles request errors concerning Jetpack connection health API call.
  * @param {string} state - current state
  * @param {Object} action - action
- * @returns {string} updated state
+ * @returns {string} updated state - request error code
  */
 export const requestError = withPersistence( ( state = '', action ) => {
 	switch ( action.type ) {
@@ -72,9 +72,9 @@ export const requestError = withPersistence( ( state = '', action ) => {
 
 /**
  * `Reducer` function which handles tracking the last request time for Jetpack connection health
- * @param {Object|null} state - current state
+ * @param {number|null} state - current state
  * @param {Object} action - action
- * @returns {Object|null} updated state
+ * @returns {number|null} updated state - last connection health request time in milliseconds
  */
 export const lastRequestTime = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

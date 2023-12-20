@@ -22,6 +22,7 @@ export const connectionHealth = {
 };
 export const jetpackConnectionHealth = {
 	type: 'object',
+	additionalProperties: false,
 	properties: {
 		connectionHealth,
 		requestError,

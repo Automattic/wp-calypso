@@ -41,7 +41,7 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
 	const currentState = getState();
 	const lastRequestTime = currentState.jetpackConnectionHealth[ siteId ]?.lastRequestTime;
 	if ( lastRequestTime && Date.now() - lastRequestTime < 1000 * 60 * 5 ) {
-		return currentState?.jetpackConnectionHealth[ siteId ]?.connectionHealth?.is_healthy;
+		return;
 	}
 
 	const reduxIsUnhealthy = isJetpackConnectionUnhealthy( currentState, siteId );

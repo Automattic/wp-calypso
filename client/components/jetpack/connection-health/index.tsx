@@ -34,7 +34,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		( state ) => !! isSiteAutomatedTransfer( state, siteId )
 	);
 
-	const isErrorCheckJetpackConnectionHealth = useSelector( ( state ) =>
+	const isJetpackConnectionHealthAPIError = useSelector( ( state ) =>
 		getJetpackConnectionHealthRequestError( state as AppState, siteId )
 	);
 
@@ -46,7 +46,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		dispatch( requestJetpackConnectionHealthStatus( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	if ( isErrorCheckJetpackConnectionHealth || jetpackConnectionHealth?.is_healthy ) {
+	if ( isJetpackConnectionHealthAPIError || jetpackConnectionHealth?.is_healthy ) {
 		return;
 	}
 
