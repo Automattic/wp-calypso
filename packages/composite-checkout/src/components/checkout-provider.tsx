@@ -8,7 +8,7 @@ import { validateArg, validatePaymentMethods } from '../lib/validation';
 import { CheckoutProviderProps } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormAndTransactionProvider } from './form-and-transaction-provider';
-import type { CheckoutContextInterface } from '../types';
+import type { CheckoutContextInterface, PaymentMethod } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -59,6 +59,12 @@ export function CheckoutProvider( {
 	// Keep track of selected payment method.
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
+	);
+
+	useDisablePaymentMethodsWhenListChanges(
+		paymentMethods,
+		availablePaymentMethodIds,
+		setDisabledPaymentMethodIds
 	);
 
 	// Reset the selected payment method if the list of payment methods changes.
@@ -136,6 +142,33 @@ function CheckoutProviderPropValidator( {
 		validatePaymentMethods( paymentMethods );
 	}, [ paymentMethods, paymentProcessors, propsToValidate ] );
 	return null;
+}
+
+function useDisablePaymentMethodsWhenListChanges(
+	paymentMethods: PaymentMethod[],
+	availablePaymentMethodIds: string[],
+	setDisabledPaymentMethodIds: ( setter: ( ids: string[] ) => string[] ) => void
+) {
+	const initiallyDisabledPaymentMethodIds = paymentMethods
+		.filter( ( method ) => method.isInitiallyDisabled )
+		.map( ( method ) => method.id );
+	const newInitiallyDisabledPaymentMethodIds = initiallyDisabledPaymentMethodIds.filter( ( id ) =>
+		availablePaymentMethodIds.includes( id )
+	);
+	const hashKey = availablePaymentMethodIds.join( '-_-' );
+	const previousKey = useRef< string >();
+
+	useEffect( () => {
+		if ( previousKey.current !== hashKey ) {
+			debug( 'paymentMethods changed; disabling any new isInitiallyDisabled payment methods' );
+
+			setDisabledPaymentMethodIds( ( currentlyDisabledIds: string[] ) => [
+				...currentlyDisabledIds,
+				...newInitiallyDisabledPaymentMethodIds,
+			] );
+			previousKey.current = hashKey;
+		}
+	}, [ hashKey, setDisabledPaymentMethodIds, newInitiallyDisabledPaymentMethodIds ] );
 }
 
 // Reset the selected payment method if the list of payment methods changes.
