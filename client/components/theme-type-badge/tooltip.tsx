@@ -21,7 +21,6 @@ import {
 	isMarketplaceThemeSubscribed,
 	getMarketplaceThemeSubscriptionPrices,
 } from 'calypso/state/themes/selectors';
-import type { ReactElement } from 'react';
 
 interface Props {
 	canGoToCheckout?: boolean;
@@ -107,41 +106,6 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
-	const getHeader = (): string | ReactElement | null => {
-		if ( isLockedStyleVariation ) {
-			return null;
-		}
-
-		if ( type === BUNDLED_THEME ) {
-			if ( ! bundleSettings ) {
-				return null;
-			}
-
-			const bundleName = bundleSettings.name;
-
-			// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-			return translate( '%(bundleName)s theme', { textOnly: true, args: { bundleName } } );
-		}
-
-		const headers = {
-			[ PREMIUM_THEME ]: translate( 'Premium theme' ),
-			[ DOT_ORG_THEME ]: translate( 'Community theme', {
-				context: 'This theme is developed and supported by a community',
-				textOnly: true,
-			} ),
-			[ MARKETPLACE_THEME ]: translate( 'Partner theme', {
-				context: 'This theme is developed and supported by a theme partner',
-				textOnly: true,
-			} ),
-		} as { [ key: string ]: string };
-
-		if ( ! ( type in headers ) ) {
-			return null;
-		}
-
-		return headers[ type ];
-	};
-
 	let message;
 	if ( isLockedStyleVariation ) {
 		message =
@@ -160,17 +124,19 @@ const ThemeTypeBadgeTooltip = ( {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
 		} else if ( isIncludedCurrentPlan ) {
-			message = translate( 'This premium theme is included in your plan.' );
+			message =
+				isEnglishLocale || i18n.hasTranslation( 'This theme is included in your plan.' )
+					? translate( 'This theme is included in your plan.' )
+					: translate( 'This premium theme is included in your plan.' );
 		} else {
 			message = createInterpolateElement(
 				isEnglishLocale ||
 					i18n.hasTranslation(
-						'This premium theme is included in the <Link>%(premiumPlanName)s plan</Link>.'
+						'This theme is included in the <Link>%(premiumPlanName)s plan</Link>.'
 					)
-					? ( translate(
-							'This premium theme is included in the <Link>%(premiumPlanName)s plan</Link>.',
-							{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
-					  ) as string )
+					? ( translate( 'This theme is included in the <Link>%(premiumPlanName)s plan</Link>.', {
+							args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' },
+					  } ) as string )
 					: translate( 'This premium theme is included in the <Link>Premium plan</Link>.' ),
 				{
 					Link: (
@@ -225,20 +191,17 @@ const ThemeTypeBadgeTooltip = ( {
 				message = createInterpolateElement(
 					isEnglishLocale ||
 						i18n.hasTranslation(
-							'This %(bundleName)s theme is included in the <Link>%(businessPlanName)s plan</Link>.'
+							'This theme is included in the <Link>%(businessPlanName)s plan</Link>.'
 						)
-						? // Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+						? translate( 'This theme is included in the <Link>%(businessPlanName)s plan</Link>.', {
+								args: {
+									bundleName,
+									businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+								},
+								textOnly: true,
+						  } )
+						: // Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".:
 						  translate(
-								'This %(bundleName)s theme is included in the <Link>%(businessPlanName)s plan</Link>.',
-								{
-									args: {
-										bundleName,
-										businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
-									},
-									textOnly: true,
-								}
-						  )
-						: translate(
 								'This %(bundleName)s theme is included in the <Link>Business plan</Link>.',
 								{
 									args: { bundleName },
@@ -344,14 +307,7 @@ const ThemeTypeBadgeTooltip = ( {
 		}
 	}
 
-	return (
-		<>
-			<div data-testid="upsell-header" className="theme-type-badge-tooltip__header">
-				{ getHeader() }
-			</div>
-			<div data-testid="upsell-message">{ message }</div>
-		</>
-	);
+	return <div data-testid="upsell-message">{ message }</div>;
 };
 
 export default ThemeTypeBadgeTooltip;
