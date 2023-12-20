@@ -305,8 +305,10 @@ body.is-section-earn.theme-default.color-scheme {
 	margin-top: 20px;
 }
 
-.memberships__module-plans-title {
+.memberships__module-plans-title,
+.memberships__products-card-title {
 	color: var(--color-neutral-100);
+	font-size: $font-body-small;
 }
 
 .memberships__module-settings-title {
