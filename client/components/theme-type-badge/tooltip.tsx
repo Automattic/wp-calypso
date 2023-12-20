@@ -124,7 +124,10 @@ const ThemeTypeBadgeTooltip = ( {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
 		} else if ( isIncludedCurrentPlan ) {
-			message = translate( 'This premium theme is included in your plan.' );
+			message =
+				isEnglishLocale || i18n.hasTranslation( 'This theme is included in your plan.' )
+					? translate( 'This theme is included in your plan.' )
+					: translate( 'This premium theme is included in your plan.' );
 		} else {
 			message = createInterpolateElement(
 				isEnglishLocale ||

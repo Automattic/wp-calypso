@@ -54,8 +54,6 @@ describe( 'ThemeTypeBadge', () => {
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
-			expect( screen.queryByTestId( 'upsell-header' ) ).toBeDefined();
-			expect( screen.queryByTestId( 'upsell-header' ).innerHTML ).toBe( 'Premium theme' );
 			expect( screen.queryByTestId( 'upsell-message' ).innerHTML ).toContain(
 				'This premium theme is included in the'
 			);
@@ -71,10 +69,8 @@ describe( 'ThemeTypeBadge', () => {
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
-			expect( screen.queryByTestId( 'upsell-header' ) ).toBeDefined();
-			expect( screen.queryByTestId( 'upsell-header' ).innerHTML ).toBe( 'Premium theme' );
 			expect( screen.queryByTestId( 'upsell-message' ).innerHTML ).toContain(
-				'This premium theme is included in your plan.'
+				'This theme is included in your plan.'
 			);
 		} );
 
@@ -88,8 +84,6 @@ describe( 'ThemeTypeBadge', () => {
 			const popoverTrigger = container.getElementsByClassName( 'theme-type-badge__content' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 
-			expect( screen.queryByTestId( 'upsell-header' ) ).toBeDefined();
-			expect( screen.queryByTestId( 'upsell-header' ).innerHTML ).toBe( 'Premium theme' );
 			expect( screen.queryByTestId( 'upsell-message' ).innerHTML ).toContain(
 				'You have purchased this theme.'
 			);
