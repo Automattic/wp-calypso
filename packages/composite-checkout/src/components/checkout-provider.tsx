@@ -150,8 +150,8 @@ function useDisablePaymentMethodsWhenListChanges(
 		.filter( ( method ) => method.isInitiallyDisabled )
 		.map( ( method ) => method.id );
 
-	const newInitiallyDisabledPaymentMethodIds = initiallyDisabledPaymentMethodIds.filter( ( id ) =>
-		previousPaymentMethodIds.current.includes( id )
+	const newInitiallyDisabledPaymentMethodIds = initiallyDisabledPaymentMethodIds.filter(
+		( id ) => ! previousPaymentMethodIds.current.includes( id )
 	);
 
 	const paymentMethodIdsHash = paymentMethods.map( ( method ) => method.id ).join( '-_-' );
