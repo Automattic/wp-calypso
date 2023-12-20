@@ -26,7 +26,7 @@ import {
 	PurchasesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount, getNewPlanName } from '../shared';
+import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
@@ -36,8 +36,8 @@ declare const browser: Browser;
  * Keywords: Onboarding, Store Checkout, Coupon, Signup, Plan, Subscription, Cancel
  */
 describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function () {
-	const planName = 'Personal';
-	const newPlanName = getNewPlanName( planName );
+	const planName = 'Explorer';
+	const newPlanName = planName;
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
 	} );
