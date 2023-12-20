@@ -3,10 +3,10 @@ import type { SerializedStyles } from '@emotion/react';
 
 const sidebarWidth = 272; //in px
 const plans2023SmallBreakpoint = '780px';
-const plans2023MediumBreakpoint = '1200px';
+const plans2023MediumBreakpoint = '1350px';
 const plans2023LargeBreakpoint = '1600px';
 const plans2023SmallWithSidebarBreakpoint = `${ 780 + sidebarWidth }px`;
-const plans2023MediumWithSidebarBreakpoint = `${ 1200 + sidebarWidth }px`;
+const plans2023MediumWithSidebarBreakpoint = `${ 1350 + sidebarWidth }px`;
 const plans2023LargeWithSidebarBreakpoint = `${ 1600 + sidebarWidth }px`;
 
 export const plansBreakSmall = ( styles: SerializedStyles ) => css`

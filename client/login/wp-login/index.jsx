@@ -15,7 +15,6 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
@@ -506,52 +505,33 @@ export class Login extends Component {
 		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
 			this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirstEnabled = config.isEnabled( 'login/social-first' );
-		let isSocialFirst = false;
+		const isSocialFirst =
+			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
 
 		return (
-			<ProvideExperimentData
-				name="wpcom_login_page_emphasise_socials_redesign_202311_v1"
-				options={ {
-					isEligible: isSocialFirstEnabled && isWhiteLogin && ! isGravPoweredClient && ! isWoo,
-				} }
-			>
-				{ ( isLoadingExperiment, experimentAssignment ) => {
-					if ( isLoadingExperiment ) {
-						return null;
-					}
+			<div>
+				{ this.props.isP2Login && this.renderP2Logo() }
+				<Main
+					className={ classNames( 'wp-login__main', {
+						'is-wpcom-migration': isFromMigrationPlugin,
+						'is-social-first': isSocialFirst,
+					} ) }
+				>
+					{ this.renderI18nSuggestions() }
 
-					if ( experimentAssignment?.variationName === 'treatment' ) {
-						isSocialFirst = true;
-					}
+					<DocumentHead
+						title={ translate( 'Log In' ) }
+						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
+					/>
 
-					return (
-						<div>
-							{ this.props.isP2Login && this.renderP2Logo() }
-							<Main
-								className={ classNames( 'wp-login__main', {
-									'is-wpcom-migration': isFromMigrationPlugin,
-									'is-social-first': isSocialFirst,
-								} ) }
-							>
-								{ this.renderI18nSuggestions() }
+					{ isSocialFirst && this.renderLoginHeaderNavigation() }
+					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+				</Main>
 
-								<DocumentHead
-									title={ translate( 'Log In' ) }
-									link={ [ { rel: 'canonical', href: canonicalUrl } ] }
-									meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
-								/>
-
-								{ isSocialFirst && this.renderLoginHeaderNavigation() }
-								<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
-							</Main>
-
-							{ this.renderFooter() }
-							{ this.props.isP2Login && this.renderP2PoweredBy() }
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
+				{ this.renderFooter() }
+				{ this.props.isP2Login && this.renderP2PoweredBy() }
+			</div>
 		);
 	}
 }

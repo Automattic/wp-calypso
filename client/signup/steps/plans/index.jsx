@@ -141,6 +141,7 @@ export class PlansStep extends Component {
 					siteTitle={ siteTitle }
 					signupFlowUserName={ username }
 					siteId={ selectedSite?.ID }
+					isCustomDomainAllowedOnFreePlan={ this.props.isCustomDomainAllowedOnFreePlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }

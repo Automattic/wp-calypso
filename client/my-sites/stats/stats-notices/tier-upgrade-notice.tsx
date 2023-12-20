@@ -34,11 +34,8 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	};
 
 	const gotoJetpackStatsProduct = () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_tier_upgrade_notice_upgrade_button_clicked' )
-			: recordTracksEvent( 'calypso_stats_tier_upgrade_notice_upgrade_button_clicked' );
-		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
+		// Analytics events are now captured at the destination.
+		page( getStatsPurchaseURL( siteId, isOdysseyStats ) );
 	};
 
 	// TODO: Consolidate the query here with the usage section on the Traffic page.

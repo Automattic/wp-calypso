@@ -92,7 +92,7 @@ export class AIAssistantFlow implements BlockFlow {
 	 * @param {Locator} block Locator to the block.
 	 */
 	private async enterInput( block: Locator ) {
-		const input = block.getByRole( 'textbox', { name: 'Ask Jetpack AI' } );
+		const input = block.getByRole( 'textbox', { name: 'Write about… Make a table for…' } );
 		await input.waitFor();
 		await input.fill( this.configurationData.query );
 	}

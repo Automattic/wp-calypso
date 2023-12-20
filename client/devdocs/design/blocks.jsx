@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import PlanPrice from '@automattic/components/src/plan-price/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -67,7 +68,6 @@ import ThemesListExample from 'calypso/components/themes-list/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 import PlanCompareCard from 'calypso/my-sites/plan-compare-card/docs/example';
-import PlanPrice from 'calypso/my-sites/plan-price/docs/example';
 
 export default class AppComponents extends Component {
 	static displayName = 'AppComponents';

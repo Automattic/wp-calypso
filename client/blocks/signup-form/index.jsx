@@ -1125,11 +1125,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		if (
-			this.props.isJetpackWooCommerceFlow ||
-			this.props.isJetpackWooDnaFlow ||
-			( this.props.isWoo && this.props.wccomFrom )
-		) {
+		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
 			return (
 				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>

@@ -77,11 +77,13 @@ export const useCommandsArrayWpcom = ( {
 		hostingEnabled: {
 			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
 			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+			emptyListNotice: __( 'No sites with hosting features enabled.' ),
 		},
 		hostingEnabledAndPublic: {
 			filter: ( site: SiteExcerptData ) =>
 				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
 			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+			emptyListNotice: __( 'No public sites with hosting features enabled.' ),
 		},
 	};
 
@@ -334,6 +336,30 @@ export const useCommandsArrayWpcom = ( {
 			icon: cacheIcon,
 		},
 		{
+			name: 'manageCacheSettings',
+			label: __( 'Manage cache settings' ),
+			searchLabel: [
+				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
+				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
+			].join( ' ' ),
+			callback: setStateCallback(
+				'manageCacheSettings',
+				__( 'Select site to manage cache settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#cache` );
+				},
+				...siteFilters.hostingEnabled,
+			},
+			icon: cacheIcon,
+		},
+		{
 			name: 'openSiteDashboard',
 			label: __( 'Open site dashboard' ),
 			searchLabel: [
@@ -356,7 +382,6 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open hosting configuration' ),
 			searchLabel: [
 				_x( 'open hosting configuration', 'Keyword for the Open hosting configuration command' ),
-				_x( 'manage hosting configuration', 'Keyword for the Open hosting configuration command' ),
 				_x( 'admin interface style', 'Keyword for the Open hosting configuration command' ),
 				_x( 'cache', 'Keyword for the Open hosting configuration command' ),
 				_x( 'database', 'Keyword for the Open hosting configuration command' ),
@@ -555,6 +580,7 @@ export const useCommandsArrayWpcom = ( {
 				filter: ( site: SiteExcerptData ) =>
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with DNS management available.' ),
+				emptyListNotice: __( 'No sites with DNS management available.' ),
 			},
 			icon: domainsIcon,
 		},
@@ -746,30 +772,6 @@ export const useCommandsArrayWpcom = ( {
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
-		},
-		{
-			name: 'manageCacheSettings',
-			label: __( 'Manage cache settings' ),
-			searchLabel: [
-				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
-				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
-			].join( ' ' ),
-			callback: setStateCallback(
-				'manageCacheSettings',
-				__( 'Select site to manage cache settings' )
-			),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#cache` );
-				},
-				...siteFilters.hostingEnabled,
-			},
-			icon: cacheIcon,
 		},
 		{
 			name: 'changeAdminInterfaceStyle',

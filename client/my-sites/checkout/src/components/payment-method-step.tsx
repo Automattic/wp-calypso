@@ -103,7 +103,7 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
-	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
+	const showToSFoldableCard = useToSFoldableCard();
 
 	return (
 		<>
