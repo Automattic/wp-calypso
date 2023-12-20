@@ -1,13 +1,17 @@
 import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
+import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal/use-is-eligible-for-one-click-checkout';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import {
 	HOME_PAGE,
@@ -38,9 +42,12 @@ import {
 } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch, useSelector } from 'calypso/state';
+import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import { SiteSlug } from 'calypso/types';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
 import type { PageId } from 'calypso/signup/difm/constants';
@@ -361,6 +368,51 @@ const Placeholder = styled.span`
 	min-width: 32px;
 `;
 
+function OneClickPurchaseModal( {
+	onClose,
+	siteSlug,
+	selectedPages,
+	isStoreFlow,
+}: {
+	onClose: () => void;
+	siteSlug: SiteSlug;
+	selectedPages: string[];
+	isStoreFlow: boolean;
+} ) {
+	const translate = useTranslate();
+	const signupDependencies = useSelector( getSignupDependencyStore );
+	const product = useMemo( () => {
+		return createRequestCartProduct( {
+			product_slug: WPCOM_DIFM_LITE,
+			extra: buildDIFMCartExtrasObject(
+				{
+					...signupDependencies,
+					selectedPageTitles: selectedPages,
+					isStoreFlow,
+				},
+				siteSlug
+			),
+			quantity: selectedPages.length,
+		} );
+	}, [ isStoreFlow, selectedPages, signupDependencies, siteSlug ] );
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<StripeHookProvider
+				fetchStripeConfiguration={ getStripeConfiguration }
+				locale={ translate.localeSlug }
+			>
+				<PurchaseModal
+					productToAdd={ product }
+					onClose={ onClose }
+					showFeatureList={ false }
+					siteSlug={ siteSlug }
+				/>
+			</StripeHookProvider>
+		</CalypsoShoppingCartProvider>
+	);
+}
+
 function DIFMPagePicker( props: StepProps ) {
 	const {
 		stepName,
@@ -372,12 +424,15 @@ function DIFMPagePicker( props: StepProps ) {
 	const dispatch = useDispatch();
 	const isStoreFlow = 'do-it-for-me-store' === flowName;
 	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
+	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const [ selectedPages, setSelectedPages ] = useState< string[] >(
 		isStoreFlow
 			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
 			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
 	);
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
+
+	const isExistingSite = newOrExistingSiteChoice === 'existing-site' || siteSlug;
 
 	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
 	const {
@@ -387,7 +442,7 @@ function DIFMPagePicker( props: StepProps ) {
 		isProductsLoading,
 		isFormattedCurrencyLoading,
 		effectiveCurrencyCode,
-	} = useCartForDIFM( selectedPages, isStoreFlow );
+	} = useCartForDIFM( selectedPages, isStoreFlow, isExistingSite );
 
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	let difmTieredPriceDetails = null;
@@ -400,6 +455,11 @@ function DIFMPagePicker( props: StepProps ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	const {
+		isLoading: isLoadingIsEligibleForOneClickCheckout,
+		result: isEligibleForOneClickCheckout,
+	} = useIsEligibleForOneClickCheckout();
+
 	const submitPickedPages = async () => {
 		if ( ! isCheckoutPressed ) {
 			setIsCheckoutPressed( true );
@@ -407,9 +467,21 @@ function DIFMPagePicker( props: StepProps ) {
 				//Empty cart so that the sign up flow can add products to the cart
 				await replaceProductsInCart( [] );
 			}
+
+			if ( true === isEligibleForOneClickCheckout && isExistingSite ) {
+				setShowPurchaseModal( true );
+				return;
+			}
+
 			dispatch( submitSignupStep( { stepName }, { selectedPageTitles: selectedPages } ) );
 			goToNextStep();
 		}
+	};
+
+	const handleModalOnClose = () => {
+		setShowPurchaseModal( false );
+		setIsCheckoutPressed( false );
+		setSelectedPages( ( selectedPages ) => selectedPages.slice() );
 	};
 
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
@@ -469,8 +541,6 @@ function DIFMPagePicker( props: StepProps ) {
 				}
 		  );
 
-	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
-
 	return (
 		<StepWrapper
 			headerText={ headerText }
@@ -478,11 +548,21 @@ function DIFMPagePicker( props: StepProps ) {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={
-				<PageSelector
-					isStoreFlow={ isStoreFlow }
-					selectedPages={ selectedPages }
-					setSelectedPages={ setSelectedPages }
-				/>
+				<>
+					{ showPurchaseModal && (
+						<OneClickPurchaseModal
+							onClose={ handleModalOnClose }
+							siteSlug={ siteSlug }
+							selectedPages={ selectedPages }
+							isStoreFlow={ isStoreFlow }
+						/>
+					) }
+					<PageSelector
+						isStoreFlow={ isStoreFlow }
+						selectedPages={ selectedPages }
+						setSelectedPages={ setSelectedPages }
+					/>
+				</>
 			}
 			hideSkip
 			align="left"
@@ -496,7 +576,8 @@ function DIFMPagePicker( props: StepProps ) {
 							( isProductsLoading ||
 								isCartPendingUpdate ||
 								isCartLoading ||
-								isCartUpdateStarted ) ) ||
+								isCartUpdateStarted ||
+								isLoadingIsEligibleForOneClickCheckout ) ) ||
 						isCheckoutPressed
 					}
 					primary
@@ -506,7 +587,11 @@ function DIFMPagePicker( props: StepProps ) {
 				</StyledButton>
 			}
 			headerContent={
-				<ShoppingCartForDIFM selectedPages={ selectedPages } isStoreFlow={ isStoreFlow } />
+				<ShoppingCartForDIFM
+					selectedPages={ selectedPages }
+					isStoreFlow={ isStoreFlow }
+					isExistingSite={ isExistingSite }
+				/>
 			}
 			{ ...props }
 		/>
