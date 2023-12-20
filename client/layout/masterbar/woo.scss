@@ -418,6 +418,15 @@
 		max-width: 472px;
 		margin: 54px auto 0;
 		height: unset;
+		min-height: 238px;
+
+		~ .auth-form__separator {
+			margin: -10px 0;
+		}
+
+		~ .card.auth-form__social.is-login {
+			max-width: 472px;
+		}
 
 		.continue-as-user__gravatar-link {
 			pointer-events: auto;
@@ -508,8 +517,11 @@
 		display: none;
 	}
 
-	.signup-form .auth-form__separator {
-		width: 100%;
+	.auth-form__separator {
+		&::before,
+		&::after {
+			content: none;
+		}
 	}
 
 	.auth-form__separator + .auth-form__social.card {
@@ -518,12 +530,6 @@
 		max-width: 100%;
 	}
 
-	.auth-form__separator {
-		&::before,
-		&::after {
-			content: none;
-		}
-	}
 	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;
