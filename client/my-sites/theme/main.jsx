@@ -183,6 +183,7 @@ const BannerUpsellDescription = ( {
  * @param {boolean} props.isSiteEligibleForManagedExternalThemes
  * @param {boolean} props.isMarketplaceThemeSubscribed
  * @param {boolean} props.isThemeAllowedOnSite
+ * @param {Object} props.themeTier
  * @returns {string} The title for the banner upsell.
  */
 const BannerUpsellTitle = ( {
@@ -193,26 +194,48 @@ const BannerUpsellTitle = ( {
 	isSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed,
 	isThemeAllowedOnSite,
+	themeTier,
 } ) => {
 	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isEnglishLocale = useIsEnglishLocale();
 
-	if ( ! isThemeAllowedOnSite ) {
-		return isEnglishLocale ||
-			i18n.hasTranslation(
-				'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!'
-			)
+	const premiumPlanTitle = () =>
+		isEnglishLocale ||
+		i18n.hasTranslation(
+			'Access this theme for FREE with a %(premiumPlanName)s or %(businessPlanName)s plan!'
+		)
 			? translate(
-					'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!',
+					'Access this theme for FREE with a %(premiumPlanName)s or %(businessPlanName)s plan!',
 					{
 						args: {
-							personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
 							premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
 							businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
 						},
 					}
 			  )
-			: translate( 'Access this theme for FREE with a Personal, Premium, or Business plan!' );
+			: translate( 'Access this theme for FREE with a Premium or Business plan!' );
+
+	if ( ! isThemeAllowedOnSite ) {
+		switch ( THEME_TIERS[ themeTier.slug ].minimumUpsellPlan ) {
+			case PLAN_PERSONAL:
+				return isEnglishLocale ||
+					i18n.hasTranslation(
+						'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!'
+					)
+					? translate(
+							'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!',
+							{
+								args: {
+									personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
+									premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
+									businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
+								},
+							}
+					  )
+					: translate( 'Access this theme for FREE with a Personal, Premium, or Business plan!' );
+			case PLAN_PREMIUM:
+				return premiumPlanTitle();
+		}
 	}
 
 	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
@@ -248,20 +271,7 @@ const BannerUpsellTitle = ( {
 		return translate( 'Subscribe to this theme!' );
 	}
 
-	return isEnglishLocale ||
-		i18n.hasTranslation(
-			'Access this theme for FREE with a %(premiumPlanName)s or %(businessPlanName)s plan!'
-		)
-		? translate(
-				'Access this theme for FREE with a %(premiumPlanName)s or %(businessPlanName)s plan!',
-				{
-					args: {
-						premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
-						businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
-					},
-				}
-		  )
-		: translate( 'Access this theme for FREE with a Premium or Business plan!' );
+	return premiumPlanTitle();
 };
 
 class ThemeSheet extends Component {
