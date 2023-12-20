@@ -90,7 +90,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					element={
 						<OdieAssistantProvider
 							botNameSlug="wpcom-support-chat"
-							botSetting="supportDocs"
 							botName="Wapuu"
 							enabled={ isWapuuEnabled }
 							isMinimized={ isMinimized }
