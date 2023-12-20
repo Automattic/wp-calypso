@@ -54,7 +54,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 			<h1>{ translate( 'Delete offering?' ) }</h1>
 			<p>
 				{ translate(
-					'Deleting this offering ({{strong}}%s{{/strong}}) will not affect existing subscribers, who will continue to be charged. You can cancel existing subscriptions on the Supporters screen.',
+					'Deleting this offering ({{strong}}%s{{/strong}}) will not affect existing subscribers, which means they will continue to be charged. You can cancel existing subscriptions on the Supporters screen.',
 					{
 						args: product?.title,
 						components: {
