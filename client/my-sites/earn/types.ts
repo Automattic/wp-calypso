@@ -20,12 +20,15 @@ export type Coupon = {
 	discount_type?: string;
 	discount_value?: number;
 	discount_percentage?: number;
+	discount_currency?: string;
 	start_date?: string;
 	end_date?: string;
 	product_ids?: number[];
 	can_be_combined?: boolean;
 	first_time_only?: boolean;
+	use_duration?: boolean;
 	duration?: string;
+	use_specific_emails?: boolean;
 	specific_emails?: string[];
 };
 
