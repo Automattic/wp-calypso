@@ -63,7 +63,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-site-count' )
 	);
 	const shouldRenderAddSiteTourStep2 =
-		! isLoading && hasAddNewSiteTourPreference && addNewSiteTourSiteCount + 1 === items.length;
+		! isLoading && hasAddNewSiteTourPreference && items.length < addNewSiteTourSiteCount;
 
 	return (
 		<>
