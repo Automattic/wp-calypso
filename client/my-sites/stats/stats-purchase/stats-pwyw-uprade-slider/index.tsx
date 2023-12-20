@@ -95,9 +95,9 @@ function StatsPWYWUpgradeSlider( {
 	const uiStrings = useTranslatedStrings( defaultAveragePayment, currencyCode );
 
 	// New steps generation.
-	const tiersX = generatePlanTiers( settings );
-	const stepsX = generateSteps( tiersX, currencyCode, settings );
-	const marks2 = [ 0, stepsX.length - 1 ];
+	const tiers = generatePlanTiers( settings );
+	const steps = generateSteps( tiers, currencyCode, settings );
+	const marks = [ 0, steps.length - 1 ];
 
 	// New mapped indexing for slider.
 	// Implemented this way so as to not break parent logic.
@@ -106,7 +106,7 @@ function StatsPWYWUpgradeSlider( {
 
 	// New slider change handler.
 	const handleSliderChanged2 = ( index: number ) => {
-		const mappedIndex = stepsX[ index ].mappedIndex;
+		const mappedIndex = steps[ index ].mappedIndex;
 		if ( analyticsEventName ) {
 			recordTracksEvent( analyticsEventName, {
 				step: mappedIndex,
@@ -120,10 +120,10 @@ function StatsPWYWUpgradeSlider( {
 		<TierUpgradeSlider
 			className="stats-pwyw-upgrade-slider"
 			uiStrings={ uiStrings }
-			steps={ stepsX }
+			steps={ steps }
 			initialValue={ mappedDefaultIndex }
 			onSliderChange={ handleSliderChanged2 }
-			marks={ marks2 }
+			marks={ marks }
 		/>
 	);
 }
