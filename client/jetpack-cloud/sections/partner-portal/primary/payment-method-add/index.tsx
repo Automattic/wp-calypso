@@ -30,12 +30,18 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	errorNotice,
+	infoNotice,
+	removeNotice,
+	successNotice,
+} from 'calypso/state/notices/actions';
 import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
+import useIssueLicenses from '../../hooks/use-issue-licenses';
 import Layout from '../../layout';
 import LayoutHeader from '../../layout/header';
 import { parseQueryStringProducts } from '../../lib/querystring-products';
@@ -72,12 +78,15 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 	const returnQueryArg = ( getQueryArg( window.location.href, 'return' ) ?? '' ).toString();
 	const products = ( getQueryArg( window.location.href, 'products' ) ?? '' ).toString();
+	const product = ( getQueryArg( window.location.href, 'product' ) ?? '' ).toString();
 	const siteId = ( getQueryArg( window.location.href, 'site_id' ) ?? '' ).toString();
 
 	const source = useMemo(
 		() => ( getQueryArg( window.location.href, 'source' ) || '' ).toString(),
 		[]
 	);
+
+	const isSiteCreationFlow = source === 'create-site' && !! product;
 
 	const dispatch = useDispatch();
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
@@ -112,6 +121,8 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 			}
 		);
 
+	const { issueLicenses } = useIssueLicenses();
+
 	useReturnUrl( ! paymentMethodRequired );
 
 	const onGoToPaymentMethods = () => {
@@ -137,11 +148,14 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 	const showSuccessMessage = useCallback(
 		( message: TranslateResult ) => {
-			reduxDispatch(
-				successNotice( message, { isPersistent: true, displayOnNextPage: true, duration: 5000 } )
-			);
+			// We do not want to show overlapping notice with site creation notice.
+			if ( ! isSiteCreationFlow ) {
+				reduxDispatch(
+					successNotice( message, { isPersistent: true, displayOnNextPage: true, duration: 5000 } )
+				);
+			}
 		},
-		[ reduxDispatch ]
+		[ isSiteCreationFlow, reduxDispatch ]
 	);
 
 	const successCallback = useCallback( () => {
@@ -150,7 +164,9 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		// assign the license after adding a payment method.
 		//
 		// product - will make sure there will be a license issuing for that product
-		if ( returnQueryArg || products ) {
+		//
+		// isSiteCreationFlow - will make sure there will be site creation
+		if ( returnQueryArg || products || isSiteCreationFlow ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -160,10 +176,18 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		} else {
 			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ returnQueryArg, products, reduxDispatch ] );
+	}, [ returnQueryArg, products, isSiteCreationFlow, reduxDispatch ] );
 
 	useEffect( () => {
 		if ( paymentMethodRequired ) {
+			return;
+		}
+
+		// If this is a site creation flow, we will need to resume on the creation of site.
+		if ( isSiteCreationFlow ) {
+			dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
+			issueLicenses( [ { slug: product, quantity: 1 } ] );
+			page( `/dashboard?provisioning=true` );
 			return;
 		}
 
@@ -199,6 +223,10 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	const elements = useElements();
 
 	const getPreviousPageLink = () => {
+		if ( isSiteCreationFlow ) {
+			return partnerPortalBasePath( '/create-site' );
+		}
+
 		if ( products ) {
 			return addQueryArgs(
 				{
