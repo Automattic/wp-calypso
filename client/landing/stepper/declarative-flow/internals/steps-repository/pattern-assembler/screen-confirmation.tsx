@@ -31,69 +31,71 @@ const ScreenConfirmation = ( { isNewSite, siteId = 0, selectedDesign, onConfirm 
 	);
 	const willThemeChange = currentThemeId !== selectedDesign?.slug;
 
-	let title;
+	let title = '';
 	let description;
 	let list;
 	let continueLabel;
 
-	if ( willThemeChange && ! isNewSite ) {
-		title = translate( 'Ready to activate?' );
-		description = translate( 'The following will change in your site.' );
-		list = [
-			{
-				icon: layout,
-				title: translate( 'Active theme' ),
-				description: translate(
-					'This will change your active theme from %(oldThemeName)s to %(newThemeName)s, the base theme of your new design.',
-					{
-						args: {
-							oldThemeName: currentTheme?.name ?? '',
-							newThemeName: selectedDesign?.title ?? '',
-						},
-					}
-				),
-			},
-			{
-				icon: home,
-				title: translate( 'Homepage' ),
-				description: translate(
-					'This will replace your homepage, but your content will remain accessible. {{a}}Learn more{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/support/themes/changing-themes' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-				),
-			},
-		];
-		continueLabel = translate( 'Activate your theme' );
-	} else {
-		title = translate( 'Great job!' );
-		description = translate( 'Time to add some content and bring your site to life!' );
-		list = [
-			{
-				icon: image,
-				title: translate( 'Upload images' ),
-				description: translate( 'Showcase your photos in their best light.' ),
-			},
-			{
-				icon: verse,
-				title: translate( 'Start writing' ),
-				description: translate( 'Get things going and share your insights.' ),
-			},
-			{
-				icon: layout,
-				title: translate( 'Customize every detail' ),
-				description: translate( 'Make your site even more unique.' ),
-			},
-		];
-		continueLabel = translate( 'Start adding content' );
+	if ( currentThemeId ) {
+		if ( willThemeChange && ! isNewSite ) {
+			title = translate( 'Ready to activate?' );
+			description = translate( 'The following will change in your site.' );
+			list = [
+				{
+					icon: layout,
+					title: translate( 'Active theme' ),
+					description: translate(
+						'This will change your active theme from %(oldThemeName)s to %(newThemeName)s, the base theme of your new design.',
+						{
+							args: {
+								oldThemeName: currentTheme?.name ?? '',
+								newThemeName: selectedDesign?.title ?? '',
+							},
+						}
+					),
+				},
+				{
+					icon: home,
+					title: translate( 'Homepage' ),
+					description: translate(
+						'This will replace your homepage, but your content will remain accessible. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/support/themes/changing-themes' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					),
+				},
+			];
+			continueLabel = translate( 'Activate your theme' );
+		} else {
+			title = translate( 'Great job!' );
+			description = translate( 'Time to add some content and bring your site to life!' );
+			list = [
+				{
+					icon: image,
+					title: translate( 'Upload images' ),
+					description: translate( 'Showcase your photos in their best light.' ),
+				},
+				{
+					icon: verse,
+					title: translate( 'Start writing' ),
+					description: translate( 'Get things going and share your insights.' ),
+				},
+				{
+					icon: layout,
+					title: translate( 'Customize every detail' ),
+					description: translate( 'Make your site even more unique.' ),
+				},
+			];
+			continueLabel = translate( 'Start adding content' );
+		}
 	}
 
 	return (
@@ -106,7 +108,7 @@ const ScreenConfirmation = ( { isNewSite, siteId = 0, selectedDesign, onConfirm 
 			<QueryActiveTheme siteId={ siteId } />
 			<div className="screen-container__body">
 				<VStack spacing="4" className="screen-confirmation__list">
-					{ list.map( ( { icon, title, description } ) => (
+					{ ( list || [] ).map( ( { icon, title, description } ) => (
 						<HStack spacing="4" alignment="top" key={ title }>
 							<div className="screen-confirmation__list-item-icon">
 								<Icon icon={ icon } size={ 18.6 } />
