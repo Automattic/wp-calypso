@@ -92,6 +92,14 @@ export default function StatsUpsellModal( {
 								{ translate( '14-day money back guarantee' ) }
 							</div>
 						</div>
+						<div className="stats-upsell-modal__feature">
+							<Gridicon icon="checkmark" />
+							<div className="stats-upsell-modal__feature-text">
+								{ translate( 'All %(planName)s plan features', {
+									args: { planName },
+								} ) }
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
