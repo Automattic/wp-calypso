@@ -166,8 +166,14 @@ function useDisablePaymentMethodsWhenListChanges(
 				...newInitiallyDisabledPaymentMethodIds,
 			] );
 			previousPaymentMethodIdsHash.current = paymentMethodIdsHash;
+			previousPaymentMethodIds.current = paymentMethods.map( ( method ) => method.id );
 		}
-	}, [ paymentMethodIdsHash, setDisabledPaymentMethodIds, newInitiallyDisabledPaymentMethodIds ] );
+	}, [
+		paymentMethodIdsHash,
+		setDisabledPaymentMethodIds,
+		paymentMethods,
+		newInitiallyDisabledPaymentMethodIds,
+	] );
 }
 
 // Reset the selected payment method if the list of payment methods changes.
