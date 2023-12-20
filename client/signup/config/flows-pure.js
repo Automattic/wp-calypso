@@ -43,8 +43,8 @@ export function generateFlows( {
 				return translate( 'Create an account' );
 			},
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
+			providesDependenciesInQuery: [ 'toStepper', 'coupon' ],
+			optionalDependenciesInQuery: [ 'toStepper', 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
