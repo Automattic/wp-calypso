@@ -99,7 +99,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const locale = useLocale();
 	const isNewSite = useIsNewSite( flow );
 	const [ searchParams ] = useSearchParams();
-	const [ callAIAssembler, , , aiAssemblerLoading ] = useAIAssembler();
+	const [ callAIAssembler, , aiAssemblerPrompt, aiAssemblerLoading ] = useAIAssembler();
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -493,23 +493,28 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	};
 
 	const customActionButtons = () => {
-		if ( flow !== AI_ASSEMBLER_FLOW ) {
-			return undefined;
+		if (
+			flow === AI_ASSEMBLER_FLOW &&
+			currentScreen.name === INITIAL_SCREEN &&
+			aiAssemblerPrompt !== ''
+		) {
+			return (
+				<Button
+					variant="secondary"
+					disabled={ aiAssemblerLoading }
+					onClick={ () => callAIAssembler() }
+					style={ {
+						marginRight: 'auto',
+						marginLeft: 14,
+					} }
+					icon={ <Icon icon={ rotateLeft } /> }
+				>
+					{ translate( 'Regenerate AI Suggestions' ) }
+				</Button>
+			);
 		}
-		return (
-			<Button
-				variant="secondary"
-				disabled={ aiAssemblerLoading }
-				onClick={ () => callAIAssembler() }
-				style={ {
-					marginRight: 'auto',
-					marginLeft: 14,
-				} }
-				icon={ <Icon icon={ rotateLeft } /> }
-			>
-				{ translate( 'Regenerate AI Suggestions' ) }
-			</Button>
-		);
+
+		return undefined;
 	};
 
 	const onBack = () => {
