@@ -19,56 +19,8 @@ const AddOnOption = styled.a`
 	}
 `;
 
-const StyledCustomSelectControl = styled( CustomSelectControl )`
-	&,
-	&:visited,
-	&:hover span.name {
-		color: var( --color-text );
-	}
-	.components-custom-select-control__button {
-		min-width: 225px;
-	}
-	.components-custom-select-control__menu {
-		margin: 0;
-	}
-	.components-custom-select-control__item {
-		grid-template-columns: auto min-content;
-	}
-`;
-
-const StickyDropdown = styled( CustomSelectControl )`
-	.components-flex {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 48px;
-		z-index: 2;
-	}
-
-	.components-custom-select-control__menu {
-		position: fixed;
-		left: 0;
-		top: 47px;
-		width: 100%;
-		margin: 0;
-		z-index: 3;
-
-		border: 1px solid #e0e0e0;
-	}
-
-	.components-custom-select-control__item {
-		grid-template-columns: auto min-content;
-	}
-
-	.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop {
-		border: none;
-		border-bottom: 1px solid #e0e0e0;
-	}
-`;
-
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType, isStuck } = props;
+	const { intervalType } = props;
 	const supportedIntervalType = (
 		[ 'yearly', '2yearly', '3yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -84,20 +36,11 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	} ) );
 
 	return (
-		<>
-			{ isStuck ? (
-				<StickyDropdown
-					label=""
-					options={ selectOptionsList }
-					value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-				/>
-			) : (
-				<StyledCustomSelectControl
-					label=""
-					options={ selectOptionsList }
-					value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-				/>
-			) }
-		</>
+		<CustomSelectControl
+			className="plan-type-selector__interval-type-dropdown"
+			label=""
+			options={ selectOptionsList }
+			value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+		/>
 	);
 };
