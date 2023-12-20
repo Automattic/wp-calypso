@@ -34,7 +34,7 @@ export default function useProgressValue( jobProgress: Partial< ImportJobProgres
 				const progress = realProgress > movableProgress ? realProgress : movableProgress;
 				setMovableProgress( progress + 1 );
 			}
-		}, 500 );
+		}, 1000 );
 		return () => clearInterval( interval );
 	}, [ realProgress, movableProgress ] );
 
