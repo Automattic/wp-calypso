@@ -16,12 +16,13 @@ import NavigatorTitle from './navigator-title';
 import './screen-confirmation.scss';
 
 interface Props {
+	isNewSite: boolean;
 	siteId?: number;
 	selectedDesign?: Design;
 	onConfirm: () => void;
 }
 
-const ScreenConfirmation = ( { siteId = 0, selectedDesign, onConfirm }: Props ) => {
+const ScreenConfirmation = ( { isNewSite, siteId = 0, selectedDesign, onConfirm }: Props ) => {
 	const translate = useTranslate();
 
 	const currentThemeId = useSelector( ( state: IAppState ) => getActiveTheme( state, siteId ) );
@@ -35,7 +36,7 @@ const ScreenConfirmation = ( { siteId = 0, selectedDesign, onConfirm }: Props ) 
 	let list;
 	let continueLabel;
 
-	if ( willThemeChange ) {
+	if ( willThemeChange && ! isNewSite ) {
 		title = translate( 'Ready to activate?' );
 		description = translate( 'The following will change in your site.' );
 		list = [
