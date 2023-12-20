@@ -409,7 +409,11 @@ class ManagePurchase extends Component<
 	}
 
 	renderSelectNewButton() {
-		const { translate, siteId } = this.props;
+		const { translate, siteId, purchase } = this.props;
+
+		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
+			return null;
+		}
 
 		return (
 			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
