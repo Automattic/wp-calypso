@@ -67,7 +67,7 @@ export default function StatsUpsellModal( {
 					</div>
 					<div className="stats-upsell-modal__features">
 						<div className="stats-upsell-modal__feature">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" size={ 18 } />
 							<div className="stats-upsell-modal__feature-text">
 								{ translate(
 									'All stats available: traffic trends, sources, optimal time to post…'
@@ -75,25 +75,25 @@ export default function StatsUpsellModal( {
 							</div>
 						</div>
 						<div className="stats-upsell-modal__feature">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" size={ 18 } />
 							<div className="stats-upsell-modal__feature-text">
 								{ translate( 'Download data as CSV' ) }
 							</div>
 						</div>
 						<div className="stats-upsell-modal__feature">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" size={ 18 } />
 							<div className="stats-upsell-modal__feature-text">
 								{ translate( 'Instant access to upcoming features' ) }
 							</div>
 						</div>
 						<div className="stats-upsell-modal__feature">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" size={ 18 } />
 							<div className="stats-upsell-modal__feature-text">
 								{ translate( '14-day money back guarantee' ) }
 							</div>
 						</div>
 						<div className="stats-upsell-modal__feature">
-							<Gridicon icon="checkmark" />
+							<Gridicon icon="checkmark" size={ 18 } />
 							<div className="stats-upsell-modal__feature-text">
 								{ translate( 'All %(planName)s plan features', {
 									args: { planName },
