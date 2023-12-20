@@ -8,7 +8,6 @@ import {
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import useDefaultSiteColumns from '../hooks/use-default-site-columns';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
@@ -55,12 +54,6 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
 
-	const addNewSiteTourSiteCount = useSelector( ( state ) =>
-		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-site-count' )
-	);
-
-	const currentSiteIsNewSite = addNewSiteTourSiteCount === index ? true : false;
-
 	return (
 		<Fragment>
 			<tr
@@ -69,7 +62,6 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
 					'site-table__table-row-site-error': hasSiteConnectionError,
 					'is-expanded': isExpanded,
-					'is-newest-site-added': currentSiteIsNewSite,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {
