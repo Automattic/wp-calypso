@@ -43,17 +43,21 @@ const AISitePrompt: Step = function ( props ) {
 		[]
 	);
 
+	const [ searchParams, setSearchParams ] = useSearchParams(); // eslint-disable-line @typescript-eslint/no-unused-vars
 	const [ loading, setLoading ] = useState( false );
-	const [ prompt, setPrompt ] = useState( '' );
+	const [ prompt, setPrompt ] = useState( searchParams.get( 'ai_description' ) || '' );
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
-	const [ searchParams, setSearchParams ] = useSearchParams(); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
+		setSearchParams( ( currentSearchParams ) => {
+			currentSearchParams.set( 'ai_description', prompt );
+			return currentSearchParams;
+		} );
 		setLoading( true );
 		wpcomRequest( {
 			path: '/pattern-assembler/ai/latest/generate',
