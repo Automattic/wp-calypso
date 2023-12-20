@@ -5,29 +5,6 @@ import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrad
 import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';
 import './styles.scss';
 
-// TODO: Remove test data.
-// Currently used as a fallback if no plan info is provided.
-// Better approach is to require plan info and do some form of validation on it.
-function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
-	// From $0 to $20, in $1 increments.
-	let tiers: any[] = [];
-	for ( let i = 0; i <= 28; i++ ) {
-		tiers.push( {
-			price: formatCurrency( ( minPrice + i * stepPrice ) / 100, 'USD' ),
-			raw: minPrice + i * stepPrice,
-		} );
-	}
-	tiers = tiers.map( ( tier ) => {
-		const emoji = tier.raw < 500 ? ':|' : ':)';
-		return {
-			...tier,
-			lhValue: tier.price,
-			rhValue: emoji,
-		};
-	} );
-	return tiers;
-}
-
 function useTranslatedStrings( defaultAveragePayment: number, currencyCode: string ) {
 	const translate = useTranslate();
 	const limits = translate( 'Your monthly contribution', {
@@ -64,27 +41,6 @@ function emojiForStep( index: number, uiEmojiHeartTier: number, uiImageCelebrati
 	}
 	// Big spender! Fire emoji.
 	return String.fromCodePoint( 0x1f525 );
-}
-
-// Takes a StatsPWYWSliderSettings object and returns an array of slider steps.
-// The slider wants string values for the left and right labels.
-function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: string ) {
-	// Pull tier strategy from settings.
-	// We ignore the emoji thresholds and use our own.
-	const { sliderStepPrice, minSliderPrice, maxSliderPrice } = settings;
-	// Set up our slider steps based on above strategy.
-	const sliderSteps = [];
-	const maxSliderValue = Math.floor( maxSliderPrice / sliderStepPrice );
-	const minSliderValue = Math.round( minSliderPrice / sliderStepPrice );
-	for ( let i = minSliderValue; i <= maxSliderValue; i++ ) {
-		const rawValue = minSliderPrice + i * sliderStepPrice;
-		sliderSteps.push( {
-			raw: rawValue,
-			lhValue: formatCurrency( rawValue, currencyCode ),
-			rhValue: emojiForStep( i, settings.uiEmojiHeartTier, settings.uiImageCelebrationTier ),
-		} );
-	}
-	return sliderSteps;
 }
 
 // Generate the range of available tiers based on the passed-in slider settings.
