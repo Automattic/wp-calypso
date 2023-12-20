@@ -187,6 +187,8 @@ export function generateFlows( {
 			lastModified: '2023-12-16',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
 				plans: {
 					showBiennialToggle: true,
