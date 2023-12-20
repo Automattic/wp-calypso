@@ -26,6 +26,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
+			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( [ 'domain' ].includes( flowName ) && {
 				isDomainOnly: 1,
 				checkoutBackUrl:
