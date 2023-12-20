@@ -488,12 +488,13 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				<div class="launch-bar-global-styles-message">
 					<?php
 					$message = sprintf(
-						/* translators: %s - documentation URL. */
+						/* translators: %1$s - documentation URL, %2$s - the name of the required plan */
 						__(
-							'Your site includes <a href="%s" target="_blank">premium styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+							'Your site includes <a href="%1$s" target="_blank">premium styles</a> that are only visible to visitors after upgrading to the %2$s plan or higher.',
 							'full-site-editing'
 						),
-						'https://wordpress.com/support/using-styles/'
+						'https://wordpress.com/support/using-styles/',
+						get_store_product( WPCOM_VALUE_BUNDLE )->product_name
 					);
 					echo sprintf(
 						wp_kses(

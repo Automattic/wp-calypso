@@ -71,10 +71,10 @@
 	}
 }
 
-.earn .promo-section__promos .gridicon {
-	fill: var(--color-primary-10);
-	position: relative;
-	top: -8px;
+.earn .promo-section__promos .promo-card {
+	@include breakpoint-deprecated( ">1280px" ) {
+		width: calc(33% - 1em);
+	}
 }
 
 @include break-wide {
@@ -136,5 +136,13 @@ h3.ads__table-header-title {
 				background-color: transparent;
 			}
 		}
+	}
+}
+
+.earn__cancel-dialog {
+	width: 580px;
+	max-width: 98%;
+	h1 {
+		margin-bottom: 1em;
 	}
 }

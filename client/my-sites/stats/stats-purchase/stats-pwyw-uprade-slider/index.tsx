@@ -1,5 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';
 import './styles.scss';
@@ -49,9 +50,7 @@ function useTranslatedStrings( defaultAveragePayment: number, currencyCode: stri
 	};
 }
 
-function emojiForStep( index: number ) {
-	const uiEmojiHeartTier = 14;
-	const uiImageCelebrationTier = 23;
+function emojiForStep( index: number, uiEmojiHeartTier: number, uiImageCelebrationTier: number ) {
 	if ( index === 0 ) {
 		return '';
 	}
@@ -82,7 +81,7 @@ function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: str
 		sliderSteps.push( {
 			raw: rawValue,
 			lhValue: formatCurrency( rawValue, currencyCode ),
-			rhValue: emojiForStep( i ),
+			rhValue: emojiForStep( i, settings.uiEmojiHeartTier, settings.uiImageCelebrationTier ),
 		} );
 	}
 	return sliderSteps;
@@ -92,12 +91,14 @@ type StatsPWYWUpgradeSliderProps = {
 	settings: StatsPWYWSliderSettings;
 	currencyCode: string;
 	defaultStartingValue: number;
+	analyticsEventName?: string;
 	onSliderChange: ( index: number ) => void;
 };
 
 function StatsPWYWUpgradeSlider( {
 	settings,
 	currencyCode,
+	analyticsEventName,
 	defaultStartingValue,
 	onSliderChange,
 }: StatsPWYWUpgradeSliderProps ) {
@@ -118,6 +119,13 @@ function StatsPWYWUpgradeSlider( {
 	const marks = [ 0, steps.length - 1 ];
 
 	const handleSliderChanged = ( index: number ) => {
+		if ( analyticsEventName ) {
+			recordTracksEvent( analyticsEventName, {
+				step: index,
+				default_changed: index !== defaultStartingValue,
+			} );
+		}
+
 		onSliderChange( index );
 	};
 
