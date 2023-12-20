@@ -89,10 +89,10 @@ describe(
 		describe( `Validate WordPress.com ${ planName } functionality`, function () {
 			let sidebarComponent: SidebarComponent;
 
-			it( `Sidebar states user is on WordPress.com ${ planName } plan`, async function () {
+			it( `Sidebar states user is on WordPress.com ${ newPlanName } plan`, async function () {
 				sidebarComponent = new SidebarComponent( page );
 				const currentPlan = await sidebarComponent.getCurrentPlanName();
-				expect( currentPlan ).toBe( planName );
+				expect( currentPlan ).toBe( newPlanName );
 			} );
 		} );
 
