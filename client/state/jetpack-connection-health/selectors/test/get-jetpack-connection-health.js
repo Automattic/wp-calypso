@@ -21,6 +21,6 @@ describe( 'getJetpackConnectionHealth()', () => {
 		};
 		const siteId = 123456;
 		const output = getJetpackConnectionHealth( stateIn, siteId );
-		expect( output ).toStrictEqual( {} );
+		expect( output ).toEqual( null );
 	} );
 } );
