@@ -61,11 +61,7 @@ export function CheckoutProvider( {
 		initiallySelectedPaymentMethodId
 	);
 
-	useDisablePaymentMethodsWhenListChanges(
-		paymentMethods,
-		availablePaymentMethodIds,
-		setDisabledPaymentMethodIds
-	);
+	useDisablePaymentMethodsWhenListChanges( paymentMethods, setDisabledPaymentMethodIds );
 
 	// Reset the selected payment method if the list of payment methods changes.
 	useResetSelectedPaymentMethodWhenListChanges(
@@ -146,29 +142,32 @@ function CheckoutProviderPropValidator( {
 
 function useDisablePaymentMethodsWhenListChanges(
 	paymentMethods: PaymentMethod[],
-	availablePaymentMethodIds: string[],
 	setDisabledPaymentMethodIds: ( setter: ( ids: string[] ) => string[] ) => void
 ) {
+	const previousPaymentMethodIds = useRef< string[] >( [] );
+
 	const initiallyDisabledPaymentMethodIds = paymentMethods
 		.filter( ( method ) => method.isInitiallyDisabled )
 		.map( ( method ) => method.id );
+
 	const newInitiallyDisabledPaymentMethodIds = initiallyDisabledPaymentMethodIds.filter( ( id ) =>
-		availablePaymentMethodIds.includes( id )
+		previousPaymentMethodIds.current.includes( id )
 	);
-	const hashKey = availablePaymentMethodIds.join( '-_-' );
-	const previousKey = useRef< string >();
+
+	const paymentMethodIdsHash = paymentMethods.map( ( method ) => method.id ).join( '-_-' );
+	const previousPaymentMethodIdsHash = useRef< string >();
 
 	useEffect( () => {
-		if ( previousKey.current !== hashKey ) {
+		if ( previousPaymentMethodIdsHash.current !== paymentMethodIdsHash ) {
 			debug( 'paymentMethods changed; disabling any new isInitiallyDisabled payment methods' );
 
 			setDisabledPaymentMethodIds( ( currentlyDisabledIds: string[] ) => [
 				...currentlyDisabledIds,
 				...newInitiallyDisabledPaymentMethodIds,
 			] );
-			previousKey.current = hashKey;
+			previousPaymentMethodIdsHash.current = paymentMethodIdsHash;
 		}
-	}, [ hashKey, setDisabledPaymentMethodIds, newInitiallyDisabledPaymentMethodIds ] );
+	}, [ paymentMethodIdsHash, setDisabledPaymentMethodIds, newInitiallyDisabledPaymentMethodIds ] );
 }
 
 // Reset the selected payment method if the list of payment methods changes.
