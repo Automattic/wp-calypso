@@ -78,8 +78,17 @@ export type ErrorResponse = {
 	};
 };
 
+export type HeaderResponse = {
+	'X-WP-Total': number;
+};
+
+type MarketplaceReviewsQueryResponse = {
+	data: MarketplaceReviewResponse[];
+	headers: HeaderResponse;
+};
+
 type MarketplaceReviewsQueryOptions = Pick<
-	UseQueryOptions< MarketplaceReviewResponse[] >,
+	UseQueryOptions< MarketplaceReviewsQueryResponse >,
 	'enabled' | 'staleTime' | 'refetchOnMount'
 >;
 
@@ -95,21 +104,30 @@ const fetchMarketplaceReviews = (
 	perPage: number = 10,
 	author?: number,
 	author_exclude?: number
-): Promise< MarketplaceReviewResponse[] > => {
-	return wpcom.req.get(
-		{
-			path: reviewsApiBase,
-			apiNamespace: reviewsApiNamespace,
-		},
-		{
-			product_type: productType,
-			product_slug: productSlug,
-			page,
-			per_page: perPage,
-			...( author ? { author } : {} ),
-			...( author_exclude ? { author_exclude } : {} ),
-		}
-	);
+): Promise< MarketplaceReviewsQueryResponse > => {
+	return new Promise( ( resolve, reject ) => {
+		wpcom.req.get(
+			{
+				path: reviewsApiBase,
+				apiNamespace: reviewsApiNamespace,
+			},
+			{
+				product_type: productType,
+				product_slug: productSlug,
+				page,
+				per_page: perPage,
+				...( author ? { author } : {} ),
+				...( author_exclude ? { author_exclude } : {} ),
+			},
+			( error: ErrorResponse, data: MarketplaceReviewResponse[], headers: HeaderResponse ) => {
+				if ( error ) {
+					return reject( error );
+				}
+
+				resolve( { data, headers } );
+			}
+		);
+	} );
 };
 
 const createReview = ( {
@@ -192,7 +210,14 @@ export const useMarketplaceReviewsQuery = (
 	];
 	const queryFn = () =>
 		fetchMarketplaceReviews( productType, slug, page, perPage, author, author_exclude );
-	return useQuery( { queryKey, queryFn, enabled, staleTime, refetchOnMount } );
+	return useQuery( {
+		queryKey,
+		queryFn,
+		enabled,
+		staleTime,
+		refetchOnMount,
+		select: ( response ) => response.data,
+	} );
 };
 
 export const useCreateMarketplaceReviewMutation = () => {
