@@ -193,7 +193,6 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 			case RefundPolicy.DomainNameRegistration:
 			case RefundPolicy.DomainNameRegistrationBundled:
 			case RefundPolicy.DomainNameRenewal:
-			case RefundPolicy.DomainNameTransfer:
 				return 4;
 
 			case RefundPolicy.GenericMonthly:
