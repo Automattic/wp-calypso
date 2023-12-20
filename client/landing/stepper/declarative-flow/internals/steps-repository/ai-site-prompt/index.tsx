@@ -71,7 +71,7 @@ const AISitePrompt: Step = function ( props ) {
 						<ActionSection>
 							{ loading && <LoadingEllipsis /> }
 							{ ! loading && (
-								<StyledNextButton type="submit" disabled={ loading }>
+								<StyledNextButton type="submit" disabled={ loading || prompt.length < 16 }>
 									{ __( 'Continue' ) }
 								</StyledNextButton>
 							) }
