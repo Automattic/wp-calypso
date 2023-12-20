@@ -95,7 +95,7 @@ function getSiteForPurchase( purchaseForSite ) {
 	};
 }
 
-function createMockReduxStoreForPurchase( purchaseForRedux ) {
+function createMockReduxStoreForPurchase( purchaseForRedux, domains_items = {} ) {
 	return createReduxStore(
 		{
 			currentUser: { id: Number( purchaseForRedux.user_id ) },
@@ -110,7 +110,7 @@ function createMockReduxStoreForPurchase( purchaseForRedux ) {
 				items: { [ purchaseForRedux.blog_id ]: getSiteForPurchase( purchaseForRedux ) },
 				plans: {},
 				requesting: {},
-				domains: { requesting: {}, items: {} },
+				domains: { requesting: {}, items: domains_items },
 			},
 			plugins: {
 				premium: { plugins: {} },
@@ -131,7 +131,7 @@ describe( 'Purchase Management Buttons', () => {
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
 
-		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 1 } );
+		const store = createMockReduxStoreForPurchase( { ...purchase } );
 
 		render(
 			<QueryClientProvider client={ queryClient }>
@@ -197,6 +197,38 @@ describe( 'Purchase Management Buttons', () => {
 
 		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
 		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( "don't renders renew buttons for domain with pending registration at registry", async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const domainsItems = {
+			212628935: [
+				{
+					name: 'onecooltestsite.com',
+					pendingRegistrationAtRegistry: true,
+				},
+			],
+		};
+		const store = createMockReduxStoreForPurchase(
+			{ ...purchase, meta: 'onecooltestsite.com', is_domain_registration: true },
+			domainsItems
+		);
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+		expect( screen.queryByText( /Renew now/ ) ).not.toBeInTheDocument();
 	} );
 
 	test.each(
