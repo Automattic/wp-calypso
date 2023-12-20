@@ -38,7 +38,7 @@ function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDial
 				button: translate( 'Remove payment' ),
 				confirmation_subheading: translate( 'Do you want to remove this payment?' ),
 				confirmation_info: translate(
-					'A Removing this payment means that the user {{strong}}%(subscriber_email)s{{/strong}} will no longer have access to any service granted by the {{strong}}%(plan_name)s{{/strong}} plan.',
+					'Removing this payment means that the user {{strong}}%(subscriber_email)s{{/strong}} will no longer have access to any service granted by the {{strong}}%(plan_name)s{{/strong}} plan.',
 					{
 						args: { subscriber_email, plan_name },
 						components: {
@@ -57,7 +57,7 @@ function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDial
 			button: translate( 'Cancel payment' ),
 			confirmation_subheading: translate( 'Do you want to cancel this payment?' ),
 			confirmation_info: translate(
-				'A Cancelling this payment means that the user {{strong}}%(subscriber_email)s{{/strong}} will no longer have access to any service granted by the {{strong}}%(plan_name)s{{/strong}} plan.',
+				'Cancelling this payment means that the user {{strong}}%(subscriber_email)s{{/strong}} will no longer have access to any service granted by the {{strong}}%(plan_name)s{{/strong}} plan.',
 				{
 					args: { subscriber_email, plan_name },
 					components: {
