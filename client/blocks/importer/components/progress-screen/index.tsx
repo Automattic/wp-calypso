@@ -27,10 +27,12 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 			case 'clean_up':
 				return __( 'Migrating your data' );
 
-			case 'convert_to_atomic':
 			case 'download_archive':
-			default:
 				return __( 'Backing up your data' );
+
+			case 'convert_to_atomic':
+			default:
+				return __( 'Preparing your site for import' );
 		}
 	}, [ customData?.current_step ] );
 
