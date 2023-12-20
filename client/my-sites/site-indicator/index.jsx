@@ -68,7 +68,7 @@ export class SiteIndicator extends Component {
 						'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}',
 						{
 							components: {
-								link: <a href={ activityLogPath } onClick={ this.handleCoreUpdate } />,
+								link: <a href={ activityLogPath } onClick={ this.resetWindowState } />,
 							},
 							args: {
 								version: siteUpdates.wp_update_version,
@@ -82,7 +82,7 @@ export class SiteIndicator extends Component {
 		if ( siteUpdates.plugins === siteUpdates.total && site.canUpdateFiles ) {
 			return (
 				<span>
-					<a onClick={ this.handlePluginsUpdate } href={ activityLogPath }>
+					<a onClick={ this.resetWindowState } href={ activityLogPath }>
 						{ translate(
 							'There is a plugin update available.',
 							'There are plugin updates available.',
@@ -98,7 +98,7 @@ export class SiteIndicator extends Component {
 		if ( siteUpdates.themes === siteUpdates.total && site.canUpdateFiles ) {
 			return (
 				<span>
-					<a onClick={ this.handleThemesUpdate } href={ activityLogPath }>
+					<a onClick={ this.resetWindowState } href={ activityLogPath }>
 						{ translate(
 							'There is a theme update available.',
 							'There are theme updates available.',
@@ -117,7 +117,7 @@ export class SiteIndicator extends Component {
 		) {
 			return (
 				<span>
-					<a onClick={ this.handleMultipleUpdate } href={ activityLogPath }>
+					<a onClick={ this.resetWindowState } href={ activityLogPath }>
 						{ translate( 'There are updates available.' ) }
 					</a>
 				</span>
@@ -135,38 +135,10 @@ export class SiteIndicator extends Component {
 		);
 	}
 
-	recordEvent() {
+	resetWindowState() {
 		window.scrollTo( 0, 0 );
 		this.setState( { expand: false } );
 	}
-
-	handlePluginsUpdate = () => {
-		const { siteUpdates } = this.props;
-		this.recordEvent(
-			'Clicked updates available link to plugins updates',
-			siteUpdates && siteUpdates.total
-		);
-	};
-
-	handleThemesUpdate = () => {
-		const { siteUpdates } = this.props;
-		this.recordEvent(
-			'Clicked updates available link to theme updates',
-			siteUpdates && siteUpdates.total
-		);
-	};
-
-	handleCoreUpdate = () => {
-		this.recordEvent( 'Clicked updates available link to WordPress updates', 1 );
-	};
-
-	handleMultipleUpdate = () => {
-		const { siteUpdates } = this.props;
-		this.recordEvent(
-			'Clicked updates available link for multiple updates',
-			siteUpdates && siteUpdates.total
-		);
-	};
 
 	handleJetpackConnectionHealthSidebarLinkClick = () => {
 		const { siteIsAutomatedTransfer } = this.props;
