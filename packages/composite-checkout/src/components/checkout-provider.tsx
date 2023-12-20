@@ -40,7 +40,9 @@ export function CheckoutProvider( {
 	};
 
 	// Keep track of enabled/disabled payment methods.
-	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
+	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >(
+		paymentMethods.filter( ( method ) => method.isInitiallyDisabled ).map( ( method ) => method.id )
+	);
 	const availablePaymentMethodIds = paymentMethods
 		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
 		.map( ( method ) => method.id );
