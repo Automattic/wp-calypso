@@ -31,7 +31,7 @@ export default function SiteTopHeaderButtons() {
 	};
 
 	const urlParams = new URLSearchParams( window.location.search );
-	const shouldRenderAddSitesTour = urlParams.get( 'tour' ) === 'add-new-site';
+	const shouldRenderAddSiteTourStep1 = urlParams.get( 'tour' ) === 'add-new-site';
 
 	return (
 		<div
@@ -76,7 +76,7 @@ export default function SiteTopHeaderButtons() {
 							)
 						}
 					/>
-					{ shouldRenderAddSitesTour && (
+					{ shouldRenderAddSiteTourStep1 && (
 						<GuidedTour
 							className="jetpack-cloud-site-dashboard__guided-tour"
 							preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour"
