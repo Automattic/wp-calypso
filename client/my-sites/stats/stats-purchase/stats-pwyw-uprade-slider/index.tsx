@@ -138,12 +138,6 @@ function StatsPWYWUpgradeSlider( {
 	const defaultAveragePayment = defaultStartingValue * settings.sliderStepPrice;
 	const uiStrings = useTranslatedStrings( defaultAveragePayment, currencyCode );
 
-	let steps = getPWYWPlanTiers( 0, 50 );
-	if ( settings !== undefined ) {
-		steps = stepsFromSettings( settings, currencyCode || '' );
-	}
-	const marks = [ 0, steps.length - 1 ];
-
 	// New steps generation.
 	const tiersX = generatePlanTiers( settings );
 	const stepsX = generateSteps( tiersX, currencyCode, settings );
