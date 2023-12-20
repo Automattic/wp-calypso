@@ -23,12 +23,6 @@ export default function ThemeTierCommunityBadge() {
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{ translate( 'Community theme', {
-					context: 'This theme is developed and supported by a community',
-					textOnly: true,
-				} ) }
-			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
 					isEnglishLocale ||
