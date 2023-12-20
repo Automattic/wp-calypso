@@ -14,7 +14,7 @@ import {
 	isBiennially,
 	isTriennially,
 	isJetpackAISlug,
-	isJetpackStatsPaidProductSlug,
+	isJetpackStatsPaidTieredProductSlug,
 } from '@automattic/calypso-products';
 import { translate, numberFormat } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
@@ -106,7 +106,7 @@ export function getLabel( product: ResponseCartProduct ): string {
 		} );
 	}
 
-	if ( isJetpackStatsPaidProductSlug( product.product_slug ) && product.quantity ) {
+	if ( isJetpackStatsPaidTieredProductSlug( product.product_slug ) && product.quantity ) {
 		return translate( '%(productName)s - %(quantity)s views per month', {
 			args: {
 				productName: product.product_name,
