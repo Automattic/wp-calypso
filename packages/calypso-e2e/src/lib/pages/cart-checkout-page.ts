@@ -46,6 +46,8 @@ const selectors = {
 	// Payment method cards
 	existingCreditCard: ( cardHolderName: string ) =>
 		`label[for*="existingCard"]:has-text("${ cardHolderName }")`,
+	alreadySelectedSavedCard: ( cardHolderName: string ) =>
+		`.checkout-payment-methods li:has-text("${ cardHolderName }")`,
 
 	// Payment field
 	cardholderName: `input[id="cardholder-name"]`,
@@ -259,6 +261,13 @@ export class CartCheckoutPage {
 	 * @param {string} cardHolderName Name of the card holder associated with the payment method.
 	 */
 	async selectSavedCard( cardHolderName: string ): Promise< void > {
+		if ( await this.page.isVisible( selectors.alreadySelectedSavedCard( cardHolderName ) ) ) {
+			// If the payment method step is collapsed, which can happen when
+			// there is a saved card already selected, then there's no need to
+			// do anything if the saved card is the one we want.
+			return;
+		}
+
 		// If the account has a saved card, the payment method step may
 		// automatically collapse with the first saved card automatically
 		// selected. So in order to select a different card, we need to click
