@@ -118,7 +118,7 @@ const ThemeTypeBadgeTooltip = ( {
 						{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
 				  )
 				: translate(
-						'Unlock this style, and tons of other features, by upgrading to a Premium plantest.'
+						'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
 				  );
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
