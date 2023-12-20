@@ -19,14 +19,11 @@ export const JumpToRecent = ( {
 	enableJumpToRecent: boolean;
 	bottomOffset: number;
 } ) => {
-	const { botSetting, botNameSlug, trackEvent, isMinimized } = useOdieAssistantContext();
+	const { trackEvent, isMinimized } = useOdieAssistantContext();
 	const translate = useTranslate();
 	const jumpToRecent = () => {
 		scrollToBottom();
-		trackEvent( 'calypso_odie_chat_jump_to_recent_click', {
-			bot_name_slug: botNameSlug,
-			bot_setting: botSetting,
-		} );
+		trackEvent( 'calypso_odie_chat_jump_to_recent_click' );
 	};
 
 	if ( isMinimized ) {

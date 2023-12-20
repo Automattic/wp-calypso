@@ -1,5 +1,6 @@
 import debugModule from 'debug';
 import { get } from 'lodash';
+import readerPocketCastImage from 'calypso/assets/images/reader/reader-pocket-cast.svg';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 
@@ -81,6 +82,27 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 					.then( handleFetchResponse )
 					.then( ( json ) => {
 						const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
+						if ( thumbnailUrl ) {
+							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+						}
+					} )
+					.catch( () => {} );
+			} catch ( error ) {}
+		}
+		case 'pocketcasts': {
+			debug( `Requesting thumbnail for embed ${ embedUrl }` );
+
+			const fetchUrl = `https://pca.st/oembed.json?url=https%3A%2F%2Fpca.st%2F${ id }`;
+			try {
+				return globalThis
+					.fetch( fetchUrl )
+					.then( handleFetchResponse )
+					.then( ( json ) => {
+						const thumbnailWidth = get( json, [ 'thumbnail_width' ] ) ?? 220;
+						const thumbnailHeight = get( json, [ 'thumbnail_height' ] ) ?? 80;
+						// append the width and height to the thumbnail url
+						let thumbnailUrl = get( json, [ 'thumbnail_url' ] ) ?? readerPocketCastImage;
+						thumbnailUrl += `?w=${ thumbnailWidth }&h=${ thumbnailHeight }`;
 						if ( thumbnailUrl ) {
 							dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 						}

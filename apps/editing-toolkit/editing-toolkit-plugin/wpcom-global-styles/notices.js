@@ -1,5 +1,9 @@
 /* global wpcomGlobalStyles */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { usePlans } from '@automattic/data-stores/src/plans';
+import { PLAN_PREMIUM } from '@automattic/data-stores/src/plans/constants';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
@@ -9,7 +13,7 @@ import {
 	useEffect,
 	useState,
 } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf, hasTranslation } from '@wordpress/i18n';
 import { useCanvas } from './use-canvas';
 import { useGlobalStylesConfig } from './use-global-styles-config';
 import { usePreview } from './use-preview';
@@ -23,15 +27,31 @@ const trackEvent = ( eventName, isSiteEditor = true ) =>
 		blog_id: wpcomGlobalStyles.wpcomBlogId,
 	} );
 
-function GlobalStylesWarningNotice() {
+function GlobalStylesWarningNotice( { plans } ) {
+	const isEnglishLocale = useIsEnglishLocale();
+
 	useEffect( () => {
 		trackEvent( 'calypso_global_styles_gating_notice_view_canvas_show' );
 	}, [] );
 
-	const upgradeTranslation = __(
-		'Your site includes premium styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
-		'full-site-editing'
-	);
+	const upgradeTranslation =
+		isEnglishLocale ||
+		hasTranslation(
+			'Your site includes premium styles that are only visible to visitors after <a>upgrading to the %s plan or higher</a>.',
+			'full-site-editing'
+		)
+			? sprintf(
+					/* translators: %s is the short-form Premium plan name */
+					__(
+						'Your site includes premium styles that are only visible to visitors after <a>upgrading to the %s plan or higher</a>.',
+						'full-site-editing'
+					),
+					plans.data?.[ PLAN_PREMIUM ]?.productNameShort || ''
+			  )
+			: __(
+					'Your site includes premium styles that are only visible to visitors after <a>upgrading to the Premium plan or higher</a>.',
+					'full-site-editing'
+			  );
 
 	return (
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
@@ -54,11 +74,16 @@ function GlobalStylesViewNotice() {
 	const { canvas } = useCanvas();
 	const [ isRendered, setIsRendered ] = useState( false );
 	const { globalStylesInUse } = useGlobalStylesConfig();
+	const plans = usePlans();
 
 	useEffect( () => {
 		if ( ! globalStylesInUse ) {
 			document.querySelector( `.${ GLOBAL_STYLES_VIEW_NOTICE_SELECTOR }` )?.remove();
 			setIsRendered( false );
+			return;
+		}
+
+		if ( ! plans?.data ) {
 			return;
 		}
 
@@ -81,10 +106,10 @@ function GlobalStylesViewNotice() {
 		noticeContainer.classList.add( GLOBAL_STYLES_VIEW_NOTICE_SELECTOR );
 		container.insertBefore( noticeContainer, saveHub );
 
-		render( <GlobalStylesWarningNotice />, noticeContainer );
+		render( <GlobalStylesWarningNotice plans={ plans } />, noticeContainer );
 
 		setIsRendered( true );
-	}, [ isRendered, canvas, globalStylesInUse ] );
+	}, [ isRendered, canvas, plans, globalStylesInUse ] );
 
 	return null;
 }
@@ -101,6 +126,8 @@ function GlobalStylesEditNotice() {
 		[ canvas ]
 	);
 	const { previewPostWithoutCustomStyles, canPreviewPost } = usePreview();
+	const plans = usePlans();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
 	const { editEntityRecord } = useDispatch( 'core' );
@@ -165,10 +192,23 @@ function GlobalStylesEditNotice() {
 		} );
 
 		createWarningNotice(
-			__(
-				'Your site includes premium styles that are only visible to visitors after upgrading to the Premium plan or higher.',
-				'full-site-editing'
-			),
+			isEnglishLocale ||
+				hasTranslation(
+					'Your site includes premium styles that are only visible to visitors after upgrading to the %s plan or higher.',
+					'full-site-editing'
+				)
+				? sprintf(
+						/* translators: %s is the short-form Premium plan name */
+						__(
+							'Your site includes premium styles that are only visible to visitors after upgrading to the %s plan or higher.',
+							'full-site-editing'
+						),
+						plans.data?.[ PLAN_PREMIUM ]?.productNameShort || ''
+				  )
+				: __(
+						'Your site includes premium styles that are only visible to visitors after upgrading to the Premium plan or higher.',
+						'full-site-editing'
+				  ),
 			{
 				id: NOTICE_ID,
 				actions: actions,
@@ -206,9 +246,9 @@ function GlobalStylesEditNotice() {
 
 export default function GlobalStylesNotices() {
 	return (
-		<>
+		<QueryClientProvider client={ new QueryClient() }>
 			<GlobalStylesViewNotice />
 			<GlobalStylesEditNotice />
-		</>
+		</QueryClientProvider>
 	);
 }

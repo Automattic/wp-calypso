@@ -1,0 +1,66 @@
+{
+	"name": "@automattic/jetpack-ai-calypso",
+	"version": "1.0.0",
+	"description": "Jetpack AI utilities available to Calypso",
+	"calypso:src": "src/index.js",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"keywords": [
+		"wordpress",
+		"jetpack",
+		"ai",
+		"utilities"
+	],
+	"author": "Automattic Inc.",
+	"contributors": [],
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/jetpack-ai-calypso"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepare": "yarn run clean && yarn run build",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/react": "^14.1.2",
+		"postcss": "^8.4.5",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"typescript": "^5.3.2",
+		"webpack": "^5.89.0"
+	},
+	"peerDependencies": {
+		"@babel/runtime": "^7.23.2",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"peerDependenciesMeta": {
+		"@babel/runtime": {
+			"optional": true
+		}
+	}
+}

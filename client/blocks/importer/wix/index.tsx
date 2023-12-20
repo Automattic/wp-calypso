@@ -45,19 +45,12 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Effects
 	 */
-	useEffect( handleImporterReadiness, [] );
 	useEffect( handleRunFlagChange, [ run ] );
 	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function handleImporterReadiness() {
-		if ( ! checkIsImporterReady() ) {
-			stepNavigator?.goToImportCapturePage?.();
-		}
-	}
-
 	function handleJobStateTransition() {
 		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
@@ -97,8 +90,9 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
-	function checkIsImporterReady() {
-		return job || run;
+	function onBackToStartClick() {
+		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
 	}
 
 	function checkProgress() {
@@ -142,7 +136,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 						return (
 							<ErrorMessage
 								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
+								onBackToStart={ onBackToStartClick }
 							/>
 						);
 					} else if ( checkProgress() ) {

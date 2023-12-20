@@ -1,8 +1,9 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
@@ -14,6 +15,9 @@ import LayoutNavigation, {
 	LayoutNavigationTabs as NavigationTabs,
 } from 'calypso/jetpack-cloud/components/layout/nav';
 import LayoutTop from 'calypso/jetpack-cloud/components/layout/top';
+import PartnerPortalSidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import { useProductBundleSize } from './hooks/use-product-bundle-size';
@@ -28,8 +32,10 @@ import './style.scss';
 
 export default function IssueLicenseV2( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize();
+	const { selectedSize, setSelectedSize, availableSizes, fetchingAvailableSizes } =
+		useProductBundleSize();
 
 	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
 	// track if the user purchases a different set of products.
@@ -46,13 +52,22 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		.map( ( license ) => license.quantity )
 		.reduce( ( a, b ) => a + b, 0 );
 
-	const handleShowLicenseOverview = useCallback( () => {
+	const onShowReviewLicensesModal = useCallback( () => {
 		setShowReviewLicenses( true );
-	}, [] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_show', {
+				total_licenses: selectedLicenseCount,
+				items: selectedLicenses
+					?.map( ( license ) => `${ license.slug } x ${ license.quantity }` )
+					.join( ',' ),
+			} )
+		);
+	}, [ dispatch, selectedLicenseCount, selectedLicenses ] );
 
-	const onClickIssueLicenses = useCallback( () => {
-		handleShowLicenseOverview();
-	}, [ handleShowLicenseOverview ] );
+	const onDismissReviewLicensesModal = useCallback( () => {
+		setShowReviewLicenses( false );
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_dimiss' ) );
+	}, [ dispatch ] );
 
 	const showStickyContent = useBreakpoint( '>660px' ) && selectedLicenses.length > 0;
 
@@ -90,7 +105,14 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 							args: { size },
 					  } ) as string ),
 			selected: selectedSize === size,
-			onClick: () => setSelectedSize( size ),
+			onClick: () => {
+				setSelectedSize( size );
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_agency_issue_license_bundle_tab_click', {
+						bundle_size: size,
+					} )
+				);
+			},
 			...( count && { count } ),
 		};
 	} );
@@ -100,13 +122,26 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		...( selectedCount && { selectedCount } ),
 	};
 
+	const showBundle = ! selectedSite;
+
+	useEffect( () => {
+		if ( ! fetchingAvailableSizes ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_agency_issue_license_visit', {
+					bundle_size: selectedSize,
+				} )
+			);
+		}
+	}, [ dispatch, fetchingAvailableSizes, selectedSize ] );
+
 	return (
 		<>
 			<Layout
-				className="issue-license-v2"
+				className={ classNames( 'issue-license-v2', { 'without-bundle': ! showBundle } ) }
 				title={ translate( 'Issue a new License' ) }
 				wide
 				withBorder
+				sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
 			>
 				<LayoutTop>
 					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
@@ -114,7 +149,15 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>
 						<Subtitle>
-							{ translate( 'Select single product licenses or save when you issue in bulk' ) }
+							{ selectedSite?.domain
+								? translate(
+										'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
+										{
+											args: { selectedSiteDomain: selectedSite.domain },
+											components: { strong: <strong /> },
+										}
+								  )
+								: translate( 'Select single product licenses or save when you issue in bulk' ) }
 						</Subtitle>
 						{ selectedLicenses.length > 0 && (
 							<Actions>
@@ -125,7 +168,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 											primary
 											className="issue-license-v2__select-license"
 											busy={ ! isReady }
-											onClick={ onClickIssueLicenses }
+											onClick={ onShowReviewLicensesModal }
 										>
 											{ translate(
 												'Review %(numLicenses)d license',
@@ -145,9 +188,11 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 						) }
 					</LayoutHeader>
 
-					<LayoutNavigation { ...selectedItemProps }>
-						<NavigationTabs { ...selectedItemProps } items={ navItems } />
-					</LayoutNavigation>
+					{ showBundle && (
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
+					) }
 				</LayoutTop>
 
 				<LayoutBody>
@@ -162,8 +207,9 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			</Layout>
 			{ showReviewLicenses && (
 				<ReviewLicenses
-					onClose={ () => setShowReviewLicenses( false ) }
+					onClose={ onDismissReviewLicensesModal }
 					selectedLicenses={ getGroupedLicenses() }
+					selectedSite={ selectedSite }
 				/>
 			) }
 		</>

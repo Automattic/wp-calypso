@@ -5,7 +5,11 @@ import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/i
 import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
+import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -15,6 +19,7 @@ interface CommandMenuGroupProps
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	setFooterMessage?: ( message: string ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -59,6 +64,16 @@ const SubLabel = styled( Label )( {
 	},
 } );
 
+const StyledCommandsFooter = styled.div( {
+	fontSize: '0.75rem',
+	paddingTop: '12px',
+	paddingLeft: '16px',
+	paddingRight: '16px',
+	paddingBottom: '12px',
+	borderTop: '1px solid var(--studio-gray-5)',
+	color: 'var(--studio-gray-50)',
+} );
+
 export function CommandMenuGroup( {
 	search,
 	close,
@@ -66,11 +81,17 @@ export function CommandMenuGroup( {
 	setPlaceholderOverride,
 	selectedCommandName,
 	setSelectedCommandName,
+	setFooterMessage,
 }: CommandMenuGroupProps ) {
-	const { commands } = useCommandPalette( {
+	const { commands, filterNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
+		search,
 	} );
+
+	useEffect( () => {
+		setFooterMessage?.( filterNotice ?? '' );
+	}, [ setFooterMessage, filterNotice ] );
 
 	if ( ! commands.length ) {
 		return null;
@@ -79,12 +100,20 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
-				const itemValue = command.searchLabel ?? command.label;
+				const itemValue = [ command.label, command.searchLabel ]
+					.filter( Boolean )
+					.join( COMMAND_SEPARATOR );
 				return (
 					<Command.Item
 						key={ command.name }
 						value={ itemValue }
-						onSelect={ () => command.callback( { close, setSearch, setPlaceholderOverride } ) }
+						onSelect={ () =>
+							command.callback( {
+								close: () => close( command.name, true ),
+								setSearch,
+								setPlaceholderOverride,
+							} )
+						}
 						id={ cleanForSlug( itemValue ) }
 					>
 						<HStack
@@ -121,20 +150,28 @@ interface CommandInputProps {
 	isOpen: boolean;
 	search: string;
 	setSearch: ( search: string ) => void;
+	selectedCommandName: string;
 	placeholder?: string;
 }
 
-function CommandInput( { isOpen, search, setSearch, placeholder }: CommandInputProps ) {
+function CommandInput( {
+	isOpen,
+	search,
+	setSearch,
+	placeholder,
+	selectedCommandName,
+}: CommandInputProps ) {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
 
 	useEffect( () => {
-		// Focus the command palette input when mounting the modal.
-		if ( isOpen ) {
+		// Focus the command palette input when mounting the modal,
+		// or when a command is selected.
+		if ( isOpen || selectedCommandName ) {
 			commandMenuInput.current?.focus();
 		}
-	}, [ isOpen ] );
+	}, [ isOpen, selectedCommandName ] );
 
 	return (
 		<Command.Input
@@ -152,10 +189,43 @@ const CommandPalette = () => {
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const { close, toggle } = {
-		close: () => setIsOpen( false ),
-		toggle: () => setIsOpen( ( isOpen ) => ! isOpen ),
-	};
+	const [ footerMessage, setFooterMessage ] = useState( '' );
+	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
+	const dispatch = useDispatch();
+	const open = useCallback( () => {
+		setIsOpen( true );
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_open', {
+				current_route: currentRoute,
+			} )
+		);
+	}, [ dispatch, currentRoute ] );
+	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
+		( commandName = '', isExecuted = false ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_command_palette_close', {
+					// For nested commands the command.name would be the siteId
+					// For root commands the selectedCommandName would be empty
+					command: selectedCommandName || commandName,
+					current_route: currentRoute,
+					search_text: search,
+					is_executed: isExecuted,
+				} )
+			);
+			setIsOpen( false );
+		},
+		[ currentRoute, dispatch, search, selectedCommandName ]
+	);
+	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
+	const commandFilter = useCommandFilter();
+
+	const commandListRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( commandListRef.current !== null ) {
+			commandListRef.current.scrollTop = 0;
+		}
+	}, [ selectedCommandName ] );
 
 	// Cmd+K shortcut
 	useEffect( () => {
@@ -180,6 +250,18 @@ const CommandPalette = () => {
 		close();
 	};
 
+	const goBackToRootCommands = ( fromKeyboard: boolean ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_back_to_root', {
+				command: selectedCommandName,
+				current_route: currentRoute,
+				search_text: search,
+				from_keyboard: fromKeyboard,
+			} )
+		);
+		reset();
+	};
+
 	if ( ! isOpen ) {
 		return false;
 	}
@@ -196,11 +278,11 @@ const CommandPalette = () => {
 			event.preventDefault();
 		}
 		if (
-			( event.key === 'Escape' && selectedCommandName ) ||
-			( event.key === 'Backspace' && ! search )
+			selectedCommandName &&
+			( event.key === 'Escape' || ( event.key === 'Backspace' && ! search ) )
 		) {
 			event.preventDefault();
-			reset();
+			goBackToRootCommands( true );
 		}
 	};
 
@@ -214,12 +296,12 @@ const CommandPalette = () => {
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
+				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown } filter={ commandFilter }>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton
 								type="button"
-								onClick={ reset }
+								onClick={ () => goBackToRootCommands( false ) }
 								aria-label={ __( 'Go back to the previous screen' ) }
 							>
 								<Icon icon={ backIcon } />
@@ -228,26 +310,32 @@ const CommandPalette = () => {
 							<Icon icon={ inputIcon } />
 						) }
 						<CommandInput
+							selectedCommandName={ selectedCommandName }
 							search={ search }
 							setSearch={ setSearch }
 							isOpen={ isOpen }
 							placeholder={ placeHolderOverride }
 						/>
 					</div>
-					<Command.List>
+					<Command.List ref={ commandListRef }>
 						{ search && ! isLoading && (
 							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
 						) }
 						<CommandMenuGroup
 							search={ search }
-							close={ closeAndReset }
+							close={ ( commandName, isExecuted ) => {
+								close( commandName, isExecuted );
+								reset();
+							} }
 							setSearch={ setSearch }
 							setPlaceholderOverride={ setPlaceholderOverride }
 							selectedCommandName={ selectedCommandName }
 							setSelectedCommandName={ setSelectedCommandName }
+							setFooterMessage={ setFooterMessage }
 						/>
 					</Command.List>
 				</Command>
+				{ footerMessage && <StyledCommandsFooter>{ footerMessage }</StyledCommandsFooter> }
 			</StyledCommandsMenuContainer>
 		</Modal>
 	);

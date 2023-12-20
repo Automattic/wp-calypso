@@ -231,6 +231,21 @@ const ChatMessage = (
 		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>
 			<div className={ messageClasses }>
 				{ messageHeader }
+				{ message.type === 'error' && (
+					<>
+						<AsyncLoad
+							require="react-markdown"
+							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
+							transformLinkUri={ uriTransformer }
+							components={ {
+								a: CustomALink,
+							} }
+						>
+							{ message.content }
+						</AsyncLoad>
+						{ extraContactOptions }
+					</>
+				) }
 				{ ( message.type === 'message' || ! message.type ) && (
 					<>
 						<AsyncLoad
@@ -287,14 +302,12 @@ const ChatMessage = (
 					} ) }
 					onClose={ () =>
 						trackEvent( 'calypso_odie_chat_message_action_sources', {
-							bot_name_slug: botName,
 							action: 'close',
 							message_id: message.message_id,
 						} )
 					}
 					onOpen={ () =>
 						trackEvent( 'calypso_odie_chat_message_action_sources', {
-							bot_name_slug: botName,
 							action: 'open',
 							message_id: message.message_id,
 						} )

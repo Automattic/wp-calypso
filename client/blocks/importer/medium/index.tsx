@@ -63,6 +63,11 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		};
 	}
 
+	function onBackToStartClick() {
+		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
+	}
+
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -109,7 +114,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 						return (
 							<ErrorMessage
 								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
+								onBackToStart={ onBackToStartClick }
 							/>
 						);
 					} else if ( checkProgress() ) {

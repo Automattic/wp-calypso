@@ -6,6 +6,7 @@ import { FC, useEffect } from 'react';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
+import { LivePreviewUpgradeModal } from './upgrade-modal';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
 import { getUnlock } from './utils';
 
@@ -22,12 +23,12 @@ const LivePreviewNotice: FC< {
 	dashboardLink?: string;
 	previewingThemeName?: string;
 } > = ( { dashboardLink, previewingThemeName } ) => {
-	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
+	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
 
 	useHideTemplatePartHint();
 
 	useEffect( () => {
-		createWarningNotice(
+		createInfoNotice(
 			sprintf(
 				// translators: %s: theme name
 				__(
@@ -49,7 +50,7 @@ const LivePreviewNotice: FC< {
 			}
 		);
 		return () => removeNotice( NOTICE_ID );
-	}, [ dashboardLink, createWarningNotice, removeNotice, previewingThemeName ] );
+	}, [ dashboardLink, createInfoNotice, removeNotice, previewingThemeName ] );
 	return null;
 };
 
@@ -77,7 +78,12 @@ const LivePreviewNoticePlugin = () => {
 	}
 
 	if ( canPreviewButNeedUpgrade ) {
-		return <LivePreviewUpgradeNotice { ...{ previewingTheme, upgradePlan, dashboardLink } } />;
+		return (
+			<>
+				<LivePreviewUpgradeModal { ...{ themeId: previewingTheme.id as string, upgradePlan } } />
+				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
+			</>
+		);
 	}
 	return <LivePreviewNotice { ...{ dashboardLink, previewingThemeName: previewingTheme.name } } />;
 };

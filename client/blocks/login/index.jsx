@@ -383,26 +383,8 @@ class Login extends Component {
 			if ( isWoo ) {
 				if ( isPartnerSignup ) {
 					headerText = translate( 'Log in to your account' );
-				} else if ( wccomFrom ) {
-					preHeader = (
-						<Fragment>
-							{ 'cart' === wccomFrom ? (
-								<WooCommerceConnectCartHeader />
-							) : (
-								<div className="login__woocommerce-wrapper">
-									<div className={ classNames( 'login__woocommerce-logo' ) }>
-										<svg width={ 200 } viewBox="0 0 1270 170">
-											<AsyncLoad
-												require="calypso/components/jetpack-header/woocommerce"
-												darkColorScheme={ false }
-												placeholder={ null }
-											/>
-										</svg>
-									</div>
-								</div>
-							) }
-						</Fragment>
-					);
+				} else if ( wccomFrom === 'cart' ) {
+					preHeader = <WooCommerceConnectCartHeader />;
 					headerText = translate( 'Log in with a WordPress.com account' );
 					postHeader = (
 						<p className="login__header-subtitle">
@@ -424,26 +406,26 @@ class Login extends Component {
 					);
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
+					const poweredByWpCom =
+						wccomFrom === 'nux'
+							? translate( 'All Woo Express stores are powered by WordPress.com!' )
+							: translate( 'All Woo stores are powered by WordPress.com!' );
+					const accountSelectionOrLoginToContinue = this.showContinueAsUser()
+						? translate( "First, select the account you'd like to use." )
+						: translate(
+								"Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+								{
+									components: {
+										signupLink: <a href={ this.getSignupUrl() } />,
+										br: <br />,
+									},
+								}
+						  );
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ this.showContinueAsUser()
-								? translate(
-										"All Woo stores are powered by WordPress.com!{{br/}}First, select the account you'd like to use.",
-										{
-											components: {
-												br: <br />,
-											},
-										}
-								  )
-								: translate(
-										"All Woo stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
-										{
-											components: {
-												signupLink: <a href={ this.getSignupUrl() } />,
-												br: <br />,
-											},
-										}
-								  ) }
+							{ poweredByWpCom }
+							<br />
+							{ accountSelectionOrLoginToContinue }
 						</p>
 					);
 				}

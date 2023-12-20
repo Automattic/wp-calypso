@@ -1,12 +1,13 @@
-import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	PatternAssemblerCta,
 	usePatternAssemblerCtaData,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -18,6 +19,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSiteOnECommerceTrial, isSiteOnWooExpress } from 'calypso/state/sites/plans/selectors';
 import { getSiteThemeInstallUrl } from 'calypso/state/sites/selectors';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -130,9 +132,9 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ tabFilter !== 'my-themes' && props.themes.length > 0 && (
-				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
-			) }
+			{ ! ( props.isSiteWooExpressOrEcomFreeTrial && props.tier === 'free' ) &&
+				tabFilter !== 'my-themes' &&
+				props.themes.length > 0 && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
 			{ props.children }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
@@ -165,6 +167,7 @@ ThemesList.propTypes = {
 	] ),
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
+	tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 	upsellCardDisplayed: PropTypes.func,
 	children: PropTypes.node,
 };
@@ -244,6 +247,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		getSiteThemeInstallUrl( state, selectedSite?.ID )
 	);
 	const assemblerCtaData = usePatternAssemblerCtaData();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const options = [];
 
@@ -306,9 +310,18 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		options.push( {
 			title: translate( 'Upload a theme' ),
 			icon: cloudUpload,
-			description: translate(
-				'With a Business plan, you can upload and install third-party themes, including your own themes.'
-			),
+			description:
+				isEnglishLocale ||
+				i18n.hasTranslation(
+					'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.'
+				)
+					? translate(
+							'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() } }
+					  )
+					: translate(
+							'With a Business plan, you can upload and install third-party themes, including your own themes.'
+					  ),
 			onClick: () =>
 				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
 					site_plan: sitePlan,
@@ -338,9 +351,18 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		options.push( {
 			title: translate( 'Upload a theme' ),
 			icon: cloudUpload,
-			description: translate(
-				'With a Business plan, you can upload and install third-party themes, including your own themes.'
-			),
+			description:
+				isEnglishLocale ||
+				i18n.hasTranslation(
+					'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.'
+				)
+					? translate(
+							'With a %(businessPlanName)s plan, you can upload and install third-party themes, including your own themes.',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() } }
+					  )
+					: translate(
+							'With a Business plan, you can upload and install third-party themes, including your own themes.'
+					  ),
 			onClick: () =>
 				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
 					site_plan: sitePlan,
@@ -412,9 +434,13 @@ function LoadingPlaceholders( { placeholderCount } ) {
 	} );
 }
 
-const mapStateToProps = ( state ) => ( {
-	themesBookmark: getThemesBookmark( state ),
-} );
+const mapStateToProps = ( state, { siteId } ) => {
+	return {
+		themesBookmark: getThemesBookmark( state ),
+		isSiteWooExpressOrEcomFreeTrial:
+			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+	};
+};
 
 const mapDispatchToProps = {
 	upsellCardDisplayed: upsellCardDisplayedAction,

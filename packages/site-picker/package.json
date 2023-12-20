@@ -24,13 +24,13 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"@automattic/tour-kit": "workspace:^",
-		"@wordpress/dom": "^3.47.0",
-		"@wordpress/i18n": "^4.47.0",
-		"@wordpress/icons": "^9.38.0",
+		"@wordpress/dom": "^3.48.0",
+		"@wordpress/i18n": "^4.48.0",
+		"@wordpress/icons": "^9.39.0",
 		"classnames": "^2.3.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.17.0",
+		"@wordpress/data": "^9.18.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"
@@ -39,7 +39,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^6.1.5",
 		"@testing-library/react": "^14.1.2",
-		"typescript": "^5.2.2"
+		"typescript": "^5.3.2"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

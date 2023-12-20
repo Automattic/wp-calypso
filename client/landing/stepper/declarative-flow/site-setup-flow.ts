@@ -419,6 +419,7 @@ const siteSetupFlow: Flow = {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
 
+				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 
@@ -531,23 +532,28 @@ const siteSetupFlow: Flow = {
 					const backToStep = urlQueryParams.get( 'backToStep' );
 
 					if ( backToStep ) {
-						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
+						return navigate( `${ backToStep }?siteSlug=${ siteSlugParam }` );
 					}
 
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+					return navigate( `importList?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWordpress':
+					if ( urlQueryParams.get( 'option' ) === 'content' ) {
+						return navigate( `importList?siteSlug=${ siteSlugParam }` );
+					}
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					return navigate( 'import' );
-
-				case 'importerWix':
-				case 'importerBlogger':
-				case 'importerMedium':
-				case 'importerSquarespace':
-				case 'importerWordpress':
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'options':
 					return navigate( 'goals' );

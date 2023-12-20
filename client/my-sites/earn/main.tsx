@@ -16,7 +16,7 @@ import { useSelector } from 'calypso/state';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
-import CustomerSection from './customers';
+import CustomersSection from './customers';
 import Home from './home';
 import MembershipsSection from './memberships/section';
 import ReferAFriendSection from './refer-a-friend';
@@ -40,6 +40,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
+	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
 
 	const layoutTitles = {
 		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
@@ -122,6 +123,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const isAdSection = ( currentSection: string | undefined ) =>
 		currentSection && currentSection.startsWith( 'ads' );
 
+	const isSingleSupporterSection = ( currentSection: string | undefined ) =>
+		currentSection && currentSection.startsWith( 'supporters' ) && subscriberId;
+
 	const getComponent = ( currentSection: string | undefined ) => {
 		switch ( currentSection ) {
 			case 'ads-earnings':
@@ -147,7 +151,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				return <MembershipsSection query={ query } />;
 
 			case 'supporters':
-				return <CustomerSection />;
+				return <CustomersSection />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
@@ -183,7 +187,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const getEarnSectionNav = () => {
 		return (
 			<div id="earn-navigation">
-				<SectionNav selectedText={ getEarnSelectedText() }>
+				<SectionNav selectedText={ getEarnSelectedText() } variation="minimal">
 					<NavTabs>
 						{ getEarnTabs().map( ( tabItem ) => {
 							return (
@@ -237,19 +241,23 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<DocumentHead
 				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'Monetize' ) }
-				subtitle={ translate(
-					'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
-						},
-					}
-				) }
-			/>
-			{ getEarnSectionNav() }
+			{ ! isSingleSupporterSection( section ) && (
+				<>
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ translate( 'Monetize' ) }
+						subtitle={ translate(
+							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
+								},
+							}
+						) }
+					/>
+					{ getEarnSectionNav() }
+				</>
+			) }
 			{ isAdSection( section ) && getAdsHeader() }
 			{ getComponent( section ) }
 		</Main>

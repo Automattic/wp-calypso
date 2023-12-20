@@ -650,7 +650,7 @@ $image-height: 47px;
 		color: #00101c;
 		line-height: 1.5;
 
-		a {
+		a:not(.notice.is-error a) {
 			color: #1d4fc4;
 		}
 	}

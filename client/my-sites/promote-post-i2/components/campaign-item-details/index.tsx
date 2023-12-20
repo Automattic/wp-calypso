@@ -527,19 +527,19 @@ export default function CampaignItemDetails( props: Props ) {
 												<FlexibleSkeleton />
 											) }
 										</span>
-										<span className="campaign-item-details__label">
-											{ translate( 'Languages' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
-										</span>
 									</div>
-									<div className="campaign-item-details__interests">
+									<div className="campaign-item-details__second-column">
 										<span className="campaign-item-details__label">
 											{ translate( 'Interests' ) }
 										</span>
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+										</span>
+										<span className="campaign-item-details__label">
+											{ translate( 'Languages' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 								</div>
