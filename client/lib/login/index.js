@@ -174,7 +174,12 @@ export const isReactLostPasswordScreenEnabled = () => {
 	);
 };
 
-export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) => {
+export const canDoMagicLogin = (
+	twoFactorAuthType,
+	oauth2Client,
+	wccomFrom,
+	isJetpackWooCommerceFlow
+) => {
 	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
 		return false;
 	}
@@ -184,7 +189,7 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCo
 		return false;
 	}
 
-	if ( isWooOAuth2Client( oauth2Client ) ) {
+	if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 		return false;
 	}
 

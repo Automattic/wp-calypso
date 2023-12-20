@@ -375,9 +375,9 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooCoreProfilerFlow } = this.props;
+		const { translate, isWoo, wccomFrom, isWooCoreProfilerFlow } = this.props;
 		if ( this.isPasswordView() || this.isFullView() ) {
-			if ( isWoo && ! isWooCoreProfilerFlow ) {
+			if ( isWoo && ! wccomFrom && ! isWooCoreProfilerFlow ) {
 				return translate( 'Get started' );
 			}
 
@@ -650,6 +650,7 @@ export class LoginForm extends Component {
 			isJetpackWooCommerceFlow,
 			isP2Login,
 			isJetpackWooDnaFlow,
+			wccomFrom,
 			currentQuery,
 			showSocialLoginFormOnly,
 			isWoo,
@@ -724,6 +725,10 @@ export class LoginForm extends Component {
 				showSocialLogin: !! accountType, // Only show the social buttons after the user entered an email.
 				socialToS,
 			} );
+		}
+
+		if ( isWoo && wccomFrom ) {
+			return this.renderWooCommerce( { socialToS } );
 		}
 
 		return (

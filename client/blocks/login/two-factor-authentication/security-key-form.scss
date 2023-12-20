@@ -12,19 +12,15 @@
 		padding: 0;
 
 		button.is-primary {
-			max-width: 404px !important;
+			width: 404px !important;
 		}
-
 		.two-factor-authentication__actions {
 			padding: 40px 0 40px 0;
-			width: 100%;
-			max-width: 404px;
-
+			width: 404px;
 			button {
-				max-width: 100% !important;
+				width: 100% !important;
 			}
 		}
-
 		.two-factor-authentication__verification-code-form {
 			margin-bottom: 40px;
 		}
