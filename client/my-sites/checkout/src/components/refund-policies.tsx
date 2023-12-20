@@ -190,6 +190,9 @@ type RefundWindow = 4 | 7 | 14 | 120;
 export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow[] {
 	const refundWindows = refundPolicies.map( ( refundPolicy ) => {
 		switch ( refundPolicy ) {
+			case RefundPolicy.DomainNameTransfer:
+				return 0;
+
 			case RefundPolicy.DomainNameRegistration:
 			case RefundPolicy.DomainNameRegistrationBundled:
 			case RefundPolicy.DomainNameRenewal:
