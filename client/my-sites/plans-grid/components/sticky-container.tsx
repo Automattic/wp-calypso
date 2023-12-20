@@ -40,6 +40,7 @@ export function StickyContainer( props: Props ) {
 			return;
 		}
 		const observer = new IntersectionObserver(
+			// Each entry describes an intersection change for one observed target element:
 			( [ entry ] ) => {
 				if ( entry.intersectionRatio === 0 ) {
 					// The element is out of view
@@ -53,12 +54,19 @@ export function StickyContainer( props: Props ) {
 				}
 			},
 			{
+				// Root: the specified element that is being intersected
 				rootMargin: `-${ stickyOffset + 1 }px 0px 0px 0px`,
+				// Threshold describes how often the callback is invoked
+				// - A threshold of 1.0 means that when 100% of the target is visible within the element
+				//   specified by the root option, the callback is invoked.
+				// - A threshold of 0.0 means that as soon as even one pixel of the target is visible
+				//   within the root element, the callback will be invoked.
 				threshold: [ 0, 1 ],
 			}
 		);
 
 		if ( stickyRef.current ) {
+			// - Target: the element that is intersecting either the device's viewport or a specified element
 			observer.observe( stickyRef.current );
 		}
 

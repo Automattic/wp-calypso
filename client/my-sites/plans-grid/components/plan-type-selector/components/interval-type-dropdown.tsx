@@ -36,8 +36,39 @@ const StyledCustomSelectControl = styled( CustomSelectControl )`
 	}
 `;
 
+const StickyDropdown = styled( CustomSelectControl )`
+	.components-flex {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 48px;
+		z-index: 2;
+	}
+
+	.components-custom-select-control__menu {
+		position: fixed;
+		left: 0;
+		top: 47px;
+		width: 100%;
+		margin: 0;
+		z-index: 3;
+
+		border: 1px solid #e0e0e0;
+	}
+
+	.components-custom-select-control__item {
+		grid-template-columns: auto min-content;
+	}
+
+	.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop.components-input-control__backdrop {
+		border: none;
+		border-bottom: 1px solid #e0e0e0;
+	}
+`;
+
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { intervalType } = props;
+	const { intervalType, isStuck } = props;
 	const supportedIntervalType = (
 		[ 'yearly', '2yearly', '3yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -51,11 +82,22 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 			</AddOnOption>
 		),
 	} ) );
+
 	return (
-		<StyledCustomSelectControl
-			label=""
-			options={ selectOptionsList }
-			value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
-		/>
+		<>
+			{ isStuck ? (
+				<StickyDropdown
+					label=""
+					options={ selectOptionsList }
+					value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				/>
+			) : (
+				<StyledCustomSelectControl
+					label=""
+					options={ selectOptionsList }
+					value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				/>
+			) }
+		</>
 	);
 };

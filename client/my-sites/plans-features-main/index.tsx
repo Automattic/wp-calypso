@@ -64,6 +64,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import { StickyContainer } from '../plans-grid/components/sticky-container';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
@@ -769,9 +770,15 @@ const PlansFeaturesMain = ( {
 				{ isPlansGridReady && (
 					<>
 						{ ! hidePlanSelector && (
-							<div className="plans-features-main__plan-type-selector">
-								<PlanTypeSelector { ...planTypeSelectorProps } />
-							</div>
+							<StickyContainer stickyClass="is-sticky-plan-type-selector">
+								{ ( isStuck: boolean ) => {
+									return (
+										<div className="plans-features-main__plan-type-selector">
+											<PlanTypeSelector { ...planTypeSelectorProps } isStuck={ isStuck } />
+										</div>
+									);
+								} }
+							</StickyContainer>
 						) }
 						<div
 							className={ classNames(
