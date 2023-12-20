@@ -79,6 +79,10 @@ function useCachedContactDetailsForCheckoutForm(
 		if ( didFillForm.current ) {
 			return;
 		}
+		if ( collapseLastStepStatus === 'loading' ) {
+			debug( 'prepopulating cached contact details waiting on Explat' );
+			return;
+		}
 		// Do nothing if the contact details are loading, or the countries are loading.
 		if ( ! cachedContactDetails ) {
 			debug( 'cached contact details for form have not loaded' );
@@ -101,7 +105,7 @@ function useCachedContactDetailsForCheckoutForm(
 				if ( cachedContactDetails.countryCode ) {
 					setShouldShowContactDetailsValidationErrors( false );
 					debug( 'Contact details are populated; attempting to skip to payment method step' );
-					if ( collapseLastStepStatus ) {
+					if ( collapseLastStepStatus === 'collapse' ) {
 						debug( 'also attempting to skip payment method step' );
 						return setStepCompleteStatus( 'payment-method-step' );
 					}

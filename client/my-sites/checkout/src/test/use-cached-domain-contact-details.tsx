@@ -51,11 +51,6 @@ function MyTestWrapper( {
 							activeStepContent={ <MyTestContent countries={ countries } /> }
 						/>
 						<CheckoutStep
-							stepId="payment-method-step"
-							titleContent={ <em>Payment Method Step</em> }
-							isCompleteCallback={ () => false }
-						/>
-						<CheckoutStep
 							stepId="other-step"
 							titleContent={ <em>Other step</em> }
 							isCompleteCallback={ () => false }

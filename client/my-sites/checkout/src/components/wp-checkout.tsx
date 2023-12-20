@@ -332,7 +332,7 @@ export default function WPCheckout( {
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
 	const showToSFoldableCard = useToSFoldableCard();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
@@ -848,7 +848,7 @@ function CheckoutTermsAndCheckboxes( {
 	} );
 
 	const translate = useTranslate();
-	const shouldCollapseLastStep = useShouldCollapseLastStep();
+	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
 	if ( ! shouldCollapseLastStep ) {
 		return null;
