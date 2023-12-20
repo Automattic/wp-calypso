@@ -105,7 +105,7 @@ function StatsPWYWUpgradeSlider( {
 	const mappedDefaultIndex = disableFreeProduct ? defaultStartingValue - 1 : defaultStartingValue;
 
 	// New slider change handler.
-	const handleSliderChanged2 = ( index: number ) => {
+	const handleSliderChanged = ( index: number ) => {
 		const mappedIndex = steps[ index ].mappedIndex;
 		if ( analyticsEventName ) {
 			recordTracksEvent( analyticsEventName, {
@@ -122,7 +122,7 @@ function StatsPWYWUpgradeSlider( {
 			uiStrings={ uiStrings }
 			steps={ steps }
 			initialValue={ mappedDefaultIndex }
-			onSliderChange={ handleSliderChanged2 }
+			onSliderChange={ handleSliderChanged }
 			marks={ marks }
 		/>
 	);
