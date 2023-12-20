@@ -1,0 +1,13 @@
+.jetpack-ai-logo-generator-modal {
+	&__loading-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		height: 100%;
+		justify-content: center;
+	}
+
+	&__loader {
+		margin-bottom: 29px;
+	}
+}
