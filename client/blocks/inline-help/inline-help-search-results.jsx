@@ -199,13 +199,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: translate( 'Recommended resources' ),
+				title: translate( 'Recommended Resources' ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? translate( 'Recommended resources' ) : '',
+				title: ! searchQuery.length ? translate( 'Recommended Resources' ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},

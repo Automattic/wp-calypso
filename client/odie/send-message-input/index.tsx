@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { JumpToRecent } from '../message/jump-to-recent';
 import { useOdieSendMessage } from '../query';
@@ -23,8 +22,7 @@ export const OdieSendMessageButton = ( {
 } ) => {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { addMessage, setIsLoading, botNameSlug, initialUserMessage, chat, isLoading, trackEvent } =
-		useOdieAssistantContext();
+	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const translate = useTranslate();
 
@@ -36,11 +34,7 @@ export const OdieSendMessageButton = ( {
 
 	const sendMessage = async () => {
 		try {
-			setIsLoading( true );
-
-			trackEvent( 'calypso_odie_chat_message_action_send', {
-				bot_name_slug: botNameSlug,
-			} );
+			trackEvent( 'calypso_odie_chat_message_action_send' );
 
 			const message = {
 				content: messageString,
@@ -48,35 +42,14 @@ export const OdieSendMessageButton = ( {
 				type: 'message',
 			} as Message;
 
-			addMessage( [
-				message,
-				{
-					content: '...',
-					role: 'bot',
-					type: 'placeholder',
-				},
-			] );
+			await sendOdieMessage( { message } );
 
-			const receivedMessage = await sendOdieMessage( { message } );
-			trackEvent( 'calypso_odie_chat_message_action_receive', {
-				bot_name_slug: botNameSlug,
-			} );
-
-			addMessage( {
-				content: receivedMessage.messages[ 0 ].content,
-				role: 'bot',
-				simulateTyping: receivedMessage.messages[ 0 ].simulateTyping,
-				type: 'message',
-				context: receivedMessage.messages[ 0 ].context,
-			} );
+			trackEvent( 'calypso_odie_chat_message_action_receive' );
 		} catch ( e ) {
-			addMessage( {
-				content: WAPUU_ERROR_MESSAGE,
-				role: 'bot',
-				type: 'error',
+			const error = e as Error;
+			trackEvent( 'calypso_odie_chat_message_error', {
+				error: error?.message,
 			} );
-		} finally {
-			setIsLoading( false );
 		}
 	};
 

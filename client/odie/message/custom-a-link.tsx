@@ -18,7 +18,7 @@ const CustomALink = ( {
 	children: React.ReactNode;
 	inline?: boolean;
 } ) => {
-	const { botNameSlug, trackEvent } = useOdieAssistantContext();
+	const { trackEvent } = useOdieAssistantContext();
 
 	const classNames = classnames( 'odie-sources', {
 		'odie-sources-inline': inline,
@@ -33,7 +33,6 @@ const CustomALink = ( {
 				rel="noopener noreferrer"
 				onClick={ () => {
 					trackEvent( 'calypso_odie_chat_message_action_click', {
-						bot_name_slug: botNameSlug,
 						action: 'link',
 						href: href,
 					} );
