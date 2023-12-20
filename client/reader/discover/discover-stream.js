@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
+import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { READER_DISCOVER_POPULAR_SITES } from 'calypso/reader/follow-sources';
@@ -50,10 +51,12 @@ const DiscoverStream = ( props ) => {
 		},
 	} );
 
+	const promptSlug = isBloganuary() ? 'bloganuary' : 'dailyprompt';
+	const promptTitle = isBloganuary() ? translate( 'Bloganuary' ) : translate( 'Daily prompts' );
 	// Add dailyprompt to the front of interestTags if not present.
-	const hasDailyPrompt = interestTags.filter( ( tag ) => tag.slug === 'dailyprompt' ).length;
-	if ( ! hasDailyPrompt ) {
-		interestTags.unshift( { title: translate( 'Daily prompts' ), slug: 'dailyprompt' } );
+	const hasPromptTab = interestTags.filter( ( tag ) => tag.slug === promptSlug ).length;
+	if ( ! hasPromptTab ) {
+		interestTags.unshift( { title: promptTitle, slug: promptSlug } );
 	}
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;

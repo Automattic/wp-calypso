@@ -74,6 +74,18 @@ export const useCommandsArrayWpcom = ( {
 		ref: 'command-palette',
 	} );
 
+	const siteFilters = {
+		hostingEnabled: {
+			filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+		},
+		hostingEnabledAndPublic: {
+			filter: ( site: SiteExcerptData ) =>
+				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+		},
+	};
+
 	const fetchSshUser = async ( siteId: number ) => {
 		const response = await wpcom.req.get( {
 			path: `/sites/${ siteId }/hosting/ssh-users`,
@@ -298,7 +310,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					clearEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
 		},
@@ -311,8 +323,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					enableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+				...siteFilters.hostingEnabledAndPublic,
 			},
 			icon: cacheIcon,
 		},
@@ -325,8 +336,31 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					disableEdgeCache( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) =>
-					site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
+				...siteFilters.hostingEnabledAndPublic,
+			},
+			icon: cacheIcon,
+		},
+		{
+			name: 'manageCacheSettings',
+			label: __( 'Manage cache settings' ),
+			searchLabel: [
+				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
+				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
+				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
+			].join( ' ' ),
+			callback: setStateCallback(
+				'manageCacheSettings',
+				__( 'Select site to manage cache settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `/hosting-config/${ site.slug }#cache` );
+				},
+				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
 		},
@@ -349,35 +383,33 @@ export const useCommandsArrayWpcom = ( {
 			icon: dashboardIcon,
 		},
 		{
-			name: 'manageHostingConfiguration',
-			label: __( 'Manage hosting configuration' ),
+			name: 'openHostingConfiguration',
+			label: __( 'Open hosting configuration' ),
 			searchLabel: [
-				_x(
-					'manage hosting configuration',
-					'Keyword for the Manage hosting configuration command'
-				),
-				_x( 'admin interface style', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'cache', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'database', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'global edge cache', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'hosting', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'mysql', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'phpmyadmin', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'php version', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'sftp/ssh credentials', 'Keyword for the Manage hosting configuration command' ),
-				_x( 'wp-cli', 'Keyword for the Manage hosting configuration command' ),
+				_x( 'open hosting configuration', 'Keyword for the Open hosting configuration command' ),
+				_x( 'admin interface style', 'Keyword for the Open hosting configuration command' ),
+				_x( 'cache', 'Keyword for the Open hosting configuration command' ),
+				_x( 'database', 'Keyword for the Open hosting configuration command' ),
+				_x( 'global edge cache', 'Keyword for the Open hosting configuration command' ),
+				_x( 'hosting', 'Keyword for the Open hosting configuration command' ),
+				_x( 'mysql', 'Keyword for the Open hosting configuration command' ),
+				_x( 'phpmyadmin', 'Keyword for the Open hosting configuration command' ),
+				_x( 'php version', 'Keyword for the Open hosting configuration command' ),
+				_x( 'sftp/ssh credentials', 'Keyword for the Open hosting configuration command' ),
+				_x( 'wp-cli', 'Keyword for the Open hosting configuration command' ),
 			].join( ' ' ),
 			context: [ '/sites' ],
 			callback: setStateCallback(
-				'manageHostingConfiguration',
+				'openHostingConfiguration',
 				__( 'Select site to open hosting configuration' )
 			),
 			siteFunctions: {
 				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
 					close();
-					navigate( `/hosting-config/${ site.slug }#sftp-credentials` );
+					navigate( `/hosting-config/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: settingsIcon,
 		},
@@ -397,7 +429,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await openPhpMyAdmin( site.ID );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},
@@ -505,7 +537,7 @@ export const useCommandsArrayWpcom = ( {
 		},
 		{
 			name: 'registerDomain',
-			label: __( 'Register domain' ),
+			label: __( 'Register new domain' ),
 			context: [ '/sites' ],
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -552,6 +584,7 @@ export const useCommandsArrayWpcom = ( {
 				},
 				filter: ( site: SiteExcerptData ) =>
 					isCustomDomain( site.slug ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with DNS management available.' ),
 			},
 			icon: domainsIcon,
 		},
@@ -567,7 +600,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -583,7 +616,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -599,7 +632,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					resetSshSftpPassword( site.ID, site.slug );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
 		},
@@ -630,6 +663,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/activity-log/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: acitvityLogIcon,
 		},
@@ -643,6 +677,7 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `/backup/${ site.slug }` );
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
 			},
 			icon: backupIcon,
 		},
@@ -658,7 +693,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: statsIcon,
 		},
@@ -678,7 +713,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/php` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -701,7 +736,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/site-monitoring/${ site.slug }/web` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: acitvityLogIcon,
 		},
@@ -725,7 +760,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#staging-site` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -738,33 +773,9 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#web-server-settings` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
-		},
-		{
-			name: 'manageCacheSettings',
-			label: __( 'Manage cache settings' ),
-			searchLabel: [
-				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
-				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
-			].join( ' ' ),
-			callback: setStateCallback(
-				'manageCacheSettings',
-				__( 'Select site to manage cache settings' )
-			),
-			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `/hosting-config/${ site.slug }#cache` );
-				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
-			},
-			icon: cacheIcon,
 		},
 		{
 			name: 'changeAdminInterfaceStyle',
@@ -785,7 +796,7 @@ export const useCommandsArrayWpcom = ( {
 					close();
 					navigate( `/hosting-config/${ site.slug }#admin-interface-style` );
 				},
-				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic,
+				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
 		},

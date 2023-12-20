@@ -17,6 +17,7 @@ const DateControlPicker = ( {
 	selectedShortcut,
 	onShortcut,
 	onApply,
+	overlay,
 }: DateControlPickerProps ) => {
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -108,6 +109,7 @@ const DateControlPicker = ( {
 						onEndChange={ changeEndDate }
 						onApply={ handleOnApply }
 						onCancel={ handleOnCancel }
+						overlay={ overlay }
 					/>
 				</div>
 			</Popover>

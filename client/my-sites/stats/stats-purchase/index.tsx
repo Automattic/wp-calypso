@@ -15,6 +15,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -76,6 +77,30 @@ const StatsPurchasePage = ( {
 		}
 	}, [ siteSlug, isSiteJetpackNotAtomic ] );
 
+	useEffect( () => {
+		// track different upgrade sources
+		let triggeredEvent;
+
+		switch ( query?.from ) {
+			case 'calypso-stats-tier-upgrade-notice':
+				triggeredEvent = 'calypso_stats_tier_upgrade_notice_upgrade_button_clicked';
+				break;
+			case 'jetpack-stats-tier-upgrade-notice':
+				triggeredEvent = 'jetpack_odyssey_stats_tier_upgrade_notice_upgrade_button_clicked';
+				break;
+			case 'jetpack-stats-tier-upgrade-usage-section':
+				triggeredEvent = 'jetpack_odyssey_stats_tier_usage_bar_upgrade_button_clicked';
+				break;
+			case 'calypso-stats-tier-upgrade-usage-section':
+				triggeredEvent = 'calypso_stats_tier_usage_bar_upgrade_button_clicked';
+				break;
+		}
+
+		if ( triggeredEvent ) {
+			recordTracksEvent( triggeredEvent );
+		}
+	}, [ siteSlug, query, query?.from ] );
+
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	) as ProductsList.ProductsListItem | null;
@@ -133,6 +158,17 @@ const StatsPurchasePage = ( {
 				path="/stats/purchase/:site"
 				title="Stats > Purchase"
 				from={ query.from ?? '' }
+				// properties={
+				// 	isTierUpgradeSliderEnabled
+				// 		? {
+				// 				variant:
+				// 					( ! isForceProductRedirect && isCommercial ) || redirectToCommercial
+				// 						? 'commercial'
+				// 						: 'personal',
+				// 				is_upgrade: isCommercialOwned,
+				// 		  }
+				// 		: null
+				// }
 			/>
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {

@@ -331,7 +331,7 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
+	const showToSFoldableCard = useToSFoldableCard();
 	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
 

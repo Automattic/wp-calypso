@@ -1,6 +1,5 @@
-import { Card, Button, Dialog, Gridicon } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
@@ -11,16 +10,13 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import Notice from 'calypso/components/notice';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
-import {
-	requestSubscribers,
-	requestSubscriptionStop,
-} from 'calypso/state/memberships/subscribers/actions';
+import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import {
 	getTotalSubscribersForSiteId,
 	getOwnershipsForSiteId,
@@ -32,6 +28,7 @@ import {
 	PLAN_ONE_TIME_FREQUENCY,
 } from '../memberships/constants';
 import { Subscriber } from '../types';
+import CancelDialog from './cancel-dialog';
 import Customer from './customer/index';
 
 function CustomerSection() {
@@ -39,9 +36,7 @@ function CustomerSection() {
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
-
-	const [ cancelledSubscriber, setCancelledSubscriber ] = useState< Subscriber | null >( null );
-
+	const [ subscriberToCancel, setSubscriberToCancel ] = useState< Subscriber | null >( null );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const subscribers = useSelector(
@@ -62,19 +57,6 @@ function CustomerSection() {
 		},
 		[ dispatch, site, subscribers, totalSubscribers ]
 	);
-
-	function onCloseCancelSubscription( reason: string | undefined ) {
-		if ( reason === 'cancel' ) {
-			dispatch(
-				requestSubscriptionStop(
-					site?.ID,
-					cancelledSubscriber,
-					getIntervalDependantWording( cancelledSubscriber ).success
-				)
-			);
-		}
-		setCancelledSubscriber( null );
-	}
 
 	function downloadSubscriberList( event: MouseEvent< HTMLButtonElement > ) {
 		event.preventDefault();
@@ -126,24 +108,20 @@ function CustomerSection() {
 	}
 
 	function renderSubscriberList() {
-		const wording = getIntervalDependantWording( cancelledSubscriber );
 		return (
 			<div>
 				{ Object.values( subscribers ).length === 0 && (
 					<Card>
-						{ translate( "You haven't added any customers. {{a}}Learn more{{/a}} about payments.", {
-							components: {
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/wordpress-editor/blocks/payments/'
-										) }
-										target="_blank"
-										rel="noreferrer noopener"
-									/>
-								),
-							},
-						} ) }
+						{ translate(
+							"You haven't added any customers. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
+							{
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink supportContext="payments_blocks" showIcon={ false } />
+									),
+								},
+							}
+						) }
 					</Card>
 				) }
 				{ Object.values( subscribers ).length > 0 && (
@@ -169,25 +147,10 @@ function CustomerSection() {
 							) }
 							<InfiniteScroll nextPageMethod={ () => fetchNextSubscriberPage( false ) } />
 						</ul>
-						<Dialog
-							isVisible={ !! cancelledSubscriber }
-							buttons={ [
-								{
-									label: translate( 'Back' ),
-									action: 'back',
-								},
-								{
-									label: wording.button,
-									isPrimary: true,
-									action: 'cancel',
-								},
-							] }
-							onClose={ onCloseCancelSubscription }
-						>
-							<h1>{ translate( 'Confirmation' ) }</h1>
-							<p>{ wording.confirmation_subheading }</p>
-							<Notice text={ wording.confirmation_info } showDismiss={ false } />
-						</Dialog>
+						<CancelDialog
+							subscriberToCancel={ subscriberToCancel }
+							setSubscriberToCancel={ setSubscriberToCancel }
+						/>
 						<div className="memberships__module-footer">
 							<Button onClick={ downloadSubscriberList }>
 								{ translate( 'Download list as CSV' ) }
@@ -199,34 +162,10 @@ function CustomerSection() {
 		);
 	}
 
-	function getIntervalDependantWording( subscriber: Subscriber | null ) {
-		const subscriber_email = subscriber?.user.user_email ?? '';
-		const plan_name = subscriber?.plan.title ?? '';
-
-		if ( subscriber?.plan?.renew_interval === 'one-time' ) {
-			return {
-				button: translate( 'Remove payment' ),
-				confirmation_subheading: translate( 'Do you want to remove this payment?' ),
-				confirmation_info: translate(
-					'Removing this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. The payment will not be refunded.',
-					{ args: { subscriber_email, plan_name } }
-				),
-				success: translate( 'Payment removed for %(subscriber_email)s.', {
-					args: { subscriber_email },
-				} ),
-			};
-		}
-		return {
-			button: translate( 'Cancel payment' ),
-			confirmation_subheading: translate( 'Do you want to cancel this payment?' ),
-			confirmation_info: translate(
-				'Cancelling this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. Payments already made will not be refunded but any scheduled future payments will not be made.',
-				{ args: { subscriber_email, plan_name } }
-			),
-			success: translate( 'Payment cancelled for %(subscriber_email)s.', {
-				args: { subscriber_email },
-			} ),
-		};
+	function getCancelButtonText( subscriber: Subscriber | null ) {
+		return subscriber?.plan?.renew_interval === 'one-time'
+			? translate( 'Remove payment' )
+			: translate( 'Cancel payment' );
 	}
 
 	function renderSubscriberSubscriptionSummary( subscriber: Subscriber ) {
@@ -258,9 +197,9 @@ function CustomerSection() {
 					<Gridicon size={ 18 } icon="visible" />
 					{ translate( 'View' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem onClick={ () => setCancelledSubscriber( subscriber ) }>
+				<PopoverMenuItem onClick={ () => setSubscriberToCancel( subscriber ) }>
 					<Gridicon size={ 18 } icon="cross" />
-					{ getIntervalDependantWording( subscriber ).button }
+					{ getCancelButtonText( subscriber ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);

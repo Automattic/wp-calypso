@@ -26,7 +26,6 @@ import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
@@ -89,7 +88,7 @@ function SidebarScrollSynchronizer() {
 	return null;
 }
 
-function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
+function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
 	const handleClose = useCallback( () => {
@@ -105,6 +104,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 			require="@automattic/help-center"
 			placeholder={ null }
 			handleClose={ handleClose }
+			currentRoute={ currentRoute }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>
@@ -246,7 +246,6 @@ class Layout extends Component {
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
-			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
 			woo: this.props.isWooCoreProfilerFlow,
 		} );
@@ -274,6 +273,7 @@ class Layout extends Component {
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
+					currentRoute={ this.props.currentRoute }
 				/>
 				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
@@ -435,6 +435,7 @@ export default withCurrentRoute(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
+			currentRoute,
 		};
 	} )( Layout )
 );
