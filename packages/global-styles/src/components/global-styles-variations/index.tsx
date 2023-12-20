@@ -106,10 +106,7 @@ const GlobalStylesVariations = ( {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const premiumStylesDescription = hasEnTranslation(
-		translate(
-			'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
-			{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
-		) as string
+		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.'
 	)
 		? translate(
 				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
@@ -196,11 +193,7 @@ const GlobalStylesVariations = ( {
 						<div className="global-styles-variations__header">
 							<h2>
 								<span>
-									{ hasEnTranslation(
-										translate( 'Style Variation', 'Style Variations', {
-											count: nonDefaultStyles.length,
-										} ) as string
-									)
+									{ hasEnTranslation( 'Style Variations' )
 										? translate( 'Style Variation', 'Style Variations', {
 												count: nonDefaultStyles.length,
 										  } )
