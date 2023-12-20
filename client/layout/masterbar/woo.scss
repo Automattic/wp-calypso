@@ -418,6 +418,16 @@
 		max-width: 472px;
 		margin: 54px auto 0;
 		height: unset;
+		min-height: 238px;
+
+		~ .auth-form__separator {
+			margin: -10px auto;
+			max-width: 472px;
+		}
+
+		~ .card.auth-form__social.is-login {
+			max-width: 472px;
+		}
 
 		.continue-as-user__gravatar-link {
 			pointer-events: auto;
@@ -508,26 +518,25 @@
 		display: none;
 	}
 
+	.auth-form__separator::before,
+	.auth-form__separator::after {
+		border-block-start: $woo-form-divider-border;
+	}
+
+	.auth-form__separator + .auth-form__social.card {
+		clip-path: unset; // unset the rule applied in ./client/blocks/authentication/form-divider/style.scss
+		max-width: 100%;
+	}
+
 	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;
-		border-top: $woo-form-divider-border;
 		padding-top: 40px;
 		padding-bottom: 40px;
 		text-align: center;
 
 		@media screen and ( max-width: 660px ) {
 			padding-top: 28px;
-		}
-	}
-
-	.two-factor-authentication__actions.card {
-		.button {
-			border: 1px solid #c3c4c7;
-			color: var(--color-gray-100);
-			font-weight: 500;
-			line-height: 20px;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 		}
 	}
 
@@ -568,11 +577,15 @@
 			margin-left: 0;
 			margin-right: 0;
 
+			@media ( min-width: 782px ) {
+				width: 100%;
+			}
+
 			&::before,
 			&::after {
 				position: absolute;
 				border-inline-start: 0;
-				border-block-start: 1px solid #eaeaeb;
+				border-block-start: $woo-form-divider-border;
 				inset-block-start: 50%;
 				inset-inline-start: 0;
 				width: 42%;
@@ -590,6 +603,11 @@
 			background: #fff;
 			padding: 0 27px !important;
 		}
+	}
+
+	.auth-form__separator .auth-form__separator-text {
+		padding: 0 27px;
+		background: #fff;
 	}
 
 	.wp-login__footer--oauth {
@@ -694,8 +712,8 @@
 
 	.auth-form__social {
 		max-width: 100%;
-		border-top: 1px solid #e6e6e6;
-		padding: 44px 0 14px;
+		padding: 40px 0 14px;
+		border-top: 0;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -904,10 +922,6 @@
 			}
 		}
 
-		.two-factor-authentication__actions.card {
-			padding-top: 36px;
-		}
-
 		div.login__two-factor-footer {
 			margin-top: 16px;
 			p {
@@ -958,6 +972,10 @@
 
 		.signup-form {
 			padding-top: 24px;
+		}
+
+		button.social-buttons__button.button {
+			width: 100%;
 		}
 
 		// Log in link on signup page

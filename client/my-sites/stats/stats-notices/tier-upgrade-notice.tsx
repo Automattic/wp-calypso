@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
@@ -47,11 +46,8 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 		  );
 
 	const gotoJetpackStatsProduct = () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_tier_upgrade_notice_upgrade_button_clicked' )
-			: recordTracksEvent( 'calypso_stats_tier_upgrade_notice_upgrade_button_clicked' );
-		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
+		// Analytics events are now captured at the destination.
+		page( getStatsPurchaseURL( siteId, isOdysseyStats ) );
 	};
 
 	const dismissNotice = () => setNoticeDismissed( true );

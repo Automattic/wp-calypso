@@ -23,20 +23,14 @@ export default function ThemeTierCommunityBadge() {
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{ translate( 'Community theme', {
-					context: 'This theme is developed and supported by a community',
-					textOnly: true,
-				} ) }
-			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
 					isEnglishLocale ||
 						i18n.hasTranslation(
-							'This community theme can only be installed if you have the <Link>%(businessNamePlan)s plan</Link> or higher on your site.'
+							'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.'
 						)
 						? translate(
-								'This community theme can only be installed if you have the <Link>%(businessNamePlan)s plan</Link> or higher on your site.',
+								'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
 								{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
 						  )
 						: translate(

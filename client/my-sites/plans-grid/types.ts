@@ -67,7 +67,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 	isPlanUpgradeCreditEligible: boolean;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
+	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;
 	showLegacyStorageFeature: boolean;
 }

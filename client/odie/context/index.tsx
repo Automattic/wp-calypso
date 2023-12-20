@@ -19,7 +19,6 @@ interface OdieAssistantContextInterface {
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
-	botSetting?: string;
 	chat: Chat;
 	clearChat: () => void;
 	initialUserMessage: string | null | undefined;
@@ -39,6 +38,7 @@ interface OdieAssistantContextInterface {
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
+	updateMessage: ( message: Message ) => void;
 }
 
 const defaultContextInterfaceValues = {
@@ -63,6 +63,7 @@ const defaultContextInterfaceValues = {
 	setIsVisible: noop,
 	setIsLoading: noop,
 	trackEvent: noop,
+	updateMessage: noop,
 };
 
 // Create a default new context
@@ -77,7 +78,6 @@ const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 const OdieAssistantProvider = ( {
 	botName = 'Wapuu assistant',
 	botNameSlug = 'wpcom-support-chat',
-	botSetting = 'wapuu',
 	initialUserMessage,
 	isMinimized = false,
 	extraContactOptions,
@@ -86,7 +86,6 @@ const OdieAssistantProvider = ( {
 }: {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
-	botSetting?: string;
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
@@ -113,10 +112,16 @@ const OdieAssistantProvider = ( {
 	}, [ existingChat, existingChat.chat_id ] );
 
 	const trackEvent = useCallback(
-		( event: string, properties?: Record< string, unknown > ) => {
-			dispatch( recordTracksEvent( event, properties ) );
+		( event: string, properties: Record< string, unknown > = {} ) => {
+			dispatch(
+				recordTracksEvent( event, {
+					...properties,
+					chat_id: chat?.chat_id,
+					bot_name_slug: botNameSlug,
+				} )
+			);
 		},
-		[ dispatch ]
+		[ botNameSlug, chat?.chat_id, dispatch ]
 	);
 
 	const clearChat = useCallback( () => {
@@ -150,22 +155,17 @@ const OdieAssistantProvider = ( {
 			// Normalize message to always be an array
 			const newMessages = Array.isArray( message ) ? message : [ message ];
 
-			// Check if any message is a placeholder
-			const hasPlaceholder = prevChat.messages.some( ( msg ) => msg.type === 'placeholder' );
-
 			// Check if the new message is of type 'dislike-feedback'
 			const isNewMessageDislikeFeedback = newMessages.some(
 				( msg ) => msg.type === 'dislike-feedback'
 			);
 
-			// Remove placeholders if the new message is not 'dislike-feedback'
-			const filteredMessages =
-				hasPlaceholder && ! isNewMessageDislikeFeedback
-					? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
-					: prevChat.messages;
+			const filteredMessages = ! isNewMessageDislikeFeedback
+				? prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' )
+				: prevChat.messages;
 
 			// If the new message is 'dislike-feedback' and there's a placeholder, insert it before the placeholder
-			if ( hasPlaceholder && isNewMessageDislikeFeedback ) {
+			if ( isNewMessageDislikeFeedback ) {
 				const lastPlaceholderIndex = prevChat.messages
 					.map( ( msg ) => msg.type )
 					.lastIndexOf( 'placeholder' );
@@ -187,6 +187,19 @@ const OdieAssistantProvider = ( {
 		} );
 	};
 
+	const updateMessage = ( message: Partial< Message > ) => {
+		setChat( ( prevChat ) => {
+			const updatedMessages = prevChat.messages.map( ( m ) =>
+				( message.internal_message_id && m.internal_message_id === message.internal_message_id ) ||
+				( message.message_id && m.message_id === message.message_id )
+					? { ...m, ...message }
+					: m
+			);
+
+			return { ...prevChat, messages: updatedMessages };
+		} );
+	};
+
 	if ( ! enabled ) {
 		return <>{ children }</>;
 	}
@@ -197,7 +210,6 @@ const OdieAssistantProvider = ( {
 				addMessage,
 				botName,
 				botNameSlug,
-				botSetting,
 				chat,
 				clearChat,
 				extraContactOptions,
@@ -217,6 +229,7 @@ const OdieAssistantProvider = ( {
 				setIsNudging,
 				setIsVisible,
 				trackEvent,
+				updateMessage,
 			} }
 		>
 			{ children }

@@ -11,7 +11,10 @@ import {
 } from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
-import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
+import {
+	SECTION_BLOGGING_PROMPT,
+	SECTION_BLOGANUARY_BLOGGING_PROMPT,
+} from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import BellOffIcon from './bell-off-icon';
@@ -61,10 +64,13 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	};
 
 	const hidePrompts = () => {
-		skipCard( SECTION_BLOGGING_PROMPT );
+		const cardToSkip = isBloganuary()
+			? SECTION_BLOGANUARY_BLOGGING_PROMPT
+			: SECTION_BLOGGING_PROMPT;
+		skipCard( cardToSkip );
 		dispatch(
 			recordTracksEvent( getTracksPrefix() + 'task_skip', {
-				task: SECTION_BLOGGING_PROMPT,
+				task: cardToSkip,
 			} )
 		);
 	};

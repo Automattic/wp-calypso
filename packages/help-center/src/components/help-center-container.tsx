@@ -31,7 +31,7 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, currentRoute } ) => {
 	const { show, isMinimized, initialRoute } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -91,7 +91,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 							onMaximize={ () => setIsMinimized( false ) }
 							onDismiss={ onDismiss }
 						/>
-						<HelpCenterContent />
+						<HelpCenterContent currentRoute={ currentRoute } />
 						{ ! isMinimized && <HelpCenterFooter /> }
 					</Card>
 				</OptionalDraggable>

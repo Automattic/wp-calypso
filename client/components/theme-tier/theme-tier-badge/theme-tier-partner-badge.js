@@ -99,12 +99,6 @@ export default function ThemeTierPartnerBadge() {
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{ translate( 'Partner theme', {
-					context: 'This theme is developed and supported by a theme partner',
-					textOnly: true,
-				} ) }
-			</div>
 			<div data-testid="upsell-message">{ getTooltipMessage() }</div>
 		</>
 	);
