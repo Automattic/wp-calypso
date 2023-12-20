@@ -164,7 +164,9 @@ export const StorageAddOnDropdown = ( {
 			{ selectedOptionPrice && ( isLargeCurrency || priceOnSeparateLine ) && (
 				<div className="storage-add-on-dropdown__offset-price-container">
 					<span className="storage-add-on-dropdown__offset-price">
-						{ ` + ${ selectedOptionPrice }/${ translate( 'month' ) }` }
+						{ translate( '+ %(selectedOptionPrice)s/month', {
+							args: { selectedOptionPrice },
+						} ) }
 					</span>
 				</div>
 			) }
