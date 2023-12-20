@@ -76,7 +76,7 @@ const LoginButtons = ( {
 
 		return (
 			<Button
-				className={ classNames( 'social-buttons__button button', { disabled: true } ) }
+				className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 				href={ magicLoginPageLinkWithEmail }
 				onClick={ handleMagicLoginClick }
 				data-e2e-link="magic-login-link"
