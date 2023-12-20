@@ -568,7 +568,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 				'Could not find the snackbar list element. As a result, the "View Post" link may open inside the iframe.'
 			);
 		}
-		// Note: the 3s timeout is necessary because the snackbar list element isn't
+		// Note: the timeout is necessary because the snackbar list element isn't
 		// rendered immediately. Even 1s is too slow to find it. Thankfully, this
 		// snackbar (triggered after publishing/updating a post) isn't rendered
 		// until
