@@ -58,11 +58,15 @@
 		font-weight: 600;
 	}
 	.stats-upsell-modal__price-amount {
-		font-size: $font-title-medium;
+		display: flex;
+		align-items: center;
+		font-size: $font-title-large;
+		font-weight: 500;
 
-		span {
-			font-size: $font-title-large;
-			font-weight: 500;
+		abbr {
+			font-size: $font-title-small;
+			line-height: $font-title-large;
+			font-weight: 400;
 		}
 	}
 	.stats-upsell-modal__price-per-month {

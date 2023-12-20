@@ -118,6 +118,8 @@ export interface PricedAPIPlan extends PricedAPIPlanIntroductoryOffer {
 	product_name_short: string;
 	product_type?: string;
 	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
+	product_display_price: string;
+	formatted_price: string;
 
 	/**
 	 * The product price in the currency's smallest unit.

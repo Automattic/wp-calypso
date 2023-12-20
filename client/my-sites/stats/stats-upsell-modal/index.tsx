@@ -1,7 +1,11 @@
+import { PLAN_PREMIUM, PLAN_PREMIUM_MONTHLY } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import QueryPlans from 'calypso/components/data/query-plans';
+import { useSelector } from 'calypso/state';
+import { getPlanBySlug } from 'calypso/state/plans/selectors';
 
 import './style.scss';
 
@@ -13,6 +17,10 @@ export default function StatsUpsellModal( {
 	onSubmit: () => void;
 } ) {
 	const translate = useTranslate();
+	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
+	const planMonthly = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM_MONTHLY ) );
+	const planName = plan?.product_name_short ?? '';
+	const isLoading = ! plan || ! planMonthly;
 	return (
 		<Modal
 			className="stats-upsell-modal"
@@ -20,6 +28,7 @@ export default function StatsUpsellModal( {
 			shouldCloseOnClickOutside={ false }
 			__experimentalHideHeader={ true }
 		>
+			<QueryPlans />
 			<Button
 				className="stats-upsell-modal__close-button"
 				onClick={ onClose }
@@ -35,16 +44,26 @@ export default function StatsUpsellModal( {
 						{ translate( 'Finesse your scaling up strategy with detailed insights and data.' ) }
 					</div>
 					<Button variant="primary" className="stats-upsell-modal__button" onClick={ onSubmit }>
-						{ translate( 'Upgrade to Personal' ) }
+						{ translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
 					</Button>
 				</div>
 				<div className="stats-upsell-modal__right">
-					<h2 className="stats-upsell-modal__plan">{ translate( 'Personal Plan' ) }</h2>
-					<div className="stats-upsell-modal__price-amount">
-						US$<span>4</span>
-					</div>
+					<h2 className="stats-upsell-modal__plan">
+						{ isLoading ? '' : translate( '%(planName)s plan', { args: { planName } } ) }
+					</h2>
+					{ ! isLoading && (
+						<div
+							className="stats-upsell-modal__price-amount"
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ { __html: planMonthly?.product_display_price ?? '' } }
+						></div>
+					) }
 					<div className="stats-upsell-modal__price-per-month">
-						{ translate( 'per month, US$48 billed yearly' ) }
+						{ isLoading
+							? ''
+							: translate( 'per month, %(planPrice)s billed yearly', {
+									args: { planPrice: plan?.formatted_price ?? '' },
+							  } ) }
 					</div>
 					<div className="stats-upsell-modal__features">
 						<div className="stats-upsell-modal__feature">
