@@ -564,7 +564,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 			} );
 		} else {
 			// eslint-disable-next-line no-console
-			console.warning(
+			console.warn(
 				'Could not find the snackbar list element. As a result, the "View Post" link may open inside the iframe.'
 			);
 		}
@@ -572,7 +572,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		// rendered immediately. Even 1s is too slow to find it. Thankfully, this
 		// snackbar (triggered after publishing/updating a post) isn't rendered
 		// until
-	}, 3000 );
+	}, 5000 );
 
 	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
 	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
