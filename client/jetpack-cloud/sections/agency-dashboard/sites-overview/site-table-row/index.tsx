@@ -53,7 +53,8 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 
 	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
-
+	const isLatestJetpackConnectedSite =
+		localStorage.getItem( 'latestJetpackConnectedSite' ) === site.value.url;
 	return (
 		<Fragment>
 			<tr
@@ -62,6 +63,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
 					'site-table__table-row-site-error': hasSiteConnectionError,
 					'is-expanded': isExpanded,
+					'is-latest-jetpack-connected-site': isLatestJetpackConnectedSite,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {
