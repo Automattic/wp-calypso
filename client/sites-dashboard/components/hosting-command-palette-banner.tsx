@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { useCommandsArrayWpcom } from './wpcom-smp-commands';
 
 const HostingCommandPaletteBannerRoot = styled.div( {
@@ -204,6 +205,10 @@ const AnimatedCommand = () => {
 
 export function HostingCommandPaletteBanner( { className }: HostingCommandPaletteBannerProps ) {
 	const translate = useTranslate();
+
+	if ( hasTouch() ) {
+		return null;
+	}
 
 	return (
 		<HostingCommandPaletteBannerRoot>
