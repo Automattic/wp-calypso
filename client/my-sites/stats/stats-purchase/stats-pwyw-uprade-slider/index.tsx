@@ -144,17 +144,6 @@ function StatsPWYWUpgradeSlider( {
 	}
 	const marks = [ 0, steps.length - 1 ];
 
-	const handleSliderChanged = ( index: number ) => {
-		if ( analyticsEventName ) {
-			recordTracksEvent( analyticsEventName, {
-				step: index,
-				default_changed: index !== defaultStartingValue,
-			} );
-		}
-
-		onSliderChange( index );
-	};
-
 	// New steps generation.
 	const tiersX = generatePlanTiers( settings );
 	const stepsX = generateSteps( tiersX, currencyCode, settings );
@@ -167,7 +156,14 @@ function StatsPWYWUpgradeSlider( {
 
 	// New slider change handler.
 	const handleSliderChanged2 = ( index: number ) => {
-		onSliderChange( stepsX[ index ].mappedIndex );
+		const mappedIndex = stepsX[ index ].mappedIndex;
+		if ( analyticsEventName ) {
+			recordTracksEvent( analyticsEventName, {
+				step: mappedIndex,
+				default_changed: mappedIndex !== mappedDefaultIndex,
+			} );
+		}
+		onSliderChange( mappedIndex );
 	};
 
 	return (
