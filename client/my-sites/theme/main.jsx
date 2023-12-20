@@ -203,7 +203,7 @@ const BannerUpsellTitle = ( {
 				'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!'
 			)
 			? translate(
-					'Access this theme for FREE with a %(personalPlanName)s or %(businessPlanName)s plan!',
+					'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!',
 					{
 						args: {
 							personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
