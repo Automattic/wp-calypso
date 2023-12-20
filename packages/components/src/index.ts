@@ -62,6 +62,7 @@ export { default as PricingSlider } from './pricing-slider';
 export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
+export { default as PlanPrice } from './plan-price';
 export * from './theme-type-badge';
 
 // Types
