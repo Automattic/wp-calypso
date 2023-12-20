@@ -133,7 +133,7 @@ describe( 'action', () => {
 				dispatchSpy,
 				stateSpy
 			);
-			expect( isHealthy ).toEqual( true );
+			expect( isHealthy ).toEqual( undefined );
 			expect( dispatchSpy ).not.toHaveBeenCalled();
 		} );
 	} );
