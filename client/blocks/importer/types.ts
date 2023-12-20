@@ -9,8 +9,10 @@ export type QueryObject = {
 };
 
 export type StepNavigator = {
+	flow: string | null;
 	supportLinkModal?: boolean;
 	goToIntentPage?: () => void;
+	goToGoalsPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;
 	goToDashboardPage?: () => void;
