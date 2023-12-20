@@ -1,7 +1,7 @@
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -153,10 +153,10 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 			<h2 className="guided-tour__popover-heading">{ title }</h2>
 			<p className="guided-tour__popover-description">
 				{ description.split( '\n' ).map( ( line, index ) => (
-					<>
+					<React.Fragment key={ index }>
 						{ line }
 						{ index < description.split( '\n' ).length - 1 && <br /> }
-					</>
+					</React.Fragment>
 				) ) }
 			</p>
 			<div className="guided-tour__popover-footer">
