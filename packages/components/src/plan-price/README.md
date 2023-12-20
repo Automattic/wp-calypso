@@ -39,7 +39,7 @@ function MyComponent( { purchaseId } ) {
 If you pass an array of two numbers in the `rawPrice` prop, a range of prices will be displayed.
 
 ```jsx
-import PlanPrice from 'calypso/my-sites/plan-price';
+import { PlanPrice } from '@automattic/components';
 
 export default class extends React.Component {
 	static displayName = 'MyPlanPrice';
