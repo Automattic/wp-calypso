@@ -253,12 +253,12 @@ export const useCommandsArrayWpcom = ( {
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	// Create URLSearchParams for send feedback by email command
-	const emailUrlSearchParams = new URLSearchParams( {
-		mode: 'EMAIL',
-	} );
-	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
-
 	const { setInitialRoute, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const emailUrl = `/contact-form?${ new URLSearchParams( {
+		mode: 'EMAIL',
+		'disable-gpt': 'true',
+	} ).toString() }`;
 
 	const commands = [
 		{
