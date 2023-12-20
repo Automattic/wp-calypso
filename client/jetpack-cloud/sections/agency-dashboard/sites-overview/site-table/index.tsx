@@ -151,7 +151,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 					preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-2"
 					tours={ [
 						{
-							target: '.is-newest-site-added > td:first-child',
+							target: '.site-table__table th:first-of-type',
 							popoverPosition: 'bottom right',
 							title: translate( '🎉 Your new site is here' ),
 							description:
