@@ -173,7 +173,7 @@
 				font-size: $font-body-small;
 				overflow: auto;
 				span {
-					overflow-wrap: break-word;
+					overflow-wrap: anywhere;
 				}
 			}
 

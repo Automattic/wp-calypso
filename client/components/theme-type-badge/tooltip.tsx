@@ -309,16 +309,16 @@ const ThemeTypeBadgeTooltip = ( {
 			message = createInterpolateElement(
 				isEnglishLocale ||
 					i18n.hasTranslation(
-						'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessNamePlan)s plan</Link> on your site.'
+						'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.'
 					)
 					? /* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 					  ( translate(
-							'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessNamePlan)s plan</Link> on your site.',
+							'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
 							{
 								args: {
 									annualPrice: subscriptionPrices.year ?? '',
 									monthlyPrice: subscriptionPrices.month ?? '',
-									businessNamePlan: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+									businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
 								},
 							}
 					  ) as string )

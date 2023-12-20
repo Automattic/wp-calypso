@@ -33,10 +33,10 @@ export default function ThemeTierCommunityBadge() {
 				{ createInterpolateElement(
 					isEnglishLocale ||
 						i18n.hasTranslation(
-							'This community theme can only be installed if you have the <Link>%(businessNamePlan)s plan</Link> or higher on your site.'
+							'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.'
 						)
 						? translate(
-								'This community theme can only be installed if you have the <Link>%(businessNamePlan)s plan</Link> or higher on your site.',
+								'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
 								{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
 						  )
 						: translate(

@@ -50,9 +50,7 @@ function useTranslatedStrings( defaultAveragePayment: number, currencyCode: stri
 	};
 }
 
-function emojiForStep( index: number ) {
-	const uiEmojiHeartTier = 14;
-	const uiImageCelebrationTier = 23;
+function emojiForStep( index: number, uiEmojiHeartTier: number, uiImageCelebrationTier: number ) {
 	if ( index === 0 ) {
 		return '';
 	}
@@ -83,7 +81,7 @@ function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: str
 		sliderSteps.push( {
 			raw: rawValue,
 			lhValue: formatCurrency( rawValue, currencyCode ),
-			rhValue: emojiForStep( i ),
+			rhValue: emojiForStep( i, settings.uiEmojiHeartTier, settings.uiImageCelebrationTier ),
 		} );
 	}
 	return sliderSteps;

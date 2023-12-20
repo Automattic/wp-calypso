@@ -200,10 +200,10 @@ export const getTask = (
 						"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				  );
 			const descriptionOnCompleted = translate(
-				'Your site is already live. You can change your site visibility in <Link>privacy options</Link> at any time.',
+				'Your site is already live. You can change your site visibility in {{link}}privacy options{{/link}} at any time.',
 				{
 					components: {
-						Link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+						link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
 					},
 					comment:
 						'pressing <Link> will redirect the user to Settings -> Privacy where they can change the site visibility',
