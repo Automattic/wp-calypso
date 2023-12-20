@@ -109,7 +109,7 @@ const GlobalStylesVariations = ( {
 		translate(
 			'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
 			{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
-		)
+		) as string
 	)
 		? translate(
 				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
@@ -199,7 +199,7 @@ const GlobalStylesVariations = ( {
 									{ hasEnTranslation(
 										translate( 'Style Variation', 'Style Variations', {
 											count: nonDefaultStyles.length,
-										} )
+										} ) as string
 									)
 										? translate( 'Style Variation', 'Style Variations', {
 												count: nonDefaultStyles.length,
