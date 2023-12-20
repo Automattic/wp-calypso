@@ -6,6 +6,7 @@ export interface Container {
 	defaultFooterContent?: ReactElement;
 	isLoading?: boolean;
 	hidden?: boolean;
+	currentRoute?: string;
 }
 
 export interface Header {

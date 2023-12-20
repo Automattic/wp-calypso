@@ -9,6 +9,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
+import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { CommandCallBackParams, useCommandPalette } from './use-command-palette';
 
 import '@wordpress/commands/build-style/style.css';
@@ -18,12 +19,23 @@ interface CommandMenuGroupProps
 	search: string;
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
+	setFooterMessage?: ( message: string ) => void;
+	setEmptyListNotice?: ( message: string ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
 	'[cmdk-root] > [cmdk-list]': {
 		overflowX: 'hidden',
 	},
+	'[cmdk-root] > [cmdk-list] [cmdk-empty]': {
+		paddingLeft: '24px',
+		paddingRight: '24px',
+	},
+} );
+
+const StyledCommandsEmpty = styled( Command.Empty )( {
+	fontSize: '13px',
+	textAlign: 'center',
 } );
 
 const BackButton = styled.button( {
@@ -62,6 +74,16 @@ const SubLabel = styled( Label )( {
 	},
 } );
 
+const StyledCommandsFooter = styled.div( {
+	fontSize: '0.75rem',
+	paddingTop: '12px',
+	paddingLeft: '16px',
+	paddingRight: '16px',
+	paddingBottom: '12px',
+	borderTop: '1px solid var(--studio-gray-5)',
+	color: 'var(--studio-gray-50)',
+} );
+
 export function CommandMenuGroup( {
 	search,
 	close,
@@ -69,12 +91,22 @@ export function CommandMenuGroup( {
 	setPlaceholderOverride,
 	selectedCommandName,
 	setSelectedCommandName,
+	setFooterMessage,
+	setEmptyListNotice,
 }: CommandMenuGroupProps ) {
-	const { commands } = useCommandPalette( {
+	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
 	} );
+
+	useEffect( () => {
+		setFooterMessage?.( filterNotice ?? '' );
+	}, [ setFooterMessage, filterNotice ] );
+
+	useEffect( () => {
+		setEmptyListNotice?.( emptyListNotice ?? '' );
+	}, [ setEmptyListNotice, emptyListNotice ] );
 
 	if ( ! commands.length ) {
 		return null;
@@ -83,7 +115,9 @@ export function CommandMenuGroup( {
 	return (
 		<Command.Group about="WPCOM">
 			{ commands.map( ( command ) => {
-				const itemValue = command.searchLabel ?? command.label;
+				const itemValue = [ command.label, command.searchLabel ]
+					.filter( Boolean )
+					.join( COMMAND_SEPARATOR );
 				return (
 					<Command.Item
 						key={ command.name }
@@ -170,6 +204,8 @@ const CommandPalette = () => {
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
+	const [ footerMessage, setFooterMessage ] = useState( '' );
+	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const dispatch = useDispatch();
 	const open = useCallback( () => {
@@ -197,6 +233,7 @@ const CommandPalette = () => {
 		[ currentRoute, dispatch, search, selectedCommandName ]
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
+	const commandFilter = useCommandFilter();
 
 	const commandListRef = useRef< HTMLDivElement >( null );
 
@@ -275,7 +312,7 @@ const CommandPalette = () => {
 			__experimentalHideHeader
 		>
 			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown }>
+				<Command label={ __( 'Command palette' ) } onKeyDown={ onKeyDown } filter={ commandFilter }>
 					<div className="commands-command-menu__header">
 						{ selectedCommandName ? (
 							<BackButton
@@ -297,8 +334,10 @@ const CommandPalette = () => {
 						/>
 					</div>
 					<Command.List ref={ commandListRef }>
-						{ search && ! isLoading && (
-							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
+						{ ! isLoading && (
+							<StyledCommandsEmpty>
+								{ emptyListNotice || __( 'No results found.' ) }
+							</StyledCommandsEmpty>
 						) }
 						<CommandMenuGroup
 							search={ search }
@@ -310,9 +349,12 @@ const CommandPalette = () => {
 							setPlaceholderOverride={ setPlaceholderOverride }
 							selectedCommandName={ selectedCommandName }
 							setSelectedCommandName={ setSelectedCommandName }
+							setFooterMessage={ setFooterMessage }
+							setEmptyListNotice={ setEmptyListNotice }
 						/>
 					</Command.List>
 				</Command>
+				{ footerMessage && <StyledCommandsFooter>{ footerMessage }</StyledCommandsFooter> }
 			</StyledCommandsMenuContainer>
 		</Modal>
 	);

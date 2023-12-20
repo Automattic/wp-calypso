@@ -8,9 +8,9 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -22,6 +22,7 @@ import PromoSection, {
 	Props as PromoSectionProps,
 	PromoSectionCardProps,
 } from 'calypso/components/promo-section';
+import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -63,9 +64,6 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-
-	const isEnglishLocale = useIsEnglishLocale();
-
 	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
@@ -132,23 +130,17 @@ const Home = () => {
 	};
 
 	const getPremiumPlanNames = () => {
-		const nonAtomicJetpackText =
-			isEnglishLocale ||
-			i18n.hasTranslation(
-				'Available only with a %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s plan.'
-			)
-				? translate(
-						'Available only with a %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s plan.',
-						{
-							args: {
-								premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
-								businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
-								commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '',
-							},
-						}
-				  )
-				: translate( 'Available only with a Premium, Business, or Commerce plan.' );
-
+		const nonAtomicJetpackText = translate(
+			// Translators: %(premiumPlanName)s is Explorer or Premium, %(businessPlanName)s is Creator or Business, %(commercePlanName)s is Entrepreneur or eCommerce.
+			'Available only with a %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s plan.',
+			{
+				args: {
+					premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
+					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
+					commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '',
+				},
+			}
+		);
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
 	};
@@ -182,19 +174,15 @@ const Home = () => {
 					},
 			  };
 		const title = translate( 'Collect PayPal payments' );
-		const body = (
-			<>
-				{ translate(
-					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
-				) }
-				{ ! hasSimplePayments && <em>{ getPremiumPlanNames() }</em> }
-			</>
+		const body = translate(
+			'Accept credit and debit card payments via PayPal for physical products, services, donations, tips, or memberships.'
 		);
 
 		return {
 			title,
 			body,
 			icon: 'credit-card',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 			},
@@ -235,6 +223,7 @@ const Home = () => {
 			title,
 			body,
 			icon: 'money',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 			},
@@ -258,25 +247,17 @@ const Home = () => {
 			},
 		};
 
-		const title = translate( 'Accept donations and tips' );
+		const title = translate( 'Receive donations and tips' );
 
-		const body = (
-			<>
-				{ hasConnectedAccount
-					? translate(
-							'Accept one-time and recurring donations by inserting the Donations Form block.'
-					  )
-					: translate(
-							'Accept one-time and recurring donations by enabling the Donations Form block.'
-					  ) }
-				<></>
-			</>
+		const body = translate(
+			'The Donations Form block lets you accept credit and debit card payments for one-time donations, contributions, and tips.'
 		);
 
 		return {
 			title,
 			body,
 			icon: 'heart-outline',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 			},
@@ -302,19 +283,16 @@ const Home = () => {
 				}
 			},
 		};
-		const title = translate( 'Profit from subscriber-only content' );
-		const hasConnectionBodyText = translate(
-			'Create paid subscriptions so only subscribers can see selected content on your site — everyone else will see a paywall.'
+		const title = translate( 'Create subscriber-only content' );
+		const body = translate(
+			'Create paid subscription options and gate access to text, video, image, or any other kind of content.'
 		);
-		const noConnectionBodyText = translate(
-			'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
-		);
-		const body = <>{ hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText }</>;
 
 		return {
 			title,
 			body,
 			icon: 'bookmark-outline',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 			},
@@ -338,15 +316,16 @@ const Home = () => {
 				}
 			},
 		};
-		const title = translate( 'Send paid email newsletters' );
+		const title = translate( 'Set up a paid newsletter' );
 		const body = translate(
-			'Share premium content with paying subscribers automatically through email.'
+			'Reach and grow your audience with a newsletter and earn with paid subscriptions, gated content options, and one-time offerings.'
 		);
 
 		return {
 			title,
 			body,
 			icon: 'mail',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 			},
@@ -374,10 +353,10 @@ const Home = () => {
 		}
 
 		return {
-			title: translate( 'Refer a friend, you’ll both earn credits' ),
+			title: translate( 'Refer a friend' ),
 			body: peerReferralLink
 				? translate(
-						'To earn free credits, share the link below with your friends, family, and website visitors.'
+						'Share the link below and, for every paying customer you send our way, you’ll both earn US$25 in credits.'
 				  )
 				: translate(
 						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
@@ -394,6 +373,7 @@ const Home = () => {
 						}
 				  ),
 			icon: 'user-add',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 			},
@@ -433,7 +413,7 @@ const Home = () => {
 		) : (
 			<>
 				{ translate(
-					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
+					'Make money each time someone visits your site by displaying ads on your posts and pages.'
 				) }
 				{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
 			</>
@@ -447,6 +427,7 @@ const Home = () => {
 			title,
 			body,
 			icon: 'speaker',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 				learnMoreLink,

@@ -36,7 +36,7 @@ This should be an object where the keys are import package names and the values 
 ```json
 {
 	"wpcalypso/no-unsafe-wp-apis": [
-		"error",
+		"warn",
 		{ "@wordpress/block-editor": [ "__experimentalBlock" ] }
 	]
 }

@@ -50,8 +50,8 @@ const BusinessUpgradeConfirmation = () => {
 							<div className="trial-upgrade-confirmation__header">
 								<h1 className="trial-upgrade-confirmation__title">
 									{ isEnglishLocale ||
-									i18n.hasTranslation( 'Welcome to the %(businessPlanName) plan' )
-										? translate( 'Welcome to the %(businessPlanName) plan', {
+									i18n.hasTranslation( 'Welcome to the %(businessPlanName)s plan' )
+										? translate( 'Welcome to the %(businessPlanName)s plan', {
 												args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '' },
 										  } )
 										: translate( 'Welcome to the Business plan' ) }

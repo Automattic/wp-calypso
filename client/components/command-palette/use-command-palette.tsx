@@ -1,5 +1,6 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -31,6 +32,8 @@ type OnClickSiteFunction = ( {
 interface SiteFunctions {
 	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
+	filterNotice?: string;
+	emptyListNotice?: string;
 }
 export interface CommandCallBackParams {
 	close: CloseFunction;
@@ -118,7 +121,11 @@ export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
-}: useCommandPaletteOptions ): { commands: Command[] } => {
+}: useCommandPaletteOptions ): {
+	commands: Command[];
+	filterNotice: string | undefined;
+	emptyListNotice: string | undefined;
+} => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
@@ -138,7 +145,7 @@ export const useCommandPalette = ( {
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommandsArrayWpcom( {
 		setSelectedCommandName,
-	} );
+	} ) as Command[];
 
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 
@@ -146,10 +153,20 @@ export const useCommandPalette = ( {
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 		let sitesToPick = null;
-
+		let filterNotice = undefined;
+		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { onClick, filter } = selectedCommand.siteFunctions;
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+			if ( sortedSites.length === 0 ) {
+				emptyListNotice = __( "You don't have any sites yet." );
+			} else if ( filteredSites.length === 0 ) {
+				emptyListNotice = selectedCommand.siteFunctions?.emptyListNotice;
+			}
+			// Only show the filterNotice if there are some sites in the first place.
+			if ( filteredSites.length > 0 ) {
+				filterNotice = selectedCommand.siteFunctions?.filterNotice;
+			}
 
 			if ( currentSiteId ) {
 				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
@@ -174,7 +191,7 @@ export const useCommandPalette = ( {
 			);
 		}
 
-		return { commands: sitesToPick ?? [] };
+		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice };
 	}
 
 	// Logic for root commands
@@ -224,5 +241,5 @@ export const useCommandPalette = ( {
 	}
 
 	// Return the sorted commands
-	return { commands: finalSortedCommands };
+	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
 };

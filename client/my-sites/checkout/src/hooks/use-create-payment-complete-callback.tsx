@@ -237,7 +237,12 @@ export default function useCreatePaymentCompleteCallback( {
 
 			// We need to do a hard redirect if we're redirecting to the stepper.
 			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
-			if ( isURL( url ) || url.includes( '/setup/' ) ) {
+			// The same is true if we are redirecting to the signup flow, we are restricting it to only 1 specific flow here.
+			if (
+				isURL( url ) ||
+				url.includes( '/setup/' ) ||
+				url.includes( '/start/site-content-collection' )
+			) {
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
