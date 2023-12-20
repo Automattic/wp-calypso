@@ -55,7 +55,6 @@ class Document extends Component {
 			feedbackURL,
 			inlineScriptNonce,
 			isSupportSession,
-			isWCComConnect,
 			isWooDna,
 			requestFrom,
 			useTranslationChunks,
@@ -167,7 +166,6 @@ class Document extends Component {
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
 								<div className="layout__content">
