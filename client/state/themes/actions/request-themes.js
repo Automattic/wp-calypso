@@ -20,7 +20,7 @@ import 'calypso/state/themes/init';
  * @param  {Object}        query         Theme query
  * @param  {string}        query.search  Search string
  * @param  {string}        query.tier    Theme tier: 'free', 'premium', 'marketplace', or '' (either)
- * @param  {string}        query.type    Theme tier: my-themes, showcase
+ * @param  {string}        query.request_type    Theme tier: my-themes, showcase
  * @param  {string}        query.filter  Filter
  * @param  {number}        query.number  How many themes to return per page
  * @param  {number}        query.offset  At which item to start the set of returned themes
@@ -44,7 +44,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 			request = () => fetchWporgThemesList( query );
 		} else if ( siteId === 'wpcom' ) {
 			request = () => makeWpcomRequest( '/themes', query, locale );
-		} else if ( query.type === 'my-themes' ) {
+		} else if ( query.request_type === 'my-themes' ) {
 			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );
 		} else {
 			request = () => makeWpcomRequest( `/sites/${ siteId }/themes`, query, locale );
@@ -58,7 +58,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 				let themes;
 				if ( siteId === 'wporg' ) {
 					themes = map( rawThemes, normalizeWporgTheme );
-				} else if ( siteId === 'wpcom' || query.type === 'showcase' ) {
+				} else if ( siteId === 'wpcom' || query.request_type === 'showcase' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 					dispatch( updateThemeTiers( tiers ) );
 				} else {

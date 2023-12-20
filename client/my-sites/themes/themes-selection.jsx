@@ -306,7 +306,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			type: tabFilter === 'my-themes' ? 'my-themes' : 'showcase',
+			request_type: tabFilter === 'my-themes' ? 'my-themes' : 'showcase',
 			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,
