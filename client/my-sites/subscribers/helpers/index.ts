@@ -1,7 +1,5 @@
 import { SubscriberListArgs } from '../types';
 
-const getEarnPaymentsPageUrl = ( siteSlug: string | null ) => `/earn/payments/${ siteSlug ?? '' }`;
-
 const getSubscribersCacheKey = (
 	siteId: number | undefined | null,
 	currentPage?: number,
@@ -88,7 +86,6 @@ const sanitizeInt = ( intString: string ) => {
 const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
 
 export {
-	getEarnPaymentsPageUrl,
 	getSubscriberDetailsCacheKey,
 	getSubscriberDetailsUrl,
 	getSubscriberDetailsType,
