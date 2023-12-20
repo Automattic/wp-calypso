@@ -75,6 +75,7 @@ export default function IntroCards( { onFinish = () => {} } ) {
 		<DotPager
 			className="intro-cards"
 			navArrowSize={ 24 }
+			tracksPrefix="calypso_jetpack_manage_overview_intro_cards"
 			includeNextButton
 			includeFinishButton
 			onFinish={ onFinish }
