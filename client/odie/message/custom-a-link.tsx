@@ -32,7 +32,7 @@ const CustomALink = ( {
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ () => {
-					trackEvent( 'calypso_odie_chat_message_action_click', {
+					trackEvent( 'chat_message_action_click', {
 						action: 'link',
 						href: href,
 					} );

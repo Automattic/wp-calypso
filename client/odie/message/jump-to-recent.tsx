@@ -23,7 +23,7 @@ export const JumpToRecent = ( {
 	const translate = useTranslate();
 	const jumpToRecent = () => {
 		scrollToBottom();
-		trackEvent( 'calypso_odie_chat_jump_to_recent_click' );
+		trackEvent( 'chat_jump_to_recent_click' );
 	};
 
 	if ( isMinimized ) {

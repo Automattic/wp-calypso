@@ -36,7 +36,7 @@ const WasThisHelpfulButtons = ( {
 			onDislike();
 		}
 
-		trackEvent( 'calypso_odie_chat_message_action_feedback', {
+		trackEvent( 'chat_message_action_feedback', {
 			action: 'feedback',
 			is_helpful: isHelpful,
 			message_id: message.message_id,
