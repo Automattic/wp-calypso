@@ -7,16 +7,17 @@ interface CoreBlockEditor {
 
 interface BlockStore {
 	getBlockTypes: () => [ value: { name: string } ];
-	getBlockType: ( arg0: string ) => { name: string };
+	getBlockType: ( arg0: string ) => { title: string; name: string };
 }
 
 export function useContextBasedSearchMapping( currentRoute: string | undefined ) {
 	const blockSearchQuery = useSelect( ( select: ( store: string ) => CoreBlockEditor ) => {
 		const selectedBlock = select( 'core/block-editor' )?.getSelectedBlock();
 		if ( selectedBlock ) {
-			return ( select( 'core/blocks' ) as unknown as BlockStore )?.getBlockType(
+			const blockType = ( select( 'core/blocks' ) as unknown as BlockStore )?.getBlockType(
 				( selectedBlock as { name: string } ).name
-			)?.name;
+			);
+			return blockType?.title || blockType?.name;
 		}
 		return '';
 	}, [] );
