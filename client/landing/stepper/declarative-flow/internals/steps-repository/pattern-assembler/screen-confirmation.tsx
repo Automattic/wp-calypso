@@ -43,7 +43,7 @@ const ScreenConfirmation = ( { siteId = 0, selectedDesign, onConfirm }: Props ) 
 				icon: layout,
 				title: translate( 'Active theme' ),
 				description: translate(
-					'This will change your active theme from %(oldThemeName)s to %(newThemeName)s.',
+					'This will change your active theme from %(oldThemeName)s to %(newThemeName)s, the base theme of your new design.',
 					{
 						args: {
 							oldThemeName: currentTheme?.name ?? '',
@@ -71,7 +71,9 @@ const ScreenConfirmation = ( { siteId = 0, selectedDesign, onConfirm }: Props ) 
 				),
 			},
 		];
-		continueLabel = translate( 'Activate this theme' );
+		continueLabel = translate( 'Activate %(themeName)s', {
+			args: { themeName: selectedDesign?.title ?? '' },
+		} );
 	} else {
 		title = translate( 'Great job!' );
 		description = translate( 'Time to add some content and bring your site to life!' );
