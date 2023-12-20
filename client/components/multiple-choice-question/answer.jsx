@@ -59,7 +59,7 @@ MultipleChoiceAnswer.propTypes = {
 		children: PropTypes.object,
 	} ).isRequired,
 	selectedAnswerText: PropTypes.string,
-	name: PropTypes.string,
+	name: PropTypes.string.isRequired,
 };
 
 MultipleChoiceAnswer.defaultProps = {

@@ -70,7 +70,7 @@ MultipleChoiceQuestion.propTypes = {
 		} )
 	).isRequired,
 	disabled: PropTypes.bool,
-	name: PropTypes.string,
+	name: PropTypes.string.isRequired,
 	onAnswerChange: PropTypes.func.isRequired,
 	question: PropTypes.string.isRequired,
 	selectedAnswerId: PropTypes.string,
