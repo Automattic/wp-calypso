@@ -12,21 +12,15 @@ const HostingCommandPaletteBannerRoot = styled.div( {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'left',
-		border: '1px solid var(--color-border-subtle)',
 		borderLeftWidth: 3,
 		borderLeftColor: 'var(--color-accent)',
 		borderLeftStyle: 'solid',
-		boxShadow: 'none',
 		padding: '10px 12px',
 	},
 	'.dismissible-card__close-button': {
 		top: 'calc(50% - 12px)',
 		right: 20,
 	},
-	'.card.is-card-link:not(a):active, .card.is-card-link:not(a):focus, .card.is-card-link:not(a):hover':
-		{
-			color: 'var(--color-primary)',
-		},
 } );
 
 const fadeIn = keyframes`
@@ -144,7 +138,8 @@ const AnimatedCommand = () => {
 	const commands = useCommandsArrayWpcom( {
 		setSelectedCommandName: () => {},
 	} );
-	const prefersReducedMotion = false;
+	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
 	const [ currentCommandIndex, setCurrentCommandIndex ] = useState( 0 );
 	const commandNames = useMemo( () => {
 		if ( prefersReducedMotion ) {
@@ -214,7 +209,7 @@ export function HostingCommandPaletteBanner( { className }: HostingCommandPalett
 		<HostingCommandPaletteBannerRoot>
 			<DismissibleCard
 				preferenceName="hosting-command-palette-banner-display"
-				className={ `hosting-command-palette-banner card banner upsell-nudge is-dismissible is-card-link ${ className }` }
+				className={ `hosting-command-palette-banner is-dismissible ${ className }` }
 			>
 				<ShortcutIcon size="big" />
 				<div>
