@@ -204,7 +204,6 @@ describe( 'PluginsBrowser basic tests', () => {
 	} );
 
 	test( 'should show notice if site is not connected to wpcom', () => {
-		jest.useFakeTimers().setSystemTime( Date.now() );
 		const lastRequestTime = Date.now() - 1000 * 60 * 4;
 		const initialState = {
 			ui: { selectedSiteId: 1 },
