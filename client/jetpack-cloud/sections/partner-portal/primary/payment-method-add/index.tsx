@@ -30,12 +30,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import {
-	errorNotice,
-	infoNotice,
-	removeNotice,
-	successNotice,
-} from 'calypso/state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
@@ -185,7 +180,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 		// If this is a site creation flow, we will need to resume on the creation of site.
 		if ( isSiteCreationFlow ) {
-			dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
 			issueLicenses( [ { slug: product, quantity: 1 } ] );
 			page( `/dashboard?provisioning=true` );
 			return;
