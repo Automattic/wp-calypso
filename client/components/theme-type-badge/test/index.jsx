@@ -55,7 +55,7 @@ describe( 'ThemeTypeBadge', () => {
 			await userEvent.hover( popoverTrigger );
 
 			expect( screen.queryByTestId( 'upsell-message' ).innerHTML ).toContain(
-				'This premium theme is included in the'
+				'This theme is included in the'
 			);
 		} );
 
