@@ -20,6 +20,7 @@ import 'calypso/state/themes/init';
  * @param  {Object}        query         Theme query
  * @param  {string}        query.search  Search string
  * @param  {string}        query.tier    Theme tier: 'free', 'premium', 'marketplace', or '' (either)
+ * @param  {string}        query.type    Theme tier: my-themes, showcase
  * @param  {string}        query.filter  Filter
  * @param  {number}        query.number  How many themes to return per page
  * @param  {number}        query.offset  At which item to start the set of returned themes
@@ -42,28 +43,11 @@ export function requestThemes( siteId, query = {}, locale ) {
 		if ( siteId === 'wporg' ) {
 			request = () => fetchWporgThemesList( query );
 		} else if ( siteId === 'wpcom' ) {
-			request = () =>
-				wpcom.req.get(
-					'/themes',
-					Object.assign(
-						{
-							...query,
-							apiVersion: '1.2',
-							// We should keep the blank-canvas-3 stay hidden according to below discussion
-							// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
-							// User can be redirected to PatternAssembler flow using the PatternAssemblerCTA on theme-list
-							include_blankcanvas_theme: null,
-							// Include retired themes when searching. This is useful when a theme exists in both wpcom and wporg.
-							// The theme will show up in the theme listing as wporg, but it cannot be activated
-							// since it's a retired wpcom theme (take precedence).
-							// See: https://github.com/Automattic/wp-calypso/pull/78231
-							...( query.search && !! query.search.length ? { retired: true } : null ),
-						},
-						locale ? { locale } : null
-					)
-				);
-		} else {
+			request = () => makeWpcomRequest( '/themes', query, locale );
+		} else if ( query.type === 'my-themes' ) {
 			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );
+		} else {
+			request = () => makeWpcomRequest( `/sites/${ siteId }/themes`, query, locale );
 		}
 
 		// WP.com returns the number of results in a `found` attr, so we can use that right away.
@@ -74,7 +58,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 				let themes;
 				if ( siteId === 'wporg' ) {
 					themes = map( rawThemes, normalizeWporgTheme );
-				} else if ( siteId === 'wpcom' ) {
+				} else if ( siteId === 'wpcom' || query.type === 'showcase' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 					dispatch( updateThemeTiers( tiers ) );
 				} else {
@@ -120,4 +104,26 @@ export function requestThemes( siteId, query = {}, locale ) {
 				} );
 			} );
 	};
+}
+
+function makeWpcomRequest( path, query, locale ) {
+	return wpcom.req.get(
+		path,
+		Object.assign(
+			{
+				...query,
+				apiVersion: '1.2',
+				// We should keep the blank-canvas-3 stay hidden according to below discussion
+				// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
+				// User can be redirected to PatternAssembler flow using the PatternAssemblerCTA on theme-list
+				include_blankcanvas_theme: null,
+				// Include retired themes when searching. This is useful when a theme exists in both wpcom and wporg.
+				// The theme will show up in the theme listing as wporg, but it cannot be activated
+				// since it's a retired wpcom theme (take precedence).
+				// See: https://github.com/Automattic/wp-calypso/pull/78231
+				...( query.search && !! query.search.length ? { retired: true } : null ),
+			},
+			locale ? { locale } : null
+		)
+	);
 }

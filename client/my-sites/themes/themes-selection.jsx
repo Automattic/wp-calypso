@@ -1,7 +1,4 @@
-import {
-	FEATURE_INSTALL_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES,
-} from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import pageRouter from '@automattic/calypso-router';
 import { compact } from 'lodash';
 import PropTypes from 'prop-types';
@@ -13,9 +10,8 @@ import ThemesList from 'calypso/components/themes-list';
 import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
@@ -289,36 +285,26 @@ export const ConnectedThemesSelection = connect(
 		state,
 		{ filter, page, search, tier, vertical, siteId, source, forceWpOrgSearch, tabFilter }
 	) => {
-		const isJetpack = isJetpackSite( state, siteId );
-		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
 		const hiddenFilters = getThemeHiddenFilters( state, siteId );
-		const hasUnlimitedPremiumThemes = siteHasFeature(
-			state,
-			siteId,
-			WPCOM_FEATURES_PREMIUM_THEMES
-		);
 		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 
 		let sourceSiteId;
-		if ( source === 'wpcom' || source === 'wporg' ) {
+		if ( source === 'wporg' ) {
 			sourceSiteId = source;
 		} else {
-			sourceSiteId = siteId && isJetpack ? siteId : 'wpcom';
-		}
-
-		if ( isAtomic && ! hasUnlimitedPremiumThemes ) {
-			sourceSiteId = 'wpcom';
+			sourceSiteId = siteId ? siteId : 'wpcom';
 		}
 
 		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 100;
+		const number = tabFilter === 'my-themes' ? 2000 : 100;
 		const query = {
 			search,
 			page,
+			type: tabFilter === 'my-themes' ? 'my-themes' : 'showcase',
 			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,

@@ -21,7 +21,7 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
 	}
 
 	// No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
-	if ( isJetpackSite( state, siteId ) ) {
+	if ( isJetpackSite( state, siteId ) && query.type === 'my-themes' ) {
 		return 1;
 	}
 
