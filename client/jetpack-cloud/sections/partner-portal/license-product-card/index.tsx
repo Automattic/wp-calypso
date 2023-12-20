@@ -60,6 +60,7 @@ export default function LicenseProductCard( props: Props ) {
 
 	const onKeyDown = useCallback(
 		( e: any ) => {
+			// Enter
 			if ( 13 === e.keyCode ) {
 				onSelect();
 			}

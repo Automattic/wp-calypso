@@ -32,8 +32,8 @@
 .license-product-card:focus-within,
 .license-product-card.selected {
 	.license-product-card__inner {
-		border: 1px solid #fff;
-		background: #fff;
+		border: 1px solid var(--studio-white);
+		background: var(--studio-white);
 		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
 	}
 }
