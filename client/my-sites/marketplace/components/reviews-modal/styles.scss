@@ -1,7 +1,19 @@
 $border-color: #eee;
 
 .marketplace-reviews-modal {
-	max-width: 850px;
+	width: 850px;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		width: 600px;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		width: 400px;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		width: 100%;
+	}
 
 	&.dialog__content {
 		padding: 0;
