@@ -33,6 +33,11 @@ const StyledCommandsMenuContainer = styled.div( {
 	},
 } );
 
+const StyledCommandsEmpty = styled( Command.Empty )( {
+	fontSize: '13px',
+	textAlign: 'center',
+} );
+
 const BackButton = styled.button( {
 	cursor: 'pointer',
 } );
@@ -330,7 +335,9 @@ const CommandPalette = () => {
 					</div>
 					<Command.List ref={ commandListRef }>
 						{ ! isLoading && (
-							<Command.Empty>{ emptyListNotice || __( 'No results found.' ) }</Command.Empty>
+							<StyledCommandsEmpty>
+								{ emptyListNotice || __( 'No results found.' ) }
+							</StyledCommandsEmpty>
 						) }
 						<CommandMenuGroup
 							search={ search }
