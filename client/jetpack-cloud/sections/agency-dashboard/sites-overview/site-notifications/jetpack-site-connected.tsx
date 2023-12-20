@@ -28,6 +28,7 @@ export default function JetpackSiteConnected() {
 					},
 				} )
 			);
+			localStorage.setItem( 'latestJetpackConnectedSite', jetpackConnectedSite );
 			page.redirect(
 				removeQueryArgs( window.location.pathname + window.location.search, 'site_connected' )
 			);
