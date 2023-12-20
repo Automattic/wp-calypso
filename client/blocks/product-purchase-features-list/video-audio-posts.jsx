@@ -51,7 +51,7 @@ function getDescription( plan, translate ) {
 
 	if ( isWpComBusinessPlan( plan ) || isWpComEcommercePlan( plan ) ) {
 		const newPlan = getPlan( plan );
-		// Translators: %(planName)s is the name of the plan - Creator, Enterpreneur, Business, or eCommerce. %(storageLimit)d is the storage limit in GB.
+		// Translators: %(planName)s is the name of the plan - Creator, Entrepreneur, Business, or eCommerce. %(storageLimit)d is the storage limit in GB.
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
 				'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
