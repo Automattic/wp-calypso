@@ -706,11 +706,19 @@ export class UserStep extends Component {
 
 const ConnectedUser = connect(
 	( state ) => {
-		const oauth2RedirectUrl = new URL( getCurrentQueryArguments( state ).oauth2_redirect );
+		const queryOauth2Redirect = getCurrentQueryArguments( state ).oauth2_redirect;
+		let wccomFrom = null;
+		try {
+			const oauth2RedirectUrl = new URL( queryOauth2Redirect );
+			wccomFrom = oauth2RedirectUrl.searchParams.get( 'wccom-from' );
+		} catch ( e ) {
+			// Do nothing
+		}
+
 		return {
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
-			wccomFrom: oauth2RedirectUrl.searchParams.get( 'wccom-from' ),
+			wccomFrom: wccomFrom,
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
