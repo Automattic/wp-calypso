@@ -2,7 +2,7 @@ import { Progress, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useCallback } from 'react';
 import { ProgressBar } from 'calypso/devdocs/design/playground-scope';
-import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
+import useProgressValue from './use-progress-value';
 import type { ImportJob } from '../../types';
 
 interface Props {
@@ -12,6 +12,7 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const { job } = props;
 	const { customData } = job || {};
+	const progressValue = useProgressValue( job?.progress );
 
 	const getPlaygroundImportTitle = useCallback( () => {
 		switch ( customData?.current_step ) {
@@ -35,12 +36,11 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 
 	const title =
 		job?.importerFileType !== 'playground' ? __( 'Importing' ) : getPlaygroundImportTitle();
-	const progress = job ? calculateProgress( job.progress ) : NaN;
 
 	return (
 		<Progress>
 			<Title>{ title }...</Title>
-			<ProgressBar compact={ true } value={ Number.isNaN( progress ) ? 0 : progress } />
+			<ProgressBar compact={ true } value={ progressValue } />
 			<SubTitle>
 				{ __( 'Feel free to close this window. We’ll email you when your new site is ready.' ) }
 			</SubTitle>

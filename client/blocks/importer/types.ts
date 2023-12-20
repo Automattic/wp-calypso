@@ -54,12 +54,15 @@ export interface ImportJob {
 		description: string;
 		code?: string;
 	};
-	progress: {
-		page: { completed: number; total: number };
-		post: { completed: number; total: number };
-		comment: { completed: number; total: number };
-		attachment: { completed: number; total: number };
-	};
+	progress: ImportJobProgress;
+}
+
+export interface ImportJobProgress {
+	page: { completed: number; total: number };
+	post: { completed: number; total: number };
+	comment: { completed: number; total: number };
+	attachment: { completed: number; total: number };
+	steps: { completed: number; total: number };
 }
 
 export interface ImportJobParams {
