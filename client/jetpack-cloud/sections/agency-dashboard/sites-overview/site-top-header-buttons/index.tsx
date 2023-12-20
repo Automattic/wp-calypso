@@ -85,10 +85,12 @@ export default function SiteTopHeaderButtons() {
 									target: '#sites-overview-add-sites-button .split-button__toggle',
 									popoverPosition: 'bottom left',
 									title: translate( 'Press on an arrow button' ),
-									description: translate(
-										'Click the arrow button and select "Connect a site to Jetpack". ' +
+									description:
+										translate( 'Click the arrow button and select "Connect a site to Jetpack".' ) +
+										'\n\n' +
+										translate(
 											'Sites with jetpack installed will automatically appear in the site management view.'
-									),
+										),
 									nextStepOnTargetClick: '#sites-overview-add-sites-button .split-button__toggle',
 								},
 							] }

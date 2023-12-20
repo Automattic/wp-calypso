@@ -153,11 +153,13 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 						{
 							target: '.is-newest-site-added > td:first-child',
 							popoverPosition: 'bottom right',
-							title: translate( 'Your new site is here' ),
-							description: translate(
-								'Check out your new site here. That was straightforward, right? ' +
+							title: translate( '🎉 Your new site is here' ),
+							description:
+								translate( 'Check out your new site here. That was straightforward, right? ' ) +
+								'\n\n' +
+								translate(
 									"You're now equipped to connect all your new sites to the site management view."
-							),
+								),
 							redirectOnButtonClick: '/overview',
 						},
 					] }
