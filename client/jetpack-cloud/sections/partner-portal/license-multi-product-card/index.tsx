@@ -166,10 +166,10 @@ export default function LicenseMultiProductCard( props: Props ) {
 								</h3>
 
 								<MultipleChoiceQuestion
-									name={ `${ product?.slug }-variant-options` }
+									name={ `${ product.family_slug }-variant-options` }
 									question={ translate( 'Select variant:' ) }
 									answers={ variantOptions }
-									selectedAnswerId={ product?.slug }
+									selectedAnswerId={ product.slug }
 									onAnswerChange={ onChangeOption }
 									shouldShuffleAnswers={ false }
 								/>
