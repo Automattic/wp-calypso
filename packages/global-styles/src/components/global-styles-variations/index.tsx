@@ -1,5 +1,6 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
@@ -102,11 +103,21 @@ const GlobalStylesVariations = ( {
 	needsUpgrade = true,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
+	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const premiumStylesDescription = translate(
-		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
-		{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
-	);
+	const premiumStylesDescription = hasEnTranslation(
+		translate(
+			'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+			{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
+		)
+	)
+		? translate(
+				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+				{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
+		  )
+		: translate(
+				'Unlock premium styles and tons of other features with the Premium plan, or try them out now for free.'
+		  );
 
 	const baseGlobalStyles = useMemo(
 		() =>
@@ -185,9 +196,17 @@ const GlobalStylesVariations = ( {
 						<div className="global-styles-variations__header">
 							<h2>
 								<span>
-									{ translate( 'Premium Style', 'Premium Styles', {
-										count: nonDefaultStyles.length,
-									} ) }
+									{ hasEnTranslation(
+										translate( 'Style Variation', 'Style Variations', {
+											count: nonDefaultStyles.length,
+										} )
+									)
+										? translate( 'Style Variation', 'Style Variations', {
+												count: nonDefaultStyles.length,
+										  } )
+										: translate( 'Premium Style', 'Premium Styles', {
+												count: nonDefaultStyles.length,
+										  } ) }
 								</span>
 								<PremiumBadge
 									shouldHideTooltip
