@@ -27,6 +27,7 @@ export const NOTICE_CELEBRATE_SITE_SETUP_COMPLETE = 'home-notice-celebrate-site-
 export const NOTICE_STAGING_SITE = 'home-notice-staging-site';
 export const SECTION_LEARN_GROW = 'home-section-learn-grow';
 export const SECTION_BLOGGING_PROMPT = 'home-section-blogging-prompt';
+export const SECTION_BLOGANUARY_BLOGGING_PROMPT = 'home-section-bloganuary-blogging-prompt';
 export const SECTION_MANAGE_SITE = 'home-section-manage-site';
 export const TASK_CONNECT_ACCOUNTS = 'home-task-connect-accounts';
 export const TASK_EARN_FEATURES = 'home-task-earn-features';
