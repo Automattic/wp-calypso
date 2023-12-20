@@ -8,10 +8,19 @@
 	width: 100%;
 }
 
-.woo .two-factor-authentication__verification-code-form {
-	margin-bottom: 52px;
-	padding: 16px 0 0;
+.woo .two-factor-authentication__verification-code-form-wrapper {
+	padding: 4px 0 0;
 	text-align: center;
+
+	.security-key-form__help-text {
+		margin-bottom: 40px;
+	}
+
+	.two-factor-authentication__verification-code-form {
+		border: 0;
+		padding: 0 0 10px;
+		margin-bottom: 40px;
+	}
 
 	@media screen and ( max-width: 660px ) {
 		text-align: left;
@@ -37,11 +46,13 @@
 	}
 
 	.form-fieldset {
-		margin: 40px 0 -8px;
+		margin: 40px auto 16px;
+		max-width: 404px;
 	}
 
 	.form-button {
-		margin: 24px 0 0;
+		margin: 0;
+		max-width: 404px;
 	}
 
 	.form-fieldset,
@@ -50,6 +61,26 @@
 			margin-left: 0;
 			margin-right: 0;
 			width: 100%;
+		}
+	}
+
+	.auth-form__separator {
+		max-width: 404px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.two-factor-authentication__actions.card {
+		padding: 36px 0 40px;
+
+		.button {
+			border: 1px solid #c3c4c7;
+			color: var(--color-gray-100);
+			font-weight: 500;
+			line-height: 20px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+			width: 100%;
+			max-width: 404px;
 		}
 	}
 }

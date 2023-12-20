@@ -192,12 +192,16 @@ export function isPartnerSignupQuery( currentQuery ) {
 
 	// Handles login through /log-in/?redirect_to=...
 	if ( typeof currentQuery?.redirect_to === 'string' ) {
-		return /woocommerce\.com\/partner-signup/.test( currentQuery.redirect_to );
+		return /woocommerce\.(?:com|test)\/partner-signup/.test(
+			decodeURIComponent( currentQuery.redirect_to )
+		);
 	}
 
 	// Handles user creation through /start/wpcc?oauth2_redirect=...
 	if ( typeof currentQuery?.oauth2_redirect === 'string' ) {
-		return /woocommerce\.com\/partner-signup/.test( currentQuery.oauth2_redirect );
+		return /woocommerce\.(?:com|test)\/partner-signup/.test(
+			decodeURIComponent( currentQuery.oauth2_redirect )
+		);
 	}
 
 	return false;
