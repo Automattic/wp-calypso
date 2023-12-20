@@ -37,7 +37,6 @@ const render = ( el, options = {} ) =>
 describe( 'JetpackConnectionHealthBanner', () => {
 	describe( 'component rendering', () => {
 		test( 'shows generic message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const initialState = {
 				jetpackConnectionHealth: {
@@ -59,7 +58,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows a database connection error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = DATABASE_ERROR;
 
@@ -85,7 +83,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows fatal error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = FATAL_ERROR;
 
@@ -113,7 +110,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows dns error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = DNS_ERROR;
 
@@ -137,7 +133,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows user token error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = USER_TOKEN_ERROR;
 
@@ -165,7 +160,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows blog token error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = BLOG_TOKEN_ERROR;
 
@@ -193,7 +187,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows http error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = HTTP_ERROR;
 
@@ -221,7 +214,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows inactivity error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = INACTIVITY_ERROR;
 
@@ -249,7 +241,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows an XML-RPC error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = XMLRPC_ERROR;
 
@@ -277,7 +268,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows a REST API error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = REST_API_ERROR;
 
@@ -305,7 +295,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows plugin error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = PLUGIN_ERROR;
 
@@ -333,7 +322,6 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows generic error message', () => {
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = GENERIC_ERROR;
 

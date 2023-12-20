@@ -119,7 +119,6 @@ describe( 'action', () => {
 
 		test( 'should return current state if 5 minutes have not passed yet', async () => {
 			const siteId = 1;
-			jest.useFakeTimers().setSystemTime( Date.now() );
 			stateSpy.mockReturnValue( {
 				jetpackConnectionHealth: {
 					1: {
