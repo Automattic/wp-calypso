@@ -3,6 +3,7 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
 	LINK_IN_BIO_TLD_FLOW,
+	isSiteAssemblerFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
@@ -209,7 +210,7 @@ export function DomainFormControl( {
 			return false;
 		}
 
-		return isDomainUpsellFlow( flow );
+		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow );
 	};
 
 	const renderDomainForm = () => {

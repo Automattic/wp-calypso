@@ -53,7 +53,8 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 			options,
 			errors: [
 				{
-					message: 'Usage of `__experimentalUnsafe` from `@wordpress/package` is not allowed',
+					message:
+						'Warning: Using `__experimentalUnsafe` from `@wordpress/package` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
 					type: 'ImportSpecifier',
 				},
 			],
@@ -63,7 +64,8 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 			options,
 			errors: [
 				{
-					message: 'Usage of `__experimentalSafe` from `@wordpress/unsafe` is not allowed',
+					message:
+						'Warning: Using `__experimentalSafe` from `@wordpress/unsafe` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
 					type: 'ImportSpecifier',
 				},
 			],
@@ -73,7 +75,8 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 			options,
 			errors: [
 				{
-					message: 'Usage of `__experimentalSafe` from `@wordpress/unsafe` is not allowed',
+					message:
+						'Warning: Using `__experimentalSafe` from `@wordpress/unsafe` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
 					type: 'ImportSpecifier',
 				},
 			],
@@ -83,7 +86,8 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 			options,
 			errors: [
 				{
-					message: 'Usage of `__experimentalUnsafe` from `@wordpress/package` is not allowed',
+					message:
+						'Warning: Using `__experimentalUnsafe` from `@wordpress/package` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
 					type: 'ImportSpecifier',
 				},
 			],
@@ -93,7 +97,8 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 			options,
 			errors: [
 				{
-					message: 'Usage of `__unstableFeature` from `@wordpress/package` is not allowed',
+					message:
+						'Warning: Using `__unstableFeature` from `@wordpress/package` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
 					type: 'ImportSpecifier',
 				},
 			],

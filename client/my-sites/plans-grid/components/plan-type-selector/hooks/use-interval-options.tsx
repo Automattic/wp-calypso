@@ -1,13 +1,13 @@
 import { LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
 import { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../types';
 import generatePath from '../utils';
-import useMaxDiscountsForPlanTerms from './use-term-vise-max-dicounts';
+import useMaxDiscountsForPlanTerms from './use-max-discounts-for-plan-terms';
 
 const getDiscountText = ( discountPercentage: number, translate: LocalizeProps[ 'translate' ] ) => {
 	if ( ! discountPercentage ) {
 		return '';
 	}
-	return translate( 'upto %(discount)d% off', {
+	return translate( 'up to %(discount)d% off', {
 		args: { discount: discountPercentage },
 		comment: 'Discount percentage',
 	} );

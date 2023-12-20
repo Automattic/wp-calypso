@@ -25,15 +25,15 @@ const SubdomainSuggestion = styled.div`
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
+	isCustomDomainAllowedOnFreePlan: boolean;
 } > = ( { paidDomainName, generatedWPComSubdomain, isCustomDomainAllowedOnFreePlan } ) => {
 	const translate = useTranslate();
-	const isLoading = generatedWPComSubdomain.isLoading || isCustomDomainAllowedOnFreePlan.isLoading;
+	const isLoading = generatedWPComSubdomain.isLoading;
 	return (
 		<SubdomainSuggestion>
 			{ isLoading && <LoadingPlaceholder /> }
 			{ ! isLoading &&
-				( isCustomDomainAllowedOnFreePlan.result ? (
+				( isCustomDomainAllowedOnFreePlan ? (
 					<div>
 						{ translate( '%s will be a redirect', {
 							args: [ paidDomainName ],
@@ -57,7 +57,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
+	isCustomDomainAllowedOnFreePlan: boolean;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 } > = ( {

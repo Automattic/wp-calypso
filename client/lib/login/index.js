@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import cookie from 'cookie';
 import { get, includes, startsWith } from 'lodash';
 import {
@@ -158,6 +159,10 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `${ signupUrl }/account?${ params.toString() }`;
 	}
 
+	if ( ! isDefaultLocale( locale ) ) {
+		return addLocaleToPath( signupUrl, locale );
+	}
+
 	return signupUrl;
 }
 
@@ -169,12 +174,7 @@ export const isReactLostPasswordScreenEnabled = () => {
 	);
 };
 
-export const canDoMagicLogin = (
-	twoFactorAuthType,
-	oauth2Client,
-	wccomFrom,
-	isJetpackWooCommerceFlow
-) => {
+export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) => {
 	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
 		return false;
 	}
@@ -184,7 +184,7 @@ export const canDoMagicLogin = (
 		return false;
 	}
 
-	if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+	if ( isWooOAuth2Client( oauth2Client ) ) {
 		return false;
 	}
 

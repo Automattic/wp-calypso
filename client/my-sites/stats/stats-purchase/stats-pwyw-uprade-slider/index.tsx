@@ -1,5 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';
 import './styles.scss';
@@ -27,7 +28,7 @@ function getPWYWPlanTiers( minPrice: number, stepPrice: number ) {
 	return tiers;
 }
 
-function useTranslatedStrings() {
+function useTranslatedStrings( defaultAveragePayment: number, currencyCode: string ) {
 	const translate = useTranslate();
 	const limits = translate( 'Your monthly contribution', {
 		comment: 'Heading for Stats PWYW Upgrade slider. The monthly payment amount.',
@@ -35,11 +36,10 @@ function useTranslatedStrings() {
 	const price = translate( 'Thank you!', {
 		comment: 'Heading for Stats PWYW Upgrade slider. The thank you message.',
 	} ) as string;
-	const defaultAverageAmount = 7; // Matches the default set in the slider.
 	const strategy = translate( 'The average person pays %(value)s per month, billed yearly', {
 		comment: 'Stats PWYW Upgrade slider message. The billing strategy.',
 		args: {
-			value: formatCurrency( defaultAverageAmount, '', { stripZeros: true } ),
+			value: formatCurrency( defaultAveragePayment, currencyCode, { stripZeros: true } ),
 		},
 	} ) as string;
 
@@ -50,9 +50,7 @@ function useTranslatedStrings() {
 	};
 }
 
-function emojiForStep( index: number ) {
-	const uiEmojiHeartTier = 14;
-	const uiImageCelebrationTier = 23;
+function emojiForStep( index: number, uiEmojiHeartTier: number, uiImageCelebrationTier: number ) {
 	if ( index === 0 ) {
 		return '';
 	}
@@ -83,21 +81,25 @@ function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: str
 		sliderSteps.push( {
 			raw: rawValue,
 			lhValue: formatCurrency( rawValue, currencyCode ),
-			rhValue: emojiForStep( i ),
+			rhValue: emojiForStep( i, settings.uiEmojiHeartTier, settings.uiImageCelebrationTier ),
 		} );
 	}
 	return sliderSteps;
 }
 
 type StatsPWYWUpgradeSliderProps = {
-	settings?: StatsPWYWSliderSettings;
-	currencyCode?: string;
+	settings: StatsPWYWSliderSettings;
+	currencyCode: string;
+	defaultStartingValue: number;
+	analyticsEventName?: string;
 	onSliderChange: ( index: number ) => void;
 };
 
 function StatsPWYWUpgradeSlider( {
 	settings,
 	currencyCode,
+	analyticsEventName,
+	defaultStartingValue,
 	onSliderChange,
 }: StatsPWYWUpgradeSliderProps ) {
 	// Responsible for:
@@ -106,7 +108,9 @@ function StatsPWYWUpgradeSlider( {
 	// 3. Rendering the slider.
 	// 4. Nofiying the parent component when the slider changes.
 
-	const uiStrings = useTranslatedStrings();
+	// TODO: Figure out how to get the actual average payment from the API in the future.
+	const defaultAveragePayment = defaultStartingValue * settings.sliderStepPrice;
+	const uiStrings = useTranslatedStrings( defaultAveragePayment, currencyCode );
 
 	let steps = getPWYWPlanTiers( 0, 50 );
 	if ( settings !== undefined ) {
@@ -115,6 +119,13 @@ function StatsPWYWUpgradeSlider( {
 	const marks = [ 0, steps.length - 1 ];
 
 	const handleSliderChanged = ( index: number ) => {
+		if ( analyticsEventName ) {
+			recordTracksEvent( analyticsEventName, {
+				step: index,
+				default_changed: index !== defaultStartingValue,
+			} );
+		}
+
 		onSliderChange( index );
 	};
 
@@ -123,7 +134,7 @@ function StatsPWYWUpgradeSlider( {
 			className="stats-pwyw-upgrade-slider"
 			uiStrings={ uiStrings }
 			steps={ steps }
-			initialValue={ ( steps.length - 1 ) / 2 }
+			initialValue={ defaultStartingValue }
 			onSliderChange={ handleSliderChanged }
 			marks={ marks }
 		/>

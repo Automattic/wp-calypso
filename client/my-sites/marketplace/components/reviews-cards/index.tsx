@@ -14,13 +14,13 @@ import './style.scss';
 export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 	const translate = useTranslate();
 	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
-	const { data: reviews } = useMarketplaceReviewsQuery( { ...props, perPage: 2, page: 1 } );
+	const { data: reviews, error } = useMarketplaceReviewsQuery( { ...props, perPage: 2, page: 1 } );
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
 		return null;
 	}
 
-	if ( ! Array.isArray( reviews ) || ! reviews || 'message' in reviews ) {
+	if ( ! Array.isArray( reviews ) || error ) {
 		return null;
 	}
 

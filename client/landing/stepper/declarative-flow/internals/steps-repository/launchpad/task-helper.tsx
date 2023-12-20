@@ -134,6 +134,14 @@ export function getEnhancedTasks( {
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
+	// We have to use the site id if the flow allows the user to change the site address
+	// as the domain name of the site may be changed.
+	// See https://github.com/Automattic/wp-calypso/pull/84532.
+	const siteInfoQueryArgs =
+		isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
+			? { siteId: site?.ID }
+			: { siteSlug };
+
 	const completeMigrateContentTask = async () => {
 		if ( siteSlug ) {
 			await updateLaunchpadSettings( siteSlug, {
@@ -271,9 +279,7 @@ export function getEnhancedTasks( {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/${ flow }/freePostSetup`, {
-									siteSlug,
-								} )
+								addQueryArgs( `/setup/${ flow }/freePostSetup`, siteInfoQueryArgs )
 							);
 						},
 					};
@@ -283,10 +289,7 @@ export function getEnhancedTasks( {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs(
-									`/setup/${ flow }/setup-blog`,
-									isBlogOnboardingFlow( flow ) ? { siteId: site?.ID } : { siteSlug: siteSlug }
-								)
+								addQueryArgs( `/setup/${ flow }/setup-blog`, siteInfoQueryArgs )
 							);
 						},
 						disabled: task.completed && ! isBlogOnboardingFlow( flow ),
@@ -297,9 +300,10 @@ export function getEnhancedTasks( {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/newsletter-post-setup/newsletterPostSetup`, {
-									siteSlug,
-								} )
+								addQueryArgs(
+									`/setup/newsletter-post-setup/newsletterPostSetup`,
+									siteInfoQueryArgs
+								)
 							);
 						},
 					};
@@ -350,10 +354,7 @@ export function getEnhancedTasks( {
 					taskData = {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							const plansUrl = addQueryArgs(
-								`/setup/${ flow }/plans`,
-								isBlogOnboardingFlow( flow ) ? { siteId: site?.ID } : { siteSlug: siteSlug }
-							);
+							const plansUrl = addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs );
 
 							window.location.assign( plansUrl );
 						},
@@ -420,7 +421,7 @@ export function getEnhancedTasks( {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/setup/update-design/designSetup`, {
-									siteSlug,
+									...siteInfoQueryArgs,
 									flowToReturnTo: flow,
 								} )
 							);
@@ -434,7 +435,7 @@ export function getEnhancedTasks( {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/setup/update-options/options`, {
-									siteSlug,
+									...siteInfoQueryArgs,
 									flowToReturnTo: flow,
 								} )
 							);
@@ -446,9 +447,10 @@ export function getEnhancedTasks( {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/link-in-bio-post-setup/linkInBioPostSetup`, {
-									siteSlug,
-								} )
+								addQueryArgs(
+									`/setup/link-in-bio-post-setup/linkInBioPostSetup`,
+									siteInfoQueryArgs
+								)
 							);
 						},
 					};
@@ -555,10 +557,10 @@ export function getEnhancedTasks( {
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 
-							if ( isBlogOnboardingFlow( flow ) ) {
+							if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 								window.location.assign(
 									addQueryArgs( `/setup/${ flow }/domains`, {
-										siteId: site?.ID,
+										...siteInfoQueryArgs,
 										flowToReturnTo: flow,
 										new: site?.name,
 										domainAndPlanPackage: true,
@@ -571,14 +573,14 @@ export function getEnhancedTasks( {
 							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
 								: addQueryArgs( `/setup/domain-upsell/domains`, {
-										siteSlug,
+										...siteInfoQueryArgs,
 										flowToReturnTo: flow,
 										new: site?.name,
 								  } );
 							window.location.assign( destinationUrl );
 						},
 						badge_text:
-							domainUpsellCompleted || isBlogOnboardingFlow( flow )
+							domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
 								? ''
 								: translate( 'Upgrade plan' ),
 					};
