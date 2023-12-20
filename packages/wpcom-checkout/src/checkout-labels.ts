@@ -16,7 +16,7 @@ import {
 	isJetpackAISlug,
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -107,10 +107,10 @@ export function getLabel( product: ResponseCartProduct ): string {
 	}
 
 	if ( isJetpackStatsPaidProductSlug( product.product_slug ) && product.quantity ) {
-		return translate( '%(productName)s (%(quantity)d views per month)', {
+		return translate( '%(productName)s - %(quantity)s views per month', {
 			args: {
 				productName: product.product_name,
-				quantity: product.quantity,
+				quantity: numberFormat( product.quantity, 0 ),
 			},
 			textOnly: true,
 		} );

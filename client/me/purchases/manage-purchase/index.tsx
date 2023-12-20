@@ -52,7 +52,7 @@ import {
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, numberFormat } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -1220,10 +1220,10 @@ class ManagePurchase extends Component<
 			isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
 			purchase.purchaseRenewalQuantity
 		) {
-			return translate( '%(productName)s (%(quantity)d views per month)', {
+			return translate( '%(productName)s (%(quantity)s views per month)', {
 				args: {
 					productName: getDisplayName( purchase ),
-					quantity: purchase.purchaseRenewalQuantity,
+					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
 				},
 			} );
 		}
