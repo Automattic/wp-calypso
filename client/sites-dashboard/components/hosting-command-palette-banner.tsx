@@ -1,12 +1,12 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import { useCommandsArrayWpcom } from './wpcom-smp-commands';
 
-const Root = styled.div( {
+const HostingCommandPaletteBannerRoot = styled.div( {
 	marginBottom: 25,
 	'.hosting-command-palette-banner': {
 		display: 'flex',
@@ -20,7 +20,7 @@ const Root = styled.div( {
 		padding: '10px 12px',
 	},
 	'.dismissible-card__close-button': {
-		top: 20,
+		top: 'calc(50% - 12px)',
 		right: 20,
 	},
 	'.card.is-card-link:not(a):active, .card.is-card-link:not(a):focus, .card.is-card-link:not(a):hover':
@@ -100,9 +100,9 @@ const BannerTitle = styled.div( {
 } );
 
 const BannerDescription = styled.div( {
-	display: 'flex',
 	color: 'var(--Gray-Gray-70, #3C434A)',
 	fontSize: 14,
+	paddingRight: 20,
 } );
 
 interface HostingCommandPaletteBannerProps {
@@ -113,7 +113,7 @@ interface ShortcutIconProps {
 	size: 'big' | 'small';
 }
 
-const StyledShortcut = styled.div< ShortcutIconProps >( ( props ) =>
+const StyledShortcut = styled.span< ShortcutIconProps >( ( props ) =>
 	props.size === 'big'
 		? {
 				fontWeight: 600,
@@ -208,22 +208,29 @@ const AnimatedCommand = () => {
 };
 
 export function HostingCommandPaletteBanner( { className }: HostingCommandPaletteBannerProps ) {
+	const translate = useTranslate();
+
 	return (
-		<Root>
+		<HostingCommandPaletteBannerRoot>
 			<DismissibleCard
 				preferenceName="hosting-command-palette-banner-display"
 				className={ `hosting-command-palette-banner card banner upsell-nudge is-dismissible is-card-link ${ className }` }
 			>
 				<ShortcutIcon size="big" />
 				<div>
-					<BannerTitle>{ __( 'The Command Palette is here' ) }</BannerTitle>
+					<BannerTitle>{ translate( 'The Command Palette is here' ) }</BannerTitle>
 					<BannerDescription>
-						<span>{ __( 'Access features and trigger commands quickly. Press' ) }</span>{ ' ' }
-						<ShortcutIcon size="small" /> <span>{ __( 'to launch the Command Palette.' ) }</span>
+						{ translate(
+							// Translators: {{shortcut/}} is "⌘K" or "Ctrl+K" depending on the user's OS.
+							'Access features and trigger commands quickly. Press {{shortcut/}} to launch the Command Palette.',
+							{
+								components: { shortcut: <ShortcutIcon size="small" /> },
+							}
+						) }
 					</BannerDescription>
 				</div>
 				<AnimatedCommand />
 			</DismissibleCard>
-		</Root>
+		</HostingCommandPaletteBannerRoot>
 	);
 }
