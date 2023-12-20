@@ -562,16 +562,14 @@ async function openLinksInParentFrame( calypsoPort ) {
 	// Essentially, when the snackbar list changes, attempt to update the link.
 	// Only called once when a snackbar item is added and when removed, so
 	// it doesn't cost much.
-	const snackbarObserver = new window.MutationObserver( updateViewPostLinkNotice );
 	const snackbarList = document.querySelector( '.components-snackbar-list' );
 	if ( snackbarList ) {
-		snackbarObserver.observe( document.querySelector( '.components-snackbar-list' ), {
-			childList: true,
-		} );
+		const snackbarObserver = new window.MutationObserver( updateViewPostLinkNotice );
+		snackbarObserver.observe( snackbarList, { childList: true } );
 	} else {
 		// eslint-disable-next-line no-console
 		console.warn(
-			'Could not find the snackbar list element. As a result, the "View Post" link may open inside the iframe.'
+			'Could not find the snackbar list element so, the "View post" link may open inside the iframe.'
 		);
 	}
 
