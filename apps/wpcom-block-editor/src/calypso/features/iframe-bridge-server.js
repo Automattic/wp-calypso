@@ -520,9 +520,6 @@ function isNavSidebarPresent() {
  */
 async function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinks = [
-		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
-		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
-		'.components-snackbar-list a.components-snackbar__action', // View Post link in success snackbar. Added for Gutenberg 17.2, and possibly earlier.
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 		'.wpcom-block-editor-post-published-sharing-modal__view-post-link', // View Post button in sharing modal
@@ -539,6 +536,43 @@ async function openLinksInParentFrame( calypsoPort ) {
 			payload: { postUrl: e.target.href },
 		} );
 	} );
+
+	// Handle the view post link in the snackbar, which unfortunately has a click
+	// handler which stops propagation, so we can't override it with the global handler.
+	const updateViewPostLinkNotice = () => {
+		// This timeout might not be necessary, but replicates the fix for Safari several lines below.
+		setTimeout( () => {
+			const snackbarLink = document.querySelector(
+				'.components-snackbar-list a.components-snackbar__action'
+			);
+			if ( snackbarLink ) {
+				// Make sure this link doesn't open inside the iframe.
+				snackbarLink.target = '_blank';
+			}
+		} );
+	};
+
+	// Essentially, when the snackbar list changes, attempt to update the link.
+	// Only called once when a snackbar item is added and when removed, so
+	// it doesn't cost much.
+	const snackbarObserver = new window.MutationObserver( updateViewPostLinkNotice );
+	setTimeout( () => {
+		const snackbarList = document.querySelector( '.components-snackbar-list' );
+		if ( snackbarList ) {
+			snackbarObserver.observe( document.querySelector( '.components-snackbar-list' ), {
+				childList: true,
+			} );
+		} else {
+			// eslint-disable-next-line no-console
+			console.warning(
+				'Could not find the snackbar list element. As a result, the "View Post" link may open inside the iframe.'
+			);
+		}
+		// Note: the 3s timeout is necessary because the snackbar list element isn't
+		// rendered immediately. Even 1s is too slow to find it. Thankfully, this
+		// snackbar (triggered after publishing/updating a post) isn't rendered
+		// until
+	}, 3000 );
 
 	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
 	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
