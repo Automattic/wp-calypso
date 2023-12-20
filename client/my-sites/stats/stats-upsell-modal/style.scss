@@ -47,6 +47,7 @@
 	.stats-upsell-modal__title {
 		@extend .wp-brand-font;
 		font-size: $font-title-large;
+		line-height: 40px; /* 125% */
 	}
 
 	.stats-upsell-modal__text {

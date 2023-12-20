@@ -37,9 +37,9 @@ export default function StatsUpsellModal( {
 			/>
 			<div className="stats-upsell-modal__content">
 				<div className="stats-upsell-modal__left">
-					<div className="stats-upsell-modal__title">
+					<h1 className="stats-upsell-modal__title">
 						{ translate( 'Grow faster with Advanced Stats' ) }
-					</div>
+					</h1>
 					<div className="stats-upsell-modal__text">
 						{ translate( 'Finesse your scaling up strategy with detailed insights and data.' ) }
 					</div>
