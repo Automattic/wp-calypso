@@ -87,6 +87,32 @@ function stepsFromSettings( settings: StatsPWYWSliderSettings, currencyCode: str
 	return sliderSteps;
 }
 
+// Generate the range of available tiers based on the passed-in slider settings.
+function generatePlanTiers( settings: StatsPWYWSliderSettings ) {
+	const tiers = [];
+	const steps = Math.floor( settings.maxSliderPrice / settings.sliderStepPrice );
+	const disableFreeProduct = settings.minSliderPrice !== 0;
+	for ( let i = 0; i <= steps; i++ ) {
+		tiers.push( { value: i * settings.sliderStepPrice, id: i } );
+	}
+	if ( disableFreeProduct ) {
+		return tiers.slice( 1 );
+	}
+	return tiers;
+}
+
+// Generate steps based on the provided tiers.
+function generateSteps( tiers: any, currencyCode: string, settings: StatsPWYWSliderSettings ) {
+	return tiers.map( ( tier: any ) => {
+		return {
+			raw: tier.value,
+			mappedIndex: tier.id,
+			lhValue: formatCurrency( tier.value, currencyCode ),
+			rhValue: emojiForStep( tier.id, settings.uiEmojiHeartTier, settings.uiImageCelebrationTier ),
+		};
+	} );
+}
+
 type StatsPWYWUpgradeSliderProps = {
 	settings: StatsPWYWSliderSettings;
 	currencyCode: string;
@@ -129,14 +155,29 @@ function StatsPWYWUpgradeSlider( {
 		onSliderChange( index );
 	};
 
+	// New steps generation.
+	const tiersX = generatePlanTiers( settings );
+	const stepsX = generateSteps( tiersX, currencyCode, settings );
+	const marks2 = [ 0, stepsX.length - 1 ];
+
+	// New mapped indexing for slider.
+	// Implemented this way so as to not break parent logic.
+	const disableFreeProduct = settings.minSliderPrice !== 0;
+	const mappedDefaultIndex = disableFreeProduct ? defaultStartingValue - 1 : defaultStartingValue;
+
+	// New slider change handler.
+	const handleSliderChanged2 = ( index: number ) => {
+		onSliderChange( stepsX[ index ].mappedIndex );
+	};
+
 	return (
 		<TierUpgradeSlider
 			className="stats-pwyw-upgrade-slider"
 			uiStrings={ uiStrings }
-			steps={ steps }
-			initialValue={ defaultStartingValue }
-			onSliderChange={ handleSliderChanged }
-			marks={ marks }
+			steps={ stepsX }
+			initialValue={ mappedDefaultIndex }
+			onSliderChange={ handleSliderChanged2 }
+			marks={ marks2 }
 		/>
 	);
 }
