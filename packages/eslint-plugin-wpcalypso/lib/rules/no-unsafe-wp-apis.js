@@ -73,7 +73,7 @@ function makeListener( { allowedImports, context } ) {
 			}
 
 			context.report( {
-				message: `Usage of \`${ importedName }\` from \`${ sourceModule }\` is not allowed`,
+				message: `Warning: Using \`${ importedName }\` from \`${ sourceModule }\` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.`,
 				node: specifierNode,
 			} );
 		} );

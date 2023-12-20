@@ -86,6 +86,14 @@ const AISitePrompt: Step = function ( props ) {
 							currentSearchParams.set( 'page_slugs', pageSlugs.join( ',' ) );
 						}
 
+						if ( response.style ) {
+							currentSearchParams.set( 'color_variation_title', response.style );
+						}
+
+						if ( response.font ) {
+							currentSearchParams.set( 'font_variation_title', response.font );
+						}
+
 						return currentSearchParams;
 					},
 					{ replace: true }

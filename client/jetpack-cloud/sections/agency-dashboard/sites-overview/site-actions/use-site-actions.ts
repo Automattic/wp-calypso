@@ -70,23 +70,29 @@ export default function useSiteActions(
 			},
 			{
 				name: translate( 'View activity' ),
-				href: `/activity-log/${ siteSlug }`,
+				href: is_atomic
+					? `https://wordpress.com/activity-log/${ siteSlug }`
+					: `/activity-log/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'view_activity' ),
-				isExternalLink: false,
+				isExternalLink: is_atomic,
 				isEnabled: ! siteError,
 			},
 			{
 				name: translate( 'Copy this site' ),
-				href: `/backup/${ siteSlug }/clone`,
+				href: is_atomic
+					? `https://wordpress.com/backup/${ siteSlug }/clone`
+					: `/backup/${ siteSlug }/clone`,
 				onClick: () => handleClickMenuItem( 'clone_site' ),
-				isExternalLink: false,
+				isExternalLink: is_atomic,
 				isEnabled: has_backup,
 			},
 			{
 				name: translate( 'Site settings' ),
-				href: `/settings/${ siteSlug }`,
+				href: is_atomic
+					? `https://wordpress.com/settings/general/${ siteSlug }`
+					: `/settings/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'site_settings' ),
-				isExternalLink: false,
+				isExternalLink: is_atomic,
 				isEnabled: has_backup,
 			},
 			{
@@ -104,5 +110,5 @@ export default function useSiteActions(
 				isEnabled: true,
 			},
 		];
-	}, [ dispatch, isLargeScreen, siteError, siteValue, translate ] );
+	}, [ dispatch, isLargeScreen, partnerCanIssueLicense, siteError, siteValue, translate ] );
 }

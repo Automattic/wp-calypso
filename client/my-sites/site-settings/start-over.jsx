@@ -6,6 +6,7 @@ import {
 	useSiteResetStatusQuery,
 } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
@@ -116,8 +117,9 @@ function SiteResetCard( {
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
-	const { data, refetch: refetchContentSummary } = useSiteResetContentSummaryQuery( siteId );
+	const { data } = useSiteResetContentSummaryQuery( siteId );
 	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 	const [ resetComplete, setResetComplete ] = useState( false );
@@ -129,7 +131,7 @@ function SiteResetCard( {
 			} = await refetchResetStatus();
 
 			if ( latestStatus === 'completed' ) {
-				refetchContentSummary();
+				queryClient.invalidateQueries();
 				dispatch(
 					successNotice( translate( 'Your site was successfully reset' ), {
 						id: 'site-reset-success-notice',
@@ -155,7 +157,7 @@ function SiteResetCard( {
 			if ( isAtomic ) {
 				refetchResetStatus();
 			} else {
-				refetchContentSummary();
+				queryClient.invalidateQueries();
 				dispatch(
 					successNotice( translate( 'Your site was successfully reset' ), {
 						id: 'site-reset-success-notice',
@@ -267,6 +269,8 @@ function SiteResetCard( {
 	const ctaText =
 		! isAtomic && isLoading ? translate( 'Resetting site' ) : translate( 'Reset site' );
 
+	const content = contentInfo();
+
 	const renderBody = () => {
 		if ( resetComplete ) {
 			const message = createInterpolateElement(
@@ -305,19 +309,23 @@ function SiteResetCard( {
 			<ActionPanel style={ { margin: 0 } }>
 				<ActionPanelBody>
 					<p>{ instructions }</p>
-					<p>{ translate( 'The following content will be removed:' ) }</p>
-					<ul>
-						{ contentInfo().map( ( { message, url } ) => {
-							if ( url ) {
-								return (
-									<li key={ message }>
-										<a href={ url }>{ message }</a>
-									</li>
-								);
-							}
-							return <li key={ message }>{ message }</li>;
-						} ) }
-					</ul>
+					{ content.length > 0 && (
+						<>
+							<p>{ translate( 'The following content will be removed:' ) }</p>
+							<ul>
+								{ content.map( ( { message, url } ) => {
+									if ( url ) {
+										return (
+											<li key={ message }>
+												<a href={ url }>{ message }</a>
+											</li>
+										);
+									}
+									return <li key={ message }>{ message }</li>;
+								} ) }
+							</ul>
+						</>
+					) }
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
