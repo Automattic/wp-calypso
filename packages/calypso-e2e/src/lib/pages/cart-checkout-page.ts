@@ -19,6 +19,7 @@ const selectors = {
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
+	editPaymentStep: 'button[aria-label="Edit the payment method"]',
 	removeCouponButton: ( coupon: string ) =>
 		`button[aria-label="Remove Coupon: ${ coupon } from cart"]`,
 	saveOrderButton: 'button[aria-label="Save your order"]',
@@ -258,6 +259,9 @@ export class CartCheckoutPage {
 	 * @param {string} cardHolderName Name of the card holder associated with the payment method.
 	 */
 	async selectSavedCard( cardHolderName: string ): Promise< void > {
+		if ( await this.page.isVisible( selectors.editPaymentStep ) ) {
+			await this.page.click( selectors.editPaymentStep );
+		}
 		const selector = this.page.locator( selectors.existingCreditCard( cardHolderName ) ).first();
 
 		await selector.click();
