@@ -62,6 +62,7 @@ const StorageAddOnOption = ( {
 										priceSpan: <span className="storage-add-on-dropdown-option__price" />,
 										perMonthSpan: <span className="storage-add-on-dropdown-option__per-month" />,
 									},
+									comment: 'The cost of a storage add on per month. Example reads as "+ $50/month"',
 								}
 							) }
 						</span>
