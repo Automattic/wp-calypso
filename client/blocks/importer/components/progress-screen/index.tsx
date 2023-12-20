@@ -1,7 +1,7 @@
+import { ProgressBar } from '@automattic/components';
 import { Progress, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useCallback } from 'react';
-import { ProgressBar } from 'calypso/devdocs/design/playground-scope';
 import useProgressValue from './use-progress-value';
 import type { ImportJob } from '../../types';
 
