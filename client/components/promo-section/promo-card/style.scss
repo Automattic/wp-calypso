@@ -92,6 +92,27 @@
 		}
 	}
 
+	&.compact {
+		.action-panel__title {
+			justify-content: flex-start;
+			gap: 12px;
+			align-items: center;
+			font-size: $font-body;
+			font-weight: 500;
+		}
+		.action-panel__cta {
+			padding-top: 0;
+		}
+		.gridicon {
+			fill: var(--studio-gray-30);
+			width: 20px;
+			height: 20px;
+			background: var(--studio-gray-0);
+			padding: 8px;
+			border-radius: 3px;
+		}
+	}
+
 	.action-panel__cta {
 		.button {
 			margin: 0 1em 4px 0;

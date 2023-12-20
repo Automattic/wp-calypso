@@ -987,3 +987,9 @@ main.akismet-checkout-thank-you {
 .jetpack-instruction-list__item .gridicon {
 	margin-bottom: -3px;
 }
+
+.failed-purchases-page {
+	padding-top: 72px;
+	background: #fff;
+	height: calc(100vh - 72px);
+}

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import {
 	useSyncGlobalStylesUserConfig,
@@ -79,7 +78,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit } = navigation;
-	const { assembleSite } = useDispatch( SITE_STORE );
+	const { assembleSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
@@ -143,7 +142,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
 				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
-				page_slugs: ( pageSlugs || [] ).join( ',' ),
 			} ),
 		[
 			flow,
@@ -219,12 +217,23 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
+			page_slugs: ( pageSlugs || [] ).join( ',' ),
 		} );
+
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
 				pattern_category: category?.name,
+			} );
+		} );
+
+		pages.forEach( ( { ID, name, categories = {} } ) => {
+			const category_slug = Object.keys( categories )[ 0 ];
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
+				pattern_id: ID,
+				pattern_name: name,
+				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
 	};
@@ -388,6 +397,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					} )
 				)
 		);
+
+		const siteTitleFromUrl = ( searchParams.get( 'site_title' ) || '' ).trim();
+		const siteTaglineFromUrl = searchParams.get( 'site_tagline' ) || '';
+
+		// Save site title/description passed to the Assembler.
+		if ( siteTitleFromUrl || siteTaglineFromUrl ) {
+			saveSiteSettings( siteSlugOrId, {
+				...( siteTitleFromUrl && { blogname: siteTitleFromUrl } ),
+				...( siteTaglineFromUrl && { blogdescription: siteTaglineFromUrl } ),
+			} );
+		}
 
 		recordSelectedDesign( { flow, intent, design } );
 		trackSubmit();
@@ -681,8 +701,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					activePosition={ activePosition }
 					pages={
 						// Consider the selected pages in the final screen.
-						isEnabled( 'pattern-assembler/add-pages' ) &&
-						( currentScreen.name === 'confirmation' || currentScreen.name === 'activation' )
+						currentScreen.name === 'confirmation' || currentScreen.name === 'activation'
 							? pages
 							: undefined
 					}

@@ -54,6 +54,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -63,6 +65,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -72,6 +76,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -140,6 +146,8 @@ export function generateFlows( {
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 			props: {
 				plans: {
@@ -176,7 +184,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
-			lastModified: '2023-07-18',
+			lastModified: '2023-12-16',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 			props: {
@@ -188,6 +196,7 @@ export function generateFlows( {
 					 * - Show only Personal, Premium, Business, and eCommerce plans (Hide free, enterprise)
 					 */
 					intent: 'plans-paid-media',
+					isCustomDomainAllowedOnFreePlan: true,
 				},
 			},
 		},

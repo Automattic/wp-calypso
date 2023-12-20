@@ -80,6 +80,20 @@ const AISitePrompt: Step = function ( props ) {
 							currentSearchParams.set( 'site_tagline', response.site.site_tagline );
 						}
 
+						// This was introduced in the V5 of the AI endpoint.
+						const pageSlugs = response.pages.map( ( page: any ) => page?.slug ).filter( Boolean );
+						if ( pageSlugs.length ) {
+							currentSearchParams.set( 'page_slugs', pageSlugs.join( ',' ) );
+						}
+
+						if ( response.style ) {
+							currentSearchParams.set( 'color_variation_title', response.style );
+						}
+
+						if ( response.font ) {
+							currentSearchParams.set( 'font_variation_title', response.font );
+						}
+
 						return currentSearchParams;
 					},
 					{ replace: true }

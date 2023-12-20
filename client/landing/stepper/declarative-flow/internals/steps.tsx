@@ -31,6 +31,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
+	DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domains' ),
+	},
+
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	FREE_POST_SETUP: {

@@ -1,25 +1,32 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.jetpack-cloud-content-sidebar {
-
-	margin: 40px auto auto;
-
-	display: flex;
-	flex-direction: column;
-
-	@include break-xlarge {
-		display: grid;
-		grid-template-columns: 3fr 1fr;
-		column-gap: 32px;
-		min-height: calc(100vh - 123px);
-		max-width: 1500px;
+.content-sidebar {
+	&.main {
+		margin-top: 32px;
 	}
 
-	.right-sidebar {
+	grid-row: 4 / span 1;
 
-		> *:not(:first-child) {
+	@include break-xlarge {
+		&.main {
 			margin-top: 40px;
+		}
+		grid-column: 1 / span 12;
+		display: grid;
+		grid-template-columns: repeat(12, [col-start] minmax(0, 1fr));
+		grid-gap: 32px;
+		grid-column-gap: 24px;
+	}
+	&__main-content {
+		@include break-xlarge {
+			grid-column: 1 / span 8;
+		}
+	}
+
+	&__right-sidebar {
+		@include break-xlarge {
+			grid-column: 9 / span 4;
 		}
 	}
 }
