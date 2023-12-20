@@ -1,6 +1,6 @@
 import { isMobile } from '@automattic/viewport';
 import { isE2ETest } from 'calypso/lib/e2e';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { shouldDisplayAppBanner } from 'calypso/state/selectors/should-display-app-banner';
 
 jest.mock( 'calypso/lib/e2e', () => ( {
@@ -11,6 +11,7 @@ jest.mock( '@automattic/viewport', () => ( {
 } ) );
 jest.mock( 'calypso/lib/mobile-app', () => ( {
 	isWpMobileApp: jest.fn( () => false ),
+	isWcMobileApp: jest.fn( () => false ),
 } ) );
 
 describe( 'shouldDisplayAppBanner()', () => {
@@ -173,8 +174,28 @@ describe( 'shouldDisplayAppBanner()', () => {
 		expect( output ).toBe( false );
 	} );
 
-	test( 'should return false if in the app', () => {
+	test( 'should return false if in the wp app', () => {
 		isWpMobileApp.mockReturnValueOnce( true );
+		const state = {
+			ui: {
+				appBannerVisibility: true,
+				layoutFocus: {
+					current: 'not-sidebar',
+				},
+				section: {
+					name: 'gutenberg-editor',
+				},
+			},
+			preferences: {
+				remoteValues: [ 'something' ],
+			},
+		};
+		const output = shouldDisplayAppBanner( state );
+		expect( output ).toBe( false );
+	} );
+
+	test( 'should return false if in the wc app', () => {
+		isWcMobileApp.mockReturnValueOnce( true );
 		const state = {
 			ui: {
 				appBannerVisibility: true,

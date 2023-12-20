@@ -10,7 +10,11 @@ import CelebrateLaunchModal from '../../components/celebrate-launch-modal';
 import CustomerHomeLaunchpad from '.';
 import type { AppState } from 'calypso/types';
 
-const LaunchpadPreLaunch = (): JSX.Element => {
+type LaunchpadPreLaunchProps = {
+	checklistSlug?: string;
+};
+
+const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId ) || '';
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
 	const checklistSlug = site?.options?.site_intent ?? '';
@@ -48,7 +52,10 @@ const LaunchpadPreLaunch = (): JSX.Element => {
 
 	return (
 		<>
-			<CustomerHomeLaunchpad checklistSlug={ checklistSlug } onSiteLaunched={ onSiteLaunched } />
+			<CustomerHomeLaunchpad
+				checklistSlug={ props.checklistSlug ?? checklistSlug }
+				onSiteLaunched={ onSiteLaunched }
+			/>
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpenWrapper }

@@ -34,13 +34,13 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 				onClose={ onClose }
 				showCloseIcon
 			>
-				<Card className="marketplace-reviews-modal__card">
-					<CardHeading tagName="h1" size={ 21 }>
-						{ translate( 'Review submitted for %(productName)s', { args: { productName } } ) }
+				<Card className="marketplace-reviews-modal__card-success">
+					<CardHeading className="marketplace-reviews-modal__card-success-title" tagName="h1">
+						{ translate( 'Thank you for your feedback!' ) }
 					</CardHeading>
-					<CardHeading tagName="h2">
+					<CardHeading className="marketplace-reviews-modal__card-success-body" tagName="p">
 						{ translate(
-							'Thank you for your contribution. It will be published following a review from our team.'
+							'Your review it‘s currently under moderation for adherence to our guidelines and will be published soon.'
 						) }
 					</CardHeading>
 				</Card>
@@ -57,9 +57,8 @@ export const ReviewsModal = ( { isVisible, onClose, slug, productName, productTy
 		>
 			<Card className="marketplace-reviews-modal__card">
 				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'Reviews for %(productName)s', { args: { productName } } ) }
+					{ translate( 'Add New Review for %(productName)s', { args: { productName } } ) }
 				</CardHeading>
-				<CardHeading tagName="h2">{ translate( 'Add new review' ) }</CardHeading>
 				<form
 					onSubmit={ ( e ) => {
 						e.preventDefault();

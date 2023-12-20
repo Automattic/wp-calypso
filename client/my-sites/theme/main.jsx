@@ -204,7 +204,7 @@ const BannerUpsellTitle = ( {
 
 		const bundleName = bundleSettings.name;
 
-		/* Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special", %(businessPlanName) is the short-form of the Business plan name.*/
+		/* Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special", %(businessPlanName)s is the short-form of the Business plan name.*/
 		return isEnglishLocale ||
 			i18n.hasTranslation( 'Access this %(bundleName)s theme with a %(businessPlanName)s plan!' )
 			? translate( 'Access this %(bundleName)s theme with a %(businessPlanName)s plan!', {
@@ -779,14 +779,16 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { styleVariations } = this.props;
+		const { isPremium, isThemePurchased, shouldLimitGlobalStyles, styleVariations } = this.props;
 
 		const splitDefaultVariation =
 			! this.props.isExternallyManagedTheme &&
-			! this.props.isThemePurchased &&
 			! this.props.isBundledSoftwareSet &&
-			! this.props.isPremium &&
-			this.props.shouldLimitGlobalStyles;
+			! isThemePurchased &&
+			! isPremium &&
+			shouldLimitGlobalStyles;
+
+		const needsUpgrade = shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
 
 		return (
 			styleVariations.length > 0 && (
@@ -795,6 +797,7 @@ class ThemeSheet extends Component {
 					splitDefaultVariation={ splitDefaultVariation }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
+					needsUpgrade={ needsUpgrade }
 					onClick={ this.onStyleVariationClick }
 				/>
 			)

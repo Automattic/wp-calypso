@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -65,7 +64,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	}
 
 	return (
-		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
+		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel>{ translate( 'Enter the URL of the site:' ) }</FormLabel>
 				<FormTextInput

@@ -11,6 +11,7 @@ import {
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import Geochart from '../geochart';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
@@ -224,7 +225,7 @@ export default connect( ( state, ownProps ) => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const { statType, query } = ownProps;
 	const gateStats = shouldGateStats( state, siteId, statType );
-	const gateDownloads = shouldGateStats( state, siteId, 'download-csv' );
+	const gateDownloads = shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV );
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
