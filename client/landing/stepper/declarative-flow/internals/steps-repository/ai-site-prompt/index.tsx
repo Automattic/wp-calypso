@@ -94,6 +94,10 @@ const AISitePrompt: Step = function ( props ) {
 							currentSearchParams.set( 'font_variation_title', response.font );
 						}
 
+						// So that we close the drawer with patterns when moving to the assembler:
+						currentSearchParams.set( 'screen', 'main' );
+						currentSearchParams.delete( 'screen_parameter' );
+
 						return currentSearchParams;
 					},
 					{ replace: true }
