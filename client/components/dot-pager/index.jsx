@@ -127,7 +127,7 @@ export const DotPager = ( {
 	isClickEnabled = false,
 	rotateTime = 0,
 	navArrowSize = 18,
-	tracksPrefix,
+	tracksPrefix = '',
 	includePreviousButton = false,
 	includeNextButton = false,
 	includeFinishButton = false,
