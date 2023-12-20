@@ -63,7 +63,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-site-count' )
 	);
 	const shouldRenderAddSiteTourStep2 =
-		! isLoading && hasAddNewSiteTourPreference && items.length < addNewSiteTourSiteCount;
+		! isLoading && hasAddNewSiteTourPreference && addNewSiteTourSiteCount < items.length;
 
 	return (
 		<>
@@ -151,15 +151,19 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 					preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-2"
 					tours={ [
 						{
-							target: '.site-table__table th:first-of-type',
+							target: 'tr.site-table__table-row:first-of-type td:first-of-type',
 							popoverPosition: 'bottom right',
 							title: translate( '🎉 Your new site is here' ),
-							description:
-								translate( 'Check out your new site here. That was straightforward, right? ' ) +
-								'\n\n' +
-								translate(
-									"You're now equipped to connect all your new sites to the site management view."
-								),
+							description: (
+								<>
+									{ translate( 'Check out your new site here. That was straightforward, right?' ) }
+									<br />
+									<br />
+									{ translate(
+										'Sites with jetpack installed will automatically appear in the site management view.'
+									) }
+								</>
+							),
 							redirectOnButtonClick: '/overview',
 						},
 					] }
