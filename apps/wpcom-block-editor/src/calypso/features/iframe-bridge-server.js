@@ -537,6 +537,13 @@ async function openLinksInParentFrame( calypsoPort ) {
 		} );
 	} );
 
+	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
+	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
+		return;
+	}
+
+	await isEditorReadyWithBlocks();
+
 	// Handle the view post link in the snackbar, which unfortunately has a click
 	// handler which stops propagation, so we can't override it with the global handler.
 	const updateViewPostLinkNotice = () => {
@@ -556,30 +563,17 @@ async function openLinksInParentFrame( calypsoPort ) {
 	// Only called once when a snackbar item is added and when removed, so
 	// it doesn't cost much.
 	const snackbarObserver = new window.MutationObserver( updateViewPostLinkNotice );
-	setTimeout( () => {
-		const snackbarList = document.querySelector( '.components-snackbar-list' );
-		if ( snackbarList ) {
-			snackbarObserver.observe( document.querySelector( '.components-snackbar-list' ), {
-				childList: true,
-			} );
-		} else {
-			// eslint-disable-next-line no-console
-			console.warn(
-				'Could not find the snackbar list element. As a result, the "View Post" link may open inside the iframe.'
-			);
-		}
-		// Note: the timeout is necessary because the snackbar list element isn't
-		// rendered immediately. Even 1s is too slow to find it. Thankfully, this
-		// snackbar (triggered after publishing/updating a post) isn't rendered
-		// until
-	}, 5000 );
-
-	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
-	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
-		return;
+	const snackbarList = document.querySelector( '.components-snackbar-list' );
+	if ( snackbarList ) {
+		snackbarObserver.observe( document.querySelector( '.components-snackbar-list' ), {
+			childList: true,
+		} );
+	} else {
+		// eslint-disable-next-line no-console
+		console.warn(
+			'Could not find the snackbar list element. As a result, the "View Post" link may open inside the iframe.'
+		);
 	}
-
-	await isEditorReadyWithBlocks();
 
 	// Create a new post link in block settings sidebar for Query block
 	const tryToReplaceCreateNewPostLink = () => {
