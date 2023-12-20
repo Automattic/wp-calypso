@@ -28,6 +28,7 @@ import {
 	OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
 	LAUNCHPAD_HASH,
 } from './constants';
+import CouponList from './coupons-list';
 import ProductList from './products-list';
 import './style.scss';
 
@@ -141,6 +142,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			<div>
 				{ renderNotices() }
 				<ProductList />
+				<CouponList />
 				{ renderSettings() }
 			</div>
 		);

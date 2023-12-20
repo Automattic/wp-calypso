@@ -14,6 +14,21 @@ export type Product = {
 	tier?: number;
 };
 
+export type Coupon = {
+	ID?: number;
+	coupon_code?: string;
+	discount_type?: string;
+	discount_value?: number;
+	discount_percentage?: number;
+	start_date?: string;
+	end_date?: string;
+	product_ids?: number[];
+	can_be_combined?: boolean;
+	first_time_only?: boolean;
+	duration?: string;
+	specific_emails?: string[];
+};
+
 export type Query = {
 	[ key: string ]: string;
 };

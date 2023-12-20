@@ -29,6 +29,21 @@ export const membershipProductFromApi = ( product ) => ( {
 	tier: product.tier,
 } );
 
+export const membershipCouponFromApi = ( coupon ) => ( {
+	ID: parseInt( coupon.id ),
+	coupon_code: coupon.coupon_code,
+	discount_type: coupon.discount_type,
+	discount_value: parseFloat( coupon.discount_value ),
+	discount_percentage: parseFloat( coupon.discount_percentage ),
+	start_date: coupon.start_date,
+	end_date: coupon.end_date,
+	product_ids: coupon.product_ids.map( ( productId ) => parseInt( productId ) ),
+	can_be_combined: coupon.can_be_combined ? true : false,
+	first_time_only: coupon.first_time_only ? true : false,
+	duration: coupon.duration,
+	specific_emails: coupon.specific_emails ?? [],
+} );
+
 export const handleMembershipProductsList = dispatchRequest( {
 	fetch: ( action ) =>
 		http(

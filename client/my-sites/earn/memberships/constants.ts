@@ -12,3 +12,12 @@ export const PLAN_YEARLY_FREQUENCY = '1 year';
 export const PLAN_ONE_TIME_FREQUENCY = 'one-time';
 
 export const TYPE_TIER = 'tier';
+
+export const ADD_NEW_COUPON_HASH = '#add-coupon';
+export const COUPON_DISCOUNT_TYPE_PERCENTAGE = 'percentage';
+export const COUPON_DISCOUNT_TYPE_AMOUNT = 'amount';
+export const COUPON_DURATION_FOREVER = 'forever';
+export const COUPON_DURATION_EVERY_MONTH = '1 month';
+export const COUPON_DURATION_EVERY_3_MONTHS = '3 months';
+export const COUPON_DURATION_EVERY_6_MONTHS = '6 months';
+export const COUPON_DURATION_EVERY_YEAR = '1 year';
