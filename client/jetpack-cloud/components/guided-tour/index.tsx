@@ -13,7 +13,7 @@ import './style.scss';
 export interface Tour {
 	target: string;
 	title: string;
-	description: string;
+	description: string | JSX.Element;
 	popoverPosition?:
 		| 'top'
 		| 'top right'
@@ -151,14 +151,7 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 			position={ popoverPosition }
 		>
 			<h2 className="guided-tour__popover-heading">{ title }</h2>
-			<p className="guided-tour__popover-description">
-				{ description.split( '\n' ).map( ( line, index ) => (
-					<React.Fragment key={ index }>
-						{ line }
-						{ index < description.split( '\n' ).length - 1 && <br /> }
-					</React.Fragment>
-				) ) }
-			</p>
+			<p className="guided-tour__popover-description">{ description }</p>
 			<div className="guided-tour__popover-footer">
 				<div>
 					{
