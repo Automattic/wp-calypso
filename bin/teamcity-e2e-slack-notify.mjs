@@ -72,47 +72,20 @@ function buildSlackMessage( failures ) {
 				type: 'section',
 				text: {
 					type: 'mrkdwn',
-					text: `:x: E2E Build Failed on branch *${ process.env.tc_build_branch }*: ${ process.env.tc_project_name }: ${ process.env.tc_build_conf_name }, #${ process.env.tc_build_number }`,
-				},
-			},
-			{
-				type: 'section',
-				text: {
-					type: 'mrkdwn',
-					text: `:teamcity: <${ process.env.BUILD_URL }|*Build*>`,
+					text: `:x: E2E Build Failed on branch *${ process.env.tc_build_branch }*: ${ process.env.tc_project_name }: ${ process.env.tc_build_conf_name }, :teamcity: <${ process.env.BUILD_URL }|Build #${ process.env.tc_build_number }>`,
 				},
 			},
 			{
 				type: 'divider',
 			},
-			{
-				type: 'header',
-				text: {
-					type: 'plain_text',
-					text: 'Stacktraces',
-				},
-			},
 		],
 	};
-	for ( const failure of failures ) {
-		body.blocks.push(
-			{
-				type: 'section',
-				text: {
-					type: 'mrkdwn',
-					text:
-						'*' + failure.step.join( ': ' ) + '*' + '\n' + '```' + failure.error.pop() + '\n```',
-				},
-			},
-			{ type: 'divider' }
-		);
-	}
+	const failedTestNames = failures.map( ( failure ) => failure.step.join( ': ' ) );
 	body.blocks.push( {
 		type: 'section',
 		text: {
 			type: 'mrkdwn',
-			// text: 'placeholder text so that I do not waste a8c GPT bandwidth',
-			text: '@gpt, can you tell me more about the error(s) above, provide link(s) to the E2E test file in GitHub, and a snippet of the relevant code section?',
+			text: `*Failed Tests:*\n - ${ failedTestNames.join( '\n - ' ) }`,
 		},
 	} );
 	return body;
