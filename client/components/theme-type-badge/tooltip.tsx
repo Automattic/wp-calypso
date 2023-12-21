@@ -7,9 +7,10 @@ import {
 	MARKETPLACE_THEME,
 	PREMIUM_THEME,
 } from '@automattic/design-picker';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
@@ -96,6 +97,8 @@ const ThemeTypeBadgeTooltip = ( {
 		type === MARKETPLACE_THEME ? getMarketplaceThemeSubscriptionPrices( state, themeId ) : {}
 	);
 
+	const isEnglishLocale = useIsEnglishLocale();
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_upgrade_nudge_impression', {
 			cta_name: 'theme-upsell-popup',
@@ -113,7 +116,9 @@ const ThemeTypeBadgeTooltip = ( {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
 		} else if ( isIncludedCurrentPlan ) {
-			message = translate( 'This theme is included in your plan.' );
+			isEnglishLocale || i18n.hasTranslation( 'This theme is included in your plan.' )
+				? translate( 'This theme is included in your plan.' )
+				: translate( 'This premium theme is included in your plan.' );
 		} else {
 			message = createInterpolateElement(
 				translate( 'This theme is included in the <Link>%(premiumPlanName)s plan</Link>.', {
