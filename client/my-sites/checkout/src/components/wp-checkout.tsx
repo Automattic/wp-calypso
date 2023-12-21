@@ -335,7 +335,7 @@ export default function WPCheckout( {
 	const showToSFoldableCard = useToSFoldableCard();
 	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
-	const shouldHideCheckoutUpsellNudge = useHideCheckoutUpsellNudge();
+	const shouldHideCheckoutUpsellNudge = useHideCheckoutUpsellNudge() === 'treatment';
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products
