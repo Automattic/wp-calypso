@@ -3,7 +3,7 @@ export const requestError = {
 };
 
 export const lastRequestTime = {
-	type: 'number',
+	type: [ 'number', 'null' ],
 };
 
 export const connectionHealth = {
