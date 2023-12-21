@@ -2,12 +2,14 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { requestPlans } from 'calypso/state/plans/actions';
 
-export default function QueryPlans() {
+const QueryPlans = ( { coupon }: { coupon?: string } ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( requestPlans() );
-	}, [ dispatch ] );
+		dispatch( requestPlans( coupon ) );
+	}, [ dispatch, coupon ] );
 
 	return null;
-}
+};
+
+export default QueryPlans;
