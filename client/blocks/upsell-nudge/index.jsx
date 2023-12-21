@@ -10,11 +10,20 @@ import {
 	WPCOM_FEATURES_NO_ADVERTS,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import debugFactory from 'debug';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo, useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { addQueryArgs } from 'calypso/lib/url';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
+import { withIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/with-is-eligible-for-one-click-checkout';
+import { successNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -85,7 +94,16 @@ export const UpsellNudge = ( {
 	displayAsLink,
 	isSiteWooExpressOrEcomFreeTrial,
 	isBusy,
+	isEligibleForOneClickCheckout,
+	isOneClickCheckoutEnabled = false,
 } ) => {
+	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const product = useMemo(
+		() => ( plan ? createRequestCartProduct( { product_slug: plan } ) : null ),
+		[ plan ]
+	);
 	const shouldNotDisplay =
 		isVip ||
 		! canManageSite ||
@@ -133,47 +151,91 @@ export const UpsellNudge = ( {
 		);
 	}
 
+	const handleClick = ( e ) => {
+		if (
+			isOneClickCheckoutEnabled &&
+			isEligibleForOneClickCheckout.result === true &&
+			plan &&
+			siteSlug &&
+			canUserUpgrade
+		) {
+			e.preventDefault();
+			setShowPurchaseModal( true );
+		}
+		onClick?.();
+	};
+
 	return (
-		<Banner
-			callToAction={ callToAction }
-			secondaryCallToAction={ secondaryCallToAction }
-			className={ classes }
-			compact={ compact }
-			compactButton={ compactButton }
-			description={ description }
-			disableHref={ disableHref }
-			dismissPreferenceName={ dismissPreferenceName }
-			dismissTemporary={ dismissTemporary }
-			event={ event }
-			secondaryEvent={ secondaryEvent }
-			feature={ feature }
-			forceHref={ forceHref }
-			horizontal={ horizontal }
-			href={ href }
-			secondaryHref={ secondaryHref }
-			icon={ icon }
-			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
-			isAtomic={ isAtomic }
-			list={ list }
-			renderListItem={ renderListItem }
-			onClick={ onClick }
-			secondaryOnClick={ secondaryOnClick }
-			onDismiss={ onDismissClick }
-			plan={ plan }
-			price={ price }
-			primaryButton={ primaryButton }
-			showIcon={ showIcon }
-			target={ target }
-			title={ title }
-			tracksClickName={ tracksClickName }
-			tracksClickProperties={ tracksClickProperties }
-			tracksDismissName={ tracksDismissName }
-			tracksDismissProperties={ tracksDismissProperties }
-			tracksImpressionName={ tracksImpressionName }
-			tracksImpressionProperties={ tracksImpressionProperties }
-			displayAsLink={ displayAsLink }
-			isBusy={ isBusy }
-		/>
+		<>
+			{ showPurchaseModal && (
+				<CalypsoShoppingCartProvider>
+					<StripeHookProvider
+						fetchStripeConfiguration={ getStripeConfiguration }
+						locale={ translate.localeSlug }
+					>
+						<PurchaseModal
+							productToAdd={ product }
+							onClose={ () => {
+								setShowPurchaseModal( false );
+							} }
+							onPurchaseSuccess={ () => {
+								setShowPurchaseModal( false );
+								dispatch(
+									successNotice( translate( 'Your purchase has been completed!' ), {
+										id: 'plugins-purchase-modal-success',
+									} )
+								);
+							} }
+							disableThankYouPage={ true }
+							showFeatureList={ true }
+							siteSlug={ siteSlug }
+						/>
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			) }
+			<Banner
+				callToAction={ callToAction }
+				secondaryCallToAction={ secondaryCallToAction }
+				className={ classes }
+				compact={ compact }
+				compactButton={ compactButton }
+				description={ description }
+				disableHref={ disableHref }
+				dismissPreferenceName={ dismissPreferenceName }
+				dismissTemporary={ dismissTemporary }
+				event={ event }
+				secondaryEvent={ secondaryEvent }
+				feature={ feature }
+				forceHref={ forceHref }
+				horizontal={ horizontal }
+				href={ href }
+				secondaryHref={ secondaryHref }
+				icon={ icon }
+				jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+				isAtomic={ isAtomic }
+				list={ list }
+				renderListItem={ renderListItem }
+				onClick={ handleClick }
+				secondaryOnClick={ secondaryOnClick }
+				onDismiss={ onDismissClick }
+				plan={ plan }
+				price={ price }
+				primaryButton={ primaryButton }
+				showIcon={ showIcon }
+				target={ target }
+				title={ title }
+				tracksClickName={ tracksClickName }
+				tracksClickProperties={ tracksClickProperties }
+				tracksDismissName={ tracksDismissName }
+				tracksDismissProperties={ tracksDismissProperties }
+				tracksImpressionName={ tracksImpressionName }
+				tracksImpressionProperties={ tracksImpressionProperties }
+				displayAsLink={ displayAsLink }
+				isBusy={
+					isBusy || ( isOneClickCheckoutEnabled && isEligibleForOneClickCheckout.isLoading )
+				}
+			/>
+		</>
 	);
 };
 
@@ -199,4 +261,4 @@ export default connect( ( state, ownProps ) => {
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
-} )( UpsellNudge );
+} )( withIsEligibleForOneClickCheckout( UpsellNudge ) );
