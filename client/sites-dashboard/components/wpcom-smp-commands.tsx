@@ -1191,6 +1191,7 @@ export const useCommandsArrayWpcom = ( {
 					}
 				},
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
 			icon: <WooCommerceLogo size={ 24 } className="woo-command-palette" />,
 		},
