@@ -45,9 +45,11 @@ export default function Overview() {
 					<IntroCards onFinish={ introCardFinishHandler } />
 				</Card>
 			) }
-			{ /*<Card className="overview__steps">*/ }
-			{ /*	/!*<OverviewSteps />*!/*/ }
-			{ /*</Card>*/ }
+			{ ! hideNextSteps && (
+				<Card className="hide-on-mobile">
+					<NextSteps onDismiss={ nextStepsDismissHandler } />
+				</Card>
+			) }
 			{ /*<Card className="overview__tools">*/ }
 			{ /*	/!*<OverviewTools />*!/*/ }
 			{ /*</Card>*/ }
