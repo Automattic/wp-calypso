@@ -23,7 +23,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 	const { increaseAiAssistantRequestsCount } = useDispatch( STORE_WPCOM_PLANS );
 	const aiData = useSelect(
 		// @ts-expect-error Missing type definition
-		( select ) => select( STORE_WPCOM_PLANS ).getAiAssistantFeature( siteId ),
+		( select ) => ( siteId ? select( STORE_WPCOM_PLANS ).getAiAssistantFeature( siteId ) : {} ),
 		[ siteId ]
 	);
 
