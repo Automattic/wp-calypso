@@ -21,10 +21,14 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
-		setTimeout( () => {
-			setIsLoading( false );
-		}, 6000 );
-	}, [] );
+		if ( isOpen ) {
+			setTimeout( () => {
+				setIsLoading( false );
+			}, 6000 );
+		} else {
+			setIsLoading( true );
+		}
+	}, [ isOpen ] );
 
 	return (
 		<>
