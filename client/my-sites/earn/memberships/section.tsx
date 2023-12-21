@@ -137,6 +137,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 					</Card>
 				) }
 				<Dialog
+					className="memberships__stripe-disconnect-modal"
 					isVisible={ !! disconnectedConnectedAccountId }
 					buttons={ [
 						{
@@ -151,14 +152,12 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 					] }
 					onClose={ onCloseDisconnectStripeAccount }
 				>
-					<h1>{ translate( 'Confirmation' ) }</h1>
-					<p>{ translate( 'Do you want to disconnect Payments from your Stripe account?' ) }</p>
-					<Notice
-						text={ translate(
+					<h1>{ translate( 'Disconnect Stripe?' ) }</h1>
+					<p>
+						{ translate(
 							'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.'
 						) }
-						showDismiss={ false }
-					/>
+					</p>
 				</Dialog>
 			</div>
 		);
