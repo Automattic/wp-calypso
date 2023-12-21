@@ -17,7 +17,6 @@ import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -46,9 +45,7 @@ function ProductsList() {
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
-	);
+
 	const hasDonationsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
 	);
@@ -160,7 +157,7 @@ function ProductsList() {
 				/>
 			) }
 
-			{ hasLoadedFeatures && hasStripeFeature && connectedAccountId && (
+			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
 					<Button primary compact onClick={ () => openAddEditDialog() }>
 						{ translate( 'Add a new payment plan' ) }
@@ -216,7 +213,7 @@ function ProductsList() {
 							</CompactCard>
 						);
 					} ) }
-			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
+			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
