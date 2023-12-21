@@ -23,4 +23,15 @@ describe( 'getJetpackConnectionHealth()', () => {
 		const output = getJetpackConnectionHealth( stateIn, siteId );
 		expect( output ).toEqual( null );
 	} );
+
+	test( 'should return null if no connection health object exists in case of not existant siteId', () => {
+		const stateIn = {
+			jetpackConnectionHealth: {
+				123456: {},
+			},
+		};
+		const siteId = 123;
+		const output = getJetpackConnectionHealth( stateIn, siteId );
+		expect( output ).toEqual( null );
+	} );
 } );

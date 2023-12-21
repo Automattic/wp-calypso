@@ -11,13 +11,23 @@ describe( 'getJetpackConnectionHealthRequestError()', () => {
 		const output = getJetpackConnectionHealthRequestError( stateIn, siteId );
 		expect( output ).toBe( 'test' );
 	} );
-	test( 'should return null if no error exists', () => {
+	test( 'should return an empty string if no error exists', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {
 				123456: {},
 			},
 		};
 		const siteId = 123456;
+		const output = getJetpackConnectionHealthRequestError( stateIn, siteId );
+		expect( output ).toBe( '' );
+	} );
+	test( 'should return an empty string if site id doesnt exist', () => {
+		const stateIn = {
+			jetpackConnectionHealth: {
+				123456: {},
+			},
+		};
+		const siteId = 456;
 		const output = getJetpackConnectionHealthRequestError( stateIn, siteId );
 		expect( output ).toBe( '' );
 	} );

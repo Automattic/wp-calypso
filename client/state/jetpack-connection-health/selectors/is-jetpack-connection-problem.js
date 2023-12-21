@@ -13,7 +13,7 @@ import 'calypso/state/jetpack-connection-health/init';
 export default function isJetpackConnectionProblem( state, siteId ) {
 	const siteState = state.jetpackConnectionHealth[ siteId ];
 
-	if ( ! siteState?.connectionHealth ) {
+	if ( siteState?.connectionHealth?.jetpack_connection_problem === undefined ) {
 		return false;
 	}
 

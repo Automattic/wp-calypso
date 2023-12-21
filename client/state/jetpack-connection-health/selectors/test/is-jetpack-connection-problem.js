@@ -29,6 +29,6 @@ describe( 'isJetpackConnectionProblem()', () => {
 		};
 		const siteId = 77777;
 		const output = isJetpackConnectionProblem( stateIn, siteId );
-		expect( output ).toBe( null );
+		expect( output ).toBe( false );
 	} );
 } );

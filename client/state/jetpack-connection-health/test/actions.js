@@ -20,33 +20,36 @@ const mockFetchHealthStatus = ( siteId ) =>
 describe( 'action', () => {
 	describe( 'setJetpackConnectionHealthy', () => {
 		test( 'should return a jetpack healthy connection action', () => {
-			const requestAction = setJetpackConnectionHealthy( 1 );
+			const siteId = 123456;
+			const requestAction = setJetpackConnectionHealthy( siteId );
 
 			expect( requestAction ).toEqual( {
 				type: JETPACK_CONNECTION_HEALTHY,
-				siteId: 1,
+				siteId,
 			} );
 		} );
 	} );
 
 	describe( 'setJetpackConnectionMaybeUnhealthy', () => {
 		test( 'should return a jetpack maybe unhealthy connection action', () => {
-			const setTransferAction = setJetpackConnectionMaybeUnhealthy( 1 );
+			const siteId = 123456;
+			const setTransferAction = setJetpackConnectionMaybeUnhealthy( siteId );
 
 			expect( setTransferAction ).toEqual( {
 				type: JETPACK_CONNECTION_MAYBE_UNHEALTHY,
-				siteId: 1,
+				siteId,
 			} );
 		} );
 	} );
 
 	describe( 'setJetpackConnectionUnhealthy', () => {
 		test( 'should return a jetpack unhealthy connection action', () => {
-			const setTransferAction = setJetpackConnectionUnhealthy( 1, 'foo_bar' );
+			const siteId = 123456;
+			const setTransferAction = setJetpackConnectionUnhealthy( siteId, 'foo_bar' );
 
 			expect( setTransferAction ).toEqual( {
 				type: JETPACK_CONNECTION_UNHEALTHY,
-				siteId: 1,
+				siteId,
 				errorCode: 'foo_bar',
 			} );
 		} );
@@ -61,14 +64,14 @@ describe( 'action', () => {
 			stateSpy = jest.fn();
 		} );
 
-		test( 'should set connection health to true if the connection api has failed but the health api finds the connection health ok.', async () => {
-			const siteId = 1;
+		test( 'should set connection health as healthy if the connection api has failed but the health api finds the connection health ok.', async () => {
+			const siteId = 123456;
 			stateSpy.mockReturnValue( {
 				jetpackConnectionHealth: {
-					1: {
+					[ siteId ]: {
 						connectionHealth: {
 							jetpack_connection_problem: true,
-							is_healthy: false,
+							error: 'test',
 						},
 					},
 				},
@@ -79,23 +82,23 @@ describe( 'action', () => {
 			await requestJetpackConnectionHealthStatus( siteId )( dispatchSpy, stateSpy );
 			expect( dispatchSpy ).toHaveBeenNthCalledWith( 1, {
 				type: JETPACK_CONNECTION_HEALTH_REQUEST,
-				siteId: 1,
+				siteId,
 				lastRequestTime: expect.any( Number ),
 			} );
 			expect( dispatchSpy ).toHaveBeenNthCalledWith( 2, {
 				type: JETPACK_CONNECTION_HEALTHY,
-				siteId: 1,
+				siteId,
 			} );
 		} );
 
 		test( 'should set connection health as unhealthy the connection api has failed and the health api has failed too', async () => {
-			const siteId = 1;
+			const siteId = 123456;
 			stateSpy.mockReturnValue( {
 				jetpackConnectionHealth: {
-					1: {
+					[ siteId ]: {
 						connectionHealth: {
 							jetpack_connection_problem: false,
-							is_healthy: false,
+							error: 'test',
 						},
 					},
 				},
@@ -107,24 +110,24 @@ describe( 'action', () => {
 			await requestJetpackConnectionHealthStatus( siteId )( dispatchSpy, stateSpy );
 			expect( dispatchSpy ).toHaveBeenNthCalledWith( 1, {
 				type: JETPACK_CONNECTION_HEALTH_REQUEST,
-				siteId: 1,
+				siteId,
 				lastRequestTime: expect.any( Number ),
 			} );
 			expect( dispatchSpy ).toHaveBeenNthCalledWith( 2, {
 				type: JETPACK_CONNECTION_UNHEALTHY,
-				siteId: 1,
+				siteId,
 				errorCode: 'foo_bar',
 			} );
 		} );
 
 		test( 'should return current state if 5 minutes have not passed yet', async () => {
-			const siteId = 1;
+			const siteId = 123456;
 			stateSpy.mockReturnValue( {
 				jetpackConnectionHealth: {
-					1: {
+					[ siteId ]: {
 						lastRequestTime: Date.now() - 1000 * 60 * 4,
 						connectionHealth: {
-							is_healthy: true,
+							error: '',
 						},
 					},
 				},
