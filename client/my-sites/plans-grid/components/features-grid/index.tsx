@@ -2,7 +2,6 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 	getPlanClass,
 	isBusinessTrial,
-	isFreePlan,
 	isWooExpressMediumPlan,
 	isWooExpressPlan,
 	isWooExpressSmallPlan,
@@ -376,9 +375,6 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 					>
 						<PlanFeatures2023GridActions
 							availableForPurchase={ availableForPurchase }
-							className={ getPlanClass( planSlug ) }
-							freePlan={ isFreePlan( planSlug ) }
-							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							isMonthlyPlan={ isMonthlyPlan }
