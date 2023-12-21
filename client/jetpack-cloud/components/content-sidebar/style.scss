@@ -4,6 +4,9 @@
 .content-sidebar {
 	&.main {
 		margin-top: 32px;
+		&.is-wide-layout {
+			padding: 0;
+		}
 	}
 
 	grid-row: 4 / span 1;
