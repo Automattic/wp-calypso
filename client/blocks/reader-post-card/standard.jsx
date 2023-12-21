@@ -22,7 +22,7 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 						</a>
 					</h2>
 				</AutoDirection>
-				<ReaderExcerpt post={ post } setHasExcerpt={ setHasExcerpt } />
+				<ReaderExcerpt post={ post } hasExcerpt={ hasExcerpt } setHasExcerpt={ setHasExcerpt } />
 			</div>
 			<FeaturedAsset
 				post={ post }
