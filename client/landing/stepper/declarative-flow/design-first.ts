@@ -4,6 +4,7 @@ import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -22,7 +23,15 @@ import { useLoginUrl } from '../utils/path';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
-	title: 'Blog',
+	get title() {
+		// Don't assign a title if coming from the logged-out Theme Showcase.
+		// See https://github.com/Automattic/wp-calypso/issues/85396.
+		if ( getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' ) {
+			return '';
+		}
+
+		return translate( 'Blog' );
+	},
 	useSteps() {
 		return [
 			{
