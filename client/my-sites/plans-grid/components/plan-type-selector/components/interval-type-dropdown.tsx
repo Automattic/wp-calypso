@@ -15,6 +15,7 @@ const AddOnOption = styled.a`
 		font-size: 0.7rem;
 	}
 	.name {
+		font-size: 0.8rem;
 		margin-right: 4px;
 	}
 `;
