@@ -88,7 +88,6 @@ export default function IntroCards( { onFinish = () => {} } ) {
 			navArrowSize={ 24 }
 			tracksPrefix="calypso_jetpack_manage_overview_intro_cards"
 			tracksFn={ tracksFn }
-			includePreviousButton
 			includeNextButton
 			includeFinishButton
 			onFinish={ onFinish }
