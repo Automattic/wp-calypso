@@ -4,45 +4,58 @@ import { connect } from 'react-redux';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
-	READER_FEATURED_MAX_IMAGE_HEIGHT,
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
+	READER_COMPACT_POST_NO_EXCERPT_FEATURED_MAX_IMAGE_WIDTH,
+	READER_FEATURED_MAX_IMAGE_HEIGHT,
 } from 'calypso/state/reader/posts/sizes';
 import './style.scss';
 
 const noop = () => {};
 
-/**
- * Check if the image can fit the container without cropping or letterboxing
- *
- * @param imageWidth number Width of the image
- * @param imageHeight number Height of the image
- * @param containerWidth number Width of the container
- * @param containerHeight number Height of the container
- * @returns {boolean}
- */
-const canImageFitContainer = ( imageWidth, imageHeight, containerWidth, containerHeight ) => {
-	// Calculate the aspect ratios of the image and container
-	const imageAspectRatio = imageWidth / imageHeight;
-	const containerAspectRatio = containerWidth / containerHeight;
-
-	console.log( 'imageWidth', imageWidth );
-	console.log( 'imageHeight', imageHeight );
-	console.log( 'containerWidth', containerWidth );
-	console.log( 'containerHeight', containerHeight );
-	console.log( 'imageAspectRatio', imageAspectRatio );
-	console.log( 'containerAspectRatio', containerAspectRatio );
-
-	// Check if the image's aspect ratio is greater than or equal to the container's aspect ratio
-	// and if its width and height are less than or equal to the container's dimensions
-	if (
-		imageAspectRatio >= containerAspectRatio &&
-		imageWidth <= containerWidth &&
-		imageHeight <= containerHeight
-	) {
-		return true; // Image can fit without cropping or letterboxing
+const getFeaturedImageType = (
+	canonicalMedia,
+	imageWidth,
+	imageHeight,
+	isCompactPost,
+	hasExcerpt
+) => {
+	let featuredImageType = 'image';
+	if ( canonicalMedia.mediaType === 'video' ) {
+		if ( canonicalMedia.type === 'pocketcasts' ) {
+			featuredImageType = 'pocketcasts-thumbnail';
+		} else {
+			featuredImageType = 'video-thumbnail';
+		}
 	}
-	return false; // Image cannot fit without cropping or letterboxing
+
+	if ( isCompactPost ) {
+		featuredImageType += '-compact';
+	}
+
+	if ( ! hasExcerpt ) {
+		featuredImageType += '-no-excerpt';
+	}
+
+	if ( isCompactPost ) {
+		if ( hasExcerpt ) {
+			if ( imageWidth < READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH ) {
+				featuredImageType += '-small';
+			}
+			if ( imageHeight < READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT ) {
+				featuredImageType += '-short';
+			}
+		} else {
+			if ( imageWidth < READER_COMPACT_POST_NO_EXCERPT_FEATURED_MAX_IMAGE_WIDTH ) {
+				featuredImageType += '-small';
+			}
+			if ( imageHeight < READER_FEATURED_MAX_IMAGE_HEIGHT ) {
+				featuredImageType += '-short';
+			}
+		}
+	}
+
+	return featuredImageType;
 };
 
 const ReaderFeaturedImage = ( {
@@ -53,9 +66,7 @@ const ReaderFeaturedImage = ( {
 	className,
 	fetched,
 	imageUrl,
-	origImageWidth,
 	imageWidth,
-	origImageHeight,
 	imageHeight,
 	isCompactPost,
 	hasExcerpt,
@@ -65,56 +76,97 @@ const ReaderFeaturedImage = ( {
 		return null;
 	}
 
-	console.log( 'image details', canonicalMedia, imageWidth, imageHeight, imageUrl );
+	const featuredImageType = getFeaturedImageType(
+		canonicalMedia,
+		imageWidth,
+		imageHeight,
+		isCompactPost,
+		hasExcerpt
+	);
 
-	// Choose the smallest width between the image width, original image width, and the container width
-	const containerWidth = Math.min(
-		imageWidth ?? origImageWidth ?? READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
-		READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH
-	);
-	const containerHeight = Math.min(
-		imageHeight ?? origImageHeight ?? READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
-		READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT
-	);
+	let containerWidth = null;
+	let containerHeight = null;
+
+	switch ( featuredImageType ) {
+		case 'image':
+		case 'video-thumbnail':
+			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
+			containerHeight = READER_FEATURED_MAX_IMAGE_HEIGHT;
+			break;
+		case 'image-compact':
+		case 'video-thumbnail-compact':
+			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
+			containerHeight = READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
+			break;
+		case 'image-compact-no-excerpt':
+		case 'pocketcasts-thumbnail-compact-no-excerpt':
+		case 'video-thumbnail-compact-no-excerpt':
+		case 'image-no-excerpt':
+		case 'pocketcasts-thumbnail-no-excerpt':
+		case 'video-thumbnail-no-excerpt':
+			containerWidth = READER_COMPACT_POST_NO_EXCERPT_FEATURED_MAX_IMAGE_WIDTH;
+			containerHeight = READER_FEATURED_MAX_IMAGE_HEIGHT;
+			break;
+		case 'pocketcasts-thumbnail':
+			containerWidth = READER_COMPACT_POST_NO_EXCERPT_FEATURED_MAX_IMAGE_WIDTH;
+			containerHeight = containerWidth; // Make square
+			break;
+		case 'pocketcasts-thumbnail-compact':
+			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
+			containerHeight = containerWidth; // Make square
+			break;
+		case 'image-compact-small':
+		case 'video-thumbnail-compact-small':
+			containerWidth = imageWidth;
+			containerHeight = READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
+			break;
+		case 'image-compact-short':
+		case 'video-thumbnail-compact-short':
+			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
+			containerHeight = imageHeight;
+			break;
+		case 'image-compact-small-short':
+		case 'video-thumbnail-compact-small-short':
+		case 'image-compact-no-excerpt-small-short':
+		case 'video-thumbnail-compact-no-excerpt-small-short':
+			containerWidth = imageWidth;
+			containerHeight = imageHeight;
+			break;
+		default:
+			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
+			containerHeight = READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
+	}
 
 	const resizedImageUrl = fetched
 		? imageUrl
 		: resizeImageUrl( imageUrl, { w: containerWidth }, containerHeight );
 	const safeCssUrl = cssSafeUrl( resizedImageUrl );
+	if ( ! safeCssUrl ) {
+		return null;
+	}
 
-	const imageFitsContainer =
-		! origImageWidth ||
-		! origImageHeight ||
-		canImageFitContainer( origImageWidth, origImageHeight, containerWidth, containerHeight );
-	let featuredImageStyle = { background: 'none' };
-	if ( safeCssUrl ) {
-		if ( children ) {
-			featuredImageStyle = {
-				backgroundImage: 'url(' + safeCssUrl + ')',
-				backgroundPosition: '50% 50%',
-				height: containerHeight,
-				width: containerWidth,
-			};
-			if ( imageFitsContainer ) {
-				featuredImageStyle = {
-					...featuredImageStyle,
-					backgroundSize: 'contain',
-				};
-			} else {
-				featuredImageStyle = {
-					...featuredImageStyle,
-					backgroundSize: 'cover',
-					backgroundRepeat: 'no-repeat',
-				};
-			}
-		} else {
-			featuredImageStyle = {
-				...featuredImageStyle,
-				height: containerHeight,
-			};
+	// Set default style to no background
+	let featuredImageStyle = {
+		background: 'none',
+		height: containerHeight,
+	};
 
-			children = <img src={ safeCssUrl } alt="Featured" style={ { height: containerHeight } } />;
-		}
+	if ( children ) {
+		// If there are children, then we are rendering an image tag inside the anchor tag
+		// In this case we will need to anchor tag will need specific styling to show the image(s)
+		featuredImageStyle = {
+			backgroundImage: 'url(' + safeCssUrl + ')',
+			backgroundPosition: '50% 50%',
+			height: containerHeight,
+			width: 'auto',
+			backgroundSize: 'cover',
+			backgroundRepeat: 'no-repeat',
+		};
+	} else {
+		// Since there is no children in props, we need to create a new image tag to ensure the correct size is rendered
+		children = (
+			<img src={ safeCssUrl } alt="Featured" style={ { height: containerHeight, width: '100%' } } />
+		);
 	}
 
 	const classNames = classnames( className, 'reader-featured-image' );
@@ -139,10 +191,12 @@ ReaderFeaturedImage.defaultProps = {
 const mapStateToProps = ( state, ownProps ) => {
 	const { canonicalMedia, imageUrl } = ownProps;
 	const { src, width, height } = canonicalMedia ?? {};
+	const imageWidth = ownProps.imageWidth ?? width;
+	const imageHeight = ownProps.imageHeight ?? height;
 	return {
 		imageUrl: imageUrl ?? src,
-		origImageWidth: width,
-		origImageHeight: height,
+		imageWidth: imageWidth,
+		imageHeight: imageHeight,
 	};
 };
 
