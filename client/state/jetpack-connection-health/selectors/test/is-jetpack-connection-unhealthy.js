@@ -34,12 +34,12 @@ describe( 'isJetpackConnectionUnhealthy()', () => {
 		expect( output ).toBe( true );
 	} );
 
-	test( 'should return null if the site Jetpack connection problem is unknown', () => {
+	test( 'should return false if the site Jetpack connection health status is absent', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {},
 		};
 		const siteId = 77777;
 		const output = isJetpackConnectionUnhealthy( stateIn, siteId );
-		expect( output ).toBe( null );
+		expect( output ).toBe( false );
 	} );
 } );

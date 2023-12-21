@@ -65,7 +65,7 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
 				dispatch( setJetpackConnectionHealthy( siteId ) );
 			}
 			if ( ! isHealthy && ! reduxIsUnhealthy ) {
-				dispatch( setJetpackConnectionUnhealthy( siteId, error ?? '' ) );
+				dispatch( setJetpackConnectionUnhealthy( siteId, error ) );
 			}
 		} )
 		.catch( ( error ) => {
