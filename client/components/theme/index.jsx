@@ -268,7 +268,19 @@ export class Theme extends Component {
 
 	renderMoreButton = () => {
 		const { active, buttonContents, index, theme } = this.props;
-		if ( isEmpty( buttonContents ) ) {
+
+		let moreOptions = buttonContents;
+		if ( isEnabled( 'themes/tiers' ) ) {
+			if ( active && buttonContents.info ) {
+				moreOptions = { info: buttonContents.info };
+			} else if ( buttonContents.deleteTheme ) {
+				moreOptions = { deleteTheme: buttonContents.deleteTheme };
+			} else {
+				moreOptions = {};
+			}
+		}
+
+		if ( isEmpty( moreOptions ) ) {
 			return null;
 		}
 
@@ -280,7 +292,7 @@ export class Theme extends Component {
 				active={ active }
 				onMoreButtonClick={ this.props.onMoreButtonClick }
 				onMoreButtonItemClick={ this.props.onMoreButtonItemClick }
-				options={ buttonContents }
+				options={ moreOptions }
 			/>
 		);
 	};

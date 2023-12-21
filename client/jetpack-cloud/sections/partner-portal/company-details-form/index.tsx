@@ -1,16 +1,17 @@
 import { Button, Gridicon } from '@automattic/components';
-import { SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import PartnerProgramOptInFieldSet from '../partner-program-opt-in-fieldset/partner-program-opt-in-fieldset';
 import SearchableDropdown from '../searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
+import type { FormEventHandler } from 'react';
 
 import './style.scss';
 
@@ -76,7 +77,9 @@ export default function CompanyDetailsForm( {
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '' );
+	const [ managedSites, setManagedSites ] = useState(
+		initialValues.managedSites ?? ( showSignupFields ? '1-5' : '' )
+	);
 	const [ partnerProgramOptIn, setPartnerProgramOptIn ] = useState( false );
 
 	const [ showPartnerProgramOptIn, setShowPartnerProgramOptIn ] = useState( false );
@@ -152,6 +155,14 @@ export default function CompanyDetailsForm( {
 		},
 		[ showCountryFields, isLoading, onSubmit, payload ]
 	);
+
+	// <FormSelect> complains if we "just" pass "setManagedSites" because it expects
+	// React.FormEventHandler, so this wrapper function is made to satisfy everything
+	// in an easily readable way.
+	const handleSetManagedSites: FormEventHandler = ( { target } ) => {
+		const value: string = ( target as HTMLSelectElement ).value;
+		setManagedSites( value );
+	};
 
 	return (
 		<div className="company-details-form">
@@ -231,21 +242,22 @@ export default function CompanyDetailsForm( {
 				) }
 				{ showSignupFields && (
 					<FormFieldset>
-						<FormLabel>{ translate( 'How many sites do you manage?' ) }</FormLabel>
-						<SelectControl
-							id="managed_sites"
+						<FormLabel htmlFor="managed_sites">
+							{ translate( 'How many sites do you manage?' ) }
+						</FormLabel>
+						<FormSelect
 							name="managed_sites"
+							id="managed_sites"
 							value={ managedSites }
-							options={ [
-								{ value: '1-5', label: translate( '1-5' ) },
-								{ value: '6-20', label: translate( '6-20' ) },
-								{ value: '21-50', label: translate( '21-50' ) },
-								{ value: '51-100', label: translate( '51-100' ) },
-								{ value: '101-500', label: translate( '101-500' ) },
-								{ value: '500+', label: translate( '500+' ) },
-							] }
-							onChange={ setManagedSites }
-						/>
+							onChange={ handleSetManagedSites }
+						>
+							<option value="1-5">{ translate( '1–5' ) }</option>
+							<option value="6-20">{ translate( '6–20' ) }</option>
+							<option value="21-50">{ translate( '21–50' ) }</option>
+							<option value="51-100">{ translate( '51–100' ) }</option>
+							<option value="101-500">{ translate( '101–500' ) }</option>
+							<option value="500+">{ translate( '500+' ) }</option>
+						</FormSelect>
 					</FormFieldset>
 				) }
 				<FormFieldset>

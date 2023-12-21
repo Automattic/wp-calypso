@@ -1213,6 +1213,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Commercial use' ),
 	];
 	const aiAssistantIncludesInfo = [
+		translate( '100 monthly requests (upgradeable)' ),
 		translate( 'Prompt-based content generation' ),
 		translate( 'Text, table, and list generation' ),
 		translate( 'Adaptive tone adjustment' ),

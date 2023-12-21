@@ -180,9 +180,9 @@ describe( 'Hosting Configuration', () => {
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
 
 			expect(
-				screen.getByText( 'Upgrade to the Business plan to access all hosting features:' )
+				screen.getByText( 'Upgrade to the Creator plan to access all hosting features:' )
 			).toBeVisible();
-			expect( screen.getByText( 'Upgrade to Business Plan' ) ).toBeVisible();
+			expect( screen.getByText( 'Upgrade to Creator Plan' ) ).toBeVisible();
 
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
@@ -199,9 +199,9 @@ describe( 'Hosting Configuration', () => {
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
 
 			expect(
-				screen.getByText( 'Upgrade to the Business plan to access all hosting features:' )
+				screen.getByText( 'Upgrade to the Creator plan to access all hosting features:' )
 			).toBeVisible();
-			expect( screen.getByText( 'Upgrade to Business Plan' ) ).toBeVisible();
+			expect( screen.getByText( 'Upgrade to Creator Plan' ) ).toBeVisible();
 
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
@@ -212,7 +212,7 @@ describe( 'Hosting Configuration', () => {
 		} );
 	} );
 
-	describe( 'Site on Business plan', () => {
+	describe( 'Site on Creator plan', () => {
 		it( 'should show activation notice when the site is not Atomic', () => {
 			const testConfig = getTestConfig( {
 				planSlug: PLAN_BUSINESS_MONTHLY,
@@ -326,9 +326,9 @@ describe( 'Hosting Configuration', () => {
 			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
 
 			expect(
-				screen.queryByText( 'Upgrade to the Business plan to access all hosting features:' )
+				screen.queryByText( 'Upgrade to the Creator plan to access all hosting features:' )
 			).toBeNull();
-			expect( screen.queryByText( 'Upgrade to Business Plan' ) ).toBeNull();
+			expect( screen.queryByText( 'Upgrade to Creator Plan' ) ).toBeNull();
 
 			expect( screen.getByTestId( 'staging-site-production-card' ) ).toBeVisible();
 		} );

@@ -457,9 +457,9 @@ export default function useCreatePaymentMethods( {
 	// The order is the order of Payment Methods in Checkout.
 	return [
 		...existingCardMethods,
+		stripeMethod,
 		applePayMethod,
 		googlePayMethod,
-		stripeMethod,
 		freePaymentMethod,
 		paypalMethod,
 		idealMethod,

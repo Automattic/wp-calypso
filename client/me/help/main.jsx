@@ -1,4 +1,9 @@
-import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	getPlan,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
@@ -56,7 +61,12 @@ class Help extends PureComponent {
 				link: localizeUrl( 'https://wordpress.com/support/business-plan/' ),
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
-					'Learn more about installing a custom theme or plugin using the Business plan.'
+					'Learn more about installing a custom theme or plugin using the %(businessPlanName)s plan.',
+					{
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+						},
+					}
 				),
 				image: helpPlugins,
 			},

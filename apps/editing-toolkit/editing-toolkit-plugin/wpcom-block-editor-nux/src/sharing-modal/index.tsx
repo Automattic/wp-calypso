@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { START_WRITING_FLOW, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
-import { Modal, Button, ExternalLink } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { Icon, globe, link as linkIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useI18n } from '@wordpress/react-i18n';
@@ -174,12 +174,6 @@ const SharingModalInner: React.FC = () => {
 			type: 'snackbar',
 		} );
 	};
-	const trackSubscribersClick = () => {
-		recordTracksEvent( 'calypso_editor_sharing_view_subscribers' );
-	};
-
-	const subscribersUrl = `https://wordpress.com/people/subscribers/${ window.location.hostname }`;
-
 	return (
 		<Modal
 			className="wpcom-block-editor-post-published-sharing-modal"
@@ -190,23 +184,6 @@ const SharingModalInner: React.FC = () => {
 			<div className="wpcom-block-editor-post-published-sharing-modal__inner">
 				<div className="wpcom-block-editor-post-published-sharing-modal__left">
 					<h1> { __( 'Post published!', 'full-site-editing' ) } </h1>
-					<p>
-						{ createInterpolateElement(
-							__(
-								'Your post is now live and was delivered to each of <a>your subscribers</a>.',
-								'full-site-editing'
-							),
-							{
-								a: (
-									<ExternalLink
-										children={ null }
-										href={ subscribersUrl }
-										onClick={ trackSubscribersClick }
-									/>
-								),
-							}
-						) }
-					</p>
 					<div className="wpcom-block-editor-post-published-buttons">
 						<a
 							href={ link }
