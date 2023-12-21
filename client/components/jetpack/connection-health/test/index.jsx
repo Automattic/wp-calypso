@@ -27,6 +27,22 @@ const initialReduxState = {
 	},
 };
 
+const getJetpackConnectionHealthFixture = ( siteId, error ) => {
+	const lastRequestTime = Date.now() - 1000 * 60 * 4;
+	return {
+		jetpackConnectionHealth: {
+			[ siteId ]: {
+				requestError: null,
+				lastRequestTime,
+				connectionHealth: {
+					error,
+					jetpack_connection_problem: true,
+				},
+			},
+		},
+	};
+};
+
 const render = ( el, options = {} ) =>
 	renderWithProvider( el, {
 		...options,
@@ -37,19 +53,8 @@ const render = ( el, options = {} ) =>
 describe( 'JetpackConnectionHealthBanner', () => {
 	describe( 'component rendering', () => {
 		test( 'shows generic message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							error: UNKNOWN_ERROR,
-							jetpack_connection_problem: true,
-						},
-					},
-				},
-			};
+			const error = UNKNOWN_ERROR;
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
@@ -58,22 +63,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows a database connection error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = DATABASE_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							jetpack_connection_problem: true,
-							error,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -83,22 +74,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows fatal error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = FATAL_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							jetpack_connection_problem: true,
-							error,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -110,22 +87,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows dns error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = DNS_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							jetpack_connection_problem: true,
-							error,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect( screen.queryByText( /Jetpack is unable to connect to your domain/i ) ).toBeVisible();
@@ -133,22 +96,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows user token error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = USER_TOKEN_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							jetpack_connection_problem: true,
-							error,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -160,22 +109,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows blog token error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = BLOG_TOKEN_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							jetpack_connection_problem: true,
-							error,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -187,22 +122,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows http error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = HTTP_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							error,
-							jetpack_connection_problem: true,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -214,22 +135,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows inactivity error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = INACTIVITY_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							jetpack_connection_problem: true,
-							error,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -241,22 +148,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows an XML-RPC error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = XMLRPC_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							jetpack_connection_problem: true,
-							error,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -268,22 +161,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows a REST API error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = REST_API_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							error,
-							jetpack_connection_problem: true,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -295,22 +174,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows plugin error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = PLUGIN_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							error,
-							jetpack_connection_problem: true,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
@@ -322,22 +187,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 		} );
 
 		test( 'shows generic error message', () => {
-			const lastRequestTime = Date.now() - 1000 * 60 * 4;
 			const error = GENERIC_ERROR;
-
-			const initialState = {
-				jetpackConnectionHealth: {
-					1: {
-						requestError: null,
-						lastRequestTime,
-						connectionHealth: {
-							error,
-							jetpack_connection_problem: true,
-						},
-					},
-				},
-			};
-
+			const initialState = getJetpackConnectionHealthFixture( 1, error );
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
