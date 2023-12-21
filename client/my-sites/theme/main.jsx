@@ -218,21 +218,16 @@ const BannerUpsellTitle = ( {
 	if ( ! isThemeAllowedOnSite ) {
 		switch ( THEME_TIERS[ themeTier.slug ].minimumUpsellPlan ) {
 			case PLAN_PERSONAL:
-				return isEnglishLocale ||
-					i18n.hasTranslation(
-						'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!'
-					)
-					? translate(
-							'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!',
-							{
-								args: {
-									personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
-									premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
-									businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
-								},
-							}
-					  )
-					: translate( 'Access this theme for FREE with a Personal, Premium, or Business plan!' );
+				return translate(
+					'Access this theme for FREE with a %(personalPlanName)s, %(premiumPlanName)s, or %(businessPlanName)s plan!',
+					{
+						args: {
+							personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
+							premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
+							businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
+						},
+					}
+				);
 			case PLAN_PREMIUM:
 				return premiumPlanTitle();
 		}
