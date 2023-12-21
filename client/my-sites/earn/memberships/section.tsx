@@ -121,29 +121,27 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						</div>
 					</Card>
 				) : (
-					<>
-						<Card className="memberships__settings-link">
-							<div className="memberships__module-plans-content">
-								<div>
-									<div className="memberships__module-plans-title">
-										{ translate( 'Connect a Stripe account to start collecting payments.' ) }
-									</div>
-									{ connectedAccountDescription ? (
-										<div className="memberships__module-plans-title">
-											{ translate(
-												'Previously connected to Stripe account %(connectedAccountDescription)s',
-												{
-													args: {
-														connectedAccountDescription: connectedAccountDescription,
-													},
-												}
-											) }
-										</div>
-									) : null }
+					<Card className="memberships__settings-link">
+						<div className="memberships__module-plans-content">
+							<div>
+								<div className="memberships__module-plans-title">
+									{ translate( 'Connect a Stripe account to start collecting payments.' ) }
 								</div>
+								{ connectedAccountDescription ? (
+									<div className="memberships__module-plans-title">
+										{ translate(
+											'Previously connected to Stripe account %(connectedAccountDescription)s',
+											{
+												args: {
+													connectedAccountDescription: connectedAccountDescription,
+												},
+											}
+										) }
+									</div>
+								) : null }
 							</div>
-						</Card>
-					</>
+						</div>
+					</Card>
 				) }
 				<p className="memberships__commission-notice">
 					<CommissionFees commission={ commission } siteSlug={ site?.slug } />
