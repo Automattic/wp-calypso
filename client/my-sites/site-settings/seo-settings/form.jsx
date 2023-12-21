@@ -7,7 +7,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Card, Button, FormInputValidation } from '@automattic/components';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -231,11 +231,8 @@ export class SiteSettingsFormSEO extends Component {
 			translate,
 			isFetchingSettings,
 			isSavingSettings,
-			locale,
 		} = this.props;
 		const { slug = '', URL: siteUrl = '' } = selectedSite;
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
-
 		const {
 			frontPageMetaDescription,
 			showPasteError = false,
@@ -259,18 +256,10 @@ export class SiteSettingsFormSEO extends Component {
 						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
 				  }
 				: {
-						title:
-							isEnglishLocale ||
-							i18n.hasTranslation(
-								'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan'
-							)
-								? translate(
-										'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan',
-										{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-								  )
-								: translate(
-										'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-								  ),
+						title: translate(
+							'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&

@@ -117,10 +117,15 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		}
 	}, [ job ] );
 
-	const onBackToStartClick = useCallback( () => {
+	const onTryAgainClick = useCallback( () => {
 		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 		stepNavigator?.goToImportCapturePage?.();
 	}, [ siteItem, job ] );
+
+	const onBackToGoalsClick = useCallback( () => {
+		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
+		stepNavigator?.goToGoalsPage?.();
+	}, [] );
 
 	/**
 	 ↓ Effects
@@ -149,8 +154,10 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 
 			{ renderState === 'error' && (
 				<ErrorMessage
-					onStartBuilding={ stepNavigator?.goToIntentPage }
-					onBackToStart={ onBackToStartClick }
+					onPrimaryBtnClick={ onTryAgainClick }
+					onSecondaryBtnClick={
+						stepNavigator?.flow === 'site-setup' ? onBackToGoalsClick : undefined
+					}
 				/>
 			) }
 

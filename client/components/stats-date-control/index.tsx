@@ -69,7 +69,14 @@ const StatsDateControl = ( {
 	const onShortcutHandler = ( shortcut: DateControlPickerShortcut ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		if ( shortcut.isGated ) {
-			return shortcut.onGatedClick( shortcut, event_from );
+			const events = [
+				{ name: `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_gated_clicked` },
+				{
+					name: 'jetpack_stats_upsell_clicked',
+					params: { statType: shortcut.statType, source: event_from },
+				},
+			];
+			return shortcut.onGatedClick( events, event_from );
 		}
 		// Generate new dates.
 		const anchor = moment().subtract( shortcut.offset, 'days' );
