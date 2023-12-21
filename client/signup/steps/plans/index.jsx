@@ -272,6 +272,8 @@ export class PlansStep extends Component {
 	}
 
 	render() {
+		const { signupDependencies } = this.props;
+		const { coupon } = signupDependencies;
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
@@ -280,7 +282,7 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<QueryPlans />
+				<QueryPlans coupon={ coupon } />
 				<MarketingMessage path="signup/plans" />
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>
