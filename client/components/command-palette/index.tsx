@@ -128,6 +128,7 @@ export function CommandMenuGroup( {
 								close: () => close( command.name, true ),
 								setSearch,
 								setPlaceholderOverride,
+								command,
 							} )
 						}
 						id={ cleanForSlug( itemValue ) }
