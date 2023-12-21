@@ -10,6 +10,8 @@ import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-healt
 
 import 'calypso/state/jetpack-connection-health/init';
 
+export const STALE_CONNECTION_HEALTH_THRESHOLD = 1000 * 60 * 5; // 5 minutes
+
 /**
  * Sets the Jetpack connection status to healthy
  * @param {number} siteId The site id to which the status belongs
@@ -40,7 +42,7 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
 export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, getState ) => {
 	const currentState = getState();
 	const lastRequestTime = currentState.jetpackConnectionHealth[ siteId ]?.lastRequestTime;
-	if ( lastRequestTime && Date.now() - lastRequestTime < 1000 * 60 * 5 ) {
+	if ( lastRequestTime && Date.now() - lastRequestTime < STALE_CONNECTION_HEALTH_THRESHOLD ) {
 		return;
 	}
 
