@@ -86,7 +86,8 @@
 
 		@include plan-type-selector-custom-mobile-breakpoint {
 			position: sticky;
-			z-index: 1;
+			// Display above sticky feature and comparison grid plan headers
+			z-index: 3;
 			top: 0;
 		}
 	}
@@ -99,7 +100,6 @@
 				left: 0;
 				width: 100%;
 				height: 48px;
-				z-index: 2;
 			}
 
 			.components-custom-select-control__menu {
@@ -108,7 +108,6 @@
 				top: 47px;
 				width: 100%;
 				margin: 0;
-				z-index: 3;
 
 				border: 1px solid #e0e0e0;
 			}
