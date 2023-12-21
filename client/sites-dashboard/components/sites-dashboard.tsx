@@ -115,6 +115,12 @@ const HiddenSitesMessageContainer = styled.div( {
 	textAlign: 'center',
 } );
 
+//const MenuItemWrapper = styled.div( {
+//	'&:focus, &:hover': {
+//		fill: 'var(--color-text-inverted)',
+//	},
+//} );
+
 const HiddenSitesMessage = styled.div( {
 	marginBlockEnd: '1em',
 } );
@@ -148,6 +154,13 @@ const ManageAllDomainsButton = styled( Button )`
 const DownloadIcon = styled( Icon )`
 	margin-right: 8px;
 	vertical-align: bottom;
+`;
+
+const hoverStyles = css`
+	&:hover,
+	&:focus {
+		fill: var( --color-text-inverted );
+	}
 `;
 
 const SitesDashboardSitesList = createSitesListComponent();
@@ -221,6 +234,7 @@ export function SitesDashboard( {
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
+							className={ `${ hoverStyles }` }
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
