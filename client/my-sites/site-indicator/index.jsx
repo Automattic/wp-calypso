@@ -135,10 +135,10 @@ export class SiteIndicator extends Component {
 		);
 	}
 
-	resetWindowState() {
+	resetWindowState = () => {
 		window.scrollTo( 0, 0 );
 		this.setState( { expand: false } );
-	}
+	};
 
 	handleJetpackConnectionHealthSidebarLinkClick = () => {
 		const { siteIsAutomatedTransfer } = this.props;
