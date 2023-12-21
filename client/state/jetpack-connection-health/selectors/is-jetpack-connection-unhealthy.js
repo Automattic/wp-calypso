@@ -15,6 +15,6 @@ export default function isJetpackConnectionUnhealthy( state, siteId ) {
 
 	return (
 		true === siteState.connectionHealth.jetpack_connection_problem &&
-		false === siteState.connectionHealth.is_healthy
+		'' !== siteState.connectionHealth.error
 	);
 }

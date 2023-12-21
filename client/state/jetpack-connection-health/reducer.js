@@ -26,7 +26,6 @@ export const connectionHealth = withPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				jetpack_connection_problem: false,
-				is_healthy: true,
 				error: '',
 			};
 		}
@@ -35,6 +34,7 @@ export const connectionHealth = withPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				jetpack_connection_problem: true,
+				error: '',
 			};
 		}
 
@@ -44,7 +44,6 @@ export const connectionHealth = withPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				jetpack_connection_problem: true,
-				is_healthy: false,
 				error: errorCode,
 			};
 		}
