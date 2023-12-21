@@ -12,7 +12,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -98,19 +98,16 @@ class Site extends Component {
 
 		if ( ! isPreviewable ) {
 			this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_unpreviewable_clicked' );
-			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
 			return;
 		}
 
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_modifier_clicked' );
-			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
 			return;
 		}
 
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_mysites_sidebar_view_site_clicked' );
-		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
 		page( '/view/' + siteSlug );
 	};
 
@@ -284,6 +281,5 @@ function mapStateToProps( state, ownProps ) {
 }
 
 export default connect( mapStateToProps, {
-	recordGoogleEvent,
 	recordTracksEvent,
 } )( localize( Site ) );
