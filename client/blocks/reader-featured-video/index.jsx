@@ -1,3 +1,4 @@
+import { getUrlParts } from '@automattic/calypso-url';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { throttle } from 'lodash';
@@ -14,7 +15,6 @@ import {
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
 } from 'calypso/state/reader/posts/sizes';
 import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
-
 import './style.scss';
 
 const noop = () => {};
@@ -98,6 +98,8 @@ class ReaderFeaturedVideo extends Component {
 			thumbnailUrl,
 			autoplayIframe,
 			iframe,
+			imageWidth,
+			imageHeight,
 			translate,
 			allowPlaying,
 			className,
@@ -122,6 +124,8 @@ class ReaderFeaturedVideo extends Component {
 					fetched={ true }
 					isCompactPost={ isCompactPost }
 					hasExcerpt={ hasExcerpt }
+					imageWidth={ imageWidth }
+					imageHeight={ imageHeight }
 				>
 					{ allowPlaying && (
 						<img
@@ -175,11 +179,22 @@ const checkEmbedSizeDimensions = ( embed ) => {
 const mapStateToProps = ( state, ownProps ) => {
 	// Check if width and height are set for the embed
 	const videoEmbed = checkEmbedSizeDimensions( ownProps.videoEmbed );
+	const thumbnailUrl = getThumbnailForIframe( state, videoEmbed.src );
+	let imageWidth = videoEmbed.width;
+	let imageHeight = videoEmbed.height;
+	if ( videoEmbed.type === 'pocketcasts' ) {
+		// Pocket cast thumbnail width and height are passed in the thumbnailUrl as w and h query params
+		const { searchParams } = getUrlParts( thumbnailUrl );
+		imageWidth = searchParams.get( 'w' );
+		imageHeight = searchParams.get( 'h' );
+	}
 	return {
 		videoEmbed: videoEmbed,
 		iframe: checkEmbedSizeDimensions( ownProps.iframe )?.outerHTML,
 		autoplayIframe: checkEmbedSizeDimensions( ownProps.autoplayIframe )?.outerHTML,
-		thumbnailUrl: getThumbnailForIframe( state, videoEmbed.src ),
+		thumbnailUrl: thumbnailUrl,
+		imageWidth: imageWidth,
+		imageHeight: imageHeight,
 	};
 };
 
