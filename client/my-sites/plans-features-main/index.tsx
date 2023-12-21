@@ -520,6 +520,7 @@ const PlansFeaturesMain = ( {
 			selectedPlan,
 			selectedFeature,
 			showBiennialToggle,
+			showPlanSelectorDropdown,
 			kind: planTypeSelector,
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
@@ -540,6 +541,7 @@ const PlansFeaturesMain = ( {
 		isPlansInsideStepper,
 		isStepperUpgradeFlow,
 		showBiennialToggle,
+		showPlanSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
 	] );
 
