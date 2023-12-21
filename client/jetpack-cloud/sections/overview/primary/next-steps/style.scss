@@ -46,6 +46,10 @@
 			color: var(--studio-gray-80);
 		}
 
+		&.completed .checklist-item__text {
+			text-decoration: line-through;
+		}
+
 		&.completed.enabled:hover,
 		&.pending:hover,
 		&.completed.enabled > a:focus,
