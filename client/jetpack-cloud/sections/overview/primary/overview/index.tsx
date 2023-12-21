@@ -3,24 +3,38 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import IntroCards from '../intro-cards';
+import NextSteps from '../next-steps';
 
 import './style.scss';
 
 export default function Overview() {
 	const translate = useTranslate();
 
-	const [ hideIntroCards, setHideIntroCards ] = useState( () => {
-		const rawPref = localStorage.getItem( 'jetpack_manage_hide_intro_cards' ) ?? 'false';
+	const getPrefFromLocalStorage = ( key: string ): boolean => {
+		const rawPref = localStorage.getItem( key ) ?? 'false';
 		try {
 			return JSON.parse( rawPref );
 		} catch {
 			return false;
 		}
-	} );
+	};
 
-	const finishHandler = () => {
+	const [ hideIntroCards, setHideIntroCards ] = useState( () =>
+		getPrefFromLocalStorage( 'jetpack_manage_hide_intro_cards' )
+	);
+
+	const [ hideNextSteps, setHideNextSteps ] = useState( () =>
+		getPrefFromLocalStorage( 'jetpack_manage_hide_next_steps' )
+	);
+
+	const introCardFinishHandler = (): void => {
 		setHideIntroCards( true );
 		localStorage.setItem( 'jetpack_manage_hide_intro_cards', JSON.stringify( true ) );
+	};
+
+	const nextStepsDismissHandler = (): void => {
+		setHideNextSteps( true );
+		localStorage.setItem( 'jetpack_manage_hide_next_steps', JSON.stringify( true ) );
 	};
 
 	return (
@@ -28,7 +42,7 @@ export default function Overview() {
 			<DocumentHead title={ translate( 'Overview' ) } />
 			{ ! hideIntroCards && (
 				<Card>
-					<IntroCards onFinish={ finishHandler } />
+					<IntroCards onFinish={ introCardFinishHandler } />
 				</Card>
 			) }
 			{ /*<Card className="overview__steps">*/ }
