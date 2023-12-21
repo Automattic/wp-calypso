@@ -106,11 +106,12 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
 		const editorParent = await this.editor.parent();
+		const settingsPanel = editorParent.locator( panel );
 		// This is a temporary workaround for the fact that the tab button
 		// selectors changed in v17.3.0. The oldTabLocator can be removed once
 		// the new version is deployed to all environments.
-		const newTabLocator = editorParent.getByRole( 'tab', { name: tabName, exact: true } );
-		const oldTabLocator = editorParent.getByLabel( tabName );
+		const newTabLocator = settingsPanel.getByRole( 'tab', { name: tabName } ).first();
+		const oldTabLocator = settingsPanel.getByRole( 'button', { name: tabName } ).first();
 
 		await newTabLocator.or( oldTabLocator ).click();
 	}
