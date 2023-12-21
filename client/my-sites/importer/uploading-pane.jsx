@@ -83,7 +83,7 @@ export class UploadingPane extends PureComponent {
 	}
 
 	getMessage = () => {
-		const { importerState } = this.props.importerStatus;
+		const { importerState, importerFileType } = this.props.importerStatus;
 		const { filename, percentComplete = 0 } = this.props;
 
 		switch ( importerState ) {
@@ -128,6 +128,28 @@ export class UploadingPane extends PureComponent {
 				);
 			}
 			case appStates.UPLOAD_SUCCESS:
+				if ( importerFileType === 'playground' ) {
+					return (
+						<div className="importer-upload-warning">
+							<p>
+								{ this.props.translate(
+									'You seem to have uploaded a Playground file.{{br/}}' +
+										'Please go {{a}}here{{/a}} to try the import again.',
+									{
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href={ `/setup/import-focused/importerWordpress?siteSlug=${ this.props.site.slug }&option=content` }
+												/>
+											),
+										},
+									}
+								) }{ ' ' }
+							</p>
+						</div>
+					);
+				}
 				return (
 					<div>
 						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>

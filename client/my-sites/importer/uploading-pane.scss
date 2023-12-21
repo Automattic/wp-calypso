@@ -58,6 +58,10 @@
 	&.importer-upload-failure {
 		color: var(--color-error);
 	}
+
+	.importer-upload-warning {
+		color: var(--color-warning);
+	}
 }
 
 .importer__upload-progress {
