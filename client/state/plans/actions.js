@@ -45,7 +45,6 @@ export const plansRequestFailureAction = ( error ) => {
  * Action creator to request WordPress.com plans: REQUEST
  * @returns {Object} action object
  */
-export const requestPlans = ( coupon ) => ( {
+export const requestPlans = () => ( {
 	type: PLANS_REQUEST,
-	coupon,
 } );
