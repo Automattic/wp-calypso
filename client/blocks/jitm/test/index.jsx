@@ -51,7 +51,7 @@ describe( 'DefaultTemplate JITM', () => {
 		};
 		render(
 			<Provider store={ store }>
-				<QueryClientProvider queryClient={ queryClient }>
+				<QueryClientProvider client={ queryClient }>
 					<DefaultTemplate { ...mockProps } />
 				</QueryClientProvider>
 			</Provider>
