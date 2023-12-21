@@ -1,9 +1,11 @@
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
+import classNames from 'classnames';
 import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from 'react';
 
 type Props = {
 	children: ( isStuck: boolean ) => ReactNode;
+	className?: string; // class to apply to the sticky container
 	stickyClass?: string; // class to apply when the element is "stuck"
 	element?: ElementType; // which element to render, defaults to div
 	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
@@ -24,7 +26,14 @@ const Container = styled.div`
 `;
 
 export function StickyContainer( props: Props ) {
-	const { stickyOffset = 0, stickyClass = '', element = 'div', disabled = false, children } = props;
+	const {
+		className,
+		stickyOffset = 0,
+		stickyClass = '',
+		element = 'div',
+		disabled = false,
+		children,
+	} = props;
 
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
@@ -94,7 +103,7 @@ export function StickyContainer( props: Props ) {
 				ref={ stickyRef }
 				stickyOffset={ stickyOffset }
 				disabled={ disabled }
-				className={ isStuck ? stickyClass : '' }
+				className={ classNames( { [ stickyClass ]: isStuck }, className ) }
 			>
 				{ children( isStuck ) }
 			</Container>

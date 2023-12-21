@@ -777,7 +777,10 @@ const PlansFeaturesMain = ( {
 				{ isPlansGridReady && (
 					<>
 						{ ! hidePlanSelector && (
-							<StickyContainer stickyClass="is-sticky-plan-type-selector">
+							<StickyContainer
+								stickyClass="is-sticky-plan-type-selector"
+								className="plans-features-main__plan-type-selector-sticky-container"
+							>
 								{ ( isStuck: boolean ) => {
 									return (
 										<div className="plans-features-main__plan-type-selector">

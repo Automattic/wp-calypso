@@ -227,3 +227,10 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 		}
 	}
 }
+
+// TODO: Include inline comment to match custom breakpoint conventions above
+@mixin plan-type-selector-custom-mobile-breakpoint() {
+	@media ( max-width: $plans-2023-small-breakpoint ) {
+		@content;
+	}
+}
