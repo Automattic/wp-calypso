@@ -2,6 +2,8 @@ import {
 	findFirstSimilarPlanKey,
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
+	getPlan,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -39,7 +41,8 @@ const GoogleAnalyticsSimpleForm = ( {
 } ) => {
 	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
-		'Connect your site to Google Analytics in seconds with the Premium plan'
+		'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
+		{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 	);
 
 	useEffect( () => {

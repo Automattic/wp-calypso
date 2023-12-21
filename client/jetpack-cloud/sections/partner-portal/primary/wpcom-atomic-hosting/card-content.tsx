@@ -5,11 +5,14 @@ import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
+import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { useDispatch } from 'calypso/state';
+import { addQueryArgs } from 'calypso/lib/url';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import FeatureItem from './feature-item';
 import './style.scss';
 
@@ -38,6 +41,7 @@ export default function CardContent( {
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
 	const { data: agencyProducts } = useProductsQuery();
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
 	const getLogo = ( planSlug: string ) => {
 		switch ( planSlug ) {
@@ -109,7 +113,13 @@ export default function CardContent( {
 		return {
 			title: plan?.getTitle?.().toString() || '',
 			description: getProductTagline( planSlug ) || '',
-			price: formatCurrency( agencyProduct?.amount || 0, 'USD', { stripZeros: true } ),
+			price: formatCurrency(
+				parseFloat( agencyProduct?.amount as string ) || 0,
+				agencyProduct?.currency || 'USD',
+				{
+					stripZeros: true,
+				}
+			),
 			interval: 'month',
 			wpcomFeatures: planFeaturesObject.map( ( feature ) => ( {
 				text: ( feature?.getTitle?.() as string ) || '',
@@ -132,6 +142,19 @@ export default function CardContent( {
 		const productSlug =
 			planSlug === PLAN_BUSINESS ? 'wpcom-hosting-business' : 'wpcom-hosting-ecommerce';
 
+		if ( paymentMethodRequired ) {
+			const nextStep = addQueryArgs(
+				{
+					product: productSlug,
+					source: 'create-site',
+				},
+				partnerPortalBasePath( '/payment-methods/add' )
+			);
+
+			page( nextStep );
+			return;
+		}
+
 		setIsRequesting( true );
 
 		dispatch( infoNotice( translate( 'A new WordPress.com site is on the way!' ) ) );
@@ -141,7 +164,7 @@ export default function CardContent( {
 
 		setIsRequesting( false );
 		page.redirect( `/dashboard?provisioning=true` );
-	}, [ dispatch, planSlug, issueLicenses, translate, setIsRequesting ] );
+	}, [ planSlug, paymentMethodRequired, setIsRequesting, dispatch, translate, issueLicenses ] );
 
 	if ( ! plan ) {
 		return null;

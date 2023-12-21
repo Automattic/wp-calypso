@@ -68,7 +68,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 	return (
 		<div className="import__upgrade-plan">
-			<div className="import__heading-center">
+			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
 					{ subTitleText ||
@@ -103,7 +103,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 							transparent={ ! isAddingTrial }
 							onClick={ onFreeTrialClick }
 						>
-							{ translate( 'Try 7-days for free' ) }
+							{ translate( 'Try 7 days for free' ) }
 						</Button>
 						{ ! isEligibleForTrialPlan && (
 							<small>

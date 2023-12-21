@@ -15,6 +15,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -42,6 +43,7 @@ const StatsPurchasePage = ( {
 } ) => {
 	const translate = useTranslate();
 	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -54,8 +56,13 @@ const StatsPurchasePage = ( {
 		getSiteOption( state, siteId, 'is_commercial' )
 	) as boolean;
 
-	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, supportCommercialUse } =
-		useStatsPurchases( siteId );
+	const {
+		isRequestingSitePurchases,
+		isFreeOwned,
+		isPWYWOwned,
+		isCommercialOwned,
+		supportCommercialUse,
+	} = useStatsPurchases( siteId );
 
 	useEffect( () => {
 		if ( ! siteSlug ) {
@@ -69,6 +76,30 @@ const StatsPurchasePage = ( {
 			page.redirect( trafficPageUrl );
 		}
 	}, [ siteSlug, isSiteJetpackNotAtomic ] );
+
+	useEffect( () => {
+		// track different upgrade sources
+		let triggeredEvent;
+
+		switch ( query?.from ) {
+			case 'calypso-stats-tier-upgrade-notice':
+				triggeredEvent = 'calypso_stats_tier_upgrade_notice_upgrade_button_clicked';
+				break;
+			case 'jetpack-stats-tier-upgrade-notice':
+				triggeredEvent = 'jetpack_odyssey_stats_tier_upgrade_notice_upgrade_button_clicked';
+				break;
+			case 'jetpack-stats-tier-upgrade-usage-section':
+				triggeredEvent = 'jetpack_odyssey_stats_tier_usage_bar_upgrade_button_clicked';
+				break;
+			case 'calypso-stats-tier-upgrade-usage-section':
+				triggeredEvent = 'calypso_stats_tier_usage_bar_upgrade_button_clicked';
+				break;
+		}
+
+		if ( triggeredEvent ) {
+			recordTracksEvent( triggeredEvent );
+		}
+	}, [ siteSlug, query, query?.from ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
@@ -107,15 +138,18 @@ const StatsPurchasePage = ( {
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
 	// Redirect to commercial is there is the query param is set and the site doesn't have commercial license yet
-	const redirectToCommercial = query?.productType === 'commercial' && ! supportCommercialUse;
+	const redirectToCommercial = ! isTierUpgradeSliderEnabled
+		? query?.productType === 'commercial' && ! supportCommercialUse
+		: query?.productType === 'commercial'; // allow multiple visit to upgrade commercial tier.
 	// Redirect to personal is there is the query param is set, the site doesn't have personal license yet, and it's not redirecting to commercial
 	const redirectToPersonal =
 		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
 	// Whether it's forced to redirect to a product
 	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
+	const allowCommercialTierUpgrade = isTierUpgradeSliderEnabled && isCommercialOwned;
 	// We show purchase page if there is no plan owned or if we are forcing a product redirect
-	const showPurchasePage = noPlanOwned || isForceProductRedirect;
+	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
 
 	return (
 		<Main fullWidthLayout>
@@ -124,6 +158,17 @@ const StatsPurchasePage = ( {
 				path="/stats/purchase/:site"
 				title="Stats > Purchase"
 				from={ query.from ?? '' }
+				// properties={
+				// 	isTierUpgradeSliderEnabled
+				// 		? {
+				// 				variant:
+				// 					( ! isForceProductRedirect && isCommercial ) || redirectToCommercial
+				// 						? 'commercial'
+				// 						: 'personal',
+				// 				is_upgrade: isCommercialOwned,
+				// 		  }
+				// 		: null
+				// }
 			/>
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {

@@ -19,6 +19,7 @@ const selectors = {
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
+	editPaymentStep: 'button[aria-label="Edit the payment method"]',
 	removeCouponButton: ( coupon: string ) =>
 		`button[aria-label="Remove Coupon: ${ coupon } from cart"]`,
 	saveOrderButton: 'button[aria-label="Save your order"]',
@@ -258,9 +259,19 @@ export class CartCheckoutPage {
 	 * @param {string} cardHolderName Name of the card holder associated with the payment method.
 	 */
 	async selectSavedCard( cardHolderName: string ): Promise< void > {
+		// If the account has a saved card, the payment method step may
+		// automatically collapse with the first saved card automatically
+		// selected. So in order to select a different card, we need to click
+		// the "Edit" button on the payment method step. There are cases where
+		// the step will not be collapsed, however, so this will only trigger
+		// if the edit button is visible.
 		const selector = this.page.locator( selectors.existingCreditCard( cardHolderName ) ).first();
-
-		await selector.click();
+		try {
+			await selector.click();
+		} catch ( error ) {
+			await this.page.click( selectors.editPaymentStep );
+			await selector.click();
+		}
 	}
 
 	/**

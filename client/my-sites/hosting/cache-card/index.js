@@ -2,11 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
+import { Icon, reusableBlock as cacheIcon } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import MaterialIcon from 'calypso/components/material-icon';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -152,7 +152,7 @@ export const CacheCard = ( {
 	//autorenew
 	return (
 		<Card className="cache-card">
-			<MaterialIcon icon="autorenew" size={ 32 } />
+			<Icon class="card-icon" icon={ cacheIcon } size={ 32 } />
 			<CardHeading id="cache" size={ 20 }>
 				{ translate( 'Cache' ) }
 			</CardHeading>

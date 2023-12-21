@@ -12,6 +12,7 @@
 		{ "path": "../calypso-products" },
 		{ "path": "../i18n-utils" },
 		{ "path": "../shopping-cart" },
-		{ "path": "../format-currency" }
+		{ "path": "../format-currency" },
+		{ "path": "../js-utils" }
 	]
 }

@@ -4,7 +4,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { FC, useEffect } from 'react';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
+import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
+import { LivePreviewUpgradeModal } from './upgrade-modal';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
 import { getUnlock } from './utils';
 
@@ -18,32 +20,15 @@ const NOTICE_ID = 'wpcom-live-preview/notice';
  * @see https://github.com/Automattic/wp-calypso/issues/82218
  */
 const LivePreviewNotice: FC< {
+	dashboardLink?: string;
 	previewingThemeName?: string;
-} > = ( { previewingThemeName } ) => {
-	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
-	const { set: setPreferences } = useDispatch( 'core/preferences' );
+} > = ( { dashboardLink, previewingThemeName } ) => {
+	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
 
-	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
-	const dashboardLink =
-		unlock &&
-		siteEditorStore &&
-		unlock( siteEditorStore ).getSettings().__experimentalDashboardLink;
+	useHideTemplatePartHint();
 
 	useEffect( () => {
-		// Do nothing in the Post Editor context.
-		if ( ! siteEditorStore ) {
-			return;
-		}
-		if ( ! previewingThemeName ) {
-			removeNotice( NOTICE_ID );
-			return;
-		}
-
-		// Suppress the "Looking for template parts?" notice in the Site Editor sidebar.
-		// The preference name is defined in https://github.com/WordPress/gutenberg/blob/d47419499cd58e20db25c370cdbf02ddf7cffce0/packages/edit-site/src/components/sidebar-navigation-screen-main/template-part-hint.js#L9.
-		setPreferences( 'core', 'isTemplatePartMoveHintVisible', false );
-
-		createWarningNotice(
+		createInfoNotice(
 			sprintf(
 				// translators: %s: theme name
 				__(
@@ -65,26 +50,42 @@ const LivePreviewNotice: FC< {
 			}
 		);
 		return () => removeNotice( NOTICE_ID );
-	}, [
-		siteEditorStore,
-		dashboardLink,
-		setPreferences,
-		createWarningNotice,
-		removeNotice,
-		previewingThemeName,
-	] );
+	}, [ dashboardLink, createInfoNotice, removeNotice, previewingThemeName ] );
 	return null;
 };
 
 const LivePreviewNoticePlugin = () => {
+	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const previewingTheme = usePreviewingTheme();
 	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( {
 		previewingTheme,
 	} );
-	if ( canPreviewButNeedUpgrade ) {
-		return <LivePreviewUpgradeNotice { ...{ previewingTheme, upgradePlan } } />;
+	const dashboardLink = useSelect(
+		( select ) =>
+			unlock &&
+			select( 'core/edit-site' ) &&
+			unlock( siteEditorStore ).getSettings().__experimentalDashboardLink,
+		[ siteEditorStore ]
+	);
+
+	// Do nothing in the Post Editor context.
+	if ( ! siteEditorStore ) {
+		return null;
 	}
-	return <LivePreviewNotice { ...{ previewingThemeName: previewingTheme.name } } />;
+	// Do nothing if the user is NOT previewing a theme.
+	if ( ! previewingTheme.name ) {
+		return null;
+	}
+
+	if ( canPreviewButNeedUpgrade ) {
+		return (
+			<>
+				<LivePreviewUpgradeModal { ...{ themeId: previewingTheme.id as string, upgradePlan } } />
+				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
+			</>
+		);
+	}
+	return <LivePreviewNotice { ...{ dashboardLink, previewingThemeName: previewingTheme.name } } />;
 };
 
 const registerLivePreviewPlugin = () => {

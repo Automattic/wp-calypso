@@ -1,5 +1,3 @@
-@import "~calypso/blocks/import/style/base";
-
 .import__error-message {
 	.onboarding-title,
 	.onboarding-subtitle {
@@ -17,6 +15,7 @@
 		margin: 1.5rem 0;
 
 		button {
+			border-radius: 4px;
 			margin-bottom: 0.5rem;
 		}
 	}

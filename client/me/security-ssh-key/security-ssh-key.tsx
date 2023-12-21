@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import { Button, CompactCard, Dialog, LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
@@ -78,7 +79,6 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const [ sshKeyNameToUpdate, setSSHKeyNameToUpdate ] = useState( '' );
 	const [ oldSSHFingerprint, setOldSSHFingerprint ] = useState( '' );
 	const [ showDialog, setShowDialog ] = useState( false );
-
 	const { __ } = useI18n();
 
 	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
@@ -191,8 +191,13 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 						) }
 					</p>
 					<p>
-						{ __(
-							'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site.'
+						{ sprintf(
+							// translators: %1$s is the short-form name of the Business plan, %2$s is the short-form name of the eCommerce plan.
+							__(
+								'Once added, attach the SSH key to a site with a %1$s or %2$s plan to enable SSH key authentication for that site.'
+							),
+							getPlan( PLAN_BUSINESS )?.getTitle() || '',
+							getPlan( PLAN_ECOMMERCE )?.getTitle() || ''
 						) }
 					</p>
 					<p style={ isLoading || hasKeys ? { marginBlockEnd: 0 } : undefined }>

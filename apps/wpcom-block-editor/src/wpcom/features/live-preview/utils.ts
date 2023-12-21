@@ -4,6 +4,10 @@ import { getQueryArg } from '@wordpress/url';
 export const WOOCOMMERCE_THEME = 'woocommerce';
 export const PREMIUM_THEME = 'premium';
 
+/**
+ * Get unlock API from Gutenberg.
+ * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
+ */
 export const getUnlock = () => {
 	/**
 	 * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.

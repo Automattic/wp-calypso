@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
@@ -303,34 +304,39 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
-			isJetpack,
-			isWhiteLogin,
-			isJetpackWooCommerceFlow,
+			action,
+			currentQuery,
+			fromSite,
+			isAnchorFmSignup,
 			isFromMigrationPlugin,
-			isP2Login,
-			wccomFrom,
+			isGravPoweredClient,
+			isGravPoweredLoginPage,
+			isJetpack,
+			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
+			isP2Login,
+			isPartnerSignup,
+			isSignupExistingAccount,
+			isSocialFirst,
+			isWhiteLogin,
+			isWoo,
+			isWooCoreProfilerFlow,
 			linkingSocialService,
 			oauth2Client,
 			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
-			fromSite,
-			isAnchorFmSignup,
-			isPartnerSignup,
-			isWoo,
-			action,
-			currentQuery,
-			isGravPoweredClient,
-			isGravPoweredLoginPage,
-			isWooCoreProfilerFlow,
-			isSignupExistingAccount,
+			wccomFrom,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
+
+		if ( isSocialFirst ) {
+			headerText = translate( 'Log in to WordPress.com' );
+		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
 			headerText = translate( 'Log in to update your payment details and renew your subscription' );
@@ -377,26 +383,8 @@ class Login extends Component {
 			if ( isWoo ) {
 				if ( isPartnerSignup ) {
 					headerText = translate( 'Log in to your account' );
-				} else if ( wccomFrom ) {
-					preHeader = (
-						<Fragment>
-							{ 'cart' === wccomFrom ? (
-								<WooCommerceConnectCartHeader />
-							) : (
-								<div className="login__woocommerce-wrapper">
-									<div className={ classNames( 'login__woocommerce-logo' ) }>
-										<svg width={ 200 } viewBox="0 0 1270 170">
-											<AsyncLoad
-												require="calypso/components/jetpack-header/woocommerce"
-												darkColorScheme={ false }
-												placeholder={ null }
-											/>
-										</svg>
-									</div>
-								</div>
-							) }
-						</Fragment>
-					);
+				} else if ( wccomFrom === 'cart' ) {
+					preHeader = <WooCommerceConnectCartHeader />;
 					headerText = translate( 'Log in with a WordPress.com account' );
 					postHeader = (
 						<p className="login__header-subtitle">
@@ -418,26 +406,26 @@ class Login extends Component {
 					);
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
+					const poweredByWpCom =
+						wccomFrom === 'nux'
+							? translate( 'All Woo Express stores are powered by WordPress.com!' )
+							: translate( 'All Woo stores are powered by WordPress.com!' );
+					const accountSelectionOrLoginToContinue = this.showContinueAsUser()
+						? translate( "First, select the account you'd like to use." )
+						: translate(
+								"Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+								{
+									components: {
+										signupLink: <a href={ this.getSignupUrl() } />,
+										br: <br />,
+									},
+								}
+						  );
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ this.showContinueAsUser()
-								? translate(
-										"All Woo stores are powered by WordPress.com!{{br/}}First, select the account you'd like to use.",
-										{
-											components: {
-												br: <br />,
-											},
-										}
-								  )
-								: translate(
-										"All Woo stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
-										{
-											components: {
-												signupLink: <a href={ this.getSignupUrl() } />,
-												br: <br />,
-											},
-										}
-								  ) }
+							{ poweredByWpCom }
+							<br />
+							{ accountSelectionOrLoginToContinue }
 						</p>
 					);
 				}
@@ -603,6 +591,39 @@ class Login extends Component {
 		);
 	}
 
+	renderToS() {
+		const { isSocialFirst, translate, twoFactorEnabled } = this.props;
+
+		if ( ! isSocialFirst || twoFactorEnabled ) {
+			return null;
+		}
+
+		const tos = translate(
+			'Just a little reminder that by continuing with any of the options below, ' +
+				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			{
+				components: {
+					tosLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					privacyLink: (
+						<a
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
+
+		return <div className="login__form-subheader-terms">{ tos }</div>;
+	}
+
 	renderNotice() {
 		const { requestNotice } = this.props;
 
@@ -642,6 +663,8 @@ class Login extends Component {
 			currentQuery,
 			isGravPoweredLoginPage,
 			isSignupExistingAccount,
+			isSocialFirst,
+			loginButtons,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -773,6 +796,8 @@ class Login extends Component {
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
+				isSocialFirst={ isSocialFirst }
+				loginButtons={ loginButtons }
 			/>
 		);
 	}
@@ -783,6 +808,7 @@ class Login extends Component {
 
 	render() {
 		const { isJetpack, oauth2Client, locale } = this.props;
+
 		return (
 			<div
 				className={ classNames( 'login', {
@@ -795,6 +821,8 @@ class Login extends Component {
 				<ErrorNotice locale={ locale } />
 
 				{ this.renderNotice() }
+
+				{ this.renderToS() }
 
 				{ this.renderContent() }
 

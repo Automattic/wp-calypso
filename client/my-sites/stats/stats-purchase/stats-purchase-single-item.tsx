@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import StatsCommercialUpgradeSlider from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
 import {
@@ -15,7 +16,6 @@ import {
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
-import TierUpgradeSlider from './stats-purchase-tier-upgrade-slider';
 import {
 	MIN_STEP_SPLITS,
 	DEFAULT_STARTING_FRACTION,
@@ -125,28 +125,37 @@ Thanks\n\n`;
 	// Currently displaying below the flow to maintain existing behaviour.
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
+	const handleSliderChanged = ( value: number ) => {
+		setPurchaseTierQuantity( value );
+	};
+
 	return (
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
-			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 			{ ! isTierUpgradeSliderEnabled && (
-				<ButtonComponent
-					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
-					onClick={ () =>
-						gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-					}
-				>
-					{ translate( 'Get Stats' ) }
-				</ButtonComponent>
+				<>
+					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
+					<ButtonComponent
+						variant="primary"
+						primary={ isWPCOMSite ? true : undefined }
+						onClick={ () =>
+							gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+						}
+					>
+						{ translate( 'Get Stats' ) }
+					</ButtonComponent>
+				</>
 			) }
 			{ isTierUpgradeSliderEnabled && (
 				<>
-					<TierUpgradeSlider
+					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
-						setPurchaseTierQuantity={ setPurchaseTierQuantity }
+						analyticsEventName={ `${
+							isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+						}_stats_purchase_commercial_slider_clicked` }
+						onSliderChange={ handleSliderChanged }
 					/>
 					<ButtonComponent
 						variant="primary"
@@ -163,7 +172,7 @@ Thanks\n\n`;
 							} )
 						}
 					>
-						{ translate( 'Get Stats' ) }
+						{ translate( 'Purchase' ) }
 					</ButtonComponent>
 				</>
 			) }

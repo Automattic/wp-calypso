@@ -1,4 +1,4 @@
-import { Onboard } from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN, isAssemblerSupported } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { ASSEMBLER_FIRST_FLOW } from '@automattic/onboarding';
@@ -69,9 +69,14 @@ const assemblerFirstFlow: Flow = {
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PATTERN_ASSEMBLER,
+			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
+			STEPS.PLANS,
+			STEPS.DOMAINS,
+			STEPS.SITE_LAUNCH,
+			STEPS.CELEBRATION,
 		];
 	},
 
@@ -83,7 +88,7 @@ const assemblerFirstFlow: Flow = {
 		);
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { siteSlug, siteId } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -114,11 +119,10 @@ const assemblerFirstFlow: Flow = {
 				return `/site-editor/${ selectedSiteSlug }?${ params }`;
 			}
 
-			params = new URLSearchParams( {
-				siteSlug: selectedSiteSlug,
-				siteId: selectedSiteId,
-			} );
-
+			// Carry over the current search parameters
+			params = new URLSearchParams( window.location.search );
+			params.set( 'siteSlug', selectedSiteSlug );
+			params.set( 'siteId', selectedSiteId );
 			if ( isNewSite ) {
 				params.set( 'isNewSite', 'true' );
 			}
@@ -126,7 +130,10 @@ const assemblerFirstFlow: Flow = {
 			return navigate( `patternAssembler?${ params }` );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
+		const submit = async (
+			providedDependencies: ProvidedDependencies = {},
+			...results: string[]
+		) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
@@ -155,17 +162,34 @@ const assemblerFirstFlow: Flow = {
 					return handleSelectSite( providedDependencies );
 				}
 
+				case 'freePostSetup': {
+					return navigate( 'launchpad' );
+				}
+
 				case 'processing': {
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
 						return navigate( 'error' );
 					}
 
 					// If we just created a new site, navigate to the assembler step.
-					if ( providedDependencies?.siteSlug && ! providedDependencies?.blogLaunched ) {
+					if ( providedDependencies?.siteSlug && ! providedDependencies?.isLaunched ) {
 						return handleSelectSite( {
 							...providedDependencies,
 							isNewSite: 'true',
 						} );
+					}
+
+					// If the user's site has just been launched.
+					if ( providedDependencies?.siteSlug && providedDependencies?.isLaunched ) {
+						await saveSiteSettings( providedDependencies?.siteSlug, {
+							launchpad_screen: 'off',
+						} );
+						return navigate( 'celebration-step' );
+					}
+
+					if ( providedDependencies?.goToCheckout ) {
+						// Do nothing and wait for checkout redirect
+						return;
 					}
 
 					const params = new URLSearchParams( {
@@ -179,6 +203,37 @@ const assemblerFirstFlow: Flow = {
 				case 'patternAssembler': {
 					return navigate( 'processing' );
 				}
+
+				case 'launchpad': {
+					return navigate( 'processing' );
+				}
+
+				case 'plans': {
+					await updateLaunchpadSettings( siteId, {
+						checklist_statuses: { plan_completed: true },
+					} );
+
+					return navigate( 'launchpad' );
+				}
+
+				case 'domains': {
+					await updateLaunchpadSettings( siteId, {
+						checklist_statuses: { domain_upsell_deferred: true },
+					} );
+
+					if ( providedDependencies?.freeDomain && providedDependencies?.domainName ) {
+						// We have to use the site id since the domain is changed.
+						return navigate( `launchpad?siteId=${ site?.ID }` );
+					}
+
+					return navigate( 'launchpad' );
+				}
+
+				case 'site-launch':
+					return navigate( 'processing' );
+
+				case 'celebration-step':
+					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		};
 
@@ -188,8 +243,17 @@ const assemblerFirstFlow: Flow = {
 					return navigate( 'new-or-existing-site' );
 				}
 
+				case 'freePostSetup':
+				case 'domains': {
+					return navigate( 'launchpad' );
+				}
+
 				case 'patternAssembler': {
-					return window.location.assign( `/themes/${ siteSlug }` );
+					const params = new URLSearchParams( window.location.search );
+					params.delete( 'siteSlug' );
+					params.delete( 'siteId' );
+					setSelectedSite( null );
+					return navigate( `site-picker?${ params }` );
 				}
 			}
 		};
@@ -225,7 +289,6 @@ const assemblerFirstFlow: Flow = {
 		// We also need to support both query param and path suffix localized urls
 		// depending on where the user is coming from.
 		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
 		const queryLocaleSlug = getLocaleFromQueryParam();
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;

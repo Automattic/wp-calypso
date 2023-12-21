@@ -1,5 +1,9 @@
 import { PRODUCT_JETPACK_STATS_YEARLY } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
+import {
+	default as usePlanUsageQuery,
+	PlanUsage,
+} from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { PriceTierListItemProps, StatsPlanTierUI } from './types';
@@ -34,7 +38,7 @@ const MOCK_PLAN_DATA = [
 	},
 	{
 		price: '$89.99',
-		views: '1M++',
+		views: null,
 		extension: true,
 		per_unit_fee: 1799,
 		description: '$25/month per million views if views exceed 1M',
@@ -61,26 +65,45 @@ function transformTier( tier: PriceTierListItemProps ): StatsPlanTierUI {
 	};
 }
 
-function getPlanTiersForSite( siteId: number | null, tiers: StatsPlanTierUI[] ): StatsPlanTierUI[] {
-	// TODO: Determine if we need to filter tiers locally.
-	// Accept the fill list of tiers and filter out options
-	// that don't apply to the current site (ie: only upgrades, not downgrades)
-	// Could happen on the server, in which case, we could remove this step.
+function filterPurchasedTiers(
+	availableTiers: StatsPlanTierUI[],
+	usageData: PlanUsage | undefined
+): StatsPlanTierUI[] {
+	// Filter out already purchased tiers.
+	let tiers: StatsPlanTierUI[];
+
+	if ( ! usageData || usageData?.views_limit === null || usageData?.views_limit === 0 ) {
+		// No tier has been purchased.
+		tiers = availableTiers;
+	} else {
+		tiers = availableTiers.filter( ( availableTier ) => {
+			return (
+				availableTier.views === null || ( availableTier?.views as number ) > usageData?.views_limit
+			);
+		} );
+	}
+
 	return tiers;
 }
 
-function useAvailableUpgradeTiers( siteId: number | null ): StatsPlanTierUI[] {
+function useAvailableUpgradeTiers(
+	siteId: number | null,
+	shouldFilterPurchasedTiers = true
+): StatsPlanTierUI[] {
 	// 1. Get the tiers. Default to yearly pricing.
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	) as ProductsList.ProductsListItem | null;
+	const { data: usageData } = usePlanUsageQuery( siteId );
 
 	let tiersForUi = commercialProduct?.price_tier_list?.map( transformTier );
 
 	tiersForUi = tiersForUi?.length > 0 ? tiersForUi : MOCK_PLAN_DATA;
 
-	// 2. Filter based on current plan. (this could also happen on the server)
-	tiersForUi = getPlanTiersForSite( siteId, tiersForUi );
+	// 2. Filter based on current plan.
+	if ( shouldFilterPurchasedTiers ) {
+		tiersForUi = filterPurchasedTiers( tiersForUi, usageData );
+	}
 
 	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;

@@ -264,6 +264,7 @@ export default function WPCheckout( {
 		responseCart,
 		applyCoupon,
 		updateLocation,
+		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -330,11 +331,16 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
+	const showToSFoldableCard = useToSFoldableCard();
 	const shouldCollapseLastStep = useShouldCollapseLastStep();
-	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
+	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
-		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+		return responseCart?.products
+			?.filter(
+				( p ) => ! ( p.product_slug && excluded3PDAccountProductSlugs.includes( p.product_slug ) )
+			)
+			.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
 	} );
 
 	const has100YearPlan = cartHas100YearPlan( responseCart );
@@ -504,6 +510,7 @@ export default function WPCheckout( {
 							completeStepContent={
 								<WPCheckoutOrderReview
 									removeProductFromCart={ removeProductFromCart }
+									replaceProductInCart={ replaceProductInCart }
 									couponFieldStateProps={ couponFieldStateProps }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }

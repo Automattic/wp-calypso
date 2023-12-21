@@ -30,17 +30,30 @@ const FontPairingVariationPreview = () => {
 	const [ textLetterSpacing = '-0.15px' ] = useGlobalStyle( 'typography.letterSpacing' );
 	const [ textFontWeight = 400 ] = useGlobalStyle( 'typography.fontWeight' );
 
-	const [ headingFontFamily = textFontFamily ] = useGlobalStyle(
+	const [ baseHeadingFontFamily = textFontFamily ] = useGlobalStyle(
 		'elements.heading.typography.fontFamily'
 	);
-	const [ headingFontStyle = textFontStyle ] = useGlobalStyle(
+	const [ baseHeadingFontStyle = textFontStyle ] = useGlobalStyle(
 		'elements.heading.typography.fontStyle'
 	);
-	const [ headingFontWeight = textFontWeight ] = useGlobalStyle(
+	const [ baseHeadingFontWeight = textFontWeight ] = useGlobalStyle(
 		'elements.heading.typography.fontWeight'
 	);
-	const [ headingLetterSpacing = textLetterSpacing ] = useGlobalStyle(
+	const [ baseHeadingLetterSpacing = textLetterSpacing ] = useGlobalStyle(
 		'elements.heading.typography.letterSpacing'
+	);
+
+	const [ headingFontFamily = baseHeadingFontFamily ] = useGlobalStyle(
+		'elements.h1.typography.fontFamily'
+	);
+	const [ headingFontStyle = baseHeadingFontStyle ] = useGlobalStyle(
+		'elements.h1.typography.fontStyle'
+	);
+	const [ headingFontWeight = baseHeadingFontWeight ] = useGlobalStyle(
+		'elements.h1.typography.fontWeight'
+	);
+	const [ headingLetterSpacing = baseHeadingLetterSpacing ] = useGlobalStyle(
+		'elements.h1.typography.letterSpacing'
 	);
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();
@@ -49,8 +62,7 @@ const FontPairingVariationPreview = () => {
 	const defaultHeight = isDesktop ? FONT_PREVIEW_LARGE_HEIGHT : FONT_PREVIEW_HEIGHT;
 	const ratio = width ? width / defaultWidth : 1;
 	const normalizedHeight = Math.ceil( defaultHeight * ratio );
-	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
-	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
+
 	const getFontFamilyName = ( targetFontFamily: string ) => {
 		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );
 		return fontFamily?.name || fontFamily?.fontFamily || targetFontFamily;
@@ -65,6 +77,12 @@ const FontPairingVariationPreview = () => {
 		() => getFontFamilyName( headingFontFamily ),
 		[ headingFontFamily, fontFamilies ]
 	);
+
+	const externalFontFamilies = fontFamilies
+		.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG )
+		.filter( ( { fontFamily } ) => [ textFontFamily, headingFontFamily ].includes( fontFamily ) );
+
+	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
 
 	const handleOnLoad = () => setIsLoaded( true );
 

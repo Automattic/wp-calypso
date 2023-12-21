@@ -1,3 +1,4 @@
+import i18n from 'i18n-calypso';
 import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -7,8 +8,10 @@ import { OdieSendMessageButton } from './send-message-input';
 
 import './style.scss';
 
-export const WAPUU_ERROR_MESSAGE =
-	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
+export const WAPUU_ERROR_MESSAGE = i18n.translate(
+	"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
+	{ comment: 'Error message when Wapuu fails to send a message', textOnly: true }
+);
 
 const ForwardedChatMessage = forwardRef( ChatMessage );
 

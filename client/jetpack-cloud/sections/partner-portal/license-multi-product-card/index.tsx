@@ -7,7 +7,8 @@ import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question'
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription, useURLQueryParams } from '../hooks';
-import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../lib';
+import { LICENSE_INFO_MODAL_ID } from '../lib';
+import getProductShortTitle from '../lib/get-product-short-title';
 import getProductVariantShortTitle from '../lib/get-product-variant-short-title';
 import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
@@ -16,7 +17,6 @@ import ProductPriceWithDiscount from '../primary/product-price-with-discount-inf
 import '../license-product-card/style.scss';
 
 interface Props {
-	tabIndex: number;
 	products: APIProductFamilyProduct[];
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -24,19 +24,24 @@ interface Props {
 		value: APIProductFamilyProduct,
 		replace?: APIProductFamilyProduct
 	) => void | null;
+	onVariantChange?: ( value: APIProductFamilyProduct ) => void;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
+	quantity?: number;
+	selectedOption: APIProductFamilyProduct;
 }
 
 export default function LicenseMultiProductCard( props: Props ) {
 	const {
-		tabIndex,
 		products,
 		isSelected,
 		isDisabled,
 		onSelectProduct,
+		onVariantChange,
 		suggestedProduct,
 		hideDiscount,
+		quantity,
+		selectedOption,
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -65,8 +70,8 @@ export default function LicenseMultiProductCard( props: Props ) {
 	const onKeyDown = useCallback(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( e: any ) => {
-			// Spacebar
-			if ( 32 === e.keyCode ) {
+			// Enter
+			if ( 13 === e.keyCode ) {
 				onSelect();
 			}
 		},
@@ -82,7 +87,9 @@ export default function LicenseMultiProductCard( props: Props ) {
 				onSelect();
 			}
 		}
-	}, [ onSelect, product.slug, suggestedProduct ] );
+		// Do not add onSelect to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ product.slug, suggestedProduct ] );
 
 	const onShowLightbox = useCallback(
 		( e: React.MouseEvent< HTMLElement > ) => {
@@ -125,9 +132,16 @@ export default function LicenseMultiProductCard( props: Props ) {
 			}
 
 			setProduct( selectedProduct );
+			onVariantChange?.( selectedProduct );
 		},
-		[ isDisabled, isSelected, onSelectProduct, product, products ]
+		[ isDisabled, isSelected, onSelectProduct, onVariantChange, product, products ]
 	);
+
+	useEffect( () => {
+		if ( selectedOption ) {
+			setProduct( selectedOption );
+		}
+	}, [ selectedOption ] );
 
 	return (
 		<>
@@ -141,29 +155,39 @@ export default function LicenseMultiProductCard( props: Props ) {
 				role="checkbox"
 				aria-checked={ isSelected }
 				aria-disabled={ isDisabled }
-				tabIndex={ tabIndex }
+				tabIndex={ 0 }
 			>
 				<div className="license-product-card__inner">
 					<div className="license-product-card__details">
 						<div className="license-product-card__main">
 							<div className="license-product-card__heading">
 								<h3 className="license-product-card__title">
-									{ getProductTitle( product.name, true ) }
+									{ getProductShortTitle( product, true ) }
 								</h3>
 
 								<MultipleChoiceQuestion
+									name={ `${ product.family_slug }-variant-options` }
 									question={ translate( 'Select variant:' ) }
 									answers={ variantOptions }
-									selectedAnswerId={ product?.slug }
+									selectedAnswerId={ product.slug }
 									onAnswerChange={ onChangeOption }
 									shouldShuffleAnswers={ false }
 								/>
+
+								<div className="license-product-card__pricing is-compact">
+									<ProductPriceWithDiscount
+										product={ product }
+										hideDiscount={ hideDiscount }
+										quantity={ quantity }
+										compact
+									/>
+								</div>
 
 								<div className="license-product-card__description">{ productDescription }</div>
 
 								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
 									<LicenseLightboxLink
-										productName={ getProductTitle( product.name ) }
+										productName={ getProductShortTitle( product ) }
 										onClick={ onShowLightbox }
 									/>
 								) }
@@ -173,16 +197,13 @@ export default function LicenseMultiProductCard( props: Props ) {
 								{ isSelected && <Gridicon icon="checkmark" /> }
 							</div>
 						</div>
-
-						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
-						</div>
 					</div>
 				</div>
 			</div>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ product }
+					quantity={ quantity }
 					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }

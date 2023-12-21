@@ -9,8 +9,10 @@ export type QueryObject = {
 };
 
 export type StepNavigator = {
+	flow: string | null;
 	supportLinkModal?: boolean;
 	goToIntentPage?: () => void;
+	goToGoalsPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;
 	goToDashboardPage?: () => void;
@@ -32,21 +34,37 @@ export interface ImportError {
 export interface ImportJob {
 	importerId: string;
 	importerState: string;
+	importerFileType: 'content' | 'playground' | 'jetpack_backup';
 	statusMessage?: string;
 	type: string;
 	site: { ID: number };
-	customData: { [ key: string ]: any };
+	customData: {
+		[ key: string ]: any;
+		current_step?:
+			| 'convert_to_atomic'
+			| 'download_archive'
+			| 'unpack_file'
+			| 'preprocess'
+			| 'process_files'
+			| 'recreate_database'
+			| 'postprocess_database'
+			| 'verify_site_integrity'
+			| 'clean_up';
+	};
 	errorData: {
 		type: string;
 		description: string;
 		code?: string;
 	};
-	progress: {
-		page: { completed: number; total: number };
-		post: { completed: number; total: number };
-		comment: { completed: number; total: number };
-		attachment: { completed: number; total: number };
-	};
+	progress: ImportJobProgress;
+}
+
+export interface ImportJobProgress {
+	page: { completed: number; total: number };
+	post: { completed: number; total: number };
+	comment: { completed: number; total: number };
+	attachment: { completed: number; total: number };
+	steps: { completed: number; total: number };
 }
 
 export interface ImportJobParams {

@@ -1,6 +1,7 @@
 import { createElement } from 'react';
 import {
 	SECTION_BLOGGING_PROMPT,
+	SECTION_BLOGANUARY_BLOGGING_PROMPT,
 	TASK_GO_MOBILE_IOS,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import {
@@ -9,7 +10,7 @@ import {
 } from 'calypso/my-sites/customer-home/locations/card-components';
 
 const getAdditionalPropsForCard = ( { card, siteId } ) => {
-	if ( card === SECTION_BLOGGING_PROMPT ) {
+	if ( card === SECTION_BLOGGING_PROMPT || card === SECTION_BLOGANUARY_BLOGGING_PROMPT ) {
 		return {
 			siteId,
 			showMenu: true,

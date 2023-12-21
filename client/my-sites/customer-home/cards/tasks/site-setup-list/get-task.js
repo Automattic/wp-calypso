@@ -1,4 +1,3 @@
-import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -200,13 +199,14 @@ export const getTask = (
 				: translate(
 						"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				  );
-			const descriptionOnCompleted = createInterpolateElement(
-				/* translators: pressing <Link> will redirect user to Settings -> Privacy where they can change the site visibilidty */
-				translate(
-					'Your site is already live. You can change your site visibility in <Link>privacy options</Link> at any time.'
-				),
+			const descriptionOnCompleted = translate(
+				'Your site is already live. You can change your site visibility in {{link}}privacy options{{/link}} at any time.',
 				{
-					Link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+					components: {
+						link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+					},
+					comment:
+						'pressing <Link> will redirect the user to Settings -> Privacy where they can change the site visibility',
 				}
 			);
 

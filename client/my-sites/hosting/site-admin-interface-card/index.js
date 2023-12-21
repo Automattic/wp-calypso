@@ -12,10 +12,16 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	errorNotice,
+	plainNotice,
+	removeNotice,
+	successNotice,
+} from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
+const changeLoadingNoticeId = 'admin-interface-change-loading';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
 
@@ -32,13 +38,21 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 	const removeAllNotices = () => {
 		dispatch( removeNotice( successNoticeId ) );
 		dispatch( removeNotice( failureNoticeId ) );
+		dispatch( removeNotice( changeLoadingNoticeId ) );
 	};
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
 			removeAllNotices();
+			dispatch(
+				plainNotice( translate( 'Changing admin interface style…' ), {
+					id: changeLoadingNoticeId,
+					showDismiss: false,
+				} )
+			);
 		},
 		onSuccess() {
+			dispatch( removeNotice( changeLoadingNoticeId ) );
 			dispatch(
 				successNotice( translate( 'Admin interface style changed.' ), {
 					id: successNoticeId,
@@ -46,6 +60,7 @@ const SiteAdminInterfaceCard = ( { siteId, adminInterface } ) => {
 			);
 		},
 		onError: () => {
+			dispatch( removeNotice( changeLoadingNoticeId ) );
 			dispatch(
 				errorNotice( translate( 'Failed to change admin interface style.' ), {
 					id: failureNoticeId,

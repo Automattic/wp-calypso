@@ -14,11 +14,11 @@ import {
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
+	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -52,7 +52,6 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import useIsFreePlanCustomDomainUpsellEnabled from 'calypso/my-sites/plans-features-main/hooks/use-is-free-plan-custom-domain-upsell-enabled';
 import { FeaturesGrid, ComparisonGrid, PlanTypeSelector } from 'calypso/my-sites/plans-grid';
 import useGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
@@ -70,17 +69,14 @@ import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
+import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
-import { useFreeHostingTrialAssignment } from './hooks/use-free-hosting-trial-assignment';
-import useIsFreeDomainFreePlanUpsellEnabled from './hooks/use-is-free-domain-free-plan-upsell-enabled';
 import useObservableForOdie from './hooks/use-observable-for-odie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
-import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
-import type { IntervalType } from './types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
@@ -123,6 +119,7 @@ export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSignup?: boolean;
+	isCustomDomainAllowedOnFreePlan?: boolean;
 	plansWithScroll?: boolean;
 	customerType?: string;
 	basePlansPath?: string;
@@ -138,8 +135,8 @@ export interface PlansFeaturesMainProps {
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
-	intervalType?: IntervalType;
-	planTypeSelector?: 'customer' | 'interval';
+	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
+	planTypeSelector?: 'interval';
 	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
@@ -235,6 +232,7 @@ const PlansFeaturesMain = ( {
 	hidePlansFeatureComparison = false,
 	hideUnavailableFeatures = false,
 	isInSignup = false,
+	isCustomDomainAllowedOnFreePlan = false,
 	isPlansInsideStepper = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
@@ -247,7 +245,6 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
@@ -272,17 +269,8 @@ const PlansFeaturesMain = ( {
 			: null
 	);
 
-	const isCustomDomainAllowedOnFreePlan = useIsFreePlanCustomDomainUpsellEnabled(
-		flowName,
-		paidDomainName
-	);
-	const isPlanUpsellEnabledOnFreeDomain = useIsFreeDomainFreePlanUpsellEnabled(
-		flowName,
-		paidDomainName
-	);
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
-		isPlanUpsellEnabledOnFreeDomain,
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,
@@ -432,8 +420,6 @@ const PlansFeaturesMain = ( {
 		} );
 	}, [] );
 
-	const { isLoadingHostingTrialExperiment, isAssignedToHostingTrialExperiment } =
-		useFreeHostingTrialAssignment( intent );
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
@@ -446,8 +432,8 @@ const PlansFeaturesMain = ( {
 		selectedPlan,
 		sitePlanSlug,
 		hideEnterprisePlan,
-		usePlanUpgradeabilityCheck,
-		eligibleForFreeHostingTrial: isAssignedToHostingTrialExperiment && eligibleForFreeHostingTrial,
+		useCheckPlanAvailabilityForPurchase,
+		eligibleForFreeHostingTrial,
 		showLegacyStorageFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		storageAddOns,
@@ -517,8 +503,7 @@ const PlansFeaturesMain = ( {
 		}, [] as GridPlan[] );
 	}, [ filteredPlansForPlanFeatures, planFeaturesForFeaturesGrid ] );
 
-	// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
-	let hidePlanSelector = 'customer' === planTypeSelector && isDisplayingPlansNeededForFeature();
+	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
@@ -580,10 +565,7 @@ const PlansFeaturesMain = ( {
 		if ( isInSignup ) {
 			actionOverrides = {
 				loggedInFreePlan: {
-					status:
-						isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
-							? 'blocked'
-							: 'enabled',
+					status: 'enabled',
 				},
 			};
 		}
@@ -592,10 +574,7 @@ const PlansFeaturesMain = ( {
 			if ( isFreePlan( sitePlanSlug ) ) {
 				actionOverrides = {
 					loggedInFreePlan: {
-						status:
-							isPlanUpsellEnabledOnFreeDomain.isLoading || resolvedSubdomainName.isLoading
-								? 'blocked'
-								: 'enabled',
+						status: 'enabled',
 						callback: () => {
 							page.redirect( `/add-ons/${ siteSlug }` );
 						},
@@ -625,7 +604,6 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		sitePlanSlug,
 		intentFromProps,
-		isPlanUpsellEnabledOnFreeDomain.isLoading,
 		resolvedSubdomainName.isLoading,
 		translate,
 		domainFromHomeUpsellFlow,
@@ -731,8 +709,7 @@ const PlansFeaturesMain = ( {
 		}
 	);
 
-	const isPlansGridReady =
-		! isLoadingGridPlans && ! resolvedSubdomainName.isLoading && ! isLoadingHostingTrialExperiment;
+	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	return (
 		<>
@@ -788,35 +765,18 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ intent === 'plans-paid-media' &&
-					( isPlanUpsellEnabledOnFreeDomain.isLoading ? (
-						<FreePlanSubHeader>
-							{ translate( `Unlock a powerful bundle of features. Or {{loader}}{{/loader}}`, {
+				{ intent === 'plans-paid-media' && (
+					<FreePlanSubHeader>
+						{ translate(
+							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+							{
 								components: {
-									loader: (
-										<LoadingPlaceholder
-											display="inline-block"
-											width="155px"
-											minHeight="0px"
-											height="15px"
-											borderRadius="2px"
-										/>
-									),
+									link: <Button onClick={ () => handleUpgradeClick() } borderless />,
 								},
-							} ) }
-						</FreePlanSubHeader>
-					) : (
-						<FreePlanSubHeader>
-							{ translate(
-								`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-								{
-									components: {
-										link: <Button onClick={ () => handleUpgradeClick() } borderless />,
-									},
-								}
-							) }
-						</FreePlanSubHeader>
-					) ) }
+							}
+						) }
+					</FreePlanSubHeader>
+				) }
 				{ isDisplayingPlansNeededForFeature() && (
 					<SecondaryFormattedHeader siteSlug={ siteSlug } />
 				) }
@@ -850,7 +810,6 @@ const PlansFeaturesMain = ( {
 									isLaunchPage={ isLaunchPage }
 									onUpgradeClick={ handleUpgradeClick }
 									selectedFeature={ selectedFeature }
-									selectedPlan={ selectedPlan }
 									siteId={ siteId }
 									intervalType={ intervalType }
 									hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -904,10 +863,6 @@ const PlansFeaturesMain = ( {
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
-												gridPlanForSpotlight={ gridPlanForSpotlight }
-												paidDomainName={ paidDomainName }
-												generatedWPComSubdomain={ resolvedSubdomainName }
-												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 												isInSignup={ isInSignup }
 												isLaunchPage={ isLaunchPage }
 												onUpgradeClick={ handleUpgradeClick }
@@ -919,7 +874,6 @@ const PlansFeaturesMain = ( {
 												currentSitePlanSlug={ sitePlanSlug }
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
-												showLegacyStorageFeature={ showLegacyStorageFeature }
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ masterbarHeight }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
@@ -946,7 +900,7 @@ const PlansFeaturesMain = ( {
 								) }
 							</div>
 						</div>
-						{ isEnglishLocale && showPressablePromoBanner && (
+						{ showPressablePromoBanner && (
 							<AsyncLoad
 								require="./components/pressable-promo-banner"
 								onShow={ onShowPressablePromoBanner }

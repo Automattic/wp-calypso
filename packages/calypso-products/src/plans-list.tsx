@@ -780,7 +780,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
-	getTitle: () => i18n.translate( 'Personal' ),
+	getTitle: () =>
+		// translators: Starter is a plan name
+		i18n.translate( 'Starter' ),
 	getAudience: () => i18n.translate( 'Best for personal use' ),
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
@@ -953,7 +955,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
-	getTitle: () => i18n.translate( 'Commerce' ),
+	getTitle: () =>
+		// translators: Entrepreneur is a plan name
+		i18n.translate( 'Entrepreneur' ),
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -974,10 +978,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				'all-in-one online store experience. This plan includes premium integrations and is extendable, ' +
 				'so it’ll grow with you as your business grows.'
 		),
-	getTagline: () =>
-		i18n.translate(
-			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
-		),
+	getTagline: function () {
+		return i18n.translate(
+			'Learn more about everything included with %(planName)s and take advantage of its powerful marketplace features.',
+			{ args: { planName: this.getTitle() } }
+		);
+	},
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
@@ -1334,7 +1340,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
-	getTitle: () => i18n.translate( 'Premium' ),
+	getTitle: () =>
+		// translators: Explorer is a plan name
+		i18n.translate( 'Explorer' ),
 	getAudience: () => i18n.translate( 'Best for freelancers' ),
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
@@ -1393,10 +1401,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getNewsletterDescription: () =>
-		i18n.translate(
-			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
-		),
+	getTagline: function () {
+		return i18n.translate(
+			'Take your Newsletter further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.',
+			{ args: { planName: this.getTitle() } }
+		);
+	},
 	getNewsletterSignupFeatures: () => [
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_STYLE_CUSTOMIZATION,
@@ -1413,10 +1423,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_ANALYTICS,
 		FEATURE_PREMIUM_THEMES,
 	],
-	getLinkInBioDescription: () =>
-		i18n.translate(
-			'Take your site further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
-		),
+	getLinkInBioDescription: function () {
+		return i18n.translate(
+			'Take your site further, faster. Get everything included in %(planName)s, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.',
+			{ args: { planName: this.getTitle() } }
+		) as string;
+	},
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
@@ -1550,7 +1562,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
-	getTitle: () => i18n.translate( 'Business' ),
+	getTitle: () =>
+		// translators: Creator is a plan name
+		i18n.translate( 'Creator' ),
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
@@ -1577,10 +1591,12 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				' %(nmOfGB)s GB storage, and the ability to remove WordPress.com branding.',
 			{ args: { nmOfGB: isEnabled( 'plans/updated-storage-labels' ) ? '50' : '200' } }
 		),
-	getTagline: () =>
-		i18n.translate(
-			'Learn more about everything included with Business and take advantage of its professional features.'
-		),
+	getTagline: function () {
+		return i18n.translate(
+			'Learn more about everything included with %(planName)s and take advantage of its powerful marketplace features.',
+			{ args: { planName: this.getTitle() } }
+		);
+	},
 	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page

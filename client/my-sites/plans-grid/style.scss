@@ -840,6 +840,13 @@ body.is-section-signup.is-white-signup,
 	}
 }
 
+.plans-features-main__comparison-grid-container {
+	.plan-comparison-grid {
+		.plan-comparison-grid__feature-group-row.is-storage-feature {
+			align-items: flex-start;
+		}
+	}
+}
 
 .plan-comparison-grid {
 	.plan-features-2023-gridrison__actions {

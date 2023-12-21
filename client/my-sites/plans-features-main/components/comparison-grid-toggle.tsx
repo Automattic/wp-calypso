@@ -17,8 +17,6 @@ const ComparisonGridToggle = forwardRef<
 		display: flex;
 		justify-content: center;
 		margin-top: 32px;
-		margin-left: 20px;
-		margin-right: 20px;
 
 		button {
 			background: var( --studio-white );
@@ -33,6 +31,7 @@ const ComparisonGridToggle = forwardRef<
 			line-height: 20px;
 			padding: 0 24px;
 			width: 100%;
+			max-width: 440px;
 			transition: border-color 0.15s ease-out;
 
 			${ plansBreakSmall( css`

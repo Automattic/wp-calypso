@@ -160,7 +160,8 @@ class CurrentPlan extends Component {
 		const { selectedSiteId, selectedSite, showJetpackChecklist, translate } = this.props;
 		const isLoading = this.isLoading();
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
-		const planTitle = getPlan( currentPlanSlug ).getTitle();
+		const currentPlan = getPlan( currentPlanSlug );
+		const planTitle = currentPlan ? currentPlan.getTitle() : '';
 		const planFeaturesHeader =
 			currentPlanSlug === PLAN_100_YEARS
 				? translate( 'Features included in your 100-Year Plan' )

@@ -15,13 +15,8 @@ jest.mock( 'calypso/state/plans/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getSitePlanRawPrice: jest.fn(),
-	isPlanAvailableForPurchase: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getByPurchaseId: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
 		usePlans: jest.fn(),
@@ -29,29 +24,30 @@ jest.mock( '@automattic/data-stores', () => ( {
 		useIntroOffers: jest.fn(),
 		useCurrentPlan: jest.fn(),
 	},
+	Purchases: {
+		useSitePurchaseById: jest.fn(),
+	},
 } ) );
+jest.mock( '../use-check-plan-availability-for-purchase', () => jest.fn() );
 
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { Plans, Purchases } from '@automattic/data-stores';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import {
-	getSitePlanRawPrice,
-	isPlanAvailableForPurchase,
-} from 'calypso/state/sites/plans/selectors';
+import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import usePricingMetaForGridPlans from '../data-store/use-pricing-meta-for-grid-plans';
+import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
 
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		Plans.useSitePlans.mockImplementation( () => ( {
-			isFetching: false,
+			isLoading: false,
 			data: null,
 		} ) );
-		getByPurchaseId.mockImplementation( () => undefined );
+		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.usePlans.mockImplementation( () => ( {
-			isFetching: false,
+			isLoading: false,
 			data: {
 				[ PLAN_PREMIUM ]: {
 					billPeriod: 365,
@@ -74,7 +70,11 @@ describe( 'usePricingMetaForGridPlans', () => {
 		getSelectedSiteId.mockImplementation( () => 100 );
 		getPlanPrices.mockImplementation( () => null );
 		getSitePlanRawPrice.mockImplementation( () => 300 );
-		isPlanAvailableForPurchase.mockImplementation( () => false );
+		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+			return {
+				[ PLAN_PREMIUM ]: true,
+			};
+		} );
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
@@ -112,7 +112,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 			planDiscountedRawPrice: 100,
 		} ) );
 		getSitePlanRawPrice.mockImplementation( () => null );
-		isPlanAvailableForPurchase.mockImplementation( () => false );
+		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+			return {
+				[ PLAN_PREMIUM ]: false,
+				[ PLAN_PERSONAL ]: false,
+			};
+		} );
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PERSONAL ],
@@ -149,7 +154,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 			planDiscountedRawPrice: 100,
 		} ) );
 		getSitePlanRawPrice.mockImplementation( () => null );
-		isPlanAvailableForPurchase.mockImplementation( () => true );
+		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+			return {
+				[ PLAN_PREMIUM ]: true,
+				[ PLAN_PERSONAL ]: true,
+			};
+		} );
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PERSONAL ],
@@ -187,7 +197,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 			planDiscountedRawPrice: 100,
 		} ) );
 		getSitePlanRawPrice.mockImplementation( () => null );
-		isPlanAvailableForPurchase.mockImplementation( () => true );
+		useCheckPlanAvailabilityForPurchase.mockImplementation( () => {
+			return {
+				[ PLAN_PREMIUM ]: true,
+				[ PLAN_PERSONAL ]: true,
+			};
+		} );
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PERSONAL ],

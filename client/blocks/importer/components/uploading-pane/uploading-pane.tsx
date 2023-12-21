@@ -6,7 +6,12 @@ import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
 import { UploadingPane as UploadingPaneBase } from 'calypso/my-sites/importer/uploading-pane';
 import { upload } from 'calypso/signup/icons';
-import { startMappingAuthors, startUpload, failPreUpload } from 'calypso/state/imports/actions';
+import {
+	startMappingAuthors,
+	startUpload,
+	startImporting,
+	failPreUpload,
+} from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
@@ -96,5 +101,5 @@ export default connect(
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
 	} ),
-	{ startMappingAuthors, startUpload, failPreUpload }
+	{ startMappingAuthors, startUpload, failPreUpload, startImporting }
 )( localize( UploadingPane ) );

@@ -241,6 +241,8 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 
 	const allowedHostsForRedirect = [
 		'wordpress.com',
+		'wpcalypso.wordpress.com',
+		'horizon.wordpress.com',
 		'calypso.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
@@ -267,6 +269,11 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 			) {
 				return false;
 			}
+			return true;
+		}
+
+		// Return true for *.calypso.live urls.
+		if ( /^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ) {
 			return true;
 		}
 
@@ -341,8 +348,9 @@ export function getRedirectFromPendingPage( {
 	saasRedirectUrl,
 	fromSiteSlug,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
-	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
+	const checkoutUrl = siteSlug ? `/checkout/${ siteSlug }` : '/checkout/no-site';
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
+	const errorUrl = `/checkout/failed-purchases`;
 
 	// If SaaS Product Redirect URL was passed then just return as redirect instruction so that
 	// we can redirect user immediately to vendor application.
@@ -398,13 +406,20 @@ export function getRedirectFromPendingPage( {
 			};
 		}
 
-		// If the processing status indicates that there was something wrong, it
-		// could be because the user has cancelled the payment, or because the
-		// payment failed after being authorized. Redirect users back to the
-		// checkout page so they can try again.
-		if ( ERROR === processingStatus || FAILURE === processingStatus ) {
+		// If the processing status indicates that there was something wrong,
+		// it could be because the user has cancelled the payment, or because
+		// the payment failed after being authorized. Redirect users back to
+		// the checkout page so they can try again on a failure or to a
+		// dedicated error page on an error.
+		if ( ERROR === processingStatus ) {
 			return {
-				url: defaultFailUrl,
+				url: errorUrl,
+				isError: true,
+			};
+		}
+		if ( FAILURE === processingStatus ) {
+			return {
+				url: checkoutUrl,
 				isError: true,
 			};
 		}
@@ -422,7 +437,7 @@ export function getRedirectFromPendingPage( {
 	// A HTTP error occured; we will send the user back to checkout.
 	if ( error ) {
 		return {
-			url: defaultFailUrl,
+			url: checkoutUrl,
 			isError: true,
 		};
 	}

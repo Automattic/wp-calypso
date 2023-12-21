@@ -51,6 +51,8 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	getIsLoadingCart,
 	getIsLivePreviewSupported,
+	getThemeTiers,
+	getThemeTier,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -3409,5 +3411,31 @@ describe( '#getIsLivePreviewSupported()', () => {
 			const isLivePreviewSupported = getIsLivePreviewSupported( baseState, 'pendant', 2916284 );
 			expect( isLivePreviewSupported ).toBe( true );
 		} );
+	} );
+} );
+
+describe( '#getThemeTiers', () => {
+	test( 'should return an empty object if the state is empty', () => {
+		const themeTiers = getThemeTiers( {} );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const themeTiers = getThemeTiers( { themes: { themeTiers: { free: {} } } } );
+		expect( themeTiers ).toEqual( { free: {} } );
+	} );
+} );
+describe( '#getThemeTier', () => {
+	const state = { themes: { themeTiers: { free: { foo: 'bar' } } } };
+	test( 'should return an empty object if the state is empty', () => {
+		const themeTiers = getThemeTier( {}, 'free' );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return an empty object if the tier is empty', () => {
+		const themeTiers = getThemeTier( state, null );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const themeTiers = getThemeTier( state, 'free' );
+		expect( themeTiers ).toEqual( { foo: 'bar' } );
 	} );
 } );

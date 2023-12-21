@@ -1,6 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { PATTERN_CATEGORIES } from '../constants';
+import { PATTERN_CATEGORIES, getPatternSourceSiteID } from '../constants';
 import type { Pattern } from '../types';
 
 const useDotcomPatterns = (
@@ -14,10 +15,21 @@ const useDotcomPatterns = (
 				path: `/ptk/patterns/${ lang }`,
 				method: 'GET',
 				apiVersion: '1.1',
-				query: new URLSearchParams( {
-					tags: 'assembler,assembler_priority',
-					categories: PATTERN_CATEGORIES.join( ',' ),
-				} ).toString(),
+				query: new URLSearchParams(
+					isEnabled( 'pattern-assembler/v2' )
+						? {
+								site: getPatternSourceSiteID(),
+								post_type: 'wp_block',
+						  }
+						: {
+								tags:
+									// Pages are fetched with assembler_priority.
+									// There are more pages tagged with assembler_page that still aren't offered in Assembler.
+									'assembler,assembler_priority',
+								categories: PATTERN_CATEGORIES.join( ',' ),
+								post_type: 'post',
+						  }
+				).toString(),
 			} );
 		},
 		...queryOptions,
