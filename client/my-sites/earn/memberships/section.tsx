@@ -9,6 +9,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { userCan } from 'calypso/lib/site/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
@@ -17,6 +18,7 @@ import {
 	getConnectUrlForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import CommissionFees from '../components/commission-fees';
 import { Query } from '../types';
 import {
 	ADD_TIER_PLAN_HASH,
@@ -48,6 +50,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		getConnectedAccountDescriptionForSiteId( state, site?.ID )
 	);
 	const connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
+
+	const { commission } = useSelector( ( state ) =>
+		getEarningsWithDefaultsForSiteId( state, site?.ID )
+	);
 
 	const navigateToLaunchpad = useCallback( () => {
 		const shouldGoToLaunchpad = query?.stripe_connect_success === 'launchpad';
@@ -114,27 +120,32 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						</div>
 					</Card>
 				) : (
-					<Card className="memberships__settings-link">
-						<div className="memberships__module-plans-content">
-							<div>
-								<div className="memberships__module-plans-title">
-									{ translate( 'Connect a Stripe account to start collecting payments.' ) }
-								</div>
-								{ connectedAccountDescription ? (
+					<>
+						<Card className="memberships__settings-link">
+							<div className="memberships__module-plans-content">
+								<div>
 									<div className="memberships__module-plans-title">
-										{ translate(
-											'Previously connected to Stripe account %(connectedAccountDescription)s',
-											{
-												args: {
-													connectedAccountDescription: connectedAccountDescription,
-												},
-											}
-										) }
+										{ translate( 'Connect a Stripe account to start collecting payments.' ) }
 									</div>
-								) : null }
+									{ connectedAccountDescription ? (
+										<div className="memberships__module-plans-title">
+											{ translate(
+												'Previously connected to Stripe account %(connectedAccountDescription)s',
+												{
+													args: {
+														connectedAccountDescription: connectedAccountDescription,
+													},
+												}
+											) }
+										</div>
+									) : null }
+								</div>
 							</div>
-						</div>
-					</Card>
+						</Card>
+						<p>
+							<CommissionFees commission={ commission } siteSlug={ site?.slug } />
+						</p>
+					</>
 				) }
 				<Dialog
 					className="memberships__stripe-disconnect-modal"
