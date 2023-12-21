@@ -3,7 +3,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
-import { Badge, Button, CompactCard, Gridicon } from '@automattic/components';
+import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -45,6 +45,7 @@ function ProductsList() {
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
+	const hasProducts = products.length > 0;
 
 	const hasDonationsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
@@ -163,6 +164,15 @@ function ProductsList() {
 						{ translate( 'Add a new payment plan' ) }
 					</Button>
 				</SectionHeader>
+			) }
+			{ hasLoadedFeatures && hasStripeFeature && ! hasProducts && (
+				<Card className="memberships__products-card">
+					<div className="memberships__products-card-content">
+						<div className="memberships__products-card-title">
+							{ translate( 'Set up a one-time offer or recurring payments plan.' ) }
+						</div>
+					</div>
+				</Card>
 			) }
 			{ hasLoadedFeatures &&
 				products
