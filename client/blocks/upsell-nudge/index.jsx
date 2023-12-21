@@ -91,7 +91,6 @@ export const UpsellNudge = ( {
 	isOneClickCheckoutEnabled = false,
 } ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-
 	const shouldNotDisplay =
 		isVip ||
 		! canManageSite ||
