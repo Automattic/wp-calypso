@@ -1,7 +1,7 @@
 import { Icon, starFilled, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useState, forwardRef, Ref, useEffect } from 'react';
+import { useContext, useState, forwardRef, Ref } from 'react';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
@@ -45,26 +45,21 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 		showLicenseInfo( license );
 	};
 
-	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		if ( urlParams.get( 'tour' ) === 'add-new-site' ) {
-			localStorage.setItem(
-				'jetpack-cloud-site-dashboard-add-new-site-tour-site-count',
-				JSON.stringify( items.length )
-			);
-		}
-	}, [ items ] );
-
 	const hasAddNewSiteTourPreference = useSelector( ( state ) =>
 		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour' )
 	);
-	const addNewSiteTourSiteCount =
-		parseInt(
-			localStorage.getItem( 'jetpack-cloud-site-dashboard-add-new-site-tour-site-count' ) ?? '0',
-			10
-		) ?? 0;
+
+	const latestJetpackConnectedSite = localStorage.getItem( 'latestJetpackConnectedSite' )
+		? localStorage.getItem( 'latestJetpackConnectedSite' )
+		: '';
+
 	const shouldRenderAddSiteTourStep2 =
-		! isLoading && hasAddNewSiteTourPreference && addNewSiteTourSiteCount < items.length;
+		hasAddNewSiteTourPreference && latestJetpackConnectedSite !== '';
+
+	const tourHTMLTarget =
+		items.length < 20
+			? 'tr.is-latest-jetpack-connected-site td:first-of-type'
+			: '.site-table__table th:first-of-type';
 
 	return (
 		<>
@@ -152,19 +147,15 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 					preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-2"
 					tours={ [
 						{
-							target: 'tr.is-latest-jetpack-connected-site td:first-of-type',
+							target: tourHTMLTarget,
 							popoverPosition: 'bottom right',
 							title: translate( '🎉 Your new site is here' ),
-							description: (
-								<>
-									{ translate( 'Check out your new site here. That was straightforward, right?' ) }
-									<br />
-									<br />
-									{ translate(
-										'Sites with jetpack installed will automatically appear in the site management view.'
-									) }
-								</>
-							),
+							description:
+								translate( 'Check out your new site here. That was straightforward, right? ' ) +
+								'\n\n' +
+								translate(
+									"You're now equipped to connect all your new sites to the site management view."
+								),
 							redirectOnButtonClick: '/overview',
 						},
 					] }
