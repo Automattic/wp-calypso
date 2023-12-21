@@ -1,18 +1,14 @@
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, ReactNode } from 'react';
-import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
+import { useState, useEffect, useCallback } from 'react';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SectionHeader from 'calypso/components/section-header';
-import { preventWidows } from 'calypso/lib/formatting';
 import { userCan } from 'calypso/lib/site/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
@@ -21,7 +17,6 @@ import {
 	getConnectUrlForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import CommissionFees from '../components/commission-fees';
 import { Query } from '../types';
 import {
 	ADD_TIER_PLAN_HASH,
@@ -54,10 +49,6 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	);
 	const connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
 
-	const { commission } = useSelector( ( state ) =>
-		getEarningsWithDefaultsForSiteId( state, site?.ID )
-	);
-
 	const navigateToLaunchpad = useCallback( () => {
 		const shouldGoToLaunchpad = query?.stripe_connect_success === 'launchpad';
 		const siteIntent = site?.options?.site_intent;
@@ -83,31 +74,68 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	function renderSettings() {
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Settings' ) } />
-				<Card
-					onClick={ () => setDisconnectedConnectedAccountId( connectedAccountId ) }
-					className="memberships__settings-link"
-				>
-					<div className="memberships__module-plans-content">
-						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon="link-break" />
-						</div>
-						<div>
-							<div className="memberships__module-settings-title">
-								{ translate( 'Disconnect Stripe Account' ) }
+				<SectionHeader label={ translate( 'Settings' ) }>
+					{ ! connectedAccountId && (
+						<Button
+							primary
+							compact
+							href={ connectUrl }
+							onClick={ () =>
+								dispatch( recordTracksEvent( 'calypso_memberships_stripe_connect_click' ) )
+							}
+						>
+							{ translate( 'Connect Stripe' ) }
+						</Button>
+					) }
+				</SectionHeader>
+				{ connectedAccountId ? (
+					<Card
+						onClick={ () => setDisconnectedConnectedAccountId( connectedAccountId ) }
+						className="memberships__settings-link"
+					>
+						<div className="memberships__module-plans-content">
+							<div className="memberships__module-plans-icon">
+								<Gridicon size={ 24 } icon="link-break" />
 							</div>
-							{ connectedAccountDescription ? (
-								<div className="memberships__module-settings-description">
-									{ translate( 'Connected to %(connectedAccountDescription)s', {
-										args: {
-											connectedAccountDescription: connectedAccountDescription,
-										},
-									} ) }
+							<div>
+								<div className="memberships__module-settings-title">
+									{ translate( 'Disconnect Stripe Account' ) }
 								</div>
-							) : null }
+								{ connectedAccountDescription ? (
+									<div className="memberships__module-settings-description">
+										{ translate( 'Connected to %(connectedAccountDescription)s', {
+											args: {
+												connectedAccountDescription: connectedAccountDescription,
+											},
+										} ) }
+									</div>
+								) : null }
+							</div>
 						</div>
-					</div>
-				</Card>
+					</Card>
+				) : (
+					<Card className="memberships__settings-link">
+						<div className="memberships__module-plans-content">
+							<div>
+								<div className="memberships__module-plans-title">
+									{ translate( 'Connect a Stripe account to start collecting payments.' ) }
+								</div>
+								{ connectedAccountDescription ? (
+									<div className="memberships__module-plans-title">
+										{ translate(
+											'Previously connected to Stripe account %(connectedAccountDescription)s',
+											{
+												args: {
+													connectedAccountDescription: connectedAccountDescription,
+												},
+											}
+										) }
+									</div>
+								) : null }
+							</div>
+						</div>
+					</Card>
+				) }
 				<Dialog
 					isVisible={ !! disconnectedConnectedAccountId }
 					buttons={ [
@@ -136,16 +164,6 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		);
 	}
 
-	function renderStripeConnected() {
-		return (
-			<div>
-				{ renderNotices() }
-				<ProductList />
-				{ renderSettings() }
-			</div>
-		);
-	}
-
 	function renderNotices() {
 		const stripe_connect_success = query?.stripe_connect_success;
 
@@ -162,13 +180,11 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			}
 
 			return (
-				! siteHasPlans && (
-					<Notice status="is-success" showDismiss={ false } text={ congratsText }>
-						<NoticeAction href={ `/earn/payments/${ site?.slug }` } icon="create">
-							{ translate( 'Add a payment plan' ) }
-						</NoticeAction>
-					</Notice>
-				)
+				<Notice status="is-success" showDismiss={ false } text={ congratsText }>
+					<NoticeAction href={ `/earn/payments/${ site?.slug }` } icon="create">
+						{ translate( 'Add a payment plan' ) }
+					</NoticeAction>
+				</Notice>
 			);
 		}
 
@@ -192,127 +208,18 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			);
 		}
 
+		if ( query?.stripe_connect_cancelled ) {
+			return (
+				<Notice
+					showDismiss={ false }
+					text={ translate(
+						'The attempt to connect to Stripe has been cancelled. You can connect again at any time.'
+					) }
+				/>
+			);
+		}
+
 		return null;
-	}
-
-	function renderOnboarding( cta: ReactNode, intro?: ReactNode | null ) {
-		return (
-			<Card>
-				<div className="memberships__onboarding-wrapper">
-					<div className="memberships__onboarding-column-info">
-						<h2 className="memberships__onboarding-header">
-							{ preventWidows( translate( 'Accept payments on your website.' ) ) }
-						</h2>
-						<p className="memberships__onboarding-paragraph">
-							{ preventWidows(
-								translate(
-									'Our payments blocks make it easy to add a buy button for digital goods or services, collect donations via a form, or limit access for specific content to subscribers-only.'
-								)
-							) }
-						</p>
-						<p className="memberships__onboarding-paragraph">
-							{ preventWidows(
-								translate(
-									'The Payment Button, Donations Form, and Premium Content blocks all require you to first connect your bank account details with our secure payment processor, Stripe.',
-									{
-										components: {
-											link: (
-												<a
-													href={ localizeUrl(
-														'https://wordpress.com/support/wordpress-editor/blocks/payments/#setting-up-payments'
-													) }
-												/>
-											),
-										},
-									}
-								)
-							) }
-						</p>
-						{ intro ? <p className="memberships__onboarding-paragraph">{ intro }</p> : null }
-						<p className="memberships__onboarding-paragraph">{ cta }</p>
-						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
-							<em>
-								{ preventWidows(
-									translate(
-										'All credit and debit card payments made through these blocks are securely and seamlessly processed by Stripe.'
-									)
-								) }
-							</em>
-						</p>
-					</div>
-					<div className="memberships__onboarding-column-image">
-						<img src={ paymentsImage } aria-hidden="true" alt="" />
-					</div>
-				</div>
-				<div className="memberships__onboarding-benefits">
-					<div>
-						<h3>{ translate( 'No plugin required' ) }</h3>
-						{ preventWidows(
-							translate(
-								'No additional installs or purchases. Simply connect your banking details with our payment processor, Stripe, and insert a block to get started.'
-							)
-						) }
-					</div>
-					<div>
-						<h3>{ translate( 'One-time and recurring options' ) }</h3>
-						{ preventWidows(
-							translate(
-								'Accept one-time, monthly, and yearly payments from your visitors. This is perfect for a single purchase or tip — or a recurring donation, membership fee, or subscription.'
-							)
-						) }
-					</div>
-					<div>
-						<h3>{ translate( 'Simple fees structure' ) }</h3>
-						<p>
-							<CommissionFees commission={ commission } siteSlug={ site?.slug } />
-						</p>
-						<p>{ preventWidows( translate( 'No fixed monthly or annual fees charged.' ) ) }</p>
-					</div>
-					<div>
-						<h3>{ translate( 'Join thousands of others' ) }</h3>
-						{ preventWidows(
-							translate(
-								'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
-							)
-						) }
-					</div>
-				</div>
-			</Card>
-		);
-	}
-
-	function renderConnectStripe() {
-		return (
-			<div>
-				{ query?.stripe_connect_cancelled && (
-					<Notice
-						showDismiss={ false }
-						text={ translate(
-							'The attempt to connect to Stripe has been cancelled. You can connect again at any time.'
-						) }
-					/>
-				) }
-				{ renderOnboarding(
-					<Button
-						primary={ true }
-						href={ connectUrl }
-						onClick={ () =>
-							dispatch( recordTracksEvent( 'calypso_memberships_stripe_connect_click' ) )
-						}
-					>
-						{ translate( 'Connect Stripe to Get Started' ) }{ ' ' }
-						<Gridicon size={ 18 } icon="external" />
-					</Button>,
-					connectedAccountDescription
-						? translate( 'Previously connected to Stripe account %(connectedAccountDescription)s', {
-								args: {
-									connectedAccountDescription: connectedAccountDescription,
-								},
-						  } )
-						: null
-				) }
-			</div>
-		);
 	}
 
 	useEffect( () => {
@@ -320,7 +227,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	}, [ navigateToLaunchpad ] );
 
 	if ( ! userCan( 'manage_options', site ) ) {
-		return renderOnboarding(
+		return (
 			<Notice
 				status="is-warning"
 				text={ translate( 'Only site administrators can edit Payments settings.' ) }
@@ -336,14 +243,16 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	return (
 		<div>
 			<QueryMembershipsSettings siteId={ site.ID } source={ source } />
-			{ connectedAccountId && renderStripeConnected() }
-			{ connectUrl && renderConnectStripe() }
-
 			{ ! connectedAccountId && ! connectUrl && (
 				<div className="earn__payments-loading">
 					<LoadingEllipsis />
 				</div>
 			) }
+			<div>
+				{ renderNotices() }
+				<ProductList />
+				{ renderSettings() }
+			</div>
 		</div>
 	);
 }
