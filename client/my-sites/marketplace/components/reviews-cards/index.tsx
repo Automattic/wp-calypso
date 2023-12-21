@@ -7,7 +7,6 @@ import {
 	ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { IAppState } from 'calypso/state/types';
 import { MarketplaceReviewCard } from './review-card';
 import './style.scss';
 
@@ -15,7 +14,12 @@ type MarketplaceReviewsCardsProps = { showMarketplaceReviews?: () => void } & Pr
 
 export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) => {
 	const translate = useTranslate();
-	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
+	const currentUserId = useSelector( getCurrentUserId );
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+		...props,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
 	const { data: reviews, error } = useMarketplaceReviewsQuery( { ...props, perPage: 2, page: 1 } );
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
@@ -26,9 +30,7 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 		return null;
 	}
 
-	// TODO: Double check this verification according what's being sent from the server
-	// Add a review card if the user has not left a review yet
-	const hasReview = reviews?.some( ( review ) => review.author === currentUserId );
+	const hasReview = userReviews.length > 0;
 	const addLeaveAReviewCard = ! hasReview && reviews.length < 2;
 
 	const addEmptyCard = reviews.length === 0;
