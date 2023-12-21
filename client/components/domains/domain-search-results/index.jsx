@@ -14,7 +14,9 @@ import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domai
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
+import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getRootDomain } from 'calypso/lib/domains/utils';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 
@@ -150,7 +152,11 @@ class DomainSearchResults extends Component {
 				offer = null;
 			}
 
-			let domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
+			let domainUnavailableMessage;
+
+			const domainArgument = ! isSubdomain( domain ) ? domain : getRootDomain( domain );
+
+			domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
 				? translate(
 						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
 						{
@@ -163,7 +169,7 @@ class DomainSearchResults extends Component {
 				: translate(
 						'{{strong}}%(domain)s{{/strong}} is already registered. {{a}}Do you own it?{{/a}}',
 						{
-							args: { domain },
+							args: { domain: domainArgument },
 							components: {
 								strong: <strong />,
 								a: (
@@ -178,11 +184,35 @@ class DomainSearchResults extends Component {
 						}
 				  );
 
+			if (
+				isSubdomain( domain ) &&
+				! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
+			) {
+				const rootDomain = getRootDomain( domain );
+				domainUnavailableMessage = translate(
+					'{{strong}}%(rootDomain)s{{/strong}} is already registered. Do you own {{strong}}%(rootDomain)s{{/strong}} and want to {{a}}{{strong}}connect %(domain)s{{/strong}}{{/a}} with WordPress.com?',
+					{
+						args: { rootDomain, domain },
+						components: {
+							strong: <strong />,
+							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a
+									href="#"
+									onClick={ this.props.onClickUseYourDomain }
+									data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+								/>
+							),
+						},
+					}
+				);
+			}
+
 			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
 				domainUnavailableMessage = translate(
 					'{{strong}}%(domain)s{{/strong}} is already registered. Do you own this domain? {{a}}Transfer it to WordPress.com{{/a}} now, or try another search.',
 					{
-						args: { domain },
+						args: { domain: domainArgument },
 						components: {
 							strong: <strong />,
 							a: (

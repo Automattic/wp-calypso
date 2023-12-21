@@ -16,7 +16,6 @@ import ProductPriceWithDiscount from '../primary/product-price-with-discount-inf
 import './style.scss';
 
 interface Props {
-	tabIndex: number;
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -30,7 +29,6 @@ interface Props {
 
 export default function LicenseProductCard( props: Props ) {
 	const {
-		tabIndex,
 		product,
 		isSelected,
 		isDisabled,
@@ -62,8 +60,8 @@ export default function LicenseProductCard( props: Props ) {
 
 	const onKeyDown = useCallback(
 		( e: any ) => {
-			// Spacebar
-			if ( 32 === e.keyCode ) {
+			// Enter
+			if ( 13 === e.keyCode ) {
 				onSelect();
 			}
 		},
@@ -115,7 +113,7 @@ export default function LicenseProductCard( props: Props ) {
 				onClick={ onSelect }
 				onKeyDown={ onKeyDown }
 				role={ isMultiSelect ? 'checkbox' : 'radio' }
-				tabIndex={ tabIndex }
+				tabIndex={ 0 }
 				aria-checked={ isSelected }
 				aria-disabled={ isDisabled }
 				className={ classNames( {

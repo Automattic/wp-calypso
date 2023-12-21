@@ -76,14 +76,14 @@ export class UploadingPane extends PureComponent {
 					break;
 				case 'playground':
 				case 'jetpack_backup':
-					this.props.startImporting( importerStatus );
+					// The startImporting action is dispatched from the onboarding flow
 					break;
 			}
 		}
 	}
 
 	getMessage = () => {
-		const { importerState } = this.props.importerStatus;
+		const { importerState, importerFileType } = this.props.importerStatus;
 		const { filename, percentComplete = 0 } = this.props;
 
 		switch ( importerState ) {
@@ -128,6 +128,28 @@ export class UploadingPane extends PureComponent {
 				);
 			}
 			case appStates.UPLOAD_SUCCESS:
+				if ( importerFileType === 'playground' ) {
+					return (
+						<div className="importer-upload-warning">
+							<p>
+								{ this.props.translate(
+									'Playground imports are not yet available through this form.{{br/}}' +
+										'Please head over to {{a}}this page{{/a}} to resume the import process.',
+									{
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href={ `/setup/import-focused/importerWordpress?siteSlug=${ this.props.site.slug }&option=content` }
+												/>
+											),
+										},
+									}
+								) }{ ' ' }
+							</p>
+						</div>
+					);
+				}
 				return (
 					<div>
 						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>

@@ -18,7 +18,7 @@ const WasThisHelpfulButtons = ( {
 	const THUMBS_UP_RATING_VALUE = 4;
 
 	const translate = useTranslate();
-	const { setMessageLikedStatus, botNameSlug, trackEvent } = useOdieAssistantContext();
+	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useOdieSendMessageFeedback();
 
 	const liked = message.liked === true;
@@ -37,7 +37,6 @@ const WasThisHelpfulButtons = ( {
 		}
 
 		trackEvent( 'calypso_odie_chat_message_action_feedback', {
-			bot_name_slug: botNameSlug,
 			action: 'feedback',
 			is_helpful: isHelpful,
 			message_id: message.message_id,

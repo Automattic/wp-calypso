@@ -38,6 +38,7 @@ import {
 	JETPACK_STARTER_UPGRADE_MAP,
 	is100Year,
 	isJetpackAISlug,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -51,7 +52,7 @@ import {
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, numberFormat } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -1211,6 +1212,18 @@ class ManagePurchase extends Component<
 				args: {
 					productName: getDisplayName( purchase ),
 					quantity: purchase.purchaseRenewalQuantity,
+				},
+			} );
+		}
+
+		if (
+			isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
+			purchase.purchaseRenewalQuantity
+		) {
+			return translate( '%(productName)s (%(quantity)s views per month)', {
+				args: {
+					productName: getDisplayName( purchase ),
+					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
 				},
 			} );
 		}

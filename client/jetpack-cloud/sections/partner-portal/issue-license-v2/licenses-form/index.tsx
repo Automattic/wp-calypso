@@ -231,7 +231,7 @@ export default function LicensesForm( {
 	const isSingleLicenseView = quantity === 1;
 
 	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
-		return products.map( ( productOption, i ) =>
+		return products.map( ( productOption ) =>
 			Array.isArray( productOption ) ? (
 				<LicenseMultiProductCard
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
@@ -249,7 +249,6 @@ export default function LicensesForm( {
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
 							! isSelected( productOption.map( ( { slug } ) => slug ) ) )
 					}
-					tabIndex={ 100 + i }
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
@@ -262,7 +261,6 @@ export default function LicensesForm( {
 					onSelectProduct={ onSelectProduct }
 					isSelected={ isSelected( productOption.slug ) }
 					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }
-					tabIndex={ 100 + i }
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }

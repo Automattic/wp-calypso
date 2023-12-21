@@ -4,9 +4,8 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -84,7 +83,6 @@ const BackupUpsellBody = () => {
 	const postCheckoutUrl = window.location.pathname + window.location.search;
 	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
-	const isEnglishLocale = useIsEnglishLocale();
 	const isWPcomSite = ! isJetpack || isAtomic;
 	const onUpgradeClick = useTrackCallback(
 		undefined,
@@ -134,12 +132,9 @@ const BackupUpsellBody = () => {
 				{ isAdmin && isWPcomSite && (
 					<PromoCardCTA
 						cta={ {
-							text:
-								isEnglishLocale || i18n.hasTranslation( 'Upgrade to %(planName)s Plan' )
-									? translate( 'Upgrade to %(planName)s Plan', {
-											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-									  } )
-									: translate( 'Upgrade to Business Plan' ),
+							text: translate( 'Upgrade to %(planName)s Plan', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							} ),
 							action: {
 								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
@@ -167,11 +162,9 @@ const BackupUpsellBody = () => {
 			{ isWPcomSite && ! hasFullActivityLogFeature && (
 				<>
 					<h2 className="backup__subheader">
-						{ isEnglishLocale || i18n.hasTranslation( 'Also included in the %(planName)s Plan' )
-							? translate( 'Also included in the %(planName)s Plan', {
-									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-							  } )
-							: translate( 'Also included in the Business Plan' ) }
+						{ translate( 'Also included in the %(planName)s Plan', {
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						} ) }
 					</h2>
 
 					<PromoSection { ...promos } />
