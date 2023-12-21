@@ -2,12 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsQuery,
 	MarketplaceReviewResponse,
 	MarketplaceReviewsQueryProps,
 	useDeleteMarketplaceReviewMutation,
+	useInfiniteMarketplaceReviewsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
 import { getAvatarURL } from 'calypso/data/marketplace/utils';
@@ -18,10 +20,17 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	const translate = useTranslate();
 	const currentUserId = useSelector( getCurrentUserId );
 	const {
-		data: reviews,
+		data,
 		refetch: reviewsRefetch,
+		fetchNextPage,
 		error,
-	} = useMarketplaceReviewsQuery( { ...props, author_exclude: currentUserId ?? undefined } );
+	} = useInfiniteMarketplaceReviewsQuery( {
+		...props,
+		author_exclude: currentUserId ?? undefined,
+	} );
+
+	const { reviews } = data ?? {};
+
 	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
 		...props,
 		perPage: 1,
@@ -128,6 +137,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						</div>
 					</div>
 				) ) }
+				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</div>
 		</div>
 	);

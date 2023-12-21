@@ -4,6 +4,7 @@ import {
 	QueryKey,
 	useMutation,
 	useQueryClient,
+	useInfiniteQuery,
 } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
@@ -79,7 +80,16 @@ export type ErrorResponse = {
 };
 
 export type HeaderResponse = {
-	'X-WP-Total': number;
+	'X-WP-TotalPages': number;
+};
+
+export type InfiniteMarketplaceReviewResponse = {
+	data: {
+		reviews: MarketplaceReviewResponse[];
+	};
+	refetch: () => void;
+	fetchNextPage: () => void;
+	error?: ErrorResponse;
 };
 
 type MarketplaceReviewsQueryResponse = {
@@ -217,6 +227,44 @@ export const useMarketplaceReviewsQuery = (
 		staleTime,
 		refetchOnMount,
 		select: ( response ) => response.data,
+	} );
+};
+
+const extractPages = ( pages: MarketplaceReviewsQueryResponse[] = [] ) =>
+	pages.flatMap( ( page ) => page.data );
+
+export const useInfiniteMarketplaceReviewsQuery = (
+	{ productType, slug, page, perPage, author, author_exclude }: MarketplaceReviewsQueryProps,
+	{ enabled = true, staleTime = BASE_STALE_TIME }: MarketplaceReviewsQueryOptions = {}
+) => {
+	const queryKey: QueryKey = [
+		queryKeyBase,
+		'infinite',
+		productType,
+		slug,
+		author,
+		author_exclude,
+		page,
+		perPage,
+	];
+	const queryFn = ( { pageParam = 1 } ) =>
+		fetchMarketplaceReviews( productType, slug, pageParam, perPage, author, author_exclude );
+
+	return useInfiniteQuery( {
+		queryKey,
+		queryFn,
+		getNextPageParam: ( lastPage, allPages ) => {
+			if ( lastPage.headers[ 'X-WP-TotalPages' ] <= allPages.length ) {
+				return;
+			}
+			return allPages.length + 1;
+		},
+		select: ( data ) => ( {
+			...data,
+			reviews: extractPages( data.pages ),
+		} ),
+		enabled,
+		staleTime,
 	} );
 };
 
