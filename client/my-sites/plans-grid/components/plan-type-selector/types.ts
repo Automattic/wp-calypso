@@ -22,7 +22,6 @@ export type PlanTypeSelectorProps = {
 	currentSitePlanSlug?: PlanSlug | null;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
-	isStuck?: boolean;
 	/**
 	 * Whether to render the selector along with a title if passed.
 	 */
@@ -43,7 +42,6 @@ export type IntervalTypeProps = Pick<
 	| 'currentSitePlanSlug'
 	| 'usePricingMetaForGridPlans'
 	| 'title'
-	| 'isStuck'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<
