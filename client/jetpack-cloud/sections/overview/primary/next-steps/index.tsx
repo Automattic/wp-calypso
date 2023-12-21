@@ -15,7 +15,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 	const tasks: Task[] = [
 		{
 			calypso_path: '',
-			completed: true,
+			completed: false,
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_get_familiar_click' ) );
@@ -26,7 +26,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 		},
 		{
 			calypso_path: '',
-			completed: true,
+			completed: false,
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_add_sites_click' ) );
@@ -37,7 +37,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 		},
 		{
 			calypso_path: '',
-			completed: true,
+			completed: false,
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_bulk_editing_click' ) );
@@ -48,7 +48,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 		},
 		{
 			calypso_path: '',
-			completed: true,
+			completed: false,
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_plugin_management_click' ) );
