@@ -14,6 +14,8 @@ export const STALE_CONNECTION_HEALTH_THRESHOLD = 1000 * 60 * 5; // 5 minutes
 
 /**
  * Sets the Jetpack connection status to healthy
+ *
+ * This action is called when the Jetpack health status API returns a healthy status.
  * @param {number} siteId The site id to which the status belongs
  * @returns {Object} An action object
  */
@@ -24,6 +26,8 @@ export const setJetpackConnectionHealthy = ( siteId ) => ( {
 
 /**
  * Sets the Jetpack connection status to unhealthy along with error code.
+ *
+ * This action is called when the Jetpack health status API returns an jetpack error.
  * @param {number} siteId The site id to which the status belongs
  * @param {string} errorCode The error code
  * @returns {Object} An action object
@@ -36,6 +40,10 @@ export const setJetpackConnectionUnhealthy = ( siteId, errorCode ) => ( {
 
 /**
  * Requests the Jetpack connection status from the server
+ *
+ * This is called when the Jetpack connection is maybe unhealthy and we want to confirm
+ * the status by calling the health status API.
+ * We also throttle the requests to avoid calling the API too often.
  * @param {number} siteId The site id to which the status belongs
  * @returns {Function} Action thunk
  */
@@ -79,6 +87,12 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
 
 /**
  * Sets the Jetpack connection status to maybe unhealthy
+ *
+ * The jetpack health status API is expensive, we don't want to call it on every page load.
+ * Instead, we call it only in case the other jetpack enpoints have failed (e.g. modules).
+ * By setting the status to maybe unhealthy, we call the health status API to show the
+ * error message in the UI.
+ *
  * @param {number} siteId The site id to which the status belongs
  * @returns {Object} An action object
  */
