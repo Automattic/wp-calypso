@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -69,8 +69,7 @@ class StepConfirmMigration extends Component {
 	}
 
 	renderCardBusinessFooter() {
-		const { translate, locale } = this.props;
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
+		const { translate } = this.props;
 
 		// If the site is has an appropriate plan, no upgrade footer is required
 		if ( this.isTargetSitePlanCompatible() ) {
@@ -81,14 +80,11 @@ class StepConfirmMigration extends Component {
 			<CompactCard className="migrate__card-footer">
 				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={ 12 } />
 				<span className="migrate__card-footer-text">
-					{ isEnglishLocale ||
-					i18n.hasTranslation( 'A %(businessPlanName)s Plan is required to import everything.' )
-						? translate( 'A %(businessPlanName)s Plan is required to import everything.', {
-								args: {
-									businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle(),
-								},
-						  } )
-						: translate( 'A Business Plan is required to import everything.' ) }
+					{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle(),
+						},
+					} ) }
 				</span>
 			</CompactCard>
 		);
