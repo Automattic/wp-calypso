@@ -4,13 +4,14 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal';
 import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/upsell-nudge/purchase-modal/use-is-eligible-for-one-click-checkout';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import EducationFooter from '../education-footer';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
@@ -101,6 +102,7 @@ const PluginsDiscoveryPage = ( props ) => {
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const { isLoading, result: isEligibleForOneClickCheckout } = useIsEligibleForOneClickCheckout();
 
@@ -117,6 +119,15 @@ const PluginsDiscoveryPage = ( props ) => {
 							onClose={ () => {
 								setShowPurchaseModal( false );
 							} }
+							onPurchaseSuccess={ () => {
+								setShowPurchaseModal( false );
+								dispatch(
+									successNotice( translate( 'Your purchase has been completed!' ), {
+										id: 'plugins-purchase-modal-success',
+									} )
+								);
+							} }
+							disableThankYouPage={ true }
 							showFeatureList={ true }
 							siteSlug={ props.siteSlug }
 						/>
