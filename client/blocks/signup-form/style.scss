@@ -152,7 +152,10 @@ body.is-section-accept-invite {
 				width: 327px;
 				margin-left: 0;
 				margin-right: 0;
-				color: var(--studio-gray-80, #2c3338);
+
+				&.is-transparent-info {
+					color: var(--studio-gray-80, #2c3338);
+				}
 			}
 
 			.auth-form__social {
