@@ -1,6 +1,7 @@
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
+import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
@@ -142,11 +143,11 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 								</div>
 							</div>
 						</Card>
-						<p>
-							<CommissionFees commission={ commission } siteSlug={ site?.slug } />
-						</p>
 					</>
 				) }
+				<p className="memberships__commission-notice">
+					<CommissionFees commission={ commission } siteSlug={ site?.slug } />
+				</p>
 				<Dialog
 					className="memberships__stripe-disconnect-modal"
 					isVisible={ !! disconnectedConnectedAccountId }
@@ -254,6 +255,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	return (
 		<div>
 			<QueryMembershipsSettings siteId={ site.ID } source={ source } />
+			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			{ ! connectedAccountId && ! connectUrl && (
 				<div className="earn__payments-loading">
 					<LoadingEllipsis />
