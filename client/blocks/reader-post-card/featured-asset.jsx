@@ -48,6 +48,7 @@ FeaturedAsset.propTypes = {
 	allowVideoPlaying: PropTypes.bool,
 	onVideoThumbnailClick: PropTypes.func,
 	isVideoExpanded: PropTypes.bool,
+	hasExcerpt: PropTypes.bool,
 };
 
 FeaturedAsset.defaultProps = {
