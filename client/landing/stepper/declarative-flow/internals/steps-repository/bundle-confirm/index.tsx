@@ -1,5 +1,5 @@
 import { ProductsList } from '@automattic/data-stores';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 import {
 	AUTOMATED_ELIGIBILITY_STORE,
 	SITE_STORE,
@@ -18,13 +19,32 @@ import {
 } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
-import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { TransferEligibilityError } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
+
+const ActionSection = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	flex-wrap: wrap;
+	margin-top: 40px;
+	gap: 4%;
+
+	@media ( max-width: 320px ) {
+		align-items: center;
+	}
+`;
+
+const StyledNextButton = styled( NextButton )`
+	@media ( max-width: 320px ) {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+`;
 
 const Divider = styled.hr`
 	border-top: 1px solid #eee;
@@ -41,11 +61,12 @@ const TRANSFERRING_NOT_BLOCKERS = [
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
 
-const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
+const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
 	const siteId = site && site?.ID;
+	const pluginSlug = useSitePluginSlug();
 	const isAtomicSite = useSelect(
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
 		[ siteId ]
@@ -179,8 +200,8 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooTransfer' ),
-				cancel_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooConfirm' ),
+				redirect_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/bundleTransfer' ),
+				cancel_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/bundleConfirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
@@ -206,7 +227,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		}
 
 		return (
-			<div className="woo-confirm__upgrade-required">
+			<div className="bundle-confirm__upgrade-required">
 				<PlanWarning title={ __( 'Plan upgrade required' ) }>
 					{ siteUpgrading.description }
 				</PlanWarning>
@@ -242,8 +263,8 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	function getContent() {
 		return (
 			<>
-				<div className="woo-confirm__info-section" />
-				<div className="woo-confirm__instructions-container">
+				<div className="bundle-confirm__info-section" />
+				<div className="bundle-confirm__instructions-container">
 					{ getWPComSubdomainWarningContent() }
 					{ getCheckoutContent() }
 					{ getWarningsOrHoldsSection() }
@@ -252,10 +273,23 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 						<StyledNextButton
 							disabled={ isTransferringBlocked || ! isDataReady }
 							onClick={ () => {
-								recordTracksEvent( 'calypso_woocommerce_dashboard_confirm_submit', {
+								const eventProperties = {
 									site: wpcomDomain,
 									upgrade_required: siteUpgrading.required,
+								};
+
+								recordTracksEvent( 'calypso_bundle_dashboard_confirm_submit', {
+									...eventProperties,
+									software_set: pluginSlug,
 								} );
+
+								// For backward compatibility with existing event. When it's not used anymore, it can be removed.
+								if ( 'woo-on-plans' === pluginSlug ) {
+									recordTracksEvent(
+										'calypso_woocommerce_dashboard_confirm_submit',
+										eventProperties
+									);
+								}
 
 								const providedDependencies = {
 									checkoutUrl: siteUpgrading.checkoutUrl,
@@ -276,7 +310,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	if ( site === null || ! site.ID || ! isDataReady || isReadyToStart ) {
 		return (
-			<div className="woo-confirm__loading-container">
+			<div className="bundle-confirm__loading-container">
 				<LoadingEllipsis />
 			</div>
 		);
@@ -289,13 +323,13 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName="woo-confirm"
+			stepName="bundle-confirm"
 			goBack={ goBack }
 			hideSkip
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id="woo-confirm-title-header"
+					id="bundle-confirm-title-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
 					align="left"
@@ -308,4 +342,4 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	);
 };
 
-export default WooConfirm;
+export default BundleConfirm;

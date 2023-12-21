@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -9,7 +8,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
@@ -81,15 +79,8 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_WORDPRESS,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
-			STEPS.BUSINESS_INFO,
-			STEPS.STORE_ADDRESS,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.WOO_TRANSFER,
-			STEPS.WOO_INSTALL_PLUGINS,
-			STEPS.WOO_VERIFY_EMAIL,
-			STEPS.WOO_CONFIRM,
-			STEPS.EDIT_EMAIL,
 			STEPS.DIFM_STARTING_POINT,
 		];
 	},
@@ -115,7 +106,6 @@ const siteSetupFlow: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
-		const currentUser = useSelector( getCurrentUser );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -284,13 +274,6 @@ const siteSetupFlow: Flow = {
 					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
-						if (
-							isEnabled( 'signup/woo-verify-email' ) &&
-							currentUser &&
-							! currentUser.email_verified
-						) {
-							return navigate( 'wooVerifyEmail' );
-						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
@@ -378,43 +361,6 @@ const siteSetupFlow: Flow = {
 					}
 				}
 
-				case 'storeAddress':
-					return navigate( 'businessInfo' );
-
-				case 'businessInfo': {
-					if ( isAtomic ) {
-						return navigate( 'wooInstallPlugins' );
-					}
-					return navigate( 'wooConfirm' );
-				}
-
-				case 'wooConfirm': {
-					const [ checkoutUrl ] = params;
-
-					if ( checkoutUrl ) {
-						window.location.replace( checkoutUrl.toString() );
-					}
-
-					return navigate( 'wooTransfer' );
-				}
-
-				case 'wooTransfer':
-					return navigate( 'processing' );
-
-				case 'wooInstallPlugins':
-					return navigate( 'processing' );
-
-				case 'editEmail':
-					return navigate( 'wooVerifyEmail' );
-
-				case 'wooVerifyEmail': {
-					if ( params[ 0 ] === 'edit-email' ) {
-						return navigate( 'editEmail' );
-					}
-
-					return navigate( 'wooVerifyEmail' );
-				}
-
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
@@ -497,15 +443,6 @@ const siteSetupFlow: Flow = {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
 
-				case 'storeAddress':
-					return navigate( 'options' );
-
-				case 'businessInfo':
-					return navigate( 'storeAddress' );
-
-				case 'wooConfirm':
-					return navigate( 'businessInfo' );
-
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 
@@ -523,9 +460,6 @@ const siteSetupFlow: Flow = {
 
 				case 'patternAssembler':
 					return navigate( 'designSetup' );
-
-				case 'editEmail':
-					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
 					// eslint-disable-next-line no-case-declarations
