@@ -3,7 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from 'calypso/jetpack-cloud/components/layout';
 import LayoutBody from 'calypso/jetpack-cloud/components/layout/body';
 import LayoutHeader, {
@@ -122,7 +122,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 		...( selectedCount && { selectedCount } ),
 	};
 
-	const showBundle = ! selectedSite;
+	const showBundle = ! selectedSite && availableSizes.length > 1;
 
 	useEffect( () => {
 		if ( ! fetchingAvailableSizes ) {
@@ -133,6 +133,22 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 			);
 		}
 	}, [ dispatch, fetchingAvailableSizes, selectedSize ] );
+
+	const subtitle = useMemo( () => {
+		if ( selectedSite?.domain ) {
+			return translate(
+				'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
+				{
+					args: { selectedSiteDomain: selectedSite.domain },
+					components: { strong: <strong /> },
+				}
+			);
+		}
+
+		return showBundle
+			? translate( 'Select single product licenses or save when you issue in bulk' )
+			: translate( 'Select the Jetpack products you would like to issue a new license for:' );
+	}, [ selectedSite?.domain, showBundle, translate ] );
 
 	return (
 		<>
@@ -148,17 +164,7 @@ export default function IssueLicenseV2( { selectedSite, suggestedProduct }: Assi
 
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>
-						<Subtitle>
-							{ selectedSite?.domain
-								? translate(
-										'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
-										{
-											args: { selectedSiteDomain: selectedSite.domain },
-											components: { strong: <strong /> },
-										}
-								  )
-								: translate( 'Select single product licenses or save when you issue in bulk' ) }
-						</Subtitle>
+						<Subtitle>{ subtitle }</Subtitle>
 						{ selectedLicenses.length > 0 && (
 							<Actions>
 								<div className="issue-license-v2__controls">
