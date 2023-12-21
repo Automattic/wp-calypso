@@ -65,7 +65,7 @@
 			}
 
 			.gift-label {
-				margin-left: 8px;
+				@extend %gift-label;
 			}
 		}
 
