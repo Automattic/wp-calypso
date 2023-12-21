@@ -76,7 +76,7 @@ export class UploadingPane extends PureComponent {
 					break;
 				case 'playground':
 				case 'jetpack_backup':
-					this.props.startImporting( importerStatus );
+					// The startImporting action is dispatched from the onboarding flow
 					break;
 			}
 		}
