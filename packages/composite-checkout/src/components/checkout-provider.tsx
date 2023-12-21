@@ -8,7 +8,7 @@ import { validateArg, validatePaymentMethods } from '../lib/validation';
 import { CheckoutProviderProps } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormAndTransactionProvider } from './form-and-transaction-provider';
-import type { CheckoutContextInterface } from '../types';
+import type { CheckoutContextInterface, PaymentMethod } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -40,7 +40,9 @@ export function CheckoutProvider( {
 	};
 
 	// Keep track of enabled/disabled payment methods.
-	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
+	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >(
+		paymentMethods.filter( ( method ) => method.isInitiallyDisabled ).map( ( method ) => method.id )
+	);
 	const availablePaymentMethodIds = paymentMethods
 		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
 		.map( ( method ) => method.id );
@@ -58,6 +60,8 @@ export function CheckoutProvider( {
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
+
+	useDisablePaymentMethodsWhenListChanges( paymentMethods, setDisabledPaymentMethodIds );
 
 	// Reset the selected payment method if the list of payment methods changes.
 	useResetSelectedPaymentMethodWhenListChanges(
@@ -134,6 +138,42 @@ function CheckoutProviderPropValidator( {
 		validatePaymentMethods( paymentMethods );
 	}, [ paymentMethods, paymentProcessors, propsToValidate ] );
 	return null;
+}
+
+function useDisablePaymentMethodsWhenListChanges(
+	paymentMethods: PaymentMethod[],
+	setDisabledPaymentMethodIds: ( setter: ( ids: string[] ) => string[] ) => void
+) {
+	const previousPaymentMethodIds = useRef< string[] >( [] );
+
+	const initiallyDisabledPaymentMethodIds = paymentMethods
+		.filter( ( method ) => method.isInitiallyDisabled )
+		.map( ( method ) => method.id );
+
+	const newInitiallyDisabledPaymentMethodIds = initiallyDisabledPaymentMethodIds.filter(
+		( id ) => ! previousPaymentMethodIds.current.includes( id )
+	);
+
+	const paymentMethodIdsHash = paymentMethods.map( ( method ) => method.id ).join( '-_-' );
+	const previousPaymentMethodIdsHash = useRef< string >();
+
+	useEffect( () => {
+		if ( previousPaymentMethodIdsHash.current !== paymentMethodIdsHash ) {
+			debug( 'paymentMethods changed; disabling any new isInitiallyDisabled payment methods' );
+
+			setDisabledPaymentMethodIds( ( currentlyDisabledIds: string[] ) => [
+				...currentlyDisabledIds,
+				...newInitiallyDisabledPaymentMethodIds,
+			] );
+			previousPaymentMethodIdsHash.current = paymentMethodIdsHash;
+			previousPaymentMethodIds.current = paymentMethods.map( ( method ) => method.id );
+		}
+	}, [
+		paymentMethodIdsHash,
+		setDisabledPaymentMethodIds,
+		paymentMethods,
+		newInitiallyDisabledPaymentMethodIds,
+	] );
 }
 
 // Reset the selected payment method if the list of payment methods changes.

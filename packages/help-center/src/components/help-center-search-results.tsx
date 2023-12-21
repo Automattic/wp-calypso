@@ -31,7 +31,7 @@ import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results'
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { useCurrentPageSearchMapping } from '../hooks/use-current-page-search-mapping';
+import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -123,7 +123,7 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const routeToQueryMapping = useCurrentPageSearchMapping( currentRoute );
+	const routeToQueryMapping = useContextBasedSearchMapping( currentRoute );
 
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
