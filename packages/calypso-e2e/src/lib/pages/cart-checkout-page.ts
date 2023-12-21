@@ -270,7 +270,7 @@ export class CartCheckoutPage {
 			.first();
 		const editPaymentButton = this.page.locator( selectors.editPaymentStep );
 
-		await cardSelector.or( editPaymentButton ).waitFor( { state: 'visible' } );
+		await cardSelector.or( editPaymentButton ).first().waitFor( { state: 'visible' } );
 
 		if ( await editPaymentButton.isVisible() ) {
 			await editPaymentButton.click();
