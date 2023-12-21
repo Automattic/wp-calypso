@@ -1,12 +1,12 @@
-export const requestError = {
+const requestError = {
 	type: [ 'string', 'null' ],
 };
 
-export const lastRequestTime = {
+const lastRequestTime = {
 	type: [ 'number', 'null' ],
 };
 
-export const connectionHealth = {
+const connectionHealth = {
 	type: 'object',
 	properties: {
 		is_healthy: {
@@ -20,7 +20,7 @@ export const connectionHealth = {
 		},
 	},
 };
-export const jetpackConnectionHealth = {
+const jetpackConnectionHealth = {
 	type: 'object',
 	additionalProperties: false,
 	properties: {
