@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { LegacyRef, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import {
@@ -15,10 +14,7 @@ import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-con
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
 
-export const MarketplaceReviewsList = forwardRef<
-	HTMLDivElement,
-	MarketplaceReviewsQueryProps & { innerRef: LegacyRef< HTMLDivElement > }
->( ( props, ref ) => {
+export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) => {
 	const translate = useTranslate();
 	const { data: reviews, refetch: reviewsRefetch, error } = useMarketplaceReviewsQuery( props );
 
@@ -64,7 +60,7 @@ export const MarketplaceReviewsList = forwardRef<
 	}
 
 	return (
-		<div className="marketplace-reviews-list__container" ref={ ref }>
+		<div className="marketplace-reviews-list__container">
 			<div className="marketplace-reviews-list__customer-reviews">
 				{ Array.isArray( reviews ) &&
 					reviews.map( ( review: MarketplaceReviewResponse ) => (
@@ -129,4 +125,4 @@ export const MarketplaceReviewsList = forwardRef<
 			</div>
 		</div>
 	);
-} );
+};
