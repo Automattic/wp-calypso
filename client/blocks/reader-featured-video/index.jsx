@@ -57,8 +57,12 @@ class ReaderFeaturedVideo extends Component {
 		if ( this.videoEmbedRef ) {
 			const iframe = ReactDom.findDOMNode( this.videoEmbedRef ).querySelector( 'iframe' );
 			const availableWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
+			const style = {
+				...this.getEmbedSize( availableWidth ),
+				borderRadius: '6px',
+			};
 
-			Object.assign( iframe.style, this.getEmbedSize( availableWidth ) );
+			Object.assign( iframe.style, style );
 		}
 	};
 
@@ -170,8 +174,7 @@ const checkEmbedSizeDimensions = ( embed ) => {
 	if ( _embed.width === 0 && _embed.height === 0 ) {
 		_embed.width = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
 		_embed.height = READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
-		_embed.aspectRatio =
-			READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH / READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
+		_embed.aspectRatio = _embed.width / _embed.height;
 	}
 	return _embed;
 };
