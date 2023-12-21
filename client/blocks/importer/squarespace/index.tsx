@@ -63,6 +63,11 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		};
 	}
 
+	function onTryAgainClick() {
+		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
+	}
+
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -106,12 +111,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
-							/>
-						);
+						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					}

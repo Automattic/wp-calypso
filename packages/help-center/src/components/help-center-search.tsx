@@ -20,9 +20,10 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 type HelpCenterSearchProps = {
 	onSearchChange?: ( query: string ) => void;
+	currentRoute?: string;
 };
 
-export const HelpCenterSearch = ( { onSearchChange }: HelpCenterSearchProps ) => {
+export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
@@ -115,6 +116,7 @@ export const HelpCenterSearch = ( { onSearchChange }: HelpCenterSearchProps ) =>
 				openAdminInNewTab
 				placeholderLines={ 4 }
 				location="help-center"
+				currentRoute={ currentRoute }
 			/>
 			{ ! searchQuery && <HelpCenterMoreResources /> }
 		</div>

@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, lock } from '@wordpress/icons';
 import classNames from 'classnames';
 import React from 'react';
 import { DateControlPickerShortcutsProps } from './types';
@@ -31,6 +31,7 @@ const DateControlPickerShortcuts = ( {
 							>
 								<span>{ shortcut.label }</span>
 								{ isSelected && <Icon icon={ check } /> }
+								{ shortcut.isGated && <Icon icon={ lock } /> }
 							</Button>
 						</li>
 					);

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import {
 	useSyncGlobalStylesUserConfig,
@@ -14,11 +13,13 @@ import {
 	NavigatorScreen,
 } from '@automattic/onboarding';
 import {
+	Button,
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { Icon, rotateLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -45,6 +46,7 @@ import {
 	useSyncNavigatorScreen,
 	useIsNewSite,
 } from './hooks';
+import useAIAssembler from './hooks/use-ai-assembler';
 import withNotices, { NoticesProps } from './notices/notices';
 import PagePreviewList from './pages/page-preview-list';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -79,7 +81,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit } = navigation;
-	const { assembleSite } = useDispatch( SITE_STORE );
+	const { assembleSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
@@ -97,6 +99,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const locale = useLocale();
 	const isNewSite = useIsNewSite( flow );
 	const [ searchParams ] = useSearchParams();
+	const [ callAIAssembler, , aiAssemblerPrompt, aiAssemblerLoading ] = useAIAssembler();
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -143,7 +146,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				font_variation_type: getVariationType( fontVariation ),
 				assembler_source: getAssemblerSource( selectedDesign ),
 				has_global_styles_selected: numOfSelectedGlobalStyles > 0,
-				page_slugs: ( pageSlugs || [] ).join( ',' ),
 			} ),
 		[
 			flow,
@@ -219,12 +221,23 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
+			page_slugs: ( pageSlugs || [] ).join( ',' ),
 		} );
+
 		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
 				pattern_category: category?.name,
+			} );
+		} );
+
+		pages.forEach( ( { ID, name, categories = {} } ) => {
+			const category_slug = Object.keys( categories )[ 0 ];
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
+				pattern_id: ID,
+				pattern_name: name,
+				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
 	};
@@ -389,6 +402,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				)
 		);
 
+		const siteTitleFromUrl = ( searchParams.get( 'site_title' ) || '' ).trim();
+		const siteTaglineFromUrl = searchParams.get( 'site_tagline' ) || '';
+
+		// Save site title/description passed to the Assembler.
+		if ( siteTitleFromUrl || siteTaglineFromUrl ) {
+			saveSiteSettings( siteSlugOrId, {
+				...( siteTitleFromUrl && { blogname: siteTitleFromUrl } ),
+				...( siteTaglineFromUrl && { blogdescription: siteTaglineFromUrl } ),
+			} );
+		}
+
 		recordSelectedDesign( { flow, intent, design } );
 		trackSubmit();
 		submit?.();
@@ -466,6 +490,31 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		// Don't show the “Back” button if the site is being created by the site assembler flow.
 		// as the previous step is the site creation step that cannot be undone.
 		return isSiteAssemblerFlow( flow );
+	};
+
+	const customActionButtons = () => {
+		if (
+			flow === AI_ASSEMBLER_FLOW &&
+			currentScreen.name === INITIAL_SCREEN &&
+			aiAssemblerPrompt !== ''
+		) {
+			return (
+				<Button
+					variant="secondary"
+					disabled={ aiAssemblerLoading }
+					onClick={ () => callAIAssembler() }
+					style={ {
+						marginRight: 'auto',
+						marginLeft: 14,
+					} }
+					icon={ <Icon icon={ rotateLeft } /> }
+				>
+					{ translate( 'Regenerate AI Suggestions' ) }
+				</Button>
+			);
+		}
+
+		return undefined;
 	};
 
 	const onBack = () => {
@@ -681,8 +730,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					activePosition={ activePosition }
 					pages={
 						// Consider the selected pages in the final screen.
-						isEnabled( 'pattern-assembler/add-pages' ) &&
-						( currentScreen.name === 'confirmation' || currentScreen.name === 'activation' )
+						currentScreen.name === 'confirmation' || currentScreen.name === 'activation'
 							? pages
 							: undefined
 					}
@@ -701,6 +749,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	return (
 		<StepContainer
+			customizedActionButtons={ customActionButtons() }
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
 			backLabelText={ getBackLabel() }

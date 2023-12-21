@@ -67,7 +67,7 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 			),
 			uploadDescription: isEnabled( 'importer/site-backups' )
 				? translate(
-						'We support: XML, ZIP, and TAR.GZ files from Playground exports ' +
+						'We support: WordPress export files in XML & ZIP and Playground ZIP files. ' +
 							'{{supportLinkAlt/}}',
 						options
 				  )

@@ -55,7 +55,6 @@ const LayoutLoggedOut = ( {
 	isGravatar,
 	isWPJobManager,
 	isGravPoweredClient,
-	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
 	primary,
@@ -82,6 +81,8 @@ const LayoutLoggedOut = ( {
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
+	const isCheckoutFailed =
+		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/failed-purchases' );
 	const isJetpackCheckout =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack' );
 
@@ -128,7 +129,6 @@ const LayoutLoggedOut = ( {
 		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
@@ -154,11 +154,7 @@ const LayoutLoggedOut = ( {
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if (
-			( isWooOAuth2Client( oauth2Client ) && wccomFrom ) ||
-			isGravatar ||
-			isGravPoweredClient
-		) {
+		} else if ( isGravatar || isGravPoweredClient ) {
 			masterbar = null;
 		} else {
 			classes.dops = true;
@@ -204,6 +200,7 @@ const LayoutLoggedOut = ( {
 				sectionName={ sectionName }
 				isCheckout={ isCheckout }
 				isCheckoutPending={ isCheckoutPending }
+				isCheckoutFailed={ isCheckoutFailed }
 				redirectUri={ redirectUri }
 			/>
 		);

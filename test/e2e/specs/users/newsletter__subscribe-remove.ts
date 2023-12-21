@@ -79,7 +79,9 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 					sentTo: testEmail,
 				} );
 
-				const confirmationURL = emailClient.getLinkFromMessageByKey( message, 'Confirm now' );
+				const confirmationURL =
+					emailClient.getLinkFromMessageByKey( message, 'Confirm email' ) ??
+					emailClient.getLinkFromMessageByKey( message, 'Confirm now' );
 				expect( confirmationURL ).not.toBe( null );
 
 				// Now, when you subscribe from a post, it uses a magic link login and redirects you to the post you subscribed from.

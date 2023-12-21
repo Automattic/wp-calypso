@@ -1,28 +1,25 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { JETPACK_CONTACT_SUPPORT_NO_ASSISTANT } from 'calypso/lib/url/support';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getDisabledProductSlugs } from 'calypso/state/partner-portal/products/selectors';
 import { parseQueryStringProducts } from '../../lib/querystring-products';
 import LicenseMultiProductCard from '../../license-multi-product-card';
 import { PRODUCT_FILTER_ALL } from '../constants';
 import IssueLicenseContext from '../context';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
 import useSubmitForm from '../hooks/use-submit-form';
+import { getIncompatibleProducts, isIncompatibleProduct } from '../lib/incompatible-products';
 import useProductAndPlans from './hooks/use-product-and-plans';
 import ProductFilterSearch from './product-filter-search';
 import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
 import type { AssignLicenceProps } from '../../types';
 import type { SelectedLicenseProp } from '../types';
-import type {
-	APIProductFamilyProduct,
-	PartnerPortalStore,
-} from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -102,8 +99,11 @@ export default function LicensesForm( {
 		preSelectProducts();
 	}, [ isLoadingProducts, preSelectProducts ] );
 
-	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
-		getDisabledProductSlugs( state, filteredProductsAndBundles ?? [] )
+	const incompatibleProducts = useMemo(
+		() =>
+			// Only check for incompatible products if we have a selected site.
+			selectedSite ? getIncompatibleProducts( selectedLicenses, filteredProductsAndBundles ) : [],
+		[ filteredProductsAndBundles, selectedLicenses, selectedSite ]
 	);
 
 	const handleSelectBundleLicense = useCallback(
@@ -231,7 +231,7 @@ export default function LicensesForm( {
 	const isSingleLicenseView = quantity === 1;
 
 	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
-		return products.map( ( productOption, i ) =>
+		return products.map( ( productOption ) =>
 			Array.isArray( productOption ) ? (
 				<LicenseMultiProductCard
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
@@ -244,8 +244,11 @@ export default function LicensesForm( {
 							( license ) => license.slug === option.slug && license.quantity === quantity
 						)
 					) }
-					isDisabled={ ! isReady }
-					tabIndex={ 100 + i }
+					isDisabled={
+						! isReady ||
+						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
+							! isSelected( productOption.map( ( { slug } ) => slug ) ) )
+					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
@@ -257,8 +260,7 @@ export default function LicensesForm( {
 					product={ productOption }
 					onSelectProduct={ onSelectProduct }
 					isSelected={ isSelected( productOption.slug ) }
-					isDisabled={ ! isReady || disabledProductSlugs.includes( productOption.slug ) }
-					tabIndex={ 100 + i }
+					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
