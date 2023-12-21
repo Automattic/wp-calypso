@@ -35,6 +35,7 @@ const SubscriberListContainer = ( {
 		searchTerm,
 		isLoading,
 		subscribers,
+		pages,
 	} = useSubscribersPage();
 	useRecordSearch();
 
@@ -44,8 +45,7 @@ const SubscriberListContainer = ( {
 
 	useEffect( () => {
 		if ( ! isLoading && subscribers.length === 0 && page > 1 ) {
-			const newPageNumber = page - 1;
-			pageChangeCallback( newPageNumber );
+			pageChangeCallback( pages ?? 0 );
 		}
 	}, [ isLoading, subscribers, page, pageChangeCallback ] );
 
