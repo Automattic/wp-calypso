@@ -246,6 +246,7 @@ export const QuickLinks = ( {
 								onClick={ () => setIsAILogoGeneratorOpen( true ) }
 							/>
 							<GeneratorModal
+								siteId={ siteId }
 								isOpen={ isAILogoGeneratorOpen }
 								onClose={ () => setIsAILogoGeneratorOpen( false ) }
 							/>
