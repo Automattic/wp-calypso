@@ -1196,6 +1196,25 @@ export const useCommandsArrayWpcom = ( {
 			icon: <WooCommerceLogo size={ 24 } className="woo-command-palette" />,
 		},
 		{
+			name: 'openJetpackSettings',
+			label: __( 'Open Jetpack settings' ),
+			callback: setStateCallback(
+				'openJetpackSettings',
+				__( 'Select site to open Jetpack settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `${ site.URL }/wp-admin/admin.php?page=jetpack#/dashboard` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
+				filterNotice: __(
+					'Only listing sites with hosting features enabled or self-hosted sites.'
+				),
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
 			name: 'manageSettingsGeneral',
 			label: __( 'Manage general settings' ),
 			context: [ '/settings' ],
