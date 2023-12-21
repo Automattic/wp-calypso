@@ -89,6 +89,9 @@ const ReaderFeaturedImage = ( {
 
 	switch ( featuredImageType ) {
 		case 'image':
+			containerWidth = imageWidth;
+			containerHeight = imageHeight;
+			break;
 		case 'video-thumbnail':
 			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
 			containerHeight = READER_FEATURED_MAX_IMAGE_HEIGHT;
