@@ -126,7 +126,7 @@ export class PlansStep extends Component {
 		}
 
 		const { signupDependencies } = this.props;
-		const { siteUrl, domainItem, siteTitle, username } = signupDependencies;
+		const { siteUrl, domainItem, siteTitle, username, coupon } = signupDependencies;
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
@@ -160,6 +160,7 @@ export class PlansStep extends Component {
 					showPressablePromoBanner={ this.props.showPressablePromoBanner }
 					removePaidDomain={ this.removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
+					coupon={ coupon }
 				/>
 			</div>
 		);
