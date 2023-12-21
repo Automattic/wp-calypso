@@ -1,4 +1,4 @@
-import { replaceSiteFragment } from 'calypso/lib/route';
+import { getSiteFragment } from 'calypso/lib/route';
 import getCurrentRoute from './get-current-route';
 
 /**
@@ -15,7 +15,11 @@ export const getCurrentRoutePattern = ( state ) => {
 	if ( ! currentPath ) {
 		return null;
 	}
-	return replaceSiteFragment( currentPath );
+	const siteFragment = getSiteFragment( currentPath );
+	if ( ! siteFragment ) {
+		return currentPath;
+	}
+	return currentPath.replace( siteFragment, ':site' );
 };
 
 export default getCurrentRoutePattern;

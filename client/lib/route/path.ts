@@ -81,17 +81,6 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	return false;
 }
 
-/**
- * Replaces the siteFragment with ":site".
- */
-export function replaceSiteFragment( path: string ) {
-	const siteFragment = getSiteFragment( path );
-	if ( ! siteFragment ) {
-		return path;
-	}
-	return path.replace( `${ siteFragment }`, ':site' );
-}
-
 export function addSiteFragment( path: URLString, site: SiteSlug ): URLString {
 	const pieces = sectionify( path ).split( '/' );
 
