@@ -28,6 +28,7 @@ const jetpackConnectionHealth = {
 		requestError,
 		lastRequestTime,
 	},
+	required: [ 'connectionHealth', 'lastRequestTime' ],
 };
 
 export const schema = {

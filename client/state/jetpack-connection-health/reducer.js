@@ -34,7 +34,6 @@ export const connectionHealth = withPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				jetpack_connection_problem: true,
-				error: '',
 			};
 		}
 
