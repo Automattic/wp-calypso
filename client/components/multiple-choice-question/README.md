@@ -54,6 +54,7 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 	return (
 		<div>
 			<MultipleChoiceQuestion
+				name="question-1"
 				answers={ answers }
 				question="Please choose one of the following:"
 				onAnswerChange={ ( answer, text ) => {
