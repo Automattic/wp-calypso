@@ -21,9 +21,9 @@ const useSubscriberRemoveMutation = (
 		siteId,
 		currentPage,
 		perPage,
-		filterOption,
 		searchTerm,
-		sortTerm
+		sortTerm,
+		filterOption
 	);
 
 	return useMutation( {
