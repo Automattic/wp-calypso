@@ -147,6 +147,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						{
 							label: translate( 'Disconnect Payments from Stripe' ),
 							isPrimary: true,
+							additionalClassNames: 'is-scary',
 							action: 'disconnect',
 						},
 					] }
