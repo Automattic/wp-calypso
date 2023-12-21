@@ -90,7 +90,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
+	const shouldCollapseLastStep = useShouldCollapseLastStep();
 	const translate = useTranslate();
 	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
