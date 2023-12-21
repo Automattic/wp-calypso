@@ -127,7 +127,7 @@ const PluginsDiscoveryPage = ( props ) => {
 									} )
 								);
 							} }
-							disableThankYouPage={ true }
+							disabledThankYouPage={ true }
 							showFeatureList={ true }
 							siteSlug={ props.siteSlug }
 						/>

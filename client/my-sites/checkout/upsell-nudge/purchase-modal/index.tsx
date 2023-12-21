@@ -37,7 +37,7 @@ type PurchaseModalProps = {
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
 	showFeatureList: boolean;
-	disableThankYouPage?: boolean;
+	disabledThankYouPage?: boolean;
 };
 
 export function PurchaseModal( {
@@ -101,7 +101,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const {
 		onClose,
 		onPurchaseSuccess = null,
-		disableThankYouPage,
+		disabledThankYouPage,
 		productToAdd,
 		siteSlug,
 		showFeatureList,
@@ -111,7 +111,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		isComingFromUpsell: true,
 		siteSlug: siteSlug,
 		isInModal: true,
-		disabledThankYouPage: disableThankYouPage,
+		disabledThankYouPage,
 	} );
 
 	const handlePaymentComplete = ( args: PaymentEventCallbackArguments ) => {
