@@ -20,6 +20,7 @@ import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -701,10 +702,10 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const stickyPlanSelectorHeight = 48;
-
-	const comparisonGridStickyRowOffset = showPlanSelectorDropdown
-		? stickyPlanSelectorHeight + masterbarHeight
-		: masterbarHeight;
+	const comparisonGridStickyRowOffset =
+		showPlanSelectorDropdown && isMobile()
+			? stickyPlanSelectorHeight + masterbarHeight
+			: masterbarHeight;
 
 	return (
 		<>
@@ -783,10 +784,10 @@ const PlansFeaturesMain = ( {
 								stickyClass="is-sticky-plan-type-selector"
 								className="plans-features-main__plan-type-selector-sticky-container"
 							>
-								{ ( isStuck: boolean ) => {
+								{ () => {
 									return (
 										<div className="plans-features-main__plan-type-selector">
-											<PlanTypeSelector { ...planTypeSelectorProps } isStuck={ isStuck } />
+											<PlanTypeSelector { ...planTypeSelectorProps } />
 										</div>
 									);
 								} }
