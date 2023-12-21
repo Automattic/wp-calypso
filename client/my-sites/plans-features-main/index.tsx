@@ -20,7 +20,7 @@ import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
-import { isMobile } from '@automattic/viewport';
+// import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -34,6 +34,7 @@ import {
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -700,12 +701,9 @@ const PlansFeaturesMain = ( {
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
-
-	const stickyPlanSelectorHeight = 48;
-	const comparisonGridStickyRowOffset =
-		showPlanSelectorDropdown && isMobile()
-			? stickyPlanSelectorHeight + masterbarHeight
-			: masterbarHeight;
+	const [ comparisonGridPlanTypeSelectorRef, isComparisonGridPlanTypeSelectorInView ] = useInView( {
+		rootMargin: '0px 0px -300px 0px',
+	} );
 
 	return (
 		<>
@@ -782,7 +780,10 @@ const PlansFeaturesMain = ( {
 						{ ! hidePlanSelector && (
 							<StickyContainer
 								stickyClass="is-sticky-plan-type-selector"
-								className="plans-features-main__plan-type-selector-sticky-container"
+								className={ classNames(
+									'plans-features-main__plan-type-selector-sticky-container',
+									{ [ 'is-hidden' ]: isComparisonGridPlanTypeSelectorInView }
+								) }
 							>
 								{ () => {
 									return (
@@ -862,7 +863,10 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<div className="plans-features-main__plan-type-selector">
+												<div
+													className="plans-features-main__plan-type-selector"
+													ref={ comparisonGridPlanTypeSelectorRef }
+												>
 													<PlanTypeSelector { ...planTypeSelectorProps } />
 												</div>
 											) }
@@ -880,7 +884,7 @@ const PlansFeaturesMain = ( {
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
-												stickyRowOffset={ comparisonGridStickyRowOffset }
+												stickyRowOffset={ masterbarHeight }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }

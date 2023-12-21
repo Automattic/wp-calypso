@@ -89,6 +89,10 @@
 			// Display above sticky feature and comparison grid plan headers
 			z-index: 3;
 			top: 0;
+
+			&.is-hidden {
+				visibility: hidden;
+			}
 		}
 	}
 
