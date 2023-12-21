@@ -34,8 +34,13 @@
 		color: var(--studio-gray-80);
 	}
 
-	button {
+	button.dismiss {
+		cursor: pointer;
 		text-decoration: underline;
+
+		&:hover {
+			color: var(--studio-jetpack-green-50);
+		}
 	}
 
 	.checklist-item__task {
