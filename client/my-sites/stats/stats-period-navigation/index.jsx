@@ -17,6 +17,12 @@ import {
 	STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
+	STATS_FEATURE_INTERVAL_DROPDOWN,
+	STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
+	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
+	STATS_PERIOD,
 } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -175,6 +181,7 @@ class StatsPeriodNavigation extends PureComponent {
 			shortcutList,
 			gateDateControl,
 			siteId,
+			intervals,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
@@ -221,7 +228,12 @@ class StatsPeriodNavigation extends PureComponent {
 									onClickPrevious={ this.handleArrowPrevious }
 								/>
 							) }
-							<IntervalDropdown slug={ slug } period={ period } queryParams={ queryParams } />
+							<IntervalDropdown
+								slug={ slug }
+								period={ period }
+								queryParams={ queryParams }
+								intervals={ intervals }
+							/>
 						</div>
 					</div>
 				) : (
@@ -241,26 +253,27 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const onGatedClick = ( siteId ) => ( shortcut, source ) => {
-	recordTracksEvent( `${ source }_stats_date_picker_shortcut_${ shortcut.id }_gated_clicked` );
-	recordTracksEvent( 'jetpack_stats_upsell_clicked', {
-		statType: shortcut.statType,
-		source,
-	} );
+const onGatedClick = ( siteId ) => ( events, source ) => {
+	events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
 	page( `/stats/purchase/${ siteId }?productType=personal&from=${ source }` );
 };
 
 const connectComponent = connect(
-	( state ) => {
+	( state, { period } ) => {
 		const siteId = getSelectedSiteId( state );
 		const gateDateControl = shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL );
+		const gatePeriodInterval = shouldGateStats(
+			state,
+			siteId,
+			`${ STATS_FEATURE_INTERVAL_DROPDOWN }/${ period }`
+		);
 		const shortcutList = [
 			{
 				id: 'last_7_days',
 				label: translate( 'Last 7 Days' ),
 				offset: 0,
 				range: 6,
-				period: 'day',
+				period: STATS_PERIOD.DAY,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
 				onGatedClick: onGatedClick( siteId ),
@@ -270,7 +283,7 @@ const connectComponent = connect(
 				label: translate( 'Last 30 Days' ),
 				offset: 0,
 				range: 29,
-				period: 'day',
+				period: STATS_PERIOD.DAY,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 				onGatedClick: onGatedClick( siteId ),
@@ -280,7 +293,7 @@ const connectComponent = connect(
 				label: translate( 'Last 90 Days' ),
 				offset: 0,
 				range: 89,
-				period: 'week',
+				period: STATS_PERIOD.WEEK,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
 				onGatedClick: onGatedClick( siteId ),
@@ -290,14 +303,44 @@ const connectComponent = connect(
 				label: translate( 'Last Year' ),
 				offset: 0,
 				range: 364, // ranges are zero based!
-				period: 'month',
+				period: STATS_PERIOD.MONTH,
 				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_YEAR ),
 				statType: STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 				onGatedClick: onGatedClick( siteId ),
 			},
 		];
+		const intervals = {
+			[ STATS_PERIOD.DAY ]: {
+				id: STATS_PERIOD.DAY,
+				label: translate( 'Days' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_DAY ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			[ STATS_PERIOD.WEEK ]: {
+				id: STATS_PERIOD.WEEK,
+				label: translate( 'Weeks' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			[ STATS_PERIOD.MONTH ]: {
+				id: STATS_PERIOD.MONTH,
+				label: translate( 'Months' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_MONTH ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			[ STATS_PERIOD.YEAR ]: {
+				id: STATS_PERIOD.YEAR,
+				label: translate( 'Years' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_YEAR ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
+				onGatedClick: onGatedClick( siteId ),
+			},
+		};
 
-		return { siteId, shortcutList, gateDateControl };
+		return { siteId, shortcutList, gateDateControl, gatePeriodInterval, intervals };
 	},
 	{ recordGoogleEvent: recordGoogleEventAction }
 );
