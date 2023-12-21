@@ -471,6 +471,26 @@ export const useCommandsArrayWpcom = ( {
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
 		{
+			name: 'manageJetpackModules',
+			label: __( 'Manage Jetpack modules' ),
+			callback: setStateCallback(
+				'manageJetpackModules',
+				__( 'Select site to manage Jetpack modules' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					navigate( `${ site.URL }/wp-admin/admin.php?page=jetpack_modules` );
+				},
+				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
+				filterNotice: __(
+					'Only listing sites with hosting features enabled or self-hosted sites.'
+				),
+				emptyListNotice: __( 'No self-hosted sites or sites with hosting features enabled.' ),
+			},
+			icon: <JetpackLogo className="gridicon" size={ 18 } />,
+		},
+		{
 			name: 'importSite',
 			label: __( 'Import site to WordPress.com' ),
 			searchLabel: [
