@@ -1,6 +1,9 @@
 import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
-import { CheckoutProvider } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	type PaymentEventCallbackArguments,
+} from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
@@ -30,9 +33,11 @@ import './style.scss';
 
 type PurchaseModalProps = {
 	onClose: () => void;
+	onPurchaseSuccess?: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
 	showFeatureList: boolean;
+	disabledThankYouPage?: boolean;
 };
 
 export function PurchaseModal( {
@@ -93,12 +98,27 @@ export function wrapValueInManagedValue( value: string | undefined ): ManagedVal
 }
 
 function PurchaseModalWrapper( props: PurchaseModalProps ) {
-	const { onClose, productToAdd, siteSlug, showFeatureList } = props;
+	const {
+		onClose,
+		onPurchaseSuccess = null,
+		disabledThankYouPage,
+		productToAdd,
+		siteSlug,
+		showFeatureList,
+	} = props;
 
-	const onComplete = useCreatePaymentCompleteCallback( {
+	const paymentCompleteCallback = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
 		siteSlug: siteSlug,
+		isInModal: true,
+		disabledThankYouPage,
 	} );
+
+	const handlePaymentComplete = ( args: PaymentEventCallbackArguments ) => {
+		paymentCompleteCallback( args );
+		onPurchaseSuccess?.();
+	};
+
 	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
@@ -199,7 +219,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	return (
 		<CheckoutProvider
 			paymentMethods={ [] }
-			onPaymentComplete={ onComplete }
+			onPaymentComplete={ handlePaymentComplete }
 			paymentProcessors={ {
 				'existing-card': ( transactionData ) =>
 					existingCardProcessor( transactionData, dataForProcessor ),

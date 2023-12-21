@@ -487,13 +487,18 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</div>
 				<div class="launch-bar-global-styles-message">
 					<?php
+					$support_url = function_exists( 'localized_wpcom_url' )
+						? localized_wpcom_url( 'https://wordpress.com/support/using-styles/' )
+						// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
+						: 'https://wordpress.com/support/using-styles/';
+
 					$message = sprintf(
 						/* translators: %1$s - documentation URL, %2$s - the name of the required plan */
 						__(
 							'Your site includes <a href="%1$s" target="_blank">premium styles</a> that are only visible to visitors after upgrading to the %2$s plan or higher.',
 							'full-site-editing'
 						),
-						'https://wordpress.com/support/using-styles/',
+						$support_url,
 						get_store_product( WPCOM_VALUE_BUNDLE )->product_name
 					);
 					echo sprintf(

@@ -96,11 +96,17 @@ export function getLabel( product: ResponseCartProduct ): string {
 		return product.meta;
 	}
 
-	if ( isJetpackAISlug( product.product_slug ) && product.quantity ) {
+	if (
+		isJetpackAISlug( product.product_slug ) &&
+		( product.quantity !== null || product.current_quantity !== null )
+	) {
+		// In theory, it'll fallback to 0, but just in case.
+		const quantity = product.quantity || product.current_quantity || 0;
+
 		return translate( '%(productName)s (%(quantity)d requests per month)', {
 			args: {
 				productName: product.product_name,
-				quantity: product.quantity,
+				quantity: quantity,
 			},
 			textOnly: true,
 		} );

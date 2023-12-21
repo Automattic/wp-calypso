@@ -88,6 +88,7 @@ function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDial
 						{
 							label: getText( subscriberToCancel ).button,
 							isPrimary: true,
+							additionalClassNames: 'is-scary',
 							action: 'cancel',
 						},
 					] }

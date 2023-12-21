@@ -53,7 +53,7 @@ const SubscriberListContainer = ( {
 						</span>
 					</div>
 
-					{ total > 3 && <SubscriberListActionsBar /> }
+					{ ( total > 3 || searchTerm ) && <SubscriberListActionsBar /> }
 				</>
 			) }
 			{ isLoading &&

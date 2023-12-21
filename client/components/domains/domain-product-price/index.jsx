@@ -108,7 +108,7 @@ class DomainProductPrice extends Component {
 
 		return (
 			<div className="domain-product-price__price">
-				<strong>{ this.props.salePrice }</strong> <del>{ priceText }</del>
+				<del>{ priceText }</del>
 			</div>
 		);
 	}
