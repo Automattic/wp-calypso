@@ -93,6 +93,7 @@ export type FeaturedItemCardProps = {
 	description: React.ReactNode;
 	hero: React.ReactNode;
 	moreInfoLink?: React.ReactNode;
+	isCondensedVersion?: boolean;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
 	isProductInCart?: boolean;
