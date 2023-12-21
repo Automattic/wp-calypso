@@ -38,6 +38,7 @@ import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-comple
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
+import { useHideCheckoutUpsellNudge } from '../hooks/use-hide-checkout-upsell-nudge';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
@@ -522,6 +523,8 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
+	const isHideUpsellNudgeExperimentLoading = useHideCheckoutUpsellNudge() === 'loading';
+
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
 	//
@@ -545,6 +548,7 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
+		{ name: translate( 'Loading Site' ), isLoading: isHideUpsellNudgeExperimentLoading },
 	];
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading

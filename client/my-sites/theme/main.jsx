@@ -7,6 +7,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_INSTALL_PLUGINS,
 	getPlan,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
@@ -1030,11 +1031,13 @@ class ThemeSheet extends Component {
 		const {
 			siteId,
 			defaultOption,
+			canInstallPlugins,
 			isActive,
 			isLoggedIn,
 			isPremium,
 			isThemePurchased,
 			translate,
+			isBundledSoftwareSet,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
@@ -1053,9 +1056,10 @@ class ThemeSheet extends Component {
 			);
 		} else if ( isLoggedIn && siteId ) {
 			if (
-				( ! isThemeAllowedOnSite || isPremium ) &&
-				! isThemePurchased &&
-				! isExternallyManagedTheme
+				( ( ! isThemeAllowedOnSite || isPremium ) &&
+					! isThemePurchased &&
+					! isExternallyManagedTheme ) ||
+				( isBundledSoftwareSet && ! canInstallPlugins )
 			) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
@@ -1611,6 +1615,7 @@ const ConnectedThemeSheet = connectOptions( ThemeSheet );
 const ThemeSheetWithOptions = ( props ) => {
 	const {
 		siteId,
+		canInstallPlugins,
 		isActive,
 		isLoggedIn,
 		isPremium,
@@ -1651,7 +1656,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'subscribe';
 	} else if ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
-	} else if ( isPremium && ! isThemePurchased && isBundledSoftwareSet ) {
+	} else if ( ! canInstallPlugins && isBundledSoftwareSet ) {
 		defaultOption = 'upgradePlanForBundledThemes';
 	} else {
 		defaultOption = 'activate';
@@ -1734,6 +1739,7 @@ export default connect(
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
+			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -250,12 +251,16 @@ class ThemePreview extends Component {
 						externalUrl={ demoUrl }
 						belowToolbar={ this.props.belowToolbar }
 					>
-						{ showActionIndicator && <PulsingDot active={ true } /> }
-						{ ! showActionIndicator && this.renderSecondaryButton() }
-						{ ! showActionIndicator &&
-							( this.shouldShowUnlockStyleButton()
-								? this.renderUnlockStyleButton()
-								: this.renderPrimaryButton() ) }
+						{ ! isEnabled( 'themes/tiers' ) && (
+							<>
+								{ showActionIndicator && <PulsingDot active={ true } /> }
+								{ ! showActionIndicator && this.renderSecondaryButton() }
+								{ ! showActionIndicator &&
+									( this.shouldShowUnlockStyleButton()
+										? this.renderUnlockStyleButton()
+										: this.renderPrimaryButton() ) }
+							</>
+						) }
 					</WebPreview>
 				) }
 				{ showUnlockStyleUpgradeModal && (

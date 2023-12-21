@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -46,6 +47,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	const [ renderState, setRenderState ] = useState< RenderState >( 'idle' );
 	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
+	const planName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
 	/**
 	 ↓ Callbacks
@@ -164,8 +166,22 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 			{ renderState === 'upgrade-plan' && (
 				<UpgradePlan
 					site={ siteItem }
-					ctaText={ translate( 'Get Business' ) }
-					subTitleText={ translate( 'Importing a backup file requires a Business plan' ) }
+					ctaText={
+						// translators: %(plan)s is the plan name - e.g. Business or Creator
+						translate( 'Get %(plan)s', {
+							args: {
+								plan: planName,
+							},
+						} ) as string
+					}
+					subTitleText={
+						// translators: %(plan)s is the plan name - e.g. Business or Creator
+						translate( 'Importing a backup file requires a %(planName)s plan', {
+							args: {
+								planName,
+							},
+						} ) as string
+					}
 					isBusy={ false }
 					onCtaClick={ () => {
 						stepNavigator?.goToCheckoutPage?.( WPImportOption.CONTENT_ONLY );
