@@ -133,8 +133,8 @@ export class UploadingPane extends PureComponent {
 						<div className="importer-upload-warning">
 							<p>
 								{ this.props.translate(
-									'You seem to have uploaded a Playground file.{{br/}}' +
-										'Please go {{a}}here{{/a}} to try the import again.',
+									'Playground imports are not yet available through this form.{{br/}}' +
+										'Please head over to {{a}}this page{{/a}} to resume the import process.',
 									{
 										components: {
 											br: <br />,
