@@ -115,12 +115,6 @@ const HiddenSitesMessageContainer = styled.div( {
 	textAlign: 'center',
 } );
 
-//const MenuItemWrapper = styled.div( {
-//	'&:focus, &:hover': {
-//		fill: 'var(--color-text-inverted)',
-//	},
-//} );
-
 const HiddenSitesMessage = styled.div( {
 	marginBlockEnd: '1em',
 } );
