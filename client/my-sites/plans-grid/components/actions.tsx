@@ -32,9 +32,7 @@ import type { PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
-	// className: string;
 	currentSitePlanSlug?: string | null;
-	// freePlan: boolean;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
@@ -42,13 +40,8 @@ type PlanFeaturesActionsButtonProps = {
 	onUpgradeClick: ( overridePlanSlug?: PlanSlug ) => void;
 	planSlug: PlanSlug;
 	buttonText?: string;
-	// isWpcomEnterpriseGridPlan: boolean;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
-	/**
-	 * @deprecated Site id is not used here to be cleaned up
-	 */
-	siteId?: number | null;
 	isStuck: boolean;
 	isLargeCurrency?: boolean;
 	storageOptions?: StorageOption[];
