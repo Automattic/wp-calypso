@@ -1,6 +1,20 @@
 $border-color: #eee;
 
 .marketplace-reviews-modal {
+	width: 850px;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		width: 600px;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		width: 400px;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		width: 100%;
+	}
+
 	&.dialog__content {
 		padding: 0;
 	}
@@ -53,6 +67,7 @@ $border-color: #eee;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 20px;
 	}
 
 	.marketplace-reviews-modal__reviews-list {
@@ -73,12 +88,4 @@ $border-color: #eee;
 .dialog__action-buttons-close {
 	padding: 16px 24px 5px 5px;
 	background-color: #fff;
-}
-
-.dialog.card {
-	max-width: 850px;
-
-	@include breakpoint-deprecated( "<1040px" ) {
-		max-height: 100%;
-	}
 }

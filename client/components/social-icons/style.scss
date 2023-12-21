@@ -5,6 +5,16 @@
 
 .social-icons--disabled {
 	path {
-		fill: var(--color-neutral-0);
+		fill: var(--color-neutral-20);
+	}
+}
+
+.social-icons__mail.social-icons--disabled {
+	rect {
+		stroke: var(--color-neutral-20);
+	}
+	path {
+		fill: none;
+		stroke: var(--color-neutral-20);
 	}
 }

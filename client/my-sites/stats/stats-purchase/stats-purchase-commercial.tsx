@@ -19,6 +19,7 @@ interface CommercialPurchaseProps {
 	from: string;
 }
 
+// When we phase out <StatsPurchaseWizard /> this component can be removed.
 const CommercialPurchase = ( {
 	planValue,
 	currencyCode,

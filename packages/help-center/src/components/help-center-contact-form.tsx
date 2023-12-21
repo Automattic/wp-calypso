@@ -29,7 +29,7 @@ import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useUserSites } from '../data/use-user-sites';
-import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
+import { useChatStatus, useContactFormTitle, useChatWidget } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SearchResult } from '../types';
@@ -95,7 +95,6 @@ export const HelpCenterContactForm = () => {
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -124,9 +123,8 @@ export const HelpCenterContactForm = () => {
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
 	} = useChatStatus();
-	useZendeskMessaging(
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
-		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
 

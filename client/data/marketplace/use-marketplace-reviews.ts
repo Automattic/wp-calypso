@@ -21,6 +21,7 @@ export type ProductProps = {
 	productType: ProductType;
 	slug: string;
 	author?: number;
+	author_exclude?: number;
 };
 
 export type PaginationProps = {
@@ -92,7 +93,8 @@ const fetchMarketplaceReviews = (
 	productSlug: string,
 	page: number = 1,
 	perPage: number = 10,
-	author?: number
+	author?: number,
+	author_exclude?: number
 ): Promise< MarketplaceReviewResponse[] > => {
 	return wpcom.req.get(
 		{
@@ -105,6 +107,7 @@ const fetchMarketplaceReviews = (
 			page,
 			per_page: perPage,
 			...( author ? { author } : {} ),
+			...( author_exclude ? { author_exclude } : {} ),
 		}
 	);
 };
@@ -171,15 +174,24 @@ const fetchMarketplaceReviewsStats = ( {
 };
 
 export const useMarketplaceReviewsQuery = (
-	{ productType, slug, page, perPage, author }: MarketplaceReviewsQueryProps,
+	{ productType, slug, page, perPage, author, author_exclude }: MarketplaceReviewsQueryProps,
 	{
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
 	}: MarketplaceReviewsQueryOptions = {}
 ) => {
-	const queryKey: QueryKey = [ queryKeyBase, productType, slug, author, page, perPage ];
-	const queryFn = () => fetchMarketplaceReviews( productType, slug, page, perPage, author );
+	const queryKey: QueryKey = [
+		queryKeyBase,
+		productType,
+		slug,
+		author,
+		author_exclude,
+		page,
+		perPage,
+	];
+	const queryFn = () =>
+		fetchMarketplaceReviews( productType, slug, page, perPage, author, author_exclude );
 	return useQuery( { queryKey, queryFn, enabled, staleTime, refetchOnMount } );
 };
 

@@ -24,14 +24,13 @@ import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import analytics from 'calypso/server/lib/analytics';
-import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
+import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
 	serverRender,
@@ -98,7 +97,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, response, entrypoint = 'entry-main', sectionName ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'getDefaultContext' );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
@@ -147,12 +146,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
-	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
-	const isWCComConnect =
-		( 'login' === sectionName || 'signup' === sectionName ) &&
-		request.query[ 'wccom-from' ] &&
-		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
-
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
@@ -177,7 +170,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 		env: calypsoEnv,
 		sanitize: sanitize,
 		requestFrom: request.query.from,
-		isWCComConnect,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
@@ -203,6 +195,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
+		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDebug,
 	};
 

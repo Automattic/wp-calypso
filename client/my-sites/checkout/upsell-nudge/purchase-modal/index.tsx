@@ -1,10 +1,12 @@
 import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
-import { CheckoutProvider } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	type PaymentEventCallbackArguments,
+} from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
-import { useState, useMemo, useEffect } from 'react';
-import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
@@ -12,8 +14,10 @@ import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-ca
 import getContactDetailsType from 'calypso/my-sites/checkout/src/lib/get-contact-details-type';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
-import getCountries from 'calypso/state/selectors/get-countries';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import useCountryList from '../../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../../src/lib/update-cart-contact-details-for-checkout';
 import { BEFORE_SUBMIT } from './constants';
@@ -23,14 +27,17 @@ import { useSubmitTransaction } from './use-submit-transaction';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails, ManagedValue, VatDetails } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/src/types/payment-processors';
+import type { SiteSlug } from 'calypso/types';
 
 import './style.scss';
 
 type PurchaseModalProps = {
 	onClose: () => void;
+	onPurchaseSuccess?: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
 	showFeatureList: boolean;
+	disabledThankYouPage?: boolean;
 };
 
 export function PurchaseModal( {
@@ -90,13 +97,28 @@ export function wrapValueInManagedValue( value: string | undefined ): ManagedVal
 	};
 }
 
-export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
-	const { onClose, productToAdd, siteSlug, showFeatureList } = props;
+function PurchaseModalWrapper( props: PurchaseModalProps ) {
+	const {
+		onClose,
+		onPurchaseSuccess = null,
+		disabledThankYouPage,
+		productToAdd,
+		siteSlug,
+		showFeatureList,
+	} = props;
 
-	const onComplete = useCreatePaymentCompleteCallback( {
+	const paymentCompleteCallback = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
 		siteSlug: siteSlug,
+		isInModal: true,
+		disabledThankYouPage,
 	} );
+
+	const handlePaymentComplete = ( args: PaymentEventCallbackArguments ) => {
+		paymentCompleteCallback( args );
+		onPurchaseSuccess?.();
+	};
+
 	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
@@ -106,7 +128,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const paymentMethodsState = useStoredPaymentMethods( {
 		type: 'card',
 	} );
-	const countries = useSelector( ( state ) => getCountries( state, 'payments' ) );
+	const countries = useCountryList();
 
 	const cards = paymentMethodsState.paymentMethods.filter( isCreditCard );
 	const contactDetailsType = getContactDetailsType( responseCart );
@@ -142,10 +164,10 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		]
 	);
 
-	useEffect( () => {
-		let isUpdatingCart = false;
+	const [ requestSent, setRequestSent ] = useState( false );
 
-		if ( storedCard && countries?.length && ! isUpdatingCart ) {
+	useEffect( () => {
+		if ( storedCard && countries?.length && cartKey && cartKey !== 'no-site' && ! requestSent ) {
 			const vatDetails: VatDetails = {
 				country: storedCard.tax_location?.country_code,
 				id: storedCard.tax_location?.vat_id,
@@ -157,7 +179,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
 				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
 			};
-
+			setRequestSent( true );
 			updateCartContactDetailsForCheckout(
 				countries ?? [],
 				responseCart,
@@ -167,17 +189,23 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			);
 			replaceProductsInCart( [ productToAdd ] );
 		}
-
-		return () => {
-			isUpdatingCart = true;
-		};
-		// This hook updates cart values which also changes the `responseCart` variable.
-		// We do not want this effect to run when `responseCart` is updated to avoid an infinite loop.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ replaceProductsInCart, updateLocation, storedCard, productToAdd, countries ] );
+	}, [
+		replaceProductsInCart,
+		updateLocation,
+		storedCard,
+		productToAdd,
+		countries,
+		selectedSite,
+		cartKey,
+		requestSent,
+		setRequestSent,
+		responseCart,
+	] );
 
 	const handleOnClose = () => {
-		Promise.all( [ updateLocation( { countryCode: '' } ), replaceProductsInCart( [] ) ] ).catch();
+		if ( cartKey ) {
+			Promise.all( [ updateLocation( { countryCode: '' } ), replaceProductsInCart( [] ) ] ).catch();
+		}
 		// We don't need to wait for the result of the above.
 		onClose();
 	};
@@ -191,13 +219,12 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	return (
 		<CheckoutProvider
 			paymentMethods={ [] }
-			onPaymentComplete={ onComplete }
+			onPaymentComplete={ handlePaymentComplete }
 			paymentProcessors={ {
 				'existing-card': ( transactionData ) =>
 					existingCardProcessor( transactionData, dataForProcessor ),
 			} }
 		>
-			{ countries?.length === 0 && <QueryPaymentCountries /> }
 			<PurchaseModal
 				cards={ cards }
 				isLoading={ isPendingUpdate || ! countries?.length }
@@ -207,5 +234,30 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				showFeatureList={ showFeatureList }
 			/>
 		</CheckoutProvider>
+	);
+}
+
+function EnsureSelectedSite( { siteSlug, children }: PropsWithChildren< { siteSlug: SiteSlug } > ) {
+	const reduxDispatch = useDispatch();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
+
+	// Set the selected site if it is not set already.
+	// This is necessary for the cart and post-purchase actions to function correctly.
+	const hasSelectedSiteId = siteId === selectedSite?.ID;
+	useEffect( () => {
+		if ( ! hasSelectedSiteId && siteId ) {
+			reduxDispatch( setSelectedSiteId( siteId ) );
+		}
+	}, [ hasSelectedSiteId, reduxDispatch, siteId ] );
+
+	return hasSelectedSiteId ? children : null;
+}
+
+export default function ( props: PurchaseModalProps ) {
+	return (
+		<EnsureSelectedSite siteSlug={ props.siteSlug }>
+			<PurchaseModalWrapper { ...props } />
+		</EnsureSelectedSite>
 	);
 }

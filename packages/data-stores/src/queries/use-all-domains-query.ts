@@ -7,20 +7,21 @@ import type { DomainData } from './use-site-domains-query';
 // related to a domain.
 export type PartialDomainData = Pick<
 	DomainData,
-	| 'domain'
+	| 'auto_renewing'
 	| 'blog_id'
-	| 'type'
-	| 'is_wpcom_staging_domain'
-	| 'has_registration'
-	| 'registration_date'
-	| 'expiry'
-	| 'wpcom_domain'
-	| 'current_user_is_owner'
 	| 'current_user_can_add_email'
-	| 'google_apps_subscription'
-	| 'titan_mail_subscription'
+	| 'current_user_is_owner'
+	| 'domain'
 	| 'email_forwards_count'
+	| 'expiry'
+	| 'google_apps_subscription'
+	| 'has_registration'
+	| 'is_wpcom_staging_domain'
+	| 'registration_date'
+	| 'titan_mail_subscription'
 	| 'tld_maintenance_end_time'
+	| 'type'
+	| 'wpcom_domain'
 >;
 
 export interface AllDomainsQueryFnData {

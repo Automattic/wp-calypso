@@ -152,6 +152,9 @@ Thanks\n\n`;
 				<>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
+						analyticsEventName={ `${
+							isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+						}_stats_purchase_commercial_slider_clicked` }
 						onSliderChange={ handleSliderChanged }
 					/>
 					<ButtonComponent

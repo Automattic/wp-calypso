@@ -67,15 +67,16 @@ export type MessageType =
 	| 'introduction';
 
 export type Message = {
-	message_id?: number;
 	content: string;
-	meta?: Record< string, string >;
-	role: MessageRole;
-	type: MessageType;
-	liked?: boolean | null;
-	simulateTyping?: boolean;
 	context?: Context;
+	internal_message_id?: string;
+	message_id?: number;
+	meta?: Record< string, string >;
+	liked?: boolean | null;
 	rating_value?: number;
+	role: MessageRole;
+	simulateTyping?: boolean;
+	type: MessageType;
 };
 
 export type Chat = {

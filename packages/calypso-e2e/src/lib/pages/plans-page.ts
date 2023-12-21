@@ -4,7 +4,16 @@ import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
+export type Plans =
+	| 'Free'
+	| 'Personal'
+	| 'Premium'
+	| 'Business'
+	| 'eCommerce'
+	| 'Starter'
+	| 'Explorer'
+	| 'Creator'
+	| 'Entrepreneur';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 

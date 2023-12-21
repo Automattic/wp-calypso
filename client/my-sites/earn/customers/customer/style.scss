@@ -88,7 +88,10 @@
 		}
 	}
 
-	.customer__stripe-button {
+	.customer__action-buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 12px;
 		margin-top: 30px;
 	}
 }
