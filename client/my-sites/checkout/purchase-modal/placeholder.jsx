@@ -1,4 +1,4 @@
-import { LoadingCheckoutSummaryFeaturesList } from '../../src/components/wp-checkout-order-summary';
+import { LoadingCheckoutSummaryFeaturesList } from '../src/components/wp-checkout-order-summary';
 
 function OrderStep() {
 	return (

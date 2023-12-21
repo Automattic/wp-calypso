@@ -17,9 +17,9 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import useCountryList from '../../src/hooks/use-country-list';
-import { useStoredPaymentMethods } from '../../src/hooks/use-stored-payment-methods';
-import { updateCartContactDetailsForCheckout } from '../../src/lib/update-cart-contact-details-for-checkout';
+import useCountryList from '../src/hooks/use-country-list';
+import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
+import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
@@ -40,7 +40,7 @@ type PurchaseModalProps = {
 	disabledThankYouPage?: boolean;
 };
 
-export function PurchaseModal( {
+function PurchaseModal( {
 	cart,
 	cards,
 	isLoading,
