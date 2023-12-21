@@ -46,6 +46,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 				{
 					label: translate( 'Delete' ),
 					isPrimary: true,
+					additionalClassNames: 'is-scary',
 					action: 'delete',
 				},
 			] }
