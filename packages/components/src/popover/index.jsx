@@ -32,19 +32,18 @@ class PopoverInner extends Component {
 		onMouseEnter: noop,
 		onMouseLeave: noop,
 		hideArrow: false,
+		autoRepositionOnInitialLoad: false, // use with caution, read comment about autoRepositionOnInitialLoad below
 	};
 
 	/**
 	 * Timeout ID that determines if repositioning the Popover is currently scheduled and lets us
 	 * cancel the task.
-	 *
 	 * @type {number|null} `setTimeout` handle or null
 	 */
 	scheduledPositionUpdate = null;
 
 	/**
 	 * Timeout ID for the scheduled focus. Lets us cancel the task when hiding/unmounting.
-	 *
 	 * @type {number|null} `setTimeout` handle or null
 	 */
 	scheduledFocus = null;
@@ -58,6 +57,12 @@ class PopoverInner extends Component {
 		positionClass: this.getPositionClass( this.props.position ),
 	};
 
+	/**
+	 * Used to prevent inifinite repositioning when autoReposition is enabled.
+	 * @type {number} Number of times the position has not changed after this.setPosition()
+	 */
+	autoRepositionStability = 0;
+
 	componentDidMount() {
 		// make sure to set the viewport when mounting, because it might have been changed between two mounts of this
 		// component, e.g. when the viewport is changed while the popover is hidden
@@ -65,6 +70,7 @@ class PopoverInner extends Component {
 		this.bindListeners();
 		this.setPosition();
 		this.show();
+		this.autoRepositionOnInitialLoad();
 	}
 
 	componentDidUpdate() {
@@ -82,6 +88,7 @@ class PopoverInner extends Component {
 
 	componentWillUnmount() {
 		this.unbindListeners();
+		this.clearAutoRepositionOnInitialLoad();
 	}
 
 	bindListeners() {
@@ -215,7 +222,6 @@ class PopoverInner extends Component {
 	/**
 	 * Adjusts position swapping left and right values
 	 * when right-to-left directionality is found.
-	 *
 	 * @param {string} position Original position
 	 * @returns {string} Adjusted position
 	 */
@@ -251,7 +257,6 @@ class PopoverInner extends Component {
 	/**
 	 * Computes the position of the Popover in function
 	 * of its main container and the target.
-	 *
 	 * @returns {Object} reposition parameters
 	 */
 	computePosition() {
@@ -303,6 +308,37 @@ class PopoverInner extends Component {
 
 		if ( position ) {
 			this.setState( position );
+		}
+		return position;
+	};
+
+	/**
+	 * Last resort to position the popover in its correct position initially.
+	 * Might be due to other components have delayed render, for example, rendering based on API results,
+	 * causing the target object to "jump positions".
+	 *
+	 * This results in the popover to be rendered in the wrong position, so we need to reposition it.
+	 * @returns {void}
+	 */
+	autoRepositionOnInitialLoad = () => {
+		if ( this.props.autoRepositionOnInitialLoad ) {
+			this.autoRepositionOnInitialLoadInterval = setInterval( () => {
+				const lastPosition = this.state;
+				const { left, top } = this.setPosition();
+				if ( lastPosition.left === left || lastPosition.top === top ) {
+					this.autoRepositionStability += 1;
+				}
+				// Arbitrary number to stop trying to reposition if the position has stabilized for performance reasons.
+				if ( this.autoRepositionStability > 5 ) {
+					clearInterval( this.autoRepositionOnInitialLoadInterval );
+				}
+			}, 500 );
+		}
+	};
+
+	clearAutoRepositionOnInitialLoad = () => {
+		if ( this.autoRepositionOnInitialLoadInterval ) {
+			clearInterval( this.autoRepositionOnInitialLoadInterval );
 		}
 	};
 
