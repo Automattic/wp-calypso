@@ -136,7 +136,7 @@ describe(
 
 			it( `Plans page states user is on WordPress.com ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
-				await plansPage.validateActivePlan( 'Premium' );
+				await plansPage.validateActivePlan( planName );
 			} );
 		} );
 

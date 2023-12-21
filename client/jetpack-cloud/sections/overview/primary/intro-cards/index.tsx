@@ -1,5 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import DotPager from 'calypso/components/dot-pager';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -71,11 +73,22 @@ const Card4 = () => {
 };
 
 export default function IntroCards( { onFinish = () => {} } ) {
+	const dispatch = useDispatch();
+
+	const tracksFn = ( tracksEventName?: string, tracksEventProps?: object ) => {
+		if ( ! tracksEventName ) {
+			return;
+		}
+		dispatch( recordTracksEvent( tracksEventName, tracksEventProps ) );
+	};
+
 	return (
 		<DotPager
 			className="intro-cards"
 			navArrowSize={ 24 }
 			tracksPrefix="calypso_jetpack_manage_overview_intro_cards"
+			tracksFn={ tracksFn }
+			includePreviousButton
 			includeNextButton
 			includeFinishButton
 			onFinish={ onFinish }

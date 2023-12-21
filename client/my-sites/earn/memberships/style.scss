@@ -153,12 +153,18 @@ body.is-section-earn.theme-default.color-scheme {
 	}
 }
 
-.memberships__delete-plan-modal {
+.memberships__delete-plan-modal,
+.memberships__stripe-disconnect-modal {
 	width: 580px;
 	max-width: 98%;
 	h1 {
 		margin-bottom: 1em;
 	}
+}
+
+.memberships__commission-notice {
+	font-size: $font-body-small;
+	color: var(--studio-gray-70);
 }
 
 .supporters-list {
@@ -312,8 +318,10 @@ body.is-section-earn.theme-default.color-scheme {
 	margin-top: 20px;
 }
 
-.memberships__module-plans-title {
+.memberships__module-plans-title,
+.memberships__products-card-title {
 	color: var(--color-neutral-100);
+	font-size: $font-body-small;
 }
 
 .memberships__module-settings-title {

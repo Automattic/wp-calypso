@@ -28,6 +28,7 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { CommandCallBackParams } from 'calypso/components/command-palette/use-command-palette';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -1172,6 +1173,27 @@ export const useCommandsArrayWpcom = ( {
 				},
 			},
 			icon: downloadIcon,
+		},
+		{
+			name: 'openWooCommerceSettings',
+			label: __( 'Open WooCommerce settings' ),
+			callback: setStateCallback(
+				'openWooCommerceSettings',
+				__( 'Select site to open WooCommerce settings' )
+			),
+			siteFunctions: {
+				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
+					close();
+					if ( site.options?.is_wpcom_store ) {
+						navigate( `${ site.URL }/wp-admin/admin.php?page=wc-admin` );
+					} else {
+						navigate( `/woocommerce-installation/${ site.slug }` );
+					}
+				},
+				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
+				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
+			},
+			icon: <WooCommerceLogo size={ 24 } className="woo-command-palette" />,
 		},
 		{
 			name: 'manageSettingsGeneral',
