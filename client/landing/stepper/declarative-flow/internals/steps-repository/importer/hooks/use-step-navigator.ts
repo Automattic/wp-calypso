@@ -26,6 +26,10 @@ export function useStepNavigator(
 		navigation.goToStep?.( 'intent' );
 	}
 
+	function goToGoalsPage() {
+		navigation.goToStep?.( 'goals' );
+	}
+
 	function goToImportCapturePage() {
 		navigation.goToStep?.( 'import' );
 	}
@@ -131,8 +135,10 @@ export function useStepNavigator(
 	}
 
 	return {
+		flow,
 		supportLinkModal: false,
 		goToIntentPage,
+		goToGoalsPage,
 		goToImportCapturePage,
 		goToSiteViewPage,
 		goToDashboardPage,

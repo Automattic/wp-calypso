@@ -8,9 +8,9 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -64,9 +64,6 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-
-	const isEnglishLocale = useIsEnglishLocale();
-
 	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
@@ -133,23 +130,17 @@ const Home = () => {
 	};
 
 	const getPremiumPlanNames = () => {
-		const nonAtomicJetpackText =
-			isEnglishLocale ||
-			i18n.hasTranslation(
-				'Available only with a %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s plan.'
-			)
-				? translate(
-						'Available only with a %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s plan.',
-						{
-							args: {
-								premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
-								businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
-								commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '',
-							},
-						}
-				  )
-				: translate( 'Available only with a Premium, Business, or Commerce plan.' );
-
+		const nonAtomicJetpackText = translate(
+			// Translators: %(premiumPlanName)s is Explorer or Premium, %(businessPlanName)s is Creator or Business, %(commercePlanName)s is Entrepreneur or eCommerce.
+			'Available only with a %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s plan.',
+			{
+				args: {
+					premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
+					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
+					commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '',
+				},
+			}
+		);
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
 	};

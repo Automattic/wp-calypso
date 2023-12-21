@@ -42,7 +42,6 @@ import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
-import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
@@ -523,8 +522,6 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isCollapseExperimentLoading = useShouldCollapseLastStep() === 'loading';
-
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
 	//
@@ -548,7 +545,6 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
-		{ name: translate( 'Loading Site' ), isLoading: isCollapseExperimentLoading },
 	];
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading
