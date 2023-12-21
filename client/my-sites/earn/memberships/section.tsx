@@ -1,6 +1,7 @@
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
+import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
@@ -9,6 +10,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { userCan } from 'calypso/lib/site/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
@@ -17,6 +19,7 @@ import {
 	getConnectUrlForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import CommissionFees from '../components/commission-fees';
 import { Query } from '../types';
 import {
 	ADD_TIER_PLAN_HASH,
@@ -48,6 +51,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		getConnectedAccountDescriptionForSiteId( state, site?.ID )
 	);
 	const connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
+
+	const { commission } = useSelector( ( state ) =>
+		getEarningsWithDefaultsForSiteId( state, site?.ID )
+	);
 
 	const navigateToLaunchpad = useCallback( () => {
 		const shouldGoToLaunchpad = query?.stripe_connect_success === 'launchpad';
@@ -136,6 +143,9 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						</div>
 					</Card>
 				) }
+				<p className="memberships__commission-notice">
+					<CommissionFees commission={ commission } siteSlug={ site?.slug } />
+				</p>
 				<Dialog
 					className="memberships__stripe-disconnect-modal"
 					isVisible={ !! disconnectedConnectedAccountId }
@@ -243,6 +253,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	return (
 		<div>
 			<QueryMembershipsSettings siteId={ site.ID } source={ source } />
+			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			{ ! connectedAccountId && ! connectUrl && (
 				<div className="earn__payments-loading">
 					<LoadingEllipsis />
