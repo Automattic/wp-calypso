@@ -150,7 +150,7 @@ const DownloadIcon = styled( Icon )`
 	vertical-align: bottom;
 `;
 
-const hoverStyles = css`
+const popoverHoverStyles = css`
 	&:hover,
 	&:focus {
 		fill: var( --color-text-inverted );
@@ -228,7 +228,7 @@ export function SitesDashboard( {
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
-							className={ `${ hoverStyles }` }
+							className={ `${ popoverHoverStyles }` }
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
