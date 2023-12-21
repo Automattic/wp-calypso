@@ -265,13 +265,18 @@ export class CartCheckoutPage {
 		// the "Edit" button on the payment method step. There are cases where
 		// the step will not be collapsed, however, so this will only trigger
 		// if the edit button is visible.
-		const selector = this.page.locator( selectors.existingCreditCard( cardHolderName ) ).first();
-		try {
-			await selector.click();
-		} catch ( error ) {
-			await this.page.click( selectors.editPaymentStep );
-			await selector.click();
+		const cardSelector = this.page
+			.locator( selectors.existingCreditCard( cardHolderName ) )
+			.first();
+		const editPaymentButton = this.page.locator( selectors.editPaymentStep );
+
+		await cardSelector.or( editPaymentButton ).waitFor( { state: 'visible' } );
+
+		if ( await editPaymentButton.isVisible() ) {
+			await editPaymentButton.click();
 		}
+
+		await cardSelector.click();
 	}
 
 	/**
