@@ -88,7 +88,7 @@ export type FeaturedItemCardProps = {
 	amountSaved?: React.ReactNode;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
-	ctaLabel: React.ReactNode;
+	ctaLabel?: React.ReactNode;
 	ctaAriaLabel?: string;
 	description: React.ReactNode;
 	hero: React.ReactNode;
