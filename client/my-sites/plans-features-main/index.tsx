@@ -261,6 +261,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const showPlanSelectorDropdown = config.isEnabled( 'onboarding/interval-dropdown' );
 	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
@@ -697,6 +698,12 @@ const PlansFeaturesMain = ( {
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
+	const stickyPlanSelectorHeight = 48;
+
+	const comparisonGridStickyRowOffset = showPlanSelectorDropdown
+		? stickyPlanSelectorHeight + masterbarHeight
+		: masterbarHeight;
+
 	return (
 		<>
 			<div
@@ -867,7 +874,7 @@ const PlansFeaturesMain = ( {
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
-												stickyRowOffset={ masterbarHeight }
+												stickyRowOffset={ comparisonGridStickyRowOffset }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
