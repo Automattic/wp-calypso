@@ -14,7 +14,7 @@ import { GeneratorModal } from '../src';
 
 describe( 'Base', () => {
 	it( 'should render Hello World', async () => {
-		render( <GeneratorModal /> );
+		render( <GeneratorModal isOpen={ true } /> );
 		expect( await screen.findByText( 'Hello World' ) ).toBeInTheDocument();
 	} );
 } );
