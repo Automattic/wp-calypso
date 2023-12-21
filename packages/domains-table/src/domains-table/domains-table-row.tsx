@@ -11,7 +11,7 @@ import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
 import { useDomainsTable } from './domains-table';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
-import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
+import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-cell';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
@@ -97,6 +97,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 					) }
 				</td>
 			) }
+
 			{ domainsTableColumns.map( ( column ) => {
 				if ( column.name === 'domain' ) {
 					return (
@@ -137,7 +138,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'expire_renew' ) {
 					return (
-						<DomainsTableExpiresRewnewsOnCell
+						<DomainsTableExpiresRenewsOnCell
 							key={ domain.domain + column.name }
 							as="td"
 							domain={ domain }

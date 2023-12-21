@@ -1,6 +1,5 @@
 import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS, getPlan } from '@automattic/calypso-products';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
 import iconCloud from './icons/icon-cloud.svg';
@@ -33,25 +32,16 @@ interface HostingUpsellNudgeProps {
 
 export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgeProps ) {
 	const translate = useTranslate();
-
 	const features = useFeatureList();
-	const isEnglishLocale = useIsEnglishLocale();
-	const callToActionText =
-		isEnglishLocale || i18n.hasTranslation( 'Upgrade to %(businessPlanName)s Plan' )
-			? translate( 'Upgrade to %(businessPlanName)s Plan', {
-					args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-			  } )
-			: translate( 'Upgrade to Business Plan' );
-	const titleText =
-		isEnglishLocale ||
-		i18n.hasTranslation(
-			'Upgrade to the %(businessPlanName)s plan to access all hosting features:'
-		)
-			? translate( 'Upgrade to the %(businessPlanName)s plan to access all hosting features:', {
-					args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-			  } )
-			: translate( 'Upgrade to the Business plan to access all hosting features:' );
-
+	const callToActionText = translate( 'Upgrade to %(businessPlanName)s Plan', {
+		args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+	} );
+	const titleText = translate(
+		'Upgrade to the %(businessPlanName)s plan to access all hosting features:',
+		{
+			args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+		}
+	);
 	const callToAction = targetPlan ? targetPlan.callToAction : callToActionText;
 	const feature = targetPlan ? targetPlan.feature : FEATURE_SFTP;
 	const href = targetPlan ? targetPlan.href : `/checkout/${ siteId }/business`;

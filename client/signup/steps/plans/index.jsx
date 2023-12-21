@@ -126,7 +126,7 @@ export class PlansStep extends Component {
 		}
 
 		const { signupDependencies } = this.props;
-		const { siteUrl, domainItem, siteTitle, username } = signupDependencies;
+		const { siteUrl, domainItem, siteTitle, username, coupon } = signupDependencies;
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
@@ -160,6 +160,7 @@ export class PlansStep extends Component {
 					showPressablePromoBanner={ this.props.showPressablePromoBanner }
 					removePaidDomain={ this.removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
+					coupon={ coupon }
 				/>
 			</div>
 		);
@@ -272,6 +273,8 @@ export class PlansStep extends Component {
 	}
 
 	render() {
+		const { signupDependencies } = this.props;
+		const { coupon } = signupDependencies;
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
 			'is-wide-layout': false,
@@ -280,7 +283,7 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<QueryPlans />
+				<QueryPlans coupon={ coupon } />
 				<MarketingMessage path="signup/plans" />
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>

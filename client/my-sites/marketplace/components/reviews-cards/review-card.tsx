@@ -7,11 +7,12 @@ type MarketplaceReviewCardProps = {
 	review?: MarketplaceReviewResponse;
 	leaveAReview?: boolean;
 	empty?: boolean;
+	showMarketplaceReviews?: () => void;
 };
 
 export const MarketplaceReviewCard = ( props: MarketplaceReviewCardProps ) => {
 	const translate = useTranslate();
-	const { review, leaveAReview, empty } = props;
+	const { review, leaveAReview, empty, showMarketplaceReviews } = props;
 
 	if ( empty ) {
 		return (
@@ -28,7 +29,13 @@ export const MarketplaceReviewCard = ( props: MarketplaceReviewCardProps ) => {
 
 	if ( leaveAReview || ! review ) {
 		return (
-			<div className="marketplace-reviews-card__leave-a-review">
+			<div
+				className="marketplace-reviews-card__leave-a-review"
+				role="button"
+				onKeyDown={ () => showMarketplaceReviews && showMarketplaceReviews() }
+				tabIndex={ 0 }
+				onClick={ () => showMarketplaceReviews && showMarketplaceReviews() }
+			>
 				<div className="marketplace-reviews-card__leave-a-review-message">
 					{ translate( 'How would you rate your overall experience?' ) }
 				</div>

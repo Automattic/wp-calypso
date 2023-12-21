@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -33,7 +34,7 @@ export const transferStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const WooTransfer: Step = function WooTransfer( { navigation } ) {
+const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 	const { submit } = navigation;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestAtomicSoftwareStatus, requestLatestAtomicTransfer, initiateAtomicTransfer } =
@@ -41,6 +42,8 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 	const site = useSite();
 
 	const siteId = site?.ID;
+
+	const softwareSet = useSitePluginSlug();
 
 	const {
 		getSiteLatestAtomicTransfer,
@@ -51,27 +54,50 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
-		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
+		const eventProperties = {
 			action: failureInfo.type,
 			site: site?.URL,
 			code: failureInfo.code,
 			error: failureInfo.error,
 			intent: getIntent(),
-		} );
+		};
 
-		logToLogstash( {
-			feature: 'calypso_client',
+		const logstashProperties = {
+			feature: 'calypso_client' as 'calypso_client' | 'calypso_ssr',
 			message: failureInfo.error,
 			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 			blog_id: siteId,
 			properties: {
 				env: config( 'env_id' ),
-				type: 'calypso_woocommerce_dashboard_snag_error',
+				type: 'calypso_bundle_dashboard_snag_error',
 				action: failureInfo.type,
 				site: site?.URL,
 				code: failureInfo.code,
 			},
+		};
+
+		recordTracksEvent( 'calypso_bundle_dashboard_snag_error', {
+			...eventProperties,
+			software_set: softwareSet,
 		} );
+
+		logToLogstash( {
+			...logstashProperties,
+			properties: { ...logstashProperties.properties, software_set: softwareSet },
+		} );
+
+		// For backward compatibility with existing event. When it's not used anymore, it can be removed.
+		if ( 'woo-on-plans' === softwareSet ) {
+			recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', eventProperties );
+
+			logToLogstash( {
+				...logstashProperties,
+				properties: {
+					...logstashProperties.properties,
+					type: 'calypso_woocommerce_dashboard_snag_error',
+				},
+			} );
+		}
 	};
 
 	useEffect( () => {
@@ -88,7 +114,7 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 			const maxRetry = 3;
 
 			// Initiate transfer
-			await initiateAtomicTransfer( siteId, 'woo-on-plans' );
+			await initiateAtomicTransfer( siteId, softwareSet );
 
 			// Poll for transfer status
 			let stopPollingTransfer = false;
@@ -142,10 +168,10 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 			let pollingSoftwareRetry = 0;
 
 			while ( ! stopPollingSoftware ) {
-				await requestAtomicSoftwareStatus( siteId, 'woo-on-plans' );
-				const softwareStatus = getAtomicSoftwareStatus( siteId, 'woo-on-plans' );
+				await requestAtomicSoftwareStatus( siteId, softwareSet );
+				const softwareStatus = getAtomicSoftwareStatus( siteId, softwareSet );
 
-				const softwareError = getAtomicSoftwareError( siteId, 'woo-on-plans' );
+				const softwareError = getAtomicSoftwareError( siteId, softwareSet );
 				if ( softwareError ) {
 					if ( pollingSoftwareRetry < maxRetry ) {
 						pollingSoftwareRetry++;
@@ -185,4 +211,4 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 	return null;
 };
 
-export default WooTransfer;
+export default BundleTransfer;

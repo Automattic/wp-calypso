@@ -4,8 +4,6 @@ import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
 import { Children, useState, useEffect } from 'react';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Swipeable from '../swipeable';
 
 import './style.scss';
@@ -17,8 +15,8 @@ const Controls = ( {
 	setCurrentPage,
 	navArrowSize,
 	tracksPrefix,
+	tracksFn,
 } ) => {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isRtl = useRtl();
 	if ( numberOfPages < 2 ) {
@@ -40,14 +38,10 @@ const Controls = ( {
 							args: { page: page + 1, numberOfPages },
 						} ) }
 						onClick={ () => {
-							if ( tracksPrefix ) {
-								dispatch(
-									recordTracksEvent( tracksPrefix + '_dot_click', {
-										current_page: currentPage,
-										destination_page: page,
-									} )
-								);
-							}
+							tracksFn( tracksPrefix + '_dot_click', {
+								current_page: currentPage,
+								destination_page: page,
+							} );
 							setCurrentPage( page );
 						} }
 					/>
@@ -60,14 +54,10 @@ const Controls = ( {
 					aria-label={ translate( 'Previous' ) }
 					onClick={ () => {
 						const destinationPage = currentPage - 1;
-						if ( tracksPrefix ) {
-							dispatch(
-								recordTracksEvent( tracksPrefix + '_prev_arrow_click', {
-									current_page: currentPage,
-									destination_page: destinationPage,
-								} )
-							);
-						}
+						tracksFn( tracksPrefix + '_prev_arrow_click', {
+							current_page: currentPage,
+							destination_page: destinationPage,
+						} );
 						setCurrentPage( destinationPage );
 					} }
 				>
@@ -91,14 +81,10 @@ const Controls = ( {
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => {
 						const destinationPage = currentPage + 1;
-						if ( tracksPrefix ) {
-							dispatch(
-								recordTracksEvent( tracksPrefix + '_next_arrow_click', {
-									current_page: currentPage,
-									destination_page: destinationPage,
-								} )
-							);
-						}
+						tracksFn( tracksPrefix + '_next_arrow_click', {
+							current_page: currentPage,
+							destination_page: destinationPage,
+						} );
 						setCurrentPage( destinationPage );
 					} }
 				>
@@ -128,13 +114,13 @@ export const DotPager = ( {
 	rotateTime = 0,
 	navArrowSize = 18,
 	tracksPrefix = '',
+	tracksFn = () => {},
 	includePreviousButton = false,
 	includeNextButton = false,
 	includeFinishButton = false,
 	onFinish = () => {},
 	...props
 } ) => {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	// Filter out the empty children
@@ -174,6 +160,7 @@ export const DotPager = ( {
 				setCurrentPage={ handleSelectPage }
 				navArrowSize={ navArrowSize }
 				tracksPrefix={ tracksPrefix }
+				tracksFn={ tracksFn }
 			/>
 			<Swipeable
 				hasDynamicHeight={ hasDynamicHeight }
@@ -190,14 +177,10 @@ export const DotPager = ( {
 					className="dot-pager__button dot-pager__button_previous"
 					onClick={ () => {
 						const destinationPage = currentPage - 1;
-						if ( tracksPrefix ) {
-							dispatch(
-								recordTracksEvent( tracksPrefix + '_prev_button_click', {
-									current_page: currentPage,
-									destination_page: destinationPage,
-								} )
-							);
-						}
+						tracksFn( tracksPrefix + '_prev_button_click', {
+							current_page: currentPage,
+							destination_page: destinationPage,
+						} );
 						setCurrentPage( destinationPage );
 					} }
 				>
@@ -209,14 +192,10 @@ export const DotPager = ( {
 					className="dot-pager__button dot-pager__button_next is-primary"
 					onClick={ () => {
 						const destinationPage = currentPage + 1;
-						if ( tracksPrefix ) {
-							dispatch(
-								recordTracksEvent( tracksPrefix + '_next_button_click', {
-									current_page: currentPage,
-									destination_page: destinationPage,
-								} )
-							);
-						}
+						tracksFn( tracksPrefix + '_next_button_click', {
+							current_page: currentPage,
+							destination_page: destinationPage,
+						} );
 						setCurrentPage( destinationPage );
 					} }
 				>
@@ -227,9 +206,7 @@ export const DotPager = ( {
 				<Button
 					className="dot-pager__button dot-pager__button_finish is-primary"
 					onClick={ () => {
-						if ( tracksPrefix ) {
-							dispatch( recordTracksEvent( tracksPrefix + '_finish_button_click' ) );
-						}
+						tracksFn( tracksPrefix + '_finish_button_click' );
 						onFinish();
 					} }
 				>

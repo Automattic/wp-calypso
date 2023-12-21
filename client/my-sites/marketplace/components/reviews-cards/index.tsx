@@ -7,13 +7,19 @@ import {
 	ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { IAppState } from 'calypso/state/types';
 import { MarketplaceReviewCard } from './review-card';
 import './style.scss';
 
-export const MarketplaceReviewsCards = ( props: ProductProps ) => {
+type MarketplaceReviewsCardsProps = { showMarketplaceReviews?: () => void } & ProductProps;
+
+export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) => {
 	const translate = useTranslate();
-	const currentUserId = useSelector( ( state: IAppState ) => getCurrentUserId( state ) );
+	const currentUserId = useSelector( getCurrentUserId );
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+		...props,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
 	const { data: reviews, error } = useMarketplaceReviewsQuery( { ...props, perPage: 2, page: 1 } );
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
@@ -24,9 +30,7 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 		return null;
 	}
 
-	// TODO: Double check this verification according what's being sent from the server
-	// Add a review card if the user has not left a review yet
-	const hasReview = reviews?.some( ( review ) => review.author === currentUserId );
+	const hasReview = userReviews.length > 0;
 	const addLeaveAReviewCard = ! hasReview && reviews.length < 2;
 
 	const addEmptyCard = reviews.length === 0;
@@ -46,7 +50,7 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 						className="is-link"
 						borderless
 						primary
-						onClick={ () => alert( 'Not implemented yet!' ) }
+						onClick={ () => props.showMarketplaceReviews && props.showMarketplaceReviews() }
 						href=""
 					>
 						{ translate( 'Read all reviews' ) }
@@ -60,7 +64,11 @@ export const MarketplaceReviewsCards = ( props: ProductProps ) => {
 				) ) }
 				{ addEmptyCard && <MarketplaceReviewCard empty={ true } key="empty-card" /> }
 				{ addLeaveAReviewCard && (
-					<MarketplaceReviewCard leaveAReview={ true } key="leave-a-review-card" />
+					<MarketplaceReviewCard
+						leaveAReview={ true }
+						key="leave-a-review-card"
+						showMarketplaceReviews={ props.showMarketplaceReviews }
+					/>
 				) }
 			</div>
 		</div>

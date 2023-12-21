@@ -8,7 +8,7 @@ import {
 	useMarketplaceReviewsStatsQuery,
 	type ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
-import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
+import { ReviewModal } from 'calypso/my-sites/marketplace/components/review-modal';
 import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
 import './styles.scss';
 import { type IAppState } from 'calypso/state/types';
@@ -46,7 +46,7 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 
 	return (
 		<>
-			<ReviewsModal
+			<ReviewModal
 				isVisible={ isVisible }
 				onClose={ () => setIsVisible( false ) }
 				slug={ slug }
