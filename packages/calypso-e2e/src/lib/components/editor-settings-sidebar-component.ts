@@ -99,15 +99,20 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar. Ensures that tab becomes active.
+	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar.
 	 *
 	 * @param {EditorSidebarTab} tabName Name of tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
 		const editorParent = await this.editor.parent();
+		// This is a temporary workaround for the fact that the tab button
+		// selectors changed in v17.3.0. The oldTabLocator can be removed once
+		// the new version is deployed to all environments.
+		const newTabLocator = editorParent.getByRole( 'tab', { name: tabName, exact: true } );
+		const oldTabLocator = editorParent.getByLabel( tabName );
 
-		await editorParent.getByRole( 'tab', { name: tabName, exact: true } ).click();
+		await newTabLocator.or( oldTabLocator ).click();
 	}
 
 	/**
