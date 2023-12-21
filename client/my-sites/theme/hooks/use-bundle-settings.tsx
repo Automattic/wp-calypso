@@ -1,7 +1,6 @@
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
-import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { type FC, useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { getThemeSoftwareSet } from 'calypso/state/themes/selectors';
@@ -31,7 +30,6 @@ const WooOnPlansIcon = () => (
 
 export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookReturn {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
 	const bundleSettings = useMemo( () => {
@@ -45,18 +43,10 @@ export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookR
 					designPickerBadgeTooltip: translate(
 						'This theme comes bundled with WooCommerce, the best way to sell online.'
 					),
-					bannerUpsellDescription:
-						isEnglishLocale ||
-						i18n.hasTranslation(
-							'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.'
-						)
-							? ( translate(
-									'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
-									{ args: { businessPlanName } }
-							  ) as string )
-							: translate(
-									'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-							  ),
+					bannerUpsellDescription: translate(
+						'This theme comes bundled with the WooCommerce plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
+						{ args: { businessPlanName } }
+					) as string,
 					bundledPluginMessage: translate(
 						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin.',
 						{
@@ -70,7 +60,7 @@ export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookR
 			default:
 				return null;
 		}
-	}, [ themeSoftware, translate, isEnglishLocale, businessPlanName ] );
+	}, [ themeSoftware, translate, businessPlanName ] );
 
 	return bundleSettings;
 }
