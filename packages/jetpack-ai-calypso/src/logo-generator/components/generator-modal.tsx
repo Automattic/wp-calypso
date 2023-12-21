@@ -3,11 +3,12 @@
  */
 import { Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 /**
  * Internal dependencies
  */
 import { FirstLoadScreen } from './first-load-screen';
+import { LogoPresenter } from './logo-presenter';
 import './generator-modal.scss';
 
 interface GeneratorModalProps {
@@ -17,7 +18,13 @@ interface GeneratorModalProps {
 }
 
 export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClose } ) => {
-	const isLoading = true;
+	const [ isLoading, setIsLoading ] = useState( true );
+
+	useEffect( () => {
+		setTimeout( () => {
+			setIsLoading( false );
+		}, 6000 );
+	}, [] );
 
 	return (
 		<>
@@ -30,7 +37,11 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 					title={ __( 'Jetpack AI Logo Generator', 'jetpack' ) }
 				>
 					<div className="jetpack-ai-logo-generator-modal__body">
-						{ isLoading && <FirstLoadScreen /> }
+						{ isLoading ? (
+							<FirstLoadScreen />
+						) : (
+							<LogoPresenter description="A publishing company in the form of a greek statue." />
+						) }
 					</div>
 				</Modal>
 			) }
