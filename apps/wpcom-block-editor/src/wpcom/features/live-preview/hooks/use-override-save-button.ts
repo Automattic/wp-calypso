@@ -34,9 +34,10 @@ export const useOverrideSaveButton = ( {
 			e.stopPropagation();
 			setIsThemeUpgradeModalOpen( true );
 			tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_open', {
+				canvas_mode: canvasMode,
 				opened_by: 'button_click',
-				theme: previewingTheme.id,
 				theme_type: previewingTheme.type,
+				theme: previewingTheme.id,
 			} );
 		};
 		const overrideSaveButtonClick = ( selector: string ) => {
@@ -121,9 +122,10 @@ export const useOverrideSaveButton = ( {
 				e.stopPropagation();
 				setIsThemeUpgradeModalOpen( true );
 				tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_open', {
+					canvas_mode: canvasMode,
 					opened_by: 'shortcut',
-					theme: previewingTheme.id,
 					theme_type: previewingTheme.type,
+					theme: previewingTheme.id,
 				} );
 			}
 		};
