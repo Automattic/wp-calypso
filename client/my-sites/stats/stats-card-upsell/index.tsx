@@ -24,6 +24,7 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteSlug } )
 		event.preventDefault();
 
 		const source = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack' : 'calypso';
+
 		recordTracksEvent( 'jetpack_stats_upsell_clicked', {
 			stat_type: statType,
 			source,
