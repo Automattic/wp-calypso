@@ -230,9 +230,6 @@ export const useMarketplaceReviewsQuery = (
 	} );
 };
 
-const extractPages = ( pages: MarketplaceReviewsQueryResponse[] = [] ) =>
-	pages.flatMap( ( page ) => page.data );
-
 export const useInfiniteMarketplaceReviewsQuery = (
 	{ productType, slug, page, perPage, author, author_exclude }: MarketplaceReviewsQueryProps,
 	{ enabled = true, staleTime = BASE_STALE_TIME }: MarketplaceReviewsQueryOptions = {}
@@ -250,7 +247,7 @@ export const useInfiniteMarketplaceReviewsQuery = (
 	const queryFn = ( { pageParam = 1 } ) =>
 		fetchMarketplaceReviews( productType, slug, pageParam, perPage, author, author_exclude );
 
-	return useInfiniteQuery( {
+	return useInfiniteQuery< MarketplaceReviewsQueryResponse >( {
 		queryKey,
 		queryFn,
 		getNextPageParam: ( lastPage, allPages ) => {
@@ -259,10 +256,6 @@ export const useInfiniteMarketplaceReviewsQuery = (
 			}
 			return allPages.length + 1;
 		},
-		select: ( data ) => ( {
-			...data,
-			reviews: extractPages( data.pages ),
-		} ),
 		enabled,
 		staleTime,
 	} );

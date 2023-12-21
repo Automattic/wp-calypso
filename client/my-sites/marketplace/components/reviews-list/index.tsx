@@ -28,8 +28,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		...props,
 		author_exclude: currentUserId ?? undefined,
 	} );
-
-	const { reviews } = data ?? {};
+	const reviews = data?.pages.flatMap( ( page ) => page.data );
 
 	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
 		...props,
