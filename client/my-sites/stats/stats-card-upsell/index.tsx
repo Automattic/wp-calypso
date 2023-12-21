@@ -1,6 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import classNames from 'classnames';
@@ -22,14 +19,6 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteSlug } )
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-
-		const source = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack' : 'calypso';
-
-		recordTracksEvent( 'jetpack_stats_upsell_clicked', {
-			stat_type: statType,
-			source,
-		} );
-
 		openModal();
 	};
 
@@ -47,15 +36,7 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteSlug } )
 				</Button>
 			</div>
 			{ isModalOpen && (
-				<StatsUpsellModal
-					onClose={ closeModal }
-					onSubmit={ () => {
-						closeModal();
-						page.redirect(
-							`/plans/${ siteSlug }/?feature=stats&plan=personal-bundle&redirect_to=/stats/day/${ siteSlug }`
-						);
-					} }
-				/>
+				<StatsUpsellModal closeModal={ closeModal } statType={ statType } siteSlug={ siteSlug } />
 			) }
 		</div>
 	);

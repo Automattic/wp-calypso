@@ -1,37 +1,59 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_PREMIUM, PLAN_PREMIUM_MONTHLY } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import QueryPlans from 'calypso/components/data/query-plans';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useSelector } from 'calypso/state';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
 
 import './style.scss';
 
 export default function StatsUpsellModal( {
-	onClose,
-	onSubmit,
+	closeModal,
+	statType,
+	siteSlug,
 }: {
-	onClose: () => void;
-	onSubmit: () => void;
+	closeModal: () => void;
+	statType: string;
+	siteSlug: string;
 } ) {
 	const translate = useTranslate();
 	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
 	const planMonthly = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM_MONTHLY ) );
 	const planName = plan?.product_name_short ?? '';
 	const isLoading = ! plan || ! planMonthly;
+
+	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
+		event.preventDefault();
+		closeModal();
+		recordTracksEvent( 'stats_upsell_modal_submit', {
+			stat_type: statType,
+		} );
+
+		page.redirect( `/checkout/${ siteSlug }/${ plan?.path_slug ?? 'premium' }` );
+	};
+
 	return (
 		<Modal
 			className="stats-upsell-modal"
-			onRequestClose={ onClose }
+			onRequestClose={ closeModal }
 			shouldCloseOnClickOutside={ false }
 			__experimentalHideHeader={ true }
 		>
+			<TrackComponentView
+				eventName="stats_upsell_modal_view"
+				eventProperties={ {
+					stat_type: statType,
+				} }
+			/>
 			<QueryPlans />
 			<Button
 				className="stats-upsell-modal__close-button"
-				onClick={ onClose }
+				onClick={ closeModal }
 				icon={ close }
 				label={ translate( 'Close' ) }
 			/>
@@ -43,8 +65,15 @@ export default function StatsUpsellModal( {
 					<div className="stats-upsell-modal__text">
 						{ translate( 'Finesse your scaling up strategy with detailed insights and data.' ) }
 					</div>
-					<Button variant="primary" className="stats-upsell-modal__button" onClick={ onSubmit }>
-						{ translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
+					<Button
+						variant="primary"
+						className="stats-upsell-modal__button"
+						onClick={ onClick }
+						disabled={ isLoading }
+					>
+						{ isLoading
+							? translate( 'Upgrade plan' )
+							: translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
 					</Button>
 				</div>
 				<div className="stats-upsell-modal__right">
