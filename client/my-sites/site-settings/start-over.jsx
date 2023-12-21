@@ -291,7 +291,7 @@ function SiteResetCard( {
 
 	return (
 		<Main className="site-settings__reset-site">
-			<Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } />
+			{ ! isLoading && <Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } /> }
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ translate( 'Site Reset' ) }
