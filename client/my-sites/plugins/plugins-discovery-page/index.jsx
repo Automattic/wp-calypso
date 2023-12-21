@@ -1,17 +1,6 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { createRequestCartProduct } from '@automattic/shopping-cart';
-import { useState } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
-import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/use-is-eligible-for-one-click-checkout';
+import { useSelector } from 'react-redux';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
 import EducationFooter from '../education-footer';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
@@ -88,10 +77,6 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
-const businessPlanProduct = createRequestCartProduct( {
-	product_slug: PLAN_BUSINESS,
-} );
-
 const PluginsDiscoveryPage = ( props ) => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
@@ -101,59 +86,10 @@ const PluginsDiscoveryPage = ( props ) => {
 	} );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-	const { isLoading, result: isEligibleForOneClickCheckout } = useIsEligibleForOneClickCheckout();
 
 	return (
 		<>
-			{ showPurchaseModal && (
-				<CalypsoShoppingCartProvider>
-					<StripeHookProvider
-						fetchStripeConfiguration={ getStripeConfiguration }
-						locale={ translate.localeSlug }
-					>
-						<PurchaseModal
-							productToAdd={ businessPlanProduct }
-							onClose={ () => {
-								setShowPurchaseModal( false );
-							} }
-							onPurchaseSuccess={ () => {
-								setShowPurchaseModal( false );
-								dispatch(
-									successNotice( translate( 'Your purchase has been completed!' ), {
-										id: 'plugins-purchase-modal-success',
-									} )
-								);
-							} }
-							disabledThankYouPage={ true }
-							showFeatureList={ true }
-							siteSlug={ props.siteSlug }
-						/>
-					</StripeHookProvider>
-				</CalypsoShoppingCartProvider>
-			) }
-			<UpgradeNudge
-				{ ...props }
-				isBusy={ isLoading }
-				paidPlugins={ true }
-				handleUpsellNudgeClick={ ( e ) => {
-					e.preventDefault();
-
-					// Prevent multiple clicks
-					if ( isLoading ) {
-						return;
-					}
-
-					if ( isEligibleForOneClickCheckout === true ) {
-						setShowPurchaseModal( true );
-						return;
-					}
-
-					page( `/checkout/${ props.siteSlug }/business` );
-				} }
-			/>
+			<UpgradeNudge { ...props } paidPlugins={ true } />
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<EducationFooter />
