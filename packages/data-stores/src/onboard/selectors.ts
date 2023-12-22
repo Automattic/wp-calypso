@@ -75,8 +75,6 @@ export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
 
-export const getEditEmail = ( state: State ) => state.editEmail;
-
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;
 export const getHideFreePlan = ( state: State ) => state.hideFreePlan;

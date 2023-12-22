@@ -393,16 +393,6 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	return state;
 };
 
-const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_EDIT_EMAIL' ) {
-		return action.email;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const verticalId: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_VERTICAL_ID' ) {
 		return action.verticalId;
@@ -624,7 +614,6 @@ const reducer = combineReducers( {
 	progressTitle,
 	stepProgress,
 	goals,
-	editEmail,
 	hideFreePlan,
 	hidePlansFeatureComparison,
 	siteDescription,

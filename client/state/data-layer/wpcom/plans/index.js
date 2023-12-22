@@ -23,6 +23,9 @@ export const requestPlans = ( action ) =>
 			apiVersion: '1.5',
 			method: 'GET',
 			path: '/plans',
+			query: {
+				coupon_code: action.coupon,
+			},
 		},
 		action
 	);
