@@ -12,6 +12,10 @@ interface Props {
 }
 
 const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => {
+	if ( productData.data === undefined ) {
+		return null;
+	}
+
 	const productSlug = productData.slug ?? '';
 
 	const itemData: PartnerSelectorProduct = {

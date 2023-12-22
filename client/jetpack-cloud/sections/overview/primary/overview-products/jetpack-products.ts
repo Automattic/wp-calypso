@@ -1,10 +1,9 @@
 import { translate } from 'i18n-calypso';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 export interface ProductData {
 	description: string;
 	url: string;
-	data?: APIProductFamilyProduct;
+	data?: any;
 	name?: string;
 	slug?: string;
 }
