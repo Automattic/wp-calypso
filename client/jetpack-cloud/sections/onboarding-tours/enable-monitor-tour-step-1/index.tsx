@@ -26,6 +26,23 @@ export default function EnableMonitorTourStep1() {
 
 						nextStepOnTargetClick: '.dashboard-bulk-actions__edit-button',
 					},
+					{
+						target: '.dashboard-bulk-actions__custom_notification_button',
+						popoverPosition: 'bottom left',
+						title: translate( 'Set up Custom Notifications' ),
+						description: (
+							<>
+								{ translate( 'Here are the notification settings for Uptime Monitoring.' ) }
+								<br />
+								<br />
+								{ translate(
+									'All sites are auto-selected; feel free to deselect any you prefer to exclude.'
+								) }
+							</>
+						),
+
+						nextStepOnTargetClick: '.dashboard-bulk-actions__custom_notification_button',
+					},
 				] }
 			/>
 		)
