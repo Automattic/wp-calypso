@@ -133,5 +133,5 @@ export const useOverrideSaveButton = ( {
 		return () => {
 			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
 		};
-	}, [ previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
+	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
 };
