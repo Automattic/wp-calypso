@@ -4,6 +4,7 @@ import {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	getPlan,
 	PLAN_PREMIUM,
+	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -63,7 +64,8 @@ const PremiumPlanDetails = ( {
 					isPremiumPlan
 						? translate(
 								'With your plan, all WordPress.com advertising has been removed from your site.' +
-									' You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+									' You can upgrade to a %(planName)s plan to also remove the WordPress.com footer credit.',
+								{ args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
 						  )
 						: translate(
 								'With your plan, all WordPress.com advertising has been removed from your site.'
