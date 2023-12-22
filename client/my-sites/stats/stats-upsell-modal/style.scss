@@ -3,6 +3,12 @@
 @import "@wordpress/base-styles/mixins";
 
 .stats-upsell-modal {
+	max-width: 375px;
+	margin: auto;
+	background: var(--studio-gray-0);
+	@include break-medium {
+		max-width: calc(100% - 32px);
+	}
 	.components-modal__content {
 		padding: 0;
 	}
@@ -16,6 +22,11 @@
 	.stats-upsell-modal__content {
 		display: flex;
 		align-items: flex-start;
+
+		flex-direction: column;
+		@include break-medium {
+			flex-direction: row;
+		}
 	}
 	.stats-upsell-modal__left,
 	.stats-upsell-modal__right {
@@ -24,30 +35,35 @@
 		flex-direction: column;
 		align-self: stretch;
 		align-items: flex-start;
+
+		min-width: 279px;
 	}
 
 	.stats-upsell-modal__left {
+		background: var(--studio-white);
 		gap: 24px;
-		width: 294px;
+		@include break-medium {
+			width: 294px;
+		}
 	}
 
 	.stats-upsell-modal__right {
-		display: none;
-		width: 0;
+
 		gap: 8px;
-
-		background: var(--studio-gray-0);
-
 		@include break-medium {
-			display: flex;
 			width: 245px;
 		}
 	}
 
 	.stats-upsell-modal__title {
 		@extend .wp-brand-font;
-		font-size: $font-title-large;
-		line-height: 40px; /* 125% */
+		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
+		font-size: 28px;
+		line-height: 34px; /* 125% */
+		@include break-medium {
+			font-size: $font-title-large;
+			line-height: 40px; /* 125% */
+		}
 	}
 
 	.stats-upsell-modal__text {
