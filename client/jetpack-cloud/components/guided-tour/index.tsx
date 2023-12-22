@@ -106,7 +106,7 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 			} )
 		);
 		if ( redirectOnButtonClick ) {
-			window.location.href = redirectOnButtonClick?.toString() || '';
+			window.location.href = redirectOnButtonClick;
 		}
 	}, [ dispatch, preferenceName, preference, redirectOnButtonClick ] );
 
