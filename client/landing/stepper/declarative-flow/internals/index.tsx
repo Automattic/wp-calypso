@@ -197,7 +197,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
-				return <></>;
+				return null;
 		}
 
 		const StepComponent = stepComponents[ step.slug ];

@@ -24,12 +24,6 @@ import { useLoginUrl } from '../utils/path';
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
 	get title() {
-		// Don't assign a title if coming from the logged-out Theme Showcase.
-		// See https://github.com/Automattic/wp-calypso/issues/85396.
-		if ( getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' ) {
-			return '';
-		}
-
 		return translate( 'Blog' );
 	},
 	useSteps() {
@@ -291,7 +285,7 @@ const designFirst: Flow = {
 
 		if ( ! isLoggedIn ) {
 			result = {
-				state: AssertConditionState.CHECKING,
+				state: AssertConditionState.FAILURE,
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
