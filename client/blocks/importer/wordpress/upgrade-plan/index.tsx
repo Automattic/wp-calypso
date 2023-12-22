@@ -103,7 +103,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 							transparent={ ! isAddingTrial }
 							onClick={ onFreeTrialClick }
 						>
-							{ translate( 'Try 7-days for free' ) }
+							{ translate( 'Try 7 days for free' ) }
 						</Button>
 						{ ! isEligibleForTrialPlan && (
 							<small>

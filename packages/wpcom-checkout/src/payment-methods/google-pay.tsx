@@ -34,6 +34,7 @@ export function createGooglePayMethod(
 		),
 		inactiveContent: <GooglePaySummary />,
 		getAriaLabel: () => 'Google Pay',
+		isInitiallyDisabled: true,
 	};
 }
 

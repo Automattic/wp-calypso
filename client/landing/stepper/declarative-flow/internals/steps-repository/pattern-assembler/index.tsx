@@ -13,11 +13,13 @@ import {
 	NavigatorScreen,
 } from '@automattic/onboarding';
 import {
+	Button,
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { Icon, rotateLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -44,6 +46,7 @@ import {
 	useSyncNavigatorScreen,
 	useIsNewSite,
 } from './hooks';
+import useAIAssembler from './hooks/use-ai-assembler';
 import withNotices, { NoticesProps } from './notices/notices';
 import PagePreviewList from './pages/page-preview-list';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -96,6 +99,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const locale = useLocale();
 	const isNewSite = useIsNewSite( flow );
 	const [ searchParams ] = useSearchParams();
+	const [ callAIAssembler, , aiAssemblerPrompt, aiAssemblerLoading ] = useAIAssembler();
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
@@ -488,6 +492,31 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		return isSiteAssemblerFlow( flow );
 	};
 
+	const customActionButtons = () => {
+		if (
+			flow === AI_ASSEMBLER_FLOW &&
+			currentScreen.name === INITIAL_SCREEN &&
+			aiAssemblerPrompt !== ''
+		) {
+			return (
+				<Button
+					variant="secondary"
+					disabled={ aiAssemblerLoading }
+					onClick={ () => callAIAssembler() }
+					style={ {
+						marginRight: 'auto',
+						marginLeft: 14,
+					} }
+					icon={ <Icon icon={ rotateLeft } /> }
+				>
+					{ translate( 'Regenerate AI Suggestions' ) }
+				</Button>
+			);
+		}
+
+		return undefined;
+	};
+
 	const onBack = () => {
 		// Go back to the previous screen
 		if ( currentScreen.previousScreen ) {
@@ -720,6 +749,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	return (
 		<StepContainer
+			customizedActionButtons={ customActionButtons() }
 			stepName="pattern-assembler"
 			stepSectionName={ currentScreen.name }
 			backLabelText={ getBackLabel() }

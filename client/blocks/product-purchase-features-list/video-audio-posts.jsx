@@ -9,9 +9,7 @@ import {
 	isWpComPremiumPlan,
 	isWpComProPlan,
 } from '@automattic/calypso-products';
-import { englishLocales } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import videoImage from 'calypso/assets/images/illustrations/video-hosting.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { newPost } from 'calypso/lib/paths';
@@ -21,32 +19,6 @@ function getDescription( plan, translate ) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
 				'directly to your site — the Pro Plan has 50 GB storage.'
-		);
-	}
-
-	if ( isWpComBusinessPlan( plan ) ) {
-		const businessPlan = getPlan( plan );
-		if (
-			englishLocales.includes( String( getLocaleSlug() ) ) ||
-			hasTranslation(
-				'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-					'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.'
-			)
-		) {
-			return translate(
-				'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-					'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
-				{
-					args: {
-						planName: businessPlan.getTitle(),
-						storageLimit: 50,
-					},
-				}
-			);
-		}
-		return translate(
-			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-				'directly to your site — the Business Plan has 200 GB storage.'
 		);
 	}
 
@@ -76,29 +48,19 @@ function getDescription( plan, translate ) {
 			}
 		);
 	}
-	if ( isWpComEcommercePlan( plan ) ) {
-		const eCommercePlan = getPlan( plan );
-		if (
-			englishLocales.includes( String( getLocaleSlug() ) ) ||
-			hasTranslation(
-				'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-					'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.'
-			)
-		) {
-			return translate(
-				'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-					'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
-				{
-					args: {
-						planName: eCommercePlan.getTitle(),
-						storageLimit: 50,
-					},
-				}
-			);
-		}
+
+	if ( isWpComBusinessPlan( plan ) || isWpComEcommercePlan( plan ) ) {
+		const newPlan = getPlan( plan );
+		// Translators: %(planName)s is the name of the plan - Creator, Entrepreneur, Business, or eCommerce. %(storageLimit)d is the storage limit in GB.
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-				'directly to your site — the eCommerce Plan has 200 GB storage.'
+				'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
+			{
+				args: {
+					planName: newPlan.getTitle(),
+					storageLimit: 50,
+				},
+			}
 		);
 	}
 

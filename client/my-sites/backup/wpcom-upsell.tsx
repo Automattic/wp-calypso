@@ -4,8 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
@@ -33,7 +32,6 @@ export default function WPCOMUpsellPage() {
 	const isAdmin = useSelector( ( state ) =>
 		canCurrentUser( state, siteId ?? 0, 'manage_options' )
 	);
-	const isEnglishLocale = useIsEnglishLocale();
 	const hasFullActivityLogFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
 	);
@@ -74,29 +72,19 @@ export default function WPCOMUpsellPage() {
 				{ ! isAdmin && (
 					<Notice
 						status="is-warning"
-						text={
-							isEnglishLocale ||
-							i18n.hasTranslation(
-								'Only site administrators can upgrade to the %(businessPlanName)s plan.'
-							)
-								? translate(
-										'Only site administrators can upgrade to the %(businessPlanName)s plan.',
-										{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
-								  )
-								: translate( 'Only site administrators can upgrade to the Business plan.' )
-						}
+						text={ translate(
+							'Only site administrators can upgrade to the %(businessPlanName)s plan.',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+						) }
 						showDismiss={ false }
 					/>
 				) }
 				{ isAdmin && (
 					<PromoCardCTA
 						cta={ {
-							text:
-								isEnglishLocale || i18n.hasTranslation( 'Upgrade to %(planName)s Plan' )
-									? translate( 'Upgrade to %(planName)s Plan', {
-											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-									  } )
-									: translate( 'Upgrade to Business Plan' ),
+							text: translate( 'Upgrade to %(planName)s Plan', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							} ),
 							action: {
 								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
@@ -110,11 +98,9 @@ export default function WPCOMUpsellPage() {
 			{ ! hasFullActivityLogFeature && (
 				<>
 					<h2 className="backup__subheader">
-						{ isEnglishLocale || i18n.hasTranslation( 'Also included in the %(planName)s Plan' )
-							? translate( 'Also included in the %(planName)s Plan', {
-									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-							  } )
-							: translate( 'Also included in the Business Plan' ) }
+						{ translate( 'Also included in the %(planName)s Plan', {
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						} ) }
 					</h2>
 
 					<PromoSection { ...promos } />

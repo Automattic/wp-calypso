@@ -3,10 +3,8 @@ import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-produ
 import page from '@automattic/calypso-router';
 import formatCurrency from '@automattic/format-currency';
 import { useChatWidget } from '@automattic/help-center/src/hooks';
-import { englishLocales } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate, numberFormat, getLocaleSlug } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useState } from 'react';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
 import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
@@ -110,7 +108,6 @@ type StepProps = {
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = 25;
@@ -119,16 +116,6 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const { refundAmount } = props;
 	const { openChatWidget } = useChatWidget();
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
-	const hasAtomicCtaTranslation =
-		englishLocales.includes( String( getLocaleSlug() ) ) ||
-		hasTranslation( 'I want the %(businessPlanName)s plan' );
-	const hasAtomicUpsellTranslation =
-		englishLocales.includes( String( getLocaleSlug() ) ) ||
-		hasTranslation(
-			'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? ' +
-				'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
-				'Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}'
-		);
 
 	switch ( upsell ) {
 		case 'live-chat:plans':
@@ -192,11 +179,9 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'Go further with %(numberOfPluginsThemes)s plugins and themes', {
 						args: { numberOfPluginsThemes },
 					} ) }
-					acceptButtonText={
-						hasAtomicCtaTranslation
-							? translate( 'I want the %(businessPlanName)s plan', { args: { businessPlanName } } )
-							: translate( 'I want the Business plan' )
-					}
+					acceptButtonText={ translate( 'I want the %(businessPlanName)s plan', {
+						args: { businessPlanName },
+					} ) }
 					acceptButtonUrl={ `/checkout/${ site.slug }/business?coupon=${ couponCode }` }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
@@ -206,30 +191,20 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 				>
 					{
 						/* translators: %(discountRate)d%% is a discount percentage like 20% or 25%, followed by an escaped percentage sign %% */
-						hasAtomicUpsellTranslation
-							? translate(
-									'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? ' +
-										'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
-										'Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
-									{
-										args: {
-											numberOfPluginsThemes,
-											discountRate,
-											couponCode,
-											businessPlanName,
-										},
-										components: { b: <strong /> },
-									}
-							  )
-							: translate(
-									'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com Business plan? ' +
-										'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
-										'Claim a %(discountRate)d%% discount when you renew your Business plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
-									{
-										args: { numberOfPluginsThemes, discountRate, couponCode },
-										components: { b: <strong /> },
-									}
-							  )
+						translate(
+							'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com %(businessPlanName)s plan? ' +
+								'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
+								'Claim a %(discountRate)d%% discount when you renew your %(businessPlanName)s plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
+							{
+								args: {
+									numberOfPluginsThemes,
+									discountRate,
+									couponCode,
+									businessPlanName,
+								},
+								components: { b: <strong /> },
+							}
+						)
 					}
 				</Upsell>
 			);

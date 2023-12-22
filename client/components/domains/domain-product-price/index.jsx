@@ -1,4 +1,4 @@
-import { PLAN_100_YEARS } from '@automattic/calypso-products';
+import { PLAN_100_YEARS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -48,7 +48,9 @@ class DomainProductPrice extends Component {
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
-				message = translate( 'Personal plan required' );
+				message = translate( '%(planName)s plan required', {
+					args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+				} );
 				break;
 		}
 
@@ -108,7 +110,7 @@ class DomainProductPrice extends Component {
 
 		return (
 			<div className="domain-product-price__price">
-				<strong>{ this.props.salePrice }</strong> <del>{ priceText }</del>
+				<del>{ priceText }</del>
 			</div>
 		);
 	}

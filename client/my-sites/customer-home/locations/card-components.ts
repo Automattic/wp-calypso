@@ -10,6 +10,7 @@ import {
 	LAUNCHPAD_INTENT_PAID_NEWSLETTER,
 	LAUNCHPAD_INTENT_WRITE,
 	LAUNCHPAD_PRE_LAUNCH,
+	LAUNCHPAD_LEGACY_SITE_SETUP,
 	NOTICE_CELEBRATE_SITE_CREATION,
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_MIGRATION,
@@ -56,6 +57,7 @@ import {
 } from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
 import LaunchpadPreLaunch from 'calypso/my-sites/customer-home/cards/launchpad/pre-launch';
+import { LaunchpadSiteSetup } from 'calypso/my-sites/customer-home/cards/launchpad/site-setup';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -136,6 +138,7 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ LAUNCHPAD_INTENT_PAID_NEWSLETTER ]: LaunchpadIntentPaidNewsletter,
 	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
 	[ LAUNCHPAD_PRE_LAUNCH ]: LaunchpadPreLaunch,
+	[ LAUNCHPAD_LEGACY_SITE_SETUP ]: LaunchpadSiteSetup,
 	[ NOTICE_READER_FIRST_POSTS ]: ReaderFirstPosts,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_BLOGANUARY_BLOGGING_PROMPT ]: BloggingPrompt,

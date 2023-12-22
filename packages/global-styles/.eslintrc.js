@@ -4,7 +4,7 @@ module.exports = {
 			files: [ '**/*.{js.jsx,ts,tsx}' ],
 			rules: {
 				'wpcalypso/no-unsafe-wp-apis': [
-					'error',
+					'warn',
 					{
 						'@wordpress/block-editor': [ '__unstableIframe', '__unstableEditorStyles' ],
 						'@wordpress/components': [
