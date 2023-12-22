@@ -1,18 +1,24 @@
 .jetpack-ai-logo-generator-modal {
 	.components-modal__header {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var(--studio-gray-5, #dcdcde);
 		padding: 20px 24px;
 	}
 
 	.components-modal__content {
 		padding: 32px;
-	}
 
-	&__body {
-		width: 100%;
-
-		@media (min-width: 699px) {
-			width: 699px;
+		> div:not(.components-modal__header) {
+			height: 100%;
 		}
+	}
+}
+
+.jetpack-ai-logo-generator-modal__body {
+	width: 100%;
+	height: 100%;
+
+	@media (min-width: 699px) {
+		width: 699px;
+		height: 409px;
 	}
 }
