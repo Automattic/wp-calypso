@@ -204,7 +204,7 @@ class StatsModule extends Component {
 				{ isAllTime && (
 					<div className={ footerClass }>
 						{ gateDownloads ? (
-							<DownloadCsvUpsell statType={ statType } siteId={ siteId } borderless />
+							<DownloadCsvUpsell siteSlug={ siteSlug } borderless />
 						) : (
 							<DownloadCsv
 								statType={ statType }
