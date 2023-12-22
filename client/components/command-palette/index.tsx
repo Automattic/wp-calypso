@@ -226,9 +226,8 @@ const NotFoundMessage = ( {
 	}, 600 );
 
 	useEffect( () => {
-		// Track search queries for root and nested commands
-		// Track default zero results for nested commands
-		if ( search || ( ! search && selectedCommandName ) ) {
+		// Track search queries only for root
+		if ( ! selectedCommandName && search ) {
 			trackNotFoundDebounced();
 		}
 		return trackNotFoundDebounced.cancel;
