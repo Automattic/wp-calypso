@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM, PLAN_PREMIUM_MONTHLY } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
@@ -26,11 +27,12 @@ export default function StatsUpsellModal( {
 	const planMonthly = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM_MONTHLY ) );
 	const planName = plan?.product_name_short ?? '';
 	const isLoading = ! plan || ! planMonthly;
+	const eventPrefix = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack' : 'calypso';
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
 		closeModal();
-		recordTracksEvent( 'stats_upsell_modal_submit', {
+		recordTracksEvent( `${ eventPrefix }_stats_upsell_modal_submit`, {
 			stat_type: statType,
 		} );
 
@@ -45,7 +47,7 @@ export default function StatsUpsellModal( {
 			__experimentalHideHeader={ true }
 		>
 			<TrackComponentView
-				eventName="stats_upsell_modal_view"
+				eventName={ `${ eventPrefix }_stats_upsell_modal_view` }
 				eventProperties={ {
 					stat_type: statType,
 				} }
