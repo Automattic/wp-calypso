@@ -865,6 +865,10 @@ body.is-section-signup.is-white-signup,
 		padding-bottom: 20px;
 		min-width: 0;
 
+		&.is-placeholder-header-cell {
+			display: none;
+		}
+
 		@include plans-2023-break-small {
 			padding-top: 34px;
 
@@ -880,6 +884,10 @@ body.is-section-signup.is-white-signup,
 			&.plan-is-footer {
 				padding-top: 50px;
 				padding-bottom: 24px;
+			}
+
+			&.is-placeholder-header-cell {
+				display: initial;
 			}
 		}
 
