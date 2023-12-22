@@ -6,28 +6,29 @@ import { Gridicon } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useSelector } from 'calypso/state';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
+import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
 
 import './style.scss';
 
-export default function StatsUpsellModal( {
-	closeModal,
-	statType,
-	siteSlug,
-}: {
-	closeModal: () => void;
-	statType: string;
-	siteSlug: string;
-} ) {
+export default function StatsUpsellModal( { siteSlug }: { siteSlug: string } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
 	const planMonthly = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM_MONTHLY ) );
 	const planName = plan?.product_name_short ?? '';
 	const isLoading = ! plan || ! planMonthly;
 	const eventPrefix = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack_odyssey' : 'calypso';
+	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteSlug ) );
+
+	const closeModal = () => {
+		dispatch( toggleUpsellModal( siteSlug, statType ) );
+	};
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();

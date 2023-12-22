@@ -1,8 +1,8 @@
 import { Button, Gridicon } from '@automattic/components';
-import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import StatsUpsellModal from '../stats-upsell-modal';
+import { useDispatch } from 'react-redux';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import './style.scss';
 
 interface Props {
@@ -13,13 +13,11 @@ interface Props {
 
 const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteSlug } ) => {
 	const translate = useTranslate();
-	const [ isModalOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
-	const closeModal = () => setOpen( false );
+	const dispatch = useDispatch();
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		openModal();
+		dispatch( toggleUpsellModal( siteSlug, statType ) );
 	};
 
 	return (
@@ -35,9 +33,6 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteSlug } )
 					Unlock
 				</Button>
 			</div>
-			{ isModalOpen && (
-				<StatsUpsellModal closeModal={ closeModal } statType={ statType } siteSlug={ siteSlug } />
-			) }
 		</div>
 	);
 };
