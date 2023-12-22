@@ -55,8 +55,9 @@ export default function DashboardWalkthroughTour() {
 						),
 					},
 					{
-						target: '.site-table__table tr:first-child td.jetpack-cloud-site-column__monitor',
-						popoverPosition: 'bottom right',
+						target:
+							'.site-table__table tr:first-child td.jetpack-cloud-site-column__monitor .toggle-activate-monitoring__toggle-button',
+						popoverPosition: 'bottom left',
 						title: translate( '⏲️ Uptime Monitor' ),
 						description: (
 							<>
