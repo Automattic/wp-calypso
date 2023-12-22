@@ -28,6 +28,7 @@ export default function DashboardOverview( {
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
+	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 
 	if ( hasFetched && ! hasActiveKey ) {
 		return <SelectPartnerKey />;
@@ -61,6 +62,8 @@ export default function DashboardOverview( {
 			currentLicenseInfo,
 			showLicenseInfo: onShowLicenseInfo,
 			hideLicenseInfo: onHideLicenseInfo,
+			mostRecentConnectedSite,
+			setMostRecentConnectedSite,
 		};
 		return (
 			<SitesOverviewContext.Provider value={ context }>

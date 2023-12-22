@@ -1,7 +1,7 @@
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -13,7 +13,7 @@ import './style.scss';
 export interface Tour {
 	target: string;
 	title: string;
-	description: string;
+	description: string | JSX.Element;
 	popoverPosition?:
 		| 'top'
 		| 'top right'
@@ -24,6 +24,7 @@ export interface Tour {
 		| 'left'
 		| 'top left';
 	nextStepOnTargetClick?: string;
+	redirectOnButtonClick?: string;
 }
 
 interface Props {
@@ -75,8 +76,14 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, target, popoverPosition, nextStepOnTargetClick } =
-		tours[ currentStep ];
+	const {
+		title,
+		description,
+		target,
+		popoverPosition,
+		nextStepOnTargetClick,
+		redirectOnButtonClick,
+	} = tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
 
@@ -98,7 +105,10 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 				tour: preferenceName,
 			} )
 		);
-	}, [ dispatch, preferenceName, preference ] );
+		if ( redirectOnButtonClick ) {
+			window.location.href = redirectOnButtonClick;
+		}
+	}, [ dispatch, preferenceName, preference, redirectOnButtonClick ] );
 
 	const nextStep = useCallback( () => {
 		if ( currentStep < tours.length - 1 ) {
