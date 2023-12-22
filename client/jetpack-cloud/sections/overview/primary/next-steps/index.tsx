@@ -21,7 +21,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 				dispatch( recordTracksEvent( tracksPrefix + '_get_familiar_click' ) );
 			},
 			id: 'get_familiar',
-			title: 'Get familiar with the sites management dashboard',
+			title: translate( 'Get familiar with the sites management dashboard' ),
 			useCalypsoPath: true,
 		},
 		{
@@ -32,7 +32,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 				dispatch( recordTracksEvent( tracksPrefix + '_add_sites_click' ) );
 			},
 			id: 'add_sites',
-			title: 'Learn how to add new sites',
+			title: translate( 'Learn how to add new sites' ),
 			useCalypsoPath: true,
 		},
 		{
@@ -43,7 +43,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 				dispatch( recordTracksEvent( tracksPrefix + '_bulk_editing_click' ) );
 			},
 			id: 'bulk_editing',
-			title: 'Learn bulk editing and enabling downtime monitoring',
+			title: translate( 'Learn bulk editing and enabling downtime monitoring' ),
 			useCalypsoPath: true,
 		},
 		{
@@ -54,7 +54,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 				dispatch( recordTracksEvent( tracksPrefix + '_plugin_management_click' ) );
 			},
 			id: 'plugin_management',
-			title: 'Explore plugin management',
+			title: translate( 'Explore plugin management' ),
 			useCalypsoPath: true,
 		},
 	];
