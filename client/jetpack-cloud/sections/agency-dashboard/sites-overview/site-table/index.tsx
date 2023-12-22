@@ -24,7 +24,8 @@ interface Props {
 const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
 	const translate = useTranslate();
 
-	const { isBulkManagementActive, showLicenseInfo } = useContext( SitesOverviewContext );
+	const { isBulkManagementActive, showLicenseInfo, mostRecentConnectedSite } =
+		useContext( SitesOverviewContext );
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
 
@@ -46,19 +47,13 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 	};
 
 	const hasAddNewSiteTourPreference = useSelector( ( state ) =>
-		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour' )
+		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-step-1' )
 	);
-
-	const latestJetpackConnectedSite = localStorage.getItem( 'latestJetpackConnectedSite' )
-		? localStorage.getItem( 'latestJetpackConnectedSite' )
-		: '';
-
-	const shouldRenderAddSiteTourStep2 =
-		hasAddNewSiteTourPreference && latestJetpackConnectedSite !== '';
+	const shouldRenderAddSiteTourStep2 = hasAddNewSiteTourPreference && mostRecentConnectedSite;
 
 	const tourHTMLTarget =
 		items.length < 20
-			? 'tr.is-latest-jetpack-connected-site td:first-of-type'
+			? 'tr.is-most-recent-jetpack-connected-site td:first-of-type'
 			: '.site-table__table th:first-of-type';
 
 	return (

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { useDispatch, useSelector } from 'calypso/state';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -8,6 +8,7 @@ import {
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import SitesOverviewContext from '../context';
 import useDefaultSiteColumns from '../hooks/use-default-site-columns';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
@@ -31,6 +32,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const dispatch = useDispatch();
 
 	const defaultSiteColumnKeys = useDefaultSiteColumns().map( ( { key } ) => key );
+	const { mostRecentConnectedSite } = useContext( SitesOverviewContext );
 
 	const site = item.site;
 	const blogId = site.value.blog_id;
@@ -53,8 +55,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 
 	const hasSiteConnectionError = ! isConnected;
 	const siteError = item.monitor.error || hasSiteConnectionError;
-	const isLatestJetpackConnectedSite =
-		localStorage.getItem( 'latestJetpackConnectedSite' ) === site.value.url;
+	const isMostRecentJetpackConnectedSite = mostRecentConnectedSite === site.value.url;
 	return (
 		<Fragment>
 			<tr
@@ -63,7 +64,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
 					'site-table__table-row-site-error': hasSiteConnectionError,
 					'is-expanded': isExpanded,
-					'is-latest-jetpack-connected-site': isLatestJetpackConnectedSite,
+					'is-most-recent-jetpack-connected-site': isMostRecentJetpackConnectedSite,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {

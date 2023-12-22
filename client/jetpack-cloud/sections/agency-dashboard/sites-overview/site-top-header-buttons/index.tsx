@@ -79,7 +79,7 @@ export default function SiteTopHeaderButtons() {
 					{ shouldRenderAddSiteTourStep1 && (
 						<GuidedTour
 							className="jetpack-cloud-site-dashboard__guided-tour"
-							preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour"
+							preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-1"
 							tours={ [
 								{
 									target: '#sites-overview-add-sites-button .split-button__toggle',
