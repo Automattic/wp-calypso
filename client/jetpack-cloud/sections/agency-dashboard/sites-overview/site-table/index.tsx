@@ -1,12 +1,9 @@
 import { Icon, starFilled, info } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { useContext, useState, forwardRef, Ref } from 'react';
-import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
+import AddNewSiteTourStep2 from 'calypso/jetpack-cloud/sections/onboarding-tours/add-new-site-tour-step-2';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
-import { useSelector } from 'calypso/state';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../context';
@@ -22,10 +19,7 @@ interface Props {
 }
 
 const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
-	const translate = useTranslate();
-
-	const { isBulkManagementActive, showLicenseInfo, mostRecentConnectedSite } =
-		useContext( SitesOverviewContext );
+	const { isBulkManagementActive, showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
 
@@ -45,16 +39,6 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 		} );
 		showLicenseInfo( license );
 	};
-
-	const hasAddNewSiteTourPreference = useSelector( ( state ) =>
-		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-step-1' )
-	);
-	const shouldRenderAddSiteTourStep2 = hasAddNewSiteTourPreference && mostRecentConnectedSite;
-
-	const tourHTMLTarget =
-		items.length < 20
-			? 'tr.is-most-recent-jetpack-connected-site td:first-of-type'
-			: '.site-table__table th:first-of-type';
 
 	return (
 		<>
@@ -136,30 +120,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 					) }
 				</tbody>
 			</table>
-			{ shouldRenderAddSiteTourStep2 && (
-				<GuidedTour
-					className="jetpack-cloud-site-dashboard-new-site-added__guided-tour"
-					preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-2"
-					tours={ [
-						{
-							target: tourHTMLTarget,
-							popoverPosition: 'bottom right',
-							title: translate( '🎉 Your new site is here' ),
-							description: (
-								<>
-									{ translate( 'Check out your new site here. That was straightforward, right?' ) }
-									<br />
-									<br />
-									{ translate(
-										'Sites with jetpack installed will automatically appear in the site management view.'
-									) }
-								</>
-							),
-							redirectOnButtonClick: '/overview',
-						},
-					] }
-				/>
-			) }
+			<AddNewSiteTourStep2 />
 		</>
 	);
 };

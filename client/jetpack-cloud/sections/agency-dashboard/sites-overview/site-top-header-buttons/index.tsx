@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import AddNewSiteButton from 'calypso/components/jetpack/add-new-site-button';
-import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
+import AddNewSiteTourStep1 from 'calypso/jetpack-cloud/sections/onboarding-tours/add-new-site-tour-step-1';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
@@ -29,9 +29,6 @@ export default function SiteTopHeaderButtons() {
 	const onIssueNewLicenseClick = () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' ) );
 	};
-
-	const urlParams = new URLSearchParams( window.location.search );
-	const shouldRenderAddSiteTourStep1 = urlParams.get( 'tour' ) === 'add-new-site';
 
 	return (
 		<div
@@ -76,33 +73,7 @@ export default function SiteTopHeaderButtons() {
 							)
 						}
 					/>
-					{ shouldRenderAddSiteTourStep1 && (
-						<GuidedTour
-							className="jetpack-cloud-site-dashboard__guided-tour"
-							preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-1"
-							tours={ [
-								{
-									target: '#sites-overview-add-sites-button .split-button__toggle',
-									popoverPosition: 'bottom left',
-									title: translate( 'Press on an arrow button' ),
-									description: (
-										<>
-											{ translate(
-												'Click the arrow button and select "Connect a site to Jetpack".'
-											) }
-											<br />
-											<br />
-											{ translate(
-												'Sites with jetpack installed will automatically appear in the site management view.'
-											) }
-										</>
-									),
-
-									nextStepOnTargetClick: '#sites-overview-add-sites-button .split-button__toggle',
-								},
-							] }
-						/>
-					) }
+					<AddNewSiteTourStep1 />
 					<WPCOMHostingPopover
 						context={ buttonRef.current }
 						// Show the popover only when the split button is closed
