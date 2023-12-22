@@ -20,6 +20,7 @@ import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -704,6 +705,12 @@ const PlansFeaturesMain = ( {
 		rootMargin: '0px 0px -300px 0px',
 	} );
 
+	const stickyPlanTypeSelectorHeight = 48;
+	const comparisonGridStickyRowOffset =
+		showPlanSelectorDropdown && isMobile()
+			? stickyPlanTypeSelectorHeight + masterbarHeight
+			: masterbarHeight;
+
 	return (
 		<>
 			<div
@@ -883,7 +890,7 @@ const PlansFeaturesMain = ( {
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
-												stickyRowOffset={ masterbarHeight }
+												stickyRowOffset={ comparisonGridStickyRowOffset }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
