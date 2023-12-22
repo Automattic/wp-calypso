@@ -66,7 +66,7 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 			event="calypso_hosting_configuration_upgrade_click"
 			href={ href }
 			callToAction={ callToAction }
-			plan={ plan }
+			plan={ plan ? ( plan as string ) : undefined }
 			feature={ feature }
 			showIcon={ true }
 			list={ features }

@@ -15,14 +15,17 @@ import { createRequestCartProduct } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
-import { withIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/with-is-eligible-for-one-click-checkout';
+import {
+	WithIsEligibleForOneClickCheckoutProps,
+	withIsEligibleForOneClickCheckout,
+} from 'calypso/my-sites/checkout/purchase-modal/with-is-eligible-for-one-click-checkout';
 import { successNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -36,15 +39,72 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { IAppState } from 'calypso/state/types';
+import type { SiteSlug } from 'calypso/types';
 
 import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
 
-/**
- * @param {any} props Props declared as `any` to prevent errors in TSX files that use this component.
- */
-export const UpsellNudge = ( {
+type UpsellNudgeConnectedProps = {
+	site: SiteDetails | null | undefined;
+	selectedSiteHasFeature: boolean;
+	canManageSite: boolean | null;
+	isJetpack: boolean | null;
+	isAtomic: boolean | null;
+	isVip: boolean | null;
+	isSiteWooExpressOrEcomFreeTrial: boolean;
+	currentPlan: ReturnType< typeof getCurrentPlan >;
+	siteSlug: SiteSlug | null;
+	canUserUpgrade: boolean;
+	siteIsWPForTeams: boolean | null;
+};
+
+type UpsellNudgePassedProps = {
+	callToAction: ReactNode;
+	className: string;
+	compact: boolean;
+	compactButton: boolean;
+	customerType: string;
+	description: ReactNode;
+	disableHref: boolean;
+	dismissPreferenceName: string;
+	dismissTemporary: boolean;
+	event: string;
+	feature?: string;
+	forceDisplay: boolean;
+	forceHref: boolean;
+	horizontal: boolean;
+	href: string;
+	isJetpackDevDocs: boolean;
+	list: any[];
+	renderListItem: any;
+	onClick: () => void;
+	onDismissClick: () => void;
+	plan?: string;
+	price: number;
+	primaryButton: boolean;
+	showIcon: boolean;
+	icon: string;
+	target: string;
+	title: ReactNode;
+	tracksClickName: string;
+	tracksClickProperties: any;
+	tracksDismissName: string;
+	tracksDismissProperties: any;
+	tracksImpressionName: string;
+	tracksImpressionProperties: any;
+	displayAsLink: boolean;
+	isBusy: boolean;
+	isOneClickCheckoutEnabled: boolean;
+};
+
+type UpsellNudgeProps = Partial< UpsellNudgePassedProps > &
+	UpsellNudgeConnectedProps &
+	WithIsEligibleForOneClickCheckoutProps;
+
+const UpsellNudge: React.FC< UpsellNudgeProps > = ( {
 	callToAction,
 	canManageSite,
 	canUserUpgrade,
@@ -107,8 +167,8 @@ export const UpsellNudge = ( {
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
 		( feature && selectedSiteHasFeature ) ||
-		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
-		( feature === WPCOM_FEATURES_NO_ADVERTS && site.options.wordads ) ||
+		( ! feature && ! ( site?.plan && isFreePlanProduct( site.plan ) ) ) ||
+		( feature === WPCOM_FEATURES_NO_ADVERTS && site?.options?.wordads ) ||
 		( ! isJetpack && site.jetpack ) ||
 		( isJetpack && ! site.jetpack );
 
@@ -147,7 +207,7 @@ export const UpsellNudge = ( {
 		);
 	}
 
-	const handleClick = ( e ) => {
+	const handleClick = ( e: React.MouseEvent ) => {
 		if (
 			isOneClickCheckoutEnabled &&
 			isEligibleForOneClickCheckout.result === true &&
@@ -163,7 +223,7 @@ export const UpsellNudge = ( {
 
 	return (
 		<>
-			{ showPurchaseModal && (
+			{ showPurchaseModal && product && siteSlug && (
 				<CalypsoShoppingCartProvider>
 					<StripeHookProvider
 						fetchStripeConfiguration={ getStripeConfiguration }
@@ -182,7 +242,7 @@ export const UpsellNudge = ( {
 									} )
 								);
 							} }
-							disableThankYouPage={ true }
+							disabledThankYouPage={ true }
 							showFeatureList={ true }
 							siteSlug={ siteSlug }
 						/>
@@ -236,18 +296,20 @@ UpsellNudge.defaultProps = {
 	compactButton: true,
 };
 
-export default connect( ( state, ownProps ) => {
+export default connect( ( state: IAppState, ownProps: Partial< UpsellNudgePassedProps > ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		site: getSite( state, siteId ),
-		selectedSiteHasFeature: siteHasFeature( state, siteId, ownProps.feature ),
+		site: getSite( state, siteId || undefined ),
+		selectedSiteHasFeature:
+			!! ownProps.feature && siteHasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
-		isVip: isVipSite( state, siteId ),
+		isVip: !! siteId && isVipSite( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
-			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+			( !! siteId && isSiteOnECommerceTrial( state, siteId ) ) ||
+			( !! siteId && isSiteOnWooExpress( state, siteId ) ),
 		currentPlan: getCurrentPlan( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
