@@ -12,7 +12,7 @@ type StepRouteProps = {
 	progressValue: number;
 	progressBarExtraStyle: React.CSSProperties;
 	showWooLogo: boolean;
-	renderStep: ( step: StepperStep ) => JSX.Element;
+	renderStep: ( step: StepperStep ) => JSX.Element | null;
 };
 
 const StepRoute = ( {
