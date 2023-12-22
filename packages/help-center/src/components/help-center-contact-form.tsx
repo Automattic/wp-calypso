@@ -114,7 +114,6 @@ export const HelpCenterContactForm = () => {
 			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
 		};
 	}, [] );
-	const wapuuChatId = getOdieStorage( 'last_chat_id' );
 
 	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
@@ -293,6 +292,8 @@ export const HelpCenterContactForm = () => {
 		const productId = plan?.getProductId();
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
+		const wapuuChatId = getOdieStorage( 'last_chat_id' );
+		const aiChatId = wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id;
 
 		switch ( mode ) {
 			case 'CHAT':
@@ -327,9 +328,12 @@ export const HelpCenterContactForm = () => {
 						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
 					}
 
-					openChatWidget( initialChatMessage, supportSite.URL, () =>
-						setHasSubmittingError( true )
-					);
+					openChatWidget( {
+						aiChatId: aiChatId,
+						message: initialChatMessage,
+						siteUrl: supportSite.URL,
+						onError: () => setHasSubmittingError( true ),
+					} );
 					break;
 				}
 				break;
@@ -358,7 +362,7 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
-						ai_chat_id: wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id,
+						ai_chat_id: aiChatId,
 						ai_message: gptResponse?.response,
 					} )
 						.then( () => {

@@ -108,7 +108,12 @@ const ChatButton: FC< Props > = ( {
 
 	const handleClick = () => {
 		if ( canConnectToZendesk ) {
-			openChatWidget( initialMessage, siteUrl, onError, onClick );
+			openChatWidget( {
+				message: initialMessage,
+				siteUrl,
+				onError,
+				onSuccess: onClick,
+			} );
 		} else {
 			setInitialRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
