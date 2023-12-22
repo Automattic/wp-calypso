@@ -9,10 +9,11 @@ import SitesOverviewContext from '../../agency-dashboard/sites-overview/context'
 export default function AddNewSiteTourStep2() {
 	const translate = useTranslate();
 	const { mostRecentConnectedSite } = useContext( SitesOverviewContext );
-	const hasAddNewSiteTourPreference = useSelector( ( state ) =>
+	const hasFinishedStep1 = useSelector( ( state ) =>
 		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-step-1' )
 	);
-	const shouldRenderAddSiteTourStep2 = hasAddNewSiteTourPreference && mostRecentConnectedSite;
+	// We should only render the second step if the first one has finished (hasFinishedStep1) and we have a new connected site (mostRecentConnectedSite).
+	const shouldRenderAddSiteTourStep2 = hasFinishedStep1 && mostRecentConnectedSite;
 
 	const tourHTMLTarget =
 		items.length < 20
