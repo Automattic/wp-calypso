@@ -33,7 +33,7 @@ const PlanButton = ( {
 	const className = classNames(
 		classes,
 		'plan-features-2023-grid__actions-button',
-		getPlanClass( planSlug ),
+		planSlug ? getPlanClass( planSlug ) : '',
 		{
 			'is-current-plan': current,
 			'is-stuck': isStuck,
