@@ -263,7 +263,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-	const showPlanSelectorDropdown = config.isEnabled( 'onboarding/interval-dropdown' );
+	const showPlanTypeSelectorDropdown = config.isEnabled( 'onboarding/interval-dropdown' );
 	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
@@ -522,7 +522,7 @@ const PlansFeaturesMain = ( {
 			selectedPlan,
 			selectedFeature,
 			showBiennialToggle,
-			showPlanSelectorDropdown,
+			showPlanTypeSelectorDropdown,
 			kind: planTypeSelector,
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
@@ -543,7 +543,7 @@ const PlansFeaturesMain = ( {
 		isPlansInsideStepper,
 		isStepperUpgradeFlow,
 		showBiennialToggle,
-		showPlanSelectorDropdown,
+		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
 	] );
 
@@ -707,7 +707,7 @@ const PlansFeaturesMain = ( {
 
 	const stickyPlanTypeSelectorHeight = 48;
 	const comparisonGridStickyRowOffset =
-		showPlanSelectorDropdown && isMobile()
+		showPlanTypeSelectorDropdown && isMobile()
 			? stickyPlanTypeSelectorHeight + masterbarHeight
 			: masterbarHeight;
 

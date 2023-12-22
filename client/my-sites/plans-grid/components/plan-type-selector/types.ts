@@ -12,7 +12,7 @@ export type PlanTypeSelectorProps = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	showBiennialToggle?: boolean;
-	showPlanSelectorDropdown?: boolean; // feature flag used for the plan selector dropdown
+	showPlanTypeSelectorDropdown?: boolean; // feature flag used for the plan selector dropdown
 	isInSignup: boolean;
 	plans: PlanSlug[];
 	eligibleForWpcomMonthlyPlans?: boolean;
@@ -38,7 +38,7 @@ export type IntervalTypeProps = Pick<
 	| 'hideDiscountLabel'
 	| 'redirectTo'
 	| 'showBiennialToggle'
-	| 'showPlanSelectorDropdown'
+	| 'showPlanTypeSelectorDropdown'
 	| 'selectedPlan'
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'
