@@ -8,6 +8,7 @@ import {
 import { getCalypsoUrl } from '@automattic/calypso-url';
 import { useEffect, useState, useCallback } from 'react';
 import wpcom from 'calypso/lib/wp';
+import tracksRecordEvent from '../../tracking/track-record-event';
 import { PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
 import { usePreviewingTheme } from './use-previewing-theme';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -92,6 +93,11 @@ export const useCanPreviewButNeedUpgrade = ( {
 	}, [ previewingTheme.type, setCanPreviewButNeedUpgrade, setSiteSlug ] );
 
 	const upgradePlan = useCallback( () => {
+		tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_upgrade', {
+			theme: previewingTheme.id,
+			theme_type: previewingTheme.type,
+		} );
+
 		const generateCheckoutUrl = ( plan: string ) => {
 			const locationHref = window.location.href;
 			let url = locationHref;
@@ -125,9 +131,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 				: // For a Premium theme, the users should have the Premium plan or higher.
 				  generateCheckoutUrl( PLAN_PREMIUM );
 		window.location.href = link;
-
-		// TODO: Add the track event.
-	}, [ previewingTheme.type, siteSlug ] );
+	}, [ previewingTheme.id, previewingTheme.type, siteSlug ] );
 
 	return {
 		canPreviewButNeedUpgrade,
