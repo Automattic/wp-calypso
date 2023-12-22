@@ -10,9 +10,9 @@ import { getPlan } from '@automattic/calypso-products/src';
  * @param {Array<string>} plans - An array of plan slugs.
  * @returns {string} The name of the first matching WordPress.com plan, or an empty string if no matching plan is found.
  */
-const getWPPlanName = ( plans: Array< string > ) => {
+const getWPCOMPlanName = ( plans: Array< string > ) => {
 	const wpcomPlan = plans.find( ( plan ) => planMatches( plan, { group: GROUP_WPCOM } ) );
 	return wpcomPlan ? getPlan( wpcomPlan )?.getTitle() : '';
 };
 
-export default getWPPlanName;
+export default getWPCOMPlanName;
