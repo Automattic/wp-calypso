@@ -6,4 +6,5 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME: Record< string, st
 	addSiteStep2: 'jetpack-cloud-site-dashboard-add-new-site-tour-step-2',
 	enableMonitorStep1: 'jetpack-cloud-site-dashboard-enable-monitor-tour-step-1',
 	enableMonitorStep2: 'jetpack-cloud-site-dashboard-enable-monitor-tour-step-2',
+	dashboardWalkthrough: 'jetpack-cloud-sites-overview-dashboard-walkthrough-tour',
 };
