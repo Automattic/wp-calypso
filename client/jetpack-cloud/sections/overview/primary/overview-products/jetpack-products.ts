@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 
-interface ProductData {
+export interface ProductData {
 	description: string;
 	url: string;
 	urlText?: string;
@@ -8,7 +8,7 @@ interface ProductData {
 	data?: any;
 	name?: string;
 }
-interface JetpackProducts {
+export interface JetpackProducts {
 	[ key: string ]: ProductData;
 }
 
