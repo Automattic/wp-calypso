@@ -1,8 +1,12 @@
-import config from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { currentlyPreviewingTheme, PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
+import {
+	currentlyPreviewingTheme,
+	PERSONAL_THEME,
+	PREMIUM_THEME,
+	WOOCOMMERCE_THEME,
+} from '../utils';
 import type { Theme } from 'calypso/types';
 
 /**
@@ -22,11 +26,7 @@ const getThemeType = ( theme?: Theme ) => {
 	}
 
 	// @TODO Replace all the logic above with the following code once Theme Tiers is live.
-	if ( config.isEnabled( 'themes/tiers' ) ) {
-		return theme?.theme_tier?.slug ?? undefined;
-	}
-
-	return undefined;
+	return theme?.theme_tier?.slug ?? undefined;
 };
 
 /**
@@ -35,11 +35,7 @@ const getThemeType = ( theme?: Theme ) => {
  */
 const getThemeFeature = ( theme?: Theme ) => {
 	// @TODO Once theme tiers is live we'll need to refactor use-can-preview-but-need-upgrade's checkNeedUpgrade function.
-	if ( config.isEnabled( 'themes/tiers' ) ) {
-		return theme?.theme_tier?.feature ?? undefined;
-	}
-
-	return undefined;
+	return theme?.theme_tier?.feature ?? undefined;
 };
 
 export const usePreviewingTheme = () => {
@@ -66,8 +62,19 @@ export const usePreviewingTheme = () => {
 	const [ previewingThemeType, setPreviewingThemeType ] =
 		useState< ReturnType< typeof getThemeType > >( undefined );
 
-	const previewingThemeTypeDisplay =
-		previewingThemeType === WOOCOMMERCE_THEME ? 'WooCommerce' : 'Premium';
+	// @TODO Find a better solution once we have Theme Tiers live. we could use the theme_tier slug or feature slug instead for simplicity.
+	let previewingThemeTypeDisplay;
+	switch ( previewingThemeType ) {
+		case WOOCOMMERCE_THEME:
+			previewingThemeTypeDisplay = 'WooCommerce';
+			break;
+		case PREMIUM_THEME:
+			previewingThemeTypeDisplay = 'Premium';
+			break;
+		case PERSONAL_THEME:
+			previewingThemeTypeDisplay = 'Personal';
+			break;
+	}
 
 	useEffect( () => {
 		if ( previewingThemeId ) {
