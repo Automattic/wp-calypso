@@ -15,7 +15,7 @@ export default function AddNewSiteTourStep1() {
 					{
 						target: '#sites-overview-add-sites-button .split-button__toggle',
 						popoverPosition: 'bottom left',
-						title: translate( 'Press on an arrow button' ),
+						title: translate( 'Click the arrow button' ),
 						description: (
 							<>
 								{ translate( 'Click the arrow button and select "Connect a site to Jetpack".' ) }
