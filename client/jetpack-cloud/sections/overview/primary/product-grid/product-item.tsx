@@ -9,29 +9,19 @@ import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 interface Props {
 	productData: ProductData;
 	productSlug: string;
-	tagline: string;
-	iconSlug: string;
-	displayName: string;
 	onMoreAboutClick: ( slug: string ) => void;
 }
 
-const ProductItem: React.FC< Props > = ( {
-	productData,
-	productSlug,
-	tagline,
-	iconSlug,
-	displayName,
-	onMoreAboutClick,
-} ) => {
+const ProductItem: React.FC< Props > = ( { productData, productSlug, onMoreAboutClick } ) => {
 	const itemData: SelectorProduct = {
 		moreAboutUrl: productData.url,
 		shortName: <>{ productData.name }</>,
 		productSlug: productSlug,
-		iconSlug: iconSlug,
+		iconSlug: productData.data.iconSlug,
 		type: 'item-type-plan',
-		displayName: displayName,
-		tagline: tagline,
-		description: undefined,
+		displayName: productData.data.displayName,
+		tagline: productData.data.tagline,
+		description: productData.description,
 		term: 'TERM_ANNUALLY',
 		features: {
 			items: [],
