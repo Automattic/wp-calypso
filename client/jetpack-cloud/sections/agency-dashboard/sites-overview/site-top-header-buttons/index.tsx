@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import AddNewSiteButton from 'calypso/components/jetpack/add-new-site-button';
-import AddNewSiteTourStep1 from 'calypso/jetpack-cloud/sections/onboarding-tours/add-new-site-tour-step-1';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
@@ -73,7 +72,6 @@ export default function SiteTopHeaderButtons() {
 							)
 						}
 					/>
-					<AddNewSiteTourStep1 />
 					<WPCOMHostingPopover
 						context={ buttonRef.current }
 						// Show the popover only when the split button is closed
