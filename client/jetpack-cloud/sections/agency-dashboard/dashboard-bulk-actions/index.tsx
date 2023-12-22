@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, createRef, useContext } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import EnableMonitorTourStep2 from '../../onboarding-tours/enable-monitor-tour-step-2';
 import NotificationSettings from '../downtime-monitoring/notification-settings';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
@@ -62,11 +63,13 @@ export default function DashboardBulkActions( {
 			label: translate( 'Custom Notification' ),
 			action: () => toggleNotificationSettingsPopup(),
 			actionName: 'custom_notification_click',
+			className: 'dashboard-bulk-actions__custom_notification_button',
 		},
 		{
 			label: translate( 'Reset Notification' ),
 			action: () => handleResetNotification(),
 			actionName: 'reset_notification_click',
+			className: 'dashboard-bulk-actions__reset_notification_button',
 		},
 	];
 
@@ -91,12 +94,13 @@ export default function DashboardBulkActions( {
 					</Button>
 				) ) }
 			</ButtonGroup>
-			{ otherMonitorActions.map( ( { label, action, actionName } ) => (
+			{ otherMonitorActions.map( ( { label, action, actionName, className } ) => (
 				<ButtonGroup key={ label }>
 					<Button
 						compact
 						disabled={ disabled }
 						onClick={ () => handleAction( action, actionName ) }
+						className={ className }
 					>
 						{ label }
 					</Button>
@@ -139,6 +143,7 @@ export default function DashboardBulkActions( {
 					</Button>
 				</ButtonGroup>
 			</div>
+			<EnableMonitorTourStep2 isMonitorPopupVisible={ showNotificationSettingsPopup } />
 			{ showNotificationSettingsPopup && (
 				<NotificationSettings
 					sites={ selectedSites }
