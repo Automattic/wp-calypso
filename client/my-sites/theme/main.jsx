@@ -1379,6 +1379,7 @@ class ThemeSheet extends Component {
 			const forceDisplay =
 				( isPremium && ! isThemePurchased ) ||
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
+				! isThemeAllowedOnSite ||
 				( isExternallyManagedTheme &&
 					! isThemeInstalled &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );

@@ -182,6 +182,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	}
 
 	if ( showGoogleAnalyticsPromo ) {
+		const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() ?? '';
 		blocks.push(
 			<MiniCarouselBlock
 				clickEvent={ EVENT_GOOGLE_ANALYTICS_BANNER_CLICK }
@@ -191,10 +192,13 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 				contentText={ translate(
 					'Linking Google Analytics to your account is effortless with our %(premiumPlanName)s plan – no coding required. Gain valuable insights in seconds.',
 					{
-						args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() },
+						args: { premiumPlanName },
 					}
 				) }
-				ctaText={ translate( 'Get Premium' ) }
+				ctaText={
+					// Translators: %(plan) is the name of a plan, e.g. "Explorer" or "Premium"
+					translate( 'Get %(plan)s', { args: { plan: premiumPlanName } } )
+				}
 				href={ `/checkout/premium/${ slug || '' }` }
 				key="google-analytics"
 			/>
