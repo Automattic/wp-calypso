@@ -59,7 +59,7 @@ const FeedStreamSidebar = ( {
 								{ followerCount.toLocaleString( getLocaleSlug() ) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
-								{ translate( 'Follower', 'Followers', { count: followerCount } ) }
+								{ translate( 'Subscriber', 'Subscribers', { count: followerCount } ) }
 							</span>
 						</div>
 					) }

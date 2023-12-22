@@ -79,16 +79,10 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		upsell: {
 			name: 'upsell',
 			title: translate( 'Premium styles' ),
-			description: hasEnTranslation(
-				"You've chosen premium styles which are exclusive to the %(premiumPlanName)s plan or higher."
-			)
-				? translate(
-						"You've chosen premium styles which are exclusive to the %(premiumPlanName)s plan or higher.",
-						{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort || '' } }
-				  )
-				: translate(
-						"You've chosen premium styles which are exclusive to the Premium plan or higher."
-				  ),
+			description: translate(
+				"You've chosen premium styles which are exclusive to the %(premiumPlanName)s plan or higher.",
+				{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort || '' } }
+			),
 			continueLabel: translate( 'Continue' ),
 			backLabel: hasEnTranslation( 'premium styles' ) ? translate( 'premium styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.UPSELL,

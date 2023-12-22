@@ -1,7 +1,7 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { CompactCard, ScreenReaderText } from '@automattic/components';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -72,14 +72,12 @@ class DomainSearchResults extends Component {
 			selectedSite,
 			translate,
 			isDomainOnly,
-			locale,
 		} = this.props;
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
 		const suggestions = this.props.suggestions || [];
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
 		const {
 			MAPPABLE,
 			MAPPED,
@@ -128,22 +126,13 @@ class DomainSearchResults extends Component {
 						{ args: { domain }, components }
 					);
 				} else {
-					offer =
-						isEnglishLocale ||
-						i18n.hasTranslation(
-							'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com %(premiumPlanName)s.'
-						)
-							? translate(
-									'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com %(premiumPlanName)s.',
-									{
-										args: { domain, premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
-										components,
-									}
-							  )
-							: translate(
-									'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.',
-									{ args: { domain }, components }
-							  );
+					offer = translate(
+						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com %(premiumPlanName)s.',
+						{
+							args: { domain, premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
+							components,
+						}
+					);
 				}
 			}
 

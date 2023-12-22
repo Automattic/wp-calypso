@@ -7,7 +7,7 @@ import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
-import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
+import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-cell';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
@@ -83,7 +83,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Expires / renews on' ) } </span>
 				<span className="domains-table-mobile-card-registered-date">
-					<DomainsTableExpiresRewnewsOnCell domain={ domain } as="div" />
+					<DomainsTableExpiresRenewsOnCell domain={ domain } as="div" />
 				</span>
 			</div>
 

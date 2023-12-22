@@ -133,6 +133,7 @@ const ProductLightbox: React.FC< Props > = ( {
 							<div>
 								<div className="product-lightbox__variants-options">
 									<MultipleChoiceQuestion
+										name="product-variants"
 										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
 										answers={ variantOptions }
 										selectedAnswerId={ product?.productSlug }

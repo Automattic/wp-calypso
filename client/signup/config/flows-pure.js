@@ -149,11 +149,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
-			props: {
-				plans: {
-					showPressablePromoBanner: true,
-				},
-			},
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -187,6 +182,8 @@ export function generateFlows( {
 			lastModified: '2023-12-16',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
 				plans: {
 					showBiennialToggle: true,
