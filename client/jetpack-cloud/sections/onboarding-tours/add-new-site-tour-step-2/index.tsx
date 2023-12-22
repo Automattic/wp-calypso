@@ -5,12 +5,13 @@ import { useSelector } from 'calypso/state';
 import { items } from 'calypso/state/notices/reducer';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import SitesOverviewContext from '../../agency-dashboard/sites-overview/context';
+import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
 export default function AddNewSiteTourStep2() {
 	const translate = useTranslate();
 	const { mostRecentConnectedSite } = useContext( SitesOverviewContext );
 	const hasFinishedStep1 = useSelector( ( state ) =>
-		getPreference( state, 'jetpack-cloud-site-dashboard-add-new-site-tour-step-1' )
+		getPreference( state, JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ] )
 	);
 	// We should only render the second step if the first one has finished (hasFinishedStep1) and we have a new connected site (mostRecentConnectedSite).
 	const shouldRenderAddSiteTourStep2 = hasFinishedStep1 && mostRecentConnectedSite;
@@ -23,7 +24,7 @@ export default function AddNewSiteTourStep2() {
 	return (
 		shouldRenderAddSiteTourStep2 && (
 			<GuidedTour
-				preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-2"
+				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep2' ] }
 				tours={ [
 					{
 						target: tourHTMLTarget,
