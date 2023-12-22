@@ -7,19 +7,19 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
-import MaximizeIcon from 'calypso/assets/images/odie/maximize-icon.svg';
-import MinimizeIcon from 'calypso/assets/images/odie/minimize-icon.svg';
-import WapuuAvatar from 'calypso/assets/images/odie/wapuu-squared-avatar.svg';
-import WapuuThinking from 'calypso/assets/images/odie/wapuu-thinking.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import MaximizeIcon from '../../assets/maximize-icon.svg';
+import MinimizeIcon from '../../assets/minimize-icon.svg';
+import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
+import WapuuThinking from '../../assets/wapuu-thinking.svg';
+import { useOdieAssistantContext } from '../../context';
 import Button from '../button';
-import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { Message, Source } from '../types';
+import type { Message, Source } from '../../types';
 
 import './style.scss';
 
@@ -301,13 +301,13 @@ const ChatMessage = (
 						textOnly: true,
 					} ) }
 					onClose={ () =>
-						trackEvent( 'calypso_odie_chat_message_action_sources', {
+						trackEvent( 'chat_message_action_sources', {
 							action: 'close',
 							message_id: message.message_id,
 						} )
 					}
 					onOpen={ () =>
-						trackEvent( 'calypso_odie_chat_message_action_sources', {
+						trackEvent( 'chat_message_action_sources', {
 							action: 'open',
 							message_id: message.message_id,
 						} )
