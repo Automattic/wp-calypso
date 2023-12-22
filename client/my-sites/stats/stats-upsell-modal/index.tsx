@@ -36,7 +36,7 @@ export default function StatsUpsellModal( {
 			stat_type: statType,
 		} );
 
-		page.redirect( `/checkout/${ siteSlug }/${ plan?.path_slug ?? 'premium' }` );
+		page( `/checkout/${ siteSlug }/${ plan?.path_slug ?? 'premium' }` );
 	};
 
 	return (
