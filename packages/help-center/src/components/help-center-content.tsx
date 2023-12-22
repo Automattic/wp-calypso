@@ -15,7 +15,6 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useIsWapuuEnabled } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
@@ -33,7 +32,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const section = useSelector( getSectionName );
-	const isWapuuEnabled = useIsWapuuEnabled();
 	const { isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -98,7 +96,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						<OdieAssistantProvider
 							botNameSlug="wpcom-support-chat"
 							botName="Wapuu"
-							enabled={ isWapuuEnabled }
 							isMinimized={ isMinimized }
 							initialUserMessage={ searchTerm }
 							logger={ trackEvent }
