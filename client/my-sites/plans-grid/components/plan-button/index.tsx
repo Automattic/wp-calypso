@@ -1,6 +1,7 @@
 import { getPlanClass, type PlanSlug } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
+import './style.scss';
 
 // TODO:
 // The prop should simply be declared by extending the
