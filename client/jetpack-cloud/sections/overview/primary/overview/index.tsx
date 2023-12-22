@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import OverviewProducts from 'calypso/jetpack-cloud/sections/overview/primary/overview-products';
 import IntroCards from '../intro-cards';
 import NextSteps from '../next-steps';
 
@@ -50,9 +51,9 @@ export default function Overview() {
 					<NextSteps onDismiss={ nextStepsDismissHandler } />
 				</Card>
 			) }
-			{ /*<Card className="overview__tools">*/ }
-			{ /*	/!*<OverviewTools />*!/*/ }
-			{ /*</Card>*/ }
+			<Card>
+				<OverviewProducts />
+			</Card>
 		</div>
 	);
 }

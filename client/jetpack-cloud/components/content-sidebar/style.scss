@@ -5,6 +5,11 @@
 
 	&.main {
 		margin-top: 32px;
+		&.is-wide-layout {
+			@include break-small {
+				padding: 0;
+			}
+		}
 	}
 
 	grid-row: 4 / span 1;
