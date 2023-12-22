@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .content-sidebar {
+
 	&.main {
 		margin-top: 32px;
 	}
@@ -29,4 +30,8 @@
 			grid-column: 9 / span 4;
 		}
 	}
+}
+
+header.current-section {
+	padding: 0 16px;
 }
