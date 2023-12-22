@@ -4,28 +4,20 @@ import { ProductData } from 'calypso/jetpack-cloud/sections/overview/primary/ove
 import { MoreInfoLink } from 'calypso/my-sites/plans/jetpack-plans/product-store/more-info-link';
 import { SimpleItemCard } from 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
-import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { PartnerSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 interface Props {
 	productData: ProductData;
-	productSlug: string;
 	onMoreAboutClick: ( slug: string ) => void;
 }
 
-const ProductItem: React.FC< Props > = ( { productData, productSlug, onMoreAboutClick } ) => {
-	const itemData: SelectorProduct = {
+const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => {
+	const productSlug = productData.slug ?? '';
+
+	const itemData: PartnerSelectorProduct = {
 		moreAboutUrl: productData.url,
 		shortName: <>{ productData.name }</>,
 		productSlug: productSlug,
-		iconSlug: productData.data.iconSlug,
-		type: 'item-type-plan',
-		displayName: productData.data.displayName,
-		tagline: productData.data.tagline,
-		description: productData.description,
-		term: 'TERM_ANNUALLY',
-		features: {
-			items: [],
-		},
 	};
 
 	const displayDescription = (
