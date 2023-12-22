@@ -1,6 +1,10 @@
-import { UseMutationOptions, useMutation } from '@tanstack/react-query';
+import { UseMutationOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions'; //eslint-disable-line no-restricted-imports
+import { getAllDomainsQueryKey } from '../queries/use-all-domains-query';
+import { getSiteDomainsQueryKey } from '../queries/use-site-domains-query';
 
 interface UpdateContactInfoVariables {
 	type: 'update-contact-info';
@@ -12,6 +16,7 @@ interface UpdateContactInfoVariables {
 interface SetAutoRenewVariables {
 	type: 'set-auto-renew';
 	domains: string[];
+	blogIds: number[];
 	autoRenew: boolean;
 }
 
@@ -22,6 +27,9 @@ export function useDomainsBulkActionsMutation<
 	TError = unknown,
 	TContext = unknown,
 >( options: UseMutationOptions< TData, TError, BulkUpdateVariables, TContext > = {} ) {
+	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
+
 	const { mutate, ...rest } = useMutation( {
 		mutationFn: ( variables ) => {
 			switch ( variables.type ) {
@@ -49,12 +57,29 @@ export function useDomainsBulkActionsMutation<
 					} );
 			}
 		},
+		onSuccess: ( data: TData, variables: BulkUpdateVariables ) => {
+			const { type } = variables;
+
+			if ( type !== 'set-auto-renew' ) {
+				return;
+			}
+
+			const { blogIds } = variables;
+
+			// Refreshes data for all the domains that were updated
+			blogIds.forEach( ( blogId ) => {
+				dispatch( fetchSiteDomains( blogId ) );
+
+				queryClient.invalidateQueries( { queryKey: getSiteDomainsQueryKey( blogId ) } );
+				queryClient.invalidateQueries( { queryKey: getAllDomainsQueryKey( { no_wpcom: true } ) } );
+			} );
+		},
 		...options,
 	} );
 
 	const setAutoRenew = useCallback(
-		( domains: string[], autoRenew: boolean ) =>
-			mutate( { type: 'set-auto-renew', domains, autoRenew } ),
+		( domains: string[], blogIds: number[], autoRenew: boolean ) =>
+			mutate( { type: 'set-auto-renew', domains, blogIds, autoRenew } ),
 		[ mutate ]
 	);
 

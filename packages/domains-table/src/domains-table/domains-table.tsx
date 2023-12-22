@@ -340,10 +340,15 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	};
 
 	const handleAutoRenew = ( enable: boolean ) => {
-		const domainsToBulkUpdate = ( domains ?? [] )
-			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
-			.map( ( domain ) => domain.domain );
-		setAutoRenew( domainsToBulkUpdate, enable );
+		const domainsToBulkUpdate = ( domains ?? [] ).filter( ( domain ) =>
+			selectedDomains.has( getDomainId( domain ) )
+		);
+
+		const domainNames = domainsToBulkUpdate.map( ( domain ) => domain.domain );
+		const blogIds = [ ...new Set( domainsToBulkUpdate.map( ( domain ) => domain.blog_id ) ) ];
+
+		setAutoRenew( domainNames, blogIds, enable );
+
 		handleRestartDomainStatusPolling();
 	};
 
