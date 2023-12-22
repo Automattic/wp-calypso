@@ -119,23 +119,24 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 	}, [ currentStep, tours.length, endTour ] );
 
 	useEffect( () => {
-		let target: Element | null = null;
-		if ( nextStepOnTargetClick ) {
+		let nextStepClickTargetElement: Element | null = null;
+		// We should wait for targetElement before attaching any events to advance to the next step
+		if ( nextStepOnTargetClick && targetElement && ! isDismissed && hasFetched ) {
 			// Find the target element using the nextStepOnTargetClick selector
-			target = document.querySelector( nextStepOnTargetClick );
-			if ( target ) {
-				// Attach the event listener to the target
-				target.addEventListener( 'click', nextStep );
+			nextStepClickTargetElement = document.querySelector( nextStepOnTargetClick );
+			if ( nextStepClickTargetElement ) {
+				// Attach the event listener to the nextStepClickTargetElement
+				nextStepClickTargetElement.addEventListener( 'click', nextStep );
 			}
 		}
 
 		// Cleanup function to remove the event listener
 		return () => {
-			if ( target ) {
-				target.removeEventListener( 'click', nextStep );
+			if ( nextStepClickTargetElement ) {
+				nextStepClickTargetElement.removeEventListener( 'click', nextStep );
 			}
 		};
-	}, [ nextStepOnTargetClick, nextStep ] );
+	}, [ nextStepOnTargetClick, nextStep, targetElement, isDismissed, hasFetched ] );
 
 	if ( isDismissed ) {
 		return null;
