@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, createRef, useContext } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import EnableMonitorTourStep2 from '../../onboarding-tours/enable-monitor-tour-step-2';
 import NotificationSettings from '../downtime-monitoring/notification-settings';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
@@ -142,6 +143,7 @@ export default function DashboardBulkActions( {
 					</Button>
 				</ButtonGroup>
 			</div>
+			<EnableMonitorTourStep2 isMonitorPopupVisible={ showNotificationSettingsPopup } />
 			{ showNotificationSettingsPopup && (
 				<NotificationSettings
 					sites={ selectedSites }
