@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -106,7 +107,7 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 			} )
 		);
 		if ( redirectOnButtonClick ) {
-			window.location.href = redirectOnButtonClick;
+			page.redirect( redirectOnButtonClick );
 		}
 	}, [ dispatch, preferenceName, preference, redirectOnButtonClick ] );
 
