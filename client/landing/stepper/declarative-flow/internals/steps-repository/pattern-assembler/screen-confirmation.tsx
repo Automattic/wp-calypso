@@ -9,9 +9,9 @@ import { Icon, image, verse, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
-import { IAppState } from 'calypso/state/types';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
+import type { IAppState } from 'calypso/state/types';
 import './screen-confirmation.scss';
 
 interface Props {
