@@ -7,7 +7,7 @@ import type { Theme } from 'calypso/types';
 
 /**
  * Get the theme type.
- * This only support WooCommerce and Premium themes.
+ * This only supports WooCommerce, Premium, and Personal themes.
  */
 const getThemeType = ( theme?: Theme ) => {
 	const theme_software_set = theme?.taxonomies?.theme_software_set;
