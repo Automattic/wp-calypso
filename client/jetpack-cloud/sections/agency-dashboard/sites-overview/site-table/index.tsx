@@ -2,6 +2,7 @@ import { Icon, starFilled, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext, useState, forwardRef, Ref } from 'react';
 import AddNewSiteTourStep2 from 'calypso/jetpack-cloud/sections/onboarding-tours/add-new-site-tour-step-2';
+import EnableMonitorTourStep1 from 'calypso/jetpack-cloud/sections/onboarding-tours/enable-monitor-tour-step-1';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
@@ -121,6 +122,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 				</tbody>
 			</table>
 			<AddNewSiteTourStep2 siteItems={ items } />
+			<EnableMonitorTourStep1 />
 		</>
 	);
 };
