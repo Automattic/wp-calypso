@@ -990,7 +990,12 @@ export class SiteSettingsFormGeneral extends Component {
 						<Gridicon icon="info-outline" />
 						<span>
 							{ translate(
-								'Your site contains premium styles that will only be visible once you upgrade to a Premium plan.'
+								'Your site contains premium styles that will only be visible once you upgrade to a %(planName)s plan.',
+								{
+									args: {
+										planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+									},
+								}
 							) }
 						</span>
 					</div>

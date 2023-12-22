@@ -1,0 +1,114 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.stats-upsell-modal {
+	max-width: 375px;
+	margin: auto;
+	background: var(--studio-gray-0);
+	@include break-medium {
+		max-width: calc(100% - 32px);
+	}
+	.components-modal__content {
+		padding: 0;
+	}
+
+	.stats-upsell-modal__close-button {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+	}
+
+	.stats-upsell-modal__content {
+		display: flex;
+		align-items: flex-start;
+
+		flex-direction: column;
+		@include break-medium {
+			flex-direction: row;
+		}
+	}
+	.stats-upsell-modal__left,
+	.stats-upsell-modal__right {
+		display: flex;
+		padding: 40px;
+		flex-direction: column;
+		align-self: stretch;
+		align-items: flex-start;
+
+		min-width: 279px;
+	}
+
+	.stats-upsell-modal__left {
+		background: var(--studio-white);
+		gap: 24px;
+		@include break-medium {
+			width: 294px;
+		}
+	}
+
+	.stats-upsell-modal__right {
+
+		gap: 8px;
+		@include break-medium {
+			width: 245px;
+		}
+	}
+
+	.stats-upsell-modal__title {
+		@extend .wp-brand-font;
+		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
+		font-size: 28px;
+		line-height: 34px; /* 125% */
+		@include break-medium {
+			font-size: $font-title-large;
+			line-height: 40px; /* 125% */
+		}
+	}
+
+	.stats-upsell-modal__text {
+		font-size: $font-body;
+	}
+
+	.stats-upsell-modal__plan {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+	.stats-upsell-modal__price-amount {
+		display: flex;
+		align-items: center;
+		font-size: $font-title-large;
+		font-weight: 500;
+
+		abbr {
+			font-size: $font-title-small;
+			line-height: $font-title-large;
+			font-weight: 400;
+		}
+	}
+	.stats-upsell-modal__price-per-month {
+		font-size: $font-body-extra-small;
+		color: var(--color-neutral);
+	}
+
+	.stats-upsell-modal__features {
+		padding-top: 7px;
+		font-size: $font-body-small;
+		display: flex;
+		flex-direction: column;
+		row-gap: 8px;
+
+		svg {
+			color: #0675c4;
+		}
+
+		.stats-upsell-modal__feature {
+			display: flex;
+			column-gap: 8px;
+
+			.stats-upsell-modal__feature-text {
+				flex: 1;
+			}
+		}
+	}
+}

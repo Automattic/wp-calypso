@@ -1,6 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearOdieStorage, useOdieStorage } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
@@ -82,6 +80,8 @@ const OdieAssistantProvider = ( {
 	isMinimized = false,
 	extraContactOptions,
 	enabled = true,
+	logger,
+	loggerEventNamePrefix,
 	children,
 }: {
 	botName?: string;
@@ -90,10 +90,10 @@ const OdieAssistantProvider = ( {
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
 	extraContactOptions?: ReactNode;
+	logger?: ( message: string, properties: Record< string, unknown > ) => void;
+	loggerEventNamePrefix?: string;
 	children?: ReactNode;
 } ) => {
-	const dispatch = useDispatch();
-
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
@@ -112,16 +112,15 @@ const OdieAssistantProvider = ( {
 	}, [ existingChat, existingChat.chat_id ] );
 
 	const trackEvent = useCallback(
-		( event: string, properties: Record< string, unknown > = {} ) => {
-			dispatch(
-				recordTracksEvent( event, {
-					...properties,
-					chat_id: chat?.chat_id,
-					bot_name_slug: botNameSlug,
-				} )
-			);
+		( eventName: string, properties: Record< string, unknown > = {} ) => {
+			const event = loggerEventNamePrefix ? `${ loggerEventNamePrefix }_${ eventName }` : eventName;
+			logger?.( event, {
+				...properties,
+				chat_id: chat?.chat_id,
+				bot_name_slug: botNameSlug,
+			} );
 		},
-		[ botNameSlug, chat?.chat_id, dispatch ]
+		[ botNameSlug, chat?.chat_id, logger, loggerEventNamePrefix ]
 	);
 
 	const clearChat = useCallback( () => {
@@ -130,7 +129,7 @@ const OdieAssistantProvider = ( {
 			chat_id: null,
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
-		trackEvent( 'calypso_odie_chat_cleared', {} );
+		trackEvent( 'chat_cleared', {} );
 	}, [ botNameSlug, trackEvent ] );
 
 	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
