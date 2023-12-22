@@ -21,7 +21,7 @@ export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 	const shouldRenderAddSiteTourStep2 = hasFinishedStep1 && mostRecentConnectedSite;
 
 	const tourHTMLTarget =
-		siteItems.length > 20
+		siteItems.length <= 20
 			? 'tr.is-most-recent-jetpack-connected-site td:first-of-type'
 			: '.site-table__table th:first-of-type';
 
