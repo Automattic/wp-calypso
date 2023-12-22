@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -29,6 +30,8 @@ const DoYouLoveJetpackStatsNotice = ( {
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	const isWPCOMPaidStatsFlow =
+		isEnabled( 'stats/paid-wpcom-v2' ) && isWPCOMSite && ! isOdysseyStats;
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -70,12 +73,22 @@ const DoYouLoveJetpackStatsNotice = ( {
 		return null;
 	}
 
-	const noPurchaseTitle = translate( 'Do you love Jetpack Stats?' );
+	const noPurchaseTitle = isWPCOMPaidStatsFlow
+		? translate( 'Grow faster with Advanced Stats' )
+		: translate( 'Do you love Jetpack Stats?' );
 	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
 
 	const learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
+
+	const description = isWPCOMPaidStatsFlow
+		? translate(
+				'Finesse your scaling up strategy with detailed insights and data. Upgrade to a Personal plan for a richer understanding and smarter decision-making.'
+		  )
+		: translate( 'Upgrade to get priority support and access to upcoming advanced features.' );
+
+	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
 
 	return (
 		<div
@@ -88,31 +101,25 @@ const DoYouLoveJetpackStatsNotice = ( {
 				title={ hasFreeStats ? freeTitle : noPurchaseTitle }
 				onClose={ dismissNotice }
 			>
-				{ translate(
-					'{{p}}Upgrade to get priority support and access to upcoming advanced features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
-					{
-						components: {
-							p: <p />,
-							jetpackStatsProductLink: (
-								<button
-									type="button"
-									className="notice-banner__action-button"
-									onClick={ gotoJetpackStatsProduct }
-								/>
-							),
-							learnMoreLink: (
-								<a
-									className="notice-banner__action-link"
-									href={ localizeUrl( learnMoreLink ) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-							learnMoreLinkText: <span />,
-							externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
-						},
-					}
-				) }
+				<p>{ description }</p>
+				<p>
+					<button
+						type="button"
+						className="notice-banner__action-button"
+						onClick={ gotoJetpackStatsProduct }
+					>
+						{ CTAText }
+					</button>
+					<a
+						className="notice-banner__action-link"
+						href={ localizeUrl( learnMoreLink ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ translate( 'Learn more' ) }
+						<Icon className="stats-icon" icon={ external } size={ 24 } />
+					</a>
+				</p>
 			</NoticeBanner>
 		</div>
 	);
