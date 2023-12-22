@@ -4,6 +4,8 @@ import { useSelector } from 'calypso/state';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
+import '../style.scss';
+
 interface Props {
 	isMonitorPopupVisible: boolean;
 }
@@ -18,6 +20,7 @@ export default function EnableMonitorTourStep1( { isMonitorPopupVisible }: Props
 	return (
 		shouldRenderEnableMonitorTourStep2 && (
 			<GuidedTour
+				className="onboardig-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'enableMonitorStep2' ] }
 				tours={ [
 					{
