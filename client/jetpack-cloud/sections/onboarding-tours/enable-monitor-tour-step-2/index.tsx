@@ -6,19 +6,14 @@ import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
 import '../style.scss';
 
-interface Props {
-	isMonitorPopupVisible: boolean;
-}
-
-export default function EnableMonitorTourStep2( { isMonitorPopupVisible }: Props ) {
+export default function EnableMonitorTourStep2() {
 	const translate = useTranslate();
 	const hasFinishedStep1 = useSelector( ( state ) =>
 		getPreference( state, JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'enableMonitorStep1' ] )
 	);
-	const shouldRenderEnableMonitorTourStep2 = hasFinishedStep1 && ! isMonitorPopupVisible;
 
 	return (
-		shouldRenderEnableMonitorTourStep2 && (
+		hasFinishedStep1 && (
 			<GuidedTour
 				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'enableMonitorStep2' ] }
