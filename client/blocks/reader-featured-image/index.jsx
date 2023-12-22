@@ -23,10 +23,11 @@ const getFeaturedImageType = (
 	let featuredImageType = 'image';
 	if ( canonicalMedia.mediaType === 'video' ) {
 		if ( canonicalMedia.type === 'pocketcasts' ) {
-			featuredImageType = 'pocketcasts-thumbnail';
+			featuredImageType = 'pocketcasts';
 		} else {
-			featuredImageType = 'video-thumbnail';
+			featuredImageType = 'video';
 		}
+		featuredImageType += '-thumbnail';
 	}
 
 	if ( isCompactPost ) {
@@ -88,10 +89,6 @@ const ReaderFeaturedImage = ( {
 	let containerHeight = null;
 
 	switch ( featuredImageType ) {
-		case 'image':
-			containerWidth = imageWidth;
-			containerHeight = imageHeight;
-			break;
 		case 'video-thumbnail':
 			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
 			containerHeight = READER_FEATURED_MAX_IMAGE_HEIGHT;
@@ -128,6 +125,7 @@ const ReaderFeaturedImage = ( {
 			containerWidth = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
 			containerHeight = imageHeight;
 			break;
+		case 'image':
 		case 'image-compact-small-short':
 		case 'video-thumbnail-compact-small-short':
 		case 'image-compact-no-excerpt-small-short':
