@@ -13,8 +13,10 @@ import { render, screen } from '@testing-library/react';
 import { GeneratorModal } from '../src';
 
 describe( 'Base', () => {
-	it( 'should render Hello World', async () => {
+	it( 'should render initial message', async () => {
 		render( <GeneratorModal isOpen={ true } /> );
-		expect( await screen.findByText( 'Hello World' ) ).toBeInTheDocument();
+		expect(
+			await screen.findByText( 'Analyzing your site to create the perfect logo…' )
+		).toBeInTheDocument();
 	} );
 } );
