@@ -7,6 +7,8 @@ import SitesOverviewContext from '../../agency-dashboard/sites-overview/context'
 import { SiteData } from '../../agency-dashboard/sites-overview/types';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
+import '../style.scss';
+
 interface Props {
 	siteItems: Array< SiteData >;
 }
@@ -28,7 +30,9 @@ export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 	return (
 		shouldRenderAddSiteTourStep2 && (
 			<GuidedTour
+				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep2' ] }
+				redirectAfterTourEnds="/overview"
 				tours={ [
 					{
 						target: tourHTMLTarget,
@@ -44,7 +48,6 @@ export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 								) }
 							</>
 						),
-						redirectOnButtonClick: '/overview',
 					},
 				] }
 			/>

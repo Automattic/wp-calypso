@@ -7,4 +7,5 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME: Record< string, st
 	enableMonitorStep1: 'jetpack-manage-site-dashboard-enable-monitor-tour-step-1',
 	enableMonitorStep2: 'jetpack-manage-site-dashboard-enable-monitor-tour-step-2',
 	dashboardWalkthrough: 'jetpack-manage-sites-overview-dashboard-walkthrough-tour',
+	pluginOverview: 'jetpack-manage-plugin-management-v2-plugin-overview-tour',
 };
