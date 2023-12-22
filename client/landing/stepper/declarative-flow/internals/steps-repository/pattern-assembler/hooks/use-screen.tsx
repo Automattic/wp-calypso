@@ -13,7 +13,7 @@ export type Screen = {
 	name: string;
 	title: string;
 	description?: TranslateResult;
-	continueLabel?: string;
+	continueLabel: string;
 	/** The label for going back from the next screen */
 	backLabel?: string;
 	initialPath: string;
@@ -89,6 +89,7 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		confirmation: {
 			name: 'confirmation',
 			title: translate( 'Great job!' ),
+			continueLabel: translate( 'Start adding content' ),
 			initialPath: NAVIGATOR_PATHS.CONFIRMATION,
 		},
 	};
