@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-type OdieStorageKey = 'chat_id';
+type OdieStorageKey = 'chat_id' | 'support_chat_id';
 
 const buildOdieStorageKey = ( key: OdieStorageKey ) => `odie_${ key }`;
 
@@ -14,6 +14,19 @@ export const getOdieStorage = ( key: OdieStorageKey ) => {
 export const setOdieStorage = ( key: OdieStorageKey, value: string ) => {
 	const storageKey = buildOdieStorageKey( key );
 	localStorage.setItem( storageKey, value );
+
+	// Duplicate the value to support_chat_id
+	if ( key === 'chat_id' ) {
+		localStorage.setItem( buildOdieStorageKey( 'support_chat_id' ), value );
+		window.dispatchEvent(
+			new CustomEvent( storageEventName, {
+				detail: {
+					key: buildOdieStorageKey( 'support_chat_id' ),
+					value: value,
+				},
+			} )
+		);
+	}
 
 	const event = new CustomEvent( storageEventName, {
 		detail: {
