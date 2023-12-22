@@ -2,7 +2,9 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
+import DashboardWalkthroughTour from '../../onboarding-tours/dashboard-walkthrough-tour';
 import type { ReactNode } from 'react';
+import './style.scss';
 
 interface Props {
 	pageTitle: string;
@@ -16,6 +18,7 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
 
 	const translate = useTranslate();
+
 	return (
 		<>
 			<MissingPaymentNotification />
@@ -36,6 +39,7 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 					{ content }
 				</div>
 			</div>
+			<DashboardWalkthroughTour />
 		</>
 	);
 }
