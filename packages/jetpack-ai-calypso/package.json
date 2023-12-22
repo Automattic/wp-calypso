@@ -62,5 +62,8 @@
 		"@babel/runtime": {
 			"optional": true
 		}
+	},
+	"dependencies": {
+		"classnames": "^2.3.2"
 	}
 }
