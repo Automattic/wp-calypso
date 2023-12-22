@@ -93,7 +93,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 	}, [ previewingTheme.type, setCanPreviewButNeedUpgrade, setSiteSlug ] );
 
 	const upgradePlan = useCallback( () => {
-		tracksRecordEvent( 'calypso_block_theme_live_preview_click_upgrade', {
+		tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_upgrade', {
 			theme: previewingTheme.id,
 			theme_type: previewingTheme.type,
 		} );

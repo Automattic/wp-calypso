@@ -39,6 +39,8 @@ import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
 import { ThemeSoftwareSet } from 'calypso/types';
 import './style.scss';
 
+export type UpgradeModalClosedBy = 'close_icon' | 'cancel_button' | 'dialog_action';
+
 interface UpgradeModalProps {
 	additionalClassNames?: string;
 	additionalOverlayClassNames?: string;
@@ -48,7 +50,7 @@ interface UpgradeModalProps {
 	isMarketplaceThemeSubscriptionNeeded?: boolean;
 	isMarketplacePlanSubscriptionNeeeded?: boolean;
 	marketplaceProduct?: ProductListItem;
-	closeModal: () => void;
+	closeModal: ( closedBy?: UpgradeModalClosedBy ) => void;
 	checkout: () => void;
 }
 
@@ -134,7 +136,10 @@ export const ThemeUpgradeModal = ( {
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle">
-					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
@@ -198,7 +203,10 @@ export const ThemeUpgradeModal = ( {
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle">
-					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
@@ -283,7 +291,10 @@ export const ThemeUpgradeModal = ( {
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle externally-managed">
-					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
@@ -392,7 +403,7 @@ export const ThemeUpgradeModal = ( {
 			additionalOverlayClassNames={ additionalOverlayClassNames }
 			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
-			onClose={ () => closeModal() }
+			onClose={ () => closeModal( 'dialog_action' ) }
 			isFullScreen
 		>
 			{ isLoading && <LoadingEllipsis /> }
@@ -407,7 +418,11 @@ export const ThemeUpgradeModal = ( {
 						{ modalData.action }
 					</div>
 					<div className="theme-upgrade-modal__col">{ features }</div>
-					<Button className="theme-upgrade-modal__close" borderless onClick={ () => closeModal() }>
+					<Button
+						className="theme-upgrade-modal__close"
+						borderless
+						onClick={ () => closeModal( 'close_icon' ) }
+					>
 						<WpIcon className="wpicon" icon={ close } size={ 24 } />
 						<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 					</Button>
