@@ -218,7 +218,6 @@ const NotFoundMessage = ( {
 	const trackNotFoundDebounced = useDebounce( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
-				command: selectedCommandName,
 				current_route: currentRoute,
 				search_text: search,
 			} )
