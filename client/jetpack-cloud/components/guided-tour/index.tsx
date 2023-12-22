@@ -25,13 +25,13 @@ export interface Tour {
 		| 'left'
 		| 'top left';
 	nextStepOnTargetClick?: string;
-	redirectOnButtonClick?: string;
 }
 
 interface Props {
 	className?: string;
 	tours: Tour[];
 	preferenceName: string;
+	redirectAfterTourEnds?: string;
 }
 
 // This hook will return the async element matching the target selector.
@@ -65,7 +65,7 @@ const useAsyncElement = ( target: string, timeoutDuration: number ): HTMLElement
 	return asyncElement;
 };
 
-const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
+const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -77,14 +77,8 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const {
-		title,
-		description,
-		target,
-		popoverPosition,
-		nextStepOnTargetClick,
-		redirectOnButtonClick,
-	} = tours[ currentStep ];
+	const { title, description, target, popoverPosition, nextStepOnTargetClick } =
+		tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
 
@@ -106,10 +100,10 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 				tour: preferenceName,
 			} )
 		);
-		if ( redirectOnButtonClick ) {
-			page.redirect( redirectOnButtonClick );
+		if ( redirectAfterTourEnds ) {
+			page.redirect( redirectAfterTourEnds );
 		}
-	}, [ dispatch, preferenceName, preference, redirectOnButtonClick ] );
+	}, [ dispatch, preferenceName, preference, redirectAfterTourEnds ] );
 
 	const nextStep = useCallback( () => {
 		if ( currentStep < tours.length - 1 ) {

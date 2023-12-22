@@ -18,6 +18,7 @@ export default function PluginOverviewTour( { isLoading, pluginCount }: Props ) 
 			<GuidedTour
 				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'pluginOverview' ] }
+				redirectAfterTourEnds="/overview"
 				tours={ [
 					{
 						target: '#plugin-management-v2__installed-plugins-table-header',
@@ -49,7 +50,6 @@ export default function PluginOverviewTour( { isLoading, pluginCount }: Props ) 
 						description: translate(
 							'You can update all your out-of-date plugins with the auto-update feature.'
 						),
-						redirectOnButtonClick: '/overview',
 					},
 				] }
 			/>

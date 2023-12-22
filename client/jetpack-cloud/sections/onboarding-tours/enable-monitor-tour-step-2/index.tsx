@@ -22,6 +22,7 @@ export default function EnableMonitorTourStep1( { isMonitorPopupVisible }: Props
 			<GuidedTour
 				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'enableMonitorStep2' ] }
+				redirectAfterTourEnds="/overview"
 				tours={ [
 					{
 						target: '.components-form-toggle__input:not([disabled])',
@@ -37,8 +38,6 @@ export default function EnableMonitorTourStep1( { isMonitorPopupVisible }: Props
 								{ translate( 'Let’s continue exploring, shall we?' ) }
 							</>
 						),
-
-						redirectOnButtonClick: '/overview',
 					},
 				] }
 			/>

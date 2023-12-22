@@ -15,6 +15,7 @@ export default function DashboardWalkthroughTour() {
 			<GuidedTour
 				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'dashboardWalkthrough' ] }
+				redirectAfterTourEnds="/overview"
 				tours={ [
 					{
 						target: "a.section-nav-tab__link[tabindex='0']",
@@ -98,7 +99,6 @@ export default function DashboardWalkthroughTour() {
 						description: translate(
 							'Click the arrow for detailed insights on stats, site speed performance, recent backups, and monitoring activity trends. Handy, right?'
 						),
-						redirectOnButtonClick: '/overview',
 					},
 				] }
 			/>
