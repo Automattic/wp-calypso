@@ -1,9 +1,9 @@
 import i18n from 'i18n-calypso';
 import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import ChatMessage from './components/message';
+import ChatMessage, { ChatMessageProps } from './components/message';
 import { OdieSendMessageButton } from './components/send-message-input';
-import { useOdieAssistantContext } from './context';
+import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 
 import './style.scss';
 
@@ -12,12 +12,9 @@ export const WAPUU_ERROR_MESSAGE = i18n.translate(
 	{ comment: 'Error message when Wapuu fails to send a message', textOnly: true }
 );
 
-export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
-export const ODIE_THUMBS_UP_RATING_VALUE = 1;
+const ForwardedChatMessage = forwardRef< HTMLDivElement, ChatMessageProps >( ChatMessage );
 
-const ForwardedChatMessage = forwardRef( ChatMessage );
-
-const OdieAssistant = () => {
+export const OdieAssistant: React.FC = () => {
 	const { chat, trackEvent } = useOdieAssistantContext();
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
@@ -104,4 +101,7 @@ const OdieAssistant = () => {
 	);
 };
 
-export default OdieAssistant;
+export default OdieAssistantProvider;
+export { useOdieAssistantContext } from './context';
+export { clearOdieStorage } from './data';
+export { EllipsisMenu } from './components/ellipsis-menu';

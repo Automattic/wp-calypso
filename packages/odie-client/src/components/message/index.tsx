@@ -1,7 +1,6 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { FoldableCard } from '@automattic/components';
-import { useTyper } from '@automattic/help-center/src/hooks';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,7 +14,9 @@ import MinimizeIcon from '../../assets/minimize-icon.svg';
 import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
 import WapuuThinking from '../../assets/wapuu-thinking.svg';
 import { useOdieAssistantContext } from '../../context';
+import useTyper from '../../utils/user-typer';
 import Button from '../button';
+import FoldableCard from '../foldable';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
@@ -34,7 +35,7 @@ const ComponentLoadedReporter = ( { callback }: { callback: () => void } ) => {
 	return null;
 };
 
-type ChatMessageProps = {
+export type ChatMessageProps = {
 	message: Message;
 	scrollToBottom: () => void;
 };
@@ -140,7 +141,7 @@ const ChatMessage = (
 	}, [ messageFullyTyped, scrolledToBottom, scrollToBottom ] );
 
 	if ( ! currentUser || ! botName ) {
-		return;
+		return <div ref={ ref } />;
 	}
 
 	const wapuuAvatarClasses = classnames( 'odie-chatbox-message-avatar', {

@@ -8,7 +8,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector, useDispatch } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -54,7 +53,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		queryFn: () => fetchSiteDomains( site?.ID ),
 	} );
 	const translate = useTranslate();
-	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 
@@ -103,25 +101,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
 					onDomainAction={ ( action, domain ) => {
-						if ( action === 'manage-dns-settings' ) {
-							return {
-								action: () => {
-									sendNudge( {
-										nudge: 'dns-settings',
-										initialMessage: translate(
-											'I see you want to change your DNS settings for your domain %(domain)s. That’s a complex thing, but I can guide you and help you at any moment.',
-											{
-												args: {
-													domain: domain.name,
-												},
-											}
-										) as string,
-										context: { domain: domain.domain },
-									} );
-								},
-							};
-						}
-
 						if ( action === 'set-primary-address' && site ) {
 							return {
 								message: translate( 'Set domain as the primary site address' ),

@@ -539,7 +539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/components@workspace:^, @automattic/components@workspace:packages/components":
+"@automattic/components@npm:^2.0.1, @automattic/components@workspace:^, @automattic/components@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
@@ -961,6 +961,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/odie-client": "workspace:^"
     "@automattic/site-picker": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -1306,6 +1307,26 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     webpack: "npm:^5.89.0"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/odie-client@workspace:^, @automattic/odie-client@workspace:packages/odie-client":
+  version: 0.0.0-use.local
+  resolution: "@automattic/odie-client@workspace:packages/odie-client"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "npm:^2.0.1"
+    "@tanstack/react-query": "npm:^4.36.1"
+    "@wordpress/data": "npm:^9.18.0"
+    "@wordpress/i18n": "npm:^4.48.0"
+    "@wordpress/icons": "npm:^9.39.0"
+    classnames: "npm:^2.3.2"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    react-intersection-observer: "npm:^9.4.3"
+    tslib: "npm:^2.3.0"
+    typescript: "npm:^4.7.4"
+    wpcom-proxy-request: "npm:^7.0.5"
   languageName: unknown
   linkType: soft
 
@@ -32323,7 +32344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wpcom-proxy-request@workspace:^, wpcom-proxy-request@workspace:packages/wpcom-proxy-request":
+"wpcom-proxy-request@npm:^7.0.5, wpcom-proxy-request@workspace:^, wpcom-proxy-request@workspace:packages/wpcom-proxy-request":
   version: 0.0.0-use.local
   resolution: "wpcom-proxy-request@workspace:packages/wpcom-proxy-request"
   dependencies:

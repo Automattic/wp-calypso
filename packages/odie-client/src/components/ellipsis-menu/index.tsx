@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useRef, useState, FunctionComponent, PropsWithChildren } from 'react';
+// eslint-disable-next-line no-restricted-imports
 import PopoverMenu from 'calypso/components/popover-menu';
 import Button from '../button';
 
@@ -11,7 +12,7 @@ type EllipsisMenuProps = {
 	popoverClassName?: string;
 } & PropsWithChildren;
 
-const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
+export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 	position,
 	children,
 	popoverClassName,
@@ -56,5 +57,3 @@ const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 		</span>
 	);
 };
-
-export default EllipsisMenu;

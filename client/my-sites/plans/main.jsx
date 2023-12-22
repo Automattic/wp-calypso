@@ -39,7 +39,6 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -504,19 +503,6 @@ const ConnectedPlans = connect( ( state ) => {
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
 export default function PlansWrapper( props ) {
-	const { sendNudge } = useOdieAssistantContext();
-
-	useEffect( () => {
-		if ( props.intervalType === 'monthly' ) {
-			sendNudge( {
-				nudge: 'monthly-plan',
-				initialMessage:
-					'I see you are sitting on a monthly plan. I can recommend you to switch to an annual plan, so you can save some money.',
-				context: { plan: 'monthly' },
-			} );
-		}
-	}, [ props.intervalType ] );
-
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans { ...props } />
