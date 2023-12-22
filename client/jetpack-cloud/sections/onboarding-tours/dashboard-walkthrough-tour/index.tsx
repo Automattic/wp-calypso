@@ -69,7 +69,7 @@ export default function DashboardWalkthroughTour() {
 								<br />
 								<br />
 								{ translate(
-									'🚩 With the premium plan, you can tweak notification settings to alert multiple recipients simultaneously.'
+									'🟢 With the premium plan, you can tweak notification settings to alert multiple recipients simultaneously.'
 								) }
 							</>
 						),
