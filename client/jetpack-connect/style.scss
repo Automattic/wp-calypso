@@ -588,6 +588,21 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	color: transparent;
 }
 
+.jetpack-connect__sso {
+
+	.formatted-header__title {
+		margin-bottom: 5px;
+	}
+
+	.card.jetpack-connect__site {
+		max-width: 100%;
+	}
+
+	.logged-out-form__link-item {
+		font-size: unset !important;
+	}
+}
+
 .jetpack-connect__sso .email-verification-gate .notice {
 	margin-bottom: 0;
 }
