@@ -335,7 +335,7 @@ export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug,
 			label: translate( 'Quick editing in the Assembler' ),
 			extendedLabel: translate( 'Quick editing in the Assembler' ),
 			getUrl: () => {
-				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub`;
+				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub&customizing=true`;
 			},
 		},
 		customize: {
