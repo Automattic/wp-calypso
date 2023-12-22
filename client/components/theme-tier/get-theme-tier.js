@@ -12,6 +12,6 @@ export default ( state, siteId, themeId ) => {
 
 	return {
 		themeTier,
-		isThemeAllowedOnSite,
+		isThemeAllowedOnSite: isThemeAllowedOnSite || theme.retained_benefits?.is_eligible,
 	};
 };
