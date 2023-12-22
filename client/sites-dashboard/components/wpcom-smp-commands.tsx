@@ -476,15 +476,13 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open Jetpack settings' )
 			),
 			siteFunctions: {
-				onClick: ( { site, close }: { site: SiteExcerptData; close: () => void } ) => {
-					close();
-					navigate( `${ site.URL }/wp-admin/admin.php?page=jetpack#/dashboard` );
-				},
+				onClick: ( param ) =>
+					commandNavigation( `${ param.site.URL }/wp-admin/admin.php?page=jetpack#/dashboard` )(
+						param
+					),
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
-				filterNotice: __(
-					'Only listing sites with hosting features enabled or self-hosted sites.'
-				),
-				emptyListNotice: __( 'No self-hosted sites or sites with hosting features enabled.' ),
+				filterNotice: __( 'Only listing sites with Jetpack settings available.' ),
+				emptyListNotice: __( 'No sites with Jetpack settings available.' ),
 			},
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
