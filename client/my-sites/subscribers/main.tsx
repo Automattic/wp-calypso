@@ -1,6 +1,8 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -28,24 +30,34 @@ type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
 };
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const openHelpCenter = () => {
+		setShowHelpCenter( true );
+		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
+	};
 
 	return (
 		<NavigationHeader
 			className="stats__section-header modernized-header"
 			title={ translate( 'Subscribers' ) }
 			subtitle={ translate(
-				'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
+				'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
 				{
 					components: {
 						link: (
 							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers'
-								) }
+								href={ localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) }
 								target="blank"
+								onClick={ ( event ) => {
+									event.preventDefault();
+									openHelpCenter();
+								} }
 							/>
 						),
 					},
