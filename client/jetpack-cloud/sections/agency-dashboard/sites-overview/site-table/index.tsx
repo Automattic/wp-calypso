@@ -120,7 +120,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 					) }
 				</tbody>
 			</table>
-			<AddNewSiteTourStep2 />
+			<AddNewSiteTourStep2 siteItems={ items } />
 		</>
 	);
 };

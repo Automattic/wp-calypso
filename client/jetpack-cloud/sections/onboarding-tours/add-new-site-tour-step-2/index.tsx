@@ -2,12 +2,16 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import { useSelector } from 'calypso/state';
-import { items } from 'calypso/state/notices/reducer';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import SitesOverviewContext from '../../agency-dashboard/sites-overview/context';
+import { SiteData } from '../../agency-dashboard/sites-overview/types';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
-export default function AddNewSiteTourStep2() {
+interface Props {
+	siteItems: Array< SiteData >;
+}
+
+export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 	const translate = useTranslate();
 	const { mostRecentConnectedSite } = useContext( SitesOverviewContext );
 	const hasFinishedStep1 = useSelector( ( state ) =>
@@ -17,7 +21,7 @@ export default function AddNewSiteTourStep2() {
 	const shouldRenderAddSiteTourStep2 = hasFinishedStep1 && mostRecentConnectedSite;
 
 	const tourHTMLTarget =
-		items.length < 20
+		siteItems.length > 20
 			? 'tr.is-most-recent-jetpack-connected-site td:first-of-type'
 			: '.site-table__table th:first-of-type';
 
