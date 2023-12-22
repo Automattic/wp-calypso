@@ -36,7 +36,7 @@ export default function OverviewProducts() {
 
 				// We need the underscore version of the product slug to be able to get the product icon
 				const userProduct = Object.values( userProducts ).find(
-					( p ) => p.product_id === productData.data.product_id
+					( p ) => p.product_id === productData.data?.product_id
 				);
 
 				if ( userProduct ) {
