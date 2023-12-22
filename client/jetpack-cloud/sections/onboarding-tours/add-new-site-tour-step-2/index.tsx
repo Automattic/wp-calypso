@@ -22,7 +22,6 @@ export default function AddNewSiteTourStep2() {
 	return (
 		shouldRenderAddSiteTourStep2 && (
 			<GuidedTour
-				className="jetpack-cloud-site-dashboard-new-site-added__guided-tour"
 				preferenceName="jetpack-cloud-site-dashboard-add-new-site-tour-step-2"
 				tours={ [
 					{
