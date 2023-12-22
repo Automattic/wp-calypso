@@ -2,6 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
 
+import '../style.scss';
+
 interface Props {
 	isLoading: boolean;
 	pluginCount: number;
