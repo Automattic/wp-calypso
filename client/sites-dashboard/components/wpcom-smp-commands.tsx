@@ -483,10 +483,8 @@ export const useCommandsArrayWpcom = ( {
 					navigate( `${ site.URL }/wp-admin/admin.php?page=jetpack_modules` );
 				},
 				filter: ( site: SiteExcerptData ) => site?.is_wpcom_atomic || isNotAtomicJetpack( site ),
-				filterNotice: __(
-					'Only listing sites with hosting features enabled or self-hosted sites.'
-				),
-				emptyListNotice: __( 'No self-hosted sites or sites with hosting features enabled.' ),
+				filterNotice: __( 'Only listing sites with Jetpack modules available.' ),
+				emptyListNotice: __( 'No sites with Jetpack modules available.' ),
 			},
 			icon: <JetpackLogo className="gridicon" size={ 18 } />,
 		},
