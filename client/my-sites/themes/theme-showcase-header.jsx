@@ -100,7 +100,7 @@ export default function ThemeShowcaseHeader( {
 					) }
 				>
 					{ showInstallThemeButton && <InstallThemeButton /> }
-					{ isLoggedIn && (
+					{ isLoggedIn && ! isSiteWooExpressOrEcomFreeTrial && (
 						<PatternAssemblerButton isPrimary onClick={ onPatternAssemblerButtonClick } />
 					) }
 				</NavigationHeader>
