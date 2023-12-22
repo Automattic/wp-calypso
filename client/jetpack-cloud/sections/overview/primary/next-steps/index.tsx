@@ -17,7 +17,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 	const preferences = useSelector( getAllRemotePreferences );
 
 	const checkTourCompletion = ( prefSlug: string ): boolean => {
-		if ( JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] ) {
+		if ( preferences && JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] ) {
 			return JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] in preferences;
 		}
 		return false;
