@@ -1,46 +1,45 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
+import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
+import StatsUpsellModal from '../stats-upsell-modal';
 
 interface Props {
 	className: string;
-	statType: string;
-	siteId: number;
+	siteSlug: string;
 	borderless: boolean;
 }
 
-const StatsDownloadCsvUpsell: React.FC< Props > = ( {
-	className,
-	statType,
-	siteId,
-	borderless,
-} ) => {
+const StatsDownloadCsvUpsell: React.FC< Props > = ( { className, siteSlug, borderless } ) => {
 	const translate = useTranslate();
+	const [ isModalOpen, setOpen ] = useState( false );
+	const openModal = () => setOpen( true );
+	const closeModal = () => setOpen( false );
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-
-		const source = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack' : 'calypso';
-		recordTracksEvent( 'jetpack_stats_csv_upsell_clicked', {
-			statType,
-			source,
-		} );
-
-		page( `/stats/purchase/${ siteId }?productType=personal&from=${ source }` );
+		openModal();
 	};
 
 	return (
-		<Button
-			className={ classNames( className, 'stats-download-csv-upsell', 'stats-download-csv' ) }
-			compact
-			borderless={ borderless }
-			onClick={ onClick }
-		>
-			<Gridicon icon="cloud-download" /> { translate( 'Upgrade & Download to CSV' ) }
-		</Button>
+		<>
+			<Button
+				className={ classNames( className, 'stats-download-csv-upsell', 'stats-download-csv' ) }
+				compact
+				borderless={ borderless }
+				onClick={ onClick }
+			>
+				<Gridicon icon="cloud-download" /> { translate( 'Upgrade & Download to CSV' ) }
+			</Button>
+			{ isModalOpen && (
+				<StatsUpsellModal
+					closeModal={ closeModal }
+					statType={ STATS_FEATURE_DOWNLOAD_CSV }
+					siteSlug={ siteSlug }
+				/>
+			) }
+		</>
 	);
 };
 

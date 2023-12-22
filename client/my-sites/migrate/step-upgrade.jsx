@@ -1,6 +1,6 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { CompactCard, ProductIcon, Gridicon } from '@automattic/components';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -40,12 +40,10 @@ class StepUpgrade extends Component {
 			targetSiteSlug,
 			themes,
 			translate,
-			locale,
 		} = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
-		const isEnglishLocale = [ 'en', 'en-bg' ].includes( locale );
 
 		return (
 			<>
@@ -54,12 +52,9 @@ class StepUpgrade extends Component {
 
 				<CompactCard>
 					<CardHeading>
-						{ isEnglishLocale ||
-						i18n.hasTranslation( 'A %(businessPlanName)s Plan is required to import everything.' )
-							? translate( 'A %(businessPlanName)s Plan is required to import everything.', {
-									args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-							  } )
-							: translate( 'A Business Plan is required to import everything.' ) }
+						{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+							args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+						} ) }
 					</CardHeading>
 					<div>
 						{ translate(

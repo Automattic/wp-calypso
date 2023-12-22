@@ -1,5 +1,5 @@
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -52,8 +52,7 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId, locale } = this.props;
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
+		const { translate, statsQueryOptions, siteId } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -146,17 +145,10 @@ class StatsSummary extends Component {
 						<div className="stats-module__footer-actions--summary-tall">
 							<UpsellNudge
 								title={ translate( 'Add Google Analytics' ) }
-								description={
-									isEnglishLocale ||
-									i18n.hasTranslation(
-										'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.'
-									)
-										? translate(
-												'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.',
-												{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
-										  )
-										: translate( 'Upgrade to a Premium Plan for Google Analytics integration.' )
-								}
+								description={ translate(
+									'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.',
+									{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
+								) }
 								event="googleAnalytics-stats-countries"
 								feature={ FEATURE_GOOGLE_ANALYTICS }
 								plan={ PLAN_PREMIUM }
