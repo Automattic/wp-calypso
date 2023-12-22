@@ -68,7 +68,7 @@ export default function OverviewProducts() {
 				{ isLoadingProducts || userProducts === undefined ? (
 					showPlaceholder()
 				) : (
-					<ProductGrid products={ products } userProducts={ Object.values( userProducts ) } />
+					<ProductGrid products={ products } />
 				) }
 			</div>
 		</div>

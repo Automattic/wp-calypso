@@ -2,16 +2,14 @@ import { ProductData } from 'calypso/jetpack-cloud/sections/overview/primary/ove
 import ProductItem from 'calypso/jetpack-cloud/sections/overview/primary/product-grid/product-item';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 import './style.scss';
 
 interface Props {
 	products: ProductData[];
-	userProducts: ProductListItem[];
 }
 
-const ProductGrid: React.FC< Props > = ( { products, userProducts } ) => {
+const ProductGrid: React.FC< Props > = ( { products } ) => {
 	const dispatch = useDispatch();
 
 	// Track the More About click
