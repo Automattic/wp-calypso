@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
