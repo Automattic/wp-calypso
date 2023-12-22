@@ -21,8 +21,8 @@ const getFeaturedImageType = (
 	hasExcerpt
 ) => {
 	let featuredImageType = 'image';
-	if ( canonicalMedia.mediaType === 'video' ) {
-		if ( canonicalMedia.type === 'pocketcasts' ) {
+	if ( canonicalMedia?.mediaType === 'video' ) {
+		if ( canonicalMedia?.type === 'pocketcasts' ) {
 			featuredImageType = 'pocketcasts';
 		} else {
 			featuredImageType = 'video';
