@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -101,6 +101,7 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 	const recordClick = () => {
 		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click' );
 	};
+	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 	if ( isBusinessPlan ) {
 		// show a card that links to the plugin page to install the ActivityPub plugin
 		return (
@@ -120,11 +121,13 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 		<Card className="site-settings__card">
 			<p>
 				{ translate(
-					'Take your fediverse presence to the next level! The Business plan unlocks per-author profiles, fine-grained controls, and more, with the ActivityPub plugin.'
+					// Translators: %(planName)s is the name of a plan, eg "Business" or "Creator"
+					'Take your fediverse presence to the next level! The %(planName)s plan unlocks per-author profiles, fine-grained controls, and more, with the ActivityPub plugin.',
+					{ args: { planName } }
 				) }
 			</p>
 			<Button primary href={ linkUrl } onClick={ recordClick }>
-				{ translate( 'Upgrade to Business' ) }
+				{ translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
 			</Button>
 		</Card>
 	);

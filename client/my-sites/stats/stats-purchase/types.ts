@@ -8,6 +8,7 @@ export type PriceTierListItemProps = {
 	minimum_price_monthly_display: string;
 	minimum_units: number;
 	per_unit_fee?: number;
+	transform_quantity_divide_by?: number | null;
 };
 
 export type StatsPlanTierUI = {
@@ -16,6 +17,7 @@ export type StatsPlanTierUI = {
 	views: number | null;
 	extension?: boolean;
 	per_unit_fee?: number;
+	transform_quantity_divide_by?: number | null;
 };
 
 // TODO: Break this down.

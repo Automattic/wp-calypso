@@ -94,7 +94,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.buyer_can_change_amount ?? false
 	);
 
-	const currencyList = Object.keys( connectedAccountMinimumCurrency );
+	const currencyList = Object.keys( connectedAccountMinimumCurrency ?? {} );
 
 	const defaultCurrency = useMemo( () => {
 		if ( product?.currency ) {

@@ -25,12 +25,14 @@ type CloseFunction = ( commandName?: string, isExecuted?: boolean ) => void;
 type OnClickSiteFunction = ( {
 	close,
 	site,
+	command,
 }: {
 	close: CloseFunction;
 	site: SiteExcerptData;
+	command: Command;
 } ) => void;
 interface SiteFunctions {
-	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
+	onClick: OnClickSiteFunction;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
 	filterNotice?: string;
 	emptyListNotice?: string;
@@ -39,9 +41,10 @@ export interface CommandCallBackParams {
 	close: CloseFunction;
 	setSearch: ( search: string ) => void;
 	setPlaceholderOverride: ( placeholder: string ) => void;
+	command: Command;
 }
 
-interface Command {
+export interface Command {
 	name: string;
 	label: string;
 	subLabel?: string;
@@ -89,7 +92,7 @@ const useSiteToAction = () => {
 					label: `${ siteName }`,
 					subLabel: `${ site.URL }`,
 					searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
-					callback: ( { close }: { close: CloseFunction } ) => {
+					callback: ( { close } ) => {
 						dispatch(
 							recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
 								command: selectedCommand.name,
@@ -102,7 +105,7 @@ const useSiteToAction = () => {
 								command_site_plan_id: site.plan?.product_id,
 							} )
 						);
-						onClickSite( { site, close } );
+						onClickSite( { site, close, command: selectedCommand } );
 					},
 					image: (
 						<FillDefaultIconWhite>

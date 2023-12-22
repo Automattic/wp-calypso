@@ -157,7 +157,6 @@ export class PlansStep extends Component {
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
 					showBiennialToggle={ this.props.showBiennialToggle }
-					showPressablePromoBanner={ this.props.showPressablePromoBanner }
 					removePaidDomain={ this.removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 					coupon={ coupon }

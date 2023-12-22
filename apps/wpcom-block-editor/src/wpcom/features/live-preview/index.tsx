@@ -80,7 +80,7 @@ const LivePreviewNoticePlugin = () => {
 	if ( canPreviewButNeedUpgrade ) {
 		return (
 			<>
-				<LivePreviewUpgradeModal { ...{ themeId: previewingTheme.id as string, upgradePlan } } />
+				<LivePreviewUpgradeModal { ...{ previewingTheme, upgradePlan } } />
 				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
 			</>
 		);

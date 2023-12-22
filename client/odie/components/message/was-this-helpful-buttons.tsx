@@ -1,9 +1,9 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { noop, useOdieAssistantContext } from '../context';
-import { useOdieSendMessageFeedback } from '../query';
+import { noop, useOdieAssistantContext } from '../../context';
+import { useOdieSendMessageFeedback } from '../../query';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
-import type { Message } from '../types';
+import type { Message } from '../../types';
 
 import './style.scss';
 
@@ -36,7 +36,7 @@ const WasThisHelpfulButtons = ( {
 			onDislike();
 		}
 
-		trackEvent( 'calypso_odie_chat_message_action_feedback', {
+		trackEvent( 'chat_message_action_feedback', {
 			action: 'feedback',
 			is_helpful: isHelpful,
 			message_id: message.message_id,

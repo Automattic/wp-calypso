@@ -19,10 +19,10 @@ import {
 	getDesignPreviewUrl,
 	isDefaultGlobalStylesVariationSlug,
 } from '@automattic/design-picker';
-import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
-import i18n, { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
@@ -133,37 +133,22 @@ const BannerUpsellDescription = ( {
 	isMarketplaceThemeSubscribed,
 } ) => {
 	const bundleSettings = useBundleSettingsByTheme( themeId );
-	const isEnglishLocale = useIsEnglishLocale();
 
 	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 		if ( ! bundleSettings ) {
-			return isEnglishLocale ||
-				i18n.hasTranslation(
-					'This theme comes bundled with a plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.'
-				)
-				? translate(
-						'This theme comes bundled with a plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
-						{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-				  )
-				: translate(
-						'This theme comes bundled with a plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
-				  );
+			return translate(
+				'This theme comes bundled with a plugin. Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features.',
+				{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+			);
 		}
 
 		return bundleSettings.bannerUpsellDescription;
 	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
-			return isEnglishLocale ||
-				i18n.hasTranslation(
-					'Unlock this theme by upgrading to a %(businessPlanName)s plan and subscribing to this theme.'
-				)
-				? translate(
-						'Unlock this theme by upgrading to a %(businessPlanName)s plan and subscribing to this theme.',
-						{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-				  )
-				: translate(
-						'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
-				  );
+			return translate(
+				'Unlock this theme by upgrading to a %(businessPlanName)s plan and subscribing to this theme.',
+				{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+			);
 		}
 		return translate( 'Subscribe to this theme and unlock all its features.' );
 	}
@@ -198,23 +183,17 @@ const BannerUpsellTitle = ( {
 	themeTier,
 } ) => {
 	const bundleSettings = useBundleSettingsByTheme( themeId );
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const premiumPlanTitle = () =>
-		isEnglishLocale ||
-		i18n.hasTranslation(
-			'Access this theme for FREE with a %(premiumPlanName)s or %(businessPlanName)s plan!'
-		)
-			? translate(
-					'Access this theme for FREE with a %(premiumPlanName)s or %(businessPlanName)s plan!',
-					{
-						args: {
-							premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
-							businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
-						},
-					}
-			  )
-			: translate( 'Access this theme for FREE with a Premium or Business plan!' );
+		translate(
+			'Access this theme for FREE with a %(premiumPlanName)s or %(businessPlanName)s plan!',
+			{
+				args: {
+					premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
+					businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
+				},
+			}
+		);
 
 	if ( ! isThemeAllowedOnSite ) {
 		switch ( THEME_TIERS[ themeTier.slug ].minimumUpsellPlan ) {
@@ -236,33 +215,22 @@ const BannerUpsellTitle = ( {
 
 	if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 		if ( ! bundleSettings ) {
-			return isEnglishLocale ||
-				i18n.hasTranslation( 'Access this theme with a %(businessPlanName)s plan!' )
-				? translate( 'Access this theme with a %(businessPlanName)s plan!', {
-						args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-				  } )
-				: translate( 'Access this theme with a Business plan!' );
+			return translate( 'Access this theme with a %(businessPlanName)s plan!', {
+				args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+			} );
 		}
 
 		const bundleName = bundleSettings.name;
 
 		/* Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special", %(businessPlanName)s is the short-form of the Business plan name.*/
-		return isEnglishLocale ||
-			i18n.hasTranslation( 'Access this %(bundleName)s theme with a %(businessPlanName)s plan!' )
-			? translate( 'Access this %(bundleName)s theme with a %(businessPlanName)s plan!', {
-					args: { bundleName, businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-			  } )
-			: translate( 'Access this %(bundleName)s theme with a Business plan!', {
-					args: { bundleName },
-			  } );
+		return translate( 'Access this %(bundleName)s theme with a %(businessPlanName)s plan!', {
+			args: { bundleName, businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+		} );
 	} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
-			return isEnglishLocale ||
-				i18n.hasTranslation( 'Upgrade to a %(businessPlanName)s plan and subscribe to this theme!' )
-				? translate( 'Upgrade to a %(businessPlanName)s plan and subscribe to this theme!', {
-						args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-				  } )
-				: translate( 'Upgrade to a Business plan and subscribe to this theme!' );
+			return translate( 'Upgrade to a %(businessPlanName)s plan and subscribe to this theme!', {
+				args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+			} );
 		}
 		return translate( 'Subscribe to this theme!' );
 	}
@@ -1267,17 +1235,8 @@ class ThemeSheet extends Component {
 	};
 
 	getStyleVariationDescription = () => {
-		const {
-			defaultOption,
-			isActive,
-			isWpcomTheme,
-			themeId,
-			shouldLimitGlobalStyles,
-			translate,
-			locale,
-		} = this.props;
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
-
+		const { defaultOption, isActive, isWpcomTheme, themeId, shouldLimitGlobalStyles, translate } =
+			this.props;
 		if ( isActive && defaultOption.getUrl ) {
 			return translate( 'Open the {{a}}site editor{{/a}} to change your site’s style.', {
 				components: {
@@ -1292,12 +1251,9 @@ class ThemeSheet extends Component {
 			return;
 		}
 
-		return isEnglishLocale ||
-			i18n.hasTranslation( 'Additional styles require the %(businessPlanName)s plan or higher.' )
-			? translate( 'Additional styles require the %(businessPlanName)s plan or higher.', {
-					args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-			  } )
-			: translate( 'Additional styles require the Business plan or higher.' );
+		return translate( 'Additional styles require the %(businessPlanName)s plan or higher.', {
+			args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+		} );
 	};
 
 	handleAddReview = () => {
@@ -1329,9 +1285,6 @@ class ThemeSheet extends Component {
 			isThemeAllowedOnSite,
 			themeTier,
 		} = this.props;
-
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( this.props.locale );
-
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
 		}`;
@@ -1464,28 +1417,14 @@ class ThemeSheet extends Component {
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
 					onClick={ () => this.props.setProductToBeInstalled( themeId, siteSlug ) }
-					title={
-						isEnglishLocale ||
-						i18n.hasTranslation(
-							'Access this third-party theme with the %(businessPlanName)s plan!'
-						)
-							? translate( 'Access this third-party theme with the %(businessPlanName)s plan!', {
-									args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-							  } )
-							: translate( 'Access this third-party theme with the Business plan!' )
-					}
+					title={ translate( 'Access this third-party theme with the %(businessPlanName)s plan!', {
+						args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+					} ) }
 					description={ preventWidows(
-						isEnglishLocale ||
-							i18n.hasTranslation(
-								'Instantly unlock thousands of different themes and install your own when you upgrade to the %(businessPlanName)s plan.'
-							)
-							? translate(
-									'Instantly unlock thousands of different themes and install your own when you upgrade to the %(businessPlanName)s plan.',
-									{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-							  )
-							: translate(
-									'Instantly unlock thousands of different themes and install your own when you upgrade to the Business plan.'
-							  )
+						translate(
+							'Instantly unlock thousands of different themes and install your own when you upgrade to the %(businessPlanName)s plan.',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+						)
 					) }
 					forceHref
 					feature={ FEATURE_UPLOAD_THEMES }

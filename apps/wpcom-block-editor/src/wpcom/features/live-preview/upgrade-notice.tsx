@@ -27,7 +27,6 @@ const LivePreviewUpgradeNoticeView: FC< {
 			status="info"
 			isDismissible={ false }
 			className="wpcom-live-preview-upgrade-notice-view"
-			// TODO: Add the tracking event.
 		>
 			{ noticeText }
 		</Notice>
