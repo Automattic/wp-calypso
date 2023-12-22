@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
+import { requestDSP } from 'calypso/lib/promote-post';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { CampaignQueryResult } from './types';
 
@@ -33,10 +33,7 @@ const useCampaignsQueryPaged = (
 		queryKey: [ 'promote-post-campaigns', siteId, searchQueryParams ],
 		queryFn: async ( { pageParam = 1 } ) => {
 			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=asc&order_by=post_date&page=${ pageParam }${ searchQueryParams }`;
-			const resultQuery = await requestDSPHandleErrors< CampaignQueryResult >(
-				siteId,
-				searchCampaignsUrl
-			);
+			const resultQuery = await requestDSP< CampaignQueryResult >( siteId, searchCampaignsUrl );
 
 			const { campaigns, page, total_items, total_pages } = resultQuery;
 			const has_more_pages = page < total_pages;
