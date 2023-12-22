@@ -23,28 +23,17 @@ const ProductGrid: React.FC< Props > = ( { products, userProducts } ) => {
 		);
 	};
 
-	const renderProductGrid = () => {
-		return products.map( ( productData: ProductData ) => {
-			// We need the underscore version of the product slug
-			const userProduct = userProducts.find(
-				( p ) => p.product_id === productData.data.product_id
-			);
-
-			if ( userProduct === undefined ) {
-				return null;
-			}
-
-			return (
-				<ProductItem
-					productData={ productData }
-					productSlug={ userProduct.product_slug }
-					onMoreAboutClick={ onMoreAboutClick }
-				/>
-			);
-		} );
-	};
-
-	return <ul className="overview-products__items">{ renderProductGrid() }</ul>;
+	return (
+		<ul className="overview-products__items">
+			{ products.map( ( productData: ProductData ) => {
+				return (
+					<li key={ productData.data.product_id }>
+						<ProductItem productData={ productData } onMoreAboutClick={ onMoreAboutClick } />
+					</li>
+				);
+			} ) }
+		</ul>
+	);
 };
 
 export default ProductGrid;

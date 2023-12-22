@@ -48,15 +48,13 @@ const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => 
 	);
 
 	return (
-		<li key={ productData.data.product_id }>
-			<SimpleItemCard
-				isCondensedVersion={ true }
-				title={ productData.name }
-				icon={ displayIcon }
-				description={ displayDescription }
-				price={ displayPrice }
-			/>
-		</li>
+		<SimpleItemCard
+			isCondensedVersion={ true }
+			title={ productData.name }
+			icon={ displayIcon }
+			description={ displayDescription }
+			price={ displayPrice }
+		/>
 	);
 };
 
