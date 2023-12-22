@@ -4,6 +4,7 @@ import {
 	QueryKey,
 	useMutation,
 	useQueryClient,
+	useInfiniteQuery,
 } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
@@ -78,8 +79,26 @@ export type ErrorResponse = {
 	};
 };
 
+export type HeaderResponse = {
+	'X-WP-TotalPages': number;
+};
+
+export type InfiniteMarketplaceReviewResponse = {
+	data: {
+		reviews: MarketplaceReviewResponse[];
+	};
+	refetch: () => void;
+	fetchNextPage: () => void;
+	error?: ErrorResponse;
+};
+
+type MarketplaceReviewsQueryResponse = {
+	data: MarketplaceReviewResponse[];
+	headers: HeaderResponse;
+};
+
 type MarketplaceReviewsQueryOptions = Pick<
-	UseQueryOptions< MarketplaceReviewResponse[] >,
+	UseQueryOptions< MarketplaceReviewsQueryResponse >,
 	'enabled' | 'staleTime' | 'refetchOnMount'
 >;
 
@@ -95,21 +114,30 @@ const fetchMarketplaceReviews = (
 	perPage: number = 10,
 	author?: number,
 	author_exclude?: number
-): Promise< MarketplaceReviewResponse[] > => {
-	return wpcom.req.get(
-		{
-			path: reviewsApiBase,
-			apiNamespace: reviewsApiNamespace,
-		},
-		{
-			product_type: productType,
-			product_slug: productSlug,
-			page,
-			per_page: perPage,
-			...( author ? { author } : {} ),
-			...( author_exclude ? { author_exclude } : {} ),
-		}
-	);
+): Promise< MarketplaceReviewsQueryResponse > => {
+	return new Promise( ( resolve, reject ) => {
+		wpcom.req.get(
+			{
+				path: reviewsApiBase,
+				apiNamespace: reviewsApiNamespace,
+			},
+			{
+				product_type: productType,
+				product_slug: productSlug,
+				page,
+				per_page: perPage,
+				...( author ? { author } : {} ),
+				...( author_exclude ? { author_exclude } : {} ),
+			},
+			( error: ErrorResponse, data: MarketplaceReviewResponse[], headers: HeaderResponse ) => {
+				if ( error ) {
+					return reject( error );
+				}
+
+				resolve( { data, headers } );
+			}
+		);
+	} );
 };
 
 const createReview = ( {
@@ -192,7 +220,45 @@ export const useMarketplaceReviewsQuery = (
 	];
 	const queryFn = () =>
 		fetchMarketplaceReviews( productType, slug, page, perPage, author, author_exclude );
-	return useQuery( { queryKey, queryFn, enabled, staleTime, refetchOnMount } );
+	return useQuery( {
+		queryKey,
+		queryFn,
+		enabled,
+		staleTime,
+		refetchOnMount,
+		select: ( response ) => response.data,
+	} );
+};
+
+export const useInfiniteMarketplaceReviewsQuery = (
+	{ productType, slug, page, perPage, author, author_exclude }: MarketplaceReviewsQueryProps,
+	{ enabled = true, staleTime = BASE_STALE_TIME }: MarketplaceReviewsQueryOptions = {}
+) => {
+	const queryKey: QueryKey = [
+		queryKeyBase,
+		'infinite',
+		productType,
+		slug,
+		author,
+		author_exclude,
+		page,
+		perPage,
+	];
+	const queryFn = ( { pageParam = 1 } ) =>
+		fetchMarketplaceReviews( productType, slug, pageParam, perPage, author, author_exclude );
+
+	return useInfiniteQuery< MarketplaceReviewsQueryResponse >( {
+		queryKey,
+		queryFn,
+		getNextPageParam: ( lastPage, allPages ) => {
+			if ( lastPage.headers[ 'X-WP-TotalPages' ] <= allPages.length ) {
+				return;
+			}
+			return allPages.length + 1;
+		},
+		enabled,
+		staleTime,
+	} );
 };
 
 export const useCreateMarketplaceReviewMutation = () => {
