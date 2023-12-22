@@ -7,6 +7,7 @@ export interface ProductData {
 	product_slug?: string;
 	data?: any;
 	name?: string;
+	slug?: string;
 }
 export interface JetpackProducts {
 	[ key: string ]: ProductData;

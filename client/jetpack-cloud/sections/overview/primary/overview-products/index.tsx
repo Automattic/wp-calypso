@@ -26,23 +26,27 @@ export default function OverviewProducts() {
 	};
 
 	// Prepare the products to show in the grid
-	const getProductsToShow = () => {
-		// Populate the ProductData fields we need for the product grid
+	const products = useMemo( () => {
 		agencyProducts?.forEach( ( product ) => {
 			const productData = jetpackProductsToShow[ product.slug ];
 
 			if ( productData ) {
 				productData.data = product;
 				productData.name = getProductShortTitle( product, true );
+
+				// We need the underscore version of the product slug to be able to get the product icon
+				const userProduct = Object.values( userProducts ).find(
+					( p ) => p.product_id === productData.data.product_id
+				);
+
+				if ( userProduct ) {
+					productData.slug = userProduct.product_slug;
+				}
 			}
 		} );
 
 		return Object.values( jetpackProductsToShow );
-	};
-
-	const products = useMemo( () => getProductsToShow(), [ agencyProducts ] );
-
-	const showPlaceholder = () => <div className="overview-products__is-loading"></div>;
+	}, [ agencyProducts ] );
 
 	return (
 		<div className="overview-products">
@@ -66,7 +70,7 @@ export default function OverviewProducts() {
 			</div>
 			<div className="overview-products__grid">
 				{ isLoadingProducts || userProducts === undefined ? (
-					showPlaceholder()
+					<div className="overview-products__is-loading"></div>
 				) : (
 					<ProductGrid products={ products } />
 				) }
