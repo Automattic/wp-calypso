@@ -22,3 +22,5 @@ export const COUPON_DURATION_3_MONTHS = '3 months';
 export const COUPON_DURATION_6_MONTHS = '6 months';
 export const COUPON_DURATION_1_YEAR = '1 year';
 export const COUPON_PRODUCTS_ANY = 'any product';
+export const COUPON_RANDOM_GENERATOR_LENGTH = 8;
+export const COUPON_RANDOM_GENERATOR_CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';

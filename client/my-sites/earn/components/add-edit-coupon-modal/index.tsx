@@ -10,6 +10,8 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useSelector } from 'calypso/state';
+import { getCouponsForSiteId } from 'calypso/state/memberships/coupon-list/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import {
 	getconnectedAccountDefaultCurrencyForSiteId,
 	getconnectedAccountMinimumCurrencyForSiteId,
@@ -24,8 +26,11 @@ import {
 	COUPON_DURATION_6_MONTHS,
 	COUPON_DURATION_1_YEAR,
 	COUPON_PRODUCTS_ANY,
+	COUPON_RANDOM_GENERATOR_CHARSET,
+	COUPON_RANDOM_GENERATOR_LENGTH,
 } from '../../memberships/constants';
-import { Coupon } from '../../types';
+import { Product, Coupon } from '../../types';
+import FormTextInputWithRandomCodeGeneration from '../form-text-input-with-value-generation';
 
 type RecurringPaymentsPlanAddEditModalProps = {
 	closeDialog: () => void;
@@ -84,6 +89,14 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		setCurrentDiscountCurrency( currency );
 	};
 
+	/** Other datasets */
+	const products: Product[] = useSelector( ( state ) =>
+		getProductsForSiteId( state, selectedSiteId )
+	);
+	const coupons: Coupon[] = useSelector( ( state ) =>
+		getCouponsForSiteId( state, selectedSiteId )
+	);
+
 	/** Dialog operations */
 	const onClose = () => {
 		closeDialog();
@@ -129,9 +142,33 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		coupon?.specific_emails ?? ''
 	);
 
+	/** Coupon functions */
+	const generateRandomCouponCode: string = () => {
+		let code = '';
+		let available = true;
+		for ( let i = 0; i < COUPON_RANDOM_GENERATOR_LENGTH; i++ ) {
+			code += COUPON_RANDOM_GENERATOR_CHARSET.charAt(
+				Math.floor( Math.random() * COUPON_RANDOM_GENERATOR_CHARSET.length )
+			);
+		}
+		coupons.forEach( ( coupon ) => {
+			if ( coupon === coupon.coupon_code ) {
+				available = false;
+			}
+		} );
+		if ( available ) {
+			return code;
+		}
+		return generateRandomCouponCode();
+	};
+
 	/** Form event handlers */
-	const onCouponCodeChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+	const onCouponCodeChange = ( value: string, event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedCouponCode( event.target.value );
+	const onCouponCodeRandomize = () => {
+		const code = generateRandomCouponCode();
+		setEditedCouponCode( code );
+	};
 	const onDescriptionChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedDescription( event.target.value );
 	const onSelectDiscountType = ( event: ChangeEvent< HTMLSelectElement > ) =>
@@ -143,9 +180,11 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const onEndDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedEndDate( event.target.value );
 	const onSelectProducts = ( event: ChangeEvent< HTMLSelectElement > ) =>
-		setEditedProducts( event.target.value );
+		setEditedProducts( [ ...event.target.selectedOptions ].map( ( prod ) => prod.value ) );
 	const onUsageLimitChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
-		setEditedUsageLimit( parseInt( event.target.value ) ?? 0 );
+		setEditedUsageLimit( event.target.value );
+	const onUsageLimitBlur = ( event: ChangeEvent< HTMLSelectElement > ) =>
+		setEditedUsageLimit( parseInt( event.target.value ) > 0 ? parseInt( event.target.value ) : 0 );
 	const onSelectDuration = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDuration( event.target.value );
 	const onSpecificEmailsChange = ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -157,6 +196,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		if ( ( field === 'coupon_code' || ! field ) && editedCouponCode === '' ) {
 			return false;
 		}
+		return true;
 	};
 
 	/** Labels */
@@ -185,11 +225,16 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			<div className="memberships__dialog-sections">
 				<FormFieldset>
 					<FormLabel htmlFor="coupon_code">{ translate( 'Coupon code' ) }</FormLabel>
-					<FormTextInput
+					<FormTextInputWithRandomCodeGeneration
 						id="coupon_code"
 						value={ editedCouponCode }
+						action="Random"
 						onChange={ onCouponCodeChange }
+						onAction={ onCouponCodeRandomize }
+						isError={ ! isFormValid( 'coupon_code' ) }
+						isValid={ isFormValid( 'coupon_code' ) }
 						onBlur={ () => setFocusedCouponCode( true ) }
+						disabledWhenEmpty={ false }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Choose a unique coupon code for the discount. Not case-sensitive.' ) }
@@ -213,7 +258,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							id="discount_type"
 							value={ editedDiscountType }
 							onChange={ onSelectDiscountType }
-							noWrap
 						>
 							<option value={ COUPON_DISCOUNT_TYPE_PERCENTAGE }>
 								{ translate( 'Percentage' ) }
@@ -229,7 +273,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								value={ editedDiscountAmount }
 								prefix="%"
 								onChange={ onDiscountAmountChange }
-								noWrap
 							/>
 						) }
 						{ COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType && (
@@ -242,7 +285,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								onCurrencyChange={ onDiscountCurrencyChange }
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 								placeholder="0.00"
-								noWrap
 								className={ null }
 								currencySymbolSuffix={ null }
 							/>
@@ -257,7 +299,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							type="date"
 							value={ editedStartDate }
 							onChange={ onStartDateChange }
-							noWrap
 						/>
 					</div>
 					<div className="memberships__dialog-sections-price-field-container">
@@ -267,14 +308,22 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							type="date"
 							value={ editedEndDate }
 							onChange={ onEndDateChange }
-							noWrap
 						/>
 					</div>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
-					<FormSelect id="products" value={ editedProducts } onChange={ onSelectProducts }>
+					<FormSelect
+						multiple={ true }
+						id="products"
+						value={ editedProducts }
+						onChange={ onSelectProducts }
+					>
 						<option value={ COUPON_PRODUCTS_ANY }>{ translate( 'Any product' ) }</option>
+						{ products &&
+							products.map( function ( currentProduct: Product ) {
+								return <option value={ currentProduct.ID }>{ currentProduct.title }</option>;
+							} ) }
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -284,6 +333,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						suffix="times"
 						value={ editedUsageLimit === 0 ? '∞' : editedUsageLimit }
 						onChange={ onUsageLimitChange }
+						onBlur={ onUsageLimitBlur }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Limit the number of times this coupon can be redeemed by a supporter.' ) }

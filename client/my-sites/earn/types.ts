@@ -17,6 +17,7 @@ export type Product = {
 export type Coupon = {
 	ID?: number;
 	coupon_code?: string;
+	description?: string;
 	discount_type?: string;
 	discount_value?: number;
 	discount_percentage?: number;
