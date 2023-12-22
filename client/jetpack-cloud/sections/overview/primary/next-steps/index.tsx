@@ -14,8 +14,8 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 
 	const tasks: Task[] = [
 		{
-			calypso_path: '',
 			completed: false,
+			calypso_path: '/dashboard?tour=dashboard-walkthrough',
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_get_familiar_click' ) );
@@ -25,8 +25,8 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '',
 			completed: false,
+			calypso_path: '/dashboard?tour=add-new-site',
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_add_sites_click' ) );
@@ -36,8 +36,8 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '',
 			completed: false,
+			calypso_path: '/dashboard?tour=enable-monitor',
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_bulk_editing_click' ) );
@@ -47,8 +47,8 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '',
 			completed: false,
+			calypso_path: '/plugins/manage?tour=plugin-management',
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( tracksPrefix + '_plugin_management_click' ) );
