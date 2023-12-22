@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
-import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
+import { GeneratorModal, StoreTester } from '@automattic/jetpack-ai-calypso';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -88,6 +88,7 @@ export const QuickLinks = ( {
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
+	const [ isStoreTesterOpen, setIsStoreTesterOpen ] = useState( false );
 
 	const addNewDomain = () => {
 		sendNudge( {
@@ -256,6 +257,17 @@ export const QuickLinks = ( {
 								siteId={ siteId }
 								isOpen={ isAILogoGeneratorOpen }
 								onClose={ () => setIsAILogoGeneratorOpen( false ) }
+							/>
+							<ActionBox
+								hideLinkIndicator
+								gridicon="plans"
+								label={ translate( 'Test Jetpack AI Store' ) }
+								onClick={ () => setIsStoreTesterOpen( true ) }
+							/>
+							<StoreTester
+								siteId={ siteId }
+								isOpen={ isStoreTesterOpen }
+								onClose={ () => setIsStoreTesterOpen( false ) }
 							/>
 						</>
 					) }
