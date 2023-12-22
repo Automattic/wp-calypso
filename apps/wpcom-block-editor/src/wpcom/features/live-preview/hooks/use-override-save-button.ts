@@ -129,9 +129,9 @@ export const useOverrideSaveButton = ( {
 				} );
 			}
 		};
-		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
+		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, true );
 		return () => {
-			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
+			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, true );
 		};
 	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
 };
