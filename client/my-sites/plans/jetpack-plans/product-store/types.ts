@@ -1,13 +1,14 @@
 import React from 'react';
-import { useStoreItemInfo } from './hooks/use-store-item-info';
-import type { PlanRecommendation } from '../plan-upgrade/types';
-import type {
+import {
 	QueryArgs,
 	SelectorProduct,
 	Duration,
 	PurchaseCallback,
 	PurchaseURLCallback,
+	PartnerSelectorProduct,
 } from '../types';
+import { useStoreItemInfo } from './hooks/use-store-item-info';
+import type { PlanRecommendation } from '../plan-upgrade/types';
 
 export type ViewType = 'products' | 'bundles';
 
@@ -107,7 +108,7 @@ export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
 };
 
 export type MoreInfoLinkProps = {
-	item: SelectorProduct;
+	item: SelectorProduct | PartnerSelectorProduct;
 	onClick?: VoidFunction;
 	isLinkExternal?: boolean;
 	withIcon?: boolean;

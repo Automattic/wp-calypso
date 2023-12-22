@@ -161,6 +161,12 @@ export interface SelectorProduct extends SelectorProductCost {
 	indirectCheckoutUrl?: string;
 }
 
+export interface PartnerSelectorProduct {
+	shortName: TranslateResult;
+	productSlug: string;
+	moreAboutUrl: string;
+}
+
 export type SiteProduct = {
 	tierUsage: number;
 };
