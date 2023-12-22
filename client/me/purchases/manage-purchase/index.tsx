@@ -328,13 +328,13 @@ class ManagePurchase extends Component<
 	}
 
 	isPendingDomainRegistration( purchase: Purchase ): boolean {
-		if ( isDomainRegistration( purchase ) ) {
-			const domain = this.props.domainsDetails[ purchase.siteId ].find(
-				( domain ) => domain.name === purchase.meta
-			);
-			return domain?.pendingRegistrationAtRegistry ?? false;
+		if ( ! isDomainRegistration( purchase ) ) {
+			return false;
 		}
-		return false;
+		const domain = this.props.domainsDetails[ purchase.siteId ].find(
+			( domain ) => domain.name === purchase.meta
+		);
+		return domain?.pendingRegistrationAtRegistry ?? false;
 	}
 
 	renderRenewButton() {

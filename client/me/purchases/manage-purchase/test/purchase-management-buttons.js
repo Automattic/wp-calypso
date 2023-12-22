@@ -199,7 +199,7 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( "don't renders renew buttons for domain with pending registration at registry", async () => {
+	it( "does't render renew buttons for domain with pending registration at registry", async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
