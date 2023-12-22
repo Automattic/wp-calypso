@@ -1,35 +1,34 @@
 /**
  * External dependencies
  */
-import { Button, Modal } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data'; // Add the missing import statement for 'select'
+import { Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React, { useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import useLogo from '../hooks/use-logo';
+import { FirstLoadScreen } from './first-load-screen';
+import { LogoPresenter } from './logo-presenter';
 import './generator-modal.scss';
-import { STORE_WPCOM_PLANS } from '../store';
 
 interface GeneratorModalProps {
-	siteId: string;
+	siteId?: string;
 	isOpen: boolean;
 	onClose: () => void;
 }
 
-export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClose, siteId } ) => {
-	const { message } = useLogo( {} );
-	const { increaseAiAssistantRequestsCount } = useDispatch( STORE_WPCOM_PLANS );
-	const aiData = useSelect(
-		// @ts-expect-error Missing type definition
-		( select ) => ( siteId ? select( STORE_WPCOM_PLANS ).getAiAssistantFeature( siteId ) : {} ),
-		[ siteId ]
-	);
+export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClose } ) => {
+	const [ isLoading, setIsLoading ] = useState( true );
 
-	const handleIncreaseCount = useCallback( () => {
-		increaseAiAssistantRequestsCount();
-	}, [ increaseAiAssistantRequestsCount ] );
+	useEffect( () => {
+		if ( isOpen ) {
+			setTimeout( () => {
+				setIsLoading( false );
+			}, 6000 );
+		} else {
+			setIsLoading( true );
+		}
+	}, [ isOpen ] );
 
 	return (
 		<>
@@ -40,14 +39,13 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 					shouldCloseOnClickOutside={ false }
 					shouldCloseOnEsc={ false }
 					title={ __( 'Jetpack AI Logo Generator', 'jetpack' ) }
-					size="large"
 				>
 					<div className="jetpack-ai-logo-generator-modal__body">
-						{ message }
-						<Button variant="primary" onClick={ handleIncreaseCount }>
-							Increase
-						</Button>
-						<pre>{ JSON.stringify( aiData, null, 2 ) }</pre>
+						{ isLoading ? (
+							<FirstLoadScreen />
+						) : (
+							<LogoPresenter description="A publishing company in the form of a greek statue." />
+						) }
 					</div>
 				</Modal>
 			) }
