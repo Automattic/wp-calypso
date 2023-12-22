@@ -10,7 +10,7 @@ interface Props {
 	isMonitorPopupVisible: boolean;
 }
 
-export default function EnableMonitorTourStep1( { isMonitorPopupVisible }: Props ) {
+export default function EnableMonitorTourStep2( { isMonitorPopupVisible }: Props ) {
 	const translate = useTranslate();
 	const hasFinishedStep1 = useSelector( ( state ) =>
 		getPreference( state, JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'enableMonitorStep1' ] )
