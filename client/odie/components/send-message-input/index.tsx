@@ -1,11 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
-import ArrowUp from 'calypso/assets/images/odie/arrow-up.svg';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
-import { useOdieAssistantContext } from '../context';
+import ArrowUp from '../../assets/arrow-up.svg';
+import { useOdieAssistantContext } from '../../context';
+import { useOdieSendMessage } from '../../query';
+import { Message } from '../../types';
 import { JumpToRecent } from '../message/jump-to-recent';
-import { useOdieSendMessage } from '../query';
-import { Message } from '../types';
 
 import './style.scss';
 
@@ -34,7 +34,7 @@ export const OdieSendMessageButton = ( {
 
 	const sendMessage = async () => {
 		try {
-			trackEvent( 'calypso_odie_chat_message_action_send' );
+			trackEvent( 'chat_message_action_send' );
 
 			const message = {
 				content: messageString,
@@ -44,10 +44,10 @@ export const OdieSendMessageButton = ( {
 
 			await sendOdieMessage( { message } );
 
-			trackEvent( 'calypso_odie_chat_message_action_receive' );
+			trackEvent( 'chat_message_action_receive' );
 		} catch ( e ) {
 			const error = e as Error;
-			trackEvent( 'calypso_odie_chat_message_error', {
+			trackEvent( 'chat_message_error', {
 				error: error?.message,
 			} );
 		}

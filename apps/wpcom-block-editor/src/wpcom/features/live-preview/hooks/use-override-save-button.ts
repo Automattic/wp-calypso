@@ -1,7 +1,9 @@
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import tracksRecordEvent from '../../tracking/track-record-event';
 import { getUnlock } from '../utils';
+import { usePreviewingTheme } from './use-previewing-theme';
 
 const SAVE_HUB_SAVE_BUTTON_SELECTOR = '.edit-site-save-hub__button';
 const HEADER_SAVE_BUTTON_SELECTOR = '.edit-site-save-button__button';
@@ -15,8 +17,10 @@ const unlock = getUnlock();
  */
 export const useOverrideSaveButton = ( {
 	setIsThemeUpgradeModalOpen,
+	previewingTheme,
 }: {
 	setIsThemeUpgradeModalOpen: ( isThemeUpgradeModalOpen: boolean ) => void;
+	previewingTheme: ReturnType< typeof usePreviewingTheme >;
 } ) => {
 	const canvasMode = useSelect(
 		( select ) =>
@@ -29,6 +33,12 @@ export const useOverrideSaveButton = ( {
 			e.preventDefault();
 			e.stopPropagation();
 			setIsThemeUpgradeModalOpen( true );
+			tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_open', {
+				canvas_mode: canvasMode,
+				opened_by: 'button_click',
+				theme_type: previewingTheme.type,
+				theme: previewingTheme.id,
+			} );
 		};
 		const overrideSaveButtonClick = ( selector: string ) => {
 			const button = document.querySelector( selector );
@@ -102,7 +112,7 @@ export const useOverrideSaveButton = ( {
 				.querySelector( HEADER_SAVE_BUTTON_SELECTOR )
 				?.removeEventListener( 'mouseout', stopObserver );
 		};
-	}, [ canvasMode, setIsThemeUpgradeModalOpen ] );
+	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
 
 	useEffect( () => {
 		// This overrides the keyboard shortcut (⌘S) for saving.
@@ -111,11 +121,17 @@ export const useOverrideSaveButton = ( {
 				e.preventDefault();
 				e.stopPropagation();
 				setIsThemeUpgradeModalOpen( true );
+				tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_open', {
+					canvas_mode: canvasMode,
+					opened_by: 'shortcut',
+					theme_type: previewingTheme.type,
+					theme: previewingTheme.id,
+				} );
 			}
 		};
-		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
+		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, true );
 		return () => {
-			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut );
+			document.removeEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, true );
 		};
-	}, [ setIsThemeUpgradeModalOpen ] );
+	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
 };
