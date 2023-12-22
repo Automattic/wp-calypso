@@ -123,6 +123,7 @@ class StatsModule extends Component {
 		const {
 			className,
 			summary,
+			siteSlug,
 			siteId,
 			path,
 			data,
@@ -194,7 +195,7 @@ class StatsModule extends Component {
 						gateStats && (
 							<StatsCardUpsell
 								className="stats-module__upsell"
-								siteId={ siteId }
+								siteSlug={ siteSlug }
 								statType={ statType }
 							/>
 						)
