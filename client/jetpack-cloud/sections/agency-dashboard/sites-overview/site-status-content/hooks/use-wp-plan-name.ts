@@ -11,17 +11,11 @@ import { getPlan } from '@automattic/calypso-products/src';
  * @returns {string} The name of the first matching WordPress.com plan, or an empty string if no matching plan is found.
  */
 const useWPPlanName = ( plans: Array< string > ) => {
-	const getPlanName = () => {
-		for ( const plan of plans ) {
-			const isWPCOMPlan = planMatches( plan, { group: GROUP_WPCOM } );
-			if ( isWPCOMPlan ) {
-				return getPlan( plan )?.getTitle();
-			}
-		}
+	const wpcomPlan = plans.find( ( plan ) => planMatches( plan, { group: GROUP_WPCOM } ) );
+	if ( ! wpcomPlan ) {
 		return '';
-	};
-
-	return getPlanName();
+	}
+	return getPlan( wpcomPlan )?.getTitle();
 };
 
 export default useWPPlanName;
