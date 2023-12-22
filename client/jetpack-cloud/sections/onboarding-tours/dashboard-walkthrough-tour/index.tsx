@@ -27,8 +27,10 @@ export default function DashboardWalkthroughTour() {
 					{
 						target: '.site-table__table tr:first-child td.jetpack-cloud-site-column__stats',
 						popoverPosition: 'bottom right',
-						title: translate( '📊 7 days insights stats' ),
-						description: translate( 'Here you can see key metrics (visitors and views).' ),
+						title: translate( '📊 Stats' ),
+						description: translate(
+							'Here you can see page view metrics and how they evolved over the last 7 days.'
+						),
 					},
 					{
 						target: '.site-table__table tr:first-child td.jetpack-cloud-site-column__boost',
