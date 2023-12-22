@@ -5,7 +5,9 @@
 	&.main {
 		margin-top: 32px;
 		&.is-wide-layout {
-			padding: 0;
+			@include break-small {
+				padding: 0;
+			}
 		}
 	}
 
