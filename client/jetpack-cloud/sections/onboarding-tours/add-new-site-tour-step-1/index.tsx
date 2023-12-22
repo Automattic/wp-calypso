@@ -12,7 +12,7 @@ export default function AddNewSiteTourStep1() {
 	return (
 		shouldRenderAddSiteTourStep1 && (
 			<GuidedTour
-				className="onboardig-tours__guided-tour"
+				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ] }
 				tours={ [
 					{

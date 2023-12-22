@@ -20,7 +20,7 @@ export default function EnableMonitorTourStep1( { isMonitorPopupVisible }: Props
 	return (
 		shouldRenderEnableMonitorTourStep2 && (
 			<GuidedTour
-				className="onboardig-tours__guided-tour"
+				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'enableMonitorStep2' ] }
 				tours={ [
 					{

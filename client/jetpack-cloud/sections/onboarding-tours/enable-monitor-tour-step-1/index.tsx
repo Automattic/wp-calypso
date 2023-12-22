@@ -12,7 +12,7 @@ export default function EnableMonitorTourStep1() {
 	return (
 		shouldRenderEnableMonitorTourStep1 && (
 			<GuidedTour
-				className="onboardig-tours__guided-tour"
+				className="onboarding-tours__guided-tour"
 				preferenceName={ JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'enableMonitorStep1' ] }
 				tours={ [
 					{
