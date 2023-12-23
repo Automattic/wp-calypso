@@ -224,7 +224,7 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	mostRecentConnectedSite: string | null;
 	setMostRecentConnectedSite: ( mostRecentConnectedSite: string ) => void;
 	isPopoverOpen: boolean;
-	setIsPopoverOpen: ( value: boolean ) => void;
+	setIsPopoverOpen: React.Dispatch< React.SetStateAction< boolean > >;
 }
 
 export interface DashboardDataContextInterface {
