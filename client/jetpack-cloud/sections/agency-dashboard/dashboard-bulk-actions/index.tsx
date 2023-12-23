@@ -40,7 +40,7 @@ export default function DashboardBulkActions( {
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
 	function toggleNotificationSettingsPopup() {
-		setIsPopoverOpen( ( isOpen ) => ! isOpen );
+		setIsPopoverOpen( ! isPopoverOpen );
 	}
 
 	const toggleMonitorActions = [
