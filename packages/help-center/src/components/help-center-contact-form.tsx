@@ -114,7 +114,7 @@ export const HelpCenterContactForm = () => {
 			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
 		};
 	}, [] );
-	const supportChatId = getOdieStorage( 'support_chat_id' );
+	const lastChatSessionId = getOdieStorage( 'last_chat_id' );
 
 	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
@@ -318,15 +318,15 @@ export const HelpCenterContactForm = () => {
 						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
 						initialChatMessage += gptResponse.response;
 					}
+
 					if ( wapuuFlow ) {
 						initialChatMessage += '<br /><br />';
-						if ( supportChatId ) {
-							initialChatMessage += `<strong>Wapuu chat reference: ${ supportChatId }</strong>:<br />`;
-						} else {
-							initialChatMessage += `<strong>Wapuu chat referene is not available </strong>:<br />`;
-						}
+						initialChatMessage += lastChatSessionId
+							? `<strong>Wapuu chat reference: ${ lastChatSessionId }</strong>:<br />`
+							: '<strong>Wapuu chat reference is not available</strong>:<br />';
 						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
 					}
+
 					openChatWidget( initialChatMessage, supportSite.URL, () =>
 						setHasSubmittingError( true )
 					);
@@ -358,7 +358,7 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
-						ai_chat_id: wapuuFlow ? supportChatId ?? '' : gptResponse?.answer_id,
+						ai_chat_id: wapuuFlow ? lastChatSessionId ?? '' : gptResponse?.answer_id,
 						ai_message: gptResponse?.response,
 					} )
 						.then( () => {
