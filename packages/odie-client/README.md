@@ -111,22 +111,23 @@ import OdieAssistantProvider, {
 	useOdieAssistantContext,
 } from '@automattic/odie-client';
 
-cont MyApp = () => {
-const { clearChat } = useOdieAssistantContext();
-return (
-	<OdieAssistantProvider botNameSlug="wpcom-support-chat">
-		<div className="custom-class">
-			<BackButton className="back-button-class" />
-			<EllipsisMenu popoverClassName="menu-class" position="bottom">
-				<PopoverMenuItem onClick={ () => clearChat() } className="menu-item-class">
-					<Gridicon icon="comment" />
-					Start a New Chat
-				</PopoverMenuItem>
-			</EllipsisMenu>
-		</div>
-		<OdieAssistant />
-	</OdieAssistantProvider>
-);}
+const MyApp = () => {
+	const { clearChat } = useOdieAssistantContext();
+	return (
+		<OdieAssistantProvider botNameSlug="wpcom-support-chat">
+			<div className="custom-class">
+				<BackButton className="back-button-class" />
+				<EllipsisMenu popoverClassName="menu-class" position="bottom">
+					<PopoverMenuItem onClick={ () => clearChat() } className="menu-item-class">
+						<Gridicon icon="comment" />
+						Start a New Chat
+					</PopoverMenuItem>
+				</EllipsisMenu>
+			</div>
+			<OdieAssistant />
+		</OdieAssistantProvider>
+	);
+};
 ```
 
 ## Versioning
