@@ -72,7 +72,7 @@ const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
-type ProvicerProps = {
+type OdieAssistantProviderProps = {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	enabled?: boolean;
@@ -84,7 +84,7 @@ type ProvicerProps = {
 	children?: ReactNode;
 } & PropsWithChildren;
 // Create a provider component for the context
-const OdieAssistantProvider: FC< ProvicerProps > = ( {
+const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	botNameSlug = 'wpcom-support-chat',
 	initialUserMessage,

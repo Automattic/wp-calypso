@@ -103,5 +103,5 @@ export const OdieAssistant: React.FC = () => {
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
-export { clearOdieStorage } from './data';
+export { clearOdieStorage, setOdieStorage, useOdieStorage, getOdieStorage } from './data';
 export { EllipsisMenu } from './components/ellipsis-menu';
