@@ -1,0 +1,33 @@
+{
+	"name": "@automattic/comment-block-editor",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && npm run build:editor && npm run build:injector",
+		"build:editor": "vite build --mode editor",
+		"build:injector": "vite build --mode injector"
+	},
+	"dependencies": {
+		"@wordpress/block-editor": "^12.16.0",
+		"@wordpress/block-library": "^8.25.0",
+		"@wordpress/blocks": "^12.25.0"
+	},
+	"devDependencies": {
+		"@types/react": "^18.2.43",
+		"@types/react-dom": "^18.2.17",
+		"@types/wordpress__blocks": "^12.5.13",
+		"@vitejs/plugin-react": "^4.2.1",
+		"@wordpress/edit-post": "^7.25.0",
+		"@wordpress/format-library": "^4.25.0",
+		"sass": "^1.69.5",
+		"typescript": "^5.2.2",
+		"vite": "^5.0.8",
+		"vite-plugin-css-injected-by-js": "^3.3.1"
+	},
+	"peerDependencies": {
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	}
+}
