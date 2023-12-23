@@ -1,10 +1,9 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, createRef, useContext } from 'react';
+import { createRef, useContext } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import EnableMonitorTourStep2 from '../../onboarding-tours/enable-monitor-tour-step-2';
 import NotificationSettings from '../downtime-monitoring/notification-settings';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
@@ -32,17 +31,16 @@ export default function DashboardBulkActions( {
 }: Props ) {
 	const actionBarRef = createRef< HTMLDivElement >();
 	const translate = useTranslate();
-	const { setIsBulkManagementActive } = useContext( SitesOverviewContext );
+	const { setIsBulkManagementActive, setIsPopoverOpen, isPopoverOpen } =
+		useContext( SitesOverviewContext );
 
 	const handleToggleActivateMonitor = useHandleToggleMonitor( selectedSites, isLargeScreen );
 	const handleResetNotification = useHandleResetNotification( selectedSites, isLargeScreen );
 	const { actionBarVisible } = useHandleShowHideActionBar( actionBarRef );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
-	const [ showNotificationSettingsPopup, setShowNotificationSettingsPopup ] = useState( false );
-
 	function toggleNotificationSettingsPopup() {
-		setShowNotificationSettingsPopup( ( isOpen ) => ! isOpen );
+		setIsPopoverOpen( ( isPopoverOpen ) => ! isPopoverOpen );
 	}
 
 	const toggleMonitorActions = [
@@ -143,8 +141,7 @@ export default function DashboardBulkActions( {
 					</Button>
 				</ButtonGroup>
 			</div>
-			<EnableMonitorTourStep2 isMonitorPopupVisible={ showNotificationSettingsPopup } />
-			{ showNotificationSettingsPopup && (
+			{ isPopoverOpen && (
 				<NotificationSettings
 					sites={ selectedSites }
 					bulkUpdateSettings={ bulkUpdateSettings }

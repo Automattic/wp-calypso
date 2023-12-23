@@ -2,7 +2,10 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
+import AddNewSiteTourStep1 from '../../onboarding-tours/add-new-site-tour-step-1';
 import DashboardWalkthroughTour from '../../onboarding-tours/dashboard-walkthrough-tour';
+import EnableMonitorTourStep1 from '../../onboarding-tours/enable-monitor-tour-step-1';
+import EnableMonitorTourStep2 from '../../onboarding-tours/enable-monitor-tour-step-2';
 import type { ReactNode } from 'react';
 import './style.scss';
 
@@ -39,6 +42,9 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 					{ content }
 				</div>
 			</div>
+			<AddNewSiteTourStep1 />
+			<EnableMonitorTourStep1 />
+			<EnableMonitorTourStep2 />
 			<DashboardWalkthroughTour />
 		</>
 	);
