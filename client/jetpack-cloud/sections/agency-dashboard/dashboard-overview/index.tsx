@@ -29,6 +29,7 @@ export default function DashboardOverview( {
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
+	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 
 	if ( hasFetched && ! hasActiveKey ) {
 		return <SelectPartnerKey />;
@@ -64,6 +65,8 @@ export default function DashboardOverview( {
 			hideLicenseInfo: onHideLicenseInfo,
 			mostRecentConnectedSite,
 			setMostRecentConnectedSite,
+			isPopoverOpen,
+			setIsPopoverOpen,
 		};
 		return (
 			<SitesOverviewContext.Provider value={ context }>

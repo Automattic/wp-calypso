@@ -223,6 +223,8 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	hideLicenseInfo: () => void;
 	mostRecentConnectedSite: string | null;
 	setMostRecentConnectedSite: ( mostRecentConnectedSite: string ) => void;
+	isPopoverOpen: boolean;
+	setIsPopoverOpen: ( value: boolean ) => void;
 }
 
 export interface DashboardDataContextInterface {

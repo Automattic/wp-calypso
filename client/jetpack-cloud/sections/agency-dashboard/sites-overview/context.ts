@@ -24,6 +24,10 @@ const SitesOverviewContext = createContext< SitesOverviewContextInterface >( {
 	setMostRecentConnectedSite: () => {
 		return undefined;
 	},
+	isPopoverOpen: false,
+	setIsPopoverOpen: () => {
+		return undefined;
+	},
 	sort: {
 		field: 'url',
 		direction: 'asc',
