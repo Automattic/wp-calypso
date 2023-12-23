@@ -5,10 +5,11 @@ import { MoreInfoLink } from 'calypso/my-sites/plans/jetpack-plans/product-store
 import { SimpleItemCard } from 'calypso/my-sites/plans/jetpack-plans/product-store/simple-item-card';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { PartnerSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 
 interface Props {
 	productData: ProductData;
-	onMoreAboutClick: ( slug: string ) => void;
+	onMoreAboutClick: ( e: ReactMouseEvent< HTMLAnchorElement, MouseEvent >, slug: string ) => void;
 }
 
 const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => {
@@ -28,7 +29,7 @@ const ProductItem: React.FC< Props > = ( { productData, onMoreAboutClick } ) => 
 		<>
 			{ productData.description } <br />
 			<MoreInfoLink
-				onClick={ () => onMoreAboutClick( productData.data.slug ) }
+				onClick={ ( event: any ) => onMoreAboutClick( event, productData.data.slug ) }
 				item={ itemData }
 				isLinkExternal={ true }
 				withIcon={ false }

@@ -1,17 +1,19 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { type MouseEvent as ReactMouseEvent, useMemo, useState } from 'react';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { jetpackProductsToShow } from 'calypso/jetpack-cloud/sections/overview/primary/overview-products/jetpack-products';
 import ProductGrid from 'calypso/jetpack-cloud/sections/overview/primary/product-grid';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
+import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
 import './style.scss';
+import './lightbox.scss';
 
 export default function OverviewProducts() {
 	const translate = useTranslate();
@@ -20,9 +22,28 @@ export default function OverviewProducts() {
 	const userProducts = useSelector( ( state ) => getProductsList( state ) );
 	const { data: agencyProducts, isLoading: isLoadingProducts } = useProductsQuery();
 
+	const [ showLightbox, setShowLightbox ] = useState( false );
+	const [ productToShow, setProductToShow ] = useState( undefined );
+
 	// Track the View All click
 	const onViewAllClick = () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_manage_overview_products_view_all_click' ) );
+	};
+
+	// Track the More About click
+	const onMoreAboutClick = (
+		e: ReactMouseEvent< HTMLAnchorElement, MouseEvent >,
+		product_slug: string
+	) => {
+		e.preventDefault();
+
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_manage_overview_products_more_about_click', {
+				product: product_slug,
+			} )
+		);
+		setShowLightbox( true );
+		setProductToShow( jetpackProductsToShow[ product_slug ].data );
 	};
 
 	// Prepare the products to show in the grid
@@ -72,9 +93,18 @@ export default function OverviewProducts() {
 				{ isLoadingProducts || userProducts === undefined ? (
 					<div className="overview-products__is-loading"></div>
 				) : (
-					<ProductGrid products={ products } />
+					<ProductGrid products={ products } onMoreAboutClick={ onMoreAboutClick } />
 				) }
 			</div>
+			{ showLightbox && productToShow && (
+				<LicenseLightbox
+					product={ productToShow }
+					ctaLabel={ translate( 'Select License' ) }
+					isCTAPrimary={ true }
+					onActivate={ () => {} }
+					onClose={ () => {} }
+				/>
+			) }
 		</div>
 	);
 }
