@@ -4,6 +4,10 @@
 
 Odie Assistant Chat is a React component designed for WordPress.com projects. This documentation is intended for developers integrating this component into their applications.
 
+<div align="center">
+  <img src="https://github.com/Automattic/wp-calypso/assets/5689927/a4e6ece6-4d5e-4888-a863-a99f5ea7120f" />
+</div>
+
 ## Installation
 
 ```bash
