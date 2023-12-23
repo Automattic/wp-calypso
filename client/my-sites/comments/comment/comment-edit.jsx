@@ -1,3 +1,4 @@
+import { CommentBlockEditor } from '@automattic/comment-block-editor';
 import { Button, Popover, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, pick } from 'lodash';
@@ -13,7 +14,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PostSchedule from 'calypso/components/post-schedule';
 import { decodeEntities } from 'calypso/lib/formatting';
-import CommentHtmlEditor from 'calypso/my-sites/comments/comment/comment-html-editor';
+// import CommentHtmlEditor from 'calypso/my-sites/comments/comment/comment-html-editor';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -25,8 +26,6 @@ import { getSiteComment } from 'calypso/state/comments/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-const noop = () => {};
 
 export class CommentEdit extends Component {
 	static propTypes = {
@@ -68,8 +67,7 @@ export class CommentEdit extends Component {
 
 	setAuthorUrlValue = ( event ) => this.setState( { authorUrl: event.target.value } );
 
-	setCommentContentValue = ( event, callback = noop ) =>
-		this.setState( { commentContent: event.target.value }, callback );
+	setCommentContentValue = ( value ) => this.setState( { commentContent: value } );
 
 	setCommentDateValue = ( commentDate ) =>
 		this.setState( { commentDate: this.props.moment( commentDate ).format() } );
@@ -199,8 +197,8 @@ export class CommentEdit extends Component {
 						</Popover>
 					</FormFieldset>
 
-					<CommentHtmlEditor
-						commentContent={ commentContent }
+					<CommentBlockEditor
+						initialContent={ commentContent }
 						onChange={ this.setCommentContentValue }
 					/>
 
