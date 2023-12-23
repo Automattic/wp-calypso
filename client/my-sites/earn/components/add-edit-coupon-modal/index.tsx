@@ -1,7 +1,11 @@
 import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { formatCurrency } from '@automattic/format-currency';
+import { MenuGroup, MenuItem, ToggleControl, ToolbarDropdownMenu } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { check, close, update } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { ChangeEvent, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -10,6 +14,10 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useSelector } from 'calypso/state';
+import {
+	requestAddCoupon,
+	requestUpdateCoupon,
+} from 'calypso/state/memberships/coupon-list/actions';
 import { getCouponsForSiteId } from 'calypso/state/memberships/coupon-list/selectors';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import {
@@ -31,6 +39,7 @@ import {
 } from '../../memberships/constants';
 import { Product, Coupon } from '../../types';
 import FormTextInputWithRandomCodeGeneration from '../form-text-input-with-value-generation';
+import './style.scss';
 
 type RecurringPaymentsPlanAddEditModalProps = {
 	closeDialog: () => void;
@@ -63,6 +72,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	coupon,
 	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
+	const dispatch = useDispatch();
+
 	/** Currency */
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
@@ -96,11 +107,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const coupons: Coupon[] = useSelector( ( state ) =>
 		getCouponsForSiteId( state, selectedSiteId )
 	);
-
-	/** Dialog operations */
-	const onClose = () => {
-		closeDialog();
-	};
 
 	/** Edited form values */
 	const [ editedCouponCode, setEditedCouponCode ] = useState( coupon?.coupon_code ?? '' );
@@ -143,7 +149,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	);
 
 	/** Coupon functions */
-	const generateRandomCouponCode: string = () => {
+	const generateRandomCouponCode = (): string => {
 		let code = '';
 		let available = true;
 		for ( let i = 0; i < COUPON_RANDOM_GENERATOR_LENGTH; i++ ) {
@@ -160,6 +166,34 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			return code;
 		}
 		return generateRandomCouponCode();
+	};
+
+	/** Product functions */
+	const getProductDescription = ( product: Product ): string => {
+		const { currency, renewal_schedule, price } = product;
+		const amount = formatCurrency( parseFloat( price ), currency );
+		switch ( renewal_schedule ) {
+			case '1 month':
+				return sprintf(
+					// translators: %s: amount
+					__( '%s / month', 'calypso' ),
+					amount
+				);
+			case '1 year':
+				return sprintf(
+					// translators: %s: amount
+					__( '%s / year', 'calypso' ),
+					amount
+				);
+			case 'one-time':
+				return amount;
+		}
+		return sprintf(
+			// translators: %s: amount, plan interval
+			__( '%1$s / %2$s', 'calypso' ),
+			amount,
+			renewal_schedule
+		);
 	};
 
 	/** Form event handlers */
@@ -179,8 +213,20 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		setEditedStartDate( event.target.value );
 	const onEndDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedEndDate( event.target.value );
-	const onSelectProducts = ( event: ChangeEvent< HTMLSelectElement > ) =>
-		setEditedProducts( [ ...event.target.selectedOptions ].map( ( prod ) => prod.value ) );
+	const onSelectProduct = ( event ) => {
+		const productId = event.target.value ?? event.target.parentElement.value;
+		if ( COUPON_PRODUCTS_ANY === productId ) {
+			setEditedProducts( [] );
+			return;
+		}
+		if ( editedProducts.includes( productId ) ) {
+			setEditedProducts(
+				editedProducts.filter( ( selectedId: string ) => selectedId !== productId )
+			);
+			return;
+		}
+		setEditedProducts( [ ...editedProducts, productId ] );
+	};
 	const onUsageLimitChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedUsageLimit( event.target.value );
 	const onUsageLimitBlur = ( event: ChangeEvent< HTMLSelectElement > ) =>
@@ -199,10 +245,60 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		return true;
 	};
 
+	/** Dialog operations */
+	const onClose = ( reason: string | undefined ) => {
+		const couponDetails: Coupon = {
+			coupon_code: editedCouponCode,
+			description: editedDescription,
+			discount_type: editedDiscountType,
+			discount_value: editedDiscountAmount,
+			discount_percentage: editedDiscountAmount, //TODO: divide amount into value and percentage vars
+			discount_currency: currentDiscountCurrency,
+			start_date: editedStartDate,
+			end_date: editedEndDate,
+			product_ids: editedProducts,
+			can_be_combined: editedCanBeCombined,
+			first_time_only: editedFirstTimeOnly,
+			use_duration: editedUseDuration,
+			duration: editedDuration,
+			use_specific_emails: editedUseSpecificEmails,
+			specific_emails: editedSpecificEmails,
+		};
+
+		if ( reason === 'submit' && ( ! coupon || ! coupon.ID ) ) {
+			dispatch(
+				requestAddCoupon(
+					siteId ?? selectedSiteId,
+					couponDetails,
+					translate( 'Added coupon "%s".', { args: editedCouponCode } )
+				)
+			);
+		} else if ( reason === 'submit' && coupon && coupon.ID ) {
+			dispatch(
+				requestUpdateCoupon(
+					siteId ?? selectedSiteId,
+					couponDetails,
+					translate( 'Updated coupon "%s".', { args: editedCouponCode } )
+				)
+			);
+		}
+		closeDialog();
+	};
+
 	/** Labels */
 	const addCoupon = translate( 'Add new coupon' );
 	const editCoupon = translate( 'Edit coupon' );
 	const editing = coupon && coupon.ID;
+	const selectedProductSummary = ( ( quantity: number ) => {
+		if ( quantity > 1 ) {
+			// translators: the %s is a number representing the number of products which are currently selected
+			return sprintf( __( '%s products selected.' ), quantity );
+		}
+		if ( quantity === 1 ) {
+			return __( '1 product selected' );
+		}
+		return translate( 'Any product' );
+	} )( editedProducts.length );
 
 	return (
 		<Dialog
@@ -234,7 +330,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						isError={ ! isFormValid( 'coupon_code' ) }
 						isValid={ isFormValid( 'coupon_code' ) }
 						onBlur={ () => setFocusedCouponCode( true ) }
-						disabledWhenEmpty={ false }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Choose a unique coupon code for the discount. Not case-sensitive.' ) }
@@ -271,7 +366,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							<FormTextInputWithAffixes
 								id="discount_amount"
 								value={ editedDiscountAmount }
-								prefix="%"
+								suffix="%"
 								onChange={ onDiscountAmountChange }
 							/>
 						) }
@@ -313,18 +408,64 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
-					<FormSelect
-						multiple={ true }
-						id="products"
-						value={ editedProducts }
-						onChange={ onSelectProducts }
+					<ToolbarDropdownMenu
+						icon={ update }
+						text={ selectedProductSummary }
+						label="Select a product"
+						role="button"
 					>
-						<option value={ COUPON_PRODUCTS_ANY }>{ translate( 'Any product' ) }</option>
-						{ products &&
-							products.map( function ( currentProduct: Product ) {
-								return <option value={ currentProduct.ID }>{ currentProduct.title }</option>;
-							} ) }
-					</FormSelect>
+						{ ( { onClose } ) => (
+							<>
+								<MenuGroup>
+									<MenuItem
+										value={ COUPON_PRODUCTS_ANY }
+										onClick={ onSelectProduct }
+										onClose={ onClose }
+										isSelected={ editedProducts.length === 0 }
+										icon={ editedProducts.length === 0 ? check : null }
+										key={ COUPON_PRODUCTS_ANY }
+										role="menuitemcheckbox"
+									>
+										{ translate( 'Any product' ) }
+									</MenuItem>
+								</MenuGroup>
+								<MenuGroup>
+									{ products &&
+										products.map( function ( currentProduct: Product ) {
+											const isSelected =
+												editedProducts.length === 0 ||
+												editedProducts.includes( '' + currentProduct.ID );
+											const itemIcon = isSelected ? check : null;
+											return (
+												<MenuItem
+													value={ currentProduct.ID }
+													onClick={ onSelectProduct }
+													onClose={ onClose }
+													isSelected={ isSelected }
+													icon={ itemIcon }
+													key={ currentProduct.ID }
+													role="menuitemcheckbox"
+												>
+													{ currentProduct.title } :
+													{ ' ' + getProductDescription( currentProduct ) }
+												</MenuItem>
+											);
+										} ) }
+								</MenuGroup>
+								<MenuGroup>
+									<MenuItem
+										value={ COUPON_PRODUCTS_ANY }
+										onClick={ onClose }
+										icon={ close }
+										key={ COUPON_PRODUCTS_ANY }
+										role="menuitemcheckbox"
+									>
+										{ translate( 'Close' ) }
+									</MenuItem>
+								</MenuGroup>
+							</>
+						) }
+					</ToolbarDropdownMenu>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="coupon_code">{ translate( 'Usage limit (optional)' ) }</FormLabel>
