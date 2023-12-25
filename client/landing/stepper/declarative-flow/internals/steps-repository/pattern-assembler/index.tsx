@@ -492,6 +492,18 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		return isSiteAssemblerFlow( flow );
 	};
 
+	const shouldIgnoreSelectedPagesInPreview = () => {
+		if ( flow === AI_ASSEMBLER_FLOW ) {
+			return false;
+		}
+
+		if ( currentScreen.name === 'confirmation' || currentScreen.name === 'activation' ) {
+			return false;
+		}
+
+		return true;
+	};
+
 	const customActionButtons = () => {
 		if (
 			flow === AI_ASSEMBLER_FLOW &&
@@ -690,6 +702,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						selectedSections={ sections }
 						selectedFooter={ footer }
 						patternsMapByCategory={ layoutCategoryPatternsMap }
+						pages={ ! shouldIgnoreSelectedPagesInPreview() ? pages : undefined }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
 						isNewSite={ isNewSite }
@@ -728,12 +741,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					sections={ sections }
 					footer={ footer }
 					activePosition={ activePosition }
-					pages={
-						// Consider the selected pages in the final screen.
-						currentScreen.name === 'confirmation' || currentScreen.name === 'activation'
-							? pages
-							: undefined
-					}
+					pages={ ! shouldIgnoreSelectedPagesInPreview() ? pages : undefined }
 					onDeleteSection={ onDeleteSection }
 					onMoveUpSection={ onMoveUpSection }
 					onMoveDownSection={ onMoveDownSection }
