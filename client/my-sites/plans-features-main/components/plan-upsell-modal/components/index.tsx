@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 
 export const DialogContainer = styled.div`
@@ -75,53 +74,5 @@ export const DomainName = styled.div`
 	max-width: 100%;
 	@media ( min-width: 780px ) {
 		max-width: 50%;
-	}
-`;
-
-export const StyledButton = styled( Button )< { maxwidth?: string } >`
-	padding: 10px 24px;
-	border-radius: 4px;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 20px;
-	flex: 1;
-	&.is-primary,
-	&.is-primary.is-busy,
-	&.is-primary:hover,
-	&.is-primary:focus {
-		background-color: var( --studio-blue-50 );
-		border: unset;
-	}
-	&:hover {
-		opacity: 0.85;
-		transition: 0.7s;
-	}
-	&:focus:not( .is-borderless ) {
-		box-shadow:
-			0 0 0 2px var( --studio-white ),
-			0 0 0 4px var( --studio-blue-50 );
-	}
-	width: 100%;
-
-	&.is-borderless {
-		text-decoration: underline;
-		border: none;
-		font-weight: 600;
-		padding: 0px;
-		color: var( --studio-gray-50 );
-	}
-
-	&:first-of-type {
-		margin-bottom: 20px;
-	}
-	@media ( min-width: 780px ) {
-		max-width: ${ ( { maxwidth } ) => maxwidth ?? 'fit-content' };
-		width: unset;
-		&:first-of-type {
-			margin-bottom: 0;
-		}
-		&:nth-of-type( 2 ) {
-			margin-left: 31.5px;
-		}
 	}
 `;
