@@ -540,14 +540,13 @@ __metadata:
     "@wordpress/blocks": "npm:^12.25.0"
     "@wordpress/edit-post": "npm:^7.25.0"
     "@wordpress/format-library": "npm:^4.25.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
     sass: "npm:^1.69.5"
     typescript: "npm:^5.2.2"
     vite: "npm:^5.0.8"
     vite-plugin-css-injected-by-js: "npm:^3.3.1"
     wpcom-proxy-request: "npm:^7.0.5"
-  peerDependencies:
-    react: ^18.2.0
-    react-dom: ^18.2.0
   languageName: unknown
   linkType: soft
 
