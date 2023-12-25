@@ -171,6 +171,12 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'site-prompt': {
+					if ( providedDependencies?.aiSitePrompt ) {
+						await saveSiteSettings( siteId, {
+							wpcom_ai_site_prompt: providedDependencies.aiSitePrompt,
+						} );
+					}
+
 					return navigate( 'patternAssembler' );
 				}
 
