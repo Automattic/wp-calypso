@@ -12,7 +12,7 @@ type StepRouteProps = {
 	progressValue: number;
 	progressBarExtraStyle: React.CSSProperties;
 	showWooLogo: boolean;
-	renderStep: ( step: StepperStep ) => JSX.Element;
+	renderStep: ( step: StepperStep ) => JSX.Element | null;
 };
 
 const StepRoute = ( {
@@ -23,6 +23,7 @@ const StepRoute = ( {
 	showWooLogo,
 	renderStep,
 }: StepRouteProps ) => {
+	const stepContent = renderStep( step );
 	const renderProgressBar = () => {
 		// The visual progress bar is removed due to its fragility.
 		// The component will be cleaned up but it'll require more untangling as the component
@@ -56,8 +57,8 @@ const StepRoute = ( {
 		>
 			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
 			{ renderProgressBar() }
-			<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
-			{ renderStep( step ) }
+			{ stepContent && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
+			{ stepContent }
 		</div>
 	);
 };
