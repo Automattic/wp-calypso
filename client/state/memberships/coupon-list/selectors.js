@@ -7,21 +7,23 @@ export function getCouponsForSiteId( state, siteId ) {
 	if ( 164491916 === siteId ) {
 		defaultCoupons = [
 			{
+				ID: 1,
 				coupon_code: 'FALLSALE2023',
 				description: 'My first coupon code!!!!',
 				discount_type: 'percentage',
 				discount_value: null,
 				discount_percentage: 20, //TODO: divide amount into value and percentage vars
 				discount_currency: 'USD',
-				start_date: '20230125',
-				end_date: '20231121',
+				start_date: '2023-01-25',
+				end_date: '2023-11-21',
 				product_ids: [],
 				can_be_combined: false,
 				first_time_only: false,
+				usage_limit: 10,
 				use_duration: true,
-				duration: 'Forever',
-				use_specific_emails: false,
-				specific_emails: [],
+				duration: '1 month',
+				use_specific_emails: true,
+				specific_emails: [ '*@*.edu', '*@*.org' ],
 			},
 		];
 	}

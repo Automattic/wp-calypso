@@ -319,8 +319,9 @@ const RecurringPaymentsCouponAddEditModal = ( {
 
 		if (
 			( field === 'end_date' || ! field ) &&
+			! coupon?.ID &&
 			editedEndDate &&
-			new Date( editedEndDate ).getTime() < new Date().getTime()
+			new Date( editedEndDate ).getTime() < today.getTime()
 		) {
 			return false;
 		}

@@ -3,13 +3,15 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
-import { CompactCard, Button, Badge } from '@automattic/components';
+import { CompactCard, Button, Badge, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import QueryMembershipsCoupons from 'calypso/components/data/query-memberships-coupons';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
 import { getCouponsForSiteId } from 'calypso/state/memberships/coupon-list/selectors';
@@ -24,6 +26,8 @@ import {
 	COUPON_DISCOUNT_TYPE_AMOUNT,
 	COUPON_DISCOUNT_TYPE_PERCENTAGE,
 } from './constants';
+
+import './style.scss';
 
 function CouponsList() {
 	const translate = useTranslate();
@@ -49,6 +53,23 @@ function CouponsList() {
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
 
+	function renderEllipsisMenu( couponId: number ) {
+		return (
+			<EllipsisMenu position="bottom left">
+				{ hasStripeFeature && (
+					<PopoverMenuItem onClick={ () => openAddEditDialog( couponId ) }>
+						<Gridicon size={ 18 } icon="pencil" />
+						{ translate( 'Edit' ) }
+					</PopoverMenuItem>
+				) }
+				<PopoverMenuItem onClick={ () => openDeleteDialog( couponId ) }>
+					<Gridicon size={ 18 } icon="trash" />
+					{ translate( 'Delete' ) }
+				</PopoverMenuItem>
+			</EllipsisMenu>
+		);
+	}
+
 	function openAddEditDialog( couponId?: number ) {
 		if ( couponId ) {
 			const currentCoupon = coupons.find( ( coup: Coupon ) => coup.ID === couponId );
@@ -60,7 +81,6 @@ function CouponsList() {
 		}
 	}
 
-	/*
 	function openDeleteDialog( couponId: number ) {
 		if ( couponId ) {
 			const currentCoupon = coupons.find( ( coup: Coupon ) => coup.ID === couponId );
@@ -68,7 +88,6 @@ function CouponsList() {
 			setCoupon( currentCoupon ?? null );
 		}
 	}
-	*/
 
 	function closeDialog() {
 		setShowAddEditDialog( false );
@@ -101,6 +120,9 @@ function CouponsList() {
 							<div className="memberships__products-product-details">
 								<div className="memberships__products-product-title">
 									{ currentCoupon?.coupon_code }
+								</div>
+								<div className="memberships__products-product-description">
+									{ currentCoupon?.description }
 								</div>
 								<sub className="memberships__products-product-price"></sub>
 								{ currentCoupon?.end_date && (
@@ -152,6 +174,7 @@ function CouponsList() {
 									</div>
 								) }
 							</div>
+							{ currentCoupon && currentCoupon.ID && renderEllipsisMenu( currentCoupon.ID ) }
 						</CompactCard>
 					);
 				} ) }
