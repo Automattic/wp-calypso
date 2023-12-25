@@ -41,6 +41,10 @@ export const ButtonContainer = styled.div`
 	margin-top: 16px;
 	@media ( min-width: 780px ) {
 		margin-top: 24px;
+		button {
+			max-width: 220px;
+			flex-basis: 196px;
+		}
 	}
 `;
 
@@ -70,7 +74,7 @@ export const DomainName = styled.div`
 	overflow-wrap: break-word;
 	max-width: 100%;
 	@media ( min-width: 780px ) {
-		max-width: 55%;
+		max-width: 50%;
 	}
 `;
 

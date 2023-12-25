@@ -10,9 +10,6 @@
 	flex: 1;
 	width: 100%;
 
-	background-color: var(--studio-white);
-	color: var(--studio-gray-100);
-
 	&:hover {
 		opacity: 0.85;
 		transition: 0.7s;
@@ -124,7 +121,11 @@
 		}
 	}
 
-	&.is-current-plan {
+	// Currently these two are identical, but the both are kept
+	// since it's too early to say the current plan button will always
+	// be the default style, i.e. the secondary CTA button style
+	&.is-current-plan,
+	&.is-default {
 		background-color: var(--studio-white);
 		color: var(--studio-gray-100);
 		box-shadow: inset 0 0 0 1px var(--studio-gray-10);
@@ -150,5 +151,15 @@
 		height: 48px;
 		line-height: 15px;
 		padding: 9px 12px;
+	}
+
+	&.is-borderless {
+		box-shadow: unset;
+		text-decoration: underline;
+		font-weight: 600;
+
+		&:hover {
+			box-shadow: unset;
+		}
 	}
 }
