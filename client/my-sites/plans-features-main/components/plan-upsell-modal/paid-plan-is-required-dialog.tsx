@@ -23,7 +23,7 @@ export default function PaidPlanIsRequiredDialog( {
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps & { paidDomainName: string } ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 
@@ -35,7 +35,7 @@ export default function PaidPlanIsRequiredDialog( {
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
-		onPlanSelected();
+		onPlanSelected( suggestedPlanSlug );
 	}
 
 	function handleFreeDomainClick() {

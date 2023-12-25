@@ -22,9 +22,7 @@ export function FreePlanPaidDomainDialog( {
 	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
-}: DomainPlanDialogProps & {
-	paidDomainName: string;
-} ) {
+}: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 
@@ -36,7 +34,7 @@ export function FreePlanPaidDomainDialog( {
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
-		onPlanSelected();
+		onPlanSelected( suggestedPlanSlug );
 	}
 
 	function handleFreePlanClick() {
@@ -80,6 +78,7 @@ export function FreePlanPaidDomainDialog( {
 					<DomainName>
 						{ generatedWPComSubdomain.isLoading && <LoadingPlaceholder /> }
 						{ generatedWPComSubdomain.result &&
+							paidDomainName &&
 							translate( '%(paidDomainName)s redirects to %(wpcomFreeDomain)s', {
 								args: {
 									paidDomainName,

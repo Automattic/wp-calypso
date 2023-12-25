@@ -23,7 +23,7 @@ export default function SuggestedPlanSection( {
 	onButtonClick,
 	isBusy,
 }: {
-	paidDomainName: string;
+	paidDomainName?: string;
 	suggestedPlanSlug: PlanSlug;
 	onButtonClick: () => void;
 	isBusy: boolean;
@@ -43,10 +43,12 @@ export default function SuggestedPlanSection( {
 
 	return (
 		<>
-			<DomainName>
-				<div>{ paidDomainName }</div>
-				<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
-			</DomainName>
+			{ paidDomainName && (
+				<DomainName>
+					<div>{ paidDomainName }</div>
+					<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
+				</DomainName>
+			) }
 			<PlanButton planSlug={ suggestedPlanSlug } busy={ isBusy } onClick={ onButtonClick }>
 				{ currencyCode &&
 					translate( 'Get %(planTitle)s - %(planPrice)s/month', {
