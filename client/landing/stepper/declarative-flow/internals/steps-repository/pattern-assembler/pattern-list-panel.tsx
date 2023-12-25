@@ -20,7 +20,7 @@ type PatternListPanelProps = {
 	label?: string;
 	description?: string;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
-	isNewSite?: boolean;
+	isNewSite: boolean;
 };
 
 const PatternListPanel = ( {
@@ -51,7 +51,7 @@ const PatternListPanel = ( {
 	const transformPatternHtml = useCallback(
 		( patternHtml: string ) => {
 			const pageTitles = pages?.map( ( page ) => page.title );
-			const isCategoryHeader = category?.name === 'header';
+			const isCategoryHeader = category && category.name === 'header';
 			if ( isCategoryHeader && pageTitles ) {
 				return injectTitlesToPageListBlock( patternHtml, pageTitles, {
 					replaceCurrentPages: isNewSite,
