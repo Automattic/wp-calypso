@@ -19,7 +19,7 @@ const PlanButton = ( {
 	isStuck = false,
 	isLargeCurrency = false,
 }: {
-	planSlug: PlanSlug;
+	planSlug?: PlanSlug;
 	children: React.ReactNode;
 	classes?: string;
 	href?: string;
