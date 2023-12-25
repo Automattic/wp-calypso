@@ -72,6 +72,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	coupon,
 	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
+	const today = new Date();
+
 	const dispatch = useDispatch();
 
 	/** Currency */
@@ -114,10 +116,13 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ editedDiscountType, setEditedDiscountType ] = useState(
 		coupon?.discount_type ?? COUPON_DISCOUNT_TYPE_PERCENTAGE
 	);
-	const [ editedDiscountAmount, setEditedDiscountAmount ] = useState( () => {
+	const [ editedDiscountPercentage, setEditedDiscountPercentage ] = useState(
+		coupon?.discount_percentage ?? 0
+	);
+	const [ editedDiscountValue, setEditedDiscountValue ] = useState( () => {
 		if ( COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType ) {
 			return (
-				coupon?.discount_amount ??
+				coupon?.discount_value ??
 				minimumCurrencyTransactionAmount(
 					connectedAccountMinimumCurrency,
 					currentDiscountCurrency,
@@ -125,9 +130,12 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				)
 			);
 		}
-		return coupon?.discount_amount ?? '';
+		return coupon?.discount_value ?? '';
 	} );
-	const [ editedStartDate, setEditedStartDate ] = useState( coupon?.start_date ?? '' );
+	const [ editedStartDate, setEditedStartDate ] = useState(
+		coupon?.start_date ??
+			`${ today.getFullYear() + 1 }-${ today.getMonth() + 1 }-${ today.getDate() }`
+	);
 	const [ editedEndDate, setEditedEndDate ] = useState( coupon?.end_date ?? '' );
 	const [ editedProducts, setEditedProducts ] = useState( coupon?.products ?? [] );
 	const [ editedUsageLimit, setEditedUsageLimit ] = useState( coupon?.usage_limit ?? 0 );
@@ -144,9 +152,21 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ editedUseSpecificEmails, setEditedUseSpecificEmails ] = useState(
 		coupon?.use_specific_emails ?? false
 	);
+	const [ editedSpecificEmailsCSV, setEditedSpecificEmailsCSV ] = useState(
+		coupon?.specific_emails?.join( ', ' ) ?? ''
+	);
 	const [ editedSpecificEmails, setEditedSpecificEmails ] = useState(
 		coupon?.specific_emails ?? ''
 	);
+	const [ invalidEditedSpecificEmails, setInvalidEditedSpecificEmails ] = useState( [] );
+	const [ invalidEditedSpecificEmailsLabel, setInvalidEditedSpecificEmailsLabel ] = useState( '' );
+	const [ focusedCouponCode, setFocusedCouponCode ] = useState( false );
+	const [ focusedStartDate, setFocusedStartDate ] = useState( false );
+	const [ focusedEndDate, setFocusedEndDate ] = useState( false );
+	const [ focusedDiscountPercentage, setFocusedDiscountPercentage ] = useState( false );
+	const [ focusedDiscountValue, setFocusedDiscountValue ] = useState( false );
+	const [ focusedUsageLimit, setFocusedUsageLimit ] = useState( false );
+	const [ focusedSpecificEmails, setFocusedSpecificEmails ] = useState( false );
 
 	/** Coupon functions */
 	const generateRandomCouponCode = (): string => {
@@ -196,6 +216,10 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		);
 	};
 
+	/** Email address functions */
+	const validateEmailAddress = ( email: string ): boolean =>
+		/^[\w.\-+*]+@(?:(?:[\w\-*]+(?:\.[\w\-*]+)+)+|(?:[\w\-*]*\*[\w\-*]*)+)+$/.test( email );
+
 	/** Form event handlers */
 	const onCouponCodeChange = ( value: string, event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedCouponCode( event.target.value );
@@ -207,8 +231,10 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		setEditedDescription( event.target.value );
 	const onSelectDiscountType = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDiscountType( event.target.value );
-	const onDiscountAmountChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedDiscountAmount( event.target.value );
+	const onDiscountValueChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+		setEditedDiscountValue( event.target.value );
+	const onDiscountPercentageChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+		setEditedDiscountPercentage( event.target.value );
 	const onStartDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedStartDate( event.target.value );
 	const onEndDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -229,19 +255,87 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	};
 	const onUsageLimitChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedUsageLimit( event.target.value );
-	const onUsageLimitBlur = ( event: ChangeEvent< HTMLSelectElement > ) =>
+	const onUsageLimitBlur = ( event: ChangeEvent< HTMLSelectElement > ) => {
+		setFocusedUsageLimit( true );
 		setEditedUsageLimit( parseInt( event.target.value ) > 0 ? parseInt( event.target.value ) : 0 );
+	};
 	const onSelectDuration = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDuration( event.target.value );
+	const onStartDateBlur = () => setFocusedStartDate( true );
+	const onEndDateBlur = () => setFocusedEndDate( true );
+	const onDiscountPercentageBlur = () => setFocusedDiscountPercentage( true );
+	const onDiscountValueBlur = () => setFocusedDiscountValue( true );
 	const onSpecificEmailsChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedSpecificEmails( event.target.value );
+		setEditedSpecificEmailsCSV( event.target.value );
+	const onSpecificEmailsBlur = ( event: ChangeEvent< HTMLInputElement > ) => {
+		const allEmails = event.target.value.split( ',' ).map( ( email: string ) => email.trim() );
+		const validEmails = allEmails.filter( ( email: string ) => validateEmailAddress( email ) );
+		const invalidEmails = allEmails.filter(
+			( email: string ) => email.trim().length > 0 && ! validEmails.includes( email )
+		);
+		setInvalidEditedSpecificEmails( invalidEmails );
+		if ( invalidEmails.length > 0 ) {
+			setInvalidEditedSpecificEmailsLabel( invalidEmails.join( ', ' ) );
+		} else {
+			setEditedSpecificEmails( validEmails );
+		}
+		setFocusedSpecificEmails( true );
+	};
 
 	/** Form validation */
-	const [ focusedCouponCode, setFocusedCouponCode ] = useState( false );
 	const isFormValid = ( field?: string ) => {
 		if ( ( field === 'coupon_code' || ! field ) && editedCouponCode === '' ) {
 			return false;
 		}
+
+		if (
+			( field === 'discount_value' || ! field ) &&
+			COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType &&
+			editedDiscountValue <= 0
+		) {
+			return false;
+		}
+
+		if (
+			( field === 'discount_percentage' || ! field ) &&
+			COUPON_DISCOUNT_TYPE_PERCENTAGE === editedDiscountType &&
+			( editedDiscountPercentage > 100 || editedDiscountPercentage <= 0 )
+		) {
+			return false;
+		}
+
+		if ( ( field === 'start_date' || ! field ) && editedStartDate === '' ) {
+			return false;
+		}
+
+		if (
+			( field === 'start_date' || ! field ) &&
+			editedEndDate &&
+			editedStartDate &&
+			new Date( editedEndDate ).getTime() < new Date( editedStartDate ).getTime()
+		) {
+			return false;
+		}
+
+		if (
+			( field === 'end_date' || ! field ) &&
+			editedEndDate &&
+			new Date( editedEndDate ).getTime() < new Date().getTime()
+		) {
+			return false;
+		}
+		if ( ( field === 'specific_emails' || ! field ) && editedUseSpecificEmails ) {
+			// invalid if the array of invalid edited emails contains any values.
+			if ( invalidEditedSpecificEmails.length > 0 ) {
+				return false;
+			}
+
+			// invalid if the (validated) array of editedSpecificEmails is empty (but specific emails are in use).
+			if ( editedSpecificEmails.length === 0 ) {
+				return false;
+			}
+		}
+
 		return true;
 	};
 
@@ -251,8 +345,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			coupon_code: editedCouponCode,
 			description: editedDescription,
 			discount_type: editedDiscountType,
-			discount_value: editedDiscountAmount,
-			discount_percentage: editedDiscountAmount, //TODO: divide amount into value and percentage vars
+			discount_value: editedDiscountValue,
+			discount_percentage: editedDiscountPercentage,
 			discount_currency: currentDiscountCurrency,
 			start_date: editedStartDate,
 			end_date: editedEndDate,
@@ -361,21 +455,26 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						</FormSelect>
 					</div>
 					<div className="memberships__dialog-sections-price-field-container">
-						<FormLabel htmlFor="amount">{ translate( 'Amount' ) }</FormLabel>
+						<FormLabel htmlFor="discount_amount">{ translate( 'Amount' ) }</FormLabel>
 						{ COUPON_DISCOUNT_TYPE_PERCENTAGE === editedDiscountType && (
 							<FormTextInputWithAffixes
 								id="discount_amount"
-								value={ editedDiscountAmount }
+								value={ editedDiscountPercentage }
 								suffix="%"
-								onChange={ onDiscountAmountChange }
+								onChange={ onDiscountPercentageChange }
+								onBlur={ onDiscountPercentageBlur }
 							/>
+						) }
+						{ ! isFormValid( 'discount_percentage' ) && focusedDiscountPercentage && (
+							<FormInputValidation isError text={ translate( 'Please enter a valid amount' ) } />
 						) }
 						{ COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType && (
 							<FormCurrencyInput
-								name="discount_type"
-								id="discount_type"
-								value={ editedDiscountAmount }
-								onChange={ onDiscountAmountChange }
+								name="discount_value"
+								id="discount_amount"
+								value={ editedDiscountValue }
+								onChange={ onDiscountValueChange }
+								onBlur={ onDiscountValueBlur }
 								currencySymbolPrefix={ currentDiscountCurrency }
 								onCurrencyChange={ onDiscountCurrencyChange }
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
@@ -384,17 +483,27 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								currencySymbolSuffix={ null }
 							/>
 						) }
+						{ ! isFormValid( 'discount_value' ) && focusedDiscountValue && (
+							<FormInputValidation isError text={ translate( 'Please enter a valid amount' ) } />
+						) }
 					</div>
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-seconds-price">
 					<div className="memberships__dialog-sections-price-field-container">
-						<FormLabel htmlFor="discount_type">{ translate( 'Start date' ) }</FormLabel>
+						<FormLabel htmlFor="start_date">{ translate( 'Start date' ) }</FormLabel>
 						<FormTextInput
 							id="start_date"
 							type="date"
 							value={ editedStartDate }
 							onChange={ onStartDateChange }
+							onBlur={ onStartDateBlur }
 						/>
+						{ ! isFormValid( 'start_date' ) && focusedStartDate && (
+							<FormInputValidation
+								isError
+								text={ translate( 'Please enter a valid start date' ) }
+							/>
+						) }
 					</div>
 					<div className="memberships__dialog-sections-price-field-container">
 						<FormLabel htmlFor="amount">{ translate( 'Expiration date (optional)' ) }</FormLabel>
@@ -403,7 +512,11 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							type="date"
 							value={ editedEndDate }
 							onChange={ onEndDateChange }
+							onBlur={ onEndDateBlur }
 						/>
+						{ ! isFormValid( 'end_date' ) && focusedEndDate && (
+							<FormInputValidation isError text={ translate( 'Please enter a valid end date' ) } />
+						) }
 					</div>
 				</FormFieldset>
 				<FormFieldset>
@@ -479,6 +592,12 @@ const RecurringPaymentsCouponAddEditModal = ( {
 					<FormSettingExplanation>
 						{ translate( 'Limit the number of times this coupon can be redeemed by a supporter.' ) }
 					</FormSettingExplanation>
+					{ ! isFormValid( 'usage_limit' ) && focusedUsageLimit && (
+						<FormInputValidation
+							isError
+							text={ translate( 'Please enter a positive value, or 0 for infinite uses.' ) }
+						/>
+					) }
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-type">
 					<ToggleControl
@@ -524,15 +643,24 @@ const RecurringPaymentsCouponAddEditModal = ( {
 					/>
 					<FormTextInput
 						id="specific_emails"
-						value={ editedSpecificEmails }
+						value={ editedSpecificEmailsCSV }
 						onChange={ onSpecificEmailsChange }
 						disabled={ ! editedUseSpecificEmails }
+						onBlur={ onSpecificEmailsBlur }
 					/>
 					<FormSettingExplanation>
 						{ translate(
 							'Separate email addresses with commas. Use an asterisk (*) to match parts of an email. For example, "*@university.edu" would select all "university.edu" addresses.'
 						) }
 					</FormSettingExplanation>
+					{ ! isFormValid( 'specific_emails' ) && focusedSpecificEmails && (
+						<FormInputValidation
+							isError
+							text={ translate( 'Please fix these invalid email addresses: %s', {
+								args: invalidEditedSpecificEmailsLabel ?? '',
+							} ) }
+						/>
+					) }
 				</FormFieldset>
 			</div>
 		</Dialog>
