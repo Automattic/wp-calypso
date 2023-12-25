@@ -1,4 +1,4 @@
-import { domainProductSlugs, getPlan } from '@automattic/calypso-products';
+import { domainProductSlugs, getPlan, type PlanSlug } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -75,6 +75,43 @@ function LazyDisplayText( {
 	);
 }
 
+// TODO:
+// Replace `getPlanPrices` with the selectors from the Plans datastore.
+const usePlanUpsellInfo = (
+	planSlug: PlanSlug
+): {
+	title: TranslateResult;
+	formattedPriceMonthly: string;
+	formattedPriceFull: string;
+} => {
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
+	const title = getPlan( planSlug )?.getTitle() || '';
+	const priceMonthly = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? null;
+		const rawPlanPrices = getPlanPrices( state, {
+			planSlug,
+			siteId,
+			returnMonthly: true,
+		} );
+		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
+	} );
+	const priceFull = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? null;
+		const rawPlanPrices = getPlanPrices( state, {
+			planSlug,
+			siteId,
+			returnMonthly: false,
+		} );
+		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
+	} );
+
+	return {
+		title,
+		formattedPriceMonthly: formatCurrency( priceMonthly, currencyCode, { stripZeros: true } ),
+		formattedPriceFull: formatCurrency( priceFull, currencyCode, { stripZeros: true } ),
+	};
+};
+
 /**
  * Adds a dialog to the free plan selection flow that explains the benefits of the paid plan
  * The FreeFreeDialog can be read as the modal to show when you
@@ -88,30 +125,12 @@ export function FreePlanFreeDomainDialog( {
 	suggestedPlanSlug,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
 	const domainRegistrationProduct = useSelector( ( state ) =>
 		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
 	);
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
 	const domainProductCost = domainRegistrationProduct?.cost;
-	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
-	const planPriceMonthly = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug: suggestedPlanSlug,
-			siteId,
-			returnMonthly: true,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
-	const planPriceFull = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug: suggestedPlanSlug,
-			siteId,
-			returnMonthly: false,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
+	const primaryUpsellPlanInfo = usePlanUpsellInfo( suggestedPlanSlug );
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
@@ -189,19 +208,16 @@ export function FreePlanFreeDomainDialog( {
 				</ListItem>
 			</List>
 			<TextBox>
-				{ planTitle &&
-					translate(
-						'Unlock {{strong}}all of{{/strong}} these features with a %(planTitle)s plan, starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
-						{
-							args: {
-								planTitle,
-								planPrice: formatCurrency( planPriceMonthly, currencyCode, {
-									stripZeros: true,
-								} ),
-							},
-							components: { break: <br />, strong: <strong></strong> },
-						}
-					) }
+				{ translate(
+					'Unlock {{strong}}all of{{/strong}} these features with a %(planTitle)s plan, starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
+					{
+						args: {
+							planTitle: primaryUpsellPlanInfo.title,
+							planPrice: primaryUpsellPlanInfo.formattedPriceMonthly,
+						},
+						components: { break: <br />, strong: <strong></strong> },
+					}
+				) }
 			</TextBox>
 			<TextBox>
 				{ domainProductCost &&
@@ -224,18 +240,17 @@ export function FreePlanFreeDomainDialog( {
 
 			<ButtonRow>
 				<PlanButton
-					planSlug={ suggestedPlanSlug }
+					planSlug={ PLAN_PERSONAL }
 					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 					onClick={ () => {
-						onPlanSelected();
+						onPlanSelected( PLAN_PERSONAL );
 					} }
 				>
-					{ planTitle &&
-						translate( 'Get the %(planTitle)s plan', {
-							args: {
-								planTitle,
-							},
-						} ) }
+					{ translate( 'Get the %(planTitle)s plan', {
+						args: {
+							planTitle: primaryUpsellPlanInfo.title,
+						},
+					} ) }
 				</PlanButton>
 
 				<PlanButton
@@ -249,21 +264,16 @@ export function FreePlanFreeDomainDialog( {
 				</PlanButton>
 			</ButtonRow>
 			<TextBox fontSize={ 12 } color="gray" noBottomGap>
-				{ planTitle &&
-					translate(
-						'%(planTitle)s plan: %(monthlyPlanPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',
-						{
-							args: {
-								planTitle,
-								monthlyPlanPrice: formatCurrency( planPriceMonthly, currencyCode, {
-									stripZeros: true,
-								} ),
-								annualPlanPrice: formatCurrency( planPriceFull, currencyCode, {
-									stripZeros: true,
-								} ),
-							},
-						}
-					) }
+				{ translate(
+					'%(planTitle)s plan: %(monthlyPlanPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',
+					{
+						args: {
+							planTitle: primaryUpsellPlanInfo.title,
+							monthlyPlanPrice: primaryUpsellPlanInfo.formattedPriceMonthly,
+							annualPlanPrice: primaryUpsellPlanInfo.formattedPriceFull,
+						},
+					}
+				) }
 			</TextBox>
 		</DialogContainer>
 	);
