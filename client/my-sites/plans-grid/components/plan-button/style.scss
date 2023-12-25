@@ -50,19 +50,14 @@
 			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
 		}
 
-		+ .button {
+		+ .button.is-borderless {
+			background: transparent;
 			font-size: $font-body-small;
 			color: #7f54b3;
 			text-decoration: none;
 
 			&:focus {
 				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
-			}
-
-			.gridicon {
-				width: 18px;
-				height: 18px;
-				top: 4px;
 			}
 		}
 	}
