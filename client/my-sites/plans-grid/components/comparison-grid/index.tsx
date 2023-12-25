@@ -1,7 +1,5 @@
 import {
 	getPlanClass,
-	isWpcomEnterpriseGridPlan,
-	isFreePlan,
 	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
@@ -370,7 +368,6 @@ const ComparisonGridHeaderCell = ( {
 	onUpgradeClick,
 	planActionOverrides,
 	isPlanUpgradeCreditEligible,
-	siteId,
 	showRefundPeriod,
 	isStuck,
 }: ComparisonGridHeaderCellProps ) => {
@@ -443,7 +440,6 @@ const ComparisonGridHeaderCell = ( {
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 				isLargeCurrency={ isLargeCurrency }
 				currentSitePlanSlug={ currentSitePlanSlug }
-				siteId={ siteId }
 				visibleGridPlans={ visibleGridPlans }
 			/>
 			<div className="plan-comparison-grid__billing-info">
@@ -455,9 +451,6 @@ const ComparisonGridHeaderCell = ( {
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
 				availableForPurchase={ gridPlan.availableForPurchase }
-				className={ getPlanClass( planSlug ) }
-				freePlan={ isFreePlan( planSlug ) }
-				isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
