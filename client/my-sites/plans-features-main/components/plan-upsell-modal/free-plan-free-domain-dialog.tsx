@@ -1,4 +1,9 @@
-import { domainProductSlugs, getPlan, type PlanSlug } from '@automattic/calypso-products';
+import {
+	domainProductSlugs,
+	getPlan,
+	type PlanSlug,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -78,13 +83,13 @@ function LazyDisplayText( {
 // TODO:
 // Replace `getPlanPrices` with the selectors from the Plans datastore.
 const usePlanUpsellInfo = (
-	planSlug: PlanSlug
+	planSlug: PlanSlug,
+	currencyCode: string
 ): {
 	title: TranslateResult;
 	formattedPriceMonthly: string;
 	formattedPriceFull: string;
 } => {
-	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
 	const title = getPlan( planSlug )?.getTitle() || '';
 	const priceMonthly = useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) ?? null;
@@ -130,7 +135,9 @@ export function FreePlanFreeDomainDialog( {
 	);
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
 	const domainProductCost = domainRegistrationProduct?.cost;
-	const primaryUpsellPlanInfo = usePlanUpsellInfo( suggestedPlanSlug );
+	const primaryUpsellPlanInfo = usePlanUpsellInfo( suggestedPlanSlug, currencyCode );
+	const secondaryUpsellPlanInfo = usePlanUpsellInfo( PLAN_PREMIUM, currencyCode );
+	const buttonDisabled = generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result;
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
@@ -240,10 +247,10 @@ export function FreePlanFreeDomainDialog( {
 
 			<ButtonRow>
 				<PlanButton
-					planSlug={ PLAN_PERSONAL }
-					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
+					planSlug={ suggestedPlanSlug }
+					disabled={ buttonDisabled }
 					onClick={ () => {
-						onPlanSelected( PLAN_PERSONAL );
+						onPlanSelected( suggestedPlanSlug );
 					} }
 				>
 					{ translate( 'Get the %(planTitle)s plan', {
@@ -252,9 +259,23 @@ export function FreePlanFreeDomainDialog( {
 						},
 					} ) }
 				</PlanButton>
-
 				<PlanButton
-					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
+					planSlug={ PLAN_PREMIUM }
+					disabled={ buttonDisabled }
+					onClick={ () => {
+						onPlanSelected( PLAN_PREMIUM );
+					} }
+				>
+					{ translate( 'Get the %(planTitle)s plan', {
+						args: {
+							planTitle: secondaryUpsellPlanInfo.title,
+						},
+					} ) }
+				</PlanButton>
+			</ButtonRow>
+			<ButtonRow>
+				<PlanButton
+					disabled={ buttonDisabled }
 					onClick={ () => {
 						onFreePlanSelected();
 					} }
