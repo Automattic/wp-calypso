@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
+import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { capitalize, get, isEmpty, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -146,7 +147,7 @@ class Login extends Component {
 		if (
 			this.props.isJetpackWooDnaFlow &&
 			this.props.requestError?.code === 'unknown_user' &&
-			this.props.usernameOrEmail.includes( '@' )
+			emailValidator.validate( this.props.usernameOrEmail )
 		) {
 			this.sendMagicLoginLink( {
 				createAccount: true,
