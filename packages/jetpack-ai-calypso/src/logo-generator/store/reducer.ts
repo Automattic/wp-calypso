@@ -6,21 +6,21 @@ import {
 	ACTION_ENQUEUE_ASYNC_REQUEST,
 	ACTION_INCREASE_AI_ASSISTANT_REQUESTS_COUNT,
 	ACTION_REQUEST_AI_ASSISTANT_FEATURE,
-	ACTION_SET_PLANS,
 	ACTION_SET_AI_ASSISTANT_FEATURE_REQUIRE_UPGRADE,
 	ACTION_STORE_AI_ASSISTANT_FEATURE,
 	ASYNC_REQUEST_COUNTDOWN_INIT_VALUE,
 	FREE_PLAN_REQUESTS_LIMIT,
 	UNLIMITED_PLAN_REQUESTS_LIMIT,
 	ACTION_SET_TIER_PLANS_ENABLED,
+	ACTION_SET_SITE_DETAILS,
 } from './constants';
-import type { PlanStateProps, TierLimitProp } from './types';
+import type { LogoGeneratorStateProp, TierLimitProp } from './types';
 
-const INITIAL_STATE: PlanStateProps = {
-	plans: [],
+const INITIAL_STATE: LogoGeneratorStateProp = {
+	siteDetails: {},
+	suggestions: [],
 	features: {
-		aiAssistant: {
-			siteId: '',
+		aiAssistantFeature: {
 			hasFeature: true,
 			isOverLimit: false,
 			requestsCount: 0,
@@ -52,21 +52,15 @@ const INITIAL_STATE: PlanStateProps = {
 
 export default function reducer( state = INITIAL_STATE, action: any ) {
 	switch ( action.type ) {
-		case ACTION_SET_PLANS:
-			return {
-				...state,
-				plans: action.plans,
-			};
-
 		case ACTION_REQUEST_AI_ASSISTANT_FEATURE:
 			return {
 				...state,
 				features: {
 					...state.features,
-					aiAssistant: {
-						...state.features.aiAssistant,
+					aiAssistantFeature: {
+						...state.features.aiAssistantFeature,
 						_meta: {
-							...state?.features?.aiAssistant?._meta,
+							...state?.features?.aiAssistantFeature?._meta,
 							isRequesting: true,
 							asyncRequestCountdown: ASYNC_REQUEST_COUNTDOWN_INIT_VALUE, // restore the countdown
 							asyncRequestTimerId: 0, // reset the timer id
@@ -80,10 +74,10 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				...state,
 				features: {
 					...state.features,
-					aiAssistant: {
+					aiAssistantFeature: {
 						...action.feature,
 						_meta: {
-							...state?.features?.aiAssistant?._meta,
+							...state?.features?.aiAssistantFeature?._meta,
 							isRequesting: false,
 						},
 					},
@@ -93,37 +87,39 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 
 		case ACTION_INCREASE_AI_ASSISTANT_REQUESTS_COUNT: {
 			// Usage Period data
-			const usagePeriod = state?.features?.aiAssistant?.usagePeriod || { requestsCount: 0 };
+			const usagePeriod = state?.features?.aiAssistantFeature?.usagePeriod || { requestsCount: 0 };
 
 			// Increase requests counters
-			const requestsCount = state?.features?.aiAssistant?.requestsCount + action.count;
+			const requestsCount = state?.features?.aiAssistantFeature?.requestsCount + action.count;
 			usagePeriod.requestsCount += action.count;
 
 			// Current tier value
-			const currentTierValue = state?.features?.aiAssistant?.currentTier?.value;
+			const currentTierValue = state?.features?.aiAssistantFeature?.currentTier?.value;
 
 			const isFreeTierPlan =
-				( typeof currentTierValue === 'undefined' && ! state?.features?.aiAssistant?.hasFeature ) ||
+				( typeof currentTierValue === 'undefined' &&
+					! state?.features?.aiAssistantFeature?.hasFeature ) ||
 				currentTierValue === 0;
 
 			const isUnlimitedTierPlan =
-				( typeof currentTierValue === 'undefined' && state?.features?.aiAssistant?.hasFeature ) ||
+				( typeof currentTierValue === 'undefined' &&
+					state?.features?.aiAssistantFeature?.hasFeature ) ||
 				currentTierValue === 1;
 
 			// Request limit defined with the current tier limit by default.
 			let requestsLimit: TierLimitProp =
-				state?.features?.aiAssistant?.currentTier?.limit || FREE_PLAN_REQUESTS_LIMIT;
+				state?.features?.aiAssistantFeature?.currentTier?.limit || FREE_PLAN_REQUESTS_LIMIT;
 
 			if ( isUnlimitedTierPlan ) {
 				requestsLimit = UNLIMITED_PLAN_REQUESTS_LIMIT;
 			} else if ( isFreeTierPlan ) {
-				requestsLimit = state?.features?.aiAssistant?.requestsLimit as TierLimitProp;
+				requestsLimit = state?.features?.aiAssistantFeature?.requestsLimit as TierLimitProp;
 			}
 
 			const currentCount =
 				isUnlimitedTierPlan || isFreeTierPlan // @todo: update once tier data is available
 					? requestsCount
-					: state?.features?.aiAssistant?.usagePeriod?.requestsCount;
+					: state?.features?.aiAssistantFeature?.usagePeriod?.requestsCount;
 
 			/**
 			 * Compute the AI Assistant Feature data optimistically,
@@ -134,14 +130,14 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			const isOverLimit = currentCount >= requestsLimit;
 
 			// highest tier holds a soft limit so requireUpgrade is false on that case (nextTier null means highest tier)
-			const requireUpgrade = isOverLimit && state?.features?.aiAssistant?.nextTier !== null;
+			const requireUpgrade = isOverLimit && state?.features?.aiAssistantFeature?.nextTier !== null;
 
 			return {
 				...state,
 				features: {
 					...state.features,
-					aiAssistant: {
-						...state.features.aiAssistant,
+					aiAssistantFeature: {
+						...state.features.aiAssistantFeature,
 						isOverLimit,
 						requestsCount,
 						requireUpgrade,
@@ -156,12 +152,12 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				...state,
 				features: {
 					...state.features,
-					aiAssistant: {
-						...state.features.aiAssistant,
+					aiAssistantFeature: {
+						...state.features.aiAssistantFeature,
 						_meta: {
-							...state?.features?.aiAssistant?._meta,
+							...state?.features?.aiAssistantFeature?._meta,
 							asyncRequestCountdown:
-								( state?.features?.aiAssistant?._meta?.asyncRequestCountdown || 0 ) - 1,
+								( state?.features?.aiAssistantFeature?._meta?.asyncRequestCountdown || 0 ) - 1,
 						},
 					},
 				},
@@ -173,10 +169,10 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				...state,
 				features: {
 					...state.features,
-					aiAssistant: {
-						...state.features.aiAssistant,
+					aiAssistantFeature: {
+						...state.features.aiAssistantFeature,
 						_meta: {
-							...state?.features?.aiAssistant?._meta,
+							...state?.features?.aiAssistantFeature?._meta,
 							asyncRequestTimerId: action.timerId,
 						},
 					},
@@ -195,8 +191,8 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				...state,
 				features: {
 					...state.features,
-					aiAssistant: {
-						...state.features.aiAssistant,
+					aiAssistantFeature: {
+						...state.features.aiAssistantFeature,
 						requireUpgrade: action.requireUpgrade,
 						...( action.requireUpgrade ? { isOverLimit: true } : {} ),
 					},
@@ -209,11 +205,18 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				...state,
 				features: {
 					...state.features,
-					aiAssistant: {
-						...state.features.aiAssistant,
+					aiAssistantFeature: {
+						...state.features.aiAssistantFeature,
 						tierPlansEnabled: action.tierPlansEnabled,
 					},
 				},
+			};
+		}
+
+		case ACTION_SET_SITE_DETAILS: {
+			return {
+				...state,
+				siteDetails: action.siteDetails,
 			};
 		}
 	}
