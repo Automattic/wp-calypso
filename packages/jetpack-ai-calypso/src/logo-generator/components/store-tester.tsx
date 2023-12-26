@@ -3,26 +3,42 @@
  */
 import { Button, Modal } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data'; // Add the missing import statement for 'select'
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import { STORE_WPCOM_PLANS } from '../store';
+import { STORE_NAME } from '../store';
 import './generator-modal.scss';
+/**
+ * Types
+ */
+import type { GeneratorModalProps } from '../../types';
 
-interface StoreTesterProps {
-	siteId: string;
-	isOpen: boolean;
-	onClose: () => void;
-}
-
-export const StoreTester: React.FC< StoreTesterProps > = ( { isOpen, onClose, siteId } ) => {
-	const { increaseAiAssistantRequestsCount } = useDispatch( STORE_WPCOM_PLANS );
-	const aiData = useSelect(
-		// @ts-expect-error Missing type definition
-		( select ) => ( siteId ? select( STORE_WPCOM_PLANS ).getAiAssistantFeature( siteId ) : {} ),
-		[ siteId ]
+export const StoreTester: React.FC< GeneratorModalProps > = ( {
+	isOpen,
+	onClose,
+	siteDetails,
+} ) => {
+	const siteId = siteDetails?.ID;
+	const { increaseAiAssistantRequestsCount, setSiteDetails } = useDispatch( STORE_NAME );
+	const [ isLoadingAiFeatureData, aiFeatureData ] = useSelect(
+		( select ) => {
+			if ( ! isOpen ) {
+				return [ false, {} ];
+			}
+			return [
+				// @ts-expect-error Missing type definition
+				select( STORE_NAME ).getIsRequestingAiAssistantFeature(),
+				// @ts-expect-error Missing type definition
+				siteId ? select( STORE_NAME ).getAiAssistantFeature( siteId ) : {},
+			];
+		},
+		[ siteId, isOpen ]
 	);
+
+	useEffect( () => {
+		setSiteDetails( siteDetails );
+	}, [ siteDetails, setSiteDetails ] );
 
 	const handleIncreaseCount = useCallback( () => {
 		increaseAiAssistantRequestsCount();
@@ -39,10 +55,22 @@ export const StoreTester: React.FC< StoreTesterProps > = ( { isOpen, onClose, si
 					title="Jetpack AI Logo Generator Store Tester"
 				>
 					<div className="jetpack-ai-logo-generator-modal__body">
-						<Button variant="primary" onClick={ handleIncreaseCount }>
+						<Button
+							disabled={ isLoadingAiFeatureData }
+							variant="primary"
+							onClick={ handleIncreaseCount }
+						>
 							Increase
 						</Button>
-						<pre>{ JSON.stringify( aiData, null, 2 ) }</pre>
+						<br />
+						{ isLoadingAiFeatureData ? (
+							<p>Loading...</p>
+						) : (
+							<>
+								<span>aiFeatureData</span>: <pre>{ JSON.stringify( aiFeatureData, null, 2 ) }</pre>
+								<span>siteDetails:</span>: <pre>{ JSON.stringify( siteDetails, null, 2 ) }</pre>
+							</>
+						) }
 					</div>
 				</Modal>
 			) }
