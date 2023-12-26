@@ -109,8 +109,11 @@ export function getStylesColorFromVariation(
 	const colorBase = getColorBaseFromColors( palette );
 	const colorList = palette.map( ( item ) => item.color );
 
-	return {
-		background: colorBase,
-		text: findColorBestAnalogous( colorList, colorBase ),
-	};
+	try {
+		return { background: colorBase, text: findColorBestAnalogous( colorList, colorBase ) };
+	} catch ( e ) {
+		// eslint-disable-next-line no-console
+		console.error( e, variation );
+		return null;
+	}
 }
