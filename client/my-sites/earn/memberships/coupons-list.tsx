@@ -19,7 +19,7 @@ import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsCouponAddEditModal from '../components/add-edit-coupon-modal';
-import { Coupon } from '../types';
+import { Coupon, Product } from '../types';
 import {
 	ADD_NEW_COUPON_HASH,
 	COUPON_DISCOUNT_TYPE_AMOUNT,
@@ -98,6 +98,40 @@ function CouponsList() {
 		setShowDeleteDialog( false );
 	}
 
+	function getDiscountBadge(
+		duration: string,
+		amountType: string,
+		amount: number,
+		currencyCode: string = ''
+	) {
+		const formattedAmount =
+			COUPON_DISCOUNT_TYPE_PERCENTAGE === amountType
+				? amount + '%'
+				: formatCurrency( amount, currencyCode );
+		switch ( duration ) {
+			case COUPON_DURATION_1_MONTH:
+				return translate( '%s off for 1 month', {
+					args: [ formattedAmount ],
+				} );
+			case COUPON_DURATION_3_MONTHS:
+				return translate( '%s off for 3 months', {
+					args: [ formattedAmount ],
+				} );
+			case COUPON_DURATION_6_MONTHS:
+				return translate( '%s off for 6 months', {
+					args: [ formattedAmount ],
+				} );
+			case COUPON_DURATION_1_YEAR:
+				return translate( '%s off for 1 year', {
+					args: [ formattedAmount ],
+				} );
+			case COUPON_DURATION_FOREVER:
+				return translate( '%s off forever', {
+					args: [ formattedAmount ],
+				} );
+		}
+	}
+
 	useEffect( () => {
 		const showAddEditDialogInitially = window.location.hash === ADD_NEW_COUPON_HASH;
 
@@ -125,9 +159,9 @@ function CouponsList() {
 								<div className="memberships__products-product-title">
 									{ currentCoupon?.coupon_code }
 								</div>
-								<div className="memberships__products-product-description">
+								{ /* <div className="memberships__products-product-description">
 									{ currentCoupon?.description }
-								</div>
+								</div> */ }
 								<sub className="memberships__products-product-price"></sub>
 								{ currentCoupon?.end_date && (
 									<div className="memberships__products-product-badge">
@@ -136,71 +170,27 @@ function CouponsList() {
 										</Badge>
 									</div>
 								) }
-								{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
-									<div className="memberships__products-product-badge">
-										<Badge type="warning-clear">
-											{ ( (): string => {
-												if ( currentCoupon?.use_duration ) {
-													switch ( currentCoupon?.duration ) {
-														case COUPON_DURATION_1_MONTH:
-															return translate( '%s% off for 1 month', {
-																args: [ currentCoupon?.discount_percentage ],
-															} );
-														case COUPON_DURATION_3_MONTHS:
-															return translate( '%s% off for 3 months', {
-																args: [ currentCoupon?.discount_percentage ],
-															} );
-														case COUPON_DURATION_6_MONTHS:
-															return translate( '%s% off for 6 months', {
-																args: [ currentCoupon?.discount_percentage ],
-															} );
-														case COUPON_DURATION_1_YEAR:
-															return translate( '%s% off for 1 year', {
-																args: [ currentCoupon?.discount_percentage ],
-															} );
-														case COUPON_DURATION_FOREVER:
-															return translate( '%s% off forever', {
-																args: [ currentCoupon?.discount_percentage ],
-															} );
-													}
-												}
-											} )() }
-										</Badge>
-									</div>
-								) }
+								{ currentCoupon?.use_duration &&
+									currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
+										<div className="memberships__products-product-badge">
+											<Badge type="warning-clear">
+												{ getDiscountBadge(
+													currentCoupon?.duration,
+													currentCoupon?.discount_type,
+													currentCoupon?.discount_percentage
+												) }
+											</Badge>
+										</div>
+									) }
 								{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_AMOUNT && (
 									<div className="memberships__products-product-badge">
 										<Badge type="warning-clear">
-											{ ( (): string => {
-												const formattedValue = formatCurrency(
-													currentCoupon?.discount_value,
-													currentCoupon?.discount_currency
-												);
-												if ( currentCoupon?.use_duration ) {
-													switch ( currentCoupon?.duration ) {
-														case COUPON_DURATION_1_MONTH:
-															return translate( '%s off for 1 month', {
-																args: [ formattedValue ],
-															} );
-														case COUPON_DURATION_3_MONTHS:
-															return translate( '%s off for 3 months', {
-																args: [ formattedValue ],
-															} );
-														case COUPON_DURATION_6_MONTHS:
-															return translate( '%s off for 6 months', {
-																args: [ formattedValue ],
-															} );
-														case COUPON_DURATION_1_YEAR:
-															return translate( '%s off for 1 year', {
-																args: [ formattedValue ],
-															} );
-														case COUPON_DURATION_FOREVER:
-															return translate( '%s off forever', {
-																args: [ formattedValue ],
-															} );
-													}
-												}
-											} )() }
+											{ getDiscountBadge(
+												currentCoupon?.duration,
+												currentCoupon?.discount_type,
+												currentCoupon?.discount_value,
+												currentCoupon?.discount_currency
+											) }
 										</Badge>
 									</div>
 								) }
