@@ -9,6 +9,11 @@
 	align-items: center;
 	flex-grow: 1;
 	max-height: 229px;
+
+	@media (max-width: 699px) {
+		flex-direction: column;
+		max-height: unset;
+	}
 }
 
 .jetpack-ai-logo-generator-modal-presenter__rectangle {
@@ -34,16 +39,24 @@
 
 .jetpack-ai-logo-generator-modal-presenter__logo {
 	margin: 16px 30px 16px 16px;
+
+	@media (max-width: 699px) {
+		margin: 16px;
+	}
 }
 
 .jetpack-ai-logo-generator-modal-presenter__action-wrapper {
 	height: 100%;
 	flex-grow: 1;
-	margin-right: 31px;
+	margin-right: 32px;
 	display: flex;
 	flex-direction: column;
 	padding: 16px 0;
 	box-sizing: border-box;
+
+	@media (max-width: 699px) {
+		margin-left: 32px;
+	}
 }
 
 .jetpack-ai-logo-generator-modal-presenter__description {
