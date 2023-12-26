@@ -40,7 +40,7 @@ export default function SuggestedPlanSection( {
 			<PlanUpsellButton
 				planUpsellInfo={ basicPlanUpsellInfo }
 				onPlanSelected={ onPlanSelected }
-				disabled={ isBusy }
+				isBusy={ isBusy }
 			/>
 			{ paidDomainName && (
 				<DomainName>
@@ -53,7 +53,7 @@ export default function SuggestedPlanSection( {
 			<PlanUpsellButton
 				planUpsellInfo={ advancePlanUpsellInfo }
 				onPlanSelected={ onPlanSelected }
-				disabled={ isBusy }
+				isBusy={ isBusy }
 			/>
 		</>
 	);

@@ -7,10 +7,12 @@ function PlanUpsellButton( {
 	planUpsellInfo,
 	onPlanSelected,
 	disabled = false,
+	isBusy = false,
 }: {
 	planUpsellInfo: PlanUpsellInfo;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
 	disabled?: boolean;
+	isBusy?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -18,6 +20,7 @@ function PlanUpsellButton( {
 		<PlanButton
 			planSlug={ planUpsellInfo.planSlug }
 			disabled={ disabled }
+			busy={ isBusy }
 			onClick={ () => {
 				onPlanSelected( planUpsellInfo.planSlug );
 			} }
