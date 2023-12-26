@@ -80,16 +80,16 @@ function LazyDisplayText( {
 	);
 }
 
-// TODO:
-// Replace `getPlanPrices` with the selectors from the Plans datastore.
-const usePlanUpsellInfo = (
-	planSlug: PlanSlug,
-	currencyCode: string
-): {
+type PlanUpsellInfo = {
+	planSlug: PlanSlug;
 	title: TranslateResult;
 	formattedPriceMonthly: string;
 	formattedPriceFull: string;
-} => {
+};
+
+// TODO:
+// Replace `getPlanPrices` with the selectors from the Plans datastore.
+const usePlanUpsellInfo = ( planSlug: PlanSlug, currencyCode: string ): PlanUpsellInfo => {
 	const title = getPlan( planSlug )?.getTitle() || '';
 	const priceMonthly = useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) ?? null;
@@ -111,11 +111,42 @@ const usePlanUpsellInfo = (
 	} );
 
 	return {
+		planSlug,
 		title,
 		formattedPriceMonthly: formatCurrency( priceMonthly, currencyCode, { stripZeros: true } ),
 		formattedPriceFull: formatCurrency( priceFull, currencyCode, { stripZeros: true } ),
 	};
 };
+
+function PlanUpsellButton( {
+	planUpsellInfo,
+	onPlanSelected,
+	disabled = false,
+}: {
+	planUpsellInfo: PlanUpsellInfo;
+	onPlanSelected: ( planSlug: PlanSlug ) => void;
+	disabled?: boolean;
+} ) {
+	const translate = useTranslate();
+
+	return (
+		<PlanButton
+			planSlug={ planUpsellInfo.planSlug }
+			disabled={ disabled }
+			onClick={ () => {
+				onPlanSelected( planUpsellInfo.planSlug );
+			} }
+		>
+			{ translate( 'Get %(planTitle)s - %(planPrice)s/month', {
+				comment: 'Eg: Get Personal $4/month',
+				args: {
+					planTitle: planUpsellInfo.title,
+					planPrice: planUpsellInfo.formattedPriceMonthly,
+				},
+			} ) }
+		</PlanButton>
+	);
+}
 
 /**
  * Adds a dialog to the free plan selection flow that explains the benefits of the paid plan
@@ -246,32 +277,16 @@ export function FreePlanFreeDomainDialog( {
 			</TextBox>
 
 			<ButtonRow>
-				<PlanButton
-					planSlug={ suggestedPlanSlug }
+				<PlanUpsellButton
+					planUpsellInfo={ primaryUpsellPlanInfo }
 					disabled={ buttonDisabled }
-					onClick={ () => {
-						onPlanSelected( suggestedPlanSlug );
-					} }
-				>
-					{ translate( 'Get the %(planTitle)s plan', {
-						args: {
-							planTitle: primaryUpsellPlanInfo.title,
-						},
-					} ) }
-				</PlanButton>
-				<PlanButton
-					planSlug={ PLAN_PREMIUM }
+					onPlanSelected={ onPlanSelected }
+				/>
+				<PlanUpsellButton
+					planUpsellInfo={ secondaryUpsellPlanInfo }
 					disabled={ buttonDisabled }
-					onClick={ () => {
-						onPlanSelected( PLAN_PREMIUM );
-					} }
-				>
-					{ translate( 'Get the %(planTitle)s plan', {
-						args: {
-							planTitle: secondaryUpsellPlanInfo.title,
-						},
-					} ) }
-				</PlanButton>
+					onPlanSelected={ onPlanSelected }
+				/>
 			</ButtonRow>
 			<ButtonRow>
 				<PlanButton
