@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { Modal } from '@wordpress/components';
+import { Icon, Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { external } from '@wordpress/icons';
 import React, { useState, useEffect } from 'react';
 /**
  * Internal dependencies
@@ -47,7 +48,17 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 								<Prompt />
 								<LogoPresenter description="A publishing company in the form of a greek statue." />
 								<div className="jetpack-ai-logo-generator__carousel">{ /** carousel row */ }</div>
-								<div className="jetpack-ai-logo-generator__footer">{ /** footer row */ }</div>
+								<div className="jetpack-ai-logo-generator__footer">
+									<Button
+										variant="link"
+										className="jetpack-ai-logo-generator__feedback-button"
+										href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
+										target="_blank"
+									>
+										<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
+										<Icon icon={ external } className="icon" />
+									</Button>
+								</div>
 							</>
 						) }
 					</div>
