@@ -1202,7 +1202,10 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to %(socialNetworksList)s', { args: { socialNetworksList } } ),
+		translate( 'Share to %(socialNetworksList)s', {
+			args: { socialNetworksList },
+			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
+		} ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -1210,7 +1213,10 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to %(socialNetworksList)s', { args: { socialNetworksList } } ),
+		translate( 'Share to %(socialNetworksList)s', {
+			args: { socialNetworksList },
+			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
+		} ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
