@@ -136,10 +136,10 @@ function StatsCommercialUpgradeSlider( {
 	};
 
 	useEffect( () => {
-		// Update the first step with the fetched tier quantity back to the parent component.
+		// Update fetched tier quantity of the first step back to the parent component for checkout.
 		const firstStepQuantity = getTierQuentity( tiers[ 0 ], true );
 		onSliderChange( firstStepQuantity as number );
-	} );
+	}, [ JSON.stringify( tiers ), onSliderChange ] );
 
 	return (
 		<TierUpgradeSlider

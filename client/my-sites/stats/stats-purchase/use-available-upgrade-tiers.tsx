@@ -154,6 +154,7 @@ function useAvailableUpgradeTiers(
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
 	) as ProductsList.ProductsListItem | null;
+	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
 	const { data: usageData } = usePlanUsageQuery( siteId );
 
 	if ( ! commercialProduct || ! usageData ) {
