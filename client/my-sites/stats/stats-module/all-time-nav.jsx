@@ -33,6 +33,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		hideNavigation,
 		navigationSwap,
 		shouldGateOptions,
+		onGatedClick,
 	} = props;
 
 	const getSummaryPeriodLabel = () => {
@@ -50,6 +51,12 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 	const recordStats = ( item ) => {
 		props.recordGoogleEvent( 'Stats', `Clicked Summary Link: ${ path } ${ item.stat }` );
+	};
+
+	const handleClick = ( item ) => () => {
+		if ( item.isGated ) {
+			return onGatedClick( item );
+		}
 	};
 
 	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format(
@@ -115,11 +122,9 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			{ options.map( ( i ) => (
 				<SegmentedControl.Item
 					key={ i.value }
-					path={ i.path }
+					path={ i.isGated ? '' : i.path }
 					selected={ i.value === selected.value }
-					onClick={ () => {
-						recordStats( i );
-					} }
+					onClick={ handleClick( i ) }
 				>
 					{ i.label }
 					{ i.isGated && <Icon icon={ lock } width={ 16 } height={ 16 } /> }
