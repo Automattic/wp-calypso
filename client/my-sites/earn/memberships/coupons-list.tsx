@@ -5,7 +5,6 @@ import {
 } from '@automattic/calypso-products';
 import { CompactCard, Button, Badge, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
-import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import QueryMembershipsCoupons from 'calypso/components/data/query-memberships-coupons';
@@ -25,6 +24,11 @@ import {
 	ADD_NEW_COUPON_HASH,
 	COUPON_DISCOUNT_TYPE_AMOUNT,
 	COUPON_DISCOUNT_TYPE_PERCENTAGE,
+	COUPON_DURATION_1_MONTH,
+	COUPON_DURATION_1_YEAR,
+	COUPON_DURATION_3_MONTHS,
+	COUPON_DURATION_6_MONTHS,
+	COUPON_DURATION_FOREVER,
 } from './constants';
 
 import './style.scss';
@@ -135,28 +139,72 @@ function CouponsList() {
 								{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
 									<div className="memberships__products-product-badge">
 										<Badge type="warning-clear">
-											{ sprintf( __( '%s% off %s' ), [
-												currentCoupon.discount_percentage,
-												currentCoupon.duration,
-											] ) }
+											{ ( (): string => {
+												if ( currentCoupon?.use_duration ) {
+													switch ( currentCoupon?.duration ) {
+														case COUPON_DURATION_1_MONTH:
+															return translate( '%s% off for 1 month', {
+																args: [ currentCoupon?.discount_percentage ],
+															} );
+														case COUPON_DURATION_3_MONTHS:
+															return translate( '%s% off for 3 months', {
+																args: [ currentCoupon?.discount_percentage ],
+															} );
+														case COUPON_DURATION_6_MONTHS:
+															return translate( '%s% off for 6 months', {
+																args: [ currentCoupon?.discount_percentage ],
+															} );
+														case COUPON_DURATION_1_YEAR:
+															return translate( '%s% off for 1 year', {
+																args: [ currentCoupon?.discount_percentage ],
+															} );
+														case COUPON_DURATION_FOREVER:
+															return translate( '%s% off forever', {
+																args: [ currentCoupon?.discount_percentage ],
+															} );
+													}
+												}
+											} )() }
 										</Badge>
 									</div>
 								) }
 								{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_AMOUNT && (
 									<div className="memberships__products-product-badge">
 										<Badge type="warning-clear">
-											{ sprintf(
-												__( '%s off %s' ),
-												formatCurrency(
-													currentCoupon.discount_value,
-													currentCoupon.discount_currency
-												),
-												currentCoupon.duration
-											) }
+											{ ( (): string => {
+												const formattedValue = formatCurrency(
+													currentCoupon?.discount_value,
+													currentCoupon?.discount_currency
+												);
+												if ( currentCoupon?.use_duration ) {
+													switch ( currentCoupon?.duration ) {
+														case COUPON_DURATION_1_MONTH:
+															return translate( '%s off for 1 month', {
+																args: [ formattedValue ],
+															} );
+														case COUPON_DURATION_3_MONTHS:
+															return translate( '%s off for 3 months', {
+																args: [ formattedValue ],
+															} );
+														case COUPON_DURATION_6_MONTHS:
+															return translate( '%s off for 6 months', {
+																args: [ formattedValue ],
+															} );
+														case COUPON_DURATION_1_YEAR:
+															return translate( '%s off for 1 year', {
+																args: [ formattedValue ],
+															} );
+														case COUPON_DURATION_FOREVER:
+															return translate( '%s off forever', {
+																args: [ formattedValue ],
+															} );
+													}
+												}
+											} )() }
 										</Badge>
 									</div>
 								) }
-								{ ! currentCoupon?.can_be_combined && (
+								{ ! currentCoupon?.cannot_be_combined && (
 									<div className="memberships__products-product-badge">
 										<Badge type="info-blue">
 											{ translate( 'Cannot be combined with other coupons' ) }

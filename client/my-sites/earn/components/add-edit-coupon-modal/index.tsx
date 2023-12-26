@@ -36,6 +36,7 @@ import {
 	COUPON_PRODUCTS_ANY,
 	COUPON_RANDOM_GENERATOR_CHARSET,
 	COUPON_RANDOM_GENERATOR_LENGTH,
+	COUPON_USAGE_LIMIT_INFINITE,
 } from '../../memberships/constants';
 import { Product, Coupon } from '../../types';
 import FormTextInputWithRandomCodeGeneration from '../form-text-input-with-value-generation';
@@ -112,12 +113,12 @@ const RecurringPaymentsCouponAddEditModal = ( {
 
 	/** Edited form values */
 	const [ editedCouponCode, setEditedCouponCode ] = useState( coupon?.coupon_code ?? '' );
-	const [ editedDescription, setEditedDescription ] = useState( coupon?.description ?? '' );
+	// const [ editedDescription, setEditedDescription ] = useState( coupon?.description ?? '' );
 	const [ editedDiscountType, setEditedDiscountType ] = useState(
 		coupon?.discount_type ?? COUPON_DISCOUNT_TYPE_PERCENTAGE
 	);
 	const [ editedDiscountPercentage, setEditedDiscountPercentage ] = useState(
-		coupon?.discount_percentage ?? 0
+		coupon?.discount_percentage ?? ''
 	);
 	const [ editedDiscountValue, setEditedDiscountValue ] = useState( () => {
 		if ( COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType ) {
@@ -139,8 +140,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ editedEndDate, setEditedEndDate ] = useState( coupon?.end_date ?? '' );
 	const [ editedProducts, setEditedProducts ] = useState( coupon?.products ?? [] );
 	const [ editedUsageLimit, setEditedUsageLimit ] = useState( coupon?.usage_limit ?? 0 );
-	const [ editedCanBeCombined, setEditedCanBeCombined ] = useState(
-		coupon?.can_be_combined ?? false
+	const [ editedCannotBeCombined, setEditedCannotBeCombined ] = useState(
+		coupon?.cannot_be_combined ?? false
 	);
 	const [ editedFirstTimeOnly, setEditedFirstTimeOnly ] = useState(
 		coupon?.first_time_only ?? false
@@ -163,6 +164,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ focusedCouponCode, setFocusedCouponCode ] = useState( false );
 	const [ focusedStartDate, setFocusedStartDate ] = useState( false );
 	const [ focusedEndDate, setFocusedEndDate ] = useState( false );
+	const [ focusedDiscountType, setFocusedDiscountType ] = useState( false );
 	const [ focusedDiscountPercentage, setFocusedDiscountPercentage ] = useState( false );
 	const [ focusedDiscountValue, setFocusedDiscountValue ] = useState( false );
 	const [ focusedUsageLimit, setFocusedUsageLimit ] = useState( false );
@@ -221,14 +223,14 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		/^[\w.\-+*]+@(?:(?:[\w\-*]+(?:\.[\w\-*]+)+)+|(?:[\w\-*]*\*[\w\-*]*)+)+$/.test( email );
 
 	/** Form event handlers */
-	const onCouponCodeChange = ( value: string, event: ChangeEvent< HTMLInputElement > ) =>
+	const onCouponCodeChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedCouponCode( event.target.value );
 	const onCouponCodeRandomize = () => {
 		const code = generateRandomCouponCode();
 		setEditedCouponCode( code );
 	};
-	const onDescriptionChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedDescription( event.target.value );
+	/* const onDescriptionChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+		setEditedDescription( event.target.value );*/
 	const onSelectDiscountType = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDiscountType( event.target.value );
 	const onDiscountValueChange = ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -281,10 +283,34 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		}
 		setFocusedSpecificEmails( true );
 	};
+	const onDiscountTypeBlur = () => setFocusedDiscountType( true );
+	const onUsageLimitFocus = ( event: ChangeEvent< HTMLInputElement > ) => {
+		if ( event.target.value === COUPON_USAGE_LIMIT_INFINITE ) {
+			event.target.value = '';
+		}
+	};
+
+	const dateRegex = /\d{4}-\d{1,2}-\d{1,2}/;
 
 	/** Form validation */
 	const isFormValid = ( field?: string ) => {
-		if ( ( field === 'coupon_code' || ! field ) && editedCouponCode === '' ) {
+		if ( field === 'coupon_code' || ! field ) {
+			if ( editedCouponCode.length < 3 || editedCouponCode.length > 10 ) {
+				return false;
+			}
+
+			if ( ! /[a-zA-Z0-9-]+/.test( editedCouponCode ) ) {
+				return false;
+			}
+		}
+
+		if (
+			( field === 'discount_type' || ! field ) &&
+			( ! editedDiscountType ||
+				! [ COUPON_DISCOUNT_TYPE_AMOUNT, COUPON_DISCOUNT_TYPE_PERCENTAGE ].includes(
+					editedDiscountType
+				) )
+		) {
 			return false;
 		}
 
@@ -304,7 +330,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			return false;
 		}
 
-		if ( ( field === 'start_date' || ! field ) && editedStartDate === '' ) {
+		if ( ( field === 'start_date' || ! field ) && ! dateRegex.test( editedStartDate ) ) {
 			return false;
 		}
 
@@ -312,7 +338,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			( field === 'start_date' || ! field ) &&
 			editedEndDate &&
 			editedStartDate &&
-			new Date( editedEndDate ).getTime() < new Date( editedStartDate ).getTime()
+			( new Date( editedEndDate ).getTime() < new Date( editedStartDate ).getTime() ||
+				! dateRegex.test( editedStartDate ) )
 		) {
 			return false;
 		}
@@ -337,6 +364,39 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			}
 		}
 
+		if (
+			( field === 'duration' || ! field ) &&
+			editedUseDuration &&
+			( ! editedDuration ||
+				! [
+					COUPON_DURATION_FOREVER,
+					COUPON_DURATION_1_MONTH,
+					COUPON_DURATION_1_YEAR,
+					COUPON_DURATION_3_MONTHS,
+					COUPON_DURATION_6_MONTHS,
+				].includes( editedDuration ) )
+		) {
+			return false;
+		}
+
+		if (
+			( field === 'products' || ! field ) &&
+			typeof editedProducts === typeof [] &&
+			editedProducts.length > 0
+		) {
+			if ( editedProducts.filter( ( prod ) => parseInt( prod ) === 0 ).length > 0 ) {
+				return false;
+			}
+
+			if ( editedProducts.filter( ( prod ) => ! products.includes( prod ) ).length > 0 ) {
+				return false;
+			}
+		}
+
+		if ( ( field === 'usage_limit' || ! field ) && parseInt( editedUsageLimit ) < 0 ) {
+			return false;
+		}
+
 		return true;
 	};
 
@@ -344,7 +404,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const onClose = ( reason: string | undefined ) => {
 		const couponDetails: Coupon = {
 			coupon_code: editedCouponCode,
-			description: editedDescription,
+			// description: editedDescription,
 			discount_type: editedDiscountType,
 			discount_value: editedDiscountValue,
 			discount_percentage: editedDiscountPercentage,
@@ -352,7 +412,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			start_date: editedStartDate,
 			end_date: editedEndDate,
 			product_ids: editedProducts,
-			can_be_combined: editedCanBeCombined,
+			cannot_be_combined: editedCannotBeCombined,
 			first_time_only: editedFirstTimeOnly,
 			use_duration: editedUseDuration,
 			duration: editedDuration,
@@ -424,6 +484,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						onAction={ onCouponCodeRandomize }
 						isError={ ! isFormValid( 'coupon_code' ) }
 						isValid={ isFormValid( 'coupon_code' ) }
+						maxLength="10"
 						onBlur={ () => setFocusedCouponCode( true ) }
 					/>
 					<FormSettingExplanation>
@@ -433,14 +494,14 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a coupon code.' ) } />
 					) }
 				</FormFieldset>
-				<FormFieldset>
+				{ /* <FormFieldset>
 					<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
 					<FormTextInput
 						id="description"
 						value={ editedDescription }
 						onChange={ onDescriptionChange }
 					/>
-				</FormFieldset>
+				</FormFieldset> */ }
 				<FormFieldset className="memberships__dialog-seconds-price">
 					<div className="memberships__dialog-sections-price-field-container">
 						<FormLabel htmlFor="discount_type">{ translate( 'Discount type' ) }</FormLabel>
@@ -448,12 +509,16 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							id="discount_type"
 							value={ editedDiscountType }
 							onChange={ onSelectDiscountType }
+							onBlur={ onDiscountTypeBlur }
 						>
 							<option value={ COUPON_DISCOUNT_TYPE_PERCENTAGE }>
 								{ translate( 'Percentage' ) }
 							</option>
 							<option value={ COUPON_DISCOUNT_TYPE_AMOUNT }>{ translate( 'Amount' ) }</option>
 						</FormSelect>
+						{ ! isFormValid( 'discount_type' ) && focusedDiscountType && (
+							<FormInputValidation isError text={ translate( 'Please select a valid type' ) } />
+						) }
 					</div>
 					<div className="memberships__dialog-sections-price-field-container">
 						<FormLabel htmlFor="discount_amount">{ translate( 'Amount' ) }</FormLabel>
@@ -586,7 +651,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 					<FormTextInputWithAffixes
 						id="usage_limit"
 						suffix="times"
-						value={ editedUsageLimit === 0 ? '∞' : editedUsageLimit }
+						value={ editedUsageLimit === 0 ? COUPON_USAGE_LIMIT_INFINITE : editedUsageLimit }
+						onFocus={ onUsageLimitFocus }
 						onChange={ onUsageLimitChange }
 						onBlur={ onUsageLimitBlur }
 					/>
@@ -602,8 +668,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-type">
 					<ToggleControl
-						onChange={ ( newValue ) => setEditedCanBeCombined( newValue ) }
-						checked={ editedCanBeCombined }
+						onChange={ ( newValue ) => setEditedCannotBeCombined( newValue ) }
+						checked={ editedCannotBeCombined }
 						label={ translate( 'Cannot be combined with other coupons' ) }
 					/>
 				</FormFieldset>

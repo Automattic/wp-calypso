@@ -9,15 +9,15 @@ export function getCouponsForSiteId( state, siteId ) {
 			{
 				ID: 1,
 				coupon_code: 'FALLSALE2023',
-				description: 'My first coupon code!!!!',
+				// description: 'My first coupon code!!!!',
 				discount_type: 'percentage',
 				discount_value: null,
-				discount_percentage: 20, //TODO: divide amount into value and percentage vars
+				discount_percentage: 20,
 				discount_currency: 'USD',
 				start_date: '2023-01-25',
 				end_date: '2023-11-21',
 				product_ids: [],
-				can_be_combined: false,
+				cannot_be_combined: false,
 				first_time_only: false,
 				usage_limit: 10,
 				use_duration: true,

@@ -38,7 +38,7 @@ export const membershipCouponFromApi = ( coupon ) => ( {
 	start_date: coupon.start_date,
 	end_date: coupon.end_date,
 	product_ids: coupon.product_ids.map( ( productId ) => parseInt( productId ) ),
-	can_be_combined: coupon.can_be_combined ? true : false,
+	cannot_be_combined: coupon.cannot_be_combined ? true : false,
 	first_time_only: coupon.first_time_only ? true : false,
 	duration: coupon.duration,
 	specific_emails: coupon.specific_emails ?? [],

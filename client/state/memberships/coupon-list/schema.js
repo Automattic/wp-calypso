@@ -9,7 +9,7 @@ export const metadataSchema = {
 	start_date: { type: 'string', metaKey: 'scoup_start_date' },
 	end_date: { type: 'string', metaKey: 'scoup_end_date' },
 	product_ids: { type: 'array', metaKey: 'scoup_product_ids' },
-	can_be_combined: { type: 'boolean', metaKey: 'scoup_can_be_combined' },
+	cannot_be_combined: { type: 'boolean', metaKey: 'scoup_cannot_be_combined' },
 	first_time_only: { type: 'boolean', metaKey: 'scoup_first_time_only' },
 	duration: { type: 'string', metaKey: 'scoup_duration' },
 	specific_emails: { type: 'array', metaKey: 'scoup_specific_emails' },
