@@ -8,16 +8,16 @@ import './style.scss';
 interface Props {
 	className: string;
 	statType: string;
-	siteSlug: string;
+	siteId: number;
 }
 
-const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteSlug } ) => {
+const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		dispatch( toggleUpsellModal( siteSlug, statType ) );
+		dispatch( toggleUpsellModal( siteId, statType ) );
 	};
 
 	return (

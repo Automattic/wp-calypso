@@ -34,6 +34,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		hideNavigation,
 		navigationSwap,
 		shouldGateOptions,
+		siteId,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -57,7 +58,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 	const handleClick = ( item ) => () => {
 		if ( item.isGated ) {
-			dispatch( toggleUpsellModal( siteSlug, item.statType ) );
+			dispatch( toggleUpsellModal( siteId, item.statType ) );
 		}
 	};
 
@@ -226,7 +227,7 @@ const connectComponent = connect(
 			),
 		};
 
-		return { siteSlug, shouldGateOptions };
+		return { siteId, siteSlug, shouldGateOptions };
 	},
 	{ recordGoogleEvent }
 );

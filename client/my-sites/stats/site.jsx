@@ -41,7 +41,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
-import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
@@ -476,7 +475,7 @@ class StatsSite extends Component {
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-				{ this.props.upsellModalView && <StatsUpsellModal siteSlug={ slug } siteId={ siteId } /> }
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</div>
 		);
 	}
@@ -601,7 +600,7 @@ export default connect(
 			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
 
 		const slug = getSelectedSiteSlug( state );
-		const upsellModalView = getUpsellModalView( state, slug );
+		const upsellModalView = getUpsellModalView( state, siteId );
 
 		return {
 			canUserViewStats,
@@ -622,6 +621,5 @@ export default connect(
 		enableJetpackStatsModule,
 		recordTracksEvent,
 		requestModuleSettings,
-		toggleUpsellModal,
 	}
 )( localize( StatsSite ) );

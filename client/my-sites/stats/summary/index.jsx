@@ -348,9 +348,7 @@ class StatsSummary extends Component {
 					{ summaryViews }
 					<JetpackColophon />
 				</div>
-				{ this.props.upsellModalView && (
-					<StatsUpsellModal siteSlug={ this.props.siteSlug } siteId={ siteId } />
-				) }
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</Main>
 		);
 	}
@@ -358,8 +356,7 @@ class StatsSummary extends Component {
 
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const slug = getSelectedSiteSlug( state );
-	const upsellModalView = getUpsellModalView( state, slug );
+	const upsellModalView = getUpsellModalView( state, siteId );
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),

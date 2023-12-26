@@ -13,27 +13,23 @@ import { useSelector } from 'calypso/state';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-export default function StatsUpsellModal( {
-	siteSlug,
-	siteId,
-}: {
-	siteSlug: string;
-	siteId: number;
-} ) {
+export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
 	const planMonthly = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM_MONTHLY ) );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const planName = plan?.product_name_short ?? '';
 	const isLoading = ! plan || ! planMonthly;
 	const eventPrefix = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack_odyssey' : 'calypso';
 	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 
 	const closeModal = () => {
-		dispatch( toggleUpsellModal( siteSlug, statType ) );
+		dispatch( toggleUpsellModal( siteId, statType ) );
 	};
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {

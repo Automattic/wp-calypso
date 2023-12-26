@@ -14,13 +14,10 @@ import type { Reducer, AnyAction } from 'redux';
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
  */
-const dataReducer = (
-	state = { view: false, siteSlug: null, statType: null },
-	action: AnyAction
-) => {
+const dataReducer = ( state = { view: false, statType: null }, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_PAID_STATS_UPSELL_MODAL_TOGGLE: {
-			return { view: ! state.view, ...action.payload };
+			return { view: ! state.view, statType: action.payload.statType };
 		}
 	}
 	return state;
@@ -28,7 +25,7 @@ const dataReducer = (
 
 export const data = withSchemaValidation(
 	schema,
-	keyedReducer( 'siteSlug', withPersistence( dataReducer as Reducer ) )
+	keyedReducer( 'siteId', withPersistence( dataReducer as Reducer ) )
 );
 
 export default combineReducers( { data } );

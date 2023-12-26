@@ -7,17 +7,17 @@ import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 
 interface Props {
 	className: string;
-	siteSlug: string;
+	siteId: number;
 	borderless: boolean;
 }
 
-const StatsDownloadCsvUpsell: React.FC< Props > = ( { className, siteSlug, borderless } ) => {
+const StatsDownloadCsvUpsell: React.FC< Props > = ( { className, siteId, borderless } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		dispatch( toggleUpsellModal( siteSlug, STATS_FEATURE_DOWNLOAD_CSV ) );
+		dispatch( toggleUpsellModal( siteId, STATS_FEATURE_DOWNLOAD_CSV ) );
 	};
 
 	return (

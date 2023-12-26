@@ -9,10 +9,10 @@ import 'calypso/state/stats/init';
  * @returns {Object}  Action object
  */
 
-export function toggleUpsellModal( siteSlug: string, statType: string ) {
+export function toggleUpsellModal( siteId: number, statType: string ) {
 	return {
 		type: STATS_PAID_STATS_UPSELL_MODAL_TOGGLE,
-		siteSlug,
-		payload: { siteSlug, statType },
+		siteId,
+		payload: { statType },
 	};
 }
