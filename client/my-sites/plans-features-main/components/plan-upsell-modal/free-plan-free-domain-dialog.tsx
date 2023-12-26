@@ -1,9 +1,4 @@
-import {
-	domainProductSlugs,
-	getPlan,
-	type PlanSlug,
-	PLAN_PREMIUM,
-} from '@automattic/calypso-products';
+import { getPlan, type PlanSlug, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -15,7 +10,6 @@ import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { DialogContainer, Heading } from './components';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
@@ -161,11 +155,7 @@ export function FreePlanFreeDomainDialog( {
 	suggestedPlanSlug,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
-	const domainRegistrationProduct = useSelector( ( state ) =>
-		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
-	);
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const domainProductCost = domainRegistrationProduct?.cost;
 	const primaryUpsellPlanInfo = usePlanUpsellInfo( suggestedPlanSlug, currencyCode );
 	const secondaryUpsellPlanInfo = usePlanUpsellInfo( PLAN_PREMIUM, currencyCode );
 	const buttonDisabled = generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result;
@@ -176,6 +166,26 @@ export function FreePlanFreeDomainDialog( {
 		} );
 	}, [] );
 
+	const featureUpsells = [
+		translate(
+			'No free custom domain: Your site will be shown to visitors as {{strong}}{{subdomain}}{{/subdomain}}{{/strong}}',
+			{
+				components: {
+					subdomain: (
+						<LazyDisplayText
+							displayText={ generatedWPComSubdomain?.result?.domain_name }
+							isLoading={ generatedWPComSubdomain?.isLoading }
+						/>
+					),
+				},
+			}
+		),
+		translate( 'No ad-free experience: Your visitors will see external ads on your site.' ),
+		translate( 'No unlimited professional customer support (only community forums)' ),
+		translate( 'No extra storage. You only get 1GB for photos, videos, media, and documents.' ),
+		translate( 'Monetize your site through paid subscribers' ),
+	];
+
 	return (
 		<DialogContainer>
 			<QueryProductsList />
@@ -184,96 +194,40 @@ export function FreePlanFreeDomainDialog( {
 				{ translate( 'With a Free plan, you miss out on a lot of great features:' ) }
 			</TextBox>
 			<List>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox>
-						{ translate(
-							'{{strong}}No free custom domain:{{/strong}} Your site will be shown to visitors as {{strong}}{{subdomain}}{{/subdomain}}{{/strong}}',
-							{
-								components: {
-									strong: <strong></strong>,
-									subdomain: (
-										<LazyDisplayText
-											displayText={ generatedWPComSubdomain?.result?.domain_name }
-											isLoading={ generatedWPComSubdomain?.isLoading }
-										/>
-									),
-								},
-							}
-						) }
-					</TextBox>
-				</ListItem>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox>
-						{ translate(
-							'{{strong}}No ad-free experience:{{/strong}} Your visitors will see external ads on your site.',
-							{
-								components: { strong: <strong></strong> },
-							}
-						) }
-					</TextBox>
-				</ListItem>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox>
-						{ translate(
-							'{{strong}}No unlimited professional customer support{{/strong}} (only community forums)',
-							{
-								components: { strong: <strong></strong> },
-							}
-						) }
-					</TextBox>
-				</ListItem>
-				<ListItem>
-					<div>
-						<CrossIcon icon="cross" size={ 24 } />
-					</div>
-					<TextBox noBottomGap>
-						{ translate(
-							'{{strong}}No extra storage:{{/strong}} You only get 1GB for photos, videos, media, and documents.',
-							{
-								components: { strong: <strong></strong> },
-							}
-						) }
-					</TextBox>
-				</ListItem>
+				{ featureUpsells.map( ( upsellItem ) => (
+					<ListItem>
+						<div>
+							<CrossIcon icon="cross" size={ 24 } />
+						</div>
+						<TextBox>{ upsellItem }</TextBox>
+					</ListItem>
+				) ) }
 			</List>
 			<TextBox>
 				{ translate(
-					'Unlock {{strong}}all of{{/strong}} these features with a %(planTitle)s plan, starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
+					'Unlock all of these features with a %(planTitle)s plan, starting at just %(planPrice)s/month.',
 					{
 						args: {
 							planTitle: primaryUpsellPlanInfo.title,
 							planPrice: primaryUpsellPlanInfo.formattedPriceMonthly,
 						},
-						components: { break: <br />, strong: <strong></strong> },
 					}
 				) }
 			</TextBox>
 			<TextBox>
-				{ domainProductCost &&
-					translate(
-						'As a bonus, you will get a custom domain - like {{strong}}{{italic}}yourgroovydomain.com{{/italic}}{{/strong}} - {{break}}{{/break}} free for the first year (%(domainPrice)s value).',
-						{
-							args: {
-								domainPrice: formatCurrency( domainProductCost, currencyCode, {
-									stripZeros: true,
-								} ),
-							},
-							components: {
-								strong: <strong></strong>,
-								italic: <i></i>,
-								break: <br />,
-							},
-						}
-					) }
+				{ translate(
+					'{{strong}}Need premium themes, live chat support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
+					{
+						args: {
+							planTitle: secondaryUpsellPlanInfo.title,
+							planPrice: secondaryUpsellPlanInfo.formattedPriceMonthly,
+						},
+						components: {
+							strong: <strong></strong>,
+							break: <br />,
+						},
+					}
+				) }
 			</TextBox>
 
 			<ButtonRow>
@@ -301,12 +255,15 @@ export function FreePlanFreeDomainDialog( {
 			</ButtonRow>
 			<TextBox fontSize={ 12 } color="gray" noBottomGap>
 				{ translate(
-					'%(planTitle)s plan: %(monthlyPlanPrice)s per month, %(annualPlanPrice)s billed annually. Excluding taxes.',
+					'%(planTitle1)s plan: %(monthlyPlanPrice1)s/mo, %(annualPlanPrice1)s billed annually. %(planTitle2)s plan: %(monthlyPlanPrice2)s/mo, %(annualPlanPrice2)s billed annually. Excluding taxes.',
 					{
 						args: {
-							planTitle: primaryUpsellPlanInfo.title,
-							monthlyPlanPrice: primaryUpsellPlanInfo.formattedPriceMonthly,
-							annualPlanPrice: primaryUpsellPlanInfo.formattedPriceFull,
+							planTitle1: primaryUpsellPlanInfo.title,
+							monthlyPlanPrice1: primaryUpsellPlanInfo.formattedPriceMonthly,
+							annualPlanPrice1: primaryUpsellPlanInfo.formattedPriceFull,
+							planTitle2: secondaryUpsellPlanInfo.title,
+							monthlyPlanPrice2: secondaryUpsellPlanInfo.formattedPriceMonthly,
+							annualPlanPrice2: secondaryUpsellPlanInfo.formattedPriceFull,
 						},
 					}
 				) }
