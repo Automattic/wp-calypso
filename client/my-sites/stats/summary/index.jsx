@@ -18,6 +18,7 @@ import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
+import StatsUpsellModal from '../stats-upsell-modal';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
@@ -31,6 +32,10 @@ class StatsSummary extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	state = {
+		isModalOpen: false,
+	};
+
 	renderSummaryHeader( path, statType, hideNavigation, query ) {
 		const period = this.props.period;
 
@@ -40,6 +45,10 @@ class StatsSummary extends Component {
 			</div>
 		);
 
+		const handleGatedClick = () => {
+			this.setState( { isModalOpen: true } );
+		};
+
 		return (
 			<AllTimeNav
 				path={ path }
@@ -47,6 +56,7 @@ class StatsSummary extends Component {
 				period={ period }
 				hideNavigation={ hideNavigation }
 				navigationSwap={ headerCSVButton }
+				onGatedClick={ handleGatedClick }
 			/>
 		);
 	}
@@ -346,6 +356,13 @@ class StatsSummary extends Component {
 					{ summaryViews }
 					<JetpackColophon />
 				</div>
+				{ this.state.isModalOpen && (
+					<StatsUpsellModal
+						closeModal={ () => this.setState( { isModalOpen: false } ) }
+						statType={ statType }
+						siteSlug={ this.props.siteSlug }
+					/>
+				) }
 			</Main>
 		);
 	}
