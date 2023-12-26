@@ -1,6 +1,7 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
@@ -133,6 +134,12 @@ function StatsCommercialUpgradeSlider( {
 
 		onSliderChange( quantity as number );
 	};
+
+	useEffect( () => {
+		// Update the first step with the fetched tier quantity back to the parent component.
+		const firstStepQuantity = getTierQuentity( tiers[ 0 ], true );
+		onSliderChange( firstStepQuantity as number );
+	} );
 
 	return (
 		<TierUpgradeSlider
