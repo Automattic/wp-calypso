@@ -11,12 +11,10 @@ import { FirstLoadScreen } from './first-load-screen';
 import { LogoPresenter } from './logo-presenter';
 import { Prompt } from './prompt';
 import './generator-modal.scss';
-
-interface GeneratorModalProps {
-	siteId?: string;
-	isOpen: boolean;
-	onClose: () => void;
-}
+/**
+ * Types
+ */
+import type { GeneratorModalProps } from '../../types';
 
 export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClose } ) => {
 	const [ isLoading, setIsLoading ] = useState( true );

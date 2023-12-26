@@ -1,3 +1,5 @@
+import type { SiteDetails } from '@automattic/data-stores';
+
 /**
  * Types for the AI Assistant feature.
  */
@@ -87,7 +89,6 @@ export type TierValueProp =
 	| Tier1000Props[ 'value' ];
 
 export type AiFeatureProps = {
-	siteId: string;
 	hasFeature: boolean;
 	isOverLimit: boolean;
 	requestsCount: number;
@@ -115,18 +116,24 @@ export type AiFeatureStateProps = AiFeatureProps & {
 	};
 };
 
-export type PlanStateProps = {
-	plans: Array< Plan >;
+export type LogoSuggestionProps = {
+	prompt: string;
+	imageSrc?: string;
+	url?: string;
+};
+
+export type LogoGeneratorStateProp = {
+	siteDetails?: Partial< SiteDetails >;
+	suggestions: Array< LogoSuggestionProps >;
 	features: {
-		aiAssistant?: AiFeatureStateProps;
+		aiAssistantFeature?: AiFeatureStateProps;
 	};
 };
 
 /*
  * `sites/$site/ai-assistant-feature` endpoint response body props
  */
-export type SiteAIAssistantFeatureEndpointResponseProps = {
-	'site-id': string;
+export type AiAssistantFeatureEndpointResponseProps = {
 	'is-enabled': boolean;
 	'has-feature': boolean;
 	'is-over-limit': boolean;
