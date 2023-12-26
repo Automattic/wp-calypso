@@ -9,7 +9,7 @@ import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-s
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { SITE_PICKER_FILTER_CONFIG } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { redirect } from '../import/util';
