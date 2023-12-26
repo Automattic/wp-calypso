@@ -22,3 +22,24 @@
 		min-height: 409px;
 	}
 }
+
+.jetpack-ai-logo-generator__footer {
+	display: flex;
+
+	.jetpack-ai-logo-generator__feedback-button {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+		margin-top: 24px;
+		color: #3858e9;
+		text-decoration: none;
+
+		&:focus:not(:disabled) {
+			box-shadow: 0 0 0 2px #3858e9;
+		}
+
+		.icon {
+			color: var(--studio-gray-20);
+		}
+	}
+}
