@@ -124,7 +124,6 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			/**
 			 * Compute the AI Assistant Feature data optimistically,
 			 * based on the Jetpack_AI_Helper::get_ai_assistance_feature() helper.
-			 *
 			 * @see _inc/lib/class-jetpack-ai-helper.php
 			 */
 			const isOverLimit = currentCount >= requestsLimit;

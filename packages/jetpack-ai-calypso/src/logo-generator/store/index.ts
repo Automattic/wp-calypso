@@ -38,7 +38,6 @@ const jetpackAiLogoGeneratorStore = createReduxStore( STORE_NAME, {
 
 		/**
 		 * Get the isRequesting flag for the AI Assistant feature.
-		 *
 		 * @param {LogoGeneratorStateProp} state - The app state tree.
 		 * @returns {boolean}              The isRequesting flag.
 		 */
