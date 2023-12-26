@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
  */
 import { FirstLoadScreen } from './first-load-screen';
 import { LogoPresenter } from './logo-presenter';
+import { Prompt } from './prompt';
 import './generator-modal.scss';
 
 interface GeneratorModalProps {
@@ -24,7 +25,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 		if ( isOpen ) {
 			setTimeout( () => {
 				setIsLoading( false );
-			}, 6000 );
+			}, 1000 );
 		} else {
 			setIsLoading( true );
 		}
@@ -44,7 +45,12 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 						{ isLoading ? (
 							<FirstLoadScreen />
 						) : (
-							<LogoPresenter description="A publishing company in the form of a greek statue." />
+							<>
+								<Prompt />
+								<LogoPresenter description="A publishing company in the form of a greek statue." />
+								<div className="jetpack-ai-logo-generator__carousel">{ /** carousel row */ }</div>
+								<div className="jetpack-ai-logo-generator__footer">{ /** footer row */ }</div>
+							</>
 						) }
 					</div>
 				</Modal>
