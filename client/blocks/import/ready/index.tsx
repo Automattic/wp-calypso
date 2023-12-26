@@ -143,12 +143,12 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 		goToStep( 'capture' );
 	};
 
-	const onStartBuildingBtnClick = () => {
+	const onBackToGoalsBtnClick = () => {
 		// clean up the import goal
 		const goalSet = new Set( goals );
 		goalSet.delete( Onboard.SiteGoal.Import );
 		setGoals( Array.from( goalSet ) );
-		goToStep( 'intent', '', 'setup-site' );
+		goToStep( 'goals' );
 	};
 
 	useEffect( recordReadyScreenEvent, [] );
@@ -165,7 +165,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ onStartBuildingBtnClick }>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ onBackToGoalsBtnClick }>{ __( 'Back to goals' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
@@ -298,14 +298,14 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 		goToStep( 'capture' );
 	};
 
-	const onStartBuildingBtnClick = () => {
+	const onBackToGoalsBtnClick = () => {
 		// event tracking
 		recordStartBuildingEvent();
 		// clean up the import goal
 		const goalSet = new Set( goals );
 		goalSet.delete( Onboard.SiteGoal.Import );
 		setGoals( Array.from( goalSet ) );
-		goToStep( 'intent', '', 'setup-site' );
+		goToStep( 'goals' );
 	};
 
 	useEffect( recordReadyScreenEvent, [] );
@@ -331,7 +331,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ onStartBuildingBtnClick }>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ onBackToGoalsBtnClick }>{ __( 'Back to goals' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
