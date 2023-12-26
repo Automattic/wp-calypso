@@ -3,10 +3,10 @@ import 'calypso/state/data-layer/wpcom/sites/stats/module-toggles';
 import 'calypso/state/stats/init';
 
 /**
- * Returns an action thunk which, when invoked, triggers a network request to
- * retrieve stats module toggles data.
+ * Toggles the paid stats upsell modal.
  * @param  {number}  siteId Site ID
- * @returns {Object}  Action object
+ * @param  {string}  statType Stat type
+ * @returns {Object} Action object
  */
 
 export function toggleUpsellModal( siteId: number, statType: string ) {
