@@ -21,6 +21,7 @@ const useWooActiveThemeQuery = (
 			} ),
 		refetchOnWindowFocus: false,
 		enabled: isEnabled && !! siteId,
+		staleTime: 1000 * 60 * 1, // 1 minutes
 	} );
 };
 
