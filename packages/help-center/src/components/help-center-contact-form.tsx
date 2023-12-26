@@ -19,6 +19,7 @@ import { useDebounce } from 'use-debounce';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getOdieStorage } from 'calypso/odie/data';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
@@ -113,6 +114,7 @@ export const HelpCenterContactForm = () => {
 			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
 		};
 	}, [] );
+	const wapuuChatId = getOdieStorage( 'last_chat_id' );
 
 	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
@@ -316,6 +318,15 @@ export const HelpCenterContactForm = () => {
 						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
 						initialChatMessage += gptResponse.response;
 					}
+
+					if ( wapuuFlow ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += wapuuChatId
+							? `<strong>Wapuu chat reference: ${ wapuuChatId }</strong>:<br />`
+							: '<strong>Wapuu chat reference is not available</strong>:<br />';
+						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
+					}
+
 					openChatWidget( initialChatMessage, supportSite.URL, () =>
 						setHasSubmittingError( true )
 					);
@@ -347,7 +358,7 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
-						ai_chat_id: gptResponse?.answer_id,
+						ai_chat_id: wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id,
 						ai_message: gptResponse?.response,
 					} )
 						.then( () => {
