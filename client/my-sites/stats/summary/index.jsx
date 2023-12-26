@@ -348,7 +348,9 @@ class StatsSummary extends Component {
 					{ summaryViews }
 					<JetpackColophon />
 				</div>
-				{ this.props.upsellModalView && <StatsUpsellModal siteSlug={ this.props.siteSlug } /> }
+				{ this.props.upsellModalView && (
+					<StatsUpsellModal siteSlug={ this.props.siteSlug } siteId={ siteId } />
+				) }
 			</Main>
 		);
 	}

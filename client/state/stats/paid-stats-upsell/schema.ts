@@ -1,19 +1,17 @@
 export const schema = {
 	type: 'object',
 	patternProperties: {
-		// Site Id
+		// Site ID
 		'^\\d+$': {
 			type: 'object',
-			patternProperties: {
-				// page key, such as 'traffic' or 'insights'
-				'^\\w+$': {
-					type: 'object',
-					patternProperties: {
-						// module key, such as 'authors' or 'videos'
-						'^\\w+$': { type: 'boolean' },
-					},
-				},
+			properties: {
+				view: { type: 'boolean' },
+				siteSlug: { type: 'string' },
+				statType: { type: 'string' },
 			},
+			required: [ 'view', 'siteSlug', 'statType' ],
+			additionalProperties: false,
 		},
 	},
+	additionalProperties: false,
 };

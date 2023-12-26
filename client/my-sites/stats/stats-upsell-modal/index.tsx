@@ -16,7 +16,13 @@ import { getUpsellModalStatType } from 'calypso/state/stats/paid-stats-upsell/se
 
 import './style.scss';
 
-export default function StatsUpsellModal( { siteSlug }: { siteSlug: string } ) {
+export default function StatsUpsellModal( {
+	siteSlug,
+	siteId,
+}: {
+	siteSlug: string;
+	siteId: number;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const plan = useSelector( ( state ) => getPlanBySlug( state, PLAN_PREMIUM ) );
@@ -24,7 +30,7 @@ export default function StatsUpsellModal( { siteSlug }: { siteSlug: string } ) {
 	const planName = plan?.product_name_short ?? '';
 	const isLoading = ! plan || ! planMonthly;
 	const eventPrefix = isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack_odyssey' : 'calypso';
-	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteSlug ) );
+	const statType = useSelector( ( state ) => getUpsellModalStatType( state, siteId ) );
 
 	const closeModal = () => {
 		dispatch( toggleUpsellModal( siteSlug, statType ) );

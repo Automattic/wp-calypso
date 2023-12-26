@@ -5,10 +5,10 @@ import 'calypso/state/stats/init';
 /**
  * Returns the current view state of the upsell modal.
  */
-export function getUpsellModalView( state: object, siteSlug: string ) {
-	return get( state, [ 'stats', 'paidStatsUpsell', 'data', siteSlug, 'view' ], false );
+export function getUpsellModalView( state: object, siteId: number ) {
+	return get( state, [ 'stats', 'paidStatsUpsell', 'data', siteId, 'view' ], false );
 }
 
-export function getUpsellModalStatType( state: object, siteSlug: string ) {
-	return get( state, [ 'stats', 'paidStatsUpsell', 'data', siteSlug, 'statType' ], null );
+export function getUpsellModalStatType( state: object, siteId: number ) {
+	return get( state, [ 'stats', 'paidStatsUpsell', 'data', siteId, 'statType' ], null );
 }
