@@ -6,6 +6,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
+import { Icon, download } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
@@ -144,6 +145,18 @@ const ManageAllDomainsButton = styled( Button )`
 	margin-inline-end: 1rem;
 `;
 
+const DownloadIcon = styled( Icon )`
+	margin-right: 8px;
+	vertical-align: bottom;
+`;
+
+const popoverHoverStyles = css`
+	&:hover,
+	&:focus {
+		fill: var( --color-text-inverted );
+	}
+`;
+
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
@@ -215,12 +228,13 @@ export function SitesDashboard( {
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
+							className={ `${ popoverHoverStyles }` }
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
 							href={ importSiteUrl }
-							icon="arrow-down"
 						>
+							<DownloadIcon icon={ download } size={ 18 } />
 							<span>{ __( 'Import an existing site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>

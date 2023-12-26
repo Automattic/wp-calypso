@@ -1,7 +1,6 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
-import Notice from 'calypso/components/notice';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSubscriptionStop } from 'calypso/state/memberships/subscribers/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -39,20 +38,35 @@ function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDial
 				button: translate( 'Remove payment' ),
 				confirmation_subheading: translate( 'Do you want to remove this payment?' ),
 				confirmation_info: translate(
-					'Removing this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. The payment will not be refunded.',
-					{ args: { subscriber_email, plan_name } }
+					'Removing this payment means that the user {{strong}}%(subscriber_email)s{{/strong}} will no longer have access to any service granted by the {{strong}}%(plan_name)s{{/strong}} plan.',
+					{
+						args: { subscriber_email, plan_name },
+						components: {
+							strong: <strong />,
+						},
+					}
 				),
+				confirmation_info_2: translate( 'The payment will not be refunded.' ),
 				success: translate( 'Payment removed for %(subscriber_email)s.', {
 					args: { subscriber_email },
 				} ),
 			};
 		}
+
 		return {
 			button: translate( 'Cancel payment' ),
 			confirmation_subheading: translate( 'Do you want to cancel this payment?' ),
 			confirmation_info: translate(
-				'Cancelling this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. Payments already made will not be refunded but any scheduled future payments will not be made.',
-				{ args: { subscriber_email, plan_name } }
+				'Cancelling this payment means that the user {{strong}}%(subscriber_email)s{{/strong}} will no longer have access to any service granted by the {{strong}}%(plan_name)s{{/strong}} plan.',
+				{
+					args: { subscriber_email, plan_name },
+					components: {
+						strong: <strong />,
+					},
+				}
+			),
+			confirmation_info_2: translate(
+				'Payments already made will not be refunded but any scheduled future payments will not be made.'
 			),
 			success: translate( 'Payment cancelled for %(subscriber_email)s.', {
 				args: { subscriber_email },
@@ -61,25 +75,31 @@ function CancelDialog( { subscriberToCancel, setSubscriberToCancel }: CancelDial
 	}
 
 	return (
-		<Dialog
-			isVisible={ Boolean( subscriberToCancel ) }
-			buttons={ [
-				{
-					label: translate( 'Back' ),
-					action: 'back',
-				},
-				{
-					label: getText( subscriberToCancel ).button,
-					isPrimary: true,
-					action: 'cancel',
-				},
-			] }
-			onClose={ onCloseCancelSubscription }
-		>
-			<h1>{ translate( 'Confirmation' ) }</h1>
-			<p>{ getText( subscriberToCancel ).confirmation_subheading }</p>
-			<Notice text={ getText( subscriberToCancel ).confirmation_info } showDismiss={ false } />
-		</Dialog>
+		<>
+			{ subscriberToCancel && (
+				<Dialog
+					className="earn__cancel-dialog"
+					isVisible={ Boolean( subscriberToCancel ) }
+					buttons={ [
+						{
+							label: translate( 'Back' ),
+							action: 'back',
+						},
+						{
+							label: getText( subscriberToCancel ).button,
+							isPrimary: true,
+							additionalClassNames: 'is-scary',
+							action: 'cancel',
+						},
+					] }
+					onClose={ onCloseCancelSubscription }
+				>
+					<h1>{ getText( subscriberToCancel ).confirmation_subheading }</h1>
+					<p>{ getText( subscriberToCancel ).confirmation_info }</p>
+					<p>{ getText( subscriberToCancel ).confirmation_info_2 }</p>
+				</Dialog>
+			) }
+		</>
 	);
 }
 

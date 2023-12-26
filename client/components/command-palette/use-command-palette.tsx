@@ -1,5 +1,6 @@
 import { useSitesListSorting } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -24,22 +25,26 @@ type CloseFunction = ( commandName?: string, isExecuted?: boolean ) => void;
 type OnClickSiteFunction = ( {
 	close,
 	site,
+	command,
 }: {
 	close: CloseFunction;
 	site: SiteExcerptData;
+	command: Command;
 } ) => void;
 interface SiteFunctions {
-	onClick: ( { site, close }: { site: SiteExcerptData; close: CloseFunction } ) => void;
+	onClick: OnClickSiteFunction;
 	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
 	filterNotice?: string;
+	emptyListNotice?: string;
 }
 export interface CommandCallBackParams {
 	close: CloseFunction;
 	setSearch: ( search: string ) => void;
 	setPlaceholderOverride: ( placeholder: string ) => void;
+	command: Command;
 }
 
-interface Command {
+export interface Command {
 	name: string;
 	label: string;
 	subLabel?: string;
@@ -87,7 +92,7 @@ const useSiteToAction = () => {
 					label: `${ siteName }`,
 					subLabel: `${ site.URL }`,
 					searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
-					callback: ( { close }: { close: CloseFunction } ) => {
+					callback: ( { close } ) => {
 						dispatch(
 							recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
 								command: selectedCommand.name,
@@ -100,7 +105,7 @@ const useSiteToAction = () => {
 								command_site_plan_id: site.plan?.product_id,
 							} )
 						);
-						onClickSite( { site, close } );
+						onClickSite( { site, close, command: selectedCommand } );
 					},
 					image: (
 						<FillDefaultIconWhite>
@@ -119,7 +124,11 @@ export const useCommandPalette = ( {
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
-}: useCommandPaletteOptions ): { commands: Command[]; filterNotice: string | undefined } => {
+}: useCommandPaletteOptions ): {
+	commands: Command[];
+	filterNotice: string | undefined;
+	emptyListNotice: string | undefined;
+} => {
 	const { data: allSites = [] } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
@@ -148,10 +157,19 @@ export const useCommandPalette = ( {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
 		let sitesToPick = null;
 		let filterNotice = undefined;
+		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { onClick, filter } = selectedCommand.siteFunctions;
-			filterNotice = selectedCommand.siteFunctions?.filterNotice;
 			let filteredSites = filter ? sortedSites.filter( filter ) : sortedSites;
+			if ( sortedSites.length === 0 ) {
+				emptyListNotice = __( "You don't have any sites yet." );
+			} else if ( filteredSites.length === 0 ) {
+				emptyListNotice = selectedCommand.siteFunctions?.emptyListNotice;
+			}
+			// Only show the filterNotice if there are some sites in the first place.
+			if ( filteredSites.length > 0 ) {
+				filterNotice = selectedCommand.siteFunctions?.filterNotice;
+			}
 
 			if ( currentSiteId ) {
 				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
@@ -176,7 +194,7 @@ export const useCommandPalette = ( {
 			);
 		}
 
-		return { commands: sitesToPick ?? [], filterNotice };
+		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice };
 	}
 
 	// Logic for root commands
@@ -226,5 +244,5 @@ export const useCommandPalette = ( {
 	}
 
 	// Return the sorted commands
-	return { commands: finalSortedCommands, filterNotice: undefined };
+	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
 };

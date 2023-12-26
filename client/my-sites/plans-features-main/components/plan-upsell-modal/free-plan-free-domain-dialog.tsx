@@ -6,12 +6,13 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { DialogContainer, Heading, StyledButton } from './components';
+import { DialogContainer, Heading } from './components';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -222,11 +223,9 @@ export function FreePlanFreeDomainDialog( {
 			</TextBox>
 
 			<ButtonRow>
-				<StyledButton
-					className="free-plan-free-domain-dialog__plan-button is-upsell-modal-personal-plan"
+				<PlanButton
+					planSlug={ suggestedPlanSlug }
 					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
-					primary
-					maxwidth="260px"
 					onClick={ () => {
 						onPlanSelected();
 					} }
@@ -237,19 +236,17 @@ export function FreePlanFreeDomainDialog( {
 								planTitle,
 							},
 						} ) }
-				</StyledButton>
+				</PlanButton>
 
-				<StyledButton
-					className="free-plan-free-domain-dialog__plan-button is-upsell-modal-free-plan"
+				<PlanButton
 					disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 					onClick={ () => {
 						onFreePlanSelected();
 					} }
 					borderless
-					color="gray"
 				>
 					{ translate( 'Continue with Free' ) }
-				</StyledButton>
+				</PlanButton>
 			</ButtonRow>
 			<TextBox fontSize={ 12 } color="gray" noBottomGap>
 				{ planTitle &&

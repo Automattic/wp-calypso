@@ -76,6 +76,7 @@ const withAIAssemblerFlow: Flow = {
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
 			STEPS.PLANS,
+			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
 		];
@@ -90,7 +91,7 @@ const withAIAssemblerFlow: Flow = {
 
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { siteSlug, siteId } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -170,6 +171,12 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'site-prompt': {
+					if ( providedDependencies?.aiSitePrompt ) {
+						await saveSiteSettings( siteId, {
+							wpcom_ai_site_prompt: providedDependencies.aiSitePrompt,
+						} );
+					}
+
 					return navigate( 'patternAssembler' );
 				}
 
@@ -216,9 +223,22 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'plans': {
-					await updateLaunchpadSettings( siteSlug, {
+					await updateLaunchpadSettings( siteId, {
 						checklist_statuses: { plan_completed: true },
 					} );
+
+					return navigate( 'launchpad' );
+				}
+
+				case 'domains': {
+					await updateLaunchpadSettings( siteId, {
+						checklist_statuses: { domain_upsell_deferred: true },
+					} );
+
+					if ( providedDependencies?.freeDomain && providedDependencies?.domainName ) {
+						// We have to use the site id since the domain is changed.
+						return navigate( `launchpad?siteId=${ site?.ID }` );
+					}
 
 					return navigate( 'launchpad' );
 				}
@@ -238,7 +258,8 @@ const withAIAssemblerFlow: Flow = {
 					return navigate( 'new-or-existing-site' );
 				}
 
-				case 'freePostSetup': {
+				case 'freePostSetup':
+				case 'domain': {
 					return navigate( 'launchpad' );
 				}
 

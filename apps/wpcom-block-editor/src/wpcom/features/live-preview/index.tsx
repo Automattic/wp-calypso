@@ -23,12 +23,12 @@ const LivePreviewNotice: FC< {
 	dashboardLink?: string;
 	previewingThemeName?: string;
 } > = ( { dashboardLink, previewingThemeName } ) => {
-	const { createWarningNotice, removeNotice } = useDispatch( 'core/notices' );
+	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
 
 	useHideTemplatePartHint();
 
 	useEffect( () => {
-		createWarningNotice(
+		createInfoNotice(
 			sprintf(
 				// translators: %s: theme name
 				__(
@@ -50,7 +50,7 @@ const LivePreviewNotice: FC< {
 			}
 		);
 		return () => removeNotice( NOTICE_ID );
-	}, [ dashboardLink, createWarningNotice, removeNotice, previewingThemeName ] );
+	}, [ dashboardLink, createInfoNotice, removeNotice, previewingThemeName ] );
 	return null;
 };
 
@@ -80,7 +80,7 @@ const LivePreviewNoticePlugin = () => {
 	if ( canPreviewButNeedUpgrade ) {
 		return (
 			<>
-				<LivePreviewUpgradeModal { ...{ themeId: previewingTheme.id as string, upgradePlan } } />
+				<LivePreviewUpgradeModal { ...{ previewingTheme, upgradePlan } } />
 				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
 			</>
 		);

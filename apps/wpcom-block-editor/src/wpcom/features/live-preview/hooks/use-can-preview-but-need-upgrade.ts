@@ -1,27 +1,37 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_PREMIUM_THEMES,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { getCalypsoUrl } from '@automattic/calypso-url';
 import { useEffect, useState, useCallback } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
+import tracksRecordEvent from '../../tracking/track-record-event';
+import { PERSONAL_THEME, PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
 import { usePreviewingTheme } from './use-previewing-theme';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const checkNeedUpgrade = ( {
 	site,
 	previewingThemeType,
+	requiredFeature,
 }: {
 	site?: SiteDetails;
 	previewingThemeType?: string;
+	requiredFeature?: string;
 } ) => {
 	const activeFeatures = site?.plan?.features?.active;
 	if ( ! activeFeatures ) {
 		return false;
+	}
+
+	// @TODO Replace all the logic below with the following code once Theme Tiers is live.
+	if ( requiredFeature ) {
+		return ! activeFeatures.includes( requiredFeature );
 	}
 
 	/**
@@ -57,10 +67,16 @@ export const useCanPreviewButNeedUpgrade = ( {
 	 * Get the theme and site info to decide whether the user needs to upgrade the plan.
 	 */
 	useEffect( () => {
+		const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME ];
+
+		if ( config.isEnabled( 'themes/tiers' ) ) {
+			livePreviewUpgradeTypes.push( PERSONAL_THEME );
+		}
+
 		/**
 		 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
 		 */
-		if ( previewingTheme.type !== WOOCOMMERCE_THEME && previewingTheme.type !== PREMIUM_THEME ) {
+		if ( previewingTheme?.type && livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
 			setCanPreviewButNeedUpgrade( false );
 			return;
 		}
@@ -80,7 +96,13 @@ export const useCanPreviewButNeedUpgrade = ( {
 			} )
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			.then( ( site: any ) => {
-				if ( ! checkNeedUpgrade( { site, previewingThemeType: previewingTheme.type } ) ) {
+				if (
+					! checkNeedUpgrade( {
+						site,
+						previewingThemeType: previewingTheme.type,
+						requiredFeature: previewingTheme.requiredFeature,
+					} )
+				) {
 					setCanPreviewButNeedUpgrade( false );
 					return;
 				}
@@ -89,9 +111,19 @@ export const useCanPreviewButNeedUpgrade = ( {
 			.catch( () => {
 				// do nothing
 			} );
-	}, [ previewingTheme.type, setCanPreviewButNeedUpgrade, setSiteSlug ] );
+	}, [
+		previewingTheme.requiredFeature,
+		previewingTheme.type,
+		setCanPreviewButNeedUpgrade,
+		setSiteSlug,
+	] );
 
 	const upgradePlan = useCallback( () => {
+		tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_upgrade', {
+			theme: previewingTheme.id,
+			theme_type: previewingTheme.type,
+		} );
+
 		const generateCheckoutUrl = ( plan: string ) => {
 			const locationHref = window.location.href;
 			let url = locationHref;
@@ -115,19 +147,19 @@ export const useCanPreviewButNeedUpgrade = ( {
 				url
 			) }`;
 		};
-		const link =
-			previewingTheme.type === WOOCOMMERCE_THEME
-				? /**
-				   * For a WooCommerce theme, the users should have the Business plan or higher,
-				   * AND the WooCommerce plugin has to be installed.
-				   */
-				  generateCheckoutUrl( PLAN_BUSINESS )
-				: // For a Premium theme, the users should have the Premium plan or higher.
-				  generateCheckoutUrl( PLAN_PREMIUM );
-		window.location.href = link;
 
-		// TODO: Add the track event.
-	}, [ previewingTheme.type, siteSlug ] );
+		switch ( previewingTheme.type ) {
+			case WOOCOMMERCE_THEME:
+				window.location.href = generateCheckoutUrl( PLAN_BUSINESS );
+				break;
+			case PREMIUM_THEME:
+				window.location.href = generateCheckoutUrl( PLAN_PREMIUM );
+				break;
+			case PERSONAL_THEME:
+				window.location.href = generateCheckoutUrl( PLAN_PERSONAL );
+				break;
+		}
+	}, [ previewingTheme.id, previewingTheme.type, siteSlug ] );
 
 	return {
 		canPreviewButNeedUpgrade,

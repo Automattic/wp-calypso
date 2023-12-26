@@ -45,7 +45,7 @@ export default function SiteTopHeaderButtons() {
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
-				<span>
+				<span id="sites-overview-add-sites-button">
 					<AddNewSiteButton
 						showMainButtonLabel={ ! isMobile }
 						popoverContext={ buttonRef }

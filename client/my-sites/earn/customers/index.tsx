@@ -1,6 +1,5 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
@@ -11,6 +10,7 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -112,19 +112,16 @@ function CustomerSection() {
 			<div>
 				{ Object.values( subscribers ).length === 0 && (
 					<Card>
-						{ translate( "You haven't added any customers. {{a}}Learn more{{/a}} about payments.", {
-							components: {
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/wordpress-editor/blocks/payments/'
-										) }
-										target="_blank"
-										rel="noreferrer noopener"
-									/>
-								),
-							},
-						} ) }
+						{ translate(
+							"You haven't added any customers. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
+							{
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink supportContext="payments_blocks" showIcon={ false } />
+									),
+								},
+							}
+						) }
 					</Card>
 				) }
 				{ Object.values( subscribers ).length > 0 && (

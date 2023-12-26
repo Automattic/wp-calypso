@@ -54,6 +54,7 @@ function transformTier( tier: PriceTierListItemProps ): StatsPlanTierUI {
 			price: tier?.minimum_price_monthly_display,
 			views: tier?.maximum_units,
 			extension: true,
+			transform_quantity_divide_by: tier?.transform_quantity_divide_by,
 			// The price is yearly for yearly plans, so we need to divide by 12.
 			per_unit_fee: ( tier?.per_unit_fee ?? 0 ) / 12,
 		};

@@ -43,6 +43,7 @@ export interface PaymentMethod {
 	submitButton: ReactElement< PaymentMethodSubmitButtonProps >;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 	hasRequiredFields?: boolean;
+	isInitiallyDisabled?: boolean;
 }
 
 export type ExternalPaymentMethod = Partial< PaymentMethod >;

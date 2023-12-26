@@ -225,6 +225,12 @@ export function useProductDescription( productSlug: string ): {
 				break;
 			case 'jetpack-stats':
 				description = translate( 'Powerful analytics to help you understand your audience.' );
+				break;
+			case 'jetpack-creator':
+				description = translate(
+					'Craft stunning content, boost your subscriber base, and monetize your online presence.'
+				);
+				break;
 		}
 
 		return {

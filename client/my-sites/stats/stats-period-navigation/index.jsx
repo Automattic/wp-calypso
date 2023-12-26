@@ -1,6 +1,7 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import classNames from 'classnames';
-import { localize, withRtl } from 'i18n-calypso';
+import { localize, translate, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import qs from 'qs';
@@ -10,8 +11,24 @@ import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsDateControl from 'calypso/components/stats-date-control';
 import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
+import {
+	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
+	STATS_FEATURE_INTERVAL_DROPDOWN,
+	STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
+	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
+	STATS_PERIOD,
+} from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import NavigationArrows from '../navigation-arrows';
+import StatsCardUpsell from '../stats-card-upsell';
 
 import './style.scss';
 
@@ -26,6 +43,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -161,6 +179,10 @@ class StatsPeriodNavigation extends PureComponent {
 			slug,
 			isWithNewDateControl,
 			dateRange,
+			shortcutList,
+			gateDateControl,
+			intervals,
+			siteSlug,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
@@ -174,7 +196,21 @@ class StatsPeriodNavigation extends PureComponent {
 				<div className="stats-period-navigation__children">{ children }</div>
 				{ isWithNewDateControl ? (
 					<div className="stats-period-navigation__date-control">
-						<StatsDateControl slug={ slug } queryParams={ queryParams } dateRange={ dateRange } />
+						<StatsDateControl
+							slug={ slug }
+							queryParams={ queryParams }
+							dateRange={ dateRange }
+							shortcutList={ shortcutList }
+							overlay={
+								gateDateControl && (
+									<StatsCardUpsell
+										className="stats-module__upsell"
+										siteSlug={ siteSlug }
+										statType={ STATS_FEATURE_DATE_CONTROL }
+									/>
+								)
+							}
+						/>
 						<div className="stats-period-navigation__period-control">
 							{ this.props.activeTab && (
 								<Legend
@@ -193,7 +229,12 @@ class StatsPeriodNavigation extends PureComponent {
 									onClickPrevious={ this.handleArrowPrevious }
 								/>
 							) }
-							<IntervalDropdown slug={ slug } period={ period } queryParams={ queryParams } />
+							<IntervalDropdown
+								slug={ slug }
+								period={ period }
+								queryParams={ queryParams }
+								intervals={ intervals }
+							/>
 						</div>
 					</div>
 				) : (
@@ -213,7 +254,98 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const connectComponent = connect( null, { recordGoogleEvent: recordGoogleEventAction } );
+const onGatedClick = ( siteId ) => ( events, source ) => {
+	events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
+	page( `/stats/purchase/${ siteId }?productType=personal&from=${ source }` );
+};
+
+const connectComponent = connect(
+	( state, { period } ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const gateDateControl = shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL );
+		const gatePeriodInterval = shouldGateStats(
+			state,
+			siteId,
+			`${ STATS_FEATURE_INTERVAL_DROPDOWN }/${ period }`
+		);
+		const shortcutList = [
+			{
+				id: 'last_7_days',
+				label: translate( 'Last 7 Days' ),
+				offset: 0,
+				range: 6,
+				period: STATS_PERIOD.DAY,
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS ),
+				statType: STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			{
+				id: 'last_30_days',
+				label: translate( 'Last 30 Days' ),
+				offset: 0,
+				range: 29,
+				period: STATS_PERIOD.DAY,
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS ),
+				statType: STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			{
+				id: 'last_3_months',
+				label: translate( 'Last 90 Days' ),
+				offset: 0,
+				range: 89,
+				period: STATS_PERIOD.WEEK,
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS ),
+				statType: STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			{
+				id: 'last_year',
+				label: translate( 'Last Year' ),
+				offset: 0,
+				range: 364, // ranges are zero based!
+				period: STATS_PERIOD.MONTH,
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_YEAR ),
+				statType: STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
+				onGatedClick: onGatedClick( siteId ),
+			},
+		];
+		const intervals = {
+			[ STATS_PERIOD.DAY ]: {
+				id: STATS_PERIOD.DAY,
+				label: translate( 'Days' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_DAY ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			[ STATS_PERIOD.WEEK ]: {
+				id: STATS_PERIOD.WEEK,
+				label: translate( 'Weeks' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			[ STATS_PERIOD.MONTH ]: {
+				id: STATS_PERIOD.MONTH,
+				label: translate( 'Months' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_MONTH ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
+				onGatedClick: onGatedClick( siteId ),
+			},
+			[ STATS_PERIOD.YEAR ]: {
+				id: STATS_PERIOD.YEAR,
+				label: translate( 'Years' ),
+				isGated: shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_YEAR ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
+				onGatedClick: onGatedClick( siteId ),
+			},
+		};
+
+		return { shortcutList, gateDateControl, gatePeriodInterval, intervals, siteSlug };
+	},
+	{ recordGoogleEvent: recordGoogleEventAction }
+);
 
 export default flowRight(
 	connectComponent,

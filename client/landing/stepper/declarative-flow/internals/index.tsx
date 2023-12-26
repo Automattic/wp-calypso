@@ -136,7 +136,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		setPreviousProgress( stepProgress?.progress ?? 0 );
 	};
 
-	const stepNavigation = flow.useStepNavigation( currentStepRoute, _navigate );
+	const stepNavigation = flow.useStepNavigation(
+		currentStepRoute,
+		_navigate,
+		flowSteps.map( ( step ) => step.slug )
+	);
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect(
@@ -197,7 +201,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
-				return <></>;
+				return null;
 		}
 
 		const StepComponent = stepComponents[ step.slug ];

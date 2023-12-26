@@ -60,7 +60,7 @@ function minimumCurrencyTransactionAmount(
 	currency: string,
 	connectedAccountDefaultCurrency: string
 ): number {
-	if ( connectedAccountDefaultCurrency.toUpperCase() === currency ) {
+	if ( connectedAccountDefaultCurrency?.toUpperCase() === currency ) {
 		return currency_min[ currency ];
 	}
 	return currency_min[ currency ] * 2;
@@ -94,7 +94,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.buyer_can_change_amount ?? false
 	);
 
-	const currencyList = Object.keys( connectedAccountMinimumCurrency );
+	const currencyList = Object.keys( connectedAccountMinimumCurrency ?? {} );
 
 	const defaultCurrency = useMemo( () => {
 		if ( product?.currency ) {

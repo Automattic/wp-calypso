@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -13,7 +14,7 @@ import './style.scss';
 export interface Tour {
 	target: string;
 	title: string;
-	description: string;
+	description: string | JSX.Element;
 	popoverPosition?:
 		| 'top'
 		| 'top right'
@@ -30,6 +31,7 @@ interface Props {
 	className?: string;
 	tours: Tour[];
 	preferenceName: string;
+	redirectAfterTourEnds?: string;
 }
 
 // This hook will return the async element matching the target selector.
@@ -63,7 +65,7 @@ const useAsyncElement = ( target: string, timeoutDuration: number ): HTMLElement
 	return asyncElement;
 };
 
-const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
+const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -98,7 +100,10 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 				tour: preferenceName,
 			} )
 		);
-	}, [ dispatch, preferenceName, preference ] );
+		if ( redirectAfterTourEnds ) {
+			page.redirect( redirectAfterTourEnds );
+		}
+	}, [ dispatch, preferenceName, preference, redirectAfterTourEnds ] );
 
 	const nextStep = useCallback( () => {
 		if ( currentStep < tours.length - 1 ) {
@@ -109,23 +114,24 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 	}, [ currentStep, tours.length, endTour ] );
 
 	useEffect( () => {
-		let target: Element | null = null;
-		if ( nextStepOnTargetClick ) {
+		let nextStepClickTargetElement: Element | null = null;
+		// We should wait for targetElement before attaching any events to advance to the next step
+		if ( nextStepOnTargetClick && targetElement && ! isDismissed && hasFetched ) {
 			// Find the target element using the nextStepOnTargetClick selector
-			target = document.querySelector( nextStepOnTargetClick );
-			if ( target ) {
-				// Attach the event listener to the target
-				target.addEventListener( 'click', nextStep );
+			nextStepClickTargetElement = document.querySelector( nextStepOnTargetClick );
+			if ( nextStepClickTargetElement ) {
+				// Attach the event listener to the nextStepClickTargetElement
+				nextStepClickTargetElement.addEventListener( 'click', nextStep );
 			}
 		}
 
 		// Cleanup function to remove the event listener
 		return () => {
-			if ( target ) {
-				target.removeEventListener( 'click', nextStep );
+			if ( nextStepClickTargetElement ) {
+				nextStepClickTargetElement.removeEventListener( 'click', nextStep );
 			}
 		};
-	}, [ nextStepOnTargetClick, nextStep ] );
+	}, [ nextStepOnTargetClick, nextStep, targetElement, isDismissed, hasFetched ] );
 
 	if ( isDismissed ) {
 		return null;

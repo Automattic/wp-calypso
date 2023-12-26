@@ -63,7 +63,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 		};
 	}
 
-	function onBackToStartClick() {
+	function onTryAgainClick() {
 		job?.importerId && resetImport( siteId, job.importerId );
 		stepNavigator?.goToImportCapturePage?.();
 	}
@@ -111,12 +111,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ onBackToStartClick }
-							/>
-						);
+						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					}

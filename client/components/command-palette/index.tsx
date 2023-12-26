@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
+import { useDebounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
@@ -20,12 +21,22 @@ interface CommandMenuGroupProps
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
+	setEmptyListNotice?: ( message: string ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
 	'[cmdk-root] > [cmdk-list]': {
 		overflowX: 'hidden',
 	},
+	'[cmdk-root] > [cmdk-list] [cmdk-empty]': {
+		paddingLeft: '24px',
+		paddingRight: '24px',
+	},
+} );
+
+const StyledCommandsEmpty = styled( Command.Empty )( {
+	fontSize: '13px',
+	textAlign: 'center',
 } );
 
 const BackButton = styled.button( {
@@ -82,8 +93,9 @@ export function CommandMenuGroup( {
 	selectedCommandName,
 	setSelectedCommandName,
 	setFooterMessage,
+	setEmptyListNotice,
 }: CommandMenuGroupProps ) {
-	const { commands, filterNotice } = useCommandPalette( {
+	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
@@ -92,6 +104,10 @@ export function CommandMenuGroup( {
 	useEffect( () => {
 		setFooterMessage?.( filterNotice ?? '' );
 	}, [ setFooterMessage, filterNotice ] );
+
+	useEffect( () => {
+		setEmptyListNotice?.( emptyListNotice ?? '' );
+	}, [ setEmptyListNotice, emptyListNotice ] );
 
 	if ( ! commands.length ) {
 		return null;
@@ -112,6 +128,7 @@ export function CommandMenuGroup( {
 								close: () => close( command.name, true ),
 								setSearch,
 								setPlaceholderOverride,
+								command,
 							} )
 						}
 						id={ cleanForSlug( itemValue ) }
@@ -184,12 +201,47 @@ function CommandInput( {
 	);
 }
 
+interface NotFoundMessageProps {
+	selectedCommandName: string;
+	search: string;
+	emptyListNotice?: string;
+	currentRoute: string | null;
+}
+
+const NotFoundMessage = ( {
+	selectedCommandName,
+	search,
+	emptyListNotice,
+	currentRoute,
+}: NotFoundMessageProps ) => {
+	const dispatch = useDispatch();
+	const trackNotFoundDebounced = useDebounce( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
+				current_route: currentRoute,
+				search_text: search,
+			} )
+		);
+	}, 600 );
+
+	useEffect( () => {
+		// Track search queries only for root
+		if ( ! selectedCommandName && search ) {
+			trackNotFoundDebounced();
+		}
+		return trackNotFoundDebounced.cancel;
+	}, [ search, selectedCommandName, trackNotFoundDebounced ] );
+
+	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
+};
+
 const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ footerMessage, setFooterMessage ] = useState( '' );
+	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const currentRoute = useSelector( ( state: object ) => getCurrentRoutePattern( state ) );
 	const dispatch = useDispatch();
 	const open = useCallback( () => {
@@ -286,8 +338,6 @@ const CommandPalette = () => {
 		}
 	};
 
-	const isLoading = false;
-
 	return (
 		<Modal
 			className="commands-command-menu"
@@ -318,9 +368,14 @@ const CommandPalette = () => {
 						/>
 					</div>
 					<Command.List ref={ commandListRef }>
-						{ search && ! isLoading && (
-							<Command.Empty>{ __( 'No results found.' ) }</Command.Empty>
-						) }
+						<StyledCommandsEmpty>
+							<NotFoundMessage
+								selectedCommandName={ selectedCommandName }
+								search={ search }
+								emptyListNotice={ emptyListNotice }
+								currentRoute={ currentRoute }
+							/>
+						</StyledCommandsEmpty>
 						<CommandMenuGroup
 							search={ search }
 							close={ ( commandName, isExecuted ) => {
@@ -332,6 +387,7 @@ const CommandPalette = () => {
 							selectedCommandName={ selectedCommandName }
 							setSelectedCommandName={ setSelectedCommandName }
 							setFooterMessage={ setFooterMessage }
+							setEmptyListNotice={ setEmptyListNotice }
 						/>
 					</Command.List>
 				</Command>

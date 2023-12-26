@@ -8,7 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
-import StatsCommercialUpgradeSlider from './stats-commercial-upgrade-slider';
+import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
 import {
@@ -22,6 +22,7 @@ import {
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
+import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -86,6 +87,8 @@ const StatsCommercialPurchase = ( {
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -93,7 +96,8 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
-	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( 0 );
+	const startingTierQuantity = getTierQuentity( tiers[ 0 ], isTierUpgradeSliderEnabled );
+	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -120,10 +124,6 @@ Thanks\n\n`;
 
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
-
-	// TODO: Replace current pricing info with slider.
-	// Currently displaying below the flow to maintain existing behaviour.
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	const handleSliderChanged = ( value: number ) => {
 		setPurchaseTierQuantity( value );
@@ -152,6 +152,9 @@ Thanks\n\n`;
 				<>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
+						analyticsEventName={ `${
+							isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+						}_stats_purchase_commercial_slider_clicked` }
 						onSliderChange={ handleSliderChanged }
 					/>
 					<ButtonComponent
