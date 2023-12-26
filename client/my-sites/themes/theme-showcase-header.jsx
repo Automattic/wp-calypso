@@ -5,6 +5,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isWooCYSEligibleSite } from 'calypso/state/sites/selectors';
 import { isDefaultWooExpressThemeActive } from 'calypso/state/themes/selectors/is-wooexpress-default-theme-active';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
@@ -30,6 +31,7 @@ export default function ThemeShowcaseHeader( {
 	const _isDefaultWooExpressThemeActive = useSelector( ( state ) =>
 		isDefaultWooExpressThemeActive( state, selectedSiteId )
 	);
+	const isWooCYSSite = useSelector( ( state ) => isWooCYSEligibleSite( state, selectedSiteId ) );
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
@@ -54,9 +56,9 @@ export default function ThemeShowcaseHeader( {
 		  }
 		: loggedOutSeoContent;
 
-	// Don't show the Install Theme button if the site is on a WooExpress or Ecom Free Trial and the default WooExpress theme is active
+	// Don't show the Install Theme button if the site is Woo CYS site and the default WooExpress theme is active
 	const showInstallThemeButton =
-		! ( isSiteWooExpressOrEcomFreeTrial && _isDefaultWooExpressThemeActive ) && !! selectedSiteId;
+		! ( isWooCYSSite && _isDefaultWooExpressThemeActive ) && !! selectedSiteId;
 
 	const metas = [
 		{

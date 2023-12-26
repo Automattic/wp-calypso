@@ -24,6 +24,7 @@ import {
 	getSiteThemeInstallUrl,
 	getSiteAdminUrl,
 	getSiteSlug,
+	isWooCYSEligibleSite,
 } from 'calypso/state/sites/selectors';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -69,6 +70,14 @@ const getWarningModalComponent = ( isDefaultWooExpressTheme, isCurrentThemeAIGen
 };
 
 export const ThemesList = ( { tabFilter, ...props } ) => {
+	const {
+		themes,
+		translate,
+		isSiteWooExpressOrEcomFreeTrial,
+		siteSlug,
+		siteAdminUrl,
+		getButtonOptions,
+	} = props;
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
 	const updateShowSecondUpsellNudge = useCallback( () => {
@@ -118,15 +127,6 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		} );
 		window.location.assign( destinationUrl );
 	};
-
-	const {
-		themes,
-		translate,
-		isSiteWooExpressOrEcomFreeTrial,
-		siteSlug,
-		siteAdminUrl,
-		getButtonOptions,
-	} = props;
 
 	const [ openWarningModal, setOpenWarningModal ] = useState( false );
 	const { data: activeTheme } = useWooActiveThemeQuery(
@@ -221,11 +221,12 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ ! isSiteWooExpressOrEcomFreeTrial && tabFilter !== 'my-themes' && _themes.length > 0 && (
-				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
-			) }
+			{ ! props.isWooCYSEligibleSite &&
+				! ( props.isSiteWooExpressOrEcomFreeTrial && props.tier === 'free' ) &&
+				tabFilter !== 'my-themes' &&
+				_themes.length > 0 && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
 			{ /* The Woo Design with AI banner will be displayed on the 2nd or last row.The behavior is controlled by CSS */ }
-			{ isSiteWooExpressOrEcomFreeTrial && _themes.length > 0 && (
+			{ props.isWooCYSEligibleSite && _themes.length > 0 && (
 				<WooDesignWithAIBanner
 					className={ activeTheme?.is_ai_generated ? 'last-row' : 'second-row' }
 					onClick={ onClickWooBannerCTA }
@@ -530,6 +531,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
+		isWooCYSEligibleSite: isWooCYSEligibleSite( state, siteId ),
 		isDefaultWooExpressThemeActive: isDefaultWooExpressThemeActive( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
