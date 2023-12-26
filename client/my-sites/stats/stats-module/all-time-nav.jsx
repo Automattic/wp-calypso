@@ -4,11 +4,12 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import SegmentedControl from 'calypso/components/segmented-control';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
@@ -33,8 +34,9 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		hideNavigation,
 		navigationSwap,
 		shouldGateOptions,
-		onGatedClick,
 	} = props;
+
+	const dispatch = useDispatch();
 
 	const getSummaryPeriodLabel = () => {
 		switch ( period.period ) {
@@ -55,7 +57,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 	const handleClick = ( item ) => () => {
 		if ( item.isGated ) {
-			return onGatedClick( item );
+			dispatch( toggleUpsellModal( siteSlug, item.statType ) );
 		}
 	};
 
@@ -72,6 +74,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			path: summaryPeriodPath,
 			stat: 'Period Summary',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_DAY ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_DAY,
 		},
 		{
 			value: '7',
@@ -79,6 +82,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			path: `${ summaryPath }7`,
 			stat: '7 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
 		},
 		{
 			value: '30',
@@ -86,6 +90,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			path: `${ summaryPath }30`,
 			stat: '30 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
 		},
 		{
 			value: '90',
@@ -93,6 +98,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			path: `${ summaryPath }90`,
 			stat: 'Quarter',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_QUARTER,
 		},
 		{
 			value: '365',
@@ -100,6 +106,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			path: `${ summaryPath }365`,
 			stat: 'Year',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_YEAR ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_YEAR,
 		},
 		{
 			value: '-1',
@@ -107,6 +114,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			path: `${ summaryPath }-1`,
 			stat: 'All Time',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_ALL ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_ALL,
 		},
 	];
 
