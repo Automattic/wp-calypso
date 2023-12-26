@@ -177,6 +177,7 @@ export function FreePlanFreeDomainDialog( {
 							isLoading={ generatedWPComSubdomain?.isLoading }
 						/>
 					),
+					strong: <strong></strong>,
 				},
 			}
 		),
