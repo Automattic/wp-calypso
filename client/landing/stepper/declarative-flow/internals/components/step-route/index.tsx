@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { ProgressBar } from '@automattic/components';
 import classnames from 'classnames';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -9,41 +7,12 @@ import { Flow, StepperStep } from '../../types';
 type StepRouteProps = {
 	step: StepperStep;
 	flow: Flow;
-	progressValue: number;
-	progressBarExtraStyle: React.CSSProperties;
 	showWooLogo: boolean;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
 };
 
-const StepRoute = ( {
-	step,
-	flow,
-	progressValue,
-	progressBarExtraStyle,
-	showWooLogo,
-	renderStep,
-}: StepRouteProps ) => {
+const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
 	const stepContent = renderStep( step );
-	const renderProgressBar = () => {
-		// The visual progress bar is removed due to its fragility.
-		// The component will be cleaned up but it'll require more untangling as the component
-		// is involved in some framework mechanisms and Tracks events
-		// See https://github.com/Automattic/dotcom-forge/issues/3160
-
-		if ( ! isEnabled( 'onboarding/stepper-loading-bar' ) ) {
-			return null;
-		}
-
-		return (
-			<ProgressBar
-				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-				className="flow-progress"
-				value={ progressValue * 100 }
-				total={ 100 }
-				style={ progressBarExtraStyle }
-			/>
-		);
-	};
 
 	return (
 		<div
@@ -56,7 +25,6 @@ const StepRoute = ( {
 			) }
 		>
 			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
-			{ renderProgressBar() }
 			{ stepContent && <SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } /> }
 			{ stepContent }
 		</div>
