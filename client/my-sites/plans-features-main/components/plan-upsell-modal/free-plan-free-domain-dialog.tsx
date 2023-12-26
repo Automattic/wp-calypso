@@ -1,6 +1,5 @@
-import { getPlan, type PlanSlug, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -9,9 +8,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { DialogContainer, Heading } from './components';
+import PlanUpsellButton from './components/plan-upsell-button';
+import { usePlanUpsellInfo } from './hooks/use-plan-upsell-info';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -80,74 +79,6 @@ function LazyDisplayText( {
 		<LoadingPlaceholder width="80px" minHeight="0px" height="8px" />
 	) : (
 		<>{ displayText }</>
-	);
-}
-
-type PlanUpsellInfo = {
-	planSlug: PlanSlug;
-	title: TranslateResult;
-	formattedPriceMonthly: string;
-	formattedPriceFull: string;
-};
-
-// TODO:
-// Replace `getPlanPrices` with the selectors from the Plans datastore.
-const usePlanUpsellInfo = ( planSlug: PlanSlug, currencyCode: string ): PlanUpsellInfo => {
-	const title = getPlan( planSlug )?.getTitle() || '';
-	const priceMonthly = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug,
-			siteId,
-			returnMonthly: true,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
-	const priceFull = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug,
-			siteId,
-			returnMonthly: false,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
-
-	return {
-		planSlug,
-		title,
-		formattedPriceMonthly: formatCurrency( priceMonthly, currencyCode, { stripZeros: true } ),
-		formattedPriceFull: formatCurrency( priceFull, currencyCode, { stripZeros: true } ),
-	};
-};
-
-function PlanUpsellButton( {
-	planUpsellInfo,
-	onPlanSelected,
-	disabled = false,
-}: {
-	planUpsellInfo: PlanUpsellInfo;
-	onPlanSelected: ( planSlug: PlanSlug ) => void;
-	disabled?: boolean;
-} ) {
-	const translate = useTranslate();
-
-	return (
-		<PlanButton
-			planSlug={ planUpsellInfo.planSlug }
-			disabled={ disabled }
-			onClick={ () => {
-				onPlanSelected( planUpsellInfo.planSlug );
-			} }
-		>
-			{ translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-				comment: 'Eg: Get Personal $4/month',
-				args: {
-					planTitle: planUpsellInfo.title,
-					planPrice: planUpsellInfo.formattedPriceMonthly,
-				},
-			} ) }
-		</PlanButton>
 	);
 }
 

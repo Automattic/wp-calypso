@@ -19,7 +19,6 @@ import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
 export function FreePlanPaidDomainDialog( {
 	paidDomainName,
 	generatedWPComSubdomain,
-	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
 }: DomainPlanDialogProps ) {
