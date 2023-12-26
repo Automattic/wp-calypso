@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Modal, TextHighlight, __experimentalHStack as HStack } from '@wordpress/components';
+import { useDebounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, search as inputIcon, chevronLeft as backIcon } from '@wordpress/icons';
 import { cleanForSlug } from '@wordpress/url';
@@ -200,6 +201,40 @@ function CommandInput( {
 	);
 }
 
+interface NotFoundMessageProps {
+	selectedCommandName: string;
+	search: string;
+	emptyListNotice?: string;
+	currentRoute: string | null;
+}
+
+const NotFoundMessage = ( {
+	selectedCommandName,
+	search,
+	emptyListNotice,
+	currentRoute,
+}: NotFoundMessageProps ) => {
+	const dispatch = useDispatch();
+	const trackNotFoundDebounced = useDebounce( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
+				current_route: currentRoute,
+				search_text: search,
+			} )
+		);
+	}, 600 );
+
+	useEffect( () => {
+		// Track search queries only for root
+		if ( ! selectedCommandName && search ) {
+			trackNotFoundDebounced();
+		}
+		return trackNotFoundDebounced.cancel;
+	}, [ search, selectedCommandName, trackNotFoundDebounced ] );
+
+	return <>{ emptyListNotice || __( 'No results found.' ) }</>;
+};
+
 const CommandPalette = () => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -303,8 +338,6 @@ const CommandPalette = () => {
 		}
 	};
 
-	const isLoading = false;
-
 	return (
 		<Modal
 			className="commands-command-menu"
@@ -335,11 +368,14 @@ const CommandPalette = () => {
 						/>
 					</div>
 					<Command.List ref={ commandListRef }>
-						{ ! isLoading && (
-							<StyledCommandsEmpty>
-								{ emptyListNotice || __( 'No results found.' ) }
-							</StyledCommandsEmpty>
-						) }
+						<StyledCommandsEmpty>
+							<NotFoundMessage
+								selectedCommandName={ selectedCommandName }
+								search={ search }
+								emptyListNotice={ emptyListNotice }
+								currentRoute={ currentRoute }
+							/>
+						</StyledCommandsEmpty>
 						<CommandMenuGroup
 							search={ search }
 							close={ ( commandName, isExecuted ) => {

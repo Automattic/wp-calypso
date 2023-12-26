@@ -1,8 +1,8 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, findFirstSimilarPlanKey, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
-import { useState } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -88,10 +88,6 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
-const businessPlanProduct = createRequestCartProduct( {
-	product_slug: PLAN_BUSINESS,
-} );
-
 const PluginsDiscoveryPage = ( props ) => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
@@ -106,16 +102,26 @@ const PluginsDiscoveryPage = ( props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const { isLoading, result: isEligibleForOneClickCheckout } = useIsEligibleForOneClickCheckout();
 
+	const productToAdd = useMemo( () => {
+		if ( ! props.sitePlan ) {
+			return null;
+		}
+		const currentPlan = getPlan( props.sitePlan.product_slug );
+		const currentPlanTerm = currentPlan.term;
+		const upsellPlan = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlanTerm } );
+		return createRequestCartProduct( { product_slug: upsellPlan } );
+	}, [ props.sitePlan ] );
+
 	return (
 		<>
-			{ showPurchaseModal && (
+			{ showPurchaseModal && productToAdd && (
 				<CalypsoShoppingCartProvider>
 					<StripeHookProvider
 						fetchStripeConfiguration={ getStripeConfiguration }
 						locale={ translate.localeSlug }
 					>
 						<PurchaseModal
-							productToAdd={ businessPlanProduct }
+							productToAdd={ productToAdd }
 							onClose={ () => {
 								setShowPurchaseModal( false );
 							} }

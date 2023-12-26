@@ -6,7 +6,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useState, useCallback, useMemo, Suspense, lazy } from 'react';
+import React, { useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -96,11 +96,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
-	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
-	const [ previousProgress, setPreviousProgress ] = useState(
-		stepProgress ? stepProgress.progress : 0
-	);
-	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
 
 	// this pre-loads all the lazy steps down the flow.
 	useEffect( () => {
@@ -133,7 +128,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ window.location.search }` );
 
 		navigate( _path, { state: stepPaths } );
-		setPreviousProgress( stepProgress?.progress ?? 0 );
 	};
 
 	const stepNavigation = flow.useStepNavigation(
@@ -201,7 +195,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
-				return <></>;
+				return null;
 		}
 
 		const StepComponent = stepComponents[ step.slug ];
@@ -225,14 +219,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
-	let progressBarExtraStyle: React.CSSProperties = {};
-	if ( 'videopress' === flow.name ) {
-		progressBarExtraStyle = {
-			'--previous-progress': Math.min( 100, Math.ceil( previousProgressValue * 100 ) ) + '%',
-			'--current-progress': Math.min( 100, Math.ceil( progressValue * 100 ) ) + '%',
-		} as React.CSSProperties;
-	}
-
 	return (
 		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
@@ -245,8 +231,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 							<StepRoute
 								step={ step }
 								flow={ flow }
-								progressBarExtraStyle={ progressBarExtraStyle }
-								progressValue={ progressValue }
 								showWooLogo={ isWooExpressFlow( flow.name ) }
 								renderStep={ renderStep }
 							/>

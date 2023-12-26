@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_PREMIUM_THEMES,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
@@ -12,7 +14,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import wpcom from 'calypso/lib/wp';
 import tracksRecordEvent from '../../tracking/track-record-event';
 import { UPGRADE_DONE_NOTICE_ID } from '../constants';
-import { PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
+import { PERSONAL_THEME, PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
 import { usePreviewingTheme } from './use-previewing-theme';
 import { useSidebarNotice } from './use-sidebar-notice';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -24,13 +26,20 @@ const POLL_INTERVAL_MAX = 10 * 60 * 1000;
 const needUpgrade = ( {
 	site,
 	previewingThemeType,
+	requiredFeature,
 }: {
 	site?: SiteDetails;
 	previewingThemeType?: string;
+	requiredFeature?: string;
 } ) => {
 	const activeFeatures = site?.plan?.features?.active;
 	if ( ! activeFeatures ) {
 		return false;
+	}
+
+	// @TODO Replace all the logic below with the following code once Theme Tiers is live.
+	if ( requiredFeature ) {
+		return ! activeFeatures.includes( requiredFeature );
 	}
 
 	/**
@@ -189,10 +198,16 @@ export const useCanPreviewButNeedUpgrade = ( {
 	 * Get the theme and site info to decide whether the user needs to upgrade the plan.
 	 */
 	useEffect( () => {
+		const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME ];
+
+		if ( config.isEnabled( 'themes/tiers' ) ) {
+			livePreviewUpgradeTypes.push( PERSONAL_THEME );
+		}
+
 		/**
 		 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
 		 */
-		if ( previewingTheme.type !== WOOCOMMERCE_THEME && previewingTheme.type !== PREMIUM_THEME ) {
+		if ( previewingTheme?.type && livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
 			setCanPreviewButNeedUpgrade( false );
 			return;
 		}
@@ -211,7 +226,13 @@ export const useCanPreviewButNeedUpgrade = ( {
 				return site;
 			} )
 			.then( ( site: any ) => {
-				if ( ! needUpgrade( { site, previewingThemeType: previewingTheme.type } ) ) {
+				if (
+					! needUpgrade( {
+						site,
+						previewingThemeType: previewingTheme.type,
+						requiredFeature: previewingTheme.requiredFeature,
+					} )
+				) {
 					setCanPreviewButNeedUpgrade( false );
 					return;
 				}
@@ -220,7 +241,12 @@ export const useCanPreviewButNeedUpgrade = ( {
 			.catch( () => {
 				// do nothing
 			} );
-	}, [ previewingTheme.type, setCanPreviewButNeedUpgrade, setSiteSlug ] );
+	}, [
+		previewingTheme.requiredFeature,
+		previewingTheme.type,
+		setCanPreviewButNeedUpgrade,
+		setSiteSlug,
+	] );
 
 	const upgradePlan = useCallback( () => {
 		tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_upgrade', {
@@ -252,23 +278,31 @@ export const useCanPreviewButNeedUpgrade = ( {
 				window._currentSiteId
 			}/${ plan }?checkoutBackUrl=${ encodeURIComponent( url ) }`;
 		};
-		const link =
-			previewingTheme.type === WOOCOMMERCE_THEME
-				? /**
-				   * For a WooCommerce theme, the users should have the Business plan or higher,
-				   * AND the WooCommerce plugin has to be installed.
-				   */
-				  generateCheckoutUrl( PLAN_BUSINESS )
-				: // For a Premium theme, the users should have the Premium plan or higher.
-				  generateCheckoutUrl( PLAN_PREMIUM );
 
+		let link = '';
+		switch ( previewingTheme.type ) {
+			/**
+			 * For a WooCommerce theme, the users should have the Business plan or higher,
+			 * AND the WooCommerce plugin has to be installed.
+			 */
+			case WOOCOMMERCE_THEME:
+				link = generateCheckoutUrl( PLAN_BUSINESS );
+				break;
+			// For a Premium theme, the users should have the Premium plan or higher.
+			case PREMIUM_THEME:
+				link = generateCheckoutUrl( PLAN_PREMIUM );
+				break;
+			case PERSONAL_THEME:
+				link = generateCheckoutUrl( PLAN_PERSONAL );
+				break;
+		}
 		// Open the checkout in a new tab.
 		if ( checkoutTab && ! checkoutTab.closed ) {
 			checkoutTab.focus();
 		} else {
 			setCheckoutTab( window.open( link, 'wpcom-live-preview-upgrade-plan-window' ) );
 		}
-	}, [ previewingTheme.id, previewingTheme.type, siteSlug, checkoutTab ] );
+	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug ] );
 
 	return {
 		canPreviewButNeedUpgrade,

@@ -25,7 +25,7 @@ import {
 	STATS_PERIOD,
 } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import NavigationArrows from '../navigation-arrows';
 import StatsCardUpsell from '../stats-card-upsell';
@@ -43,6 +43,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -180,8 +181,8 @@ class StatsPeriodNavigation extends PureComponent {
 			dateRange,
 			shortcutList,
 			gateDateControl,
-			siteId,
 			intervals,
+			siteSlug,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
@@ -204,7 +205,7 @@ class StatsPeriodNavigation extends PureComponent {
 								gateDateControl && (
 									<StatsCardUpsell
 										className="stats-module__upsell"
-										siteId={ siteId }
+										siteSlug={ siteSlug }
 										statType={ STATS_FEATURE_DATE_CONTROL }
 									/>
 								)
@@ -261,6 +262,7 @@ const onGatedClick = ( siteId ) => ( events, source ) => {
 const connectComponent = connect(
 	( state, { period } ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 		const gateDateControl = shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL );
 		const gatePeriodInterval = shouldGateStats(
 			state,
@@ -340,7 +342,7 @@ const connectComponent = connect(
 			},
 		};
 
-		return { siteId, shortcutList, gateDateControl, gatePeriodInterval, intervals };
+		return { shortcutList, gateDateControl, gatePeriodInterval, intervals, siteSlug };
 	},
 	{ recordGoogleEvent: recordGoogleEventAction }
 );

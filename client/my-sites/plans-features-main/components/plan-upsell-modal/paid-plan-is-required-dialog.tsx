@@ -4,6 +4,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PlanButton from 'calypso/my-sites/plans-grid/components/plan-button';
 import {
 	ButtonContainer,
 	DialogContainer,
@@ -12,7 +13,6 @@ import {
 	Row,
 	RowWithBorder,
 	DomainName,
-	StyledButton,
 } from './components';
 import SuggestedPlanSection from './components/suggested-plan-section';
 import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
@@ -78,13 +78,13 @@ export default function PaidPlanIsRequiredDialog( {
 							<div>{ generatedWPComSubdomain.result.domain_name }</div>
 						) }
 					</DomainName>
-					<StyledButton
+					<PlanButton
 						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }
 						onClick={ handleFreeDomainClick }
 					>
 						{ translate( 'Continue with Free plan' ) }
-					</StyledButton>
+					</PlanButton>
 				</Row>
 			</ButtonContainer>
 		</DialogContainer>

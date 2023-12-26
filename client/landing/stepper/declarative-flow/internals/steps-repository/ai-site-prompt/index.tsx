@@ -52,7 +52,7 @@ const AISitePrompt: Step = function ( props ) {
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		callAIAssembler()
-			?.then( () => submit?.() )
+			?.then( () => submit?.( { aiSitePrompt: prompt } ) )
 			?.catch( () => goNext?.() );
 	};
 

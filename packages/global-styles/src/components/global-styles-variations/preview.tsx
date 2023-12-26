@@ -55,8 +55,18 @@ interface Props {
 const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut }: Props ) => {
 	const [ fontWeight ] = useGlobalStyle( 'typography.fontWeight' );
 	const [ fontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
-	const [ headingFontFamily = fontFamily ] = useGlobalStyle( 'elements.h1.typography.fontFamily' );
-	const [ headingFontWeight = fontWeight ] = useGlobalStyle( 'elements.h1.typography.fontWeight' );
+	const [ baseHeadingFontFamily = fontFamily ] = useGlobalStyle(
+		'elements.heading.typography.fontFamily'
+	);
+	const [ baseHeadingFontWeight = fontWeight ] = useGlobalStyle(
+		'elements.heading.typography.fontWeight'
+	);
+	const [ headingFontFamily = baseHeadingFontFamily ] = useGlobalStyle(
+		'elements.h1.typography.fontFamily'
+	);
+	const [ headingFontWeight = baseHeadingFontWeight ] = useGlobalStyle(
+		'elements.h1.typography.fontWeight'
+	);
 	const [ textColor = 'black' ] = useGlobalStyle( 'color.text' );
 	const [ headingColor = textColor ] = useGlobalStyle( 'elements.h1.color.text' );
 	const [ backgroundColor = 'white' ] = useGlobalStyle( 'color.background' );
