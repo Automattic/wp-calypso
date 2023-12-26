@@ -10,11 +10,11 @@ import reducer from './reducer';
 /**
  * Types
  */
-import type { AiFeatureProps, PlanStateProps } from './types';
+import type { AiFeatureProps, LogoGeneratorStateProp } from './types';
 
-export const STORE_WPCOM_PLANS = 'wordpress-com/plans';
+export const STORE_NAME = 'jetpack-ai/logo-generator';
 
-const wordpressPlansStore = createReduxStore( STORE_WPCOM_PLANS, {
+const jetpackAiLogoGeneratorStore = createReduxStore( STORE_NAME, {
 	// @ts-expect-error -- TSCONVERSION
 	__experimentalUseThunks: true,
 
@@ -25,12 +25,12 @@ const wordpressPlansStore = createReduxStore( STORE_WPCOM_PLANS, {
 	selectors: {
 		/**
 		 * Return the AI Assistant feature.
-		 * @param {PlanStateProps} state - The Plans state tree.
+		 * @param {LogoGeneratorStateProp} state - The app state tree.
 		 * @returns {AiFeatureProps}       The AI Assistant feature data.
 		 */
-		getAiAssistantFeature( state: PlanStateProps, siteId: string = '' ): Partial< AiFeatureProps > {
+		getAiAssistantFeature( state: LogoGeneratorStateProp ): Partial< AiFeatureProps > {
 			// Clean up the _meta property.
-			const data = { ...state.features.aiAssistant, siteId };
+			const data = { ...state.features.aiAssistantFeature };
 			delete data._meta;
 
 			return data;
@@ -39,25 +39,18 @@ const wordpressPlansStore = createReduxStore( STORE_WPCOM_PLANS, {
 		/**
 		 * Get the isRequesting flag for the AI Assistant feature.
 		 *
-		 * @param {PlanStateProps} state - The Plans state tree.
+		 * @param {LogoGeneratorStateProp} state - The app state tree.
 		 * @returns {boolean}              The isRequesting flag.
 		 */
-		getIsRequestingAiAssistantFeature( state: PlanStateProps ): boolean {
-			return state.features.aiAssistant?._meta?.isRequesting ?? false;
+		getIsRequestingAiAssistantFeature( state: LogoGeneratorStateProp ): boolean {
+			return state.features.aiAssistantFeature?._meta?.isRequesting ?? false;
 		},
 	},
 
 	resolvers: {
-		getAiAssistantFeature: ( state: PlanStateProps, siteId: string ) => {
-			// eslint-disable-next-line no-console
-			console.log( 'RESOLVER getAiAssistantFeature', state, String( siteId ) );
-			if ( state?.features?.aiAssistant ) {
-				return;
-			}
-
-			return actions.fetchAiAssistantFeature( String( state ) );
-		},
+		getAiAssistantFeature: ( siteId: string ) =>
+			actions.fetchAiAssistantFeature( String( siteId ) ),
 	},
 } );
 
-register( wordpressPlansStore );
+register( jetpackAiLogoGeneratorStore );
