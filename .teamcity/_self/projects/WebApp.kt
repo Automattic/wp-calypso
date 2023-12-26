@@ -557,17 +557,14 @@ object CheckCodeStyleBranch : BuildType({
 
 				# Find files to lint
 				if [ "%run_full_eslint%" = "true" ]; then
-					FILES_TO_LINT="."
+					echo "Linting all files"
+					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${file//\//_}.xml"
 				else
-					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
-				fi
-				echo "Files to lint:"
-				echo ${'$'}FILES_TO_LINT
-				echo ""
-
-				# Lint files
-				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+					# this is necessary for large diffs to avoid `ENAMETOOLONG` errors linting files
+					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)$' | while read -r file; do
+						echo "Linting ${'$'}file"
+						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${file//\//_}.xml" "${'$'}file"
+					done
 				fi
 			"""
 		}
