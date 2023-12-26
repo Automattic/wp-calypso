@@ -31,11 +31,6 @@ export function FreePlanPaidDomainDialog( {
 		} );
 	}, [] );
 
-	function handlePaidPlanClick() {
-		setIsBusy( true );
-		onPlanSelected( suggestedPlanSlug );
-	}
-
 	function handleFreePlanClick() {
 		setIsBusy( true );
 		onFreePlanSelected( true );
@@ -68,9 +63,8 @@ export function FreePlanPaidDomainDialog( {
 				<RowWithBorder>
 					<SuggestedPlanSection
 						paidDomainName={ paidDomainName }
-						suggestedPlanSlug={ suggestedPlanSlug }
 						isBusy={ isBusy }
-						onButtonClick={ handlePaidPlanClick }
+						onPlanSelected={ onPlanSelected }
 					/>
 				</RowWithBorder>
 				<Row>
