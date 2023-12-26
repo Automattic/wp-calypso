@@ -95,8 +95,8 @@ export function FreePlanFreeDomainDialog( {
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const primaryUpsellPlanInfo = usePlanUpsellInfo( PLAN_PERSONAL, currencyCode );
-	const secondaryUpsellPlanInfo = usePlanUpsellInfo( PLAN_PREMIUM, currencyCode );
+	const basicPlanUpsellInfo = usePlanUpsellInfo( PLAN_PERSONAL, currencyCode );
+	const advancePlanUpsellInfo = usePlanUpsellInfo( PLAN_PREMIUM, currencyCode );
 	const buttonDisabled = generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result;
 
 	useEffect( () => {
@@ -147,8 +147,8 @@ export function FreePlanFreeDomainDialog( {
 					'Unlock all of these features with a %(planTitle)s plan, starting at just %(planPrice)s/month.',
 					{
 						args: {
-							planTitle: primaryUpsellPlanInfo.title,
-							planPrice: primaryUpsellPlanInfo.formattedPriceMonthly,
+							planTitle: basicPlanUpsellInfo.title,
+							planPrice: basicPlanUpsellInfo.formattedPriceMonthly,
 						},
 					}
 				) }
@@ -158,8 +158,8 @@ export function FreePlanFreeDomainDialog( {
 					'{{strong}}Need premium themes, live chat support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
 					{
 						args: {
-							planTitle: secondaryUpsellPlanInfo.title,
-							planPrice: secondaryUpsellPlanInfo.formattedPriceMonthly,
+							planTitle: advancePlanUpsellInfo.title,
+							planPrice: advancePlanUpsellInfo.formattedPriceMonthly,
 						},
 						components: {
 							strong: <strong></strong>,
@@ -171,12 +171,12 @@ export function FreePlanFreeDomainDialog( {
 
 			<ButtonRow>
 				<PlanUpsellButton
-					planUpsellInfo={ primaryUpsellPlanInfo }
+					planUpsellInfo={ basicPlanUpsellInfo }
 					disabled={ buttonDisabled }
 					onPlanSelected={ onPlanSelected }
 				/>
 				<PlanUpsellButton
-					planUpsellInfo={ secondaryUpsellPlanInfo }
+					planUpsellInfo={ advancePlanUpsellInfo }
 					disabled={ buttonDisabled }
 					onPlanSelected={ onPlanSelected }
 				/>
@@ -195,12 +195,12 @@ export function FreePlanFreeDomainDialog( {
 					'%(planTitle1)s plan: %(monthlyPlanPrice1)s/mo, %(annualPlanPrice1)s billed annually. %(planTitle2)s plan: %(monthlyPlanPrice2)s/mo, %(annualPlanPrice2)s billed annually. Excluding taxes.',
 					{
 						args: {
-							planTitle1: primaryUpsellPlanInfo.title,
-							monthlyPlanPrice1: primaryUpsellPlanInfo.formattedPriceMonthly,
-							annualPlanPrice1: primaryUpsellPlanInfo.formattedPriceFull,
-							planTitle2: secondaryUpsellPlanInfo.title,
-							monthlyPlanPrice2: secondaryUpsellPlanInfo.formattedPriceMonthly,
-							annualPlanPrice2: secondaryUpsellPlanInfo.formattedPriceFull,
+							planTitle1: basicPlanUpsellInfo.title,
+							monthlyPlanPrice1: basicPlanUpsellInfo.formattedPriceMonthly,
+							annualPlanPrice1: basicPlanUpsellInfo.formattedPriceFull,
+							planTitle2: advancePlanUpsellInfo.title,
+							monthlyPlanPrice2: advancePlanUpsellInfo.formattedPriceMonthly,
+							annualPlanPrice2: advancePlanUpsellInfo.formattedPriceFull,
 						},
 					}
 				) }
