@@ -181,7 +181,7 @@ export function FreePlanFreeDomainDialog( {
 			<QueryProductsList />
 			<Heading id="plan-upsell-modal-title">{ translate( "Don't miss out" ) }</Heading>
 			<TextBox id="plan-upsell-modal-description">
-				{ translate( "With a Free plan, you'll miss out on a lot of great features:" ) }
+				{ translate( 'With a Free plan, you miss out on a lot of great features:' ) }
 			</TextBox>
 			<List>
 				<ListItem>
