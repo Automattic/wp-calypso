@@ -33,12 +33,19 @@ import './style.scss';
 
 type PurchaseModalProps = {
 	onClose: () => void;
-	onPurchaseSuccess?: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
 	showFeatureList: boolean;
-	disabledThankYouPage?: boolean;
-};
+} & (
+	| {
+			disabledThankYouPage?: never | false;
+			onPurchaseSuccess?: never;
+	  }
+	| {
+			onPurchaseSuccess: () => void;
+			disabledThankYouPage: true;
+	  }
+);
 
 function PurchaseModal( {
 	cart,

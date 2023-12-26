@@ -8,8 +8,10 @@ The `PurchaseModal` component is a React component designed to render a 1-click 
 - **productToAdd** (MinimalRequestCartProduct, required): The product object. Ensure that the object reference does not change.
 - **showFeatureList** (Boolean, required): Whether to display a feature list in the modal. Default is `false`.
 - **disabledThankYouPage** (Boolean, optional): Whether to disable the thank-you page after a successful purchase. Default is `false`.
-- **onClose** (Function, required): Callback function to be called when the modal is closed.
 - **onPurchaseSuccess** (Function, optional): Callback function to be called when the purchase is successful.
+- **onClose** (Function, required): Callback function to be called when the modal is closed.
+
+Note: If `disabledThankYouPage` is `true`, then `onPurchaseSuccess` should also be defined, otherwise the modal will remain open after the purchase is complete. This rule is only enforced via Typescript.
 
 ## Example
 
