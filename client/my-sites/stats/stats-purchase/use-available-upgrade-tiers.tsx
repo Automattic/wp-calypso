@@ -11,7 +11,7 @@ import { PriceTierListItemProps, StatsPlanTierUI } from './types';
 
 // Special case for per-unit fees over the max tier.
 export const EXTENSION_THRESHOLD_IN_MILLION = 2;
-const EXTENDED_TIERS_AMOUNT = 5;
+const EXTENDED_TIERS_AMOUNT = 6;
 
 // TODO: Remove the mock data after release.
 // No need to translate mock data.
@@ -116,7 +116,7 @@ function extendTiersBeyondHighestTier(
 
 		for (
 			let extendedTierCount = extendedTierCountStart;
-			extendedTierCount <= extendedTierCountEnd;
+			extendedTierCount < extendedTierCountEnd;
 			extendedTierCount++
 		) {
 			const totalPrice =
