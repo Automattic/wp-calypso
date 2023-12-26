@@ -63,11 +63,6 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
-
 	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
 
 	const urlData = useSelector( getUrlData );
@@ -271,7 +266,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 						{ subTitle && <p className="processing-step__subtitle">{ subTitle }</p> }
 					</>
 				}
-				stepProgress={ stepProgress }
 				showFooterWooCommercePowered={ false }
 			/>
 		</>

@@ -1,4 +1,5 @@
 import {
+	SENSEI_FLOW,
 	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 	isSenseiFlow,
@@ -92,28 +93,22 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		? !! selectedSite && ! isRequestingSelectedSite
 		: true;
 
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
-
 	// this pre-loads all the lazy steps down the flow.
 	useEffect( () => {
 		Promise.all( flowSteps.map( ( step ) => 'asyncComponent' in step && step.asyncComponent() ) );
 	}, stepPaths );
 
 	const isFlowStart = useCallback( () => {
-		if ( ! flow || ! stepProgress ) {
+		if ( ! flow || ! stepPaths.length ) {
 			return false;
 		}
-		if ( stepProgress?.progress === 0 ) {
-			return true;
+
+		if ( flow.name === SENSEI_FLOW ) {
+			return currentStepRoute === stepPaths[ 1 ];
 		}
-		if ( flow.name === 'sensei' && stepProgress?.progress === 1 ) {
-			return true;
-		}
-		return false;
-	}, [ flow, stepProgress ] );
+
+		return currentStepRoute === stepPaths[ 0 ];
+	}, [ flow, currentStepRoute, ...stepPaths ] );
 
 	const _navigate = async ( path: string, extraData = {} ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
