@@ -12,8 +12,8 @@ import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 const apiBase = '/sites/marketplace.wordpress.com';
 const reviewsApiBase = `${ apiBase }/comments`;
 const reviewsApiNamespace = 'wp/v2';
-const reviewsStatsApiBase = `${ apiBase }/marketplace/reviews`;
-const reviewsStatsNamespace = 'wpcom/v2';
+const reviewsUtilsApiBase = `${ apiBase }/marketplace/reviews`;
+const reviewsUtilsNamespace = 'wpcom/v2';
 const queryKeyBase: QueryKey = [ 'marketplace-reviews' ];
 
 export type ProductType = 'plugin' | 'theme';
@@ -106,6 +106,15 @@ type MarketplaceReviewsStatsQueryOptions = Pick<
 	UseQueryOptions< MarketplaceReviewsStatsResponse >,
 	'enabled' | 'staleTime' | 'refetchOnMount'
 >;
+type MarketplaceReviewsValidateQueryOptions = Pick<
+	UseQueryOptions< MarketplaceReviewsValidateQueryResponse >,
+	'enabled' | 'staleTime' | 'refetchOnMount'
+>;
+
+type MarketplaceReviewsValidateQueryResponse = {
+	valid: boolean;
+	message?: string;
+};
 
 const fetchMarketplaceReviews = (
 	productType: ProductType,
@@ -196,8 +205,18 @@ const fetchMarketplaceReviewsStats = ( {
 	slug,
 }: ProductProps ): Promise< MarketplaceReviewsStatsResponse > => {
 	return wpcom.req.get( {
-		path: `${ reviewsStatsApiBase }/${ productType }/${ slug }/stats`,
-		apiNamespace: reviewsStatsNamespace,
+		path: `${ reviewsUtilsApiBase }/${ productType }/${ slug }/stats`,
+		apiNamespace: reviewsUtilsNamespace,
+	} );
+};
+
+const fetchIsUserAllowedToReview = ( {
+	productType,
+	slug,
+}: ProductProps ): Promise< MarketplaceReviewsValidateQueryResponse > => {
+	return wpcom.req.get( {
+		path: `${ reviewsUtilsApiBase }/${ productType }/${ slug }/validate`,
+		apiNamespace: reviewsUtilsNamespace,
 	} );
 };
 
@@ -304,6 +323,26 @@ export const useMarketplaceReviewsStatsQuery = (
 	return useQuery( {
 		queryKey,
 		queryFn,
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
+};
+
+export const useIsUserAllowedToReview = (
+	productProps: ProductProps,
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: MarketplaceReviewsValidateQueryOptions = {}
+) => {
+	const queryKey: QueryKey = [ ...queryKeyBase, 'validate', productProps ];
+	const queryFn = () => fetchIsUserAllowedToReview( productProps );
+	return useQuery( {
+		queryKey,
+		queryFn,
+		select: ( response ) => response.valid,
 		enabled,
 		staleTime,
 		refetchOnMount,

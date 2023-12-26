@@ -2,16 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import {
 	useMarketplaceReviewsStatsQuery,
+	useIsUserAllowedToReview,
 	type ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { ReviewModal } from 'calypso/my-sites/marketplace/components/review-modal';
-import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
 import './styles.scss';
-import { type IAppState } from 'calypso/state/types';
 
 type Props = ProductProps & {
 	productName: string;
@@ -26,9 +24,7 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 		slug,
 	} );
 
-	const userCanPublishReviews = useSelector( ( state: IAppState ) =>
-		canPublishProductReviews( state, productType, slug )
-	);
+	const { data: userCanPublishReviews } = useIsUserAllowedToReview( { productType, slug } );
 
 	let averageRating = null;
 	let numberOfReviews = null;
