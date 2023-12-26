@@ -9,12 +9,12 @@ import { schema } from './schema';
 import type { Reducer, AnyAction } from 'redux';
 
 /**
- * Returns the updated modules settings state after an action has been dispatched.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
+ * Returns the updated value for the paid stats upsell modal.
+ * @param {Object} state - Current state.
+ * @param {Object} action - Action object.
+ * @returns {Object} Updated state.
  */
-const dataReducer = ( state = { view: false, statType: null }, action: AnyAction ) => {
+const modalReducer = ( state = { view: false, statType: null }, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_PAID_STATS_UPSELL_MODAL_TOGGLE: {
 			return { view: ! state.view, statType: action.payload.statType };
@@ -25,7 +25,7 @@ const dataReducer = ( state = { view: false, statType: null }, action: AnyAction
 
 export const data = withSchemaValidation(
 	schema,
-	keyedReducer( 'siteId', withPersistence( dataReducer as Reducer ) )
+	keyedReducer( 'siteId', withPersistence( modalReducer as Reducer ) )
 );
 
 export default combineReducers( { data } );
