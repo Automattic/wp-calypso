@@ -32,8 +32,15 @@ const ButtonRow = styled.div`
 	justify-content: flex-start;
 	margin: 16px 0;
 	flex-direction: column;
+	gap: 12px;
+
 	@media ( min-width: 780px ) {
 		flex-direction: row;
+		justify-content: space-between;
+
+		button {
+			max-width: 282px;
+		}
 	}
 `;
 
@@ -41,7 +48,8 @@ type TextBoxProps = {
 	fontSize?: number;
 	bold?: boolean;
 	color?: 'gray';
-	noBottomGap?: boolean;
+	marginTop?: number;
+	marginBottom?: number;
 };
 const TextBox = styled.div< TextBoxProps >`
 	font-size: ${ ( { fontSize } ) => fontSize || 14 }px;
@@ -53,7 +61,8 @@ const TextBox = styled.div< TextBoxProps >`
 		}
 		return 'var(--color-text)';
 	} };
-	margin-bottom: ${ ( { noBottomGap } ) => ( noBottomGap ? 0 : '8px' ) };
+	margin-top: ${ ( { marginTop } ) => ( marginTop ? `${ marginTop }px` : 'inherit' ) };
+	margin-bottom: ${ ( { marginBottom } ) => ( marginBottom ? `${ marginBottom }px` : 'inherit' ) };
 `;
 
 const CrossIcon = styled( Gridicon )`
@@ -168,7 +177,7 @@ export function FreePlanFreeDomainDialog( {
 
 	const featureUpsells = [
 		translate(
-			'No free custom domain: Your site will be shown to visitors as {{strong}}{{subdomain}}{{/subdomain}}{{/strong}}',
+			'No free custom domain: Your site will be shown to visitors as {{subdomain}}{{/subdomain}}',
 			{
 				components: {
 					subdomain: (
@@ -177,7 +186,6 @@ export function FreePlanFreeDomainDialog( {
 							isLoading={ generatedWPComSubdomain?.isLoading }
 						/>
 					),
-					strong: <strong></strong>,
 				},
 			}
 		),
@@ -191,7 +199,7 @@ export function FreePlanFreeDomainDialog( {
 		<DialogContainer>
 			<QueryProductsList />
 			<Heading id="plan-upsell-modal-title">{ translate( "Don't miss out" ) }</Heading>
-			<TextBox id="plan-upsell-modal-description">
+			<TextBox id="plan-upsell-modal-description" marginTop={ 8 }>
 				{ translate( 'With a Free plan, you miss out on a lot of great features:' ) }
 			</TextBox>
 			<List>
@@ -200,11 +208,11 @@ export function FreePlanFreeDomainDialog( {
 						<div>
 							<CrossIcon icon="cross" size={ 24 } />
 						</div>
-						<TextBox>{ upsellItem }</TextBox>
+						<TextBox bold>{ upsellItem }</TextBox>
 					</ListItem>
 				) ) }
 			</List>
-			<TextBox>
+			<TextBox marginBottom={ 8 }>
 				{ translate(
 					'Unlock all of these features with a %(planTitle)s plan, starting at just %(planPrice)s/month.',
 					{
@@ -243,18 +251,16 @@ export function FreePlanFreeDomainDialog( {
 					onPlanSelected={ onPlanSelected }
 				/>
 			</ButtonRow>
-			<ButtonRow>
-				<PlanButton
-					disabled={ buttonDisabled }
-					onClick={ () => {
-						onFreePlanSelected();
-					} }
-					borderless
-				>
-					{ translate( 'Continue with Free' ) }
-				</PlanButton>
-			</ButtonRow>
-			<TextBox fontSize={ 12 } color="gray" noBottomGap>
+			<PlanButton
+				disabled={ buttonDisabled }
+				onClick={ () => {
+					onFreePlanSelected();
+				} }
+				borderless
+			>
+				{ translate( 'Continue with Free' ) }
+			</PlanButton>
+			<TextBox fontSize={ 12 } color="gray">
 				{ translate(
 					'%(planTitle1)s plan: %(monthlyPlanPrice1)s/mo, %(annualPlanPrice1)s billed annually. %(planTitle2)s plan: %(monthlyPlanPrice2)s/mo, %(annualPlanPrice2)s billed annually. Excluding taxes.',
 					{
