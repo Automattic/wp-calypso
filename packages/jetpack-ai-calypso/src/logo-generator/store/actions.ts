@@ -9,24 +9,24 @@ import proxy from 'wpcom-proxy-request';
 import {
 	ACTION_INCREASE_AI_ASSISTANT_REQUESTS_COUNT,
 	ACTION_REQUEST_AI_ASSISTANT_FEATURE,
-	ACTION_SET_PLANS,
 	ACTION_SET_AI_ASSISTANT_FEATURE_REQUIRE_UPGRADE,
+	ACTION_SET_SITE_DETAILS,
 	ACTION_STORE_AI_ASSISTANT_FEATURE,
 	ACTION_SET_TIER_PLANS_ENABLED,
 } from './constants';
-import type { AiFeatureProps, Plan, SiteAIAssistantFeatureEndpointResponseProps } from './types';
+import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * Map the response from the `sites/$site/ai-assistant-feature`
  * endpoint to the AI Assistant feature props.
- * @param { SiteAIAssistantFeatureEndpointResponseProps } response - The response from the endpoint.
+ * @param { AiAssistantFeatureEndpointResponseProps } response - The response from the endpoint.
  * @returns { AiFeatureProps }                                       The AI Assistant feature props.
  */
 export function mapAiFeatureResponseToAiFeatureProps(
-	response: SiteAIAssistantFeatureEndpointResponseProps
+	response: AiAssistantFeatureEndpointResponseProps
 ): AiFeatureProps {
 	return {
-		siteId: response[ 'site-id' ],
 		hasFeature: !! response[ 'has-feature' ],
 		isOverLimit: !! response[ 'is-over-limit' ],
 		requestsCount: response[ 'requests-count' ],
@@ -47,13 +47,6 @@ export function mapAiFeatureResponseToAiFeatureProps(
 }
 
 const actions = {
-	setPlans( plans: Array< Plan > ) {
-		return {
-			type: ACTION_SET_PLANS,
-			plans,
-		};
-	},
-
 	storeAiAssistantFeature( feature: AiFeatureProps ) {
 		return {
 			type: ACTION_STORE_AI_ASSISTANT_FEATURE,
@@ -71,18 +64,16 @@ const actions = {
 			dispatch( { type: ACTION_REQUEST_AI_ASSISTANT_FEATURE } );
 
 			try {
-				const response: SiteAIAssistantFeatureEndpointResponseProps = await proxy( {
+				const response: AiAssistantFeatureEndpointResponseProps = await proxy( {
 					apiNamespace: 'wpcom/v2',
 					path:
 						'/sites/' + encodeURIComponent( String( siteId ) ) + '/jetpack-ai/ai-assistant-feature',
 					query: 'force=wpcom',
 				} );
 
-				const withSiteId = { ...response, 'site-id': siteId };
-
 				// Store the feature in the store.
 				dispatch(
-					actions.storeAiAssistantFeature( mapAiFeatureResponseToAiFeatureProps( withSiteId ) )
+					actions.storeAiAssistantFeature( mapAiFeatureResponseToAiFeatureProps( response ) )
 				);
 			} catch ( err ) {
 				// @todo: Handle error.
@@ -117,6 +108,13 @@ const actions = {
 		return {
 			type: ACTION_SET_TIER_PLANS_ENABLED,
 			tierPlansEnabled,
+		};
+	},
+
+	setSiteDetails( siteDetails: SiteDetails ) {
+		return {
+			type: ACTION_SET_SITE_DETAILS,
+			siteDetails,
 		};
 	},
 };
