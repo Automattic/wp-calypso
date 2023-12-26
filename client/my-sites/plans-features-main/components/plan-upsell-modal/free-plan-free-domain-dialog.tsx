@@ -1,4 +1,4 @@
-import { getPlan, type PlanSlug, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { getPlan, type PlanSlug, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -161,11 +161,10 @@ export function FreePlanFreeDomainDialog( {
 	generatedWPComSubdomain,
 	onFreePlanSelected,
 	onPlanSelected,
-	suggestedPlanSlug,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const primaryUpsellPlanInfo = usePlanUpsellInfo( suggestedPlanSlug, currencyCode );
+	const primaryUpsellPlanInfo = usePlanUpsellInfo( PLAN_PERSONAL, currencyCode );
 	const secondaryUpsellPlanInfo = usePlanUpsellInfo( PLAN_PREMIUM, currencyCode );
 	const buttonDisabled = generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result;
 

@@ -714,7 +714,6 @@ const PlansFeaturesMain = ( {
 					paidDomainName={ paidDomainName }
 					modalType={ resolveModal( lastClickedPlan ) }
 					generatedWPComSubdomain={ resolvedSubdomainName }
-					suggestedPlanSlug={ PLAN_PERSONAL }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {

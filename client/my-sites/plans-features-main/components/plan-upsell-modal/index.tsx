@@ -20,7 +20,6 @@ export type ModalType =
 export type DomainPlanDialogProps = {
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	suggestedPlanSlug: PlanSlug;
 	upsellPremiumPlan?: boolean;
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
