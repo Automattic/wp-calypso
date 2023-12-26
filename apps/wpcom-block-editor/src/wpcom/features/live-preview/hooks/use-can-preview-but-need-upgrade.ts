@@ -33,7 +33,7 @@ const needUpgrade = ( {
 	requiredFeature?: string;
 } ) => {
 	const activeFeatures = site?.plan?.features?.active;
-	if ( ! activeFeatures ) {
+	if ( ! activeFeatures || activeFeatures.length === 0 ) {
 		return false;
 	}
 
@@ -207,7 +207,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 		/**
 		 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
 		 */
-		if ( previewingTheme?.type && livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
+		if ( previewingTheme?.type && ! livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
 			setCanPreviewButNeedUpgrade( false );
 			return;
 		}
