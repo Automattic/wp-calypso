@@ -17,8 +17,29 @@
 	width: 100%;
 	height: 100%;
 
-	@media (min-width: 699px) {
-		width: 699px;
-		height: 409px;
+	@media (min-width: 700px) {
+		width: 700px;
+		min-height: 409px;
+	}
+}
+
+.jetpack-ai-logo-generator__footer {
+	display: flex;
+
+	.jetpack-ai-logo-generator__feedback-button {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+		margin-top: 24px;
+		color: #3858e9;
+		text-decoration: none;
+
+		&:focus:not(:disabled) {
+			box-shadow: 0 0 0 2px #3858e9;
+		}
+
+		.icon {
+			color: var(--studio-gray-20);
+		}
 	}
 }
