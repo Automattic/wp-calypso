@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { removeQueryArgs } from '@wordpress/url';
+import { removeQueryArgs, getQueryArg } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
 import { createElement } from 'react';
@@ -134,10 +134,17 @@ export function createNavigation( context ) {
 export function renderRebloggingEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
+	const actionURL = addQueryArgs(
+		{
+			redirect_to: getQueryArg( window.location.search, 'url' ),
+		},
+		'/setup/reblogging'
+	);
+
 	context.primary = createElement( () =>
 		NoSitesMessage( {
 			title: i18n.translate( 'Create a site to reblog' ),
-			actionURL: '/setup/reblogging',
+			actionURL,
 		} )
 	);
 
