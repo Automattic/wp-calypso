@@ -1,22 +1,24 @@
-import { Card, Dialog, FormInputValidation } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, Card, Dialog, FormInputValidation } from '@automattic/components';
 import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
+import WarningCard from 'calypso/components/warning-card';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
-
 import './style.scss';
 
 const debug = debugFactory( 'calypso:me:reauth-required' );
@@ -170,7 +172,10 @@ class ReauthRequired extends Component {
 		);
 	}
 
-	renderVerificationForm() {
+	renderVerificationForm( enhancedSecurity ) {
+		if ( enhancedSecurity ) {
+			return this.renderSecurityKeyUnsupported();
+		}
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
 		return (
 			<Card compact>
@@ -232,8 +237,35 @@ class ReauthRequired extends Component {
 		);
 	}
 
+	renderSecurityKeyUnsupported() {
+		const { translate } = this.props;
+
+		return (
+			<Card compact>
+				<CardHeading tagName="h2">{ translate( 'Two Factor Auth Required' ) }</CardHeading>
+				<WarningCard
+					message={ translate(
+						'Your WordPress.com account requires the use of security keys, but the current device does not seem to support them.'
+					) }
+				/>
+				<Button
+					onClick={ this.getClickHandler(
+						'Reauth Required Log Out Link',
+						this.props.redirectToLogout
+					) }
+					primary
+					className="reauth-required__button reauth-required__logout"
+				>
+					{ translate( 'Log out' ) }
+				</Button>
+			</Card>
+		);
+	}
+
 	renderDialog() {
-		const enhancedSecurity = this.props.twoStepAuthorization.data?.two_step_enhanced_security;
+		const enhancedSecurity =
+			this.props.twoStepAuthorization.data?.two_step_enhanced_security &&
+			isEnabled( 'two-factor/enhanced-security' );
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
 			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
@@ -261,7 +293,7 @@ class ReauthRequired extends Component {
 						onComplete={ this.refreshNonceOnFailure }
 					/>
 				) : (
-					this.renderVerificationForm()
+					this.renderVerificationForm( enhancedSecurity )
 				) }
 				<TwoFactorActions
 					twoFactorAuthType={ currentAuthType }

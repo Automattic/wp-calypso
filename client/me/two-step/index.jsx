@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -91,7 +91,11 @@ class TwoStep extends Component {
 	};
 
 	renderEnhancedSecuritySetting = () => {
-		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
+		if (
+			! isEnabled( 'two-factor/enhanced-security' ) ||
+			this.props.isFetchingUserSettings ||
+			! this.props.isTwoStepEnabled
+		) {
 			return null;
 		}
 		return <Security2faEnhancedSecuritySetting />;
@@ -99,7 +103,8 @@ class TwoStep extends Component {
 
 	render() {
 		const { path, translate, userSettings } = this.props;
-		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+		const useCheckupMenu = isEnabled( 'security/security-checkup' );
+		const useEnhancedSecurity = isEnabled( 'two-step/enhanced-security' );
 
 		return (
 			<Main wideLayout className="security two-step">
@@ -123,7 +128,9 @@ class TwoStep extends Component {
 
 				{ this.renderEnhancedSecuritySetting() }
 				{ this.render2faKey() }
-				{ ! userSettings?.two_step_enhanced_security ? this.renderBackupCodes() : null }
+				{ ! useEnhancedSecurity && ! userSettings?.two_step_enhanced_security
+					? this.renderBackupCodes()
+					: null }
 				{ this.renderApplicationPasswords() }
 			</Main>
 		);

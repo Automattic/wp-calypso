@@ -217,6 +217,7 @@
 		"themes/assembler-first": true,
 		"themes/tiers": true,
 		"titan/iframe-control-panel": false,
+		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
