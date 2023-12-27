@@ -56,10 +56,12 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		props.recordGoogleEvent( 'Stats', `Clicked Summary Link: ${ path } ${ item.stat }` );
 	};
 
-	const handleClick = ( item ) => () => {
+	const handleClick = ( item ) => ( event ) => {
 		if ( item.isGated ) {
+			event.preventDefault();
 			dispatch( toggleUpsellModal( siteId, item.statType ) );
 		}
+		recordStats( item );
 	};
 
 	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format(
@@ -152,11 +154,17 @@ export const StatsModuleSummaryLinks = ( props ) => {
 					key={ 'navTabsDropdown-' + index }
 					path={ i.path }
 					selected={ i.value === selected.value }
-					onClick={ () => {
-						recordStats( i );
-					} }
+					onClick={ handleClick( i ) }
 				>
 					{ i.label }
+					{ i.isGated && (
+						<Icon
+							className="stats-summary-nav__gated-icon"
+							icon={ lock }
+							width={ 16 }
+							height={ 16 }
+						/>
+					) }
 				</SelectDropdown.Item>
 			) ) }
 		</SelectDropdown>
