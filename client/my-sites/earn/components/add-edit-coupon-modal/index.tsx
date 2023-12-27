@@ -2,7 +2,7 @@ import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { MenuGroup, MenuItem, ToggleControl, ToolbarDropdownMenu } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { check, close, update } from '@wordpress/icons';
+import { check, chevronDown, close } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { ChangeEvent, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -474,7 +474,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		>
 			<FormSectionHeading>{ editing ? editCoupon : addCoupon }</FormSectionHeading>
 			<div className="memberships__dialog-sections">
-				<FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-coupon-code">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Coupon code' ) }</FormLabel>
 					<FormTextInputWithRandomCodeGeneration
 						id="coupon_code"
@@ -502,8 +502,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						onChange={ onDescriptionChange }
 					/>
 				</FormFieldset> */ }
-				<FormFieldset className="memberships__dialog-seconds-price">
-					<div className="memberships__dialog-sections-price-field-container">
+				<FormFieldset className="memberships__dialog-sections-discount-info">
+					<div className="memberships__dialog-sections-discount-info-field-container">
 						<FormLabel htmlFor="discount_type">{ translate( 'Discount type' ) }</FormLabel>
 						<FormSelect
 							id="discount_type"
@@ -520,7 +520,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							<FormInputValidation isError text={ translate( 'Please select a valid type' ) } />
 						) }
 					</div>
-					<div className="memberships__dialog-sections-price-field-container">
+					<div className="memberships__dialog-sections-discount-info-field-container">
 						<FormLabel htmlFor="discount_amount">{ translate( 'Amount' ) }</FormLabel>
 						{ COUPON_DISCOUNT_TYPE_PERCENTAGE === editedDiscountType && (
 							<FormTextInputWithAffixes
@@ -554,8 +554,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						) }
 					</div>
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-seconds-price">
-					<div className="memberships__dialog-sections-price-field-container">
+				<FormFieldset className="memberships__dialog-sections-date">
+					<div className="memberships__dialog-sections-date-field-container">
 						<FormLabel htmlFor="start_date">{ translate( 'Start date' ) }</FormLabel>
 						<FormTextInput
 							id="start_date"
@@ -571,7 +571,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 							/>
 						) }
 					</div>
-					<div className="memberships__dialog-sections-price-field-container">
+					<div className="memberships__dialog-sections-date-field-container">
 						<FormLabel htmlFor="amount">{ translate( 'Expiration date (optional)' ) }</FormLabel>
 						<FormTextInput
 							id="end_date"
@@ -585,14 +585,9 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						) }
 					</div>
 				</FormFieldset>
-				<FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-products">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
-					<ToolbarDropdownMenu
-						icon={ update }
-						text={ selectedProductSummary }
-						label="Select a product"
-						role="button"
-					>
+					<ToolbarDropdownMenu icon={ chevronDown } text={ selectedProductSummary } role="button">
 						{ ( { onClose } ) => (
 							<>
 								<MenuGroup>
@@ -646,7 +641,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						) }
 					</ToolbarDropdownMenu>
 				</FormFieldset>
-				<FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-usage-limit">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Usage limit (optional)' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						id="usage_limit"
@@ -666,21 +661,21 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						/>
 					) }
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-type">
+				<FormFieldset className="memberships__dialog-sections-coupon-boolean">
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedCannotBeCombined( newValue ) }
 						checked={ editedCannotBeCombined }
 						label={ translate( 'Cannot be combined with other coupons' ) }
 					/>
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-type">
+				<FormFieldset className="memberships__dialog-sections-coupon-boolean">
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedFirstTimeOnly( newValue ) }
 						checked={ editedFirstTimeOnly }
 						label={ translate( 'Eligible for first-time order only' ) }
 					/>
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-type">
+				<FormFieldset className="memberships__dialog-sections-duration">
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedUseDuration( newValue ) }
 						checked={ editedUseDuration }
@@ -702,7 +697,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						{ translate( 'Once the coupon is used for a subscription, how long does it last?' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-type">
+				<FormFieldset className="memberships__dialog-sections-specific-emails">
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedUseSpecificEmails( newValue ) }
 						checked={ editedUseSpecificEmails }

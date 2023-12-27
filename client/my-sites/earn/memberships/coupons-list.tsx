@@ -162,9 +162,9 @@ function CouponsList() {
 								{ /* <div className="memberships__products-product-description">
 									{ currentCoupon?.description }
 								</div> */ }
-								<sub className="memberships__products-product-price"></sub>
+								<sub className="memberships__products-product-amount"></sub>
 								{ currentCoupon?.end_date && (
-									<div className="memberships__products-product-badge">
+									<div className="memberships__coupons-coupon-badge">
 										<Badge type="info">
 											{ translate( 'Expires on %s', { args: [ currentCoupon.end_date ] } ) }
 										</Badge>
@@ -172,7 +172,7 @@ function CouponsList() {
 								) }
 								{ currentCoupon?.use_duration &&
 									currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
-										<div className="memberships__products-product-badge">
+										<div className="memberships__coupons-coupon-badge">
 											<Badge type="warning-clear">
 												{ getDiscountBadge(
 													currentCoupon?.duration,
@@ -183,7 +183,7 @@ function CouponsList() {
 										</div>
 									) }
 								{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_AMOUNT && (
-									<div className="memberships__products-product-badge">
+									<div className="memberships__coupons-coupon-badge">
 										<Badge type="warning-clear">
 											{ getDiscountBadge(
 												currentCoupon?.duration,
@@ -195,19 +195,19 @@ function CouponsList() {
 									</div>
 								) }
 								{ ! currentCoupon?.cannot_be_combined && (
-									<div className="memberships__products-product-badge">
+									<div className="memberships__coupons-coupon-badge">
 										<Badge type="info-blue">
 											{ translate( 'Cannot be combined with other coupons' ) }
 										</Badge>
 									</div>
 								) }
 								{ currentCoupon?.first_time_only && (
-									<div className="memberships__products-product-badge">
+									<div className="memberships__coupons-coupon-badge">
 										<Badge type="info-green">{ translate( 'First-time order only' ) }</Badge>
 									</div>
 								) }
 								{ ! currentCoupon?.use_specific_emails && (
-									<div className="memberships__products-product-badge">
+									<div className="memberships__coupons-coupon-badge">
 										<Badge type="info-purple">{ translate( 'Limited to specific emails' ) }</Badge>
 									</div>
 								) }
