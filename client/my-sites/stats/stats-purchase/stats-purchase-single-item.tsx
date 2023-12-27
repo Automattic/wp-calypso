@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -125,9 +125,9 @@ Thanks\n\n`;
 		setTimeout( () => ( window.location.href = emailHref ), 250 );
 	};
 
-	const handleSliderChanged = ( value: number ) => {
+	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
-	};
+	}, [] );
 
 	return (
 		<>

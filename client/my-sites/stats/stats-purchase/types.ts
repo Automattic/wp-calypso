@@ -12,6 +12,7 @@ export type PriceTierListItemProps = {
 };
 
 export type StatsPlanTierUI = {
+	minimum_price: number;
 	price: string | undefined;
 	description?: string;
 	views: number | null;
