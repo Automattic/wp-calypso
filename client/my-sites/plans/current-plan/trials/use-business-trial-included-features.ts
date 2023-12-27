@@ -94,7 +94,7 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: googleAnalytics,
 			showButton: true,
 			buttonText: translate( 'Connect Google Analytics' ),
-			buttonClick: () => page( `/marketing/traffic/${ siteSlug }` ),
+			buttonClick: () => page( `/marketing/traffic/${ siteSlug }#analytics` ),
 		},
 		{
 			id: 'hosting',
