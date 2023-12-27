@@ -9,6 +9,7 @@ import CaptureStep from 'calypso/blocks/import/capture';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
@@ -82,12 +83,18 @@ export const ImportWrapper: Step = function ( props ) {
 
 const ImportStep: Step = function ImportStep( props ) {
 	const { navigation, flow } = props;
+	const siteSlug = useSiteSlug();
 
 	return (
 		<ImportWrapper { ...props }>
 			<CaptureStep
 				disableImportListStep={ IMPORT_HOSTED_SITE_FLOW === flow }
-				goToStep={ ( step, section ) => navigation.goToStep?.( generateStepPath( step, section ) ) }
+				goToStep={ ( step, section, params ) => {
+					const stepPath = generateStepPath( step, section );
+					const from = encodeURIComponent( params?.fromUrl || '' );
+
+					navigation.goToStep?.( `${ stepPath }?siteSlug=${ siteSlug }&from=${ from }` );
+				} }
 			/>
 		</ImportWrapper>
 	);
