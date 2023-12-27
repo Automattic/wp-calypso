@@ -8,11 +8,11 @@ export const metadataSchema = {
 	discount_percentage: { type: 'number', metaKey: 'scoup_discount_percentage' },
 	start_date: { type: 'string', metaKey: 'scoup_start_date' },
 	end_date: { type: 'string', metaKey: 'scoup_end_date' },
-	product_ids: { type: 'array', metaKey: 'scoup_product_ids' },
+	plan_ids_allow_list: { type: 'array', metaKey: 'scoup_plan_ids_allow_list' },
 	cannot_be_combined: { type: 'boolean', metaKey: 'scoup_cannot_be_combined' },
-	first_time_only: { type: 'boolean', metaKey: 'scoup_first_time_only' },
+	first_time_purchase_only: { type: 'boolean', metaKey: 'scoup_first_time_purchase_only' },
 	duration: { type: 'string', metaKey: 'scoup_duration' },
-	specific_emails: { type: 'array', metaKey: 'scoup_specific_emails' },
+	email_allow_list: { type: 'array', metaKey: 'scoup_email_allow_list' },
 };
 
 /**
@@ -22,7 +22,6 @@ export const metadataSchema = {
 const couponSchema = {
 	type: 'object',
 	properties: {
-		description: { type: 'string' },
 		ID: { type: 'number' },
 		...metadataSchema,
 	},

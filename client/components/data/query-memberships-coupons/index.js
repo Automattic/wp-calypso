@@ -6,7 +6,7 @@ import { requestCoupons } from 'calypso/state/memberships/coupon-list/actions';
 class QueryMembershipsCoupons extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		requestProducts: PropTypes.func,
+		requestCoupons: PropTypes.func,
 	};
 
 	request() {

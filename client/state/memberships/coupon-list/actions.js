@@ -46,7 +46,7 @@ export const requestAddCoupon = ( siteId, coupon, noticeText ) => {
 			.post(
 				{
 					method: 'POST',
-					path: `/sites/${ siteId }/memberships/coupon`,
+					path: `/sites/${ siteId }/memberships/coupons`,
 					apiNamespace: 'wpcom/v2',
 				},
 				coupon
@@ -92,14 +92,14 @@ export const requestUpdateCoupon = ( siteId, coupon, noticeText ) => {
 		return wpcom.req
 			.post(
 				{
-					method: 'POST',
+					method: 'PUT',
 					path: `/sites/${ siteId }/memberships/coupon/${ coupon.ID }`,
 					apiNamespace: 'wpcom/v2',
 				},
 				coupon
 			)
 			.then( ( newCoupon ) => {
-				const membershipCoupon = membershipCouponFromApi( newCoupon.coupon );
+				const membershipCoupon = membershipCouponFromApi( newCoupon );
 				dispatch( receiveUpdateCoupon( siteId, membershipCoupon ) );
 				if ( noticeText ) {
 					dispatch(

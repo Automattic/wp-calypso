@@ -7,6 +7,8 @@ import {
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_SETTINGS_RECEIVE,
+	MEMBERSHIPS_COUPONS_LIST,
+	MEMBERSHIPS_COUPONS_RECIEVE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -37,11 +39,12 @@ export const membershipCouponFromApi = ( coupon ) => ( {
 	discount_percentage: parseFloat( coupon.discount_percentage ),
 	start_date: coupon.start_date,
 	end_date: coupon.end_date,
-	product_ids: coupon.product_ids.map( ( productId ) => parseInt( productId ) ),
-	cannot_be_combined: coupon.cannot_be_combined ? true : false,
-	first_time_only: coupon.first_time_only ? true : false,
+	plan_ids_allow_list: coupon.plan_ids_allow_list.map( ( productId ) => parseInt( productId ) ),
+	cannot_be_combined: ! coupon.can_be_combined,
+	can_be_combined: coupon.can_be_combined, // TODO: remove after backend migrates to 'cannot_be_combined'
+	first_time_purchase_only: coupon.first_time_purchase_only ? true : false,
 	duration: coupon.duration,
-	specific_emails: coupon.specific_emails ?? [],
+	email_allow_list: coupon.email_allow_list ?? [],
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
@@ -62,6 +65,28 @@ export const handleMembershipProductsList = dispatchRequest( {
 		type: MEMBERSHIPS_PRODUCTS_RECEIVE,
 		siteId,
 		products,
+	} ),
+	onError: noop,
+} );
+
+export const handleMembershipCouponsList = dispatchRequest( {
+	fetch: ( action ) =>
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ action.siteId }/memberships/coupons?type=all&is_editable=true`,
+				apiNamespace: 'wpcom/v2',
+			},
+			action
+		),
+	fromApi: function ( endpointResponse ) {
+		const coupons = endpointResponse.map( membershipCouponFromApi );
+		return coupons;
+	},
+	onSuccess: ( { siteId }, coupons ) => ( {
+		type: MEMBERSHIPS_COUPONS_RECIEVE,
+		siteId,
+		coupons,
 	} ),
 	onError: noop,
 } );
@@ -122,6 +147,7 @@ export const handleMembershipGetSettings = dispatchRequest( {
 
 registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {
 	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
+	[ MEMBERSHIPS_COUPONS_LIST ]: [ handleMembershipCouponsList ],
 	[ MEMBERSHIPS_EARNINGS_GET ]: [ handleMembershipGetEarnings ],
 	[ MEMBERSHIPS_SUBSCRIBERS_LIST ]: [ handleMembershipGetSubscribers ],
 	[ MEMBERSHIPS_SETTINGS ]: [ handleMembershipGetSettings ],

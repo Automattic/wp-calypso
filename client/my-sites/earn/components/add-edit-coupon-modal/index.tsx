@@ -37,6 +37,7 @@ import {
 	COUPON_RANDOM_GENERATOR_CHARSET,
 	COUPON_RANDOM_GENERATOR_LENGTH,
 	COUPON_USAGE_LIMIT_INFINITE,
+	COUPON_EMAIL_ALLOW_LIST_ALLOW_ALL,
 } from '../../memberships/constants';
 import { Product, Coupon } from '../../types';
 import FormTextInputWithRandomCodeGeneration from '../form-text-input-with-value-generation';
@@ -113,7 +114,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 
 	/** Edited form values */
 	const [ editedCouponCode, setEditedCouponCode ] = useState( coupon?.coupon_code ?? '' );
-	// const [ editedDescription, setEditedDescription ] = useState( coupon?.description ?? '' );
 	const [ editedDiscountType, setEditedDiscountType ] = useState(
 		coupon?.discount_type ?? COUPON_DISCOUNT_TYPE_PERCENTAGE
 	);
@@ -138,37 +138,40 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			`${ today.getFullYear() + 1 }-${ today.getMonth() + 1 }-${ today.getDate() }`
 	);
 	const [ editedEndDate, setEditedEndDate ] = useState( coupon?.end_date ?? '' );
-	const [ editedProducts, setEditedProducts ] = useState( coupon?.products ?? [] );
-	const [ editedUsageLimit, setEditedUsageLimit ] = useState( coupon?.usage_limit ?? 0 );
+	const [ editedPlanIdsAllowList, setEditedPlanIdsAllowList ] = useState(
+		coupon?.plan_ids_allow_list ?? []
+	);
+	const [ editedLimitPerUser, setEditedLimitPerUser ] = useState( coupon?.limit_per_user ?? 0 );
 	const [ editedCannotBeCombined, setEditedCannotBeCombined ] = useState(
 		coupon?.cannot_be_combined ?? false
 	);
-	const [ editedFirstTimeOnly, setEditedFirstTimeOnly ] = useState(
-		coupon?.first_time_only ?? false
+	const [ editedFirstTimePurchaseOnly, setEditedFirstTimePurchaseOnly ] = useState(
+		coupon?.first_time_purchase_only ?? false
 	);
 	const [ editedUseDuration, setEditedUseDuration ] = useState( coupon?.use_duration ?? false );
 	const [ editedDuration, setEditedDuration ] = useState(
 		coupon?.duration ?? COUPON_DURATION_FOREVER
 	);
-	const [ editedUseSpecificEmails, setEditedUseSpecificEmails ] = useState(
-		coupon?.use_specific_emails ?? false
+	const [ editedUseEmailAllowList, setEditedUseEmailAllowList ] = useState(
+		coupon?.email_allow_list?.length > 0 &&
+			coupon?.email_allow_list !== [ COUPON_EMAIL_ALLOW_LIST_ALLOW_ALL ]
 	);
-	const [ editedSpecificEmailsCSV, setEditedSpecificEmailsCSV ] = useState(
-		coupon?.specific_emails?.join( ', ' ) ?? ''
+	const [ editedEmailAllowListCSV, setEditedEmailAllowListCSV ] = useState(
+		coupon?.email_allow_list?.join( ', ' ) ?? ''
 	);
-	const [ editedSpecificEmails, setEditedSpecificEmails ] = useState(
-		coupon?.specific_emails ?? ''
+	const [ editedEmailAllowList, setEditedEmailAllowList ] = useState(
+		coupon?.email_allow_list ?? []
 	);
-	const [ invalidEditedSpecificEmails, setInvalidEditedSpecificEmails ] = useState( [] );
-	const [ invalidEditedSpecificEmailsLabel, setInvalidEditedSpecificEmailsLabel ] = useState( '' );
+	const [ invalidEditedEmailAllowList, setInvalidEditedEmailAllowList ] = useState( [] );
+	const [ invalidEditedEmailAllowListLabel, setInvalidEditedEmailAllowListLabel ] = useState( '' );
 	const [ focusedCouponCode, setFocusedCouponCode ] = useState( false );
 	const [ focusedStartDate, setFocusedStartDate ] = useState( false );
 	const [ focusedEndDate, setFocusedEndDate ] = useState( false );
 	const [ focusedDiscountType, setFocusedDiscountType ] = useState( false );
 	const [ focusedDiscountPercentage, setFocusedDiscountPercentage ] = useState( false );
 	const [ focusedDiscountValue, setFocusedDiscountValue ] = useState( false );
-	const [ focusedUsageLimit, setFocusedUsageLimit ] = useState( false );
-	const [ focusedSpecificEmails, setFocusedSpecificEmails ] = useState( false );
+	const [ focusedLimitPerUser, setFocusedLimitPerUser ] = useState( false );
+	const [ focusedEmailAllowList, setFocusedEmailAllowList ] = useState( false );
 
 	/** Coupon functions */
 	const generateRandomCouponCode = (): string => {
@@ -229,8 +232,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		const code = generateRandomCouponCode();
 		setEditedCouponCode( code );
 	};
-	/* const onDescriptionChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedDescription( event.target.value );*/
 	const onSelectDiscountType = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDiscountType( event.target.value );
 	const onDiscountValueChange = ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -244,22 +245,24 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const onSelectProduct = ( event ) => {
 		const productId = event.target.value ?? event.target.parentElement.value;
 		if ( COUPON_PRODUCTS_ANY === productId ) {
-			setEditedProducts( [] );
+			setEditedPlanIdsAllowList( [] );
 			return;
 		}
-		if ( editedProducts.includes( productId ) ) {
-			setEditedProducts(
-				editedProducts.filter( ( selectedId: string ) => selectedId !== productId )
+		if ( editedPlanIdsAllowList.includes( productId ) ) {
+			setEditedPlanIdsAllowList(
+				editedPlanIdsAllowList.filter( ( selectedId: string ) => selectedId !== productId )
 			);
 			return;
 		}
-		setEditedProducts( [ ...editedProducts, productId ] );
+		setEditedPlanIdsAllowList( [ ...editedPlanIdsAllowList, productId ] );
 	};
-	const onUsageLimitChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
-		setEditedUsageLimit( event.target.value );
-	const onUsageLimitBlur = ( event: ChangeEvent< HTMLSelectElement > ) => {
-		setFocusedUsageLimit( true );
-		setEditedUsageLimit( parseInt( event.target.value ) > 0 ? parseInt( event.target.value ) : 0 );
+	const onLimitPerUserChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
+		setEditedLimitPerUser( event.target.value );
+	const onLimitPerUserBlur = ( event: ChangeEvent< HTMLSelectElement > ) => {
+		setFocusedLimitPerUser( true );
+		setEditedLimitPerUser(
+			parseInt( event.target.value ) > 0 ? parseInt( event.target.value ) : 0
+		);
 	};
 	const onSelectDuration = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDuration( event.target.value );
@@ -267,24 +270,31 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const onEndDateBlur = () => setFocusedEndDate( true );
 	const onDiscountPercentageBlur = () => setFocusedDiscountPercentage( true );
 	const onDiscountValueBlur = () => setFocusedDiscountValue( true );
-	const onSpecificEmailsChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedSpecificEmailsCSV( event.target.value );
-	const onSpecificEmailsBlur = ( event: ChangeEvent< HTMLInputElement > ) => {
+	const onEmailAllowListChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+		setEditedEmailAllowListCSV( event.target.value );
+	const onEmailAllowListBlur = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const allEmails = event.target.value.split( ',' ).map( ( email: string ) => email.trim() );
+
 		const validEmails = allEmails.filter( ( email: string ) => validateEmailAddress( email ) );
 		const invalidEmails = allEmails.filter(
 			( email: string ) => email.trim().length > 0 && ! validEmails.includes( email )
 		);
-		setInvalidEditedSpecificEmails( invalidEmails );
+		setInvalidEditedEmailAllowList( invalidEmails );
 		if ( invalidEmails.length > 0 ) {
-			setInvalidEditedSpecificEmailsLabel( invalidEmails.join( ', ' ) );
+			setInvalidEditedEmailAllowListLabel( invalidEmails.join( ', ' ) );
 		} else {
-			setEditedSpecificEmails( validEmails );
+			// The backend requires an array of strings, so we'll use `[*]` to represent all emails.
+			// For clarity, we don't want to include this in the list of emails.
+			if ( validEmails.length === 0 ) {
+				validEmails = [ COUPON_EMAIL_ALLOW_LIST_ALLOW_ALL ];
+			}
+
+			setEditedEmailAllowList( validEmails );
 		}
-		setFocusedSpecificEmails( true );
+		setFocusedEmailAllowList( true );
 	};
 	const onDiscountTypeBlur = () => setFocusedDiscountType( true );
-	const onUsageLimitFocus = ( event: ChangeEvent< HTMLInputElement > ) => {
+	const onLimitPerUserFocus = ( event: ChangeEvent< HTMLInputElement > ) => {
 		if ( event.target.value === COUPON_USAGE_LIMIT_INFINITE ) {
 			event.target.value = '';
 		}
@@ -352,14 +362,14 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		) {
 			return false;
 		}
-		if ( ( field === 'specific_emails' || ! field ) && editedUseSpecificEmails ) {
+		if ( ( field === 'email_allow_list' || ! field ) && editedUseEmailAllowList ) {
 			// invalid if the array of invalid edited emails contains any values.
-			if ( invalidEditedSpecificEmails.length > 0 ) {
+			if ( invalidEditedEmailAllowList.length > 0 ) {
 				return false;
 			}
 
-			// invalid if the (validated) array of editedSpecificEmails is empty (but specific emails are in use).
-			if ( editedSpecificEmails.length === 0 ) {
+			// invalid if the (validated) array of editedEmailAllowList is empty (but specific emails are in use).
+			if ( editedEmailAllowList.length === 0 ) {
 				return false;
 			}
 		}
@@ -381,19 +391,21 @@ const RecurringPaymentsCouponAddEditModal = ( {
 
 		if (
 			( field === 'products' || ! field ) &&
-			typeof editedProducts === typeof [] &&
-			editedProducts.length > 0
+			typeof editedPlanIdsAllowList === typeof [] &&
+			editedPlanIdsAllowList.length > 0
 		) {
-			if ( editedProducts.filter( ( prod ) => parseInt( prod ) === 0 ).length > 0 ) {
-				return false;
-			}
-
-			if ( editedProducts.filter( ( prod ) => ! products.includes( prod ) ).length > 0 ) {
+			// In the event that the form is tampered with, don't allow planIds to be included which are outside of the existing planIds.
+			const allProductIds = products.map( ( product ) => product.ID );
+			if (
+				editedPlanIdsAllowList.filter(
+					( planId ) => ! allProductIds.includes( parseInt( planId ) )
+				).length > 0
+			) {
 				return false;
 			}
 		}
 
-		if ( ( field === 'usage_limit' || ! field ) && parseInt( editedUsageLimit ) < 0 ) {
+		if ( ( field === 'limit_per_user' || ! field ) && parseInt( editedLimitPerUser ) < 0 ) {
 			return false;
 		}
 
@@ -404,20 +416,20 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const onClose = ( reason: string | undefined ) => {
 		const couponDetails: Coupon = {
 			coupon_code: editedCouponCode,
-			// description: editedDescription,
 			discount_type: editedDiscountType,
 			discount_value: editedDiscountValue,
 			discount_percentage: editedDiscountPercentage,
 			discount_currency: currentDiscountCurrency,
 			start_date: editedStartDate,
 			end_date: editedEndDate,
-			product_ids: editedProducts,
+			plan_ids_allow_list: editedPlanIdsAllowList,
 			cannot_be_combined: editedCannotBeCombined,
-			first_time_only: editedFirstTimeOnly,
+			can_be_combined: ! editedCannotBeCombined,
+			first_time_purchase_only: editedFirstTimePurchaseOnly,
 			use_duration: editedUseDuration,
 			duration: editedDuration,
-			use_specific_emails: editedUseSpecificEmails,
-			specific_emails: editedSpecificEmails,
+			use_email_allow_list: editedUseEmailAllowList,
+			email_allow_list: editedEmailAllowList,
 		};
 
 		if ( reason === 'submit' && ( ! coupon || ! coupon.ID ) ) {
@@ -429,6 +441,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				)
 			);
 		} else if ( reason === 'submit' && coupon && coupon.ID ) {
+			couponDetails.ID = coupon.ID;
 			dispatch(
 				requestUpdateCoupon(
 					siteId ?? selectedSiteId,
@@ -453,7 +466,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			return __( '1 product selected' );
 		}
 		return translate( 'Any product' );
-	} )( editedProducts.length );
+	} )( editedPlanIdsAllowList.length );
 
 	return (
 		<Dialog
@@ -494,14 +507,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a coupon code.' ) } />
 					) }
 				</FormFieldset>
-				{ /* <FormFieldset>
-					<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
-					<FormTextInput
-						id="description"
-						value={ editedDescription }
-						onChange={ onDescriptionChange }
-					/>
-				</FormFieldset> */ }
 				<FormFieldset className="memberships__dialog-sections-discount-info">
 					<div className="memberships__dialog-sections-discount-info-field-container">
 						<FormLabel htmlFor="discount_type">{ translate( 'Discount type' ) }</FormLabel>
@@ -595,8 +600,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 										value={ COUPON_PRODUCTS_ANY }
 										onClick={ onSelectProduct }
 										onClose={ onClose }
-										isSelected={ editedProducts.length === 0 }
-										icon={ editedProducts.length === 0 ? check : null }
+										isSelected={ editedPlanIdsAllowList.length === 0 }
+										icon={ editedPlanIdsAllowList.length === 0 ? check : null }
 										key={ COUPON_PRODUCTS_ANY }
 										role="menuitemcheckbox"
 									>
@@ -607,8 +612,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 									{ products &&
 										products.map( function ( currentProduct: Product ) {
 											const isSelected =
-												editedProducts.length === 0 ||
-												editedProducts.includes( '' + currentProduct.ID );
+												editedPlanIdsAllowList.length === 0 ||
+												editedPlanIdsAllowList.includes( '' + currentProduct.ID );
 											const itemIcon = isSelected ? check : null;
 											return (
 												<MenuItem
@@ -644,17 +649,17 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				<FormFieldset className="memberships__dialog-sections-usage-limit">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Usage limit (optional)' ) }</FormLabel>
 					<FormTextInputWithAffixes
-						id="usage_limit"
+						id="limit_per_user"
 						suffix="times"
-						value={ editedUsageLimit === 0 ? COUPON_USAGE_LIMIT_INFINITE : editedUsageLimit }
-						onFocus={ onUsageLimitFocus }
-						onChange={ onUsageLimitChange }
-						onBlur={ onUsageLimitBlur }
+						value={ editedLimitPerUser === 0 ? COUPON_USAGE_LIMIT_INFINITE : editedLimitPerUser }
+						onFocus={ onLimitPerUserFocus }
+						onChange={ onLimitPerUserChange }
+						onBlur={ onLimitPerUserBlur }
 					/>
 					<FormSettingExplanation>
 						{ translate( 'Limit the number of times this coupon can be redeemed by a supporter.' ) }
 					</FormSettingExplanation>
-					{ ! isFormValid( 'usage_limit' ) && focusedUsageLimit && (
+					{ ! isFormValid( 'limit_per_user' ) && focusedLimitPerUser && (
 						<FormInputValidation
 							isError
 							text={ translate( 'Please enter a positive value, or 0 for infinite uses.' ) }
@@ -670,8 +675,8 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-coupon-boolean">
 					<ToggleControl
-						onChange={ ( newValue ) => setEditedFirstTimeOnly( newValue ) }
-						checked={ editedFirstTimeOnly }
+						onChange={ ( newValue ) => setEditedFirstTimePurchaseOnly( newValue ) }
+						checked={ editedFirstTimePurchaseOnly }
 						label={ translate( 'Eligible for first-time order only' ) }
 					/>
 				</FormFieldset>
@@ -699,27 +704,27 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-specific-emails">
 					<ToggleControl
-						onChange={ ( newValue ) => setEditedUseSpecificEmails( newValue ) }
-						checked={ editedUseSpecificEmails }
+						onChange={ ( newValue ) => setEditedUseEmailAllowList( newValue ) }
+						checked={ editedUseEmailAllowList }
 						label={ translate( 'Limit coupon to specific emails' ) }
 					/>
 					<FormTextInput
-						id="specific_emails"
-						value={ editedSpecificEmailsCSV }
-						onChange={ onSpecificEmailsChange }
-						disabled={ ! editedUseSpecificEmails }
-						onBlur={ onSpecificEmailsBlur }
+						id="email_allow_list"
+						value={ editedEmailAllowListCSV }
+						onChange={ onEmailAllowListChange }
+						disabled={ ! editedUseEmailAllowList }
+						onBlur={ onEmailAllowListBlur }
 					/>
 					<FormSettingExplanation>
 						{ translate(
 							'Separate email addresses with commas. Use an asterisk (*) to match parts of an email. For example, "*@university.edu" would select all "university.edu" addresses.'
 						) }
 					</FormSettingExplanation>
-					{ ! isFormValid( 'specific_emails' ) && focusedSpecificEmails && (
+					{ ! isFormValid( 'email_allow_list' ) && focusedEmailAllowList && (
 						<FormInputValidation
 							isError
 							text={ translate( 'Please fix these invalid email addresses: %s', {
-								args: invalidEditedSpecificEmailsLabel ?? '',
+								args: invalidEditedEmailAllowListLabel ?? '',
 							} ) }
 						/>
 					) }

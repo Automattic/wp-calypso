@@ -159,9 +159,6 @@ function CouponsList() {
 								<div className="memberships__products-product-title">
 									{ currentCoupon?.coupon_code }
 								</div>
-								{ /* <div className="memberships__products-product-description">
-									{ currentCoupon?.description }
-								</div> */ }
 								<sub className="memberships__products-product-amount"></sub>
 								{ currentCoupon?.end_date && (
 									<div className="memberships__coupons-coupon-badge">
@@ -201,12 +198,12 @@ function CouponsList() {
 										</Badge>
 									</div>
 								) }
-								{ currentCoupon?.first_time_only && (
+								{ currentCoupon?.first_time_purchase_only && (
 									<div className="memberships__coupons-coupon-badge">
 										<Badge type="info-green">{ translate( 'First-time order only' ) }</Badge>
 									</div>
 								) }
-								{ ! currentCoupon?.use_specific_emails && (
+								{ ! currentCoupon?.use_email_allow_list && (
 									<div className="memberships__coupons-coupon-badge">
 										<Badge type="info-purple">{ translate( 'Limited to specific emails' ) }</Badge>
 									</div>
