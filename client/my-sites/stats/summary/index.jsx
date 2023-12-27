@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
@@ -356,7 +357,7 @@ class StatsSummary extends Component {
 
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const upsellModalView = getUpsellModalView( state, siteId );
+	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),

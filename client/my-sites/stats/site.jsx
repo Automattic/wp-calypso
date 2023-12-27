@@ -600,7 +600,8 @@ export default connect(
 			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
 
 		const slug = getSelectedSiteSlug( state );
-		const upsellModalView = getUpsellModalView( state, siteId );
+		const upsellModalView =
+			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 
 		return {
 			canUserViewStats,
