@@ -1,9 +1,8 @@
 import { type UserSelect } from '@automattic/data-stores';
 import { useFlowProgress, REBLOGGING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import {
 	setSignupCompleteSlug,
@@ -40,6 +39,10 @@ const reblogging: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
+		const redirectToQueryArg = getQueryArg( window.location.search, 'redirect_to' );
+		const processDestination = addQueryArgs( `/post`, {
+			url: redirectToQueryArg,
+		} );
 
 		setStepProgress( flowProgress );
 
@@ -70,11 +73,10 @@ const reblogging: Flow = {
 
 				case 'processing':
 					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/post?url=https://mmm434.wordpress.com/2023/09/26/hello-world/?page_id=3&is_post_share=true&v=5`;
-						persistSignupDestination( destination );
+						persistSignupDestination( processDestination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
-						const returnUrl = encodeURIComponent( destination );
+						const returnUrl = encodeURIComponent( processDestination );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
@@ -82,9 +84,7 @@ const reblogging: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return window.location.assign(
-						`/post?url=https://mmm434.wordpress.com/2023/09/26/hello-world/?page_id=3&is_post_share=true&v=5`
-					);
+					return window.location.assign( processDestination );
 			}
 			return providedDependencies;
 		};
