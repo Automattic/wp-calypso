@@ -10,8 +10,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
-import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -38,19 +36,10 @@ const reblogging: Flow = {
 		];
 	},
 
-	useSideEffect() {
-		// const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
-		// useEffect( () => {
-		// 	setHidePlansFeatureComparison( true );
-		// } );
-	},
-
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
-		const siteId = useSiteIdParam();
-		const siteSlug = useSiteSlug();
 
 		setStepProgress( flowProgress );
 
@@ -80,23 +69,12 @@ const reblogging: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
-					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
-						return window.location.replace(
-							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
-								celebrateLaunch: true,
-								launchpadComplete: true,
-							} )
-						);
-					}
-
 					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+						const destination = `/post?url=https://mmm434.wordpress.com/2023/09/26/hello-world/?page_id=3&is_post_share=true&v=5`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
-						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies?.siteSlug }`
-						);
+						const returnUrl = encodeURIComponent( destination );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
@@ -104,12 +82,9 @@ const reblogging: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-
-					return navigate( `launchpad?siteSlug=${ providedDependencies?.siteSlug }` );
-
-				case 'launchpad': {
-					return navigate( 'processing' );
-				}
+					return window.location.assign(
+						`/post?url=https://mmm434.wordpress.com/2023/09/26/hello-world/?page_id=3&is_post_share=true&v=5`
+					);
 			}
 			return providedDependencies;
 		};
@@ -119,18 +94,7 @@ const reblogging: Flow = {
 		};
 
 		const goNext = async () => {
-			switch ( _currentStepSlug ) {
-				case 'launchpad':
-					skipLaunchpad( {
-						checklistSlug: 'link-in-bio',
-						siteId,
-						siteSlug,
-					} );
-					return;
-
-				default:
-					return navigate( 'intro' );
-			}
+			return;
 		};
 
 		const goToStep = ( step: string ) => {
