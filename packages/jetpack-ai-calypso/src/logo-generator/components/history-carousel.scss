@@ -7,6 +7,10 @@
 		height: unset;
 		padding: unset;
 	}
+
+	@media (min-width: 700px) {
+		padding: 2px;
+	}
 }
 
 .jetpack-ai-logo-generator__carousel-logo {
