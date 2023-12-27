@@ -208,7 +208,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 		/**
 		 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
 		 */
-		if ( previewingTheme?.type && ! livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
+		if ( ! previewingTheme?.type || ! livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
 			setCanPreviewButNeedUpgrade( false );
 			return;
 		}
