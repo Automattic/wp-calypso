@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
@@ -11,6 +12,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
@@ -32,10 +34,6 @@ class StatsSummary extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	state = {
-		isModalOpen: false,
-	};
-
 	renderSummaryHeader( path, statType, hideNavigation, query ) {
 		const period = this.props.period;
 
@@ -45,10 +43,6 @@ class StatsSummary extends Component {
 			</div>
 		);
 
-		const handleGatedClick = () => {
-			this.setState( { isModalOpen: true } );
-		};
-
 		return (
 			<AllTimeNav
 				path={ path }
@@ -56,7 +50,6 @@ class StatsSummary extends Component {
 				period={ period }
 				hideNavigation={ hideNavigation }
 				navigationSwap={ headerCSVButton }
-				onGatedClick={ handleGatedClick }
 			/>
 		);
 	}
@@ -356,13 +349,7 @@ class StatsSummary extends Component {
 					{ summaryViews }
 					<JetpackColophon />
 				</div>
-				{ this.state.isModalOpen && (
-					<StatsUpsellModal
-						closeModal={ () => this.setState( { isModalOpen: false } ) }
-						statType={ statType }
-						siteSlug={ this.props.siteSlug }
-					/>
-				) }
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</Main>
 		);
 	}
@@ -370,9 +357,11 @@ class StatsSummary extends Component {
 
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
+		upsellModalView,
 	};
 } )( localize( StatsSummary ) );

@@ -123,7 +123,6 @@ class StatsModule extends Component {
 		const {
 			className,
 			summary,
-			siteSlug,
 			siteId,
 			path,
 			data,
@@ -195,8 +194,8 @@ class StatsModule extends Component {
 						gateStats && (
 							<StatsCardUpsell
 								className="stats-module__upsell"
-								siteSlug={ siteSlug }
 								statType={ statType }
+								siteId={ siteId }
 							/>
 						)
 					}
@@ -204,7 +203,7 @@ class StatsModule extends Component {
 				{ isAllTime && (
 					<div className={ footerClass }>
 						{ gateDownloads ? (
-							<DownloadCsvUpsell siteSlug={ siteSlug } borderless />
+							<DownloadCsvUpsell siteId={ siteId } borderless />
 						) : (
 							<DownloadCsv
 								statType={ statType }
