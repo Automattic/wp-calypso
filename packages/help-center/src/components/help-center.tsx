@@ -76,10 +76,15 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const isHelpCenterShown = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-		[]
-	);
+
+	const { isHelpCenterShown, selectedSite } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			isHelpCenterShown: store.isHelpCenterShown(),
+			selectedSite: store.getSite(),
+		};
+	}, [] );
+
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -102,8 +107,10 @@ const HelpCenter: React.FC< Container > = ( {
 	const usedSite = backendProvidedSite || site;
 
 	useEffect( () => {
+		// This calls changes the value of `selectedSite` in the store.
+		// Passing `selectedSite` is unintuitive but it's needed to trigger the effect when the value is deleted and needs to be re-set.
 		setSite( usedSite );
-	}, [ usedSite, setSite ] );
+	}, [ selectedSite, usedSite, setSite ] );
 
 	useStillNeedHelpURL();
 
