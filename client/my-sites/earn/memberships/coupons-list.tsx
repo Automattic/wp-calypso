@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import QueryMembershipsCoupons from 'calypso/components/data/query-memberships-coupons';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
@@ -30,13 +31,13 @@ import {
 	COUPON_DURATION_6_MONTHS,
 	COUPON_DURATION_FOREVER,
 } from './constants';
-
 import './style.scss';
+import RecurringPaymentsCouponDeleteModal from './delete-coupon-modal';
 
 function CouponsList() {
 	const translate = useTranslate();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( false );
-	const [ , setShowDeleteDialog ] = useState( false );
+	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ coupon, setCoupon ] = useState< Product | null >( null );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
@@ -218,6 +219,14 @@ function CouponsList() {
 					closeDialog={ closeDialog }
 					coupon={ Object.assign( coupon ?? {}, {} ) }
 				/>
+			) }
+			{ hasLoadedFeatures && showDeleteDialog && coupon && (
+				<RecurringPaymentsCouponDeleteModal closeDialog={ closeDialog } coupon={ coupon } />
+			) }
+			{ ! hasLoadedFeatures && (
+				<div className="memberships__loading">
+					<LoadingEllipsis />
+				</div>
 			) }
 		</div>
 	);
