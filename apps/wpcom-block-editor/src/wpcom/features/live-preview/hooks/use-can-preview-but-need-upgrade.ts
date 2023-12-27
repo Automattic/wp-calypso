@@ -92,6 +92,7 @@ const usePolling = ( {
 		if ( ! isPolling ) {
 			return;
 		}
+		// Using exponential backoff, as we don't want to make too many requests while the user is completing the purchase.
 		const nextPollInterval = () =>
 			Math.min( pollInterval.current * POLL_INTERVAL_FACTOR, POLL_INTERVAL_MAX );
 		const poll = () => {
