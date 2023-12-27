@@ -142,12 +142,12 @@ const free: Flow = {
 					}
 
 					if ( providedDependencies?.shouldGoToAssembler ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( `processing?siteSlug=${ siteSlug }` );
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( `processing?siteSlug=${ siteSlug }` );
 				}
 
@@ -160,7 +160,7 @@ const free: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'designSetup' );
 			}
 		};
