@@ -343,7 +343,7 @@ class StatsSummary extends Component {
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<NavigationHeader navigationItems={ navigationItems } />
+				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					{ summaryViews }
