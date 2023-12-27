@@ -4,7 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { UrlData, GoToStep, RecordTracksEvent, ImporterPlatform } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
@@ -12,8 +12,6 @@ import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
-
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const trackEventName = 'calypso_signup_step_start';
 const trackEventParams = {
@@ -34,7 +32,7 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
-	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 
 	const recordReadyScreenEvent = () => {
 		recordTracksEvent( trackEventName, {
@@ -56,8 +54,8 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 		} );
 	};
 
-	useEffect( recordReadyScreenEvent, [] );
-	useEffect( recordImportGuideEvent, [ isModalDetailsOpen ] );
+	useEffect( () => recordReadyScreenEvent(), [ urlData.platform ] );
+	useEffect( () => recordImportGuideEvent(), [ isModalDetailsOpen ] );
 
 	return (
 		<>
