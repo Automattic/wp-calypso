@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useState, useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -29,6 +29,11 @@ import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './styles.scss';
 
+const isComingFromSenseiLMSSite = () => {
+	const urlParams = new URLSearchParams( window.location.search );
+	return urlParams.get( 'ref' ) === 'senseilms';
+};
+
 const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< PlanBillingPeriod >( 'ANNUALLY' );
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
@@ -44,6 +49,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 	const senseiProPlan = useSenseiProPricing( billingPeriod );
 	const businessPlan = useBusinessPlanPricing( billingPeriod );
+	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
 
 	const goToDomainStep = useCallback( () => {
 		submit?.( undefined, 'senseiDomain' );
@@ -90,7 +96,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 		[ businessPlan.productSlug, domain, flow, senseiProPlan.productSlug ]
 	);
 
-	const onPlanSelect = async () => {
+	const onPlanSelect = useCallback( async () => {
 		try {
 			setStatus( Status.Bundling );
 
@@ -104,10 +110,20 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 		} catch ( err ) {
 			setStatus( Status.Error );
 		}
-	};
+	}, [ createAndConfigureSite, createCheckoutCart ] );
+
+	useEffect( () => {
+		// Check if it should auto-select the plan.
+		if ( ! isLoading && isComingFromSenseiLMSSite() ) {
+			onPlanSelect();
+		}
+	}, [ onPlanSelect, isLoading ] );
+
+	if ( isComingFromSenseiLMSSite() ) {
+		return null;
+	}
 
 	const currencyCode = senseiProPlan.currencyCode;
-	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
 	const price = businessPlan.price + senseiProPlan.price;
 	const monthlyPrice = businessPlan.monthlyPrice + senseiProPlan.monthlyPrice;
 	const annualPrice = businessPlan.yearlyPrice + senseiProPlan.yearlyPrice;
