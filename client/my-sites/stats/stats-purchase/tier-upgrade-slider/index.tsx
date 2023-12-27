@@ -12,7 +12,7 @@ type TierUIStrings = {
 interface TierStep {
 	lhValue: string;
 	rhValue: string;
-	fullPrice?: string;
+	upgradePrice?: string;
 }
 
 type TierUpgradeSliderProps = {
@@ -84,10 +84,10 @@ function TierUpgradeSlider( {
 	const infoReferenceElement = useRef( null );
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
-	const rhValue = steps[ currentPlanIndex ]?.rhValue;
-	const fullPrice = steps[ currentPlanIndex ]?.fullPrice || '';
+	const originalPrice = steps[ currentPlanIndex ]?.rhValue;
+	const discountedPrice = steps[ currentPlanIndex ]?.upgradePrice || '';
 
-	const secondaryCalloutIsHidden = rhValue === '';
+	const secondaryCalloutIsHidden = originalPrice === '';
 
 	return (
 		<div className={ componentClassNames }>
@@ -100,7 +100,7 @@ function TierUpgradeSlider( {
 					<div className="tier-upgrade-slider__step-callout right-aligned">
 						<h2>{ uiStrings.price }</h2>
 						<p ref={ infoReferenceElement }>
-							{ rhValue } <span className="full-price-label">{ fullPrice }</span>
+							{ discountedPrice } <span className="full-price-label">{ originalPrice }</span>
 						</p>
 					</div>
 				) }

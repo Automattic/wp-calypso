@@ -56,28 +56,6 @@ const MOCK_PLAN_DATA = [
 	},
 ];
 
-function transformTier( tier: PriceTierListItemProps ): StatsPlanTierUI {
-	// TODO: Some description of transform logic here.
-	// So as to clarify what we should expect from the API.
-	if ( tier?.maximum_units === null ) {
-		// Special transformation for highest tier extension.
-		return {
-			minimum_price: tier?.minimum_price,
-			price: tier?.minimum_price_monthly_display,
-			views: EXTENSION_THRESHOLD_IN_MILLION * ( tier?.transform_quantity_divide_by || 1 ),
-			extension: true,
-			transform_quantity_divide_by: tier?.transform_quantity_divide_by,
-			per_unit_fee: tier?.per_unit_fee,
-		};
-	}
-
-	return {
-		minimum_price: tier?.minimum_price,
-		price: tier?.maximum_price_monthly_display,
-		views: tier?.maximum_units,
-	};
-}
-
 function filterPurchasedTiers(
 	availableTiers: StatsPlanTierUI[],
 	usageData: PlanUsage | undefined
@@ -129,8 +107,12 @@ function extendTiersBeyondHighestTier(
 				( highestTier?.views ?? 0 ) +
 				( highestTier.transform_quantity_divide_by ?? 0 ) * extendedTierCount;
 
+			const extendedTierAmount = extendedTierCount - purchasedExtendedTierCount;
+
 			availableTiers.push( {
 				minimum_price: totalPrice,
+				// Upgrade price for every 1M views.
+				upgrade_price: ( highestTier.per_unit_fee || 0 ) * extendedTierAmount,
 				price: monthlyPriceDisplay,
 				views: views,
 				extension: true,
@@ -161,7 +143,36 @@ function useAvailableUpgradeTiers(
 		return MOCK_PLAN_DATA;
 	}
 
-	let tiersForUi = commercialProduct.price_tier_list.map( transformTier );
+	const currentTierPrice = usageData.current_tier.minimum_price;
+
+	let tiersForUi = commercialProduct.price_tier_list.map(
+		( tier: PriceTierListItemProps ): StatsPlanTierUI => {
+			// TODO: Some description of transform logic here.
+			// So as to clarify what we should expect from the API.
+			const tierUpgradePrice =
+				tier.minimum_price > currentTierPrice ? tier.minimum_price - currentTierPrice : 0;
+
+			if ( tier?.maximum_units === null ) {
+				// Special transformation for highest tier extension.
+				return {
+					minimum_price: tier.minimum_price,
+					upgrade_price: tierUpgradePrice,
+					price: tier.minimum_price_monthly_display,
+					views: EXTENSION_THRESHOLD_IN_MILLION * ( tier.transform_quantity_divide_by || 1 ),
+					extension: true,
+					transform_quantity_divide_by: tier.transform_quantity_divide_by,
+					per_unit_fee: tier.per_unit_fee,
+				};
+			}
+
+			return {
+				minimum_price: tier.minimum_price,
+				upgrade_price: tierUpgradePrice,
+				price: tier.minimum_price_monthly_display,
+				views: tier.maximum_units,
+			};
+		}
+	);
 	const currencyCode = commercialProduct.currency_code || 'USD';
 
 	tiersForUi = tiersForUi.length > 0 ? tiersForUi : MOCK_PLAN_DATA;
