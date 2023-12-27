@@ -131,6 +131,20 @@ export function createNavigation( context ) {
 	);
 }
 
+export function renderRebloggingEmptySites( context ) {
+	setSectionMiddleware( { group: 'sites' } )( context );
+
+	context.primary = createElement( () =>
+		NoSitesMessage( {
+			title: i18n.translate( 'Create a site to reblog' ),
+			actionURL: '/setup/reblogging',
+		} )
+	);
+
+	makeLayout( context, noop );
+	clientRender( context );
+}
+
 export function renderEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -509,7 +523,11 @@ export function siteSelection( context, next ) {
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
-		renderEmptySites( context );
+		if ( context.querystring.includes( 'is_post_share=true' ) ) {
+			renderRebloggingEmptySites( context );
+		} else {
+			renderEmptySites( context );
+		}
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
