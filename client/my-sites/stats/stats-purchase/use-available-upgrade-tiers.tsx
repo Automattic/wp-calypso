@@ -149,8 +149,13 @@ function useAvailableUpgradeTiers(
 		( tier: PriceTierListItemProps ): StatsPlanTierUI => {
 			// TODO: Some description of transform logic here.
 			// So as to clarify what we should expect from the API.
-			const tierUpgradePrice =
-				tier.minimum_price > currentTierPrice ? tier.minimum_price - currentTierPrice : 0;
+			let tierUpgradePrice = 0;
+
+			// If there is a purchased paid tier,
+			// the upgrade price is the difference between the current tier and the target tier.
+			if ( currentTierPrice && tier.minimum_price > currentTierPrice ) {
+				tierUpgradePrice = tier.minimum_price - currentTierPrice;
+			}
 
 			if ( tier?.maximum_units === null ) {
 				// Special transformation for highest tier extension.

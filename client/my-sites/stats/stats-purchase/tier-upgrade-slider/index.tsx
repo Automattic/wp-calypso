@@ -85,7 +85,7 @@ function TierUpgradeSlider( {
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const originalPrice = steps[ currentPlanIndex ]?.rhValue;
-	const discountedPrice = steps[ currentPlanIndex ]?.upgradePrice || '';
+	const discountedPrice = steps[ currentPlanIndex ]?.upgradePrice;
 
 	const secondaryCalloutIsHidden = originalPrice === '';
 
@@ -100,7 +100,14 @@ function TierUpgradeSlider( {
 					<div className="tier-upgrade-slider__step-callout right-aligned">
 						<h2>{ uiStrings.price }</h2>
 						<p ref={ infoReferenceElement }>
-							{ discountedPrice } <span className="full-price-label">{ originalPrice }</span>
+							{ discountedPrice ? (
+								<>
+									<span>{ discountedPrice }</span>
+									<span className="full-price-label">{ originalPrice }</span>
+								</>
+							) : (
+								<span>{ originalPrice }</span>
+							) }
 						</p>
 					</div>
 				) }

@@ -59,10 +59,12 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 			lhValue: views,
 			rhValue: price,
 			originalPrice: tier.price,
-			upgradePrice: formatCurrency( tierUpgradePricePerMonth, currencyCode, {
-				isSmallestUnit: true,
-				stripZeros: true,
-			} ),
+			upgradePrice: tierUpgradePricePerMonth
+				? formatCurrency( tierUpgradePricePerMonth, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+				  } )
+				: '',
 			tierViews: tier.views === null ? EXTENSION_THRESHOLD_IN_MILLION * 1000000 : tier.views,
 		};
 	} );
