@@ -26,7 +26,7 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: beautifulThemes,
 			showButton: true,
 			buttonText: translate( 'Browse themes' ),
-			buttonClick: () => page.redirect( `/themes/${ siteSlug }` ),
+			buttonClick: () => page( `/themes/${ siteSlug }` ),
 		},
 		{
 			id: 'advanced-design-tools',
@@ -61,7 +61,7 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: jetpackBackupsAndRestores,
 			showButton: true,
 			buttonText: 'View your backup activity',
-			buttonClick: () => page.redirect( `/backup/${ siteSlug }` ),
+			buttonClick: () => page( `/backup/${ siteSlug }` ),
 		},
 		{
 			id: 'spam-protection',
@@ -85,7 +85,7 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: seoTools,
 			showButton: true,
 			buttonText: translate( 'Increase visibility' ),
-			buttonClick: () => page.redirect( `/marketing/traffic/${ siteSlug }` ),
+			buttonClick: () => page( `/marketing/traffic/${ siteSlug }` ),
 		},
 		{
 			id: 'google-analytics',
@@ -94,7 +94,7 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: googleAnalytics,
 			showButton: true,
 			buttonText: translate( 'Connect Google Analytics' ),
-			buttonClick: () => page.redirect( `/marketing/traffic/${ siteSlug }` ),
+			buttonClick: () => page( `/marketing/traffic/${ siteSlug }` ),
 		},
 		{
 			id: 'hosting',
