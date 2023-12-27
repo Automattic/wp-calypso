@@ -84,7 +84,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	const description = isWPCOMPaidStatsFlow
 		? translate(
-				'Finesse your scaling up strategy with detailed insights and data. Upgrade to a Personal plan for a richer understanding and smarter decision-making.'
+				'Finesse your scaling up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
 		  )
 		: translate( 'Upgrade to get priority support and access to upcoming advanced features.' );
 
