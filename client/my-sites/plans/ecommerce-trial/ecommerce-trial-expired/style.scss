@@ -2,10 +2,6 @@
 @import "@wordpress/base-styles/breakpoints";
 
 body.is-section-plans.is-expired-ecommerce-trial-plan {
-	.layout__content {
-		padding-left: 0 !important;
-	}
-
 	&.color-scheme {
 		--color-surface-backdrop: var(--color-surface);
 	}
