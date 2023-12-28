@@ -475,6 +475,7 @@ function PluginDetails( props ) {
 						slug={ fullPlugin.slug }
 						productType="plugin"
 						showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
+						ref={ reviewsListRef }
 					/>
 				</div>
 			) }
