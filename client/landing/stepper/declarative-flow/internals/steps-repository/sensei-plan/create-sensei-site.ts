@@ -114,7 +114,6 @@ export const useCreateSenseiSite = () => {
 			if ( styleVariation && userGlobalStylesId ) {
 				await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
 			}
-			wait( 1200 );
 		}
 		setProgress( {
 			percentage: 100,

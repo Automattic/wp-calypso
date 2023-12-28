@@ -50,7 +50,7 @@ const importFlow: Flow = {
 			{ slug: 'importerSquarespace', component: ImporterSquarespace },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
 			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'pattern-assembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'migrationHandler', component: MigrationHandler },
@@ -171,13 +171,13 @@ const importFlow: Flow = {
 				case 'designSetup': {
 					const { selectedDesign: _selectedDesign } = providedDependencies;
 					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( 'processing' );
 				}
 
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'processing' );
 
 				case 'siteCreationStep':
