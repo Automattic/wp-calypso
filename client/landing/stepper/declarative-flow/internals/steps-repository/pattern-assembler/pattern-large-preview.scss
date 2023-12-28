@@ -13,6 +13,12 @@
 	box-sizing: border-box;
 	z-index: 1;
 	transition: margin-inline-start 0.2s ease-out;
+
+	&.device-switcher__container--is-computer:has(.pattern-large-preview__placeholder) {
+		.device-switcher__frame {
+			max-width: 1080px;
+		}
+	}
 }
 
 .pattern-large-preview__patterns {
