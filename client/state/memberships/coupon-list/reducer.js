@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import {
-	MEMBERSHIPS_COUPONS_RECIEVE,
+	MEMBERSHIPS_COUPONS_RECEIVE,
 	MEMBERSHIPS_COUPON_DELETE,
-	MEMBERSHIPS_COUPON_RECIEVE,
+	MEMBERSHIPS_COUPON_RECEIVE,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
 import couponListSchema from './schema';
@@ -38,7 +38,7 @@ function addOrEditCoupon( list = [], newCoupon ) {
  */
 export const items = withSchemaValidation( couponListSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
-		case MEMBERSHIPS_COUPONS_RECIEVE: {
+		case MEMBERSHIPS_COUPONS_RECEIVE: {
 			const { siteId, coupons } = action;
 
 			return {
@@ -46,7 +46,7 @@ export const items = withSchemaValidation( couponListSchema, ( state = {}, actio
 				[ siteId ]: coupons,
 			};
 		}
-		case MEMBERSHIPS_COUPON_RECIEVE: {
+		case MEMBERSHIPS_COUPON_RECEIVE: {
 			const { siteId, coupon } = action;
 
 			return {

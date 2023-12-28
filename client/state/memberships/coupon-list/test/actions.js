@@ -1,6 +1,6 @@
 import {
 	MEMBERSHIPS_COUPONS_LIST,
-	MEMBERSHIPS_COUPONS_RECIEVE,
+	MEMBERSHIPS_COUPON_RECEIVE,
 	MEMBERSHIPS_COUPONS_DELETE,
 } from 'calypso/state/action-types';
 import { requestCoupons, receiveUpdateCoupon, receiveDeleteCoupon } from '../actions';
@@ -20,7 +20,7 @@ describe( 'actions', () => {
 			expect( receiveUpdateCoupon( 123, {} ) ).toEqual( {
 				coupon: {},
 				siteId: 123,
-				type: MEMBERSHIPS_COUPONS_RECIEVE,
+				type: MEMBERSHIPS_COUPON_RECEIVE,
 			} );
 		} );
 	} );

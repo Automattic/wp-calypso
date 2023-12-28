@@ -8,7 +8,7 @@ import {
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_SETTINGS_RECEIVE,
 	MEMBERSHIPS_COUPONS_LIST,
-	MEMBERSHIPS_COUPONS_RECIEVE,
+	MEMBERSHIPS_COUPONS_RECEIVE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -84,7 +84,7 @@ export const handleMembershipCouponsList = dispatchRequest( {
 		return coupons;
 	},
 	onSuccess: ( { siteId }, coupons ) => ( {
-		type: MEMBERSHIPS_COUPONS_RECIEVE,
+		type: MEMBERSHIPS_COUPONS_RECEIVE,
 		siteId,
 		coupons,
 	} ),
