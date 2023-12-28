@@ -5,7 +5,7 @@ import {
 	MEMBERSHIPS_COUPON_ADD_FAILURE,
 	MEMBERSHIPS_COUPON_DELETE,
 	MEMBERSHIPS_COUPON_DELETE_FAILURE,
-	MEMBERSHIPS_COUPON_RECIEVE,
+	MEMBERSHIPS_COUPON_RECEIVE,
 	MEMBERSHIPS_COUPON_UPDATE,
 	MEMBERSHIPS_COUPON_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
@@ -22,7 +22,7 @@ export function receiveUpdateCoupon( siteId, coupon ) {
 	return {
 		coupon,
 		siteId,
-		type: MEMBERSHIPS_COUPON_RECIEVE,
+		type: MEMBERSHIPS_COUPON_RECEIVE,
 	};
 }
 
@@ -30,7 +30,7 @@ export function receiveDeleteCoupon( siteId, couponId ) {
 	return {
 		couponId,
 		siteId,
-		type: MEMBERSHIPS_COUPON_RECIEVE,
+		type: MEMBERSHIPS_COUPON_DELETE,
 	};
 }
 
