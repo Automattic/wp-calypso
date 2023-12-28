@@ -44,7 +44,6 @@ const GoogleAnalyticsSimpleForm = ( {
 		'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
 		{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 	);
-
 	useEffect( () => {
 		if ( fields?.wga?.code ) {
 			setDisplayForm( true );

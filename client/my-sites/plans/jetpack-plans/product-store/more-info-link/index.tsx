@@ -8,6 +8,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( {
 	item,
 	onClick,
 	isLinkExternal,
+	withIcon = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -24,7 +25,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( {
 				components: { productName: <>{ item.shortName }</> },
 			} ) }
 
-			{ isOpeningNewTab && <Gridicon icon="external" size={ 16 } /> }
+			{ isOpeningNewTab && withIcon && <Gridicon icon="external" size={ 16 } /> }
 		</Button>
 	);
 };

@@ -23,6 +23,7 @@ import { Icon, rotateLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -51,7 +52,6 @@ import withNotices, { NoticesProps } from './notices/notices';
 import PagePreviewList from './pages/page-preview-list';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
@@ -129,7 +129,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	const { pages, pageSlugs, setPageSlugs } = usePatternPages( pageCategoryPatternsMap );
 
-	const currentScreen = useCurrentScreen( { isNewSite, shouldUnlockGlobalStyles } );
+	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
@@ -440,7 +440,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const globalStylesUpgradeProps = useGlobalStylesUpgradeProps( {
 		flowName: flow,
 		stepName,
-		nextScreenName: isNewSite ? 'confirmation' : 'activation',
+		nextScreenName: 'confirmation',
 		onUpgradeLater: onContinue,
 		recordTracksEvent,
 	} );
@@ -490,6 +490,18 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		// Don't show the “Back” button if the site is being created by the site assembler flow.
 		// as the previous step is the site creation step that cannot be undone.
 		return isSiteAssemblerFlow( flow );
+	};
+
+	const shouldIgnoreSelectedPagesInPreview = () => {
+		if ( flow === AI_ASSEMBLER_FLOW ) {
+			return false;
+		}
+
+		if ( currentScreen.name === 'confirmation' ) {
+			return false;
+		}
+
+		return true;
 	};
 
 	const customActionButtons = () => {
@@ -542,11 +554,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 		resetRecipe();
 		goBack?.();
-	};
-
-	const onActivate = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
-		onContinue();
 	};
 
 	const onConfirm = () => {
@@ -633,6 +640,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			{ noticeUI }
 			<div className="pattern-assembler__sidebar">
+				<QueryActiveTheme siteId={ site?.ID } />
+
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
@@ -667,12 +676,13 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
-					<ScreenActivation onActivate={ onActivate } />
-				</NavigatorScreen>
-
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation onConfirm={ onConfirm } />
+					<ScreenConfirmation
+						isNewSite={ isNewSite }
+						siteId={ site?.ID }
+						selectedDesign={ selectedDesign }
+						onConfirm={ onConfirm }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
@@ -690,6 +700,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						selectedSections={ sections }
 						selectedFooter={ footer }
 						patternsMapByCategory={ layoutCategoryPatternsMap }
+						pages={ ! shouldIgnoreSelectedPagesInPreview() ? pages : undefined }
 						onSelect={ onSelect }
 						recordTracksEvent={ recordTracksEvent }
 						isNewSite={ isNewSite }
@@ -728,12 +739,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					sections={ sections }
 					footer={ footer }
 					activePosition={ activePosition }
-					pages={
-						// Consider the selected pages in the final screen.
-						currentScreen.name === 'confirmation' || currentScreen.name === 'activation'
-							? pages
-							: undefined
-					}
+					pages={ ! shouldIgnoreSelectedPagesInPreview() ? pages : undefined }
 					onDeleteSection={ onDeleteSection }
 					onMoveUpSection={ onMoveUpSection }
 					onMoveDownSection={ onMoveDownSection }

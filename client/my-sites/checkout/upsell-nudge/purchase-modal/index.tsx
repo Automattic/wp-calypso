@@ -110,7 +110,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const paymentCompleteCallback = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
 		siteSlug: siteSlug,
-		isInModal: true,
+		isInModal: disabledThankYouPage,
 		disabledThankYouPage,
 	} );
 

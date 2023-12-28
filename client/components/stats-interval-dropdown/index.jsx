@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import qs from 'qs';
 import './style.scss';
 
-const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) => {
+const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGatedHandler } ) => {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const isSelectedItem = ( interval ) => {
@@ -16,7 +16,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 	const clickHandler = ( interval ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 
-		if ( intervals[ interval ].isGated ) {
+		if ( intervals[ interval ].isGated && onGatedHandler ) {
 			const events = [
 				{
 					name: `${ event_from }_stats_interval_dropdown_listing_${ intervals[ interval ].id }_gated_clicked`,
@@ -26,7 +26,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 					params: { statType: intervals[ interval ].statType, source: event_from },
 				},
 			];
-			return intervals[ interval ].onGatedClick( events, event_from );
+			return onGatedHandler( events, event_from, intervals[ interval ].statType );
 		}
 		onSelection( interval );
 	};
@@ -64,7 +64,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 	);
 };
 
-const IntervalDropdown = ( { slug, period, queryParams, intervals } ) => {
+const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandler } ) => {
 	// New interval listing that preserves date range.
 	// TODO: Figure out how to dismiss on select.
 
@@ -99,6 +99,7 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals } ) => {
 						selected={ period }
 						onSelection={ onSelectionHandler }
 						intervals={ intervals }
+						onGatedHandler={ onGatedHandler }
 					/>
 				</div>
 			) }
