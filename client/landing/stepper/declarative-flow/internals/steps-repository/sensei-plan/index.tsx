@@ -41,7 +41,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 	const senseiProPlan = useSenseiProPricing( billingPeriod );
 	const businessPlan = useBusinessPlanPricing( billingPeriod );
-	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
+	const isLoadingPlans = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
 
 	const goToDomainStep = useCallback( () => {
 		submit?.( undefined, 'senseiDomain' );
@@ -54,7 +54,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 		domain,
 		businessPlanSlug: businessPlan.productSlug,
 		senseiProPlanSlug: senseiProPlan.productSlug,
-		isLoading,
+		isLoadingPlans,
 	} );
 
 	const currencyCode = senseiProPlan.currencyCode;
@@ -106,13 +106,13 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 					<PlansIntervalToggle
 						intervalType={ billingPeriod }
 						onChange={ setBillingPeriod }
-						maxMonthlyDiscountPercentage={ isLoading ? undefined : annualDiscount }
+						maxMonthlyDiscountPercentage={ isLoadingPlans ? undefined : annualDiscount }
 					/>
 
 					<div className="plan-item-wrapper">
 						<div
 							className={ classnames( 'plan-item plan-item--sensei', {
-								'plan-item--is-loading': isLoading,
+								'plan-item--is-loading': isLoadingPlans,
 							} ) }
 						>
 							<div tabIndex={ 0 } role="button" className="plan-item__summary">
@@ -120,13 +120,13 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 									<div className="plan-item__name">{ title }</div>
 								</div>
 								<div className="plan-item__price">
-									{ ! isLoading && (
+									{ ! isLoadingPlans && (
 										<PlanPrice rawPrice={ price ?? undefined } currencyCode={ currencyCode } />
 									) }
 								</div>
 							</div>
 							<div className="plan-item__price-note">
-								{ ! isLoading && billingPeriod === 'ANNUALLY'
+								{ ! isLoadingPlans && billingPeriod === 'ANNUALLY'
 									? planItemPriceLabelAnnually
 									: planItemPriceLabelMonthly }
 							</div>

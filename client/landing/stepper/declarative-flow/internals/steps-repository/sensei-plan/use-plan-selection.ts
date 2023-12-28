@@ -18,7 +18,7 @@ export const usePlanSelection = ( {
 	domain,
 	businessPlanSlug,
 	senseiProPlanSlug,
-	isLoading,
+	isLoadingPlans,
 }: {
 	flow: string;
 	status: Status;
@@ -26,7 +26,7 @@ export const usePlanSelection = ( {
 	domain: DomainSuggestion | undefined;
 	businessPlanSlug: string;
 	senseiProPlanSlug: string;
-	isLoading: boolean;
+	isLoadingPlans: boolean;
 } ) => {
 	const { createAndConfigureSite, progress } = useCreateSenseiSite();
 
@@ -95,10 +95,10 @@ export const usePlanSelection = ( {
 			setStatus( Status.Bundling );
 		}
 
-		if ( ! isLoading ) {
+		if ( ! isLoadingPlans ) {
 			onPlanSelect();
 		}
-	}, [ isLoading, status, setStatus, onPlanSelect ] );
+	}, [ isLoadingPlans, status, setStatus, onPlanSelect ] );
 
 	return { progress, onPlanSelect };
 };
