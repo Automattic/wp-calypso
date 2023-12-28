@@ -300,12 +300,31 @@ export const useUpdateMarketplaceReviewMutation = () => {
 	} );
 };
 
-export const useDeleteMarketplaceReviewMutation = () => {
+export const useDeleteMarketplaceReviewMutation = ( {
+	productType,
+	slug,
+	page,
+	perPage,
+	author,
+	author_exclude,
+}: MarketplaceReviewsQueryProps ) => {
 	const queryClient = useQueryClient();
+	const queryKey: QueryKey = [
+		queryKeyBase,
+		productType,
+		slug,
+		author,
+		author_exclude,
+		page,
+		perPage,
+	];
 	return useMutation( {
 		mutationFn: deleteReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
+			queryClient.invalidateQueries( { queryKey } );
+		},
+		onError: ( error: Error ) => {
+			alert( error.message );
 		},
 	} );
 };

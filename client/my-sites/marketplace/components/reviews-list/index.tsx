@@ -29,20 +29,20 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	} );
 	const reviews = data?.pages.flatMap( ( page ) => page.data );
 
-	const { data: userReviews = [], refetch: userReviewsRefetch } = useMarketplaceReviewsQuery( {
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
 		...props,
 		perPage: 1,
 		author: currentUserId ?? undefined,
 	} );
 
-	const deleteReviewMutation = useDeleteMarketplaceReviewMutation();
+	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
+		...props,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
 	const deleteReview = ( reviewId: number ) => {
 		setIsConfirmModalVisible( false );
-		deleteReviewMutation.mutate( {
-			reviewId: reviewId,
-		} );
-		userReviewsRefetch();
-		deleteReviewMutation?.isError && alert( ( deleteReviewMutation.error as Error ).message );
+		deleteReviewMutation.mutate( { reviewId: reviewId } );
 	};
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
