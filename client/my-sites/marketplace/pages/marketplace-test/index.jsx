@@ -26,6 +26,7 @@ import {
 	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransfer, getEligibility } from 'calypso/state/automated-transfer/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
@@ -54,6 +55,7 @@ export default function MarketplaceTest() {
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
+	const currentUserId = useSelector( getCurrentUserId );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
@@ -97,7 +99,11 @@ export default function MarketplaceTest() {
 
 	const createReview = useCreateMarketplaceReviewMutation();
 	const updateReview = useUpdateMarketplaceReviewMutation();
-	const deleteReview = useDeleteMarketplaceReviewMutation();
+	const deleteReview = useDeleteMarketplaceReviewMutation( {
+		productType: 'plugin',
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
 
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
