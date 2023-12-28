@@ -193,19 +193,22 @@ export function FreePlanFreeDomainDialog( {
 				{ translate( 'Continue with Free' ) }
 			</PlanButton>
 			<TextBox fontSize={ 12 } color="gray">
-				{ translate(
-					'%(planTitle1)s plan: %(monthlyPlanPrice1)s/mo, %(annualPlanPrice1)s billed annually. %(planTitle2)s plan: %(monthlyPlanPrice2)s/mo, %(annualPlanPrice2)s billed annually. Excluding taxes.',
-					{
-						args: {
-							planTitle1: basicPlanUpsellInfo.title,
-							monthlyPlanPrice1: basicPlanUpsellInfo.formattedPriceMonthly,
-							annualPlanPrice1: basicPlanUpsellInfo.formattedPriceFull,
-							planTitle2: advancePlanUpsellInfo.title,
-							monthlyPlanPrice2: advancePlanUpsellInfo.formattedPriceMonthly,
-							annualPlanPrice2: advancePlanUpsellInfo.formattedPriceFull,
-						},
-					}
-				) }
+				{
+					/* translators: /mo is the abbreviation form of "per month" */
+					translate(
+						'%(planTitle1)s plan: %(monthlyPlanPrice1)s/mo, %(annualPlanPrice1)s billed annually. %(planTitle2)s plan: %(monthlyPlanPrice2)s/mo, %(annualPlanPrice2)s billed annually. Excluding taxes.',
+						{
+							args: {
+								planTitle1: basicPlanUpsellInfo.title,
+								monthlyPlanPrice1: basicPlanUpsellInfo.formattedPriceMonthly,
+								annualPlanPrice1: basicPlanUpsellInfo.formattedPriceFull,
+								planTitle2: advancePlanUpsellInfo.title,
+								monthlyPlanPrice2: advancePlanUpsellInfo.formattedPriceMonthly,
+								annualPlanPrice2: advancePlanUpsellInfo.formattedPriceFull,
+							},
+						}
+					)
+				}
 			</TextBox>
 		</DialogContainer>
 	);
