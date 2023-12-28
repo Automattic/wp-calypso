@@ -51,7 +51,7 @@ const StatsBenefitsCommercial = () => {
 	const translate = useTranslate();
 
 	const infoIconRef = useRef( null );
-	const [ show, setShow ] = useState( true );
+	const [ show, setShow ] = useState( false );
 	const handlePopoverOpen = () => setShow( true );
 	const handlePopoverClose = () => setShow( false );
 
