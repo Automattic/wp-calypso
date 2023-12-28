@@ -134,8 +134,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		return coupon?.discount_value ?? '';
 	} );
 	const [ editedStartDate, setEditedStartDate ] = useState(
-		coupon?.start_date ??
-			`${ today.getFullYear() + 1 }-${ today.getMonth() + 1 }-${ today.getDate() }`
+		coupon?.start_date ?? `${ today.getFullYear() }-${ today.getMonth() + 1 }-${ today.getDate() }`
 	);
 	const [ editedEndDate, setEditedEndDate ] = useState( coupon?.end_date ?? '' );
 	const [ editedPlanIdsAllowList, setEditedPlanIdsAllowList ] = useState(
@@ -376,15 +375,13 @@ const RecurringPaymentsCouponAddEditModal = ( {
 
 		if (
 			( field === 'duration' || ! field ) &&
-			editedUseDuration &&
-			( ! editedDuration ||
-				! [
-					COUPON_DURATION_FOREVER,
-					COUPON_DURATION_1_MONTH,
-					COUPON_DURATION_1_YEAR,
-					COUPON_DURATION_3_MONTHS,
-					COUPON_DURATION_6_MONTHS,
-				].includes( editedDuration ) )
+			! [
+				COUPON_DURATION_FOREVER,
+				COUPON_DURATION_1_MONTH,
+				COUPON_DURATION_1_YEAR,
+				COUPON_DURATION_3_MONTHS,
+				COUPON_DURATION_6_MONTHS,
+			].includes( editedDuration )
 		) {
 			return false;
 		}
