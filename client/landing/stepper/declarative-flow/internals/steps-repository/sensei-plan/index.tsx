@@ -114,10 +114,10 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 	useEffect( () => {
 		// Check if it should auto-select the plan.
-		if ( ! isLoading && isComingFromSenseiLMSSite() ) {
+		if ( ! isLoading && status === Status.Initial && isComingFromSenseiLMSSite() ) {
 			onPlanSelect();
 		}
-	}, [ onPlanSelect, isLoading ] );
+	}, [ isLoading, status, onPlanSelect ] );
 
 	if ( isComingFromSenseiLMSSite() ) {
 		return null;
