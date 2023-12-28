@@ -92,8 +92,11 @@ const ImportStep: Step = function ImportStep( props ) {
 				goToStep={ ( step, section, params ) => {
 					const stepPath = generateStepPath( step, section );
 					const from = encodeURIComponent( params?.fromUrl || '' );
+					const path = siteSlug
+						? `${ stepPath }?siteSlug=${ siteSlug }&from=${ from }`
+						: `${ stepPath }?from=${ from }`;
 
-					navigation.goToStep?.( `${ stepPath }?siteSlug=${ siteSlug }&from=${ from }` );
+					navigation.goToStep?.( path );
 				} }
 			/>
 		</ImportWrapper>
