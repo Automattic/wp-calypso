@@ -144,6 +144,7 @@ export type Selectors = {
 	getIsRequestingAiAssistantFeature(): boolean;
 	getLogos(): Array< Logo >;
 	getSelectedLogo(): Logo;
+	getSiteDetails(): Partial< SiteDetails >;
 };
 
 /*
