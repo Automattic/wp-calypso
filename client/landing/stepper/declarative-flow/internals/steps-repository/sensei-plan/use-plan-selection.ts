@@ -2,6 +2,7 @@ import { useCallback, useEffect } from '@wordpress/element';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { Status } from './constants';
+import { useCreateSenseiSite } from './create-sensei-site';
 import type { NewSiteBlogDetails, DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -27,7 +28,7 @@ export const usePlanSelection = ( {
 	senseiProPlanSlug: string;
 	isLoadingPlans: boolean;
 } ) => {
-	const progress = 0;
+	const { createAndConfigureSite, progress } = useCreateSenseiSite();
 
 	const createCheckoutCart = useCallback(
 		async ( site?: NewSiteBlogDetails ) => {
@@ -75,13 +76,14 @@ export const usePlanSelection = ( {
 			// Wait for a bit to get an animation in the beginning of site creation.
 			await new Promise( ( res ) => setTimeout( res, 100 ) );
 
+			const { site } = await createAndConfigureSite();
 			const checkoutUrl = await createCheckoutCart( site );
 
 			return window.location.assign( checkoutUrl );
 		} catch ( err ) {
 			setStatus( Status.Error );
 		}
-	}, [ setStatus, createCheckoutCart ] );
+	}, [ setStatus, createAndConfigureSite, createCheckoutCart ] );
 
 	// Auto-select YEARLY plan when coming from senseilms.com site.
 	useEffect( () => {
