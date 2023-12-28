@@ -1,16 +1,18 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { SenseiStepContainer } from '../components/sensei-step-container';
+import { useCreateSenseiSite } from './create-sensei-site';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -26,6 +28,17 @@ const SenseiDomain: Step = ( { navigation } ) => {
 		[]
 	);
 	const { setDomain } = useDispatch( ONBOARD_STORE );
+
+	// Create site in background while user is selecting a domain.
+	const { newSite } = useSelect( ( select ) => {
+		const { getNewSite } = select( SITE_STORE ) as SiteSelect;
+		return { newSite: getNewSite() };
+	}, [] );
+
+	const { createAndConfigureSite } = useCreateSenseiSite();
+	useEffect( () => {
+		createAndConfigureSite();
+	}, [ createAndConfigureSite ] );
 
 	const onSkip = () => {
 		setDomain( domain );
