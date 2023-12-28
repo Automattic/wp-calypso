@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-// import apiFetch from '@wordpress/api-fetch';
 import proxy from 'wpcom-proxy-request';
 /**
  * Types & Constants
@@ -13,8 +12,10 @@ import {
 	ACTION_SET_SITE_DETAILS,
 	ACTION_STORE_AI_ASSISTANT_FEATURE,
 	ACTION_SET_TIER_PLANS_ENABLED,
+	ACTION_SET_SELECTED_LOGO_INDEX,
+	ACTION_ADD_LOGO_TO_HISTORY,
 } from './constants';
-import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps } from './types';
+import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 /**
@@ -115,6 +116,20 @@ const actions = {
 		return {
 			type: ACTION_SET_SITE_DETAILS,
 			siteDetails,
+		};
+	},
+
+	setSelectedLogoIndex( selectedLogoIndex: number ) {
+		return {
+			type: ACTION_SET_SELECTED_LOGO_INDEX,
+			selectedLogoIndex,
+		};
+	},
+
+	addLogoToHistory( logo: Logo ) {
+		return {
+			type: ACTION_ADD_LOGO_TO_HISTORY,
+			logo,
 		};
 	},
 };
