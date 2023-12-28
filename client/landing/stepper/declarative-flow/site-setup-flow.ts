@@ -50,7 +50,7 @@ const siteSetupFlow: Flow = {
 
 		useEffect( () => {
 			// Require to start the flow from the first step
-			if ( currentStep === 'patternAssembler' && ! selectedDesign ) {
+			if ( currentStep === 'pattern-assembler' && ! selectedDesign ) {
 				navigate( 'goals' );
 			}
 		}, [] );
@@ -236,12 +236,12 @@ const siteSetupFlow: Flow = {
 				case 'designSetup': {
 					const { selectedDesign: _selectedDesign } = providedDependencies;
 					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( 'processing' );
 				}
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -458,7 +458,7 @@ const siteSetupFlow: Flow = {
 							return navigate( 'goals' );
 					}
 
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'designSetup' );
 
 				case 'importList':
