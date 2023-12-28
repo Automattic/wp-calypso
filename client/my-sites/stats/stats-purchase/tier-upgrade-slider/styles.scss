@@ -121,6 +121,11 @@ $track-height: 4px;
 		color: var(--studio-gray-40);
 		text-decoration: line-through;
 	}
+
+	svg {
+		fill: var(--studio-gray-20);
+		cursor: pointer;
+	}
 }
 
 .stats-purchase__info-popover {

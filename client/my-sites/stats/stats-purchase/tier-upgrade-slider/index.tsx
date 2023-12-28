@@ -1,4 +1,5 @@
 import { PricingSlider, RenderThumbFunction, Popover } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState, useRef } from 'react';
 import './styles.scss';
@@ -108,6 +109,7 @@ function TierUpgradeSlider( {
 							) : (
 								<span>{ originalPrice }</span>
 							) }
+							{ showPopup && <Icon icon={ info } /> }
 						</p>
 					</div>
 				) }
