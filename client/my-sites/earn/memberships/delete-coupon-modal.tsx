@@ -8,7 +8,6 @@ import { Coupon } from '../types';
 type RecurringPaymentsCouponDeleteModalProps = {
 	closeDialog: () => void;
 	coupon: Coupon;
-	annualcoupon: Coupon | null;
 };
 
 const RecurringPaymentsCouponDeleteModal = ( {

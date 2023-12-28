@@ -23,14 +23,15 @@ export type Coupon = {
 	start_date?: string;
 	end_date?: string;
 	plan_ids_allow_list?: number[];
-	// use_duration?: boolean;
-	// use_email_allow_list?: boolean;
+	limit_per_user?: number;
+	use_duration?: boolean;
+	use_email_allow_list?: boolean;
 	duration?: string;
 	email_allow_list?: string[];
 	discount_type?: string;
 	discount_value?: number;
 	discount_percentage?: number;
-	// discount_currency?: string;
+	discount_currency?: string;
 };
 
 export type Query = {

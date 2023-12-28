@@ -4,7 +4,7 @@ import { MenuGroup, MenuItem, ToggleControl, ToolbarDropdownMenu } from '@wordpr
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, close } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, MouseEventHandler, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -37,7 +37,6 @@ import {
 	COUPON_RANDOM_GENERATOR_CHARSET,
 	COUPON_RANDOM_GENERATOR_LENGTH,
 	COUPON_USAGE_LIMIT_INFINITE,
-	COUPON_EMAIL_ALLOW_LIST_ALLOW_ALL,
 } from '../../memberships/constants';
 import { Product, Coupon } from '../../types';
 import FormTextInputWithRandomCodeGeneration from '../form-text-input-with-value-generation';
@@ -96,7 +95,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			return connectedAccountDefaultCurrency;
 		}
 		return 'USD';
-	}, [ coupon, connectedAccountDefaultCurrency ] );
+	}, [ coupon, connectedAccountDefaultCurrency, currencyList ] );
 	const [ currentDiscountCurrency, setCurrentDiscountCurrency ] =
 		useState( defaultDiscountCurrency );
 	const onDiscountCurrencyChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -118,7 +117,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		coupon?.discount_type ?? COUPON_DISCOUNT_TYPE_PERCENTAGE
 	);
 	const [ editedDiscountPercentage, setEditedDiscountPercentage ] = useState(
-		coupon?.discount_percentage ?? ''
+		coupon?.discount_percentage ?? 0
 	);
 	const [ editedDiscountValue, setEditedDiscountValue ] = useState( () => {
 		if ( COUPON_DISCOUNT_TYPE_AMOUNT === editedDiscountType ) {
@@ -131,7 +130,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				)
 			);
 		}
-		return coupon?.discount_value ?? '';
+		return coupon?.discount_value ?? 0;
 	} );
 	const [ editedStartDate, setEditedStartDate ] = useState(
 		coupon?.start_date ?? `${ today.getFullYear() }-${ today.getMonth() + 1 }-${ today.getDate() }`
@@ -147,13 +146,14 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ editedFirstTimePurchaseOnly, setEditedFirstTimePurchaseOnly ] = useState(
 		coupon?.first_time_purchase_only ?? false
 	);
-	const [ editedUseDuration, setEditedUseDuration ] = useState( coupon?.use_duration ?? false );
 	const [ editedDuration, setEditedDuration ] = useState(
 		coupon?.duration ?? COUPON_DURATION_FOREVER
 	);
+	const [ editedUseDuration, setEditedUseDuration ] = useState(
+		coupon?.use_duration ?? editedDuration !== COUPON_DURATION_FOREVER ?? false
+	);
 	const [ editedUseEmailAllowList, setEditedUseEmailAllowList ] = useState(
-		coupon?.email_allow_list?.length > 0 &&
-			coupon?.email_allow_list !== [ COUPON_EMAIL_ALLOW_LIST_ALLOW_ALL ]
+		coupon?.email_allow_list?.length && coupon?.email_allow_list?.length > 0
 	);
 	const [ editedEmailAllowListCSV, setEditedEmailAllowListCSV ] = useState(
 		coupon?.email_allow_list?.join( ', ' ) ?? ''
@@ -161,7 +161,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const [ editedEmailAllowList, setEditedEmailAllowList ] = useState(
 		coupon?.email_allow_list ?? []
 	);
-	const [ invalidEditedEmailAllowList, setInvalidEditedEmailAllowList ] = useState( [] );
+	const [ invalidEmailsInAllowList, setInvalidEmailsInAllowList ] = useState( false );
 	const [ invalidEditedEmailAllowListLabel, setInvalidEditedEmailAllowListLabel ] = useState( '' );
 	const [ focusedCouponCode, setFocusedCouponCode ] = useState( false );
 	const [ focusedStartDate, setFocusedStartDate ] = useState( false );
@@ -195,7 +195,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	/** Product functions */
 	const getProductDescription = ( product: Product ): string => {
 		const { currency, renewal_schedule, price } = product;
-		const amount = formatCurrency( parseFloat( price ), currency );
+		const amount = formatCurrency( price ?? 0, currency ?? 'USD' );
 		switch ( renewal_schedule ) {
 			case '1 month':
 				return sprintf(
@@ -234,29 +234,29 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const onSelectDiscountType = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedDiscountType( event.target.value );
 	const onDiscountValueChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedDiscountValue( event.target.value );
+		setEditedDiscountValue( parseFloat( event.target.value ) );
 	const onDiscountPercentageChange = ( event: ChangeEvent< HTMLInputElement > ) =>
-		setEditedDiscountPercentage( event.target.value );
+		setEditedDiscountPercentage( parseFloat( event.target.value ) );
 	const onStartDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedStartDate( event.target.value );
 	const onEndDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedEndDate( event.target.value );
-	const onSelectProduct = ( event ) => {
-		const productId = event.target.value ?? event.target.parentElement.value;
+	const onSelectProduct = ( event: MouseEventHandler< HTMLButtonElement > ) => {
+		const productId = event.target.value ?? event.target.parentElement?.value ?? '';
 		if ( COUPON_PRODUCTS_ANY === productId ) {
 			setEditedPlanIdsAllowList( [] );
 			return;
 		}
 		if ( editedPlanIdsAllowList.includes( productId ) ) {
 			setEditedPlanIdsAllowList(
-				editedPlanIdsAllowList.filter( ( selectedId: string ) => selectedId !== productId )
+				editedPlanIdsAllowList.filter( ( selectedId: number ): boolean => selectedId !== productId )
 			);
 			return;
 		}
 		setEditedPlanIdsAllowList( [ ...editedPlanIdsAllowList, productId ] );
 	};
 	const onLimitPerUserChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
-		setEditedLimitPerUser( event.target.value );
+		setEditedLimitPerUser( parseInt( event.target.value ) );
 	const onLimitPerUserBlur = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		setFocusedLimitPerUser( true );
 		setEditedLimitPerUser(
@@ -278,16 +278,12 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		const invalidEmails = allEmails.filter(
 			( email: string ) => email.trim().length > 0 && ! validEmails.includes( email )
 		);
-		setInvalidEditedEmailAllowList( invalidEmails );
 		if ( invalidEmails.length > 0 ) {
+			setInvalidEmailsInAllowList( true );
 			setInvalidEditedEmailAllowListLabel( invalidEmails.join( ', ' ) );
 		} else {
-			// The backend requires an array of strings, so we'll use `[*]` to represent all emails.
-			// For clarity, we don't want to include this in the list of emails.
-			if ( validEmails.length === 0 ) {
-				validEmails = [ COUPON_EMAIL_ALLOW_LIST_ALLOW_ALL ];
-			}
-
+			setInvalidEmailsInAllowList( false );
+			setInvalidEditedEmailAllowListLabel( '' );
 			setEditedEmailAllowList( validEmails );
 		}
 		setFocusedEmailAllowList( true );
@@ -295,6 +291,11 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const onDiscountTypeBlur = () => setFocusedDiscountType( true );
 	const onLimitPerUserFocus = ( event: ChangeEvent< HTMLInputElement > ) => {
 		if ( event.target.value === COUPON_USAGE_LIMIT_INFINITE ) {
+			event.target.value = '';
+		}
+	};
+	const onDiscountAmountFocus = ( event: ChangeEvent< HTMLInputElement > ) => {
+		if ( event.target.value === '0' ) {
 			event.target.value = '';
 		}
 	};
@@ -363,7 +364,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		}
 		if ( ( field === 'email_allow_list' || ! field ) && editedUseEmailAllowList ) {
 			// invalid if the array of invalid edited emails contains any values.
-			if ( invalidEditedEmailAllowList.length > 0 ) {
+			if ( invalidEmailsInAllowList ) {
 				return false;
 			}
 
@@ -394,15 +395,13 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			// In the event that the form is tampered with, don't allow planIds to be included which are outside of the existing planIds.
 			const allProductIds = products.map( ( product ) => product.ID );
 			if (
-				editedPlanIdsAllowList.filter(
-					( planId ) => ! allProductIds.includes( parseInt( planId ) )
-				).length > 0
+				editedPlanIdsAllowList.filter( ( planId ) => ! allProductIds.includes( planId ) ).length > 0
 			) {
 				return false;
 			}
 		}
 
-		if ( ( field === 'limit_per_user' || ! field ) && parseInt( editedLimitPerUser ) < 0 ) {
+		if ( ( field === 'limit_per_user' || ! field ) && editedLimitPerUser < 0 ) {
 			return false;
 		}
 
@@ -425,7 +424,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			first_time_purchase_only: editedFirstTimePurchaseOnly,
 			use_duration: editedUseDuration,
 			duration: editedDuration,
-			use_email_allow_list: editedUseEmailAllowList,
+			use_email_allow_list: !! editedUseEmailAllowList,
 			email_allow_list: editedEmailAllowList,
 		};
 
@@ -487,7 +486,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				<FormFieldset className="memberships__dialog-sections-coupon-code">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Coupon code' ) }</FormLabel>
 					<FormTextInputWithRandomCodeGeneration
-						id="coupon_code"
 						value={ editedCouponCode }
 						action="Random"
 						onChange={ onCouponCodeChange }
@@ -530,6 +528,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								value={ editedDiscountPercentage }
 								suffix="%"
 								onChange={ onDiscountPercentageChange }
+								onFocus={ onDiscountAmountFocus }
 								onBlur={ onDiscountPercentageBlur }
 							/>
 						) }
@@ -542,6 +541,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								id="discount_amount"
 								value={ editedDiscountValue }
 								onChange={ onDiscountValueChange }
+								onFocus={ onDiscountAmountFocus }
 								onBlur={ onDiscountValueBlur }
 								currencySymbolPrefix={ currentDiscountCurrency }
 								onCurrencyChange={ onDiscountCurrencyChange }
@@ -702,7 +702,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				<FormFieldset className="memberships__dialog-sections-specific-emails">
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedUseEmailAllowList( newValue ) }
-						checked={ editedUseEmailAllowList }
+						checked={ !! editedUseEmailAllowList }
 						label={ translate( 'Limit coupon to specific emails' ) }
 					/>
 					<FormTextInput

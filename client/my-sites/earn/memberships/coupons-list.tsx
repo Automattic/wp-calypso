@@ -109,7 +109,7 @@ function CouponsList() {
 		duration: string,
 		amountType: string,
 		amount: number,
-		currencyCode: string = ''
+		currencyCode: string = 'USD'
 	) {
 		const formattedAmount =
 			COUPON_DISCOUNT_TYPE_PERCENTAGE === amountType
@@ -179,9 +179,9 @@ function CouponsList() {
 										<div className="memberships__coupons-coupon-badge">
 											<Badge type="warning-clear">
 												{ getDiscountBadge(
-													currentCoupon?.duration,
+													currentCoupon?.duration || '',
 													currentCoupon?.discount_type,
-													currentCoupon?.discount_percentage
+													currentCoupon?.discount_percentage || 0
 												) }
 											</Badge>
 										</div>
@@ -190,9 +190,9 @@ function CouponsList() {
 										<div className="memberships__coupons-coupon-badge">
 											<Badge type="warning-clear">
 												{ getDiscountBadge(
-													currentCoupon?.duration,
+													currentCoupon?.duration || '',
 													currentCoupon?.discount_type,
-													currentCoupon?.discount_value,
+													currentCoupon?.discount_value || 0,
 													currentCoupon?.discount_currency
 												) }
 											</Badge>
@@ -210,14 +210,14 @@ function CouponsList() {
 											<Badge type="info-green">{ translate( 'First-time order only' ) }</Badge>
 										</div>
 									) }
-									{ currentCoupon?.email_allow_list?.length > 0 && (
+									{ ( currentCoupon?.email_allow_list?.length ?? 0 ) > 0 && (
 										<div className="memberships__coupons-coupon-badge">
 											<Badge type="info-purple">
 												{ translate( 'Limited to specific emails' ) }
 											</Badge>
 										</div>
 									) }
-									{ currentCoupon?.plan_ids_allow_list?.length > 0 && (
+									{ ( currentCoupon?.plan_ids_allow_list?.length ?? 0 ) > 0 && (
 										<div className="memberships__coupons-coupon-badge">
 											<Badge type="info-purple">
 												{ translate( 'Limited to specific products' ) }

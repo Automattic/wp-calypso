@@ -13,7 +13,7 @@ type FormTextInputWithValueGenerationProps = {
 	value?: string;
 	onAction?: () => void;
 	onFocus?: () => void;
-	onChange?: () => void;
+	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 	disabled?: boolean;
 	isError?: boolean;
 	isValid?: boolean;
