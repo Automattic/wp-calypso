@@ -82,7 +82,9 @@ const StatsBenefitsCommercial = () => {
 				className="stats-purchase__info-popover"
 			>
 				<div className="stats-purchase__info-popover-content">
-					{ translate( "We'll exclude the two days of the month with the highest page views." ) }
+					{ translate(
+						"You won't incur additional charges for occasional traffic spikes, nor will we cease tracking your statistics due to such spikes. There are no unforeseen fees, ensuring that your card will never be charged unexpectedly." // TODO: We need a 'learn more' link here.
+					) }
 				</div>
 			</Popover>
 		</div>
