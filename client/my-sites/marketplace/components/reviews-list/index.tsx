@@ -1,7 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import ConfirmModal from 'calypso/components/confirm-modal';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Rating from 'calypso/components/rating';
 import {
@@ -18,34 +21,28 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) => {
 	const translate = useTranslate();
+	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
 	const currentUserId = useSelector( getCurrentUserId );
-	const {
-		data,
-		refetch: reviewsRefetch,
-		fetchNextPage,
-		error,
-	} = useInfiniteMarketplaceReviewsQuery( {
+	const { data, fetchNextPage, error } = useInfiniteMarketplaceReviewsQuery( {
 		...props,
 		author_exclude: currentUserId ?? undefined,
 	} );
 	const reviews = data?.pages.flatMap( ( page ) => page.data );
 
-	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+	const { data: userReviews = [], refetch: userReviewsRefetch } = useMarketplaceReviewsQuery( {
 		...props,
 		perPage: 1,
 		author: currentUserId ?? undefined,
 	} );
 
-	// ...
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation();
 	const deleteReview = ( reviewId: number ) => {
-		if ( confirm( translate( 'Are you sure you want to delete your review?' ) ) ) {
-			deleteReviewMutation.mutate( {
-				reviewId: reviewId,
-			} );
-			deleteReviewMutation?.isSuccess && reviewsRefetch();
-			deleteReviewMutation?.isError && alert( ( deleteReviewMutation.error as Error ).message );
-		}
+		setIsConfirmModalVisible( false );
+		deleteReviewMutation.mutate( {
+			reviewId: reviewId,
+		} );
+		userReviewsRefetch();
+		deleteReviewMutation?.isError && alert( ( deleteReviewMutation.error as Error ).message );
 	};
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
@@ -123,14 +120,26 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 										className="marketplace-reviews-list__review-actions-editable-button"
 										onClick={ () => alert( 'Not implemented yet' ) }
 									>
-										{ translate( 'Update my review' ) }
+										<Gridicon icon="pencil" size={ 18 } />
+										{ translate( 'Edit my review' ) }
 									</button>
 									<button
 										className="marketplace-reviews-list__review-actions-editable-button"
-										onClick={ () => deleteReview( review.id ) }
+										onClick={ () => setIsConfirmModalVisible( true ) }
 									>
+										<Gridicon icon="trash" size={ 18 } />
 										{ translate( 'Delete my review' ) }
 									</button>
+									<div className="marketplace-reviews-list__review-actions-editable-confirm-modal">
+										<ConfirmModal
+											isVisible={ isConfirmModalVisible }
+											confirmButtonLabel={ translate( 'Yes' ) }
+											text={ translate( 'Do you really want to delete your review?' ) }
+											title={ translate( 'Delete my review' ) }
+											onCancel={ () => setIsConfirmModalVisible( false ) }
+											onConfirm={ () => deleteReview( review.id ) }
+										/>
+									</div>
 								</div>
 							) }
 						</div>
