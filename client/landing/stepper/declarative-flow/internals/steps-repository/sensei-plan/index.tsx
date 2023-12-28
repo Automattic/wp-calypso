@@ -112,16 +112,20 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 		}
 	}, [ createAndConfigureSite, createCheckoutCart ] );
 
+	// Auto-select YEARLY plan when coming from senseilms.com site.
 	useEffect( () => {
-		// Check if it should auto-select the plan.
-		if ( ! isLoading && status === Status.Initial && isComingFromSenseiLMSSite() ) {
+		if ( ! isComingFromSenseiLMSSite() ) {
+			return;
+		}
+
+		if ( status === Status.Initial ) {
+			setStatus( Status.Bundling );
+		}
+
+		if ( ! isLoading ) {
 			onPlanSelect();
 		}
 	}, [ isLoading, status, onPlanSelect ] );
-
-	if ( isComingFromSenseiLMSSite() ) {
-		return null;
-	}
 
 	const currencyCode = senseiProPlan.currencyCode;
 	const price = businessPlan.price + senseiProPlan.price;
