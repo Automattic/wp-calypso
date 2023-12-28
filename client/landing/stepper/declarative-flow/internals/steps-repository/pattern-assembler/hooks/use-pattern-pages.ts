@@ -9,12 +9,14 @@ const usePatternPages = (
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	let pageCategoriesInOrder;
+	let pageSlugs: string[] = [];
 	let pages;
 	let pagesToShow;
 	const page_slugs = searchParams.get( 'page_slugs' );
 
-	const pageSlugs = page_slugs !== null ? page_slugs.split( ',' ).filter( Boolean ) : INITIAL_PAGES;
-
+	if ( page_slugs !== null ) {
+		pageSlugs = page_slugs.split( ',' ).filter( Boolean );
+	}
 
 	// eslint-disable-next-line prefer-const
 	pageCategoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
