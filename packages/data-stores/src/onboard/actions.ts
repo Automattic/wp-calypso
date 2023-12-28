@@ -431,13 +431,6 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 	progressTitle,
 } );
 
-export const setStepProgress = (
-	stepProgress: { count: number; progress: number } | undefined
-) => ( {
-	type: 'SET_STEP_PROGRESS' as const,
-	stepProgress,
-} );
-
 export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
