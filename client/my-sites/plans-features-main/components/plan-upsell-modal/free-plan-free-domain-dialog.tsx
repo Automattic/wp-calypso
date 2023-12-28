@@ -50,10 +50,10 @@ type TextBoxProps = {
 	marginTop?: number;
 	marginBottom?: number;
 };
-const TextBox = styled.div< TextBoxProps >`
+const TextBox = styled.p< TextBoxProps >`
 	font-size: ${ ( { fontSize } ) => fontSize || 14 }px;
 	font-weight: ${ ( { bold } ) => ( bold ? 600 : 400 ) };
-	line-height: 20px;
+	line-height: 1.5;
 	color: ${ ( { color } ) => {
 		if ( color === 'gray' ) {
 			return 'var(--studio-gray-50)';
@@ -62,10 +62,12 @@ const TextBox = styled.div< TextBoxProps >`
 	} };
 	margin-top: ${ ( { marginTop } ) => ( marginTop ? `${ marginTop }px` : 'inherit' ) };
 	margin-bottom: ${ ( { marginBottom } ) => ( marginBottom ? `${ marginBottom }px` : 'inherit' ) };
+	padding-bottom: 3px;
 `;
 
 const CrossIcon = styled( Gridicon )`
 	color: #e53e3e;
+	padding-top: 1px; // a brute-force way of aligning the icon and the sentence.
 `;
 
 function LazyDisplayText( {
@@ -136,13 +138,13 @@ export function FreePlanFreeDomainDialog( {
 				{ featureUpsells.map( ( upsellItem ) => (
 					<ListItem>
 						<div>
-							<CrossIcon icon="cross" size={ 24 } />
+							<CrossIcon icon="cross" size={ 20 } />
 						</div>
 						<TextBox bold>{ upsellItem }</TextBox>
 					</ListItem>
 				) ) }
 			</List>
-			<TextBox marginBottom={ 8 }>
+			<TextBox marginBottom={ 20 }>
 				{ translate(
 					'Unlock all of these features with a %(planTitle)s plan, starting at just %(planPrice)s/month.',
 					{
