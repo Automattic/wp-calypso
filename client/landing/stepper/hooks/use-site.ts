@@ -12,7 +12,7 @@ export function useSite() {
 	const dispatch = useDispatch();
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
-	const siteIdOrSlug = siteIdParam ?? siteSlug;
+	const siteIdOrSlug = siteIdParam ?? siteSlug ?? '';
 	const selectedSite = useSelector( ( state ) => getSite( state, siteIdOrSlug ) );
 	const isRequestingSelectedSite = useSelector( ( state ) =>
 		isRequestingSite( state, siteIdOrSlug )
