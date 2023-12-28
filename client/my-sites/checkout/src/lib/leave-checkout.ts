@@ -8,11 +8,12 @@ import {
 	getSignupCompleteFlowName,
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
+import { sendMessageToOpener } from './popup';
 
 const debug = debugFactory( 'calypso:leave-checkout' );
 
 export const leaveCheckout = ( {
-	siteSlug,
+	siteSlug = '',
 	forceCheckoutBackUrl,
 	previousPath,
 	tracksEvent,
@@ -36,6 +37,10 @@ export const leaveCheckout = ( {
 	const redirectToParam = getQueryArg( window.location.href, 'redirect_to' );
 	const launchpadURLRegex = /^\/setup\/[a-z][a-z\-_]*[a-z]\/launchpad\b/g;
 	const launchpadURLRegexMatch = redirectToParam?.toString().match( launchpadURLRegex );
+
+	if ( sendMessageToOpener( siteSlug, 'checkoutCancelled' ) ) {
+		return;
+	}
 
 	if ( isTailoredSignupFlow( signupFlowName ) ) {
 		const urlFromCookie = retrieveSignupDestination();

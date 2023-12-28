@@ -8,9 +8,10 @@ import {
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { getCalypsoUrl } from '@automattic/calypso-url';
+import { usePrevious } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import wpcom from 'calypso/lib/wp';
 import tracksRecordEvent from '../../tracking/track-record-event';
 import { UPGRADE_DONE_NOTICE_ID } from '../constants';
@@ -18,10 +19,6 @@ import { PERSONAL_THEME, PREMIUM_THEME, WOOCOMMERCE_THEME } from '../utils';
 import { usePreviewingTheme } from './use-previewing-theme';
 import { useSidebarNotice } from './use-sidebar-notice';
 import type { SiteDetails } from '@automattic/data-stores';
-
-const POLL_INTERVAL_DEFAULT = 1000;
-const POLL_INTERVAL_FACTOR = 2;
-const POLL_INTERVAL_MAX = 10 * 60 * 1000;
 
 const needUpgrade = ( {
 	site,
@@ -64,22 +61,10 @@ const needUpgrade = ( {
 };
 
 /**
- * A polling mechanism to check whether the user has upgraded the plan.
+ * Display the notice after the plan is upgraded
  */
-const usePolling = ( {
-	isPolling,
-	previewingTheme,
-	setCanPreviewButNeedUpgrade,
-	setIsPolling,
-}: {
-	isPolling: boolean;
-	previewingTheme: ReturnType< typeof usePreviewingTheme >;
-	setCanPreviewButNeedUpgrade: ( canPreviewButNeedUpgrade: boolean ) => void;
-	setIsPolling: ( isPolling: boolean ) => void;
-} ) => {
-	const pollInterval = useRef( POLL_INTERVAL_DEFAULT );
-	const timeoutId = useRef< NodeJS.Timeout | null >( null );
-	const [ visibilityChange, setVisibilityChange ] = useState( false );
+const useDisplayUpgradedNotice = ( canPreviewButNeedUpgrade: boolean ) => {
+	const prevCanPreviewButNeedUpgrade = usePrevious( canPreviewButNeedUpgrade );
 	const [ shouldReflectUpgradedPlan, setShouldReflectUpgradedPlan ] = useState( false );
 	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
 
@@ -89,67 +74,16 @@ const usePolling = ( {
 	);
 
 	useEffect( () => {
-		if ( ! isPolling ) {
-			return;
+		if ( prevCanPreviewButNeedUpgrade && ! canPreviewButNeedUpgrade ) {
+			setShouldReflectUpgradedPlan( true );
 		}
-		// Using exponential backoff, as we don't want to make too many requests while the user is completing the purchase.
-		const nextPollInterval = () =>
-			Math.min( pollInterval.current * POLL_INTERVAL_FACTOR, POLL_INTERVAL_MAX );
-		const poll = () => {
-			wpcom.req
-				.get( `/sites/${ window._currentSiteId }`, { apiVersion: '1.2' } )
-				.then( ( site: any ) => {
-					if ( ! needUpgrade( { site, previewingThemeType: previewingTheme.type } ) ) {
-						setShouldReflectUpgradedPlan( true );
-						setIsPolling( false );
-						return;
-					}
-					pollInterval.current = nextPollInterval();
-					timeoutId.current = setTimeout( poll, pollInterval.current );
-				} )
-				.catch( ( error: { message: string; status: number } ) => {
-					if ( error.status >= 400 && error.status < 500 ) {
-						return;
-					}
-					pollInterval.current = nextPollInterval();
-					timeoutId.current = setTimeout( poll, pollInterval.current );
-				} );
-		};
-		timeoutId.current = setTimeout( poll, pollInterval.current );
-		return () => {
-			if ( timeoutId.current ) {
-				clearTimeout( timeoutId.current );
-			}
-		};
-	}, [
-		createInfoNotice,
-		isPolling,
-		previewingTheme.type,
-		setCanPreviewButNeedUpgrade,
-		setIsPolling,
-		visibilityChange,
-	] );
-
-	// Make a request as soon as the user finishes the payment and returns to the tab.
-	useEffect( () => {
-		const handleVisibilityChange = () => {
-			if ( document.visibilityState === 'visible' ) {
-				pollInterval.current = POLL_INTERVAL_DEFAULT;
-				setVisibilityChange( ( v ) => ! v );
-			}
-		};
-		document.addEventListener( 'visibilitychange', handleVisibilityChange );
-		return () => {
-			document.removeEventListener( 'visibilitychange', handleVisibilityChange );
-		};
-	}, [] );
+	}, [ canPreviewButNeedUpgrade, prevCanPreviewButNeedUpgrade ] );
 
 	useEffect( () => {
 		if ( ! shouldReflectUpgradedPlan ) {
 			return;
 		}
 
-		setCanPreviewButNeedUpgrade( false );
 		createInfoNotice( noticeText, {
 			__unstableHTML: true,
 			id: UPGRADE_DONE_NOTICE_ID,
@@ -162,13 +96,7 @@ const usePolling = ( {
 		return () => {
 			removeNotice( UPGRADE_DONE_NOTICE_ID );
 		};
-	}, [
-		createInfoNotice,
-		noticeText,
-		removeNotice,
-		setCanPreviewButNeedUpgrade,
-		shouldReflectUpgradedPlan,
-	] );
+	}, [ createInfoNotice, noticeText, removeNotice, shouldReflectUpgradedPlan ] );
 
 	useSidebarNotice( {
 		noticeProps: {
@@ -192,71 +120,59 @@ export const useCanPreviewButNeedUpgrade = ( {
 	const [ siteSlug, setSiteSlug ] = useState< string | undefined >();
 	const [ checkoutTab, setCheckoutTab ] = useState< Window | null >();
 
-	const [ isPolling, setIsPolling ] = useState( false );
-	usePolling( { previewingTheme, setCanPreviewButNeedUpgrade, isPolling, setIsPolling } );
+	const handleCanPreviewButNeedUpgrade = useCallback(
+		( previewingTheme: ReturnType< typeof usePreviewingTheme > ) => {
+			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME ];
+			if ( config.isEnabled( 'themes/tiers' ) ) {
+				livePreviewUpgradeTypes.push( PERSONAL_THEME );
+			}
 
-	/**
-	 * Get the theme and site info to decide whether the user needs to upgrade the plan.
-	 */
-	useEffect( () => {
-		const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME ];
+			/**
+			 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
+			 */
+			if ( ! previewingTheme?.type || ! livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
+				setCanPreviewButNeedUpgrade( false );
+				return;
+			}
 
-		if ( config.isEnabled( 'themes/tiers' ) ) {
-			livePreviewUpgradeTypes.push( PERSONAL_THEME );
-		}
-
-		/**
-		 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
-		 */
-		if ( ! previewingTheme?.type || ! livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
-			setCanPreviewButNeedUpgrade( false );
-			return;
-		}
-
-		wpcom.req
-			.get( `/sites/${ window._currentSiteId }`, { apiVersion: '1.2' } )
-			.then( ( site: any ) => {
-				let parsedUrl;
-				try {
-					parsedUrl = new URL( site.URL );
-					const { hostname } = parsedUrl;
-					setSiteSlug( hostname );
-				} catch {
-					// Invalid URL
-				}
-				return site;
-			} )
-			.then( ( site: any ) => {
-				if (
-					! needUpgrade( {
-						site,
-						previewingThemeType: previewingTheme.type,
-						requiredFeature: previewingTheme.requiredFeature,
-					} )
-				) {
-					setCanPreviewButNeedUpgrade( false );
-					return;
-				}
-				setCanPreviewButNeedUpgrade( true );
-			} )
-			.catch( () => {
-				// do nothing
-			} );
-	}, [
-		previewingTheme.requiredFeature,
-		previewingTheme.type,
-		setCanPreviewButNeedUpgrade,
-		setSiteSlug,
-	] );
+			return wpcom.req
+				.get( `/sites/${ window._currentSiteId }`, { apiVersion: '1.2' } )
+				.then( ( site: any ) => {
+					let parsedUrl;
+					try {
+						parsedUrl = new URL( site.URL );
+						const { hostname } = parsedUrl;
+						setSiteSlug( hostname );
+					} catch {
+						// Invalid URL
+					}
+					return site;
+				} )
+				.then( ( site: any ) => {
+					if (
+						! needUpgrade( {
+							site,
+							previewingThemeType: previewingTheme.type,
+							requiredFeature: previewingTheme.requiredFeature,
+						} )
+					) {
+						setCanPreviewButNeedUpgrade( false );
+						return;
+					}
+					setCanPreviewButNeedUpgrade( true );
+				} )
+				.catch( () => {
+					// do nothing
+				} );
+		},
+		[ setCanPreviewButNeedUpgrade, setSiteSlug ]
+	);
 
 	const upgradePlan = useCallback( () => {
 		tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_upgrade', {
 			theme: previewingTheme.id,
 			theme_type: previewingTheme.type,
 		} );
-
-		// Start polling the site info to check whether the user has upgraded the plan in a new tab.
-		setIsPolling( true );
 
 		const generateCheckoutUrl = ( plan: string ) => {
 			const locationHref = window.location.href;
@@ -304,6 +220,43 @@ export const useCanPreviewButNeedUpgrade = ( {
 			setCheckoutTab( window.open( link, 'wpcom-live-preview-upgrade-plan-window' ) );
 		}
 	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug ] );
+
+	useDisplayUpgradedNotice( canPreviewButNeedUpgrade );
+
+	useEffect( () => {
+		handleCanPreviewButNeedUpgrade( previewingTheme );
+	}, [ previewingTheme ] );
+
+	useEffect( () => {
+		const closeCheckoutTabAndFocus = () => {
+			checkoutTab?.close();
+			window.focus();
+		};
+
+		const handlePopupMessage = ( { data, origin }: MessageEvent ) => {
+			if ( origin !== getCalypsoUrl() ) {
+				return;
+			}
+
+			switch ( data.action ) {
+				case 'checkoutCancelled':
+				case 'checkoutFailed': {
+					closeCheckoutTabAndFocus();
+					break;
+				}
+				case 'checkoutCompleted': {
+					closeCheckoutTabAndFocus();
+					handleCanPreviewButNeedUpgrade( previewingTheme );
+					break;
+				}
+			}
+		};
+
+		window.addEventListener( 'message', handlePopupMessage );
+		return () => {
+			window.removeEventListener( 'message', handlePopupMessage );
+		};
+	}, [ checkoutTab, previewingTheme, getCalypsoUrl, handleCanPreviewButNeedUpgrade ] );
 
 	return {
 		canPreviewButNeedUpgrade,
