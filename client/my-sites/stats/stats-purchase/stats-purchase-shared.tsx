@@ -83,7 +83,7 @@ const StatsBenefitsCommercial = () => {
 			>
 				<div className="stats-purchase__info-popover-content">
 					{ translate(
-						"You won't incur additional charges for occasional traffic spikes, nor will we cease tracking your statistics due to such spikes. There are no unforeseen fees, ensuring that your card will never be charged unexpectedly." // TODO: We need a 'learn more' link here.
+						"You won't incur additional charges for occasional traffic spikes, nor will we cease tracking your statistics due to such spikes." // TODO: We need a 'learn more' link here.
 					) }
 				</div>
 			</Popover>
