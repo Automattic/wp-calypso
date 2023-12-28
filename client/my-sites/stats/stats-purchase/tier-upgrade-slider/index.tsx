@@ -129,11 +129,9 @@ function TierUpgradeSlider( {
 				context={ infoReferenceElement?.current }
 				isVisible={ showPopup }
 				focusOnShow={ false }
-				className="tier-upgrade-slider__extension-popover-wrapper"
+				className="stats-purchase__info-popover"
 			>
-				<div className="tier-upgrade-slider__extension-popover-content">
-					{ showPopup && popupInfoString }
-				</div>
+				<div className="stats-purchase__info-popover-content">{ showPopup && popupInfoString }</div>
 			</Popover>
 			<p className="tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
 		</div>
