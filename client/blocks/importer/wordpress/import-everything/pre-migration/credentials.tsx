@@ -17,7 +17,7 @@ export function Credentials( props: Props ) {
 	const translate = useTranslate();
 	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
-	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
+	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ssh' );
 
 	const onChangeProtocol = ( protocol: 'ftp' | 'ssh' ) => {
 		setSelectedProtocol( protocol );
@@ -46,6 +46,7 @@ export function Credentials( props: Props ) {
 						selectedHost={ selectedHost }
 						migrationTrackingProps={ migrationTrackingProps }
 						onChangeProtocol={ onChangeProtocol }
+						allowFtp={ false }
 					/>
 				</div>
 				<div className="pre-migration__credentials-help">
