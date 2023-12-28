@@ -220,6 +220,14 @@ $button-padding: 8px 32px;
 			margin-bottom: 8px;
 			padding-left: 28px;
 			background: no-repeat 0 50%;
+
+			display: flex;
+			align-items: center;
+
+			& > svg {
+				margin-left: 5px;
+				fill: var(--studio-gray-20);
+			}
 		}
 	}
 
