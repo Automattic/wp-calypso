@@ -122,12 +122,28 @@ export type LogoSuggestionProps = {
 	url?: string;
 };
 
+export type Logo = {
+	url: string;
+	description: string;
+};
+
 export type LogoGeneratorStateProp = {
 	siteDetails?: Partial< SiteDetails >;
 	suggestions: Array< LogoSuggestionProps >;
 	features: {
 		aiAssistantFeature?: AiFeatureStateProps;
 	};
+	history: {
+		logos: Array< Logo >;
+		selectedLogoIndex: number;
+	};
+};
+
+export type Selectors = {
+	getAiAssistantFeature(): Partial< AiFeatureProps >;
+	getIsRequestingAiAssistantFeature(): boolean;
+	getLogos(): Array< Logo >;
+	getSelectedLogo(): Logo;
 };
 
 /*
