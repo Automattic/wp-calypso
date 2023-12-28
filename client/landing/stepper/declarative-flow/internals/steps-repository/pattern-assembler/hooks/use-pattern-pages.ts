@@ -23,7 +23,7 @@ const usePatternPages = (
 
 	// This is a way to mock/inject pages that are not in the pattern repository. We may continue with this approach later.:
 	// eslint-disable-next-line no-constant-condition
-	if ( true ) {
+	if ( false ) {
 		const mockedPages = [ 'Potato', 'Potato 2', 'Potato 3' ];
 		pages = mockedPages.map(
 			( title ) =>
@@ -56,7 +56,7 @@ const usePatternPages = (
 			};
 		} );
 	} else {
-		if ( isEnabled( 'pattern-assembler/add-pages' ) && page_slugs === null ) {
+		if ( page_slugs === null ) {
 			pageSlugs = INITIAL_PAGES;
 		}
 
