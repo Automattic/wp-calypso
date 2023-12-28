@@ -6,9 +6,12 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
+import { STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE } from '../constants';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = (
@@ -32,6 +35,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isWPCOMPaidStatsFlow =
 		isEnabled( 'stats/paid-wpcom-v2' ) && isWPCOMSite && ! isOdysseyStats;
+	const dispatch = useDispatch();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -49,6 +53,11 @@ const DoYouLoveJetpackStatsNotice = ( {
 		postponeNoticeAsync();
 	};
 
+	const openWPCOMPaidStatsUpsellModal = () => {
+		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked' );
+		dispatch( toggleUpsellModal( siteId, STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE ) );
+	};
+
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
 			? recordTracksEvent(
@@ -59,6 +68,13 @@ const DoYouLoveJetpackStatsNotice = ( {
 			  );
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ), 250 );
+	};
+
+	const handleCTAClick = () => {
+		if ( isWPCOMPaidStatsFlow ) {
+			return openWPCOMPaidStatsUpsellModal();
+		}
+		gotoJetpackStatsProduct();
 	};
 
 	useEffect( () => {
@@ -103,11 +119,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 			>
 				<p>{ description }</p>
 				<p>
-					<button
-						type="button"
-						className="notice-banner__action-button"
-						onClick={ gotoJetpackStatsProduct }
-					>
+					<button type="button" className="notice-banner__action-button" onClick={ handleCTAClick }>
 						{ CTAText }
 					</button>
 					<a
