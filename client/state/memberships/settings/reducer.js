@@ -21,6 +21,7 @@ export default ( state = {}, action ) => {
 						null
 					),
 					connectUrl: get( action, 'data.connect_url', null ),
+					couponsAndGiftsEnabled: get( action, 'data.coupons_and_gifts_enabled', null ),
 				},
 			};
 	}
