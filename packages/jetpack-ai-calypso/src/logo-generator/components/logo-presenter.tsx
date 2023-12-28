@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
@@ -7,11 +10,11 @@ import { useState } from 'react';
  */
 import LogoIcon from '../assets/icons/logo';
 import MediaIcon from '../assets/icons/media';
-import sample from '../assets/images/sample-logo.png';
 import './logo-presenter.scss';
 /**
  * Types
  */
+import { Logo } from '../store/types';
 import { ImageLoader } from './image-loader';
 import type React from 'react';
 
@@ -50,8 +53,8 @@ const UseOnSiteButton: React.FC = () => {
 	);
 };
 
-export const LogoPresenter: React.FC< { description?: string; loading?: boolean } > = ( {
-	description,
+export const LogoPresenter: React.FC< { logo: Logo; loading?: boolean } > = ( {
+	logo,
 	loading = false,
 } ) => {
 	return (
@@ -67,13 +70,13 @@ export const LogoPresenter: React.FC< { description?: string; loading?: boolean 
 				) : (
 					<>
 						<img
-							src={ sample }
-							alt={ description }
+							src={ logo.url }
+							alt={ logo.description }
 							className="jetpack-ai-logo-generator-modal-presenter__logo"
 						/>
 						<div className="jetpack-ai-logo-generator-modal-presenter__action-wrapper">
 							<span className="jetpack-ai-logo-generator-modal-presenter__description">
-								{ description }
+								{ logo.description }
 							</span>
 							<div className="jetpack-ai-logo-generator-modal-presenter__actions">
 								<SaveInLibraryButton />

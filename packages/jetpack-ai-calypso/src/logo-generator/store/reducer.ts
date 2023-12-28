@@ -13,42 +13,11 @@ import {
 	UNLIMITED_PLAN_REQUESTS_LIMIT,
 	ACTION_SET_TIER_PLANS_ENABLED,
 	ACTION_SET_SITE_DETAILS,
+	ACTION_SET_SELECTED_LOGO_INDEX,
+	ACTION_ADD_LOGO_TO_HISTORY,
 } from './constants';
-import type { LogoGeneratorStateProp, TierLimitProp } from './types';
-
-const INITIAL_STATE: LogoGeneratorStateProp = {
-	siteDetails: {},
-	suggestions: [],
-	features: {
-		aiAssistantFeature: {
-			hasFeature: true,
-			isOverLimit: false,
-			requestsCount: 0,
-			requestsLimit: FREE_PLAN_REQUESTS_LIMIT,
-			requireUpgrade: false,
-			errorMessage: '',
-			errorCode: '',
-			upgradeType: 'default',
-			currentTier: {
-				slug: 'ai-assistant-tier-free',
-				value: 0,
-				limit: 20,
-			},
-			usagePeriod: {
-				currentStart: '',
-				nextStart: '',
-				requestsCount: 0,
-			},
-			nextTier: null,
-			tierPlansEnabled: false,
-			_meta: {
-				isRequesting: false,
-				asyncRequestCountdown: ASYNC_REQUEST_COUNTDOWN_INIT_VALUE,
-				asyncRequestTimerId: 0,
-			},
-		},
-	},
-};
+import INITIAL_STATE from './initial-state';
+import type { TierLimitProp } from './types';
 
 export default function reducer( state = INITIAL_STATE, action: any ) {
 	switch ( action.type ) {
@@ -124,7 +93,6 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			/**
 			 * Compute the AI Assistant Feature data optimistically,
 			 * based on the Jetpack_AI_Helper::get_ai_assistance_feature() helper.
-			 *
 			 * @see _inc/lib/class-jetpack-ai-helper.php
 			 */
 			const isOverLimit = currentCount >= requestsLimit;
@@ -217,6 +185,28 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			return {
 				...state,
 				siteDetails: action.siteDetails,
+			};
+		}
+
+		case ACTION_SET_SELECTED_LOGO_INDEX: {
+			return {
+				...state,
+				history: {
+					...state.history,
+					selectedLogoIndex: action.selectedLogoIndex,
+				},
+			};
+		}
+
+		case ACTION_ADD_LOGO_TO_HISTORY: {
+			const logos = [ ...state.history.logos, action.logo ];
+
+			return {
+				...state,
+				history: {
+					logos,
+					selectedLogoIndex: logos.length - 1,
+				},
 			};
 		}
 	}

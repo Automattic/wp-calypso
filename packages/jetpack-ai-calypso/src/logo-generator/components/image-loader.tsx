@@ -1,7 +1,10 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import classnames from 'classnames';
+/**
+ * Internal dependencies
+ */
 import loader from '../assets/images/loader.gif';
 /**
  * Types

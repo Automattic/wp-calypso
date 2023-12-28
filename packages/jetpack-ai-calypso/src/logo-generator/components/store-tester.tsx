@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Button, Modal } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data'; // Add the missing import statement for 'select'
+import { useSelect, useDispatch } from '@wordpress/data';
 import React, { useCallback, useEffect } from 'react';
 /**
  * Internal dependencies
