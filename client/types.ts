@@ -45,7 +45,15 @@ export interface Theme {
 	style_variations: StyleVariation[];
 	stylesheet: string;
 	supportDocumentation: string;
-	retained_benefits: { is_eligible: boolean };
+	retained_benefits: {
+		is_eligible: boolean;
+		eligibility_expiration_date: string | null;
+		tier: null | {
+			slug: string;
+			feature: string;
+			platform: string;
+		};
+	};
 	tags: string[];
 	taxonomies?: {
 		theme_feature?: ThemeFeature[];

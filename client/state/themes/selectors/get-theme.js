@@ -1,6 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
-
 import 'calypso/state/themes/init';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Returns a theme object by site ID, theme ID pair.
@@ -11,7 +11,13 @@ import 'calypso/state/themes/init';
  */
 export const getTheme = createSelector(
 	( state, siteId, themeId ) => {
-		const manager = state.themes.queries[ siteId ];
+		let manager = state.themes.queries[ siteId ];
+
+		if ( ! manager && siteId === 'wpcom' ) {
+			const fallbackSiteId = getSelectedSiteId( state );
+			manager = state.themes.queries[ fallbackSiteId ];
+		}
+
 		if ( ! manager ) {
 			return null;
 		}
