@@ -41,6 +41,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -56,6 +57,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
+import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
@@ -473,6 +475,7 @@ class StatsSite extends Component {
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</div>
 		);
 	}
@@ -596,18 +599,28 @@ export default connect(
 		const canUserViewStats =
 			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
 
+		const slug = getSelectedSiteSlug( state );
+		const upsellModalView =
+			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+
 		return {
 			canUserViewStats,
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
-			slug: getSelectedSiteSlug( state ),
+			slug,
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
+			upsellModalView,
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
+	{
+		recordGoogleEvent,
+		enableJetpackStatsModule,
+		recordTracksEvent,
+		requestModuleSettings,
+	}
 )( localize( StatsSite ) );

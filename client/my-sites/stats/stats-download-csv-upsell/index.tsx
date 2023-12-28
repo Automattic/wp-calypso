@@ -1,25 +1,23 @@
 import { Button, Gridicon } from '@automattic/components';
-import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
-import StatsUpsellModal from '../stats-upsell-modal';
 
 interface Props {
 	className: string;
-	siteSlug: string;
+	siteId: number;
 	borderless: boolean;
 }
 
-const StatsDownloadCsvUpsell: React.FC< Props > = ( { className, siteSlug, borderless } ) => {
+const StatsDownloadCsvUpsell: React.FC< Props > = ( { className, siteId, borderless } ) => {
 	const translate = useTranslate();
-	const [ isModalOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
-	const closeModal = () => setOpen( false );
+	const dispatch = useDispatch();
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
-		openModal();
+		dispatch( toggleUpsellModal( siteId, STATS_FEATURE_DOWNLOAD_CSV ) );
 	};
 
 	return (
@@ -32,13 +30,6 @@ const StatsDownloadCsvUpsell: React.FC< Props > = ( { className, siteSlug, borde
 			>
 				<Gridicon icon="cloud-download" /> { translate( 'Upgrade & Download to CSV' ) }
 			</Button>
-			{ isModalOpen && (
-				<StatsUpsellModal
-					closeModal={ closeModal }
-					statType={ STATS_FEATURE_DOWNLOAD_CSV }
-					siteSlug={ siteSlug }
-				/>
-			) }
 		</>
 	);
 };

@@ -337,7 +337,7 @@ export class Login extends Component {
 			locale,
 			oauth2Client,
 			pathname,
-			query,
+			currentQuery,
 			translate,
 			usernameOrEmail,
 		} = this.props;
@@ -346,8 +346,8 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isP2Login && query?.redirect_to ) {
-			const urlParts = getUrlParts( query.redirect_to );
+		if ( isP2Login && currentQuery?.redirect_to ) {
+			const urlParts = getUrlParts( currentQuery.redirect_to );
 			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
 				return null;
 			}
@@ -356,7 +356,7 @@ export class Login extends Component {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
 			<a

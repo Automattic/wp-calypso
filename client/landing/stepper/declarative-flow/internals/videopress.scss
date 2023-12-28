@@ -31,30 +31,6 @@ body.is-videopress-tv-purchase-stepper {
 			outline: solid 2px $videopress-theme-yellow;
 		}
 
-		.flow-progress {
-			display: block;
-			border-radius: 0;
-			background-color: #fff3;
-
-			.progress-bar__progress {
-				background-color: $videopress-theme-yellow;
-				border-radius: 0;
-				animation: progress-lerp ease-in-out 250ms;
-				@keyframes progress-lerp {
-					0% {
-						width: calc(var(--previous-progress));
-					}
-					100% {
-						width: calc(var(--current-progress));
-					}
-				}
-			}
-		}
-
-		&.intro .flow-progress {
-			background: #0003;
-		}
-
 		.signup-header {
 			padding: 24px;
 

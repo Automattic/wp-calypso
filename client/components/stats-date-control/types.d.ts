@@ -5,6 +5,11 @@ interface StatsDateControlProps {
 	dateRange: any;
 	shortcutList: DateControlPickerShortcut[];
 	overlay?: JSX.Element;
+	onGatedHandler: (
+		events: { name: string; params?: object }[],
+		event_from: string,
+		stat_type: string
+	) => void;
 }
 
 interface DateControlPickerProps {
@@ -31,10 +36,6 @@ interface DateControlPickerShortcut {
 	period: string;
 	statType: string;
 	isGated: boolean;
-	onGatedClick: (
-		events: { name: string; params?: object }[],
-		event_from: 'jetpack_odyssey' | 'calypso'
-	) => void;
 }
 
 interface DateControlPickerDateProps {

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { includes, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -61,7 +61,7 @@ class StatsModule extends Component {
 			this.setState( { loaded: true } );
 		}
 
-		if ( this.props.query !== prevProps.query && this.state.loaded ) {
+		if ( ! isEqual( this.props.query, prevProps.query ) ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
@@ -123,7 +123,6 @@ class StatsModule extends Component {
 		const {
 			className,
 			summary,
-			siteSlug,
 			siteId,
 			path,
 			data,
@@ -195,8 +194,8 @@ class StatsModule extends Component {
 						gateStats && (
 							<StatsCardUpsell
 								className="stats-module__upsell"
-								siteSlug={ siteSlug }
 								statType={ statType }
+								siteId={ siteId }
 							/>
 						)
 					}
@@ -204,7 +203,7 @@ class StatsModule extends Component {
 				{ isAllTime && (
 					<div className={ footerClass }>
 						{ gateDownloads ? (
-							<DownloadCsvUpsell siteSlug={ siteSlug } borderless />
+							<DownloadCsvUpsell siteId={ siteId } borderless />
 						) : (
 							<DownloadCsv
 								statType={ statType }

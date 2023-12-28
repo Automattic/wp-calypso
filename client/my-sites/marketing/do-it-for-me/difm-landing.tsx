@@ -278,19 +278,20 @@ export default function DIFMLanding( {
 	onPrimarySubmit,
 	onSecondarySubmit,
 	siteId,
-	planSlug,
+	isStoreFlow,
 }: {
 	onPrimarySubmit: () => void;
 	onSecondarySubmit?: () => void;
 	showNewOrExistingSiteChoice: boolean;
 	siteId?: number | null;
-	planSlug: typeof PLAN_PREMIUM | typeof PLAN_BUSINESS;
+	isStoreFlow: boolean;
 } ) {
 	const translate = useTranslate();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
 
+	const planSlug = isStoreFlow ? PLAN_BUSINESS : PLAN_PREMIUM;
 	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
 	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
@@ -466,7 +467,11 @@ export default function DIFMLanding( {
 					) }
 				</ContentSection>
 				<ImageSection>
-					<AsyncLoad require="./site-build-showcase" placeholder={ <LoadingEllipsis /> } />
+					<AsyncLoad
+						require="./site-build-showcase"
+						placeholder={ <LoadingEllipsis /> }
+						isStoreFlow={ isStoreFlow }
+					/>
 				</ImageSection>
 			</Wrapper>
 

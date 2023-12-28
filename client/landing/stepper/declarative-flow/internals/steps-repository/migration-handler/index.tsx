@@ -14,16 +14,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { redirect } from '../import/util';
 import type { Step } from '../../types';
-import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
+import type { UserSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
 	const currentUser = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 		[]
@@ -103,7 +99,6 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 				stepName="migration-handler"
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={ renderContent() }
-				stepProgress={ stepProgress }
 				showFooterWooCommercePowered={ false }
 				className="import__onboarding-page"
 			/>
