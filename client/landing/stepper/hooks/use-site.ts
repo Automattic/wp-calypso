@@ -29,7 +29,7 @@ export function useSite() {
 
 	// Request the site for the redux store
 	useEffect( () => {
-		if ( siteIdOrSlug && ! selectedSite && isRequestingSelectedSite ) {
+		if ( siteIdOrSlug && ! selectedSite && ! isRequestingSelectedSite ) {
 			dispatch( requestSite( siteIdOrSlug ) );
 		}
 	}, [ siteIdOrSlug, selectedSite, isRequestingSelectedSite ] );
