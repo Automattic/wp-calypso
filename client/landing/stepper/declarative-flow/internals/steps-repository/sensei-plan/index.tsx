@@ -18,7 +18,7 @@ import { SenseiStepProgress } from '../components/sensei-step-progress';
 import { PlansIntervalToggle } from './components';
 import { useFeatures, Status } from './constants';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
-import { usePlanSelection } from './use-plan-selection';
+import { usePlanSelection, getDefaultPlan } from './use-plan-selection';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
@@ -27,7 +27,9 @@ import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './styles.scss';
 
 const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
-	const [ billingPeriod, setBillingPeriod ] = useState< PlanBillingPeriod >( 'ANNUALLY' );
+	const [ billingPeriod, setBillingPeriod ] = useState< PlanBillingPeriod >(
+		getDefaultPlan() ?? 'ANNUALLY'
+	);
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
 	const locale = useLocale();
 	const { __, hasTranslation } = useI18n();

@@ -5,10 +5,19 @@ import { Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import type { NewSiteBlogDetails, DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
-const isComingFromSenseiLMSSite = (): boolean => {
+export const getDefaultPlan = (): PlanBillingPeriod | undefined => {
+	const billingPeriodOptions = [ 'MONTHLY', 'ANNUALLY' ];
+
 	const urlParams = new URLSearchParams( window.location.search );
-	return urlParams.get( 'ref' ) === 'senseilms';
+	const plan = urlParams.get( 'plan' ) ?? '';
+
+	if ( billingPeriodOptions.includes( plan ) ) {
+		return plan as PlanBillingPeriod;
+	}
+
+	return undefined;
 };
 
 export const usePlanSelection = ( {
@@ -87,7 +96,7 @@ export const usePlanSelection = ( {
 
 	// Auto-select YEARLY plan when coming from senseilms.com site.
 	useEffect( () => {
-		if ( ! isComingFromSenseiLMSSite() ) {
+		if ( undefined === getDefaultPlan() ) {
 			return;
 		}
 
