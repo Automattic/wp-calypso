@@ -1,10 +1,7 @@
 import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
-import { MenuGroup, MenuItem, ToggleControl, ToolbarDropdownMenu } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { check, chevronDown, close } from '@wordpress/icons';
+import { ToggleControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { ChangeEvent, MouseEvent, MouseEventHandler, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -12,6 +9,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
 import { useSelector, useDispatch } from 'calypso/state';
 import {
 	requestAddCoupon,
@@ -32,7 +30,6 @@ import {
 	COUPON_DURATION_3_MONTHS,
 	COUPON_DURATION_6_MONTHS,
 	COUPON_DURATION_1_YEAR,
-	COUPON_PRODUCTS_ANY,
 	COUPON_RANDOM_GENERATOR_CHARSET,
 	COUPON_RANDOM_GENERATOR_LENGTH,
 	COUPON_USAGE_LIMIT_INFINITE,
@@ -70,7 +67,6 @@ function minimumCurrencyTransactionAmount(
 const RecurringPaymentsCouponAddEditModal = ( {
 	closeDialog,
 	coupon,
-	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const today = new Date();
 
@@ -79,10 +75,10 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	/** Currency */
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
-		getconnectedAccountDefaultCurrencyForSiteId( state, siteId ?? selectedSiteId )
+		getconnectedAccountDefaultCurrencyForSiteId( state, selectedSiteId )
 	);
 	const connectedAccountMinimumCurrency = useSelector( ( state ) =>
-		getconnectedAccountMinimumCurrencyForSiteId( state, siteId ?? selectedSiteId )
+		getconnectedAccountMinimumCurrencyForSiteId( state, selectedSiteId )
 	);
 	const currencyList = Object.keys( connectedAccountMinimumCurrency );
 	const defaultDiscountCurrency = useMemo( () => {
@@ -191,34 +187,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		return generateRandomCouponCode();
 	};
 
-	/** Product functions */
-	const getProductDescription = ( product: Product ): string => {
-		const { currency, renewal_schedule, price } = product;
-		const amount = formatCurrency( price ?? 0, currency ?? 'USD' );
-		switch ( renewal_schedule ) {
-			case '1 month':
-				return sprintf(
-					// translators: %s: amount
-					__( '%s / month', 'calypso' ),
-					amount
-				);
-			case '1 year':
-				return sprintf(
-					// translators: %s: amount
-					__( '%s / year', 'calypso' ),
-					amount
-				);
-			case 'one-time':
-				return amount;
-		}
-		return sprintf(
-			// translators: %s: amount, plan interval
-			__( '%1$s / %2$s', 'calypso' ),
-			amount,
-			renewal_schedule
-		);
-	};
-
 	/** Email address functions */
 	const validateEmailAddress = ( email: string ): boolean =>
 		/^[\w.\-+*]+@(?:(?:[\w\-*]+(?:\.[\w\-*]+)+)+|(?:[\w\-*]*\*[\w\-*]*)+)+$/.test( email );
@@ -240,25 +208,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		setEditedStartDate( event.target.value );
 	const onEndDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedEndDate( event.target.value );
-	const onSelectProduct = ( event: ChangeEvent< HTMLInputElement > ) => {
-		const productId =
-			( event.target as HTMLInputElement ).value ??
-			( event.target.parentElement as HTMLInputElement )?.value ??
-			'';
-		if ( COUPON_PRODUCTS_ANY === productId ) {
-			setEditedPlanIdsAllowList( [] );
-			return;
-		}
-		if ( editedPlanIdsAllowList.includes( parseInt( productId ) ) ) {
-			setEditedPlanIdsAllowList(
-				editedPlanIdsAllowList.filter(
-					( selectedId: number ): boolean => selectedId !== parseInt( productId )
-				)
-			);
-			return;
-		}
-		setEditedPlanIdsAllowList( [ ...editedPlanIdsAllowList, parseInt( productId ) ] );
-	};
 	const onLimitPerUserChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedLimitPerUser( parseInt( event.target.value ) );
 	const onLimitPerUserBlur = ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -435,7 +384,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		if ( reason === 'submit' && ( ! coupon || ! coupon.ID ) ) {
 			dispatch(
 				requestAddCoupon(
-					siteId ?? selectedSiteId,
+					selectedSiteId,
 					couponDetails,
 					translate( 'Added coupon "%s".', { args: editedCouponCode } )
 				)
@@ -444,7 +393,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 			couponDetails.ID = coupon.ID;
 			dispatch(
 				requestUpdateCoupon(
-					siteId ?? selectedSiteId,
+					selectedSiteId,
 					couponDetails,
 					translate( 'Updated coupon "%s".', { args: editedCouponCode } )
 				)
@@ -457,16 +406,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	const addCoupon = translate( 'Add new coupon' );
 	const editCoupon = translate( 'Edit coupon' );
 	const editing = coupon && coupon.ID;
-	const selectedProductSummary = ( ( quantity: number ) => {
-		if ( quantity > 1 ) {
-			// translators: the %s is a number representing the number of products which are currently selected
-			return sprintf( __( '%s products selected.' ), quantity );
-		}
-		if ( quantity === 1 ) {
-			return __( '1 product selected' );
-		}
-		return translate( 'Any product' );
-	} )( editedPlanIdsAllowList.length );
 
 	return (
 		<Dialog
@@ -591,69 +530,10 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						) }
 					</div>
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-products">
-					<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
-					<ToolbarDropdownMenu
-						icon={ chevronDown }
-						label={ selectedProductSummary }
-						text={ selectedProductSummary }
-					>
-						{ ( { onClose } ) => (
-							<>
-								<MenuGroup>
-									<MenuItem
-										value={ COUPON_PRODUCTS_ANY }
-										onClick={ ( event: MouseEvent< HTMLButtonElement > ) =>
-											onSelectProduct( event as unknown as ChangeEvent< HTMLInputElement > )
-										}
-										isSelected={ editedPlanIdsAllowList.length === 0 }
-										icon={ editedPlanIdsAllowList.length === 0 ? check : null }
-										key={ COUPON_PRODUCTS_ANY }
-										role="menuitemcheckbox"
-									>
-										{ translate( 'Any product' ) }
-									</MenuItem>
-								</MenuGroup>
-								<MenuGroup>
-									{ products &&
-										products.map( function ( currentProduct: Product ) {
-											const isSelected =
-												editedPlanIdsAllowList.length === 0 ||
-												( currentProduct.ID &&
-													editedPlanIdsAllowList.includes( currentProduct.ID ) );
-											const itemIcon = isSelected ? check : null;
-											return (
-												<MenuItem
-													value={ currentProduct.ID }
-													onClick={
-														onSelectProduct as unknown as MouseEventHandler< HTMLButtonElement >
-													}
-													isSelected={ !! isSelected }
-													icon={ itemIcon }
-													key={ currentProduct.ID }
-													role="menuitemcheckbox"
-												>
-													{ currentProduct.title } :
-													{ ' ' + getProductDescription( currentProduct ) }
-												</MenuItem>
-											);
-										} ) }
-								</MenuGroup>
-								<MenuGroup>
-									<MenuItem
-										value={ COUPON_PRODUCTS_ANY }
-										onClick={ onClose }
-										icon={ close }
-										key={ COUPON_PRODUCTS_ANY }
-										role="menuitemcheckbox"
-									>
-										{ translate( 'Close' ) }
-									</MenuItem>
-								</MenuGroup>
-							</>
-						) }
-					</ToolbarDropdownMenu>
-				</FormFieldset>
+				<ProductsSelector
+					onSelectedPlanIdsChange={ ( list ) => setEditedPlanIdsAllowList( list ) }
+					initialSelectedList={ editedPlanIdsAllowList }
+				/>
 				<FormFieldset className="memberships__dialog-sections-usage-limit">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Usage limit (optional)' ) }</FormLabel>
 					<FormTextInputWithAffixes
