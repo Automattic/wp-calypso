@@ -12,7 +12,7 @@ export default function AddNewSiteTourStep1() {
 
 	if ( shouldRenderAddSiteTourStep1 ) {
 		ResetTour( 'addSiteStep', [ 'addSiteStep1', 'addSiteStep2' ] );
-		window.localStorage.removeItem( 'Jetpack_Manage_Preference_Reset_addSiteStep' );
+		window.localStorage.setItem( 'Jetpack_Manage_Preference_Viewed_addSiteStep', 'true' );
 	}
 
 	return (
@@ -36,7 +36,7 @@ export default function AddNewSiteTourStep1() {
 							</>
 						),
 
-						nextStepOnTargetClick: '#sites-overview-add-sites-button .split-button__toggle',
+						nextStepOnTargetClick: '#sites-overview-add-sites-button',
 					},
 				] }
 			/>

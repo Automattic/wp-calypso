@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import SitesOverviewContext from '../../agency-dashboard/sites-overview/context';
 import { SiteData } from '../../agency-dashboard/sites-overview/types';
@@ -16,11 +17,44 @@ interface Props {
 export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 	const translate = useTranslate();
 	const { mostRecentConnectedSite } = useContext( SitesOverviewContext );
+	const dispatch = useDispatch();
+	const [ resetApplied, setResetApplied ] = useState( false );
+
 	const hasFinishedStep1 = useSelector( ( state ) =>
 		getPreference( state, JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ] )
 	);
-	// We should only render the second step if the first one has finished (hasFinishedStep1) and we have a new connected site (mostRecentConnectedSite).
-	const shouldRenderAddSiteTourStep2 = hasFinishedStep1 && mostRecentConnectedSite;
+
+	const hasStep1BeenViewed = window.localStorage.getItem(
+		'Jetpack_Manage_Preference_Viewed_addSiteStep'
+	);
+
+	const shouldRenderAddSiteTourStep2 =
+		( hasFinishedStep1 || hasStep1BeenViewed ) && mostRecentConnectedSite;
+
+	// We want to reset preferences only if we're coming to this page after initiating the tour previously, but we never completed it.
+	if ( hasFinishedStep1 && mostRecentConnectedSite && ! resetApplied ) {
+		window.localStorage.removeItem( 'Jetpack_Manage_Preference_Viewed_addSiteStep' );
+		setResetApplied( true ); // Set the state to indicate that the reset has been applied
+		window.localStorage.removeItem( 'Jetpack_Manage_Preference_Reset_addSiteStep' );
+	} else if (
+		! resetApplied &&
+		hasStep1BeenViewed &&
+		! mostRecentConnectedSite &&
+		window.localStorage.getItem( 'Jetpack_Manage_Preference_Reset_addSiteStep' ) !== 'true'
+	) {
+		// Reset preferences
+		dispatch(
+			savePreference( JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ], {
+				dismiss: true,
+			} )
+		);
+		dispatch(
+			savePreference( JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep2' ], {
+				dismiss: true,
+			} )
+		);
+		setResetApplied( true ); // Set the state to indicate that the reset has been applied
+	}
 
 	const tourHTMLTarget =
 		siteItems.length < 20
