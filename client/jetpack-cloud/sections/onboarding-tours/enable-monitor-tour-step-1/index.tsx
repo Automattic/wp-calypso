@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import GuidedTour from 'calypso/jetpack-cloud/components/guided-tour';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from '../constants';
+import ResetTour from '../reset-tour';
 
 import '../style.scss';
 
@@ -8,6 +9,11 @@ export default function EnableMonitorTourStep1() {
 	const translate = useTranslate();
 	const urlParams = new URLSearchParams( window.location.search );
 	const shouldRenderEnableMonitorTourStep1 = urlParams.get( 'tour' ) === 'enable-monitor';
+
+	if ( shouldRenderEnableMonitorTourStep1 ) {
+		ResetTour( 'enableMonitor', [ 'enableMonitorStep1', 'enableMonitorStep2' ] );
+		window.localStorage.removeItem( 'Jetpack_Manage_Preference_Reset_enableMonitor' );
+	}
 
 	return (
 		shouldRenderEnableMonitorTourStep1 && (

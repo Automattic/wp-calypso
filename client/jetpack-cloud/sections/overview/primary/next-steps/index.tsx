@@ -31,6 +31,11 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 		} );
 	};
 
+	const delayedTourReset = ( slug: string | string[] ) => {
+		const preferenceName = 'Jetpack_Manage_Preference_Reset_' + slug;
+		window.localStorage.setItem( preferenceName, 'true' );
+	};
+
 	const tasks: Task[] = [
 		{
 			calypso_path: '/dashboard?tour=dashboard-walkthrough',
@@ -49,8 +54,8 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			completed: checkTourCompletion( 'addSiteStep2' ),
 			disabled: false,
 			actionDispatch: () => {
+				delayedTourReset( 'addSiteStep' );
 				dispatch( recordTracksEvent( tracksPrefix + '_add_sites_click' ) );
-				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
 			},
 			id: 'add_sites',
 			title: translate( 'Learn how to add new sites' ),
@@ -61,8 +66,8 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			completed: checkTourCompletion( 'enableMonitorStep2' ),
 			disabled: false,
 			actionDispatch: () => {
+				delayedTourReset( 'enableMonitor' );
 				dispatch( recordTracksEvent( tracksPrefix + '_bulk_editing_click' ) );
-				resetTour( [ 'enableMonitorStep1', 'enableMonitorStep2' ] );
 			},
 			id: 'bulk_editing',
 			title: translate( 'Learn bulk editing and enabling downtime monitoring' ),
