@@ -45,4 +45,5 @@ export type Tag = {
 export type CustomPageTitle = {
 	title: string;
 	ID: number;
+	selected: boolean;
 };

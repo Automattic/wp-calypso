@@ -12,15 +12,13 @@ const usePatternPages = (
 	let pageCategoriesInOrder;
 	let pageSlugs: string[] = [];
 	let pages: ( Pattern | null )[] = [];
-	let pagesToShow;
+	let pagesToShow: any[] = [];
 	const page_slugs = searchParams.get( 'page_slugs' );
 	const custom_pages = searchParams.get( 'custom_pages' );
 
 	if ( page_slugs !== null ) {
 		pageSlugs = page_slugs.split( ',' ).filter( Boolean );
 	}
-
-	pages = [];
 
 	// eslint-disable-next-line prefer-const
 	pageCategoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
@@ -29,31 +27,45 @@ const usePatternPages = (
 	if ( custom_pages !== null ) {
 		const mockedPages: CustomPageTitle[] = JSON.parse( custom_pages ) || [];
 
-		pages = mockedPages
-			.map( ( { ID, title }: CustomPageTitle ) => {
-				const patterns = dotcomPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
-				if ( patterns.length < 1 ) {
-					return null;
-				}
-				const pattern = patterns[ 0 ];
-				pattern.title = title;
+		mockedPages.forEach( ( { ID, title, selected }: CustomPageTitle ) => {
+			const patterns = dotcomPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
+			if ( patterns.length === 0 ) {
+				return;
+			}
+			const pattern = patterns[ 0 ];
+			pattern.title = title;
 
-				return pattern;
-			} )
-			.filter( Boolean );
-
-		if ( page_slugs === null ) {
-			pageSlugs = pages.map( ( page ) => page?.name || '' );
-		}
-
-		pagesToShow = pages.map( ( page ) => {
-			return {
-				name: page?.name || '',
+			if ( selected ) {
+				pageSlugs.push( pattern?.name || '' );
+				pages.push( pattern );
+			}
+			pagesToShow.push( {
+				name: pattern?.name || '',
 				hasPages: true,
-				title: page?.title || '',
-				isSelected: pageSlugs.includes( page?.name || '' ),
-			};
+				title: title,
+				isSelected: !! selected,
+			} );
 		} );
+
+		const setPageSlugs = ( slugs: string[] ) => {
+			setSearchParams(
+				( currentSearchParams ) => {
+					const newMockedPages = mockedPages.map( ( page: CustomPageTitle ) => {
+						const patterns = dotcomPatterns.filter(
+							( pattern: Pattern ) => pattern.ID === page.ID
+						);
+						page.selected = slugs.includes( patterns[ 0 ].name );
+						return page;
+					} );
+					currentSearchParams.set( 'custom_pages', JSON.stringify( newMockedPages ) );
+
+					return currentSearchParams;
+				},
+				{ replace: true }
+			);
+		};
+
+		return { pages, pageSlugs, setPageSlugs, pagesToShow };
 	} else if ( custom_pages === null ) {
 		if ( page_slugs === null ) {
 			pageSlugs = INITIAL_PAGES;
@@ -71,24 +83,23 @@ const usePatternPages = (
 				isSelected: name ? pageSlugs.includes( name ) : false,
 			};
 		} );
+		const setPageSlugs = ( slugs: string[] ) => {
+			setSearchParams(
+				( currentSearchParams ) => {
+					if ( slugs.length === 0 ) {
+						currentSearchParams.set( 'page_slugs', '' );
+					} else {
+						currentSearchParams.set( 'page_slugs', slugs.join( ',' ) );
+					}
+
+					return currentSearchParams;
+				},
+				{ replace: true }
+			);
+		};
+
+		return { pages, pageSlugs, setPageSlugs, pagesToShow };
 	}
-
-	const setPageSlugs = ( slugs: string[] ) => {
-		setSearchParams(
-			( currentSearchParams ) => {
-				if ( slugs.length === 0 ) {
-					currentSearchParams.set( 'page_slugs', '' );
-				} else {
-					currentSearchParams.set( 'page_slugs', slugs.join( ',' ) );
-				}
-
-				return currentSearchParams;
-			},
-			{ replace: true }
-		);
-	};
-
-	return { pages, pageSlugs, setPageSlugs, pagesToShow };
 };
 
 export default usePatternPages;
