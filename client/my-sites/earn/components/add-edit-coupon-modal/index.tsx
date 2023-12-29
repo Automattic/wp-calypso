@@ -4,7 +4,7 @@ import { MenuGroup, MenuItem, ToggleControl, ToolbarDropdownMenu } from '@wordpr
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, close } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import { ChangeEvent, MouseEventHandler, useMemo, useState } from 'react';
+import { ChangeEvent, MouseEvent, MouseEventHandler, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -241,19 +241,24 @@ const RecurringPaymentsCouponAddEditModal = ( {
 		setEditedStartDate( event.target.value );
 	const onEndDateChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedEndDate( event.target.value );
-	const onSelectProduct = ( event: MouseEventHandler< HTMLButtonElement > ) => {
-		const productId = event.target.value ?? event.target.parentElement?.value ?? '';
+	const onSelectProduct = ( event: ChangeEvent< HTMLInputElement > ) => {
+		const productId =
+			( event.target as HTMLInputElement ).value ??
+			( event.target.parentElement as HTMLInputElement )?.value ??
+			'';
 		if ( COUPON_PRODUCTS_ANY === productId ) {
 			setEditedPlanIdsAllowList( [] );
 			return;
 		}
-		if ( editedPlanIdsAllowList.includes( productId ) ) {
+		if ( editedPlanIdsAllowList.includes( parseInt( productId ) ) ) {
 			setEditedPlanIdsAllowList(
-				editedPlanIdsAllowList.filter( ( selectedId: number ): boolean => selectedId !== productId )
+				editedPlanIdsAllowList.filter(
+					( selectedId: number ): boolean => selectedId !== parseInt( productId )
+				)
 			);
 			return;
 		}
-		setEditedPlanIdsAllowList( [ ...editedPlanIdsAllowList, productId ] );
+		setEditedPlanIdsAllowList( [ ...editedPlanIdsAllowList, parseInt( productId ) ] );
 	};
 	const onLimitPerUserChange = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedLimitPerUser( parseInt( event.target.value ) );
@@ -589,13 +594,15 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-products">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
-					<ToolbarDropdownMenu icon={ chevronDown } text={ selectedProductSummary } role="button">
+					<ToolbarDropdownMenu icon={ chevronDown } label={ selectedProductSummary }>
 						{ ( { onClose } ) => (
 							<>
 								<MenuGroup>
 									<MenuItem
 										value={ COUPON_PRODUCTS_ANY }
-										onClick={ onSelectProduct }
+										onClick={ ( event: MouseEvent< HTMLButtonElement > ) =>
+											onSelectProduct( event as unknown as ChangeEvent< HTMLInputElement > )
+										}
 										onClose={ onClose }
 										isSelected={ editedPlanIdsAllowList.length === 0 }
 										icon={ editedPlanIdsAllowList.length === 0 ? check : null }
@@ -610,14 +617,17 @@ const RecurringPaymentsCouponAddEditModal = ( {
 										products.map( function ( currentProduct: Product ) {
 											const isSelected =
 												editedPlanIdsAllowList.length === 0 ||
-												editedPlanIdsAllowList.includes( '' + currentProduct.ID );
+												( currentProduct.ID &&
+													editedPlanIdsAllowList.includes( currentProduct.ID ) );
 											const itemIcon = isSelected ? check : null;
 											return (
 												<MenuItem
 													value={ currentProduct.ID }
-													onClick={ onSelectProduct }
+													onClick={
+														onSelectProduct as unknown as MouseEventHandler< HTMLButtonElement >
+													}
 													onClose={ onClose }
-													isSelected={ isSelected }
+													isSelected={ !! isSelected }
 													icon={ itemIcon }
 													key={ currentProduct.ID }
 													role="menuitemcheckbox"

@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { useState, useCallback, ChangeEvent } from 'react';
+import { useState, useCallback, ChangeEvent, FocusEvent, MouseEvent } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 import './style.scss';
@@ -11,12 +11,14 @@ type FormTextInputWithValueGenerationProps = {
 	className?: string;
 	action?: string;
 	value?: string;
-	onAction?: () => void;
-	onFocus?: () => void;
+	onAction?: ( event: MouseEvent< HTMLButtonElement > ) => void;
+	onFocus?: ( event: FocusEvent< HTMLInputElement > ) => void;
+	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 	disabled?: boolean;
 	isError?: boolean;
 	isValid?: boolean;
+	maxLength?: string;
 };
 
 const FormTextInputWithValueGeneration = ( {
@@ -30,12 +32,13 @@ const FormTextInputWithValueGeneration = ( {
 	disabled = false,
 	isError = false,
 	isValid = false,
+	maxLength = '10',
 	...props
 }: FormTextInputWithValueGenerationProps ) => {
 	const [ focused, setFocused ] = useState( false );
 
 	const handleFocus = useCallback(
-		( event: ChangeEvent< HTMLInputElement > ) => {
+		( event: FocusEvent< HTMLInputElement > ) => {
 			setFocused( true );
 			onFocus( event );
 		},
@@ -43,7 +46,7 @@ const FormTextInputWithValueGeneration = ( {
 	);
 
 	const handleBlur = useCallback(
-		( event: ChangeEvent< HTMLInputElement > ) => {
+		( event: FocusEvent< HTMLInputElement > ) => {
 			setFocused( false );
 			onBlur( event );
 		},
@@ -68,6 +71,7 @@ const FormTextInputWithValueGeneration = ( {
 				onBlur={ handleBlur }
 				onChange={ onChange }
 				value={ value }
+				maxLength={ maxLength }
 			/>
 			<Button
 				size="compact"
