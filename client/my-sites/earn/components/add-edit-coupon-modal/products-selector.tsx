@@ -5,6 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, close } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { ChangeEvent, MouseEvent, MouseEventHandler, useState } from 'react';
+import QueryMemberships from 'calypso/components/data/query-memberships';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { COUPON_PRODUCTS_ANY } from 'calypso/my-sites/earn/memberships/constants';
 import { Product } from 'calypso/my-sites/earn/types';
@@ -92,6 +93,7 @@ const ProductsSelector = ( {
 
 	return (
 		<FormFieldset className="memberships__dialog-sections-products">
+			<QueryMemberships siteId={ selectedSiteId ?? 0 } />
 			<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
 			<ToolbarDropdownMenu
 				icon={ chevronDown }

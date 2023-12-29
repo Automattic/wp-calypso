@@ -5,6 +5,7 @@ import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -16,6 +17,7 @@ import {
 	SubscribersPageProvider,
 	useSubscribersPage,
 } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import GiftSubscriptionModal from 'calypso/state/memberships/gifts/gift-modal';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { MigrateSubscribersModal } from './components/migrate-subscribers-modal';
@@ -25,7 +27,6 @@ import { SubscribersFilterBy, SubscribersSortBy } from './constants';
 import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
 import { Subscriber } from './types';
-
 import './style.scss';
 
 type SubscribersHeaderProps = {
@@ -119,6 +120,8 @@ const SubscribersPage = ( {
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
+	const [ giftUserId, setGiftUserId ] = useState( 0 );
+
 	const siteId = selectedSite?.ID || null;
 
 	const pageArgs = {
@@ -134,8 +137,8 @@ const SubscribersPage = ( {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
-	const onGiftSubscription = ( { subscription_id, user_id }: Subscriber ) => {
-		alert( 'Gift a subscription' + subscription_id + ' ' + user_id );
+	const onGiftSubscription = ( { user_id }: Subscriber ) => {
+		setGiftUserId( user_id );
 	};
 
 	return (
@@ -168,6 +171,14 @@ const SubscribersPage = ( {
 					onCancel={ resetSubscriber }
 					onConfirm={ onConfirmModal }
 				/>
+
+				{ giftUserId !== 0 && (
+					<GiftSubscriptionModal
+						userId={ giftUserId }
+						onCancel={ () => setGiftUserId( 0 ) }
+						onConfirm={ () => setGiftUserId( 0 ) }
+					/>
+				) }
 				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 				{ selectedSite && <MigrateSubscribersModal /> }
 			</Main>
