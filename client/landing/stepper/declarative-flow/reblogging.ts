@@ -69,7 +69,7 @@ const reblogging: Flow = {
 
 				case 'processing': {
 					const postToShare = getQueryArg( window.location.search, 'blog_post' );
-					const processDestination = addQueryArgs( `/post`, {
+					const processDestination = addQueryArgs( `/post/${ providedDependencies?.siteSlug }`, {
 						url: postToShare,
 					} );
 
