@@ -3,10 +3,12 @@
  */
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
 /**
  * Internal dependencies
  */
+import AiIcon from '../assets/icons/ai';
 import { STORE_NAME } from '../store';
 import './prompt.scss';
 
@@ -30,14 +32,30 @@ export const Prompt: React.FC = () => {
 			<div className="jetpack-ai-logo-generator__prompt-header">
 				<div className="jetpack-ai-logo-generator__prompt-label">Describe your site/logo:</div>
 				<div className="jetpack-ai-logo-generator__prompt-actions">
-					<Button variant="link">Enhance prompt</Button>
+					<Button variant="link">
+						<AiIcon />
+						Enhance prompt
+					</Button>
 				</div>
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-query">
-				<textarea placeholder="describe your site or simply ask for a logo specifying some details about it"></textarea>
-				<Button className="jetpack-ai-logo-generator__prompt-submit" onClick={ onClick }>
+				{ /* TODO: textarea doesn't resize, either import from block-editor or use custom contentEditable */ }
+				<textarea
+					className="prompt-query__input"
+					placeholder="describe your site or simply ask for a logo specifying some details about it"
+				></textarea>
+				<Button
+					variant="primary"
+					className="jetpack-ai-logo-generator__prompt-submit"
+					onClick={ onClick }
+				>
 					Generate
 				</Button>
+			</div>
+			<div className="jetpack-ai-logo-generator__prompt-footer">
+				<div>18 requests remaining.</div>&nbsp;
+				<a href="https://automattic.com/ai-guidelines">Upgrade</a>
+				<Icon className="prompt-footer__icon" icon={ info } />
 			</div>
 		</div>
 	);
