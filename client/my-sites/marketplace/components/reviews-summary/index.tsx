@@ -2,16 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import {
-	useMarketplaceReviewsQuery,
+	useMarketplaceReviewsStatsQuery,
+	useIsUserAllowedToReview,
 	type ProductProps,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
-import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
-import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
+import { ReviewModal } from 'calypso/my-sites/marketplace/components/review-modal';
 import './styles.scss';
-import { type IAppState } from 'calypso/state/types';
 
 type Props = ProductProps & {
 	productName: string;
@@ -21,38 +19,30 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 	const translate = useTranslate();
 	const [ isVisible, setIsVisible ] = useState( false );
 
-	const { data: marketplaceReviews } = useMarketplaceReviewsQuery( {
+	const { data: marketplaceReviewsStats } = useMarketplaceReviewsStatsQuery( {
 		productType,
 		slug,
 	} );
 
-	const userCanPublishReviews = useSelector( ( state: IAppState ) =>
-		canPublishProductReviews( state, productType, slug )
-	);
+	const { data: userCanPublishReviews } = useIsUserAllowedToReview( { productType, slug } );
 
-	// TODO: The averageRating will come from the server. Calculating it here temporarily.
 	let averageRating = null;
 	let numberOfReviews = null;
+
 	if (
 		isEnabled( 'marketplace-reviews-show' ) &&
-		marketplaceReviews &&
-		! ( 'message' in marketplaceReviews ) &&
-		marketplaceReviews.length > 0
+		marketplaceReviewsStats?.ratings_count !== undefined &&
+		marketplaceReviewsStats?.ratings_average !== undefined
 	) {
-		const totalReviews = marketplaceReviews.reduce(
-			( acc, review ) => acc + review.meta.wpcom_marketplace_rating,
-			0
-		);
-
-		numberOfReviews = marketplaceReviews.length;
-
-		averageRating = totalReviews / numberOfReviews;
-		averageRating = ( averageRating * 100 ) / 5; // Normalize to 100
+		numberOfReviews = marketplaceReviewsStats.ratings_count;
+		averageRating = marketplaceReviewsStats.ratings_average;
+		// Normalize to 100
+		averageRating = ( averageRating * 100 ) / 5;
 	}
 
 	return (
 		<>
-			<ReviewsModal
+			<ReviewModal
 				isVisible={ isVisible }
 				onClose={ () => setIsVisible( false ) }
 				slug={ slug }
@@ -60,9 +50,9 @@ export const ReviewsSummary = ( { slug, productName, productType }: Props ) => {
 				productType={ productType }
 			/>
 			<div className="reviews-summary__container">
-				{ numberOfReviews && (
+				{ numberOfReviews !== null && (
 					<div>
-						{ averageRating && <Rating rating={ averageRating } /> }
+						{ averageRating !== null && <Rating rating={ averageRating } /> }
 						<Button borderless className="reviews-summary__number-reviews-link is-link">
 							{ translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
 								count: numberOfReviews,

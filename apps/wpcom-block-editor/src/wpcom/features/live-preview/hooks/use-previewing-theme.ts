@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -6,7 +7,7 @@ import type { Theme } from 'calypso/types';
 
 /**
  * Get the theme type.
- * This only support WooCommerce and Premium themes.
+ * This only supports WooCommerce, Premium, and Personal themes.
  */
 const getThemeType = ( theme?: Theme ) => {
 	const theme_software_set = theme?.taxonomies?.theme_software_set;
@@ -19,6 +20,25 @@ const getThemeType = ( theme?: Theme ) => {
 	if ( isPremiumTheme ) {
 		return PREMIUM_THEME;
 	}
+
+	// @TODO Replace all the logic above with the following code once Theme Tiers is live.
+	if ( config.isEnabled( 'themes/tiers' ) ) {
+		return theme?.theme_tier?.slug ?? undefined;
+	}
+
+	return undefined;
+};
+
+/**
+ * Get the theme required feature.
+ * This only support WooCommerce and Premium themes.
+ */
+const getThemeFeature = ( theme?: Theme ) => {
+	// @TODO Once theme tiers is live we'll need to refactor use-can-preview-but-need-upgrade's checkNeedUpgrade function.
+	if ( config.isEnabled( 'themes/tiers' ) ) {
+		return theme?.theme_tier?.feature ?? undefined;
+	}
+
 	return undefined;
 };
 
@@ -40,6 +60,9 @@ export const usePreviewingTheme = () => {
 	const previewingThemeId =
 		( previewingThemeSlug as string )?.split( '/' )?.[ 1 ] || previewingThemeSlug;
 
+	const [ previewingThemeFeature, setPreviewingThemeFeature ] =
+		useState< ReturnType< typeof getThemeFeature > >( undefined );
+
 	const [ previewingThemeType, setPreviewingThemeType ] =
 		useState< ReturnType< typeof getThemeType > >( undefined );
 
@@ -55,6 +78,7 @@ export const usePreviewingTheme = () => {
 				.get( `/themes/${ previewingThemeId }`, { apiVersion: '1.2' } )
 				.then( ( theme: Theme ) => {
 					setPreviewingThemeType( getThemeType( theme ) );
+					setPreviewingThemeFeature( getThemeFeature( theme ) );
 				} )
 				.catch( () => {
 					// do nothing
@@ -69,6 +93,7 @@ export const usePreviewingTheme = () => {
 		id: previewingThemeId,
 		name: previewingThemeName,
 		type: previewingThemeType,
+		requiredFeature: previewingThemeFeature,
 		typeDisplay: previewingThemeTypeDisplay,
 	};
 };

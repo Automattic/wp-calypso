@@ -107,7 +107,8 @@ export const requestSiteAddressChange =
 		oldDomain,
 		siteType,
 		discard = true,
-		requireVerifiedEmail = true
+		requireVerifiedEmail = true,
+		skipRedirection = false
 	) =>
 	async ( dispatch, getState ) => {
 		dispatch( {
@@ -174,7 +175,10 @@ export const requestSiteAddressChange =
 				const siteSlug = getSiteSlug( getState(), siteId );
 				// new name of the `*.wordpress.com` domain that we just changed
 				const newDomain = newSlug + '.' + domain;
-				page( domainManagementEdit( siteSlug, newDomain ) );
+
+				if ( ! skipRedirection ) {
+					page( domainManagementEdit( siteSlug, newDomain ) );
+				}
 			}
 		} catch ( error ) {
 			dispatch(

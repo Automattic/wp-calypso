@@ -50,7 +50,7 @@ const importFlow: Flow = {
 			{ slug: 'importerSquarespace', component: ImporterSquarespace },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
 			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'pattern-assembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'migrationHandler', component: MigrationHandler },
@@ -171,13 +171,13 @@ const importFlow: Flow = {
 				case 'designSetup': {
 					const { selectedDesign: _selectedDesign } = providedDependencies;
 					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( 'processing' );
 				}
 
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'processing' );
 
 				case 'siteCreationStep':
@@ -286,21 +286,27 @@ const importFlow: Flow = {
 						return navigate( path );
 					}
 
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+					return navigate( `importList?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWordpress':
+					if ( urlQueryParams.get( 'option' ) === 'content' ) {
+						return navigate( `importList?siteSlug=${ siteSlugParam }` );
+					} else if ( isMigrateFromWp && fromParam ) {
+						return navigate( `sitePicker?from=${ fromParam }` );
+					}
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-				case 'importerWix':
-				case 'importerBlogger':
-				case 'importerMedium':
-				case 'importerSquarespace':
-				case 'importerWordpress':
 				case 'designSetup':
-					if ( isMigrateFromWp && fromParam ) {
-						return navigate( `sitePicker?from=${ fromParam }` );
-					}
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'verifyEmail':

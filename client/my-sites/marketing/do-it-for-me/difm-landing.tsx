@@ -78,6 +78,7 @@ const ImageSection = styled.div`
 // @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component
 const Header = styled( FormattedHeader )`
 	.formatted-header__title {
+		font-size: 2.25rem;
 		line-height: 3rem;
 	}
 `;
@@ -277,19 +278,20 @@ export default function DIFMLanding( {
 	onPrimarySubmit,
 	onSecondarySubmit,
 	siteId,
-	planSlug,
+	isStoreFlow,
 }: {
 	onPrimarySubmit: () => void;
 	onSecondarySubmit?: () => void;
 	showNewOrExistingSiteChoice: boolean;
 	siteId?: number | null;
-	planSlug: typeof PLAN_PREMIUM | typeof PLAN_BUSINESS;
+	isStoreFlow: boolean;
 } ) {
 	const translate = useTranslate();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
 
+	const planSlug = isStoreFlow ? PLAN_BUSINESS : PLAN_PREMIUM;
 	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
 	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
@@ -402,7 +404,12 @@ export default function DIFMLanding( {
 			<Wrapper>
 				<ContentSection>
 					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
-					<Header align="left" headerText={ headerText } subHeaderText={ subHeaderText } />
+					<Header
+						brandFont
+						align="left"
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+					/>
 					<VerticalStepProgress>
 						<Step
 							index={ translate( '1' ) }
@@ -460,7 +467,11 @@ export default function DIFMLanding( {
 					) }
 				</ContentSection>
 				<ImageSection>
-					<AsyncLoad require="./site-build-showcase" placeholder={ <LoadingEllipsis /> } />
+					<AsyncLoad
+						require="./site-build-showcase"
+						placeholder={ <LoadingEllipsis /> }
+						isStoreFlow={ isStoreFlow }
+					/>
 				</ImageSection>
 			</Wrapper>
 

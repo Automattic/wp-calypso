@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { includes, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import {
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import Geochart from '../geochart';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
@@ -60,7 +61,7 @@ class StatsModule extends Component {
 			this.setState( { loaded: true } );
 		}
 
-		if ( this.props.query !== prevProps.query && this.state.loaded ) {
+		if ( ! isEqual( this.props.query, prevProps.query ) ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
@@ -193,8 +194,8 @@ class StatsModule extends Component {
 						gateStats && (
 							<StatsCardUpsell
 								className="stats-module__upsell"
-								siteId={ siteId }
 								statType={ statType }
+								siteId={ siteId }
 							/>
 						)
 					}
@@ -202,7 +203,7 @@ class StatsModule extends Component {
 				{ isAllTime && (
 					<div className={ footerClass }>
 						{ gateDownloads ? (
-							<DownloadCsvUpsell statType={ statType } siteId={ siteId } borderless />
+							<DownloadCsvUpsell siteId={ siteId } borderless />
 						) : (
 							<DownloadCsv
 								statType={ statType }
@@ -224,7 +225,7 @@ export default connect( ( state, ownProps ) => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const { statType, query } = ownProps;
 	const gateStats = shouldGateStats( state, siteId, statType );
-	const gateDownloads = shouldGateStats( state, siteId, 'download-csv' );
+	const gateDownloads = shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV );
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),

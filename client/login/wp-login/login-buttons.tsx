@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import MailIcon from 'calypso/components/social-icons/mail';
@@ -8,6 +9,7 @@ import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { isFormDisabled } from 'calypso/state/login/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
@@ -28,7 +30,7 @@ const LoginButtons = ( {
 }: LoginButtonsProps ) => {
 	const translate = useTranslate();
 
-	const { query, wccomFrom, isJetpackWooCommerceFlow, currentRoute } = useSelector( ( state ) => {
+	const { query, isJetpackWooCommerceFlow, currentRoute, isDisabled } = useSelector( ( state ) => {
 		const query = getCurrentQueryArguments( state );
 
 		return {
@@ -36,14 +38,13 @@ const LoginButtons = ( {
 			wccomFrom: query?.[ 'wccom-from' ],
 			isJetpackWooCommerceFlow: 'woocommerce-onboarding' === query?.from,
 			currentRoute: getCurrentRoute( state ),
+			isDisabled: isFormDisabled( state ),
 		};
 	} );
 	const dispatch = useDispatch();
 
 	const getMagicLoginPageLink = () => {
-		if (
-			! canDoMagicLogin( twoFactorAuthType, oauth2Client, wccomFrom, isJetpackWooCommerceFlow )
-		) {
+		if ( ! canDoMagicLogin( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) ) {
 			return null;
 		}
 
@@ -75,13 +76,13 @@ const LoginButtons = ( {
 
 		return (
 			<Button
-				className="social-buttons__button button"
+				className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 				href={ magicLoginPageLinkWithEmail }
 				onClick={ handleMagicLoginClick }
 				data-e2e-link="magic-login-link"
 				key="magic-login-link"
 			>
-				<MailIcon width="20" height="20" />
+				<MailIcon width="20" height="20" isDisabled={ isDisabled } />
 				<span className="social-buttons__service-name">
 					{ translate( 'Email me a login link' ) }
 				</span>
@@ -111,13 +112,13 @@ const LoginButtons = ( {
 
 		return (
 			<Button
-				className="social-buttons__button button"
+				className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 				href={ loginUrl }
 				onClick={ handleMagicLoginClick }
 				data-e2e-link="magic-login-link"
 				key="lost-password-link"
 			>
-				<JetpackLogo size={ 20 } />
+				<JetpackLogo monochrome={ isDisabled } size={ 20 } />
 				<span className="social-buttons__service-name">{ translate( 'Login via app' ) }</span>
 			</Button>
 		);

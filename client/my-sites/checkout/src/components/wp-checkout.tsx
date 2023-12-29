@@ -61,7 +61,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
+import { useHideCheckoutUpsellNudge } from '../hooks/use-hide-checkout-upsell-nudge';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -331,9 +331,9 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
-	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
-	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
+	const showToSFoldableCard = useToSFoldableCard();
 	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
+	const shouldHideCheckoutUpsellNudge = useHideCheckoutUpsellNudge() === 'treatment';
 
 	const hasMarketplaceProduct = useSelector( ( state ) => {
 		return responseCart?.products
@@ -477,7 +477,7 @@ export default function WPCheckout( {
 								/>
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
 									<>
-										<CheckoutSidebarPlanUpsell />
+										{ ! shouldHideCheckoutUpsellNudge && <CheckoutSidebarPlanUpsell /> }
 										<JetpackAkismetCheckoutSidebarPlanUpsell />
 									</>
 								) }
@@ -625,31 +625,6 @@ export default function WPCheckout( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
-						activeStepFooter={
-							! shouldCollapseLastStep && (
-								<>
-									<BeforeSubmitCheckoutHeader />
-									{ hasMarketplaceProduct && (
-										<AcceptTermsOfServiceCheckbox
-											isAccepted={ is3PDAccountConsentAccepted }
-											onChange={ setIs3PDAccountConsentAccepted }
-											isSubmitted={ isSubmitted }
-											message={ translate(
-												'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
-											) }
-										/>
-									) }
-									{ has100YearPlan && (
-										<AcceptTermsOfServiceCheckbox
-											isAccepted={ is100YearPlanTermsAccepted }
-											onChange={ setIs100YearPlanTermsAccepted }
-											isSubmitted={ isSubmitted }
-											message={ translate( 'I have read and agree to all of the above.' ) }
-										/>
-									) }
-								</>
-							)
-						}
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
@@ -848,11 +823,7 @@ function CheckoutTermsAndCheckboxes( {
 	} );
 
 	const translate = useTranslate();
-	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 
-	if ( ! shouldCollapseLastStep ) {
-		return null;
-	}
 	return (
 		<CheckoutTermsAndCheckboxesWrapper>
 			<BeforeSubmitCheckoutHeader />

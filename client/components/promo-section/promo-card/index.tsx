@@ -23,6 +23,11 @@ export enum TitleLocation {
 	FIGURE,
 }
 
+export enum PromoCardVariation {
+	Compact = 'compact',
+	Default = 'default',
+}
+
 export interface Props {
 	icon?: string;
 	image?: Image | ReactElement;
@@ -33,6 +38,7 @@ export interface Props {
 	badge?: string | ReactElement;
 	className?: string;
 	children?: React.ReactNode;
+	variation?: PromoCardVariation;
 }
 
 const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnProperty( 'path' );
@@ -47,11 +53,15 @@ const PromoCard: FunctionComponent< Props > = ( {
 	children,
 	badge,
 	className,
+	variation = PromoCardVariation.Default,
 } ) => {
+	const isCompact = variation === PromoCardVariation.Compact;
+
 	const classes = classNames(
 		{
 			'promo-card': true,
 			'is-primary': isPrimary,
+			compact: isCompact,
 		},
 		className
 	);
@@ -72,7 +82,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 
 	return (
 		<ActionPanel className={ classes }>
-			{ image && (
+			{ image && ! isCompact && (
 				<ActionPanelFigure inlineBodyText={ false } align={ imageActionPanelAlignment }>
 					{ isImage( image ) ? (
 						<img src={ image.path } alt={ image.alt || '' } className={ image.className } />
@@ -82,7 +92,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
-			{ icon && (
+			{ icon && ! isCompact && (
 				<ActionPanelFigure inlineBodyText={ false } align="left">
 					<Gridicon icon={ icon } size={ 32 } />
 					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
@@ -91,6 +101,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 			<ActionPanelBody>
 				{ title && (
 					<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
+						{ icon && isCompact && <Gridicon icon={ icon } size={ 32 } /> }
 						{ title }
 						{ badgeComponent }
 					</ActionPanelTitle>

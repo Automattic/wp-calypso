@@ -14,12 +14,10 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { useShouldCollapseLastStep } from '../hooks/use-should-collapse-last-step';
 import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div< {
-	shouldCollapseLastStep: boolean;
 	showToSFoldableCard: boolean;
 } >`
 	& > * {
@@ -40,7 +38,7 @@ const CheckoutTermsWrapper = styled.div< {
 		padding-left: 0;
 		margin-right: 0;
 		margin-left: 0;
-		margin-top: ${ ( { shouldCollapseLastStep } ) => ( shouldCollapseLastStep ? '0' : '32px' ) };
+		margin-top: 0;
 	}
 
 	a {
@@ -90,7 +88,6 @@ export default function BeforeSubmitCheckoutHeader() {
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const shouldCollapseLastStep = useShouldCollapseLastStep() === 'collapse';
 	const translate = useTranslate();
 	const subtotalWithoutCoupon = getSubtotalWithoutCoupon( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
@@ -103,22 +100,16 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
-	const showToSFoldableCard = useToSFoldableCard() === 'treatment';
+	const showToSFoldableCard = useToSFoldableCard();
 
 	return (
 		<>
 			{ ! showToSFoldableCard ? (
-				<CheckoutTermsWrapper
-					shouldCollapseLastStep={ shouldCollapseLastStep }
-					showToSFoldableCard={ showToSFoldableCard }
-				>
+				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
 					<CheckoutTerms cart={ responseCart } />
 				</CheckoutTermsWrapper>
 			) : (
-				<CheckoutTermsWrapper
-					shouldCollapseLastStep={ shouldCollapseLastStep }
-					showToSFoldableCard={ showToSFoldableCard }
-				>
+				<CheckoutTermsWrapper showToSFoldableCard={ showToSFoldableCard }>
 					<CheckoutTerms cart={ responseCart } />
 				</CheckoutTermsWrapper>
 			) }

@@ -3,6 +3,7 @@ import { getQueryArg } from '@wordpress/url';
 
 export const WOOCOMMERCE_THEME = 'woocommerce';
 export const PREMIUM_THEME = 'premium';
+export const PERSONAL_THEME = 'personal';
 
 /**
  * Get unlock API from Gutenberg.
