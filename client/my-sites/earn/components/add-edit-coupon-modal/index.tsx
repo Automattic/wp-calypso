@@ -5,7 +5,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, close } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { ChangeEvent, MouseEvent, MouseEventHandler, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -13,7 +12,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import {
 	requestAddCoupon,
 	requestUpdateCoupon,
@@ -414,7 +413,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 	};
 
 	/** Dialog operations */
-	const onClose = ( reason: string | undefined ) => {
+	const onClose = ( reason: string | undefined ): void => {
 		const couponDetails: Coupon = {
 			coupon_code: editedCouponCode,
 			discount_type: editedDiscountType,
@@ -603,7 +602,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 										onClick={ ( event: MouseEvent< HTMLButtonElement > ) =>
 											onSelectProduct( event as unknown as ChangeEvent< HTMLInputElement > )
 										}
-										onClose={ onClose }
 										isSelected={ editedPlanIdsAllowList.length === 0 }
 										icon={ editedPlanIdsAllowList.length === 0 ? check : null }
 										key={ COUPON_PRODUCTS_ANY }
@@ -626,7 +624,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 													onClick={
 														onSelectProduct as unknown as MouseEventHandler< HTMLButtonElement >
 													}
-													onClose={ onClose }
 													isSelected={ !! isSelected }
 													icon={ itemIcon }
 													key={ currentProduct.ID }
