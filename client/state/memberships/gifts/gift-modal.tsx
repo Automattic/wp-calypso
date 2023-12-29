@@ -30,12 +30,13 @@ const GiftSubscriptionModal = ( { userId, onCancel, onConfirm }: GiftSubscriptio
 			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setPlanId( list[ 0 ] ?? 0 ) }
 				initialSelectedList={ [] }
+				allowMultiple={ false }
 			/>
 			<div className="confirm-modal__buttons">
 				<Button className="confirm-modal__cancel" onClick={ onCancel }>
 					{ translate( 'Cancel' ) }
 				</Button>
-				<Button onClick={ giftsubscription } primary disabled={ planId !== 0 }>
+				<Button onClick={ giftsubscription } primary disabled={ planId === 0 }>
 					{ translate( 'Confirm' ) }
 				</Button>
 			</div>

@@ -16,11 +16,13 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 type ProductsSelectorProps = {
 	onSelectedPlanIdsChange: ( ids_list: number[] ) => void;
 	initialSelectedList: number[];
+	allowMultiple: boolean;
 };
 
 const ProductsSelector = ( {
 	onSelectedPlanIdsChange,
 	initialSelectedList,
+	allowMultiple,
 }: ProductsSelectorProps ) => {
 	const [ selectedPlanIds, setSelectedPlanIds ] = useState( initialSelectedList ?? [] );
 
@@ -35,60 +37,89 @@ const ProductsSelector = ( {
 			( event.target as HTMLInputElement ).value ??
 			( event.target.parentElement as HTMLInputElement )?.value ??
 			'';
-		if ( COUPON_PRODUCTS_ANY === productId ) {
-			setSelectedPlanIds( [] );
-			return;
+		let newList = [];
+		if ( allowMultiple ) {
+			if ( COUPON_PRODUCTS_ANY === productId ) {
+				setSelectedPlanIds( [] );
+				return;
+			}
+			if ( selectedPlanIds.includes( parseInt( productId ) ) ) {
+				setSelectedPlanIds(
+					selectedPlanIds.filter(
+						( selectedId: number ): boolean => selectedId !== parseInt( productId )
+					)
+				);
+				return;
+			}
+			newList = [ ...selectedPlanIds, parseInt( productId ) ];
+		} else {
+			newList = [ parseInt( productId ) ];
 		}
-		if ( selectedPlanIds.includes( parseInt( productId ) ) ) {
-			setSelectedPlanIds(
-				selectedPlanIds.filter(
-					( selectedId: number ): boolean => selectedId !== parseInt( productId )
-				)
-			);
-			return;
-		}
-		const newList = [ ...selectedPlanIds, parseInt( productId ) ];
 		setSelectedPlanIds( newList );
 		onSelectedPlanIdsChange( newList );
 	};
 
 	/** Product functions */
 	const getProductDescription = ( product: Product ): string => {
-		const { currency, renewal_schedule, price } = product;
+		const { title, currency, renewal_schedule, price } = product;
 		const amount = formatCurrency( price ?? 0, currency ?? 'USD' );
 		switch ( renewal_schedule ) {
 			case '1 month':
 				return sprintf(
-					// translators: %s: amount
-					__( '%s / month', 'calypso' ),
+					// translators: %1$s: product title, %2$s: amount
+					__( '%1$s : %2$s / month', 'calypso' ),
+					title,
 					amount
 				);
 			case '1 year':
 				return sprintf(
-					// translators: %s: amount
-					__( '%s / year', 'calypso' ),
+					// translators: %1$s: product title, %2$s: amount
+					__( '%1$s : %2$s / year', 'calypso' ),
+					title,
 					amount
 				);
 			case 'one-time':
-				return amount;
+				return sprintf(
+					// translators: %1$s: product title, %2$s: amount
+					__( '%1$s : %2$s', 'calypso' ),
+					title,
+					amount
+				);
+			default:
+				return sprintf(
+					// translators: %1$s: product title, %2$s: amount, %3$s: plan interval
+					__( '%1$s : %2$s / %3$s', 'calypso' ),
+					title,
+					amount,
+					renewal_schedule
+				);
 		}
-		return sprintf(
-			// translators: %s: amount, plan interval
-			__( '%1$s / %2$s', 'calypso' ),
-			amount,
-			renewal_schedule
-		);
 	};
 
 	const selectedProductSummary = ( ( quantity: number ) => {
-		if ( quantity > 1 ) {
-			// translators: the %s is a number representing the number of products which are currently selected
-			return sprintf( __( '%s products selected.' ), quantity );
+		if ( allowMultiple ) {
+			if ( quantity > 1 ) {
+				// translators: the %s is a number representing the number of products which are currently selected
+				return sprintf( __( '%s products selected.' ), quantity );
+			}
+			if ( quantity === 1 ) {
+				return __( '1 product selected' );
+			}
+			return translate( 'Any product' );
 		}
+
+		// ! allowMultiple
 		if ( quantity === 1 ) {
-			return __( '1 product selected' );
+			const productId = selectedPlanIds[ 0 ];
+			const seletedProduct = products.filter(
+				( product: Product ) => product.ID === productId
+			)[ 0 ];
+
+			if ( seletedProduct ) {
+				return getProductDescription( seletedProduct );
+			}
 		}
-		return translate( 'Any product' );
+		return translate( 'No product selected' );
 	} )( selectedPlanIds.length );
 
 	return (
@@ -102,39 +133,47 @@ const ProductsSelector = ( {
 			>
 				{ ( { onClose } ) => (
 					<>
-						<MenuGroup>
-							<MenuItem
-								value={ COUPON_PRODUCTS_ANY }
-								onClick={ ( event: MouseEvent< HTMLButtonElement > ) =>
-									onSelectProduct( event as unknown as ChangeEvent< HTMLInputElement > )
-								}
-								isSelected={ selectedPlanIds.length === 0 }
-								icon={ selectedPlanIds.length === 0 ? check : null }
-								key={ COUPON_PRODUCTS_ANY }
-								role="menuitemcheckbox"
-							>
-								{ translate( 'Any product' ) }
-							</MenuItem>
-						</MenuGroup>
+						{ allowMultiple && (
+							<MenuGroup>
+								<MenuItem
+									value={ COUPON_PRODUCTS_ANY }
+									onClick={ ( event: MouseEvent< HTMLButtonElement > ) =>
+										onSelectProduct( event as unknown as ChangeEvent< HTMLInputElement > )
+									}
+									isSelected={ selectedPlanIds.length === 0 }
+									icon={ selectedPlanIds.length === 0 ? check : null }
+									key={ COUPON_PRODUCTS_ANY }
+									role="menuitemcheckbox"
+								>
+									{ translate( 'Any product' ) }
+								</MenuItem>
+							</MenuGroup>
+						) }
 						<MenuGroup>
 							{ products &&
 								products.map( function ( currentProduct: Product ) {
 									const isSelected =
-										selectedPlanIds.length === 0 ||
-										( currentProduct.ID && selectedPlanIds.includes( currentProduct.ID ) );
+										allowMultiple &&
+										( selectedPlanIds.length === 0 ||
+											( currentProduct.ID && selectedPlanIds.includes( currentProduct.ID ) ) );
 									const itemIcon = isSelected ? check : null;
 									return (
 										<MenuItem
 											value={ currentProduct.ID }
-											onClick={
-												onSelectProduct as unknown as MouseEventHandler< HTMLButtonElement >
-											}
+											onClick={ ( e ) => {
+												( onSelectProduct as unknown as MouseEventHandler< HTMLButtonElement > )(
+													e
+												);
+												if ( ! allowMultiple ) {
+													onClose();
+												}
+											} }
 											isSelected={ !! isSelected }
 											icon={ itemIcon }
 											key={ currentProduct.ID }
 											role="menuitemcheckbox"
 										>
-											{ currentProduct.title } :{ ' ' + getProductDescription( currentProduct ) }
+											{ getProductDescription( currentProduct ) }
 										</MenuItem>
 									);
 								} ) }
