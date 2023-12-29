@@ -18,4 +18,28 @@ describe( 'useCommandFilter', () => {
 		const value = beforeSeparator + COMMAND_SEPARATOR + afterSeparator;
 		expect( commandFilter( value, search ) ).toBe( 1 );
 	} );
+
+	test( 'should return 1 for the exact match with multiple words before separator', () => {
+		const search = 'manage posts';
+		const beforeSeparator = 'Manage posts';
+		const afterSeparator = 'your blog posts';
+		const value = beforeSeparator + COMMAND_SEPARATOR + afterSeparator;
+		expect( commandFilter( value, search ) ).toBe( 1 );
+	} );
+
+	test( 'should return 0.5 for the exact match after separator', () => {
+		const search = 'cache';
+		const beforeSeparator = 'Open hosting configuration';
+		const afterSeparator = 'cache hosting manage';
+		const value = beforeSeparator + COMMAND_SEPARATOR + afterSeparator;
+		expect( commandFilter( value, search ) ).toBe( 0.5 );
+	} );
+
+	test( 'should return 0.5 for the exact match after separator despite upper or lower case', () => {
+		const search = 'CACHE';
+		const beforeSeparator = 'Open hosting configuration';
+		const afterSeparator = 'cache hosting manage';
+		const value = beforeSeparator + COMMAND_SEPARATOR + afterSeparator;
+		expect( commandFilter( value, search ) ).toBe( 0.5 );
+	} );
 } );
