@@ -166,7 +166,6 @@ export function* createSenseiSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'sensei',
 			enable_fse: true,
-			theme: 'pub/course',
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {

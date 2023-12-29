@@ -115,10 +115,9 @@ function StatsCommercialUpgradeSlider( {
 		const perUnitFee = Number( lastTier?.per_unit_fee ) / 12;
 
 		perUnitFeeMessaging = translate(
-			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
+			"Beyond 1 million, we'll charge an extra %(extension_value)s per million views per month.", // TODO: we'll need a 'learn more' here.
 			{
 				args: {
-					views_extension_limit: EXTENSION_THRESHOLD_IN_MILLION,
 					extension_value: formatCurrency( perUnitFee, currencyCode, {
 						isSmallestUnit: true,
 						stripZeros: true,

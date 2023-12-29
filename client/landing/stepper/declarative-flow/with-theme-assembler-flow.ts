@@ -95,7 +95,7 @@ const withThemeAssemblerFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -107,7 +107,7 @@ const withThemeAssemblerFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return window.location.assign( `/themes/${ siteSlug }` );
 				}
 			}

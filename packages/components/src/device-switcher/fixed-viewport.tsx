@@ -25,7 +25,7 @@ export const useViewportScale = ( device: string, viewportWidth: number ) => {
 		width = deviceWidth;
 	}
 
-	return width / deviceWidth;
+	return Math.min( width / deviceWidth, 1 );
 };
 
 interface Props {
