@@ -66,6 +66,22 @@ $border-color: #eee;
 				}
 			}
 
+			.marketplace-reviews-list__review-rating {
+				margin-top: 16px;
+				margin-bottom: 16px;
+
+				h2 {
+					margin-top: 16px;
+
+					font-family: "SF Pro Text", $sans;
+					font-size: $font-title-small;
+					font-weight: 500;
+					line-height: 26px;
+					overflow-wrap: anywhere;
+					color: var(--studio-gray-100);
+				}
+			}
+
 			.marketplace-reviews-list__content {
 				color: var(--studio-gray-100);
 				font-size: $font-body-small;
@@ -108,6 +124,7 @@ $border-color: #eee;
 
 .marketplace-reviews-list__review-actions {
 	display: flex;
+	align-items: baseline;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	margin-top: 15px;
@@ -115,6 +132,11 @@ $border-color: #eee;
 
 	.marketplace-reviews-list__review-actions-editable {
 		display: flex;
+		align-items: center;
+
+		.marketplace-reviews-list__review-submit {
+			margin-left: 16px;
+		}
 
 		.marketplace-reviews-list__review-actions-editable-button {
 			color: var(--studio-blue-50);

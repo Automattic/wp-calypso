@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
+import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -45,7 +46,8 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		deleteReviewMutation.mutate( { reviewId: reviewId } );
 	};
 
-	const [ isEditing, setIsEditing ] = useState( false );
+	const [ isEditing, setIsEditing ] = useState< boolean >( false );
+	const [ editorContent, setEditorContent ] = useState< string >( '' );
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
 		return null;
@@ -107,7 +109,18 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 							</div>
 						</div>
 						{ isEditing && review.author === currentUserId ? (
-							<div className="marketplace-reviews-list__editor">Editing...</div>
+							<>
+								<div className="marketplace-reviews-list__review-rating">
+									<h2>{ translate( 'Let us know how your experience has changed' ) }</h2>
+								</div>
+								<TextareaControl
+									rows={ 4 }
+									cols={ 40 }
+									name="content"
+									value={ editorContent }
+									onChange={ setEditorContent }
+								/>
+							</>
 						) : (
 							<div
 								// sanitized with sanitizeSectionContent
@@ -119,7 +132,29 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 							></div>
 						) }
 						<div className="marketplace-reviews-list__review-actions">
-							{ review.author === currentUserId && (
+							{ isEditing && review.author === currentUserId && (
+								<>
+									<CheckboxControl
+										className="marketplace-reviews-list__checkbox"
+										label={ translate( 'Notify me when my review is approved and published.' ) }
+										checked={ false }
+										onChange={ () => alert( 'Not implemented yet' ) }
+									/>
+									<div className="marketplace-reviews-list__review-actions-editable">
+										<Button className="is-link" onClick={ () => setIsEditing( ! isEditing ) }>
+											{ translate( 'Cancel' ) }
+										</Button>
+										<Button
+											className="marketplace-reviews-list__review-submit"
+											primary
+											onClick={ () => alert( 'Not implemented yet' ) }
+										>
+											{ translate( 'Leave my review' ) }
+										</Button>
+									</div>
+								</>
+							) }
+							{ ! isEditing && review.author === currentUserId && (
 								<div className="marketplace-reviews-list__review-actions-editable">
 									<button
 										className="marketplace-reviews-list__review-actions-editable-button"
