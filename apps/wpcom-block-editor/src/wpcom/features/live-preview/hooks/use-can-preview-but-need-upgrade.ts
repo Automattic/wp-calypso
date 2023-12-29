@@ -8,7 +8,6 @@ import {
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { getCalypsoUrl } from '@automattic/calypso-url';
-import { usePrevious } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState, useCallback } from 'react';
@@ -60,31 +59,43 @@ const needUpgrade = ( {
 	return true;
 };
 
+type CheckoutStatus = 'success' | 'failure' | '';
+
 /**
  * Display the notice after the plan is upgraded
  */
-const useDisplayUpgradedNotice = ( canPreviewButNeedUpgrade: boolean ) => {
-	const prevCanPreviewButNeedUpgrade = usePrevious( canPreviewButNeedUpgrade );
+const useDisplayUpgradedNotice = ( checkoutStatus: CheckoutStatus ) => {
 	const [ shouldReflectUpgradedPlan, setShouldReflectUpgradedPlan ] = useState( false );
-	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
+	const { createNotice, removeNotice } = useDispatch( 'core/notices' );
 
-	const noticeText = __(
-		'You have successfully upgraded your plan! You can now activate the theme.',
-		'wpcom-live-preview'
-	);
+	const getNoticeStatus = () => {
+		return checkoutStatus === 'success' ? 'info' : 'error';
+	};
+
+	const getNoticeText = () => {
+		return checkoutStatus === 'success'
+			? __(
+					'You have successfully upgraded your plan! You can now activate the theme.',
+					'wpcom-live-preview'
+			  )
+			: __(
+					"Sorry, we couldn't process your payment. Please try again later.",
+					'wpcom-live-preview'
+			  );
+	};
 
 	useEffect( () => {
-		if ( prevCanPreviewButNeedUpgrade && ! canPreviewButNeedUpgrade ) {
+		if ( checkoutStatus ) {
 			setShouldReflectUpgradedPlan( true );
 		}
-	}, [ canPreviewButNeedUpgrade, prevCanPreviewButNeedUpgrade ] );
+	}, [ checkoutStatus ] );
 
 	useEffect( () => {
-		if ( ! shouldReflectUpgradedPlan ) {
+		if ( ! shouldReflectUpgradedPlan || ! checkoutStatus ) {
 			return;
 		}
 
-		createInfoNotice( noticeText, {
+		createNotice( getNoticeStatus(), getNoticeText(), {
 			__unstableHTML: true,
 			id: UPGRADE_DONE_NOTICE_ID,
 			isDismissible: true,
@@ -96,18 +107,18 @@ const useDisplayUpgradedNotice = ( canPreviewButNeedUpgrade: boolean ) => {
 		return () => {
 			removeNotice( UPGRADE_DONE_NOTICE_ID );
 		};
-	}, [ createInfoNotice, noticeText, removeNotice, shouldReflectUpgradedPlan ] );
+	}, [ createNotice, checkoutStatus, removeNotice, shouldReflectUpgradedPlan ] );
 
 	useSidebarNotice( {
 		noticeProps: {
-			children: noticeText,
+			children: getNoticeText(),
 			isDismissible: true,
 			onDismiss: () => {
 				setShouldReflectUpgradedPlan( false );
 			},
-			status: 'info',
+			status: getNoticeStatus(),
 		},
-		shouldShowNotice: shouldReflectUpgradedPlan,
+		shouldShowNotice: shouldReflectUpgradedPlan && !! checkoutStatus,
 	} );
 };
 
@@ -119,6 +130,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 	const [ canPreviewButNeedUpgrade, setCanPreviewButNeedUpgrade ] = useState( false );
 	const [ siteSlug, setSiteSlug ] = useState< string | undefined >();
 	const [ checkoutTab, setCheckoutTab ] = useState< Window | null >();
+	const [ checkoutStatus, setCheckoutStatus ] = useState< CheckoutStatus >( '' );
 
 	const handleCanPreviewButNeedUpgrade = useCallback(
 		( previewingTheme: ReturnType< typeof usePreviewingTheme > ) => {
@@ -157,7 +169,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 						} )
 					) {
 						setCanPreviewButNeedUpgrade( false );
-						return;
+						return true;
 					}
 					setCanPreviewButNeedUpgrade( true );
 				} )
@@ -221,7 +233,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 		}
 	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug ] );
 
-	useDisplayUpgradedNotice( canPreviewButNeedUpgrade );
+	useDisplayUpgradedNotice( checkoutStatus );
 
 	useEffect( () => {
 		handleCanPreviewButNeedUpgrade( previewingTheme );
@@ -239,14 +251,22 @@ export const useCanPreviewButNeedUpgrade = ( {
 			}
 
 			switch ( data.action ) {
-				case 'checkoutCancelled':
-				case 'checkoutFailed': {
+				case 'checkoutCancelled': {
 					closeCheckoutTabAndFocus();
 					break;
 				}
+
+				case 'checkoutFailed': {
+					closeCheckoutTabAndFocus();
+					setCheckoutStatus( 'failure' );
+					break;
+				}
+
 				case 'checkoutCompleted': {
 					closeCheckoutTabAndFocus();
-					handleCanPreviewButNeedUpgrade( previewingTheme );
+					handleCanPreviewButNeedUpgrade( previewingTheme ).then(
+						( result?: boolean ) => !! result && setCheckoutStatus( 'success' )
+					);
 					break;
 				}
 			}
