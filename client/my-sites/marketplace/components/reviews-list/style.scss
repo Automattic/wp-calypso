@@ -69,10 +69,11 @@ $border-color: #eee;
 			.marketplace-reviews-list__review-rating {
 				margin-top: 16px;
 				margin-bottom: 16px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
 
 				h2 {
-					margin-top: 16px;
-
 					font-family: "SF Pro Text", $sans;
 					font-size: $font-title-small;
 					font-weight: 500;

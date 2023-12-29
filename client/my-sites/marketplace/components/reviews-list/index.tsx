@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Rating from 'calypso/components/rating';
+import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	useMarketplaceReviewsQuery,
 	MarketplaceReviewResponse,
@@ -112,6 +113,11 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 							<>
 								<div className="marketplace-reviews-list__review-rating">
 									<h2>{ translate( 'Let us know how your experience has changed' ) }</h2>
+									<ReviewsRatingsStars
+										size="medium-large"
+										onSelectRating={ () => {} }
+										rating={ 4 }
+									/>
 								</div>
 								<TextareaControl
 									rows={ 4 }
