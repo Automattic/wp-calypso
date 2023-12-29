@@ -101,7 +101,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const [ searchParams ] = useSearchParams();
 	const [ callAIAssembler, , aiAssemblerPrompt, aiAssemblerLoading ] = useAIAssembler();
 
-	// The categories api triggers the ETK plugin before the PTK api request
+	// Fetching pattern categories from the patterns registry
 	const categories = usePatternCategories( site?.ID );
 	// Fetching curated patterns and categories from PTK api
 	const dotcomPatterns = useDotcomPatterns( locale );

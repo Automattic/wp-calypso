@@ -33,4 +33,4 @@ export const isPriorityPattern = ( { tags: { assembler_priority } }: Pattern ) =
 	isEnabled( 'pattern-assembler/v2' ) ? true : Boolean( assembler_priority );
 
 export const isPagePattern = ( { categories, tags: { assembler_page } }: Pattern ) =>
-	Boolean( isEnabled( 'pattern-assembler/v2' ) ? categories.page : assembler_page );
+	Boolean( isEnabled( 'pattern-assembler/v2' ) ? categories[ 'assembler-page' ] : assembler_page );

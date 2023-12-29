@@ -1,7 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { PATTERN_CATEGORIES, getPatternSourceSiteID } from '../constants';
+import {
+	PATTERN_CATEGORIES,
+	PATTERN_CATEGORIES_FOR_QUERY,
+	getPatternSourceSiteID,
+} from '../constants';
 import type { Pattern } from '../types';
 
 const useDotcomPatterns = (
@@ -20,6 +24,7 @@ const useDotcomPatterns = (
 						? {
 								site: getPatternSourceSiteID(),
 								post_type: 'wp_block',
+								categories: PATTERN_CATEGORIES_FOR_QUERY.join( ',' ),
 						  }
 						: {
 								tags:

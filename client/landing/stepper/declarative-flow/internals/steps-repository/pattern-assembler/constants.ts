@@ -93,3 +93,6 @@ export const ORDERED_PATTERN_PAGES_CATEGORIES = [
 	'posts',
 	'contact',
 ];
+
+// Category slugs used to fetch wp_block patterns
+export const PATTERN_CATEGORIES_FOR_QUERY = [ 'assembler', 'assembler-page' ];
