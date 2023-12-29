@@ -31,7 +31,7 @@ export default function AddNewSiteTourStep1() {
 								<br />
 								<br />
 								{ translate(
-									'Sites with jetpack installed will automatically appear in the site management view.'
+									'Sites with Jetpack installed will automatically appear in the site management view.'
 								) }
 							</>
 						),
