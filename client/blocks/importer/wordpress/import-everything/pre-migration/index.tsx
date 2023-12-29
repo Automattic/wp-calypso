@@ -206,6 +206,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					targetSite={ targetSite }
 					migrationTrackingProps={ migrationTrackingProps }
 					startImport={ startImport }
+					allowFtp={ false }
 				/>
 			);
 
