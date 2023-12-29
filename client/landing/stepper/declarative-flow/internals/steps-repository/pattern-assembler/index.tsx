@@ -105,7 +105,6 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 	const categories = usePatternCategories( site?.ID );
 	// Fetching curated patterns and categories from PTK api
 	const dotcomPatterns = useDotcomPatterns( locale );
-
 	const { allCategoryPatternsMap, layoutCategoryPatternsMap, pageCategoryPatternsMap } =
 		useCategoryPatternsMap( dotcomPatterns );
 	const {
@@ -130,7 +129,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 
 	const { pages, pageSlugs, setPageSlugs, pagesToShow } = usePatternPages(
 		pageCategoryPatternsMap,
-		categories
+		categories,
+		dotcomPatterns
 	);
 
 	const currentScreen = useCurrentScreen( { shouldUnlockGlobalStyles } );
