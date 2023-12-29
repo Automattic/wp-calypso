@@ -191,22 +191,17 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 		case ACTION_SET_SELECTED_LOGO_INDEX: {
 			return {
 				...state,
-				history: {
-					...state.history,
-					selectedLogoIndex: action.selectedLogoIndex,
-				},
+				selectedLogoIndex: action.selectedLogoIndex,
 			};
 		}
 
 		case ACTION_ADD_LOGO_TO_HISTORY: {
-			const logos = [ ...state.history.logos, action.logo ];
+			const history = [ ...state.history, action.logo ];
 
 			return {
 				...state,
-				history: {
-					logos,
-					selectedLogoIndex: logos.length - 1,
-				},
+				history,
+				selectedLogoIndex: history.length - 1,
 			};
 		}
 	}

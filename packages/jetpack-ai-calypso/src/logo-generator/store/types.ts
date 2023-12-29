@@ -125,6 +125,7 @@ export type LogoSuggestionProps = {
 export type Logo = {
 	url: string;
 	description: string;
+	mediaId?: number | string;
 };
 
 export type LogoGeneratorStateProp = {
@@ -133,10 +134,8 @@ export type LogoGeneratorStateProp = {
 	features: {
 		aiAssistantFeature?: AiFeatureStateProps;
 	};
-	history: {
-		logos: Array< Logo >;
-		selectedLogoIndex: number;
-	};
+	history: Array< Logo >;
+	selectedLogoIndex: number;
 };
 
 export type Selectors = {

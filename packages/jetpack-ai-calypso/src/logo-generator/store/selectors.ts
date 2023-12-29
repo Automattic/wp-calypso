@@ -42,7 +42,7 @@ const selectors = {
 	 * @returns {Array<Logo>}                  The logos history array.
 	 */
 	getLogos( state: LogoGeneratorStateProp ): Array< Logo > {
-		return state.history?.logos ?? [];
+		return state.history ?? [];
 	},
 
 	/**
@@ -51,7 +51,7 @@ const selectors = {
 	 * @returns {Logo}                         The selected logo.
 	 */
 	getSelectedLogo( state: LogoGeneratorStateProp ): Logo {
-		return state.history?.logos?.[ state.history.selectedLogoIndex ] ?? null;
+		return state.history?.[ state.selectedLogoIndex ] ?? null;
 	},
 };
 
