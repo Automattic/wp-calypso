@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
@@ -133,6 +134,10 @@ const SubscribersPage = ( {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
+	const onGiftSubscription = ( { subscription_id, user_id }: Subscriber ) => {
+		alert( 'Gift a subscription' + subscription_id + ' ' + user_id );
+	};
+
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -145,6 +150,7 @@ const SubscribersPage = ( {
 			searchTermChanged={ searchTermChanged }
 			sortTermChanged={ sortTermChanged }
 		>
+			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
@@ -153,6 +159,7 @@ const SubscribersPage = ( {
 				<SubscriberListContainer
 					siteId={ siteId }
 					onClickView={ onClickView }
+					onGiftSubscription={ onGiftSubscription }
 					onClickUnsubscribe={ onClickUnsubscribe }
 				/>
 
