@@ -192,6 +192,9 @@ const blockLinks: { [ key: string ]: string } = {
 	'jetpack/mailchimp': 'https://wordpress.com/support/wordpress-editor/blocks/mailchimp-block/',
 
 	'jetpack/paywall': 'https://wordpress.com/support/paid-newsletters/#use-the-paywall-block',
+
+	'jetpack/sharing-buttons':
+		'https://wordpress.com/support/wordpress-editor/blocks/sharing-buttons-block/',
 };
 
 export const blockLinksWithVariations: {
