@@ -62,10 +62,10 @@ const needUpgrade = ( {
 type CheckoutStatus = 'success' | 'failure' | '';
 
 /**
- * Display the notice after the plan is upgraded
+ * Display the notice of the checkout status.
  */
-const useDisplayUpgradedNotice = ( checkoutStatus: CheckoutStatus ) => {
-	const [ shouldReflectUpgradedPlan, setShouldReflectUpgradedPlan ] = useState( false );
+const useDisplayCheckoutNotice = ( checkoutStatus: CheckoutStatus ) => {
+	const [ shouldShowNotice, setShouldShowNotice ] = useState( false );
 	const { createNotice, removeNotice } = useDispatch( 'core/notices' );
 
 	const getNoticeStatus = () => {
@@ -86,12 +86,12 @@ const useDisplayUpgradedNotice = ( checkoutStatus: CheckoutStatus ) => {
 
 	useEffect( () => {
 		if ( checkoutStatus ) {
-			setShouldReflectUpgradedPlan( true );
+			setShouldShowNotice( true );
 		}
 	}, [ checkoutStatus ] );
 
 	useEffect( () => {
-		if ( ! shouldReflectUpgradedPlan || ! checkoutStatus ) {
+		if ( ! shouldShowNotice || ! checkoutStatus ) {
 			return;
 		}
 
@@ -100,33 +100,38 @@ const useDisplayUpgradedNotice = ( checkoutStatus: CheckoutStatus ) => {
 			id: UPGRADE_DONE_NOTICE_ID,
 			isDismissible: true,
 			onDismiss: () => {
-				setShouldReflectUpgradedPlan( false );
+				setShouldShowNotice( false );
 			},
 		} );
 
 		return () => {
 			removeNotice( UPGRADE_DONE_NOTICE_ID );
 		};
-	}, [ createNotice, checkoutStatus, removeNotice, shouldReflectUpgradedPlan ] );
+	}, [
+		shouldShowNotice,
+		checkoutStatus,
+		createNotice,
+		removeNotice,
+		getNoticeStatus,
+		getNoticeText,
+	] );
 
 	useSidebarNotice( {
 		noticeProps: {
 			children: getNoticeText(),
 			isDismissible: true,
 			onDismiss: () => {
-				setShouldReflectUpgradedPlan( false );
+				setShouldShowNotice( false );
 			},
 			status: getNoticeStatus(),
 		},
-		shouldShowNotice: shouldReflectUpgradedPlan && !! checkoutStatus,
+		shouldShowNotice: shouldShowNotice && !! checkoutStatus,
 	} );
 };
 
-export const useCanPreviewButNeedUpgrade = ( {
-	previewingTheme,
-}: {
-	previewingTheme: ReturnType< typeof usePreviewingTheme >;
-} ) => {
+export const useCanPreviewButNeedUpgrade = (
+	previewingTheme: ReturnType< typeof usePreviewingTheme >
+) => {
 	const [ canPreviewButNeedUpgrade, setCanPreviewButNeedUpgrade ] = useState( false );
 	const [ siteSlug, setSiteSlug ] = useState< string | undefined >();
 	const [ checkoutTab, setCheckoutTab ] = useState< Window | null >();
@@ -233,7 +238,7 @@ export const useCanPreviewButNeedUpgrade = ( {
 		}
 	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug ] );
 
-	useDisplayUpgradedNotice( checkoutStatus );
+	useDisplayCheckoutNotice( checkoutStatus );
 
 	useEffect( () => {
 		handleCanPreviewButNeedUpgrade( previewingTheme );
