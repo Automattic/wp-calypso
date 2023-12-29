@@ -10,8 +10,7 @@ import { useState } from 'react';
  */
 import LogoIcon from '../assets/icons/logo';
 import MediaIcon from '../assets/icons/media';
-import useLogo from '../hooks/use-logo';
-import { saveToMediaLibrary } from '../lib/save-to-media-library';
+import useLogoGenerator from '../hooks/use-logo-generator';
 import { ImageLoader } from './image-loader';
 import './logo-presenter.scss';
 /**
@@ -24,10 +23,7 @@ const SaveInLibraryButton: React.FC = () => {
 	const [ saved, setSaved ] = useState( false );
 	const [ saving, setSaving ] = useState( false );
 
-	const {
-		selectedLogo,
-		site: { id },
-	} = useLogo();
+	const { saveLogo } = useLogoGenerator();
 
 	return (
 		<button
@@ -39,16 +35,7 @@ const SaveInLibraryButton: React.FC = () => {
 					try {
 						setSaving( true );
 
-						await saveToMediaLibrary( {
-							siteId: String( id ),
-							url: selectedLogo.url,
-							attrs: {
-								alt: selectedLogo.description,
-								caption: selectedLogo.description,
-								description: selectedLogo.description,
-								title: __( 'Site logo', 'jetpack' ),
-							},
-						} );
+						await saveLogo();
 						setSaved( true );
 					} catch ( error ) {
 						// TODO: Handle error
