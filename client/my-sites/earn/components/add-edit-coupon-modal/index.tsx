@@ -593,7 +593,11 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-products">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
-					<ToolbarDropdownMenu icon={ chevronDown } label={ selectedProductSummary }>
+					<ToolbarDropdownMenu
+						icon={ chevronDown }
+						label={ selectedProductSummary }
+						text={ selectedProductSummary }
+					>
 						{ ( { onClose } ) => (
 							<>
 								<MenuGroup>
