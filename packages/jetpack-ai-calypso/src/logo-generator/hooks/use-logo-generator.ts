@@ -16,7 +16,7 @@ import { STORE_NAME } from '../store';
 import type { Selectors } from '../store/types';
 
 const useLogoGenerator = () => {
-	const { setSelectedLogoIndex } = useDispatch( STORE_NAME );
+	const { setSelectedLogoIndex, saveSelectedLogo } = useDispatch( STORE_NAME );
 
 	const { logos, selectedLogo, siteDetails } = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
@@ -27,15 +27,23 @@ const useLogoGenerator = () => {
 		};
 	}, [] );
 	const { ID = null, name = null, description = null } = siteDetails;
-	const siteId = String( ID );
+	const siteId = ID ? String( ID ) : null;
 
-	const saveLogo = useCallback( async () => {
-		if ( ! selectedLogo || selectedLogo.mediaId ) {
-			return;
+	const saveLogo = useCallback<
+		() => Promise< { mediaId: number; mediaURL: string } >
+	>( async () => {
+		if ( ! siteId || ! selectedLogo ) {
+			throw new Error( 'Missing siteId or logo' );
 		}
 
+		// If the logo is already saved, return its mediaId and mediaURL.
+		if ( selectedLogo.mediaId ) {
+			return { mediaId: selectedLogo.mediaId, mediaURL: selectedLogo.url };
+		}
+
+		// eslint-disable-next-line no-useless-catch
 		try {
-			const { ID, URL } = await saveToMediaLibrary( {
+			const { ID: mediaId, URL: mediaURL } = await saveToMediaLibrary( {
 				siteId,
 				url: selectedLogo.url,
 				attrs: {
@@ -46,28 +54,26 @@ const useLogoGenerator = () => {
 				},
 			} );
 
-			selectedLogo.mediaId = ID;
-			selectedLogo.url = URL;
+			saveSelectedLogo( mediaId, mediaURL );
+
+			return { mediaId, mediaURL };
 		} catch ( error ) {
 			// TODO: Handle error when saving to media library fails.
+			throw error;
 		}
-	}, [ selectedLogo, siteId ] );
+	}, [ saveSelectedLogo, selectedLogo, siteId ] );
 
 	const applyLogo = useCallback( async () => {
-		if ( ! selectedLogo ) {
-			return;
-		}
-
-		await saveLogo();
-
-		if ( ! selectedLogo.mediaId ) {
-			return;
+		if ( ! siteId || ! selectedLogo ) {
+			throw new Error( 'Missing siteId or logo' );
 		}
 
 		try {
+			const { mediaId } = await saveLogo();
+
 			setSiteLogo( {
 				siteId: siteId,
-				imageId: selectedLogo.mediaId as string,
+				imageId: mediaId,
 			} );
 		} catch ( error ) {
 			// TODO: Handle error when setting site logo fails.

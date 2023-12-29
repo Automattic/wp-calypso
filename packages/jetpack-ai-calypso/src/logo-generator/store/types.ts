@@ -125,7 +125,7 @@ export type LogoSuggestionProps = {
 export type Logo = {
 	url: string;
 	description: string;
-	mediaId?: number | string;
+	mediaId?: number;
 };
 
 export type LogoGeneratorStateProp = {

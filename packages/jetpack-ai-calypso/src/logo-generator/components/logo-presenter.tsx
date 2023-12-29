@@ -20,10 +20,10 @@ import type { Logo } from '../store/types';
 import type React from 'react';
 
 const SaveInLibraryButton: React.FC = () => {
-	const [ saved, setSaved ] = useState( false );
 	const [ saving, setSaving ] = useState( false );
 
-	const { saveLogo } = useLogoGenerator();
+	const { saveLogo, selectedLogo } = useLogoGenerator();
+	const saved = !! selectedLogo.mediaId;
 
 	return (
 		<button
@@ -34,9 +34,7 @@ const SaveInLibraryButton: React.FC = () => {
 				if ( ! saving && ! saved ) {
 					try {
 						setSaving( true );
-
 						await saveLogo();
-						setSaved( true );
 					} catch ( error ) {
 						// TODO: Handle error
 					} finally {
