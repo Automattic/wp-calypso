@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { removeQueryArgs, getQueryArg } from '@wordpress/url';
+import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
 import { createElement } from 'react';
@@ -136,7 +136,7 @@ export function renderRebloggingEmptySites( context ) {
 
 	const actionURL = addQueryArgs(
 		{
-			redirect_to: getQueryArg( window.location.search, 'url' ),
+			blog_post: context.query?.url,
 		},
 		'/setup/reblogging'
 	);
@@ -144,6 +144,9 @@ export function renderRebloggingEmptySites( context ) {
 	context.primary = createElement( () =>
 		NoSitesMessage( {
 			title: i18n.translate( 'Create a site to reblog' ),
+			line: i18n.translate(
+				"Create your first webiste to reblog content from other sites you're following."
+			),
 			actionURL,
 		} )
 	);
@@ -530,7 +533,7 @@ export function siteSelection( context, next ) {
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 && shouldRenderNoSites ) {
-		if ( context.querystring.includes( 'is_post_share=true' ) ) {
+		if ( context.query?.is_post_share ) {
 			renderRebloggingEmptySites( context );
 		} else {
 			renderEmptySites( context );

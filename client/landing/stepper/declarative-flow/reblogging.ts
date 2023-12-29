@@ -39,10 +39,6 @@ const reblogging: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
-		const redirectToQueryArg = getQueryArg( window.location.search, 'redirect_to' );
-		const processDestination = addQueryArgs( `/post`, {
-			url: redirectToQueryArg,
-		} );
 
 		setStepProgress( flowProgress );
 
@@ -71,7 +67,12 @@ const reblogging: Flow = {
 				case 'siteCreationStep':
 					return navigate( 'processing' );
 
-				case 'processing':
+				case 'processing': {
+					const postToShare = getQueryArg( window.location.search, 'blog_post' );
+					const processDestination = addQueryArgs( `/post`, {
+						url: postToShare,
+					} );
+
 					if ( providedDependencies?.goToCheckout ) {
 						persistSignupDestination( processDestination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
@@ -85,6 +86,7 @@ const reblogging: Flow = {
 						);
 					}
 					return window.location.assign( processDestination );
+				}
 			}
 			return providedDependencies;
 		};
