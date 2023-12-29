@@ -505,8 +505,7 @@ export class Login extends Component {
 		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
 			this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient && ! isWoo;
 
 		return (
 			<div>
