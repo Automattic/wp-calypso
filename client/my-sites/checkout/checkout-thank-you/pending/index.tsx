@@ -13,6 +13,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
+import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -127,6 +128,22 @@ function performRedirect( url: string ): void {
 		return;
 	}
 	window.location.href = url;
+}
+
+// If the current page is in the pop-up, notify to the opener and delay the redirection.
+// Otherwise, do the redirection immediately.
+function notifyAndPerformRedirect(
+	siteSlug: string = '',
+	{ isError, isUnknown, url }: RedirectInstructions
+): void {
+	if (
+		sendMessageToOpener( siteSlug, isError || isUnknown ? 'checkoutFailed' : 'checkoutCompleted' )
+	) {
+		window.setTimeout( () => performRedirect( url ), 3000 );
+		return;
+	}
+
+	performRedirect( url );
 }
 
 function getSaaSProductRedirectUrl( receipt: ReceiptState ) {
@@ -258,7 +275,8 @@ function useRedirectOnTransactionSuccess( {
 			translate,
 			reduxDispatch,
 		} );
-		performRedirect( redirectInstructions.url );
+
+		notifyAndPerformRedirect( siteSlug, redirectInstructions );
 	}, [
 		isLoadingOrder,
 		saasRedirectUrl,

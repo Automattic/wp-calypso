@@ -1,7 +1,10 @@
+import { Popover } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { Card } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useRef, useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import StatsPurchaseSVG from './stats-purchase-svg';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
@@ -47,6 +50,11 @@ const StatsCommercialPriceDisplay = ( {
 const StatsBenefitsCommercial = () => {
 	const translate = useTranslate();
 
+	const infoIconRef = useRef( null );
+	const [ show, setShow ] = useState( false );
+	const handlePopoverOpen = () => setShow( true );
+	const handlePopoverClose = () => setShow( false );
+
 	return (
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
@@ -57,7 +65,28 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
 				<li>{ translate( 'Commercial use' ) }</li>
+				<li>
+					{ translate( 'Traffic spike forgiveness' ) }
+					<Icon
+						icon={ info }
+						ref={ infoIconRef }
+						onMouseEnter={ handlePopoverOpen }
+						onMouseLeave={ handlePopoverClose }
+					/>
+				</li>
 			</ul>
+			<Popover
+				position="right"
+				isVisible={ show }
+				context={ infoIconRef.current }
+				className="stats-purchase__info-popover"
+			>
+				<div className="stats-purchase__info-popover-content">
+					{ translate(
+						"You won't incur additional charges for occasional traffic spikes, nor will we cease tracking your statistics due to such spikes." // TODO: We need a 'learn more' link here.
+					) }
+				</div>
+			</Popover>
 		</div>
 	);
 };

@@ -1,13 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import FreeSetup from '../index';
 
 jest.mock( 'react-router-dom', () => ( {
@@ -18,24 +15,6 @@ jest.mock( 'react-router-dom', () => ( {
 		state: undefined,
 	} ) ),
 } ) );
-
-const middlewares = [ thunk ];
-
-const mockStore = configureStore( middlewares );
-
-const renderComponent = ( component, initialState = {} ) => {
-	const queryClient = new QueryClient();
-	const store = mockStore( {
-		'automattic/onboard': {},
-		...initialState,
-	} );
-
-	return render(
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>{ component }</QueryClientProvider>
-		</Provider>
-	);
-};
 
 describe( 'Onboarding Free Flow - FreeSetup', () => {
 	const user = userEvent.setup();
@@ -51,7 +30,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 
 	describe( 'Initial screen render', () => {
 		it( 'should render successfully', async () => {
-			renderComponent( <FreeSetup flow="free" navigation={ navigation } /> );
+			renderWithProvider( <FreeSetup flow="free" navigation={ navigation } /> );
 
 			await waitFor( () => {
 				expect( screen.getByText( 'Personalize your Site' ) ).toBeInTheDocument();
@@ -64,7 +43,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 
 	describe( 'FreeSetup form submission', () => {
 		it( 'should submit form if Site name field is not empty', async () => {
-			const freeSetupComponent = renderComponent(
+			const freeSetupComponent = renderWithProvider(
 				<FreeSetup flow="free" navigation={ navigation } />
 			);
 
@@ -78,7 +57,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 		} );
 
 		it( 'should not submit form if Site name field is empty', async () => {
-			const freeSetupComponent = renderComponent(
+			const freeSetupComponent = renderWithProvider(
 				<FreeSetup flow="free" navigation={ navigation } />
 			);
 
