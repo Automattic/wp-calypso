@@ -14,6 +14,7 @@ import {
 	MarketplaceReviewResponse,
 	MarketplaceReviewsQueryProps,
 	useDeleteMarketplaceReviewMutation,
+	useUpdateMarketplaceReviewMutation,
 	useInfiniteMarketplaceReviewsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
@@ -47,8 +48,27 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		deleteReviewMutation.mutate( { reviewId: reviewId } );
 	};
 
+	const updateReviewMutation = useUpdateMarketplaceReviewMutation( {
+		...props,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
+
 	const [ isEditing, setIsEditing ] = useState< boolean >( false );
 	const [ editorContent, setEditorContent ] = useState< string >( '' );
+	const [ editorRating, setEditorRating ] = useState< number >( 0 );
+
+	const setEditing = ( review: MarketplaceReviewResponse ) => {
+		setIsEditing( true );
+		setEditorContent( review.content.rendered );
+		setEditorRating( review.meta.wpcom_marketplace_rating );
+	};
+
+	const clearEditing = () => {
+		setIsEditing( false );
+		setEditorContent( '' );
+		setEditorRating( 0 );
+	};
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
 		return null;
@@ -115,8 +135,8 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 									<h2>{ translate( 'Let us know how your experience has changed' ) }</h2>
 									<ReviewsRatingsStars
 										size="medium-large"
-										onSelectRating={ () => {} }
-										rating={ 4 }
+										rating={ editorRating }
+										onSelectRating={ setEditorRating }
 									/>
 								</div>
 								<TextareaControl
@@ -147,15 +167,24 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 										onChange={ () => alert( 'Not implemented yet' ) }
 									/>
 									<div className="marketplace-reviews-list__review-actions-editable">
-										<Button className="is-link" onClick={ () => setIsEditing( ! isEditing ) }>
+										<Button className="is-link" onClick={ clearEditing }>
 											{ translate( 'Cancel' ) }
 										</Button>
 										<Button
 											className="marketplace-reviews-list__review-submit"
 											primary
-											onClick={ () => alert( 'Not implemented yet' ) }
+											onClick={ () => {
+												updateReviewMutation.mutate( {
+													reviewId: review.id,
+													productType: props.productType,
+													slug: props.slug,
+													content: editorContent,
+													rating: editorRating,
+												} );
+												clearEditing();
+											} }
 										>
-											{ translate( 'Leave my review' ) }
+											{ translate( 'Save my review' ) }
 										</Button>
 									</div>
 								</>
@@ -164,7 +193,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 								<div className="marketplace-reviews-list__review-actions-editable">
 									<button
 										className="marketplace-reviews-list__review-actions-editable-button"
-										onClick={ () => setIsEditing( ! isEditing ) }
+										onClick={ () => setEditing( review ) }
 									>
 										<Gridicon icon="pencil" size={ 18 } />
 										{ translate( 'Edit my review' ) }

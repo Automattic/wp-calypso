@@ -290,12 +290,31 @@ export const useCreateMarketplaceReviewMutation = () => {
 	} );
 };
 
-export const useUpdateMarketplaceReviewMutation = () => {
+export const useUpdateMarketplaceReviewMutation = ( {
+	productType,
+	slug,
+	page,
+	perPage,
+	author,
+	author_exclude,
+}: MarketplaceReviewsQueryProps ) => {
 	const queryClient = useQueryClient();
+	const queryKey: QueryKey = [
+		queryKeyBase,
+		productType,
+		slug,
+		author,
+		author_exclude,
+		page,
+		perPage,
+	];
 	return useMutation( {
 		mutationFn: updateReview,
 		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: queryKeyBase } );
+			queryClient.invalidateQueries( { queryKey } );
+		},
+		onError: ( error: Error ) => {
+			alert( error.message );
 		},
 	} );
 };
