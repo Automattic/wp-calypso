@@ -153,6 +153,12 @@ Thanks\n\n`;
 		<>
 			<h1>{ translate( 'Jetpack Stats' ) }</h1>
 			{ ! isCommercialOwned && (
+				<>
+					<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+					<StatsBenefitsCommercial />
+				</>
+			) }
+			{ isCommercialOwned && <StatsUpgradeInstructions /> }
 				<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			) }
 			{ ! isCommercialOwned ? <StatsBenefitsCommercial /> : <StatsUpgradeInstructions /> }
