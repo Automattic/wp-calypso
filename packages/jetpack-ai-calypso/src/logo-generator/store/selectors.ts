@@ -2,6 +2,7 @@
  * Types
  */
 import type { AiFeatureProps, LogoGeneratorStateProp, Logo } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
 
 const selectors = {
 	/**
@@ -15,6 +16,15 @@ const selectors = {
 		delete data._meta;
 
 		return data;
+	},
+
+	/**
+	 * Return the site details.
+	 * @param {LogoGeneratorStateProp} state       - The app state tree.
+	 * @returns {Partial<SiteDetails> | undefined}   The site details.
+	 */
+	getSiteDetails( state: LogoGeneratorStateProp ): Partial< SiteDetails > | undefined {
+		return state.siteDetails;
 	},
 
 	/**
