@@ -45,6 +45,8 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		deleteReviewMutation.mutate( { reviewId: reviewId } );
 	};
 
+	const [ isEditing, setIsEditing ] = useState( false );
+
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
 		return null;
 	}
@@ -104,21 +106,24 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 								{ moment( review.date ).format( 'll' ) }
 							</div>
 						</div>
-
-						<div
-							// sanitized with sanitizeSectionContent
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ {
-								__html: sanitizeSectionContent( review.content.rendered ),
-							} }
-							className="marketplace-reviews-list__content"
-						></div>
+						{ isEditing && review.author === currentUserId ? (
+							<div className="marketplace-reviews-list__editor">Editing...</div>
+						) : (
+							<div
+								// sanitized with sanitizeSectionContent
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ {
+									__html: sanitizeSectionContent( review.content.rendered ),
+								} }
+								className="marketplace-reviews-list__content"
+							></div>
+						) }
 						<div className="marketplace-reviews-list__review-actions">
 							{ review.author === currentUserId && (
 								<div className="marketplace-reviews-list__review-actions-editable">
 									<button
 										className="marketplace-reviews-list__review-actions-editable-button"
-										onClick={ () => alert( 'Not implemented yet' ) }
+										onClick={ () => setIsEditing( ! isEditing ) }
 									>
 										<Gridicon icon="pencil" size={ 18 } />
 										{ translate( 'Edit my review' ) }
