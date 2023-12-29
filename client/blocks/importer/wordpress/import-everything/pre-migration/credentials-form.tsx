@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CredentialsFormAdvanced from 'calypso/components/advanced-credentials/credentials-form';
 import {
 	FormMode,
+	FormState,
 	INITIAL_FORM_ERRORS,
 	INITIAL_FORM_STATE,
 	validate,
@@ -28,14 +29,19 @@ interface Props {
 	selectedHost: string;
 	migrationTrackingProps: StartImportTrackingProps;
 	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
+	allowFtp?: boolean;
 }
 
 export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
-	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
+	const { sourceSite, targetSite, migrationTrackingProps, startImport, allowFtp } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { hostname } = new URL( sourceSite.URL );
-	const [ formState, setFormState ] = useState( { ...INITIAL_FORM_STATE, host: hostname } );
+	const [ formState, setFormState ] = useState( {
+		...INITIAL_FORM_STATE,
+		host: hostname,
+		...( ! allowFtp ? { protocol: 'ssh', port: 22 } : {} ),
+	} as FormState );
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
 	const [ hasMissingFields, setHasMissingFields ] = useState( false );
@@ -190,6 +196,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 					onFormStateChange={ setFormState }
 					onModeChange={ setFormMode }
 					withHeader={ false }
+					allowFtp={ allowFtp }
 				/>
 
 				{ updateError && (

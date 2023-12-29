@@ -54,6 +54,7 @@ export function testDomain(
 		},
 		email_forwards_count: 0,
 		tld_maintenance_end_time: 0,
+		auto_renewing: false,
 	};
 
 	const partialOnlyDefaults = Object.entries( defaults ).filter( ( [ key ] ) =>

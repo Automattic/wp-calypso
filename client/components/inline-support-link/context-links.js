@@ -166,6 +166,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/paid-newsletters/',
 		post_id: 168381,
 	},
+	payments_blocks: {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/payments',
+		post_id: 169123,
+	},
 	payment_button_block: {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block',
 		post_id: 169123,

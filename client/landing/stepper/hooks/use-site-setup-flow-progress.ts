@@ -55,7 +55,7 @@ export function useSiteSetupFlowProgress( currentStep: string, intent: string ) 
 				case 'designSetup':
 					middleProgress = { progress: 1, count: 3 };
 					break;
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					middleProgress = { progress: 2, count: 3 };
 					break;
 			}

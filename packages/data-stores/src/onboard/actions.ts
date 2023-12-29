@@ -166,7 +166,6 @@ export function* createSenseiSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'sensei',
 			enable_fse: true,
-			theme: 'pub/course',
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {
@@ -463,11 +462,6 @@ export const resetSelectedDesign = () => ( {
 	type: 'RESET_SELECTED_DESIGN' as const,
 } );
 
-export const setEditEmail = ( email: string ) => ( {
-	type: 'SET_EDIT_EMAIL' as const,
-	email,
-} );
-
 export const setVerticalId = ( verticalId: string ) => ( {
 	type: 'SET_VERTICAL_ID' as const,
 	verticalId,
@@ -582,7 +576,6 @@ export type OnboardAction = ReturnType<
 	| typeof resetGoals
 	| typeof resetIntent
 	| typeof resetSelectedDesign
-	| typeof setEditEmail
 	| typeof setDomainForm
 	| typeof setDomainCartItem
 	| typeof setSiteDescription

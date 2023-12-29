@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@automattic/components/src/styles/typography.scss";
 
 $slider-height: 40px;
 $slider-bg-color: var(--studio-white);
@@ -116,14 +117,38 @@ $track-height: 4px;
 	.right-aligned {
 		text-align: right;
 	}
+	.full-price-label {
+		color: var(--studio-gray-40);
+		text-decoration: line-through;
+	}
+
+	svg {
+		fill: var(--studio-gray-20);
+		cursor: pointer;
+	}
 }
 
-.tier-upgrade-slider__extension-popover-wrapper {
-	max-width: 245px;
-	margin-left: 15px;
+.stats-purchase__info-popover {
+	max-width: 244px;
+	margin-left: 8px;
+
+	.popover__arrow {
+		border-color: var(--studio-gray-5);
+	}
+
+	.popover__inner {
+		border-color: var(--studio-gray-5);
+		border-radius: 4px;
+	}
 }
 
-.tier-upgrade-slider__extension-popover-content {
+.stats-purchase__info-popover-content {
 	padding: 24px;
+	color: var(--studio-black);
+	font-family: $font-sf-pro-text;
+	font-size: $font-body;
+	font-weight: 400;
+	line-height: 24px;
 	text-align: left;
+
 }

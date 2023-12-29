@@ -821,6 +821,11 @@ class Signup extends Component {
 
 		const stepClassName = stepName === 'user-hosting' ? 'user' : stepName;
 
+		// If a coupon is provided as a query dependency, then hide the free plan.
+		// It's assumed here that the coupon applies to paid plans at the minimum, and
+		// in this scenario it wouldn't be necessary to show a free plan.
+		const hideFreePlan = this.props.signupDependencies.coupon ?? false;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ stepClassName }` }>
@@ -844,7 +849,7 @@ class Signup extends Component {
 							signupDependencies={ this.props.signupDependencies }
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ false }
+							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
 							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }

@@ -1,8 +1,8 @@
 import getProductTitle from '../get-product-title';
 
 describe( 'getProductTitle', () => {
-	it( 'returns "AI Assistant" if the product name is "Jetpack AI"', () => {
-		expect( getProductTitle( 'Jetpack AI' ) ).toBe( 'AI Assistant' );
+	it( 'returns "AI" if the product name is "Jetpack AI"', () => {
+		expect( getProductTitle( 'Jetpack AI' ) ).toBe( 'AI' );
 	} );
 
 	it( 'returns "Stats" if the product name is "Jetpack Stats (Commercial license)"', () => {

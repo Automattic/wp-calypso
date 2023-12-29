@@ -1,7 +1,6 @@
 import { PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -16,7 +15,6 @@ export const MailPoetUpgradePage = ( { siteId }: { siteId: number } ) => {
 	const dispatch = useDispatch();
 	const [ isBusy, setIsBusy ] = useState( false );
 	const [ isCompleted, setIsCompleted ] = useState( false );
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const getItNowClickHandler = async () => {
 		setIsBusy( true );
@@ -52,17 +50,10 @@ export const MailPoetUpgradePage = ( { siteId }: { siteId: number } ) => {
 			/>
 			<Card>
 				<p>
-					{ isEnglishLocale ||
-					i18n.hasTranslation(
-						'Your %(commercePlanName)s plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
-					)
-						? translate(
-								'Your %(commercePlanName)s plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.',
-								{ args: { commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '' } }
-						  )
-						: translate(
-								'Your Commerce plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
-						  ) }
+					{ translate(
+						'Your %(commercePlanName)s plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.',
+						{ args: { commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '' } }
+					) }
 				</p>
 				<p>
 					{ translate( 'Know more about {{a/}}', {

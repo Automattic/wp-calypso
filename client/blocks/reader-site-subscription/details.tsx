@@ -109,6 +109,7 @@ const SiteSubscriptionDetails = ( {
 			<Button
 				onClick={ () => subscribe( { blog_id: blogId, url } ) }
 				disabled={ subscribing || unsubscribing }
+				variant="secondary"
 			>
 				{ translate( 'Resubscribe' ) }
 			</Button>

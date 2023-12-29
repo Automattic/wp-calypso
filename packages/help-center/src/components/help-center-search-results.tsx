@@ -31,6 +31,7 @@ import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results'
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
+import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -91,6 +92,7 @@ interface HelpSearchResultsProps {
 	placeholderLines: number;
 	openAdminInNewTab: boolean;
 	location: string;
+	currentRoute?: string;
 }
 
 function HelpSearchResults( {
@@ -101,6 +103,7 @@ function HelpSearchResults( {
 	placeholderLines,
 	openAdminInNewTab = false,
 	location = 'inline-help-popover',
+	currentRoute,
 }: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
 	const hasPurchases = useSelector( hasCancelableUserPurchases );
@@ -120,10 +123,12 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
+	const routeToQueryMapping = useContextBasedSearchMapping( currentRoute );
+
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery,
+		debouncedQuery || routeToQueryMapping,
 		locale,
 		{},
 		sectionName
@@ -286,13 +291,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: __( 'Recommended resources', __i18n_text_domain__ ),
+				title: __( 'Recommended Resources', __i18n_text_domain__ ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? __( 'Recommended resources', __i18n_text_domain__ ) : '',
+				title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},

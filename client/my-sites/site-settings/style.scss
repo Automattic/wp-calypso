@@ -275,6 +275,11 @@
 			font-weight: 400;
 		}
 	}
+
+	.site-settings__tooltip-container {
+		display: flex;
+		justify-content: space-between;
+	}
 }
 
 .site-settings__site-options {

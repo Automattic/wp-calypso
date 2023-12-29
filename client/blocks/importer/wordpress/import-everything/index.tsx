@@ -2,7 +2,6 @@ import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -205,27 +204,29 @@ export class ImportEverything extends SectionMigrate {
 		const { translate, sourceSite, targetSite } = this.props;
 
 		return (
-			<>
+			<div className="import-layout__center">
 				<Progress>
 					<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-					<Title>
-						{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
-							MigrationStatus.NEW === this.state.migrationStatus ) &&
-							sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
-								'...' }
-						{ MigrationStatus.RESTORING === this.state.migrationStatus &&
-							sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) +
-								'...' }
-					</Title>
-					<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-					<SubTitle>
-						{ translate(
-							"This may take a few minutes. We'll notify you by email when it's done."
-						) }
-					</SubTitle>
+					<div className="import__heading import__heading-center">
+						<Title>
+							{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
+								MigrationStatus.NEW === this.state.migrationStatus ) &&
+								sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
+									'...' }
+							{ MigrationStatus.RESTORING === this.state.migrationStatus &&
+								sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) +
+									'...' }
+						</Title>
+						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
+						<SubTitle>
+							{ translate(
+								"This may take a few minutes. We'll notify you by email when it's done."
+							) }
+						</SubTitle>
+					</div>
 				</Progress>
 				<GettingStartedVideo />
-			</>
+			</div>
 		);
 	}
 
@@ -233,16 +234,20 @@ export class ImportEverything extends SectionMigrate {
 		const { translate } = this.props;
 
 		return (
-			<Progress className="onboarding-progress-simple">
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-				<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
-				<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-				<SubTitle tagName="h3">
-					{ translate(
-						'Feel free to close this window. We’ll email you when your new site is ready.'
-					) }
-				</SubTitle>
-			</Progress>
+			<div className="import-layout__center">
+				<Progress className="onboarding-progress-simple">
+					<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
+					<div className="import__heading import__heading-center">
+						<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
+						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
+						<SubTitle tagName="h3">
+							{ translate(
+								'Feel free to close this window. We’ll email you when your new site is ready.'
+							) }
+						</SubTitle>
+					</div>
+				</Progress>
+			</div>
 		);
 	}
 
@@ -261,16 +266,18 @@ export class ImportEverything extends SectionMigrate {
 		const { translate } = this.props;
 
 		return (
-			<div className={ classnames( 'import__header' ) }>
-				<div className={ classnames( 'import__heading import__heading-center' ) }>
-					<Title>{ translate( 'Import failed' ) }</Title>
-					<SubTitle>
-						{ translate( 'There was an error with your import.' ) }
-						<br />
-						{ translate( 'Please try again soon or contact support for help.' ) }
-					</SubTitle>
-					<div className={ classnames( 'import__buttons-group' ) }>
-						<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
+			<div className="import-layout__center">
+				<div>
+					<div className="import__heading import__heading-center">
+						<Title>{ translate( 'Import failed' ) }</Title>
+						<SubTitle>
+							{ translate( 'There was an error with your import.' ) }
+							<br />
+							{ translate( 'Please try again soon or contact support for help.' ) }
+						</SubTitle>
+						<div className="import__buttons-group">
+							<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -281,7 +288,7 @@ export class ImportEverything extends SectionMigrate {
 		const { translate, stepNavigator } = this.props;
 
 		return (
-			<>
+			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'Hooray!' ) }</Title>
 				<SubTitle>
 					{ translate( 'Congratulations. Your content was successfully imported.' ) }
@@ -293,14 +300,14 @@ export class ImportEverything extends SectionMigrate {
 						stepNavigator?.goToSiteViewPage?.();
 					} }
 				/>
-			</>
+			</div>
 		);
 	}
 
 	renderHoorayScreenWithDomainInfo() {
 		const { translate, stepNavigator, targetSite } = this.props;
 		return (
-			<>
+			<div className="import__heading import__heading-center">
 				<Title>{ translate( "Migration done! You're all set!" ) }</Title>
 				<SubTitle>
 					{ createInterpolateElement(
@@ -328,7 +335,7 @@ export class ImportEverything extends SectionMigrate {
 						stepNavigator?.goToSiteViewPage?.();
 					} }
 				/>
-			</>
+			</div>
 		);
 	}
 

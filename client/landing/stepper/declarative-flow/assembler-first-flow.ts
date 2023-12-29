@@ -74,6 +74,7 @@ const assemblerFirstFlow: Flow = {
 			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
 			STEPS.PLANS,
+			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
 		];
@@ -87,7 +88,7 @@ const assemblerFirstFlow: Flow = {
 		);
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { siteSlug, siteId } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -126,7 +127,7 @@ const assemblerFirstFlow: Flow = {
 				params.set( 'isNewSite', 'true' );
 			}
 
-			return navigate( `patternAssembler?${ params }` );
+			return navigate( `pattern-assembler?${ params }` );
 		};
 
 		const submit = async (
@@ -199,7 +200,7 @@ const assemblerFirstFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -208,9 +209,22 @@ const assemblerFirstFlow: Flow = {
 				}
 
 				case 'plans': {
-					await updateLaunchpadSettings( siteSlug, {
+					await updateLaunchpadSettings( siteId, {
 						checklist_statuses: { plan_completed: true },
 					} );
+
+					return navigate( 'launchpad' );
+				}
+
+				case 'domains': {
+					await updateLaunchpadSettings( siteId, {
+						checklist_statuses: { domain_upsell_deferred: true },
+					} );
+
+					if ( providedDependencies?.freeDomain && providedDependencies?.domainName ) {
+						// We have to use the site id since the domain is changed.
+						return navigate( `launchpad?siteId=${ site?.ID }` );
+					}
 
 					return navigate( 'launchpad' );
 				}
@@ -229,11 +243,12 @@ const assemblerFirstFlow: Flow = {
 					return navigate( 'new-or-existing-site' );
 				}
 
-				case 'freePostSetup': {
+				case 'freePostSetup':
+				case 'domains': {
 					return navigate( 'launchpad' );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					const params = new URLSearchParams( window.location.search );
 					params.delete( 'siteSlug' );
 					params.delete( 'siteId' );

@@ -1,3 +1,10 @@
+export const STATS_PERIOD = {
+	DAY: 'day',
+	WEEK: 'week',
+	MONTH: 'month',
+	YEAR: 'year',
+};
+
 // statTypes referred from
 // https://github.com/Automattic/wp-calypso/blob/trunk/packages/wpcom.js/src/lib/runtime/site.get.js
 // stat features are newly defined in this file
@@ -36,4 +43,23 @@ export const STAT_TYPE_WPCOM_PLUGINS_LIST = 'wpcomPluginsList';
 
 // stats feature are for more granular control, string value is based on component name
 export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';
+export const STATS_FEATURE_DATE_CONTROL_LAST_7_DAYS = 'StatsDateControl/last_7_days';
+export const STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS = 'StatsDateControl/last_30_days';
+export const STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS = 'StatsDateControl/last_3_months';
+export const STATS_FEATURE_DATE_CONTROL_LAST_YEAR = 'StatsDateControl/last_year';
+export const STATS_FEATURE_INTERVAL_DROPDOWN = 'StatsIntervalDropdown';
+export const STATS_FEATURE_INTERVAL_DROPDOWN_DAY = `StatsIntervalDropdown/${ STATS_PERIOD.DAY }`;
+export const STATS_FEATURE_INTERVAL_DROPDOWN_WEEK = `StatsIntervalDropdown/${ STATS_PERIOD.WEEK }`;
+export const STATS_FEATURE_INTERVAL_DROPDOWN_MONTH = `StatsIntervalDropdown/${ STATS_PERIOD.MONTH }`;
+export const STATS_FEATURE_INTERVAL_DROPDOWN_YEAR = `StatsIntervalDropdown/${ STATS_PERIOD.YEAR }`;
 export const STATS_FEATURE_DOWNLOAD_CSV = 'StatsDownloadCsv';
+export const STATS_FEATURE_SUMMARY_LINKS = 'StatsModuleSummaryLinks';
+export const STATS_FEATURE_SUMMARY_LINKS_DAY = 'StatsModuleSummaryLinks/day';
+export const STATS_FEATURE_SUMMARY_LINKS_7_DAYS = 'StatsModuleSummaryLinks/7_days';
+export const STATS_FEATURE_SUMMARY_LINKS_30_DAYS = 'StatsModuleSummaryLinks/30_days';
+export const STATS_FEATURE_SUMMARY_LINKS_QUARTER = 'StatsModuleSummaryLinks/quarter';
+export const STATS_FEATURE_SUMMARY_LINKS_YEAR = 'StatsModuleSummaryLinks/year';
+export const STATS_FEATURE_SUMMARY_LINKS_ALL = 'StatsModuleSummaryLinks/all';
+
+// other
+export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNotice';

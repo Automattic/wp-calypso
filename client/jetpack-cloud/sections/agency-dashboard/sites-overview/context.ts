@@ -20,6 +20,14 @@ const SitesOverviewContext = createContext< SitesOverviewContextInterface >( {
 	hideLicenseInfo: () => {
 		return undefined;
 	},
+	mostRecentConnectedSite: null,
+	setMostRecentConnectedSite: () => {
+		return undefined;
+	},
+	isPopoverOpen: false,
+	setIsPopoverOpen: () => {
+		return undefined;
+	},
 	sort: {
 		field: 'url',
 		direction: 'asc',

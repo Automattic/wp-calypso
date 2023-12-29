@@ -38,6 +38,7 @@ import {
 	JETPACK_STARTER_UPGRADE_MAP,
 	is100Year,
 	isJetpackAISlug,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -51,7 +52,7 @@ import {
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, numberFormat } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -326,6 +327,16 @@ class ManagePurchase extends Component<
 		return hasSetupAds && purchase && isPlan( purchase );
 	}
 
+	isPendingDomainRegistration( purchase: Purchase ): boolean {
+		if ( ! isDomainRegistration( purchase ) ) {
+			return false;
+		}
+		const domain = this.props.domainsDetails[ purchase.siteId ].find(
+			( domain ) => domain.name === purchase.meta
+		);
+		return domain?.pendingRegistrationAtRegistry ?? false;
+	}
+
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -338,6 +349,10 @@ class ManagePurchase extends Component<
 			isAkismetFreeProduct( purchase ) ||
 			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
+			return null;
+		}
+
+		if ( this.isPendingDomainRegistration( purchase ) ) {
 			return null;
 		}
 
@@ -394,7 +409,11 @@ class ManagePurchase extends Component<
 	}
 
 	renderSelectNewButton() {
-		const { translate, siteId } = this.props;
+		const { translate, siteId, purchase } = this.props;
+
+		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
+			return null;
+		}
 
 		return (
 			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
@@ -566,7 +585,11 @@ class ManagePurchase extends Component<
 	}
 
 	renderSelectNewNavItem() {
-		const { translate, siteId } = this.props;
+		const { translate, siteId, purchase } = this.props;
+
+		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
+			return null;
+		}
 
 		return (
 			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }` }>
@@ -1215,6 +1238,18 @@ class ManagePurchase extends Component<
 			} );
 		}
 
+		if (
+			isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
+			purchase.purchaseRenewalQuantity
+		) {
+			return translate( '%(productName)s (%(quantity)s views per month)', {
+				args: {
+					productName: getDisplayName( purchase ),
+					quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+				},
+			} );
+		}
+
 		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
 			return getDisplayName( purchase );
 		}
@@ -1337,6 +1372,7 @@ class ManagePurchase extends Component<
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
+							! this.isPendingDomainRegistration( purchase ) &&
 							this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }

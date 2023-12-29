@@ -24,10 +24,9 @@ const LivePreviewUpgradeNoticeView: FC< {
 } > = ( { noticeText } ) => {
 	return (
 		<Notice
-			status="warning"
+			status="info"
 			isDismissible={ false }
 			className="wpcom-live-preview-upgrade-notice-view"
-			// TODO: Add the tracking event.
 		>
 			{ noticeText }
 		</Notice>
@@ -39,7 +38,7 @@ export const LivePreviewUpgradeNotice: FC< {
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
 } > = ( { dashboardLink, previewingTheme } ) => {
 	const [ isRendered, setIsRendered ] = useState( false );
-	const { createWarningNotice } = useDispatch( 'core/notices' );
+	const { createInfoNotice } = useDispatch( 'core/notices' );
 	const canvasMode = useSelect(
 		( select ) =>
 			unlock && select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode(),
@@ -61,7 +60,7 @@ export const LivePreviewUpgradeNotice: FC< {
 	 * Show the notice when the canvas mode is 'edit'.
 	 */
 	useEffect( () => {
-		createWarningNotice( noticeText, {
+		createInfoNotice( noticeText, {
 			id: UPGRADE_NOTICE_ID,
 			isDismissible: false,
 			__unstableHTML: true,
@@ -77,7 +76,7 @@ export const LivePreviewUpgradeNotice: FC< {
 					: [] ),
 			],
 		} );
-	}, [ createWarningNotice, dashboardLink, noticeText ] );
+	}, [ createInfoNotice, dashboardLink, noticeText ] );
 
 	/**
 	 * Show the notice when the canvas mode is 'view'.

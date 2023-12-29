@@ -31,6 +31,7 @@ import { type Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
+	launchpadKey: string;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
@@ -49,7 +50,14 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
+const Sidebar = ( {
+	sidebarDomain,
+	launchpadKey,
+	siteSlug,
+	submit,
+	goToStep,
+	flow,
+}: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
@@ -66,7 +74,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
-	} = useLaunchpad( siteSlug, siteIntentOption, {
+	} = useLaunchpad( launchpadKey, siteIntentOption, {
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
 	} );
 
@@ -266,7 +274,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 						</div>
 					) }
 					<LaunchpadInternal
-						siteSlug={ siteSlug }
+						siteSlug={ launchpadKey }
 						taskFilter={ () => enhancedTasks || [] }
 						makeLastTaskPrimaryAction={ true }
 					/>
