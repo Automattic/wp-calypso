@@ -129,6 +129,9 @@ export type Logo = {
 };
 
 export type LogoGeneratorStateProp = {
+	_meta?: {
+		isSavingLogoToLibrary: boolean;
+	};
 	siteDetails?: Partial< SiteDetails >;
 	suggestions: Array< LogoSuggestionProps >;
 	features: {
@@ -144,6 +147,7 @@ export type Selectors = {
 	getLogos(): Array< Logo >;
 	getSelectedLogo(): Logo;
 	getSiteDetails(): Partial< SiteDetails >;
+	getSavingLogoToLibrary(): boolean;
 };
 
 /*

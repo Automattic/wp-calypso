@@ -16,16 +16,19 @@ import { STORE_NAME } from '../store';
 import type { Selectors } from '../store/types';
 
 const useLogoGenerator = () => {
-	const { setSelectedLogoIndex, saveSelectedLogo } = useDispatch( STORE_NAME );
+	const { setSelectedLogoIndex, updateSelectedLogo, setSavingLogoToLibrary } =
+		useDispatch( STORE_NAME );
 
-	const { logos, selectedLogo, siteDetails } = useSelect( ( select ) => {
+	const { logos, selectedLogo, siteDetails, savingLogoToLibrary } = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
 		return {
 			logos: selectors.getLogos(),
 			selectedLogo: selectors.getSelectedLogo(),
 			siteDetails: selectors.getSiteDetails(),
+			savingLogoToLibrary: selectors.getSavingLogoToLibrary(),
 		};
 	}, [] );
+
 	const { ID = null, name = null, description = null } = siteDetails;
 	const siteId = ID ? String( ID ) : null;
 
@@ -54,14 +57,14 @@ const useLogoGenerator = () => {
 				},
 			} );
 
-			saveSelectedLogo( mediaId, mediaURL );
+			updateSelectedLogo( mediaId, mediaURL );
 
 			return { mediaId, mediaURL };
 		} catch ( error ) {
 			// TODO: Handle error when saving to media library fails.
 			throw error;
 		}
-	}, [ saveSelectedLogo, selectedLogo, siteId ] );
+	}, [ updateSelectedLogo, selectedLogo, siteId ] );
 
 	const applyLogo = useCallback( async () => {
 		if ( ! siteId || ! selectedLogo ) {
@@ -91,6 +94,8 @@ const useLogoGenerator = () => {
 		},
 		saveLogo,
 		applyLogo,
+		setSavingLogoToLibrary,
+		savingLogoToLibrary,
 	};
 };
 

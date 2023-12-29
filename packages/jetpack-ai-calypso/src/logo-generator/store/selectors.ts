@@ -53,6 +53,15 @@ const selectors = {
 	getSelectedLogo( state: LogoGeneratorStateProp ): Logo {
 		return state.history?.[ state.selectedLogoIndex ] ?? null;
 	},
+
+	/**
+	 * Get the isSavingToLibrary flag.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The isSavingToLibrary flag.
+	 */
+	getSavingLogoToLibrary( state: LogoGeneratorStateProp ): boolean {
+		return state._meta?.isSavingLogoToLibrary ?? false;
+	},
 };
 
 export default selectors;

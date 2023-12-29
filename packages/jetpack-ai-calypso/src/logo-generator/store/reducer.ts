@@ -16,6 +16,7 @@ import {
 	ACTION_SET_SELECTED_LOGO_INDEX,
 	ACTION_ADD_LOGO_TO_HISTORY,
 	ACTION_SAVE_SELECTED_LOGO,
+	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { TierLimitProp } from './types';
@@ -203,6 +204,16 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				...state,
 				history,
 				selectedLogoIndex: history.length - 1,
+			};
+		}
+
+		case ACTION_SET_SAVING_LOGO_TO_LIBRARY: {
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					isSavingLogoToLibrary: action.isSavingLogoToLibrary,
+				},
 			};
 		}
 
