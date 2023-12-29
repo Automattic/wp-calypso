@@ -40,7 +40,7 @@ export default function AddNewSiteTourStep2( { siteItems }: Props ) {
 		! resetApplied &&
 		hasStep1BeenViewed &&
 		! mostRecentConnectedSite &&
-		window.localStorage.getItem( 'Jetpack_Manage_Preference_Reset_addSiteStep' ) !== 'true'
+		window.localStorage.getItem( 'Jetpack_Manage_Preference_Reset_addSiteStep' ) === 'true'
 	) {
 		// Reset preferences
 		dispatch(
