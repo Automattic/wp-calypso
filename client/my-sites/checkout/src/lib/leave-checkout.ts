@@ -13,7 +13,7 @@ import { sendMessageToOpener } from './popup';
 const debug = debugFactory( 'calypso:leave-checkout' );
 
 export const leaveCheckout = ( {
-	siteSlug = '',
+	siteSlug,
 	forceCheckoutBackUrl,
 	previousPath,
 	tracksEvent,

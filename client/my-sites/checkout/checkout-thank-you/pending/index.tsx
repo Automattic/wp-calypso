@@ -133,7 +133,7 @@ function performRedirect( url: string ): void {
 // If the current page is in the pop-up, notify to the opener and delay the redirection.
 // Otherwise, do the redirection immediately.
 function notifyAndPerformRedirect(
-	siteSlug: string,
+	siteSlug: string = '',
 	{ isError, isUnknown, url }: RedirectInstructions
 ): void {
 	if (
@@ -161,7 +161,7 @@ function getSaaSProductRedirectUrl( receipt: ReceiptState ) {
 function useRedirectOnTransactionSuccess( {
 	orderId,
 	receiptId,
-	siteSlug = '',
+	siteSlug,
 	redirectTo,
 	fromSiteSlug,
 }: {
