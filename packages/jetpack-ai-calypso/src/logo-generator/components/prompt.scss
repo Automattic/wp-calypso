@@ -29,8 +29,8 @@
 	align-items: flex-end;
 	align-self: stretch;
 	border-radius: calc(4px * 2);
-	border: 1px solid var(--Gutenberg-Gray-400, #ccc);
-	background: var(--Gutenberg-White, #fff);
+	border: 1px solid var(--studio-gray-10, #ccc);
+	background: var(--studio-white, #fff);
 	gap: 48px;
 
 	.prompt-query__input {
@@ -44,11 +44,10 @@
 			outline: 0;
 		}
 	}
-
 }
 
 .jetpack-ai-logo-generator__prompt-footer {
-	color: var(--Gray-Gray-50, #646970);
+	color: var(--studio-gray-50, #646970);
 	font-size: $font-body-extra-small;
 	line-height: 21px;
 	display: flex;
@@ -58,7 +57,7 @@
 		width: 20px;
 
 		path {
-			fill: var(--Gray-Gray-20, #a7aaad);
+			fill: var(--studio-gray-20, #a7aaad);
 		}
 	}
 }
