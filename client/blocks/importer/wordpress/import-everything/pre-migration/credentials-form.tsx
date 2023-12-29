@@ -40,8 +40,7 @@ export const CredentialsForm: React.FunctionComponent< Props > = ( props ) => {
 	const [ formState, setFormState ] = useState( {
 		...INITIAL_FORM_STATE,
 		host: hostname,
-		protocol: 'ssh',
-		port: 22,
+		...( ! allowFtp ? { protocol: 'ssh', port: 22 } : {} ),
 	} as FormState );
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
