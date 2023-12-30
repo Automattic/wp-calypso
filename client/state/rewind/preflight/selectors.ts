@@ -9,5 +9,5 @@ export const getPreflightStatus = ( state: AppState, siteId: number ) => {
 		return PreflightTestStatus.FAILED;
 	}
 
-	return state.rewind[ siteId ].preflight.overallStatus;
+	return state.rewind[ siteId ]?.preflight.overallStatus || PreflightTestStatus.PENDING;
 };
