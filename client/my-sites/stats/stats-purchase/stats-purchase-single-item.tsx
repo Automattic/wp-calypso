@@ -159,9 +159,6 @@ Thanks\n\n`;
 				</>
 			) }
 			{ isCommercialOwned && <StatsUpgradeInstructions /> }
-				<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
-			) }
-			{ ! isCommercialOwned ? <StatsBenefitsCommercial /> : <StatsUpgradeInstructions /> }
 			{ ! isTierUpgradeSliderEnabled && (
 				<>
 					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
