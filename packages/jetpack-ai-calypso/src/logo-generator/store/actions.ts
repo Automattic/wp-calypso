@@ -14,6 +14,8 @@ import {
 	ACTION_SET_TIER_PLANS_ENABLED,
 	ACTION_SET_SELECTED_LOGO_INDEX,
 	ACTION_ADD_LOGO_TO_HISTORY,
+	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
+	ACTION_SAVE_SELECTED_LOGO,
 } from './constants';
 import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -130,6 +132,21 @@ const actions = {
 		return {
 			type: ACTION_ADD_LOGO_TO_HISTORY,
 			logo,
+		};
+	},
+
+	setSavingLogoToLibrary( isSavingLogoToLibrary: boolean ) {
+		return {
+			type: ACTION_SET_SAVING_LOGO_TO_LIBRARY,
+			isSavingLogoToLibrary,
+		};
+	},
+
+	updateSelectedLogo( mediaId: string, url: string ) {
+		return {
+			type: ACTION_SAVE_SELECTED_LOGO,
+			mediaId,
+			url,
 		};
 	},
 };

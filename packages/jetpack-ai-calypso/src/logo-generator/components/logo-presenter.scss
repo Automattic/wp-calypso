@@ -80,12 +80,10 @@
 	display: flex;
 	align-items: center;
 
-	&.clickable {
-		cursor: pointer;
-
-		.action-text {
-			color: #3858e9;
-		}
+	&.components-button,
+	&.components-button:hover,
+	&.components-button:active {
+		color: #3858e9;
 	}
 
 	.action-text {
