@@ -125,18 +125,20 @@ export type LogoSuggestionProps = {
 export type Logo = {
 	url: string;
 	description: string;
+	mediaId?: number;
 };
 
 export type LogoGeneratorStateProp = {
+	_meta?: {
+		isSavingLogoToLibrary: boolean;
+	};
 	siteDetails?: Partial< SiteDetails >;
 	suggestions: Array< LogoSuggestionProps >;
 	features: {
 		aiAssistantFeature?: AiFeatureStateProps;
 	};
-	history: {
-		logos: Array< Logo >;
-		selectedLogoIndex: number;
-	};
+	history: Array< Logo >;
+	selectedLogoIndex: number;
 };
 
 export type Selectors = {
@@ -145,6 +147,7 @@ export type Selectors = {
 	getLogos(): Array< Logo >;
 	getSelectedLogo(): Logo;
 	getSiteDetails(): Partial< SiteDetails >;
+	getSavingLogoToLibrary(): boolean;
 };
 
 /*

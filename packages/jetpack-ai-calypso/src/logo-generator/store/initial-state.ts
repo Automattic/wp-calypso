@@ -1,4 +1,3 @@
-import sample from '../assets/images/sample-logo.png';
 /**
  * Types & Constants
  */
@@ -37,16 +36,14 @@ const INITIAL_STATE: LogoGeneratorStateProp = {
 			},
 		},
 	},
-	history: {
-		// TODO: Remove this sample logo
-		logos: [
-			{
-				url: sample,
-				description: 'A publishing company in the form of a greek statue.',
-			},
-		],
-		selectedLogoIndex: 0,
-	},
+	// TODO: Remove this sample logo
+	history: [
+		{
+			url: 'https://s.w.org/style/images/about/WordPress-logotype-wmark.png',
+			description: 'A publishing company in the form of a greek statue.',
+		},
+	],
+	selectedLogoIndex: 0,
 };
 
 export default INITIAL_STATE;
