@@ -32,6 +32,7 @@ describe( 'canRestoreSite', () => {
 	} );
 
 	it( 'should return false if site is not atomic and credentials are invalid', () => {
+		getDoesRewindNeedCredentials.mockReturnValue( true );
 		isSiteAutomatedTransfer.mockReturnValue( false );
 		areJetpackCredentialsInvalid.mockReturnValue( true );
 		expect( canRestoreSite( {}, siteId ) ).toBe( false );
