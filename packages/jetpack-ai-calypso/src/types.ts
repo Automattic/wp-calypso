@@ -29,3 +29,13 @@ export type SaveToMediaLibraryResponseProps = {
 		},
 	];
 };
+
+export type SetSiteLogoProps = {
+	siteId: string | number;
+	imageId: string | number;
+};
+
+export type SetSiteLogoResponseProps = {
+	id: number;
+	url: string;
+};

@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-import { Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
 import { useState } from 'react';
 /**
  * Internal dependencies
  */
+import CheckIcon from '../assets/icons/check';
 import LogoIcon from '../assets/icons/logo';
 import MediaIcon from '../assets/icons/media';
-import useLogo from '../hooks/use-logo';
-import { saveToMediaLibrary } from '../lib/save-to-media-library';
+import useLogoGenerator from '../hooks/use-logo-generator';
 import { ImageLoader } from './image-loader';
 import './logo-presenter.scss';
 /**
@@ -21,65 +20,79 @@ import type { Logo } from '../store/types';
 import type React from 'react';
 
 const SaveInLibraryButton: React.FC = () => {
-	const [ saved, setSaved ] = useState( false );
-	const [ saving, setSaving ] = useState( false );
-
 	const {
+		saveLogo,
 		selectedLogo,
-		site: { id },
-	} = useLogo();
+		setSavingLogoToLibrary: setSaving,
+		savingLogoToLibrary: saving,
+	} = useLogoGenerator();
+	const saved = !! selectedLogo.mediaId;
 
-	return (
-		<button
-			className={ classnames( 'jetpack-ai-logo-generator-modal-presenter__action', {
-				clickable: ! saved && ! saving,
-			} ) }
-			onClick={ async () => {
-				if ( ! saving && ! saved ) {
-					try {
-						setSaving( true );
+	const handleClick = async () => {
+		if ( ! saved && ! saving ) {
+			try {
+				setSaving( true );
+				await saveLogo();
+			} catch ( error ) {
+				// TODO: Handle error
+			} finally {
+				setSaving( false );
+			}
+		}
+	};
 
-						await saveToMediaLibrary( {
-							siteId: String( id ),
-							url: selectedLogo.url,
-							attrs: {
-								alt: selectedLogo.description,
-								caption: selectedLogo.description,
-								description: selectedLogo.description,
-								title: __( 'Site logo', 'jetpack' ),
-							},
-						} );
-						setSaved( true );
-					} catch ( error ) {
-						// TODO: Handle error
-					} finally {
-						setSaving( false );
-					}
-				}
-			} }
-		>
+	return ! saving && ! saved ? (
+		<Button className="jetpack-ai-logo-generator-modal-presenter__action" onClick={ handleClick }>
 			<Icon icon={ <MediaIcon /> } />
-			{ saving && (
-				<span className={ classnames( 'action-text', 'is-loading' ) }>
-					{ __( 'Saving…', 'jetpack' ) }
-				</span>
-			) }
-			{ ! saving && saved && <span className="action-text">{ __( 'Saved', 'jetpack' ) }</span> }
-			{ ! saving && ! saved && (
-				<span className="action-text">{ __( 'Save in Library', 'jetpack' ) }</span>
-			) }
+			<span className="action-text">{ __( 'Save in Library', 'jetpack' ) }</span>
+		</Button>
+	) : (
+		<button className="jetpack-ai-logo-generator-modal-presenter__action">
+			<Icon icon={ saving ? <MediaIcon /> : <CheckIcon /> } />
+			<span className="action-text">
+				{ saving ? __( 'Saving…', 'jetpack' ) : __( 'Saved', 'jetpack' ) }
+			</span>
 		</button>
 	);
 };
 
 const UseOnSiteButton: React.FC = () => {
-	return (
-		<button
-			className={ classnames( 'jetpack-ai-logo-generator-modal-presenter__action', 'clickable' ) }
+	const [ updating, setUpdating ] = useState( false );
+	const [ updated, setUpdated ] = useState( false );
+	const { applyLogo, savingLogoToLibrary } = useLogoGenerator();
+
+	const handleClick = async () => {
+		if ( ! updating && ! savingLogoToLibrary ) {
+			try {
+				setUpdating( true );
+				await applyLogo();
+				setUpdated( true );
+			} catch ( error ) {
+				// TODO: Handle error
+			} finally {
+				setUpdating( false );
+			}
+		}
+	};
+
+	if ( updated ) {
+		return null;
+	}
+
+	return updating ? (
+		<button className="jetpack-ai-logo-generator-modal-presenter__action">
+			<Icon icon={ <LogoIcon /> } />
+			<span className="action-text">{ __( 'Applying logo…', 'jetpack' ) }</span>
+		</button>
+	) : (
+		<Button
+			className="jetpack-ai-logo-generator-modal-presenter__action"
+			onClick={ handleClick }
+			disabled={ savingLogoToLibrary }
 		>
 			<Icon icon={ <LogoIcon /> } />
 			<span className="action-text">{ __( 'Use on Site', 'jetpack' ) }</span>
-		</button>
+		</Button>
 	);
 };
 
