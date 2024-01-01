@@ -15,6 +15,8 @@ import {
 	ACTION_SET_SITE_DETAILS,
 	ACTION_SET_SELECTED_LOGO_INDEX,
 	ACTION_ADD_LOGO_TO_HISTORY,
+	ACTION_SAVE_SELECTED_LOGO,
+	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { TierLimitProp } from './types';
@@ -191,22 +193,44 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 		case ACTION_SET_SELECTED_LOGO_INDEX: {
 			return {
 				...state,
-				history: {
-					...state.history,
-					selectedLogoIndex: action.selectedLogoIndex,
-				},
+				selectedLogoIndex: action.selectedLogoIndex,
 			};
 		}
 
 		case ACTION_ADD_LOGO_TO_HISTORY: {
-			const logos = [ ...state.history.logos, action.logo ];
+			const history = [ ...state.history, action.logo ];
 
 			return {
 				...state,
-				history: {
-					logos,
-					selectedLogoIndex: logos.length - 1,
+				history,
+				selectedLogoIndex: history.length - 1,
+			};
+		}
+
+		case ACTION_SET_SAVING_LOGO_TO_LIBRARY: {
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					isSavingLogoToLibrary: action.isSavingLogoToLibrary,
 				},
+			};
+		}
+
+		case ACTION_SAVE_SELECTED_LOGO: {
+			const selectedLogo = state.history?.[ state.selectedLogoIndex ];
+
+			return {
+				...state,
+				history: [
+					...state.history.slice( 0, state.selectedLogoIndex ),
+					{
+						...selectedLogo,
+						mediaId: action.mediaId,
+						url: action.url,
+					},
+					...state.history.slice( state.selectedLogoIndex + 1 ),
+				],
 			};
 		}
 	}
