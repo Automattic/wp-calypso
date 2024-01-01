@@ -421,10 +421,12 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 				indexInGridPlansForFeaturesGrid > 0
 					? gridPlans[ indexInGridPlansForFeaturesGrid - 1 ].productNameShort
 					: null;
+			// eslint-disable-next-line wpcalypso/i18n-no-variables
+			const translatedProductName = previousProductName && translate( previousProductName );
 			const title =
 				previousProductName &&
 				translate( 'Everything in %(planShortName)s, plus:', {
-					args: { planShortName: previousProductName },
+					args: { planShortName: translatedProductName },
 				} );
 			const classes = classNames(
 				'plan-features-2023-grid__common-title',
