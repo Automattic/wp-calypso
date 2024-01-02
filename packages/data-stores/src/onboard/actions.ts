@@ -563,7 +563,6 @@ export type OnboardAction = ReturnType<
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
-	| typeof setStepProgress
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal
