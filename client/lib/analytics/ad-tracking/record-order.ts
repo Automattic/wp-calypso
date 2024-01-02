@@ -79,10 +79,10 @@ export async function recordOrder(
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInParsely( wpcomJetpackCartInfo );
 	recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInParsely( cart, orderId );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -722,20 +722,26 @@ function recordOrderInAkismetGTM(
 /**
  * Sends a purchase conversion event to Prasely.
  */
-function recordOrderInParsely( cart: ResponseCart, orderId: number | null | undefined ): void {
+function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): void {
+	if ( ! mayWeTrackByTracker( 'parsely' ) ) {
+		return;
+	}
+
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+
+	const cartContents = wpcomJetpackCartInfo.wpcomProducts
+		.map( ( product ) => product.product_slug )
+		.join( ', ' );
+
 	loadParselyTracker()
 		.then( () => {
 			debug( `loadParselyTracker: Loaded Parsely tracker ${ TRACKING_IDS.parselyTracker }` );
-
-			// We ensure that we can track with Parsely
-			if ( ! mayWeTrackByTracker( 'parsely' ) ) {
-				return;
-			}
-
-			// Record Parsely purchase
-			window.PARSELY.conversions.trackPurchase( `Order Id ${ orderId }` );
-
-			debug( `recordOrderInParsely: Record Parsely purchase`, orderId );
+			window.PARSELY && window.PARSELY.conversions.trackPurchase( cartContents );
+		} )
+		.then( () => {
+			debug( `recordOrderInParsely: Record Parsely purchase`, cartContents );
 		} )
 		.catch( ( error ) => {
 			debug( 'recordOrderInParsely: Error loading Parsely', error );
