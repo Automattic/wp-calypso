@@ -450,7 +450,7 @@ export class Login extends Component {
 
 		const loginButtons = (
 			<>
-				{ isSocialFirst && isWhiteLogin && (
+				{ isSocialFirst && (
 					<LoginButtons
 						locale={ locale }
 						twoFactorAuthType={ twoFactorAuthType }
@@ -502,11 +502,10 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
+		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWhiteLogin } =
 			this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient;
 
 		return (
 			<div>

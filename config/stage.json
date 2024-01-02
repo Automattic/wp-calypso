@@ -87,7 +87,6 @@
 		"livechat_solution": true,
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
-		"login/social-first": true,
 		"mailchimp": true,
 		"marketplace-add-review": false,
 		"marketplace-domain-bundle": true,

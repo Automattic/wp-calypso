@@ -330,7 +330,6 @@ class Login extends Component {
 			isP2Login,
 			isPartnerSignup,
 			isSignupExistingAccount,
-			isSocialFirst,
 			isWhiteLogin,
 			isWoo,
 			isWooCoreProfilerFlow,
@@ -343,13 +342,9 @@ class Login extends Component {
 			wccomFrom,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account' );
+		let headerText = translate( 'Log in to WordPress.com' );
 		let preHeader = null;
 		let postHeader = null;
-
-		if ( isSocialFirst ) {
-			headerText = translate( 'Log in to WordPress.com' );
-		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
 			headerText = translate( 'Log in to update your payment details and renew your subscription' );
@@ -604,10 +599,10 @@ class Login extends Component {
 		);
 	}
 
-	renderToS() {
-		const { isSocialFirst, translate, twoFactorEnabled } = this.props;
+	renderSubheaderToS() {
+		const { translate, twoFactorEnabled } = this.props;
 
-		if ( ! isSocialFirst || twoFactorEnabled ) {
+		if ( twoFactorEnabled ) {
 			return null;
 		}
 
@@ -820,7 +815,7 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale } = this.props;
+		const { isSocialFirst, isJetpack, oauth2Client, locale } = this.props;
 
 		return (
 			<div
@@ -835,7 +830,7 @@ class Login extends Component {
 
 				{ this.renderNotice() }
 
-				{ this.renderToS() }
+				{ isSocialFirst && this.renderSubheaderToS() }
 
 				{ this.renderContent() }
 
