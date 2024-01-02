@@ -78,7 +78,6 @@ const PageList = ( { pagesToShow, onSelectPage }: PageListProps ) => {
 							aria-checked={ page.isSelected }
 							onClick={ () => onSelectPage( page.name ) }
 						>
-
 							<PageListItem label={ page.title } isSelected={ page.isSelected } />
 						</CompositeItem>
 					);
