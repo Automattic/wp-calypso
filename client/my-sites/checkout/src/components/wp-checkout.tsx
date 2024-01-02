@@ -91,7 +91,11 @@ import type {
 	CheckoutPageErrorCallback,
 	StepChangedCallback,
 } from '@automattic/composite-checkout';
-import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type {
+	RemoveProductFromCart,
+	MinimalRequestCartProduct,
+	ResponseCart,
+} from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, ReactNode } from 'react';
 
@@ -332,16 +336,10 @@ export default function WPCheckout( {
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
 	const showToSFoldableCard = useToSFoldableCard();
-	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
 	const shouldHideCheckoutUpsellNudge = useHideCheckoutUpsellNudge() === 'treatment';
 
-	const hasMarketplaceProduct = useSelector( ( state ) => {
-		return responseCart?.products
-			?.filter(
-				( p ) => ! ( p.product_slug && excluded3PDAccountProductSlugs.includes( p.product_slug ) )
-			)
-			.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
-	} );
+	const hasMarketplaceProduct =
+		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
 
 	const has100YearPlan = cartHas100YearPlan( responseCart );
 
@@ -818,9 +816,8 @@ function CheckoutTermsAndCheckboxes( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const has100YearPlan = cartHas100YearPlan( responseCart );
-	const hasMarketplaceProduct = useSelector( ( state ) => {
-		return responseCart.products.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
-	} );
+	const hasMarketplaceProduct =
+		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
 
 	const translate = useTranslate();
 
@@ -863,6 +860,22 @@ function SubmitButtonHeader() {
 			} ) }
 		</SubmitButtonHeaderWrapper>
 	);
+}
+
+function useDoesCartHaveMarketplaceProductRequiringConfirmation(
+	responseCart: ResponseCart
+): boolean {
+	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
+	return useSelector( ( state ) => {
+		return responseCart.products
+			.filter(
+				( product ) =>
+					! (
+						product.product_slug && excluded3PDAccountProductSlugs.includes( product.product_slug )
+					)
+			)
+			.some( ( product ) => isMarketplaceProduct( state, product.product_slug ) );
+	} );
 }
 
 const JetpackCheckoutSeals = () => {
