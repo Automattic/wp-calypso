@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
+import { getQueryArg } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import defaultFetchHandler from './default';
-import { getQueryArg } from '@wordpress/url';
 
 /**
  * Creates an embed response emulating core's fallback link.
