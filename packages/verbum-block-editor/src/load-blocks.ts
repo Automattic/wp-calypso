@@ -5,17 +5,26 @@ import * as listItem from '@wordpress/block-library/build-module/list-item';
 import * as paragraph from '@wordpress/block-library/build-module/paragraph';
 import * as quote from '@wordpress/block-library/build-module/quote';
 import { setDefaultBlockName, registerBlockType, createBlock } from '@wordpress/blocks';
+import type { Block } from '@wordpress/blocks';
 
+interface EmbedBlock extends Block {
+	settings: {
+		variations: Array< {
+			name: string;
+			patterns: RegExp[];
+		} >;
+	};
+}
 /**
  * Run the URL against the available embed patterns to determine if the URL is embeddable.
  * @param url URL to check
  * @returns true if the URL is an embeddable URL, false otherwise
  */
-function isEmbedUrl( url: string ): any {
-	const embedRegexes = embed.settings.variations
+function isEmbedUrl( url: string ): boolean {
+	const embedRegexes = ( embed as EmbedBlock ).settings.variations
 		.flatMap(
 			( variation: { patterns: RegExp[]; name: string } ) =>
-				'imgur' !== variation.name && variation.patterns
+				( 'imgur' !== variation.name && variation.patterns ) || []
 		)
 		.filter( Boolean );
 
@@ -47,7 +56,7 @@ function isImage( url: string ) {
  */
 export const loadBlocksWithCustomizations = () => {
 	[ paragraph, image, list, listItem, quote, embed ].forEach( ( block ) => {
-		const { metadata, settings, name } = block;
+		const { metadata, settings, name } = block as any;
 
 		/**
 		 * Customize the paragraph block.

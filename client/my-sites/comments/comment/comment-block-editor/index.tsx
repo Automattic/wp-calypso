@@ -1,17 +1,18 @@
+import {
+	Editor,
+	loadBlocksWithCustomizations,
+	loadTextFormatting,
+	addApiMiddleware,
+} from '@automattic/verbum-block-editor';
 import { parse } from '@wordpress/blocks';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { addApiMiddleware } from './api';
-import { Editor } from './editor';
-import { loadBlocksWithCustomizations } from './load-blocks';
-import { loadTextFormatting } from './load-text-formatting';
-import './editor-style.scss';
 
 loadBlocksWithCustomizations();
 loadTextFormatting();
 
-export const CommentBlockEditor = ( {
+const CommentBlockEditor = ( {
 	onChange,
 	commentContent,
 }: {
@@ -35,3 +36,5 @@ export const CommentBlockEditor = ( {
 		</div>
 	);
 };
+
+export default CommentBlockEditor;
