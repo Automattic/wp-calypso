@@ -18,6 +18,7 @@ const usePatternPages = (
 	let pageSlugs: string[] = [];
 	let pages: Pattern[] = [];
 	let pagesToShow: any[] = [];
+	let mockedPages: CustomPageTitle[] = [];
 	const page_slugs = searchParams.get( 'page_slugs' );
 	const custom_pages = searchParams.get( 'custom_pages' );
 
@@ -28,10 +29,14 @@ const usePatternPages = (
 	// eslint-disable-next-line prefer-const
 	pageCategoriesInOrder = useCategoriesOrder( categories, ORDERED_PATTERN_PAGES_CATEGORIES );
 
-	// Pairs of page title and pattern id can be passed in the URL from AI flow.
 	if ( custom_pages !== null ) {
-		const mockedPages: CustomPageTitle[] = JSON.parse( custom_pages ) || [];
+		try {
+			mockedPages = JSON.parse( custom_pages );
+		} catch ( e ) {}
+	}
 
+	// Pairs of page title and pattern id can be passed in the URL from AI flow.
+	if ( mockedPages.length > 0 ) {
 		mockedPages.forEach( ( { ID, title, selected }: CustomPageTitle ) => {
 			const patterns = dotcomPatterns.filter( ( pattern: Pattern ) => pattern.ID === ID );
 			if ( patterns.length === 0 ) {
