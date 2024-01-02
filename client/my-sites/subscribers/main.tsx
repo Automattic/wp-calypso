@@ -12,12 +12,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
 	SubscribersPageProvider,
 	useSubscribersPage,
 } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import GiftSubscriptionModal from 'calypso/state/memberships/gifts/gift-modal';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { MigrateSubscribersModal } from './components/migrate-subscribers-modal';
