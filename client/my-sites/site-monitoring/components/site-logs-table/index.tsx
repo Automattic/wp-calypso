@@ -52,11 +52,11 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		request_type: __( 'Request type' ),
 		request_url: __( 'Request URL' ),
 		// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-		date: sprintf( __( 'Date (%s)' ), siteGsmOffsetDisplay ),
+		date: sprintf( __( 'Date/Time (%s)' ), siteGsmOffsetDisplay ),
 		status: __( 'Status' ),
 		severity: 'Severity',
 		// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-		timestamp: sprintf( __( 'Timestamp (%s)' ), siteGsmOffsetDisplay ),
+		timestamp: sprintf( __( 'Date/Time (%s)' ), siteGsmOffsetDisplay ),
 		message: __( 'Message' ),
 	};
 
