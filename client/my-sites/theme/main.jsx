@@ -754,7 +754,11 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
+						<LivePreviewButton
+							siteId={ siteId }
+							themeId={ themeId }
+							styleVariation={ this.getSelectedStyleVariation() }
+						/>
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
 								onClick={ ( e ) => {
