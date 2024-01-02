@@ -174,6 +174,7 @@ const SubscribersPage = ( {
 
 				{ giftUserId !== 0 && (
 					<GiftSubscriptionModal
+						siteId={ selectedSite }
 						userId={ giftUserId }
 						onCancel={ () => setGiftUserId( 0 ) }
 						onConfirm={ () => setGiftUserId( 0 ) }
