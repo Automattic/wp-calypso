@@ -1,5 +1,6 @@
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import {
 	alignJustify as acitvityLogIcon,
@@ -33,6 +34,11 @@ import {
 	CommandCallBackParams,
 } from 'calypso/components/command-palette/use-command-palette';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
+import {
+	getEdgeCacheStatus,
+	setEdgeCache,
+	USE_EDGE_CACHE_QUERY_KEY,
+} from 'calypso/data/hosting/use-edge-cache';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
@@ -86,6 +92,7 @@ export const useCommandsArrayWpcom = ( {
 		};
 
 	const commandNavigation = useCommandNavigation();
+	const queryClient = useQueryClient();
 
 	const dispatch = useDispatch();
 	const displayNotice = (
@@ -206,15 +213,6 @@ export const useCommandsArrayWpcom = ( {
 		displayNotice( __( 'SFTP/SSH password reset and copied to clipboard.' ) );
 	};
 
-	const getEdgeCacheStatus = async ( siteId: number ) => {
-		const response = await wpcom.req.get( {
-			path: `/sites/${ siteId }/hosting/edge-cache/active`,
-			apiNamespace: 'wpcom/v2',
-		} );
-
-		return response;
-	};
-
 	const clearEdgeCache = async ( siteId: number ) => {
 		try {
 			const response = await getEdgeCacheStatus( siteId );
@@ -235,18 +233,6 @@ export const useCommandsArrayWpcom = ( {
 		}
 	};
 
-	// Toggle cache function
-	const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
-		const response = await wpcom.req.post( {
-			path: `/sites/${ siteId }/hosting/edge-cache/active`,
-			apiNamespace: 'wpcom/v2',
-			body: {
-				active: newStatus,
-			},
-		} );
-		return response;
-	};
-
 	const enableEdgeCache = async ( siteId: number ) => {
 		const currentStatus = await getEdgeCacheStatus( siteId );
 
@@ -264,6 +250,7 @@ export const useCommandsArrayWpcom = ( {
 		);
 		try {
 			await setEdgeCache( siteId, true );
+			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], true );
 			removeLoadingNotice();
 			displayNotice( __( 'Edge cache enabled.' ) );
 		} catch ( error ) {
@@ -287,6 +274,7 @@ export const useCommandsArrayWpcom = ( {
 		);
 		try {
 			await setEdgeCache( siteId, false );
+			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], false );
 			removeLoadingNotice();
 			displayNotice( __( 'Edge cache disabled.' ) );
 		} catch ( error ) {

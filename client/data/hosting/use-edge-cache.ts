@@ -25,14 +25,30 @@ interface MutationError {
 	message: string;
 }
 
+export const getEdgeCacheStatus = async ( siteId: number ) => {
+	const response = await wp.req.get( {
+		path: `/sites/${ siteId }/hosting/edge-cache/active`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	return response;
+};
+
+export const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
+	const response = await wp.req.post( {
+		path: `/sites/${ siteId }/hosting/edge-cache/active`,
+		apiNamespace: 'wpcom/v2',
+		body: {
+			active: newStatus,
+		},
+	} );
+	return response;
+};
+
 export const useEdgeCacheQuery = ( siteId: number ) => {
 	return useQuery< boolean, unknown, boolean >( {
 		queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
-		queryFn: () =>
-			wp.req.get( {
-				path: `/sites/${ siteId }/hosting/edge-cache/active`,
-				apiNamespace: 'wpcom/v2',
-			} ),
+		queryFn: () => getEdgeCacheStatus( siteId ),
 		enabled: !! siteId,
 		select: ( data ) => {
 			return !! data;
@@ -55,13 +71,7 @@ export const useSetEdgeCacheMutation = (
 	const queryClient = useQueryClient();
 	const mutation = useMutation< boolean, MutationError, boolean >( {
 		mutationFn: async ( active ) => {
-			return wp.req.post( {
-				path: `/sites/${ siteId }/hosting/edge-cache/active`,
-				apiNamespace: 'wpcom/v2',
-				body: {
-					active,
-				},
-			} );
+			return setEdgeCache( siteId, active );
 		},
 		mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY, siteId ],
 		onMutate: async ( active ) => {
@@ -92,9 +102,9 @@ export const useSetEdgeCacheMutation = (
 	const isLoading =
 		useIsMutating( { mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY, siteId ] } ) > 0;
 
-	const setEdgeCache = useCallback( mutate, [ mutate ] );
+	const setEdgeCacheCallback = useCallback( mutate, [ mutate ] );
 
-	return { setEdgeCache, isLoading };
+	return { setEdgeCache: setEdgeCacheCallback, isLoading };
 };
 
 export const useClearEdgeCacheMutation = (
