@@ -33,6 +33,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		...props,
 		perPage: 1,
 		author: currentUserId ?? undefined,
+		status: 'all',
 	} );
 
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
