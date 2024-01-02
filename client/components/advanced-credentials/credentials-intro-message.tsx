@@ -28,7 +28,7 @@ const useCredentialsIntroMessage = ( siteId: SiteId ) => {
 			}
 		),
 		BACKUP_AND_SCAN: translate(
-			'We need your website’s {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials, so that we can perform site scans. In some cases, they might be necessary for restores, too. We’ll guide you through it:',
+			'We need your website’s {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials, so that we can auto-fix threats. In some cases, they might be necessary for restores, too. We’ll guide you through it:',
 			{
 				components: { strong: <strong /> },
 			}
