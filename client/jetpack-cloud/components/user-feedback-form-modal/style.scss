@@ -1,0 +1,36 @@
+.theme-jetpack-cloud .ReactModalPortal .user-feedback-form-modal .dialog.card {
+	border-radius: 4px;
+	box-shadow: none;
+	max-width: 827px;
+}
+
+.user-feedback-form-modal .dialog .dialog__content {
+	padding: 0;
+}
+
+.user-feedback-form-modal__main {
+	padding: 40px;
+	gap: 24px;
+	display: flex;
+	flex-direction: column;
+}
+
+.user-feedback-form-modal__title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 0.8;
+	margin: 0;
+	padding: 0;
+}
+
+.user-feedback-form-modal__instruction {
+	font-size: 1rem;
+	font-weight: 400;
+}
+
+.user-feedback-form-modal__footer {
+	padding: 24px 40px;
+	text-align: right;
+	background-color: var(--studio-gray-0);
+	border-radius: 4px;
+}
