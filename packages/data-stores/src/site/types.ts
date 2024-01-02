@@ -143,6 +143,9 @@ export interface SiteDetails {
 	canUpdateFiles?: boolean;
 	isMainNetworkSite?: boolean;
 	isSecondaryNetworkSite?: boolean;
+
+	// Migration
+	site_migration?: SourceSiteMigrationBase;
 }
 
 export enum SiteCapabilities {
@@ -551,15 +554,21 @@ export enum MigrationStatusError {
 	WOA_TRANSFER = 'error-atomic-transfer',
 }
 
-export interface SourceSiteMigrationDetails {
-	status: MigrationStatus;
+export interface SourceSiteMigrationBase {
 	source_blog_id?: number;
+	error_status?: MigrationStatusError;
+	status: MigrationStatus;
+	last_modified: string;
+	// Migration meta
+	recent_migration?: boolean;
+	failed_backup_source?: boolean;
+}
+
+export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {
 	target_blog_id?: number;
 	site_migration_id: number;
-	error_status?: MigrationStatusError;
 	percent: number;
 	created: string;
-	last_modified: string;
 	is_atomic: boolean;
 	// Statistics
 	backup_percent?: number;
