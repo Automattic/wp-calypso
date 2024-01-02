@@ -8,7 +8,7 @@ import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
-} from 'calypso/data/hosting/use-edge-cache';
+} from 'calypso/data/hosting/use-cache';
 import { CacheCard } from '..';
 
 const INITIAL_STATE = {
@@ -37,7 +37,7 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/data/hosting/use-edge-cache', () => ( {
+jest.mock( 'calypso/data/hosting/use-cache', () => ( {
 	__esModule: true,
 	useEdgeCacheQuery: jest.fn( () => {
 		return {

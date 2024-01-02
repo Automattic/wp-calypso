@@ -12,7 +12,7 @@ import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
-} from 'calypso/data/hosting/use-edge-cache';
+} from 'calypso/data/hosting/use-cache';
 import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice } from 'calypso/state/notices/actions';

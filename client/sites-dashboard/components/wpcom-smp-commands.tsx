@@ -39,7 +39,7 @@ import {
 	getEdgeCacheStatus,
 	setEdgeCache,
 	USE_EDGE_CACHE_QUERY_KEY,
-} from 'calypso/data/hosting/use-edge-cache';
+} from 'calypso/data/hosting/use-cache';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
