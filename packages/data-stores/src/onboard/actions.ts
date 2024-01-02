@@ -471,6 +471,15 @@ export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => (
 	ecommerceFlowRecurType,
 } );
 
+export const setCouponCode = ( couponCode: string ) => ( {
+	type: 'SET_COUPON_CODE' as const,
+	couponCode,
+} );
+
+export const resetCouponCode = () => ( {
+	type: 'RESET_COUPON_CODE' as const,
+} );
+
 export const setDomainForm = ( step: Record< string, string > ) => {
 	const lastUpdated = Date.now();
 
@@ -577,6 +586,7 @@ export type OnboardAction = ReturnType<
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
+	| typeof setCouponCode
 	| typeof setHideFreePlan
 	| typeof setHidePlansFeatureComparison
 	| typeof setProductCartItems

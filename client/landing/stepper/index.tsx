@@ -71,6 +71,12 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 		}
 	}
 
+	const couponCode = useQuery().get( 'coupon' );
+	const { setCouponCode } = useDispatch( ONBOARD_STORE );
+	if ( couponCode ) {
+		setCouponCode( couponCode );
+	}
+
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	return <FlowRenderer flow={ flow } />;
