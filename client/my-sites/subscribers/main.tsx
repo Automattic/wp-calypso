@@ -121,6 +121,7 @@ const SubscribersPage = ( {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const [ giftUserId, setGiftUserId ] = useState( 0 );
+	const [ giftUsername, setGiftUsername ] = useState( '' );
 
 	const siteId = selectedSite?.ID || null;
 
@@ -137,8 +138,9 @@ const SubscribersPage = ( {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
-	const onGiftSubscription = ( { user_id }: Subscriber ) => {
+	const onGiftSubscription = ( { user_id, display_name }: Subscriber ) => {
 		setGiftUserId( user_id );
+		setGiftUsername( display_name );
 	};
 
 	return (
@@ -174,8 +176,9 @@ const SubscribersPage = ( {
 
 				{ giftUserId !== 0 && (
 					<GiftSubscriptionModal
-						siteId={ selectedSite }
+						siteId={ selectedSite?.ID ?? 0 }
 						userId={ giftUserId }
+						username={ giftUsername }
 						onCancel={ () => setGiftUserId( 0 ) }
 						onConfirm={ () => setGiftUserId( 0 ) }
 					/>

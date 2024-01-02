@@ -9,6 +9,7 @@ import { requestAddGift } from 'calypso/state/memberships/gifts/actions';
 type GiftSubscriptionModalProps = {
 	userId: number;
 	siteId: number;
+	username: string;
 	onCancel: () => void;
 	onConfirm: () => void;
 };
@@ -22,6 +23,7 @@ type Gift = {
 const GiftSubscriptionModal = ( {
 	siteId,
 	userId,
+	username,
 	onCancel,
 	onConfirm,
 }: GiftSubscriptionModalProps ) => {
@@ -35,7 +37,7 @@ const GiftSubscriptionModal = ( {
 
 	const text = translate( 'Select a plan to gift to this user: ' );
 
-	const giftSubscription = ( plan_id: number, user_id: number ) => {
+	const giftSubscription = ( plan_id: number, user_id: number, username: string ) => {
 		const giftDetails: Gift = {
 			gift_id: null,
 			plan_id: plan_id,
@@ -46,10 +48,9 @@ const GiftSubscriptionModal = ( {
 			requestAddGift(
 				siteId,
 				giftDetails,
-				translate( 'Gifted subscription for plan "%(plan_id)s" to user "%(user_id)s".', {
+				translate( 'Gifted subscription to user "%(username)s".', {
 					args: {
-						plan_id: plan_id,
-						user_id: user_id,
+						username: username,
 					},
 				} )
 			)
@@ -70,7 +71,7 @@ const GiftSubscriptionModal = ( {
 					{ translate( 'Cancel' ) }
 				</Button>
 				<Button
-					onClick={ () => giftSubscription( planId, userId ) }
+					onClick={ () => giftSubscription( planId, userId, username ) }
 					primary
 					disabled={ planId === 0 }
 				>
