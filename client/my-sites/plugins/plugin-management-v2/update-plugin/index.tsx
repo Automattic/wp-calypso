@@ -125,7 +125,6 @@ export default function UpdatePlugin( {
 					primary
 					onClick={ handleUpdateConfirmation }
 					className="update-plugin__new-version"
-					borderless
 					compact
 				>
 					{ translate( '{{span}}Update to {{/span}}%s', {
