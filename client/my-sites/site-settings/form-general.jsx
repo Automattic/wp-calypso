@@ -725,7 +725,13 @@ export class SiteSettingsFormGeneral extends Component {
 					showButton
 					title={ translate( 'Privacy {{learnMoreLink/}}', {
 						components: {
-							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
+							learnMoreLink: (
+								<InlineSupportLink
+									supportContext="privacy"
+									showText={ false }
+									iconStyle="info-outline"
+								/>
+							),
 						},
 						comment: 'Privacy Settings header',
 					} ) }

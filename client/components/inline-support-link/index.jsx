@@ -27,6 +27,7 @@ class InlineSupportLink extends Component {
 		showIcon: PropTypes.bool,
 		supportContext: PropTypes.string,
 		iconSize: PropTypes.number,
+		iconStyle: PropTypes.string,
 		linkTitle: PropTypes.string,
 		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
@@ -41,6 +42,7 @@ class InlineSupportLink extends Component {
 		supportLink: null,
 		showText: true,
 		showIcon: true,
+		iconStyle: 'help-outline',
 		iconSize: 14,
 		showSupportModal: true,
 		noWrap: true,
@@ -70,8 +72,17 @@ class InlineSupportLink extends Component {
 	}
 
 	render() {
-		const { className, showText, showIcon, linkTitle, iconSize, translate, children, noWrap } =
-			this.props;
+		const {
+			className,
+			showText,
+			showIcon,
+			linkTitle,
+			iconSize,
+			iconStyle,
+			translate,
+			children,
+			noWrap,
+		} = this.props;
 
 		let { supportPostId, supportLink } = this.props;
 		if ( this.state.supportDataFromContext ) {
@@ -94,7 +105,7 @@ class InlineSupportLink extends Component {
 		let content = (
 			<>
 				{ showText && text }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ supportPostId && showIcon && <Gridicon icon={ iconStyle } size={ iconSize } /> }
 			</>
 		);
 		/* Prevent widows, sometimes:
