@@ -1,3 +1,4 @@
+import wpcomRequest from 'wpcom-proxy-request';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { LIVE_PREVIEW_START } from 'calypso/state/themes/action-types';
@@ -7,9 +8,28 @@ import { AppState } from 'calypso/types';
 import { installAndLivePreview } from './install-and-live-preview';
 import { redirectToLivePreview } from './redirect-to-live-preview';
 import { suffixThemeIdForInstall } from './suffix-theme-id-for-install';
+import type { GlobalStyles } from '@automattic/data-stores';
 
-export function livePreview( themeId: string, siteId: number, source?: 'list' | 'detail' ) {
-	return ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
+function setUserGlobalStyles( siteId: number, stylesheet: string, styleVariation: GlobalStyles ) {
+	return wpcomRequest( {
+		method: 'PUT',
+		apiNamespace: 'wpcom/v2',
+		path: `/sites/${ siteId }/global-styles-variation/user`,
+		query: new URLSearchParams( {
+			wp_theme_preview: stylesheet,
+		} ).toString(),
+		body: styleVariation,
+	} );
+}
+
+export function livePreview(
+	siteId: number,
+	themeId: string,
+	stylesheet: string,
+	styleVariation?: GlobalStyles,
+	source?: 'list' | 'detail'
+) {
+	return async ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
 		const analysis = recordTracksEvent( 'calypso_block_theme_live_preview_click', {
 			active_theme: getActiveTheme( getState(), siteId ),
 			site_id: siteId,
@@ -24,6 +44,11 @@ export function livePreview( themeId: string, siteId: number, source?: 'list' | 
 			// FIXME: Handle the case where the installation fails and the theme is not installed.
 			return dispatch( installAndLivePreview( installId, siteId ) );
 		}
+
+		if ( styleVariation && ! isJetpackSite( getState(), siteId ) ) {
+			await setUserGlobalStyles( siteId, stylesheet, styleVariation );
+		}
+
 		return dispatch( redirectToLivePreview( themeId, siteId ) );
 	};
 }

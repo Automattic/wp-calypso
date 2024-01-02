@@ -717,6 +717,7 @@ class ThemeSheet extends Component {
 			siteId,
 			softLaunched,
 			themeId,
+			stylesheet,
 			translate,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
@@ -745,7 +746,12 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
+						<LivePreviewButton
+							siteId={ siteId }
+							themeId={ themeId }
+							stylesheet={ stylesheet }
+							styleVariation={ this.getSelectedStyleVariation() }
+						/>
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
 								onClick={ ( e ) => {
@@ -1154,7 +1160,8 @@ class ThemeSheet extends Component {
 	};
 
 	getSelectedStyleVariation = () => {
-		const { selectedStyleVariationSlug, styleVariations } = this.props;
+		const { selectedStyleVariationSlug = DEFAULT_GLOBAL_STYLES_VARIATION_SLUG, styleVariations } =
+			this.props;
 		return styleVariations.find( ( variation ) => variation.slug === selectedStyleVariationSlug );
 	};
 

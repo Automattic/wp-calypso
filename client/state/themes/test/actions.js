@@ -1465,8 +1465,10 @@ describe( 'actions', () => {
 			test( 'should redirect users to the Live Preview', () => {
 				return new Promise( ( done ) => {
 					livePreview(
-						'pendant',
 						2211667,
+						'pendant',
+						'pub/pendant',
+						undefined,
 						'detail'
 					)( dispatch, state ).then( () => {
 						expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
@@ -1511,8 +1513,10 @@ describe( 'actions', () => {
 				test( 'should redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
 						livePreview(
-							'pendant',
 							2211667,
+							'pendant',
+							'pub/pendant',
+							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
@@ -1538,8 +1542,10 @@ describe( 'actions', () => {
 				test( 'should install the theme and then redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
 						livePreview(
-							'pendant',
 							2211667,
+							'pendant',
+							'pub/pendant',
+							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
