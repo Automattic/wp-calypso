@@ -1,5 +1,6 @@
+import { usePrevious } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
@@ -17,7 +18,7 @@ export function useSite() {
 	const isRequestingSelectedSite = useSelector( ( state ) =>
 		isRequestingSite( state, siteIdOrSlug )
 	);
-	const lastRequestedSiteIdOrSlug = useRef( '' );
+	const lastRequestedSiteIdOrSlug = usePrevious( siteIdOrSlug );
 
 	const site = useSelect(
 		( select ) => {
@@ -32,12 +33,11 @@ export function useSite() {
 	useEffect( () => {
 		if (
 			siteIdOrSlug &&
-			siteIdOrSlug !== lastRequestedSiteIdOrSlug.current &&
+			siteIdOrSlug !== lastRequestedSiteIdOrSlug &&
 			! selectedSite &&
 			! isRequestingSelectedSite
 		) {
 			dispatch( requestSite( siteIdOrSlug ) );
-			lastRequestedSiteIdOrSlug.current = siteIdOrSlug;
 		}
 	}, [ siteIdOrSlug, selectedSite, isRequestingSelectedSite ] );
 
