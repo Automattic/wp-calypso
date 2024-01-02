@@ -14,7 +14,7 @@ declare module '@verbum/block-editor' {
 }
 
 declare module '!!css-loader!sass-loader!./inline-iframe-style.scss' {
-	const css: string[];
+	const css: Array< [ string, string ] >;
 
 	export default css;
 }

@@ -69,8 +69,10 @@ export class CommentEdit extends Component {
 
 	setAuthorUrlValue = ( event ) => this.setState( { authorUrl: event.target.value } );
 
-	setCommentContentValue = ( event, callback = noop ) =>
-		this.setState( { commentContent: event.target.value }, callback );
+	setCommentContentValue = ( event, callback = noop ) => {
+		const commentContent = typeof event === 'string' ? event : event.target.value;
+		this.setState( { commentContent }, callback );
+	};
 
 	setCommentDateValue = ( commentDate ) =>
 		this.setState( { commentDate: this.props.moment( commentDate ).format() } );

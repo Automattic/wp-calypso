@@ -1,4 +1,4 @@
-import { type BlockInstance, parse } from '@wordpress/blocks';
+import { parse } from '@wordpress/blocks';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -30,7 +30,7 @@ export const CommentBlockEditor = ( {
 		<div className="editor__wrapper">
 			<Editor
 				initialContent={ commentContent ? parse( commentContent ) : [] }
-				onChange={ ( content: BlockInstance[] ) => onChange( { target: { value: content } } ) }
+				onChange={ onChange }
 			/>
 		</div>
 	);

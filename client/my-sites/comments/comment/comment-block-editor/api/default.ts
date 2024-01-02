@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import type { APIFetchOptions } from '@wordpress/api-fetch';
 
 /**
  * Parses the apiFetch response.
@@ -9,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  * @param {boolean}  shouldParseResponse
  * @returns {Promise<any> | null | Response} Parsed response.
  */
-const parseResponse = ( response, shouldParseResponse = true ) => {
+const parseResponse = ( response: Response, shouldParseResponse = true ) => {
 	if ( shouldParseResponse ) {
 		if ( response.status === 204 ) {
 			return null;
@@ -27,7 +28,7 @@ const parseResponse = ( response, shouldParseResponse = true ) => {
  * @param {Response} response
  * @returns {Promise<any>} Parsed response.
  */
-const parseJsonAndNormalizeError = ( response ) => {
+const parseJsonAndNormalizeError = ( response: Response ) => {
 	const invalidJsonError = {
 		code: 'invalid_json',
 		message: __( 'The response is not a valid JSON response.' ),
@@ -48,7 +49,10 @@ const parseJsonAndNormalizeError = ( response ) => {
  * @param {boolean}  shouldParseResponse
  * @returns {Promise<any>} Parsed response.
  */
-export const parseResponseAndNormalizeError = ( response, shouldParseResponse = true ) => {
+export const parseResponseAndNormalizeError = (
+	response: Response,
+	shouldParseResponse = true
+) => {
 	return Promise.resolve( parseResponse( response, shouldParseResponse ) ).catch( ( res ) =>
 		parseAndThrowError( res, shouldParseResponse )
 	);
@@ -60,7 +64,7 @@ export const parseResponseAndNormalizeError = ( response, shouldParseResponse = 
  * @param {boolean}  shouldParseResponse
  * @returns {Promise<any>} Parsed response.
  */
-export function parseAndThrowError( response, shouldParseResponse = true ) {
+export function parseAndThrowError( response: Response, shouldParseResponse = true ) {
 	if ( ! shouldParseResponse ) {
 		throw response;
 	}
@@ -93,7 +97,7 @@ const DEFAULT_HEADERS = {
  * unless explicitly provided through apiFetch options.
  * @type {Object}
  */
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS: APIFetchOptions = {
 	credentials: 'include',
 };
 
@@ -103,7 +107,7 @@ const DEFAULT_OPTIONS = {
  * @param {Response} response
  * @returns {Response} The response if the status is in the 200 range.
  */
-const checkStatus = ( response ) => {
+const checkStatus = ( response: Response ) => {
 	if ( response.status >= 200 && response.status < 300 ) {
 		return response;
 	}
@@ -111,12 +115,7 @@ const checkStatus = ( response ) => {
 	throw response;
 };
 
-/** @typedef {(options: import('./types').APIFetchOptions) => Promise<any>} FetchHandler*/
-
-/**
- * @type {FetchHandler}
- */
-const defaultFetchHandler = ( nextOptions ) => {
+const defaultFetchHandler = ( nextOptions: APIFetchOptions ) => {
 	const { url, path, data, parse = true, ...remainingOptions } = nextOptions;
 	let { body, headers } = nextOptions;
 

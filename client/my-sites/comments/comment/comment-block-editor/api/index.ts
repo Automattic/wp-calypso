@@ -2,11 +2,12 @@ import apiFetch from '@wordpress/api-fetch';
 import { getQueryArg } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import defaultFetchHandler from './default';
+import type { APIFetchMiddleware } from '@wordpress/api-fetch';
 
 /**
  * Creates an embed response emulating core's fallback link.
  */
-function createFallbackResponse( url ) {
+function createFallbackResponse( url: string ) {
 	const link = document.createElement( 'a' );
 	link.href = url;
 	link.innerText = url;
@@ -36,7 +37,7 @@ export function addApiMiddleware( siteId: number ) {
 	} );
 
 	// Add a middleware to handle calls to site that are not available.
-	apiFetch.use( ( options, next ): any => {
+	apiFetch.use( async ( options, next ): ReturnType< APIFetchMiddleware > => {
 		if ( options.path?.startsWith( '/wp/v2/themes?context=edit&status=active' ) ) {
 			return {
 				body: [],
@@ -50,10 +51,10 @@ export function addApiMiddleware( siteId: number ) {
 	 * Transform oEmbed response.
 	 * See: wp-content/plugins/gutenberg-wpcom/gutenberg-wpcom-embed.js?
 	 */
-	function transformOEmbedApiResponse( options, next ) {
+	const transformOEmbedApiResponse: APIFetchMiddleware = async ( options, next ) => {
 		if ( options.path && options.path.indexOf( 'oembed' ) !== -1 ) {
 			const url = getQueryArg( options.path, 'url' );
-			const response = next( options, next );
+			const response = next( options );
 
 			return new Promise( function ( resolve ) {
 				response
@@ -76,11 +77,14 @@ export function addApiMiddleware( siteId: number ) {
 						resolve( data );
 					} )
 					.catch( function () {
-						resolve( createFallbackResponse( url ) );
+						if ( url ) {
+							resolve( createFallbackResponse( url.toString() ) );
+						}
 					} );
 			} );
 		}
-		return next( options, next );
-	}
+		return next( options );
+	};
+
 	apiFetch.use( transformOEmbedApiResponse );
 }

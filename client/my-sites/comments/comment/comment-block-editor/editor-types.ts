@@ -1,7 +1,7 @@
 import { type BlockInstance } from '@wordpress/blocks';
 
 export interface EditorProps {
-	initialContent?: string;
+	initialContent?: BlockInstance[];
 	onChange: ( content: string ) => void;
 	commentId?: number;
 }

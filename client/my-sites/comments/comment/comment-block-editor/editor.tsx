@@ -11,11 +11,11 @@ import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import classNames from 'classnames';
 import { editorSettings } from './editor-settings';
-import { EditorProps, StateWithUndoManager } from './types';
+import { EditorProps, StateWithUndoManager } from './editor-types';
 import type { MouseEvent, KeyboardEvent } from 'react';
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 
@@ -36,45 +36,51 @@ export const Editor: React.FC< EditorProps > = ( { initialContent, onChange } ) 
 	} = useStateWithHistory( initialContent ) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
 
-	const handleContentUpdate = ( content: BlockInstance[] ) => {
-		setEditorContent( content );
-		onChange( serialize( content ) );
-	};
+	const handleContentUpdate = useCallback(
+		( content: BlockInstance[] ) => {
+			setEditorContent( content );
+			onChange( serialize( content ) );
+		},
+		[ setEditorContent, onChange ]
+	);
 
 	// Listen for the content height changing and update the iframe height.
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 
 	const { selectBlock } = useDispatch( blockEditorStore );
 
-	const selectLastBlock = ( event?: MouseEvent | KeyboardEvent ) => {
-		const lastBlock = editorContent[ editorContent.length - 1 ];
+	const selectLastBlock = useCallback(
+		( event?: MouseEvent | KeyboardEvent ) => {
+			const lastBlock = editorContent[ editorContent.length - 1 ];
 
-		// If this is a click event only shift focus if the click is in the root.
-		// We don't want to shift focus if the click is in a block.
-		if ( event ) {
-			if ( ( event.target as HTMLDivElement ).dataset.isDropZone ) {
-				// If the last block isn't a paragraph, add a new one.
-				// This allows the user to add text after a non-text block without clicking the inserter.
-				if ( lastBlock.name !== 'core/paragraph' ) {
-					const newParagraph = createBlock( 'core/paragraph' );
-					handleContentUpdate( [ ...editorContent, newParagraph ] );
-					selectBlock( newParagraph.clientId );
+			// If this is a click event only shift focus if the click is in the root.
+			// We don't want to shift focus if the click is in a block.
+			if ( event ) {
+				if ( ( event.target as HTMLDivElement ).dataset.isDropZone ) {
+					// If the last block isn't a paragraph, add a new one.
+					// This allows the user to add text after a non-text block without clicking the inserter.
+					if ( lastBlock.name !== 'core/paragraph' ) {
+						const newParagraph = createBlock( 'core/paragraph' );
+						handleContentUpdate( [ ...editorContent, newParagraph ] );
+						selectBlock( newParagraph.clientId );
+					}
+
+					selectBlock( lastBlock.clientId );
+				} else {
+					return;
 				}
-
-				selectBlock( lastBlock.clientId );
-			} else {
-				return;
 			}
-		}
 
-		selectBlock( lastBlock.clientId );
-	};
+			selectBlock( lastBlock.clientId );
+		},
+		[ editorContent, handleContentUpdate, selectBlock ]
+	);
 
 	useEffect( () => {
 		// Select the first item in the editor when it loads.
 		selectLastBlock();
 		setIsEditing( true );
-	}, [] );
+	}, [ selectLastBlock ] );
 
 	return (
 		<SlotFillProvider>
