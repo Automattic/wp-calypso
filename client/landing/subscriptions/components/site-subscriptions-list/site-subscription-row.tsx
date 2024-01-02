@@ -3,7 +3,6 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
@@ -21,6 +20,7 @@ import {
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
+import { useDispatch } from 'calypso/state';
 import { requestDeleteGift } from 'calypso/state/memberships/gifts/actions';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
