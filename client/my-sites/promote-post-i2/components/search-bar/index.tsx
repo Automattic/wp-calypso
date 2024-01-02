@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import Search, { SearchIcon } from '@automattic/search';
 import { translate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import './style.scss';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
+import WooItemsFilter, { WooItemsFilterType } from '../posts-woo-filter';
 
 export type SearchOptions = {
 	search?: string;
@@ -43,8 +45,13 @@ const FILTER_OPTIONS_DEFAULT = {
 	postType: '',
 };
 
+const WOO_FILTER_OPTIONS_DEFAULT = {
+	filter: 'products',
+};
+
 export default function SearchBar( props: Props ) {
 	const { mode, handleSetSearch } = props;
+	const isWooStore = () => config.isEnabled( 'isWooStore' );
 
 	const sortOptions: Array< DropdownOption > = [
 		{
@@ -95,6 +102,7 @@ export default function SearchBar( props: Props ) {
 	const [ searchInput, setSearchInput ] = React.useState< string | undefined >( '' );
 	const [ sortOption, setSortOption ] = React.useState( SORT_OPTIONS_DEFAULT );
 	const [ filterOption, setFilterOption ] = React.useState( FILTER_OPTIONS_DEFAULT );
+	const [ wooFilterOption, setWooFilterOption ] = React.useState( WOO_FILTER_OPTIONS_DEFAULT );
 
 	useEffect( () => {
 		handleSetSearch( {
@@ -115,6 +123,14 @@ export default function SearchBar( props: Props ) {
 			search: searchInput || '',
 			filter: newFilter,
 		} );
+	};
+
+	const onChangeFilter = ( filter: string ) => {
+		const newFilter = {
+			filter,
+		};
+
+		setWooFilterOption( newFilter );
 	};
 
 	const onChangeSearch = ( search: string ) => {
@@ -199,13 +215,22 @@ export default function SearchBar( props: Props ) {
 			<div className="promote-post-i2__search-bar-options">
 				{ mode === 'posts' && (
 					<>
-						<SelectDropdown
-							className="promote-post-i2__search-bar-dropdown post-type"
-							onSelect={ onChangePostTypeFilter }
-							options={ postTypeOptions }
-							initialSelected={ filterOption.postType }
-							selectedText={ getPostTypeFilterLabel() }
-						/>
+						{ isWooStore() && (
+							<WooItemsFilter
+								handleChangeFilter={ onChangeFilter }
+								itemsFilter={ wooFilterOption.filter as WooItemsFilterType }
+							/>
+						) }
+
+						{ ! isWooStore() && (
+							<SelectDropdown
+								className="promote-post-i2__search-bar-dropdown post-type"
+								onSelect={ onChangePostTypeFilter }
+								options={ postTypeOptions }
+								initialSelected={ filterOption.postType }
+								selectedText={ getPostTypeFilterLabel() }
+							/>
+						) }
 						<SelectDropdown
 							className="promote-post-i2__search-bar-dropdown order-by"
 							onSelect={ onChangeOrderOption }
