@@ -12,6 +12,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarHeader from './header';
@@ -62,6 +63,8 @@ const JetpackCloudSidebar = ( {
 	const dispatch = useDispatch();
 
 	const isUserFeedbackEnabled = isEnabled( 'jetpack/user-feedback-form' );
+
+	const isAgency = useSelector( isAgencyUser );
 
 	const onShowUserFeedbackForm = () => {
 		// TODO: Show user feedback form modal.
@@ -127,7 +130,7 @@ const JetpackCloudSidebar = ( {
 						} }
 					/>
 
-					{ isUserFeedbackEnabled && (
+					{ isUserFeedbackEnabled && isAgency && (
 						<SidebarNavigatorMenuItem
 							title={ translate( 'Share product feedback', {
 								comment: 'Jetpack Cloud sidebar navigation item',
