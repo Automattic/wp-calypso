@@ -7,7 +7,11 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useEdgeCacheQuery, useSetEdgeCacheMutation } from 'calypso/data/hosting/use-edge-cache';
+import {
+	useEdgeCacheQuery,
+	useSetEdgeCacheMutation,
+	useClearEdgeCacheMutation,
+} from 'calypso/data/hosting/use-edge-cache';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -15,7 +19,6 @@ import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
-import { useClearEdgeCacheMutation } from './use-clear-edge-cache';
 
 const Hr = styled.hr( {
 	marginBottom: '16px',

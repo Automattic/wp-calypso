@@ -4,8 +4,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { useEdgeCacheQuery, useSetEdgeCacheMutation } from 'calypso/data/hosting/use-edge-cache';
-import { useClearEdgeCacheMutation } from 'calypso/my-sites/hosting/cache-card/use-clear-edge-cache';
+import {
+	useEdgeCacheQuery,
+	useSetEdgeCacheMutation,
+	useClearEdgeCacheMutation,
+} from 'calypso/data/hosting/use-edge-cache';
 import { CacheCard } from '..';
 
 const INITIAL_STATE = {
@@ -34,16 +37,6 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/my-sites/hosting/cache-card/use-clear-edge-cache', () => ( {
-	__esModule: true,
-	useClearEdgeCacheMutation: jest.fn( () => {
-		return {
-			clearEdgeCache: jest.fn(),
-			loading: false,
-		};
-	} ),
-} ) );
-
 jest.mock( 'calypso/data/hosting/use-edge-cache', () => ( {
 	__esModule: true,
 	useEdgeCacheQuery: jest.fn( () => {
@@ -55,6 +48,12 @@ jest.mock( 'calypso/data/hosting/use-edge-cache', () => ( {
 		return {
 			toggleEdgeCache: jest.fn(),
 			isLoading: false,
+		};
+	} ),
+	useClearEdgeCacheMutation: jest.fn( () => {
+		return {
+			clearEdgeCache: jest.fn(),
+			loading: false,
 		};
 	} ),
 } ) );
