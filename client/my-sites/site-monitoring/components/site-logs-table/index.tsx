@@ -51,7 +51,8 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	const columnNames: { [ key in string ]: string } = {
 		request_type: __( 'Request type' ),
 		request_url: __( 'Request URL' ),
-		date: __( 'Date' ),
+		// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+		date: sprintf( __( 'Date (%s)' ), siteGsmOffsetDisplay ),
 		status: __( 'Status' ),
 		severity: 'Severity',
 		// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
