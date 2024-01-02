@@ -69,7 +69,7 @@ export function addApiMiddleware( siteId: number ) {
 							const doc = document.implementation.createHTMLDocument( '' );
 							doc.body.innerHTML = data.html;
 							const wrapper = doc.querySelector(
-								'[class="embed-youtube"],[class="embed-vimeo"],[class="embed-dailymotion"]'
+								'[class="embed-youtube"],[class="embed-vimeo"],[class="embed-dailymotion"],[class="embed-spotify"]'
 							);
 							data.html = wrapper ? wrapper.innerHTML : data.html;
 						}
