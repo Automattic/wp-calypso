@@ -148,7 +148,7 @@ export const CacheCard = ( {
 	//autorenew
 	return (
 		<Card className="cache-card">
-			<Icon class="card-icon" icon={ cacheIcon } size={ 32 } />
+			<Icon className="card-icon" icon={ cacheIcon } size={ 32 } />
 			<CardHeading id="cache" size={ 20 }>
 				{ translate( 'Cache' ) }
 			</CardHeading>
