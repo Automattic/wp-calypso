@@ -821,7 +821,7 @@ class Signup extends Component {
 
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className="signup__step is-user">
+				<div className={ `signup__step is-${ stepName }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
