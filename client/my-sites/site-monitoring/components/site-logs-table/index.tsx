@@ -46,7 +46,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	}
 
 	const siteGsmOffsetDisplay =
-		siteGmtOffset === 0 ? 'GMT' : `GMT ${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
+		siteGmtOffset === 0 ? 'UTC' : `UTC${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
 
 	const columnNames: { [ key in string ]: string } = {
 		request_type: __( 'Request type' ),
