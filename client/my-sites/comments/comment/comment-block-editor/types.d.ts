@@ -20,7 +20,7 @@ declare module '!!css-loader!sass-loader!./inline-iframe-style.scss' {
 }
 
 declare module '@wordpress/block-library/build-module/*' {
-	import { BlockConfiguration } from '@wordpress/blocks';
+	import { Block } from '@wordpress/blocks';
 
 	const block: Block;
 

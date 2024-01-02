@@ -14,12 +14,12 @@ import { useDispatch } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import classNames from 'classnames';
-import { EditorProps, StateWithUndoManager } from '../types';
 import { editorSettings } from './editor-settings';
+import { EditorProps, StateWithUndoManager } from './types';
 import type { MouseEvent, KeyboardEvent } from 'react';
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 
-const iframedCSS = css.reduce( ( css, [ , item ] ) => {
+const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) => {
 	return css + '\n' + item;
 }, '' );
 
