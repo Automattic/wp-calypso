@@ -7,11 +7,16 @@ const usePatternPages = (
 	pagesMapByCategory: Record< string, Pattern[] >,
 	categories: Category[],
 	dotcomPatterns: Pattern[]
-) => {
+): {
+	pages: Pattern[];
+	pageSlugs: string[];
+	setPageSlugs: ( slugs: string[] ) => void;
+	pagesToShow: any[];
+} => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	let pageCategoriesInOrder;
 	let pageSlugs: string[] = [];
-	let pages: ( Pattern | null )[] = [];
+	let pages: Pattern[] = [];
 	let pagesToShow: any[] = [];
 	const page_slugs = searchParams.get( 'page_slugs' );
 	const custom_pages = searchParams.get( 'custom_pages' );
@@ -66,40 +71,40 @@ const usePatternPages = (
 		};
 
 		return { pages, pageSlugs, setPageSlugs, pagesToShow };
-	} else if ( custom_pages === null ) {
-		if ( page_slugs === null ) {
-			pageSlugs = INITIAL_PAGES;
-		}
-
-		pages = pageSlugs.map( ( slug ) => pagesMapByCategory[ slug ]?.[ 0 ] ).filter( Boolean );
-
-		pagesToShow = pageCategoriesInOrder.map( ( category: Category ) => {
-			const { name } = category;
-			const hasPages = name && pagesMapByCategory[ name ]?.length;
-			return {
-				name,
-				hasPages,
-				title: hasPages ? pagesMapByCategory[ name ][ 0 ].title : '',
-				isSelected: name ? pageSlugs.includes( name ) : false,
-			};
-		} );
-		const setPageSlugs = ( slugs: string[] ) => {
-			setSearchParams(
-				( currentSearchParams ) => {
-					if ( slugs.length === 0 ) {
-						currentSearchParams.set( 'page_slugs', '' );
-					} else {
-						currentSearchParams.set( 'page_slugs', slugs.join( ',' ) );
-					}
-
-					return currentSearchParams;
-				},
-				{ replace: true }
-			);
-		};
-
-		return { pages, pageSlugs, setPageSlugs, pagesToShow };
 	}
+
+	if ( page_slugs === null ) {
+		pageSlugs = INITIAL_PAGES;
+	}
+
+	pages = pageSlugs.map( ( slug ) => pagesMapByCategory[ slug ]?.[ 0 ] ).filter( Boolean );
+
+	pagesToShow = pageCategoriesInOrder.map( ( category: Category ) => {
+		const { name } = category;
+		const hasPages = name && pagesMapByCategory[ name ]?.length;
+		return {
+			name,
+			hasPages,
+			title: hasPages ? pagesMapByCategory[ name ][ 0 ].title : '',
+			isSelected: name ? pageSlugs.includes( name ) : false,
+		};
+	} );
+	const setPageSlugs = ( slugs: string[] ) => {
+		setSearchParams(
+			( currentSearchParams ) => {
+				if ( slugs.length === 0 ) {
+					currentSearchParams.set( 'page_slugs', '' );
+				} else {
+					currentSearchParams.set( 'page_slugs', slugs.join( ',' ) );
+				}
+
+				return currentSearchParams;
+			},
+			{ replace: true }
+		);
+	};
+
+	return { pages, pageSlugs, setPageSlugs, pagesToShow };
 };
 
 export default usePatternPages;
