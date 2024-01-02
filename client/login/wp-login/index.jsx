@@ -450,7 +450,7 @@ export class Login extends Component {
 
 		const loginButtons = (
 			<>
-				{ isSocialFirst && isWhiteLogin && (
+				{ isSocialFirst && (
 					<LoginButtons
 						locale={ locale }
 						twoFactorAuthType={ twoFactorAuthType }
