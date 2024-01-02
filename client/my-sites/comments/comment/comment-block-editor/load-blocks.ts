@@ -64,7 +64,7 @@ export const loadBlocksWithCustomizations = () => {
 					{
 						type: 'files',
 						isMatch: () => true,
-						transform: ( file: any ) => [],
+						transform: () => [],
 					},
 					// Transform image links to image block.
 					{
@@ -115,7 +115,7 @@ export const loadBlocksWithCustomizations = () => {
 			const edit = settings.edit;
 
 			const customEdit = ( props: any ) => {
-				props.context = { ...props.context, allowResize: false };
+				//props.context = { ...props.context, allowResize: false };
 
 				return edit( props );
 			};

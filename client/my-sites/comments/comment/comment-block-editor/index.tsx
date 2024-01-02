@@ -1,4 +1,4 @@
-import { serialize, type BlockInstance, parse } from '@wordpress/blocks';
+import { type BlockInstance, parse } from '@wordpress/blocks';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -27,12 +27,10 @@ export const CommentBlockEditor = ( {
 	}, [ siteId ] );
 
 	return (
-		<div className="editor__wrapper ">
+		<div className="editor__wrapper">
 			<Editor
 				initialContent={ commentContent ? parse( commentContent ) : [] }
-				saveContent={ ( content: BlockInstance[] ) =>
-					onChange( { target: { value: serialize( content ) } } )
-				}
+				onChange={ ( content: BlockInstance[] ) => onChange( { target: { value: content } } ) }
 			/>
 		</div>
 	);

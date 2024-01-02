@@ -19,4 +19,15 @@ export function addApiMiddleware( siteId: number ) {
 
 		return defaultFetchHandler( options );
 	} );
+
+	// Add a middleware to handle calls to site that are not available.
+	apiFetch.use( ( options, next ): any => {
+		if ( options.path?.startsWith( '/wp/v2/themes?context=edit&status=active' ) ) {
+			return {
+				body: [],
+			};
+		}
+
+		return next( options );
+	} );
 }
