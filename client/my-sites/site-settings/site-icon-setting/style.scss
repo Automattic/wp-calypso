@@ -1,16 +1,6 @@
-.site-settings .form-label.site-icon-setting__heading {
+.form-label.site-icon-setting__heading {
 	display: flex;
 	align-items: center;
-	justify-content: normal;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		justify-content: normal;
-		white-space: nowrap;
-	}
-
-	.info-popover {
-		margin-left: 6px;
-	}
 
 	.gridicon {
 		display: block;
