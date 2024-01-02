@@ -727,6 +727,10 @@ function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): voi
 		return;
 	}
 
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+
 	const cartContents = wpcomJetpackCartInfo.wpcomProducts
 		.map( ( product ) => product.product_slug )
 		.join( ', ' );
@@ -734,7 +738,7 @@ function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): voi
 	loadParselyTracker()
 		.then( () => {
 			debug( `loadParselyTracker: Loaded Parsely tracker ${ TRACKING_IDS.parselyTracker }` );
-			window.PARSELY.conversions.trackPurchase( cartContents );
+			window.PARSELY && window.PARSELY.conversions.trackPurchase( cartContents );
 		} )
 		.then( () => {
 			debug( `recordOrderInParsely: Record Parsely purchase`, cartContents );
