@@ -8,8 +8,8 @@ import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import useCredentialsIntroMessage from '../credentials-intro-message';
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
+import useCredentialsIntroMessage from '../use-credentials-intro-message';
 import type { SiteId } from 'calypso/types';
 import './style.scss';
 
