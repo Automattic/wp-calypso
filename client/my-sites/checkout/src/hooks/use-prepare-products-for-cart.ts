@@ -4,6 +4,7 @@ import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout'
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
+import { getBillingIntent } from 'calypso/data/marketplace/use-marketplace-billing-intents';
 import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useStripProductsFromUrl from './use-strip-products-from-url';
@@ -118,6 +119,11 @@ export default function usePrepareProductsForCart( {
 		jetpackPurchaseToken,
 		source,
 	} );
+	useAddProductFromBillingIntent( {
+		productAliasFromUrl,
+		dispatch,
+		addHandler,
+	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
 		sitelessCheckoutType, // Akismet products can renew independently of a site
@@ -134,6 +140,7 @@ export default function usePrepareProductsForCart( {
 		! areProductsRetrievedFromUrl ||
 			sitelessCheckoutType === 'jetpack' ||
 			sitelessCheckoutType === 'akismet' ||
+			sitelessCheckoutType === 'marketplace' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -180,7 +187,12 @@ function preparedProductsReducer(
 	}
 }
 
-type AddHandler = 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd' | 'addFromLocalStorage';
+type AddHandler =
+	| 'addProductFromSlug'
+	| 'addRenewalItems'
+	| 'doNotAdd'
+	| 'addFromLocalStorage'
+	| 'addProductFromBillingIntent';
 
 function chooseAddHandler( {
 	isLoading,
@@ -206,6 +218,10 @@ function chooseAddHandler( {
 
 	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
 		return 'addProductFromSlug';
+	}
+
+	if ( sitelessCheckoutType === 'marketplace' ) {
+		return 'addProductFromBillingIntent';
 	}
 
 	if ( ! isLoading ) {
@@ -250,6 +266,69 @@ function useNothingToAdd( {
 		debug( 'nothing to add' );
 		dispatch( { type: 'PRODUCTS_ADD', products: [] } );
 	}, [ addHandler, dispatch ] );
+}
+
+function useAddProductFromBillingIntent( {
+	productAliasFromUrl,
+	dispatch,
+	addHandler,
+}: {
+	productAliasFromUrl: string | undefined | null;
+	dispatch: ( action: PreparedProductsAction ) => void;
+	addHandler: AddHandler;
+} ) {
+	useEffect( () => {
+		if ( addHandler !== 'addProductFromBillingIntent' ) {
+			return;
+		}
+
+		if ( ! productAliasFromUrl && productAliasFromUrl === '0' ) {
+			debug( 'creating products from billing intent failed' );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: 'I tried and failed to create products from a billing intent',
+			} );
+			return;
+		}
+
+		const getProductFromBillingIntent = async () => {
+			try {
+				const productsForCart: RequestCartProduct[] = [];
+				const billingIntent = await getBillingIntent( Number( productAliasFromUrl ) );
+
+				return productsForCart.push( {
+					product_slug: billingIntent.payload.product_slug,
+					meta: '',
+					extra: {
+						isMarketplaceSitelessCheckout: true,
+					},
+					volume: 1,
+					quantity: null,
+				} );
+			} catch ( error ) {
+				dispatch( {
+					type: 'PRODUCTS_ADD_ERROR',
+					message: 'I tried and failed to create products from a billing intent',
+				} );
+
+				return [];
+			}
+		};
+
+		// Wesley is helping me to solve this problem.
+		const productsForCart: RequestCartProduct[] = getProductFromBillingIntent() || [];
+
+		if ( productsForCart.length < 1 ) {
+			debug( 'creating products from billing intent failed' );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: 'I tried and failed to create products from a billing intent',
+			} );
+			return;
+		}
+
+		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+	}, [ addHandler, dispatch, productAliasFromUrl ] );
 }
 
 function useAddProductsFromLocalStorage( {
