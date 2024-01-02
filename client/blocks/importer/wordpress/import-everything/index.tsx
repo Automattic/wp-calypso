@@ -1,4 +1,5 @@
 import { ProgressBar } from '@automattic/components';
+import { MigrationStatus, type SiteDetails } from '@automattic/data-stores';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -21,9 +22,8 @@ import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
-import { MigrationStatus, WPImportOption } from '../types';
+import { WPImportOption } from '../types';
 import { retrieveMigrateSource, clearMigrateSource } from '../utils';
-import type { SiteDetails } from '@automattic/data-stores';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -78,7 +78,7 @@ export class ImportEverything extends SectionMigrate {
 			 */
 			this.setState(
 				{
-					migrationStatus: 'inactive',
+					migrationStatus: MigrationStatus.INACTIVE,
 					errorMessage: '',
 				},
 				this.updateFromAPI
@@ -205,22 +205,14 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationProgress() {
-		const { translate, sourceSite, targetSite } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<div className="import-layout__center">
 				<Progress>
 					<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
 					<div className="import__heading import__heading-center">
-						<Title>
-							{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
-								MigrationStatus.NEW === this.state.migrationStatus ) &&
-								sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
-									'...' }
-							{ MigrationStatus.RESTORING === this.state.migrationStatus &&
-								sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) +
-									'...' }
-						</Title>
+						<Title>{ this.getTitle() }</Title>
 						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
 						<SubTitle>
 							{ translate(
@@ -364,6 +356,26 @@ export class ImportEverything extends SectionMigrate {
 
 			default:
 				return null;
+		}
+	}
+
+	getTitle(): string {
+		const { translate, sourceSite, targetSite } = this.props;
+
+		switch ( this.state.migrationStatus ) {
+			case MigrationStatus.BACKING_UP:
+			case MigrationStatus.NEW:
+				return (
+					sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) + '...'
+				);
+
+			case MigrationStatus.RESTORING:
+				return (
+					sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) + '...'
+				);
+
+			default:
+				return '';
 		}
 	}
 }

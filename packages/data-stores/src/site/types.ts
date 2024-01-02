@@ -519,10 +519,66 @@ export interface CurrentTheme {
 
 export type SiteSelect = SelectFromMap< typeof selectors >;
 
+export enum MigrationStatus {
+	UNKNOWN = 'unknown',
+	INACTIVE = 'inactive',
+	NEW = 'new',
+	BACKING_UP = 'backing-up',
+	BACKING_UP_QUEUED = 'backing-up-queued',
+	RESTORING = 'restoring',
+	DONE = 'done',
+	ERROR = 'error',
+}
+
+export enum MigrationStatusError {
+	ACTIVATE_REWIND = 'error-rewind-activate',
+	BACKUP_QUEUEING = 'error-backup-queue',
+	BACKUP_SITE_NOT_ACCESSIBLE = 'error-backup-fail-not-accessible',
+	BACKUP_UNKNOWN = 'error-backup-fail-unknown',
+	FIX_EXTERNAL_USER_ID = 'error-fix-external-user-id',
+	GENERAL = 'error-general',
+	GET_SOURCE_EXTERNAL_USER_ID = 'error-get-external-user-id',
+	GET_USER_TOKEN = 'error-get-target-user-token',
+	// eslint-disable-next-line inclusive-language/use-inclusive-words
+	MISSING_SOURCE_MASTER_USER = 'error-get-master-user',
+	MISSING_WOA_CREDENTIALS = 'error-credentials-atomic',
+	NO_BACKUP_STATUS = 'error-backup-status',
+	RESTORE_FAILED = 'error-restore-fail',
+	RESTORE_QUEUE = 'error-restore-queue',
+	RESTORE_STATUS = 'error-restore-status',
+	UPDATE_TARGET_USER_TOKEN = 'error-update-target-user-token',
+	WOA_GET_TRANSFER_RECORD = 'error-atomic-transfer-get',
+	WOA_TRANSFER = 'error-atomic-transfer',
+}
+
 export interface SourceSiteMigrationDetails {
-	status: string;
+	status: MigrationStatus;
 	source_blog_id?: number;
 	target_blog_id?: number;
+	site_migration_id: number;
+	error_status?: MigrationStatusError;
+	percent: number;
+	created: string;
+	last_modified: string;
+	is_atomic: boolean;
+	// Statistics
+	backup_percent?: number;
+	backup_size?: number;
+	backup_started?: string;
+	site_size?: number;
+	restore_percent?: number;
+	restore_message?: string;
+	restore_failure?: string;
+	restore_started?: number;
+	comments_count?: number;
+	plugins_count?: number;
+	posts_count?: number;
+	tables_count?: number;
+	themes_count?: number;
+	uploads_count?: number;
+	real_percent?: number;
+	wp_version?: string;
+	// Source site details
 	is_target_blog_admin?: boolean;
 	is_target_blog_upgraded?: boolean;
 	target_blog_slug?: string;
