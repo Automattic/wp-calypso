@@ -92,10 +92,6 @@
 	border: solid 1px var(--color-neutral-0);
 	margin-bottom: 10px;
 
-	&,
-	& iframe {
-		min-height: 140px;
-	}
 }
 
 
@@ -144,7 +140,6 @@ div[id^="portal/tooltip"] {
 		font-family: inherit;
 		font-size: 13px;
 		font-weight: 400;
-		height: 36px;
 		margin: 0;
 		padding: 6px;
 		text-decoration: none;

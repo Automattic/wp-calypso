@@ -33,9 +33,7 @@ export const Editor: React.FC< EditorProps > = ( { initialContent, onChange } ) 
 		setValue: setEditorContent,
 		undo,
 		redo,
-	} = useStateWithHistory(
-		initialContent ?? [ createBlock( 'core/paragraph' ) ]
-	) as unknown as StateWithUndoManager;
+	} = useStateWithHistory( initialContent ) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
 
 	const handleContentUpdate = ( content: BlockInstance[] ) => {

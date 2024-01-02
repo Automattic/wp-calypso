@@ -1,6 +1,21 @@
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
 import defaultFetchHandler from './default';
+import { getQueryArg } from '@wordpress/url';
+
+/**
+ * Creates an embed response emulating core's fallback link.
+ */
+function createFallbackResponse( url ) {
+	const link = document.createElement( 'a' );
+	link.href = url;
+	link.innerText = url;
+	return {
+		html: link.outerHTML,
+		type: 'rich',
+		provider_name: 'Embed',
+	};
+}
 
 export function addApiMiddleware( siteId: number ) {
 	apiFetch.setFetchHandler( ( options ) => {
@@ -30,4 +45,42 @@ export function addApiMiddleware( siteId: number ) {
 
 		return next( options );
 	} );
+
+	/**
+	 * Transform oEmbed response.
+	 * See: wp-content/plugins/gutenberg-wpcom/gutenberg-wpcom-embed.js?
+	 */
+	function transformOEmbedApiResponse( options, next ) {
+		if ( options.path && options.path.indexOf( 'oembed' ) !== -1 ) {
+			const url = getQueryArg( options.path, 'url' );
+			const response = next( options, next );
+
+			return new Promise( function ( resolve ) {
+				response
+					.then( function ( data ) {
+						if ( data.html ) {
+							/**
+							 * Removes wrappers from YouTube, Vimeo & Dailymotion block, e.g.
+							 * <span class="embed-youtube">, <div class="embed-vimeo"> & <div class="embed-dailymotion">
+							 * and return just the <iframe> child directly to allow wide & full width sizing.
+							 * See: https://github.com/Automattic/wp-calypso/issues/43047
+							 */
+							const doc = document.implementation.createHTMLDocument( '' );
+							doc.body.innerHTML = data.html;
+							const wrapper = doc.querySelector(
+								'[class="embed-youtube"],[class="embed-vimeo"],[class="embed-dailymotion"]'
+							);
+							data.html = wrapper ? wrapper.innerHTML : data.html;
+						}
+
+						resolve( data );
+					} )
+					.catch( function () {
+						resolve( createFallbackResponse( url ) );
+					} );
+			} );
+		}
+		return next( options, next );
+	}
+	apiFetch.use( transformOEmbedApiResponse );
 }
