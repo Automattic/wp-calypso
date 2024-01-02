@@ -78,53 +78,53 @@
 	}
 }
 
-.plans-features-main {
-	.plans-features-main__plan-type-selector-sticky-container {
-		position: static;
-		z-index: 1;
-		top: auto;
+// .plans-features-main__plan-type-selector-sticky-container {
+// 	position: static;
+// 	z-index: 1;
+// 	top: auto;
 
-		@include plan-type-selector-custom-mobile-breakpoint {
-			position: sticky;
-			// Display above sticky feature and comparison grid plan headers
-			z-index: 3;
-			top: 0;
+// 	@include plan-type-selector-custom-mobile-breakpoint {
+// 		position: sticky;
+// 		// Display above sticky feature and comparison grid plan headers
+// 		z-index: 3;
+// 		top: 0;
 
-			&.is-hidden {
-				visibility: hidden;
-			}
-		}
-	}
+// 		&.is-hidden {
+// 			visibility: hidden;
+// 		}
+// 	}
+// }
 
-	.is-sticky-plan-type-selector {
-		@include plan-type-selector-custom-mobile-breakpoint {
-			.components-flex {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 48px;
-				padding: 0 16px;
-				border-bottom: 1px solid #e0e0e0;
-			}
 
-			.components-custom-select-control__menu {
-				position: fixed;
-				left: 0;
-				top: 47px;
-				width: 100%;
-				margin: 0;
+// .is-sticky-plan-type-selector {
+// 	@include plan-type-selector-custom-mobile-breakpoint {
+// 		.components-flex {
+// 			position: fixed;
+// 			top: 0;
+// 			left: 0;
+// 			width: 100%;
+// 			height: 48px;
+// 			padding: 0 16px;
+// 			border-bottom: 1px solid #e0e0e0;
+// 		}
 
-				border: 1px solid #e0e0e0;
-			}
+// 		.components-custom-select-control__menu {
+// 			position: fixed;
+// 			left: 0;
+// 			top: 47px;
+// 			width: 100%;
+// 			margin: 0;
 
-			.components-custom-select-control__item {
-				padding-left: 22px;
-			}
+// 			border: 1px solid #e0e0e0;
+// 		}
 
-			.components-input-control__backdrop.components-input-control__backdrop {
-				border: none;
-			}
-		}
-	}
-}
+// 		.components-custom-select-control__item {
+// 			padding-left: 22px;
+// 		}
+
+// 		.components-input-control__backdrop.components-input-control__backdrop {
+// 			border: none;
+// 		}
+// 	}
+// }
+// }

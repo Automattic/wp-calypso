@@ -34,7 +34,7 @@ import {
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import { useInView } from 'react-intersection-observer';
+// import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -66,7 +66,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import { StickyContainer } from '../plans-grid/components/sticky-container';
+// import { StickyContainer } from '../plans-grid/components/sticky-container';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
@@ -701,9 +701,9 @@ const PlansFeaturesMain = ( {
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
-	const [ comparisonGridPlanTypeSelectorRef, isComparisonGridPlanTypeSelectorInView ] = useInView( {
-		rootMargin: '0px 0px -300px 0px',
-	} );
+	// const [ comparisonGridPlanTypeSelectorRef, isComparisonGridPlanTypeSelectorInView ] = useInView( {
+	// 	rootMargin: '0px 0px -300px 0px',
+	// } );
 
 	const stickyPlanTypeSelectorHeight = 48;
 	const comparisonGridStickyRowOffset =
@@ -784,21 +784,13 @@ const PlansFeaturesMain = ( {
 				{ isPlansGridReady && (
 					<>
 						{ ! hidePlanSelector && (
-							<StickyContainer
-								stickyClass="is-sticky-plan-type-selector"
-								className={ classNames(
-									'plans-features-main__plan-type-selector-sticky-container',
-									{ [ 'is-hidden' ]: isComparisonGridPlanTypeSelectorInView }
-								) }
-							>
-								{ () => {
-									return (
-										<div className="plans-features-main__plan-type-selector">
-											<PlanTypeSelector { ...planTypeSelectorProps } />
-										</div>
-									);
-								} }
-							</StickyContainer>
+							<div className="plans-features-main__plan-type-selector">
+								<PlanTypeSelector
+									{ ...planTypeSelectorProps }
+									// isComparisonGridPlanTypeSelectorInView={ isComparisonGridPlanTypeSelectorInView }
+									showPlanTypeSelectorDropdown={ showPlanTypeSelectorDropdown }
+								/>
+							</div>
 						) }
 						<div
 							className={ classNames(
@@ -871,7 +863,7 @@ const PlansFeaturesMain = ( {
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
 												<div
 													className="plans-features-main__plan-type-selector"
-													ref={ comparisonGridPlanTypeSelectorRef }
+													// ref={ comparisonGridPlanTypeSelectorRef }
 												>
 													<PlanTypeSelector { ...planTypeSelectorProps } />
 												</div>
