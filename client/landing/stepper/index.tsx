@@ -26,6 +26,7 @@ import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { FlowRenderer } from './declarative-flow/internals';
+import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
@@ -129,6 +130,7 @@ window.AppBoot = async () => {
 							id="notices"
 						/>
 					</BrowserRouter>
+					<AsyncHelpCenter />
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
