@@ -8,11 +8,14 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
+	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-edge-cache';
+import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
+import { createNotice } from 'calypso/state/notices/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -74,6 +77,8 @@ export const CacheCard = ( {
 		isInitialLoading: getEdgeCacheInitialLoading,
 	} = useEdgeCacheQuery( siteId );
 
+	const dispatch = useDispatch();
+
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
 	const { setEdgeCache, isLoading: toggleEdgeCacheLoading } = useSetEdgeCacheMutation( siteId, {
@@ -86,6 +91,13 @@ export const CacheCard = ( {
 				{
 					site_id: siteId,
 				}
+			);
+			dispatch(
+				createNotice(
+					'is-success',
+					active ? translate( 'Edge cache enabled.' ) : translate( 'Edge cache disabled.' ),
+					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
+				)
 			);
 		},
 	} );
@@ -172,7 +184,18 @@ export const CacheCard = ( {
 							<ToggleControl
 								disabled={ clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible }
 								checked={ isEdgeCacheActive }
-								onChange={ setEdgeCache }
+								onChange={ ( active ) => {
+									dispatch(
+										createNotice(
+											'is-plain',
+											active
+												? translate( 'Enabling edge cache…' )
+												: translate( 'Disabling edge cache…' ),
+											{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
+										)
+									);
+									setEdgeCache( active );
+								} }
 								label={ edgeCacheToggleDescription }
 							/>
 							<Hr />

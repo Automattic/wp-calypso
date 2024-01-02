@@ -35,6 +35,7 @@ import {
 } from 'calypso/components/command-palette/use-command-palette';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import {
+	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	getEdgeCacheStatus,
 	setEdgeCache,
 	USE_EDGE_CACHE_QUERY_KEY,
@@ -99,7 +100,7 @@ export const useCommandsArrayWpcom = ( {
 		message: string,
 		noticeType: NoticeStatus = 'is-success',
 		duration: undefined | number | null = 5000,
-		additionalOptions: { button?: string; onClick?: () => void } = {}
+		additionalOptions: { button?: string; id?: string; onClick?: () => void } = {}
 	) => {
 		const { notice } = dispatch(
 			createNotice( noticeType, message, { duration, ...additionalOptions } )
@@ -239,23 +240,30 @@ export const useCommandsArrayWpcom = ( {
 		// Check if the cache is already active
 		if ( currentStatus ) {
 			// Display a different notice if the cache is already active
-			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success' );
+			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 			return;
 		}
 
 		const { removeNotice: removeLoadingNotice } = displayNotice(
 			__( 'Enabling edge cache…' ),
 			'is-plain',
-			5000
+			5000,
+			{ id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
 		);
 		try {
 			await setEdgeCache( siteId, true );
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], true );
 			removeLoadingNotice();
-			displayNotice( __( 'Edge cache enabled.' ) );
+			displayNotice( __( 'Edge cache enabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 		} catch ( error ) {
 			removeLoadingNotice();
-			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error' );
+			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 		}
 	};
 
@@ -263,23 +271,30 @@ export const useCommandsArrayWpcom = ( {
 		const currentStatus = await getEdgeCacheStatus( siteId );
 
 		if ( ! currentStatus ) {
-			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success' );
+			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 			return;
 		}
 
 		const { removeNotice: removeLoadingNotice } = displayNotice(
 			__( 'Disabling edge cache…' ),
 			'is-plain',
-			5000
+			5000,
+			{ id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
 		);
 		try {
 			await setEdgeCache( siteId, false );
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], false );
 			removeLoadingNotice();
-			displayNotice( __( 'Edge cache disabled.' ) );
+			displayNotice( __( 'Edge cache disabled.' ), 'is-success', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 		} catch ( error ) {
 			removeLoadingNotice();
-			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error' );
+			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error', 5000, {
+				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+			} );
 		}
 	};
 

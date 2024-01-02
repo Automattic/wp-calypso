@@ -8,6 +8,7 @@ import {
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
+export const EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID = 'edge-cache-enable-disable-notice';
 export const USE_EDGE_CACHE_QUERY_KEY = 'edge-cache-key';
 export const TOGGLE_EDGE_CACHE_MUTATION_KEY = 'set-edge-site-mutation-key';
 export const CLEAR_EDGE_CACHE_MUTATION_KEY = 'clear-edge-site-mutation-key';
