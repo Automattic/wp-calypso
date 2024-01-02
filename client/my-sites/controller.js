@@ -138,6 +138,7 @@ export function renderRebloggingEmptySites( context ) {
 	const state = getState();
 	const locale = getCurrentLocaleSlug( state );
 	setSectionMiddleware( { group: 'sites' } )( context );
+	recordTracksEvent( 'calypso_post_share_no_sites' );
 
 	const actionURL = addQueryArgs(
 		{
