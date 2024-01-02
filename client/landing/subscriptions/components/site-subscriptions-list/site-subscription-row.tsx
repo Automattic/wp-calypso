@@ -21,6 +21,7 @@ import {
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
+import { requestDeleteGift } from 'calypso/state/memberships/gifts/actions';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
@@ -89,6 +90,7 @@ const SiteSubscriptionRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	is_gift,
+	gift_id,
 	isDeleted,
 	is_rss,
 	resubscribed,
@@ -350,34 +352,40 @@ const SiteSubscriptionRow = ( {
 					onUnsubscribe={ () => {
 						unsubscribeInProgress.current = true;
 						unsubscribeCallback();
-						unsubscribe(
-							{
-								blog_id,
-								subscriptionId: Number( subscriptionId ),
-								url,
-								doNotInvalidateSiteSubscriptions: true,
-							},
-							{
-								onSuccess: () => {
-									unsubscribeInProgress.current = false;
+						if ( is_gift ) {
+							dispatch( requestDeleteGift( blog_id, gift_id, translate( 'Deleted gift' ) ) );
+						}
 
-									if ( resubscribePending.current ) {
-										resubscribePending.current = false;
-										resubscribe( {
-											blog_id,
-											url,
-											doNotInvalidateSiteSubscriptions: true,
-											resubscribed: true,
-										} );
-										recordSiteResubscribed( {
-											blog_id,
-											url,
-											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-										} );
-									}
+						if ( subscriptionId ) {
+							unsubscribe(
+								{
+									blog_id,
+									subscriptionId: Number( subscriptionId ),
+									url,
+									doNotInvalidateSiteSubscriptions: true,
 								},
-							}
-						);
+								{
+									onSuccess: () => {
+										unsubscribeInProgress.current = false;
+
+										if ( resubscribePending.current ) {
+											resubscribePending.current = false;
+											resubscribe( {
+												blog_id,
+												url,
+												doNotInvalidateSiteSubscriptions: true,
+												resubscribed: true,
+											} );
+											recordSiteResubscribed( {
+												blog_id,
+												url,
+												source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+											} );
+										}
+									},
+								}
+							);
+						}
 					} }
 					unsubscribing={ unsubscribing }
 					blogId={ sanitizedBlogId }
