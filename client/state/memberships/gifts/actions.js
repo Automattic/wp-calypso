@@ -9,9 +9,9 @@ import { membershipGiftFromApi } from 'calypso/state/data-layer/wpcom/sites/memb
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import 'calypso/state/memberships/init';
 
-export function receiveDeleteCoupon( siteId, couponId ) {
+export function receiveDeleteCoupon( siteId, giftId ) {
 	return {
-		couponId,
+		giftId,
 		siteId,
 		type: MEMBERSHIPS_GIFT_DELETE,
 	};
@@ -63,18 +63,18 @@ export const requestAddGift = ( siteId, gift, noticeText ) => {
 	};
 };
 
-export const requestDeleteGift = ( siteId, gift, noticeText ) => {
+export const requestDeleteGift = ( siteId, giftId, noticeText ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_GIFT_DELETE,
 			siteId,
-			gift,
+			giftId,
 		} );
 
 		return wpcom.req
 			.post( {
 				method: 'DELETE',
-				path: `/sites/${ siteId }/memberships/gift/${ gift.gift_id }`,
+				path: `/sites/${ siteId }/memberships/gift/${ giftId }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( () => {
@@ -83,14 +83,13 @@ export const requestDeleteGift = ( siteId, gift, noticeText ) => {
 						duration: 5000,
 					} )
 				);
-				return gift.gift_id;
 			} )
 			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_GIFT_DELETE_FAILURE,
 					siteId,
 					error,
-					gift,
+					giftId,
 				} );
 				dispatch(
 					errorNotice( error.message, {
