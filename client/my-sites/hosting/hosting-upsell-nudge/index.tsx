@@ -1,4 +1,4 @@
-import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS } from '@automattic/calypso-products';
+import { FEATURE_SFTP, PLAN_BUSINESS, WPCOM_PLANS, getPlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -9,7 +9,6 @@ import iconServerRacks from './icons/icon-server-racks.svg';
 import iconSSH from './icons/icon-ssh.svg';
 import iconTerminal from './icons/icon-terminal.svg';
 import type { TranslateResult } from 'i18n-calypso';
-
 import './style.scss';
 
 interface FeatureListItem {
@@ -33,18 +32,21 @@ interface HostingUpsellNudgeProps {
 
 export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgeProps ) {
 	const translate = useTranslate();
-
 	const features = useFeatureList();
-
-	const callToAction = targetPlan
-		? targetPlan.callToAction
-		: translate( 'Upgrade to Business Plan' );
+	const callToActionText = translate( 'Upgrade to %(businessPlanName)s Plan', {
+		args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+	} );
+	const titleText = translate(
+		'Upgrade to the %(businessPlanName)s plan to access all hosting features:',
+		{
+			args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+		}
+	);
+	const callToAction = targetPlan ? targetPlan.callToAction : callToActionText;
 	const feature = targetPlan ? targetPlan.feature : FEATURE_SFTP;
 	const href = targetPlan ? targetPlan.href : `/checkout/${ siteId }/business`;
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
-	const title = targetPlan
-		? targetPlan.title
-		: translate( 'Upgrade to the Business plan to access all hosting features:' );
+	const title = targetPlan ? targetPlan.title : titleText;
 
 	return (
 		<UpsellNudge

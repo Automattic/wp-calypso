@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -25,10 +26,6 @@ export default function ThemeTierPartnerBadge() {
 	);
 	const { isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
-	if ( isPartnerThemePurchased && isThemeAllowedOnSite ) {
-		return <span>{ translate( 'Included in my plan' ) }</span>;
-	}
-
 	const labelText = isThemeAllowedOnSite
 		? translate( 'Subscribe' )
 		: translate( 'Upgrade and Subscribe' );
@@ -37,7 +34,8 @@ export default function ThemeTierPartnerBadge() {
 		if ( isPartnerThemePurchased && ! isThemeAllowedOnSite ) {
 			return createInterpolateElement(
 				translate(
-					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
+					'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
+					{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
 				),
 				{
 					Link: <ThemeTierBadgeCheckoutLink plan="business" />,
@@ -60,11 +58,12 @@ export default function ThemeTierPartnerBadge() {
 			return createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',
 							monthlyPrice: subscriptionPrices.month ?? '',
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
 						},
 					}
 				),
@@ -78,27 +77,34 @@ export default function ThemeTierPartnerBadge() {
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{ translate( 'Partner theme', {
-					context: 'This theme is developed and supported by a theme partner',
-					textOnly: true,
-				} ) }
-			</div>
 			<div data-testid="upsell-message">{ getTooltipMessage() }</div>
 		</>
 	);
 
 	return (
 		<>
-			<ThemeTierBadgeTracker />
+			{ ( ! isPartnerThemePurchased || ! isThemeAllowedOnSite ) && (
+				<>
+					<ThemeTierBadgeTracker />
+					<PremiumBadge
+						className="theme-tier-badge__content"
+						focusOnShow={ false }
+						isClickable
+						labelText={ labelText }
+						tooltipClassName="theme-tier-badge-tooltip"
+						tooltipContent={ tooltipContent }
+						tooltipPosition="top"
+					/>
+				</>
+			) }
+
 			<PremiumBadge
-				className="theme-tier-badge__content"
+				className="theme-tier-badge__content is-third-party"
 				focusOnShow={ false }
-				isClickable
-				labelText={ labelText }
-				tooltipClassName="theme-tier-badge-tooltip"
-				tooltipContent={ tooltipContent }
-				tooltipPosition="top"
+				isClickable={ false }
+				labelText={ translate( 'Partner' ) }
+				shouldHideIcon
+				shouldHideTooltip
 			/>
 		</>
 	);

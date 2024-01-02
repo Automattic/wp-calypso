@@ -62,6 +62,7 @@ export { default as PricingSlider } from './pricing-slider';
 export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
+export { default as PlanPrice } from './plan-price';
 export * from './theme-type-badge';
 
 // Types
@@ -82,4 +83,3 @@ export { default as VIPLogo } from './logos/vip-logo';
 export { default as WooLogo } from './logos/woo-logo';
 export { default as WordPressLogo } from './wordpress-logo';
 export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
-export { default as PressableLogo } from './logos/pressable-logo';

@@ -31,9 +31,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
-	EDIT_EMAIL: {
-		slug: 'editEmail',
-		asyncComponent: () => import( './steps-repository/edit-email' ),
+	DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domains' ),
 	},
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
@@ -171,23 +171,18 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/import-verify-email' ),
 	},
 
-	WOO_CONFIRM: {
-		slug: 'wooConfirm',
-		asyncComponent: () => import( './steps-repository/woo-confirm' ),
+	BUNDLE_CONFIRM: {
+		slug: 'bundleConfirm',
+		asyncComponent: () => import( './steps-repository/bundle-confirm' ),
 	},
 
-	WOO_INSTALL_PLUGINS: {
-		slug: 'wooInstallPlugins',
-		asyncComponent: () => import( './steps-repository/woo-install-plugins' ),
+	BUNDLE_INSTALL_PLUGINS: {
+		slug: 'bundleInstallPlugins',
+		asyncComponent: () => import( './steps-repository/bundle-install-plugins' ),
 	},
 
-	WOO_TRANSFER: {
-		slug: 'wooTransfer',
-		asyncComponent: () => import( './steps-repository/woo-transfer' ),
-	},
-
-	WOO_VERIFY_EMAIL: {
-		slug: 'wooVerifyEmail',
-		asyncComponent: () => import( './steps-repository/woo-verify-email' ),
+	BUNDLE_TRANSFER: {
+		slug: 'bundleTransfer',
+		asyncComponent: () => import( './steps-repository/bundle-transfer' ),
 	},
 };

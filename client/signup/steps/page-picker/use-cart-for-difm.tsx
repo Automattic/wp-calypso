@@ -238,7 +238,8 @@ function getSiteCartProducts( {
 
 export function useCartForDIFM(
 	selectedPages: string[],
-	isStoreFlow: boolean
+	isStoreFlow: boolean,
+	isExistingSite: boolean
 ): {
 	items: CartItem[];
 	total: string | null;
@@ -258,8 +259,7 @@ export function useCartForDIFM(
 	const activePlanScheme = useSelector( ( state ) =>
 		getProductBySlug( state, isStoreFlow ? PLAN_BUSINESS : PLAN_PREMIUM )
 	);
-	const { newOrExistingSiteChoice, siteId, siteSlug } = signupDependencies;
-	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
+	const { siteId, siteSlug } = signupDependencies;
 	const isProductsLoading = useSelector( isProductsListFetching );
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode );

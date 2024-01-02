@@ -17,7 +17,6 @@ import ProductPriceWithDiscount from '../primary/product-price-with-discount-inf
 import '../license-product-card/style.scss';
 
 interface Props {
-	tabIndex: number;
 	products: APIProductFamilyProduct[];
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -25,21 +24,24 @@ interface Props {
 		value: APIProductFamilyProduct,
 		replace?: APIProductFamilyProduct
 	) => void | null;
+	onVariantChange?: ( value: APIProductFamilyProduct ) => void;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
 	quantity?: number;
+	selectedOption: APIProductFamilyProduct;
 }
 
 export default function LicenseMultiProductCard( props: Props ) {
 	const {
-		tabIndex,
 		products,
 		isSelected,
 		isDisabled,
 		onSelectProduct,
+		onVariantChange,
 		suggestedProduct,
 		hideDiscount,
 		quantity,
+		selectedOption,
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -68,8 +70,8 @@ export default function LicenseMultiProductCard( props: Props ) {
 	const onKeyDown = useCallback(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( e: any ) => {
-			// Spacebar
-			if ( 32 === e.keyCode ) {
+			// Enter
+			if ( 13 === e.keyCode ) {
 				onSelect();
 			}
 		},
@@ -85,7 +87,9 @@ export default function LicenseMultiProductCard( props: Props ) {
 				onSelect();
 			}
 		}
-	}, [ onSelect, product.slug, suggestedProduct ] );
+		// Do not add onSelect to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ product.slug, suggestedProduct ] );
 
 	const onShowLightbox = useCallback(
 		( e: React.MouseEvent< HTMLElement > ) => {
@@ -128,9 +132,16 @@ export default function LicenseMultiProductCard( props: Props ) {
 			}
 
 			setProduct( selectedProduct );
+			onVariantChange?.( selectedProduct );
 		},
-		[ isDisabled, isSelected, onSelectProduct, product, products ]
+		[ isDisabled, isSelected, onSelectProduct, onVariantChange, product, products ]
 	);
+
+	useEffect( () => {
+		if ( selectedOption ) {
+			setProduct( selectedOption );
+		}
+	}, [ selectedOption ] );
 
 	return (
 		<>
@@ -144,7 +155,7 @@ export default function LicenseMultiProductCard( props: Props ) {
 				role="checkbox"
 				aria-checked={ isSelected }
 				aria-disabled={ isDisabled }
-				tabIndex={ tabIndex }
+				tabIndex={ 0 }
 			>
 				<div className="license-product-card__inner">
 					<div className="license-product-card__details">
@@ -155,9 +166,10 @@ export default function LicenseMultiProductCard( props: Props ) {
 								</h3>
 
 								<MultipleChoiceQuestion
+									name={ `${ product.family_slug }-variant-options` }
 									question={ translate( 'Select variant:' ) }
 									answers={ variantOptions }
-									selectedAnswerId={ product?.slug }
+									selectedAnswerId={ product.slug }
 									onAnswerChange={ onChangeOption }
 									shouldShuffleAnswers={ false }
 								/>

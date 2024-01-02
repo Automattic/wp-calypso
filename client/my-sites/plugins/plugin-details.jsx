@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -12,6 +12,7 @@ import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -20,7 +21,8 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { MarketplaceReviewsList } from 'calypso/my-sites/marketplace/components/reviews-list';
+import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
+import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -115,6 +117,7 @@ function PluginDetails( props ) {
 				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 				: canCurrentUserManagePlugins( state ) )
 	);
+	const [ isReviewsModalVisible, setIsReviewsModalVisible ] = useState( false );
 
 	// Site type.
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -344,6 +347,7 @@ function PluginDetails( props ) {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
+			<QueryUserPurchases />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
@@ -369,6 +373,14 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
+			<ReviewsModal
+				isVisible={ isReviewsModalVisible }
+				onClose={ () => setIsReviewsModalVisible( false ) }
+				productName={ fullPlugin.name }
+				slug={ fullPlugin.slug }
+				variations={ fullPlugin.variations }
+				productType="plugin"
+			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
@@ -459,10 +471,10 @@ function PluginDetails( props ) {
 			</div>
 			{ isEnabled( 'marketplace-reviews-show' ) && ! showPlaceholder && (
 				<div className="plugin-details__reviews">
-					<MarketplaceReviewsList
+					<MarketplaceReviewsCards
 						slug={ fullPlugin.slug }
 						productType="plugin"
-						ref={ reviewsListRef }
+						showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
 					/>
 				</div>
 			) }

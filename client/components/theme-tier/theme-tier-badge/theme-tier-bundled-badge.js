@@ -1,7 +1,8 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { BundledBadge, PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import useBundleSettings from 'calypso/my-sites/theme/hooks/use-bundle-settings';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,8 +15,8 @@ export default function ThemeTierBundledBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
-	const bundleSettings = useBundleSettings( themeId );
-	const legacyCanUseTheme = useSelector(
+	const bundleSettings = useBundleSettingsByTheme( themeId );
+	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
 
@@ -29,17 +30,12 @@ export default function ThemeTierBundledBadge() {
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{
-					// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-					translate( '%(bundleName)s theme', { textOnly: true, args: { bundleName } } )
-				}
-			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
-					// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
-					translate( 'This %(bundleName)s theme is included in the <Link>Business plan</Link>.', {
-						args: { bundleName },
+					translate( 'This theme is included in the <Link>%(businessPlanName)s plan</Link>.', {
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+						},
 						textOnly: true,
 					} ),
 					{
@@ -52,7 +48,7 @@ export default function ThemeTierBundledBadge() {
 
 	return (
 		<div className="theme-tier-badge">
-			{ ! legacyCanUseTheme && (
+			{ ! isThemeIncluded && (
 				<>
 					<ThemeTierBadgeTracker />
 					<PremiumBadge
@@ -76,8 +72,6 @@ export default function ThemeTierBundledBadge() {
 			>
 				{ bundleName }
 			</BundledBadge>
-
-			{ legacyCanUseTheme && <span>{ translate( 'Included in my plan' ) }</span> }
 		</div>
 	);
 }

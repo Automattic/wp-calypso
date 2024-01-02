@@ -286,21 +286,27 @@ const importFlow: Flow = {
 						return navigate( path );
 					}
 
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+					return navigate( `importList?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWordpress':
+					if ( urlQueryParams.get( 'option' ) === 'content' ) {
+						return navigate( `importList?siteSlug=${ siteSlugParam }` );
+					} else if ( isMigrateFromWp && fromParam ) {
+						return navigate( `sitePicker?from=${ fromParam }` );
+					}
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-				case 'importerWix':
-				case 'importerBlogger':
-				case 'importerMedium':
-				case 'importerSquarespace':
-				case 'importerWordpress':
 				case 'designSetup':
-					if ( isMigrateFromWp && fromParam ) {
-						return navigate( `sitePicker?from=${ fromParam }` );
-					}
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'verifyEmail':

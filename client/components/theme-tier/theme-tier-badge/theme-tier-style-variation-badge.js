@@ -1,3 +1,4 @@
+import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
@@ -12,7 +13,10 @@ export default function ThemeTierStyleVariationBadge() {
 			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header" />
 			<div data-testid="upsell-message">
 				{ translate(
-					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+					'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.',
+					{
+						args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() },
+					}
 				) }
 			</div>
 		</>

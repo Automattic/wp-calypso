@@ -1,18 +1,18 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { usePlans } from '@automattic/data-stores/src/plans';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
 export type UseScreenOptions = {
-	isNewSite?: boolean;
 	shouldUnlockGlobalStyles?: boolean;
 };
 
 export type Screen = {
 	name: string;
 	title: string;
-	description: TranslateResult;
+	description?: TranslateResult;
 	continueLabel: string;
 	/** The label for going back from the next screen */
 	backLabel?: string;
@@ -22,9 +22,9 @@ export type Screen = {
 };
 
 const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Screen => {
-	const isAddPagesEnabled = isEnabled( 'pattern-assembler/add-pages' );
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
+	const plans = usePlans();
 	const screens: Record< ScreenName, Screen > = {
 		main: {
 			name: 'main',
@@ -56,9 +56,7 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				  ),
-			continueLabel: isAddPagesEnabled
-				? translate( 'Select pages' )
-				: translate( 'Save and continue' ),
+			continueLabel: translate( 'Select pages' ),
 			backLabel: hasEnTranslation( 'styles' ) ? translate( 'styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.STYLES_COLORS,
 		},
@@ -81,23 +79,16 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 			name: 'upsell',
 			title: translate( 'Premium styles' ),
 			description: translate(
-				"You've chosen premium styles which are exclusive to the Premium plan or higher."
+				"You've chosen premium styles which are exclusive to the %(premiumPlanName)s plan or higher.",
+				{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort || '' } }
 			),
 			continueLabel: translate( 'Continue' ),
 			backLabel: hasEnTranslation( 'premium styles' ) ? translate( 'premium styles' ) : undefined,
 			initialPath: NAVIGATOR_PATHS.UPSELL,
 		},
-		activation: {
-			name: 'activation',
-			title: translate( 'Activate this theme' ),
-			description: translate( 'Activating this theme will result in the following changes.' ),
-			continueLabel: translate( 'Activate' ),
-			initialPath: NAVIGATOR_PATHS.ACTIVATION,
-		},
 		confirmation: {
 			name: 'confirmation',
 			title: translate( 'Great job!' ),
-			description: translate( 'Time to add some content and bring your site to life!' ),
 			continueLabel: translate( 'Start adding content' ),
 			initialPath: NAVIGATOR_PATHS.CONFIRMATION,
 		},
@@ -107,45 +98,15 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 		main: null,
 		styles: screens.main,
 		pages: screens.styles,
-		upsell: isAddPagesEnabled ? screens.pages : screens.styles,
-		activation: ( () => {
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return isAddPagesEnabled ? screens.pages : screens.styles;
-		} )(),
-		confirmation: ( () => {
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return isAddPagesEnabled ? screens.pages : screens.styles;
-		} )(),
+		upsell: screens.pages,
+		confirmation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.pages,
 	};
 
 	const nextScreens = {
 		main: screens.styles,
-		styles: ( () => {
-			if ( isAddPagesEnabled ) {
-				return screens.pages;
-			}
-
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return options.isNewSite ? screens.confirmation : screens.activation;
-		} )(),
-		pages: ( () => {
-			if ( options.shouldUnlockGlobalStyles ) {
-				return screens.upsell;
-			}
-
-			return options.isNewSite ? screens.confirmation : screens.activation;
-		} )(),
-		upsell: options.isNewSite ? screens.confirmation : screens.activation,
-		activation: null,
+		styles: screens.pages,
+		pages: options.shouldUnlockGlobalStyles ? screens.upsell : screens.confirmation,
+		upsell: screens.confirmation,
 		confirmation: null,
 	};
 

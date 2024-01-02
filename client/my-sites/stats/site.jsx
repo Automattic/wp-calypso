@@ -19,6 +19,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -40,6 +41,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -55,6 +57,7 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
+import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
@@ -472,6 +475,7 @@ class StatsSite extends Component {
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</div>
 		);
 	}
@@ -540,6 +544,9 @@ class StatsSite extends Component {
 
 		return (
 			<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
+				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
+					<QuerySiteFeatures siteIds={ [ siteId ] } />
+				) }
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
@@ -592,18 +599,28 @@ export default connect(
 		const canUserViewStats =
 			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
 
+		const slug = getSelectedSiteSlug( state );
+		const upsellModalView =
+			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+
 		return {
 			canUserViewStats,
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
-			slug: getSelectedSiteSlug( state ),
+			slug,
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
+			upsellModalView,
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
+	{
+		recordGoogleEvent,
+		enableJetpackStatsModule,
+		recordTracksEvent,
+		requestModuleSettings,
+	}
 )( localize( StatsSite ) );

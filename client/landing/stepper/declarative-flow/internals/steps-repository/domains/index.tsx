@@ -10,6 +10,7 @@ import {
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
+	isSiteAssemblerFlow,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -32,6 +33,7 @@ import {
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
 } from 'calypso/state/domains/actions';
+import useChangeSiteDomain from '../../../../hooks/use-change-site-domain';
 import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
@@ -50,6 +52,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
+
+	const changeSiteDomain = useChangeSiteDomain();
 
 	const { submit, exitFlow, goBack } = navigation;
 
@@ -119,6 +123,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
+		}
+
+		if ( suggestion?.is_free && suggestion?.domain_name ) {
+			changeSiteDomain( suggestion?.domain_name );
 		}
 
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
@@ -270,21 +278,21 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( isDomainUpsellFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );

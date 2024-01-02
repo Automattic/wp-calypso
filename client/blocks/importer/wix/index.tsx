@@ -90,6 +90,11 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
+	function onTryAgainClick() {
+		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
+	}
+
 	function checkProgress() {
 		return (
 			job?.importerState === appStates.IMPORTING ||
@@ -128,12 +133,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 			<div className={ classnames( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
-							/>
-						);
+						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					} else if ( checkIsSuccess() ) {

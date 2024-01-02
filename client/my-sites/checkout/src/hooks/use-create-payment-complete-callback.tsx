@@ -30,7 +30,6 @@ import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import type { FailedResponse } from '../lib/normalize-transaction-response';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -196,7 +195,8 @@ export default function useCreatePaymentCompleteCallback( {
 				receiptId &&
 				transactionResult &&
 				'purchases' in transactionResult &&
-				transactionResult.purchases
+				transactionResult.purchases &&
+				transactionResult.success
 			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
@@ -237,7 +237,12 @@ export default function useCreatePaymentCompleteCallback( {
 
 			// We need to do a hard redirect if we're redirecting to the stepper.
 			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
-			if ( isURL( url ) || url.includes( '/setup/' ) ) {
+			// The same is true if we are redirecting to the signup flow, we are restricting it to only 1 specific flow here.
+			if (
+				isURL( url ) ||
+				url.includes( '/setup/' ) ||
+				url.includes( '/start/site-content-collection' )
+			) {
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
@@ -293,7 +298,7 @@ async function recordPaymentCompleteAnalytics( {
 	sitePlanSlug,
 }: {
 	paymentMethodId: string | null;
-	transactionResult: WPCOMTransactionEndpointResponse | FailedResponse | undefined;
+	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	checkoutFlow?: string;

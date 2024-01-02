@@ -1,19 +1,21 @@
+import i18n from 'i18n-calypso';
 import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import ChatMessage from './components/message';
+import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext } from './context';
-import ChatMessage from './message';
-import { OdieSendMessageButton } from './send-message-input';
 
 import './style.scss';
 
-export const WAPUU_ERROR_MESSAGE =
-	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
+export const WAPUU_ERROR_MESSAGE = i18n.translate(
+	"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
+	{ comment: 'Error message when Wapuu fails to send a message', textOnly: true }
+);
 
 const ForwardedChatMessage = forwardRef( ChatMessage );
 
 const OdieAssistant = () => {
-	const { chat, botNameSlug } = useOdieAssistantContext();
+	const { chat, trackEvent } = useOdieAssistantContext();
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
@@ -35,6 +37,10 @@ const OdieAssistant = () => {
 		[ lastMessageElement?.target, stickToBottom ]
 	);
 
+	useEffect( () => {
+		trackEvent( 'chatbox_view' );
+	}, [ trackEvent ] );
+
 	const scrollToInitialBlockOfLastMessage = useCallback( () => {
 		if ( chatboxMessagesRef.current ) {
 			requestAnimationFrame( () => {
@@ -55,10 +61,6 @@ const OdieAssistant = () => {
 
 	return (
 		<div className="chatbox">
-			<TrackComponentView
-				eventName="calypso_odie_chatbox_view"
-				eventProperties={ { bot_name_slug: botNameSlug } }
-			/>
 			<div className="chat-box-message-container">
 				<div
 					className="chatbox-messages"

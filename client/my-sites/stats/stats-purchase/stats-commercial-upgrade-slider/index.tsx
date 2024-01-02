@@ -1,16 +1,17 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { StatsPlanTierUI } from '../types';
-import useAvailableUpgradeTiers from '../use-available-upgrade-tiers';
+import {
+	EXTENSION_THRESHOLD_IN_MILLION,
+	default as useAvailableUpgradeTiers,
+} from '../use-available-upgrade-tiers';
 import './styles.scss';
-
-// Special case for per-unit fees over the max tier.
-// In millions.
-const EXTENSION_THRESHOLD = 2;
 
 function useTranslatedStrings() {
 	const translate = useTranslate();
@@ -46,7 +47,7 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 		// Special case that scenario for now.
 		let views = '';
 		if ( tier.views === null ) {
-			views = `${ formatNumber( EXTENSION_THRESHOLD * 1000000 ) }+`;
+			views = `${ formatNumber( EXTENSION_THRESHOLD_IN_MILLION * 1000000 ) }+`;
 		} else {
 			views = formatNumber( tier.views );
 		}
@@ -55,17 +56,31 @@ function getStepsForTiers( tiers: StatsPlanTierUI[] ) {
 		return {
 			lhValue: views,
 			rhValue: price,
+			tierViews: tier.views === null ? EXTENSION_THRESHOLD_IN_MILLION * 1000000 : tier.views,
 		};
 	} );
 }
 
 type StatsCommercialUpgradeSliderProps = {
 	currencyCode: string;
+	analyticsEventName?: string;
 	onSliderChange: ( quantity: number ) => void;
+};
+
+const getTierQuentity = ( tiers: StatsPlanTierUI, isTierUpgradeSliderEnabled: boolean ) => {
+	if ( isTierUpgradeSliderEnabled ) {
+		if ( tiers?.views === null && tiers?.transform_quantity_divide_by ) {
+			// handle extension an tier by muliplying the limit of the highest tier
+			return EXTENSION_THRESHOLD_IN_MILLION * tiers.transform_quantity_divide_by; // TODO: this will use a dynamic multiplier (#85246)
+		}
+		return tiers?.views;
+	}
+	return 0;
 };
 
 function StatsCommercialUpgradeSlider( {
 	currencyCode,
+	analyticsEventName,
 	onSliderChange,
 }: StatsCommercialUpgradeSliderProps ) {
 	// Responsible for:
@@ -87,12 +102,14 @@ function StatsCommercialUpgradeSlider( {
 	const lastTier = tiers.at( -1 );
 	const hasPerUnitFee = !! lastTier?.per_unit_fee;
 	if ( hasPerUnitFee ) {
-		const perUnitFee = Number( lastTier?.per_unit_fee );
+		// The price is yearly for yearly plans, so we need to divide by 12.
+		const perUnitFee = Number( lastTier?.per_unit_fee ) / 12;
+
 		perUnitFeeMessaging = translate(
 			'This is the base price for %(views_extension_limit)s million monthly views; beyond that, you will be charged additional +%(extension_value)s per million views.',
 			{
 				args: {
-					views_extension_limit: EXTENSION_THRESHOLD,
+					views_extension_limit: EXTENSION_THRESHOLD_IN_MILLION,
 					extension_value: formatCurrency( perUnitFee, currencyCode, {
 						isSmallestUnit: true,
 						stripZeros: true,
@@ -106,8 +123,23 @@ function StatsCommercialUpgradeSlider( {
 	const steps = getStepsForTiers( tiers );
 
 	const handleSliderChanged = ( index: number ) => {
-		onSliderChange( tiers[ index ]?.views as number );
+		const quantity = getTierQuentity( tiers[ index ], true );
+
+		if ( analyticsEventName ) {
+			recordTracksEvent( analyticsEventName, {
+				tier_views: quantity,
+				default_changed: index !== 0, // 0 is the default initialVlaue value for <TierUpgradeSlider />
+			} );
+		}
+
+		onSliderChange( quantity as number );
 	};
+
+	useEffect( () => {
+		// Update fetched tier quantity of the first step back to the parent component for checkout.
+		const firstStepQuantity = getTierQuentity( tiers[ 0 ], true );
+		onSliderChange( firstStepQuantity as number );
+	}, [ JSON.stringify( tiers ), onSliderChange ] );
 
 	return (
 		<TierUpgradeSlider
@@ -121,4 +153,4 @@ function StatsCommercialUpgradeSlider( {
 	);
 }
 
-export default StatsCommercialUpgradeSlider;
+export { StatsCommercialUpgradeSlider as default, StatsCommercialUpgradeSlider, getTierQuentity };

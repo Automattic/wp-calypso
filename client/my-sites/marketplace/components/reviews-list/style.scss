@@ -2,12 +2,6 @@ $profile-picture-size: 36px;
 $border-color: #eee;
 
 .marketplace-reviews-list__container {
-	padding: 0 16px;
-
-	@include breakpoint-deprecated( ">1040px" ) {
-		padding: 0;
-	}
-
 	.marketplace-reviews-list__title {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
@@ -91,6 +85,24 @@ $border-color: #eee;
 	.rating .rating__overlay .gridicon,
 	.rating .rating__star-outline .gridicon {
 		fill: var(--studio-yellow-20);
+	}
+}
+
+.marketplace-reviews-list__review-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-top: 15px;
+	font-size: $font-body-small;
+
+	.marketplace-reviews-list__review-actions-editable {
+		display: flex;
+
+		.marketplace-reviews-list__review-actions-editable-button {
+			color: var(--studio-blue-50);
+			margin-right: 15px;
+			cursor: pointer;
+		}
 	}
 }
 

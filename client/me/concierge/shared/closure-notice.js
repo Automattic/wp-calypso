@@ -21,8 +21,8 @@ const ClosureNotice = ( { closesAt, displayAt, reopensAt } ) => {
 	if ( currentDate.isBefore( closesAt ) ) {
 		message = translate(
 			'{{strong}}Notice:{{/strong}} Quick Start sessions will be closed from %(closesAt)s until %(reopensAt)s. ' +
-				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} and we’ll ' +
-				'get to it as fast as we can. Thank you!',
+				'If you need to get in touch with us, you’ll be able to {{link}}submit a support request{{/link}} ' +
+				'and we’ll get to it as fast as we can. Thank you!',
 			{
 				args: {
 					closesAt: moment.tz( closesAt, guessedTimezone ).format( DATE_FORMAT ),
@@ -36,9 +36,8 @@ const ClosureNotice = ( { closesAt, displayAt, reopensAt } ) => {
 		);
 	} else {
 		message = translate(
-			'{{strong}}Quick Start Sessions will be closed from %(closesAt)s – %(reopensAt)s.{{/strong}}{{br/}}' +
-				'Once a year, Happiness Engineers get together to work on improving our services, building new features, and learning how to better serve you. ' +
-				'During this time, we will continue to provide support over email. If you need to get in touch with us, please submit a {{link}}support request from this page{{/link}} and we will get to it as fast as we can. ' +
+			'{{strong}}Quick Start Sessions will be closed from %(closesAt)s – %(reopensAt)s for the New Year’s holiday.{{/strong}}{{br/}}' +
+				'If you need to get in touch with us, please submit a {{link}}support request from this page{{/link}} and we will get to it as fast as we can. ' +
 				'Quick Start Sessions will re-open at %(reopensAt)s. Thank you for your understanding!',
 			{
 				args: {

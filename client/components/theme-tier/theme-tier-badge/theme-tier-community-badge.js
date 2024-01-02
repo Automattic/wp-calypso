@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -13,27 +14,18 @@ export default function ThemeTierCommunityBadge() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
-	const legacyCanUseTheme = useSelector(
+	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
-
-	if ( legacyCanUseTheme ) {
-		return <span>{ translate( 'Included in my plan' ) }</span>;
-	}
 
 	const tooltipContent = (
 		<>
 			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-header" className="theme-tier-badge-tooltip__header">
-				{ translate( 'Community theme', {
-					context: 'This theme is developed and supported by a community',
-					textOnly: true,
-				} ) }
-			</div>
 			<div data-testid="upsell-message">
 				{ createInterpolateElement(
 					translate(
-						'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
+						'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
+						{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
 					),
 					{
 						Link: <ThemeTierBadgeCheckoutLink plan="business" />,
@@ -45,15 +37,28 @@ export default function ThemeTierCommunityBadge() {
 
 	return (
 		<>
-			<ThemeTierBadgeTracker />
+			{ ! isThemeIncluded && (
+				<>
+					<ThemeTierBadgeTracker />
+					<PremiumBadge
+						className="theme-tier-badge__content"
+						focusOnShow={ false }
+						isClickable
+						labelText={ translate( 'Upgrade' ) }
+						tooltipClassName="theme-tier-badge-tooltip"
+						tooltipContent={ tooltipContent }
+						tooltipPosition="top"
+					/>
+				</>
+			) }
+
 			<PremiumBadge
-				className="theme-tier-badge__content"
+				className="theme-tier-badge__content is-third-party"
 				focusOnShow={ false }
-				isClickable
-				labelText={ translate( 'Upgrade' ) }
-				tooltipClassName="theme-tier-badge-tooltip"
-				tooltipContent={ tooltipContent }
-				tooltipPosition="top"
+				isClickable={ false }
+				labelText={ translate( 'Community' ) }
+				shouldHideIcon
+				shouldHideTooltip
 			/>
 		</>
 	);

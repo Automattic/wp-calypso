@@ -58,12 +58,7 @@ function TierUpgradeSlider( {
 		return <div { ...props }>{ thumbSVG }</div>;
 	} ) as RenderThumbFunction;
 
-	// We need at least two steps for the slider to work.
-	let errorMessage = null;
 	const maxIndex = steps.length - 1;
-	if ( maxIndex < 1 ) {
-		errorMessage = <p>Slider has not been configured properly.</p>;
-	}
 
 	// Bounds check the initial index value.
 	let initialIndex = Math.floor( initialValue );
@@ -89,10 +84,7 @@ function TierUpgradeSlider( {
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const rhValue = steps[ currentPlanIndex ]?.rhValue;
-
-	if ( errorMessage !== null ) {
-		return errorMessage;
-	}
+	const secondaryCalloutIsHidden = rhValue === '';
 
 	return (
 		<div className={ componentClassNames }>
@@ -101,21 +93,25 @@ function TierUpgradeSlider( {
 					<h2>{ uiStrings.limits }</h2>
 					<p>{ lhValue }</p>
 				</div>
-				<div className="tier-upgrade-slider__step-callout right-aligned">
-					<h2>{ uiStrings.price }</h2>
-					<p ref={ infoReferenceElement }>{ rhValue }</p>
-				</div>
+				{ ! secondaryCalloutIsHidden && (
+					<div className="tier-upgrade-slider__step-callout right-aligned">
+						<h2>{ uiStrings.price }</h2>
+						<p ref={ infoReferenceElement }>{ rhValue }</p>
+					</div>
+				) }
 			</div>
-			<PricingSlider
-				className="tier-upgrade-slider__slider"
-				thumbClassName="tier-upgrade-slider__thumb"
-				renderThumb={ handleRenderThumb }
-				value={ currentPlanIndex }
-				minValue={ sliderMin }
-				maxValue={ sliderMax }
-				onChange={ handleSliderChange }
-				marks={ marks }
-			/>
+			{ steps.length > 1 && (
+				<PricingSlider
+					className="tier-upgrade-slider__slider"
+					thumbClassName="tier-upgrade-slider__thumb"
+					renderThumb={ handleRenderThumb }
+					value={ currentPlanIndex }
+					minValue={ sliderMin }
+					maxValue={ sliderMax }
+					onChange={ handleSliderChange }
+					marks={ marks }
+				/>
+			) }
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }

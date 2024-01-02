@@ -221,6 +221,10 @@ export interface SitesOverviewContextInterface extends DashboardOverviewContextI
 	currentLicenseInfo: string | null;
 	showLicenseInfo: ( license: string ) => void;
 	hideLicenseInfo: () => void;
+	mostRecentConnectedSite: string | null;
+	setMostRecentConnectedSite: ( mostRecentConnectedSite: string ) => void;
+	isPopoverOpen: boolean;
+	setIsPopoverOpen: React.Dispatch< React.SetStateAction< boolean > >;
 }
 
 export interface DashboardDataContextInterface {

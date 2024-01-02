@@ -28,10 +28,18 @@
 	}
 }
 
-.license-product-card.selected .license-product-card__inner {
-	border: 1px solid #fff;
-	background: #fff;
-	box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+.license-product-card:hover,
+.license-product-card:focus-within,
+.license-product-card.selected {
+	.license-product-card__inner {
+		border: 1px solid var(--studio-white);
+		background: var(--studio-white);
+		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+	}
+}
+
+.license-product-card:focus-visible .license-product-card__select-button {
+	outline: var(--studio-gray-10) solid 2px;
 }
 
 @mixin license-product-card-block__details {
@@ -270,3 +278,4 @@
 		background: var(--studio-green-50);
 	}
 }
+

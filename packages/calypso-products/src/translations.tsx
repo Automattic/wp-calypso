@@ -1,4 +1,4 @@
-import { translate, useTranslate } from 'i18n-calypso';
+import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { createElement, useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
@@ -1185,12 +1185,27 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
 	];
+
+	const listFormatter = new Intl.ListFormat( getLocaleSlug() || 'en' );
+
+	const socialNetworksList = listFormatter.format( [
+		translate( 'Facebook' ),
+		translate( 'Instagram' ),
+		translate( 'LinkedIn' ),
+		translate( 'Mastodon' ),
+		translate( 'Tumblr' ),
+		translate( 'Nextdoor' ),
+	] );
+
 	const socialBasicIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
+		translate( 'Share to %(socialNetworksList)s', {
+			args: { socialNetworksList },
+			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
+		} ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -1198,7 +1213,10 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
+		translate( 'Share to %(socialNetworksList)s', {
+			args: { socialNetworksList },
+			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
+		} ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
@@ -1213,6 +1231,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Commercial use' ),
 	];
 	const aiAssistantIncludesInfo = [
+		translate( '100 monthly requests (upgradeable)' ),
 		translate( 'Prompt-based content generation' ),
 		translate( 'Text, table, and list generation' ),
 		translate( 'Adaptive tone adjustment' ),

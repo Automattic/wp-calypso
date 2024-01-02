@@ -222,10 +222,15 @@
 	}
 }
 
+.domain-registration-suggestion__domain-title-tld {
+	word-break: normal;
+}
+
 .domain-suggestion__price-container,
 .domain-suggestion__action-container {
 	flex: 0 0 auto;
 	width: 100%;
+	height: 40px;
 
 	@include break-mobile {
 		width: auto;
@@ -243,11 +248,15 @@
 .button.domain-suggestion__action {
 	width: 100%;
 	height: 40px;
-	min-width: 66px;
+	min-width: 130px;
 	text-align: center;
-	margin-top: 16px;
 	padding: 0.25em 3em;
-	transition: all 0.1s linear;
+	margin-top: 10px;
+
+	&:focus {
+		box-shadow: none !important;
+		border-color: #c3c4c7 !important;
+	}
 
 	@include break-mobile {
 		width: auto;
@@ -268,9 +277,24 @@
 
 	&.is-borderless {
 		color: var(--color-primary);
-		margin-top: 0;
 		padding: 0;
+		display: flex;
+		align-items: center;
+
+		&:focus {
+			box-shadow: none !important;
+			border-color: transparent !important;
+		}
+
+		/* Checkmark for selected domains */
+		svg {
+			height: 20px;
+			top: 0;
+			left: -2px;
+			margin-right: 4px;
+		}
 	}
+
 }
 
 .domain-suggestion__chevron {

@@ -23,8 +23,8 @@ const selectors = {
 	postPasswordInput: '.editor-post-visibility__password-input',
 
 	// Schedule
-	scheduleButton: `button.edit-post-post-schedule__toggle`,
-	scheduleInput: ( name: string ) => `.edit-post-post-schedule__dialog label:has-text("${ name }")`,
+	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
+	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
 
 	// Category

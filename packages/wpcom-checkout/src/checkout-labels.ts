@@ -14,8 +14,9 @@ import {
 	isBiennially,
 	isTriennially,
 	isJetpackAISlug,
+	isJetpackStatsPaidTieredProductSlug,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -95,11 +96,27 @@ export function getLabel( product: ResponseCartProduct ): string {
 		return product.meta;
 	}
 
-	if ( isJetpackAISlug( product.product_slug ) && product.quantity ) {
+	if (
+		isJetpackAISlug( product.product_slug ) &&
+		( product.quantity !== null || product.current_quantity !== null )
+	) {
+		// In theory, it'll fallback to 0, but just in case.
+		const quantity = product.quantity || product.current_quantity || 0;
+
 		return translate( '%(productName)s (%(quantity)d requests per month)', {
 			args: {
 				productName: product.product_name,
-				quantity: product.quantity,
+				quantity: quantity,
+			},
+			textOnly: true,
+		} );
+	}
+
+	if ( isJetpackStatsPaidTieredProductSlug( product.product_slug ) && product.quantity ) {
+		return translate( '%(productName)s - %(quantity)s views per month', {
+			args: {
+				productName: product.product_name,
+				quantity: numberFormat( product.quantity, 0 ),
 			},
 			textOnly: true,
 		} );

@@ -827,6 +827,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						! isPluginBundleEligible &&
 						shouldLimitGlobalStyles
 					}
+					needsUpgrade={ shouldLimitGlobalStyles || isLockedTheme }
 					title={ headerDesignTitle }
 					selectedDesignTitle={ designTitle }
 					shortDescription={ selectedDesign.description }

@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -24,10 +25,14 @@ function getHoldMessages(
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
 				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
-					return translate( 'Upgrade to a Personal plan' );
+					return translate( 'Upgrade to a %(personalPlanName)s plan', {
+						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+					} );
 				}
 
-				return translate( 'Upgrade to a Business plan' );
+				return translate( 'Upgrade to a %(businessPlanName)s plan', {
+					args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				} );
 			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {

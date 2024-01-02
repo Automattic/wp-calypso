@@ -1,0 +1,15 @@
+@import "./upgrade-modal";
+@import "./upgrade-notice";
+
+.components-editor-notices__pinned .components-notice__content {
+	display: flex;
+	margin-right: 0;
+
+	.components-notice__actions {
+		margin-left: auto;
+
+		.components-notice__action {
+			margin-top: 0;
+		}
+	}
+}

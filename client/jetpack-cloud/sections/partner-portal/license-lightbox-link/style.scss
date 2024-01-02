@@ -7,6 +7,13 @@
 	text-decoration: underline;
 	text-align: left;
 	cursor: pointer;
+	padding-left: 2px;
+	margin-left: -2px;
+}
+
+.license-lightbox-link:focus-visible {
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px var(--studio-gray-10);
 }
 
 .license-lightbox-link__text {

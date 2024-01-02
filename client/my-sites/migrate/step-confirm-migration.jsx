@@ -1,4 +1,9 @@
-import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import {
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	getPlan,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -75,7 +80,11 @@ class StepConfirmMigration extends Component {
 			<CompactCard className="migrate__card-footer">
 				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={ 12 } />
 				<span className="migrate__card-footer-text">
-					{ translate( 'A Business Plan is required to import everything.' ) }
+					{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle(),
+						},
+					} ) }
 				</span>
 			</CompactCard>
 		);

@@ -52,7 +52,9 @@ class StepUpgrade extends Component {
 
 				<CompactCard>
 					<CardHeading>
-						{ translate( 'A Business Plan is required to import everything.' ) }
+						{ translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+							args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+						} ) }
 					</CardHeading>
 					<div>
 						{ translate(
