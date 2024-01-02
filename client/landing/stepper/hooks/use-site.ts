@@ -1,5 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
@@ -17,6 +17,7 @@ export function useSite() {
 	const isRequestingSelectedSite = useSelector( ( state ) =>
 		isRequestingSite( state, siteIdOrSlug )
 	);
+	const lastRequestedSiteIdOrSlug = useRef( '' );
 
 	const site = useSelect(
 		( select ) => {
@@ -29,8 +30,14 @@ export function useSite() {
 
 	// Request the site for the redux store
 	useEffect( () => {
-		if ( siteIdOrSlug && ! selectedSite && ! isRequestingSelectedSite ) {
+		if (
+			siteIdOrSlug &&
+			siteIdOrSlug !== lastRequestedSiteIdOrSlug.current &&
+			! selectedSite &&
+			! isRequestingSelectedSite
+		) {
 			dispatch( requestSite( siteIdOrSlug ) );
+			lastRequestedSiteIdOrSlug.current = siteIdOrSlug;
 		}
 	}, [ siteIdOrSlug, selectedSite, isRequestingSelectedSite ] );
 
