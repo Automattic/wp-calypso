@@ -38,6 +38,7 @@ import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	getEdgeCacheStatus,
 	setEdgeCache,
+	purgeEdgeCache,
 	USE_EDGE_CACHE_QUERY_KEY,
 } from 'calypso/data/hosting/use-cache';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -220,15 +221,10 @@ export const useCommandsArrayWpcom = ( {
 
 			if ( response ) {
 				// If global cache is active, purge the cache
-				await wpcom.req.post( {
-					path: `/sites/${ siteId }/hosting/edge-cache/purge`,
-					apiNamespace: 'wpcom/v2',
-				} );
-				displayNotice( __( 'Successfully cleared cache.' ) );
-			} else {
-				// If global edge cache is not active, clear WordPress cache
-				dispatch( clearWordPressCache( siteId, 'Cache not active' ) );
+				await purgeEdgeCache( siteId );
 			}
+			// Always clear the WordPress cache.
+			dispatch( clearWordPressCache( siteId, 'Clear cache via command palette' ) );
 		} catch ( error ) {
 			displayNotice( __( 'Failed to clear cache.' ), 'is-error' );
 		}

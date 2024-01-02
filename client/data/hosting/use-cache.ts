@@ -46,6 +46,13 @@ export const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
 	return response;
 };
 
+export const purgeEdgeCache = async ( siteId: number ) => {
+	return await wp.req.post( {
+		path: `/sites/${ siteId }/hosting/edge-cache/purge`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const useEdgeCacheQuery = ( siteId: number ) => {
 	return useQuery< boolean, unknown, boolean >( {
 		queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
@@ -113,11 +120,7 @@ export const useClearEdgeCacheMutation = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const mutation = useMutation( {
-		mutationFn: async () =>
-			wp.req.post( {
-				path: `/sites/${ siteId }/hosting/edge-cache/purge`,
-				apiNamespace: 'wpcom/v2',
-			} ),
+		mutationFn: async () => purgeEdgeCache( siteId ),
 		...options,
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
 		onSuccess: async ( ...args ) => {
