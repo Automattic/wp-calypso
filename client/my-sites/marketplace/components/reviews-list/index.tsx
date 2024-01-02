@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import Card from '@automattic/components/src/card';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -80,6 +81,14 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						className="marketplace-reviews-list__review-container"
 						key={ `review-${ review.id }` }
 					>
+						{ review.author === currentUserId && review.status === 'hold' && (
+							<Card className="marketplace-reviews-list__pending-review">
+								<Gridicon className="marketplace-reviews-list__icon" icon="info" size={ 18 } />
+								<span className="marketplace-reviews-list__pending-review-text">
+									{ translate( 'Your review is pending approval.' ) }
+								</span>
+							</Card>
+						) }
 						<div className="marketplace-reviews-list__review-container-header">
 							<div className="marketplace-reviews-list__profile-picture">
 								{ getAvatarURL( review ) ? (
