@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { englishLocales } from '@automattic/i18n-utils';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
@@ -62,6 +63,7 @@ import {
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -132,6 +134,9 @@ export function createNavigation( context ) {
 }
 
 export function renderRebloggingEmptySites( context ) {
+	const { getState } = getStore( context );
+	const state = getState();
+	const locale = getCurrentLocaleSlug( state );
 	setSectionMiddleware( { group: 'sites' } )( context );
 
 	const actionURL = addQueryArgs(
@@ -143,10 +148,19 @@ export function renderRebloggingEmptySites( context ) {
 
 	context.primary = createElement( () =>
 		NoSitesMessage( {
-			title: i18n.translate( 'Create a site to reblog' ),
-			line: i18n.translate(
-				"Create your first webiste to reblog content from other sites you're following."
-			),
+			title:
+				englishLocales.includes( locale ) || i18n.hasTranslation( 'Create a site to reblog' )
+					? i18n.translate( 'Create a site to reblog' )
+					: null,
+			line:
+				englishLocales.includes( locale ) ||
+				i18n.hasTranslation(
+					"Create your first website to reblog content from other sites you're following."
+				)
+					? i18n.translate(
+							"Create your first website to reblog content from other sites you're following."
+					  )
+					: null,
 			actionURL,
 		} )
 	);
