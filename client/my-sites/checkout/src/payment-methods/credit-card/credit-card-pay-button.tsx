@@ -71,6 +71,19 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
+						if ( ! cardNumberElement ) {
+							// This should never happen because they won't get
+							// to this point if the credit card fields are not
+							// filled-in (see isCreditCardFormValid) but it
+							// seems to happen so let's tell the user
+							// something.
+							setDisplayFieldsError(
+								__(
+									'Something seems to be wrong with the credit card form. Please try again or contact support for help.'
+								)
+							);
+							return;
+						}
 						onClick( {
 							stripe,
 							name: cardholderName?.value,
