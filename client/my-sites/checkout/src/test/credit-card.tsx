@@ -134,7 +134,7 @@ describe( 'Credit card payment method', () => {
 				countryCode: '',
 				postalCode: '',
 				stripe: null,
-				cardNumberElement: undefined,
+				cardNumberElement: {},
 				stripeConfiguration,
 				useForAllSubscriptions: false,
 			} );
