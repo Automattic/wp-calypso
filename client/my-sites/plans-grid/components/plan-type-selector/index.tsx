@@ -1,5 +1,7 @@
 import { useEffect } from '@wordpress/element';
+import classNames from 'classnames';
 import * as React from 'react';
+import { StickyContainer } from '../sticky-container';
 import { IntervalTypeSelector } from './components/interval-type-selector';
 import { PlanTypeSelectorProps } from './types';
 
@@ -7,6 +9,9 @@ import './style.scss';
 
 const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	kind,
+	enableStickyBehavior = false,
+	// TODO: Rename this prop
+	isComparisonGridPlanTypeSelectorInView,
 	...props
 } ) => {
 	useEffect( () => {
@@ -14,12 +19,21 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 			kind,
 		} );
 	}, [] );
-
 	if ( kind === 'interval' ) {
 		return (
-			<div className="plan-type-selector">
-				<IntervalTypeSelector { ...props } />
-			</div>
+			<StickyContainer
+				stickyClass="is-sticky-plan-type-selector"
+				className={ classNames( 'plan-type-selector__sticky-container', {
+					[ 'is-hidden' ]: isComparisonGridPlanTypeSelectorInView,
+				} ) }
+				disabled={ ! enableStickyBehavior || isComparisonGridPlanTypeSelectorInView }
+			>
+				{ () => (
+					<div className="plan-type-selector">
+						<IntervalTypeSelector { ...props } />
+					</div>
+				) }
+			</StickyContainer>
 		);
 	}
 	/**

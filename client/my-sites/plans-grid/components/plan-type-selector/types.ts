@@ -8,6 +8,8 @@ export type PlanTypeSelectorProps = {
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
 	withDiscount?: string;
+	enableStickyBehavior?: boolean;
+	isComparisonGridPlanTypeSelectorInView?: boolean;
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
