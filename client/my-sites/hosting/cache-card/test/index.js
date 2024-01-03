@@ -108,7 +108,7 @@ describe( 'CacheCard component', () => {
 		expect( useSetEdgeCacheMutation().setEdgeCache ).not.toHaveBeenCalled();
 		expect( screen.getByRole( 'checkbox' ) ).toBeVisible();
 		screen.getByRole( 'checkbox' ).click();
-		expect( useSetEdgeCacheMutation().setEdgeCache ).toHaveBeenCalledWith( true );
+		expect( useSetEdgeCacheMutation().setEdgeCache ).toHaveBeenCalledWith( 1, true );
 	} );
 	it( 'displays rate limit message when shouldRateLimitCacheClear prop is true', () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );

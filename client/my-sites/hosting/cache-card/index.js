@@ -81,9 +81,9 @@ export const CacheCard = ( {
 
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
-	const { setEdgeCache, isLoading: toggleEdgeCacheLoading } = useSetEdgeCacheMutation( siteId, {
+	const { setEdgeCache, isLoading: isEdgeCacheMutating } = useSetEdgeCacheMutation( {
 		onSettled: ( ...args ) => {
-			const active = args[ 2 ];
+			const active = args[ 2 ].active;
 			recordTracksEvent(
 				active
 					? 'calypso_hosting_configuration_edge_cache_enable'
@@ -130,7 +130,7 @@ export const CacheCard = ( {
 						isClearingCache ||
 						shouldRateLimitCacheClear ||
 						getEdgeCacheLoading ||
-						toggleEdgeCacheLoading
+						isEdgeCacheMutating
 					}
 				>
 					<span>{ translate( 'Clear cache' ) }</span>
@@ -182,7 +182,12 @@ export const CacheCard = ( {
 						<>
 							<ToggleLabel>{ translate( 'Global edge cache' ) }</ToggleLabel>
 							<ToggleControl
-								disabled={ clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible }
+								disabled={
+									clearEdgeCacheLoading ||
+									getEdgeCacheLoading ||
+									! isEdgeCacheEligible ||
+									isEdgeCacheMutating
+								}
 								checked={ isEdgeCacheActive }
 								onChange={ ( active ) => {
 									dispatch(
@@ -194,7 +199,7 @@ export const CacheCard = ( {
 											{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
 										)
 									);
-									setEdgeCache( active );
+									setEdgeCache( siteId, active );
 								} }
 								label={ edgeCacheToggleDescription }
 							/>

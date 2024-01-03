@@ -13,8 +13,13 @@ export const USE_EDGE_CACHE_QUERY_KEY = 'edge-cache-key';
 export const TOGGLE_EDGE_CACHE_MUTATION_KEY = 'set-edge-site-mutation-key';
 export const CLEAR_EDGE_CACHE_MUTATION_KEY = 'clear-edge-site-mutation-key';
 
-interface MutationVariables {
+interface ClearEdgeCacheMutationVariables {
 	name: string;
+}
+
+interface SetEdgeCacheMutationVariables {
+	siteId: number;
+	active: boolean;
 }
 
 interface MutationResponse {
@@ -32,17 +37,6 @@ export const getEdgeCacheStatus = async ( siteId: number ) => {
 		apiNamespace: 'wpcom/v2',
 	} );
 
-	return response;
-};
-
-export const setEdgeCache = async ( siteId: number, newStatus: boolean ) => {
-	const response = await wp.req.post( {
-		path: `/sites/${ siteId }/hosting/edge-cache/active`,
-		apiNamespace: 'wpcom/v2',
-		body: {
-			active: newStatus,
-		},
-	} );
 	return response;
 };
 
@@ -73,16 +67,20 @@ interface MutationError {
 }
 
 export const useSetEdgeCacheMutation = (
-	siteId: number,
-	options: UseMutationOptions< boolean, MutationError, boolean > = {}
+	options: UseMutationOptions< boolean, MutationError, SetEdgeCacheMutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation< boolean, MutationError, boolean >( {
-		mutationFn: async ( active ) => {
-			return setEdgeCache( siteId, active );
+	const mutation = useMutation< boolean, MutationError, SetEdgeCacheMutationVariables >( {
+		mutationFn: async ( { active, siteId } ) => {
+			return await wp.req.post( {
+				path: `/sites/${ siteId }/hosting/edge-cache/active`,
+				apiNamespace: 'wpcom/v2',
+				body: {
+					active,
+				},
+			} );
 		},
-		mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY, siteId ],
-		onMutate: async ( active ) => {
+		onMutate: async ( { active, siteId } ) => {
 			await queryClient.cancelQueries( {
 				queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
 			} );
@@ -90,11 +88,12 @@ export const useSetEdgeCacheMutation = (
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], active );
 			return previousData;
 		},
-		onError( _err, _newActive, prevValue ) {
+		onError( _err, { siteId }, prevValue ) {
 			// Revert to previous settings on failure
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], Boolean( prevValue ) );
 		},
 		onSettled: ( ...args ) => {
+			const { siteId } = args[ 2 ];
 			// Refetch settings regardless
 			queryClient.invalidateQueries( {
 				queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
@@ -103,21 +102,23 @@ export const useSetEdgeCacheMutation = (
 		},
 	} );
 
-	const { mutate } = mutation;
-	// isMutating is returning a number. Greater than 0 means we have some pending mutations for
-	// the provided key. This is preserved across different pages, while isLoading it's not.
-	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
-	const isLoading =
-		useIsMutating( { mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY, siteId ] } ) > 0;
+	const { mutate, ...rest } = mutation;
 
-	const setEdgeCacheCallback = useCallback( mutate, [ mutate ] );
+	const setEdgeCache = useCallback(
+		( siteId: number, active: boolean ) => mutate( { siteId, active } ),
+		[ mutate ]
+	);
 
-	return { setEdgeCache: setEdgeCacheCallback, isLoading };
+	return { setEdgeCache, ...rest };
 };
 
 export const useClearEdgeCacheMutation = (
 	siteId: number,
-	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
+	options: UseMutationOptions<
+		MutationResponse,
+		MutationError,
+		ClearEdgeCacheMutationVariables
+	> = {}
 ) => {
 	const mutation = useMutation( {
 		mutationFn: async () => purgeEdgeCache( siteId ),

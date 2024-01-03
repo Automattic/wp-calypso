@@ -1,6 +1,5 @@
 import { Gridicon, JetpackLogo } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import {
 	alignJustify as acitvityLogIcon,
@@ -37,9 +36,8 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	getEdgeCacheStatus,
-	setEdgeCache,
+	useSetEdgeCacheMutation,
 	purgeEdgeCache,
-	USE_EDGE_CACHE_QUERY_KEY,
 } from 'calypso/data/hosting/use-cache';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { navigate } from 'calypso/lib/navigate';
@@ -94,9 +92,21 @@ export const useCommandsArrayWpcom = ( {
 		};
 
 	const commandNavigation = useCommandNavigation();
-	const queryClient = useQueryClient();
-
 	const dispatch = useDispatch();
+
+	const { setEdgeCache } = useSetEdgeCacheMutation( {
+		onSettled: ( ...args ) => {
+			const { active } = args[ 2 ];
+			dispatch(
+				createNotice(
+					'is-success',
+					active ? __( 'Edge cache enabled.' ) : __( 'Edge cache disabled.' ),
+					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
+				)
+			);
+		},
+	} );
+
 	const displayNotice = (
 		message: string,
 		noticeType: NoticeStatus = 'is-success',
@@ -242,25 +252,11 @@ export const useCommandsArrayWpcom = ( {
 			return;
 		}
 
-		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Enabling edge cache…' ),
-			'is-plain',
-			5000,
-			{ id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
-		);
-		try {
-			await setEdgeCache( siteId, true );
-			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], true );
-			removeLoadingNotice();
-			displayNotice( __( 'Edge cache enabled.' ), 'is-success', 5000, {
-				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
-			} );
-		} catch ( error ) {
-			removeLoadingNotice();
-			displayNotice( __( 'Failed to enable edge cache.' ), 'is-error', 5000, {
-				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
-			} );
-		}
+		displayNotice( __( 'Enabling edge cache…' ), 'is-plain', 5000, {
+			id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+		} );
+
+		setEdgeCache( siteId, true );
 	};
 
 	const disableEdgeCache = async ( siteId: number ) => {
@@ -273,25 +269,11 @@ export const useCommandsArrayWpcom = ( {
 			return;
 		}
 
-		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Disabling edge cache…' ),
-			'is-plain',
-			5000,
-			{ id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
-		);
-		try {
-			await setEdgeCache( siteId, false );
-			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], false );
-			removeLoadingNotice();
-			displayNotice( __( 'Edge cache disabled.' ), 'is-success', 5000, {
-				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
-			} );
-		} catch ( error ) {
-			removeLoadingNotice();
-			displayNotice( __( 'Failed to disable edge cache.' ), 'is-error', 5000, {
-				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
-			} );
-		}
+		displayNotice( __( 'Disablingq edge cache…' ), 'is-plain', 5000, {
+			id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+		} );
+
+		setEdgeCache( siteId, false );
 	};
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
