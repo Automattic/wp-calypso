@@ -5,6 +5,7 @@ import { ASYNC_REQUEST_COUNTDOWN_INIT_VALUE, FREE_PLAN_REQUESTS_LIMIT } from './
 import { LogoGeneratorStateProp } from './types';
 
 const INITIAL_STATE: LogoGeneratorStateProp = {
+	// @ts-expect-error -- TSCONVERSION
 	siteDetails: {},
 	suggestions: [],
 	features: {
@@ -33,6 +34,7 @@ const INITIAL_STATE: LogoGeneratorStateProp = {
 				isRequesting: false,
 				asyncRequestCountdown: ASYNC_REQUEST_COUNTDOWN_INIT_VALUE,
 				asyncRequestTimerId: 0,
+				isRequestingImage: false,
 			},
 		},
 	},
