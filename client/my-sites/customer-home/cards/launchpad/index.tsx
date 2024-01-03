@@ -3,6 +3,8 @@ import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/da
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -27,7 +29,12 @@ const CustomerHomeLaunchpad = ( {
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const {
-		data: { checklist, is_dismissed: initialIsChecklistDismissed, title },
+		data: {
+			checklist,
+			is_dismissed: initialIsChecklistDismissed,
+			is_dismissable: isDismissable,
+			title,
+		},
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	useEffect( () => {
@@ -56,6 +63,13 @@ const CustomerHomeLaunchpad = ( {
 							numberOfSteps={ numberOfSteps }
 							currentStep={ completedSteps }
 						/>
+						{ isDismissable && (
+							<EllipsisMenu position="bottom" toggleTitle={ translate( 'Skip settings' ) }>
+								<PopoverMenuItem>{ translate( 'Hide for a day' ) } </PopoverMenuItem>
+								<PopoverMenuItem>{ translate( 'Hide for a week' ) }</PopoverMenuItem>
+								<PopoverMenuItem>{ translate( 'Hide forever' ) }</PopoverMenuItem>
+							</EllipsisMenu>
+						) }
 					</div>
 				) : (
 					<div className="customer-home-launchpad__dismiss-button">

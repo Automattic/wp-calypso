@@ -42,6 +42,7 @@ export interface LaunchpadResponse {
 	checklist_statuses?: ChecklistStatuses;
 	is_enabled: boolean;
 	is_dismissed: boolean;
+	is_dismissable: boolean;
 	title?: string | null;
 }
 
@@ -124,6 +125,7 @@ export const useLaunchpad = (
 			checklist: null,
 			is_enabled: false,
 			is_dismissed: false,
+			is_dismissable: false,
 			title: null,
 		},
 	} );
