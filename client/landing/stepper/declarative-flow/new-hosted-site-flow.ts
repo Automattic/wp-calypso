@@ -4,6 +4,10 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
 import {
+	recordFreeHostingTrialStarted,
+	FlowNames,
+} from 'calypso/lib/analytics/ad-tracking/record-hosting-trial-started';
+import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -70,6 +74,7 @@ const hosting: Flow = {
 				}
 
 				case 'trialAcknowledge': {
+					recordFreeHostingTrialStarted( FlowNames.NewSite );
 					return navigate( 'siteCreationStep' );
 				}
 
