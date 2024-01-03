@@ -55,7 +55,7 @@ export const requestAddGift = ( siteId, gift, noticeText ) => {
 					type: MEMBERSHIPS_GIFT_ADD_FAILURE,
 				} );
 				dispatch(
-					errorNotice( error.message, {
+					errorNotice( error.error.message ?? error.message, {
 						duration: 10000,
 					} )
 				);
