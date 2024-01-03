@@ -4,9 +4,11 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
+import wpcomProxyRequest from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
+import { requestJwt } from '../lib/request-token';
 import { saveToMediaLibrary } from '../lib/save-to-media-library';
 import { setSiteLogo } from '../lib/set-site-logo';
 import { STORE_NAME } from '../store';
@@ -16,18 +18,22 @@ import { STORE_NAME } from '../store';
 import type { Selectors } from '../store/types';
 
 const useLogoGenerator = () => {
-	const { setSelectedLogoIndex, updateSelectedLogo, setSavingLogoToLibrary } =
+	const { setSelectedLogoIndex, updateSelectedLogo, setSavingLogoToLibrary, setIsRequestingImage } =
 		useDispatch( STORE_NAME );
 
-	const { logos, selectedLogo, siteDetails, savingLogoToLibrary } = useSelect( ( select ) => {
-		const selectors: Selectors = select( STORE_NAME );
-		return {
-			logos: selectors.getLogos(),
-			selectedLogo: selectors.getSelectedLogo(),
-			siteDetails: selectors.getSiteDetails(),
-			savingLogoToLibrary: selectors.getSavingLogoToLibrary(),
-		};
-	}, [] );
+	const { logos, selectedLogo, siteDetails, savingLogoToLibrary, isRequestingImage } = useSelect(
+		( select ) => {
+			const selectors: Selectors = select( STORE_NAME );
+			return {
+				logos: selectors.getLogos(),
+				selectedLogo: selectors.getSelectedLogo(),
+				siteDetails: selectors.getSiteDetails(),
+				savingLogoToLibrary: selectors.getSavingLogoToLibrary(),
+				isRequestingImage: selectors.getIsRequestingImage(),
+			};
+		},
+		[]
+	);
 
 	const { ID = null, name = null, description = null } = siteDetails;
 	const siteId = ID ? String( ID ) : null;
@@ -83,6 +89,39 @@ const useLogoGenerator = () => {
 		}
 	}, [ saveLogo, selectedLogo, siteId ] );
 
+	const generateImage = async function ( { prompt }: { prompt: string } ): Promise< any > {
+		const tokenData = await requestJwt( { siteDetails } );
+		const isSimple = ! siteDetails.is_wpcom_atomic;
+
+		if ( ! tokenData || ! tokenData.token ) {
+			// TODO: handle error
+			return;
+		}
+		let data;
+		const params = {
+			prompt,
+			token: tokenData.token,
+			response_format: 'url',
+		};
+		if ( ! isSimple ) {
+			// TODO: unsure how to handle this
+			// data = await proxy( {
+			// 	path: '/jetpack/v4/jetpack-ai-jwt?_cacheBuster=' + Date.now(),
+			// 	method: 'GET',
+			// 	query: `prompt=${ prompt }&token=${ tokenData.token }&response_format=url`,
+			// } );
+		} else {
+			data = await wpcomProxyRequest( {
+				apiNamespace: 'wpcom/v2',
+				path: '/jetpack-ai-image',
+				method: 'GET',
+				query: new URLSearchParams( params ).toString(),
+			} );
+		}
+
+		return data;
+	};
+
 	return {
 		setSelectedLogoIndex,
 		logos,
@@ -96,6 +135,9 @@ const useLogoGenerator = () => {
 		applyLogo,
 		setSavingLogoToLibrary,
 		savingLogoToLibrary,
+		generateImage,
+		setIsRequestingImage,
+		isRequestingImage,
 	};
 };
 

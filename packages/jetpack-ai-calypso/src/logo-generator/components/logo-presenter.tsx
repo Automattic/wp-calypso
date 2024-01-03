@@ -100,10 +100,11 @@ export const LogoPresenter: React.FC< { logo: Logo; loading?: boolean } > = ( {
 	logo,
 	loading = false,
 } ) => {
+	const { isRequestingImage } = useLogoGenerator();
 	return (
 		<div className="jetpack-ai-logo-generator-modal-presenter">
 			<div className="jetpack-ai-logo-generator-modal-presenter__container">
-				{ loading ? (
+				{ loading || isRequestingImage ? (
 					<>
 						<ImageLoader className="jetpack-ai-logo-generator-modal-presenter__logo" />
 						<span className="jetpack-ai-logo-generator-modal-presenter__loading-text">
