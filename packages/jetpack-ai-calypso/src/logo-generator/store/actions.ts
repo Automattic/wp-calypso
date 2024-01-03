@@ -16,6 +16,7 @@ import {
 	ACTION_ADD_LOGO_TO_HISTORY,
 	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
 	ACTION_SAVE_SELECTED_LOGO,
+	ACTION_SET_IS_REQUESTING_IMAGE,
 } from './constants';
 import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -147,6 +148,13 @@ const actions = {
 			type: ACTION_SAVE_SELECTED_LOGO,
 			mediaId,
 			url,
+		};
+	},
+
+	setIsRequestingImage( isRequestingImage: boolean ) {
+		return {
+			type: ACTION_SET_IS_REQUESTING_IMAGE,
+			isRequestingImage,
 		};
 	},
 };

@@ -64,6 +64,8 @@
 		}
 	},
 	"dependencies": {
-		"classnames": "^2.3.2"
+		"@automattic/calypso-analytics": "workspace:^",
+		"classnames": "^2.3.2",
+		"debug": "^4.3.4"
 	}
 }
