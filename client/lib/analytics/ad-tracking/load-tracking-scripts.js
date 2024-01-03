@@ -105,6 +105,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.akismetGoogleTagManagerId );
 	}
 
+	if ( mayWeInitTracker( 'googleTagManager' ) && ( isJetpackCloud() || isJetpackCheckout() ) ) {
+		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.jetpackGoogleTagManagerId );
+	}
+
 	if ( mayWeTrackByTracker( 'clarity' ) ) {
 		scripts.push( WPCOM_CLARITY_URI );
 	}
