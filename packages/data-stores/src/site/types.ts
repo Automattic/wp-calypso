@@ -534,24 +534,42 @@ export enum MigrationStatus {
 }
 
 export enum MigrationStatusError {
+	// Start of migration #1
 	ACTIVATE_REWIND = 'error-rewind-activate',
 	BACKUP_QUEUEING = 'error-backup-queue',
-	BACKUP_SITE_NOT_ACCESSIBLE = 'error-backup-fail-not-accessible',
-	BACKUP_UNKNOWN = 'error-backup-fail-unknown',
-	FIX_EXTERNAL_USER_ID = 'error-fix-external-user-id',
-	GENERAL = 'error-general',
-	GET_SOURCE_EXTERNAL_USER_ID = 'error-get-external-user-id',
-	GET_USER_TOKEN = 'error-get-target-user-token',
+
+	// Start of backup
 	// eslint-disable-next-line inclusive-language/use-inclusive-words
 	MISSING_SOURCE_MASTER_USER = 'error-get-master-user',
-	MISSING_WOA_CREDENTIALS = 'error-credentials-atomic',
+
+	// During backup
 	NO_BACKUP_STATUS = 'error-backup-status',
-	RESTORE_FAILED = 'error-restore-fail',
-	RESTORE_QUEUE = 'error-restore-queue',
-	RESTORE_STATUS = 'error-restore-status',
-	UPDATE_TARGET_USER_TOKEN = 'error-update-target-user-token',
+	BACKUP_SITE_NOT_ACCESSIBLE = 'error-backup-fail-not-accessible',
+	BACKUP_UNKNOWN = 'error-backup-fail-unknown',
+
+	// End of backup
 	WOA_GET_TRANSFER_RECORD = 'error-atomic-transfer-get',
+	MISSING_WOA_CREDENTIALS = 'error-credentials-atomic',
+
+	// Start of restore
+	RESTORE_QUEUE = 'error-restore-queue',
+	RESTORE_FAILED = 'error-restore-fail',
+
+	// During restore
+	RESTORE_STATUS = 'error-restore-status',
+
+	// End of restore
+	FIX_EXTERNAL_USER_ID = 'error-fix-external-user-id',
+	GET_SOURCE_EXTERNAL_USER_ID = 'error-get-external-user-id',
+	GET_USER_TOKEN = 'error-get-target-user-token',
+	UPDATE_TARGET_USER_TOKEN = 'error-update-target-user-token',
+
+	// Start of migration #2
+	// End of backup #2
 	WOA_TRANSFER = 'error-atomic-transfer',
+
+	// Miscellanous
+	GENERAL = 'error-general',
 }
 
 export interface SourceSiteMigrationBase {

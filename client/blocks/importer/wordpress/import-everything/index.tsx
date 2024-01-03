@@ -1,6 +1,6 @@
 import { ProgressBar } from '@automattic/components';
-import { MigrationStatus, type SiteDetails } from '@automattic/data-stores';
-import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
+import { MigrationStatus, MigrationStatusError, type SiteDetails } from '@automattic/data-stores';
+import { Hooray, NextButton, Progress, SubTitle, Title } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
@@ -23,7 +23,7 @@ import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
 import { WPImportOption } from '../types';
-import { retrieveMigrateSource, clearMigrateSource } from '../utils';
+import { clearMigrateSource, retrieveMigrateSource } from '../utils';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -39,7 +39,8 @@ interface Props {
 }
 
 interface State {
-	migrationStatus: string;
+	migrationStatus: MigrationStatus;
+	migrationErrorStatus: MigrationStatusError;
 	percent: number | null;
 }
 
@@ -267,7 +268,7 @@ export class ImportEverything extends SectionMigrate {
 					<div className="import__heading import__heading-center">
 						<Title>{ translate( 'Import failed' ) }</Title>
 						<SubTitle>
-							{ translate( 'There was an error with your import.' ) }
+							{ this.getErrorTitle() }
 							<br />
 							{ translate( 'Please try again soon or contact support for help.' ) }
 						</SubTitle>
@@ -345,6 +346,7 @@ export class ImportEverything extends SectionMigrate {
 
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
+			case MigrationStatus.BACKING_UP_QUEUED:
 			case MigrationStatus.RESTORING:
 				return this.renderMigrationProgressSimple();
 
@@ -364,6 +366,7 @@ export class ImportEverything extends SectionMigrate {
 
 		switch ( this.state.migrationStatus ) {
 			case MigrationStatus.BACKING_UP:
+			case MigrationStatus.BACKING_UP_QUEUED:
 			case MigrationStatus.NEW:
 				return (
 					sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) + '...'
@@ -376,6 +379,62 @@ export class ImportEverything extends SectionMigrate {
 
 			default:
 				return '';
+		}
+	}
+
+	getErrorTitle(): string {
+		const { translate } = this.props;
+
+		if ( this.state.migrationStatus !== MigrationStatus.ERROR ) {
+			return '';
+		}
+
+		switch ( this.state.migrationErrorStatus as unknown as MigrationStatusError ) {
+			// Start of migration #1
+			case MigrationStatusError.ACTIVATE_REWIND:
+			case MigrationStatusError.BACKUP_QUEUEING:
+				return translate( 'Impossible to start the migration.' );
+
+			// Start of backup
+			// eslint-disable-next-line inclusive-language/use-inclusive-words
+			case MigrationStatusError.MISSING_SOURCE_MASTER_USER:
+				return translate( 'Impossible to start the backup.' );
+
+			// During backup
+			case MigrationStatusError.NO_BACKUP_STATUS:
+			case MigrationStatusError.BACKUP_SITE_NOT_ACCESSIBLE:
+			case MigrationStatusError.BACKUP_UNKNOWN:
+				return translate( 'There was an error during the backup.' );
+
+			// End of backup #1
+			case MigrationStatusError.WOA_GET_TRANSFER_RECORD:
+			case MigrationStatusError.MISSING_WOA_CREDENTIALS:
+				return translate( 'There was an error during the backup.' );
+
+			// Start of restore
+			case MigrationStatusError.RESTORE_QUEUE:
+			case MigrationStatusError.RESTORE_FAILED:
+				return translate( 'There was an error to start the restore.' );
+
+			// During restore
+			case MigrationStatusError.RESTORE_STATUS:
+				return translate( 'There was an error during the restore.' );
+
+			// End of restore
+			case MigrationStatusError.FIX_EXTERNAL_USER_ID:
+			case MigrationStatusError.GET_SOURCE_EXTERNAL_USER_ID:
+			case MigrationStatusError.GET_USER_TOKEN:
+			case MigrationStatusError.UPDATE_TARGET_USER_TOKEN:
+				return translate( 'There was an error at the end of the restore.' );
+
+			// Start of migration #2
+			// End of backup #2
+			case MigrationStatusError.WOA_TRANSFER:
+				return translate( 'Impossible to perform the migration.' );
+
+			case MigrationStatusError.GENERAL:
+			default:
+				return translate( 'There was an error with your import.' );
 		}
 	}
 }

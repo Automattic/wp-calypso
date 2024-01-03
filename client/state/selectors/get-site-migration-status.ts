@@ -3,19 +3,13 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { AppState } from 'calypso/types';
 
 /**
- * Returns the migration status of the site or the error status if there is one.
+ * Returns the migration status of the site.
  */
 export default function getSiteMigrationStatus(
 	state: AppState,
-	siteId: number,
-	outputErrorStatus = true
+	siteId: number
 ): MigrationStatus | MigrationStatusError {
 	const site = getRawSite( state, siteId );
-
-	// Output the error status if there is one.
-	if ( outputErrorStatus && site?.site_migration?.error_status ) {
-		return site.site_migration.error_status;
-	}
 
 	return site?.site_migration?.status ?? MigrationStatus.INACTIVE;
 }

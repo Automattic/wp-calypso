@@ -8,7 +8,7 @@ import { AppState } from 'calypso/types';
  * We regard 'error' as 'in progress' – the user needs to dismiss that state.
  */
 export default function isSiteMigrationInProgress( state: AppState, siteId: number ) {
-	const migrationStatus = getSiteMigrationStatus( state, siteId, false );
+	const migrationStatus = getSiteMigrationStatus( state, siteId );
 
 	return migrationStatus !== MigrationStatus.INACTIVE && migrationStatus !== MigrationStatus.DONE;
 }

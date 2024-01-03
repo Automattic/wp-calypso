@@ -46,6 +46,7 @@ export class SectionMigrate extends Component {
 		errorMessage: '',
 		isJetpackConnected: false,
 		migrationStatus: 'unknown',
+		migrationErrorStatus: null,
 		percent: 0,
 		siteInfo: null,
 		selectedSiteSlug: null,
