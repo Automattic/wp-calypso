@@ -16,7 +16,7 @@ import './logo-presenter.scss';
 /**
  * Types
  */
-import type { Logo } from '../store/types';
+import type { LogoPresenterProps } from '../../types';
 import type React from 'react';
 
 const SaveInLibraryButton: React.FC = () => {
@@ -56,7 +56,7 @@ const SaveInLibraryButton: React.FC = () => {
 	);
 };
 
-const UseOnSiteButton: React.FC = () => {
+const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo } ) => {
 	const [ updating, setUpdating ] = useState( false );
 	const [ updated, setUpdated ] = useState( false );
 	const { applyLogo, savingLogoToLibrary } = useLogoGenerator();
@@ -67,6 +67,7 @@ const UseOnSiteButton: React.FC = () => {
 				setUpdating( true );
 				await applyLogo();
 				setUpdated( true );
+				onApplyLogo();
 			} catch ( error ) {
 				// TODO: Handle error
 			} finally {
@@ -96,9 +97,10 @@ const UseOnSiteButton: React.FC = () => {
 	);
 };
 
-export const LogoPresenter: React.FC< { logo: Logo; loading?: boolean } > = ( {
+export const LogoPresenter: React.FC< LogoPresenterProps > = ( {
 	logo,
 	loading = false,
+	onApplyLogo,
 } ) => {
 	const { isRequestingImage } = useLogoGenerator();
 	return (
@@ -124,7 +126,7 @@ export const LogoPresenter: React.FC< { logo: Logo; loading?: boolean } > = ( {
 							</span>
 							<div className="jetpack-ai-logo-generator-modal-presenter__actions">
 								<SaveInLibraryButton />
-								<UseOnSiteButton />
+								<UseOnSiteButton onApplyLogo={ onApplyLogo } />
 							</div>
 						</div>
 					</>

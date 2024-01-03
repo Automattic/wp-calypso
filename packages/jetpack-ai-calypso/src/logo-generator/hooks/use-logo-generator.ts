@@ -80,7 +80,7 @@ const useLogoGenerator = () => {
 		try {
 			const { mediaId } = await saveLogo();
 
-			setSiteLogo( {
+			return setSiteLogo( {
 				siteId: siteId,
 				imageId: mediaId,
 			} );

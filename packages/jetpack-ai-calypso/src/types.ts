@@ -1,12 +1,19 @@
 /**
  * Types
  */
+import type { Logo } from './logo-generator/store/types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export interface GeneratorModalProps {
 	siteDetails?: SiteDetails;
 	isOpen: boolean;
 	onClose: () => void;
+}
+
+export interface LogoPresenterProps {
+	logo: Logo;
+	loading?: boolean;
+	onApplyLogo: () => void;
 }
 
 export type SaveToMediaLibraryProps = {
