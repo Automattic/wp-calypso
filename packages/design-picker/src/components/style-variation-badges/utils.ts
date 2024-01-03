@@ -115,7 +115,7 @@ export function getStylesColorFromVariation(
 	try {
 		return { background: colorBase, text: findColorBestAnalogous( colorList, colorBase ) };
 	} catch ( e ) {
-		debug( e instanceof Error ? e.message : e, variation );
+		debug( e, variation );
 		return null;
 	}
 }
