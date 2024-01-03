@@ -1,6 +1,6 @@
 import { type UserSelect } from '@automattic/data-stores';
-import { useFlowProgress, REBLOGGING_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { REBLOGGING_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
@@ -9,7 +9,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { AssertConditionResult, AssertConditionState } from './internals/types';
@@ -37,10 +37,6 @@ const reblogging: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
-
-		setStepProgress( flowProgress );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
