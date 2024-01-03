@@ -19,6 +19,10 @@
 		display: flex;
 		font-size: $font-body-extra-small;
 		line-height: 20px;
+
+		.jetpack-ai-logo-generator-icon {
+			margin-right: 4px;
+		}
 	}
 }
 
@@ -31,7 +35,11 @@
 	border-radius: calc(4px * 2);
 	border: 1px solid var(--studio-gray-10, #ccc);
 	background: var(--studio-white, #fff);
-	gap: 48px;
+	gap: 8px;
+
+	@media (min-width: 700px) {
+		gap: 48px;
+	}
 
 	.prompt-query__input {
 		border: 0;
