@@ -1,7 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	getPlan,
 	FEATURE_SFTP,
 	FEATURE_SITE_STAGING_SITES,
+	PLAN_BUSINESS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -118,6 +120,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const [ href, label ] = hasManagePluginsFeature
 		? [ getManagePluginsUrl( site.slug ), __( 'Manage plugins' ) ]
 		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
+	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	return (
 		<MenuItemLink
@@ -127,7 +130,16 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature ? __( 'Requires a Business Plan' ) : undefined }
+			info={
+				! hasManagePluginsFeature
+					? sprintf(
+							/* translators: %s - the plan's product name, such as Creator or Explorer. */ __(
+								'Requires a %s Plan'
+							),
+							upsellPlanName
+					  )
+					: undefined
+			}
 		>
 			{ label }
 		</MenuItemLink>
@@ -318,6 +330,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,
 	} );
+	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -332,7 +345,17 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 					product_slug: site.plan?.product_slug,
 				} }
 			/>
-			<MenuItemLink info={ displayUpsell ? __( 'Requires a Business Plan' ) : undefined }>
+			<MenuItemLink
+				info={
+					displayUpsell
+						? sprintf(
+								/* translators: %s - the plan's product name, such as Creator or Explorer. */
+								__( 'Requires a %s Plan' ),
+								upsellPlanName
+						  )
+						: undefined
+				}
+			>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
@@ -348,8 +371,12 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 								product_slug: site.plan?.product_slug,
 							} }
 						/>
-						{ __(
-							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+						{ sprintf(
+							/* translators: %s - the plan's product name, such as Creator or Explorer. */
+							__(
+								'Upgrade to the %s Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+							),
+							upsellPlanName
 						) }
 						<Button
 							compact
