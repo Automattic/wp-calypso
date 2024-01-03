@@ -39,3 +39,21 @@ export type SetSiteLogoResponseProps = {
 	id: number;
 	url: string;
 };
+
+// Token
+export type RequestTokenOptions = {
+	siteDetails?: SiteDetails;
+	isJetpackSite?: boolean;
+	expirationTime?: number;
+};
+
+export type TokenDataProps = {
+	token: string;
+	blogId: string | undefined;
+	expire: number;
+};
+
+export type TokenDataEndpointResponseProps = {
+	token: string;
+	blog_id: string;
+};
