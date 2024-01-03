@@ -4,6 +4,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { SetStateAction, useCallback, useState } from 'react';
@@ -22,7 +23,15 @@ export const Prompt: React.FC = () => {
 	const { addLogoToHistory } = useDispatch( STORE_NAME );
 	const [ prompt, setPrompt ] = useState( '' );
 
-	const { generateImage, setIsRequestingImage, isRequestingImage } = useLogoGenerator();
+	const {
+		generateImage,
+		setIsRequestingImage,
+		isRequestingImage,
+		savingLogoToLibrary,
+		applyingLogo,
+	} = useLogoGenerator();
+
+	const isLoading = isRequestingImage || savingLogoToLibrary || applyingLogo;
 
 	const onClick = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
@@ -50,11 +59,13 @@ export const Prompt: React.FC = () => {
 	return (
 		<div className="jetpack-ai-logo-generator__prompt">
 			<div className="jetpack-ai-logo-generator__prompt-header">
-				<div className="jetpack-ai-logo-generator__prompt-label">Describe your site/logo:</div>
+				<div className="jetpack-ai-logo-generator__prompt-label">
+					{ __( 'Describe your site:', 'jetpack' ) }
+				</div>
 				<div className="jetpack-ai-logo-generator__prompt-actions">
-					<Button variant="link" disabled={ isRequestingImage }>
+					<Button variant="link" disabled={ isLoading }>
 						<AiIcon />
-						Enhance prompt
+						<span>{ __( 'Enhance prompt', 'jetpack' ) }</span>
 					</Button>
 				</div>
 			</div>
@@ -62,23 +73,35 @@ export const Prompt: React.FC = () => {
 				{ /* TODO: textarea doesn't resize, either import from block-editor or use custom contentEditable */ }
 				<textarea
 					className="prompt-query__input"
-					placeholder="describe your site or simply ask for a logo specifying some details about it"
+					placeholder={ __(
+						'Describe your site or simply ask for a logo specifying some details about it',
+						'jetpack'
+					) }
 					onChange={ onChange }
 					value={ prompt }
-					disabled={ isRequestingImage }
+					disabled={ isLoading }
 				></textarea>
 				<Button
 					variant="primary"
 					className="jetpack-ai-logo-generator__prompt-submit"
 					onClick={ onClick }
-					disabled={ isRequestingImage }
+					disabled={ isLoading }
 				>
-					Generate
+					{ __( 'Generate', 'jetpack' ) }
 				</Button>
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-footer">
-				<div>18 requests remaining.</div>&nbsp;
-				<a href="https://automattic.com/ai-guidelines">Upgrade</a>
+				<div>
+					{ sprintf(
+						// translators: %u is the number of requests
+						__( '%u requests remaining.', 'jetpack' ),
+						18
+					) }
+				</div>
+				&nbsp;
+				<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
+					{ __( 'Upgrade', 'jetpack' ) }
+				</Button>
 				<Icon className="prompt-footer__icon" icon={ info } />
 			</div>
 		</div>

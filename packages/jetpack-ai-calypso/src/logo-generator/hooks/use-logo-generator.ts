@@ -18,22 +18,26 @@ import { STORE_NAME } from '../store';
 import type { Selectors } from '../store/types';
 
 const useLogoGenerator = () => {
-	const { setSelectedLogoIndex, updateSelectedLogo, setSavingLogoToLibrary, setIsRequestingImage } =
-		useDispatch( STORE_NAME );
+	const {
+		setSelectedLogoIndex,
+		updateSelectedLogo,
+		setSavingLogoToLibrary,
+		setApplyingLogo,
+		setIsRequestingImage,
+	} = useDispatch( STORE_NAME );
 
-	const { logos, selectedLogo, siteDetails, savingLogoToLibrary, isRequestingImage } = useSelect(
-		( select ) => {
+	const { logos, selectedLogo, siteDetails, savingLogoToLibrary, applyingLogo, isRequestingImage } =
+		useSelect( ( select ) => {
 			const selectors: Selectors = select( STORE_NAME );
 			return {
 				logos: selectors.getLogos(),
 				selectedLogo: selectors.getSelectedLogo(),
 				siteDetails: selectors.getSiteDetails(),
 				savingLogoToLibrary: selectors.getSavingLogoToLibrary(),
+				applyingLogo: selectors.getApplyingLogo(),
 				isRequestingImage: selectors.getIsRequestingImage(),
 			};
-		},
-		[]
-	);
+		}, [] );
 
 	const { ID = null, name = null, description = null } = siteDetails;
 	const siteId = ID ? String( ID ) : null;
@@ -52,6 +56,8 @@ const useLogoGenerator = () => {
 
 		// eslint-disable-next-line no-useless-catch
 		try {
+			setSavingLogoToLibrary( true );
+
 			const { ID: mediaId, URL: mediaURL } = await saveToMediaLibrary( {
 				siteId,
 				url: selectedLogo.url,
@@ -64,13 +70,15 @@ const useLogoGenerator = () => {
 			} );
 
 			updateSelectedLogo( mediaId, mediaURL );
+			setSavingLogoToLibrary( false );
 
 			return { mediaId, mediaURL };
 		} catch ( error ) {
 			// TODO: Handle error when saving to media library fails.
+			setSavingLogoToLibrary( false );
 			throw error;
 		}
-	}, [ updateSelectedLogo, selectedLogo, siteId ] );
+	}, [ siteId, selectedLogo, setSavingLogoToLibrary, updateSelectedLogo ] );
 
 	const applyLogo = useCallback( async () => {
 		if ( ! siteId || ! selectedLogo ) {
@@ -80,14 +88,20 @@ const useLogoGenerator = () => {
 		try {
 			const { mediaId } = await saveLogo();
 
-			setSiteLogo( {
+			setApplyingLogo( true );
+
+			await setSiteLogo( {
 				siteId: siteId,
 				imageId: mediaId,
 			} );
+
+			setApplyingLogo( false );
 		} catch ( error ) {
 			// TODO: Handle error when setting site logo fails.
+			setApplyingLogo( false );
+			throw error;
 		}
-	}, [ saveLogo, selectedLogo, siteId ] );
+	}, [ saveLogo, selectedLogo, setApplyingLogo, siteId ] );
 
 	const generateImage = async function ( { prompt }: { prompt: string } ): Promise< any > {
 		const tokenData = await requestJwt( { siteDetails } );
@@ -135,6 +149,8 @@ const useLogoGenerator = () => {
 		applyLogo,
 		setSavingLogoToLibrary,
 		savingLogoToLibrary,
+		setApplyingLogo,
+		applyingLogo,
 		generateImage,
 		setIsRequestingImage,
 		isRequestingImage,

@@ -1,4 +1,8 @@
 .jetpack-ai-logo-generator-modal {
+	@media (min-width: 960px) {
+		max-height: 90%;
+	}
+
 	.components-modal__header {
 		border-bottom: 1px solid var(--studio-gray-5, #dcdcde);
 		padding: 20px 24px;
@@ -6,16 +10,20 @@
 
 	.components-modal__content {
 		padding: 32px;
+
+		> div:not(.components-modal__header) {
+			height: 100%;
+		}
 	}
 
 	.components-button {
-		&:focus:not(:disabled) {
-			box-shadow: 0 0 0 2px #3858e9;
+		&:focus:not(:disabled):not(.is-primary) {
+			box-shadow: 0 0 0 2px var(--color-link, #3858e9);
 		}
 
 		&.is-link {
 			text-decoration: none;
-			color: #3858e9;
+			color: var(--color-link, #3858e9);
 		}
 	}
 }
@@ -24,6 +32,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+	height: 100%;
 
 	@media (min-width: 700px) {
 		width: 700px;
