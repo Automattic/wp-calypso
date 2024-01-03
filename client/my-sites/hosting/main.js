@@ -36,7 +36,6 @@ import {
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -45,6 +44,7 @@ import {
 	isSiteOnHostingTrial,
 	isSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -395,7 +395,8 @@ export default connect(
 		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
-		const isSiteAtomic = isSiteAutomatedTransfer( state, siteId );
+		const site = getSite( state, siteId );
+		const isSiteAtomic = site?.domain.endsWith( '.wpcomstaging.com' );
 
 		return {
 			teams: getReaderTeams( state ),
