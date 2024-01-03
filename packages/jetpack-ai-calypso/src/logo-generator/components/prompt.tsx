@@ -65,7 +65,10 @@ export const Prompt: React.FC = () => {
 				{ /* TODO: textarea doesn't resize, either import from block-editor or use custom contentEditable */ }
 				<textarea
 					className="prompt-query__input"
-					placeholder="describe your site or simply ask for a logo specifying some details about it"
+					placeholder={ __(
+						'Describe your site or simply ask for a logo specifying some details about it',
+						'jetpack'
+					) }
 					onChange={ onChange }
 					value={ prompt }
 					disabled={ isRequestingImage }
