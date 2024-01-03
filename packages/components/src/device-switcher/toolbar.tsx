@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { DEVICES_SUPPORTED, DEVICE_TYPES } from './constants';
-import { computer, tablet, phone, globe } from './icons';
+import { computer, tablet, phone, zoomIn, zoomOut } from './icons';
 import type { Device } from './types';
 import './toolbar.scss';
 
@@ -54,7 +54,7 @@ const DeviceSwitcherToolbar = ( {
 						className={ classnames( { zoom: true, 'is-selected': isZoomActive } ) }
 						onClick={ () => onZoomClick() }
 					>
-						<Icon icon={ globe } size={ 24 } />
+						<Icon icon={ isZoomActive ? zoomIn : zoomOut } size={ 18 } />
 					</Button>
 				) }
 			</div>
