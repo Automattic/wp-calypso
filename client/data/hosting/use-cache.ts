@@ -61,11 +61,6 @@ export const useEdgeCacheQuery = ( siteId: number ) => {
 	} );
 };
 
-interface MutationError {
-	code: string;
-	message: string;
-}
-
 export const useSetEdgeCacheMutation = (
 	options: UseMutationOptions< boolean, MutationError, SetEdgeCacheMutationVariables > = {}
 ) => {
