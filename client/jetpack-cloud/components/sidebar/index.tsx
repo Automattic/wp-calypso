@@ -47,6 +47,8 @@ type Props = {
 	};
 };
 
+const USER_FEEDBACK_FORM_URL_HASH = '#product-feedback';
+
 const JetpackCloudSidebar = ( {
 	className,
 	isJetpackManage,
@@ -65,15 +67,20 @@ const JetpackCloudSidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( false );
-
 	const isUserFeedbackEnabled = isEnabled( 'jetpack/user-feedback-form' );
+
+	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState(
+		// Set the initial state to true if the URL hash is set to the feedback form.
+		isUserFeedbackEnabled && window.location.hash === USER_FEEDBACK_FORM_URL_HASH
+	);
 
 	const onShowUserFeedbackForm = useCallback( () => {
 		setShowUserFeedbackForm( true );
 	}, [] );
 
 	const onCloseUserFeedbackForm = useCallback( () => {
+		// Remove any hash from the URL.
+		history.pushState( null, '', window.location.pathname + window.location.search );
 		setShowUserFeedbackForm( false );
 	}, [] );
 
@@ -142,7 +149,7 @@ const JetpackCloudSidebar = ( {
 							title={ translate( 'Share product feedback', {
 								comment: 'Jetpack Cloud sidebar navigation item',
 							} ) }
-							link="#product-feedback"
+							link={ USER_FEEDBACK_FORM_URL_HASH }
 							path=""
 							icon={ <Icon icon={ starEmpty } /> }
 							onClickMenuItem={ onShowUserFeedbackForm }
