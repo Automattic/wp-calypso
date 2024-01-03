@@ -8,7 +8,7 @@ export default function GetHelpNav() {
 	const translate = useTranslate();
 
 	const header = translate( 'Get help' );
-	const tracksName = 'calypso_jetpack_manage_overview_quick_links';
+	const tracksName = 'calypso_jetpack_manage_overview_get_help';
 
 	const navItems: FoldableNavItem[] = [
 		{
