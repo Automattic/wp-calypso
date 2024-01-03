@@ -187,7 +187,7 @@ ThemesList.defaultProps = {
 };
 
 export function ThemeBlock( props ) {
-	const { theme, index, tabFilter } = props;
+	const { theme, index, tabFilter, tier } = props;
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
 
 	if ( isEmpty( theme ) ) {
@@ -204,6 +204,7 @@ export function ThemeBlock( props ) {
 			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
 			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, {
 				tabFilter,
+				tierFilter: tier,
 				styleVariationSlug: selectedStyleVariation?.slug,
 			} ) }
 			onScreenshotClick={ props.onScreenshotClick }

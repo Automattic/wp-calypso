@@ -1121,6 +1121,7 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isLoggedIn,
 			tabFilter,
+			tier,
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
 			siteId,
@@ -1132,7 +1133,7 @@ class ThemeSheet extends Component {
 				href={
 					getUrl &&
 					( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn || ! siteId )
-						? getUrl( this.props.themeId, { tabFilter, styleVariationSlug } )
+						? getUrl( this.props.themeId, { tabFilter, tierFilter: tier, styleVariationSlug } )
 						: null
 				}
 				onClick={ () => {
