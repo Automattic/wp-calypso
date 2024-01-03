@@ -490,6 +490,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 				<FormFieldset className="memberships__dialog-sections-coupon-code">
 					<FormLabel htmlFor="coupon_code">{ translate( 'Coupon code' ) }</FormLabel>
 					<FormTextInputWithRandomCodeGeneration
+						id="coupon_code"
 						value={ editedCouponCode }
 						action="Random"
 						onChange={ onCouponCodeChange }

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormTextInputWithValueGeneration should render 1`] = `
+<div>
+  <div
+    class="form-text-input-with-value-generation"
+    role="group"
+  >
+    <input
+      class="form-text-input form-text-input-with-value-generation__input"
+      maxlength="10"
+      type="text"
+      value=""
+    />
+    <button
+      class="components-button form-text-input-with-value-generation__button is-compact"
+      type="button"
+    >
+      Random
+    </button>
+  </div>
+</div>
+`;
