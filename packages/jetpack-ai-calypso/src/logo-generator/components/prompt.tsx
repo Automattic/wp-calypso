@@ -10,6 +10,7 @@ import { SetStateAction, useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
+import { EVENT_PROMPT_SUBMIT } from '../../constants';
 import AiIcon from '../assets/icons/ai';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import { STORE_NAME } from '../store';
@@ -26,7 +27,7 @@ export const Prompt: React.FC = () => {
 	const onClick = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
 		setIsRequestingImage( true );
-		recordTracksEvent( 'calypso_jp_ai_logo_generator_prompt_submit' );
+		recordTracksEvent( EVENT_PROMPT_SUBMIT );
 		const image = await generateImage( { prompt } );
 
 		if ( ! image || ! image.data.length ) {
