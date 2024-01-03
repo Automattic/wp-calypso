@@ -132,6 +132,7 @@ export type Logo = {
 export type LogoGeneratorStateProp = {
 	_meta?: {
 		isSavingLogoToLibrary: boolean;
+		isApplyingLogo: boolean;
 		isRequestingImage: boolean;
 	};
 	siteDetails?: SiteDetails;
@@ -150,6 +151,7 @@ export type Selectors = {
 	getSelectedLogo(): Logo;
 	getSiteDetails(): SiteDetails;
 	getSavingLogoToLibrary(): boolean;
+	getApplyingLogo(): boolean;
 	getIsRequestingImage(): boolean;
 };
 

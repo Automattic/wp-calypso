@@ -38,6 +38,15 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 		}
 	}, [ isOpen ] );
 
+	const handleApplyLogo = () => {
+		onClose();
+
+		setTimeout( () => {
+			// Reload the page to update the logo.
+			window.location.reload();
+		}, 1000 );
+	};
+
 	return (
 		<>
 			{ isOpen && (
@@ -54,7 +63,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClo
 						) : (
 							<>
 								<Prompt />
-								<LogoPresenter logo={ selectedLogo } />
+								<LogoPresenter logo={ selectedLogo } onApplyLogo={ handleApplyLogo } />
 								<HistoryCarousel />
 								<div className="jetpack-ai-logo-generator__footer">
 									<Button

@@ -64,6 +64,15 @@ const selectors = {
 	},
 
 	/**
+	 * Get the isApplyingLogo flag.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The isApplyingLogo flag.
+	 */
+	getApplyingLogo( state: LogoGeneratorStateProp ): boolean {
+		return state._meta?.isApplyingLogo ?? false;
+	},
+
+	/**
 	 * Get the isRequestingImage flag.
 	 * @param {LogoGeneratorStateProp} state - The app state tree.
 	 * @returns {boolean}                      The isRequestingImage flag.
