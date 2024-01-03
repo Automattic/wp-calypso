@@ -624,6 +624,7 @@ class ThemeShowcase extends Component {
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 					onPatternAssemblerButtonClick={ this.onDesignYourOwnClick }
+					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
 				/>
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
