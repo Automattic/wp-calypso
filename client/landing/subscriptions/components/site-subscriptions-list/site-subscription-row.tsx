@@ -88,6 +88,7 @@ const SiteSubscriptionRow = ( {
 	delivery_methods,
 	is_wpforteams_site,
 	is_paid_subscription,
+	is_gift,
 	isDeleted,
 	is_rss,
 	resubscribed,
@@ -265,6 +266,12 @@ const SiteSubscriptionRow = ( {
 						{ !! is_paid_subscription && (
 							<span className="paid-label">
 								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
+							</span>
+						) }
+
+						{ !! is_gift && (
+							<span className="gift-label">
+								{ translate( 'Gift', { context: 'Label for a gifted subscription' } ) }
 							</span>
 						) }
 

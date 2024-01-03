@@ -1,17 +1,33 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Dropdown } from '@wordpress/components';
-import { check, Icon, chevronDown } from '@wordpress/icons';
+import { check, Icon, chevronDown, lock } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import qs from 'qs';
 import './style.scss';
 
-const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) => {
+const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGatedHandler } ) => {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	const isSelectedItem = ( interval ) => {
 		return interval === selected;
 	};
 
 	const clickHandler = ( interval ) => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
+		if ( intervals[ interval ].isGated && onGatedHandler ) {
+			const events = [
+				{
+					name: `${ event_from }_stats_interval_dropdown_listing_${ intervals[ interval ].id }_gated_clicked`,
+				},
+				{
+					name: 'jetpack_stats_upsell_clicked',
+					params: { statType: intervals[ interval ].statType, source: event_from },
+				},
+			];
+			return onGatedHandler( events, event_from, intervals[ interval ].statType );
+		}
 		onSelection( interval );
 	};
 
@@ -19,7 +35,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 		<div className="stats-interval-dropdown-listing">
 			<ul className="stats-interval-dropdown-listing__list" role="radiogroup">
 				{ Object.keys( intervals ).map( ( intervalKey ) => {
-					const intervalLabel = intervals[ intervalKey ];
+					const interval = intervals[ intervalKey ];
 
 					return (
 						<li
@@ -36,8 +52,9 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 									clickHandler( intervalKey );
 								} }
 							>
-								{ intervalLabel }
+								{ interval.label }
 								{ isSelectedItem( intervalKey ) && <Icon icon={ check } /> }
+								{ interval.isGated && <Icon icon={ lock } /> }
 							</Button>
 						</li>
 					);
@@ -47,16 +64,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals } ) =>
 	);
 };
 
-const IntervalDropdown = ( { slug, period, queryParams } ) => {
-	const translate = useTranslate();
-
-	const intervalLabels = {
-		day: translate( 'Days' ),
-		week: translate( 'Weeks' ),
-		month: translate( 'Months' ),
-		year: translate( 'Years' ),
-	};
-
+const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandler } ) => {
 	// New interval listing that preserves date range.
 	// TODO: Figure out how to dismiss on select.
 
@@ -69,7 +77,7 @@ const IntervalDropdown = ( { slug, period, queryParams } ) => {
 	}
 
 	function getDisplayLabel() {
-		return intervalLabels[ period ];
+		return intervals[ period ].label;
 	}
 
 	function onSelectionHandler( interval ) {
@@ -90,7 +98,8 @@ const IntervalDropdown = ( { slug, period, queryParams } ) => {
 					<StatsIntervalDropdownListing
 						selected={ period }
 						onSelection={ onSelectionHandler }
-						intervals={ intervalLabels }
+						intervals={ intervals }
+						onGatedHandler={ onGatedHandler }
 					/>
 				</div>
 			) }

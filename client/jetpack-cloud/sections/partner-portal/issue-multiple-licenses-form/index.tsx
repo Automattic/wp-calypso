@@ -219,7 +219,7 @@ export default function IssueMultipleLicensesForm( {
 			</div>
 			<div className="issue-multiple-licenses-form__bottom">
 				{ products &&
-					products.map( ( productOption, i ) => (
+					products.map( ( productOption ) => (
 						<LicenseProductCard
 							isMultiSelect
 							key={ productOption.slug }
@@ -227,7 +227,6 @@ export default function IssueMultipleLicensesForm( {
 							onSelectProduct={ onSelectProduct }
 							isSelected={ selectedProductSlugs.includes( productOption.slug ) }
 							isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-							tabIndex={ 100 + i }
 							suggestedProduct={ suggestedProduct }
 						/>
 					) ) }
@@ -261,7 +260,7 @@ export default function IssueMultipleLicensesForm( {
 						{ translate( 'WooCommerce Extensions:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ wooExtensions.map( ( productOption, i ) => (
+						{ wooExtensions.map( ( productOption ) => (
 							<LicenseProductCard
 								isMultiSelect
 								key={ productOption.slug }
@@ -269,7 +268,6 @@ export default function IssueMultipleLicensesForm( {
 								onSelectProduct={ onSelectProduct }
 								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
 								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-								tabIndex={ 100 + i }
 								suggestedProduct={ suggestedProduct }
 							/>
 						) ) }
@@ -283,7 +281,7 @@ export default function IssueMultipleLicensesForm( {
 						{ translate( 'VaultPress Backup Add-on Storage:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ backupAddons.map( ( productOption, i ) => (
+						{ backupAddons.map( ( productOption ) => (
 							<LicenseProductCard
 								isMultiSelect
 								key={ productOption.slug }
@@ -291,7 +289,6 @@ export default function IssueMultipleLicensesForm( {
 								onSelectProduct={ onSelectProduct }
 								isSelected={ selectedProductSlugs.includes( productOption.slug ) }
 								isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
-								tabIndex={ 100 + i }
 								suggestedProduct={ suggestedProduct }
 							/>
 						) ) }

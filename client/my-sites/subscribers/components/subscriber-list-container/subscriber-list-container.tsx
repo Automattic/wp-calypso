@@ -1,4 +1,5 @@
 import { numberFormat, translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { NoSearchResults } from 'calypso/my-sites/subscribers/components/no-search-results';
@@ -12,7 +13,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { useRecordSearch } from '../../tracks';
 import { GrowYourAudience } from '../grow-your-audience';
-
 import './style.scss';
 
 type SubscriberListContainerProps = {
@@ -26,13 +26,28 @@ const SubscriberListContainer = ( {
 	onClickView,
 	onClickUnsubscribe,
 }: SubscriberListContainerProps ) => {
-	const { grandTotal, total, perPage, page, pageChangeCallback, searchTerm, isLoading } =
-		useSubscribersPage();
+	const {
+		grandTotal,
+		total,
+		perPage,
+		page,
+		pageChangeCallback,
+		searchTerm,
+		isLoading,
+		subscribers,
+		pages,
+	} = useSubscribersPage();
 	useRecordSearch();
 
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
+
+	useEffect( () => {
+		if ( ! isLoading && subscribers.length === 0 && page > 1 ) {
+			pageChangeCallback( pages ?? 0 );
+		}
+	}, [ isLoading, subscribers, page, pageChangeCallback ] );
 
 	return (
 		<section className="subscriber-list-container">
@@ -53,7 +68,7 @@ const SubscriberListContainer = ( {
 						</span>
 					</div>
 
-					{ total > 3 && <SubscriberListActionsBar /> }
+					{ ( total > 3 || searchTerm ) && <SubscriberListActionsBar /> }
 				</>
 			) }
 			{ isLoading &&

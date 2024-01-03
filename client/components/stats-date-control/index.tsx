@@ -1,8 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { useTranslate } from 'i18n-calypso';
 import qs from 'qs';
-import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControlPicker from './stats-date-control-picker';
@@ -11,45 +9,20 @@ import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
 
-const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlProps ) => {
+const StatsDateControl = ( {
+	slug,
+	queryParams,
+	dateRange,
+	shortcutList,
+	overlay,
+	onGatedHandler,
+}: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
 	// We could use the bestPeriodForDays() helper and keep the shortcuts
 	// consistent with the custom ranges.
 
-	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-
-	const shortcutList = [
-		{
-			id: 'last-7-days',
-			label: translate( 'Last 7 Days' ),
-			offset: 0,
-			range: 6,
-			period: 'day',
-		},
-		{
-			id: 'last-30-days',
-			label: translate( 'Last 30 Days' ),
-			offset: 0,
-			range: 29,
-			period: 'day',
-		},
-		{
-			id: 'last-3-months',
-			label: translate( 'Last 90 Days' ),
-			offset: 0,
-			range: 89,
-			period: 'week',
-		},
-		{
-			id: 'last-year',
-			label: translate( 'Last Year' ),
-			offset: 0,
-			range: 364, // ranges are zero based!
-			period: 'month',
-		},
-	];
 
 	// Shared link generation helper.
 	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
@@ -95,12 +68,22 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 
 	// Handler for shortcut selection.
 	const onShortcutHandler = ( shortcut: DateControlPickerShortcut ) => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		if ( shortcut.isGated && onGatedHandler ) {
+			const events = [
+				{ name: `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_gated_clicked` },
+				{
+					name: 'jetpack_stats_upsell_clicked',
+					params: { stat_type: shortcut.statType, source: event_from },
+				},
+			];
+			return onGatedHandler( events, event_from, shortcut.statType );
+		}
 		// Generate new dates.
 		const anchor = moment().subtract( shortcut.offset, 'days' );
 		const endDate = anchor.format( 'YYYY-MM-DD' );
 		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
 
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_clicked` );
 
 		// Update chart via routing.
@@ -149,6 +132,7 @@ const StatsDateControl = ( { slug, queryParams, dateRange }: StatsDateControlPro
 				selectedShortcut={ getShortcutForRange()?.id }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }
+				overlay={ overlay }
 			/>
 		</div>
 	);

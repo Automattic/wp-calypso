@@ -26,6 +26,7 @@ interface CallToActionProps {
 
 const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
 	const { __ } = useI18n();
+	const plan = getPlan( PLAN_BUSINESS );
 	const { isVerified, hasUser, isSending, email, resendEmail } = useVerifyEmail();
 	const startTrial = () => {
 		if ( ! isVerified ) {
@@ -40,7 +41,13 @@ const CallToAction = ( { onStartTrialClick }: CallToActionProps ) => {
 				<EmailVerification isSending={ isSending } email={ email } resendEmail={ resendEmail } />
 			) }
 			<NextButton isBusy={ false } onClick={ startTrial } disabled={ ! isVerified }>
-				{ __( 'Start the Business trial' ) }
+				{ sprintf(
+					/* translators: the name of the plan that the user will try */
+					__( 'Start the %(planName)s trial' ),
+					{
+						planName: plan?.getTitle(),
+					}
+				) }
 			</NextButton>
 		</>
 	);
@@ -90,15 +97,17 @@ function EmailVerification( {
 	resendEmail: () => void;
 } ) {
 	const { __ } = useI18n();
+	const plan = getPlan( PLAN_BUSINESS );
 	return (
 		<SubTitle>
 			<p>
 				{ sprintf(
-					/* translators: the email address of the account*/
+					/* translators: plan name, and the email address of the account */
 					__(
-						'To start your Business plan 7-day trial, verify your email address by clicking the link we sent to %(email)s.'
+						'To start your %(planName)s plan 7-day trial, verify your email address by clicking the link we sent to %(email)s.'
 					),
 					{
+						planName: plan?.getTitle(),
 						email: email,
 					}
 				) }

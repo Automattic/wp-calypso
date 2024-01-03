@@ -114,6 +114,7 @@ export function getDesignEventProps( {
 		design_type: design.design_type,
 		is_premium: design.is_premium,
 		is_externally_managed: design?.is_externally_managed,
+		is_bundled_with_woo: design?.is_bundled_with_woo,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
 		is_style_variation: is_style_variation,
 		...( colorVariation && {

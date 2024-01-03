@@ -3,6 +3,7 @@ import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 type ZendeskUserFields = {
+	messaging_ai_chat_id?: string;
 	messaging_initial_message?: string;
 	messaging_plan?: string;
 	messaging_source?: string;

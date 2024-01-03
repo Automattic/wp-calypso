@@ -39,6 +39,7 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		flex-shrink: 0;
 		gap: 24px;
 
 		@include break-wide {
@@ -133,20 +134,13 @@
 	}
 
 	.pattern-assembler-cta__image-wrapper {
-		flex-grow: 1;
 		padding-left: 35px;
 		text-align: right;
-
-		@include break-wide {
-			flex-grow: 0;
-		}
-
-		@media ( min-width: 1600px ) {
-			margin: 0;
-		}
 	}
 
 	.pattern-assembler-cta__image {
-		width: 405px;
+		width: 100%;
+		min-width: 380px;
+		max-width: 405px;
 	}
 }

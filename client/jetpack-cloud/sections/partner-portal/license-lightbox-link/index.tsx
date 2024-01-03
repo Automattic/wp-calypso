@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, KeyboardEvent, useCallback } from 'react';
 import ModalLinkIcon from 'calypso/assets/images/jetpack/jetpack-icon-modal-link.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 
@@ -14,12 +14,16 @@ type Props = {
 const LicenseLightboxLink: FunctionComponent< Props > = ( { productName, onClick } ) => {
 	const translate = useTranslate();
 
+	const onKeyDown = useCallback( ( e: KeyboardEvent< HTMLButtonElement > ) => {
+		e.stopPropagation();
+	}, [] );
+
 	// In this specific context, not wrapping between words in a product name
 	// gives us a more readable, professional look
 	const noWrapProductName = <>{ preventWidows( productName, Infinity ) }</>;
 
 	return (
-		<Button className="license-lightbox-link" plain onClick={ onClick }>
+		<Button className="license-lightbox-link" plain onClick={ onClick } onKeyDown={ onKeyDown }>
 			<span className="license-lightbox-link__text">
 				{ translate( 'More about {{productName/}}', {
 					components: { productName: noWrapProductName },

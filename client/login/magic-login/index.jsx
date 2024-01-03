@@ -355,11 +355,11 @@ class MagicLogin extends Component {
 			<div className="grav-powered-magic-login__tos">
 				{ isGravatarOAuth2Client( oauth2Client )
 					? translate(
-							`By clicking “Send me login link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
+							`By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
 							textOptions
 					  )
 					: translate(
-							`By clicking “Send me login link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
+							`By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
 							textOptions
 					  ) }
 			</div>
@@ -387,7 +387,7 @@ class MagicLogin extends Component {
 						headerText={ translate( 'Sign in with your email' ) }
 						hideSubHeaderText
 						inputPlaceholder={ translate( 'Enter your email address' ) }
-						submitButtonLabel={ translate( 'Send me login link' ) }
+						submitButtonLabel={ translate( 'Send me sign in link' ) }
 						tosComponent={ this.renderGravPoweredMagicLoginTos() }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser

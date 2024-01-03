@@ -105,6 +105,7 @@ export { isJetpackSocialBasicSlug } from './is-jetpack-social-basic-slug';
 export { isJetpackStatsSlug } from './is-jetpack-stats-slug';
 export { isJetpackStatsPaidProductSlug } from './is-jetpack-stats-paid-product-slug';
 export { isJetpackStatsFreeProductSlug } from './is-jetpack-stats-free-product-slug';
+export { isJetpackStatsPaidTieredProductSlug } from './is-jetpack-stats-paid-tiered-product-slug';
 export { isJetpackVideoPress } from './is-jetpack-videopress';
 export { isJetpackBoostSlug } from './is-jetpack-boost-slug';
 export { isJetpackVideoPressSlug } from './is-jetpack-videopress-slug';

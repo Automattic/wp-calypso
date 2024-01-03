@@ -520,8 +520,6 @@ function isNavSidebarPresent() {
  */
 async function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinks = [
-		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
-		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 		'.wpcom-block-editor-post-published-sharing-modal__view-post-link', // View Post button in sharing modal
@@ -545,6 +543,35 @@ async function openLinksInParentFrame( calypsoPort ) {
 	}
 
 	await isEditorReadyWithBlocks();
+
+	// Handle the view post link in the snackbar, which unfortunately has a click
+	// handler which stops propagation, so we can't override it with the global handler.
+	const updateViewPostLinkNotice = () => {
+		// This timeout might not be necessary, but replicates the fix for Safari several lines below.
+		setTimeout( () => {
+			const snackbarLink = document.querySelector(
+				'.components-snackbar-list a.components-snackbar__action'
+			);
+			if ( snackbarLink ) {
+				// Make sure this link doesn't open inside the iframe.
+				snackbarLink.target = '_blank';
+			}
+		} );
+	};
+
+	// Essentially, when the snackbar list changes, attempt to update the link.
+	// Only called once when a snackbar item is added and when removed, so
+	// it doesn't cost much.
+	const snackbarList = document.querySelector( '.components-snackbar-list' );
+	if ( snackbarList ) {
+		const snackbarObserver = new window.MutationObserver( updateViewPostLinkNotice );
+		snackbarObserver.observe( snackbarList, { childList: true } );
+	} else {
+		// eslint-disable-next-line no-console
+		console.warn(
+			'Could not find the snackbar list element so, the "View post" link may open inside the iframe.'
+		);
+	}
 
 	// Create a new post link in block settings sidebar for Query block
 	const tryToReplaceCreateNewPostLink = () => {

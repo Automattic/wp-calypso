@@ -1,6 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { HelpCenter } from '@automattic/data-stores';
+import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -28,29 +31,54 @@ type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
 };
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
+
+	const openHelpCenter = () => {
+		setShowHelpCenter( true );
+		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
+	};
+
+	const subtitleOptions = {
+		components: {
+			link: (
+				<a
+					href={ localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) }
+					target="blank"
+					onClick={ ( event ) => {
+						event.preventDefault();
+						openHelpCenter();
+					} }
+				/>
+			),
+		},
+	};
+
+	const subtitle =
+		isEnglishLocale ||
+		hasTranslation(
+			'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.'
+		)
+			? translate(
+					'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+					subtitleOptions
+			  )
+			: translate(
+					'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
+					subtitleOptions
+			  );
 
 	return (
 		<NavigationHeader
 			className="stats__section-header modernized-header"
 			title={ translate( 'Subscribers' ) }
-			subtitle={ translate(
-				'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
-				{
-					components: {
-						link: (
-							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers'
-								) }
-								target="blank"
-							/>
-						),
-					},
-				}
-			) }
+			subtitle={ subtitle }
 			screenReader={ navItems.insights?.label }
 			navigationItems={ [] }
 		>

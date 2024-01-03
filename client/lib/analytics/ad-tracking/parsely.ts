@@ -1,5 +1,5 @@
 import { loadScript } from '@automattic/load-script';
-import { mayWeInitTracker } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import { PARSLEY_SCRIPT_URL } from './constants';
 
 /**
@@ -22,7 +22,7 @@ declare global {
  */
 export const loadParselyTracker = async (): Promise< void > => {
 	// Are we allowed to track (user consent, e2e, etc.)?
-	if ( ! mayWeInitTracker( 'parsely' ) ) {
+	if ( ! mayWeTrackByTracker( 'parsely' ) ) {
 		throw new Error( 'Tracking is not allowed' );
 	}
 

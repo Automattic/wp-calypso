@@ -49,6 +49,7 @@ type SubscribersPageContextProps = {
 	closeAllModals: typeof closeAllModals;
 	siteId: number | null;
 	isLoading: boolean;
+	pages?: number;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -112,6 +113,7 @@ export const SubscribersPageProvider = ( {
 		filterOption: subscriberType,
 	} );
 	const grandTotal = subscribersQueryResult.data?.total || 0;
+	const pages = subscribersQueryResult.data?.pages || 0;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,
@@ -220,6 +222,7 @@ export const SubscribersPageProvider = ( {
 				migrateSubscribersCallback,
 				siteId,
 				isLoading: subscribersQueryResult.isLoading,
+				pages,
 			} }
 		>
 			{ children }

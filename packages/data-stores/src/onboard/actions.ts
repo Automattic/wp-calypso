@@ -431,13 +431,6 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 	progressTitle,
 } );
 
-export const setStepProgress = (
-	stepProgress: { count: number; progress: number } | undefined
-) => ( {
-	type: 'SET_STEP_PROGRESS' as const,
-	stepProgress,
-} );
-
 export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
@@ -461,11 +454,6 @@ export const resetIntent = () => ( {
 
 export const resetSelectedDesign = () => ( {
 	type: 'RESET_SELECTED_DESIGN' as const,
-} );
-
-export const setEditEmail = ( email: string ) => ( {
-	type: 'SET_EDIT_EMAIL' as const,
-	email,
 } );
 
 export const setVerticalId = ( verticalId: string ) => ( {
@@ -575,14 +563,12 @@ export type OnboardAction = ReturnType<
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
-	| typeof setStepProgress
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal
 	| typeof resetGoals
 	| typeof resetIntent
 	| typeof resetSelectedDesign
-	| typeof setEditEmail
 	| typeof setDomainForm
 	| typeof setDomainCartItem
 	| typeof setSiteDescription

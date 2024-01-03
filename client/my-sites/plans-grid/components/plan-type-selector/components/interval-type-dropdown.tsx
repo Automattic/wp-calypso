@@ -31,6 +31,9 @@ const StyledCustomSelectControl = styled( CustomSelectControl )`
 	.components-custom-select-control__menu {
 		margin: 0;
 	}
+	.components-custom-select-control__item {
+		grid-template-columns: auto min-content;
+	}
 `;
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {

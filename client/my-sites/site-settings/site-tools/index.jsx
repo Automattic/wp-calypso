@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
@@ -70,18 +69,10 @@ class SiteTools extends Component {
 
 		const changeSiteAddress = translate( 'Change your site address' );
 
-		const hasSiteReset = isEnabled( 'settings/self-serve-site-reset' );
-		const startOver = hasSiteReset
-			? translate( 'Reset your site' )
-			: translate( 'Delete your content' );
-		const startOverText = hasSiteReset
-			? translate(
-					"Remove all posts, pages, and media to start fresh while keeping your site's address."
-			  )
-			: translate(
-					"Keep your site's address and current theme, but remove all posts, " +
-						'pages, and media so you can start fresh.'
-			  );
+		const startOver = translate( 'Reset your site' );
+		const startOverText = translate(
+			"Remove all posts, pages, and media to start fresh while keeping your site's address."
+		);
 
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(

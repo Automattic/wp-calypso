@@ -21,6 +21,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-1"
@@ -38,6 +39,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-2"
@@ -55,6 +57,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-3"
@@ -72,6 +75,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-4"

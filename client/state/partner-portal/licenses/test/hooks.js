@@ -26,7 +26,7 @@ import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/u
 
 jest.mock( 'react-redux', () => ( {
 	useDispatch: jest.fn( () => null ),
-	useSelector: () => 1,
+	useSelector: jest.fn(),
 } ) );
 
 describe( 'useRefreshLicenseList', () => {

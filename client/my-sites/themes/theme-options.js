@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
@@ -10,6 +11,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
@@ -148,7 +150,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
 			! siteId ||
-			! isThemePremium( state, themeId ) ||
 			! doesThemeBundleSoftwareSet( state, themeId ) ||
 			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
@@ -190,6 +191,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isUserLoggedIn( state ) ||
 			! siteId ||
 			isJetpackSiteMultiSite( state, siteId ) ||
+			( doesThemeBundleSoftwareSet( state, themeId ) &&
+				! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ) ) ||
 			( isExternallyManagedTheme( state, themeId ) &&
 				! getTheme( state, siteId, themeId ) &&
 				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
@@ -324,6 +327,31 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		info,
 	};
 }
+
+export const getWooMyCustomThemeOptions = ( { translate, siteAdminUrl, siteSlug, options } ) => {
+	return {
+		assembler: {
+			key: 'assembler',
+			label: translate( 'Quick editing in the Assembler' ),
+			extendedLabel: translate( 'Quick editing in the Assembler' ),
+			getUrl: () => {
+				return `${ siteAdminUrl }admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub&customizing=true`;
+			},
+		},
+		customize: {
+			...options.customize,
+			label: translate( 'Advance customization in the Editor' ),
+			extendedLabel: translate( 'Advance customization in the Editor' ),
+		},
+		preview: {
+			label: translate( 'Store preview' ),
+			extendedLabel: translate( 'Store preview' ),
+			getUrl: () => {
+				return `//${ siteSlug }`;
+			},
+		},
+	};
+};
 
 const connectOptionsHoc = connect(
 	( state, props ) => {

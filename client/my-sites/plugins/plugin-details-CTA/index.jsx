@@ -3,6 +3,8 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	getPlan,
+	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -374,7 +376,9 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 							primary
 							onClick={ () => {} }
 						>
-							{ translate( 'Upgrade to Business' ) }
+							{ translate( 'Upgrade to %(planName)s', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							} ) }
 						</Button>
 					</div>
 				) }
@@ -528,7 +532,15 @@ function FreePrice( { shouldUpgrade } ) {
 		<>
 			{ translate( 'Free' ) }
 			{ ( ! isLoggedIn || ! selectedSite || shouldUpgrade ) && (
-				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
+				<span className="plugin-details-cta__notice">
+					{ translate(
+						// Translators: %(planName)s is the name of a plan (e.g. Creator or Business)
+						'on %(planName)s plan',
+						{
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						}
+					) }
+				</span>
 			) }
 		</>
 	);

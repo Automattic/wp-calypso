@@ -1,5 +1,5 @@
 import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
-import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
@@ -80,17 +80,11 @@ const newsletter: Flow = {
 		);
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const isLoadingIntroScreen =
 			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
 
-		const flowProgress = useFlowProgress( {
-			stepName: _currentStep,
-			flowName,
-		} );
-		setStepProgress( flowProgress );
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/newsletterSetup`,

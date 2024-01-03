@@ -1,5 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +12,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
@@ -18,6 +20,7 @@ import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
+import StatsUpsellModal from '../stats-upsell-modal';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
@@ -52,8 +55,7 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId, locale } = this.props;
-		const isEnglishLocale = [ 'en', 'en-gb' ].includes( locale );
+		const { translate, statsQueryOptions, siteId } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -146,17 +148,10 @@ class StatsSummary extends Component {
 						<div className="stats-module__footer-actions--summary-tall">
 							<UpsellNudge
 								title={ translate( 'Add Google Analytics' ) }
-								description={
-									isEnglishLocale ||
-									i18n.hasTranslation(
-										'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.'
-									)
-										? translate(
-												'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.',
-												{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
-										  )
-										: translate( 'Upgrade to a Premium Plan for Google Analytics integration.' )
-								}
+								description={ translate(
+									'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.',
+									{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
+								) }
 								event="googleAnalytics-stats-countries"
 								feature={ FEATURE_GOOGLE_ANALYTICS }
 								plan={ PLAN_PREMIUM }
@@ -348,12 +343,13 @@ class StatsSummary extends Component {
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<NavigationHeader navigationItems={ navigationItems } />
+				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					{ summaryViews }
 					<JetpackColophon />
 				</div>
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</Main>
 		);
 	}
@@ -361,9 +357,11 @@ class StatsSummary extends Component {
 
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
+		upsellModalView,
 	};
 } )( localize( StatsSummary ) );
