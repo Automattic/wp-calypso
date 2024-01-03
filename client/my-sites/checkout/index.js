@@ -108,16 +108,14 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'marketplace-siteless-checkout' ) ) {
-		page(
-			`/checkout/marketplace/:productSlug`,
-			setLocaleMiddleware(),
-			noSite,
-			checkoutMarketplaceSiteless,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		`/checkout/marketplace/:intentId`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
 
 	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
 	if ( isEnabled( 'akismet/siteless-checkout' ) ) {

@@ -120,7 +120,7 @@ export default function usePrepareProductsForCart( {
 		source,
 	} );
 	useAddProductFromBillingIntent( {
-		productAliasFromUrl,
+		intentId: productAliasFromUrl,
 		dispatch,
 		addHandler,
 	} );
@@ -269,11 +269,11 @@ function useNothingToAdd( {
 }
 
 function useAddProductFromBillingIntent( {
-	productAliasFromUrl,
+	intentId,
 	dispatch,
 	addHandler,
 }: {
-	productAliasFromUrl: string | undefined | null;
+	intentId: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
 } ) {
@@ -282,7 +282,7 @@ function useAddProductFromBillingIntent( {
 			return;
 		}
 
-		if ( ! productAliasFromUrl && productAliasFromUrl === '0' ) {
+		if ( ! intentId && intentId === '0' ) {
 			debug( 'creating products from billing intent failed' );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
@@ -291,14 +291,18 @@ function useAddProductFromBillingIntent( {
 			return;
 		}
 
+		const { meta } = getProductPartsFromAlias( intentId );
+
+		const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
+
 		const getProductFromBillingIntent = async () => {
 			try {
 				const productsForCart: RequestCartProduct[] = [];
-				const billingIntent = await getBillingIntent( Number( productAliasFromUrl ) );
+				const billingIntent = await getBillingIntent( Number( intentId ) );
 
 				return productsForCart.push( {
 					product_slug: billingIntent.payload.product_slug,
-					meta: '',
+					meta: cartMeta,
 					extra: {
 						isMarketplaceSitelessCheckout: true,
 					},
@@ -328,7 +332,7 @@ function useAddProductFromBillingIntent( {
 		}
 
 		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
-	}, [ addHandler, dispatch, productAliasFromUrl ] );
+	}, [ addHandler, dispatch, intentId ] );
 }
 
 function useAddProductsFromLocalStorage( {
