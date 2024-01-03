@@ -87,6 +87,11 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 								<span className="marketplace-reviews-list__pending-review-text">
 									{ translate( 'Your review is pending approval.' ) }
 								</span>
+								{ isEnabled( 'marketplace-reviews-notification' ) && (
+									<span className="marketplace-reviews-list__pending-review-text">
+										{ translate( 'You will be notified once it is published.' ) }
+									</span>
+								) }
 							</Card>
 						) }
 						<div className="marketplace-reviews-list__review-container-header">
