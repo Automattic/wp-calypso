@@ -3,6 +3,7 @@ import { ResponseCart } from '@automattic/shopping-cart';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { WpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import { REDDIT_TRACKING_SCRIPT, WPCOM_REDDIT_PIXEL_ID } from './constants';
+import { FlowNames } from './record-hosting-trial-started';
 
 /**
  * We'll be accessing rdt from the window object.
@@ -86,7 +87,7 @@ export const redditTrackerPurchase = (
 /**
  * Tracks a lead (free trial) in Reddit.
  */
-export const redditTrackerFreeTrialStarted = ( trial_flow_name: string ): void => {
+export const redditTrackerFreeTrialStarted = ( trial_flow_name: FlowNames ): void => {
 	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
 		return;
 	}
