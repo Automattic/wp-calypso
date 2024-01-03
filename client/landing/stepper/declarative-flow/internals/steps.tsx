@@ -125,7 +125,7 @@ export const STEPS = {
 	},
 
 	PATTERN_ASSEMBLER: {
-		slug: 'patternAssembler',
+		slug: 'pattern-assembler',
 		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
 

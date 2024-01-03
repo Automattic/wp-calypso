@@ -1,6 +1,5 @@
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
-import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -97,7 +96,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					deleteBulkActionStatus={ deleteBulkActionStatus }
 				/>
 			</Main>
-			<UsePresalesChat />
 		</>
 	);
 }

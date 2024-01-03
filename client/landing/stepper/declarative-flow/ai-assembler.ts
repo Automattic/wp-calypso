@@ -177,7 +177,7 @@ const withAIAssemblerFlow: Flow = {
 						} );
 					}
 
-					return navigate( 'patternAssembler' );
+					return navigate( 'pattern-assembler' );
 				}
 
 				case 'processing': {
@@ -214,7 +214,7 @@ const withAIAssemblerFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -263,7 +263,7 @@ const withAIAssemblerFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'site-prompt' );
 				}
 			}
@@ -272,7 +272,7 @@ const withAIAssemblerFlow: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'site-prompt': {
-					return navigate( 'patternAssembler' );
+					return navigate( 'pattern-assembler' );
 				}
 
 				case 'launchpad':

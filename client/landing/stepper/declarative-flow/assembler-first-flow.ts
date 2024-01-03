@@ -127,7 +127,7 @@ const assemblerFirstFlow: Flow = {
 				params.set( 'isNewSite', 'true' );
 			}
 
-			return navigate( `patternAssembler?${ params }` );
+			return navigate( `pattern-assembler?${ params }` );
 		};
 
 		const submit = async (
@@ -200,7 +200,7 @@ const assemblerFirstFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -248,7 +248,7 @@ const assemblerFirstFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					const params = new URLSearchParams( window.location.search );
 					params.delete( 'siteSlug' );
 					params.delete( 'siteId' );

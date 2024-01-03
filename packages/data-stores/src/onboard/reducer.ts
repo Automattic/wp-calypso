@@ -367,16 +367,6 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
-const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'SET_STEP_PROGRESS' ) {
-		return action.stepProgress;
-	}
-	return state;
-};
-
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
@@ -612,7 +602,6 @@ const reducer = combineReducers( {
 	pendingAction,
 	progress,
 	progressTitle,
-	stepProgress,
 	goals,
 	hideFreePlan,
 	hidePlansFeatureComparison,
