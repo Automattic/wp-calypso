@@ -1,4 +1,4 @@
-export default ( { color = '#3858E9' } ) => {
+export default () => {
 	return (
 		<svg
 			width="24"
@@ -12,7 +12,6 @@ export default ( { color = '#3858E9' } ) => {
 				fillRule="evenodd"
 				clipRule="evenodd"
 				d="M17.9291 7.96836L10.7308 17.6492L6.2145 14.2911L7.10952 13.0873L10.4221 15.5504L16.7253 7.07333L17.9291 7.96836Z"
-				fill={ color }
 			/>
 		</svg>
 	);

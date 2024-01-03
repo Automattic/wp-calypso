@@ -17,6 +17,7 @@ import {
 	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
 	ACTION_SAVE_SELECTED_LOGO,
 	ACTION_SET_IS_REQUESTING_IMAGE,
+	ACTION_SET_APPLYING_LOGO,
 } from './constants';
 import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -140,6 +141,13 @@ const actions = {
 		return {
 			type: ACTION_SET_SAVING_LOGO_TO_LIBRARY,
 			isSavingLogoToLibrary,
+		};
+	},
+
+	setApplyingLogo( isApplyingLogo: boolean ) {
+		return {
+			type: ACTION_SET_APPLYING_LOGO,
+			isApplyingLogo,
 		};
 	},
 
