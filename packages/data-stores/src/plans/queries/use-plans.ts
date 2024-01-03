@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
@@ -13,12 +14,13 @@ interface PlansIndex {
  */
 function usePlans(): UseQueryResult< PlansIndex > {
 	const queryKeys = useQueryKeysFactory();
+	const locale = useLocale();
 
 	return useQuery( {
 		queryKey: queryKeys.plans(),
 		queryFn: async () => {
 			const data: PricedAPIPlan[] = await wpcomRequest( {
-				path: `/plans`,
+				path: `/plans?locale=${ locale }`,
 				apiVersion: '1.5',
 			} );
 
