@@ -23,7 +23,15 @@ export const Prompt: React.FC = () => {
 	const { addLogoToHistory } = useDispatch( STORE_NAME );
 	const [ prompt, setPrompt ] = useState( '' );
 
-	const { generateImage, setIsRequestingImage, isRequestingImage } = useLogoGenerator();
+	const {
+		generateImage,
+		setIsRequestingImage,
+		isRequestingImage,
+		savingLogoToLibrary,
+		applyingLogo,
+	} = useLogoGenerator();
+
+	const isLoading = isRequestingImage || savingLogoToLibrary || applyingLogo;
 
 	const onClick = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
@@ -55,7 +63,7 @@ export const Prompt: React.FC = () => {
 					{ __( 'Describe your site:', 'jetpack' ) }
 				</div>
 				<div className="jetpack-ai-logo-generator__prompt-actions">
-					<Button variant="link" disabled={ isRequestingImage }>
+					<Button variant="link" disabled={ isLoading }>
 						<AiIcon />
 						<span>{ __( 'Enhance prompt', 'jetpack' ) }</span>
 					</Button>
@@ -71,13 +79,13 @@ export const Prompt: React.FC = () => {
 					) }
 					onChange={ onChange }
 					value={ prompt }
-					disabled={ isRequestingImage }
+					disabled={ isLoading }
 				></textarea>
 				<Button
 					variant="primary"
 					className="jetpack-ai-logo-generator__prompt-submit"
 					onClick={ onClick }
-					disabled={ isRequestingImage }
+					disabled={ isLoading }
 				>
 					{ __( 'Generate', 'jetpack' ) }
 				</Button>
@@ -91,7 +99,7 @@ export const Prompt: React.FC = () => {
 					) }
 				</div>
 				&nbsp;
-				<Button variant="link" href="https://automattic.com/ai-guidelines">
+				<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
 					{ __( 'Upgrade', 'jetpack' ) }
 				</Button>
 				<Icon className="prompt-footer__icon" icon={ info } />
