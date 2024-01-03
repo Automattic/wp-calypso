@@ -50,6 +50,9 @@ export function StickyContainer( props: Props ) {
 		}
 		const observer = new IntersectionObserver(
 			( [ entry ] ) => {
+				if ( disabled ) {
+					return;
+				}
 				if ( entry.intersectionRatio === 0 ) {
 					// The element is out of view
 					setIsStuck( false );
