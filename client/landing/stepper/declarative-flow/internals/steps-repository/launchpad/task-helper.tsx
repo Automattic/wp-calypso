@@ -49,7 +49,7 @@ interface GetEnhancedTasksProps {
 	setShowPlansModal: Dispatch< SetStateAction< boolean > >;
 	queryClient: QueryClient;
 	goToStep?: NavigationControls[ 'goToStep' ];
-	flow: string | null;
+	flow: string;
 	isEmailVerified?: boolean;
 	checklistStatuses?: ChecklistStatuses;
 	planCartItem?: MinimalRequestCartProduct | null;
