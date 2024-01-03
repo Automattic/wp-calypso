@@ -1,4 +1,8 @@
 .jetpack-ai-logo-generator-modal {
+	@media (min-width: 960px) {
+		max-height: 90%;
+	}
+
 	.components-modal__header {
 		border-bottom: 1px solid var(--studio-gray-5, #dcdcde);
 		padding: 20px 24px;
