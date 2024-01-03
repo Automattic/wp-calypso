@@ -21,7 +21,6 @@ import {
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
 import { useDispatch } from 'calypso/state';
-import { requestDeleteGift } from 'calypso/state/memberships/gifts/actions';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
@@ -90,7 +89,6 @@ const SiteSubscriptionRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	is_gift,
-	gift_id,
 	isDeleted,
 	is_rss,
 	resubscribed,
@@ -352,9 +350,6 @@ const SiteSubscriptionRow = ( {
 					onUnsubscribe={ () => {
 						unsubscribeInProgress.current = true;
 						unsubscribeCallback();
-						if ( is_gift ) {
-							dispatch( requestDeleteGift( blog_id, gift_id, translate( 'Deleted gift' ) ) );
-						}
 
 						if ( subscriptionId ) {
 							unsubscribe(
