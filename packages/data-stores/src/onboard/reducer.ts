@@ -418,7 +418,7 @@ const couponCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
 		return action.couponCode;
 	}
 	if ( [ 'RESET_COUPON_CODE', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
-		return [];
+		return '';
 	}
 	return state;
 };
