@@ -11,7 +11,9 @@ import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import PreMigration from '../index';
 
 const user = {
@@ -48,6 +50,8 @@ jest.mock( 'calypso/blocks/importer/hooks/use-site-can-migrate' );
 jest.mock( 'calypso/state/selectors/is-requesting-site-credentials' );
 jest.mock( 'calypso/state/selectors/get-jetpack-credentials' );
 jest.mock( 'calypso/data/plans/use-check-eligibility-migration-trial-plan' );
+jest.mock( 'calypso/state/user-settings/selectors' );
+jest.mock( 'calypso/state/selectors/get-user-setting' );
 
 function renderPreMigrationScreen( props?: any ) {
 	const initialState = getInitialState( initialReducer, user.ID );
@@ -198,6 +202,12 @@ describe( 'PreMigration', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		isRequestingSiteCredentials.mockReturnValue( false );
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		isFetchingUserSettings.mockReturnValue( false );
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		getUserSetting.mockReturnValue( false );
 
 		expect( screen.getByText( 'You are ready to migrate' ) ).toBeInTheDocument();
 
