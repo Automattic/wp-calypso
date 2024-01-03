@@ -22,7 +22,7 @@
 	flex-shrink: 0;
 
 	&.is-selected {
-		border-color: #3858e9;
+		border-color: var(--color-link, #3858e9);
 		border-width: 1.5px;
 	}
 

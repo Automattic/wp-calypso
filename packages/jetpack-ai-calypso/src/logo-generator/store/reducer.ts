@@ -18,6 +18,7 @@ import {
 	ACTION_SAVE_SELECTED_LOGO,
 	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
 	ACTION_SET_IS_REQUESTING_IMAGE,
+	ACTION_SET_APPLYING_LOGO,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { TierLimitProp } from './types';
@@ -214,6 +215,16 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				_meta: {
 					...( state._meta ?? {} ),
 					isSavingLogoToLibrary: action.isSavingLogoToLibrary,
+				},
+			};
+		}
+
+		case ACTION_SET_APPLYING_LOGO: {
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					isApplyingLogo: action.isApplyingLogo,
 				},
 			};
 		}
