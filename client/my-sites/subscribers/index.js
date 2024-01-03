@@ -1,12 +1,11 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
-	subscribers,
-	subscriberDetails,
-	externalSubscriberDetails,
-	redirectIfInsufficientPrivileges,
-} from './controller';
+	makeLayout,
+	render as clientRender,
+	redirectIfCurrentUserCannot,
+} from 'calypso/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { subscribers, subscriberDetails, externalSubscriberDetails } from './controller';
 
 export default function () {
 	page(
@@ -14,7 +13,7 @@ export default function () {
 		siteSelection,
 		sites,
 		navigation,
-		redirectIfInsufficientPrivileges,
+		redirectIfCurrentUserCannot( 'list_users' ),
 		makeLayout,
 		clientRender
 	);
@@ -22,7 +21,7 @@ export default function () {
 		'/subscribers/:domain',
 		siteSelection,
 		navigation,
-		redirectIfInsufficientPrivileges,
+		redirectIfCurrentUserCannot( 'list_users' ),
 		subscribers,
 		makeLayout,
 		clientRender
@@ -31,7 +30,7 @@ export default function () {
 		'/subscribers/:domain/:user',
 		siteSelection,
 		navigation,
-		redirectIfInsufficientPrivileges,
+		redirectIfCurrentUserCannot( 'list_users' ),
 		subscriberDetails,
 		makeLayout,
 		clientRender
@@ -40,7 +39,7 @@ export default function () {
 		'/subscribers/external/:domain/:subscriber',
 		siteSelection,
 		navigation,
-		redirectIfInsufficientPrivileges,
+		redirectIfCurrentUserCannot( 'list_users' ),
 		externalSubscriberDetails,
 		makeLayout,
 		clientRender

@@ -1,7 +1,5 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { sanitizeInt } from './helpers';
 import SubscribersPage from './main';
 import SubscriberDetailsPage from './subscriber-details-page';
@@ -24,21 +22,6 @@ const queryStringChanged = ( key ) => ( value ) => {
 
 	return page.show( addQueryArgs( path, { [ key ]: value } ) );
 };
-
-export async function redirectIfInsufficientPrivileges( context, next ) {
-	const { store } = context;
-	const state = store.getState();
-	const site = getSelectedSite( state );
-	const canManageOptions = canCurrentUser( state, site.ID, 'manage_options' );
-
-	// if site loaded, but user cannot manage site, redirect
-	if ( site && ! canManageOptions ) {
-		page.redirect( `/home/${ site.slug }` );
-		return;
-	}
-
-	next();
-}
 
 export function subscribers( context, next ) {
 	const { query } = context;
