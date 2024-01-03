@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -10,11 +11,20 @@ import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
+import {
+	areJetpackCredentialsInvalid,
+	hasJetpackCredentials,
+} from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import {
+	usePreflightStatusQuery,
+	useEnqueuePreflightCheck,
+} from 'calypso/state/rewind/preflight/hooks';
+import { getPreflightStatus } from 'calypso/state/rewind/preflight/selectors';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -76,14 +86,39 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
+
+	usePreflightStatusQuery( siteId );
+	const preflightCheck = useEnqueuePreflightCheck( siteId );
+	const preflightStatus = useSelector( ( state ) => getPreflightStatus( state, siteId ) );
+	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
+	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
+
+	useEffect( () => {
+		if ( userHasRequestedRestore && ! isRestoreInProgress ) {
+			if ( ( hasCredentials && ! areCredentialsInvalid ) || preflightStatus === 'success' ) {
+				dispatch( setValidFrom( 'restore', Date.now() ) );
+				requestRestore();
+			}
+		}
+	}, [
+		areCredentialsInvalid,
+		dispatch,
+		hasCredentials,
+		isRestoreInProgress,
+		preflightStatus,
+		requestRestore,
+		userHasRequestedRestore,
+	] );
 	const onConfirm = useCallback( () => {
+		// Queue preflight
+		preflightCheck.mutate( { siteId } );
+
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
-		requestRestore();
 
 		// Track the restore confirmation event.
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
-	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
+	}, [ preflightCheck, siteId, dispatch ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
