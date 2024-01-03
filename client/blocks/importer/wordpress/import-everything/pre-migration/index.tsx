@@ -12,6 +12,10 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import {
+	recordFreeHostingTrialStarted,
+	FlowNames,
+} from 'calypso/lib/analytics/ad-tracking/record-hosting-trial-started';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCredentials } from 'calypso/state/jetpack/credentials/actions';
@@ -100,6 +104,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const { isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			setQueryTargetSitePlanStatus( 'fetching' );
+			recordFreeHostingTrialStarted(
+				migrationTrackingProps.is_migrate_from_wp ? FlowNames.SiteMigration : FlowNames.NewSite
+			);
 		},
 	} );
 
