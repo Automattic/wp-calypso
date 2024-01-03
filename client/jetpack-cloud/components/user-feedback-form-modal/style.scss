@@ -1,8 +1,14 @@
 
-.theme-jetpack-cloud .ReactModalPortal .user-feedback-form-modal .dialog.card {
-	border-radius: 4px;
-	box-shadow: none;
-	max-width: 827px;
+.theme-jetpack-cloud .ReactModalPortal .user-feedback-form-modal {
+	.dialog.card {
+		border-radius: 4px;
+		box-shadow: none;
+		max-width: 827px;
+	}
+
+	.reviews-ratings-stars__star:focus {
+		outline: none;
+	}
 }
 
 

@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import Rating from 'calypso/components/rating';
+import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 
 import './style.scss';
 
@@ -17,9 +17,14 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 	const translate = useTranslate();
 
 	const [ feedback, setFeedback ] = useState( '' );
+	const [ rating, setRating ] = useState( 1 );
 
-	const onFeedBackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
+	const onFeedbackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setFeedback( event.currentTarget.value );
+	}, [] );
+
+	const onRatingChange = useCallback( ( rating: number ) => {
+		setRating( rating );
 	}, [] );
 
 	return (
@@ -57,7 +62,7 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 						id="textarea"
 						placeholder="Add your feedback here"
 						value={ feedback }
-						onChange={ onFeedBackChange }
+						onChange={ onFeedbackChange }
 					/>
 				</FormFieldset>
 
@@ -65,8 +70,7 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 					<FormLabel htmlFor="textarea">
 						{ translate( 'How satisfied with Jetpack Manage are you?' ) }
 					</FormLabel>
-					{ /* TODO: Implement a clickable Rating component */ }
-					<Rating rating={ 65 } size={ 32 } />
+					<ReviewsRatingsStars rating={ rating } onSelectRating={ onRatingChange } />
 				</FormFieldset>
 			</div>
 
