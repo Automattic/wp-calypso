@@ -178,13 +178,16 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 											className="marketplace-reviews-list__review-submit"
 											primary
 											onClick={ () => {
-												updateReviewMutation.mutate( {
-													reviewId: review.id,
-													productType: props.productType,
-													slug: props.slug,
-													content: editorContent,
-													rating: editorRating,
-												} );
+												updateReviewMutation.mutate(
+													{
+														reviewId: review.id,
+														productType: props.productType,
+														slug: props.slug,
+														content: editorContent,
+														rating: editorRating,
+													},
+													{ onError: ( error ) => alert( error.message ) }
+												);
 												clearEditing();
 											} }
 										>

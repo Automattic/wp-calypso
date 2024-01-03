@@ -313,9 +313,6 @@ export const useUpdateMarketplaceReviewMutation = ( {
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey } );
 		},
-		onError: ( error: Error ) => {
-			alert( error.message );
-		},
 	} );
 };
 
@@ -341,9 +338,6 @@ export const useDeleteMarketplaceReviewMutation = ( {
 		mutationFn: deleteReview,
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey } );
-		},
-		onError: ( error: Error ) => {
-			alert( error.message );
 		},
 	} );
 };
