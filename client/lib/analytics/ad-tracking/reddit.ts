@@ -52,7 +52,7 @@ export const redditTrackerPageView = (): void => {
 	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
 		return;
 	}
-	loadRedditTracker().then( () => window.rdt( 'track', 'PageVisit' ) );
+	loadRedditTracker().then( () => window.rdt && window.rdt( 'track', 'PageVisit' ) );
 };
 
 /**
@@ -80,7 +80,7 @@ export const redditTrackerPurchase = (
 			name: product_name.toString(),
 		} ) ),
 	};
-	loadRedditTracker().then( () => window.rdt( 'track', 'Purchase', params ) );
+	loadRedditTracker().then( () => window.rdt && window.rdt( 'track', 'Purchase', params ) );
 };
 
 /**
@@ -100,5 +100,5 @@ export const redditTrackerFreeTrialStarted = ( trial_flow_name: string ): void =
 			},
 		],
 	};
-	loadRedditTracker().then( () => window.rdt( 'track', 'Lead', params ) );
+	loadRedditTracker().then( () => window.rdt && window.rdt( 'track', 'Lead', params ) );
 };
