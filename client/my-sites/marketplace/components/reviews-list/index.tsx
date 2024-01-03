@@ -160,12 +160,16 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						<div className="marketplace-reviews-list__review-actions">
 							{ isEditing && review.author === currentUserId && (
 								<>
-									<CheckboxControl
-										className="marketplace-reviews-list__checkbox"
-										label={ translate( 'Notify me when my review is approved and published.' ) }
-										checked={ false }
-										onChange={ () => alert( 'Not implemented yet' ) }
-									/>
+									<div>
+										{ isEnabled( 'marketplace-reviews-notifications' ) && (
+											<CheckboxControl
+												className="marketplace-reviews-list__checkbox"
+												label={ translate( 'Notify me when my review is approved and published.' ) }
+												checked={ false }
+												onChange={ () => alert( 'Not implemented yet' ) }
+											/>
+										) }
+									</div>
 									<div className="marketplace-reviews-list__review-actions-editable">
 										<Button className="is-link" onClick={ clearEditing }>
 											{ translate( 'Cancel' ) }

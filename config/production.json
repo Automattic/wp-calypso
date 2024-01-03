@@ -97,6 +97,7 @@
 		"marketplace-domain-bundle": false,
 		"marketplace-fetch-all-dynamic-products": false,
 		"marketplace-personal-premium": false,
+		"marketplace-reviews-notifications": false,
 		"marketplace-reviews-show": false,
 		"marketplace-test": false,
 		"me/account-close": true,
