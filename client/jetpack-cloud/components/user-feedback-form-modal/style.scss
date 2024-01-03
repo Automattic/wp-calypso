@@ -1,11 +1,17 @@
+
 .theme-jetpack-cloud .ReactModalPortal .user-feedback-form-modal .dialog.card {
 	border-radius: 4px;
 	box-shadow: none;
 	max-width: 827px;
 }
 
+
 .user-feedback-form-modal .dialog .dialog__content {
 	padding: 0;
+}
+
+.user-feedback-form-modal .form-fieldset {
+	margin: 0;
 }
 
 .user-feedback-form-modal__main {
@@ -23,9 +29,10 @@
 	padding: 0;
 }
 
-.user-feedback-form-modal__instruction {
+p.user-feedback-form-modal__instruction {
 	font-size: 1rem;
 	font-weight: 400;
+	margin: 0;
 }
 
 .user-feedback-form-modal__footer {
@@ -33,4 +40,16 @@
 	text-align: right;
 	background-color: var(--studio-gray-0);
 	border-radius: 4px;
+}
+
+.user-feedback-form-modal__close-button {
+	position: absolute;
+	right: 1rem;
+	top: 1rem;
+	cursor: pointer;
+	transition: scale 0.2s ease-in;
+
+	&:hover {
+		scale: 1.2;
+	}
 }
