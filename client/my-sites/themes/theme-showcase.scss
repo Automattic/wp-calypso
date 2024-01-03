@@ -325,16 +325,16 @@
 		}
 
 		.banner__icon {
-			background-color: var(--studio-blue-50);
+			background-color: #3858e9;
 			display: none;
 		}
 
 		.banner__icon-circle {
-			background-color: var(--studio-blue-50);
+			background-color: #3858e9;
 		}
 
 		.banner__action .button {
-			background-color: var(--studio-blue-50);
+			background-color: #3858e9;
 			border: none;
 			font-size: $font-body-small;
 			font-weight: 400;
@@ -343,7 +343,7 @@
 			white-space: nowrap;
 
 			&:hover {
-				background-color: var(--studio-blue-60);
+				background-color: #2145e6;
 			}
 
 			.accessible-focus &:focus {
@@ -392,8 +392,8 @@
 	.popover__menu-item:hover,
 	.popover__menu-item:focus,
 	.popover__menu-item:active {
-		color: var(--color-neutral-60);
-		background-color: var(--studio-gray-0);
+		color: var(--color-text-inverted);
+		background-color: var(--color-accent);
 	}
 }
 

@@ -259,6 +259,11 @@ class Signup extends Component {
 			);
 		}
 		this.preloadNextStep();
+
+		const body = document.querySelector( 'body' );
+		if ( body && ! body.classList.contains( 'is-classic-dark' ) ) {
+			body.classList.add( 'is-classic-dark' );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {

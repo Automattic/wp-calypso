@@ -43,10 +43,10 @@
 		}
 
 		&:not(:disabled):hover {
-			color: var(--studio-blue-50);
+			color: var(--color-accent-50);
 
 			svg {
-				fill: var(--studio-blue-50);
+				fill: var(--color-accent-50);
 			}
 		}
 

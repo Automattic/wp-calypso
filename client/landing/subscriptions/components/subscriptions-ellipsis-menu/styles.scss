@@ -33,10 +33,10 @@
 
 		&:hover,
 		&:focus {
-			color: $studio-blue-50;
+			color: var(--color-accent);
 
 			.subscriptions-ellipsis-menu__item-icon {
-				fill: $studio-blue-50;
+				fill: var(--color-accent);
 			}
 		}
 	}

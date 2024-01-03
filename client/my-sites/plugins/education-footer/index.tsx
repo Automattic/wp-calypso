@@ -210,7 +210,7 @@ function ReadMoreLink() {
 	const { __ } = useI18n();
 
 	return (
-		<CardText color="var(--studio-blue-50)">
+		<CardText color="#3858e9">
 			{ __( 'Read More' ) }
 			<Gridicon icon="external" size={ 12 } />
 		</CardText>
