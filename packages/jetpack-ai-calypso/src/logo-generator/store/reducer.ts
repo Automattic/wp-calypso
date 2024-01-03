@@ -17,6 +17,7 @@ import {
 	ACTION_ADD_LOGO_TO_HISTORY,
 	ACTION_SAVE_SELECTED_LOGO,
 	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
+	ACTION_SET_IS_REQUESTING_IMAGE,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { TierLimitProp } from './types';
@@ -231,6 +232,16 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 					},
 					...state.history.slice( state.selectedLogoIndex + 1 ),
 				],
+			};
+		}
+
+		case ACTION_SET_IS_REQUESTING_IMAGE: {
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					isRequestingImage: action.isRequestingImage,
+				},
 			};
 		}
 	}

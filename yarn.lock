@@ -1041,11 +1041,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.2.0"
     "@testing-library/react": "npm:^14.1.2"
     classnames: "npm:^2.3.2"
+    debug: "npm:^4.3.4"
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
