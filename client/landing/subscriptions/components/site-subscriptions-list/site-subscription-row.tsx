@@ -3,6 +3,7 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
@@ -20,7 +21,6 @@ import {
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
-import { useDispatch } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
@@ -350,37 +350,34 @@ const SiteSubscriptionRow = ( {
 					onUnsubscribe={ () => {
 						unsubscribeInProgress.current = true;
 						unsubscribeCallback();
+						unsubscribe(
+							{
+								blog_id,
+								subscriptionId: Number( subscriptionId ),
+								url,
+								doNotInvalidateSiteSubscriptions: true,
+							},
+							{
+								onSuccess: () => {
+									unsubscribeInProgress.current = false;
 
-						if ( subscriptionId ) {
-							unsubscribe(
-								{
-									blog_id,
-									subscriptionId: Number( subscriptionId ),
-									url,
-									doNotInvalidateSiteSubscriptions: true,
+									if ( resubscribePending.current ) {
+										resubscribePending.current = false;
+										resubscribe( {
+											blog_id,
+											url,
+											doNotInvalidateSiteSubscriptions: true,
+											resubscribed: true,
+										} );
+										recordSiteResubscribed( {
+											blog_id,
+											url,
+											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+										} );
+									}
 								},
-								{
-									onSuccess: () => {
-										unsubscribeInProgress.current = false;
-
-										if ( resubscribePending.current ) {
-											resubscribePending.current = false;
-											resubscribe( {
-												blog_id,
-												url,
-												doNotInvalidateSiteSubscriptions: true,
-												resubscribed: true,
-											} );
-											recordSiteResubscribed( {
-												blog_id,
-												url,
-												source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-											} );
-										}
-									},
-								}
-							);
-						}
+							}
+						);
 					} }
 					unsubscribing={ unsubscribing }
 					blogId={ sanitizedBlogId }
