@@ -7,7 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.tsx",
+	"calypso:src": "src/index.ts",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -24,7 +24,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -48,6 +48,7 @@
 		"@wordpress/url": "^3.48.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__blocks": "^12.5.13",
 		"@typescript-eslint/eslint-plugin": "^6.13.1",

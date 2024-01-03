@@ -151,6 +151,7 @@
 		"@automattic/launchpad": "workspace:^",
 		"@automattic/privacy-toolset": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@automattic/verbum-block-editor": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/whats-new": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",

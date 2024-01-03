@@ -13,12 +13,16 @@ declare module '@verbum/block-editor' {
 	): void;
 }
 
-declare module '!!css-loader!sass-loader!./inline-iframe-style.scss' {
+declare module '!!css-loader!@wordpress/block-library/build-style/*' {
 	const css: Array< [ string, string ] >;
 
 	export default css;
 }
+declare module '!!css-loader!@wordpress/components/build-style/*' {
+	const css: Array< [ string, string ] >;
 
+	export default css;
+}
 
 declare module '@wordpress/block-library/build-module/*' {
 	import { Block } from '@wordpress/blocks';
@@ -26,4 +30,9 @@ declare module '@wordpress/block-library/build-module/*' {
 	const block: Block;
 
 	export = block;
+}
+
+declare module '*.scss' {
+	const content: string;
+	export default content;
 }

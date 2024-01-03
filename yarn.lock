@@ -1714,10 +1714,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/verbum-block-editor@workspace:packages/verbum-block-editor":
+"@automattic/verbum-block-editor@workspace:^, @automattic/verbum-block-editor@workspace:packages/verbum-block-editor":
   version: 0.0.0-use.local
   resolution: "@automattic/verbum-block-editor@workspace:packages/verbum-block-editor"
   dependencies:
+    "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/wordpress__block-editor": "npm:^11.5.8"
     "@types/wordpress__blocks": "npm:^12.5.13"
@@ -32489,6 +32490,7 @@ __metadata:
     "@automattic/launchpad": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/verbum-block-editor": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
