@@ -16,25 +16,13 @@ import { rawShortcut } from '@wordpress/keycodes';
 import classNames from 'classnames';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
-import iframeCustomStyles from './inline-iframe-style';
 import type { MouseEvent, KeyboardEvent } from 'react';
-import iframedStyleEditor from '!!css-loader!@wordpress/block-library/build-style/editor.css';
-import iframedStyleLibrary from '!!css-loader!@wordpress/block-library/build-style/style.css';
-import iframedStyleTheme from '!!css-loader!@wordpress/block-library/build-style/theme.css';
-import iframedStyleComponents from '!!css-loader!@wordpress/components/build-style/style.css';
+import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
-const iframedCSS = [
-	iframedStyleEditor,
-	iframedStyleLibrary,
-	iframedStyleTheme,
-	iframedStyleComponents,
-	[ [ '', iframeCustomStyles ] ],
-]
-	.map( ( el ) => el[ 0 ][ 1 ] )
-	.reduce( ( css: string, item: string ) => {
-		return css + '\n' + item;
-	}, '' );
+const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) => {
+	return css + '\n' + item;
+}, '' );
 
 /**
  * Editor component
