@@ -10,7 +10,7 @@ export default function () {
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
 		empty: translate(
-			'Your most popular {{link}}posts and pages{{/link}} will display here once you begin to get some visitors.',
+			'Your most popular {{link}}posts and pages{{/link}} will display here once readers visit your site.',
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
@@ -61,7 +61,7 @@ export default function () {
 			context: 'Stats: module row header for number of views from a country.',
 		} ),
 		empty: translate(
-			'Stats on visitors and {{link}}their viewing location{{/link}} will make its way here.',
+			'Stats on visitors and {{link}}their viewing location{{/link}} will appear here.',
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
