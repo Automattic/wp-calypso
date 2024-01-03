@@ -431,13 +431,6 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 	progressTitle,
 } );
 
-export const setStepProgress = (
-	stepProgress: { count: number; progress: number } | undefined
-) => ( {
-	type: 'SET_STEP_PROGRESS' as const,
-	stepProgress,
-} );
-
 export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
@@ -570,7 +563,6 @@ export type OnboardAction = ReturnType<
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
-	| typeof setStepProgress
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal

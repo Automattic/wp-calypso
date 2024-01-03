@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card, CompactCard, Dialog, Gridicon } from '@automattic/components';
+import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, map } from 'lodash';
@@ -182,7 +182,7 @@ class JetpackSsoForm extends Component {
 			site = <Site site={ siteObject } />;
 		}
 
-		return <CompactCard className="jetpack-connect__site">{ site }</CompactCard>;
+		return <Card className="jetpack-connect__site">{ site }</Card>;
 	}
 
 	getSharedDetailLabel( key ) {

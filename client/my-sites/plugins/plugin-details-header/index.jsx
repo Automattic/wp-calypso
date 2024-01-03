@@ -115,7 +115,8 @@ const PluginDetailsHeader = ( {
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
 					<div className="plugin-details-header__info-value">
-						{ currentVersionsRange?.min }
+						{ /* Show the default version if plugin is not installed */ }
+						{ currentVersionsRange?.min || plugin.version }
 						{ currentVersionsRange?.max && ` - ${ currentVersionsRange.max }` }
 					</div>
 				</div>

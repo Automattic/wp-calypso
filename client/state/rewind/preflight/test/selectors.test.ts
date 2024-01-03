@@ -10,7 +10,7 @@ jest.mock( '@automattic/calypso-config', () => {
 
 const mockPreflightFeatureFlag = ( isEnabledValue: boolean ) => {
 	( isEnabled as jest.Mock ).mockImplementation( ( property: string ) => {
-		if ( property === 'jetpack/backup-restore-preflight-check' ) {
+		if ( property === 'jetpack/backup-restore-preflight-checks' ) {
 			return isEnabledValue;
 		}
 

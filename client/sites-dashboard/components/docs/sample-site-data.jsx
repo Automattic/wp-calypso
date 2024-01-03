@@ -48,13 +48,13 @@ const siteSimpleBusinessComingSoon = {
 		...exampleSite.plan,
 		product_id: 1008,
 		product_slug: 'business-bundle',
-		product_name_short: 'Business',
+		product_name_short: 'Creator',
 		user_is_owner: true,
 		is_free: false,
 	},
 	is_coming_soon: true,
 	launch_status: 'unlaunched',
-	title: 'Business Simple Site with Coming Soon status',
+	title: 'Creator Simple Site with Coming Soon status',
 };
 
 const siteSimpleBusinessExpired = {
@@ -68,12 +68,12 @@ const siteSimpleBusinessExpired = {
 		...exampleSite.plan,
 		product_id: 1008,
 		product_slug: 'business-bundle',
-		product_name_short: 'Business',
+		product_name_short: 'Creator',
 		user_is_owner: true,
 		is_free: false,
 		expired: true,
 	},
-	title: 'Expired Business Simple Site',
+	title: 'Expired Creator Simple Site',
 };
 
 const siteJetpackComplete = {

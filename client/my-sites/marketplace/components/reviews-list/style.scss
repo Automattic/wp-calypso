@@ -102,6 +102,13 @@ $border-color: #eee;
 			color: var(--studio-blue-50);
 			margin-right: 15px;
 			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
+
+		.gridicon {
+			margin-right: 5px;
+			color: var(--studio-gray-10);
 		}
 	}
 }
@@ -132,4 +139,8 @@ $border-color: #eee;
 		font-size: $font-body-small;
 		max-width: 400px;
 	}
+}
+
+.confirm-modal {
+	z-index: z-index(".dialog__backdrop", ".confirm-modal");
 }

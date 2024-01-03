@@ -72,3 +72,4 @@ export { default as getJetpackSearchDashboardUrl } from './get-jetpack-search-da
 export { default as getJetpackVersion } from './get-jetpack-version';
 export { default as isSimpleSite } from './is-simple-site';
 export { default as getJetpackStatsAdminVersion } from './get-jetpack-stats-admin-version';
+export { default as isWooCYSEligibleSite } from './is-woo-cys-eligible-site';
