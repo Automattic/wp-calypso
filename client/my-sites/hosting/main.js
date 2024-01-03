@@ -7,8 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Component, Fragment } from 'react';
-import wrapWithClickOutside from 'react-click-outside';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -29,12 +28,10 @@ import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isAutomatedTransferActive,
-} from 'calypso/state/automated-transfer/selectors';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -44,7 +41,6 @@ import {
 	isSiteOnHostingTrial,
 	isSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -184,207 +180,163 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
 };
 
-class Hosting extends Component {
-	state = {
-		clickOutside: false,
+const Hosting = ( props ) => {
+	const {
+		teams,
+		clickActivate,
+		isECommerceTrial,
+		isMigrationTrial,
+		isHostingTrial,
+		isWpcomStagingSite,
+		siteId,
+		siteSlug,
+		translate,
+		isLoadingSftpData,
+		hasAtomicFeature,
+		hasSftpFeature,
+		hasStagingSitesFeature,
+		isJetpack,
+	} = props;
+
+	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteSlug, {
+		refetchInterval: 5000,
+	} );
+
+	const isSiteAtomic =
+		transferStatus === transferStates.COMPLETE || transferStatus === transferStates.COMPLETED;
+
+	const getUpgradeBanner = () => {
+		// The eCommerce Trial requires a different upsell path.
+		const targetPlan = ! isECommerceTrial
+			? undefined
+			: {
+					callToAction: translate( 'Upgrade your plan' ),
+					feature: FEATURE_SFTP_DATABASE,
+					href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
+					title: translate( 'Upgrade your plan to access all hosting features' ),
+			  };
+
+		return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 	};
 
-	handleClickOutside( event ) {
-		const { COMPLETE } = transferStates;
-		const { isTransferring, transferState } = this.props;
-
-		if ( isTransferring && COMPLETE !== transferState ) {
-			event.preventDefault();
-			event.stopImmediatePropagation();
-			this.setState( { clickOutside: true } );
-		}
-	}
-
-	componentDidMount() {
-		const { COMPLETE } = transferStates;
-		// Check if a reverted site still has the COMPLETE status
-		if ( this.props.transferState === COMPLETE ) {
-			// Try to refresh the transfer state
-			this.props.fetchAutomatedTransferStatus( this.props.siteId );
-		}
-	}
-
-	render() {
-		const {
-			teams,
-			clickActivate,
-			isAdvancedHostingDisabled,
-			isBasicHostingDisabled,
-			isECommerceTrial,
-			isMigrationTrial,
-			isHostingTrial,
-			isSiteAtomic,
-			isTransferring,
-			isWpcomStagingSite,
-			requestSiteById,
-			siteId,
-			siteSlug,
-			translate,
-			transferState,
-			isLoadingSftpData,
-			hasAtomicFeature,
-			hasStagingSitesFeature,
-			isJetpack,
-		} = this.props;
-
-		const getUpgradeBanner = () => {
-			// The eCommerce Trial requires a different upsell path.
-			const targetPlan = ! isECommerceTrial
-				? undefined
-				: {
-						callToAction: translate( 'Upgrade your plan' ),
-						feature: FEATURE_SFTP_DATABASE,
-						href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
-						title: translate( 'Upgrade your plan to access all hosting features' ),
-				  };
-
-			return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
-		};
-
-		const { COMPLETE, FAILURE } = transferStates;
-
-		const isTransferInProgress = () => isTransferring && COMPLETE !== transferState;
-
-		const getAtomicActivationNotice = () => {
-			// Transfer in progress
-			if ( isTransferInProgress() || ( isBasicHostingDisabled && COMPLETE === transferState ) ) {
-				if ( COMPLETE === transferState ) {
-					requestSiteById( siteId );
-				}
-
-				let activationText = translate( 'Please wait while we activate the hosting features.' );
-				if ( this.state.clickOutside ) {
-					activationText = translate( "Don't leave quite yet! Just a bit longer." );
-				}
-
-				return (
-					<>
-						<Notice
-							className="hosting__activating-notice"
-							status="is-info"
-							showDismiss={ false }
-							text={ activationText }
-							icon="sync"
-						/>
-					</>
-				);
-			}
-
-			if ( hasAtomicFeature && ! isSiteAtomic && ! isTransferring ) {
-				const failureNotice = FAILURE === transferState && (
-					<Notice
-						status="is-error"
-						showDismiss={ false }
-						text={ translate( 'There was an error activating hosting features.' ) }
-						icon="bug"
-					/>
-				);
-
-				return (
-					<>
-						{ failureNotice }
-						<Notice
-							status="is-info"
-							showDismiss={ false }
-							text={ translate(
-								'Please activate the hosting access to begin using these features.'
-							) }
-							icon="globe"
-						>
-							<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
-							<NoticeAction
-								onClick={ clickActivate }
-								href={ `/hosting-config/activate/${ siteSlug }` }
-							>
-								{ translate( 'Activate' ) }
-							</NoticeAction>
-						</Notice>
-					</>
-				);
-			}
-
-			return null;
-		};
-
-		const getContent = () => {
-			const isGithubIntegrationEnabled =
-				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
-
+	const getAtomicActivationNotice = () => {
+		// Transfer in progress
+		if ( isTransferring ) {
 			return (
 				<>
-					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-					{ isGithubIntegrationEnabled && (
-						<>
-							<QueryKeyringServices />
-							<QueryKeyringConnections />
-						</>
-					) }
-					<Layout className="hosting__layout">
-						<Column type="main" className="hosting__main-layout-col">
-							<MainCards
-								hasStagingSitesFeature={ hasStagingSitesFeature }
-								isAdvancedHostingDisabled={ isAdvancedHostingDisabled }
-								isBasicHostingDisabled={ isBasicHostingDisabled }
-								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
-								isWpcomStagingSite={ isWpcomStagingSite }
-								isMigrationTrial={ isMigrationTrial }
-								siteId={ siteId }
-							/>
-						</Column>
-						<Column type="sidebar">
-							<SidebarCards isBasicHostingDisabled={ isBasicHostingDisabled } />
-						</Column>
-					</Layout>
+					<Notice
+						className="hosting__activating-notice"
+						status="is-info"
+						showDismiss={ false }
+						text={ translate( 'Please wait while we activate the hosting features.' ) }
+						icon="sync"
+					/>
 				</>
 			);
-		};
+		}
 
-		/* We want to show the upsell banner for the following cases:
-		 *  1. The site does not have the Atomic feature.
-		 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
-		 * Otherwise, we show the activation notice, which may be empty.
-		 */
-		const shouldShowUpgradeBanner =
-			! hasAtomicFeature ||
-			( isSiteAtomic &&
-				! isTransferInProgress() &&
-				isAdvancedHostingDisabled &&
-				! isWpcomStagingSite );
-		const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
+		const failureNotice = transferStatus === transferStates.ERROR && (
+			<Notice
+				status="is-error"
+				showDismiss={ false }
+				text={ translate( 'There was an error activating hosting features.' ) }
+				icon="bug"
+			/>
+		);
 
-		const isBusinessTrial = isMigrationTrial || isHostingTrial;
+		if ( ! isSiteAtomic && ! isTransferring ) {
+			return (
+				<>
+					{ failureNotice }
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate(
+							'Please activate the hosting access to begin using these features.'
+						) }
+						icon="globe"
+					>
+						<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
+						<NoticeAction
+							onClick={ clickActivate }
+							href={ `/hosting-config/activate/${ siteSlug }` }
+						>
+							{ translate( 'Activate' ) }
+						</NoticeAction>
+					</Notice>
+				</>
+			);
+		}
+	};
+
+	const getContent = () => {
+		const isGithubIntegrationEnabled =
+			isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 
 		return (
-			<Main wideLayout className="hosting">
-				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
-				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
-				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ translate( 'Hosting Configuration' ) }
-					subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
-				/>
-				{ ! isBusinessTrial && banner }
-				{ isBusinessTrial && (
-					<TrialBanner
-						callToAction={
-							<Button primary href={ `/plans/${ siteSlug }` }>
-								{ translate( 'Upgrade plan' ) }
-							</Button>
-						}
-					/>
+			<>
+				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ isGithubIntegrationEnabled && (
+					<>
+						<QueryKeyringServices />
+						<QueryKeyringConnections />
+					</>
 				) }
-				{ getContent() }
-				<QueryReaderTeams />
-			</Main>
+				<Layout className="hosting__layout">
+					<Column type="main" className="hosting__main-layout-col">
+						<MainCards
+							hasStagingSitesFeature={ hasStagingSitesFeature }
+							isAdvancedHostingDisabled={ hasSftpFeature && ! isSiteAtomic }
+							isBasicHostingDisabled={ hasAtomicFeature && ! isSiteAtomic }
+							isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
+							isWpcomStagingSite={ isWpcomStagingSite }
+							isMigrationTrial={ isMigrationTrial }
+							siteId={ siteId }
+						/>
+					</Column>
+					<Column type="sidebar">
+						<SidebarCards isBasicHostingDisabled={ hasAtomicFeature && ! isSiteAtomic } />
+					</Column>
+				</Layout>
+			</>
 		);
-	}
-}
+	};
+
+	/* We want to show the upsell banner for the following cases:
+	 *  1. The site does not have the Atomic feature.
+	 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+	 * Otherwise, we show the activation notice, which may be empty.
+	 */
+	const shouldShowUpgradeBanner = false;
+	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
+
+	const isBusinessTrial = isMigrationTrial || isHostingTrial;
+
+	return (
+		<Main wideLayout className="hosting">
+			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
+			<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
+			<DocumentHead title={ translate( 'Hosting Configuration' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Hosting Configuration' ) }
+				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
+			/>
+			{ ! isBusinessTrial && banner }
+			{ isBusinessTrial && (
+				<TrialBanner
+					callToAction={
+						<Button primary href={ `/plans/${ siteSlug }` }>
+							{ translate( 'Upgrade plan' ) }
+						</Button>
+					}
+				/>
+			) }
+			{ getContent() }
+			<QueryReaderTeams />
+		</Main>
+	);
+};
 
 export const clickActivate = () =>
 	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
@@ -395,8 +347,6 @@ export default connect(
 		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
-		const site = getSite( state, siteId );
-		const isSiteAtomic = site?.domain.endsWith( '.wpcomstaging.com' );
 
 		return {
 			teams: getReaderTeams( state ),
@@ -405,12 +355,9 @@ export default connect(
 			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
 			isHostingTrial: isSiteOnHostingTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
-			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,
-			isBasicHostingDisabled: ! hasAtomicFeature || ! isSiteAtomic,
-			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
-			isSiteAtomic,
+			hasSftpFeature,
 			hasAtomicFeature,
+			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
@@ -422,4 +369,4 @@ export default connect(
 		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
 	}
-)( localize( wrapWithClickOutside( Hosting ) ) );
+)( localize( Hosting ) );
