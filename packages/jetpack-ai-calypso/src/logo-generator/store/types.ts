@@ -113,6 +113,7 @@ export type AiFeatureStateProps = AiFeatureProps & {
 		isRequesting: boolean;
 		asyncRequestCountdown: number;
 		asyncRequestTimerId: number;
+		isRequestingImage: boolean;
 	};
 };
 
@@ -131,8 +132,9 @@ export type Logo = {
 export type LogoGeneratorStateProp = {
 	_meta?: {
 		isSavingLogoToLibrary: boolean;
+		isRequestingImage: boolean;
 	};
-	siteDetails?: Partial< SiteDetails >;
+	siteDetails?: SiteDetails;
 	suggestions: Array< LogoSuggestionProps >;
 	features: {
 		aiAssistantFeature?: AiFeatureStateProps;
@@ -146,8 +148,9 @@ export type Selectors = {
 	getIsRequestingAiAssistantFeature(): boolean;
 	getLogos(): Array< Logo >;
 	getSelectedLogo(): Logo;
-	getSiteDetails(): Partial< SiteDetails >;
+	getSiteDetails(): SiteDetails;
 	getSavingLogoToLibrary(): boolean;
+	getIsRequestingImage(): boolean;
 };
 
 /*
