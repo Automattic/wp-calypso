@@ -34,7 +34,7 @@ import {
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import { useInView } from 'react-intersection-observer';
+// import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -700,9 +700,9 @@ const PlansFeaturesMain = ( {
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
-	const [ comparisonGridPlanTypeSelectorRef, isComparisonGridPlanTypeSelectorInView ] = useInView( {
-		rootMargin: '0px 0px -300px 0px',
-	} );
+	// const [ comparisonGridPlanTypeSelectorRef, isComparisonGridPlanTypeSelectorInView ] = useInView( {
+	// 	rootMargin: '0px 0px -300px 0px',
+	// } );
 
 	const stickyPlanTypeSelectorHeight = 48;
 	const comparisonGridStickyRowOffset =
@@ -783,15 +783,12 @@ const PlansFeaturesMain = ( {
 				{ isPlansGridReady && (
 					<>
 						{ ! hidePlanSelector && (
-							// TODO: Migrate plans-features-main__plan-type-selector styles
-							// <div className="plans-features-main__plan-type-selector">
 							<PlanTypeSelector
 								{ ...planTypeSelectorProps }
-								enableStickyBehavior={ true }
-								showPlanTypeSelectorDropdown={ showPlanTypeSelectorDropdown }
-								isComparisonGridPlanTypeSelectorInView={ isComparisonGridPlanTypeSelectorInView }
+								layoutClassName="plans-features-main__plan-type-selector-layout"
+								enableStickyBehavior={ isMobile() && showPlanTypeSelectorDropdown }
+								// isComparisonGridPlanTypeSelectorInView={ isComparisonGridPlanTypeSelectorInView }
 							/>
-							// </div>
 						) }
 						<div
 							className={ classNames(
@@ -862,12 +859,10 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<div
-													className="plans-features-main__plan-type-selector"
-													ref={ comparisonGridPlanTypeSelectorRef }
-												>
-													<PlanTypeSelector { ...planTypeSelectorProps } />
-												</div>
+												<PlanTypeSelector
+													{ ...planTypeSelectorProps }
+													layoutClassName="plans-features-main__plan-type-selector-layout"
+												/>
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }

@@ -10,6 +10,7 @@ export type PlanTypeSelectorProps = {
 	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	isComparisonGridPlanTypeSelectorInView?: boolean;
+	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
