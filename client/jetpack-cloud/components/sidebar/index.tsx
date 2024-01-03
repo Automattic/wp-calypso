@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { Icon, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
@@ -10,6 +12,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarHeader from './header';
@@ -58,6 +61,14 @@ const JetpackCloudSidebar = ( {
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isUserFeedbackEnabled = isEnabled( 'jetpack/user-feedback-form' );
+
+	const isAgency = useSelector( isAgencyUser );
+
+	const onShowUserFeedbackForm = () => {
+		// TODO: Show user feedback form modal.
+	};
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
@@ -118,6 +129,18 @@ const JetpackCloudSidebar = ( {
 							);
 						} }
 					/>
+
+					{ isUserFeedbackEnabled && isAgency && (
+						<SidebarNavigatorMenuItem
+							title={ translate( 'Share product feedback', {
+								comment: 'Jetpack Cloud sidebar navigation item',
+							} ) }
+							link="#product-feedback"
+							path=""
+							icon={ <Icon icon={ starEmpty } /> }
+							onClickMenuItem={ onShowUserFeedbackForm }
+						/>
+					) }
 				</ul>
 			</SidebarFooter>
 
