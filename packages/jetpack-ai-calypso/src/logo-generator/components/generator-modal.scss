@@ -9,13 +9,13 @@
 	}
 
 	.components-button {
-		&:focus:not(:disabled) {
-			box-shadow: 0 0 0 2px #3858e9;
+		&:focus:not(:disabled):not(.is-primary) {
+			box-shadow: 0 0 0 2px var(--color-link, #3858e9);
 		}
 
 		&.is-link {
 			text-decoration: none;
-			color: #3858e9;
+			color: var(--color-link, #3858e9);
 		}
 	}
 }

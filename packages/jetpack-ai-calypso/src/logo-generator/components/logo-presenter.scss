@@ -83,7 +83,7 @@
 	&.components-button,
 	&.components-button:hover,
 	&.components-button:active {
-		color: #3858e9;
+		color: var(--color-link, #3858e9);
 	}
 
 	.action-text {
