@@ -62,6 +62,15 @@ const selectors = {
 	getSavingLogoToLibrary( state: LogoGeneratorStateProp ): boolean {
 		return state._meta?.isSavingLogoToLibrary ?? false;
 	},
+
+	/**
+	 * Get the isRequestingImage flag.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The isRequestingImage flag.
+	 */
+	getIsRequestingImage( state: LogoGeneratorStateProp ): boolean {
+		return state._meta?.isRequestingImage ?? false;
+	},
 };
 
 export default selectors;

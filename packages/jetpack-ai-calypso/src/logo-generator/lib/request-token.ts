@@ -1,0 +1,74 @@
+import debugFactory from 'debug';
+import wpcomProxyRequest from 'wpcom-proxy-request';
+import { JWT_TOKEN_EXPIRATION_TIME, JWT_TOKEN_ID } from '../../constants';
+import { RequestTokenOptions, TokenDataProps, TokenDataEndpointResponseProps } from '../../types';
+
+const debug = debugFactory( 'jetpack-ai-calypso:request-token' );
+
+/**
+ * Request a token from the Jetpack site.
+ * @param {RequestTokenOptions} options - Options
+ * @returns {Promise<TokenDataProps>}     The token and the blogId
+ */
+export async function requestJwt( {
+	siteDetails,
+	expirationTime,
+}: RequestTokenOptions = {} ): Promise< TokenDataProps > {
+	// Default values
+	// @ts-expect-error meh
+	const siteId = siteDetails?.ID || window.JP_CONNECTION_INITIAL_STATE.siteSuffix;
+	expirationTime = expirationTime || JWT_TOKEN_EXPIRATION_TIME;
+
+	const isSimple = ! siteDetails?.is_wpcom_atomic;
+
+	// Trying to pick the token from localStorage
+	const token = localStorage.getItem( JWT_TOKEN_ID );
+	let tokenData: TokenDataProps | null = null;
+
+	if ( token ) {
+		try {
+			tokenData = JSON.parse( token );
+		} catch ( err ) {
+			debug( 'Error parsing token', err );
+		}
+	}
+
+	if ( tokenData && tokenData?.expire > Date.now() ) {
+		debug( 'Using cached token' );
+		return tokenData;
+	}
+
+	let data: TokenDataEndpointResponseProps;
+
+	if ( ! isSimple ) {
+		data = await wpcomProxyRequest( {
+			path: '/jetpack/v4/jetpack-ai-jwt?_cacheBuster=' + Date.now(),
+			method: 'POST',
+		} );
+	} else {
+		data = await wpcomProxyRequest( {
+			apiNamespace: 'wpcom/v2',
+			path: '/sites/' + siteId + '/jetpack-openai-query/jwt',
+			method: 'POST',
+		} );
+	}
+
+	const newTokenData = {
+		token: data.token,
+		/**
+		 * TODO: make sure we return id from the .com token acquisition endpoint too
+		 */
+		blogId: ! isSimple ? data.blog_id : siteId,
+
+		/**
+		 * Let's expire the token in 2 minutes
+		 */
+		expire: Date.now() + expirationTime,
+	};
+
+	// Store the token in localStorage
+	debug( 'Storing new token' );
+	localStorage.setItem( JWT_TOKEN_ID, JSON.stringify( newTokenData ) );
+
+	return newTokenData;
+}
