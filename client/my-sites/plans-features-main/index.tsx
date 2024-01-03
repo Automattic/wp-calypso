@@ -34,7 +34,6 @@ import {
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-// import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -700,15 +699,12 @@ const PlansFeaturesMain = ( {
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
-	// const [ comparisonGridPlanTypeSelectorRef, isComparisonGridPlanTypeSelectorInView ] = useInView( {
-	// 	rootMargin: '0px 0px -300px 0px',
-	// } );
 
+	const enablePlanTypeSelectorStickyBehavior = isMobile() && showPlanTypeSelectorDropdown;
 	const stickyPlanTypeSelectorHeight = 48;
-	const comparisonGridStickyRowOffset =
-		showPlanTypeSelectorDropdown && isMobile()
-			? stickyPlanTypeSelectorHeight + masterbarHeight
-			: masterbarHeight;
+	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
+		? stickyPlanTypeSelectorHeight + masterbarHeight
+		: masterbarHeight;
 
 	return (
 		<>
@@ -786,8 +782,7 @@ const PlansFeaturesMain = ( {
 							<PlanTypeSelector
 								{ ...planTypeSelectorProps }
 								layoutClassName="plans-features-main__plan-type-selector-layout"
-								enableStickyBehavior={ isMobile() && showPlanTypeSelectorDropdown }
-								// isComparisonGridPlanTypeSelectorInView={ isComparisonGridPlanTypeSelectorInView }
+								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
 							/>
 						) }
 						<div

@@ -79,20 +79,10 @@
 	}
 }
 
-.plan-type-selector__sticky-container {
-	position: static;
-	z-index: 1;
-	top: auto;
-
+.plan-type-selector__sticky-container.is-sticky-plan-type-selector {
 	@include plan-type-selector-custom-mobile-breakpoint {
-		position: sticky;
 		// Display above sticky feature and comparison grid plan headers
 		z-index: 3;
-		top: 0;
-
-		&.is-hidden {
-			visibility: hidden;
-		}
 	}
 }
 

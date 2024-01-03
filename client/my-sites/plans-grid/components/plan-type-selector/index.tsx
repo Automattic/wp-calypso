@@ -11,8 +11,6 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	kind,
 	enableStickyBehavior = false,
 	layoutClassName,
-	// TODO: Rename this prop
-	isComparisonGridPlanTypeSelectorInView,
 	...props
 } ) => {
 	useEffect( () => {
@@ -22,31 +20,19 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	}, [] );
 	if ( kind === 'interval' ) {
 		return (
-			<>
-				{ enableStickyBehavior ? (
-					<StickyContainer
-						stickyClass="is-sticky-plan-type-selector"
-						className={ classNames( 'plan-type-selector__sticky-container', {
-							[ 'is-hidden' ]: isComparisonGridPlanTypeSelectorInView,
-						} ) }
-						disabled={ isComparisonGridPlanTypeSelectorInView }
-					>
-						{ () => (
-							<div className={ classNames( layoutClassName ) }>
-								<div className="plan-type-selector">
-									<IntervalTypeSelector { ...props } />
-								</div>
-							</div>
-						) }
-					</StickyContainer>
-				) : (
+			<StickyContainer
+				stickyClass="is-sticky-plan-type-selector"
+				className="plan-type-selector__sticky-container"
+				disabled={ ! enableStickyBehavior }
+			>
+				{ () => (
 					<div className={ classNames( layoutClassName ) }>
 						<div className="plan-type-selector">
 							<IntervalTypeSelector { ...props } />
 						</div>
 					</div>
 				) }
-			</>
+			</StickyContainer>
 		);
 	}
 	/**
