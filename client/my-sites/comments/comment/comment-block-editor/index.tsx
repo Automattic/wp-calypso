@@ -12,7 +12,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 loadBlocksWithCustomizations();
 loadTextFormatting();
 
-export const CommentBlockEditor = ( {
+const CommentBlockEditor = ( {
 	onChange,
 	commentContent,
 }: {
@@ -36,3 +36,5 @@ export const CommentBlockEditor = ( {
 		</div>
 	);
 };
+
+export default CommentBlockEditor;

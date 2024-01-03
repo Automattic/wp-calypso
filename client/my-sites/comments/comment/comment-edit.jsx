@@ -1,9 +1,11 @@
 import { Button, Popover, Gridicon } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -13,7 +15,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PostSchedule from 'calypso/components/post-schedule';
 import { decodeEntities } from 'calypso/lib/formatting';
-// import CommentHtmlEditor from 'calypso/my-sites/comments/comment/comment-html-editor';
+import CommentHtmlEditor from 'calypso/my-sites/comments/comment/comment-html-editor';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -25,7 +27,10 @@ import { getSiteComment } from 'calypso/state/comments/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { CommentBlockEditor } from './comment-block-editor';
+
+function hasBlocks( comment ) {
+	return comment.includes( '<!-- wp:' );
+}
 
 const noop = () => {};
 
@@ -201,11 +206,19 @@ export class CommentEdit extends Component {
 							</div>
 						</Popover>
 					</FormFieldset>
-
-					<CommentBlockEditor
-						commentContent={ commentContent }
-						onChange={ this.setCommentContentValue }
-					/>
+					{ hasBlocks( commentContent ) ? (
+						<AsyncLoad
+							require="./comment-block-editor"
+							fallback={ <Spinner /> }
+							commentContent={ commentContent }
+							onChange={ this.setCommentContentValue }
+						/>
+					) : (
+						<CommentHtmlEditor
+							onChange={ this.setCommentContentValue }
+							commentContent={ commentContent }
+						/>
+					) }
 
 					<div className="comment__edit-buttons">
 						<FormButton compact onClick={ this.submitEdit }>
