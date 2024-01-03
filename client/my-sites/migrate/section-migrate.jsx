@@ -48,6 +48,12 @@ export class SectionMigrate extends Component {
 		migrationStatus: 'unknown',
 		migrationErrorStatus: null,
 		percent: 0,
+		backupPercent: 0,
+		restorePercent: 0,
+		restoreMessage: '',
+		backupPosts: 0,
+		backupMedia: 0,
+		siteSize: 0,
 		siteInfo: null,
 		selectedSiteSlug: null,
 		sourceSitePlugins: [],
@@ -203,9 +209,11 @@ export class SectionMigrate extends Component {
 			this.props.updateSiteMigrationMeta(
 				this.props.targetSiteId,
 				state.migrationStatus,
+				state.migrationErrorStatus,
 				state.lastModified
 			);
 		}
+
 		this.setState( state );
 	};
 
@@ -317,7 +325,14 @@ export class SectionMigrate extends Component {
 			.then( ( response ) => {
 				const {
 					status: migrationStatus,
+					error_status: migrationErrorStatus,
 					percent,
+					backup_percent: backupPercent,
+					restore_percent: restorePercent,
+					restore_message: restoreMessage,
+					site_size: siteSize,
+					posts_count: backupPosts,
+					uploads_count: backupMedia,
 					source_blog_id: sourceSiteId,
 					created: startTime,
 					last_modified: lastModified,
@@ -329,15 +344,25 @@ export class SectionMigrate extends Component {
 				}
 
 				if ( migrationStatus ) {
+					const newState = {
+						migrationStatus,
+						migrationErrorStatus,
+						percent,
+						backupPercent,
+						restorePercent,
+						restoreMessage,
+						siteSize,
+						backupPosts,
+						backupMedia,
+						lastModified,
+					};
+
 					if ( startTime && isEmpty( this.state.startTime ) ) {
 						const startMoment = moment.utc( startTime, 'YYYY-MM-DD HH:mm:ss' );
 
 						if ( ! startMoment.isValid() ) {
-							this.setMigrationState( {
-								migrationStatus,
-								percent,
-								lastModified,
-							} );
+							this.setMigrationState( newState );
+
 							return;
 						}
 
@@ -346,12 +371,9 @@ export class SectionMigrate extends Component {
 							.locale( getLocaleSlug() )
 							.format( 'lll' );
 
-						this.setMigrationState( {
-							migrationStatus,
-							percent,
-							startTime: localizedStartTime,
-							lastModified,
-						} );
+						newState.startTime = localizedStartTime;
+						this.setMigrationState( newState );
+
 						return;
 					}
 
@@ -362,11 +384,7 @@ export class SectionMigrate extends Component {
 						this.props.requestSite( targetSiteId );
 					}
 
-					this.setMigrationState( {
-						migrationStatus,
-						percent,
-						lastModified,
-					} );
+					this.setMigrationState( newState );
 				}
 			} )
 			.catch( ( error ) => {

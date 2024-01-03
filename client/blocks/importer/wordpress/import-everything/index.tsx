@@ -8,7 +8,7 @@ import { get } from 'lodash';
 import { connect } from 'react-redux';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -211,7 +211,7 @@ export class ImportEverything extends SectionMigrate {
 		return (
 			<div className="import-layout__center">
 				<Progress>
-					<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
+					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
 					<div className="import__heading import__heading-center">
 						<Title>{ this.getTitle() }</Title>
 						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
@@ -233,9 +233,9 @@ export class ImportEverything extends SectionMigrate {
 		return (
 			<div className="import-layout__center">
 				<Progress className="onboarding-progress-simple">
-					<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
+					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
 					<div className="import__heading import__heading-center">
-						<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
+						<Title>{ this.getTitle() }</Title>
 						<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
 						<SubTitle tagName="h3">
 							{ translate(
@@ -361,25 +361,94 @@ export class ImportEverything extends SectionMigrate {
 		}
 	}
 
+	byteToMB( bytes: number ) {
+		const megabytes = bytes / 1024 / 1024;
+
+		return megabytes.toFixed( 2 );
+	}
+
 	getTitle(): string {
-		const { translate, sourceSite, targetSite } = this.props;
+		const { translate } = this.props;
 
 		switch ( this.state.migrationStatus ) {
-			case MigrationStatus.BACKING_UP:
-			case MigrationStatus.BACKING_UP_QUEUED:
 			case MigrationStatus.NEW:
-				return (
-					sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) + '...'
-				);
+			case MigrationStatus.BACKING_UP_QUEUED:
+				return translate( 'Backing up your data…' );
+
+			case MigrationStatus.BACKING_UP:
+				return this.getBackupTitle();
 
 			case MigrationStatus.RESTORING:
-				return (
-					sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) + '...'
-				);
+				return this.getRestoreTitle();
 
 			default:
 				return '';
 		}
+	}
+
+	getBackupTitle(): string {
+		const { translate } = this.props;
+
+		if ( this.state.backupPercent === 100 ) {
+			if ( this.state.backupMedia ) {
+				return sprintf( translate( 'Moving your %(count)d files…' ), {
+					count: this.state.backupMedia,
+				} );
+			} else if ( this.state.backupPosts ) {
+				return sprintf( translate( 'Moving your %(count)d posts…' ), {
+					count: this.state.backupPosts,
+				} );
+			}
+
+			return translate( 'Moving your files…' );
+		}
+
+		if ( typeof this.state.backupPercent === 'undefined' ) {
+			return translate( 'Backing up your data…' );
+		}
+
+		const backupPercent = Math.max( this.state.backupPercent, 1 );
+
+		if ( typeof this.state.siteSize === 'undefined' ) {
+			return sprintf( translate( 'Backing up %(percentage)d%% of your data…' ), {
+				percentage: backupPercent,
+			} );
+		}
+
+		return sprintf( translate( 'Backing up %(percentage)d%% of your %(size)f MB of data…' ), {
+			percentage: backupPercent,
+			size: this.byteToMB( this.state.siteSize ),
+		} );
+	}
+
+	getRestoreTitle(): string {
+		const { translate } = this.props;
+
+		const format = {
+			percentage: Math.max( this.state.restorePercent, 1 ),
+		};
+
+		if (
+			this.state.restoreMessage === 'Starting' ||
+			this.state.restoreMessage.startsWith( 'Checking remote files' ) ||
+			this.state.restoreMessage.startsWith( 'Parsing' )
+		) {
+			return sprintf(
+				translate( 'Restoring up %(percentage)d%%. Checking remote files…' ),
+				format
+			);
+		} else if ( this.state.restoreMessage.startsWith( 'Verifying' ) ) {
+			return sprintf(
+				translate( 'Restoring up %(percentage)d%%. Verifying configuration…' ),
+				format
+			);
+		} else if ( this.state.restoreMessage.startsWith( 'Uploading' ) ) {
+			return sprintf( translate( 'Restoring up %(percentage)d%%. Uploading files…' ), format );
+		} else if ( this.state.restoreMessage === 'Done' ) {
+			return sprintf( translate( 'Finalizing restore…' ), format );
+		}
+
+		return sprintf( translate( 'Restoring up %(percentage)d%%…' ), format );
 	}
 
 	getErrorTitle(): string {
