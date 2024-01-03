@@ -98,6 +98,11 @@ const useLogoGenerator = () => {
 			return;
 		}
 		let data;
+		const params = {
+			prompt,
+			token: tokenData.token,
+			response_format: 'url',
+		};
 		if ( ! isSimple ) {
 			// TODO: unsure how to handle this
 			// data = await proxy( {
@@ -110,7 +115,7 @@ const useLogoGenerator = () => {
 				apiNamespace: 'wpcom/v2',
 				path: '/jetpack-ai-image',
 				method: 'GET',
-				query: `prompt=${ prompt }&token=${ tokenData.token }&response_format=url`,
+				query: new URLSearchParams( params ).toString(),
 			} );
 		}
 

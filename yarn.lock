@@ -1030,6 +1030,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-calypso@workspace:packages/jetpack-ai-calypso"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.1.5"

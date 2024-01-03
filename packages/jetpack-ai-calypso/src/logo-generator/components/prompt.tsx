@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { Icon, info } from '@wordpress/icons';
@@ -25,6 +26,7 @@ export const Prompt: React.FC = () => {
 	const onClick = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
 		setIsRequestingImage( true );
+		recordTracksEvent( 'calypso_jp_ai_logo_generator_prompt_submit' );
 		const image = await generateImage( { prompt } );
 
 		if ( ! image || ! image.data.length ) {
