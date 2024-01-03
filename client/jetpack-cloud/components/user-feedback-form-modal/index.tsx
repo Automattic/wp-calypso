@@ -1,4 +1,5 @@
-import { Button, Dialog, FormLabel } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
+import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useState } from 'react';
@@ -17,7 +18,7 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 	const translate = useTranslate();
 
 	const [ feedback, setFeedback ] = useState( '' );
-	const [ rating, setRating ] = useState( 1 );
+	const [ rating, setRating ] = useState( 3 );
 
 	const onFeedbackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setFeedback( event.currentTarget.value );
@@ -27,25 +28,25 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 		setRating( rating );
 	}, [] );
 
-	return (
-		<Dialog
-			isVisible={ show }
-			additionalOverlayClassNames="user-feedback-form-modal"
-			onClose={ onClose }
-		>
-			<Button
-				className="user-feedback-form-modal__close-button"
-				plain
-				onClick={ onClose }
-				aria-label={ translate( 'Close' ) }
-			>
-				<Icon size={ 24 } icon={ close } />
-			</Button>
+	const title = translate( 'Help us make Jetpack Manage even better' );
 
+	if ( ! show ) {
+		return null;
+	}
+
+	return (
+		<Modal className="user-feedback-form-modal" onRequestClose={ onClose } __experimentalHideHeader>
 			<div className="user-feedback-form-modal__main">
-				<h1 className="user-feedback-form-modal__title">
-					{ translate( 'Help us make Jetpack Manage even better' ) }
-				</h1>
+				<Button
+					className="user-feedback-form-modal__close-button"
+					plain
+					onClick={ onClose }
+					aria-label={ translate( 'Close' ) }
+				>
+					<Icon size={ 24 } icon={ close } />
+				</Button>
+
+				<h1 className="user-feedback-form-modal__title">{ title }</h1>
 
 				<p className="user-feedback-form-modal__instruction">
 					{ translate(
@@ -79,6 +80,6 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 					{ translate( 'Submit your feedback' ) }
 				</Button>
 			</div>
-		</Dialog>
+		</Modal>
 	);
 }

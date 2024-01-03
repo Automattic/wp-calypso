@@ -1,19 +1,29 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-.theme-jetpack-cloud .ReactModalPortal .user-feedback-form-modal {
-	.dialog.card {
-		border-radius: 4px;
-		box-shadow: none;
-		max-width: 827px;
+.user-feedback-form-modal {
+	max-width: 827px;
+	max-height: 100%;
+	margin: 0;
+
+	.components-modal__content {
+		padding: 0;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+		}
 	}
 
 	.reviews-ratings-stars__star:focus {
 		outline: none;
 	}
-}
 
-
-.user-feedback-form-modal .dialog .dialog__content {
-	padding: 0;
+	@include break-medium {
+		margin: auto;
+	}
 }
 
 .user-feedback-form-modal .form-fieldset {
