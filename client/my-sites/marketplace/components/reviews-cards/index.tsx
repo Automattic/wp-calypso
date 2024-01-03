@@ -27,7 +27,6 @@ export const MarketplaceReviewsCards = forwardRef< HTMLDivElement, MarketplaceRe
 			...props,
 			perPage: 2,
 			page: 1,
-			status: 'all',
 		} );
 
 		if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
