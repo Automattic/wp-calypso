@@ -82,7 +82,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						key={ `review-${ review.id }` }
 					>
 						{ review.author === currentUserId && review.status === 'hold' && (
-							<Card className="marketplace-reviews-list__pending-review">
+							<Card className="marketplace-reviews-list__pending-review" highlight="warning">
 								<Gridicon className="marketplace-reviews-list__icon" icon="info" size={ 18 } />
 								<span className="marketplace-reviews-list__pending-review-text">
 									{ translate( 'Your review is pending approval.' ) }
