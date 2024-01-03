@@ -393,7 +393,7 @@ export class ImportEverything extends SectionMigrate {
 			// Start of migration #1
 			case MigrationStatusError.ACTIVATE_REWIND:
 			case MigrationStatusError.BACKUP_QUEUEING:
-				return translate( 'Impossible to start the migration.' );
+				return translate( 'Impossible to start the import.' );
 
 			// Start of backup
 			// eslint-disable-next-line inclusive-language/use-inclusive-words
@@ -430,9 +430,11 @@ export class ImportEverything extends SectionMigrate {
 			// Start of migration #2
 			// End of backup #2
 			case MigrationStatusError.WOA_TRANSFER:
-				return translate( 'Impossible to perform the migration.' );
+				return translate( 'Impossible to perform the import.' );
 
+			// Miscellanous
 			case MigrationStatusError.GENERAL:
+			case MigrationStatusError.UNKNOWN:
 			default:
 				return translate( 'There was an error with your import.' );
 		}

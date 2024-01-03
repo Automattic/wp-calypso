@@ -570,6 +570,7 @@ export enum MigrationStatusError {
 
 	// Miscellanous
 	GENERAL = 'error-general',
+	UNKNOWN = 'error-unknown',
 }
 
 export interface SourceSiteMigrationBase {
