@@ -50,10 +50,14 @@ const StatsCommercialPriceDisplay = ( {
 const StatsBenefitsCommercial = () => {
 	const translate = useTranslate();
 
-	const infoIconRef = useRef( null );
-	const [ show, setShow ] = useState( false );
-	const handlePopoverOpen = () => setShow( true );
-	const handlePopoverClose = () => setShow( false );
+	const spikeInfoIconRef = useRef( null );
+	const OverageInfoIconRef = useRef( null );
+	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
+	const handleSpikePopoverOpen = () => setSpikeInfoShow( true );
+	const handleSpikePopoverClose = () => setSpikeInfoShow( false );
+	const [ overageInfoShow, setOverageInfoShow ] = useState( false );
+	const handleOveragePopoverOpen = () => setOverageInfoShow( true );
+	const handleOveragePopoverClose = () => setOverageInfoShow( false );
 
 	return (
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
@@ -69,21 +73,42 @@ const StatsBenefitsCommercial = () => {
 					{ translate( 'Traffic spike forgiveness' ) }
 					<Icon
 						icon={ info }
-						ref={ infoIconRef }
-						onMouseEnter={ handlePopoverOpen }
-						onMouseLeave={ handlePopoverClose }
+						ref={ spikeInfoIconRef }
+						onMouseEnter={ handleSpikePopoverOpen }
+						onMouseLeave={ handleSpikePopoverClose }
+					/>
+				</li>
+				<li>
+					{ translate( 'Overage forgiveness' ) }
+					<Icon
+						icon={ info }
+						ref={ OverageInfoIconRef }
+						onMouseEnter={ handleOveragePopoverOpen }
+						onMouseLeave={ handleOveragePopoverClose }
 					/>
 				</li>
 			</ul>
 			<Popover
 				position="right"
-				isVisible={ show }
-				context={ infoIconRef.current }
+				isVisible={ spikeInfoShow }
+				context={ spikeInfoIconRef.current }
 				className="stats-purchase__info-popover"
 			>
 				<div className="stats-purchase__info-popover-content">
 					{ translate(
 						"You won't incur additional charges for occasional traffic spikes, nor will we cease tracking your statistics due to such spikes." // TODO: We need a 'learn more' link here.
+					) }
+				</div>
+			</Popover>
+			<Popover
+				position="right"
+				isVisible={ overageInfoShow }
+				context={ OverageInfoIconRef.current }
+				className="stats-purchase__info-popover"
+			>
+				<div className="stats-purchase__info-popover-content">
+					{ translate(
+						'You will only be prompted to upgrade to higher tiers when you exceed the limit for three consecutive months.' // TODO: We need a 'learn more' link here.
 					) }
 				</div>
 			</Popover>
