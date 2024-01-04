@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import DateInput from './stats-date-control-date-input';
@@ -25,6 +26,7 @@ const DateControlPickerDate = ( {
 		>
 			<h2 className={ `${ BASE_CLASS_NAME }__heading` }>
 				{ translate( 'Date Range' ) }
+				{ overlay && <Icon icon={ lock } /> }
 				<span> &#8212;</span>
 				<input id="date-example" type="date" disabled />
 			</h2>

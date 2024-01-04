@@ -19,6 +19,10 @@ $date-control-shortcut-min-width: 140px;
 		.stats-date-control-picker-date__overlay {
 			grid-column: 1;
 			grid-row: 1;
+
+			.stats-card-upsell__lock {
+				visibility: hidden;
+			}
 		}
 
 		.stats-date-control-picker-dates__inputs,
