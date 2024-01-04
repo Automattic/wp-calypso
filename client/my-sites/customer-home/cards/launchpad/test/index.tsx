@@ -97,7 +97,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 		jest.mocked( apiFetch ).mockResolvedValue( DEFAULT_TAKS_RESPONSE );
 	} );
 
-	it( 'renders the launchpad', async () => {
+	it( 'renders the launchpad title', async () => {
 		render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
 		expect( await screen.findByText( 'Some cool title for you task list' ) ).toBeVisible();
@@ -161,7 +161,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 		it( "doesn't renders skip button", async () => {
 			render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
-			expect( await screen.queryByTitle( 'Skip settings' ) ).not.toBeInTheDocument();
+			expect( await screen.queryByTitle( 'Dismiss settings' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'renders the dismiss button', async () => {
@@ -191,7 +191,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 		it( 'renders the dismiss settings menu when the tasks are not completed', () => {
 			render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
-			expect( screen.queryByTitle( 'Skip settings' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTitle( 'Dismiss settings' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
