@@ -109,7 +109,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/marketplace/:intentId`,
+		`/checkout/marketplace/:productSlug`, // It should be intentId but sitelessCheckout expect param to be productSlug.
 		setLocaleMiddleware(),
 		noSite,
 		checkoutMarketplaceSiteless,
