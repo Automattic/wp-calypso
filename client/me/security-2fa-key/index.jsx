@@ -1,5 +1,4 @@
 import { Button, Card, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
