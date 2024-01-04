@@ -1,7 +1,8 @@
+import { createSelector } from '@automattic/state-utils';
+import { useSelector } from 'calypso/state';
 import { getProductDisplayCost, getProductTerm } from 'calypso/state/products-list/selectors';
 import { getTheme } from './get-theme';
 import type { AppState, Theme } from 'calypso/types';
-
 import 'calypso/state/themes/init';
 
 const PRODUCT_TERM_MONTH = 'month' as const;
@@ -40,3 +41,11 @@ export function getMarketplaceThemeSubscriptionPrices(
 		emptyPrices
 	);
 }
+
+export const useMarketplaceThemeSubscriptionPrices = ( themeId: string ) =>
+	useSelector(
+		createSelector(
+			( state ) => getMarketplaceThemeSubscriptionPrices( state, themeId ),
+			( state: AppState ) => state.themes.queries
+		)
+	);

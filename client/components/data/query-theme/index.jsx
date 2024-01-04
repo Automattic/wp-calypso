@@ -4,12 +4,26 @@ import { useDispatch } from 'react-redux';
 import { requestTheme } from 'calypso/state/themes/actions';
 import { isRequestingTheme } from 'calypso/state/themes/selectors';
 
+/**
+ * dispatches a request for a theme
+ * @deprecated use requestThemeFromApi instead
+ * @param siteId
+ * @param themeId
+ * @returns {(function(*, *): void)|*}
+ */
 const request = ( siteId, themeId ) => ( dispatch, getState ) => {
 	if ( ! isRequestingTheme( getState(), siteId, themeId ) ) {
 		dispatch( requestTheme( themeId, siteId ) );
 	}
 };
 
+/**
+ * Query a theme from the API.
+ * @deprecated use QueryCanonicalTheme instead
+ * @param {themeId: string, siteId: number|null} props
+ * @returns {null}
+ * @class
+ */
 function QueryTheme( { siteId, themeId } ) {
 	useQueryTheme( siteId, themeId );
 	return null;

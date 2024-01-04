@@ -5,7 +5,7 @@ import 'calypso/state/themes/init';
  * false otherwise.
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @param  {number}  themeId Theme ID
+ * @param  {string}  themeId Theme ID
  * @returns {boolean}        Whether request is in progress
  */
 export function isRequestingTheme( state, siteId, themeId ) {

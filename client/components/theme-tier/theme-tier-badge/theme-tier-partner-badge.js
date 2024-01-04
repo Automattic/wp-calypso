@@ -3,10 +3,8 @@ import { PremiumBadge } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
-import {
-	isMarketplaceThemeSubscribed,
-	getMarketplaceThemeSubscriptionPrices,
-} from 'calypso/state/themes/selectors';
+import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors';
+import { useMarketplaceThemeSubscriptionPrices } from 'calypso/state/themes/selectors/get-marketplace-theme-subscription-prices';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useThemeTier from '../use-theme-tier';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
@@ -21,9 +19,7 @@ export default function ThemeTierPartnerBadge() {
 	const isPartnerThemePurchased = useSelector( ( state ) =>
 		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
 	);
-	const subscriptionPrices = useSelector( ( state ) =>
-		getMarketplaceThemeSubscriptionPrices( state, themeId )
-	);
+	const subscriptionPrices = useMarketplaceThemeSubscriptionPrices( themeId );
 	const { isThemeAllowedOnSite } = useThemeTier( siteId, themeId );
 
 	const labelText = isThemeAllowedOnSite

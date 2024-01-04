@@ -42,7 +42,7 @@ export function requestThemes( siteId, query = {}, locale ) {
 
 		if ( siteId === 'wporg' ) {
 			request = () => fetchWporgThemesList( query );
-		} else if ( siteId === 'wpcom' ) {
+		} else if ( siteId === 'wpcom' || siteId === null ) {
 			request = () => makeWpcomRequest( '/themes', query, locale );
 		} else if ( query.request_type === 'my-themes' ) {
 			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );

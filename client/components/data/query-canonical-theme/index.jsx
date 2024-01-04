@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Fragment } from 'react';
 import { connect } from 'react-redux';
-import QueryTheme from 'calypso/components/data/query-theme';
+import QuerySingleTheme from 'calypso/components/data/query-theme/query-single-theme';
 import { isWpcomTheme, isWporgTheme } from 'calypso/state/themes/selectors';
 import { knownConflictingThemes } from 'calypso/state/themes/selectors/get-canonical-theme';
 
@@ -9,13 +9,24 @@ const QueryCanonicalTheme = ( { siteId, themeId, isWpcom, isWporg } ) => {
 	// Conflicting themes are themes we always search Jetpack+Atomic sites for information about.
 	// Usually, it's only searched if we can't find info on both Wpcom and Wporg.
 	const isConflictingTheme = knownConflictingThemes.has( themeId );
+
+	let sourceType = 'wpcom';
+
+	if ( isWporg && ! isWpcom ) {
+		sourceType = 'wporg';
+	}
+
+	if ( ! isWporg && ! isWpcom ) {
+		sourceType = 'jetpack';
+	}
+
+	if ( isConflictingTheme && siteId ) {
+		sourceType = 'jetpack';
+	}
+
 	return (
 		<Fragment>
-			<QueryTheme themeId={ themeId } siteId="wpcom" />
-			{ ! isWpcom && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-			{ ( ( ! isWpcom && ! isWporg ) || isConflictingTheme ) && siteId && (
-				<QueryTheme themeId={ themeId } siteId={ siteId } />
-			) }
+			<QuerySingleTheme siteId={ siteId } themeId={ themeId } sourceType={ sourceType } />
 		</Fragment>
 	);
 };
