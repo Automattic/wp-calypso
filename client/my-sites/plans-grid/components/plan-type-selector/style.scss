@@ -78,16 +78,11 @@
 	}
 }
 
-.plan-type-selector__sticky-container.is-sticky-plan-type-selector {
+div.is-sticky-plan-type-selector {
 	@include plan-type-selector-custom-mobile-breakpoint {
 		// Display above sticky feature and comparison grid plan headers
 		z-index: 3;
-	}
-}
 
-
-.is-sticky-plan-type-selector {
-	@include plan-type-selector-custom-mobile-breakpoint {
 		.components-flex {
 			position: fixed;
 			top: 0;

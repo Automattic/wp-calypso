@@ -22,7 +22,6 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 		return (
 			<StickyContainer
 				stickyClass="is-sticky-plan-type-selector"
-				className="plan-type-selector__sticky-container"
 				disabled={ ! enableStickyBehavior }
 			>
 				{ () => (

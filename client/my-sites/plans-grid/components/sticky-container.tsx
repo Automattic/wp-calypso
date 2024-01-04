@@ -5,7 +5,6 @@ import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from '
 
 type Props = {
 	children: ( isStuck: boolean ) => ReactNode;
-	className?: string; // class to apply to the sticky container
 	stickyClass?: string; // class to apply when the element is "stuck"
 	element?: ElementType; // which element to render, defaults to div
 	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
@@ -26,14 +25,7 @@ const Container = styled.div`
 `;
 
 export function StickyContainer( props: Props ) {
-	const {
-		className,
-		stickyOffset = 0,
-		stickyClass = '',
-		element = 'div',
-		disabled = false,
-		children,
-	} = props;
+	const { stickyOffset = 0, stickyClass = '', element = 'div', disabled = false, children } = props;
 
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
@@ -98,7 +90,7 @@ export function StickyContainer( props: Props ) {
 				ref={ stickyRef }
 				stickyOffset={ stickyOffset }
 				disabled={ disabled }
-				className={ classNames( { [ stickyClass ]: isStuck }, className ) }
+				className={ classNames( { [ stickyClass ]: isStuck } ) }
 			>
 				{ children( isStuck ) }
 			</Container>
