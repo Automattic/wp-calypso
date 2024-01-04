@@ -18,30 +18,30 @@ const stagingSite = {
 const activeBusinessSite = {
 	ID: 1,
 	site_owner: siteOwnerId,
-	title: 'Expired Business Site',
+	title: 'Expired Creator Site',
 	plan: {
 		expired: false,
-		product_name_short: 'Business',
+		product_name_short: 'Creator',
 	},
 };
 
 const expiredBusinessSite = {
 	ID: 1,
 	site_owner: siteOwnerId,
-	title: 'Expired Business Site',
+	title: 'Expired Creator Site',
 	plan: {
 		expired: true,
-		product_name_short: 'Business',
+		product_name_short: 'Creator',
 	},
 };
 
 const activeTrialSite = {
 	ID: 1,
 	site_owner: siteOwnerId,
-	title: 'Active Business Trial',
+	title: 'Active Creator Trial',
 	plan: {
 		expired: false,
-		product_name_short: 'Business Trial',
+		product_name_short: 'Creator Trial',
 		product_slug: PLAN_HOSTING_TRIAL_MONTHLY,
 	},
 };
@@ -49,10 +49,10 @@ const activeTrialSite = {
 const expiredTrialSite = {
 	ID: 1,
 	site_owner: siteOwnerId,
-	title: 'Expired Business Trial',
+	title: 'Expired Creator Trial',
 	plan: {
 		expired: true,
-		product_name_short: 'Business Trial',
+		product_name_short: 'Creator Trial',
 		product_slug: PLAN_HOSTING_TRIAL_MONTHLY,
 	},
 };
@@ -73,26 +73,26 @@ describe( '<SitePlan>', () => {
 		expect( container.textContent ).toBe( 'Staging' );
 	} );
 
-	test( 'shows "Business" as label for a site with an active Business plan', () => {
+	test( 'shows "Creator" as label for a site with an active Creator plan', () => {
 		const { container } = render(
 			<SitePlan site={ activeBusinessSite } userId={ otherAdminId } />
 		);
-		expect( container.textContent ).toBe( 'Business' );
+		expect( container.textContent ).toBe( 'Creator' );
 	} );
 
-	test( 'shows "Business" as label to an administrator for site with an expired Business plan', () => {
+	test( 'shows "Creator" as label to an administrator for site with an expired Creator plan', () => {
 		const { getByText, queryAllByRole } = render(
 			<SitePlan site={ expiredBusinessSite } userId={ otherAdminId } />
 		);
-		expect( getByText( 'Business - Expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Creator - Expired' ) ).toBeInTheDocument();
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'shows "Business" as label to a site owner for a site with an expired Business plan', () => {
+	test( 'shows "Creator" as label to a site owner for a site with an expired Creator plan', () => {
 		const { getByText, queryAllByRole, getByRole } = render(
 			<SitePlan site={ expiredBusinessSite } userId={ siteOwnerId } />
 		);
-		expect( getByText( 'Business - Expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Creator - Expired' ) ).toBeInTheDocument();
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 1 );
 		expect( getByRole( 'link', { name: 'Renew plan' } ) ).toHaveAttribute(
 			'href',
@@ -100,27 +100,27 @@ describe( '<SitePlan>', () => {
 		);
 	} );
 
-	test( 'shows "Business Trial" as label for a site with an active Business Trial plan', () => {
+	test( 'shows "Creator Trial" as label for a site with an active Creator Trial plan', () => {
 		const { container, queryAllByRole } = render(
 			<SitePlan site={ activeTrialSite } userId={ siteOwnerId } />
 		);
-		expect( container.textContent ).toBe( 'Business Trial' );
+		expect( container.textContent ).toBe( 'Creator Trial' );
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'shows "Business Trial" as label to an administrator for site with an expired Business Trial plan', () => {
+	test( 'shows "Creator Trial" as label to an administrator for site with an expired Creator Trial plan', () => {
 		const { container, queryAllByRole } = render(
 			<SitePlan site={ expiredTrialSite } userId={ otherAdminId } />
 		);
-		expect( container.textContent ).toBe( 'Business Trial - Expired' );
+		expect( container.textContent ).toBe( 'Creator Trial - Expired' );
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'shows "Business Trial" as label to a site owner for a site with an expired Business Trial plan', () => {
+	test( 'shows "Creator Trial" as label to a site owner for a site with an expired Creator Trial plan', () => {
 		const { getByText, queryAllByRole, getByRole } = render(
 			<SitePlan site={ expiredTrialSite } userId={ siteOwnerId } />
 		);
-		expect( getByText( 'Business Trial - Expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Creator Trial - Expired' ) ).toBeInTheDocument();
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 1 );
 		expect( getByRole( 'link', { name: 'Upgrade' } ) ).toHaveAttribute(
 			'href',

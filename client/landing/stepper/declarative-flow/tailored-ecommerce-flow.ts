@@ -152,12 +152,13 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setPlanCartItem, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const { setPlanCartItem, setPluginsToVerify, resetCouponCode } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-		const { selectedDesign, recurType } = useSelect(
+		const { selectedDesign, recurType, couponCode } = useSelect(
 			( select ) => ( {
 				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			} ),
 			[]
 		);
@@ -211,11 +212,13 @@ const ecommerceFlow: Flow = {
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
+						const couponCodeParam = couponCode ? `coupon=${ couponCode }` : '';
+						resetCouponCode();
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+							) }?redirect_to=${ returnUrl }&signup=1&${ couponCodeParam }`
 						);
 					}
 					return navigate( `checkPlan?siteSlug=${ siteSlug }` );

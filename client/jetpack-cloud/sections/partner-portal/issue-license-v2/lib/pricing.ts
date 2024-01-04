@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import type { SelectedLicenseProp } from '../types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -15,8 +14,6 @@ export const getProductPricingInfo = (
 		: parseFloat( product?.amount ) || 0;
 
 	const isDailyPricing = product.price_interval === 'day';
-
-	const isBundleUIEnabled = isEnabled( 'jetpack/bundle-licensing' );
 
 	const discountInfo: {
 		actualCost: number;
@@ -43,8 +40,7 @@ export const getProductPricingInfo = (
 			);
 		// If a monthly product is found, calculate the actual cost and discount percentage
 		if ( monthlyProduct ) {
-			const monthlyProductBundleCost =
-				( isBundleUIEnabled ? parseFloat( product.amount ) : monthlyProduct.cost ) * quantity;
+			const monthlyProductBundleCost = parseFloat( product.amount );
 			const actualCost = isDailyPricing ? monthlyProductBundleCost / 365 : monthlyProductBundleCost;
 			const discountedCost = actualCost - productBundleCost;
 			discountInfo.discountPercentage = productBundleCost

@@ -60,7 +60,7 @@ const FoldableNav = ( {
 					icon={ navItem.icon ?? <></> }
 					path="/"
 					onClickMenuItem={ () =>
-						dispatch( recordTracksEvent( navItem.trackEventName, { nav_item: navItem.title } ) )
+						dispatch( recordTracksEvent( navItem.trackEventName, { nav_item: navItem.slug } ) )
 					}
 					{ ...navItem }
 				/>

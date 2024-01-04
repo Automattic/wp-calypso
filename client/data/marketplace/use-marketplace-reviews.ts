@@ -7,7 +7,7 @@ import {
 	useInfiniteQuery,
 } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { BASE_STALE_TIME } from 'calypso/state/initial-state';
+import { BASE_STALE_TIME } from 'calypso/state/constants';
 
 const apiBase = '/sites/marketplace.wordpress.com';
 const reviewsApiBase = `${ apiBase }/comments`;
