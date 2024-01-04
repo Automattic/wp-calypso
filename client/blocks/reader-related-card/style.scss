@@ -277,9 +277,7 @@
 		-webkit-box-orient: vertical;
 	}
 }
-.reader-stream__recommended-post-dismiss {
-	display: none;
-}
+
 @include breakpoint-deprecated( "<660px" ) {
 	.reader-stream__recommended-posts {
 		margin: 0 !important;
