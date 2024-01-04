@@ -25,6 +25,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	const translate = useTranslate();
 	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
 	const currentUserId = useSelector( getCurrentUserId );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const { data, fetchNextPage, error } = useInfiniteMarketplaceReviewsQuery( {
 		...props,
 		author_exclude: currentUserId ?? undefined,
@@ -45,7 +46,17 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	} );
 	const deleteReview = ( reviewId: number ) => {
 		setIsConfirmModalVisible( false );
-		deleteReviewMutation.mutate( { reviewId: reviewId } );
+		deleteReviewMutation.mutate(
+			{ reviewId: reviewId },
+			{
+				onError: ( error ) => {
+					setErrorMessage( error.message );
+				},
+				onSuccess: () => {
+					setErrorMessage( '' );
+				},
+			}
+		);
 	};
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
@@ -86,17 +97,18 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						} ) }
 						key={ `review-${ review.id }` }
 					>
+						{ review.author === currentUserId && errorMessage && (
+							<Card className="marketplace-reviews-list__error-message" highlight="error">
+								{ errorMessage }
+							</Card>
+						) }
 						{ review.author === currentUserId && review.status === 'hold' && (
 							<Card className="marketplace-reviews-list__pending-review" highlight="warning">
-								<Gridicon className="marketplace-reviews-list__icon" icon="info" size={ 18 } />
-								<div>
-									<span className="marketplace-reviews-list__pending-review-text">
-										{ translate( 'Your review is pending approval.' ) }
-									</span>
+								<Gridicon className="marketplace-reviews-list__card-icon" icon="info" size={ 18 } />
+								<div className="marketplace-reviews-list__card-text">
+									<span>{ translate( 'Your review is pending approval.' ) }</span>
 									{ isEnabled( 'marketplace-reviews-notification' ) && (
-										<span className="marketplace-reviews-list__pending-review-text">
-											{ translate( ' You will be notified once it is published.' ) }
-										</span>
+										<span>{ translate( ' You will be notified once it is published.' ) }</span>
 									) }
 								</div>
 							</Card>
