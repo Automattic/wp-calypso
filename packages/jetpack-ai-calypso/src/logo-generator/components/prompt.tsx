@@ -11,7 +11,7 @@ import { SetStateAction, useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_PROMPT_SUBMIT } from '../../constants';
+import { EVENT_PROMPT_SUBMIT, EVENT_PROMPT_ENHANCE } from '../../constants';
 import AiIcon from '../assets/icons/ai';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import { STORE_NAME } from '../store';
@@ -25,15 +25,34 @@ export const Prompt: React.FC = () => {
 
 	const {
 		generateImage,
+		enhancePrompt,
 		setIsRequestingImage,
-		isRequestingImage,
-		savingLogoToLibrary,
-		applyingLogo,
+		setIsEnhancingPrompt,
+		isBusy,
+		isEnhancingPrompt,
 	} = useLogoGenerator();
 
-	const isLoading = isRequestingImage || savingLogoToLibrary || applyingLogo;
+	const enhancingLabel = __( 'Enhancing…', 'jetpack' );
+	const enhanceLabel = __( 'Enhance prompt', 'jetpack' );
+	const enhanceButtonLabel = isEnhancingPrompt ? enhancingLabel : enhanceLabel;
 
-	const onClick = useCallback( async () => {
+	const onEnhance = useCallback( async () => {
+		debug( 'enhancing prompt', prompt );
+		setIsEnhancingPrompt( true );
+		recordTracksEvent( EVENT_PROMPT_ENHANCE );
+
+		try {
+			const enhancedPrompt = await enhancePrompt( { prompt } );
+			setPrompt( enhancedPrompt );
+			setIsEnhancingPrompt( false );
+		} catch ( error ) {
+			// TODO: handle error
+			debug( 'error enhancing prompt', error );
+			setIsEnhancingPrompt( false );
+		}
+	}, [ enhancePrompt, prompt, setIsEnhancingPrompt ] );
+
+	const onGenerate = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
 		setIsRequestingImage( true );
 		recordTracksEvent( EVENT_PROMPT_SUBMIT );
@@ -46,7 +65,7 @@ export const Prompt: React.FC = () => {
 		// response_format=url returns object with url, otherwise b64_json
 		const logo = {
 			url: image.data[ 0 ].url,
-			description: image.data[ 0 ].revised_prompt,
+			description: prompt,
 		};
 		addLogoToHistory( logo );
 		setIsRequestingImage( false );
@@ -63,9 +82,9 @@ export const Prompt: React.FC = () => {
 					{ __( 'Describe your site:', 'jetpack' ) }
 				</div>
 				<div className="jetpack-ai-logo-generator__prompt-actions">
-					<Button variant="link" disabled={ isLoading }>
+					<Button variant="link" disabled={ isBusy } onClick={ onEnhance }>
 						<AiIcon />
-						<span>{ __( 'Enhance prompt', 'jetpack' ) }</span>
+						<span>{ enhanceButtonLabel }</span>
 					</Button>
 				</div>
 			</div>
@@ -79,13 +98,13 @@ export const Prompt: React.FC = () => {
 					) }
 					onChange={ onChange }
 					value={ prompt }
-					disabled={ isLoading }
+					disabled={ isBusy }
 				></textarea>
 				<Button
 					variant="primary"
 					className="jetpack-ai-logo-generator__prompt-submit"
-					onClick={ onClick }
-					disabled={ isLoading }
+					onClick={ onGenerate }
+					disabled={ isBusy }
 				>
 					{ __( 'Generate', 'jetpack' ) }
 				</Button>
