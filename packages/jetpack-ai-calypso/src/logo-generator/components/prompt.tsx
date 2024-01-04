@@ -7,7 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import debugFactory from 'debug';
-import { SetStateAction, useCallback, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 /**
  * Internal dependencies
  */
@@ -20,8 +20,9 @@ import './prompt.scss';
 const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
 
 export const Prompt: React.FC = () => {
-	const { addLogoToHistory } = useDispatch( STORE_NAME );
+	const { addLogoToHistory, increaseAiAssistantRequestsCount } = useDispatch( STORE_NAME );
 	const [ prompt, setPrompt ] = useState( '' );
+	const [ requestsRemaining, setRequestsRemaining ] = useState( 0 );
 
 	const {
 		generateImage,
@@ -30,6 +31,8 @@ export const Prompt: React.FC = () => {
 		setIsEnhancingPrompt,
 		isBusy,
 		isEnhancingPrompt,
+		site,
+		getAiAssistantFeature,
 	} = useLogoGenerator();
 
 	const enhancingLabel = __( 'Enhancing…', 'jetpack' );
@@ -52,8 +55,20 @@ export const Prompt: React.FC = () => {
 		}
 	}, [ enhancePrompt, prompt, setIsEnhancingPrompt ] );
 
+	const featureData = getAiAssistantFeature( String( site?.id || '' ) );
+
+	const isFreeTier = featureData?.currentTier?.value === 0;
+	const currentLimit = featureData?.currentTier?.value || 0;
+	const currentUsage = featureData?.usagePeriod?.requestsCount || 0;
+	const isUnlimited = currentLimit === 1;
+
+	useEffect( () => {
+		setRequestsRemaining( currentLimit - currentUsage );
+	}, [ currentLimit, currentUsage ] );
+
 	const onGenerate = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
+		increaseAiAssistantRequestsCount();
 		setIsRequestingImage( true );
 		recordTracksEvent( EVENT_PROMPT_SUBMIT );
 		const image = await generateImage( { prompt } );
@@ -69,11 +84,28 @@ export const Prompt: React.FC = () => {
 		};
 		addLogoToHistory( logo );
 		setIsRequestingImage( false );
-	}, [ addLogoToHistory, prompt, generateImage, setIsRequestingImage ] );
+	}, [
+		addLogoToHistory,
+		prompt,
+		generateImage,
+		setIsRequestingImage,
+		increaseAiAssistantRequestsCount,
+	] );
 
 	const onChange = useCallback( ( event: { target: { value: SetStateAction< string > } } ) => {
 		setPrompt( event.target.value );
 	}, [] );
+
+	const freeUsage = sprintf(
+		// translators: %u is the number of requests
+		__( '%u free requests remaining.', 'jetpack' ),
+		requestsRemaining
+	);
+	const tieredUsage = sprintf(
+		// translators: %u is the number of requests
+		__( '%u requests remaining.', 'jetpack' ),
+		requestsRemaining
+	);
 
 	return (
 		<div className="jetpack-ai-logo-generator__prompt">
@@ -110,18 +142,17 @@ export const Prompt: React.FC = () => {
 				</Button>
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-footer">
-				<div>
-					{ sprintf(
-						// translators: %u is the number of requests
-						__( '%u requests remaining.', 'jetpack' ),
-						18
-					) }
-				</div>
-				&nbsp;
-				<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
-					{ __( 'Upgrade', 'jetpack' ) }
-				</Button>
-				<Icon className="prompt-footer__icon" icon={ info } />
+				{ ! isUnlimited && (
+					<>
+						<div>{ isFreeTier ? freeUsage : tieredUsage }</div>
+						&nbsp;
+						<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
+							{ __( 'Upgrade', 'jetpack' ) }
+						</Button>
+						&nbsp;
+						<Icon className="prompt-footer__icon" icon={ info } />
+					</>
+				) }
 			</div>
 		</div>
 	);
