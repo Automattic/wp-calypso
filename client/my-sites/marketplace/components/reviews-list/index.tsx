@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import Card from '@automattic/components/src/card';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -34,6 +35,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		...props,
 		perPage: 1,
 		author: currentUserId ?? undefined,
+		status: 'all',
 	} );
 
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
@@ -84,6 +86,21 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						} ) }
 						key={ `review-${ review.id }` }
 					>
+						{ review.author === currentUserId && review.status === 'hold' && (
+							<Card className="marketplace-reviews-list__pending-review" highlight="warning">
+								<Gridicon className="marketplace-reviews-list__icon" icon="info" size={ 18 } />
+								<div>
+									<span className="marketplace-reviews-list__pending-review-text">
+										{ translate( 'Your review is pending approval.' ) }
+									</span>
+									{ isEnabled( 'marketplace-reviews-notification' ) && (
+										<span className="marketplace-reviews-list__pending-review-text">
+											{ translate( ' You will be notified once it is published.' ) }
+										</span>
+									) }
+								</div>
+							</Card>
+						) }
 						<div className="marketplace-reviews-list__review-container-header">
 							<div className="marketplace-reviews-list__profile-picture">
 								{ getAvatarURL( review ) ? (
