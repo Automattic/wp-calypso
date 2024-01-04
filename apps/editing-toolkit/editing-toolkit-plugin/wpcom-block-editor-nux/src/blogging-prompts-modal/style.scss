@@ -11,6 +11,11 @@
 	}
 	max-width: 800px;
 	margin: auto;
+
+	.components-modal__header-heading {
+		font-size: $font-body;
+		font-weight: 400;
+	}
 }
 
 .blogging-prompts-modal__prompt {
