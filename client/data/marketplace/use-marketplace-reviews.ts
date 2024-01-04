@@ -22,7 +22,11 @@ export type ProductProps = {
 	productType: ProductType;
 	slug: string;
 	author?: number;
+};
+
+export type FilteringProps = {
 	author_exclude?: number;
+	status?: 'approved' | 'hold' | 'all';
 };
 
 export type PaginationProps = {
@@ -30,7 +34,7 @@ export type PaginationProps = {
 	perPage?: number;
 };
 
-export type MarketplaceReviewsQueryProps = ProductProps & PaginationProps;
+export type MarketplaceReviewsQueryProps = ProductProps & FilteringProps & PaginationProps;
 
 export type MarketplaceReviewBody = {
 	content: string;
@@ -59,7 +63,7 @@ export type MarketplaceReviewResponse = {
 	};
 	author_avatar_urls: { '24': string; '48': string; '96': string };
 	link: string;
-	status: string;
+	status: 'approved' | 'hold' | 'all';
 	type: string;
 	meta: {
 		wpcom_marketplace_rating: number;
@@ -122,7 +126,8 @@ const fetchMarketplaceReviews = (
 	page: number = 1,
 	perPage: number = 10,
 	author?: number,
-	author_exclude?: number
+	author_exclude?: number,
+	status?: string
 ): Promise< MarketplaceReviewsQueryResponse > => {
 	return new Promise( ( resolve, reject ) => {
 		wpcom.req.get(
@@ -137,6 +142,7 @@ const fetchMarketplaceReviews = (
 				per_page: perPage,
 				...( author ? { author } : {} ),
 				...( author_exclude ? { author_exclude } : {} ),
+				...( status ? { status } : {} ),
 			},
 			( error: ErrorResponse, data: MarketplaceReviewResponse[], headers: HeaderResponse ) => {
 				if ( error ) {
@@ -221,7 +227,15 @@ const fetchIsUserAllowedToReview = ( {
 };
 
 export const useMarketplaceReviewsQuery = (
-	{ productType, slug, page, perPage, author, author_exclude }: MarketplaceReviewsQueryProps,
+	{
+		productType,
+		slug,
+		page,
+		perPage,
+		author,
+		author_exclude,
+		status,
+	}: MarketplaceReviewsQueryProps,
 	{
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
@@ -234,11 +248,12 @@ export const useMarketplaceReviewsQuery = (
 		slug,
 		author,
 		author_exclude,
+		status,
 		page,
 		perPage,
 	];
 	const queryFn = () =>
-		fetchMarketplaceReviews( productType, slug, page, perPage, author, author_exclude );
+		fetchMarketplaceReviews( productType, slug, page, perPage, author, author_exclude, status );
 	return useQuery( {
 		queryKey,
 		queryFn,
