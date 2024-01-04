@@ -139,7 +139,7 @@ describe( 'Launchpad', () => {
 	describe( 'when loading the Launchpad view', () => {
 		describe( 'and the site is launchpad enabled', () => {
 			it( 'does not redirect', () => {
-				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+				( useLaunchpad as jest.Mock ).mockReturnValue( {
 					...MOCK_USE_QUERY_RESULT,
 					data: { launchpad_screen: 'full' },
 				} );
@@ -154,7 +154,7 @@ describe( 'Launchpad', () => {
 			} );
 
 			it( 'does not redirect when site id is used', () => {
-				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+				( useLaunchpad as jest.Mock ).mockReturnValue( {
 					...MOCK_USE_QUERY_RESULT,
 					data: { launchpad_screen: 'full' },
 				} );

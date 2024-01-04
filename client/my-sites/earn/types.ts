@@ -14,6 +14,26 @@ export type Product = {
 	tier?: number;
 };
 
+export type Coupon = {
+	ID?: number;
+	coupon_code?: string;
+	cannot_be_combined?: boolean;
+	can_be_combined?: boolean; // TODO: remove after backend migration to 'cannot_be_combined';
+	first_time_purchase_only?: boolean;
+	start_date?: string;
+	end_date?: string;
+	plan_ids_allow_list?: number[];
+	limit_per_user?: number;
+	use_duration?: boolean;
+	use_email_allow_list?: boolean;
+	duration?: string;
+	email_allow_list?: string[];
+	discount_type?: string;
+	discount_value?: number;
+	discount_percentage?: number;
+	discount_currency?: string;
+};
+
 export type Query = {
 	[ key: string ]: string;
 };

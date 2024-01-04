@@ -459,7 +459,7 @@ $image-height: 47px;
 		max-width: 758px;
 		margin-top: 24px;
 
-		@include break-mobile {
+		@include break-medium {
 			margin-top: 20.5vh;
 		}
 

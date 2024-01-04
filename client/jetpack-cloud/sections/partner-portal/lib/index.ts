@@ -11,7 +11,6 @@ export { default as ensurePartnerPortalReturnUrl } from './ensure-partner-portal
 export { default as formatApiPartner } from './format-api-partner';
 export { default as getProductTitle } from './get-product-title';
 export { default as selectAlphabeticallySortedProductOptions } from './select-alphabetically-sorted-product-options';
-export { default as isJetpackBundle } from './is-jetpack-bundle';
 export { default as isWooCommerceProduct } from './is-woocommerce-product';
 export { default as isWpcomHostingProduct } from './is-wpcom-hosting-product';
 export { default as areLicenseKeysAssignableToMultisite } from './are-license-keys-assignable-to-multisite';

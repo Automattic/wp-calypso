@@ -116,8 +116,6 @@ function extendTiersBeyondHighestTier(
 				price: monthlyPriceDisplay,
 				views: views,
 				extension: true,
-				transform_quantity_divide_by: highestTier.transform_quantity_divide_by,
-				per_unit_fee: highestTier?.per_unit_fee,
 			} );
 		}
 
@@ -139,7 +137,7 @@ function useAvailableUpgradeTiers(
 	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
 	const { data: usageData } = usePlanUsageQuery( siteId );
 
-	if ( ! commercialProduct || ! usageData ) {
+	if ( ! commercialProduct?.price_tier_list || ! usageData ) {
 		return MOCK_PLAN_DATA;
 	}
 
@@ -178,7 +176,6 @@ function useAvailableUpgradeTiers(
 			};
 		}
 	);
-	const currencyCode = commercialProduct.currency_code || 'USD';
 
 	tiersForUi = tiersForUi.length > 0 ? tiersForUi : MOCK_PLAN_DATA;
 
@@ -187,6 +184,7 @@ function useAvailableUpgradeTiers(
 		tiersForUi = filterPurchasedTiers( tiersForUi, usageData );
 	}
 
+	const currencyCode = commercialProduct.currency_code;
 	tiersForUi = extendTiersBeyondHighestTier( tiersForUi, currencyCode, usageData );
 
 	// 3. Return the relevant upgrade options as a list.

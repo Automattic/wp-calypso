@@ -1,0 +1,81 @@
+.form-text-input-with-value-generation {
+	@extend %form-field !optional;
+	display: flex;
+	padding: 0;
+
+	&.is-focused {
+		border-color: var(--color-primary);
+		outline: none;
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+
+		&:hover {
+			box-shadow: 0 0 0 2px var(--color-primary-20);
+		}
+
+		&.is-valid {
+			box-shadow: 0 0 0 2px var(--color-success-5);
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px var(--color-success-5);
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px var(--color-error-5);
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px var(--color-error-10);
+		}
+	}
+
+	&.is-disabled {
+		background: var(--color-neutral-0);
+		border-color: var(--color-neutral-0);
+		color: var(--color-neutral-20);
+		opacity: 1;
+		-webkit-text-fill-color: var(--color-neutral-20);
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: var(--color-neutral-20);
+		}
+	}
+
+	&.is-valid {
+		border-color: var(--color-success);
+	}
+
+	&.is-valid:hover {
+		border-color: var(--color-success-40);
+	}
+
+	&.is-error {
+		border-color: var(--color-error);
+	}
+
+	&.is-error:hover {
+		border-color: var(--color-error-50);
+	}
+}
+
+.form-text-input-with-value-generation__button.is-compact {
+	flex: 0 0 auto;
+	margin: 4px;
+	text-transform: none;
+}
+
+input[type="text"].form-text-input-with-value-generation {
+	flex: 1 1 0;
+	border: none;
+	min-width: 0;
+}
+
+input[type="text"].form-text-input-with-value-generation:focus,
+input[type="text"].form-text-input-with-value-generation:focus:hover {
+	border: none;
+	box-shadow: none;
+}
