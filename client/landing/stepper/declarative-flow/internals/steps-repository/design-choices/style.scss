@@ -1,0 +1,17 @@
+.step-container.design-choices {
+	.step-container__header {
+		margin-top: 96px;
+		margin-bottom: 50px;
+
+		.formatted-header .formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+}
+
+.design-choices__container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 43px;
+}

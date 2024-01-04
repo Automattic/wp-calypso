@@ -334,12 +334,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'design-choices': {
-					const { selectedDesign: _selectedDesign } = providedDependencies;
-					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'pattern-assembler' );
-					}
-
-					return navigate( 'designSetup' );
+					return navigate( providedDependencies.destination as string );
 				}
 
 				case 'intent': {
