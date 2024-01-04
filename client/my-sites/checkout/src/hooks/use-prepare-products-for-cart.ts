@@ -4,7 +4,7 @@ import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout'
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
-import { getBillingIntent } from 'calypso/data/marketplace/use-marketplace-billing-intents';
+import { getCartProductByBillingIntentId } from 'calypso/data/marketplace/use-marketplace-billing-intents';
 import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useStripProductsFromUrl from './use-strip-products-from-url';
@@ -282,56 +282,36 @@ function useAddProductFromBillingIntent( {
 			return;
 		}
 
-		if ( ! intentId && intentId === '0' ) {
+		const billingIntentId = Number( intentId );
+
+		if ( ! billingIntentId ) {
 			debug( 'creating products from billing intent failed' );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: 'I tried and failed to create products from a billing intent',
+				message: 'I tried and failed to create products from a billing intent 2',
 			} );
 			return;
 		}
 
-		const { meta } = getProductPartsFromAlias( intentId );
+		const productsForCart: RequestCartProduct[] = [];
+		( async () => {
+			const cartProduct = await getCartProductByBillingIntentId( billingIntentId );
 
-		const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
+			if ( cartProduct ) {
+				productsForCart.push( cartProduct );
+			}
 
-		const getProductFromBillingIntent = async () => {
-			try {
-				const productsForCart: RequestCartProduct[] = [];
-				const billingIntent = await getBillingIntent( Number( intentId ) );
-
-				return productsForCart.push( {
-					product_slug: billingIntent.payload.product_slug,
-					meta: cartMeta,
-					extra: {
-						isMarketplaceSitelessCheckout: true,
-					},
-					volume: 1,
-					quantity: null,
-				} );
-			} catch ( error ) {
+			if ( productsForCart.length < 1 ) {
+				debug( 'creating products from billing intent failed' );
 				dispatch( {
 					type: 'PRODUCTS_ADD_ERROR',
 					message: 'I tried and failed to create products from a billing intent',
 				} );
-
-				return [];
+				return;
 			}
-		};
 
-		// Wesley is helping me to solve this problem.
-		const productsForCart: RequestCartProduct[] = getProductFromBillingIntent() || [];
-
-		if ( productsForCart.length < 1 ) {
-			debug( 'creating products from billing intent failed' );
-			dispatch( {
-				type: 'PRODUCTS_ADD_ERROR',
-				message: 'I tried and failed to create products from a billing intent',
-			} );
-			return;
-		}
-
-		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+			dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+		} )();
 	}, [ addHandler, dispatch, intentId ] );
 }
 
