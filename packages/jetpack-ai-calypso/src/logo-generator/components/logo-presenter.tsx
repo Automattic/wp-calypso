@@ -19,7 +19,7 @@ import type { LogoPresenterProps } from '../../types';
 import type React from 'react';
 
 const SaveInLibraryButton: React.FC = () => {
-	const { saveLogo, selectedLogo, savingLogoToLibrary: saving } = useLogoGenerator();
+	const { saveLogo, selectedLogo, isSavingLogoToLibrary: saving } = useLogoGenerator();
 	const saved = !! selectedLogo.mediaId;
 
 	const handleClick = async () => {
@@ -48,10 +48,10 @@ const SaveInLibraryButton: React.FC = () => {
 };
 
 const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo } ) => {
-	const { applyLogo, savingLogoToLibrary, applyingLogo } = useLogoGenerator();
+	const { applyLogo, isSavingLogoToLibrary, isApplyingLogo } = useLogoGenerator();
 
 	const handleClick = async () => {
-		if ( ! applyingLogo && ! savingLogoToLibrary ) {
+		if ( ! isApplyingLogo && ! isSavingLogoToLibrary ) {
 			try {
 				await applyLogo();
 				onApplyLogo();
@@ -61,7 +61,7 @@ const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo
 		}
 	};
 
-	return applyingLogo && ! savingLogoToLibrary ? (
+	return isApplyingLogo && ! isSavingLogoToLibrary ? (
 		<button className="jetpack-ai-logo-generator-modal-presenter__action">
 			<Icon icon={ <LogoIcon /> } />
 			<span className="action-text">{ __( 'Applying logo…', 'jetpack' ) }</span>
@@ -70,7 +70,7 @@ const UseOnSiteButton: React.FC< { onApplyLogo: () => void } > = ( { onApplyLogo
 		<Button
 			className="jetpack-ai-logo-generator-modal-presenter__action"
 			onClick={ handleClick }
-			disabled={ savingLogoToLibrary }
+			disabled={ isSavingLogoToLibrary }
 		>
 			<Icon icon={ <LogoIcon /> } />
 			<span className="action-text">{ __( 'Use on Site', 'jetpack' ) }</span>
