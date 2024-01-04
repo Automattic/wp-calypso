@@ -1,3 +1,4 @@
+import { RequestCartProduct } from '@automattic/shopping-cart/src/types';
 import wpcom from 'calypso/lib/wp';
 
 export type GetBillingIntentResponse = {
@@ -33,4 +34,29 @@ export const getBillingIntent = ( intentId: number ): Promise< GetBillingIntentR
 		path: `/marketplace/vendor/billing-intent/${ intentId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+/**
+ * Gets the cart product for a given intent ID.
+ * @param {number} intentId Billing intent ID.
+ * @returns {Promise} Promise RequestCartProduct object represents the billing intent or null.
+ */
+export const getCartProductByBillingIntentId = async (
+	intentId: number
+): Promise< RequestCartProduct | null > => {
+	try {
+		const billingIntent = await getBillingIntent( intentId );
+
+		return {
+			product_slug: billingIntent.payload.store_product_slug,
+			meta: String( billingIntent.billing_plan_id ),
+			extra: {
+				isMarketplaceSitelessCheckout: true,
+			},
+			volume: 1,
+			quantity: null,
+		};
+	} catch ( error ) {
+		return null;
+	}
 };
