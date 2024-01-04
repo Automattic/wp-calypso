@@ -4,6 +4,7 @@ import {
 	loadTextFormatting,
 	addApiMiddleware,
 } from '@automattic/verbum-block-editor';
+import { useRtl } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -19,6 +20,7 @@ const CommentBlockEditor = ( {
 	commentContent: string;
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
+	const isRTL = useRtl();
 
 	useEffect( () => {
 		if ( siteId ) {
@@ -28,7 +30,7 @@ const CommentBlockEditor = ( {
 
 	return (
 		<div className="editor__wrapper">
-			<Editor initialContent={ commentContent } onChange={ onChange } />
+			<Editor initialContent={ commentContent } onChange={ onChange } isRTL={ isRTL } />
 		</div>
 	);
 };

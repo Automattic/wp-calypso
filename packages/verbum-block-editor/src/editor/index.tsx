@@ -28,7 +28,7 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
 /**
  * Editor component
  */
-export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange } ) => {
+export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange, isRTL } ) => {
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
 		value: editorContent,
@@ -92,7 +92,7 @@ export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange
 				} }
 			>
 				<BlockEditorProvider
-					settings={ editorSettings }
+					settings={ editorSettings( isRTL ) }
 					value={ editorContent }
 					useSubRegistry={ false }
 					onInput={ handleContentUpdate }
