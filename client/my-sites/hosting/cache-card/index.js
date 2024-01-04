@@ -83,8 +83,7 @@ export const CacheCard = ( {
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
 	const { setEdgeCache } = useSetEdgeCacheMutation( {
-		onSettled: ( ...args ) => {
-			const active = args[ 2 ].active;
+		onSuccess: ( data, { active } ) => {
 			recordTracksEvent(
 				active
 					? 'calypso_hosting_configuration_edge_cache_enable'
@@ -97,6 +96,17 @@ export const CacheCard = ( {
 				createNotice(
 					'is-success',
 					active ? translate( 'Edge cache enabled.' ) : translate( 'Edge cache disabled.' ),
+					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
+				)
+			);
+		},
+		onError: ( error, { active } ) => {
+			dispatch(
+				createNotice(
+					'is-error',
+					active
+						? translate( 'Failed to enable edge cache.' )
+						: translate( 'Failed to disable edge cache.' ),
 					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
 				)
 			);

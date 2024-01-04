@@ -95,12 +95,20 @@ export const useCommandsArrayWpcom = ( {
 	const dispatch = useDispatch();
 
 	const { setEdgeCache } = useSetEdgeCacheMutation( {
-		onSettled: ( ...args ) => {
-			const { active } = args[ 2 ];
+		onSuccess: ( data, { active } ) => {
 			dispatch(
 				createNotice(
 					'is-success',
 					active ? __( 'Edge cache enabled.' ) : __( 'Edge cache disabled.' ),
+					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
+				)
+			);
+		},
+		onError: ( error, { active } ) => {
+			dispatch(
+				createNotice(
+					'is-error',
+					active ? __( 'Failed to enable edge cache.' ) : __( 'Failed to disable edge cache.' ),
 					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
 				)
 			);

@@ -66,6 +66,7 @@ export const useSetEdgeCacheMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation< boolean, MutationError, SetEdgeCacheMutationVariables >( {
+		...options,
 		mutationFn: async ( { active, siteId } ) => {
 			return await wp.req.post( {
 				path: `/sites/${ siteId }/hosting/edge-cache/active`,
@@ -84,9 +85,11 @@ export const useSetEdgeCacheMutation = (
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], active );
 			return previousData;
 		},
-		onError( _err, { siteId }, prevValue ) {
+		onError( ...args ) {
+			const [ , { siteId }, prevValue ] = args;
 			// Revert to previous settings on failure
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], Boolean( prevValue ) );
+			options?.onError?.( ...args );
 		},
 		onSettled: ( ...args ) => {
 			const { siteId } = args[ 2 ];
@@ -130,9 +133,6 @@ export const useClearEdgeCacheMutation = (
 		mutationFn: async () => purgeEdgeCache( siteId ),
 		...options,
 		mutationKey: [ CLEAR_EDGE_CACHE_MUTATION_KEY, siteId ],
-		onSuccess: async ( ...args ) => {
-			options?.onSuccess?.( ...args );
-		},
 	} );
 
 	const { mutate } = mutation;
