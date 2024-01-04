@@ -286,7 +286,7 @@ function useAddProductFromBillingIntent( {
 
 		const billingIntentId = Number( intentId );
 
-		if ( ! billingIntentId ) {
+		if ( isNaN( billingIntentId ) || billingIntentId < 1 ) {
 			debug( 'creating products from billing intent failed' );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
