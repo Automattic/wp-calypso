@@ -1261,6 +1261,9 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 					volume: 1,
 					extra: { feature_slug: FEATURE_50GB_STORAGE_ADD_ON },
 				} );
+				recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+					add_on_slug: FEATURE_50GB_STORAGE_ADD_ON,
+				} );
 				break;
 			case FEATURE_100GB_STORAGE_ADD_ON:
 				cartItem.push( {
@@ -1268,6 +1271,9 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 					quantity: 100,
 					volume: 1,
 					extra: { feature_slug: FEATURE_100GB_STORAGE_ADD_ON },
+				} );
+				recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+					add_on_slug: FEATURE_100GB_STORAGE_ADD_ON,
 				} );
 				break;
 		}
