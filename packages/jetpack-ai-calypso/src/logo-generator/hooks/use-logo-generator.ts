@@ -52,7 +52,7 @@ const useLogoGenerator = () => {
 		};
 	}, [] );
 
-	const { ID = null, name = null, description = null } = siteDetails;
+	const { ID = null, name = null, description = null } = siteDetails || {};
 	const siteId = ID ? String( ID ) : null;
 
 	const saveLogo = useCallback<
