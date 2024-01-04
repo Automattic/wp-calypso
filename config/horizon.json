@@ -88,6 +88,7 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"onboarding/design-choices": false,
 		"p2/p2-plus": true,
 		"pattern-assembler/v2": false,
 		"plans/hosting-trial": true,

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -60,6 +61,7 @@ const siteSetupFlow: Flow = {
 			STEPS.GOALS,
 			STEPS.INTENT,
 			STEPS.OPTIONS,
+			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
 			STEPS.PATTERN_ASSEMBLER,
 			STEPS.BLOGGER_STARTING_POINT,
@@ -322,9 +324,22 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 						case SiteIntent.Sell:
 							return navigate( 'options' );
-						default:
+						default: {
+							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+								return navigate( 'design-choices' );
+							}
 							return navigate( 'designSetup' );
+						}
 					}
+				}
+
+				case 'design-choices': {
+					const { selectedDesign: _selectedDesign } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
+						return navigate( 'pattern-assembler' );
+					}
+
+					return navigate( 'designSetup' );
 				}
 
 				case 'intent': {
@@ -447,9 +462,17 @@ const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
-						default:
+						default: {
+							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+								return navigate( 'design-choices' );
+							}
 							return navigate( 'goals' );
+						}
 					}
+
+				case 'design-choices': {
+					return navigate( 'goals' );
+				}
 
 				case 'pattern-assembler':
 					return navigate( 'designSetup' );
