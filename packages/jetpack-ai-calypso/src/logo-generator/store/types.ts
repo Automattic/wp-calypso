@@ -150,8 +150,8 @@ export type Selectors = {
 	getLogos(): Array< Logo >;
 	getSelectedLogo(): Logo;
 	getSiteDetails(): SiteDetails;
-	getSavingLogoToLibrary(): boolean;
-	getApplyingLogo(): boolean;
+	getIsSavingLogoToLibrary(): boolean;
+	getIsApplyingLogo(): boolean;
 	getIsRequestingImage(): boolean;
 };
 

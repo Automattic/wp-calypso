@@ -27,11 +27,11 @@ export const Prompt: React.FC = () => {
 		generateImage,
 		setIsRequestingImage,
 		isRequestingImage,
-		savingLogoToLibrary,
-		applyingLogo,
+		isSavingLogoToLibrary,
+		isApplyingLogo,
 	} = useLogoGenerator();
 
-	const isLoading = isRequestingImage || savingLogoToLibrary || applyingLogo;
+	const isLoading = isRequestingImage || isSavingLogoToLibrary || isApplyingLogo;
 
 	const onClick = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );

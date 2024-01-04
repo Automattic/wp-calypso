@@ -59,7 +59,7 @@ const selectors = {
 	 * @param {LogoGeneratorStateProp} state - The app state tree.
 	 * @returns {boolean}                      The isSavingToLibrary flag.
 	 */
-	getSavingLogoToLibrary( state: LogoGeneratorStateProp ): boolean {
+	getIsSavingLogoToLibrary( state: LogoGeneratorStateProp ): boolean {
 		return state._meta?.isSavingLogoToLibrary ?? false;
 	},
 
@@ -68,7 +68,7 @@ const selectors = {
 	 * @param {LogoGeneratorStateProp} state - The app state tree.
 	 * @returns {boolean}                      The isApplyingLogo flag.
 	 */
-	getApplyingLogo( state: LogoGeneratorStateProp ): boolean {
+	getIsApplyingLogo( state: LogoGeneratorStateProp ): boolean {
 		return state._meta?.isApplyingLogo ?? false;
 	},
 

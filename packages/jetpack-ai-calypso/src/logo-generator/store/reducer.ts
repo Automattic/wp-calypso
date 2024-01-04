@@ -16,9 +16,9 @@ import {
 	ACTION_SET_SELECTED_LOGO_INDEX,
 	ACTION_ADD_LOGO_TO_HISTORY,
 	ACTION_SAVE_SELECTED_LOGO,
-	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
+	ACTION_SET_IS_SAVING_LOGO_TO_LIBRARY,
 	ACTION_SET_IS_REQUESTING_IMAGE,
-	ACTION_SET_APPLYING_LOGO,
+	ACTION_SET_IS_APPLYING_LOGO,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { TierLimitProp } from './types';
@@ -209,7 +209,7 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			};
 		}
 
-		case ACTION_SET_SAVING_LOGO_TO_LIBRARY: {
+		case ACTION_SET_IS_SAVING_LOGO_TO_LIBRARY: {
 			return {
 				...state,
 				_meta: {
@@ -219,7 +219,7 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			};
 		}
 
-		case ACTION_SET_APPLYING_LOGO: {
+		case ACTION_SET_IS_APPLYING_LOGO: {
 			return {
 				...state,
 				_meta: {
