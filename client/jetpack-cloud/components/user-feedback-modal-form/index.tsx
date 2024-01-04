@@ -6,6 +6,7 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
+import useSubmitProductFeedback from './use-submit-product-feedback';
 
 import './style.scss';
 
@@ -23,6 +24,8 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 	const [ feedback, setFeedback ] = useState( DEFAULT_FEEDBACK_VALUE );
 	const [ rating, setRating ] = useState( DEFAULT_RATING_VALUE );
 
+	const { isSubmittingFeedback, submitFeedback } = useSubmitProductFeedback();
+
 	const onFeedbackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setFeedback( event.currentTarget.value );
 	}, [] );
@@ -37,9 +40,10 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 		if ( ! hasCompletedForm ) {
 			return;
 		}
-
-		// TODO: send feedback to backend
-	}, [ hasCompletedForm ] );
+		// Remove the hash from the URL.
+		const sourceUrl = window.location.href.split( '#' )[ 0 ];
+		submitFeedback( { feedback, rating, source_url: sourceUrl } );
+	}, [ feedback, hasCompletedForm, rating, submitFeedback ] );
 
 	const onModalClose = useCallback( () => {
 		setFeedback( DEFAULT_FEEDBACK_VALUE );
@@ -100,6 +104,7 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 
 			<div className="user-feedback-modal-form__footer">
 				<Button
+					busy={ isSubmittingFeedback }
 					className="user-feedback-modal-form__footer-submit"
 					primary
 					disabled={ ! hasCompletedForm }
