@@ -308,7 +308,7 @@ export const useUpdateMarketplaceReviewMutation = ( {
 		page,
 		perPage,
 	];
-	return useMutation( {
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, UpdateMarketplaceReviewProps >( {
 		mutationFn: updateReview,
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey } );
@@ -334,7 +334,7 @@ export const useDeleteMarketplaceReviewMutation = ( {
 		page,
 		perPage,
 	];
-	return useMutation( {
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, DeleteMarketplaceReviewProps >( {
 		mutationFn: deleteReview,
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey } );
