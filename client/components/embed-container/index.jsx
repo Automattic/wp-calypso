@@ -23,6 +23,7 @@ const embedsToLookFor = {
 	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
 	'.wp-block-jetpack-tiled-gallery': embedTiledGallery,
 	'.wp-embedded-content': embedWordPressPost,
+	'a[data-pin-do="embedPin"]': embedPinterest,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -116,6 +117,11 @@ function embedFacebook( domNode ) {
 	}
 
 	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
+}
+
+function embedPinterest( domNode ) {
+	debug( 'processing Pinterest for', domNode );
+	loadAndRun( '//assets.pinterest.com/js/pinit.js', noop );
 }
 
 function embedReddit( domNode ) {
