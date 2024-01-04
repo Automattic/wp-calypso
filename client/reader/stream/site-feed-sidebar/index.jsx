@@ -56,7 +56,9 @@ const FeedStreamSidebar = ( {
 					{ followerCount && (
 						<div className="reader-tag-sidebar-stats__item">
 							<span className="reader-tag-sidebar-stats__count">
-								{ followerCount.toLocaleString( getLocaleSlug() ) }
+								{ Intl.NumberFormat( getLocaleSlug(), { notation: 'compact' } ).format(
+									followerCount
+								) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
 								{ translate( 'Subscriber', 'Subscribers', { count: followerCount } ) }
