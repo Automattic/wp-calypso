@@ -95,17 +95,16 @@ export const Prompt: React.FC = () => {
 		setPrompt( event.target.value );
 	}, [] );
 
-	const usage = isFreeTier
-		? sprintf(
-				// translators: %u is the number of requests
-				__( '%u free requests remaining.', 'jetpack' ),
-				requestsRemaining
-		  )
-		: sprintf(
-				// translators: %u is the number of requests
-				__( '%u requests remaining.', 'jetpack' ),
-				requestsRemaining
-		  );
+	const freeUsage = sprintf(
+		// translators: %u is the number of requests
+		__( '%u free requests remaining.', 'jetpack' ),
+		requestsRemaining
+	);
+	const tieredUsage = sprintf(
+		// translators: %u is the number of requests
+		__( '%u requests remaining.', 'jetpack' ),
+		requestsRemaining
+	);
 
 	return (
 		<div className="jetpack-ai-logo-generator__prompt">
@@ -144,7 +143,7 @@ export const Prompt: React.FC = () => {
 			<div className="jetpack-ai-logo-generator__prompt-footer">
 				{ ! isUnlimited && (
 					<>
-						<div>{ usage }</div>
+						<div>{ isFreeTier ? freeUsage : tieredUsage }</div>
 						&nbsp;
 						<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
 							{ __( 'Upgrade', 'jetpack' ) }
