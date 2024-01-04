@@ -89,14 +89,16 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 						{ review.author === currentUserId && review.status === 'hold' && (
 							<Card className="marketplace-reviews-list__pending-review" highlight="warning">
 								<Gridicon className="marketplace-reviews-list__icon" icon="info" size={ 18 } />
-								<span className="marketplace-reviews-list__pending-review-text">
-									{ translate( 'Your review is pending approval.' ) }
-								</span>
-								{ isEnabled( 'marketplace-reviews-notification' ) && (
+								<div>
 									<span className="marketplace-reviews-list__pending-review-text">
-										{ translate( 'You will be notified once it is published.' ) }
+										{ translate( 'Your review is pending approval.' ) }
 									</span>
-								) }
+									{ isEnabled( 'marketplace-reviews-notification' ) && (
+										<span className="marketplace-reviews-list__pending-review-text">
+											{ translate( ' You will be notified once it is published.' ) }
+										</span>
+									) }
+								</div>
 							</Card>
 						) }
 						<div className="marketplace-reviews-list__review-container-header">
