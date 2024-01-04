@@ -59,6 +59,7 @@ export const Prompt: React.FC = () => {
 	const isFreeTier = featureData?.hasFeature ? false : true;
 	const currentLimit = featureData?.currentTier?.limit || 0;
 	const currentUsage = featureData?.usagePeriod?.requestsCount || 0;
+	const isUnlimited = currentLimit === 1;
 
 	useEffect( () => {
 		setRequestsRemaining( currentLimit - currentUsage );
@@ -141,13 +142,17 @@ export const Prompt: React.FC = () => {
 				</Button>
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-footer">
-				<div>{ usage }</div>
-				&nbsp;
-				<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
-					{ __( 'Upgrade', 'jetpack' ) }
-				</Button>
-				&nbsp;
-				<Icon className="prompt-footer__icon" icon={ info } />
+				{ ! isUnlimited && (
+					<>
+						<div>{ usage }</div>
+						&nbsp;
+						<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
+							{ __( 'Upgrade', 'jetpack' ) }
+						</Button>
+						&nbsp;
+						<Icon className="prompt-footer__icon" icon={ info } />
+					</>
+				) }
 			</div>
 		</div>
 	);
