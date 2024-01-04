@@ -134,6 +134,7 @@ export type LogoGeneratorStateProp = {
 		isSavingLogoToLibrary: boolean;
 		isApplyingLogo: boolean;
 		isRequestingImage: boolean;
+		isEnhancingPrompt: boolean;
 	};
 	siteDetails?: SiteDetails;
 	suggestions: Array< LogoSuggestionProps >;
@@ -150,9 +151,11 @@ export type Selectors = {
 	getLogos(): Array< Logo >;
 	getSelectedLogo(): Logo;
 	getSiteDetails(): SiteDetails;
-	getSavingLogoToLibrary(): boolean;
-	getApplyingLogo(): boolean;
+	getIsSavingLogoToLibrary(): boolean;
+	getIsApplyingLogo(): boolean;
 	getIsRequestingImage(): boolean;
+	getIsEnhancingPrompt(): boolean;
+	getIsBusy(): boolean;
 };
 
 /*
