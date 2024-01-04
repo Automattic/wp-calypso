@@ -16,6 +16,7 @@ export type GetBillingIntentResponse = {
 		billing_period: string;
 		billing_interval: number;
 		return_url: string;
+		store_product_slug: string;
 	};
 	status: string;
 	date_created: string;
