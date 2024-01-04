@@ -22,7 +22,6 @@ interface Props {
 	suggestedProduct?: string | null;
 	isMultiSelect?: boolean;
 	hideDiscount?: boolean;
-	withBackground?: boolean;
 	quantity?: number;
 }
 
@@ -35,7 +34,6 @@ export default function LicenseProductCard( props: Props ) {
 		suggestedProduct,
 		isMultiSelect,
 		hideDiscount,
-		withBackground,
 		quantity,
 	} = props;
 
@@ -117,7 +115,6 @@ export default function LicenseProductCard( props: Props ) {
 					'license-product-card': true,
 					selected: isSelected,
 					disabled: isDisabled,
-					'license-product-card--with-background': withBackground,
 				} ) }
 			>
 				<div className="license-product-card__inner">
