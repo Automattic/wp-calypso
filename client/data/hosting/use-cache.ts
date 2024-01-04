@@ -5,8 +5,11 @@ import {
 	useQueryClient,
 	useIsMutating,
 } from '@tanstack/react-query';
+import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { createNotice } from 'calypso/state/notices/actions';
 
 export const EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID = 'edge-cache-enable-disable-notice';
 export const USE_EDGE_CACHE_QUERY_KEY = 'edge-cache-key';
@@ -64,6 +67,8 @@ export const useEdgeCacheQuery = ( siteId: number ) => {
 export const useSetEdgeCacheMutation = (
 	options: UseMutationOptions< boolean, MutationError, SetEdgeCacheMutationVariables > = {}
 ) => {
+	const { __ } = useI18n();
+	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const mutation = useMutation< boolean, MutationError, SetEdgeCacheMutationVariables >( {
 		...options,
@@ -85,10 +90,33 @@ export const useSetEdgeCacheMutation = (
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], active );
 			return previousData;
 		},
+		onSuccess( ...args ) {
+			const [ , { active } ] = args;
+			dispatch(
+				createNotice(
+					'is-success',
+					active ? __( 'Edge cache enabled.' ) : __( 'Edge cache disabled.' ),
+					{
+						duration: 5000,
+						id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+					}
+				)
+			);
+			options?.onSuccess?.( ...args );
+		},
 		onError( ...args ) {
-			const [ , { siteId }, prevValue ] = args;
+			const [ , { active, siteId }, prevValue ] = args;
 			// Revert to previous settings on failure
 			queryClient.setQueryData( [ USE_EDGE_CACHE_QUERY_KEY, siteId ], Boolean( prevValue ) );
+
+			dispatch(
+				createNotice(
+					'is-error',
+					active ? __( 'Failed to enable edge cache.' ) : __( 'Failed to disable edge cache.' ),
+					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
+				)
+			);
+
 			options?.onError?.( ...args );
 		},
 		onSettled: ( ...args ) => {
@@ -104,8 +132,21 @@ export const useSetEdgeCacheMutation = (
 	const { mutate, ...rest } = mutation;
 
 	const setEdgeCache = useCallback(
-		( siteId: number, active: boolean ) => mutate( { siteId, active } ),
-		[ mutate ]
+		( siteId: number, active: boolean ) => {
+			dispatch(
+				createNotice(
+					'is-plain',
+					active ? __( 'Enabling edge cache…' ) : __( 'Disabling edge cache…' ),
+					{
+						duration: 5000,
+						id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
+					}
+				)
+			);
+
+			mutate( { siteId, active } );
+		},
+		[ dispatch, mutate, __ ]
 	);
 
 	return { setEdgeCache, ...rest };
