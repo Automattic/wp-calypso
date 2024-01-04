@@ -75,7 +75,7 @@ class SharingServiceTip extends Component {
 			'You can also add the {{blockLink}}Latest Instagram Posts block{{/blockLink}} to display your latest Instagram photos on your site.',
 			{
 				components: {
-					widgetLink: (
+					blockLink: (
 						<a
 							href={ localizeUrl( 'https://wordpress.com/support/instagram/' ) }
 						/>
