@@ -20,6 +20,11 @@ class SecurityKeyForm extends Component {
 		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		showOrDivider: PropTypes.bool,
+		isWoo: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isWoo: false,
 	};
 
 	state = {
@@ -38,7 +43,7 @@ class SecurityKeyForm extends Component {
 	};
 
 	render() {
-		const { translate, switchTwoFactorAuthType } = this.props;
+		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
 
 		return (
 			<form
