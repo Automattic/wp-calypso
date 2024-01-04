@@ -123,9 +123,9 @@ const useLogoGenerator = () => {
 			return;
 		}
 		let data;
-		const params = {
+		const body = {
 			prompt,
-			token: tokenData.token,
+			feature: 'jetpack-ai-logo-generator',
 			response_format: 'url',
 		};
 		if ( ! isSimple ) {
@@ -139,12 +139,55 @@ const useLogoGenerator = () => {
 			data = await wpcomProxyRequest( {
 				apiNamespace: 'wpcom/v2',
 				path: '/jetpack-ai-image',
-				method: 'GET',
-				query: new URLSearchParams( params ).toString(),
+				method: 'POST',
+				token: tokenData.token,
+				body,
 			} );
 		}
 
 		return data;
+	};
+
+	const enhancePrompt = async function ( { prompt }: { prompt: string } ): Promise< string > {
+		const tokenData = await requestJwt( { siteDetails } );
+
+		if ( ! tokenData || ! tokenData.token ) {
+			// TODO: handle error
+			throw new Error( 'No token provided' );
+		}
+
+		const systemMessage = `Enhance the prompt you receive.
+The prompt is meant for generating a logo. Return the same prompt enhanced, and make each enhancement wrapped in brackets.
+For example: user's prompt: A logo for an ice cream shop. Returned prompt: A logo for an ice cream shop [that is pink] [and vibrant].`;
+
+		const messages = [
+			{
+				role: 'system',
+				content: systemMessage,
+			},
+			{
+				role: 'user',
+				content: prompt,
+			},
+		];
+
+		const body = {
+			messages,
+			feature: 'jetpack-ai-logo-generator',
+			stream: false,
+		};
+
+		const data = await wpcomProxyRequest< { choices: Array< { message: { content: string } } > } >(
+			{
+				apiNamespace: 'wpcom/v2',
+				path: '/jetpack-ai-query',
+				method: 'POST',
+				token: tokenData.token,
+				body,
+			}
+		);
+
+		return data?.choices?.[ 0 ]?.message?.content;
 	};
 
 	return {
@@ -159,6 +202,7 @@ const useLogoGenerator = () => {
 		saveLogo,
 		applyLogo,
 		generateImage,
+		enhancePrompt,
 		setIsEnhancingPrompt,
 		setIsRequestingImage,
 		setIsSavingLogoToLibrary,
