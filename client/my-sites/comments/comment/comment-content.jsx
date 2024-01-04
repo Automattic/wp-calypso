@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
 import DOMPurify from 'dompurify';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -8,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryComment from 'calypso/components/data/query-comment';
+import EmbedContainer from 'calypso/components/embed-container';
 import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
@@ -91,61 +91,26 @@ export class CommentContent extends Component {
 								{ this.renderInReplyTo() }
 							</div>
 						) }
-
 						<AutoDirection>
-							<div
-								className={ classnames( 'comment__content-body', {
-									'with-blocks': hasBlocks( commentRawContent ),
-								} ) }
-								// eslint-disable-next-line react/no-danger
-								dangerouslySetInnerHTML={ {
-									__html: DOMPurify.sanitize( commentContent, {
-										ALLOWED_TAGS: [
-											'p',
-											'figcaption',
-											'iframe',
-											'img',
-											'span',
-											'#text',
-											'div',
-											'figure',
-											'a',
-											'strong',
-											'em',
-											'br',
-											'ul',
-											'ol',
-											'li',
-											'blockquote',
-											'pre',
-											'cite',
-											'code',
-										],
-										ALLOWED_ATTR: [
-											'style',
-											'class',
-											'href',
-											'src',
-											'title',
-											'target',
-											'width',
-											'height',
-											'frameborder',
-											'allow',
-											'loading',
-											'aria-controls',
-											'aria-current',
-											'aria-describedby',
-											'aria-details',
-											'aria-expanded',
-											'aria-hidden',
-											'aria-label',
-											'aria-labelledby',
-											'aria-live',
-										],
-									} ),
-								} }
-							/>
+							<EmbedContainer>
+								{ hasBlocks( commentRawContent ) ? (
+									<div
+										className="comment__content-body with-blocks"
+										// eslint-disable-next-line react/no-danger
+										dangerouslySetInnerHTML={ {
+											__html: commentContent,
+										} }
+									/>
+								) : (
+									<div
+										className="comment__content-body"
+										// eslint-disable-next-line react/no-danger
+										dangerouslySetInnerHTML={ {
+											__html: DOMPurify.sanitize( commentContent ),
+										} }
+									/>
+								) }
+							</EmbedContainer>
 						</AutoDirection>
 					</div>
 				) }

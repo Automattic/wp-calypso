@@ -2,7 +2,7 @@ import { loadScript } from '@automattic/load-script';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
-import { Children, PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import DotPager from 'calypso/components/dot-pager';
@@ -22,6 +22,7 @@ const embedsToLookFor = {
 	'.embed-tiktok': embedTikTok,
 	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
 	'.wp-block-jetpack-tiled-gallery': embedTiledGallery,
+	'.wp-embedded-content': embedWordPressPost,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -125,6 +126,11 @@ function embedReddit( domNode ) {
 function embedTikTok( domNode ) {
 	debug( 'processing tiktok for ', domNode );
 	loadAndRun( 'https://www.tiktok.com/embed.js', noop );
+}
+
+function embedWordPressPost( domNode ) {
+	debug( 'processing WordPress for ', domNode );
+	loadAndRun( 'https://wordpress.com/wp-includes/js/wp-embed.min.js', noop );
 }
 
 let tumblrLoader;
@@ -287,12 +293,18 @@ export default class EmbedContainer extends PureComponent {
 	componentDidMount() {
 		processEmbeds( ReactDom.findDOMNode( this ) );
 	}
-
 	componentDidUpdate() {
 		processEmbeds( ReactDom.findDOMNode( this ) );
 	}
-
+	componentWillUnmount() {
+		// Unmark the contents as done because they may not be on the following re-render.
+		ReactDom.findDOMNode( this )
+			.querySelectorAll( [ 'data-wpcom-embed-processed' ] )
+			.forEach( ( node ) => {
+				node.removeAttribute( 'data-wpcom-embed-processed' );
+			} );
+	}
 	render() {
-		return Children.only( this.props.children );
+		return this.props.children;
 	}
 }
