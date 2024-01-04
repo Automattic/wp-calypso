@@ -117,6 +117,7 @@ const gotoCheckoutPage = ( {
 	redirectUri,
 	price,
 	quantity,
+	isTierUpgradeSliderEnabled,
 }: {
 	from: string;
 	type: 'pwyw' | 'free' | 'commercial';
@@ -125,11 +126,10 @@ const gotoCheckoutPage = ( {
 	redirectUri?: string;
 	price?: number;
 	quantity?: number;
+	isTierUpgradeSliderEnabled?: boolean;
 } ) => {
 	let eventName = '';
 	let product: string;
-
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	switch ( type ) {
 		case 'pwyw':

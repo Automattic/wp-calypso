@@ -16,10 +16,15 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import version_compare from 'calypso/lib/version-compare';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	getSiteOption,
+	getJetpackStatsAdminVersion,
+} from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
@@ -42,8 +47,6 @@ const StatsPurchasePage = ( {
 	query: { redirect_uri: string; from: string; productType: 'commercial' | 'personal' };
 } ) => {
 	const translate = useTranslate();
-	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -55,6 +58,18 @@ const StatsPurchasePage = ( {
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
 	) as boolean;
+
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isTierUpgradeSliderEnabled = !! (
+		config.isEnabled( 'stats/tier-upgrade-slider' ) &&
+		( ! isOdysseyStats ||
+			( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
+	);
 
 	const {
 		isRequestingSitePurchases,

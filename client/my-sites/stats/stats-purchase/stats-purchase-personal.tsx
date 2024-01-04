@@ -8,8 +8,10 @@ import formatCurrency from '@automattic/format-currency';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import version_compare from 'calypso/lib/version-compare';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 import StatsPWYWUpgradeSlider from './stats-pwyw-uprade-slider';
@@ -92,7 +94,16 @@ const PersonalPurchase = ( {
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const isTierUpgradeSliderEnabled = !! (
+		config.isEnabled( 'stats/tier-upgrade-slider' ) &&
+		( ! isOdysseyStats ||
+			( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
+	);
+
 	const handleSliderChanged = ( index: number ) => {
 		// TODO: Remove state from caller.
 		// Caller expects an index but doesn't do anything with it.
@@ -232,7 +243,14 @@ const PersonalPurchase = ( {
 						! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked
 					}
 					onClick={ () =>
-						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+						gotoCheckoutPage( {
+							from,
+							type: 'free',
+							siteSlug,
+							adminUrl,
+							redirectUri,
+							isTierUpgradeSliderEnabled,
+						} )
 					}
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
@@ -249,6 +267,7 @@ const PersonalPurchase = ( {
 							adminUrl,
 							redirectUri,
 							price: subscriptionValue / MIN_STEP_SPLITS,
+							isTierUpgradeSliderEnabled,
 						} )
 					}
 				>

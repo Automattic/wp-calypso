@@ -1,10 +1,13 @@
+import config from '@automattic/calypso-config';
 import { Button as CalypsoButton } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import version_compare from 'calypso/lib/version-compare';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { StatsCommercialPriceDisplay } from './stats-purchase-shared';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
@@ -37,6 +40,17 @@ const CommercialPurchase = ( {
 	const learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-site-types';
+
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isTierUpgradeSliderEnabled = !! (
+		config.isEnabled( 'stats/tier-upgrade-slider' ) &&
+		( ! isOdysseyStats ||
+			( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
+	);
 
 	return (
 		<div>
@@ -71,7 +85,14 @@ const CommercialPurchase = ( {
 				variant="primary"
 				primary={ isWPCOMSite ? true : undefined }
 				onClick={ () =>
-					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+					gotoCheckoutPage( {
+						from,
+						type: 'commercial',
+						siteSlug,
+						adminUrl,
+						redirectUri,
+						isTierUpgradeSliderEnabled,
+					} )
 				}
 			>
 				{ translate( 'Get Jetpack Stats' ) }

@@ -5,8 +5,10 @@ import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import version_compare from 'calypso/lib/version-compare';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
@@ -106,9 +108,19 @@ const StatsCommercialPurchase = ( {
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const { isCommercialOwned } = useStatsPurchases( siteId );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const isTierUpgradeSliderEnabled = !! (
+		config.isEnabled( 'stats/tier-upgrade-slider' ) &&
+		( ! isOdysseyStats ||
+			( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
+	);
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -118,8 +130,6 @@ const StatsCommercialPurchase = ( {
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
 	const startingTierQuantity = getTierQuentity( tiers[ 0 ], isTierUpgradeSliderEnabled );
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
-
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const handleClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
 		event.preventDefault();
@@ -166,7 +176,14 @@ Thanks\n\n`;
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
 						onClick={ () =>
-							gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
+							gotoCheckoutPage( {
+								from,
+								type: 'commercial',
+								siteSlug,
+								adminUrl,
+								redirectUri,
+								isTierUpgradeSliderEnabled,
+							} )
 						}
 					>
 						{ translate( 'Get Stats' ) }
@@ -194,6 +211,7 @@ Thanks\n\n`;
 								redirectUri,
 								price: undefined,
 								quantity: purchaseTierQuantity,
+								isTierUpgradeSliderEnabled,
 							} )
 						}
 					>
