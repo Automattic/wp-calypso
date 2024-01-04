@@ -216,7 +216,6 @@
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
 		"themes/text-search-lots": true,
-		"themes/theme-switch-persist-template": false,
 		"themes/assembler-first": true,
 		"themes/tiers": true,
 		"titan/iframe-control-panel": false,
