@@ -3,7 +3,7 @@
  */
 import { SiteDetails } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
@@ -205,9 +205,6 @@ describe( 'PreMigration', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		isFetchingUserSettings.mockReturnValue( false );
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		getUserSetting.mockReturnValue( false );
 
 		expect( screen.getByText( 'You are ready to migrate' ) ).toBeInTheDocument();
 
@@ -235,5 +232,48 @@ describe( 'PreMigration', () => {
 		expect(
 			screen.getByText( 'Please make sure all fields are filled in correctly before proceeding.' )
 		).toBeInTheDocument();
+	} );
+
+	test( 'should show credential form screen for developer account', async () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useSiteMigrateInfo.mockReturnValue( {
+			sourceSiteId: 777712,
+			fetchMigrationEnabledStatus: jest.fn(),
+			isFetchingData: false,
+			siteCanMigrate: true,
+			isInitFetchingDone: true,
+		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		getUserSetting.mockImplementation( ( state, settings ) => {
+			if ( settings === 'is_dev_account' ) {
+				return true;
+			}
+			return false;
+		} );
+
+		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
+			targetSite: targetSite,
+			isTargetSitePlanCompatible: true,
+			isMigrateFromWp: true,
+			onContentOnlyClick,
+		} );
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		isRequestingSiteCredentials.mockReturnValue( false );
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		isFetchingUserSettings.mockReturnValue( false );
+
+		await waitFor( () => {
+			expect(
+				screen.getByText( 'Do you need help locating your credentials?' )
+			).toBeInTheDocument();
+			expect( screen.getByText( 'Start migration' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Skip credentials (slower setup)' ) ).toBeInTheDocument();
+		} );
 	} );
 } );

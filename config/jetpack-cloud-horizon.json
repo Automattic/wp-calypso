@@ -35,7 +35,6 @@
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
 		"jetpack-cloud": true,
-		"jetpack/bundle-licensing": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-retention-settings": true,

@@ -91,7 +91,7 @@ const linkInBioDomain: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: variantSlug,
 			redirectTo: redirectTo,
-			pageTitle: 'Link in Bio',
+			pageTitle: translate( 'Link in Bio' ),
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {

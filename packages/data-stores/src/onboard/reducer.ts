@@ -413,6 +413,16 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 	return state;
 };
 
+const couponCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_COUPON_CODE' ) {
+		return action.couponCode;
+	}
+	if ( [ 'RESET_COUPON_CODE', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return '';
+	}
+	return state;
+};
+
 const domainForm: Reducer< DomainForm, OnboardAction > = ( state = {}, action ) => {
 	if ( action.type === 'SET_DOMAIN_FORM' ) {
 		return {
@@ -611,6 +621,7 @@ const reducer = combineReducers( {
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
+	couponCode,
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,

@@ -76,10 +76,13 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const isHelpCenterShown = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-		[]
-	);
+	const { isHelpCenterShown, storedSite } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			storedSite: helpCenterSelect.getSite(),
+			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+		};
+	}, [] );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -103,7 +106,7 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useEffect( () => {
 		setSite( usedSite );
-	}, [ usedSite, setSite ] );
+	}, [ usedSite, setSite, storedSite ] );
 
 	useStillNeedHelpURL();
 

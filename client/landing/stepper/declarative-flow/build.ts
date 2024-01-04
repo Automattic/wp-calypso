@@ -1,6 +1,5 @@
 import { BUILD_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -13,7 +12,7 @@ import { Flow, ProvidedDependencies } from './internals/types';
 const build: Flow = {
 	name: BUILD_FLOW,
 	get title() {
-		return translate( 'WordPress' );
+		return 'WordPress';
 	},
 	useSteps() {
 		return [

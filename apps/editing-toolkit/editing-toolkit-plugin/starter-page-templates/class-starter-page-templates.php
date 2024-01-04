@@ -39,6 +39,7 @@ class Starter_Page_Templates {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 		add_action( 'delete_attachment', array( $this, 'clear_sideloaded_image_cache' ) );
 		add_action( 'switch_theme', array( $this, 'clear_templates_cache' ) );
+		add_action( 'block_editor_settings_all', array( $this, 'add_default_editor_styles_for_classic_themes' ), 10, 2 );
 	}
 
 	/**
@@ -399,5 +400,40 @@ class Starter_Page_Templates {
 		}
 
 		return $registered_categories;
+	}
+
+	/**
+	 * Fix for text overlapping on the page patterns preview on classic themes.
+	 *
+	 * @param object $editor_settings Editor settings.
+	 * @param object $editor_context  Editor context.
+	 *
+	 * Only for classic themes because the default styles for block themes include a line-height for the body.
+	 * This issue would not exist if the WordPress wp-admin common.css for the body element (line-height: 1.4em)
+	 * does not overwrite the Gutenberg block-library reset.css for .editor-styles-wrapper (line-height: normal).
+	 *
+	 * This fix adds the default editor styles as custom styles in the editor settings. These are used in the
+	 * editor canvas (.editor-styles-wrapper) and pattern previews (BlockPreview).
+	 * Custom styles are safe because they are overwritten by local block styles, global styles, or theme stylesheets.
+	 **/
+	public function add_default_editor_styles_for_classic_themes( $editor_settings, $editor_context ) {
+		$theme = wp_get_theme( normalize_theme_slug( get_stylesheet() ) );
+		if ( $theme->is_block_theme() ) {
+			// Only for classic themes
+			return $editor_settings;
+		}
+		if ( 'core/edit-post' !== $editor_context->name || 'page' !== $editor_context->post->post_type ) {
+			// Only for page editor
+			return $editor_settings;
+		}
+		$default_editor_styles_file = gutenberg_dir_path() . 'build/block-editor/default-editor-styles.css';
+		if ( ! file_exists( $default_editor_styles_file ) ) {
+			return $editor_settings;
+		}
+		$default_editor_styles       = file_get_contents( $default_editor_styles_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$editor_settings['styles'][] = array(
+			'css' => $default_editor_styles,
+		);
+		return $editor_settings;
 	}
 }
