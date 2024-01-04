@@ -380,6 +380,16 @@ const couponCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const storageAddonSlug: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STORAGE_ADDON' ) {
+		return action.storageAddonSlug;
+	}
+	if ( [ 'RESET_STORAGE_ADDON', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return '';
+	}
+	return state;
+};
+
 const domainForm: Reducer< DomainForm, OnboardAction > = ( state = {}, action ) => {
 	if ( action.type === 'SET_DOMAIN_FORM' ) {
 		return {
@@ -575,6 +585,7 @@ const reducer = combineReducers( {
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	couponCode,
+	storageAddonSlug,
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,

@@ -3,6 +3,9 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
+	PRODUCT_1GB_SPACE,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
@@ -50,6 +53,17 @@ function getPlanFromRecurType( recurType: string ) {
 		default:
 			return PLAN_ECOMMERCE_MONTHLY;
 	}
+}
+
+function getQuantityFromStorageType( storageAddonSlug: string ) {
+	switch ( storageAddonSlug ) {
+		case FEATURE_50GB_STORAGE_ADD_ON:
+			return 50;
+		case FEATURE_100GB_STORAGE_ADD_ON:
+			return 100;
+	}
+
+	return null;
 }
 
 const ecommerceFlow: Flow = {
@@ -152,13 +166,15 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setPlanCartItem, setPluginsToVerify, resetCouponCode } = useDispatch( ONBOARD_STORE );
+		const { setPlanCartItem, setProductCartItems, setPluginsToVerify, resetCouponCode } =
+			useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-		const { selectedDesign, recurType, couponCode } = useSelect(
+		const { selectedDesign, recurType, couponCode, storageAddonSlug } = useSelect(
 			( select ) => ( {
 				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
 				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+				storageAddonSlug: ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
 			} ),
 			[]
 		);
@@ -183,6 +199,10 @@ const ecommerceFlow: Flow = {
 					setPlanCartItem( {
 						product_slug: selectedPlan,
 						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
+					} );
+					setProductCartItems( {
+						product_slug: PRODUCT_1GB_SPACE,
+						quantity: getQuantityFromStorageType( storageAddonSlug ),
 					} );
 					return navigate( 'siteCreationStep' );
 
