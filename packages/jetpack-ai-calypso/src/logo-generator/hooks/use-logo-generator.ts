@@ -33,9 +33,10 @@ const useLogoGenerator = () => {
 		siteDetails,
 		isSavingLogoToLibrary,
 		isApplyingLogo,
-		isRequestingImage,
 		isEnhancingPrompt,
 		isBusy,
+		isRequestingImage,
+		getAiAssistantFeature,
 	} = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
 		return {
@@ -47,6 +48,7 @@ const useLogoGenerator = () => {
 			isRequestingImage: selectors.getIsRequestingImage(),
 			isEnhancingPrompt: selectors.getIsEnhancingPrompt(),
 			isBusy: selectors.getIsBusy(),
+			getAiAssistantFeature: selectors.getAiAssistantFeature,
 		};
 	}, [] );
 
@@ -221,6 +223,7 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		isSavingLogoToLibrary,
 		isApplyingLogo,
 		isBusy,
+		getAiAssistantFeature,
 	};
 };
 
