@@ -24,6 +24,7 @@ const embedsToLookFor = {
 	'.wp-block-jetpack-tiled-gallery': embedTiledGallery,
 	'.wp-embedded-content': embedWordPressPost,
 	'a[data-pin-do="embedPin"]': embedPinterest,
+	'div.embed-issuu': embedIssuu,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -117,6 +118,11 @@ function embedFacebook( domNode ) {
 	}
 
 	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
+}
+function embedIssuu( domNode ) {
+	debug( 'processing Issuu for', domNode );
+
+	loadAndRun( '//e.issuu.com/embed.js', noop );
 }
 
 function embedPinterest( domNode ) {
