@@ -209,7 +209,7 @@ export class CommentEdit extends Component {
 					{ hasBlocks( commentContent ) ? (
 						<AsyncLoad
 							require="./comment-block-editor"
-							fallback={ <Spinner /> }
+							placeholder={ <Spinner style={ { margin: 20 } } /> }
 							commentContent={ commentContent }
 							onChange={ this.setCommentContentValue }
 						/>
