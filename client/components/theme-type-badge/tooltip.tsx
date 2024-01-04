@@ -12,6 +12,7 @@ import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import ThemeTierBadgeCheckoutLink from 'calypso/components/theme-tier/theme-tier-badge/theme-tier-badge-checkout-link';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import {
@@ -106,11 +107,17 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
+	const premiumPlan = plans?.data?.[ PLAN_PREMIUM ];
 	let message;
 	if ( isLockedStyleVariation ) {
-		message = translate(
-			'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.',
-			{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
+		message = createInterpolateElement(
+			// Translators: %(premiumPlanName)s is the name of the premium plan that includes this theme. Examples: "Explorer" or "Premium".
+			translate(
+				'Unlock this style, and tons of other features, by upgrading to a <Link>%(premiumPlanName)s plan</Link>.',
+				{ args: { premiumPlanName: premiumPlan?.productNameShort || '' }, textOnly: true }
+			),
+			// @ts-expect-error -- Property children is missing, but provided by the createInterpolateElement function.
+			{ Link: <ThemeTierBadgeCheckoutLink plan={ premiumPlan?.planSlug } /> }
 		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
