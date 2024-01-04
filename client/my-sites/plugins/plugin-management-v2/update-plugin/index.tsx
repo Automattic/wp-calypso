@@ -66,7 +66,7 @@ export default function UpdatePlugin( {
 	const showConfirmationModal = () => (
 		<ConfirmModal
 			isVisible={ displayConfirmModal }
-			confirmButtonLabel={ translate( 'Yes' ) }
+			confirmButtonLabel={ translate( 'Update' ) }
 			text={ translate(
 				'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d site. ',
 				'You are about to update the %(plugin)s plugin to version %(version)s, on %(siteCount)d sites. ',
