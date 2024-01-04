@@ -7,6 +7,7 @@ import {
 	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
+import { parse } from '@wordpress/blocks';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
@@ -27,14 +28,14 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
 /**
  * Editor component
  */
-export const Editor: React.FC< EditorProps > = ( { initialContent, onChange } ) => {
+export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange } ) => {
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
 		value: editorContent,
 		setValue: setEditorContent,
 		undo,
 		redo,
-	} = useStateWithHistory( initialContent ) as unknown as StateWithUndoManager;
+	} = useStateWithHistory( parse( initialContent ) ) as unknown as StateWithUndoManager;
 	const [ isEditing, setIsEditing ] = useState( false );
 
 	const handleContentUpdate = useCallback(
@@ -50,38 +51,36 @@ export const Editor: React.FC< EditorProps > = ( { initialContent, onChange } ) 
 
 	const { selectBlock } = useDispatch( blockEditorStore );
 
-	const selectLastBlock = useCallback(
-		( event?: MouseEvent | KeyboardEvent ) => {
-			const lastBlock = editorContent[ editorContent.length - 1 ];
+	const selectLastBlock = ( event?: MouseEvent | KeyboardEvent ) => {
+		const lastBlock = editorContent[ editorContent.length - 1 ];
 
-			// If this is a click event only shift focus if the click is in the root.
-			// We don't want to shift focus if the click is in a block.
-			if ( event ) {
-				if ( ( event.target as HTMLDivElement ).dataset.isDropZone ) {
-					// If the last block isn't a paragraph, add a new one.
-					// This allows the user to add text after a non-text block without clicking the inserter.
-					if ( lastBlock.name !== 'core/paragraph' ) {
-						const newParagraph = createBlock( 'core/paragraph' );
-						handleContentUpdate( [ ...editorContent, newParagraph ] );
-						selectBlock( newParagraph.clientId );
-					}
-
-					selectBlock( lastBlock.clientId );
-				} else {
-					return;
+		// If this is a click event only shift focus if the click is in the root.
+		// We don't want to shift focus if the click is in a block.
+		if ( event ) {
+			if ( ( event.target as HTMLDivElement ).dataset.isDropZone ) {
+				// If the last block isn't a paragraph, add a new one.
+				// This allows the user to add text after a non-text block without clicking the inserter.
+				if ( lastBlock.name !== 'core/paragraph' ) {
+					const newParagraph = createBlock( 'core/paragraph' );
+					handleContentUpdate( [ ...editorContent, newParagraph ] );
+					selectBlock( newParagraph.clientId );
 				}
-			}
 
-			selectBlock( lastBlock.clientId );
-		},
-		[ editorContent, handleContentUpdate, selectBlock ]
-	);
+				selectBlock( lastBlock.clientId );
+			} else {
+				return;
+			}
+		}
+
+		selectBlock( lastBlock.clientId );
+	};
 
 	useEffect( () => {
 		// Select the first item in the editor when it loads.
 		selectLastBlock();
 		setIsEditing( true );
-	}, [ selectLastBlock ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- we want to run this once
+	}, [] );
 
 	return (
 		<SlotFillProvider>

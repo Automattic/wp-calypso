@@ -4,7 +4,6 @@ import {
 	loadTextFormatting,
 	addApiMiddleware,
 } from '@automattic/verbum-block-editor';
-import { parse } from '@wordpress/blocks';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -29,10 +28,7 @@ const CommentBlockEditor = ( {
 
 	return (
 		<div className="editor__wrapper">
-			<Editor
-				initialContent={ commentContent ? parse( commentContent ) : [] }
-				onChange={ onChange }
-			/>
+			<Editor initialContent={ commentContent } onChange={ onChange } />
 		</div>
 	);
 };

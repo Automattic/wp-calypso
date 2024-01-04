@@ -1,9 +1,8 @@
 import { type BlockInstance } from '@wordpress/blocks';
 
 export interface EditorProps {
-	initialContent?: BlockInstance[];
+	initialContent: string;
 	onChange: ( content: string ) => void;
-	commentId?: number;
 }
 
 export interface StateWithUndoManager {
