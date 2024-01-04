@@ -7,15 +7,15 @@ import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 
 export function useToSFoldableCard(): boolean {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const section = useSelector( getSectionName );
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);
 
+	const section = useSelector( getSectionName );
 	const enabledSections = [ 'business-plan-upgrade-upsell', 'checkout' ];
 
 	const isWPcomCheckout =
-		section != null &&
+		section &&
 		enabledSections.includes( section ) &&
 		! isJetpackCheckout() &&
 		! isAkismetCheckout() &&
