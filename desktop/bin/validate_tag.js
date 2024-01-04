@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-//
-// Checks whether the version value in the package.json is the same as the
-// given input.
-//
+/* Checks whether the version value in the package.json is the same as the
+   given input.*/
+
 
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -15,8 +14,8 @@ if ( process.argv.length === 2 ) {
 }
 
 const version = process.argv[ 2 ];
-// Remove the leading v that a tag from version control may have.
-// This regex means "a letter v at the start of the string"
+/* Remove the leading v that a tag from version control may have.
+   This regex means "a letter v at the start of the string"*/
 const sanitizedVersion = version.replace( /^desktop-v/, '' );
 
 console.log( `Validating package.json version matches ${ version }...` );
