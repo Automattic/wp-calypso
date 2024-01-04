@@ -120,7 +120,7 @@ export default function LicensePreview( {
 	const isSiteAtomic =
 		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
-	const isParentLicense = isEnabled( 'jetpack/bundle-licensing' ) && quantity && parentLicenseId;
+	const isParentLicense = quantity && parentLicenseId;
 
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" type="info">

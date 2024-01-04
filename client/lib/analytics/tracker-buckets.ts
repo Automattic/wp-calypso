@@ -95,7 +95,6 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	criteo: () => 'criteo_q' in window,
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
-	parsely: () => 'PARSELY' in window,
 	clarity: () => 'clarity' in window,
 };
 

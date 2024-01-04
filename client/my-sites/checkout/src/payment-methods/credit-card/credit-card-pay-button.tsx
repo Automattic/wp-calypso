@@ -7,7 +7,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { logStashEvent } from '../../lib/analytics';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
@@ -71,6 +73,27 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
+						if ( ! cardNumberElement ) {
+							// This should never happen because they won't get
+							// to this point if the credit card fields are not
+							// filled-in (see isCreditCardFormValid) but it
+							// seems to happen so let's tell the user
+							// something.
+							setDisplayFieldsError(
+								__(
+									'Something seems to be wrong with the credit card form. Please try again or contact support for help.'
+								)
+							);
+							reduxDispatch(
+								recordTracksEvent( 'calypso_checkout_card_missing_element', {
+									error: 'No card number element found on page when submtting form.',
+								} )
+							);
+							logStashEvent( 'calypso_checkout_card_missing_element', {
+								error: 'No card number element found on page when submtting form.',
+							} );
+							return;
+						}
 						onClick( {
 							stripe,
 							name: cardholderName?.value,

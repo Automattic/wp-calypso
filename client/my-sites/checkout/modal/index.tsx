@@ -95,6 +95,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 				previousPath={ previousRoute }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
 				isLeavingAllowed
+				loadHelpCenterIcon
 			/>
 			<CalypsoShoppingCartProvider>
 				<StripeHookProvider

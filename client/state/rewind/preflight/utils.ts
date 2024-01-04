@@ -12,6 +12,11 @@ import { PreflightTest, PreflightTestStatus } from './types';
  * @returns The overall status as a PreflightTestStatus enum value.
  */
 export const calculateOverallStatus = ( tests: PreflightTest[] ): PreflightTestStatus => {
+	// If there are no tests, the overall status is PENDING.
+	if ( tests.length === 0 ) {
+		return PreflightTestStatus.PENDING;
+	}
+
 	if ( tests.some( ( test ) => test.status === PreflightTestStatus.FAILED ) ) {
 		return PreflightTestStatus.FAILED;
 	} else if ( tests.some( ( test ) => test.status === PreflightTestStatus.IN_PROGRESS ) ) {
