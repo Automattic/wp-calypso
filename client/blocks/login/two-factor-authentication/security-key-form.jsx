@@ -64,7 +64,7 @@ class SecurityKeyForm extends Component {
 							</p>
 							<p>
 								{ translate(
-									'Insert your hardware security key, or follow the instructions in your browser or phone to use your finger print or facial recognition.'
+									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
 								) }
 							</p>
 						</div>
