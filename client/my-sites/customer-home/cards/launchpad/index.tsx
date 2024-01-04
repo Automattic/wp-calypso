@@ -17,10 +17,10 @@ interface CustomerHomeLaunchpadProps {
 	onSiteLaunched?: () => void;
 }
 
-const CustomerHomeLaunchpad = ( {
+const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	checklistSlug,
 	onSiteLaunched,
-}: CustomerHomeLaunchpadProps ): JSX.Element => {
+}: CustomerHomeLaunchpadProps ) => {
 	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
