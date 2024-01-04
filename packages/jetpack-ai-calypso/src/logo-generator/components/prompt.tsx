@@ -57,7 +57,7 @@ export const Prompt: React.FC = () => {
 
 	const featureData = getAiAssistantFeature( String( site?.id || '' ) );
 	const isFreeTier = featureData?.hasFeature ? false : true;
-	const currentLimit = featureData?.currentTier?.limit || 0;
+	const currentLimit = featureData?.currentTier?.value || 0;
 	const currentUsage = featureData?.usagePeriod?.requestsCount || 0;
 	const isUnlimited = currentLimit === 1;
 
