@@ -36,6 +36,7 @@ export function generateSteps( {
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
 	isAddOnsFulfilled = noop,
+	maybeAddStorageAddonToCart = noop,
 	isDomainFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	createSiteAndAddDIFMToCart = noop,
@@ -891,6 +892,15 @@ export function generateSteps( {
 			fulfilledStepCallback: isAddOnsFulfilled,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+		},
+
+		'storage-addon': {
+			stepName: 'storage-addon',
+			apiRequestFunction: addAddOnsToCart,
+			fulfilledStepCallback: maybeAddStorageAddonToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			optionalDependencies: [ 'cartItem' ],
 		},
 
 		'difm-site-picker': {
