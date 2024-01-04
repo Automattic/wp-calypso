@@ -651,12 +651,11 @@ const Settings = ( {
 				showDismiss={ false }
 				status="is-warning"
 			>
-				{ /*
-					TO DO: Enable the link when the support page is ready
-					<NoticeAction href={ domain.pendingRegistrationAtRegistryUrl }>
+				{ domain?.pendingRegistrationAtRegistryUrl && (
+					<NoticeAction external href={ domain?.pendingRegistrationAtRegistryUrl }>
 						{ translate( 'More info' ) }
 					</NoticeAction>
-				*/ }
+				) }
 			</Notice>
 		);
 	};
