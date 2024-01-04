@@ -88,7 +88,6 @@ class AuthorCompactProfile extends Component {
 								args: {
 									followCount: Intl.NumberFormat( getLocaleSlug(), {
 										notation: 'compact',
-										roundingPriority: 'lessPrecision',
 										maximumFractionDigits: 1,
 									} ).format( followCount ),
 								},

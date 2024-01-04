@@ -58,7 +58,6 @@ const FeedStreamSidebar = ( {
 							<span className="reader-tag-sidebar-stats__count">
 								{ Intl.NumberFormat( getLocaleSlug(), {
 									notation: 'compact',
-									roundingPriority: 'lessPrecision',
 									maximumFractionDigits: 1,
 								} ).format( followerCount ) }
 							</span>
