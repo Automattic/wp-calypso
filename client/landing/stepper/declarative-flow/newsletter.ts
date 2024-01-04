@@ -88,7 +88,7 @@ const newsletter: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/newsletterSetup`,
-			pageTitle: 'Newsletter',
+			pageTitle: translate( 'Newsletter' ),
 		} );
 
 		const completeSubscribersTask = async () => {

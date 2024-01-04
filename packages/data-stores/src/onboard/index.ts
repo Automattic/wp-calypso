@@ -60,6 +60,7 @@ export function register(): typeof STORE_KEY {
 			'verticalId',
 			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
+			'couponCode',
 			'domainCartItem',
 			'planCartItem',
 			'productCartItems',

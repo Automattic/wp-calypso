@@ -118,18 +118,17 @@
 	}
 
 	.pattern-assembler-cta__button {
-		background-color: #fc8f65;
-		border-color: #fc8f65;
+		background-color: #010101;
+		border-color: #010101;
 		border-radius: 4px;
-		color: #1d2327;
 		letter-spacing: -0.15px;
 		line-height: 20px;
 		padding: 10px 24px;
 
-		&:hover {
-			background-color: #d67a56;
-			border-color: #d67a56;
-			color: #1d2327;
+		&:hover,
+		&:focus {
+			background-color: #333;
+			border-color: #333;
 		}
 	}
 

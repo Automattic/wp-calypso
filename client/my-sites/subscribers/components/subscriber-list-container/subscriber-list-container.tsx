@@ -19,12 +19,14 @@ type SubscriberListContainerProps = {
 	siteId: number | null;
 	onClickView: ( subscriber: Subscriber ) => void;
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriberListContainer = ( {
 	siteId,
 	onClickView,
 	onClickUnsubscribe,
+	onGiftSubscription,
 }: SubscriberListContainerProps ) => {
 	const {
 		grandTotal,
@@ -83,7 +85,11 @@ const SubscriberListContainer = ( {
 			{ ! isLoading && Boolean( grandTotal ) && (
 				<>
 					{ Boolean( total ) && (
-						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
+						<SubscriberList
+							onView={ onClickView }
+							onGiftSubscription={ onGiftSubscription }
+							onUnsubscribe={ onClickUnsubscribe }
+						/>
 					) }
 					{ ! total && <NoSearchResults searchTerm={ searchTerm } /> }
 
