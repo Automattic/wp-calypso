@@ -32,7 +32,7 @@ export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
 		value: editorContent,
-		setValue: setEditorContent,
+		setValue,
 		undo,
 		redo,
 	} = useStateWithHistory( parse( initialContent ) ) as unknown as StateWithUndoManager;
@@ -40,10 +40,10 @@ export const Editor: React.FC< EditorProps > = ( { initialContent = '', onChange
 
 	const handleContentUpdate = useCallback(
 		( content: BlockInstance[] ) => {
-			setEditorContent( content );
+			setValue( content );
 			onChange( serialize( content ) );
 		},
-		[ setEditorContent, onChange ]
+		[ setValue, onChange ]
 	);
 
 	// Listen for the content height changing and update the iframe height.
