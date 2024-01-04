@@ -3,7 +3,7 @@ import { Gridicon } from '@automattic/components';
 import apiFetch from '@wordpress/api-fetch';
 import { createBlock } from '@wordpress/blocks';
 import { Button, Modal } from '@wordpress/components';
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -94,7 +94,11 @@ export const BloggingPromptsModalInner = () => {
 };
 
 export const BloggingPromptsModal = () => {
-	const shouldOpen = getQueryArg( window.location.href, 'new_prompt' );
+	const hasQueryArg = getQueryArg( window.location.href, 'new_prompt' );
+	const editorType = select( 'core/editor' ).getCurrentPostType();
+
+	const shouldOpen = hasQueryArg && editorType === 'post';
+
 	if ( ! shouldOpen ) {
 		return null;
 	}
