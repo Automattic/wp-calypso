@@ -243,7 +243,7 @@
 }
 
 // Comment Content
-.comment__content-body.without-blocks {
+.comment__content-body:not(.with-blocks) {
 	*:last-child {
 		margin-bottom: 0;
 	}
