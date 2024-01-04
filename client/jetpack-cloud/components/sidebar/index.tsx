@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Icon, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -15,6 +16,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
 import JetpackCloudSiteSelector from './site-selector';
 
@@ -54,6 +56,7 @@ const JetpackCloudSidebar = ( {
 	description,
 	backButtonProps,
 }: Props ) => {
+	const isAgency = useSelector( isAgencyUser );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const jetpackAdminUrl = useSelector( ( state ) =>
 		siteId ? getJetpackAdminUrl( state, siteId ) : null
@@ -62,13 +65,17 @@ const JetpackCloudSidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( false );
+
 	const isUserFeedbackEnabled = isEnabled( 'jetpack/user-feedback-form' );
 
-	const isAgency = useSelector( isAgencyUser );
+	const onShowUserFeedbackForm = useCallback( () => {
+		setShowUserFeedbackForm( true );
+	}, [] );
 
-	const onShowUserFeedbackForm = () => {
-		// TODO: Show user feedback form modal.
-	};
+	const onCloseUserFeedbackForm = useCallback( () => {
+		setShowUserFeedbackForm( false );
+	}, [] );
 
 	return (
 		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
@@ -145,6 +152,8 @@ const JetpackCloudSidebar = ( {
 			</SidebarFooter>
 
 			<JetpackCloudSiteSelector />
+
+			<UserFeedbackModalForm show={ showUserFeedbackForm } onClose={ onCloseUserFeedbackForm } />
 		</Sidebar>
 	);
 };
