@@ -347,7 +347,7 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	PublicFormRadio = ( checked, onChange ) => {
+	publicFormRadio = ( checked, onChange ) => {
 		const { isRequestingSettings, translate, eventTracker } = this.props;
 		return (
 			<FormLabel className="site-settings__visibility-label is-public">
@@ -444,7 +444,7 @@ export class SiteSettingsFormGeneral extends Component {
 					) }
 				{ isWpcomStagingSite && (
 					<>
-						{ this.PublicFormRadio(
+						{ this.publicFormRadio(
 							( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
 								( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
 								blogPublic === 1,
@@ -464,7 +464,7 @@ export class SiteSettingsFormGeneral extends Component {
 				) }
 				{ ! isNonAtomicJetpackSite &&
 					! isWpcomStagingSite &&
-					this.PublicFormRadio(
+					this.publicFormRadio(
 						( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
 							( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
 							blogPublic === 1,
