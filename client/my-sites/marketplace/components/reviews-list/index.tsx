@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -71,12 +72,16 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		);
 	}
 
+	const allReviews = [ ...userReviews, ...reviews ];
+
 	return (
 		<div className="marketplace-reviews-list__container">
 			<div className="marketplace-reviews-list__customer-reviews">
-				{ [ ...userReviews, ...reviews ].map( ( review: MarketplaceReviewResponse ) => (
+				{ allReviews.map( ( review: MarketplaceReviewResponse, i ) => (
 					<div
-						className="marketplace-reviews-list__review-container"
+						className={ classnames( 'marketplace-reviews-list__review-container', {
+							last: i === allReviews.length - 1,
+						} ) }
 						key={ `review-${ review.id }` }
 					>
 						<div className="marketplace-reviews-list__review-container-header">
@@ -113,8 +118,8 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 							} }
 							className="marketplace-reviews-list__content"
 						></div>
-						<div className="marketplace-reviews-list__review-actions">
-							{ review.author === currentUserId && (
+						{ review.author === currentUserId && (
+							<div className="marketplace-reviews-list__review-actions">
 								<div className="marketplace-reviews-list__review-actions-editable">
 									<button
 										className="marketplace-reviews-list__review-actions-editable-button"
@@ -141,8 +146,8 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 										/>
 									</div>
 								</div>
-							) }
-						</div>
+							</div>
+						) }
 					</div>
 				) ) }
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
