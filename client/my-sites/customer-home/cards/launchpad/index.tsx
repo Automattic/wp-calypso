@@ -32,7 +32,7 @@ const CustomerHomeLaunchpad = ( {
 		data: {
 			checklist,
 			is_dismissed: initialIsChecklistDismissed,
-			is_dismissable: isDismissable,
+			is_dismissible: isDismissable,
 			title,
 		},
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );

@@ -88,7 +88,7 @@ const DEFAULT_TAKS_RESPONSE = {
 	],
 	is_enabled: false,
 	is_dismissed: false,
-	is_dismissable: true,
+	is_dismissible: true,
 	title: 'Some cool title for you task list',
 };
 
@@ -120,7 +120,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 		it( 'doesnt renders the launchpad', () => {
 			const data = {
 				...DEFAULT_TAKS_RESPONSE,
-				is_dismissed: true,
+				is_dismissable: true,
 			};
 			jest.mocked( apiFetch ).mockResolvedValueOnce( data );
 
@@ -174,7 +174,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 	describe( 'when the launchpad is NOT dismissable', () => {
 		const dismissableTask = {
 			...DEFAULT_TAKS_RESPONSE,
-			is_dismissable: false,
+			is_dismissed: false,
 		};
 
 		beforeAll( () => {
