@@ -1,5 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .blogging-prompts-modal {
-	width: 40%;
+	@include break-small {
+		width: 80%;
+	}
+	@include break-large {
+		width: 60%;
+	}
+	max-width: 800px;
+	margin: auto;
 }
 
 .blogging-prompts-modal__prompt {
@@ -20,6 +30,9 @@
 		border-radius: 50%;
 		width: 44px;
 		height: 44px;
+		&.components-button:hover:not(:disabled,[aria-disabled="true"]) {
+			box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
 	}
 
 	.blogging-prompts-modal__prompt-text {
@@ -28,6 +41,7 @@
 		line-height: 26px;
 		text-align: left;
 		width: 100%;
+		text-wrap: pretty;
 	}
 }
 
