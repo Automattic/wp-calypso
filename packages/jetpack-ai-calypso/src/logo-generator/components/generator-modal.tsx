@@ -31,10 +31,15 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const { selectedLogo, getAiAssistantFeature } = useLogoGenerator();
 	const siteId = siteDetails?.ID;
-	// setSiteDetails( siteDetails );
+
+	useEffect( () => {
+		setSiteDetails( siteDetails );
+	}, [ siteDetails, setSiteDetails ] );
+
 	useEffect( () => {
 		if ( isOpen ) {
 			getAiAssistantFeature( String( siteId ) );
+
 			setTimeout( () => {
 				setIsLoading( false );
 			}, 1000 );
