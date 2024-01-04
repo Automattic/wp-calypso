@@ -38,7 +38,9 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 
 	useEffect( () => {
 		if ( isOpen ) {
-			getAiAssistantFeature( String( siteId ) );
+			if ( siteId ) {
+				getAiAssistantFeature( String( siteId ) );
+			}
 
 			setTimeout( () => {
 				setIsLoading( false );
