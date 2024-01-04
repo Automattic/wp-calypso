@@ -118,13 +118,22 @@ const useLogoGenerator = () => {
 		const tokenData = await requestJwt( { siteDetails } );
 		const isSimple = ! siteDetails.is_wpcom_atomic;
 
+		const imageGenerationPrompt = `I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS:
+Create a text-free vector logo that symbolically represents the user request, using abstract or symbolic imagery.
+The design should be modern, with a either a vivid color scheme full of gradients or a color scheme that's monochromatic.
+Ensure the logo is set against a clean solid background.
+The imagery in the logo should subtly hint at the user request... without using any text, or letters.
+
+User request: ${ prompt }
+`;
+
 		if ( ! tokenData || ! tokenData.token ) {
 			// TODO: handle error
 			return;
 		}
 		let data;
 		const body = {
-			prompt,
+			prompt: imageGenerationPrompt,
 			feature: 'jetpack-ai-logo-generator',
 			response_format: 'url',
 		};
