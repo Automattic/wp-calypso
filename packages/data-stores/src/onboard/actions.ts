@@ -480,6 +480,15 @@ export const resetCouponCode = () => ( {
 	type: 'RESET_COUPON_CODE' as const,
 } );
 
+export const setStorageAddonSlug = ( storageAddonSlug: string ) => ( {
+	type: 'SET_STORAGE_ADDON' as const,
+	storageAddonSlug,
+} );
+
+export const resetStorageAddonSlug = () => ( {
+	type: 'RESET_STORAGE_ADDON' as const,
+} );
+
 export const setDomainForm = ( step: Record< string, string > ) => {
 	const lastUpdated = Date.now();
 
@@ -542,6 +551,8 @@ export type OnboardAction = ReturnType<
 	| typeof resetFonts
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
+	| typeof resetStorageAddonSlug
+	| typeof resetCouponCode
 	| typeof setStoreType
 	| typeof setDomainsTransferData
 	| typeof setShouldImportDomainTransferDnsRecords
@@ -587,6 +598,7 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setCouponCode
+	| typeof setStorageAddonSlug
 	| typeof setHideFreePlan
 	| typeof setHidePlansFeatureComparison
 	| typeof setProductCartItems

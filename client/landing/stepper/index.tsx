@@ -71,16 +71,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 		}
 	}
 
-	// This stores the coupon code query param, and the flow declaration
-	// will append it to the checkout URL so that it auto-applies the coupon code at
-	// checkout. For example, /setup/ecommerce/?coupon=SOMECOUPON will auto-apply the
-	// coupon code at the checkout page.
-	const couponCode = useQuery().get( 'coupon' );
-	const { setCouponCode } = useDispatch( ONBOARD_STORE );
-	if ( couponCode ) {
-		setCouponCode( couponCode );
-	}
-
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	return <FlowRenderer flow={ flow } />;

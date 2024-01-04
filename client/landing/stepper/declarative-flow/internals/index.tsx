@@ -76,7 +76,27 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	const urlQueryParams = useQuery();
-	const ref = urlQueryParams.get( 'ref' ) || '';
+	let ref = '';
+	const { setCouponCode, setStorageAddonSlug } = useDispatch( ONBOARD_STORE );
+	urlQueryParams.forEach( ( value, key ) => {
+		switch ( key ) {
+			case 'coupon':
+				// This stores the coupon code query param, and the flow declaration
+				// will append it to the checkout URL so that it auto-applies the coupon code at
+				// checkout. For example, /setup/ecommerce/?coupon=SOMECOUPON will auto-apply the
+				// coupon code at the checkout page.
+				value && setCouponCode( value );
+				break;
+
+			case 'ref':
+				ref = value ?? '';
+				break;
+
+			case 'storage':
+				value && setStorageAddonSlug( value );
+				break;
+		}
+	} );
 
 	const { site, siteSlugOrId } = useSiteData();
 
