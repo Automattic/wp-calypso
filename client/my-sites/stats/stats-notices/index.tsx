@@ -90,6 +90,15 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isRequestingSitePurchases, isCommercialOwned } = useStatsPurchases( siteId );
 
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const isTierUpgradeNoticeEnabled = !! (
+		! isOdysseyStats ||
+		( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) )
+	);
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -103,6 +112,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		statsPurchaseSuccess,
 		isCommercial,
 		isCommercialOwned,
+		isTierUpgradeNoticeEnabled,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );

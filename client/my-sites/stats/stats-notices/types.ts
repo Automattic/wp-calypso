@@ -18,6 +18,7 @@ export interface StatsNoticeProps {
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
 	isCommercialOwned?: boolean;
+	isTierUpgradeNoticeEnabled?: boolean;
 }
 
 export interface NoticeBodyProps {
