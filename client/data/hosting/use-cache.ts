@@ -75,6 +75,7 @@ export const useSetEdgeCacheMutation = (
 				},
 			} );
 		},
+		mutationKey: [ TOGGLE_EDGE_CACHE_MUTATION_KEY ],
 		onMutate: async ( { active, siteId } ) => {
 			await queryClient.cancelQueries( {
 				queryKey: [ USE_EDGE_CACHE_QUERY_KEY, siteId ],
@@ -105,6 +106,16 @@ export const useSetEdgeCacheMutation = (
 	);
 
 	return { setEdgeCache, ...rest };
+};
+
+export const useIsSetEdgeCacheMutating = ( siteId: number ) => {
+	const count = useIsMutating( {
+		predicate: ( mutation ) =>
+			mutation.options.mutationKey?.[ 0 ] === TOGGLE_EDGE_CACHE_MUTATION_KEY &&
+			mutation.state.variables?.siteId === siteId,
+	} );
+
+	return count > 0;
 };
 
 export const useClearEdgeCacheMutation = (

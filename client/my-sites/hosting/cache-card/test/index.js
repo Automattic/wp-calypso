@@ -7,6 +7,7 @@ import configureStore from 'redux-mock-store';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
+	useIsSetEdgeCacheMutating,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
 import { CacheCard } from '..';
@@ -47,13 +48,13 @@ jest.mock( 'calypso/data/hosting/use-cache', () => ( {
 	useSetEdgeCacheMutation: jest.fn( () => {
 		return {
 			toggleEdgeCache: jest.fn(),
-			isLoading: false,
 		};
 	} ),
+	useIsSetEdgeCacheMutating: jest.fn( () => false ),
 	useClearEdgeCacheMutation: jest.fn( () => {
 		return {
 			clearEdgeCache: jest.fn(),
-			loading: false,
+			isLoading: false,
 		};
 	} ),
 } ) );
@@ -99,6 +100,7 @@ describe( 'CacheCard component', () => {
 	it( 'toggles edge cache state when edge cache checkbox is clicked', async () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );
 		useSetEdgeCacheMutation.mockReturnValue( { setEdgeCache: jest.fn(), isLoading: false } );
+		useIsSetEdgeCacheMutating.mockReturnValue( false );
 
 		render(
 			<Provider store={ store }>

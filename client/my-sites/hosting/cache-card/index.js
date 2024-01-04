@@ -11,6 +11,7 @@ import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
+	useIsSetEdgeCacheMutating,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
 import { useDispatch } from 'calypso/state';
@@ -81,7 +82,7 @@ export const CacheCard = ( {
 
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
-	const { setEdgeCache, isLoading: isEdgeCacheMutating } = useSetEdgeCacheMutation( {
+	const { setEdgeCache } = useSetEdgeCacheMutation( {
 		onSettled: ( ...args ) => {
 			const active = args[ 2 ].active;
 			recordTracksEvent(
@@ -101,6 +102,7 @@ export const CacheCard = ( {
 			);
 		},
 	} );
+	const isEdgeCacheMutating = useIsSetEdgeCacheMutating( siteId );
 	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId, {
 		onSuccess: () => {
 			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
