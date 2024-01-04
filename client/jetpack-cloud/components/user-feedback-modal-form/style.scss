@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.user-feedback-form-modal {
+.user-feedback-modal-form {
 	max-width: 827px;
 	max-height: 100%;
 	margin: 0;
@@ -26,18 +26,18 @@
 	}
 }
 
-.user-feedback-form-modal .form-fieldset {
+.user-feedback-modal-form .form-fieldset {
 	margin: 0;
 }
 
-.user-feedback-form-modal__main {
+.user-feedback-modal-form__main {
 	padding: 40px;
 	gap: 24px;
 	display: flex;
 	flex-direction: column;
 }
 
-.user-feedback-form-modal__title {
+.user-feedback-modal-form__title {
 	font-size: 1.5rem;
 	font-weight: 700;
 	line-height: 0.8;
@@ -45,23 +45,23 @@
 	padding: 0;
 }
 
-p.user-feedback-form-modal__instruction {
+p.user-feedback-modal-form__instruction {
 	font-size: 1rem;
 	font-weight: 400;
 	margin: 0;
 }
 
-.user-feedback-form-modal__footer {
+.user-feedback-modal-form__footer {
 	padding: 24px 40px;
 	text-align: right;
 	background-color: var(--studio-gray-0);
 	border-radius: 4px;
 }
 
-.user-feedback-form-modal__close-button {
+.user-feedback-modal-form__close-button {
 	position: absolute;
-	right: 1rem;
-	top: 1rem;
+	inset-inline-end: 1rem;
+	inset-block-start: 1rem;
 	cursor: pointer;
 	transition: scale 0.2s ease-in;
 

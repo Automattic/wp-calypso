@@ -16,7 +16,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import UserFeedbackFormModal from '../user-feedback-form-modal';
+import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
 import JetpackCloudSiteSelector from './site-selector';
 
@@ -153,7 +153,7 @@ const JetpackCloudSidebar = ( {
 
 			<JetpackCloudSiteSelector />
 
-			<UserFeedbackFormModal show={ showUserFeedbackForm } onClose={ onCloseUserFeedbackForm } />
+			<UserFeedbackModalForm show={ showUserFeedbackForm } onClose={ onCloseUserFeedbackForm } />
 		</Sidebar>
 	);
 };

@@ -14,11 +14,11 @@ type Props = {
 	onClose: () => void;
 };
 
-export default function UserFeedbackForm( { show, onClose }: Props ) {
+export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 	const translate = useTranslate();
 
 	const [ feedback, setFeedback ] = useState( '' );
-	const [ rating, setRating ] = useState( 3 );
+	const [ rating, setRating ] = useState( 0 );
 
 	const onFeedbackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setFeedback( event.currentTarget.value );
@@ -28,17 +28,25 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 		setRating( rating );
 	}, [] );
 
-	const title = translate( 'Help us make Jetpack Manage even better' );
+	const hasCompletedForm = !! feedback && !! rating;
+
+	const onSubmit = useCallback( () => {
+		if ( ! hasCompletedForm ) {
+			return;
+		}
+
+		// TODO: send feedback to backend
+	}, [ hasCompletedForm ] );
 
 	if ( ! show ) {
 		return null;
 	}
 
 	return (
-		<Modal className="user-feedback-form-modal" onRequestClose={ onClose } __experimentalHideHeader>
-			<div className="user-feedback-form-modal__main">
+		<Modal className="user-feedback-modal-form" onRequestClose={ onClose } __experimentalHideHeader>
+			<div className="user-feedback-modal-form__main">
 				<Button
-					className="user-feedback-form-modal__close-button"
+					className="user-feedback-modal-form__close-button"
 					plain
 					onClick={ onClose }
 					aria-label={ translate( 'Close' ) }
@@ -46,9 +54,11 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 					<Icon size={ 24 } icon={ close } />
 				</Button>
 
-				<h1 className="user-feedback-form-modal__title">{ title }</h1>
+				<h1 className="user-feedback-modal-form__title">
+					{ translate( 'Help us make Jetpack Manage even better' ) }
+				</h1>
 
-				<p className="user-feedback-form-modal__instruction">
+				<p className="user-feedback-modal-form__instruction">
 					{ translate(
 						'Your product feedback is extremely valuable to us. Our goal is to help you do your work better and more efficiently - all feedback is sent to our product team and helps inform our development roadmap.'
 					) }
@@ -75,8 +85,13 @@ export default function UserFeedbackForm( { show, onClose }: Props ) {
 				</FormFieldset>
 			</div>
 
-			<div className="user-feedback-form-modal__footer">
-				<Button className="user-feedback-form-modal__footer-submit" primary disabled={ ! feedback }>
+			<div className="user-feedback-modal-form__footer">
+				<Button
+					className="user-feedback-modal-form__footer-submit"
+					primary
+					disabled={ ! hasCompletedForm }
+					onClick={ onSubmit }
+				>
 					{ translate( 'Submit your feedback' ) }
 				</Button>
 			</div>
