@@ -110,14 +110,14 @@ describe( 'CustomerHomeLaunchPad', () => {
 		expect( await screen.findByText( 'Task 2' ) ).toBeVisible();
 	} );
 
-	it( 'renders the dissmiss settings menu when the tasks are not completed', async () => {
+	it( 'renders the dismiss settings menu when the tasks are not completed', async () => {
 		render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
 		expect( await screen.findByTitle( 'Skip settings' ) ).toBeVisible();
 	} );
 
 	describe( 'when the launchpad was previously dismissed', () => {
-		it( 'doesnt renders the launchpad', () => {
+		it( "doesn't renders the launchpad", () => {
 			const data = {
 				...DEFAULT_TAKS_RESPONSE,
 				is_dismissable: true,
@@ -171,17 +171,17 @@ describe( 'CustomerHomeLaunchPad', () => {
 		} );
 	} );
 
-	describe( 'when the launchpad is NOT dismissable', () => {
-		const dismissableTask = {
+	describe( 'when the launchpad is NOT dismissible', () => {
+		const dismissibleTask = {
 			...DEFAULT_TAKS_RESPONSE,
 			is_dismissed: false,
 		};
 
 		beforeAll( () => {
-			jest.mocked( apiFetch ).mockResolvedValue( dismissableTask );
+			jest.mocked( apiFetch ).mockResolvedValue( dismissibleTask );
 		} );
 
-		it( 'renders the dissmiss settings menu when the tasks are not completed', () => {
+		it( 'renders the dismiss settings menu when the tasks are not completed', () => {
 			render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
 			expect( screen.queryByTitle( 'Skip settings' ) ).not.toBeInTheDocument();
