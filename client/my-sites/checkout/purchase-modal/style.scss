@@ -159,17 +159,19 @@ $left-margin: 36px;
  * Checkout Terms
  */
 
- .purchase-modal {
+.purchase-modal {
 	& .checkout__terms-foldable-card, .foldable-card.card.is-expanded {
-		margin: .5rem 0 .5rem 20px;
+		margin: 8px 0 8px 20px;
 		box-shadow: none;
-
+		padding: 0;
+		font-size: 14px;
 		& .foldable-card__expand {
 			top: 0;
 		}
 	}
 	& .foldable-card.is-expanded .foldable-card__content {
 		border-top: none;
+		padding-top: 8px;
 
 		& .checkout__terms-item {
 			margin-left: 0;
@@ -180,11 +182,11 @@ $left-margin: 36px;
 		padding-left: $left-margin;
 	}
 	& .checkout__terms-item {
-		margin-bottom: .5rem;
+		margin-bottom: 8px;
 		margin-left: 36px;
-		margin-top: .5rem;
+		margin-top: 8px;
 	}
- }
+}
 
 /**
  * Taxes and cost
