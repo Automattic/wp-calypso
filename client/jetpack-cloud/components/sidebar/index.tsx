@@ -69,10 +69,11 @@ const JetpackCloudSidebar = ( {
 
 	const isUserFeedbackEnabled = isEnabled( 'jetpack/user-feedback-form' );
 
-	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState(
-		// Set the initial state to true if the URL hash is set to the feedback form.
-		isUserFeedbackEnabled && window.location.hash === USER_FEEDBACK_FORM_URL_HASH
-	);
+	// Determine whether to initially show the user feedback form.
+	const shouldShowUserFeedbackForm =
+		isUserFeedbackEnabled && window.location.hash === USER_FEEDBACK_FORM_URL_HASH;
+
+	const [ showUserFeedbackForm, setShowUserFeedbackForm ] = useState( shouldShowUserFeedbackForm );
 
 	const onShowUserFeedbackForm = useCallback( () => {
 		setShowUserFeedbackForm( true );
