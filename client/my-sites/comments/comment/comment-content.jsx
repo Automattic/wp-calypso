@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import DOMPurify from 'dompurify';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -12,6 +13,7 @@ import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
 import { getParentComment, getSiteComment } from 'calypso/state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { hasBlocks } from './utils';
 
 export class CommentContent extends Component {
 	static propTypes = {
@@ -45,6 +47,7 @@ export class CommentContent extends Component {
 	render() {
 		const {
 			commentContent,
+			commentRawContent,
 			commentId,
 			commentStatus,
 			isBulkMode,
@@ -91,8 +94,57 @@ export class CommentContent extends Component {
 
 						<AutoDirection>
 							<div
-								className="comment__content-body"
-								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } // eslint-disable-line react/no-danger
+								className={ classnames( 'comment__content-body', {
+									'with-blocks': hasBlocks( commentRawContent ),
+								} ) }
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ {
+									__html: DOMPurify.sanitize( commentContent, {
+										ALLOWED_TAGS: [
+											'p',
+											'figcaption',
+											'iframe',
+											'img',
+											'span',
+											'#text',
+											'div',
+											'figure',
+											'a',
+											'strong',
+											'em',
+											'br',
+											'ul',
+											'ol',
+											'li',
+											'blockquote',
+											'pre',
+											'cite',
+											'code',
+										],
+										ALLOWED_ATTR: [
+											'style',
+											'class',
+											'href',
+											'src',
+											'title',
+											'target',
+											'width',
+											'height',
+											'frameborder',
+											'allow',
+											'loading',
+											'aria-controls',
+											'aria-current',
+											'aria-describedby',
+											'aria-details',
+											'aria-expanded',
+											'aria-hidden',
+											'aria-label',
+											'aria-labelledby',
+											'aria-live',
+										],
+									} ),
+								} }
 							/>
 						</AutoDirection>
 					</div>
@@ -117,6 +169,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	return {
 		commentContent: get( comment, 'content' ),
+		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
 		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,

@@ -1,3 +1,4 @@
+@use "sass:meta";
 // Comment Base Style
 
 .card.comment {
@@ -181,9 +182,68 @@
 	}
 }
 
-// Comment Content Block
-
 .comment__content {
+	padding: 16px;
+
+	.comment__post-link {
+		font-weight: 600;
+		margin-bottom: 16px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		.gridicon {
+			color: var(--color-text-subtle);
+			margin: 0 4px -3px 0;
+		}
+	}
+
+	.comment__status-label {
+		border-radius: 9px; /* stylelint-disable-line scales/radii */
+		float: right;
+		font-size: $font-body-extra-small;
+		margin-left: 8px;
+		padding: 0 10px;
+
+		&.is-pending {
+			background: var(--color-warning-20);
+		}
+		&.is-spam,
+		&.is-trash {
+			background: var(--color-error-20);
+		}
+	}
+
+	.comment__in-reply-to {
+		border-left: 4px solid var(--color-neutral-0);
+		color: var(--color-text-subtle);
+		margin-bottom: 16px;
+		overflow: hidden;
+		padding: 2px 4px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		.gridicon {
+			fill: var(--color-text-subtle);
+			margin-bottom: -4px;
+		}
+
+		span {
+			margin: 0 4px;
+		}
+
+		a {
+			color: var(--color-text-subtle);
+		}
+		a:focus,
+		a:hover {
+			color: var(--color-primary);
+		}
+	}
+}
+
+// Comment Content
+.comment__content-body.without-blocks {
 	padding: 8px 16px 16px 56px;
 
 	.comment__post-link {
@@ -241,16 +301,12 @@
 			color: var(--color-primary);
 		}
 	}
+}
 
-	.comment__content-body *:last-child {
-		margin-bottom: 0;
-	}
-
-	.comment__content-body blockquote {
-		padding: 8px 16px;
-		margin: 8px 0 16px;
-		border-left: 2px solid var(--color-neutral-0);
-	}
+.comment__content-body.with-blocks {
+	// This encloses the blocks CSS to this div only.
+	@include meta.load-css( "node_modules/@wordpress/block-library/build-style/style.css");
+	@include meta.load-css( "node_modules/@wordpress/block-library/build-style/theme.css");
 }
 
 .comment__content-preview {

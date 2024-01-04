@@ -27,10 +27,7 @@ import { getSiteComment } from 'calypso/state/comments/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-function hasBlocks( comment ) {
-	return comment.includes( '<!-- wp:' );
-}
+import { hasBlocks } from './utils';
 
 const noop = () => {};
 
