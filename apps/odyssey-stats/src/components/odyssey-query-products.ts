@@ -28,6 +28,7 @@ export default function QueryProductsList( {
 			return;
 		}
 		dispatch( { type: PRODUCTS_LIST_REQUEST } );
+		// Calling the endpoint directly because jetpack/v4/products doesn't have tiers information (why?).
 		globalThis
 			.fetch(
 				'https://public-api.wordpress.com/rest/v1.1/products?' +
