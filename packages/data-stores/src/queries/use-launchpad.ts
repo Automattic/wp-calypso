@@ -133,12 +133,13 @@ export const useLaunchpad = (
 
 export const useSortedLaunchpadTasks = (
 	siteSlug: string | null,
-	checklist_slug?: string | 0 | null | undefined,
-	launchpad_context?: string | undefined
+	checklist_slug?: string | 0 | null,
+	launchpad_context?: string
 ) => {
 	const launchpadOptions = {
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
 	};
+
 	return useLaunchpad( siteSlug, checklist_slug, launchpadOptions, launchpad_context );
 };
 
