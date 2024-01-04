@@ -45,6 +45,7 @@ export function getDomainCategory( domain: string ): SPECIAL_DOMAIN_CATEGORY | u
 		case 'simplenote.com':
 		case 'jetpack.com':
 		case 'woocommerce.com':
+		case 'woo.com':
 		case 'dayoneapp.com':
 			specialDomainCase = 'genaral-a8c-properties';
 			break;

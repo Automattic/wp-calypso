@@ -154,7 +154,7 @@ exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
       , or
        
       <a
-        href="https://woocommerce.com/?ref=partners-lp"
+        href="https://woo.com/?ref=partners-lp"
       >
         WooCommerce
       </a>

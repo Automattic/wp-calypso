@@ -118,18 +118,18 @@ describe( 'getSignupUrl', () => {
 		const currentQuery = {
 			client_id: '50916',
 			redirect_to:
-				'https://public-api.wordpress.com/oauth2/authorize/?response_type=code&client_id=50916&state=1234&redirect_uri=https%3A%2F%2Fwoocommerce.com%2Fwc-api%2Fwpcom-signin%3Fnext%3D%252F&blog_id=0&wpcom_connect=1&wccom-from&calypso_env=production&from-calypso=1',
+				'https://public-api.wordpress.com/oauth2/authorize/?response_type=code&client_id=50916&state=1234&redirect_uri=https%3A%2F%2Fwoo.com%2Fwc-api%2Fwpcom-signin%3Fnext%3D%252F&blog_id=0&wpcom_connect=1&wccom-from&calypso_env=production&from-calypso=1',
 		};
 		const currentRoute = '/log-in';
 		const oauth2Client = {
 			id: 50916,
 			name: 'woo',
-			title: 'WooCommerce.com',
-			icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
-			url: 'https://woocommerce.com',
+			title: 'Woo.com',
+			icon: 'https://woo.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
+			url: 'https://woo.com',
 		};
 		expect( getSignupUrl( currentQuery, currentRoute, oauth2Client, 'en', '' ) ).toEqual(
-			'/start/wpcc?oauth2_client_id=50916&oauth2_redirect=https%3A%2F%2Fpublic-api.wordpress.com%2Foauth2%2Fauthorize%2F%3Fresponse_type%3Dcode%26client_id%3D50916%26state%3D1234%26redirect_uri%3Dhttps%253A%252F%252Fwoocommerce.com%252Fwc-api%252Fwpcom-signin%253Fnext%253D%25252F%26blog_id%3D0%26wpcom_connect%3D1%26wccom-from%26calypso_env%3Dproduction%26from-calypso%3D1'
+			'/start/wpcc?oauth2_client_id=50916&oauth2_redirect=https%3A%2F%2Fpublic-api.wordpress.com%2Foauth2%2Fauthorize%2F%3Fresponse_type%3Dcode%26client_id%3D50916%26state%3D1234%26redirect_uri%3Dhttps%253A%252F%252Fwoo.com%252Fwc-api%252Fwpcom-signin%253Fnext%253D%25252F%26blog_id%3D0%26wpcom_connect%3D1%26wccom-from%26calypso_env%3Dproduction%26from-calypso%3D1'
 		);
 	} );
 

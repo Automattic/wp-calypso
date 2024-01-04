@@ -38,7 +38,7 @@ describe( 'login', () => {
 		expect( url ).toBe( '/log-in/jetpack?from=potato' );
 	} );
 
-	test( 'should return the login url with WooCommerce.com handler', () => {
+	test( 'should return the login url with Woo.com handler', () => {
 		const url = login( { oauth2ClientId: 12345, wccomFrom: 'testing' } );
 		expect( url ).toBe( '/log-in?client_id=12345&wccom-from=testing' );
 	} );

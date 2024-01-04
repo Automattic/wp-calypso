@@ -60,7 +60,7 @@ export function useBundleSettings( themeSoftware?: string ): BundleSettingsHookR
 						'This theme comes bundled with the {{link}}WooCommerce{{/link}} plugin.',
 						{
 							components: {
-								link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
+								link: <ExternalLink children={ null } href="https://woo.com/" />,
 							},
 						}
 					),

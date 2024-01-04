@@ -305,7 +305,7 @@ class Login extends Component {
 
 		if ( isWoo && isEmpty( currentQuery ) ) {
 			// if query is empty, return to the woo start flow
-			return 'https://woocommerce.com/start/';
+			return 'https://woo.com/start/';
 		}
 
 		if ( isWooCoreProfilerFlow && isEmpty( currentQuery ) ) {
@@ -402,7 +402,7 @@ class Login extends Component {
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ translate(
-								'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
+								'Log in to Woo.com with your WordPress.com account to connect your store and manage your extensions'
 							) }
 						</p>
 					);

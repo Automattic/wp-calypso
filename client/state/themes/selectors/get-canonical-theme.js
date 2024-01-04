@@ -13,7 +13,7 @@ import 'calypso/state/themes/init';
  * more fields.
  *
  * However, some themes have a conflicting themeId. For example, let's say I
- * buy the bistro theme off woocommerce.com and install it on my jetpack or
+ * buy the bistro theme off woo.com and install it on my jetpack or
  * atomic site. When I search for information about 'bistro' in the WPCOM ->
  * WPORG -> JP/Atomic order, I will first find information in
  * https://wp-themes.com/bistro/, which is a completely different theme than

@@ -134,7 +134,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 			{
 				slug: 'woocommerce-xero',
 				name: __( 'Xero' ),
-				icon: 'https://woocommerce.com/wp-content/uploads/2012/08/xero2.png',
+				icon: 'https://woo.com/wp-content/uploads/2012/08/xero2.png',
 				short_description: __( 'Sync your site with your Xero account' ),
 			},
 			{
