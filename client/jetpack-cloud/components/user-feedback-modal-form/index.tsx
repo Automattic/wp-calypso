@@ -11,14 +11,17 @@ import './style.scss';
 
 type Props = {
 	show: boolean;
-	onClose: () => void;
+	onClose?: () => void;
 };
+
+const DEFAULT_FEEDBACK_VALUE = '';
+const DEFAULT_RATING_VALUE = 0;
 
 export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 	const translate = useTranslate();
 
-	const [ feedback, setFeedback ] = useState( '' );
-	const [ rating, setRating ] = useState( 0 );
+	const [ feedback, setFeedback ] = useState( DEFAULT_FEEDBACK_VALUE );
+	const [ rating, setRating ] = useState( DEFAULT_RATING_VALUE );
 
 	const onFeedbackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setFeedback( event.currentTarget.value );
@@ -38,17 +41,27 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 		// TODO: send feedback to backend
 	}, [ hasCompletedForm ] );
 
+	const onModalClose = useCallback( () => {
+		setFeedback( DEFAULT_FEEDBACK_VALUE );
+		setRating( DEFAULT_RATING_VALUE );
+		onClose?.();
+	}, [ onClose ] );
+
 	if ( ! show ) {
 		return null;
 	}
 
 	return (
-		<Modal className="user-feedback-modal-form" onRequestClose={ onClose } __experimentalHideHeader>
+		<Modal
+			className="user-feedback-modal-form"
+			onRequestClose={ onModalClose }
+			__experimentalHideHeader
+		>
 			<div className="user-feedback-modal-form__main">
 				<Button
 					className="user-feedback-modal-form__close-button"
 					plain
-					onClick={ onClose }
+					onClick={ onModalClose }
 					aria-label={ translate( 'Close' ) }
 				>
 					<Icon size={ 24 } icon={ close } />
