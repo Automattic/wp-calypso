@@ -160,11 +160,12 @@ $left-margin: 36px;
  */
 
 .purchase-modal {
-	& .checkout__terms-foldable-card, .foldable-card.card.is-expanded {
+	& .checkout__terms-foldable-card,
+	.foldable-card.card.is-expanded {
 		margin: 8px 0 8px 20px;
 		box-shadow: none;
 		padding: 0;
-		font-size: 14px;
+		font-size: $font-body-small;
 		& .foldable-card__expand {
 			top: 0;
 		}
