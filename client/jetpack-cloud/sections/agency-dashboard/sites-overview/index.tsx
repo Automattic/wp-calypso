@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -204,31 +203,20 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
-	const isBundleUIEnabled = isEnabled( 'jetpack/bundle-licensing' );
+	const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
+		slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
+		quantity: 1,
+	} ) );
 
-	let serializedLicenses = selectedLicenses
-		?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-		// If multiple products are selected, pass them as a comma-separated list.
-		.join( ',' );
-
-	if ( isBundleUIEnabled ) {
-		const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
-			slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
-			quantity: 1,
-		} ) );
-
-		serializedLicenses = serializeQueryStringProducts( selectedProducts );
-	}
+	const serializedLicenses = serializeQueryStringProducts( selectedProducts );
 
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			...( isBundleUIEnabled
-				? { products: serializedLicenses }
-				: { product_slug: serializedLicenses } ),
+			products: serializedLicenses,
 			source: 'dashboard',
 		} );
-	}, [ isBundleUIEnabled, selectedLicensesSiteId, serializedLicenses ] );
+	}, [ selectedLicensesSiteId, serializedLicenses ] );
 
 	const renderIssueLicenseButton = () => {
 		return (
