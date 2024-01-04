@@ -25,10 +25,6 @@ const CheckoutPaymentMethodsWrapper = styled.div`
 	padding-top: 4px;
 `;
 
-export const RadioButtons = styled.div`
-	margin-bottom: 16px;
-`;
-
 export default function CheckoutPaymentMethods( {
 	summary,
 	isComplete,
@@ -93,7 +89,7 @@ export default function CheckoutPaymentMethods( {
 		<CheckoutPaymentMethodsWrapper
 			className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
 		>
-			<RadioButtons>
+			<div>
 				{ paymentMethods.map( ( method ) => (
 					<CheckoutErrorBoundary
 						key={ method.id }
@@ -115,7 +111,7 @@ export default function CheckoutPaymentMethods( {
 						/>
 					</CheckoutErrorBoundary>
 				) ) }
-			</RadioButtons>
+			</div>
 		</CheckoutPaymentMethodsWrapper>
 	);
 }

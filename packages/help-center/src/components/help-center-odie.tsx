@@ -4,9 +4,9 @@
  */
 import { Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import OdieAssistant from 'calypso/odie';
+import EllipsisMenu from 'calypso/odie/components/ellipsis-menu';
 import { useOdieAssistantContext } from 'calypso/odie/context';
 /**
  * Internal Dependencies

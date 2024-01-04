@@ -10,11 +10,12 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	resetImport: ( siteId: number, importerId: string ) => void;
+	buttonLabel?: string;
 	onSiteViewClick?: () => void;
 }
 const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { job, siteId, resetImport, onSiteViewClick } = props;
+	const { job, siteId, buttonLabel, resetImport, onSiteViewClick } = props;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_start_import_success' );
@@ -22,14 +23,17 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<Hooray>
-			<Title>{ __( 'Hooray!' ) }</Title>
-			<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
-			<DoneButton
-				siteId={ siteId }
-				job={ job as ImportJob }
-				resetImport={ resetImport }
-				onSiteViewClick={ onSiteViewClick }
-			/>
+			<div className="import__heading import__heading-center">
+				<Title>{ __( 'Hooray!' ) }</Title>
+				<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
+				<DoneButton
+					siteId={ siteId }
+					job={ job as ImportJob }
+					resetImport={ resetImport }
+					label={ buttonLabel }
+					onSiteViewClick={ onSiteViewClick }
+				/>
+			</div>
 		</Hooray>
 	);
 };

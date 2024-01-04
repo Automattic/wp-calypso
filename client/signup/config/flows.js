@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
@@ -26,6 +26,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
+			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( [ 'domain' ].includes( flowName ) && {
 				isDomainOnly: 1,
 				checkoutBackUrl:
@@ -173,7 +174,7 @@ function getWithThemeDestination( {
 } ) {
 	if (
 		! cartItems &&
-		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
+		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes( themeType )
 	) {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
 	}
@@ -184,7 +185,7 @@ function getWithThemeDestination( {
 
 	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
 
-	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, WOOCOMMERCE_THEME ].includes( themeType ) ) {
+	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, BUNDLED_THEME ].includes( themeType ) ) {
 		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
 	}
 
@@ -238,13 +239,13 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 }
 
 function getHostingFlowDestination() {
-	const queryArgs = getQueryArgs();
+	const { flow, ...queryArgs } = getQueryArgs();
 
-	if ( queryArgs.flow === 'new-hosted-site' ) {
-		return '/setup/new-hosted-site';
+	if ( flow === 'new-hosted-site' ) {
+		return addQueryArgs( queryArgs, '/setup/new-hosted-site' );
 	}
 
-	if ( queryArgs.flow === 'import-hosted-site' ) {
+	if ( flow === 'import-hosted-site' ) {
 		return '/setup/import-hosted-site';
 	}
 

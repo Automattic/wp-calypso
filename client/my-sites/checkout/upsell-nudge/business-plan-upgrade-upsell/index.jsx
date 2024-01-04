@@ -1,7 +1,8 @@
+import { PLAN_BUSINESS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { PureComponent } from 'react';
 import formatCurrency from 'calypso/../packages/format-currency/src';
-import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket-2.png';
+import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket.png';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
@@ -50,7 +51,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 				className="business-plan-upgrade-upsell-new-design__image"
 				src={ upsellImage }
 				alt=""
-				width="454"
+				width="320"
 			/>
 		);
 	}
@@ -78,7 +79,14 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 			<>
 				<div className="business-plan-upgrade-upsell-new-design__column-pane">
 					<p>
-						<b>{ translate( 'Unlock the power of the Business Plan and gain access to:' ) }</b>
+						<b>
+							{
+								/* translators: %(planName)s is the short-hand version of the Business plan name */
+								translate( 'Unlock the power of the %(planName)s Plan and gain access to:', {
+									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+								} )
+							}
+						</b>
 					</p>
 					<ul className="business-plan-upgrade-upsell-new-design__checklist">
 						<li className="business-plan-upgrade-upsell-new-design__checklist-item">
@@ -121,22 +129,26 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 						</li>
 					</ul>
 					<p>
-						{ translate(
-							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
-							{
-								components: {
-									b: <b />,
-								},
-								args: {
-									days: hasSevenDayRefundPeriod ? 7 : 14,
-									comment: 'A number, e.g. 7-day money-back guarantee',
-								},
-							}
-						) }
+						{
+							/* translators: %(planName)s is the short-hand version of the Business plan name */
+							translate(
+								'The great news is that you can upgrade today and try the %(planName)s Plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
+								{
+									components: {
+										b: <b />,
+									},
+									args: {
+										days: hasSevenDayRefundPeriod ? 7 : 14,
+										planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+										comment: 'A number, e.g. 7-day money-back guarantee',
+									},
+								}
+							)
+						}
 					</p>
 					<p>
 						{ translate(
-							'Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
+							'Simply click below to upgrade. You’ll only have to pay the difference to the %(planName)s Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
 							{
 								components: {
 									del: <del />,
@@ -146,6 +158,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 										stripZeros: true,
 									} ),
+									planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 									comment: 'A monetary value at the end, e.g. $25',
 								},
 							}

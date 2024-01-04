@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback, type Context } from '@automattic/calypso-router';
 import IssueLicenseV2 from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-v2';
 import {
@@ -13,7 +12,6 @@ import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
 import DownloadProducts from 'calypso/jetpack-cloud/sections/partner-portal/primary/download-products';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
-import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
@@ -110,15 +108,9 @@ export const issueLicenseContext: Callback = ( context, next ) => {
 	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
 	setSidebar( context, true );
-	if ( isEnabled( 'jetpack/bundle-licensing' ) ) {
-		context.primary = (
-			<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-		);
-	} else {
-		context.primary = (
-			<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-		);
-	}
+	context.primary = (
+		<IssueLicenseV2 selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+	);
 	next();
 };
 

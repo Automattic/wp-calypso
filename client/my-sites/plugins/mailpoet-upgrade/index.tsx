@@ -1,3 +1,4 @@
+import { PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -50,7 +51,8 @@ export const MailPoetUpgradePage = ( { siteId }: { siteId: number } ) => {
 			<Card>
 				<p>
 					{ translate(
-						'Your Commerce plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.'
+						'Your %(commercePlanName)s plan provides a complimentary MailPoet Business subscription, allowing you to send visually appealing emails that consistently land in inboxes and cultivate a loyal subscriber base.',
+						{ args: { commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '' } }
 					) }
 				</p>
 				<p>

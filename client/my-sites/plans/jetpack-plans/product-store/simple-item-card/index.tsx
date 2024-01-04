@@ -10,6 +10,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 	ctaAriaLabel,
 	description,
 	icon,
+	isCondensedVersion,
 	isCtaDisabled,
 	isCtaExternal,
 	isProductInCart,
@@ -26,18 +27,20 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 						<h3 className="simple-item-card__title">{ title }</h3>
 						<div className="simple-item-card__price">{ price }</div>
 					</div>
-					<Button
-						className="simple-item-card__cta"
-						onClick={ onClickCta }
-						disabled={ isCtaDisabled }
-						href={ isCtaDisabled ? '#' : ctaHref }
-						target={ isCtaExternal ? '_blank' : undefined }
-						primary={ ctaAsPrimary }
-						aria-label={ ctaAriaLabel }
-					>
-						{ isProductInCart && <Gridicon icon="checkmark" /> }
-						{ ctaLabel }
-					</Button>
+					{ ! isCondensedVersion && (
+						<Button
+							className="simple-item-card__cta"
+							onClick={ onClickCta }
+							disabled={ isCtaDisabled }
+							href={ isCtaDisabled ? '#' : ctaHref }
+							target={ isCtaExternal ? '_blank' : undefined }
+							primary={ ctaAsPrimary }
+							aria-label={ ctaAriaLabel }
+						>
+							{ isProductInCart && <Gridicon icon="checkmark" /> }
+							{ ctaLabel }
+						</Button>
+					) }
 				</div>
 				<div className="simple-item-card__footer">{ description }</div>
 			</div>

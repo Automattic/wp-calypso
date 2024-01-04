@@ -44,6 +44,7 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
 	) : (

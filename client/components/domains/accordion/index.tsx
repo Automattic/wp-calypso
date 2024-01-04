@@ -13,6 +13,7 @@ const Accordion = ( {
 	isDisabled,
 	expanded = false,
 	onClose,
+	onOpen,
 	className,
 }: AccordionProps ) => {
 	const classes = classNames( {
@@ -49,6 +50,7 @@ const Accordion = ( {
 					</button>
 				}
 				onClose={ onClose }
+				onOpen={ onOpen }
 			>
 				{ children }
 			</FoldableCard>

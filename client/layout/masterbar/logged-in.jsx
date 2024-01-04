@@ -71,6 +71,7 @@ class MasterbarLoggedIn extends Component {
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
+		isCheckoutFailed: PropTypes.bool,
 		isInEditor: PropTypes.bool,
 		hasDismissedThePopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
@@ -275,6 +276,7 @@ class MasterbarLoggedIn extends Component {
 	renderCheckout() {
 		const {
 			isCheckoutPending,
+			isCheckoutFailed,
 			previousPath,
 			currentSelectedSiteSlug,
 			isJetpackNotAtomic,
@@ -291,6 +293,7 @@ class MasterbarLoggedIn extends Component {
 				previousPath={ previousPath }
 				siteSlug={ currentSelectedSiteSlug }
 				isLeavingAllowed={ ! isCheckoutPending }
+				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
 		);
@@ -514,10 +517,11 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, loadHelpCenterIcon } = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
+			this.props;
 		const { isMobile } = this.state;
 
-		if ( isCheckout || isCheckoutPending ) {
+		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
 		}
 

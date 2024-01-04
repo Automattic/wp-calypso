@@ -1,13 +1,10 @@
-import {
-	OnboardSelect,
-	LaunchpadNavigator,
-	updateLaunchpadSettings,
-} from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch, dispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -18,19 +15,17 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
-import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
+import { useSiteData } from '../hooks/use-site-data';
 import { useLoginUrl } from '../utils/path';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
-	title: 'Blog',
+	get title() {
+		return translate( 'Blog' );
+	},
 	useSteps() {
 		return [
 			{
@@ -83,17 +78,9 @@ const designFirst: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const siteSlug = useSiteSlug();
-		const siteId = useSiteIdParam();
-
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
-		const state = useSelect(
-			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
-			[]
-		).getState();
-		const site = useSite();
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
+		const { site, siteSlug, siteId } = useSiteData();
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -148,7 +135,7 @@ const designFirst: Flow = {
 				case 'processing': {
 					// If we just created a new site.
 					const siteSlug = providedDependencies?.siteSlug;
-					if ( ! providedDependencies?.blogLaunched && siteSlug ) {
+					if ( ! providedDependencies?.isLaunched && siteSlug ) {
 						const siteId = providedDependencies?.siteId;
 						setSelectedSite( siteId );
 						setIntentOnSite( siteSlug, DESIGN_FIRST_FLOW );
@@ -175,7 +162,7 @@ const designFirst: Flow = {
 					}
 
 					// If the user's site has just been launched.
-					if ( providedDependencies?.blogLaunched && siteSlug ) {
+					if ( providedDependencies?.isLaunched && siteSlug ) {
 						await Promise.all( [
 							// We set launchpad_screen to off because users can choose to
 							// complete the first_post_published checklist task or not.
@@ -194,56 +181,34 @@ const designFirst: Flow = {
 					return navigate( 'launchpad' );
 				}
 				case 'domains':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
 
 					if ( providedDependencies?.freeDomain ) {
-						const freeDomainSuffix = '.wordpress.com';
-						const newDomainName = String( providedDependencies?.domainName ).replace(
-							freeDomainSuffix,
-							''
-						);
-
-						if ( providedDependencies?.domainName ) {
-							await requestSiteAddressChange(
-								site?.ID,
-								newDomainName,
-								'wordpress.com',
-								siteSlug,
-								freeSiteAddressType.BLOG,
-								true,
-								false
-							)( dispatch, state );
-						}
-
-						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
-
-						return window.location.assign(
-							`/setup/design-first/launchpad?siteSlug=${ currentSiteSlug }`
-						);
+						return window.location.assign( `/setup/design-first/launchpad?siteId=${ site?.ID }` );
 					}
 
 					return navigate( 'plans' );
 				case 'use-my-domain':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
 					return navigate( 'plans' );
 				case 'plans':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { plan_completed: true },
 						} );
 					}
 					return navigate( 'launchpad' );
 				case 'setup-blog':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { setup_blog: true },
 						} );
 					}
@@ -262,7 +227,6 @@ const designFirst: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: site?.options?.site_intent,
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );
@@ -297,7 +261,7 @@ const designFirst: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			pageTitle: 'Pick a design',
+			pageTitle: translate( 'Pick a design' ),
 			locale,
 		} );
 
@@ -313,7 +277,7 @@ const designFirst: Flow = {
 				isSiteCreationStep &&
 				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
 			) {
-				redirect( '/setup/design-first/site-creation-step' );
+				redirect( `/setup/design-first/site-creation-step${ window.location.search }` );
 			}
 		}, [] );
 
@@ -321,7 +285,7 @@ const designFirst: Flow = {
 
 		if ( ! isLoggedIn ) {
 			result = {
-				state: AssertConditionState.CHECKING,
+				state: AssertConditionState.FAILURE,
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {

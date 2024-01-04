@@ -26,6 +26,7 @@ import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { FlowRenderer } from './declarative-flow/internals';
+import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
@@ -68,6 +69,16 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 		} else {
 			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
 		}
+	}
+
+	// This stores the coupon code query param, and the flow declaration
+	// will append it to the checkout URL so that it auto-applies the coupon code at
+	// checkout. For example, /setup/ecommerce/?coupon=SOMECOUPON will auto-apply the
+	// coupon code at the checkout page.
+	const couponCode = useQuery().get( 'coupon' );
+	const { setCouponCode } = useDispatch( ONBOARD_STORE );
+	if ( couponCode ) {
+		setCouponCode( couponCode );
 	}
 
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
@@ -129,6 +140,7 @@ window.AppBoot = async () => {
 							id="notices"
 						/>
 					</BrowserRouter>
+					<AsyncHelpCenter />
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

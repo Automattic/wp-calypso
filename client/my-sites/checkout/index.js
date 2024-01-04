@@ -13,6 +13,7 @@ import {
 	checkoutAkismetSiteless,
 	checkoutPending,
 	checkoutJetpackSiteless,
+	checkoutMarketplaceSiteless,
 	checkoutThankYou,
 	licensingThankYouManualActivationInstructions,
 	licensingThankYouManualActivationLicenseKey,
@@ -27,6 +28,7 @@ import {
 	akismetCheckoutThankYou,
 	hundredYearCheckoutThankYou,
 	transferDomainToAnyUser,
+	checkoutFailedPurchases,
 } from './controller';
 
 export default function () {
@@ -105,6 +107,17 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	if ( isEnabled( 'marketplace-siteless-checkout' ) ) {
+		page(
+			`/checkout/marketplace/:productSlug`,
+			setLocaleMiddleware(),
+			noSite,
+			checkoutMarketplaceSiteless,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
 	if ( isEnabled( 'akismet/siteless-checkout' ) ) {
@@ -204,6 +217,8 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/checkout/failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
 
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 

@@ -4,8 +4,8 @@ import { useState, useRef } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import RevokeLicenseDialog from '../revoke-license-dialog';
+import { LicenseRole, type LicenseAction, type LicenseType } from '../types';
 import useLicenseActions from './use-license-actions';
-import type { LicenseAction, LicenseType } from '../types';
 
 interface Props {
 	licenseKey: string;
@@ -14,6 +14,7 @@ interface Props {
 	attachedAt: string | null;
 	revokedAt: string | null;
 	licenseType: LicenseType;
+	isChildLicense?: boolean;
 }
 
 export default function LicenseActions( {
@@ -23,13 +24,20 @@ export default function LicenseActions( {
 	attachedAt,
 	revokedAt,
 	licenseType,
+	isChildLicense,
 }: Props ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
 
-	const licenseActions = useLicenseActions( siteUrl, attachedAt, revokedAt, licenseType );
+	const licenseActions = useLicenseActions(
+		siteUrl,
+		attachedAt,
+		revokedAt,
+		licenseType,
+		isChildLicense
+	);
 
 	const handleActionClick = ( action: LicenseAction ) => {
 		action.onClick();
@@ -70,6 +78,7 @@ export default function LicenseActions( {
 					product={ product }
 					siteUrl={ siteUrl }
 					onClose={ () => setShowRevokeDialog( false ) }
+					licenseRole={ isChildLicense ? LicenseRole.Child : LicenseRole.Single }
 				/>
 			) }
 		</>

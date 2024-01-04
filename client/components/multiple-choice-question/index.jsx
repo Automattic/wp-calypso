@@ -1,6 +1,6 @@
 import { memoize, pick, shuffle, values } from 'lodash';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import MultipleChoiceAnswer from './answer';
@@ -21,6 +21,7 @@ const shuffleAnswers = memoize(
 const MultipleChoiceQuestion = ( {
 	disabled,
 	answers,
+	name,
 	onAnswerChange,
 	question,
 	selectedAnswerId,
@@ -29,12 +30,18 @@ const MultipleChoiceQuestion = ( {
 } ) => {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( selectedAnswerId );
 	const shuffledAnswers = shouldShuffleAnswers ? shuffleAnswers( answers ) : answers;
+
+	useEffect( () => {
+		setSelectedAnswer( selectedAnswerId );
+	}, [ selectedAnswerId ] );
+
 	return (
-		<FormFieldset className="multiple-choice-question">
+		<FormFieldset className="multiple-choice-question" onClick={ ( e ) => e.stopPropagation() }>
 			<FormLegend>{ question }</FormLegend>
 			<div className="multiple-choice-question__answers">
 				{ shuffledAnswers.map( ( answer ) => (
 					<MultipleChoiceAnswer
+						name={ name }
 						key={ answer.id }
 						answer={ answer }
 						disabled={ disabled }
@@ -63,6 +70,7 @@ MultipleChoiceQuestion.propTypes = {
 		} )
 	).isRequired,
 	disabled: PropTypes.bool,
+	name: PropTypes.string.isRequired,
 	onAnswerChange: PropTypes.func.isRequired,
 	question: PropTypes.string.isRequired,
 	selectedAnswerId: PropTypes.string,

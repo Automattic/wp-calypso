@@ -1,7 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -13,7 +14,7 @@ import './style.scss';
 export interface Tour {
 	target: string;
 	title: string;
-	description: string;
+	description: string | JSX.Element;
 	popoverPosition?:
 		| 'top'
 		| 'top right'
@@ -23,12 +24,14 @@ export interface Tour {
 		| 'bottom left'
 		| 'left'
 		| 'top left';
+	nextStepOnTargetClick?: string;
 }
 
 interface Props {
 	className?: string;
 	tours: Tour[];
 	preferenceName: string;
+	redirectAfterTourEnds?: string;
 }
 
 // This hook will return the async element matching the target selector.
@@ -62,7 +65,7 @@ const useAsyncElement = ( target: string, timeoutDuration: number ): HTMLElement
 	return asyncElement;
 };
 
-const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
+const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -74,7 +77,8 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, target, popoverPosition } = tours[ currentStep ];
+	const { title, description, target, popoverPosition, nextStepOnTargetClick } =
+		tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
 
@@ -89,22 +93,45 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 		}
 	}, [ dispatch, isDismissed, preferenceName, targetElement, hasFetched ] );
 
-	const endTour = () => {
+	const endTour = useCallback( () => {
 		dispatch( savePreference( preferenceName, { ...preference, dismiss: true } ) );
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_cloud_end_tour', {
 				tour: preferenceName,
 			} )
 		);
-	};
+		if ( redirectAfterTourEnds ) {
+			page.redirect( redirectAfterTourEnds );
+		}
+	}, [ dispatch, preferenceName, preference, redirectAfterTourEnds ] );
 
-	const nextStep = () => {
+	const nextStep = useCallback( () => {
 		if ( currentStep < tours.length - 1 ) {
 			setCurrentStep( currentStep + 1 );
 		} else {
 			endTour();
 		}
-	};
+	}, [ currentStep, tours.length, endTour ] );
+
+	useEffect( () => {
+		let nextStepClickTargetElement: Element | null = null;
+		// We should wait for targetElement before attaching any events to advance to the next step
+		if ( nextStepOnTargetClick && targetElement && ! isDismissed && hasFetched ) {
+			// Find the target element using the nextStepOnTargetClick selector
+			nextStepClickTargetElement = document.querySelector( nextStepOnTargetClick );
+			if ( nextStepClickTargetElement ) {
+				// Attach the event listener to the nextStepClickTargetElement
+				nextStepClickTargetElement.addEventListener( 'click', nextStep );
+			}
+		}
+
+		// Cleanup function to remove the event listener
+		return () => {
+			if ( nextStepClickTargetElement ) {
+				nextStepClickTargetElement.removeEventListener( 'click', nextStep );
+			}
+		};
+	}, [ nextStepOnTargetClick, nextStep, targetElement, isDismissed, hasFetched ] );
 
 	if ( isDismissed ) {
 		return null;
@@ -135,17 +162,21 @@ const GuidedTour = ( { className, tours, preferenceName }: Props ) => {
 					}
 				</div>
 				<div className="guided-tour__popover-footer-right-content">
-					{
-						// Show the skip button if there are multiple steps and we're not on the last step
-						tours.length > 1 && currentStep < tours.length - 1 && (
-							<Button borderless onClick={ endTour }>
-								{ translate( 'Skip' ) }
+					{ ! nextStepOnTargetClick && (
+						<>
+							{
+								// Show the skip button if there are multiple steps and we're not on the last step
+								tours.length > 1 && currentStep < tours.length - 1 && (
+									<Button borderless onClick={ endTour }>
+										{ translate( 'Skip' ) }
+									</Button>
+								)
+							}
+							<Button onClick={ nextStep }>
+								{ currentStep === tours.length - 1 ? lastTourLabel : translate( 'Next' ) }
 							</Button>
-						)
-					}
-					<Button onClick={ nextStep }>
-						{ currentStep === tours.length - 1 ? lastTourLabel : translate( 'Next' ) }
-					</Button>
+						</>
+					) }
 				</div>
 			</div>
 		</Popover>

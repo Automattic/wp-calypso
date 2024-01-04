@@ -1,14 +1,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { usePlans } from '@automattic/data-stores/src/plans';
 import {
+	BUNDLED_THEME,
 	DOT_ORG_THEME,
 	MARKETPLACE_THEME,
 	PREMIUM_THEME,
-	WOOCOMMERCE_THEME,
 } from '@automattic/design-picker';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import {
 	canUseTheme,
@@ -67,7 +71,10 @@ const ThemeTypeBadgeTooltip = ( {
 	themeId,
 }: Props ) => {
 	const translate = useTranslate();
+	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
+	const plans = usePlans();
 	const type = useSelector( ( state ) => getThemeType( state, themeId ) );
+	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
@@ -90,6 +97,8 @@ const ThemeTypeBadgeTooltip = ( {
 		type === MARKETPLACE_THEME ? getMarketplaceThemeSubscriptionPrices( state, themeId ) : {}
 	);
 
+	const isEnglishLocale = useIsEnglishLocale();
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_upgrade_nudge_impression', {
 			cta_name: 'theme-upsell-popup',
@@ -97,44 +106,25 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
-	const getHeader = (): string | null => {
-		if ( isLockedStyleVariation ) {
-			return null;
-		}
-
-		const headers = {
-			[ PREMIUM_THEME ]: translate( 'Premium theme' ),
-			[ DOT_ORG_THEME ]: translate( 'Community theme', {
-				context: 'This theme is developed and supported by a community',
-				textOnly: true,
-			} ),
-			[ WOOCOMMERCE_THEME ]: translate( 'WooCommerce theme' ),
-			[ MARKETPLACE_THEME ]: translate( 'Partner theme', {
-				context: 'This theme is developed and supported by a theme partner',
-				textOnly: true,
-			} ),
-		} as { [ key: string ]: string };
-
-		if ( ! ( type in headers ) ) {
-			return null;
-		}
-
-		return headers[ type ];
-	};
-
 	let message;
 	if ( isLockedStyleVariation ) {
 		message = translate(
-			'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+			'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.',
+			{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
 		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );
 		} else if ( isIncludedCurrentPlan ) {
-			message = translate( 'This premium theme is included in your plan.' );
+			message =
+				isEnglishLocale || i18n.hasTranslation( 'This theme is included in your plan.' )
+					? translate( 'This theme is included in your plan.' )
+					: translate( 'This premium theme is included in your plan.' );
 		} else {
 			message = createInterpolateElement(
-				translate( 'This premium theme is included in the <Link>Premium plan</Link>.' ),
+				translate( 'This theme is included in the <Link>%(premiumPlanName)s plan</Link>.', {
+					args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' },
+				} ) as string,
 				{
 					Link: (
 						<ThemeTypeBadgeTooltipUpgradeLink
@@ -151,8 +141,13 @@ const ThemeTypeBadgeTooltip = ( {
 			? translate( 'This community theme is included in your plan.' )
 			: createInterpolateElement(
 					translate(
-						'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
-					),
+						'This community theme can only be installed if you have the <Link>%(businessPlanName)s plan</Link> or higher on your site.',
+						{
+							args: {
+								businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+							},
+						}
+					) as string,
 					{
 						Link: (
 							<ThemeTypeBadgeTooltipUpgradeLink
@@ -163,11 +158,24 @@ const ThemeTypeBadgeTooltip = ( {
 						),
 					}
 			  );
-	} else if ( type === WOOCOMMERCE_THEME ) {
-		message = isIncludedCurrentPlan
-			? translate( 'This WooCommerce theme is included in your plan.' )
-			: createInterpolateElement(
-					translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
+	} else if ( type === BUNDLED_THEME ) {
+		if ( bundleSettings ) {
+			const bundleName = bundleSettings.name;
+
+			if ( isIncludedCurrentPlan ) {
+				// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+				message = translate( 'This %(bundleName)s theme is included in your plan.', {
+					args: { bundleName },
+				} );
+			} else {
+				message = createInterpolateElement(
+					translate( 'This theme is included in the <Link>%(businessPlanName)s plan</Link>.', {
+						args: {
+							bundleName,
+							businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
+						},
+						textOnly: true,
+					} ),
 					{
 						Link: (
 							<ThemeTypeBadgeTooltipUpgradeLink
@@ -177,17 +185,21 @@ const ThemeTypeBadgeTooltip = ( {
 							/>
 						),
 					}
-			  );
+				);
+			}
+		}
 	} else if ( type === MARKETPLACE_THEME ) {
 		if ( isPurchased && isIncludedCurrentPlan ) {
 			message = translate(
-				'You have a subscription for this theme, and it will be usable as long as you keep a Business plan or higher on your site.'
+				'You have a subscription for this theme, and it will be usable as long as you keep a %(businessPlanName)s plan or higher on your site.',
+				{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
 			);
 		} else if ( isPurchased && ! isIncludedCurrentPlan ) {
 			message = createInterpolateElement(
 				translate(
-					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
-				),
+					'You have a subscription for this theme, but it will only be usable if you have the <link>%(businessPlanName)s plan</link> on your site.',
+					{ args: { businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '' } }
+				) as string,
 				{
 					link: (
 						<ThemeTypeBadgeTooltipUpgradeLink
@@ -213,11 +225,12 @@ const ThemeTypeBadgeTooltip = ( {
 			message = createInterpolateElement(
 				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
-					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					'This theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>%(businessPlanName)s plan</Link> on your site.',
 					{
 						args: {
 							annualPrice: subscriptionPrices.year ?? '',
 							monthlyPrice: subscriptionPrices.month ?? '',
+							businessPlanName: plans?.data?.[ PLAN_BUSINESS ]?.productNameShort ?? '',
 						},
 					}
 				) as string,
@@ -234,14 +247,7 @@ const ThemeTypeBadgeTooltip = ( {
 		}
 	}
 
-	return (
-		<>
-			<div data-testid="upsell-header" className="theme-type-badge-tooltip__header">
-				{ getHeader() }
-			</div>
-			<div data-testid="upsell-message">{ message }</div>
-		</>
-	);
+	return <div data-testid="upsell-message">{ message }</div>;
 };
 
 export default ThemeTypeBadgeTooltip;

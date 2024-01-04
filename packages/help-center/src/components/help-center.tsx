@@ -70,12 +70,19 @@ function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded:
 	}, [ setShowMessagingLauncher, hasActiveChats ] );
 }
 
-const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
+const HelpCenter: React.FC< Container > = ( {
+	handleClose,
+	hidden,
+	currentRoute = window.location.pathname + window.location.search,
+} ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const isHelpCenterShown = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-		[]
-	);
+	const { isHelpCenterShown, storedSite } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			storedSite: helpCenterSelect.getSite(),
+			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+		};
+	}, [] );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -99,7 +106,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 
 	useEffect( () => {
 		setSite( usedSite );
-	}, [ usedSite, setSite ] );
+	}, [ usedSite, setSite, storedSite ] );
 
 	useStillNeedHelpURL();
 
@@ -128,7 +135,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />,
+		<HelpCenterContainer
+			handleClose={ handleClose }
+			hidden={ hidden }
+			currentRoute={ currentRoute }
+		/>,
 		portalParent
 	);
 };

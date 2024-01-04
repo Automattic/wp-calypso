@@ -11,6 +11,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import BloganuaryIcon from './bloganuary-icon';
 import LightbulbIcon from './lightbulb-icon';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
@@ -136,7 +137,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 		return (
 			<>
 				<CardHeading>
-					<LightbulbIcon />
+					{ isBloganuary() ? <BloganuaryIcon /> : <LightbulbIcon /> }
 					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
 					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
 						{ promptLabel }

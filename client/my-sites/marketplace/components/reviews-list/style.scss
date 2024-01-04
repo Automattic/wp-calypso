@@ -1,10 +1,7 @@
+$profile-picture-size: 36px;
+$border-color: #eee;
+
 .marketplace-reviews-list__container {
-	padding: 0 16px;
-
-	@include breakpoint-deprecated( ">1040px" ) {
-		padding: 0;
-	}
-
 	.marketplace-reviews-list__title {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
@@ -13,61 +10,137 @@
 	}
 
 	.marketplace-reviews-list__customer-reviews {
-		margin-top: 10px;
-
 		.marketplace-reviews-list__review-container {
-			display: grid;
-			grid-template-columns: 200px 1fr 150px;
-			border-top: 1px solid var(--studio-gray-5);
-			padding: 20px 0;
+			border-top: 1px solid $border-color;
+			padding: 32px 0;
 
 			&:first-of-type {
 				border-top: none;
+				padding-top: 0;
 			}
 
-			.marketplace-reviews-list__author {
-				font-weight: bold;
-				padding-right: 20px;
-				font-size: $font-body-small;
+			&.last {
+				padding-bottom: 0;
+			}
+
+			.marketplace-reviews-list__review-container-header {
+				display: grid;
+				grid-template-columns: calc($profile-picture-size + 8px) 1fr 100px;
+
+				.marketplace-reviews-list__rating-data {
+					display: flex;
+					flex-direction: column;
+
+					.rating {
+						margin-left: -1px;
+					}
+				}
+
+				.marketplace-reviews-list__profile-picture {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+
+					.marketplace-reviews-list__profile-picture-img,
+					.marketplace-reviews-list__profile-picture-placeholder {
+						height: $profile-picture-size;
+						width: $profile-picture-size;
+						border-radius: 50%;
+					}
+
+					.marketplace-reviews-list__profile-picture-placeholder {
+						background-color: var(--studio-gray-20);
+					}
+				}
+
+				.marketplace-reviews-list__date {
+					color: var(--studio-gray-60);
+					font-size: $font-body-small;
+					text-align: right;
+					align-self: center;
+				}
+
+				.marketplace-reviews-list__author {
+					color: var(--studio-gray-100);
+					font-size: $font-body-small;
+				}
 			}
 
 			.marketplace-reviews-list__content {
-				margin-top: 10px;
-				margin-left: 3px;
+				color: var(--studio-gray-100);
+				font-size: $font-body-small;
+				margin-top: 16px;
 
 				p {
 					margin-bottom: 0;
 				}
 			}
-
-			.marketplace-reviews-list__date {
-				font-weight: bold;
-				font-size: $font-body-extra-small;
-				text-align: right;
-			}
-
-			@include breakpoint-deprecated( "<960px" ) {
-				position: relative;
-				grid-template-areas:
-					"content"
-					"author";
-				grid-template-columns: 100%;
-
-				.marketplace-reviews-list__author {
-					margin-top: 20px;
-					grid-area: author;
-				}
-
-				.marketplace-reviews-list__content {
-					grid-area: content;
-				}
-
-				.marketplace-reviews-list__date {
-					position: absolute;
-					right: 0;
-					top: 20px;
-				}
-			}
 		}
 	}
+	.rating .rating__overlay .is-empty,
+	.rating .rating__star-outline .is-empty {
+		fill: var(--studio-yellow-20);
+	}
+
+	.rating .rating__overlay .gridicon,
+	.rating .rating__star-outline .gridicon {
+		fill: var(--studio-yellow-20);
+	}
+}
+
+.marketplace-reviews-list__review-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-top: 15px;
+	font-size: $font-body-small;
+
+	.marketplace-reviews-list__review-actions-editable {
+		display: flex;
+
+		.marketplace-reviews-list__review-actions-editable-button {
+			color: var(--studio-blue-50);
+			margin-right: 15px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
+
+		.gridicon {
+			margin-right: 5px;
+			color: var(--studio-gray-10);
+		}
+	}
+}
+
+.marketplace-reviews-list__no-reviews,
+.marketplace-reviews-list__customer-reviews {
+	margin-top: 10px;
+	padding: 40px;
+	border: 1px solid $border-color;
+	border-radius: 9px; /* stylelint-disable-line scales/radii */
+}
+
+.marketplace-reviews-list__no-reviews {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	align-items: center;
+
+	.marketplace-reviews-list__no-reviews-title {
+		font-family: Recoleta, $sans;
+		color: var(--studio-gray-100);
+		font-size: $font-title-medium;
+	}
+
+	.marketplace-reviews-list__no-reviews-subtitle {
+		font-family: "SF Pro Text", $sans;
+		color: var(--studio-gray-60);
+		font-size: $font-body-small;
+		max-width: 400px;
+	}
+}
+
+.confirm-modal {
+	z-index: z-index(".dialog__backdrop", ".confirm-modal");
 }

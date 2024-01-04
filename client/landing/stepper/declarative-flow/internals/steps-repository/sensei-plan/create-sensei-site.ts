@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { SENSEI_FLOW } from '@automattic/onboarding';
+import { SENSEI_FLOW, setThemeOnSite } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,6 +7,7 @@ import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
 import { Progress } from '../components/sensei-step-progress';
+import { wait } from '../sensei-launch/launch-completion-tasks';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import type { StyleVariation } from 'calypso/../packages/design-picker';
 
@@ -53,20 +54,20 @@ export const useCreateSenseiSite = () => {
 		[]
 	);
 
-	const [ progress, setProgress ] = useState< Progress >( {
-		percentage: 0,
-		title: '',
-	} );
-
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const visibility = useNewSiteVisibility();
 
-	const createAndConfigureSite = useCallback( async () => {
-		const siteProgressTitle = __( 'Laying out the foundations' );
-		const cartProgressTitle = __( 'Preparing Your Bundle' );
-		const styleProgressTitle = __( 'Applying your site styles' );
+	const siteProgressTitle = __( 'Laying out the foundations' );
+	const cartProgressTitle = __( 'Preparing Your Bundle' );
+	const styleProgressTitle = __( 'Applying your site styles' );
 
+	const [ progress, setProgress ] = useState< Progress >( {
+		percentage: 0,
+		title: siteProgressTitle,
+	} );
+
+	const createAndConfigureSite = useCallback( async () => {
 		setProgress( {
 			percentage: 25,
 			title: siteProgressTitle,
@@ -97,6 +98,8 @@ export const useCreateSenseiSite = () => {
 		} );
 
 		if ( siteId ) {
+			await setThemeOnSite( siteId.toString(), COURSE_THEME );
+			wait( 1200 );
 			const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
 			const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
 				getStyleVariations( siteId, COURSE_THEME ),
@@ -119,7 +122,6 @@ export const useCreateSenseiSite = () => {
 
 		return { site: newSite };
 	}, [
-		__,
 		createSenseiSite,
 		currentUser?.username,
 		getNewSite,
@@ -129,6 +131,9 @@ export const useCreateSenseiSite = () => {
 		setIntentOnSite,
 		setSelectedSite,
 		visibility,
+		siteProgressTitle,
+		cartProgressTitle,
+		styleProgressTitle,
 	] );
 
 	return { createAndConfigureSite, progress };

@@ -1,11 +1,32 @@
 .importer-drag {
-	.social-logo {
-		border-radius: 4px;
+	.uploading-pane__upload-content.importer-ready-for-upload {
+		flex-direction: column;
+
+		svg {
+			width: 32px;
+			height: 32px;
+		}
+
+		p {
+			font-size: 0.875rem;
+			margin: 0.5rem 0 0;
+
+			span {
+				text-decoration: underline;
+			}
+		}
 	}
 
-	.importer-header {
-		margin-bottom: 40px;
-		padding-bottom: 20px;
+	.drop-zone {
+		&.is-active {
+			background: linear-gradient(0deg, var(--studio-gray-0), var(--studio-gray-0)), linear-gradient(0deg, var(--studio-gray-40), var(--studio-gray-40));
+			box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
+
+			.drop-zone__content-text {
+				font-weight: 400;
+				color: var(--studio-gray-70);
+			}
+		}
 	}
 
 	.importer-header__service-info {

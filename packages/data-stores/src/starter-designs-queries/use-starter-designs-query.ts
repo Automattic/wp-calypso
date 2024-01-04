@@ -94,8 +94,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
 	const is_externally_managed = design.theme_type === 'managed-external';
-
-	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
+	const is_bundled_with_woo = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
 
@@ -107,7 +106,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		categories,
 		is_premium,
 		is_externally_managed,
-		is_bundled_with_woo_commerce,
+		is_bundled_with_woo,
 		price,
 		software_sets,
 		design_type: design_type ?? ( is_premium ? 'premium' : 'standard' ),

@@ -14,11 +14,22 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
 import { CheckIcon } from '../../src/components/check-icon';
+import CheckoutNextSteps from '../../src/components/checkout-next-steps';
+import { CheckoutSummaryFeaturesList } from '../../src/components/wp-checkout-order-summary';
 import { BEFORE_SUBMIT } from './constants';
-import { formatDate } from './util';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
+
+function formatDate( cardExpiry: string ): string {
+	const expiryDate = new Date( cardExpiry );
+	const formattedDate = expiryDate.toLocaleDateString( 'en-US', {
+		month: '2-digit',
+		year: '2-digit',
+	} );
+
+	return formattedDate;
+}
 
 function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
 	return (
@@ -51,8 +62,7 @@ function LineItemIntroductoryOffer( { product }: { product: ResponseCartProduct 
 	);
 }
 
-function OrderStep( { siteSlug, product }: { siteSlug: string; product: ResponseCartProduct } ) {
-	const translate = useTranslate();
+function OrderStepRow( { product }: { product: ResponseCartProduct } ) {
 	const originalAmountDisplay = formatCurrency(
 		product.item_original_subtotal_integer,
 		product.currency,
@@ -67,29 +77,46 @@ function OrderStep( { siteSlug, product }: { siteSlug: string; product: Response
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
+	return (
+		<div className="purchase-modal__order-step-row">
+			<div className="purchase-modal__step-content-row">
+				<span className="purchase-modal__product-name">{ product.product_name }</span>
+				<span className="purchase-modal__product-cost">
+					{ isDiscounted && originalAmountDisplay ? (
+						<>
+							<s>{ originalAmountDisplay }</s> { actualAmountDisplay }
+						</>
+					) : (
+						actualAmountDisplay
+					) }
+				</span>
+			</div>
+
+			<div className="purchase-modal__step-content-row">
+				<LineItemSublabelAndPrice product={ product } />
+				<LineItemIntroductoryOffer product={ product } />
+			</div>
+		</div>
+	);
+}
+
+function OrderStep( {
+	siteSlug,
+	products,
+}: {
+	siteSlug: string;
+	products: ResponseCartProduct[];
+} ) {
+	const translate = useTranslate();
 
 	return (
-		<PurchaseModalStep id={ product.product_slug }>
+		<PurchaseModalStep id="purchase-modal-step">
 			<div className="purchase-modal__step-title">{ translate( 'Your order' ) }</div>
 			<div className="purchase-modal__step-content">
 				<div>{ translate( 'Site: %(siteSlug)s', { args: { siteSlug } } ) }</div>
-				<div className="purchase-modal__step-content-row">
-					<span className="purchase-modal__product-name">{ product.product_name }</span>
-					<span className="purchase-modal__product-cost">
-						{ isDiscounted && originalAmountDisplay ? (
-							<>
-								<s>{ originalAmountDisplay }</s> { actualAmountDisplay }
-							</>
-						) : (
-							actualAmountDisplay
-						) }
-					</span>
-				</div>
-
-				<div className="purchase-modal__step-content-row">
-					<LineItemSublabelAndPrice product={ product } />
-					<LineItemIntroductoryOffer product={ product } />
-				</div>
+				{ products.map( ( product ) => (
+					<OrderStepRow key={ product.product_id } product={ product } />
+				) ) }
 			</div>
 		</PurchaseModalStep>
 	);
@@ -200,6 +227,7 @@ export default function PurchaseModalContent( {
 	siteSlug,
 	step,
 	submitTransaction,
+	showFeatureList,
 }: {
 	cards: StoredPaymentMethodCard[];
 	cart: ResponseCart;
@@ -207,47 +235,62 @@ export default function PurchaseModalContent( {
 	siteSlug: string;
 	step: string;
 	submitTransaction(): void;
+	showFeatureList: boolean;
 } ) {
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( cart );
-	const firstProduct = cart.products.length > 0 ? cart.products[ 0 ] : undefined;
 	const firstCard = cards.length > 0 ? cards[ 0 ] : undefined;
 
 	return (
-		<>
-			<Button
-				borderless
-				className="purchase-modal__close"
-				aria-label={ translate( 'Close dialog' ) }
-				onClick={ onClose }
-			>
-				<Gridicon icon="cross-small" />
-			</Button>
-			{ firstProduct && <OrderStep siteSlug={ siteSlug } product={ firstProduct } /> }
-			{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
-			<CheckoutTerms cart={ cart } />
-			<hr />
-			<OrderReview
-				creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
-				shouldDisplayTax={ cart.tax.display_taxes }
-				total={ formatCurrency( cart.total_cost_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-				tax={ formatCurrency( cart.total_tax_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-			/>
-			<PayButton
-				busy={ BEFORE_SUBMIT !== step }
-				onClick={ submitTransaction }
-				totalCost={ cart.total_cost_integer }
-				totalCostDisplay={ formatCurrency( cart.total_cost_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-			/>
-		</>
+		<div className="purchase-modal__wrapper">
+			<div className="purchase-modal__steps">
+				<Button
+					borderless
+					className="purchase-modal__close"
+					aria-label={ translate( 'Close dialog' ) }
+					onClick={ onClose }
+				>
+					<Gridicon icon="cross-small" />
+				</Button>
+				{ cart.products?.length ? (
+					<OrderStep siteSlug={ siteSlug } products={ cart.products } />
+				) : null }
+				{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
+				<CheckoutTerms cart={ cart } />
+				<OrderReview
+					creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
+					shouldDisplayTax={ cart.tax.display_taxes }
+					total={ formatCurrency( cart.total_cost_integer, cart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+					tax={ formatCurrency( cart.total_tax_integer, cart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				/>
+				<PayButton
+					busy={ BEFORE_SUBMIT !== step }
+					onClick={ submitTransaction }
+					totalCost={ cart.total_cost_integer }
+					totalCostDisplay={ formatCurrency( cart.total_cost_integer, cart.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				/>
+			</div>
+			{ showFeatureList && (
+				<div className="purchase-modal__features">
+					<h3 className="purchase-modal__features-title">
+						{ translate( 'Included with your purchase' ) }
+					</h3>
+					<CheckoutSummaryFeaturesList
+						siteId={ cart.blog_id }
+						nextDomainIsFree={ cart.next_domain_is_free }
+					/>
+					<CheckoutNextSteps responseCart={ cart } />
+				</div>
+			) }
+		</div>
 	);
 }

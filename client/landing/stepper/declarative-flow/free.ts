@@ -1,7 +1,7 @@
-import { LaunchpadNavigator, type OnboardSelect, type UserSelect } from '@automattic/data-stores';
+import { type OnboardSelect, type UserSelect } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
+import { FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
@@ -53,16 +53,13 @@ const free: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
-		const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -91,9 +88,9 @@ const free: Flow = {
 
 			switch ( _currentStep ) {
 				case 'freeSetup':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'site-creation-step' );
 
-				case 'siteCreationStep':
+				case 'site-creation-step':
 					return navigate( 'processing' );
 
 				case 'processing':
@@ -143,12 +140,12 @@ const free: Flow = {
 					}
 
 					if ( providedDependencies?.shouldGoToAssembler ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( `processing?siteSlug=${ siteSlug }` );
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( `processing?siteSlug=${ siteSlug }` );
 				}
 
@@ -161,7 +158,7 @@ const free: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'designSetup' );
 			}
 		};
@@ -171,7 +168,6 @@ const free: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: 'free',
-						setActiveChecklist,
 						siteId,
 						siteSlug,
 					} );

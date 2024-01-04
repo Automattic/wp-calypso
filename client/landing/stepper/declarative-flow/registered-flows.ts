@@ -12,6 +12,7 @@ import {
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
+	REBLOGGING_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -69,11 +70,20 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'with-theme-assembler': () =>
 		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
 
+	'assembler-first': () =>
+		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
+
+	[ AI_ASSEMBLER_FLOW ]: () =>
+		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
+
+	'update-options': () =>
+		import( /* webpackChunkName: "update-options-flow" */ '../declarative-flow/update-options' ),
 
 	'domain-upsell': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/domain-upsell' ),
@@ -118,6 +128,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'domain-user-transfer': () =>
 		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
+
+	[ REBLOGGING_FLOW ]: () =>
+		import( /* webpackChunkName: "reblogging-flow" */ '../declarative-flow/reblogging' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
@@ -135,13 +148,4 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'calypso/ai-assembler'
-)
-	? {
-			[ AI_ASSEMBLER_FLOW ]: () =>
-				import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
-	  }
-	: {};
-
-export default { ...availableFlows, ...videoPressTvFlows, ...aiAsseblerFlows };
+export default { ...availableFlows, ...videoPressTvFlows };

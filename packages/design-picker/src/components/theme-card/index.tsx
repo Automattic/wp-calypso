@@ -20,7 +20,7 @@ interface ThemeCardProps {
 	selectedStyleVariation?: StyleVariation;
 	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
-	isInstalling?: boolean;
+	isLoading?: boolean;
 	isShowDescriptionOnImageHover?: boolean;
 	isSoftLaunched?: boolean;
 	onClick?: () => void;
@@ -44,7 +44,7 @@ const ThemeCard = forwardRef(
 			selectedStyleVariation,
 			optionsMenu,
 			isActive,
-			isInstalling,
+			isLoading,
 			isShowDescriptionOnImageHover,
 			isSoftLaunched,
 			onClick,
@@ -97,9 +97,9 @@ const ThemeCard = forwardRef(
 							{ image }
 						</a>
 					</div>
-					{ isInstalling && (
-						<div className="theme-card__installing">
-							<div className="theme-card__installing-dot" />
+					{ isLoading && (
+						<div className="theme-card__loading">
+							<div className="theme-card__loading-dot" />
 						</div>
 					) }
 					{ isShowDescriptionOnImageHover && description && (

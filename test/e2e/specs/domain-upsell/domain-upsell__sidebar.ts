@@ -14,11 +14,13 @@ import {
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { getNewPlanName } from '../shared';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	const planName = 'Premium';
+	const newPlanName = getNewPlanName( planName );
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 	let plansPage: PlansPage;
@@ -76,13 +78,13 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		plansPage = new PlansPage( page );
 	} );
 
-	it( `Click button to upgrade to WordPress.com ${ planName }`, async function () {
-		await plansPage.selectPlan( 'Premium' );
+	it( `Click button to upgrade to WordPress.com ${ newPlanName }`, async function () {
+		await plansPage.selectPlan( planName );
 	} );
 
-	it( `WordPress.com ${ planName } is added to cart`, async function () {
+	it( `WordPress.com ${ newPlanName } is added to cart`, async function () {
 		cartCheckoutPage = new CartCheckoutPage( page );
-		await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+		await cartCheckoutPage.validateCartItem( `WordPress.com ${ newPlanName }` );
 	} );
 
 	it( 'See secure payment', async function () {

@@ -4,16 +4,23 @@ import { useTranslate } from 'i18n-calypso';
 import { useLicenseLightboxData } from '../../license-lightbox/hooks/use-license-lightbox-data';
 import { getProductPricingInfo, getTotalInvoiceValue } from '../lib/pricing';
 import type { SelectedLicenseProp } from '../types';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const LicenseItem = ( {
 	license,
 	userProducts,
+	selectedSite,
 }: {
 	license: SelectedLicenseProp;
 	userProducts: Record< string, ProductListItem >;
+	selectedSite?: SiteDetails | null;
 } ) => {
-	const { actualCost, discountedCost } = getProductPricingInfo( userProducts, license );
+	const { actualCost, discountedCost } = getProductPricingInfo(
+		userProducts,
+		license,
+		license.quantity
+	);
 
 	const { title } = useLicenseLightboxData( license );
 
@@ -21,7 +28,7 @@ const LicenseItem = ( {
 		<div className="review-licenses__license-item">
 			<span className="review-licenses__license-item-column">
 				<Icon size={ 24 } icon={ check } />
-				{ title } x{ license.quantity }
+				{ title } { ! selectedSite && `x ${ license.quantity }` }
 			</span>
 			<span className="review-licenses__license-item-column">
 				{ formatCurrency( discountedCost, license.currency ) }
@@ -36,9 +43,11 @@ const LicenseItem = ( {
 export default function PricingBreakdown( {
 	selectedLicenses,
 	userProducts,
+	selectedSite,
 }: {
 	selectedLicenses: SelectedLicenseProp[];
 	userProducts: Record< string, ProductListItem >;
+	selectedSite?: SiteDetails | null;
 } ) {
 	const translate = useTranslate();
 
@@ -49,9 +58,10 @@ export default function PricingBreakdown( {
 			<div className="review-licenses__pricing-breakdown">
 				{ selectedLicenses.map( ( license ) => (
 					<LicenseItem
-						key={ `license-item-${ license.product_id }` }
+						key={ `license-item-${ license.product_id }-${ license.quantity }` }
 						license={ license }
 						userProducts={ userProducts }
+						selectedSite={ selectedSite }
 					/>
 				) ) }
 			</div>

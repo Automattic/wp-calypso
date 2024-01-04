@@ -191,7 +191,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<StepContainer
 					className={ classnames(
 						'import__onboarding-page',
-						'import-layout__center',
 						'importer-wrapper',
 						'import__onboarding-page--redesign',
 						{

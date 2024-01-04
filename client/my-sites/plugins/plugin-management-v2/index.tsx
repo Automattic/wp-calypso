@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement, useEffect, useMemo } from 'react';
+import PluginOverviewTour from 'calypso/jetpack-cloud/sections/onboarding-tours/plugin-overview-tour';
 import { useDispatch } from 'calypso/state';
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import BulkActionsHeader from './bulk-actions-header';
@@ -76,7 +77,11 @@ export default function PluginManagementV2( {
 	const columns = [
 		{
 			key: 'plugin',
-			header: translate( 'Installed Plugins' ),
+			header: (
+				<span id="plugin-management-v2__installed-plugins-table-header">
+					{ translate( 'Installed Plugins' ) }
+				</span>
+			),
 		},
 		...( selectedSite
 			? [
@@ -134,22 +139,25 @@ export default function PluginManagementV2( {
 	}
 
 	return (
-		<div
-			className={ classNames( 'plugin-management-v2__main-content-container', {
-				'is-bulk-management-active': isBulkManagementActive,
-			} ) }
-		>
-			<PluginsList
-				items={ plugins }
-				columns={ columns }
-				isLoading={ isLoading }
-				className={ classNames( {
-					'has-bulk-management-active': isBulkManagementActive,
+		<>
+			<div
+				className={ classNames( 'plugin-management-v2__main-content-container', {
+					'is-bulk-management-active': isBulkManagementActive,
 				} ) }
-				selectedSite={ selectedSite }
-				removePluginNotice={ removePluginNotice }
-				updatePlugin={ updatePlugin }
-			/>
-		</div>
+			>
+				<PluginsList
+					items={ plugins }
+					columns={ columns }
+					isLoading={ isLoading }
+					className={ classNames( {
+						'has-bulk-management-active': isBulkManagementActive,
+					} ) }
+					selectedSite={ selectedSite }
+					removePluginNotice={ removePluginNotice }
+					updatePlugin={ updatePlugin }
+				/>
+			</div>
+			<PluginOverviewTour isLoading={ isLoading } pluginCount={ plugins.length } />
+		</>
 	);
 }

@@ -26,6 +26,7 @@ import {
 import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import { serializeQueryStringProducts } from '../../partner-portal/lib/querystring-products';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
@@ -36,6 +37,7 @@ import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
+import SiteNotifications from './site-notifications';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import type { Site } from '../sites-overview/types';
@@ -201,16 +203,20 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
+	const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
+		slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
+		quantity: 1,
+	} ) );
+
+	const serializedLicenses = serializeQueryStringProducts( selectedProducts );
+
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			product_slug: selectedLicenses
-				?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-				// If multiple products are selected, pass them as a comma-separated list.
-				.join( ',' ),
+			products: serializedLicenses,
 			source: 'dashboard',
 		} );
-	}, [ selectedLicensesSiteId, selectedLicenses ] );
+	}, [ selectedLicensesSiteId, serializedLicenses ] );
 
 	const renderIssueLicenseButton = () => {
 		return (
@@ -230,10 +236,7 @@ export default function SitesOverview() {
 						dispatch(
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
 								site_id: selectedLicensesSiteId,
-								products: selectedLicenses
-									?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-									// If multiple products are selected, pass them as a comma-separated list.
-									.join( ',' ),
+								products: serializedLicenses,
 							} )
 						)
 					}
@@ -276,6 +279,7 @@ export default function SitesOverview() {
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
+			<SiteNotifications />
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">

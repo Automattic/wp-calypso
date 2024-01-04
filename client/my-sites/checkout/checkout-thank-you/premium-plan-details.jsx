@@ -1,5 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import {
+	isPremium,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	getPlan,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -58,7 +64,8 @@ const PremiumPlanDetails = ( {
 					isPremiumPlan
 						? translate(
 								'With your plan, all WordPress.com advertising has been removed from your site.' +
-									' You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+									' You can upgrade to a %(planName)s plan to also remove the WordPress.com footer credit.',
+								{ args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
 						  )
 						: translate(
 								'With your plan, all WordPress.com advertising has been removed from your site.'
@@ -110,7 +117,8 @@ const PremiumPlanDetails = ( {
 				title={ translate( 'Video and audio posts' ) }
 				description={ translate(
 					'Enrich your posts with video and audio, uploaded directly on your site. ' +
-						'No ads. The Premium plan offers 13GB of file storage.'
+						'No ads. The %(premiumPlanName)s plan offers 13GB of file storage.',
+					{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 				) }
 				buttonText={ translate( 'Start a new post' ) }
 				href={ newPost( selectedSite ) }

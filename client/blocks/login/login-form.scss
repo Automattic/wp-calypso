@@ -1,0 +1,47 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+$breakpoint-mobile: 782px; //Mobile size.
+
+form {
+	margin-left: auto;
+	margin-right: auto;
+	align-items: center;
+
+	@include break-medium {
+		align-items: unset;
+	}
+}
+
+.is-white-login {
+	form {
+		max-width: 400px;
+
+		&.is-social-first {
+			display: flex;
+			flex-direction: column;
+			margin-top: 24px;
+			justify-content: center;
+			max-width: 758px;
+
+			@media (min-width: $breakpoint-mobile ) {
+				flex-direction: row;
+				margin-top: 32px;
+			}
+
+			.card.login__form,
+			.card.auth-form__social {
+				width: 100%;
+				max-width: var(--login-form-column-max-width);
+				margin: 0;
+			}
+
+			.card.login__form {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: 0 16px;
+			}
+		}
+	}
+}

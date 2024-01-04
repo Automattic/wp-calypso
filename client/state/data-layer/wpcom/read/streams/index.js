@@ -298,10 +298,11 @@ const streamApis = {
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
+		apiNamespace: 'wpcom/v2',
 		dateProperty: 'date',
 	},
 	tag_popular: {
-		path: ( { streamKey } ) => `/read/streams/discover?tags=${ streamKeySuffix( streamKey ) }`,
+		path: ( { streamKey } ) => `/read/streams/tag/${ streamKeySuffix( streamKey ) }`,
 		apiNamespace: 'wpcom/v2',
 		query: ( extras, { streamKey } ) =>
 			getQueryString( {
@@ -368,7 +369,9 @@ export function requestPage( action ) {
 
 function get_page_handle( streamType, action, data ) {
 	const { date_range, meta, next_page, next_page_handle } = data;
-	if ( includes( streamType, 'rec' ) ) {
+	if ( next_page_handle ) {
+		return { page_handle: next_page_handle };
+	} else if ( includes( streamType, 'rec' ) ) {
 		const offset = get( action, 'payload.pageHandle.offset', 0 ) + PER_FETCH;
 		return { offset };
 	} else if ( next_page || ( meta && meta.next_page ) ) {
@@ -380,8 +383,6 @@ function get_page_handle( streamType, action, data ) {
 		// and offsets must be used
 		const { after } = date_range;
 		return { before: after };
-	} else if ( next_page_handle ) {
-		return { page_handle: next_page_handle };
 	}
 	return null;
 }

@@ -27,6 +27,7 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	prependThemeFilterKeys,
+	getIsLivePreviewStarted,
 	getThemeType,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
@@ -52,6 +53,7 @@ class ThemesSelection extends Component {
 		getThemeDetailsUrl: PropTypes.func,
 		getThemeType: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
+		isThemeLivePreviewStarted: PropTypes.func,
 		isLastPage: PropTypes.bool,
 		isRequesting: PropTypes.bool,
 		isThemeActive: PropTypes.func,
@@ -210,6 +212,7 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
+			tier,
 		} = this.props;
 
 		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
@@ -234,12 +237,14 @@ class ThemesSelection extends Component {
 					isActive={ this.props.isThemeActive }
 					getPrice={ this.props.getPremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
+					isLivePreviewStarted={ this.props.isThemeLivePreviewStarted }
 					loading={ isRequesting }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
+					tier={ tier }
 				>
 					{ this.props.children }
 				</ThemesList>
@@ -261,6 +266,10 @@ function bindIsThemeActive( state, siteId ) {
 
 function bindIsInstallingTheme( state, siteId ) {
 	return ( themeId ) => isInstallingTheme( state, themeId, siteId );
+}
+
+function bindIsThemeLivePreviewStarted( state ) {
+	return ( themeId ) => getIsLivePreviewStarted( state, themeId );
 }
 
 function bindGetPremiumThemePrice( state, siteId ) {
@@ -370,6 +379,7 @@ export const ConnectedThemesSelection = connect(
 			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: boundIsThemeActive,
 			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
+			isThemeLivePreviewStarted: bindIsThemeLivePreviewStarted( state ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
 			// (used by the `isPremiumThemeAvailable` selector). That data is provided by the `<QuerySitePurchases />`
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them

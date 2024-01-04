@@ -26,6 +26,7 @@ import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
+import { isP2Flow, isVideoPressFlow } from 'calypso/signup/is-flow';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -34,8 +35,6 @@ import {
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
-	isP2Flow,
-	isVideoPressFlow,
 } from 'calypso/signup/utils';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -166,7 +165,8 @@ export class UserStep extends Component {
 	}
 
 	getLoginUrl() {
-		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = this.props;
+		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale, step } = this.props;
+		const emailAddress = step?.form?.email?.value ?? step?.form?.email;
 
 		return login( {
 			isJetpack: 'jetpack-connect' === sectionName,
@@ -177,7 +177,7 @@ export class UserStep extends Component {
 			wccomFrom,
 			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
-			emailAddress: this.props?.step?.form?.email,
+			emailAddress,
 		} );
 	}
 
@@ -197,17 +197,41 @@ export class UserStep extends Component {
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
-				subHeaderText =
-					'cart' === wccomFrom
-						? translate(
-								"You'll need an account to complete your purchase and manage your subscription"
-						  )
-						: translate(
-								"You'll need an account to connect your store and manage your extensions"
-						  );
+				switch ( wccomFrom ) {
+					case 'cart':
+						subHeaderText = translate(
+							"You'll need an account to complete your purchase and manage your subscription"
+						);
+						break;
+					case 'nux':
+						subHeaderText = translate(
+							'All Woo Express stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							{
+								components: {
+									a: <a href={ loginUrl } />,
+									br: <br />,
+								},
+								comment:
+									'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
+							}
+						);
+						break;
+					default:
+						subHeaderText = translate(
+							'All Woo stores are powered by WordPress.com!{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							{
+								components: {
+									a: <a href={ loginUrl } />,
+									br: <br />,
+								},
+								comment:
+									'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
+							}
+						);
+				}
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+					'All Woo stores are powered by WordPress.com!{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
@@ -680,13 +704,24 @@ export class UserStep extends Component {
 }
 
 const ConnectedUser = connect(
-	( state ) => ( {
-		oauth2Client: getCurrentOAuth2Client( state ),
-		suggestedUsername: getSuggestedUsername( state ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
-		userLoggedIn: isUserLoggedIn( state ),
-	} ),
+	( state ) => {
+		const queryOauth2Redirect = getCurrentQueryArguments( state ).oauth2_redirect;
+		let wccomFrom = null;
+		try {
+			const oauth2RedirectUrl = new URL( queryOauth2Redirect );
+			wccomFrom = oauth2RedirectUrl.searchParams.get( 'wccom-from' );
+		} catch ( e ) {
+			// Do nothing
+		}
+
+		return {
+			oauth2Client: getCurrentOAuth2Client( state ),
+			suggestedUsername: getSuggestedUsername( state ),
+			wccomFrom: wccomFrom,
+			from: get( getCurrentQueryArguments( state ), 'from' ),
+			userLoggedIn: isUserLoggedIn( state ),
+		};
+	},
 	{
 		errorNotice,
 		recordTracksEvent,

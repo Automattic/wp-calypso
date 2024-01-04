@@ -14,6 +14,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/celebration-step' ),
 	},
 
+	CHECK_SITES: {
+		slug: 'check-sites',
+		asyncComponent: () => import( './steps-repository/sites-checker' ),
+	},
+
 	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
 
 	DESIGN_SETUP: {
@@ -26,12 +31,17 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
-	EDIT_EMAIL: {
-		slug: 'editEmail',
-		asyncComponent: () => import( './steps-repository/edit-email' ),
+	DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domains' ),
 	},
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
+
+	FREE_POST_SETUP: {
+		slug: 'freePostSetup',
+		asyncComponent: () => import( './steps-repository/free-post-setup' ),
+	},
 
 	FREE_SETUP: {
 		slug: 'freeSetup',
@@ -102,6 +112,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
+	NEW_OR_EXISTING_SITE: {
+		slug: 'new-or-existing-site',
+		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),
+	},
+
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
 	OPTIONS: {
@@ -110,9 +125,11 @@ export const STEPS = {
 	},
 
 	PATTERN_ASSEMBLER: {
-		slug: 'patternAssembler',
+		slug: 'pattern-assembler',
 		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
+
+	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 
 	PROCESSING: {
 		slug: 'processing',
@@ -120,8 +137,18 @@ export const STEPS = {
 	},
 
 	SITE_CREATION_STEP: {
-		slug: 'siteCreationStep',
+		slug: 'site-creation-step',
 		asyncComponent: () => import( './steps-repository/site-creation-step' ),
+	},
+
+	SITE_LAUNCH: {
+		slug: 'site-launch',
+		asyncComponent: () => import( './steps-repository/site-launch' ),
+	},
+
+	SITE_PICKER: {
+		slug: 'site-picker',
+		asyncComponent: () => import( './steps-repository/site-picker-list' ),
 	},
 
 	SITE_PROMPT: {
@@ -144,23 +171,18 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/import-verify-email' ),
 	},
 
-	WOO_CONFIRM: {
-		slug: 'wooConfirm',
-		asyncComponent: () => import( './steps-repository/woo-confirm' ),
+	BUNDLE_CONFIRM: {
+		slug: 'bundleConfirm',
+		asyncComponent: () => import( './steps-repository/bundle-confirm' ),
 	},
 
-	WOO_INSTALL_PLUGINS: {
-		slug: 'wooInstallPlugins',
-		asyncComponent: () => import( './steps-repository/woo-install-plugins' ),
+	BUNDLE_INSTALL_PLUGINS: {
+		slug: 'bundleInstallPlugins',
+		asyncComponent: () => import( './steps-repository/bundle-install-plugins' ),
 	},
 
-	WOO_TRANSFER: {
-		slug: 'wooTransfer',
-		asyncComponent: () => import( './steps-repository/woo-transfer' ),
-	},
-
-	WOO_VERIFY_EMAIL: {
-		slug: 'wooVerifyEmail',
-		asyncComponent: () => import( './steps-repository/woo-verify-email' ),
+	BUNDLE_TRANSFER: {
+		slug: 'bundleTransfer',
+		asyncComponent: () => import( './steps-repository/bundle-transfer' ),
 	},
 };

@@ -18,6 +18,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
+	isSiteAssemblerFlow,
 	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -62,11 +63,6 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
-
 	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
 
 	const urlData = useSelector( getUrlData );
@@ -138,6 +134,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isMigrationFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
+		isSiteAssemblerFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -154,7 +151,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
-	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
+	const useThemeHeadstart =
+		! isStartWritingFlow( flow ) &&
+		! isNewHostedSiteCreationFlow( flow ) &&
+		! isSiteAssemblerFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -266,7 +266,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 						{ subTitle && <p className="processing-step__subtitle">{ subTitle }</p> }
 					</>
 				}
-				stepProgress={ stepProgress }
 				showFooterWooCommercePowered={ false }
 			/>
 		</>

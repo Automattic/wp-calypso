@@ -1,0 +1,17 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.overview {
+	> .card {
+		margin-bottom: 32px;
+		@include break-xlarge {
+			margin-bottom: 16px;
+		}
+	}
+
+	@media ( max-width: 660px ) {
+		.hide-on-mobile {
+			display: none;
+		}
+	}
+}

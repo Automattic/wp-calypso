@@ -1,22 +1,24 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import version_compare from 'calypso/lib/version-compare';
+import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	isJetpackSite,
 	getSiteSlug,
 	getJetpackStatsAdminVersion,
+	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import PageViewTracker from '../stats-page-view-tracker';
@@ -63,6 +65,11 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'subscribers-page'
 	);
 
+	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
+	const isSimple = useSelector( isSimpleSite );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const showLaunchpad = ! isLoading && ( isSimple || isAtomic ) && ! subscribersTotals?.total;
+
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
@@ -79,30 +86,31 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 					screenReader={ navItems.subscribers?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
-				{ siteId && (
-					<div>
-						<DomainTip
-							siteId={ siteId }
-							event="stats_subscribers_domain"
-							vendor={ getSuggestionsVendor() }
-						/>
-					</div>
-				) }
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				<SubscribersHighlightSection siteId={ siteId } />
-				{ isChartVisible && (
+				{ showLaunchpad ? (
+					<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+				) : (
 					<>
-						<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period.period } />
-						<SubscribersOverview siteId={ siteId } />
+						<SubscribersHighlightSection siteId={ siteId } />
+						{ isChartVisible && (
+							<>
+								<SubscribersChartSection
+									siteId={ siteId }
+									slug={ siteSlug }
+									period={ period.period }
+								/>
+								<SubscribersOverview siteId={ siteId } />
+							</>
+						) }
+						<div className={ statsModuleListClass }>
+							<Followers path="followers" />
+							<Reach />
+							{ ! isOdysseyStats && period && (
+								<StatsModuleEmails period={ period } query={ { period, date: today } } />
+							) }
+						</div>
 					</>
 				) }
-				<div className={ statsModuleListClass }>
-					<Followers path="followers" />
-					<Reach />
-					{ ! isOdysseyStats && period && (
-						<StatsModuleEmails period={ period } query={ { period, date: today } } />
-					) }
-				</div>
 				<JetpackColophon />
 			</div>
 		</Main>

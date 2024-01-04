@@ -1,4 +1,8 @@
-import { PLAN_PERSONAL, WPCOM_FEATURES_UPLOAD_AUDIO_FILES } from '@automattic/calypso-products';
+import {
+	PLAN_PERSONAL,
+	WPCOM_FEATURES_UPLOAD_AUDIO_FILES,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -201,7 +205,9 @@ class PodcastingDetails extends Component {
 					{ ! error && plansDataLoaded && (
 						<UpsellNudge
 							plan={ PLAN_PERSONAL }
-							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
+							title={ translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
+								args: { personalPlanName: getPlan( PLAN_PERSONAL ).getTitle() },
+							} ) }
 							description={ translate(
 								'Embed podcast episodes directly from your media library.'
 							) }

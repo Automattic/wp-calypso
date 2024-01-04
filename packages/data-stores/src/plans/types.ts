@@ -64,6 +64,7 @@ export interface SitePlan {
 	planSlug: PlanSlugFromProducts;
 	productSlug: PlanSlugFromProducts;
 	productId: number;
+	introOffer?: PlanIntroductoryOffer | null;
 	/* END: Same SitePlan/PlanNext props */
 
 	currentPlan?: boolean;
@@ -78,7 +79,6 @@ export interface SitePlan {
 	 * It is sent through as `id` from the endpoint and remapped here to avoid confusion e.g. with `productId`.
 	 */
 	purchaseId?: number;
-	introOffer?: PlanIntroductoryOffer | null;
 }
 
 /**
@@ -90,6 +90,7 @@ export interface PlanNext {
 	planSlug: PlanSlugFromProducts;
 	productSlug: PlanSlugFromProducts;
 	productId: number;
+	introOffer?: PlanIntroductoryOffer | null;
 	/* END: Same SitePlan/PlanNext props */
 
 	productNameShort: string;
@@ -109,7 +110,7 @@ export interface PricedAPIPlanIntroductoryOffer {
  * Item returned from https://public-api.wordpress.com/rest/v1.5/plans response
  * Only the properties that are actually used in the store are typed
  */
-export interface PricedAPIPlan {
+export interface PricedAPIPlan extends PricedAPIPlanIntroductoryOffer {
 	product_id: number;
 	product_name: string;
 	path_slug?: PlanPath;
@@ -117,6 +118,8 @@ export interface PricedAPIPlan {
 	product_name_short: string;
 	product_type?: string;
 	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
+	product_display_price: string;
+	formatted_price: string;
 
 	/**
 	 * The product price in the currency's smallest unit.

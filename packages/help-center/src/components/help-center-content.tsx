@@ -6,10 +6,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CardBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { OdieAssistantProvider } from 'calypso/odie/context';
+import { clearOdieStorage } from 'calypso/odie/data';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -24,7 +25,9 @@ import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
-const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
+const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string } > = ( {
+	currentRoute,
+} ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -69,10 +72,22 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 		}
 	}, [ location ] );
 
+	const trackEvent = useCallback(
+		( eventName: string, properties: Record< string, unknown > = {} ) => {
+			recordTracksEvent( eventName, properties );
+		},
+		[]
+	);
+
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Routes>
-				<Route path="/" element={ <HelpCenterSearch onSearchChange={ setSearchTerm } /> } />
+				<Route
+					path="/"
+					element={
+						<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
+					}
+				/>
 				<Route path="/post" element={ <HelpCenterEmbedResult /> } />
 				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 				<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
@@ -82,12 +97,19 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = () => {
 					element={
 						<OdieAssistantProvider
 							botNameSlug="wpcom-support-chat"
-							botSetting="supportDocs"
 							botName="Wapuu"
 							enabled={ isWapuuEnabled }
 							isMinimized={ isMinimized }
 							initialUserMessage={ searchTerm }
-							extraContactOptions={ <HelpCenterContactPage hideHeaders /> }
+							logger={ trackEvent }
+							loggerEventNamePrefix="calypso_odie"
+							extraContactOptions={
+								<HelpCenterContactPage
+									hideHeaders
+									trackEventName="calypso_odie_extra_contact_option"
+									onClick={ () => clearOdieStorage( 'chat_id' ) }
+								/>
+							}
 						>
 							<HelpCenterOdie />
 						</OdieAssistantProvider>

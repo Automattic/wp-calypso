@@ -1,9 +1,8 @@
-import { getDoNotTrack } from '@automattic/calypso-analytics';
+import { getDoNotTrack, getTrackingPrefs } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
-	getTrackingPrefs,
 	mayWeTrackUserGpcInCcpaRegion,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
@@ -96,7 +95,6 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	criteo: () => 'criteo_q' in window,
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
-	parsely: () => 'PARSELY' in window,
 	clarity: () => 'clarity' in window,
 };
 

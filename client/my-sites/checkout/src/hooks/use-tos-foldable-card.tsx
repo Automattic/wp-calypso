@@ -1,33 +1,29 @@
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 
-export function useToSFoldableCard(): 'loading' | 'treatment' | 'control' {
+export function useToSFoldableCard(): boolean {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);
+	const isWPcomCheckout =
+		useSelector( getSectionName ) === 'checkout' &&
+		! isJetpackCheckout() &&
+		! isAkismetCheckout() &&
+		! isJetpackNotAtomic;
 
-	const isWPcomCheckout = ! isJetpackCheckout() && ! isAkismetCheckout() && ! isJetpackNotAtomic;
-
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'wp_web_checkout_tos_foldable_card_v1',
-		{ isEligible: isWPcomCheckout }
-	);
-
-	// Is loading experiment assignment
-	if ( isLoadingExperimentAssignment ) {
-		return 'loading';
+	/* Only show the foldable card on the checkout page for WPCOM,
+	 * further testing for Jetpack and Akismet is required before removing this hook
+	 * and showing the foldable ToS for all checkout pages.
+	 */
+	if ( isWPcomCheckout ) {
+		return true;
 	}
-	// Done loading experiment assignment, and treatment assignment found
-	if ( experimentAssignment?.variationName === 'treatment' ) {
-		return 'treatment';
-	}
-	// Done loading experiment assignment, and control or null assignment found
-	return 'control';
+
+	return false;
 }

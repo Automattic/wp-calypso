@@ -1,15 +1,12 @@
 import {
+	FEATURE_CUSTOM_DOMAIN,
 	getPlanClass,
-	isFreePlan,
+	isBusinessTrial,
+	isWooExpressMediumPlan,
+	isWooExpressPlan,
+	isWooExpressSmallPlan,
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
-	isWooExpressMediumPlan,
-	isWooExpressSmallPlan,
-	PlanSlug,
-	isWooExpressPlusPlan,
-	isBusinessTrial,
-	isWooExpressPlan,
-	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import {
 	BloombergLogo,
@@ -17,15 +14,15 @@ import {
 	CondenastLogo,
 	DisneyLogo,
 	FacebookLogo,
+	FoldableCard,
 	SalesforceLogo,
 	SlackLogo,
 	TimeLogo,
-	FoldableCard,
 } from '@automattic/components';
 import classNames from 'classnames';
-import { LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
+import { FeaturesGridProps } from '../../types';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
@@ -36,7 +33,6 @@ import PlanFeaturesContainer from '../plan-features-container';
 import PlanLogo from '../plan-logo';
 import { StickyContainer } from '../sticky-container';
 import StorageAddOnDropdown from '../storage-add-on-dropdown';
-import type { PlansGridProps } from '../..';
 import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
 
 type PlanRowOptions = {
@@ -44,15 +40,7 @@ type PlanRowOptions = {
 	isStuck?: boolean;
 };
 
-interface FeaturesGridType extends PlansGridProps {
-	isLargeCurrency: boolean;
-	translate: LocalizeProps[ 'translate' ];
-	currentPlanManageHref?: string;
-	isPlanUpgradeCreditEligible: boolean;
-	handleUpgradeClick: ( planSlug: PlanSlug ) => void;
-}
-
-class FeaturesGrid extends Component< FeaturesGridType > {
+class FeaturesGrid extends Component< FeaturesGridProps > {
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset } = this.props;
 		// Do not render the spotlight plan if it exists
@@ -249,11 +237,8 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 	}
 
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { isLargeCurrency, translate, isPlanUpgradeCreditEligible, currentSitePlanSlug, siteId } =
-			this.props;
+		const { isLargeCurrency, isPlanUpgradeCreditEligible, currentSitePlanSlug } = this.props;
 		return renderedGridPlans.map( ( { planSlug } ) => {
-			const isWooExpressPlus = isWooExpressPlusPlan( planSlug );
-
 			return (
 				<PlanDivOrTdContainer
 					scope="col"
@@ -266,14 +251,8 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 						isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 						isLargeCurrency={ isLargeCurrency }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						siteId={ siteId }
 						visibleGridPlans={ renderedGridPlans }
 					/>
-					{ isWooExpressPlus && (
-						<div className="plan-features-2023-grid__header-tagline">
-							{ translate( 'Speak to our team for a custom quote.' ) }
-						</div>
-					) }
 				</PlanDivOrTdContainer>
 			);
 		} );
@@ -357,13 +336,11 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		const {
 			isInSignup,
 			isLaunchPage,
-			flowName,
 			currentSitePlanSlug,
 			translate,
 			planActionOverrides,
-			siteId,
 			isLargeCurrency,
-			handleUpgradeClick,
+			onUpgradeClick,
 		} = this.props;
 
 		return renderedGridPlans.map(
@@ -395,23 +372,17 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 					>
 						<PlanFeatures2023GridActions
 							availableForPurchase={ availableForPurchase }
-							className={ getPlanClass( planSlug ) }
-							freePlan={ isFreePlan( planSlug ) }
-							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
-							isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
 							isMonthlyPlan={ isMonthlyPlan }
 							onUpgradeClick={ ( overridePlanSlug ) =>
-								handleUpgradeClick( overridePlanSlug ?? planSlug )
+								onUpgradeClick( overridePlanSlug ?? planSlug )
 							}
 							planSlug={ planSlug }
-							flowName={ flowName }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							buttonText={ buttonText }
 							planActionOverrides={ planActionOverrides }
 							showMonthlyPrice={ true }
-							siteId={ siteId }
 							isStuck={ options?.isStuck || false }
 							isLargeCurrency={ isLargeCurrency }
 							storageOptions={ storageOptions }
@@ -441,8 +412,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 		const { translate, gridPlans } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug } ) => {
-			const shouldRenderEnterpriseLogos =
-				isWpcomEnterpriseGridPlan( planSlug ) || isWooExpressPlusPlan( planSlug );
+			const shouldRenderEnterpriseLogos = isWpcomEnterpriseGridPlan( planSlug );
 			const shouldShowFeatureTitle = ! isWpComFreePlan( planSlug ) && ! shouldRenderEnterpriseLogos;
 			const indexInGridPlansForFeaturesGrid = gridPlans.findIndex(
 				( { planSlug: slug } ) => slug === planSlug
@@ -486,9 +456,7 @@ class FeaturesGrid extends Component< FeaturesGridType > {
 			isCustomDomainAllowedOnFreePlan,
 		} = this.props;
 		const plansWithFeatures = renderedGridPlans.filter(
-			( gridPlan ) =>
-				! isWpcomEnterpriseGridPlan( gridPlan.planSlug ) &&
-				! isWooExpressPlusPlan( gridPlan.planSlug )
+			( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
 		);
 
 		return (

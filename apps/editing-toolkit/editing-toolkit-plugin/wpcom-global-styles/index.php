@@ -62,6 +62,12 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
+	// Do not limit Global Styles when live previewing a Premium theme without a Premium plan or higher
+	// because the live preview already shows an upgrade notice, and we avoid duplication.
+	if ( wpcom_global_styles_is_previewing_premium_theme_without_premium_plan( $blog_id ) ) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -481,13 +487,19 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</div>
 				<div class="launch-bar-global-styles-message">
 					<?php
+					$support_url = function_exists( 'localized_wpcom_url' )
+						? localized_wpcom_url( 'https://wordpress.com/support/using-styles/' )
+						// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.UnlocalizedUrl
+						: 'https://wordpress.com/support/using-styles/';
+
 					$message = sprintf(
-						/* translators: %s - documentation URL. */
+						/* translators: %1$s - documentation URL, %2$s - the name of the required plan */
 						__(
-							'Your site includes <a href="%s" target="_blank">premium styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+							'Your site includes <a href="%1$s" target="_blank">premium styles</a> that are only visible to visitors after upgrading to the %2$s plan or higher.',
 							'full-site-editing'
 						),
-						'https://wordpress.com/support/using-styles/'
+						$support_url,
+						get_store_product( WPCOM_VALUE_BUNDLE )->product_name
 					);
 					echo sprintf(
 						wp_kses(
@@ -625,4 +637,29 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 	}
 
 	return false;
+}
+
+/**
+ * Checks whether the site has access to the Global Styles feature when the editor is live previewing a Premium theme without a Premium plan or higher.
+ *
+ * @param int $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has access to Global Styles when live previewing.
+ */
+function wpcom_global_styles_is_previewing_premium_theme_without_premium_plan( $blog_id ) {
+	if ( ! isset( $_GET['wp_theme_preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Not live previewing.
+		return false;
+	}
+	$wp_theme_preview = sanitize_text_field( wp_unslash( $_GET['wp_theme_preview'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+	$is_previewing_premium_theme = str_starts_with( $wp_theme_preview, 'premium/' );
+	if ( ! $is_previewing_premium_theme ) {
+		// Not a premium theme.
+		return false;
+	}
+
+	// Check for a Premium plan or higher by checking if can use global styles.
+	$has_premium_plan_or_higher = wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id );
+
+	return ! $has_premium_plan_or_higher;
 }

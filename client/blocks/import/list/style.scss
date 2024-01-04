@@ -37,21 +37,7 @@ html[dir="rtl"] {
 	}
 
 	.list__wrapper {
-		margin-left: auto !important;
-		margin-right: auto !important;
-
-		.import__heading {
-			margin-bottom: 2.5rem;
-
-			.onboarding-title {
-				width: 100%;
-				max-width: 100%;
-			}
-		}
-
-		@include break-wide {
-			max-width: 1032px;
-		}
+		padding-bottom: 2rem;
 
 		h3 {
 			font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -80,6 +66,8 @@ html[dir="rtl"] {
 }
 
 .list__importers {
+	max-width: 430px;
+
 	.select-dropdown > div {
 		width: 100%;
 	}

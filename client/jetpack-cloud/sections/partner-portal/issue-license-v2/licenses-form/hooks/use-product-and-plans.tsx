@@ -1,17 +1,12 @@
 import { getQueryArg } from '@wordpress/url';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
-	isJetpackBundle,
 	isWooCommerceProduct,
 	isWpcomHostingProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
-import {
-	addSelectedProductSlugs,
-	clearSelectedProductSlugs,
-} from 'calypso/state/partner-portal/products/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
 	PRODUCT_FILTER_ALL,
@@ -20,6 +15,7 @@ import {
 	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
 } from '../../constants';
+import { isProductMatch } from '../../lib/filter';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // Plans and Products that we can merged into 1 card.
@@ -84,7 +80,7 @@ const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduc
 		return ! MERGABLE_PLANS.some( ( filter ) => slug.startsWith( filter ) );
 	} );
 
-	return [ ...filteredPlans, ...restOfPlans ];
+	return [ ...filteredPlans, ...restOfPlans ] as APIProductFamilyProduct[];
 };
 
 // This function gets the displayable Products based on how it should be arranged in the listing.
@@ -109,7 +105,7 @@ const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyPro
 		const product_a = Array.isArray( a ) ? a[ 0 ].name : a.name;
 		const product_b = Array.isArray( b ) ? b[ 0 ].name : b.name;
 		return product_a.localeCompare( product_b );
-	} );
+	} ) as APIProductFamilyProduct[];
 };
 
 export default function useProductAndPlans( {
@@ -119,28 +115,6 @@ export default function useProductAndPlans( {
 	productSearchQuery,
 }: Props ) {
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		// If the user comes from the flow for adding a new payment method during an attempt to issue a license
-		// after the payment method is added, we will make an attempt to issue the chosen license automatically.
-		const defaultProductSlugs = getQueryArg( window.location.href, 'products' )
-			?.toString()
-			.split( ',' );
-		// Select the slugs included in the URL
-		defaultProductSlugs &&
-			dispatch(
-				addSelectedProductSlugs(
-					// Filter the bundles and select only individual products
-					defaultProductSlugs.filter( ( slug ) => ! isJetpackBundle( slug ) )
-				)
-			);
-
-		// Clear all selected slugs when navigating away from the page to avoid persisting the data.
-		return () => {
-			dispatch( clearSelectedProductSlugs() );
-		};
-	}, [ dispatch ] );
 
 	const addedPlanAndProducts = useSelector( ( state ) =>
 		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
@@ -164,8 +138,8 @@ export default function useProductAndPlans( {
 
 		// Filter products based on the search term
 		if ( productSearchQuery ) {
-			filteredProductsAndBundles = filteredProductsAndBundles.filter(
-				( product ) => product.name?.toLowerCase().includes( productSearchQuery.toLowerCase() )
+			filteredProductsAndBundles = filteredProductsAndBundles.filter( ( product ) =>
+				isProductMatch( product, productSearchQuery )
 			);
 		}
 
@@ -184,6 +158,7 @@ export default function useProductAndPlans( {
 
 		return {
 			isLoadingProducts,
+			data,
 			filteredProductsAndBundles,
 			plans: getDisplayablePlans( filteredProductsAndBundles ),
 			products: getDisplayableProducts( filteredProductsAndBundles ),

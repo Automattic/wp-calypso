@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_ATOMIC, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { WordPressWordmark, Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
@@ -356,9 +356,14 @@ const MarketplaceProductInstall = ( {
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
-						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
+						"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
+						{
+							args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						}
 					) }
-					action={ translate( 'Upgrade to Business Plan' ) }
+					action={ translate( 'Upgrade to %(planName)s Plan', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) }
 					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ pluginSlug }/install/${ selectedSite?.slug }#step2` }
 				/>
 			);

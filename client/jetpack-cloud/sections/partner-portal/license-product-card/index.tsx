@@ -6,7 +6,8 @@ import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { useProductDescription, useURLQueryParams } from '../hooks';
-import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../lib';
+import { LICENSE_INFO_MODAL_ID } from '../lib';
+import getProductShortTitle from '../lib/get-product-short-title';
 import LicenseLightbox from '../license-lightbox';
 import LicenseLightboxLink from '../license-lightbox-link';
 import ProductPriceWithDiscount from '../primary/product-price-with-discount-info';
@@ -14,7 +15,6 @@ import ProductPriceWithDiscount from '../primary/product-price-with-discount-inf
 import './style.scss';
 
 interface Props {
-	tabIndex: number;
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -22,12 +22,11 @@ interface Props {
 	suggestedProduct?: string | null;
 	isMultiSelect?: boolean;
 	hideDiscount?: boolean;
-	withBackground?: boolean;
+	quantity?: number;
 }
 
 export default function LicenseProductCard( props: Props ) {
 	const {
-		tabIndex,
 		product,
 		isSelected,
 		isDisabled,
@@ -35,11 +34,13 @@ export default function LicenseProductCard( props: Props ) {
 		suggestedProduct,
 		isMultiSelect,
 		hideDiscount,
-		withBackground,
+		quantity,
 	} = props;
+
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
 	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
-	const productTitle = getProductTitle( product.name );
+	const productTitle = getProductShortTitle( product );
+
 	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -54,8 +55,8 @@ export default function LicenseProductCard( props: Props ) {
 
 	const onKeyDown = useCallback(
 		( e: any ) => {
-			// Spacebar
-			if ( 32 === e.keyCode ) {
+			// Enter
+			if ( 13 === e.keyCode ) {
 				onSelect();
 			}
 		},
@@ -107,14 +108,13 @@ export default function LicenseProductCard( props: Props ) {
 				onClick={ onSelect }
 				onKeyDown={ onKeyDown }
 				role={ isMultiSelect ? 'checkbox' : 'radio' }
-				tabIndex={ tabIndex }
+				tabIndex={ 0 }
 				aria-checked={ isSelected }
 				aria-disabled={ isDisabled }
 				className={ classNames( {
 					'license-product-card': true,
 					selected: isSelected,
 					disabled: isDisabled,
-					'license-product-card--with-background': withBackground,
 				} ) }
 			>
 				<div className="license-product-card__inner">
@@ -122,6 +122,15 @@ export default function LicenseProductCard( props: Props ) {
 						<div className="license-product-card__main">
 							<div className="license-product-card__heading">
 								<h3 className="license-product-card__title">{ productTitle }</h3>
+
+								<div className="license-product-card__pricing is-compact">
+									<ProductPriceWithDiscount
+										product={ product }
+										hideDiscount={ hideDiscount }
+										quantity={ quantity }
+										compact
+									/>
+								</div>
 
 								<div className="license-product-card__description">{ productDescription }</div>
 
@@ -138,16 +147,13 @@ export default function LicenseProductCard( props: Props ) {
 								{ isSelected && <Gridicon icon="checkmark" /> }
 							</div>
 						</div>
-
-						<div className="license-product-card__pricing">
-							<ProductPriceWithDiscount product={ product } hideDiscount={ hideDiscount } />
-						</div>
 					</div>
 				</div>
 			</div>
 			{ showLightbox && (
 				<LicenseLightbox
 					product={ product }
+					quantity={ quantity }
 					ctaLabel={ isSelected ? translate( 'Unselect License' ) : translate( 'Select License' ) }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }

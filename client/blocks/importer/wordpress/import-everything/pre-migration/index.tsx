@@ -1,13 +1,13 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-credentials-info';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { MigrationReady } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-ready';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
-import { PreMigrationUpgradePlan } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/upgrade-plan';
+import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -31,7 +31,6 @@ interface PreMigrationProps {
 	isTargetSitePlanCompatible: boolean;
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	navigateToVerifyEmailStep: () => void;
-	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	onNotAuthorizedClick: () => void;
 }
@@ -48,7 +47,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isTrial,
 		startImport,
 		navigateToVerifyEmailStep,
-		onFreeTrialClick,
 		onContentOnlyClick,
 		onNotAuthorizedClick,
 	} = props;
@@ -84,12 +82,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		};
 	}, [ sourceSiteId, sourceSiteUrl, targetSite.ID, targetSite.slug, isMigrateFromWp, isTrial ] );
 
-	const toggleCredentialsForm = () => {
-		setShowCredentials( ! showCredentials );
+	const toggleCredentialsForm = useCallback( () => {
+		setShowCredentials( ( prevShowCredentials ) => ! prevShowCredentials );
 		dispatch(
 			recordTracksEvent( 'calypso_site_migration_credentials_form_toggle', migrationTrackingProps )
 		);
-	};
+	}, [ dispatch, migrationTrackingProps ] );
 
 	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
 		'init' | 'fetching' | 'fetched'
@@ -208,6 +206,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					targetSite={ targetSite }
 					migrationTrackingProps={ migrationTrackingProps }
 					startImport={ startImport }
+					allowFtp={ false }
 				/>
 			);
 
@@ -227,17 +226,16 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return (
 				<>
 					{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
-					<PreMigrationUpgradePlan
-						sourceSiteUrl={ sourceSiteUrl }
-						targetSite={ targetSite }
-						startImport={ onUpgradeAndMigrateClick }
+					<UpgradePlan
+						site={ targetSite }
 						navigateToVerifyEmailStep={ navigateToVerifyEmailStep }
-						onFreeTrialClick={ onFreeTrialClick }
-						onContentOnlyClick={ onContentOnlyClick }
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
-						migrationTrackingProps={ migrationTrackingProps }
+						ctaText={ translate( 'Upgrade and migrate' ) }
+						onCtaClick={ onUpgradeAndMigrateClick }
+						onContentOnlyClick={ onContentOnlyClick }
+						trackingEventsProps={ migrationTrackingProps }
 					/>
 				</>
 			);

@@ -50,7 +50,7 @@ import {
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
-import { isP2Flow } from 'calypso/signup/utils';
+import { isP2Flow } from 'calypso/signup/is-flow';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -1125,11 +1125,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		if (
-			this.props.isJetpackWooCommerceFlow ||
-			this.props.isJetpackWooDnaFlow ||
-			( this.props.isWoo && this.props.wccomFrom )
-		) {
+		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
 			return (
 				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>

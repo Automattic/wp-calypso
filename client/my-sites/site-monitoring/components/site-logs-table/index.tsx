@@ -1,13 +1,12 @@
-import { __ } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { LogType } from '../../logs-tab';
 import SiteLogsTableRow from './site-logs-table-row';
 import { Skeleton } from './skeleton';
-
 import './style.scss';
 
 type SiteLogs = SiteLogsData[ 'logs' ];
@@ -15,26 +14,9 @@ type SiteLogs = SiteLogsData[ 'logs' ];
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
 	logType?: LogType;
+	latestLogType?: LogType | null;
 	isLoading?: boolean;
 	headerTitles: string[];
-}
-
-export function formatColumnName( column: string ) {
-	if ( column === 'request_type' ) {
-		return __( 'Request type' );
-	} else if ( column === 'request_url' ) {
-		return __( 'Request URL' );
-	} else if ( column === 'date' ) {
-		return __( 'Date' );
-	} else if ( column === 'status' ) {
-		return __( 'Status' );
-	} else if ( column === 'severity' ) {
-		return 'Severity';
-	} else if ( column === 'timestamp' ) {
-		return __( 'Timestamp' );
-	} else if ( column === 'message' ) {
-		return __( 'Message' );
-	}
 }
 
 export const SiteLogsTable = memo( function SiteLogsTable( {
@@ -42,6 +24,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	isLoading,
 	headerTitles,
 	logType,
+	latestLogType,
 }: SiteLogsTableProps ) {
 	const { __ } = useI18n();
 	const columns = useSiteColumns( logs, headerTitles );
@@ -50,13 +33,6 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	const logsWithKeys = useMemo( () => {
 		return generateRowKeys( logs );
 	}, [ logs ] );
-
-	const [ latestLogType, setLatestLogType ] = useState< LogType | undefined | null >( null );
-	useEffect( () => {
-		if ( ! isLoading && logType !== latestLogType ) {
-			setLatestLogType( logType );
-		}
-	}, [ latestLogType, logType, isLoading ] );
 
 	if ( isLoading && logType !== latestLogType ) {
 		const skeletonClassName =
@@ -67,6 +43,25 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 
 	if ( ! isLoading && ! logsWithKeys.length ) {
 		return <>{ __( 'No log entries within this time range.' ) }</>;
+	}
+
+	const siteGsmOffsetDisplay =
+		siteGmtOffset === 0 ? 'UTC' : `UTC${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
+
+	const columnNames: { [ key in string ]: string } = {
+		request_type: __( 'Request type' ),
+		request_url: __( 'Request URL' ),
+		// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+		date: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+		status: __( 'Status' ),
+		severity: 'Severity',
+		// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+		timestamp: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+		message: __( 'Message' ),
+	};
+
+	function formatColumnName( column: string ) {
+		return columnNames[ column ] || column;
 	}
 
 	return (

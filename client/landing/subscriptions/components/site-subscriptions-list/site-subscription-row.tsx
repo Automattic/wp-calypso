@@ -21,7 +21,7 @@ import {
 	SOURCE_SUBSCRIPTIONS_SITE_LIST,
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
 } from 'calypso/landing/subscriptions/tracks';
-import { successNotice } from 'calypso/state/notices/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { Link } from '../link';
 import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
@@ -67,6 +67,16 @@ const SelectedNewPostDeliveryMethods = ( {
 
 type SiteRowProps = Reader.SiteSubscriptionsResponseItem;
 
+const scrollToFirstRow = () => {
+	const firstRow = document.querySelector( '.site-subscriptions-list li.site-subscription-row' );
+
+	if ( firstRow ) {
+		firstRow.scrollIntoView( { block: 'center' } );
+	}
+};
+
+const siteUnsubscribedNoticeId = 'site-unsubscribed';
+
 const SiteSubscriptionRow = ( {
 	ID: subscriptionId,
 	blog_ID: blog_id,
@@ -78,8 +88,10 @@ const SiteSubscriptionRow = ( {
 	delivery_methods,
 	is_wpforteams_site,
 	is_paid_subscription,
+	is_gift,
 	isDeleted,
 	is_rss,
+	resubscribed,
 }: SiteRowProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -129,13 +141,21 @@ const SiteSubscriptionRow = ( {
 			successNotice(
 				translate( 'You have successfully unsubscribed from %(name)s.', { args: { name } } ),
 				{
-					duration: 5000,
+					id: siteUnsubscribedNoticeId,
 					button: translate( 'Resubscribe' ),
 					onClick: () => {
 						if ( unsubscribeInProgress.current ) {
 							resubscribePending.current = true;
 						} else {
-							resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+							resubscribe( {
+								blog_id,
+								url,
+								doNotInvalidateSiteSubscriptions: true,
+								resubscribed: true,
+							} );
+							dispatch( removeNotice( siteUnsubscribedNoticeId ) );
+							scrollToFirstRow();
+
 							recordSiteResubscribed( {
 								blog_id,
 								url,
@@ -159,6 +179,11 @@ const SiteSubscriptionRow = ( {
 				return feedUrl;
 			}
 
+			if ( resubscribed ) {
+				// If the site was resubscribed, the id of the optmistic update is not the same as the id of the new subscription
+				return `/read/site/subscription/${ blog_id }`;
+			}
+
 			return `/read/subscriptions/${ subscriptionId }`;
 		}
 
@@ -169,7 +194,7 @@ const SiteSubscriptionRow = ( {
 			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
-	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, subscriptionId ] );
+	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, resubscribed, subscriptionId ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
@@ -212,7 +237,7 @@ const SiteSubscriptionRow = ( {
 	};
 
 	return ! isDeleted ? (
-		<HStack as="li" alignment="center" className="row" role="row">
+		<HStack as="li" alignment="center" className="row site-subscription-row" role="row">
 			<span className="title-cell" role="cell">
 				<Link
 					className="title-icon"
@@ -241,6 +266,12 @@ const SiteSubscriptionRow = ( {
 						{ !! is_paid_subscription && (
 							<span className="paid-label">
 								{ translate( 'Paid', { context: 'Label for a paid subscription plan' } ) }
+							</span>
+						) }
+
+						{ !! is_gift && (
+							<span className="gift-label">
+								{ translate( 'Gift', { context: 'Label for a gifted subscription' } ) }
 							</span>
 						) }
 
@@ -332,7 +363,12 @@ const SiteSubscriptionRow = ( {
 
 									if ( resubscribePending.current ) {
 										resubscribePending.current = false;
-										resubscribe( { blog_id, url, doNotInvalidateSiteSubscriptions: true } );
+										resubscribe( {
+											blog_id,
+											url,
+											doNotInvalidateSiteSubscriptions: true,
+											resubscribed: true,
+										} );
 										recordSiteResubscribed( {
 											blog_id,
 											url,

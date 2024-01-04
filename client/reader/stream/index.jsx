@@ -563,7 +563,7 @@ class ReaderStream extends Component {
 										selected={ this.state.selectedTab === 'sites' }
 										onClick={ this.handleSitesSelected }
 									>
-										{ this.props.sidebarTabTitle || translate( 'Sites' ) }
+										{ this.props.sidebarTabTitle || translate( 'Subscriptions' ) }
 									</NavItem>
 								</NavTabs>
 							</SectionNav>

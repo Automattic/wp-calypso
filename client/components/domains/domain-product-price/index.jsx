@@ -1,4 +1,4 @@
-import { PLAN_100_YEARS } from '@automattic/calypso-products';
+import { PLAN_100_YEARS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -48,7 +48,9 @@ class DomainProductPrice extends Component {
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
-				message = translate( 'Personal plan required' );
+				message = translate( '%(planName)s plan required', {
+					args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+				} );
 				break;
 		}
 
@@ -108,7 +110,7 @@ class DomainProductPrice extends Component {
 
 		return (
 			<div className="domain-product-price__price">
-				<strong>{ this.props.salePrice }</strong> <del>{ priceText }</del>
+				<del>{ priceText }</del>
 			</div>
 		);
 	}
@@ -151,6 +153,24 @@ class DomainProductPrice extends Component {
 				<div className={ productPriceClassName }>
 					<span>{ translate( 'Free', { context: 'Adjective refers to subdomain' } ) }</span>
 				</div>
+			</div>
+		);
+	}
+
+	renderDomainMovePrice() {
+		const { showStrikedOutPrice, translate } = this.props;
+
+		const className = classnames( 'domain-product-price', {
+			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
+		} );
+
+		return (
+			<div className={ className }>
+				<span>
+					{ translate( 'Move your existing domain.', {
+						context: 'Line item description in cart.',
+					} ) }
+				</span>
 			</div>
 		);
 	}
@@ -223,6 +243,8 @@ class DomainProductPrice extends Component {
 			case 'INCLUDED_IN_HIGHER_PLAN':
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
 				return this.renderFreeWithPlan();
+			case 'DOMAIN_MOVE_PRICE':
+				return this.renderDomainMovePrice();
 			case 'PRICE':
 			default:
 				return this.renderPrice();

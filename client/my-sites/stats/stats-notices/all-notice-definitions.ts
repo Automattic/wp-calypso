@@ -4,6 +4,7 @@ import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
+import TierUpgradeNotice from './tier-upgrade-notice';
 import { StatsNoticeProps } from './types';
 
 type StatsNoticeType = {
@@ -101,6 +102,28 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! hasPaidStats &&
 				// Show the notice if the site is not commercial.
 				( ! config.isEnabled( 'stats/type-detection' ) || ! isCommercial )
+			);
+		},
+		disabled: false,
+	},
+	{
+		component: TierUpgradeNotice,
+		noticeId: 'tier_upgrade',
+		isVisibleFunc: ( {
+			isOdysseyStats,
+			isWpcom,
+			isCommercialOwned,
+			isSiteJetpackNotAtomic,
+		}: StatsNoticeProps ) => {
+			// Show the notice if the site is Jetpack or it is Odyssey Stats.
+			const showTierUpgradeNoticeOnOdyssey = isOdysseyStats;
+			const showTierUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+			// We don't show the notice for WPCOM sites for now.
+			return !! (
+				! isWpcom &&
+				( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
+				config.isEnabled( 'stats/tier-upgrade-slider' ) &&
+				isCommercialOwned
 			);
 		},
 		disabled: false,

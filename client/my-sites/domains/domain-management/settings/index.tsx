@@ -8,13 +8,22 @@ import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
-import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import {
+	modeType,
+	stepSlug,
+	useMyDomainInputMode,
+} from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
+import {
+	getSelectedDomain,
+	isDomainInGracePeriod,
+	isDomainUpdateable,
+	isSubdomain,
+} from 'calypso/lib/domains';
 import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
@@ -26,10 +35,12 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
+	domainMappingSetup,
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
@@ -322,8 +333,19 @@ const Settings = ( {
 	};
 
 	const renderExternalNameserversNotice = ( noticeType: string ) => {
-		if ( areAllWpcomNameServers() || ! nameservers || ! nameservers.length ) {
+		if ( ! domain || areAllWpcomNameServers() || ! nameservers || ! nameservers.length ) {
 			return null;
+		}
+
+		let mappingSetupStep: string =
+			domain.connectionMode === modeType.ADVANCED
+				? stepSlug.ADVANCED_UPDATE
+				: stepSlug.SUGGESTED_UPDATE;
+		if ( isSubdomain( selectedDomainName ) ) {
+			mappingSetupStep =
+				domain.connectionMode === modeType.ADVANCED
+					? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
+					: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
 		}
 
 		const dnsRecordsNotice = translate(
@@ -332,9 +354,13 @@ const Settings = ( {
 				components: {
 					a: (
 						<a
-							href={ domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
-								nameservers: true,
-							} ) }
+							href={
+								domain.type === domainTypes.MAPPED
+									? domainMappingSetup( selectedSite.slug, selectedDomainName, mappingSetupStep )
+									: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+											nameservers: true,
+									  } )
+							}
 						/>
 					),
 				},
@@ -347,9 +373,13 @@ const Settings = ( {
 				components: {
 					a: (
 						<a
-							href={ domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
-								nameservers: true,
-							} ) }
+							href={
+								domain.type === domainTypes.MAPPED
+									? domainMappingSetup( selectedSite.slug, selectedDomainName, mappingSetupStep )
+									: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+											nameservers: true,
+									  } )
+							}
 						/>
 					),
 				},
@@ -621,14 +651,27 @@ const Settings = ( {
 				showDismiss={ false }
 				status="is-warning"
 			>
-				{ /*
-					TO DO: Enable the link when the support page is ready
-					<NoticeAction href={ domain.pendingRegistrationAtRegistryUrl }>
+				{ domain?.pendingRegistrationAtRegistryUrl && (
+					<NoticeAction external href={ domain?.pendingRegistrationAtRegistryUrl }>
 						{ translate( 'More info' ) }
 					</NoticeAction>
-				*/ }
+				) }
 			</Notice>
 		);
+	};
+
+	const renderDomainGlueRecordsSection = () => {
+		// We can only create glue records for domains registered with us through KS_RAM
+		if (
+			! domain ||
+			domain.type !== domainTypes.REGISTERED ||
+			domain.registrar !== 'KS_RAM' ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return <GlueRecordsCard domain={ domain } />;
 	};
 
 	const renderMainContent = () => {
@@ -657,6 +700,7 @@ const Settings = ( {
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
+				{ renderDomainGlueRecordsSection() }
 			</>
 		);
 	};

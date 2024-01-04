@@ -1,12 +1,18 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { HelpCenter } from '@automattic/data-stores';
+import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
 	SubscribersPageProvider,
@@ -21,36 +27,60 @@ import { SubscribersFilterBy, SubscribersSortBy } from './constants';
 import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
 import { Subscriber } from './types';
-
 import './style.scss';
 
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
 };
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 const SubscribersHeader = ( { selectedSiteId }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
+
+	const openHelpCenter = () => {
+		setShowHelpCenter( true );
+		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
+	};
+
+	const subtitleOptions = {
+		components: {
+			link: (
+				<a
+					href={ localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) }
+					target="blank"
+					onClick={ ( event ) => {
+						event.preventDefault();
+						openHelpCenter();
+					} }
+				/>
+			),
+		},
+	};
+
+	const subtitle =
+		isEnglishLocale ||
+		hasTranslation(
+			'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.'
+		)
+			? translate(
+					'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+					subtitleOptions
+			  )
+			: translate(
+					'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
+					subtitleOptions
+			  );
 
 	return (
 		<NavigationHeader
 			className="stats__section-header modernized-header"
 			title={ translate( 'Subscribers' ) }
-			subtitle={ translate(
-				'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
-				{
-					components: {
-						link: (
-							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/launch-a-newsletter/#about-your-subscribers'
-								) }
-								target="blank"
-							/>
-						),
-					},
-				}
-			) }
+			subtitle={ subtitle }
 			screenReader={ navItems.insights?.label }
 			navigationItems={ [] }
 		>
@@ -90,6 +120,9 @@ const SubscribersPage = ( {
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
+	const [ giftUserId, setGiftUserId ] = useState( 0 );
+	const [ giftUsername, setGiftUsername ] = useState( '' );
+
 	const siteId = selectedSite?.ID || null;
 
 	const pageArgs = {
@@ -105,6 +138,11 @@ const SubscribersPage = ( {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
+	const onGiftSubscription = ( { user_id, display_name }: Subscriber ) => {
+		setGiftUserId( user_id );
+		setGiftUsername( display_name );
+	};
+
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -117,6 +155,7 @@ const SubscribersPage = ( {
 			searchTermChanged={ searchTermChanged }
 			sortTermChanged={ sortTermChanged }
 		>
+			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
@@ -125,6 +164,7 @@ const SubscribersPage = ( {
 				<SubscriberListContainer
 					siteId={ siteId }
 					onClickView={ onClickView }
+					onGiftSubscription={ onGiftSubscription }
 					onClickUnsubscribe={ onClickUnsubscribe }
 				/>
 
@@ -133,6 +173,16 @@ const SubscribersPage = ( {
 					onCancel={ resetSubscriber }
 					onConfirm={ onConfirmModal }
 				/>
+
+				{ giftUserId !== 0 && (
+					<GiftSubscriptionModal
+						siteId={ selectedSite?.ID ?? 0 }
+						userId={ giftUserId }
+						username={ giftUsername }
+						onCancel={ () => setGiftUserId( 0 ) }
+						onConfirm={ () => setGiftUserId( 0 ) }
+					/>
+				) }
 				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 				{ selectedSite && <MigrateSubscribersModal /> }
 			</Main>

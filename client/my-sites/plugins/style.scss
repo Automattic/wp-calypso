@@ -529,8 +529,11 @@ body.is-section-plugins #primary {
 }
 
 .plugin-details__reviews {
-	margin-top: 20px;
 	margin-bottom: 40px;
+
+	@media screen and ( max-width: 1040px ) {
+		padding: 16px;
+	}
 }
 
 .plugin__header {

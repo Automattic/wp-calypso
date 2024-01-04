@@ -21,27 +21,40 @@
 		}
 	}
 
+	.onboarding-title {
+		@include onboarding-import-heading-text;
+		margin-bottom: rem(12px);
+	}
+
+	.onboarding-subtitle {
+		font-size: 1rem;
+		line-height: 1.5;
+		color: var(--studio-gray-60);
+
+		@include break-small {
+			max-width: 600px;
+		}
+
+		button {
+			padding: 0;
+			color: inherit;
+			font-size: inherit;
+			text-decoration: underline;
+		}
+	}
+
 	.import__header {
 		@include onboarding-heading-padding;
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.import__heading {
 		flex-grow: 1;
-
-		@include break-medium {
-			h1 {
-				max-width: 500px;
-				margin: auto;
-			}
-
-			h2 {
-				max-width: 560px;
-				margin: auto;
-			}
-		}
+		margin-top: rem(26px);
+		margin-bottom: rem(52px);
 
 		&.center {
 			text-align: center;
@@ -50,21 +63,6 @@
 		strong {
 			font-weight: 500;
 			color: var(--studio-gray-100);
-		}
-
-		.onboarding-title {
-			@include onboarding-import-heading-text;
-			margin-bottom: 20px;
-		}
-
-		.onboarding-subtitle {
-			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.4444em;
-
-			@include break-small {
-				width: 600px;
-			}
 		}
 
 		.formatted-header__subtitle {
@@ -91,6 +89,16 @@
 
 	.import__heading-center {
 		text-align: center;
+
+		.onboarding-title,
+		.onboarding-subtitle {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+
+	.onboarding-hooray .import__heading {
+		margin-top: 0;
 	}
 
 	.scanning__header {

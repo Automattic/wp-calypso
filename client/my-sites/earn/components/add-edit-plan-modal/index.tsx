@@ -60,10 +60,15 @@ function minimumCurrencyTransactionAmount(
 	currency: string,
 	connectedAccountDefaultCurrency: string
 ): number {
-	if ( connectedAccountDefaultCurrency.toUpperCase() === currency ) {
-		return currency_min[ currency ];
+	const currencyMin = currency_min?.[ currency ];
+	if ( ! currencyMin ) {
+		return 0;
 	}
-	return currency_min[ currency ] * 2;
+
+	if ( connectedAccountDefaultCurrency?.toUpperCase() === currency ) {
+		return currencyMin;
+	}
+	return currencyMin * 2;
 }
 
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
@@ -94,7 +99,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.buyer_can_change_amount ?? false
 	);
 
-	const currencyList = Object.keys( connectedAccountMinimumCurrency );
+	const currencyList = Object.keys( connectedAccountMinimumCurrency ?? {} );
 
 	const defaultCurrency = useMemo( () => {
 		if ( product?.currency ) {
@@ -135,11 +140,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedPostIsTier, setEditedPostIsTier ] = useState(
 		product?.type === TYPE_TIER ?? false
 	);
-
 	const [ editedSchedule, setEditedSchedule ] = useState(
 		product?.renewal_schedule ?? PLAN_MONTHLY_FREQUENCY
 	);
+
 	const [ focusedName, setFocusedName ] = useState( false );
+	const [ nameWasEdited, setNameWasEdited ] = useState( false );
 
 	const [ editedPrice, setEditedPrice ] = useState( false );
 
@@ -196,8 +202,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		};
 	const handlePayWhatYouWant = ( newValue: boolean ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue: boolean ) => setEditedMultiplePerUser( newValue );
-	const onNameChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+	const onNameChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		setNameWasEdited( true );
 		setEditedProductName( event.target.value );
+	};
 	const onSelectSchedule = ( event: ChangeEvent< HTMLSelectElement > ) =>
 		setEditedSchedule( event.target.value );
 
@@ -214,20 +222,24 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	useEffect( () => {
 		// If the user has manually entered a name that should be left as-is, don't overwrite it
-		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
+		if (
+			product.ID ||
+			nameWasEdited ||
+			( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) )
+		) {
 			return;
 		}
 		const name = editedPostIsTier ? defaultNameTier : defaultNames[ `${ editedSchedule }` ] ?? '';
 
 		setEditedProductName( name );
-	}, [ editedSchedule, editedPostIsTier ] );
+	}, [ editedSchedule, editedPostIsTier, product, nameWasEdited ] );
 
 	const getAnnualProductDetailsFromProduct = ( productDetails: Product ): Product => ( {
 		...productDetails,
 		ID: annualProduct?.ID, // will the the ID if already existing
 		price: currentAnnualPrice,
 		interval: PLAN_YEARLY_FREQUENCY,
-		title: `${ productDetails.title } ${ translate( '(yearly)' ) }`,
+		title: productDetails.title,
 	} );
 
 	const getCurrentProductDetails = (): Product => {

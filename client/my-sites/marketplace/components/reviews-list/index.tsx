@@ -1,22 +1,50 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { LegacyRef, forwardRef } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import ConfirmModal from 'calypso/components/confirm-modal';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Rating from 'calypso/components/rating';
 import {
-	ProductProps,
 	useMarketplaceReviewsQuery,
 	MarketplaceReviewResponse,
+	MarketplaceReviewsQueryProps,
+	useDeleteMarketplaceReviewMutation,
+	useInfiniteMarketplaceReviewsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
+import { getAvatarURL } from 'calypso/data/marketplace/utils';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
-export const MarketplaceReviewsList = forwardRef<
-	HTMLDivElement,
-	ProductProps & { innerRef: LegacyRef< HTMLDivElement > }
->( ( props, ref ) => {
+export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) => {
 	const translate = useTranslate();
-	const { data: reviews } = useMarketplaceReviewsQuery( props );
+	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
+	const currentUserId = useSelector( getCurrentUserId );
+	const { data, fetchNextPage, error } = useInfiniteMarketplaceReviewsQuery( {
+		...props,
+		author_exclude: currentUserId ?? undefined,
+	} );
+	const reviews = data?.pages.flatMap( ( page ) => page.data );
+
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+		...props,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
+
+	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
+		...props,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+	} );
+	const deleteReview = ( reviewId: number ) => {
+		setIsConfirmModalVisible( false );
+		deleteReviewMutation.mutate( { reviewId: reviewId } );
+	};
 
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
 		return null;
@@ -25,40 +53,105 @@ export const MarketplaceReviewsList = forwardRef<
 	// TODO: In the future there should a form of catching and displaying an error
 	// But as currently we returns errors for products without reviews,
 	// its better to just avoid rendering the component at all
-	if ( ! Array.isArray( reviews ) && ( ! reviews || reviews.message ) ) {
+	if ( ! Array.isArray( reviews ) || error ) {
 		return null;
 	}
 
+	if ( Array.isArray( reviews ) && reviews?.length === 0 ) {
+		return (
+			<div className="marketplace-reviews-list__no-reviews">
+				<h2 className="marketplace-reviews-list__no-reviews-title">
+					{ translate( 'No reviews yet' ) }
+				</h2>
+				<h3 className="marketplace-reviews-list__no-reviews-subtitle">
+					{ translate(
+						'There are no reviews for this plugin at the moment. Your feedback could be the first to guide others.'
+					) }
+				</h3>
+			</div>
+		);
+	}
+
+	const allReviews = [ ...userReviews, ...reviews ];
+
 	return (
-		<div className="marketplace-reviews-list__container" ref={ ref }>
-			<h2 className="marketplace-reviews-list__title">{ translate( 'Customer reviews' ) }</h2>
-
+		<div className="marketplace-reviews-list__container">
 			<div className="marketplace-reviews-list__customer-reviews">
-				{ Array.isArray( reviews ) &&
-					reviews.map( ( review: MarketplaceReviewResponse ) => (
-						<div
-							className="marketplace-reviews-list__review-container"
-							key={ `review-${ review.id }` }
-						>
-							<div className="marketplace-reviews-list__author">{ review.author_name }</div>
-							<div className="marketplace-reviews-list__rating-data">
-								<Rating rating={ review.meta.wpcom_marketplace_rating * 20 } />
+				{ allReviews.map( ( review: MarketplaceReviewResponse, i ) => (
+					<div
+						className={ classnames( 'marketplace-reviews-list__review-container', {
+							last: i === allReviews.length - 1,
+						} ) }
+						key={ `review-${ review.id }` }
+					>
+						<div className="marketplace-reviews-list__review-container-header">
+							<div className="marketplace-reviews-list__profile-picture">
+								{ getAvatarURL( review ) ? (
+									<img
+										className="marketplace-reviews-list__profile-picture-img"
+										src={ getAvatarURL( review ) }
+										alt={ translate( "%(reviewer)s's profile picture", {
+											comment: 'Alt description for the profile picture of a reviewer',
+											args: { reviewer: review.author_name },
+										} ).toString() }
+									/>
+								) : (
+									<div className="marketplace-reviews-list__profile-picture-placeholder" />
+								) }
+							</div>
 
-								<div
-									// sanitized with sanitizeSectionContent
-									// eslint-disable-next-line react/no-danger
-									dangerouslySetInnerHTML={ {
-										__html: sanitizeSectionContent( review.content.rendered ),
-									} }
-									className="marketplace-reviews-list__content"
-								></div>
+							<div className="marketplace-reviews-list__rating-data">
+								<div className="marketplace-reviews-list__author">{ review.author_name }</div>
+
+								<Rating rating={ review.meta.wpcom_marketplace_rating * 20 } />
 							</div>
 							<div className="marketplace-reviews-list__date">
 								{ moment( review.date ).format( 'll' ) }
 							</div>
 						</div>
-					) ) }
+
+						<div
+							// sanitized with sanitizeSectionContent
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ {
+								__html: sanitizeSectionContent( review.content.rendered ),
+							} }
+							className="marketplace-reviews-list__content"
+						></div>
+						{ review.author === currentUserId && (
+							<div className="marketplace-reviews-list__review-actions">
+								<div className="marketplace-reviews-list__review-actions-editable">
+									<button
+										className="marketplace-reviews-list__review-actions-editable-button"
+										onClick={ () => alert( 'Not implemented yet' ) }
+									>
+										<Gridicon icon="pencil" size={ 18 } />
+										{ translate( 'Edit my review' ) }
+									</button>
+									<button
+										className="marketplace-reviews-list__review-actions-editable-button"
+										onClick={ () => setIsConfirmModalVisible( true ) }
+									>
+										<Gridicon icon="trash" size={ 18 } />
+										{ translate( 'Delete my review' ) }
+									</button>
+									<div className="marketplace-reviews-list__review-actions-editable-confirm-modal">
+										<ConfirmModal
+											isVisible={ isConfirmModalVisible }
+											confirmButtonLabel={ translate( 'Yes' ) }
+											text={ translate( 'Do you really want to delete your review?' ) }
+											title={ translate( 'Delete my review' ) }
+											onCancel={ () => setIsConfirmModalVisible( false ) }
+											onConfirm={ () => deleteReview( review.id ) }
+										/>
+									</div>
+								</div>
+							</div>
+						) }
+					</div>
+				) ) }
+				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</div>
 		</div>
 	);
-} );
+};

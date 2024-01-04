@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
-import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
+import { DomainsTable, ResponseDomain, useDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
-import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -82,6 +81,12 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
 		useState< ResponseDomain | null >( null );
 
+	// If user has more than 1 domain on more than 1 site, show manage all domains CTA.
+	const { domains: allDomains } = useDomainsTable( fetchAllDomains );
+	const showManageAllDomainsCTA =
+		( allDomains || [] ).length > 1 &&
+		[ ...new Set( ( allDomains || [] ).map( ( domain ) => domain.blog_id ) ) ].length > 1;
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
@@ -147,7 +152,9 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 									hasNonWpcomDomains={ hasNonWpcomDomains }
 								/>
 							) }
-							<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+							{ showManageAllDomainsCTA && (
+								<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+							) }
 						</>
 					}
 					fetchAllDomains={ fetchAllDomains }
@@ -168,7 +175,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					/>
 				) }
 			</Main>
-			<UsePresalesChat />
 		</>
 	);
 }

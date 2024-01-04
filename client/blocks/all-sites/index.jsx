@@ -108,7 +108,7 @@ class AllSites extends Component {
 					{ showIcon && this.renderIcon() }
 					<div className="all-sites__info site__info">
 						<span className="all-sites__title site__title">
-							{ title || translate( 'All My Sites' ) }
+							{ title || translate( 'All sites' ) }
 							{ showChevronDownIcon && (
 								<Icon icon={ chevronDown } className="all-sites__title-chevron-icon" size={ 24 } />
 							) }

@@ -11,13 +11,16 @@ interface Props {
 	targetSite: SiteDetails;
 	migrationTrackingProps: StartImportTrackingProps;
 	startImport: ( props?: StartImportTrackingProps ) => void;
+	allowFtp: boolean;
 }
 
 export function Credentials( props: Props ) {
 	const translate = useTranslate();
-	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
+	const { sourceSite, targetSite, migrationTrackingProps, startImport, allowFtp } = props;
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
-	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
+	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >(
+		allowFtp ? 'ftp' : 'ssh'
+	);
 
 	const onChangeProtocol = ( protocol: 'ftp' | 'ssh' ) => {
 		setSelectedProtocol( protocol );
@@ -33,7 +36,7 @@ export function Credentials( props: Props ) {
 
 	return (
 		<div className="import__pre-migration import__import-everything import__import-everything--redesign">
-			<div className="import__heading-title">
+			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'You are ready to migrate' ) }</Title>
 			</div>
 
@@ -46,6 +49,7 @@ export function Credentials( props: Props ) {
 						selectedHost={ selectedHost }
 						migrationTrackingProps={ migrationTrackingProps }
 						onChangeProtocol={ onChangeProtocol }
+						allowFtp={ allowFtp }
 					/>
 				</div>
 				<div className="pre-migration__credentials-help">
