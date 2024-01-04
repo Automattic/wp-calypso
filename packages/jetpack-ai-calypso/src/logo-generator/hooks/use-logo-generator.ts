@@ -21,23 +21,34 @@ const useLogoGenerator = () => {
 	const {
 		setSelectedLogoIndex,
 		updateSelectedLogo,
-		setSavingLogoToLibrary,
-		setApplyingLogo,
+		setIsSavingLogoToLibrary,
+		setIsApplyingLogo,
 		setIsRequestingImage,
+		setIsEnhancingPrompt,
 	} = useDispatch( STORE_NAME );
 
-	const { logos, selectedLogo, siteDetails, savingLogoToLibrary, applyingLogo, isRequestingImage } =
-		useSelect( ( select ) => {
-			const selectors: Selectors = select( STORE_NAME );
-			return {
-				logos: selectors.getLogos(),
-				selectedLogo: selectors.getSelectedLogo(),
-				siteDetails: selectors.getSiteDetails(),
-				savingLogoToLibrary: selectors.getSavingLogoToLibrary(),
-				applyingLogo: selectors.getApplyingLogo(),
-				isRequestingImage: selectors.getIsRequestingImage(),
-			};
-		}, [] );
+	const {
+		logos,
+		selectedLogo,
+		siteDetails,
+		isSavingLogoToLibrary,
+		isApplyingLogo,
+		isRequestingImage,
+		isEnhancingPrompt,
+		isBusy,
+	} = useSelect( ( select ) => {
+		const selectors: Selectors = select( STORE_NAME );
+		return {
+			logos: selectors.getLogos(),
+			selectedLogo: selectors.getSelectedLogo(),
+			siteDetails: selectors.getSiteDetails(),
+			isSavingLogoToLibrary: selectors.getIsSavingLogoToLibrary(),
+			isApplyingLogo: selectors.getIsApplyingLogo(),
+			isRequestingImage: selectors.getIsRequestingImage(),
+			isEnhancingPrompt: selectors.getIsEnhancingPrompt(),
+			isBusy: selectors.getIsBusy(),
+		};
+	}, [] );
 
 	const { ID = null, name = null, description = null } = siteDetails;
 	const siteId = ID ? String( ID ) : null;
@@ -56,7 +67,7 @@ const useLogoGenerator = () => {
 
 		// eslint-disable-next-line no-useless-catch
 		try {
-			setSavingLogoToLibrary( true );
+			setIsSavingLogoToLibrary( true );
 
 			const { ID: mediaId, URL: mediaURL } = await saveToMediaLibrary( {
 				siteId,
@@ -70,15 +81,15 @@ const useLogoGenerator = () => {
 			} );
 
 			updateSelectedLogo( mediaId, mediaURL );
-			setSavingLogoToLibrary( false );
+			setIsSavingLogoToLibrary( false );
 
 			return { mediaId, mediaURL };
 		} catch ( error ) {
 			// TODO: Handle error when saving to media library fails.
-			setSavingLogoToLibrary( false );
+			setIsSavingLogoToLibrary( false );
 			throw error;
 		}
-	}, [ siteId, selectedLogo, setSavingLogoToLibrary, updateSelectedLogo ] );
+	}, [ siteId, selectedLogo, setIsSavingLogoToLibrary, updateSelectedLogo ] );
 
 	const applyLogo = useCallback( async () => {
 		if ( ! siteId || ! selectedLogo ) {
@@ -88,33 +99,42 @@ const useLogoGenerator = () => {
 		try {
 			const { mediaId } = await saveLogo();
 
-			setApplyingLogo( true );
+			setIsApplyingLogo( true );
 
 			await setSiteLogo( {
 				siteId: siteId,
 				imageId: mediaId,
 			} );
 
-			setApplyingLogo( false );
+			setIsApplyingLogo( false );
 		} catch ( error ) {
 			// TODO: Handle error when setting site logo fails.
-			setApplyingLogo( false );
+			setIsApplyingLogo( false );
 			throw error;
 		}
-	}, [ saveLogo, selectedLogo, setApplyingLogo, siteId ] );
+	}, [ saveLogo, selectedLogo, setIsApplyingLogo, siteId ] );
 
 	const generateImage = async function ( { prompt }: { prompt: string } ): Promise< any > {
 		const tokenData = await requestJwt( { siteDetails } );
 		const isSimple = ! siteDetails.is_wpcom_atomic;
+
+		const imageGenerationPrompt = `I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS:
+Create a text-free vector logo that symbolically represents the user request, using abstract or symbolic imagery.
+The design should be modern, with a either a vivid color scheme full of gradients or a color scheme that's monochromatic.
+Ensure the logo is set against a clean solid background.
+The imagery in the logo should subtly hint at the user request... without using any text, or letters.
+
+User request: ${ prompt }
+`;
 
 		if ( ! tokenData || ! tokenData.token ) {
 			// TODO: handle error
 			return;
 		}
 		let data;
-		const params = {
-			prompt,
-			token: tokenData.token,
+		const body = {
+			prompt: imageGenerationPrompt,
+			feature: 'jetpack-ai-logo-generator',
 			response_format: 'url',
 		};
 		if ( ! isSimple ) {
@@ -128,18 +148,61 @@ const useLogoGenerator = () => {
 			data = await wpcomProxyRequest( {
 				apiNamespace: 'wpcom/v2',
 				path: '/jetpack-ai-image',
-				method: 'GET',
-				query: new URLSearchParams( params ).toString(),
+				method: 'POST',
+				token: tokenData.token,
+				body,
 			} );
 		}
 
 		return data;
 	};
 
+	const enhancePrompt = async function ( { prompt }: { prompt: string } ): Promise< string > {
+		const tokenData = await requestJwt( { siteDetails } );
+
+		if ( ! tokenData || ! tokenData.token ) {
+			// TODO: handle error
+			throw new Error( 'No token provided' );
+		}
+
+		const systemMessage = `Enhance the prompt you receive.
+The prompt is meant for generating a logo. Return the same prompt enhanced, and make each enhancement wrapped in brackets.
+For example: user's prompt: A logo for an ice cream shop. Returned prompt: A logo for an ice cream shop [that is pink] [and vibrant].`;
+
+		const messages = [
+			{
+				role: 'system',
+				content: systemMessage,
+			},
+			{
+				role: 'user',
+				content: prompt,
+			},
+		];
+
+		const body = {
+			messages,
+			feature: 'jetpack-ai-logo-generator',
+			stream: false,
+		};
+
+		const data = await wpcomProxyRequest< { choices: Array< { message: { content: string } } > } >(
+			{
+				apiNamespace: 'wpcom/v2',
+				path: '/jetpack-ai-query',
+				method: 'POST',
+				token: tokenData.token,
+				body,
+			}
+		);
+
+		return data?.choices?.[ 0 ]?.message?.content;
+	};
+
 	return {
-		setSelectedLogoIndex,
 		logos,
 		selectedLogo,
+		setSelectedLogoIndex,
 		site: {
 			id: siteId,
 			name,
@@ -147,13 +210,17 @@ const useLogoGenerator = () => {
 		},
 		saveLogo,
 		applyLogo,
-		setSavingLogoToLibrary,
-		savingLogoToLibrary,
-		setApplyingLogo,
-		applyingLogo,
 		generateImage,
+		enhancePrompt,
+		setIsEnhancingPrompt,
 		setIsRequestingImage,
+		setIsSavingLogoToLibrary,
+		setIsApplyingLogo,
+		isEnhancingPrompt,
 		isRequestingImage,
+		isSavingLogoToLibrary,
+		isApplyingLogo,
+		isBusy,
 	};
 };
 
