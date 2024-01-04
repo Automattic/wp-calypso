@@ -277,6 +277,8 @@ function useAddProductFromBillingIntent( {
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
 } ) {
+	const translate = useTranslate();
+
 	useEffect( () => {
 		if ( addHandler !== 'addProductFromBillingIntent' ) {
 			return;
@@ -288,7 +290,9 @@ function useAddProductFromBillingIntent( {
 			debug( 'creating products from billing intent failed' );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: 'I tried and failed to create products from a billing intent',
+				message: translate( 'I tried and failed to create products from a billing intent', {
+					textOnly: true,
+				} ),
 			} );
 			return;
 		}
@@ -305,14 +309,16 @@ function useAddProductFromBillingIntent( {
 				debug( 'creating products from billing intent failed' );
 				dispatch( {
 					type: 'PRODUCTS_ADD_ERROR',
-					message: 'I tried and failed to create products from a billing intent',
+					message: translate( 'I tried and failed to create products from a billing intent', {
+						textOnly: true,
+					} ),
 				} );
 				return;
 			}
 
 			dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
 		} )();
-	}, [ addHandler, dispatch, intentId ] );
+	}, [ addHandler, dispatch, intentId, translate ] );
 }
 
 function useAddProductsFromLocalStorage( {
