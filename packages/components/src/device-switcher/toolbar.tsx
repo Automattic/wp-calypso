@@ -54,7 +54,7 @@ const DeviceSwitcherToolbar = ( {
 						className={ classnames( { zoom: true, 'is-selected': isZoomActive } ) }
 						onClick={ () => onZoomClick() }
 					>
-						<Icon icon={ isZoomActive ? zoomIn : zoomOut } size={ 18 } />
+						<Icon icon={ isZoomActive ? zoomIn : zoomOut } size={ 24 } />
 					</Button>
 				) }
 			</div>
