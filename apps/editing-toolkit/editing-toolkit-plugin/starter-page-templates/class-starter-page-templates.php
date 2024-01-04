@@ -426,7 +426,10 @@ class Starter_Page_Templates {
 			// Only for page editor
 			return $editor_settings;
 		}
-		$default_editor_styles_file  = gutenberg_dir_path() . 'build/block-editor/default-editor-styles.css';
+		$default_editor_styles_file = gutenberg_dir_path() . 'build/block-editor/default-editor-styles.css';
+		if ( ! file_exists( $default_editor_styles_file ) ) {
+			return $editor_settings;
+		}
 		$default_editor_styles       = file_get_contents( $default_editor_styles_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$editor_settings['styles'][] = array(
 			'css' => $default_editor_styles,
