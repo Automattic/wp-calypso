@@ -180,11 +180,13 @@
 
 	&.domain-registration-suggestion__title-domain {
 		@include breakpoint-deprecated( ">480px" ) {
+			max-width: 55%;
 			min-width: 50%;
 			margin-right: 1em;
 		}
 
 		@include breakpoint-deprecated( ">800px" ) {
+			max-width: 55%;
 			min-width: 55%;
 			margin-right: 1em;
 		}
@@ -379,6 +381,11 @@ body.is-section-signup.is-white-signup {
 			justify-content: space-between;
 		}
 
+		.domain-product-price {
+			max-width: 180px;
+			width: unset;
+		}
+
 		.domain-product-price__free-text {
 			color: var(--color-neutral-60);
 			font-size: $font-body;
@@ -415,6 +422,7 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-registration-suggestion__domain-title {
 			color: var(--studio-gray-90);
+			white-space: nowrap;
 		}
 
 		& .domain-product-price__free-price {
