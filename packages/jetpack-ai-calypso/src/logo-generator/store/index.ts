@@ -22,8 +22,12 @@ const jetpackAiLogoGeneratorStore = createReduxStore( STORE_NAME, {
 	selectors,
 
 	resolvers: {
-		getAiAssistantFeature: ( siteId: string ) =>
-			actions.fetchAiAssistantFeature( String( siteId ) ),
+		getAiAssistantFeature: ( siteId: string ) => {
+			if ( ! siteId ) {
+				return;
+			}
+			return actions.fetchAiAssistantFeature( String( siteId ) );
+		},
 	},
 } );
 

@@ -146,7 +146,7 @@ export type LogoGeneratorStateProp = {
 };
 
 export type Selectors = {
-	getAiAssistantFeature(): Partial< AiFeatureProps >;
+	getAiAssistantFeature( siteId?: string ): Partial< AiFeatureProps >;
 	getIsRequestingAiAssistantFeature(): boolean;
 	getLogos(): Array< Logo >;
 	getSelectedLogo(): Logo;
