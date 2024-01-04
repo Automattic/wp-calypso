@@ -1,5 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import 'calypso/state/themes/init';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
@@ -14,7 +15,7 @@ export const getTheme = createSelector(
 		let manager = state.themes.queries[ siteId ];
 
 		if ( ! manager && siteId === 'wpcom' ) {
-			const fallbackSiteId = getSelectedSiteId( state );
+			const fallbackSiteId = isUserLoggedIn( state ) ? getSelectedSiteId( state ) : null;
 			if ( fallbackSiteId ) {
 				manager = state.themes.queries[ fallbackSiteId ];
 			}
