@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import apiFetch from '@wordpress/api-fetch';
 import React from 'react';
@@ -110,10 +110,17 @@ describe( 'CustomerHomeLaunchPad', () => {
 		expect( await screen.findByText( 'Task 2' ) ).toBeVisible();
 	} );
 
-	it( 'renders the dismiss settings menu when the tasks are not completed', async () => {
+	it( 'dismiss the launchpad using the dismiss settings menu', async () => {
 		render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
+		userEvent.click( await screen.findByTitle( 'Dismiss settings' ) );
 
-		expect( await screen.findByTitle( 'Skip settings' ) ).toBeVisible();
+		const hideForever = await screen.findByText( 'Hide forever' );
+		await act( async () => {
+			await userEvent.click( hideForever );
+		} );
+		await waitFor( () =>
+			expect( screen.queryByText( 'Some cool title for you task list' ) ).not.toBeInTheDocument()
+		);
 	} );
 
 	describe( 'when the launchpad was previously dismissed', () => {

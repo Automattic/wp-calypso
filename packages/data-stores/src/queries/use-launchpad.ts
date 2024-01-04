@@ -173,23 +173,28 @@ export const updateLaunchpadSettings = (
 		  } as APIFetchOptions );
 };
 
+interface DismissSettings {
+	isDismissed: boolean;
+	dismissUntil?: number;
+}
+
 export const useLauchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string ) => {
 	const queryClient = useQueryClient();
 	const key = getKey( siteSlug, checklistSlug );
 
 	return useMutation( {
-		mutationFn: ( isDismissed: boolean ) =>
+		mutationFn: ( settings: DismissSettings ) =>
 			updateLaunchpadSettings( siteSlug, {
 				is_checklist_dismissed: {
 					slug: checklistSlug,
-					is_dismissed: isDismissed,
+					is_dismissed: settings.isDismissed,
 				},
 			} ),
-		onMutate: async ( isDismissed ) => {
+		onMutate: async ( settings: DismissSettings ) => {
 			await queryClient.cancelQueries( { queryKey: key } );
 			const previous = queryClient.getQueryData< LaunchpadResponse >( key );
 
-			queryClient.setQueryData( key, { ...previous, is_dismissed: isDismissed } );
+			queryClient.setQueryData( key, { ...previous, is_dismissed: settings.isDismissed } );
 			return { previous };
 		},
 		onSuccess: () => {

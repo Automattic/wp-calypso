@@ -29,7 +29,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	const { mutate: dismiss } = useLauchpadDismisser( siteSlug, checklistSlug );
 
 	const {
-		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissable, title },
+		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	const numberOfSteps = checklist?.length || 0;
@@ -54,11 +54,13 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 							numberOfSteps={ numberOfSteps }
 							currentStep={ completedSteps }
 						/>
-						{ isDismissable && (
-							<EllipsisMenu position="bottom" toggleTitle={ translate( 'Skip settings' ) }>
-								<PopoverMenuItem>{ translate( 'Hide for a day' ) } </PopoverMenuItem>
-								<PopoverMenuItem>{ translate( 'Hide for a week' ) }</PopoverMenuItem>
-								<PopoverMenuItem>{ translate( 'Hide forever' ) }</PopoverMenuItem>
+						{ isDismissible && (
+							<EllipsisMenu position="bottom" toggleTitle={ translate( 'Dismiss settings' ) }>
+								{ /* <PopoverMenuItem>{ translate( 'Hide for a day' ) } </PopoverMenuItem>
+								<PopoverMenuItem onClick={() => dismiss({isDismissed: false})} >{ translate( 'Hide for a week' ) }</PopoverMenuItem> */ }
+								<PopoverMenuItem onClick={ () => dismiss( { isDismissed: true } ) }>
+									{ translate( 'Hide forever' ) }
+								</PopoverMenuItem>
 							</EllipsisMenu>
 						) }
 					</div>
@@ -68,7 +70,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 							className="themes__activation-modal-close-icon"
 							borderless
 							onClick={ () => {
-								dismiss( ! isDismissed );
+								dismiss( { isDismissed: true } );
 							} }
 						>
 							<div> { translate( 'Dismiss guide' ) } </div>
