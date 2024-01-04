@@ -124,7 +124,7 @@ export const HelpCenterContactForm = () => {
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
 	} = useChatStatus();
-	const { openChatWidget } = useChatWidget(
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
@@ -155,7 +155,7 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
-	const isSubmitting = submittingTicket || submittingTopic;
+	const isSubmitting = submittingTicket || submittingTopic || isOpeningChatWidget;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
 	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
