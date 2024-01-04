@@ -28,7 +28,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const segmentClasses = classNames( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
-	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
+	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
 	const maxDiscount = useMaxDiscount( props.plans, usePricingMetaForGridPlans, selectedSiteId );
 	// TODO clk pricing
 	const pricingMeta = usePricingMetaForGridPlans( {
