@@ -33,9 +33,10 @@ const useLogoGenerator = () => {
 		siteDetails,
 		isSavingLogoToLibrary,
 		isApplyingLogo,
-		isRequestingImage,
 		isEnhancingPrompt,
 		isBusy,
+		isRequestingImage,
+		getAiAssistantFeature,
 	} = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
 		return {
@@ -47,10 +48,11 @@ const useLogoGenerator = () => {
 			isRequestingImage: selectors.getIsRequestingImage(),
 			isEnhancingPrompt: selectors.getIsEnhancingPrompt(),
 			isBusy: selectors.getIsBusy(),
+			getAiAssistantFeature: selectors.getAiAssistantFeature,
 		};
 	}, [] );
 
-	const { ID = null, name = null, description = null } = siteDetails;
+	const { ID = null, name = null, description = null } = siteDetails || {};
 	const siteId = ID ? String( ID ) : null;
 
 	const saveLogo = useCallback<
@@ -221,6 +223,7 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		isSavingLogoToLibrary,
 		isApplyingLogo,
 		isBusy,
+		getAiAssistantFeature,
 	};
 };
 

@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { Icon, Modal, Button } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
 import React, { useState, useEffect } from 'react';
 /**
  * Internal dependencies
  */
+import useLogoGenerator from '../hooks/use-logo-generator';
 import { STORE_NAME } from '../store';
 import { FirstLoadScreen } from './first-load-screen';
 import { HistoryCarousel } from './history-carousel';
@@ -19,24 +20,35 @@ import './generator-modal.scss';
  * Types
  */
 import type { GeneratorModalProps } from '../../types';
-import type { Selectors } from '../store/types';
 
-export const GeneratorModal: React.FC< GeneratorModalProps > = ( { isOpen, onClose } ) => {
+export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
+	isOpen,
+	onClose,
+	siteDetails,
+} ) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { setSiteDetails } = useDispatch( STORE_NAME );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const { selectedLogo } = useSelect( ( select ) => {
-		const selectors: Selectors = select( STORE_NAME );
-		return { selectedLogo: selectors.getSelectedLogo() };
-	}, [] );
+	const { selectedLogo, getAiAssistantFeature } = useLogoGenerator();
+	const siteId = siteDetails?.ID;
+
+	useEffect( () => {
+		setSiteDetails( siteDetails );
+	}, [ siteDetails, setSiteDetails ] );
 
 	useEffect( () => {
 		if ( isOpen ) {
+			if ( siteId ) {
+				getAiAssistantFeature( String( siteId ) );
+			}
+
 			setTimeout( () => {
 				setIsLoading( false );
 			}, 1000 );
 		} else {
 			setIsLoading( true );
 		}
-	}, [ isOpen ] );
+	}, [ isOpen, getAiAssistantFeature, siteId ] );
 
 	const handleApplyLogo = () => {
 		onClose();
