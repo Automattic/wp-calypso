@@ -86,9 +86,11 @@ class AuthorCompactProfile extends Component {
 							{ this.props.translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 								count: followCount,
 								args: {
-									followCount: Intl.NumberFormat( getLocaleSlug(), { notation: 'compact' } ).format(
-										followCount
-									),
+									followCount: Intl.NumberFormat( getLocaleSlug(), {
+										notation: 'compact',
+										roundingPriority: 'lessPrecision',
+										maximumFractionDigits: 1,
+									} ).format( followCount ),
 								},
 							} ) }
 						</div>
