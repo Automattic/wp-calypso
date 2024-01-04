@@ -5,11 +5,14 @@ import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
 	SubscribersPageProvider,
@@ -24,7 +27,6 @@ import { SubscribersFilterBy, SubscribersSortBy } from './constants';
 import { getSubscriberDetailsUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
 import { Subscriber } from './types';
-
 import './style.scss';
 
 type SubscribersHeaderProps = {
@@ -118,6 +120,9 @@ const SubscribersPage = ( {
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
+	const [ giftUserId, setGiftUserId ] = useState( 0 );
+	const [ giftUsername, setGiftUsername ] = useState( '' );
+
 	const siteId = selectedSite?.ID || null;
 
 	const pageArgs = {
@@ -133,6 +138,11 @@ const SubscribersPage = ( {
 		page.show( getSubscriberDetailsUrl( selectedSite?.slug, subscription_id, user_id, pageArgs ) );
 	};
 
+	const onGiftSubscription = ( { user_id, display_name }: Subscriber ) => {
+		setGiftUserId( user_id );
+		setGiftUsername( display_name );
+	};
+
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -145,6 +155,7 @@ const SubscribersPage = ( {
 			searchTermChanged={ searchTermChanged }
 			sortTermChanged={ sortTermChanged }
 		>
+			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
@@ -153,6 +164,7 @@ const SubscribersPage = ( {
 				<SubscriberListContainer
 					siteId={ siteId }
 					onClickView={ onClickView }
+					onGiftSubscription={ onGiftSubscription }
 					onClickUnsubscribe={ onClickUnsubscribe }
 				/>
 
@@ -161,6 +173,16 @@ const SubscribersPage = ( {
 					onCancel={ resetSubscriber }
 					onConfirm={ onConfirmModal }
 				/>
+
+				{ giftUserId !== 0 && (
+					<GiftSubscriptionModal
+						siteId={ selectedSite?.ID ?? 0 }
+						userId={ giftUserId }
+						username={ giftUsername }
+						onCancel={ () => setGiftUserId( 0 ) }
+						onConfirm={ () => setGiftUserId( 0 ) }
+					/>
+				) }
 				{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 				{ selectedSite && <MigrateSubscribersModal /> }
 			</Main>

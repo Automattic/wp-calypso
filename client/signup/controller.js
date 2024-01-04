@@ -19,6 +19,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getStepComponent } from './config/step-components';
+import { isReskinnedFlow } from './is-flow';
 import SignupComponent from './main';
 import {
 	retrieveSignupDestination,
@@ -35,7 +36,6 @@ import {
 	getValidPath,
 	getFlowPageTitle,
 	shouldForceLogin,
-	isReskinnedFlow,
 } from './utils';
 
 /**

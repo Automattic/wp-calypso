@@ -163,6 +163,9 @@ export function renderRebloggingEmptySites( context ) {
 					  )
 					: null,
 			actionURL,
+			actionCallback: () => {
+				recordTracksEvent( 'calypso_post_share_no_sites_create_site_click' );
+			},
 		} )
 	);
 
