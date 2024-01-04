@@ -288,7 +288,7 @@ function useAddProductFromBillingIntent( {
 			debug( 'creating products from billing intent failed' );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: 'I tried and failed to create products from a billing intent 2',
+				message: 'I tried and failed to create products from a billing intent',
 			} );
 			return;
 		}
