@@ -23,15 +23,7 @@ export const Prompt: React.FC = () => {
 	const { addLogoToHistory } = useDispatch( STORE_NAME );
 	const [ prompt, setPrompt ] = useState( '' );
 
-	const {
-		generateImage,
-		setIsRequestingImage,
-		isRequestingImage,
-		isSavingLogoToLibrary,
-		isApplyingLogo,
-	} = useLogoGenerator();
-
-	const isLoading = isRequestingImage || isSavingLogoToLibrary || isApplyingLogo;
+	const { generateImage, setIsRequestingImage, isBusy } = useLogoGenerator();
 
 	const onClick = useCallback( async () => {
 		debug( 'getting image for prompt', prompt );
@@ -63,7 +55,7 @@ export const Prompt: React.FC = () => {
 					{ __( 'Describe your site:', 'jetpack' ) }
 				</div>
 				<div className="jetpack-ai-logo-generator__prompt-actions">
-					<Button variant="link" disabled={ isLoading }>
+					<Button variant="link" disabled={ isBusy }>
 						<AiIcon />
 						<span>{ __( 'Enhance prompt', 'jetpack' ) }</span>
 					</Button>
@@ -79,13 +71,13 @@ export const Prompt: React.FC = () => {
 					) }
 					onChange={ onChange }
 					value={ prompt }
-					disabled={ isLoading }
+					disabled={ isBusy }
 				></textarea>
 				<Button
 					variant="primary"
 					className="jetpack-ai-logo-generator__prompt-submit"
 					onClick={ onClick }
-					disabled={ isLoading }
+					disabled={ isBusy }
 				>
 					{ __( 'Generate', 'jetpack' ) }
 				</Button>

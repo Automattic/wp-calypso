@@ -19,6 +19,7 @@ import {
 	ACTION_SET_IS_SAVING_LOGO_TO_LIBRARY,
 	ACTION_SET_IS_REQUESTING_IMAGE,
 	ACTION_SET_IS_APPLYING_LOGO,
+	ACTION_SET_IS_ENHANCING_PROMPT,
 } from './constants';
 import INITIAL_STATE from './initial-state';
 import type { TierLimitProp } from './types';
@@ -252,6 +253,16 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 				_meta: {
 					...( state._meta ?? {} ),
 					isRequestingImage: action.isRequestingImage,
+				},
+			};
+		}
+
+		case ACTION_SET_IS_ENHANCING_PROMPT: {
+			return {
+				...state,
+				_meta: {
+					...( state._meta ?? {} ),
+					isEnhancingPrompt: action.isEnhancingPrompt,
 				},
 			};
 		}

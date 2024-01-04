@@ -73,12 +73,35 @@ const selectors = {
 	},
 
 	/**
+	 * Get the isEnhancingPrompt flag.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The isEnhancingPrompt flag.
+	 */
+	getIsEnhancingPrompt( state: LogoGeneratorStateProp ): boolean {
+		return state._meta?.isEnhancingPrompt ?? false;
+	},
+
+	/**
 	 * Get the isRequestingImage flag.
 	 * @param {LogoGeneratorStateProp} state - The app state tree.
 	 * @returns {boolean}                      The isRequestingImage flag.
 	 */
 	getIsRequestingImage( state: LogoGeneratorStateProp ): boolean {
 		return state._meta?.isRequestingImage ?? false;
+	},
+
+	/**
+	 * Get an aggregated isBusy flag, based on the loading states of the app.
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The isBusy flag.
+	 */
+	getIsBusy( state: LogoGeneratorStateProp ): boolean {
+		return (
+			selectors.getIsApplyingLogo( state ) ||
+			selectors.getIsSavingLogoToLibrary( state ) ||
+			selectors.getIsRequestingImage( state ) ||
+			selectors.getIsEnhancingPrompt( state )
+		);
 	},
 };
 

@@ -24,6 +24,7 @@ const useLogoGenerator = () => {
 		setIsSavingLogoToLibrary,
 		setIsApplyingLogo,
 		setIsRequestingImage,
+		setIsEnhancingPrompt,
 	} = useDispatch( STORE_NAME );
 
 	const {
@@ -33,6 +34,8 @@ const useLogoGenerator = () => {
 		isSavingLogoToLibrary,
 		isApplyingLogo,
 		isRequestingImage,
+		isEnhancingPrompt,
+		isBusy,
 	} = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
 		return {
@@ -42,6 +45,8 @@ const useLogoGenerator = () => {
 			isSavingLogoToLibrary: selectors.getIsSavingLogoToLibrary(),
 			isApplyingLogo: selectors.getIsApplyingLogo(),
 			isRequestingImage: selectors.getIsRequestingImage(),
+			isEnhancingPrompt: selectors.getIsEnhancingPrompt(),
+			isBusy: selectors.getIsBusy(),
 		};
 	}, [] );
 
@@ -143,9 +148,9 @@ const useLogoGenerator = () => {
 	};
 
 	return {
-		setSelectedLogoIndex,
 		logos,
 		selectedLogo,
+		setSelectedLogoIndex,
 		site: {
 			id: siteId,
 			name,
@@ -153,13 +158,16 @@ const useLogoGenerator = () => {
 		},
 		saveLogo,
 		applyLogo,
-		setIsSavingLogoToLibrary,
-		isSavingLogoToLibrary,
-		setIsApplyingLogo,
-		isApplyingLogo,
 		generateImage,
+		setIsEnhancingPrompt,
 		setIsRequestingImage,
+		setIsSavingLogoToLibrary,
+		setIsApplyingLogo,
+		isEnhancingPrompt,
 		isRequestingImage,
+		isSavingLogoToLibrary,
+		isApplyingLogo,
+		isBusy,
 	};
 };
 
