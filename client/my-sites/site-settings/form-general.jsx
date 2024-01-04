@@ -347,6 +347,23 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	PublicFormRadio = ( checked, onChange ) => {
+		const { isRequestingSettings, translate, eventTracker } = this.props;
+		return (
+			<FormLabel className="site-settings__visibility-label is-public">
+				<FormRadio
+					name="blog_public"
+					value="1"
+					checked={ checked }
+					onChange={ onChange }
+					disabled={ isRequestingSettings }
+					onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+					label={ translate( 'Public' ) }
+				/>
+			</FormLabel>
+		);
+	};
+
 	visibilityOptionsComingSoon() {
 		const {
 			fields,
@@ -382,30 +399,6 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-
-		const PublicFormRadio = () => (
-			<FormLabel className="site-settings__visibility-label is-public">
-				<FormRadio
-					name="blog_public"
-					value="1"
-					checked={
-						( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-						( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
-						blogPublic === 1
-					}
-					onChange={ () =>
-						this.handleVisibilityOptionChange( {
-							blog_public: isWpcomStagingSite ? 0 : 1,
-							wpcom_coming_soon: 0,
-							wpcom_public_coming_soon: 0,
-						} )
-					}
-					disabled={ isRequestingSettings }
-					onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-					label={ translate( 'Public' ) }
-				/>
-			</FormLabel>
-		);
 
 		return (
 			<FormFieldset>
@@ -451,7 +444,17 @@ export class SiteSettingsFormGeneral extends Component {
 					) }
 				{ isWpcomStagingSite && (
 					<>
-						<PublicFormRadio />
+						{ this.PublicFormRadio(
+							( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+								( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
+								blogPublic === 1,
+							() =>
+								this.handleVisibilityOptionChange( {
+									blog_public: isWpcomStagingSite ? 0 : 1,
+									wpcom_coming_soon: 0,
+									wpcom_public_coming_soon: 0,
+								} )
+						) }
 						<FormSettingExplanation>
 							{ translate(
 								'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
@@ -459,7 +462,19 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormSettingExplanation>
 					</>
 				) }
-				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && <PublicFormRadio /> }
+				{ ! isNonAtomicJetpackSite &&
+					! isWpcomStagingSite &&
+					this.PublicFormRadio(
+						( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+							( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
+							blogPublic === 1,
+						() =>
+							this.handleVisibilityOptionChange( {
+								blog_public: isWpcomStagingSite ? 0 : 1,
+								wpcom_coming_soon: 0,
+								wpcom_public_coming_soon: 0,
+							} )
+					) }
 				{ ! isWpcomStagingSite && (
 					<>
 						<FormSettingExplanation>
