@@ -14,10 +14,11 @@ import {
 	ACTION_SET_TIER_PLANS_ENABLED,
 	ACTION_SET_SELECTED_LOGO_INDEX,
 	ACTION_ADD_LOGO_TO_HISTORY,
-	ACTION_SET_SAVING_LOGO_TO_LIBRARY,
+	ACTION_SET_IS_SAVING_LOGO_TO_LIBRARY,
 	ACTION_SAVE_SELECTED_LOGO,
 	ACTION_SET_IS_REQUESTING_IMAGE,
-	ACTION_SET_APPLYING_LOGO,
+	ACTION_SET_IS_APPLYING_LOGO,
+	ACTION_SET_IS_ENHANCING_PROMPT,
 } from './constants';
 import type { AiFeatureProps, AiAssistantFeatureEndpointResponseProps, Logo } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -137,16 +138,16 @@ const actions = {
 		};
 	},
 
-	setSavingLogoToLibrary( isSavingLogoToLibrary: boolean ) {
+	setIsSavingLogoToLibrary( isSavingLogoToLibrary: boolean ) {
 		return {
-			type: ACTION_SET_SAVING_LOGO_TO_LIBRARY,
+			type: ACTION_SET_IS_SAVING_LOGO_TO_LIBRARY,
 			isSavingLogoToLibrary,
 		};
 	},
 
-	setApplyingLogo( isApplyingLogo: boolean ) {
+	setIsApplyingLogo( isApplyingLogo: boolean ) {
 		return {
-			type: ACTION_SET_APPLYING_LOGO,
+			type: ACTION_SET_IS_APPLYING_LOGO,
 			isApplyingLogo,
 		};
 	},
@@ -163,6 +164,13 @@ const actions = {
 		return {
 			type: ACTION_SET_IS_REQUESTING_IMAGE,
 			isRequestingImage,
+		};
+	},
+
+	setIsEnhancingPrompt( isEnhancingPrompt: boolean ) {
+		return {
+			type: ACTION_SET_IS_ENHANCING_PROMPT,
+			isEnhancingPrompt,
 		};
 	},
 };
