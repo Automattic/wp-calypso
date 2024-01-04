@@ -94,26 +94,7 @@ export const useCommandsArrayWpcom = ( {
 	const commandNavigation = useCommandNavigation();
 	const dispatch = useDispatch();
 
-	const { setEdgeCache } = useSetEdgeCacheMutation( {
-		onSuccess: ( data, { active } ) => {
-			dispatch(
-				createNotice(
-					'is-success',
-					active ? __( 'Edge cache enabled.' ) : __( 'Edge cache disabled.' ),
-					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
-				)
-			);
-		},
-		onError: ( error, { active } ) => {
-			dispatch(
-				createNotice(
-					'is-error',
-					active ? __( 'Failed to enable edge cache.' ) : __( 'Failed to disable edge cache.' ),
-					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
-				)
-			);
-		},
-	} );
+	const { setEdgeCache } = useSetEdgeCacheMutation();
 
 	const displayNotice = (
 		message: string,
@@ -260,10 +241,6 @@ export const useCommandsArrayWpcom = ( {
 			return;
 		}
 
-		displayNotice( __( 'Enabling edge cache…' ), 'is-plain', 5000, {
-			id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
-		} );
-
 		setEdgeCache( siteId, true );
 	};
 
@@ -276,10 +253,6 @@ export const useCommandsArrayWpcom = ( {
 			} );
 			return;
 		}
-
-		displayNotice( __( 'Disablingq edge cache…' ), 'is-plain', 5000, {
-			id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
-		} );
 
 		setEdgeCache( siteId, false );
 	};

@@ -8,15 +8,12 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
-	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
 	useIsSetEdgeCacheMutating,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
-import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
-import { createNotice } from 'calypso/state/notices/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -78,53 +75,19 @@ export const CacheCard = ( {
 		isInitialLoading: getEdgeCacheInitialLoading,
 	} = useEdgeCacheQuery( siteId );
 
-	const dispatch = useDispatch();
-
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 
-	const { setEdgeCache } = useSetEdgeCacheMutation( {
-		onSuccess: ( data, { active } ) => {
-			recordTracksEvent(
-				active
-					? 'calypso_hosting_configuration_edge_cache_enable'
-					: 'calypso_hosting_configuration_edge_cache_disable',
-				{
-					site_id: siteId,
-				}
-			);
-			dispatch(
-				createNotice(
-					'is-success',
-					active ? translate( 'Edge cache enabled.' ) : translate( 'Edge cache disabled.' ),
-					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
-				)
-			);
-		},
-		onError: ( error, { active } ) => {
-			dispatch(
-				createNotice(
-					'is-error',
-					active
-						? translate( 'Failed to enable edge cache.' )
-						: translate( 'Failed to disable edge cache.' ),
-					{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
-				)
-			);
-		},
-	} );
+	const { setEdgeCache } = useSetEdgeCacheMutation();
 	const isEdgeCacheMutating = useIsSetEdgeCacheMutating( siteId );
-	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId, {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
-				site_id: siteId,
-			} );
-		},
-	} );
+	const { clearEdgeCache, isLoading: clearEdgeCacheLoading } = useClearEdgeCacheMutation( siteId );
 
 	const isClearingCache = isClearingWordpressCache || clearEdgeCacheLoading;
 
 	const clearCache = () => {
 		if ( isEdgeCacheActive ) {
+			recordTracksEvent( 'calypso_hosting_configuration_clear_wordpress_cache', {
+				site_id: siteId,
+			} );
 			clearEdgeCache();
 		}
 		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
@@ -202,14 +165,13 @@ export const CacheCard = ( {
 								}
 								checked={ isEdgeCacheActive }
 								onChange={ ( active ) => {
-									dispatch(
-										createNotice(
-											'is-plain',
-											active
-												? translate( 'Enabling edge cache…' )
-												: translate( 'Disabling edge cache…' ),
-											{ duration: 5000, id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID }
-										)
+									recordTracksEvent(
+										active
+											? 'calypso_hosting_configuration_edge_cache_enable'
+											: 'calypso_hosting_configuration_edge_cache_disable',
+										{
+											site_id: siteId,
+										}
 									);
 									setEdgeCache( siteId, active );
 								} }
