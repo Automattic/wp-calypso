@@ -1,4 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
+
 import 'calypso/state/themes/init';
 
 /**
@@ -11,10 +12,10 @@ import 'calypso/state/themes/init';
 export const getTheme = createSelector(
 	( state, siteId, themeId ) => {
 		const manager = state.themes.queries[ siteId ];
-
 		if ( ! manager ) {
 			return null;
 		}
+
 		return manager.getItem( themeId );
 	},
 	( state ) => state.themes.queries
