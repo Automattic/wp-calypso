@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -28,7 +28,10 @@ import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
+import {
+	endStates,
+	useAtomicTransferQuery,
+} from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -198,13 +201,20 @@ const Hosting = ( props ) => {
 		isJetpack,
 	} = props;
 
+	const [ transferRefetchEnabled, setTransferRefetchEnabled ] = useState( hasSftpFeature );
+
 	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteSlug, {
 		refetchInterval: 5000,
+		enabled: transferRefetchEnabled,
 	} );
 
 	const isSiteAtomic =
 		transferStatus === transferStates.COMPLETE || transferStatus === transferStates.COMPLETED;
 
+	if ( endStates.includes( transferStatus ) && transferRefetchEnabled ) {
+		// the result won't chnage so no need to call the API
+		setTransferRefetchEnabled( false );
+	}
 	const getUpgradeBanner = () => {
 		// The eCommerce Trial requires a different upsell path.
 		const targetPlan = ! isECommerceTrial
@@ -243,12 +253,12 @@ const Hosting = ( props ) => {
 				icon="bug"
 			/>
 		);
-
-		if ( ! isSiteAtomic && ! isTransferring ) {
+		if ( ! isSiteAtomic && hasSftpFeature && ! isTransferring && transferStatus !== undefined ) {
 			return (
 				<>
 					{ failureNotice }
 					<Notice
+						className="hosting__activating-notice"
 						status="is-info"
 						showDismiss={ false }
 						text={ translate(
@@ -272,6 +282,7 @@ const Hosting = ( props ) => {
 	const getContent = () => {
 		const isGithubIntegrationEnabled =
 			isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
+		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 
 		return (
 			<>
@@ -282,22 +293,24 @@ const Hosting = ( props ) => {
 						<QueryKeyringConnections />
 					</>
 				) }
-				<Layout className="hosting__layout">
-					<Column type="main" className="hosting__main-layout-col">
-						<MainCards
-							hasStagingSitesFeature={ hasStagingSitesFeature }
-							isAdvancedHostingDisabled={ hasSftpFeature && ! isSiteAtomic }
-							isBasicHostingDisabled={ hasAtomicFeature && ! isSiteAtomic }
-							isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
-							isWpcomStagingSite={ isWpcomStagingSite }
-							isMigrationTrial={ isMigrationTrial }
-							siteId={ siteId }
-						/>
-					</Column>
-					<Column type="sidebar">
-						<SidebarCards isBasicHostingDisabled={ hasAtomicFeature && ! isSiteAtomic } />
-					</Column>
-				</Layout>
+				<WrapperComponent>
+					<Layout className="hosting__layout">
+						<Column type="main" className="hosting__main-layout-col">
+							<MainCards
+								hasStagingSitesFeature={ hasStagingSitesFeature }
+								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
+								isWpcomStagingSite={ isWpcomStagingSite }
+								isMigrationTrial={ isMigrationTrial }
+								siteId={ siteId }
+							/>
+						</Column>
+						<Column type="sidebar">
+							<SidebarCards isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic } />
+						</Column>
+					</Layout>
+				</WrapperComponent>
 			</>
 		);
 	};
@@ -307,7 +320,8 @@ const Hosting = ( props ) => {
 	 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
 	 * Otherwise, we show the activation notice, which may be empty.
 	 */
-	const shouldShowUpgradeBanner = false;
+	const shouldShowUpgradeBanner =
+		! hasAtomicFeature || ( ! isTransferring && ! hasSftpFeature && ! isWpcomStagingSite );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	const isBusinessTrial = isMigrationTrial || isHostingTrial;
@@ -347,7 +361,6 @@ export default connect(
 		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
-
 		return {
 			teams: getReaderTeams( state ),
 			isJetpack: isJetpackSite( state, siteId ),

@@ -23,7 +23,7 @@ interface UseAtomicTransferQueryOptions {
 	refetchInterval?: number;
 }
 
-const endStates: TransferStates[] = [
+export const endStates: TransferStates[] = [
 	transferStates.NONE,
 	transferStates.COMPLETE,
 	transferStates.COMPLETED,
@@ -32,24 +32,31 @@ const endStates: TransferStates[] = [
 	transferStates.REVERTED,
 ];
 
+export function useAtomicTransferQueryQueryKey( siteSlug ) {
+	return [ 'sites', siteSlug, 'atomic', 'transfers', 'latest' ];
+}
+
 export const useAtomicTransferQuery = (
 	siteSlug: SiteSlug,
-	{ refetchInterval }: UseAtomicTransferQueryOptions
+	{ refetchInterval, enabled }: UseAtomicTransferQueryOptions
 ) => {
-	const { data } = useQuery( {
-		queryKey: [ 'sites', siteSlug, 'atomic', 'transfers', 'latest' ],
+	const { data, failureReason } = useQuery( {
+		queryKey: useAtomicTransferQueryQueryKey( siteSlug ),
 		queryFn: () => fetchLatestAtomicTransfer( siteSlug ),
 		refetchInterval,
+		enabled,
 	} );
 
-	if ( ! data ) {
+	if ( ! data && ! failureReason ) {
 		return {
 			isTransferring: false,
-			transferStatus: transferStates.NONE,
+			transferStatus: undefined,
 		};
 	}
 
-	if ( 'code' in data ) {
+	if ( failureReason ) {
+		// Will happen for new sites when no transfer exists: a 404 is returned
+		// by the API which becomes failureReason in React Query
 		return {
 			transferStatus: transferStates.NONE,
 			isTransferring: false,
