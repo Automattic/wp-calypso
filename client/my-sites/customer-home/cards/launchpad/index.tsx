@@ -1,11 +1,10 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
+import { useLauchpadDismisser, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -24,29 +23,21 @@ const CustomerHomeLaunchpad = ( {
 }: CustomerHomeLaunchpadProps ): JSX.Element => {
 	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-
 	const translate = useTranslate();
-	const [ isDismissed, setIsDismissed ] = useState( false );
-	const {
-		data: {
-			checklist,
-			is_dismissed: initialIsChecklistDismissed,
-			is_dismissible: isDismissable,
-			title,
-		},
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
+	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) || '' );
 
-	useEffect( () => {
-		setIsDismissed( initialIsChecklistDismissed );
-	}, [ initialIsChecklistDismissed ] );
+	const { mutate: dismiss } = useLauchpadDismisser( siteSlug, checklistSlug );
+
+	const {
+		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissable, title },
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 
 	// return nothing if the launchpad is dismissed
 	if ( isDismissed ) {
-		return <></>;
+		return null;
 	}
 
 	return (
@@ -77,22 +68,7 @@ const CustomerHomeLaunchpad = ( {
 							className="themes__activation-modal-close-icon"
 							borderless
 							onClick={ () => {
-								if ( ! siteSlug ) {
-									return;
-								}
-
-								updateLaunchpadSettings( siteSlug, {
-									is_checklist_dismissed: {
-										slug: checklistSlug,
-										is_dismissed: true,
-									},
-								} );
-								setIsDismissed( true );
-
-								recordTracksEvent( 'calypso_launchpad_dismiss_guide', {
-									checklist_slug: checklistSlug,
-									context: 'customer-home',
-								} );
+								dismiss( ! isDismissed );
 							} }
 						>
 							<div> { translate( 'Dismiss guide' ) } </div>
