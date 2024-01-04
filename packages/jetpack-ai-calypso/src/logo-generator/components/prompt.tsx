@@ -65,7 +65,7 @@ export const Prompt: React.FC = () => {
 		// response_format=url returns object with url, otherwise b64_json
 		const logo = {
 			url: image.data[ 0 ].url,
-			description: image.data[ 0 ].revised_prompt,
+			description: prompt,
 		};
 		addLogoToHistory( logo );
 		setIsRequestingImage( false );
