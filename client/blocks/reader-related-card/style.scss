@@ -231,6 +231,7 @@
 	min-height: 38px;
 	width: calc(100% - 70px);
 	overflow: hidden;
+	white-space: nowrap;
 }
 
 .reader-related-card__byline-site {
@@ -253,6 +254,8 @@
 	font-size: 12px;
 	margin-top: 2px;
 	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 
 	&::after {
 		@include long-content-fade( $size: 10% );
