@@ -278,7 +278,6 @@ export interface Cart {
 	total_tax: number;
 	total_tax_integer: number;
 	credits: number;
-	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
 	messages: Record< 'errors' | 'success', unknown >;

@@ -53,7 +53,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			currency: 'BRL',
 			credits: 100,
 			credits_integer: 10000,
-			credits_display: 'R$100',
 			allowed_payment_methods: [
 				'WPCOM_Billing_Stripe_Payment_Method',
 				'WPCOM_Billing_Ebanx',
@@ -157,7 +156,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			is_coupon_applied: false,
 			credits: 0,
 			credits_integer: 0,
-			credits_display: '0',
 			sub_total_integer: 14400,
 			total_tax: '5',
 			total_tax_integer: 500,
@@ -308,7 +306,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			is_coupon_applied: false,
 			credits: 0,
 			credits_integer: 0,
-			credits_display: '0',
 			sub_total_integer: 21600,
 			total_tax: '5',
 			total_tax_integer: 500,
@@ -390,7 +387,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			currency: 'USD',
 			credits: 100,
 			credits_integer: 10000,
-			credits_display: '$100',
 			allowed_payment_methods: [
 				'WPCOM_Billing_Stripe_Payment_Method',
 				'WPCOM_Billing_Ebanx',

@@ -16,7 +16,6 @@ const cart = {
 	total_cost_integer: 0,
 	currency: 'USD',
 	credits_integer: 0,
-	credits_display: '$0',
 	allowed_payment_methods: [],
 	coupon: '',
 	is_coupon_applied: false,
