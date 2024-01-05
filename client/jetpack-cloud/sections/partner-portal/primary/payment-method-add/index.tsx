@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-stripe';
 import { Card, Button } from '@automattic/components';
 import { CheckoutProvider, CheckoutFormSubmit } from '@automattic/composite-checkout';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
@@ -61,7 +60,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		stripe,
 	} );
 	const paymentMethods = useMemo(
-		() => [ stripeMethod ].filter( isValueTruthy ),
+		() => ( stripeMethod ? [ stripeMethod ] : [] ),
 		[ stripeMethod ]
 	);
 	const useAsPrimaryPaymentMethod: boolean = useSelect(
@@ -280,9 +279,11 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 					<div className="payment-method-add__content">
 						<div className="payment-method-add__form">
-							{ 0 === paymentMethods.length && <CreditCardLoading /> }
-
-							{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
+							{ 0 === paymentMethods.length ? (
+								<CreditCardLoading />
+							) : (
+								paymentMethods[ 0 ].activeContent
+							) }
 
 							{ useAsPrimaryPaymentMethod && (
 								<p className="payment-method-add__notice">

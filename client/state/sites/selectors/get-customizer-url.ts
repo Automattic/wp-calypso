@@ -1,4 +1,3 @@
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getCustomizerFocus } from 'calypso/my-sites/customize/panels';
 import { AppState } from 'calypso/types';
@@ -25,9 +24,14 @@ export default function getCustomizerUrl(
 ): string | null {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		const siteSlug = getSiteSlug( state, siteId );
-		const url = [ '' ]
-			.concat( [ 'customize', panel, siteSlug ].filter( isValueTruthy ) )
-			.join( '/' );
+		let url = '/customize';
+		if ( panel ) {
+			url += '/' + panel;
+		}
+		if ( siteSlug ) {
+			url += '/' + siteSlug;
+		}
+
 		return addQueryArgs(
 			{
 				return: returnUrl,

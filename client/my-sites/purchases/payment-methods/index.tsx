@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -108,7 +107,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 		initialUseForAllSubscriptions: true,
 	} );
 	const paymentMethodList = useMemo(
-		() => [ stripeMethod ].filter( isValueTruthy ),
+		() => ( stripeMethod ? [ stripeMethod ] : [] ),
 		[ stripeMethod ]
 	);
 	const reduxDispatch = useDispatch();
