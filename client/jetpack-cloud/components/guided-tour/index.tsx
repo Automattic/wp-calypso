@@ -158,7 +158,7 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 			<div className="guided-tour__popover-footer">
 				<div>
 					{
-						// Show the step count if there are multiple steps and we're not on the last step
+						// Show the step count if there are multiple steps and we're not on the last step, unless we explicitly choose to hide them
 						tours.length > 1 && ! hideSteps && (
 							<span className="guided-tour__popover-step-count">
 								{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
