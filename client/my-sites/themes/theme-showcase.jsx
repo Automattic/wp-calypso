@@ -24,7 +24,7 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
+import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
@@ -609,7 +609,7 @@ class ThemeShowcase extends Component {
 				/>
 				{ isLoggedIn && (
 					<ThemeShowcaseSurvey
-						survey={ SurveyType.DECEMBER_2023 }
+						survey={ null }
 						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
 					/>
 				) }
