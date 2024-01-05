@@ -6,6 +6,13 @@ const mockUseTranslate = () => ( text ) => text;
 const mockTranslate = ( text ) => text;
 const mockGetConnectedAccountDefaultCurrencyForSiteId = () => 'USD';
 const mockGetConnectedAccountMinimumCurrencyForSiteId = () => 0.5;
+const RealDate = Date;
+const mockDate = ( isoDate ) =>
+	( global.Date = class extends RealDate {
+		constructor() {
+			return new RealDate( isoDate );
+		}
+	} );
 
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
@@ -27,6 +34,7 @@ jest.mock( 'calypso/state/memberships/settings/selectors' );
 jest.mock( 'calypso/state/ui/selectors' );
 
 import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { __ } from '@wordpress/i18n';
 import { translate, useTranslate } from 'i18n-calypso';
 import { unmountComponentAtNode } from 'react-dom';
@@ -157,9 +165,11 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		unmountComponentAtNode( modalRoot );
 		document.body.removeChild( modalRoot );
 		modalRoot = null;
+		global.Date = RealDate;
 	} );
 
 	test( 'should render empty form when no coupon is provided', () => {
+		mockDate( '2023-06-23T14:23:44z' );
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
@@ -167,6 +177,7 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 	} );
 
 	test( 'should generate a new coupon code when the random button is clicked', () => {
+		mockDate( '2023-06-23T14:23:44z' );
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
 		);
@@ -180,7 +191,52 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		expect( generatedCode.length ).toBeGreaterThan( 3 );
 	} );
 
+	test( 'should show discount amount input when discount type is amount', async () => {
+		mockDate( '2023-06-23T14:23:44z' );
+		render(
+			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
+		);
+		expect( screen.getByRole( 'option', { name: 'Amount' } ).selected ).toBe( false );
+		expect( screen.getByRole( 'option', { name: 'Percentage' } ).selected ).toBe( true );
+		expect( screen.getByLabelText( 'Amount' ) ).toMatchSnapshot();
+		await userEvent.selectOptions(
+			screen.getByLabelText( 'Discount type' ),
+			screen.getByRole( 'option', { name: 'Amount' } )
+		);
+
+		expect( screen.getByRole( 'option', { name: 'Amount' } ).selected ).toBe( true );
+		expect( screen.getByRole( 'option', { name: 'Percentage' } ).selected ).toBe( false );
+		expect( screen.getByLabelText( 'Amount' ) ).toMatchSnapshot();
+	} );
+
+	test( 'should enable select dropdown if duration other than default', () => {
+		mockDate( '2023-06-23T14:23:44z' );
+		render(
+			<WrappedRecurringPaymentsCouponAddEditModal
+				closeDialog={ closeDialog }
+				coupon={ { duration: COUPON_DURATION_3_MONTHS } }
+			/>
+		);
+		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).toBeChecked();
+		expect( screen.getByRole( 'combobox', { name: '' } ) ).not.toBeDisabled();
+	} );
+
+	test( 'should show select dropdown as disabled unless toggled', () => {
+		mockDate( '2023-06-23T14:23:44z' );
+		render(
+			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
+		);
+		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).not.toBeChecked();
+		expect( screen.getByRole( 'combobox', { name: '' } ) ).toBeDisabled();
+		act( () => {
+			screen.getByRole( 'checkbox', { name: 'Duration' } ).click();
+		} );
+		expect( screen.getByRole( 'checkbox', { name: 'Duration' } ) ).toBeChecked();
+		expect( screen.getByRole( 'combobox', { name: '' } ) ).not.toBeDisabled();
+	} );
+
 	test( 'should render form correctly when a coupon is provided', () => {
+		mockDate( '2023-06-23T14:23:44z' );
 		render(
 			<WrappedRecurringPaymentsCouponAddEditModal
 				closeDialog={ closeDialog }

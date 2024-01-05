@@ -469,6 +469,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 						{ COUPON_DISCOUNT_TYPE_PERCENTAGE === editedDiscountType && (
 							<FormTextInputWithAffixes
 								id="discount_amount"
+								name="discount_percentage"
 								value={ editedDiscountPercentage }
 								suffix="%"
 								onChange={ onDiscountPercentageChange }
