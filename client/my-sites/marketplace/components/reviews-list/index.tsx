@@ -95,7 +95,9 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		return null;
 	}
 
-	if ( Array.isArray( reviews ) && reviews?.length === 0 ) {
+	const allReviews = [ ...userReviews, ...reviews ];
+
+	if ( Array.isArray( allReviews ) && allReviews?.length === 0 ) {
 		return (
 			<div className="marketplace-reviews-list__no-reviews">
 				<h2 className="marketplace-reviews-list__no-reviews-title">
@@ -109,8 +111,6 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 			</div>
 		);
 	}
-
-	const allReviews = [ ...userReviews, ...reviews ];
 
 	return (
 		<div className="marketplace-reviews-list__container">
