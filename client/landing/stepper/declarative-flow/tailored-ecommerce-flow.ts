@@ -4,8 +4,6 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
 	PRODUCT_1GB_SPACE,
-	FEATURE_50GB_STORAGE_ADD_ON,
-	FEATURE_100GB_STORAGE_ADD_ON,
 } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
@@ -21,6 +19,7 @@ import {
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import CheckPlan from './internals/steps-repository/check-plan';
@@ -53,17 +52,6 @@ function getPlanFromRecurType( recurType: string ) {
 		default:
 			return PLAN_ECOMMERCE_MONTHLY;
 	}
-}
-
-function getQuantityFromStorageType( storageAddonSlug: string ) {
-	switch ( storageAddonSlug ) {
-		case FEATURE_50GB_STORAGE_ADD_ON:
-			return 50;
-		case FEATURE_100GB_STORAGE_ADD_ON:
-			return 100;
-	}
-
-	return null;
 }
 
 const ecommerceFlow: Flow = {
@@ -200,10 +188,15 @@ const ecommerceFlow: Flow = {
 						product_slug: selectedPlan,
 						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
 					} );
-					setProductCartItems( {
-						product_slug: PRODUCT_1GB_SPACE,
-						quantity: getQuantityFromStorageType( storageAddonSlug ),
-					} );
+
+					setProductCartItems( [
+						{
+							product_slug: PRODUCT_1GB_SPACE,
+							quantity: getQuantityFromStorageType( storageAddonSlug ),
+							volume: 1,
+							extra: { feature_slug: storageAddonSlug },
+						},
+					] );
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
