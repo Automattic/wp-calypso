@@ -263,8 +263,6 @@ export interface Cart {
 	blog_id: number;
 	cart_key: number;
 	coupon: string;
-	coupon_discounts: unknown[];
-	coupon_discounts_integer: unknown[];
 	is_coupon_applied: boolean;
 	next_domain_is_free: boolean;
 	next_domain_condition: string;

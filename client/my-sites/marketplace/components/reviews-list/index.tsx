@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, Button } from '@automattic/components';
+import Card from '@automattic/components/src/card';
 import { CheckboxControl, TextareaControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -26,6 +28,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	const translate = useTranslate();
 	const [ isConfirmModalVisible, setIsConfirmModalVisible ] = useState( false );
 	const currentUserId = useSelector( getCurrentUserId );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const { data, fetchNextPage, error } = useInfiniteMarketplaceReviewsQuery( {
 		...props,
 		author_exclude: currentUserId ?? undefined,
@@ -36,6 +39,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		...props,
 		perPage: 1,
 		author: currentUserId ?? undefined,
+		status: 'all',
 	} );
 
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
@@ -45,7 +49,17 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 	} );
 	const deleteReview = ( reviewId: number ) => {
 		setIsConfirmModalVisible( false );
-		deleteReviewMutation.mutate( { reviewId: reviewId } );
+		deleteReviewMutation.mutate(
+			{ reviewId: reviewId },
+			{
+				onError: ( error ) => {
+					setErrorMessage( error.message );
+				},
+				onSuccess: () => {
+					setErrorMessage( '' );
+				},
+			}
+		);
 	};
 
 	const updateReviewMutation = useUpdateMarketplaceReviewMutation( {
@@ -96,14 +110,34 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		);
 	}
 
+	const allReviews = [ ...userReviews, ...reviews ];
+
 	return (
 		<div className="marketplace-reviews-list__container">
 			<div className="marketplace-reviews-list__customer-reviews">
-				{ [ ...userReviews, ...reviews ].map( ( review: MarketplaceReviewResponse ) => (
+				{ allReviews.map( ( review: MarketplaceReviewResponse, i ) => (
 					<div
-						className="marketplace-reviews-list__review-container"
+						className={ classnames( 'marketplace-reviews-list__review-container', {
+							last: i === allReviews.length - 1,
+						} ) }
 						key={ `review-${ review.id }` }
 					>
+						{ review.author === currentUserId && errorMessage && (
+							<Card className="marketplace-reviews-list__error-message" highlight="error">
+								{ errorMessage }
+							</Card>
+						) }
+						{ review.author === currentUserId && review.status === 'hold' && (
+							<Card className="marketplace-reviews-list__pending-review" highlight="warning">
+								<Gridicon className="marketplace-reviews-list__card-icon" icon="info" size={ 18 } />
+								<div className="marketplace-reviews-list__card-text">
+									<span>{ translate( 'Your review is pending approval.' ) }</span>
+									{ isEnabled( 'marketplace-reviews-notification' ) && (
+										<span>{ translate( ' You will be notified once it is published.' ) }</span>
+									) }
+								</div>
+							</Card>
+						) }
 						<div className="marketplace-reviews-list__review-container-header">
 							<div className="marketplace-reviews-list__profile-picture">
 								{ getAvatarURL( review ) ? (
@@ -161,7 +195,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 							{ isEditing && review.author === currentUserId && (
 								<>
 									<div>
-										{ isEnabled( 'marketplace-reviews-notifications' ) && (
+										{ isEnabled( 'marketplace-reviews-notification' ) && (
 											<CheckboxControl
 												className="marketplace-reviews-list__checkbox"
 												label={ translate( 'Notify me when my review is approved and published.' ) }
