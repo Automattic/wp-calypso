@@ -1,4 +1,4 @@
-import { numberFormat, translate } from 'i18n-calypso';
+import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -66,7 +66,10 @@ const SubscriberListContainer = ( {
 								isLoading ? 'loading-placeholder' : ''
 							}` }
 						>
-							{ numberFormat( total, 0 ) }
+							{ Intl.NumberFormat( getLocaleSlug() || undefined, {
+								notation: 'compact',
+								maximumFractionDigits: 1,
+							} ).format( total ) }
 						</span>
 					</div>
 
