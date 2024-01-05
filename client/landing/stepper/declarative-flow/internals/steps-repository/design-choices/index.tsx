@@ -22,7 +22,7 @@ import './style.scss';
 const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
-	const headerText = translate( 'How would you like to start?' );
+	const headerText = translate( 'Bring your vision to life' );
 	const subHeaderText = translate( 'You can change your mind later.' );
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -59,17 +59,15 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 				stepContent={
 					<div className="design-choices__container">
 						<DesignChoice
-							title={ translate( 'Explore theme gallery' ) }
+							title={ translate( 'Choose a theme' ) }
 							description={ translate( 'Choose one of our professionally designed themes.' ) }
 							imageSrc={ themeGalleryIllustrationImage }
 							destination="designSetup"
 							onSelect={ handleSubmit }
 						/>
 						<DesignChoice
-							title={ translate( 'Build my own theme' ) }
-							description={ translate(
-								'Start by building your homepage and then select your style and pages.'
-							) }
+							title={ translate( 'Design my own' ) }
+							description={ translate( 'Design your own homepage with custom styles and pages.' ) }
 							imageSrc={ patternAssemblerIllustrationImage }
 							destination="pattern-assembler"
 							onSelect={ handleSubmit }
