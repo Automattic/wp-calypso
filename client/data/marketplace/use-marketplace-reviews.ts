@@ -319,7 +319,7 @@ export const useUpdateMarketplaceReviewMutation = ( {
 	const queryClient = useQueryClient();
 	const queryKeyPrefix = [ queryKeyBase, productType, slug ];
 
-	return useMutation( {
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, UpdateMarketplaceReviewProps >( {
 		mutationFn: updateReview,
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: queryKeyPrefix } );

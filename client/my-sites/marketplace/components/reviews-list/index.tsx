@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import Card from '@automattic/components/src/card';
+import { CheckboxControl, TextareaControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -9,11 +10,13 @@ import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Rating from 'calypso/components/rating';
+import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
 import {
 	useMarketplaceReviewsQuery,
 	MarketplaceReviewResponse,
 	MarketplaceReviewsQueryProps,
 	useDeleteMarketplaceReviewMutation,
+	useUpdateMarketplaceReviewMutation,
 	useInfiniteMarketplaceReviewsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import './style.scss';
@@ -57,6 +60,24 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		);
 	};
 
+	const updateReviewMutation = useUpdateMarketplaceReviewMutation( { ...props } );
+
+	const [ isEditing, setIsEditing ] = useState< boolean >( false );
+	const [ editorContent, setEditorContent ] = useState< string >( '' );
+	const [ editorRating, setEditorRating ] = useState< number >( 0 );
+
+	const setEditing = ( review: MarketplaceReviewResponse ) => {
+		setIsEditing( true );
+		setEditorContent( review.content.rendered );
+		setEditorRating( review.meta.wpcom_marketplace_rating );
+	};
+
+	const clearEditing = () => {
+		setIsEditing( false );
+		setEditorContent( '' );
+		setEditorRating( 0 );
+	};
+
 	if ( ! isEnabled( 'marketplace-reviews-show' ) ) {
 		return null;
 	}
@@ -68,7 +89,9 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		return null;
 	}
 
-	if ( Array.isArray( reviews ) && reviews?.length === 0 ) {
+	const allReviews = [ ...userReviews, ...reviews ];
+
+	if ( Array.isArray( allReviews ) && allReviews?.length === 0 ) {
 		return (
 			<div className="marketplace-reviews-list__no-reviews">
 				<h2 className="marketplace-reviews-list__no-reviews-title">
@@ -82,8 +105,6 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 			</div>
 		);
 	}
-
-	const allReviews = [ ...userReviews, ...reviews ];
 
 	return (
 		<div className="marketplace-reviews-list__container">
@@ -136,21 +157,78 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 								{ moment( review.date ).format( 'll' ) }
 							</div>
 						</div>
-
-						<div
-							// sanitized with sanitizeSectionContent
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ {
-								__html: sanitizeSectionContent( review.content.rendered ),
-							} }
-							className="marketplace-reviews-list__content"
-						></div>
-						{ review.author === currentUserId && (
-							<div className="marketplace-reviews-list__review-actions">
+						{ isEditing && review.author === currentUserId ? (
+							<>
+								<div className="marketplace-reviews-list__review-rating">
+									<h2>{ translate( 'Let us know how your experience has changed' ) }</h2>
+									<ReviewsRatingsStars
+										size="medium-large"
+										rating={ editorRating }
+										onSelectRating={ setEditorRating }
+									/>
+								</div>
+								<TextareaControl
+									rows={ 4 }
+									cols={ 40 }
+									name="content"
+									value={ editorContent }
+									onChange={ setEditorContent }
+								/>
+							</>
+						) : (
+							<div
+								// sanitized with sanitizeSectionContent
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ {
+									__html: sanitizeSectionContent( review.content.rendered ),
+								} }
+								className="marketplace-reviews-list__content"
+							></div>
+						) }
+						<div className="marketplace-reviews-list__review-actions">
+							{ isEditing && review.author === currentUserId && (
+								<>
+									<div>
+										{ isEnabled( 'marketplace-reviews-notification' ) && (
+											<CheckboxControl
+												className="marketplace-reviews-list__checkbox"
+												label={ translate( 'Notify me when my review is approved and published.' ) }
+												checked={ false }
+												onChange={ () => alert( 'Not implemented yet' ) }
+											/>
+										) }
+									</div>
+									<div className="marketplace-reviews-list__review-actions-editable">
+										<Button className="is-link" onClick={ clearEditing }>
+											{ translate( 'Cancel' ) }
+										</Button>
+										<Button
+											className="marketplace-reviews-list__review-submit"
+											primary
+											onClick={ () => {
+												updateReviewMutation.mutate(
+													{
+														reviewId: review.id,
+														productType: props.productType,
+														slug: props.slug,
+														content: editorContent,
+														rating: editorRating,
+													},
+													{ onError: ( error ) => alert( error.message ) }
+												);
+												clearEditing();
+											} }
+										>
+											{ translate( 'Save my review' ) }
+										</Button>
+									</div>
+								</>
+							) }
+							{ ! isEditing && review.author === currentUserId && (
 								<div className="marketplace-reviews-list__review-actions-editable">
 									<button
 										className="marketplace-reviews-list__review-actions-editable-button"
-										onClick={ () => alert( 'Not implemented yet' ) }
+										onClick={ () => setEditing( review ) }
 									>
 										<Gridicon icon="pencil" size={ 18 } />
 										{ translate( 'Edit my review' ) }
@@ -173,8 +251,8 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 										/>
 									</div>
 								</div>
-							</div>
-						) }
+							) }
+						</div>
 					</div>
 				) ) }
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
