@@ -126,7 +126,6 @@ describe( 'Checkout payment methods list', () => {
 		const cartChanges = {
 			coupon: 'FREE',
 			sub_total_integer: 0,
-			sub_total_display: '0',
 			credits_integer: 0,
 			credits_display: '0',
 			total_tax_integer: 0,
