@@ -362,10 +362,10 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 				) {
 					buttonText = translate( 'Get Essential', { textOnly: true } );
 				} else if ( isBusinessTrial( currentSitePlanSlug || '' ) ) {
-					buttonText = translate( 'Get %(planTitle)s', {
+					buttonText = translate( 'Get %(plan)s', {
 						textOnly: true,
 						args: {
-							planTitle: getPlan( planSlug )?.getTitle() || '',
+							plan: getPlan( planSlug )?.getTitle() || '',
 						},
 					} );
 				}
