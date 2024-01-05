@@ -29,6 +29,7 @@ import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
+import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
