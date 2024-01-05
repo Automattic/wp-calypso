@@ -35,12 +35,10 @@ interface MutationError {
 }
 
 export const getEdgeCacheStatus = async ( siteId: number ) => {
-	const response = await wp.req.get( {
+	return await wp.req.get( {
 		path: `/sites/${ siteId }/hosting/edge-cache/active`,
 		apiNamespace: 'wpcom/v2',
 	} );
-
-	return response;
 };
 
 export const purgeEdgeCache = async ( siteId: number ) => {
