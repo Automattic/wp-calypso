@@ -1,8 +1,5 @@
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import {
-	upsertAndGetGlobalStylesId,
-	updateGlobalStyles,
-} from 'calypso/state/global-styles/actions';
+import { getGlobalStylesId, updateGlobalStyles } from 'calypso/state/global-styles/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { LIVE_PREVIEW_START } from 'calypso/state/themes/action-types';
 import {
@@ -50,7 +47,7 @@ export function livePreview(
 				// Clear the global styles if the default style variation is selected.
 				( {} as GlobalStyles );
 
-			const globalStylesId = await dispatch( upsertAndGetGlobalStylesId( siteId, stylesheet ) );
+			const globalStylesId = await dispatch( getGlobalStylesId( siteId, stylesheet ) );
 			dispatch( updateGlobalStyles( siteId, globalStylesId, styleVariationToUpdate ) );
 		}
 
