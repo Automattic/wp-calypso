@@ -242,6 +242,7 @@
 	height: 20px;
 	text-overflow: ellipsis;
 	width: calc(100% - 25px);
+	color: var(--color-primary);
 
 	&::after {
 		@include long-content-fade( $size: 10% );
