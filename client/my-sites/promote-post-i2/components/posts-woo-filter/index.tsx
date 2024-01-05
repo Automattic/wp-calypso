@@ -2,10 +2,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-export type WooItemsFilterType = 'products' | 'postsandpages';
+export type WooItemsFilterType = 'product' | 'postsandpages';
 
 interface Props {
 	itemsFilter: WooItemsFilterType;
+	filterType: string;
 	handleChangeFilter: ( type: WooItemsFilterType ) => void;
 }
 
@@ -31,7 +32,7 @@ export default function WooItemsFilter( props: Props ) {
 
 	const options = [
 		{
-			value: 'products',
+			value: 'product',
 			label: translate( 'Products' ),
 		},
 		{

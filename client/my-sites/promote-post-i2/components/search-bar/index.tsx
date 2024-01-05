@@ -46,12 +46,13 @@ const FILTER_OPTIONS_DEFAULT = {
 };
 
 const WOO_FILTER_OPTIONS_DEFAULT = {
-	filter: 'products',
+	filter: 'product',
 };
 
 export default function SearchBar( props: Props ) {
 	const { mode, handleSetSearch } = props;
-	const isWooStore = () => config.isEnabled( 'isWooStore' );
+	const isWooStore = () => config.isEnabled( 'is_running_in_woo_site' );
+	//const [ filterType, setFilterType ] = () => isWooStore() ? useState('products') : useState('')
 
 	const sortOptions: Array< DropdownOption > = [
 		{
@@ -108,7 +109,9 @@ export default function SearchBar( props: Props ) {
 		handleSetSearch( {
 			search: '',
 			order: SORT_OPTIONS_DEFAULT,
-			filter: FILTER_OPTIONS_DEFAULT,
+			filter: isWooStore()
+				? { status: '', postType: WOO_FILTER_OPTIONS_DEFAULT.filter }
+				: FILTER_OPTIONS_DEFAULT,
 		} );
 	}, [] );
 
@@ -127,10 +130,15 @@ export default function SearchBar( props: Props ) {
 
 	const onChangeFilter = ( filter: string ) => {
 		const newFilter = {
-			filter,
+			...filterOption,
+			postType: filter,
 		};
-
-		setWooFilterOption( newFilter );
+		setWooFilterOption( { filter } );
+		handleSetSearch( {
+			search: searchInput || '',
+			order: sortOption,
+			filter: newFilter,
+		} );
 	};
 
 	const onChangeSearch = ( search: string ) => {
@@ -219,6 +227,7 @@ export default function SearchBar( props: Props ) {
 							<WooItemsFilter
 								handleChangeFilter={ onChangeFilter }
 								itemsFilter={ wooFilterOption.filter as WooItemsFilterType }
+								filterType={ wooFilterOption.filter }
 							/>
 						) }
 

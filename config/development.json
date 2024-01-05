@@ -84,7 +84,7 @@
 		"importer/unified": true,
 		"importers/substack": true,
 		"individual-subscriber-stats": true,
-		"isWooStore": true,
+		"is_running_in_woo_site": false,
 		"jetpack/agency-dashboard": true,
 		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/ai-logo-generator": true,
