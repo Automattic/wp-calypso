@@ -10,20 +10,14 @@ import {
 	WPCOM_FEATURES_NO_ADVERTS,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { createRequestCartProduct } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { addQueryArgs } from 'calypso/lib/url';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
 import { withIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/with-is-eligible-for-one-click-checkout';
-import { successNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -98,12 +92,7 @@ export const UpsellNudge = ( {
 	isOneClickCheckoutEnabled = false,
 } ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const product = useMemo(
-		() => ( plan ? createRequestCartProduct( { product_slug: plan } ) : null ),
-		[ plan ]
-	);
+
 	const shouldNotDisplay =
 		isVip ||
 		! canManageSite ||
@@ -168,30 +157,12 @@ export const UpsellNudge = ( {
 	return (
 		<>
 			{ showPurchaseModal && (
-				<CalypsoShoppingCartProvider>
-					<StripeHookProvider
-						fetchStripeConfiguration={ getStripeConfiguration }
-						locale={ translate.localeSlug }
-					>
-						<PurchaseModal
-							productToAdd={ product }
-							onClose={ () => {
-								setShowPurchaseModal( false );
-							} }
-							onPurchaseSuccess={ () => {
-								setShowPurchaseModal( false );
-								dispatch(
-									successNotice( translate( 'Your purchase has been completed!' ), {
-										id: 'plugins-purchase-modal-success',
-									} )
-								);
-							} }
-							disableThankYouPage={ true }
-							showFeatureList={ true }
-							siteSlug={ siteSlug }
-						/>
-					</StripeHookProvider>
-				</CalypsoShoppingCartProvider>
+				<AsyncLoad
+					require="./purchase-modal-wrapper"
+					plan={ plan }
+					siteSlug={ siteSlug }
+					setShowPurchaseModal={ setShowPurchaseModal }
+				/>
 			) }
 			<Banner
 				callToAction={ callToAction }
