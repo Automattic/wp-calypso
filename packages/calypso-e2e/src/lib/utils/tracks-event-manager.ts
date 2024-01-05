@@ -99,7 +99,7 @@ export class TracksEventManager {
 	 */
 	blockUnnecessaryRequests() {
 		// Only allow specific requests needed for tests
-		// We're specific not allowing the t.gif requests. We only need the request URL.
+		// We're explicitly not allowing t.gif requests. We only need the request URL.
 		const urlContainsAllowList = [
 			'https://wordpress.com',
 			'public-api.wordpress.com',

@@ -1,5 +1,4 @@
 /**
- * TODO: decide on group - maybe once a day rather than per PR or release?
  * @group calypso-release
  */
 
