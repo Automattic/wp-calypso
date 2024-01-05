@@ -269,18 +269,13 @@ export interface Cart {
 	products: unknown[];
 	total_cost: number;
 	currency: string;
-	total_cost_display: string;
 	total_cost_integer: number;
 	temporary: boolean;
 	tax: unknown;
-	sub_total: number;
-	sub_total_display: string;
 	sub_total_integer: number;
 	total_tax: number;
-	total_tax_display: string;
 	total_tax_integer: number;
 	credits: number;
-	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
 	messages: Record< 'errors' | 'success', unknown >;
