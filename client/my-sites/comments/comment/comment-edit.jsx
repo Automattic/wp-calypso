@@ -27,10 +27,7 @@ import { getSiteComment } from 'calypso/state/comments/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-function hasBlocks( comment ) {
-	return comment.includes( '<!-- wp:' );
-}
+import { hasBlocks } from './utils';
 
 const noop = () => {};
 
@@ -47,6 +44,8 @@ export class CommentEdit extends Component {
 		commentDate: this.props.commentDate || '',
 		isDatePopoverVisible: false,
 		storedCommentDate: '',
+		// Cache whether the comment has blocks. We don't want change that mid-typing (in case the user adds `<!-- wp:`).
+		originalCommentHasBlocks: hasBlocks( this.props.commentContent ),
 	};
 
 	datePopoverButtonRef = createRef();
@@ -134,8 +133,14 @@ export class CommentEdit extends Component {
 			toggleEditMode,
 			translate,
 		} = this.props;
-		const { authorDisplayName, authorUrl, commentContent, commentDate, isDatePopoverVisible } =
-			this.state;
+		const {
+			authorDisplayName,
+			authorUrl,
+			commentContent,
+			commentDate,
+			isDatePopoverVisible,
+			originalCommentHasBlocks,
+		} = this.state;
 
 		return (
 			<div className="comment__edit">
@@ -206,7 +211,7 @@ export class CommentEdit extends Component {
 							</div>
 						</Popover>
 					</FormFieldset>
-					{ hasBlocks( commentContent ) ? (
+					{ originalCommentHasBlocks ? (
 						<AsyncLoad
 							require="./comment-block-editor"
 							placeholder={ <Spinner style={ { margin: 20 } } /> }
