@@ -24,7 +24,6 @@ describe( 'freePurchaseProcessor', () => {
 		item_subtotal_integer: 100,
 		item_subtotal_display: '$100',
 		product_cost_integer: 100,
-		product_cost_display: '$100',
 		item_subtotal_monthly_cost_display: '$100',
 		item_subtotal_monthly_cost_integer: 100,
 		item_original_subtotal_integer: 100,
