@@ -1,4 +1,5 @@
-import { getLocaleSlug, translate } from 'i18n-calypso';
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -66,10 +67,7 @@ const SubscriberListContainer = ( {
 								isLoading ? 'loading-placeholder' : ''
 							}` }
 						>
-							{ Intl.NumberFormat( getLocaleSlug() || undefined, {
-								notation: 'compact',
-								maximumFractionDigits: 1,
-							} ).format( total ) }
+							{ formatNumber( total ) }
 						</span>
 					</div>
 
