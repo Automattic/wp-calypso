@@ -7,9 +7,10 @@ const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
 	// Tab
-	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button:has-text("${ tabName }")`,
+	tabButton: ( tabName: EditorSidebarTab ) =>
+		`${ panel } button[role="tab"]:has-text("${ tabName }")`,
 	activeTabButton: ( tabName: EditorSidebarTab ) =>
-		`${ panel } button[aria-selected="true"]:has-text("${ tabName }")`,
+		`${ panel } button[aria-selected="true"][role="tab"]:has-text("${ tabName }")`,
 
 	// General section-related
 	section: ( name: string ) =>
