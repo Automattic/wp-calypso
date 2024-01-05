@@ -229,6 +229,8 @@
 	font-size: $font-body-small;
 	margin-top: 4px;
 	min-height: 38px;
+	width: calc(100% - 70px);
+	overflow: hidden;
 }
 
 .reader-related-card__byline-site {
@@ -291,7 +293,16 @@
 		.reader-related-card__link-block {
 			margin-bottom: 0;
 		}
-		.reader-stream__recommended-posts-list-item .card.reader-related-card {
+	}
+}
+
+.reader-stream__recommended-posts {
+	.reader-stream__recommended-posts-list-item {
+		min-width: 250px;
+		display: flex;
+		flex-direction: column;
+
+		.card.reader-related-card {
 			width: 100%;
 		}
 	}
@@ -351,11 +362,8 @@
 	border-radius: 0;
 	margin-bottom: 12px;
 	margin-top: -4px;
-	min-width: 70px;
-	position: relative;
 	padding: 0;
 	z-index: z-index(".reader-related-card__meta", ".follow-button");
-	left: 50px;
 
 	.reader-follow-feed {
 		fill: var(--color-primary);
