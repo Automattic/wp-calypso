@@ -128,7 +128,7 @@ function embedIssuu( domNode ) {
 function embedPinterest( domNode ) {
 	debug( 'processing Pinterest for', domNode );
 	if ( window.PinUtils ) {
-		window.PinUtils.build();
+		window.PinUtils.build?.();
 	} else {
 		loadAndRun( '//assets.pinterest.com/js/pinit.js', noop );
 	}
