@@ -14,11 +14,7 @@ type EmailPathUtilityFunction = (
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
 
-/**
- * Builds a URL query string from an object. Handles null values.
- * @param {Object} parameters - optional path prefix
- * @returns {string} the corresponding query string
- */
+// Builds a URL query string from an object. Handles null values.
 const buildQueryString = ( parameters?: QueryStringParameters ) =>
 	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
@@ -34,10 +30,7 @@ function resolveRootPath( relativeTo?: string | null ) {
 	return emailManagementPrefix;
 }
 
-/**
- * Retrieves the url of the Add New Mailboxes page for email forwarding:
- * https://wordpress.com/email/:domainName/forwarding/add/:siteName
- */
+// Retrieves the URL of the Add New Mailboxes page for email forwarding
 export const emailManagementAddEmailForwards: EmailPathUtilityFunction = (
 	siteName,
 	domainName,
@@ -47,13 +40,7 @@ export const emailManagementAddEmailForwards: EmailPathUtilityFunction = (
 	return emailManagementEdit( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
 };
 
-/**
- * Retrieves the url of the Add New Mailboxes page either for G Suite or Google Workspace:
- * https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
- * https://wordpress.com/email/:domainName/gsuite/add-users/:siteName
- * https://wordpress.com/email/google-workspace/add-users/:siteName
- * https://wordpress.com/email/gsuite/add-users/:siteName
- */
+// Retrieves the URL of the Add New Mailboxes page either for G Suite or Google Workspace
 export function emailManagementAddGSuiteUsers(
 	siteName: string,
 	domainName: string,
@@ -103,10 +90,7 @@ export const emailManagementNewTitanAccount: EmailPathUtilityFunction = (
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo, urlParameters );
 };
 
-/**
- * Retrieves the url to set up Titan mailboxes
- * https://wordpress.com/email/:domainName/forwarding/add/:siteName
- */
+// Retrieves the URL to set up Titan mailboxes
 export const emailManagementTitanSetUpMailbox: EmailPathUtilityFunction = (
 	siteName,
 	domainName,
@@ -171,18 +155,15 @@ export const emailManagement = (
 	return path;
 };
 
-export function emailManagementForwarding(
-	siteName: string,
-	domainName: string,
-	relativeTo?: string
-) {
+export const emailManagementForwarding: EmailPathUtilityFunction = (
+	siteName,
+	domainName,
+	relativeTo
+) => {
 	return emailManagementEdit( siteName, domainName, 'forwarding', relativeTo );
-}
+};
 
-/**
- * Retrieves the url of the Email Comparison page:
- * https://wordpress.com/email/:domainName/purchase/:siteName
- */
+// Retrieves the URL of the Email Comparison page
 export function emailManagementPurchaseNewEmailAccount(
 	siteName: string,
 	domainName: string,
@@ -198,10 +179,7 @@ export function emailManagementPurchaseNewEmailAccount(
 	} );
 }
 
-/**
- * Retrieves the url of the Email In-Depth Comparison page:
- * https://wordpress.com/email/:domainName/in-depth-comparison/:siteName
- */
+// Retrieves the URL of the Email In-Depth Comparison page
 export function emailManagementInDepthComparison(
 	siteName: string,
 	domainName: string,
@@ -221,7 +199,7 @@ export function emailManagementEdit(
 	domainName: string,
 	slug?: string | null,
 	relativeTo?: string | null,
-	urlParameters: { [ key: string ]: string | undefined } = {}
+	urlParameters?: QueryStringParameters
 ) {
 	slug = slug || 'manage';
 
