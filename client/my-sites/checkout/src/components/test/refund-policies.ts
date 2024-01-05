@@ -132,6 +132,21 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameRegistration ] );
 	} );
 
+	test( 'transfer domain', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 10,
+			is_domain_registration: false,
+			meta: 'test.live',
+			product_slug: 'domain_transfer',
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameTransfer ] );
+	} );
+
 	test( 'free domain', () => {
 		const cart = getEmptyResponseCart();
 		cart.products.push( {
