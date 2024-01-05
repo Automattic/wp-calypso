@@ -1,5 +1,6 @@
 import {
 	FEATURE_CUSTOM_DOMAIN,
+	getPlan,
 	getPlanClass,
 	isBusinessTrial,
 	isWooExpressMediumPlan,
@@ -361,7 +362,12 @@ class FeaturesGrid extends Component< FeaturesGridProps > {
 				) {
 					buttonText = translate( 'Get Essential', { textOnly: true } );
 				} else if ( isBusinessTrial( currentSitePlanSlug || '' ) ) {
-					buttonText = translate( 'Get Business', { textOnly: true } );
+					buttonText = translate( 'Get %(planTitle)s', {
+						textOnly: true,
+						args: {
+							planTitle: getPlan( planSlug )?.getTitle() || '',
+						},
+					} );
 				}
 
 				return (
