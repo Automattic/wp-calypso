@@ -57,7 +57,9 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 	const feature = targetPlan ? targetPlan.feature : FEATURE_SFTP;
 	const href = targetPlan
 		? targetPlan.href
-		: addQueryArgs( `/checkout/${ siteId }/business`, { redirect_to: location.pathname } );
+		: addQueryArgs( `/checkout/${ siteId }/business`, {
+				redirect_to: `/hosting-config/${ siteId }`,
+		  } );
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
 	const title = targetPlan ? targetPlan.title : titleText;
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
