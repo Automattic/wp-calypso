@@ -63,9 +63,9 @@ const StatsBenefitsCommercial = () => {
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 				<li>{ translate( 'Real-time data on visitors' ) }</li>
-				<li>{ translate( 'Traffic stats and trends for post and pages' ) }</li>
+				<li>{ translate( 'Traffic stats and trends for posts and pages' ) }</li>
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
-				<li>{ translate( 'GDPR compliant' ) }</li>
+				<li>{ translate( 'GDPR compliance' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
 				<li>{ translate( 'Commercial use' ) }</li>
@@ -123,9 +123,9 @@ const StatsBenefitsPersonal = () => {
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 				<li>{ translate( 'Real-time data on visitors' ) }</li>
-				<li>{ translate( 'Traffic stats and trends for post and pages' ) }</li>
+				<li>{ translate( 'Traffic stats and trends for posts and pages' ) }</li>
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
-				<li>{ translate( 'GDPR compliant' ) }</li>
+				<li>{ translate( 'GDPR compliance' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				{ /** TODO: check sub price for validation -  will need support added to use-stats-purchases hook */ }
 				<li>{ translate( 'Priority support' ) }</li>
@@ -144,9 +144,9 @@ const StatsBenefitsFree = () => {
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 				<li>{ translate( 'Real-time data on visitors' ) }</li>
-				<li>{ translate( 'Traffic stats and trends for post and pages' ) }</li>
+				<li>{ translate( 'Traffic stats and trends for posts and pages' ) }</li>
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
-				<li>{ translate( 'GDPR compliant' ) }</li>
+				<li>{ translate( 'GDPR compliance' ) }</li>
 			</ul>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 				<li>{ translate( 'No access to upcoming features' ) }</li>

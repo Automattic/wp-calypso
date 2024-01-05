@@ -1,10 +1,10 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { isCreditCard, type StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import { useStoredPaymentMethods } from '../../src/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import {
 	getTaxValidationResult,
 	isContactValidationResponseValid,
-} from '../../src/lib/contact-validation';
+} from '../src/lib/contact-validation';
 import { wrapValueInManagedValue } from '.';
 
 export interface IsEligibleForOneClickCheckoutReturnValue {
