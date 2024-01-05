@@ -10,13 +10,27 @@ const AddOnOption = styled.a`
 		color: var( --color-text );
 	}
 	.discount {
-		color: var( --studio-green-40 );
+		background-color: var( --studio-green-0 );
+		color: var( --studio-green-50 );
 		display: inline-block;
 		font-size: 0.7rem;
+		display: flex;
+		padding: 0px 10px;
+		line-height: 14px;
+		border-radius: 3px;
+		line-height: 20px;
 	}
 	.name {
 		font-size: 0.8rem;
 		margin-right: 4px;
+		line-height: 19px;
+	}
+	padding: 16px;
+	padding-right: 25px;
+	display: flex;
+	justify-content: space-between;
+	.is-highlighted & {
+		background-color: #f6f7f7;
 	}
 `;
 
@@ -31,7 +45,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 		name: (
 			<AddOnOption href={ option.url }>
 				<span className="name"> { option.name } </span>
-				<span className="discount"> { option.discountText } </span>
+				{ option.discountText ? <span className="discount"> { option.discountText } </span> : null }
 			</AddOnOption>
 		),
 	} ) );
