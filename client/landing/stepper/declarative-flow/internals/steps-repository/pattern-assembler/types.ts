@@ -20,6 +20,7 @@ export interface NavigatorLocation {
 
 export type Category = {
 	name?: string;
+	title?: string;
 	slug?: string;
 	label?: string;
 	description?: string;

@@ -34,3 +34,6 @@ export const isPriorityPattern = ( { tags: { assembler_priority } }: Pattern ) =
 
 export const isPagePattern = ( { categories, tags: { assembler_page } }: Pattern ) =>
 	Boolean( isEnabled( 'pattern-assembler/v2' ) ? categories.page : assembler_page );
+
+export const getPagePatternTitle = ( { categories }: Pattern ) =>
+	( Object.values( categories ) as Category[] ).find( ( { slug } ) => 'page' !== slug )?.title;
