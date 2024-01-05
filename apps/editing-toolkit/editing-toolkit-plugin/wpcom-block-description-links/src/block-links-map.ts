@@ -1,6 +1,6 @@
 /* URLs are localized within the function where these URLs are used. */
 /* eslint-disable wpcalypso/i18n-unlocalized-url */
-export const blockInfoMapping: { [ key: string ]: { link: string; ID: number } } = {
+const blockInfoMapping: { [ key: string ]: { link: string; ID: number } } = {
 	/**
 	 * Core Blocks
 	 */
