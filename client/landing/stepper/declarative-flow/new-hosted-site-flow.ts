@@ -3,10 +3,7 @@ import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
-import {
-	recordFreeHostingTrialStarted,
-	FlowNames,
-} from 'calypso/lib/analytics/ad-tracking/record-hosting-trial-started';
+import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/record-hosting-trial-started';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -74,7 +71,7 @@ const hosting: Flow = {
 				}
 
 				case 'trialAcknowledge': {
-					recordFreeHostingTrialStarted( FlowNames.NewSite );
+					recordFreeHostingTrialStarted( 'new_site' );
 					return navigate( 'siteCreationStep' );
 				}
 

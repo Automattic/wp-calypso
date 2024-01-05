@@ -9,10 +9,7 @@ import SiteCreationStep from 'calypso/landing/stepper/declarative-flow/internals
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
-import {
-	recordFreeHostingTrialStarted,
-	FlowNames,
-} from 'calypso/lib/analytics/ad-tracking/record-hosting-trial-started';
+import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/record-hosting-trial-started';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
@@ -163,7 +160,7 @@ const importHostedSiteFlow: Flow = {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'importer':
-							recordFreeHostingTrialStarted( FlowNames.SiteMigration );
+							recordFreeHostingTrialStarted( 'site_migration' );
 							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 						case 'checkout':
 							return exitFlow( providedDependencies?.checkoutUrl as string );
