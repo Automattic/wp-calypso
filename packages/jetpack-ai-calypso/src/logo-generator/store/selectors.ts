@@ -103,6 +103,15 @@ const selectors = {
 			selectors.getIsEnhancingPrompt( state )
 		);
 	},
+
+	/**
+	 * Get the requireUpgrade value from aiAssistantFeature
+	 * @param {LogoGeneratorStateProp} state - The app state tree.
+	 * @returns {boolean}                      The requireUpgrade flag.
+	 */
+	getRequireUpgrade( state: LogoGeneratorStateProp ): boolean {
+		return state.features.aiAssistantFeature?.requireUpgrade ?? true;
+	},
 };
 
 export default selectors;
