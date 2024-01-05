@@ -50,7 +50,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 	}
 
 	if ( isWooExpressFlow( flow || null ) ) {
-		switch ( stepData.currentStep ) {
+		switch ( stepData?.currentStep ) {
 			case 'siteCreationStep':
 				return [
 					{
@@ -178,7 +178,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 		return videoPressLoadingMessages;
 	}
 
-	switch ( stepData.intent ) {
+	switch ( stepData?.intent ) {
 		case SiteIntent.DIFM:
 			loadingMessages = [
 				{ title: __( 'Securing your data' ), duration: 5000 },
