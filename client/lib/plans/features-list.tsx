@@ -302,6 +302,7 @@ import {
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
+	FEATURE_STATS_PAID,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1963,6 +1964,12 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Install plugins & themes' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock access to 50,000+ plugins, design templates, and integrations.' ),
+	},
+	[ FEATURE_STATS_PAID ]: {
+		getSlug: () => FEATURE_STATS_PAID,
+		getTitle: () => i18n.translate( 'Jetpack Stats' ),
+		getDescription: () =>
+			i18n.translate( 'Finesse your scaling up strategy with detailed insights and data.' ),
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
