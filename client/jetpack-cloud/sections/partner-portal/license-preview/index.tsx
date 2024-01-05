@@ -31,7 +31,6 @@ import './style.scss';
 interface Props {
 	licenseKey: string;
 	product: string;
-	username: string | null;
 	blogId: number | null;
 	siteUrl: string | null;
 	hasDownloads: boolean;
@@ -47,7 +46,6 @@ interface Props {
 export default function LicensePreview( {
 	licenseKey,
 	product,
-	username,
 	blogId,
 	siteUrl,
 	hasDownloads,
@@ -267,7 +265,6 @@ export default function LicensePreview( {
 						licenseKey={ licenseKey }
 						product={ product }
 						siteUrl={ siteUrl }
-						username={ username }
 						blogId={ blogId }
 						hasDownloads={ hasDownloads }
 						issuedAt={ issuedAt }
