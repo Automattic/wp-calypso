@@ -66,7 +66,8 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							onSelect={ handleSubmit }
 						/>
 						<DesignChoice
-							title={ translate( 'Design my own' ) }
+							className="design-choices__design-your-own"
+							title={ translate( 'Design your own' ) }
 							description={ translate( 'Design your own homepage with custom styles and pages.' ) }
 							imageSrc={ patternAssemblerIllustrationImage }
 							destination="pattern-assembler"

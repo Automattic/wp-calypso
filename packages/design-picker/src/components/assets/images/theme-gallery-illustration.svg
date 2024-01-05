@@ -1,12 +1,8 @@
 <svg width="311" height="234" viewBox="0 0 311 234" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect x="166.5" y="0.5" width="139" height="97" rx="2.5" stroke="#DCDCDE"/>
-<rect x="0.5" y="124.5" width="139" height="97" rx="2.5" stroke="#DCDCDE"/>
-<rect x="166.5" y="124.5" width="139" height="97" rx="2.5" stroke="#DCDCDE"/>
-<rect x="0.5" y="0.5" width="139" height="97" rx="2.5" stroke="#DCDCDE"/>
-<rect x="5" y="4" width="140" height="105" rx="2" fill="url(#pattern0)"/>
-<rect x="171.5" y="129.5" width="139" height="104" rx="1.5" fill="url(#pattern1)" stroke="#F5F5F5"/>
-<rect x="171" y="4" width="140" height="105" rx="2" fill="url(#pattern2)"/>
-<rect x="5" y="129" width="140" height="105" rx="2" fill="url(#pattern3)"/>
+<rect x="0.5" y="0.5" width="140" height="105" rx="2" fill="url(#pattern0)"/>
+<rect x="166.5" y="124.5" width="139" height="104" rx="1.5" fill="url(#pattern1)" stroke="#F5F5F5"/>
+<rect x="166.5" y="0.5" width="140" height="105" rx="2" fill="url(#pattern2)"/>
+<rect x="0.5" y="124.5" width="140" height="105" rx="2" fill="url(#pattern3)"/>
 <defs>
 <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_3538_2540" transform="matrix(0.00131119 0 0 0.00174825 -0.00218531 0)"/>

@@ -19,7 +19,7 @@
 	}
 
 	.design-choice__description {
-		margin-bottom: 27px;
+		margin-bottom: 21px;
 		color: var(--studio-gray-50);
 		font-size: $font-body;
 		font-weight: 400;
@@ -28,16 +28,17 @@
 		text-align: start;
 	}
 
-	.design-choice__image {
+	.design-choice__image-container {
+		display: flex;
 		width: 308px;
-		height: 215px;
+		min-height: 226px;
 		transition: transform ease-in 0.15s;
 	}
 
 	&:hover {
 		outline: #3858e9 solid 2px;
 
-		.design-choice__image {
+		.design-choice__image-container {
 			transform: scale(1.05);
 		}
 	}

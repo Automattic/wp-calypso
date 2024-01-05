@@ -15,3 +15,19 @@
 	justify-content: center;
 	gap: 43px;
 }
+
+.design-choices__design-your-own {
+	.design-choice__image-container {
+		position: relative;
+
+		img {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 340px;
+			max-width: unset;
+			padding: 32px 18px 28px;
+		}
+	}
+}
