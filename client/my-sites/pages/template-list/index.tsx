@@ -34,7 +34,7 @@ const TemplateList = ( { site, isAdmin }: Props ) => {
 						id={ template.id }
 						type={ template.type }
 						title={ template.title?.rendered || template.slug }
-						hasLoaded
+						isLoaded
 					/>
 				);
 			} ) }
