@@ -255,7 +255,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'does not render the paypal payment method option when the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		const cartChanges = { total_cost_integer: 0 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }
@@ -273,7 +273,6 @@ describe( 'Checkout payment methods list', () => {
 			total_tax_integer: 0,
 			total_tax_display: 'R$0',
 			total_cost_integer: 0,
-			total_cost_display: '0',
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
@@ -290,7 +289,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'renders the free payment method option when the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		const cartChanges = { total_cost_integer: 0 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }
@@ -304,7 +303,7 @@ describe( 'Checkout payment methods list', () => {
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		const cartChanges = { total_cost_integer: 0 };
 		render(
 			<MockCheckout
 				initialCart={ initialCart }

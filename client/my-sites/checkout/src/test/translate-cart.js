@@ -54,7 +54,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			total_tax_display: 'R$5',
 			total_tax_integer: 500,
 			total_cost: 149,
-			total_cost_display: 'R$149',
 			total_cost_integer: 14900,
 			currency: 'BRL',
 			credits: 100,
@@ -173,7 +172,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			total_tax_display: 'R$5',
 			total_tax_integer: 500,
 			total_cost: 149,
-			total_cost_display: 'R$149',
 			total_cost_integer: 14900,
 			currency: 'BRL',
 			allowed_payment_methods: [
@@ -330,7 +328,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			total_tax_display: '$5',
 			total_tax_integer: 500,
 			total_cost: 221,
-			total_cost_display: '$221',
 			total_cost_integer: 22100,
 			currency: 'USD',
 			allowed_payment_methods: [
@@ -409,7 +406,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			total_tax_display: '$5',
 			total_tax_integer: 500,
 			total_cost: 132,
-			total_cost_display: '$132',
 			total_cost_integer: 13200,
 			currency: 'USD',
 			credits: 100,

@@ -271,7 +271,6 @@ export interface Cart {
 	products: unknown[];
 	total_cost: number;
 	currency: string;
-	total_cost_display: string;
 	total_cost_integer: number;
 	temporary: boolean;
 	tax: unknown;
