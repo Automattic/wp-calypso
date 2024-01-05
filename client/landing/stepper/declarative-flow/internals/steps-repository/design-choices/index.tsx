@@ -10,6 +10,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../../../../stores';
+import kebabCase from '../../../../utils/kebabCase';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -35,7 +36,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			flow,
 			step: stepName,
 			intent,
-			destination,
+			destination: kebabCase( destination ),
 		} );
 
 		if ( destination === 'pattern-assembler' ) {
