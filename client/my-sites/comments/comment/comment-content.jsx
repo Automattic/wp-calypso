@@ -22,6 +22,11 @@ export class CommentContent extends Component {
 		isPostView: PropTypes.bool,
 	};
 
+	state = {
+		// Cache whether the comment has blocks. We don't want change that mid-typing (in case the user adds `<!-- wp:`).
+		originalCommentHasBlocks: hasBlocks( this.props.commentRawContent ),
+	};
+
 	renderInReplyTo = () => {
 		const { commentId, isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
 
@@ -47,7 +52,6 @@ export class CommentContent extends Component {
 	render() {
 		const {
 			commentContent,
-			commentRawContent,
 			commentId,
 			commentStatus,
 			isBulkMode,
@@ -93,7 +97,7 @@ export class CommentContent extends Component {
 						) }
 						<AutoDirection>
 							<EmbedContainer>
-								{ hasBlocks( commentRawContent ) ? (
+								{ this.state.originalCommentHasBlocks ? (
 									<div
 										className="comment__content-body with-blocks"
 										// eslint-disable-next-line react/no-danger
