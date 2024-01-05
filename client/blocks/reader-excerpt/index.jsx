@@ -116,13 +116,17 @@ const chooseExcerpt = ( post ) => {
 	return null;
 };
 
-const ReaderExcerpt = ( { post, setHasExcerpt } ) => {
+const ReaderExcerpt = ( { post, hasExcerpt, showExcerpt, setHasExcerpt } ) => {
 	const isDailyPrompt = !! getDailyPromptText( post );
 	const excerpt = chooseExcerpt( post );
 
 	useEffect( () => {
-		setHasExcerpt?.( excerpt !== '' && excerpt !== null );
+		setHasExcerpt?.( excerpt !== '' && excerpt !== null && showExcerpt );
 	}, [ excerpt ] );
+
+	if ( ! hasExcerpt || ! showExcerpt ) {
+		return null;
+	}
 
 	return (
 		<AutoDirection>
