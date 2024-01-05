@@ -26,6 +26,7 @@ export interface Tour {
 		| 'top left';
 	nextStepOnTargetClick?: string;
 	hideSteps?: boolean;
+	showOkayButton?: boolean;
 }
 
 interface Props {
@@ -85,6 +86,7 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 		popoverPosition,
 		nextStepOnTargetClick,
 		hideSteps = false,
+		showOkayButton = false,
 	} = tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
@@ -184,6 +186,14 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 							</Button>
 						</>
 					) }
+					{
+						// Show an okay button on any particular step if specified
+						showOkayButton && (
+							<>
+								<Button onClick={ endTour }>{ translate( 'Okay' ) }</Button>
+							</>
+						)
+					}
 				</div>
 			</div>
 		</Popover>
