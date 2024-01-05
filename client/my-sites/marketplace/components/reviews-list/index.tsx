@@ -44,8 +44,6 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
 		...props,
-		perPage: 1,
-		author: currentUserId ?? undefined,
 	} );
 	const deleteReview = ( reviewId: number ) => {
 		setIsConfirmModalVisible( false );
@@ -62,11 +60,7 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 		);
 	};
 
-	const updateReviewMutation = useUpdateMarketplaceReviewMutation( {
-		...props,
-		perPage: 1,
-		author: currentUserId ?? undefined,
-	} );
+	const updateReviewMutation = useUpdateMarketplaceReviewMutation( { ...props } );
 
 	const [ isEditing, setIsEditing ] = useState< boolean >( false );
 	const [ editorContent, setEditorContent ] = useState< string >( '' );

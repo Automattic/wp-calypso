@@ -47,7 +47,7 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 		},
 		{
 			calypso_path: '/dashboard?tour=add-new-site',
-			completed: checkTourCompletion( 'addSiteStep2' ),
+			completed: checkTourCompletion( 'addSiteStep1' ),
 			disabled: false,
 			actionDispatch: () => {
 				dispatch(
