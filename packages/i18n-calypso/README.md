@@ -72,7 +72,7 @@ const translation4 = i18n.translate(
 		'from Marathon to Waterloo, in order categorical.'
 );
 
-const emoji = 18n.translate( 'Let us celebrate 🎉');
+const emoji = i18n.translate( 'Let us celebrate 🎉');
 ```
 
 ### String Substitution
