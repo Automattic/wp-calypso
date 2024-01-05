@@ -2,10 +2,12 @@ import { Button, FormLabel } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import useSubmitProductFeedback from './use-submit-product-feedback';
 
 import './style.scss';
@@ -20,11 +22,31 @@ const DEFAULT_RATING_VALUE = 0;
 
 export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ feedback, setFeedback ] = useState( DEFAULT_FEEDBACK_VALUE );
 	const [ rating, setRating ] = useState( DEFAULT_RATING_VALUE );
 
-	const { isSubmittingFeedback, submitFeedback } = useSubmitProductFeedback();
+	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
+		useSubmitProductFeedback();
+
+	const onModalClose = useCallback( () => {
+		setFeedback( DEFAULT_FEEDBACK_VALUE );
+		setRating( DEFAULT_RATING_VALUE );
+		onClose?.();
+	}, [ onClose ] );
+
+	useEffect( () => {
+		if ( isSubmissionSuccessful ) {
+			dispatch(
+				successNotice( translate( 'Thank you for your feedback!' ), {
+					id: 'submit-product-feedback-success',
+					duration: 5000,
+				} )
+			);
+			onModalClose();
+		}
+	}, [ dispatch, isSubmissionSuccessful, onModalClose, translate ] );
 
 	const onFeedbackChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setFeedback( event.currentTarget.value );
@@ -40,16 +62,9 @@ export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 		if ( ! hasCompletedForm ) {
 			return;
 		}
-		// Remove the hash from the URL.
-		const sourceUrl = window.location.href.split( '#' )[ 0 ];
+		const sourceUrl = `${ window.location.origin }${ window.location.pathname }`;
 		submitFeedback( { feedback, rating, source_url: sourceUrl } );
 	}, [ feedback, hasCompletedForm, rating, submitFeedback ] );
-
-	const onModalClose = useCallback( () => {
-		setFeedback( DEFAULT_FEEDBACK_VALUE );
-		setRating( DEFAULT_RATING_VALUE );
-		onClose?.();
-	}, [ onClose ] );
 
 	if ( ! show ) {
 		return null;
