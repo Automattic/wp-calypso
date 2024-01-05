@@ -11,6 +11,7 @@ import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import getSiteCredentialsRequestStatus from 'calypso/state/selectors/get-site-credentials-request-status';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
@@ -52,6 +53,7 @@ jest.mock( 'calypso/state/selectors/get-jetpack-credentials' );
 jest.mock( 'calypso/data/plans/use-check-eligibility-migration-trial-plan' );
 jest.mock( 'calypso/state/user-settings/selectors' );
 jest.mock( 'calypso/state/selectors/get-user-setting' );
+jest.mock( 'calypso/state/selectors/get-site-credentials-request-status' );
 
 function renderPreMigrationScreen( props?: any ) {
 	const initialState = getInitialState( initialReducer, user.ID );
@@ -192,6 +194,10 @@ describe( 'PreMigration', () => {
 			isInitFetchingDone: true,
 		} );
 
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		getSiteCredentialsRequestStatus.mockReturnValue( 'success' );
+
 		renderPreMigrationScreen( {
 			sourceSite: sourceSite,
 			targetSite: targetSite,
@@ -199,6 +205,7 @@ describe( 'PreMigration', () => {
 			isMigrateFromWp: true,
 			onContentOnlyClick,
 		} );
+
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		isRequestingSiteCredentials.mockReturnValue( false );
@@ -244,6 +251,10 @@ describe( 'PreMigration', () => {
 			siteCanMigrate: true,
 			isInitFetchingDone: true,
 		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		getSiteCredentialsRequestStatus.mockReturnValue( 'success' );
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
