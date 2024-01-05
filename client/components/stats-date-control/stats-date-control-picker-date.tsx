@@ -25,9 +25,9 @@ const DateControlPickerDate = ( {
 			} ) }
 		>
 			<h2 className={ `${ BASE_CLASS_NAME }__heading` }>
-				{ translate( 'Date Range' ) }
 				{ overlay && <Icon icon={ lock } /> }
-				<span> &#8212;</span>
+				{ translate( 'Date Range' ) }
+				<span>&#8212;</span>
 				<input id="date-example" type="date" disabled />
 			</h2>
 			<div className={ `${ BASE_CLASS_NAME }s__inputs` }>
