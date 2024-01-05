@@ -41,8 +41,6 @@ export const MarketplaceReviewsList = ( props: MarketplaceReviewsQueryProps ) =>
 
 	const deleteReviewMutation = useDeleteMarketplaceReviewMutation( {
 		...props,
-		perPage: 1,
-		author: currentUserId ?? undefined,
 	} );
 	const deleteReview = ( reviewId: number ) => {
 		setIsConfirmModalVisible( false );
