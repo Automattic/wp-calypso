@@ -1,5 +1,5 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
-import { translate } from 'i18n-calypso';
+import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -67,7 +67,7 @@ const SubscriberListContainer = ( {
 								isLoading ? 'loading-placeholder' : ''
 							}` }
 						>
-							{ formatNumber( total ) }
+							{ formatNumber( total, getLocaleSlug() || undefined ) }
 						</span>
 					</div>
 
