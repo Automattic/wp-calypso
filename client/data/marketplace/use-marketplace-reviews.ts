@@ -333,13 +333,10 @@ export const useDeleteMarketplaceReviewMutation = ( {
 		page,
 		perPage,
 	];
-	return useMutation( {
+	return useMutation< MarketplaceReviewResponse, ErrorResponse, DeleteMarketplaceReviewProps >( {
 		mutationFn: deleteReview,
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey } );
-		},
-		onError: ( error: Error ) => {
-			alert( error.message );
 		},
 	} );
 };
