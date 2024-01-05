@@ -46,7 +46,7 @@ const EmailForwardingLink = ( { selectedDomainName }: EmailForwardingLinkProps )
 								selectedSite.slug,
 								selectedDomainName,
 								currentRoute,
-								'purchase'
+								{ source: 'purchase' }
 							) }
 						/>
 					),

@@ -8,7 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import {
-	emailManagementEdit,
+	emailManagement,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
 
@@ -36,18 +36,12 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		const redirectUrlParameter =
 			source === 'email-comparison'
 				? emailManagementPurchaseNewEmailAccount(
-						selectedSite?.slug ?? '',
-						domain?.name ?? '',
+						selectedSite?.slug,
+						domain?.name,
 						null,
 						'login-redirect'
 				  )
-				: emailManagementEdit(
-						selectedSite?.slug ?? '',
-						domain?.name ?? '',
-						'manage',
-						null,
-						'login-redirect'
-				  );
+				: emailManagement( selectedSite?.slug, domain?.name );
 
 		return `/log-in/${ buildQueryString( {
 			email_address: ownerUserName,
