@@ -20,6 +20,7 @@ import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -260,6 +261,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const showPlanTypeSelectorDropdown = config.isEnabled( 'onboarding/interval-dropdown' );
 	const observableForOdieRef = useObservableForOdie();
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
@@ -518,6 +520,7 @@ const PlansFeaturesMain = ( {
 			selectedPlan,
 			selectedFeature,
 			showBiennialToggle,
+			showPlanTypeSelectorDropdown,
 			kind: planTypeSelector,
 			plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 			currentSitePlanSlug: sitePlanSlug,
@@ -538,6 +541,7 @@ const PlansFeaturesMain = ( {
 		isPlansInsideStepper,
 		isStepperUpgradeFlow,
 		showBiennialToggle,
+		showPlanTypeSelectorDropdown,
 		eligibleForWpcomMonthlyPlans,
 	] );
 
@@ -696,6 +700,12 @@ const PlansFeaturesMain = ( {
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
+	const enablePlanTypeSelectorStickyBehavior = isMobile() && showPlanTypeSelectorDropdown;
+	const stickyPlanTypeSelectorHeight = 48;
+	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
+		? stickyPlanTypeSelectorHeight + masterbarHeight
+		: masterbarHeight;
+
 	return (
 		<>
 			<div
@@ -769,9 +779,12 @@ const PlansFeaturesMain = ( {
 				{ isPlansGridReady && (
 					<>
 						{ ! hidePlanSelector && (
-							<div className="plans-features-main__plan-type-selector">
-								<PlanTypeSelector { ...planTypeSelectorProps } />
-							</div>
+							<PlanTypeSelector
+								{ ...planTypeSelectorProps }
+								layoutClassName="plans-features-main__plan-type-selector-layout"
+								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
+								stickyPlanTypeSelectorOffset={ masterbarHeight }
+							/>
 						) }
 						<div
 							className={ classNames(
@@ -842,9 +855,10 @@ const PlansFeaturesMain = ( {
 												{ translate( 'Compare our plans and find yours' ) }
 											</PlanComparisonHeader>
 											{ ! hidePlanSelector && showPlansComparisonGrid && (
-												<div className="plans-features-main__plan-type-selector">
-													<PlanTypeSelector { ...planTypeSelectorProps } />
-												</div>
+												<PlanTypeSelector
+													{ ...planTypeSelectorProps }
+													layoutClassName="plans-features-main__plan-type-selector-layout"
+												/>
 											) }
 											<ComparisonGrid
 												gridPlans={ gridPlansForComparisonGrid }
@@ -860,7 +874,7 @@ const PlansFeaturesMain = ( {
 												planActionOverrides={ planActionOverrides }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
-												stickyRowOffset={ masterbarHeight }
+												stickyRowOffset={ comparisonGridStickyRowOffset }
 												usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 												allFeaturesList={ FEATURES_LIST }
 												onStorageAddOnClick={ handleStorageAddOnClick }
