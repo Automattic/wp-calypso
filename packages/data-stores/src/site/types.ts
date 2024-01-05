@@ -274,7 +274,6 @@ export interface Cart {
 	total_cost_integer: number;
 	temporary: boolean;
 	tax: unknown;
-	sub_total: number;
 	sub_total_display: string;
 	sub_total_integer: number;
 	total_tax: number;
