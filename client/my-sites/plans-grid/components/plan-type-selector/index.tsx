@@ -11,6 +11,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	kind,
 	enableStickyBehavior = false,
 	layoutClassName,
+	stickyPlanTypeSelectorOffset = 0,
 	...props
 } ) => {
 	useEffect( () => {
@@ -23,6 +24,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 			<StickyContainer
 				stickyClass="is-sticky-plan-type-selector"
 				disabled={ ! enableStickyBehavior }
+				stickyOffset={ stickyPlanTypeSelectorOffset }
 			>
 				{ () => (
 					<div className={ classNames( layoutClassName ) }>
