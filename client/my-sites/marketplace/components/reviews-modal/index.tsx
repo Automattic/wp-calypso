@@ -42,6 +42,7 @@ export const ReviewsModal = ( props: Props ) => {
 		slug,
 		perPage: 1,
 		author: currentUser?.ID ?? undefined,
+		status: 'all',
 	} );
 	const { data: reviewsStats } = useMarketplaceReviewsStatsQuery( {
 		productType,

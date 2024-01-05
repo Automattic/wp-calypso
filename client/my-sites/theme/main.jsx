@@ -1572,6 +1572,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isActive,
 		isLoggedIn,
 		isPremium,
+		isThemeAllowedOnSite,
 		isThemePurchased,
 		isStandaloneJetpack,
 		demoUrl,
@@ -1609,7 +1610,10 @@ const ThemeSheetWithOptions = ( props ) => {
 		! isThemeInstalled
 	) {
 		defaultOption = 'subscribe';
-	} else if ( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) {
+	} else if (
+		( isPremium && ! isThemePurchased && ! isBundledSoftwareSet ) ||
+		! isThemeAllowedOnSite
+	) {
 		defaultOption = 'purchase';
 	} else if (
 		! canInstallPlugins &&

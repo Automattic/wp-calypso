@@ -26,6 +26,7 @@ import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
+import { isP2Flow, isVideoPressFlow } from 'calypso/signup/is-flow';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -34,8 +35,6 @@ import {
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
-	isP2Flow,
-	isVideoPressFlow,
 } from 'calypso/signup/utils';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

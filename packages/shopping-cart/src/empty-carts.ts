@@ -19,7 +19,6 @@ export function getEmptyResponseCart(): ResponseCart {
 		allowed_payment_methods: [],
 		coupon: '',
 		is_coupon_applied: false,
-		coupon_discounts_integer: [],
 		locale: 'en-us',
 		tax: { location: {}, display_taxes: false },
 		is_signup: false,

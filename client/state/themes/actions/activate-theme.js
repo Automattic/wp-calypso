@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
@@ -55,9 +54,6 @@ export function activateTheme(
 			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
 				theme: themeId,
 				...( dontChangeHomepage && { dont_change_homepage: true } ),
-				...( isEnabled( 'themes/theme-switch-persist-template' ) && {
-					persist_homepage_template: true,
-				} ),
 			} )
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
