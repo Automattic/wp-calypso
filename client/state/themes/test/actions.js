@@ -1466,6 +1466,7 @@ describe( 'actions', () => {
 					livePreview(
 						2211667,
 						'pendant',
+						false,
 						undefined,
 						'detail'
 					)( dispatch, state ).then( () => {
@@ -1511,6 +1512,7 @@ describe( 'actions', () => {
 						livePreview(
 							2211667,
 							'pendant',
+							false,
 							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
@@ -1537,6 +1539,7 @@ describe( 'actions', () => {
 						livePreview(
 							2211667,
 							'pendant',
+							false,
 							undefined,
 							'detail'
 						)( dispatch, state ).then( () => {
