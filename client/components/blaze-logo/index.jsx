@@ -2,7 +2,12 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
-function BlazeLogo( { className = 'blaze-logo', size = 40 } ) {
+function BlazeLogo( {
+	className = 'blaze-logo',
+	size = 40,
+	colorStart = '#E94338',
+	colorEnd = '#FFB800',
+} ) {
 	return (
 		<svg className={ className } height={ size } width={ size } viewBox="0 0 48 48" fill="none">
 			<path
@@ -18,8 +23,8 @@ function BlazeLogo( { className = 'blaze-logo', size = 40 } ) {
 					y2="43.125"
 					gradientUnits="userSpaceOnUse"
 				>
-					<stop stopColor="#E94338" />
-					<stop offset="1" stopColor="#FFB800" />
+					<stop stopColor={ colorStart } />
+					<stop offset="1" stopColor={ colorEnd } />
 				</linearGradient>
 			</defs>
 		</svg>
