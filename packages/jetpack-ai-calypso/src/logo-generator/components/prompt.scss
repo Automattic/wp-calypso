@@ -45,11 +45,27 @@
 		border: 0;
 		resize: none;
 		flex-grow: 1;
-		min-height: 60px; /* temporary while we figure out auto height */
+		padding: 6px 0;
+		vertical-align: baseline;
+		color: var(--studio-gray-100);
+		line-height: 1.6;
 
 		&:focus,
 		&:active {
 			outline: 0;
+		}
+
+		&[contentEditable="false"] {
+			color: var(--studio-gray-50, #646970);
+		}
+
+		&[placeholder]:empty::before {
+			content: attr(placeholder);
+			color: var(--studio-gray-50, #646970);
+		}
+
+		&[placeholder]:empty:focus::before {
+			content: "";
 		}
 	}
 }

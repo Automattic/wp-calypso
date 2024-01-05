@@ -7,7 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import debugFactory from 'debug';
-import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 /**
  * Internal dependencies
  */
@@ -93,8 +93,9 @@ export const Prompt: React.FC = () => {
 		increaseAiAssistantRequestsCount,
 	] );
 
-	const onChange = useCallback( ( event: { target: { value: SetStateAction< string > } } ) => {
-		setPrompt( event.target.value );
+	const onPromptInput = useCallback( ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		// TODO: double check this, never used textContent before as a replacement to input.value
+		setPrompt( event.target.textContent || '' );
 	}, [] );
 
 	return (
@@ -115,17 +116,15 @@ export const Prompt: React.FC = () => {
 				</div>
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-query">
-				{ /* TODO: textarea doesn't resize, either import from block-editor or use custom contentEditable */ }
-				<textarea
+				<div
+					contentEditable={ ! isBusy && ! requireUpgrade }
 					className="prompt-query__input"
+					onInput={ onPromptInput }
 					placeholder={ __(
 						'Describe your site or simply ask for a logo specifying some details about it',
 						'jetpack'
 					) }
-					onChange={ onChange }
-					value={ prompt }
-					disabled={ isBusy || requireUpgrade }
-				></textarea>
+				></div>
 				<Button
 					variant="primary"
 					className="jetpack-ai-logo-generator__prompt-submit"
