@@ -11,7 +11,6 @@ import React, { useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
@@ -22,6 +21,8 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { useQuery } from '../../hooks/use-query';
+import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
@@ -75,28 +76,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[]
 	);
 
-	const urlQueryParams = useQuery();
-	let ref = '';
-	const { setCouponCode, setStorageAddonSlug } = useDispatch( ONBOARD_STORE );
-	urlQueryParams.forEach( ( value, key ) => {
-		switch ( key ) {
-			case 'coupon':
-				// This stores the coupon code query param, and the flow declaration
-				// will append it to the checkout URL so that it auto-applies the coupon code at
-				// checkout. For example, /setup/ecommerce/?coupon=SOMECOUPON will auto-apply the
-				// coupon code at the checkout page.
-				value && setCouponCode( value );
-				break;
-
-			case 'ref':
-				ref = value ?? '';
-				break;
-
-			case 'storage':
-				value && setStorageAddonSlug( value );
-				break;
-		}
-	} );
+	useSaveQueryParams();
+	const ref = useQuery().get( 'ref' ) || '';
 
 	const { site, siteSlugOrId } = useSiteData();
 
