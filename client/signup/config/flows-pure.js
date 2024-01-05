@@ -466,7 +466,6 @@ export function generateFlows( {
 				'courses',
 				'store-options',
 				'store-features',
-				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
