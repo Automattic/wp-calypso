@@ -51,6 +51,7 @@ const CheckoutTermsWrapper = styled.div< {
 
 	& .checkout__terms-foldable-card {
 		box-shadow: none;
+		padding: 0;
 		& .foldable-card__header {
 			font-size: 12px;
 			font-weight: 500;
