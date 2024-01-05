@@ -127,7 +127,11 @@ function embedIssuu( domNode ) {
 
 function embedPinterest( domNode ) {
 	debug( 'processing Pinterest for', domNode );
-	loadAndRun( '//assets.pinterest.com/js/pinit.js', noop );
+	if ( window.PinUtils ) {
+		window.PinUtils.build();
+	} else {
+		loadAndRun( '//assets.pinterest.com/js/pinit.js', noop );
+	}
 }
 
 function embedReddit( domNode ) {
@@ -311,7 +315,7 @@ export default class EmbedContainer extends PureComponent {
 	componentWillUnmount() {
 		// Unmark the contents as done because they may not be on the following re-render.
 		ReactDom.findDOMNode( this )
-			.querySelectorAll( [ 'data-wpcom-embed-processed' ] )
+			.querySelectorAll( '[data-wpcom-embed-processed]' )
 			.forEach( ( node ) => {
 				node.removeAttribute( 'data-wpcom-embed-processed' );
 			} );
