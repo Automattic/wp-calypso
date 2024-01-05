@@ -385,7 +385,7 @@ class ThemeSheet extends Component {
 
 		if ( typeof window !== 'undefined' ) {
 			const params = new URLSearchParams( window.location.search );
-			if ( variation?.inline_css !== '' ) {
+			if ( variation.slug !== DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
 				params.set( 'style_variation', variation.slug );
 			} else {
 				params.delete( 'style_variation' );
@@ -727,6 +727,7 @@ class ThemeSheet extends Component {
 			softLaunched,
 			themeId,
 			translate,
+			styleVariations,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -757,6 +758,7 @@ class ThemeSheet extends Component {
 						<LivePreviewButton
 							siteId={ siteId }
 							themeId={ themeId }
+							hasStyleVariations={ styleVariations.length > 0 }
 							styleVariation={ this.getSelectedStyleVariation() }
 						/>
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (

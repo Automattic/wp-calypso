@@ -10,6 +10,7 @@ import type { GlobalStyles } from '@automattic/data-stores';
 interface Props {
 	siteId: number;
 	themeId: string;
+	hasStyleVariations: boolean;
 	styleVariation?: GlobalStyles;
 }
 
@@ -17,7 +18,12 @@ interface Props {
  * Live Preview leveraging Gutenberg's Block Theme Previews
  * @see pbxlJb-3Uv-p2
  */
-export const LivePreviewButton: FC< Props > = ( { siteId, themeId, styleVariation } ) => {
+export const LivePreviewButton: FC< Props > = ( {
+	siteId,
+	themeId,
+	hasStyleVariations,
+	styleVariation,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -32,7 +38,7 @@ export const LivePreviewButton: FC< Props > = ( { siteId, themeId, styleVariatio
 
 	const handleClick = () => {
 		setIsLoading( true );
-		dispatch( livePreview( siteId, themeId, styleVariation, 'detail' ) );
+		dispatch( livePreview( siteId, themeId, hasStyleVariations, styleVariation, 'detail' ) );
 	};
 
 	return (

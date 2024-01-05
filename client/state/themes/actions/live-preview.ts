@@ -21,6 +21,7 @@ import type { GlobalStyles } from '@automattic/data-stores';
 export function livePreview(
 	siteId: number,
 	themeId: string,
+	hasStyleVariations: boolean,
 	styleVariation?: GlobalStyles,
 	source?: 'list' | 'detail'
 ) {
@@ -40,13 +41,17 @@ export function livePreview(
 			await dispatch( installTheme( installId, siteId ) );
 		}
 
-		if ( styleVariation ) {
-			const stylesheet = isJetpackSite( getState(), siteId )
-				? themeId
-				: getCanonicalTheme( getState(), siteId, themeId )?.stylesheet ?? '';
+		if ( hasStyleVariations ) {
+			const theme = getCanonicalTheme( getState(), siteId, themeId );
+			const stylesheet = theme?.stylesheet ?? themeId;
+
+			const styleVariationToUpdate =
+				styleVariation ??
+				// Clear the global styles if the default style variation is selected.
+				( {} as GlobalStyles );
 
 			const globalStylesId = await dispatch( upsertAndGetGlobalStylesId( siteId, stylesheet ) );
-			dispatch( updateGlobalStyles( siteId, globalStylesId, styleVariation ) );
+			dispatch( updateGlobalStyles( siteId, globalStylesId, styleVariationToUpdate ) );
 		}
 
 		return dispatch( redirectToLivePreview( themeId, siteId ) );
