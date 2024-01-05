@@ -50,7 +50,7 @@ function getPlanFromRecurType( recurType: string ) {
 		case ecommerceFlowRecurTypes[ '3Y' ]:
 			return PLAN_ECOMMERCE_3_YEARS;
 		default:
-			return PLAN_ECOMMERCE_MONTHLY;
+			return PLAN_ECOMMERCE;
 	}
 }
 
