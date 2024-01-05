@@ -37,6 +37,7 @@ const useLogoGenerator = () => {
 		isBusy,
 		isRequestingImage,
 		getAiAssistantFeature,
+		requireUpgrade,
 	} = useSelect( ( select ) => {
 		const selectors: Selectors = select( STORE_NAME );
 		return {
@@ -49,6 +50,7 @@ const useLogoGenerator = () => {
 			isEnhancingPrompt: selectors.getIsEnhancingPrompt(),
 			isBusy: selectors.getIsBusy(),
 			getAiAssistantFeature: selectors.getAiAssistantFeature,
+			requireUpgrade: selectors.getRequireUpgrade(),
 		};
 	}, [] );
 
@@ -224,6 +226,7 @@ For example: user's prompt: A logo for an ice cream shop. Returned prompt: A log
 		isApplyingLogo,
 		isBusy,
 		getAiAssistantFeature,
+		requireUpgrade,
 	};
 };
 
