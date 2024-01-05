@@ -68,7 +68,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 						{ translate( 'Grow faster with Advanced Stats' ) }
 					</h1>
 					<div className="stats-upsell-modal__text">
-						{ translate( 'Finesse your scaling up strategy with detailed insights and data.' ) }
+						{ translate( 'Finesse your scaling-up strategy with detailed insights and data.' ) }
 					</div>
 					<Button
 						variant="primary"
@@ -123,7 +123,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 						<div className="stats-upsell-modal__feature">
 							<Gridicon icon="checkmark" size={ 18 } />
 							<div className="stats-upsell-modal__feature-text">
-								{ translate( '14-day money back guarantee' ) }
+								{ translate( '14-day money-back guarantee' ) }
 							</div>
 						</div>
 						<div className="stats-upsell-modal__feature">
