@@ -95,9 +95,9 @@ export const redditTrackerFreeTrialStarted = ( trial_flow_name: FlowNames ): voi
 	const params = {
 		products: [
 			{
-				id: 'wpcom_hosting_trial',
+				id: 'wpcom_creator_trial',
 				name: trial_flow_name,
-				category: 'Free Trial',
+				category: 'free_trial',
 			},
 		],
 	};
