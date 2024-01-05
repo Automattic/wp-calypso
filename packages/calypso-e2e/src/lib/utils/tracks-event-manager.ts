@@ -1,5 +1,12 @@
 import { Page, Request } from 'playwright';
 
+// Modify global Window interface to include _tkAllowE2ETests
+declare global {
+	interface Window {
+		_tkAllowE2ETests: boolean;
+	}
+}
+
 /**
  * A class to help monitor Tracks events in the browser
  */
@@ -8,7 +15,7 @@ export class TracksEventManager {
 	private timeout: number;
 
 	/**
-	 * Construct an instance of the Tracks event class
+	 * Construct an instance of the Tracks event manager class
 	 * @param page
 	 * @param timeout
 	 */
@@ -16,6 +23,16 @@ export class TracksEventManager {
 		this.page = page;
 		this.timeout = timeout;
 		this.blockUnnecessaryRequests();
+	}
+
+	/**
+	 * Tell Tracks to allow these tests to fire events
+	 * We later abort any requests to t.gif
+	 */
+	async allowTestsToFireEvents() {
+		await this.page.addInitScript( () => {
+			window._tkAllowE2ETests = true;
+		} );
 	}
 
 	/**
