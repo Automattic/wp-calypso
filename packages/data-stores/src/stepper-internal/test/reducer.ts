@@ -28,6 +28,6 @@ describe( 'StepperInternal reducer', () => {
 		const state = stepData( null, {
 			type: 'CLEAR_STEP_DATA',
 		} );
-		expect( state ).toEqual( null );
+		expect( state ).toEqual( undefined );
 	} );
 } );

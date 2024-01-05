@@ -80,6 +80,11 @@ describe( 'Onboarding: Site Assembler', () => {
 			}
 		} );
 
+		it( 'Select "Choose a theme" and land on the Design Picker', async function () {
+			await startSiteFlow.clickButton( 'Choose a theme' );
+			await page.waitForURL( /setup\/site-setup\/designSetup/ );
+		} );
+
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {
 			await startSiteFlow.clickButton( 'Design your own' );
 			await page.waitForURL( /setup\/site-setup\/pattern-assembler/, {

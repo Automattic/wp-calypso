@@ -18,12 +18,12 @@ describe( 'StepperInternal selectors', () => {
 	it( 'can set the step data and retrieve it', async () => {
 		const data = { message: 'test' };
 
-		expect( select( store ).getStepData() ).toEqual( null );
+		expect( select( store ).getStepData() ).toEqual( undefined );
 
 		dispatch( store ).setStepData( data );
 		expect( select( store ).getStepData() ).toEqual( data );
 
 		dispatch( store ).clearStepData();
-		expect( select( store ).getStepData() ).toEqual( null );
+		expect( select( store ).getStepData() ).toEqual( undefined );
 	} );
 } );

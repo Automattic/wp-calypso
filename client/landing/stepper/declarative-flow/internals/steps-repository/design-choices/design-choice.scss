@@ -35,7 +35,8 @@
 		transition: transform ease-in 0.15s;
 	}
 
-	&:hover {
+	&:hover,
+	&:focus-visible {
 		outline: #3858e9 solid 2px;
 
 		.design-choice__image-container {

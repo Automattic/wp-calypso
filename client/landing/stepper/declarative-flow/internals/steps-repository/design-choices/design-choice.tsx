@@ -20,6 +20,7 @@ const DesignChoice = ( {
 }: Props ) => (
 	<button
 		className={ classnames( 'design-choice', className ) }
+		aria-label={ title }
 		onClick={ () => onSelect( destination ) }
 	>
 		<div className="design-choice__title">{ title }</div>
