@@ -33,7 +33,7 @@ const getUpsellCopy = ( statType: string ) => {
 		case STAT_TYPE_SEARCH_TERMS:
 			return translate( 'Discover the terms and phrases your visitors use to find your site.' );
 		case STAT_TYPE_TOP_AUTHORS:
-			return translate( "Identify your audience's favorite writers and perspectives." );
+			return translate( 'Identify your audience’s favorite writers and perspectives.' );
 		case STATS_FEATURE_DATE_CONTROL:
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
 		default:
