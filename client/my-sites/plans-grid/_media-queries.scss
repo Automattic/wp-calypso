@@ -227,3 +227,14 @@ $planComparisonMinWidthToGridWidthWithSidebarMap: (
 		}
 	}
 }
+
+/**
+ * @see client/my-sites/plans-grid/components/plan-type-selector/style.scss
+ * This introduces mobile only sticky behavior for the plan type selector.
+ *
+ */
+@mixin plan-type-selector-custom-mobile-breakpoint() {
+	@media ( max-width: $plans-2023-small-breakpoint ) {
+		@content;
+	}
+}

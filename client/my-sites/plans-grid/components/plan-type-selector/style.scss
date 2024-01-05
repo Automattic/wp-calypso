@@ -1,3 +1,4 @@
+@import "calypso/my-sites/plans-grid/media-queries";
 
 .plan-type-selector {
 	max-width: fit-content;
@@ -56,6 +57,56 @@
 
 		.segmented-control__text {
 			white-space: initial;
+		}
+	}
+}
+
+.plan-type-selector .plan-type-selector__interval-type-dropdown {
+	&,
+	&:visited,
+	&:hover span.name {
+		color: var(--color-text);
+	}
+	.components-custom-select-control__button {
+		min-width: 225px;
+	}
+	.components-custom-select-control__menu {
+		margin: 0;
+	}
+	.components-custom-select-control__item {
+		grid-template-columns: auto min-content;
+	}
+}
+
+div.is-sticky-plan-type-selector {
+	.components-custom-select-control__label {
+		display: inline;
+	}
+
+	@include plan-type-selector-custom-mobile-breakpoint {
+		// Display above sticky feature and comparison grid plan headers
+		z-index: 3;
+
+		.components-flex {
+			width: 100vw;
+			height: 48px;
+			padding: 0 16px;
+			border-bottom: 1px solid #e0e0e0;
+		}
+
+		.components-custom-select-control__menu {
+			width: 100%;
+			margin: 0;
+
+			border: 1px solid #e0e0e0;
+		}
+
+		.components-custom-select-control__item {
+			padding-left: 22px;
+		}
+
+		.components-input-control__backdrop.components-input-control__backdrop {
+			border: none;
 		}
 	}
 }

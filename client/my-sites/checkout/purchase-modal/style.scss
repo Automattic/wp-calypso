@@ -158,15 +158,35 @@ $left-margin: 36px;
 /**
  * Checkout Terms
  */
-.purchase-modal .checkout__terms {
-	margin: 1em 0 4px;
-	padding-left: $left-margin;
-	font-size: $font-body-extra-small;
-}
-.purchase-modal .checkout__terms-item {
-	margin-bottom: 4px;
-	margin-left: 12px;
-	margin-top: 4px;
+
+.purchase-modal {
+	& .checkout__terms-foldable-card,
+	.foldable-card.card.is-expanded {
+		margin: 8px 0 8px 20px;
+		box-shadow: none;
+		padding: 0;
+		font-size: $font-body-small;
+		& .foldable-card__expand {
+			top: 0;
+		}
+	}
+	& .foldable-card.is-expanded .foldable-card__content {
+		border-top: none;
+		padding-top: 8px;
+
+		& .checkout__terms-item {
+			margin-left: 0;
+		}
+	}
+	& .checkout__terms {
+		margin: 1em 0 4px;
+		padding-left: $left-margin;
+	}
+	& .checkout__terms-item {
+		margin-bottom: 8px;
+		margin-left: 36px;
+		margin-top: 8px;
+	}
 }
 
 /**

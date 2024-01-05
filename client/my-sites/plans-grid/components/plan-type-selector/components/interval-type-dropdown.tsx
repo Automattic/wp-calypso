@@ -15,24 +15,8 @@ const AddOnOption = styled.a`
 		font-size: 0.7rem;
 	}
 	.name {
+		font-size: 0.8rem;
 		margin-right: 4px;
-	}
-`;
-
-const StyledCustomSelectControl = styled( CustomSelectControl )`
-	&,
-	&:visited,
-	&:hover span.name {
-		color: var( --color-text );
-	}
-	.components-custom-select-control__button {
-		min-width: 225px;
-	}
-	.components-custom-select-control__menu {
-		margin: 0;
-	}
-	.components-custom-select-control__item {
-		grid-template-columns: auto min-content;
 	}
 `;
 
@@ -51,8 +35,10 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 			</AddOnOption>
 		),
 	} ) );
+
 	return (
-		<StyledCustomSelectControl
+		<CustomSelectControl
+			className="plan-type-selector__interval-type-dropdown"
 			label=""
 			options={ selectOptionsList }
 			value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
