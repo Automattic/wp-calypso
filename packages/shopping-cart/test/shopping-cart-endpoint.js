@@ -13,7 +13,6 @@ import {
 const cart = {
 	products: [],
 	total_tax_integer: 0,
-	total_tax_display: '$0',
 	total_cost_integer: 0,
 	currency: 'USD',
 	credits_integer: 0,

@@ -270,7 +270,6 @@ describe( 'Checkout payment methods list', () => {
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
 		const cartChanges = {
 			total_tax_integer: 0,
-			total_tax_display: 'R$0',
 			total_cost_integer: 0,
 			credits_integer: 15600,
 			credits_display: 'R$156',
