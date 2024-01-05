@@ -66,10 +66,11 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 		await page.click( 'a[href*="https://wordpress.com/start"]' );
 		requestUrl = await requestUrlPromise;
 
-		const anonIdFromCalypsoPageView = tracksEventManager.getParamFromUrl( '_ui', requestUrl );
-
 		// Expect anon ids in wpcom and calypso page view events to match
-		expect( anonIdFromCalypsoPageView ).toBe( anonIdFromWpcomPageView );
+		expect( tracksEventManager.getParamFromUrl( '_en', requestUrl ) ).toBe( 'calypso_page_view' );
+		expect( tracksEventManager.getParamFromUrl( '_ui', requestUrl ) ).toBe(
+			anonIdFromWpcomPageView
+		);
 	} );
 
 	/**
