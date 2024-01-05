@@ -37,7 +37,7 @@ const getUpsellCopy = ( statType: string ) => {
 		case STATS_FEATURE_DATE_CONTROL:
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
 		default:
-			return translate( 'Upgrade your plan to unlock advanced stats.' );
+			return translate( 'Upgrade your plan to unlock Jetpack Stats.' );
 	}
 };
 
