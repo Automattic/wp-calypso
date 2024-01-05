@@ -1,3 +1,4 @@
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ReaderFeedHeaderFollow from 'calypso/blocks/reader-feed-header/follow';
@@ -56,10 +57,7 @@ const FeedStreamSidebar = ( {
 					{ followerCount && (
 						<div className="reader-tag-sidebar-stats__item">
 							<span className="reader-tag-sidebar-stats__count">
-								{ Intl.NumberFormat( getLocaleSlug(), {
-									notation: 'compact',
-									maximumFractionDigits: 1,
-								} ).format( followerCount ) }
+								{ formatNumber( followerCount, getLocaleSlug() ) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
 								{ translate( 'Subscriber', 'Subscribers', { count: followerCount } ) }

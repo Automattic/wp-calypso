@@ -1,3 +1,4 @@
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -86,10 +87,7 @@ class AuthorCompactProfile extends Component {
 							{ this.props.translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 								count: followCount,
 								args: {
-									followCount: Intl.NumberFormat( getLocaleSlug(), {
-										notation: 'compact',
-										maximumFractionDigits: 1,
-									} ).format( followCount ),
+									followCount: formatNumber( followCount, getLocaleSlug() ),
 								},
 							} ) }
 						</div>
