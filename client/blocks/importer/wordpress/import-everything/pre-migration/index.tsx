@@ -103,8 +103,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		},
 	} );
 
-	const { hasCredentials, isRequesting: isFetchingCredentials } =
-		useSiteCredentialsInfo( sourceSiteId );
+	const {
+		hasCredentials,
+		isRequesting: isFetchingCredentials,
+		hasLoaded: hasCredentialLoaded,
+	} = useSiteCredentialsInfo( sourceSiteId );
 
 	const onUpgradeAndMigrateClick = () => {
 		fetchMigrationEnabledStatus();
@@ -170,7 +173,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			setRenderState( 'upgrade-plan' );
 		} else if ( showCredentials ) {
 			setRenderState( 'credentials' );
-		} else if ( isFetchingCredentials || isFetchingMigrationData ) {
+		} else if ( ! hasCredentialLoaded || isFetchingCredentials || isFetchingMigrationData ) {
 			setRenderState( 'loading' );
 		} else if ( ! sourceSiteId ) {
 			setRenderState( 'not-authorized' );

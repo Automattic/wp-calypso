@@ -100,6 +100,7 @@ export interface CheckoutMainProps {
 	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
 	akismetSiteSlug?: string;
+	marketplaceSiteSlug?: string;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -137,6 +138,7 @@ export default function CheckoutMain( {
 	disabledThankYouPage,
 	sitelessCheckoutType,
 	akismetSiteSlug,
+	marketplaceSiteSlug,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -170,8 +172,12 @@ export default function CheckoutMain( {
 			return akismetSiteSlug;
 		}
 
+		if ( sitelessCheckoutType === 'marketplace' ) {
+			return marketplaceSiteSlug;
+		}
+
 		return siteSlug;
-	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
+	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error: string ) => {

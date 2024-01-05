@@ -54,6 +54,7 @@
 		{ "path": "./viewport-react" },
 		{ "path": "./whats-new" },
 		{ "path": "./wpcom-checkout" },
+		{ "path": "./verbum-block-editor" },
 		{ "path": "./wpcom-template-parts" }
 	]
 }

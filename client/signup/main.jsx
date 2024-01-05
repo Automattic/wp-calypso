@@ -75,6 +75,7 @@ import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
+import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
@@ -87,8 +88,6 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
-	isReskinnedFlow,
-	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';

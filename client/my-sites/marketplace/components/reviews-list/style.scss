@@ -19,7 +19,7 @@ $border-color: #eee;
 				padding-top: 0;
 			}
 
-			&:last-of-type {
+			&.last {
 				padding-bottom: 0;
 			}
 
@@ -138,6 +138,24 @@ $border-color: #eee;
 		color: var(--studio-gray-60);
 		font-size: $font-body-small;
 		max-width: 400px;
+	}
+}
+
+.marketplace-reviews-list__pending-review,
+.marketplace-reviews-list__error-message {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	align-self: stretch;
+
+	.marketplace-reviews-list__card-icon {
+		color: var(--studio-gray-10);
+	}
+
+	.marketplace-reviews-list__card-text {
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-small;
+		line-height: 20px;
 	}
 }
 

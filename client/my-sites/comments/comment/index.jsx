@@ -27,11 +27,11 @@ export class Comment extends Component {
 		commentsListQuery: PropTypes.object,
 		isAtMaxDepth: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
-		isEditMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		redirect: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
+		isSingularEditMode: PropTypes.bool,
 		toggleSelected: PropTypes.func,
 		updateLastUndo: PropTypes.func,
 	};
@@ -40,7 +40,6 @@ export class Comment extends Component {
 		super( props );
 
 		this.state = {
-			isEditMode: props.isEditMode,
 			isReplyVisible: false,
 			offsetTop: 0,
 		};
@@ -61,8 +60,7 @@ export class Comment extends Component {
 				? 0
 				: this.getCommentOffsetTop();
 
-		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
-			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
+		this.setState( ( { isReplyVisible } ) => ( {
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
 			offsetTop,
 		} ) );
@@ -128,10 +126,7 @@ export class Comment extends Component {
 	};
 
 	toggleEditMode = () => {
-		this.setState( ( { isEditMode } ) => ( {
-			isEditMode: ! isEditMode,
-			isReplyVisible: false,
-		} ) );
+		this.props.onToggleEditMode( this.props.commentId );
 	};
 
 	toggleReply = () =>
@@ -154,8 +149,12 @@ export class Comment extends Component {
 			redirect,
 			refreshCommentData,
 			updateLastUndo,
+			isSingularEditMode,
 		} = this.props;
-		const { isEditMode, isReplyVisible } = this.state;
+
+		const { isReplyVisible } = this.state;
+
+		const isEditMode = isSingularEditMode && ! isBulkMode;
 
 		const classes = classNames( 'comment', {
 			'is-at-max-depth': isAtMaxDepth,

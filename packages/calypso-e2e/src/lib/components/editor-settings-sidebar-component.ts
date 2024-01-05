@@ -7,9 +7,9 @@ const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
 	// Tab
-	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button[data-label="${ tabName }"]`,
+	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button:has-text("${ tabName }")`,
 	activeTabButton: ( tabName: EditorSidebarTab ) =>
-		`${ panel } button.is-active:has-text("${ tabName }")`,
+		`${ panel } button[aria-selected="true"]:has-text("${ tabName }")`,
 
 	// General section-related
 	section: ( name: string ) =>
@@ -115,9 +115,7 @@ export class EditorSettingsSidebarComponent {
 		const locator = editorParent.locator( selectors.tabButton( tabName ) );
 		await locator.click();
 
-		const activeTabLocator = editorParent.locator(
-			`${ selectors.tabButton( tabName ) }.is-active`
-		);
+		const activeTabLocator = editorParent.locator( selectors.activeTabButton( tabName ) );
 		await activeTabLocator.waitFor();
 	}
 

@@ -50,12 +50,12 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import PurchaseModal from './purchase-modal';
+import PurchaseModal from '../purchase-modal';
 import {
 	type WithIsEligibleForOneClickCheckoutProps,
 	withIsEligibleForOneClickCheckout,
-} from './purchase-modal/with-is-eligible-for-one-click-checkout';
+} from '../purchase-modal/with-is-eligible-for-one-click-checkout';
+import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
