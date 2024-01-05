@@ -25,6 +25,7 @@ export interface Tour {
 		| 'left'
 		| 'top left';
 	nextStepOnTargetClick?: string;
+	hideSteps?: boolean;
 }
 
 interface Props {
@@ -77,8 +78,14 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 
 	const isDismissed = preference?.dismiss;
 
-	const { title, description, target, popoverPosition, nextStepOnTargetClick } =
-		tours[ currentStep ];
+	const {
+		title,
+		description,
+		target,
+		popoverPosition,
+		nextStepOnTargetClick,
+		hideSteps = false,
+	} = tours[ currentStep ];
 
 	const targetElement = useAsyncElement( target, 3000 );
 
@@ -152,7 +159,7 @@ const GuidedTour = ( { className, tours, preferenceName, redirectAfterTourEnds }
 				<div>
 					{
 						// Show the step count if there are multiple steps and we're not on the last step
-						tours.length > 1 && (
+						tours.length > 1 && ! hideSteps && (
 							<span className="guided-tour__popover-step-count">
 								{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
 									args: { currentStep: currentStep + 1, totalSteps: tours.length },
