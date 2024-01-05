@@ -36,8 +36,10 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const siteId = siteDetails?.ID;
 
 	useEffect( () => {
-		setSiteDetails( siteDetails );
-	}, [ siteDetails, setSiteDetails ] );
+		if ( siteId ) {
+			setSiteDetails( siteDetails );
+		}
+	}, [ siteId, siteDetails, setSiteDetails ] );
 
 	useEffect( () => {
 		if ( isOpen ) {
