@@ -90,7 +90,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	}
 
 	const noPurchaseTitle = isWPCOMPaidStatsFlow
-		? translate( 'Grow faster with Advanced Stats' )
+		? translate( 'Grow faster with Jetpack Stats' )
 		: translate( 'Do you love Jetpack Stats?' );
 	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
 
