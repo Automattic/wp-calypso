@@ -1,3 +1,4 @@
+import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
@@ -36,7 +37,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
-
 import './content.scss';
 
 const noop = () => {};
@@ -141,7 +141,10 @@ export class MediaLibraryContent extends Component {
 			let onDismiss;
 			const i18nOptions = {
 				count: occurrences.length,
-				args: occurrences.length,
+				args: {
+					occurrences: occurrences.length,
+					planName: getPlan( PLAN_PREMIUM )?.getTitle(),
+				},
 			};
 
 			if ( site ) {
@@ -162,8 +165,8 @@ export class MediaLibraryContent extends Component {
 					upgradeNudgeName = 'plan-media-storage-error-video';
 					upgradeNudgeFeature = 'video-upload';
 					message = translate(
-						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
-						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
+						'%(occurrences)d file could not be uploaded because your site does not support video files. Upgrade to a %(planName)s plan for video support.',
+						'%(occurrences)d files could not be uploaded because your site does not support video files. Upgrade to a %(planName)s plan for video support.',
 						i18nOptions
 					);
 					break;
