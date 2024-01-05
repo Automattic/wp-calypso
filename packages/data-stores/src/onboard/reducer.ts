@@ -381,10 +381,10 @@ const couponCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
 };
 
 const storageAddonSlug: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_STORAGE_ADDON' ) {
+	if ( action.type === 'SET_STORAGE_ADDON_SLUG' ) {
 		return action.storageAddonSlug;
 	}
-	if ( [ 'RESET_STORAGE_ADDON', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+	if ( [ 'RESET_STORAGE_ADDON_SLUG', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
 	}
 	return state;

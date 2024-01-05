@@ -385,12 +385,12 @@ export const resetCouponCode = () => ( {
 } );
 
 export const setStorageAddonSlug = ( storageAddonSlug: string ) => ( {
-	type: 'SET_STORAGE_ADDON' as const,
+	type: 'SET_STORAGE_ADDON_SLUG' as const,
 	storageAddonSlug,
 } );
 
 export const resetStorageAddonSlug = () => ( {
-	type: 'RESET_STORAGE_ADDON' as const,
+	type: 'RESET_STORAGE_ADDON_SLUG' as const,
 } );
 
 export const setDomainForm = ( step: Record< string, string > ) => {

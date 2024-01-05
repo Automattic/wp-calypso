@@ -154,8 +154,13 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setPlanCartItem, setProductCartItems, setPluginsToVerify, resetCouponCode } =
-			useDispatch( ONBOARD_STORE );
+		const {
+			setPlanCartItem,
+			setProductCartItems,
+			setPluginsToVerify,
+			resetCouponCode,
+			resetStorageAddonSlug,
+		} = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
 		const { selectedDesign, recurType, couponCode, storageAddonSlug } = useSelect(
 			( select ) => ( {
@@ -189,14 +194,17 @@ const ecommerceFlow: Flow = {
 						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
 					} );
 
-					setProductCartItems( [
-						{
-							product_slug: PRODUCT_1GB_SPACE,
-							quantity: getQuantityFromStorageType( storageAddonSlug ),
-							volume: 1,
-							extra: { feature_slug: storageAddonSlug },
-						},
-					] );
+					if ( storageAddonSlug ) {
+						setProductCartItems( [
+							{
+								product_slug: PRODUCT_1GB_SPACE,
+								quantity: getQuantityFromStorageType( storageAddonSlug ),
+								volume: 1,
+								extra: { feature_slug: storageAddonSlug },
+							},
+						] );
+						resetStorageAddonSlug();
+					}
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
