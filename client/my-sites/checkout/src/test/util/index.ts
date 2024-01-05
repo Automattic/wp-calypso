@@ -468,7 +468,6 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			cart_generated_at_timestamp: 12345,
 			cart_key: 1234,
 			coupon: requestCoupon,
-			coupon_discounts_integer: [],
 			coupon_savings_total_integer: requestCoupon ? 1000 : 0,
 			credits_integer: 0,
 			currency,
@@ -1348,7 +1347,6 @@ export function getBasicCart(): ResponseCart {
 		total_tax_integer: 700,
 		total_cost_integer: 15600,
 		sub_total_integer: 15600,
-		coupon_discounts_integer: [],
 	};
 }
 
