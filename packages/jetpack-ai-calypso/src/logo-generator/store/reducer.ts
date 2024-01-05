@@ -103,7 +103,8 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 			const isOverLimit = currentCount >= requestsLimit;
 
 			// highest tier holds a soft limit so requireUpgrade is false on that case (nextTier null means highest tier)
-			const requireUpgrade = isOverLimit && state?.features?.aiAssistantFeature?.nextTier !== null;
+			const requireUpgrade =
+				isFreeTierPlan || ( isOverLimit && state?.features?.aiAssistantFeature?.nextTier !== null );
 
 			return {
 				...state,

@@ -156,6 +156,7 @@ export type Selectors = {
 	getIsRequestingImage(): boolean;
 	getIsEnhancingPrompt(): boolean;
 	getIsBusy(): boolean;
+	getRequireUpgrade(): boolean;
 };
 
 /*

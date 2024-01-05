@@ -33,6 +33,7 @@ export const Prompt: React.FC = () => {
 		isEnhancingPrompt,
 		site,
 		getAiAssistantFeature,
+		requireUpgrade,
 	} = useLogoGenerator();
 
 	const enhancingLabel = __( 'Enhancing…', 'jetpack' );
@@ -57,7 +58,6 @@ export const Prompt: React.FC = () => {
 
 	const featureData = getAiAssistantFeature( String( site?.id || '' ) );
 
-	const isFreeTier = featureData?.currentTier?.value === 0;
 	const currentLimit = featureData?.currentTier?.value || 0;
 	const currentUsage = featureData?.usagePeriod?.requestsCount || 0;
 	const isUnlimited = currentLimit === 1;
@@ -96,17 +96,6 @@ export const Prompt: React.FC = () => {
 		setPrompt( event.target.value );
 	}, [] );
 
-	const freeUsage = sprintf(
-		// translators: %u is the number of requests
-		__( '%u free requests remaining.', 'jetpack' ),
-		requestsRemaining
-	);
-	const tieredUsage = sprintf(
-		// translators: %u is the number of requests
-		__( '%u requests remaining.', 'jetpack' ),
-		requestsRemaining
-	);
-
 	return (
 		<div className="jetpack-ai-logo-generator__prompt">
 			<div className="jetpack-ai-logo-generator__prompt-header">
@@ -114,7 +103,7 @@ export const Prompt: React.FC = () => {
 					{ __( 'Describe your site:', 'jetpack' ) }
 				</div>
 				<div className="jetpack-ai-logo-generator__prompt-actions">
-					<Button variant="link" disabled={ isBusy } onClick={ onEnhance }>
+					<Button variant="link" disabled={ isBusy || requireUpgrade } onClick={ onEnhance }>
 						<AiIcon />
 						<span>{ enhanceButtonLabel }</span>
 					</Button>
@@ -130,13 +119,13 @@ export const Prompt: React.FC = () => {
 					) }
 					onChange={ onChange }
 					value={ prompt }
-					disabled={ isBusy }
+					disabled={ isBusy || requireUpgrade }
 				></textarea>
 				<Button
 					variant="primary"
 					className="jetpack-ai-logo-generator__prompt-submit"
 					onClick={ onGenerate }
-					disabled={ isBusy }
+					disabled={ isBusy || requireUpgrade }
 				>
 					{ __( 'Generate', 'jetpack' ) }
 				</Button>
@@ -144,7 +133,13 @@ export const Prompt: React.FC = () => {
 			<div className="jetpack-ai-logo-generator__prompt-footer">
 				{ ! isUnlimited && (
 					<>
-						<div>{ isFreeTier ? freeUsage : tieredUsage }</div>
+						<div>
+							{ sprintf(
+								// translators: %u is the number of requests
+								__( '%u requests remaining.', 'jetpack' ),
+								requestsRemaining
+							) }
+						</div>
 						&nbsp;
 						<Button variant="link" href="https://automattic.com/ai-guidelines" target="_blank">
 							{ __( 'Upgrade', 'jetpack' ) }
