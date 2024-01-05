@@ -290,15 +290,15 @@ function useAddProductFromBillingIntent( {
 			debug( 'creating products from billing intent failed' );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: translate( 'I tried and failed to create products from a billing intent', {
+				message: translate( 'I tried and failed to create products', {
 					textOnly: true,
 				} ),
 			} );
 			return;
 		}
 
-		const productsForCart: RequestCartProduct[] = [];
 		( async () => {
+			const productsForCart: RequestCartProduct[] = [];
 			const cartProduct = await getCartProductByBillingIntentId( billingIntentId );
 
 			if ( cartProduct ) {
@@ -309,7 +309,7 @@ function useAddProductFromBillingIntent( {
 				debug( 'creating products from billing intent failed' );
 				dispatch( {
 					type: 'PRODUCTS_ADD_ERROR',
-					message: translate( 'I tried and failed to create products from a billing intent', {
+					message: translate( 'I tried and failed to create products', {
 						textOnly: true,
 					} ),
 				} );
