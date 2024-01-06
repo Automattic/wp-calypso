@@ -121,7 +121,6 @@ div.is-sticky-plan-type-selector .plan-type-selector__interval-type-dropdown {
 	width: 100%;
 	@include plan-type-selector-custom-mobile-breakpoint {
 		// Display above sticky feature and comparison grid plan headers
-		z-index: 3;
 		.components-flex {
 			width: 100vw;
 			height: 64px;

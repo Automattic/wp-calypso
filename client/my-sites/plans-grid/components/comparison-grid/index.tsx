@@ -1094,6 +1094,7 @@ const ComparisonGrid = ( {
 					disabled={ isBottomHeaderInView }
 					stickyClass="is-sticky-header-row"
 					stickyOffset={ stickyRowOffset }
+					zIndex={ 1 }
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader

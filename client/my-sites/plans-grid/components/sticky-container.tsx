@@ -9,15 +9,24 @@ type Props = {
 	element?: ElementType; // which element to render, defaults to div
 	stickyOffset?: number; // offset from the top of the scrolling container to control when the element should start sticking, default 0
 	disabled?: boolean; // force disabled sticky behaviour if set to true
+	zIndex?: number; // Set z index manually
 };
 
-const styles = ( { disabled, stickyOffset }: { disabled: boolean; stickyOffset: number } ) =>
+const styles = ( {
+	disabled,
+	stickyOffset,
+	zIndex,
+}: {
+	disabled: boolean;
+	stickyOffset: number;
+	zIndex: number;
+} ) =>
 	disabled
 		? ''
 		: css`
 				position: sticky;
 				top: ${ stickyOffset + 'px' };
-				z-index: 2;
+				z-index: ${ zIndex };
 		  `;
 
 const Container = styled.div`
@@ -25,7 +34,14 @@ const Container = styled.div`
 `;
 
 export function StickyContainer( props: Props ) {
-	const { stickyOffset = 0, stickyClass = '', element = 'div', disabled = false, children } = props;
+	const {
+		stickyOffset = 0,
+		zIndex = 2,
+		stickyClass = '',
+		element = 'div',
+		disabled = false,
+		children,
+	} = props;
 
 	const stickyRef = useRef( null );
 	const [ isStuck, setIsStuck ] = useState( false );
@@ -91,6 +107,7 @@ export function StickyContainer( props: Props ) {
 				stickyOffset={ stickyOffset }
 				disabled={ disabled }
 				className={ classNames( { [ stickyClass ]: isStuck } ) }
+				zIndex={ zIndex }
 			>
 				{ children( isStuck ) }
 			</Container>
