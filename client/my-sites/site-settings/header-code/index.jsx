@@ -53,7 +53,7 @@ const HeaderCodeSettings = ( {
 		}
 
 		// Necessary for if switching to a site without any code.
-		if ( 'boolean' === typeof headCode || ! headCode ) {
+		if ( ! headCode ) {
 			setHtmlCode( '' );
 		}
 	}, [ headCode, siteId ] );
@@ -135,8 +135,9 @@ const HeaderCodeSettings = ( {
 						<div className="header-code__warning">
 							<Gridicon icon="info" size={ 18 } />
 							<p className="header-code__warning-text">
+								{ translate( "This code will be run for all your site's viewers." ) }{ ' ' }
 								{ translate(
-									"This code will be run for all your site's viewers. Please make sure that you understand any code and trust its source before adding it here."
+									'Please make sure that you understand any code and trust its source before adding it here.'
 								) }
 							</p>
 						</div>
