@@ -235,6 +235,35 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		expect( screen.getByRole( 'combobox', { name: '' } ) ).not.toBeDisabled();
 	} );
 
+	test( 'should enable emails textarea if email allow list other than default', () => {
+		mockDate( '2023-06-23T14:23:44z' );
+		const labelText = 'Limit coupon to specific emails';
+		const email_allow_list = [ '*@*.edu', '*@automattic.com' ];
+		render(
+			<WrappedRecurringPaymentsCouponAddEditModal
+				closeDialog={ closeDialog }
+				coupon={ { email_allow_list } }
+			/>
+		);
+		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).toBeChecked();
+		expect( screen.getByDisplayValue( email_allow_list.join( ', ' ) ) ).not.toBeDisabled();
+	} );
+
+	test( 'should show email textarea as disabled unless toggled', () => {
+		mockDate( '2023-06-23T14:23:44z' );
+		const labelText = 'Limit coupon to specific emails';
+		render(
+			<WrappedRecurringPaymentsCouponAddEditModal closeDialog={ closeDialog } coupon={ {} } />
+		);
+		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).not.toBeChecked();
+		expect( document.getElementById( 'email_allow_list' ) ).toBeDisabled();
+		act( () => {
+			screen.getByRole( 'checkbox', { name: labelText } ).click();
+		} );
+		expect( screen.getByRole( 'checkbox', { name: labelText } ) ).toBeChecked();
+		expect( document.getElementById( 'email_allow_list' ) ).not.toBeDisabled();
+	} );
+
 	test( 'should render form correctly when a coupon is provided', () => {
 		mockDate( '2023-06-23T14:23:44z' );
 		render(

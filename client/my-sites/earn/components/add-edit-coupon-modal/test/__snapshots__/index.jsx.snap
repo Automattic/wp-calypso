@@ -555,6 +555,15 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
     class="ReactModalPortal"
   />
   <div
+    class="ReactModalPortal"
+  />
+  <div
+    class="ReactModalPortal"
+  />
+  <div
+    class="ReactModalPortal"
+  />
+  <div
     aria-hidden="true"
     id="wpcom"
   />
@@ -804,7 +813,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                     >
                       <input
                         class="components-form-toggle__input"
-                        id="inspector-toggle-control-20"
+                        id="inspector-toggle-control-28"
                         type="checkbox"
                       />
                       <span
@@ -818,7 +827,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                       class="components-flex-item components-flex-block components-toggle-control__label css-14wzr73-View-Item-sx-Base-block e19lxcc00"
                       data-wp-c16t="true"
                       data-wp-component="FlexBlock"
-                      for="inspector-toggle-control-20"
+                      for="inspector-toggle-control-28"
                     >
                       Cannot be combined with other coupons
                     </label>
@@ -846,7 +855,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                     >
                       <input
                         class="components-form-toggle__input"
-                        id="inspector-toggle-control-21"
+                        id="inspector-toggle-control-29"
                         type="checkbox"
                       />
                       <span
@@ -860,7 +869,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                       class="components-flex-item components-flex-block components-toggle-control__label css-14wzr73-View-Item-sx-Base-block e19lxcc00"
                       data-wp-c16t="true"
                       data-wp-component="FlexBlock"
-                      for="inspector-toggle-control-21"
+                      for="inspector-toggle-control-29"
                     >
                       Eligible for first-time order only
                     </label>
@@ -888,7 +897,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                     >
                       <input
                         class="components-form-toggle__input"
-                        id="inspector-toggle-control-22"
+                        id="inspector-toggle-control-30"
                         type="checkbox"
                       />
                       <span
@@ -902,7 +911,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                       class="components-flex-item components-flex-block components-toggle-control__label css-14wzr73-View-Item-sx-Base-block e19lxcc00"
                       data-wp-c16t="true"
                       data-wp-component="FlexBlock"
-                      for="inspector-toggle-control-22"
+                      for="inspector-toggle-control-30"
                     >
                       Duration
                     </label>
@@ -967,7 +976,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                       <input
                         checked=""
                         class="components-form-toggle__input"
-                        id="inspector-toggle-control-23"
+                        id="inspector-toggle-control-31"
                         type="checkbox"
                       />
                       <span
@@ -981,7 +990,7 @@ exports[`RecurringPaymentsCouponAddEditModal should render form correctly when a
                       class="components-flex-item components-flex-block components-toggle-control__label css-14wzr73-View-Item-sx-Base-block e19lxcc00"
                       data-wp-c16t="true"
                       data-wp-component="FlexBlock"
-                      for="inspector-toggle-control-23"
+                      for="inspector-toggle-control-31"
                     >
                       Limit coupon to specific emails
                     </label>
