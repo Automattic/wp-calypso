@@ -2,17 +2,15 @@ import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-export type WooItemsFilterType = 'product' | 'postsandpages';
+export type WooItemsFilterType = 'product' | 'post' | 'page';
 
 interface Props {
-	itemsFilter: WooItemsFilterType;
-	filterType: string;
+	postType: string;
 	handleChangeFilter: ( type: WooItemsFilterType ) => void;
 }
 
 export default function WooItemsFilter( props: Props ) {
 	const translate = useTranslate();
-
 	// Smooth horizontal scrolling on mobile views
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
 	const onTabClick = ( key: string ) => {
@@ -23,7 +21,7 @@ export default function WooItemsFilter( props: Props ) {
 		} );
 	};
 
-	const { handleChangeFilter, itemsFilter } = props;
+	const { handleChangeFilter, postType } = props;
 
 	const handleChange = ( type: WooItemsFilterType ) => {
 		onTabClick( type );
@@ -36,17 +34,25 @@ export default function WooItemsFilter( props: Props ) {
 			label: translate( 'Products' ),
 		},
 		{
-			value: 'postsandpages',
-			label: translate( 'Posts & Pages' ),
+			value: 'post',
+			label: translate( 'Posts' ),
+		},
+		{
+			value: 'pages',
+			label: translate( 'Page' ),
 		},
 	];
 
 	return (
-		<SegmentedControl compact primary>
+		<SegmentedControl
+			className="promote-post-i2__search-bar-segemented-control-woo"
+			compact
+			primary
+		>
 			{ options.map( ( option ) => (
 				<SegmentedControl.Item
 					key={ option.value }
-					selected={ itemsFilter === option.value }
+					selected={ postType === option.value }
 					onClick={ () => handleChange( option.value as WooItemsFilterType ) }
 				>
 					<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }> { option.label } </span>

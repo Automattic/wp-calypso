@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { translate, useTranslate } from 'i18n-calypso';
+import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import { BlazablePost } from 'calypso/data/promote-post/types';
@@ -33,6 +35,9 @@ const fetchErrorListMessage = translate(
 );
 
 export default function PostsList( props: Props ) {
+	const isWooStore = () => config.isEnabled( 'is_running_in_woo_site' );
+	const initialPostType = isWooStore() ? 'product' : '';
+	const [ postType, setPostType ] = React.useState( initialPostType );
 	const {
 		isLoading,
 		isError,
@@ -56,6 +61,10 @@ export default function PostsList( props: Props ) {
 		},
 	} );
 
+	const onChangeFilter = ( postType: string ) => {
+		setPostType( postType );
+	};
+
 	if ( isError && hasLocalUser ) {
 		return (
 			<Notice
@@ -71,7 +80,12 @@ export default function PostsList( props: Props ) {
 
 	return (
 		<>
-			<SearchBar mode="posts" handleSetSearch={ ( search ) => handleSearchOptions( search ) } />
+			<SearchBar
+				mode="posts"
+				handleSetSearch={ ( search ) => handleSearchOptions( search ) }
+				postType={ postType }
+				handleFilterPostTypeChange={ onChangeFilter }
+			/>
 			{ ! isLoading && posts?.length === 0 ? (
 				<div className="promote-post-i2__aux-wrapper">
 					{ totalCampaigns === 0 ? (
