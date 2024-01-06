@@ -8,6 +8,7 @@ import './style.scss';
 const noop = () => {};
 
 type FormTextInputWithValueGenerationProps = {
+	id?: string;
 	className?: string;
 	action?: string;
 	value?: string;
