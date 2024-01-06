@@ -14,6 +14,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
+import HeaderCodeSettings from './header-code';
 import ManageConnection from './manage-connection';
 import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
 import StartOver from './start-over';
@@ -108,6 +109,11 @@ export function manageConnection( context, next ) {
 
 export function startSiteOwnerTransfer( context, next ) {
 	context.primary = <SiteOwnerTransfer />;
+	next();
+}
+
+export function headerCode( context, next ) {
+	context.primary = <HeaderCodeSettings />;
 	next();
 }
 

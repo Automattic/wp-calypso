@@ -7,6 +7,7 @@ import {
 	disconnectSite,
 	disconnectSiteConfirm,
 	general,
+	headerCode,
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
@@ -107,6 +108,16 @@ export default function () {
 		navigation,
 		setScroll,
 		startSiteOwnerTransfer,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/settings/header-code/:site_id',
+		siteSelection,
+		navigation,
+		setScroll,
+		headerCode,
 		makeLayout,
 		clientRender
 	);
