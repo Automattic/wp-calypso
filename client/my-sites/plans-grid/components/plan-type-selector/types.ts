@@ -8,10 +8,14 @@ export type PlanTypeSelectorProps = {
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
 	withDiscount?: string;
+	enableStickyBehavior?: boolean;
+	stickyPlanTypeSelectorOffset?: number;
+	layoutClassName?: string;
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
 	showBiennialToggle?: boolean;
+	showPlanTypeSelectorDropdown?: boolean; // feature flag used for the plan selector dropdown
 	isInSignup: boolean;
 	plans: PlanSlug[];
 	eligibleForWpcomMonthlyPlans?: boolean;
@@ -37,6 +41,7 @@ export type IntervalTypeProps = Pick<
 	| 'hideDiscountLabel'
 	| 'redirectTo'
 	| 'showBiennialToggle'
+	| 'showPlanTypeSelectorDropdown'
 	| 'selectedPlan'
 	| 'selectedFeature'
 	| 'currentSitePlanSlug'

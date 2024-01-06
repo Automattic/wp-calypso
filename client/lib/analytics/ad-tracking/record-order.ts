@@ -83,6 +83,7 @@ export async function recordOrder(
 	recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -716,6 +717,45 @@ function recordOrderInAkismetGTM(
 		window.dataLayer.push( purchaseEventMeta );
 
 		debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
+	}
+}
+
+/**
+ * Sends a purchase event to Google Tag Manager for Jetpack purchases.
+ */
+function recordOrderInJetpackGTM(
+	cart: ResponseCart,
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
+	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		// We ensure that we can track with GTM
+		if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+			return;
+		}
+
+		const purchaseEventMeta = {
+			event: 'purchase',
+			ecommerce: {
+				coupon: cart.coupon?.toString() ?? '',
+				transaction_id: orderId,
+				currency: 'USD',
+				items: wpcomJetpackCartInfo.jetpackProducts.map(
+					( { product_id, product_name, cost, volume, bill_period } ) => ( {
+						id: product_id.toString(),
+						name: product_name.toString(),
+						quantity: parseInt( String( volume ) ),
+						price: costToUSD( cost, cart.currency ) ?? 0,
+						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
+					} )
+				),
+				value: wpcomJetpackCartInfo.jetpackCostUSD,
+			},
+		};
+
+		window.dataLayer.push( purchaseEventMeta );
+
+		debug( `recordOrderInJetpackGTM: Record Jetpack GTM purchase`, purchaseEventMeta );
 	}
 }
 

@@ -106,11 +106,24 @@ const ThemeTypeBadgeTooltip = ( {
 		} );
 	}, [ themeId ] );
 
+	const premiumPlan = plans?.data?.[ PLAN_PREMIUM ];
 	let message;
 	if ( isLockedStyleVariation ) {
-		message = translate(
-			'Unlock this style, and tons of other features, by upgrading to a %(premiumPlanName)s plan.',
-			{ args: { premiumPlanName: plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '' } }
+		message = createInterpolateElement(
+			// Translators: %(premiumPlanName)s is the name of the premium plan that includes this theme. Examples: "Explorer" or "Premium".
+			translate(
+				'Unlock this style, and tons of other features, by upgrading to a <Link>%(premiumPlanName)s plan</Link>.',
+				{ args: { premiumPlanName: premiumPlan?.productNameShort || '' }, textOnly: true }
+			),
+			{
+				Link: (
+					<ThemeTypeBadgeTooltipUpgradeLink
+						canGoToCheckout={ canGoToCheckout }
+						plan={ premiumPlan?.planSlug || '' }
+						siteSlug={ siteSlug }
+					/>
+				),
+			}
 		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {

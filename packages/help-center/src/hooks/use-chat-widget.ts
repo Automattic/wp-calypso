@@ -60,7 +60,7 @@ export default function useChatWidget(
 	};
 
 	return {
-		isOpeningChatWidget: isSubmittingZendeskUserFields || ! isMessagingScriptLoaded,
+		isOpeningChatWidget: enabled && ( isSubmittingZendeskUserFields || ! isMessagingScriptLoaded ),
 		openChatWidget,
 	};
 }

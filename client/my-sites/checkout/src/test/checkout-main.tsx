@@ -642,7 +642,6 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = {
 			couponCode: 'MYCOUPONCODE',
 			coupon_savings_total_integer: 10,
-			coupon_savings_total_display: '$R10',
 		};
 		render(
 			<MockCheckout
