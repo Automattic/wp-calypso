@@ -1,7 +1,7 @@
 @import "calypso/my-sites/plans-grid/media-queries";
 
 .plan-type-selector {
-	max-width: fit-content;
+	width: 100%;
 }
 
 .plan-type-selector__title {
@@ -63,11 +63,7 @@
 
 .plan-type-selector .plan-type-selector__interval-type-dropdown {
 	width: 259px;
-	background-color: var(--studio-gray-0);
-
-	@include plan-type-selector-custom-mobile-breakpoint {
-		width: 100%;
-	}
+	margin: 0 auto;
 
 	&,
 	&:visited,
@@ -77,7 +73,7 @@
 	.components-flex {
 		overflow: hidden;
 		.components-input-control__container {
-			background-color: var(--studio-gray-0);
+			background-color: var(--studio-white);
 			.components-custom-select-control__button {
 				min-width: 225px;
 				height: auto;
@@ -85,6 +81,10 @@
 			}
 			.components-input-control__backdrop {
 				border-color: var(--studio-gray-10);
+			}
+
+			.components-input-control__suffix > div {
+				padding-right: 13px;
 			}
 		}
 	}
@@ -117,28 +117,24 @@
 	}
 }
 
-div.is-sticky-plan-type-selector {
+div.is-sticky-plan-type-selector .plan-type-selector__interval-type-dropdown {
+	width: 100%;
 	@include plan-type-selector-custom-mobile-breakpoint {
 		// Display above sticky feature and comparison grid plan headers
 		z-index: 3;
-
 		.components-flex {
 			width: 100vw;
-			height: 48px;
-			padding: 0 16px;
+			height: 64px;
+			padding: 0;
 			border-bottom: 1px solid #e0e0e0;
+			border-bottom-right-radius: 0;
+			border-bottom-left-radius: 0;
 		}
 
 		.components-custom-select-control__menu {
 			width: 100%;
-			margin: 0;
 			border: 1px solid #e0e0e0;
 		}
-
-		.components-custom-select-control__item {
-			padding-left: 22px;
-		}
-
 		.components-input-control__backdrop.components-input-control__backdrop {
 			border: none;
 		}
