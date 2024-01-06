@@ -164,6 +164,9 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 	afterEach( () => {
 		unmountComponentAtNode( modalRoot );
 		document.body.removeChild( modalRoot );
+		[ ...document.getElementsByClassName( 'ReactModalPortal' ) ].map( ( el ) => {
+			document.body.removeChild( el );
+		} );
 		modalRoot = null;
 		global.Date = RealDate;
 	} );
