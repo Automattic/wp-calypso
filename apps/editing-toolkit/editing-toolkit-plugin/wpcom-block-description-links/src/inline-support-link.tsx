@@ -34,13 +34,15 @@ export default function DescriptionSupportLink( {
 			<br />
 			<ExternalLink
 				onClick={ ( e ) => {
-					e.preventDefault();
+					if ( setShowHelpCenter && setShowSupportDoc ) {
+						e.preventDefault();
+						setShowHelpCenter( true );
+						setShowSupportDoc( localizeUrl( url ), postID );
+					}
 					recordTracksEvent( 'calypso_block_description_support_link_click', {
 						block: title,
 						support_link: url,
 					} );
-					setShowHelpCenter( true );
-					setShowSupportDoc( localizeUrl( url ), postID );
 				} }
 				ref={ ( reference ) => ref !== reference && setRef( reference ) }
 				style={ { display: 'block', marginTop: 10, maxWidth: 'fit-content' } }
