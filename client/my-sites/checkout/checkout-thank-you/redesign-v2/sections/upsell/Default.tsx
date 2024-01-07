@@ -34,7 +34,7 @@ const validMeshColors = {
 
 type MeshColor = keyof typeof validMeshColors;
 
-type DefaultUpsellProps = {
+export type DefaultUpsellProps = {
 	title: string;
 	description: string;
 	trackEvent: string;

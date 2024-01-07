@@ -71,15 +71,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const {
-			translate,
-			_n,
-			isDataLoaded,
-			hasFailedPurchases,
-			primaryPurchase,
-			displayMode,
-			purchases,
-		} = this.props;
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
+			this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
@@ -97,31 +90,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 						) }
 					</p>
 				</div>
-			);
-		}
-
-		if ( isBulkDomainTransfer( purchases ) ) {
-			return (
-				<>
-					<div>
-						{ preventWidows(
-							_n(
-								"We've got it from here. Your domain is being transferred with no downtime.",
-								"We've got it from here! Your domains are being transferred with no downtime.",
-								purchases?.length
-							)
-						) }
-					</div>
-					<div>
-						{ preventWidows(
-							_n(
-								"We'll send an email when your domain is ready to use.",
-								"We'll send an email when your domains are ready to use.",
-								purchases?.length
-							)
-						) }
-					</div>
-				</>
 			);
 		}
 
@@ -545,16 +513,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getHeaderText() {
-		const { purchases, _n } = this.props;
-
-		if ( isBulkDomainTransfer( purchases ) ) {
-			return _n(
-				'Your domain transfer has started',
-				'Your domain transfers have started',
-				purchases?.length
-			);
-		}
-
 		return getHeading( {
 			...this.props,
 			isSearch: this.isSearch(),

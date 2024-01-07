@@ -1,13 +1,23 @@
-import preventWidows from 'calypso/lib/post-normalizer/rule-prevent-widows';
-
 import './style.scss';
 
 interface DefaultThankYouHeaderContainerProps {
-	children: string;
+	title: React.ReactNode;
+	subtitle: React.ReactNode;
+	buttons?: React.ReactNode;
 }
 
-const DefaultThankYouHeader: React.FC< DefaultThankYouHeaderContainerProps > = ( { children } ) => {
-	return <h1 className="checkout-thank-you__header-heading">{ preventWidows( children ) }</h1>;
+const ThankYouHeader: React.FC< DefaultThankYouHeaderContainerProps > = ( {
+	title,
+	subtitle,
+	buttons,
+} ) => {
+	return (
+		<div className="checkout-thank-you__header">
+			<h1 className="checkout-thank-you__header-heading">{ title }</h1>
+			<h2 className="checkout-thank-you__header-text">{ subtitle }</h2>
+			{ buttons && <div className="checkout-thank-you__header-buttons">{ buttons }</div> }
+		</div>
+	);
 };
 
-export default DefaultThankYouHeader;
+export default ThankYouHeader;

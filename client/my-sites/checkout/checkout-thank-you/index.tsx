@@ -83,6 +83,7 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
+import DomainBulkTransferThankYou from './domains/domain-bulk-transfer-thank-you';
 import DomainOnlyThankYou from './domains/domain-only-thank-you-redesign-v2';
 import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
@@ -102,7 +103,7 @@ import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
-import { isBulkDomainTransfer } from './utils';
+import { isBulkDomainTransfer, isDomainOnly } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
@@ -574,6 +575,41 @@ export class CheckoutThankYou extends Component<
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
+		/** REDESIGN *********************************************************************************/
+
+		let thankYouLayout = null;
+
+		if ( wasBulkDomainTransfer ) {
+			thankYouLayout = (
+				<DomainBulkTransferThankYou purchases={ purchases } currency={ this.props.currency } />
+			);
+		} else if ( isDomainOnly( purchases ) ) {
+			thankYouLayout = <DomainOnlyThankYou purchases={ purchases } />;
+		}
+
+		if ( thankYouLayout ) {
+			return (
+				<>
+					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+					{ this.isDataLoaded() && (
+						<>
+							<ConfettiAnimation delay={ 1000 } />
+							<CheckoutMasterbar
+								siteId={ this.props.selectedSite?.ID }
+								siteSlug={ this.props.selectedSiteSlug }
+								backText={
+									this.props.selectedSiteSlug ? translate( 'Back to dashboard' ) : undefined
+								}
+							/>
+						</>
+					) }
+					{ thankYouLayout }
+				</>
+			);
+		}
+
+		/** LEGACY - The ultimate goal is to remove everything below *********************************/
+
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
 			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
@@ -640,10 +676,7 @@ export class CheckoutThankYou extends Component<
 			const emailFallback = email ? email : this.props.user?.email ?? '';
 			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
 			const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-			// support redesign v2 for domain only purchases
-			if ( isRedesignV2( this.props ) ) {
-				return <DomainOnlyThankYou domains={ domains ?? [] } />;
-			}
+
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }
@@ -723,17 +756,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		return null;
-	}
-
-	getDomainPurchaseType( purchases: ReceiptPurchase[] ): [ string, FindPredicate ] {
-		const hasDomainMapping = purchases.some( isDomainMapping );
-
-		if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
-			return [ 'REGISTRATION', isDomainRegistration ];
-		} else if ( hasDomainMapping ) {
-			return [ 'MAPPING', isDomainMapping ];
-		}
-		return [ 'TRANSFER', isDomainTransfer ];
 	}
 
 	startTransfer = ( event: { preventDefault: () => void } ) => {

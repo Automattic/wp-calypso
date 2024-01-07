@@ -25,15 +25,8 @@
 		margin: 40px auto 80px;
 		display: flex;
 		justify-content: center;
-
-		// Each of the checkout thank you pages "details" component sections specifically wrap
-		// all purchase details in a single unclassed div, so we need to target it for the
-		// flexbox styles instead of .checkout-thank-you__purchase-details-list directly.
-		> div {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 30px;
-		}
+		flex-wrap: wrap;
+		gap: 30px;
 
 		@include break-mobile {
 			margin-top: 50px;
