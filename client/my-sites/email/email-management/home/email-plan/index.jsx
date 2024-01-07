@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -52,6 +53,7 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
 import './style.scss';
 
@@ -102,6 +104,9 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const currentRoute = useSelector( getCurrentRoute );
 	const canAddMailboxes = canAddMailboxesToEmailSubscription( domain );
 	const hasSubscription = hasEmailSubscription( domain );
+	const hasExtendedLimit = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite.ID, FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT )
+	);
 
 	const handleBack = () => {
 		page( emailManagement( selectedSite.slug ) );
@@ -263,7 +268,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			);
 		}
 
-		const emailForwardsLimit = 25;
+		const emailForwardsLimit = hasExtendedLimit ? 100 : 25;
 		const isAtEmailForwardsLimit = mailboxes.length >= emailForwardsLimit;
 
 		return (
