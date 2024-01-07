@@ -45,7 +45,7 @@ export default function DescriptionSupportLink( {
 				ref={ ( reference ) => ref !== reference && setRef( reference ) }
 				style={ { display: 'block', marginTop: 10, maxWidth: 'fit-content' } }
 				className="fse-inline-support-link"
-				href="#"
+				href={ url }
 			>
 				{ __( 'Learn more', 'full-site-editing' ) }
 			</ExternalLink>
