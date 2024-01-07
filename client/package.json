@@ -209,7 +209,7 @@
 		"webpack": "^5.89.0",
 		"webpack-bundle-analyzer": "^4.10.1",
 		"webpack-dev-middleware": "^5.3.3",
-		"webpack-hot-middleware": "^2.25.4",
+		"webpack-hot-middleware": "^2.26.0",
 		"webpack-node-externals": "^3.0.0",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^",
