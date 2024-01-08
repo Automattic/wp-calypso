@@ -16,7 +16,7 @@ const HostingCommandPaletteBannerRoot = styled.div( {
 		borderLeftWidth: 3,
 		borderLeftColor: 'var(--color-accent)',
 		borderLeftStyle: 'solid',
-		padding: '10px 12px',
+		padding: '10px 56px 10px 12px',
 	},
 	'.dismissible-card__close-button': {
 		top: 'calc(50% - 12px)',
@@ -57,8 +57,10 @@ const CommandBoxWrapper = styled.div( {
 	display: 'grid',
 	gridTemplateColumns: '1fr',
 	flexGrow: 1,
-	paddingRight: 44,
 	userSelect: 'none',
+	'@media ( max-width: 810px )': {
+		display: 'none',
+	},
 } );
 
 const CommandBox = styled.div( {
