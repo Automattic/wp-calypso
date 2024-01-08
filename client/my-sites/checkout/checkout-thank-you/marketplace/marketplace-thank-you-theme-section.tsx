@@ -1,9 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -115,6 +114,7 @@ export const ThankYouThemeSection = ( {
 			<QueryActiveTheme siteId={ siteId } />
 			<ActivationModal source="details" />
 			<ThankYouProduct
+				key={ `theme_information_${ theme.id }` }
 				name={ theme.name }
 				details={
 					theme.author ? translate( 'by %(author)s', { args: { author: theme.author } } ) : null

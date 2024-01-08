@@ -1,9 +1,7 @@
-import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { ThankYou } from 'calypso/components/thank-you';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -176,28 +174,13 @@ const MarketplaceThankYou = ( {
 					<ThankYouV2
 						title={ title }
 						subtitle={ subtitle }
+						headerButtons={ thankYouHeaderAction }
 						products={ products }
 						purchaseDetailsProps={ purchaseDetailsProps }
 						masterbarProps={ {
 							siteId,
 							backText: translate( 'Back to home' ),
 						} }
-					/>
-				</div>
-			) }
-
-			{ false && (
-				<div className="marketplace-thank-you__container">
-					<ConfettiAnimation delay={ 1000 } />
-					<ThankYou
-						containerClassName="marketplace-thank-you"
-						sections={ sections }
-						showSupportSection={ false }
-						thankYouTitle={ title }
-						thankYouSubtitle={ subtitle }
-						thankYouHeaderBody={ thankYouHeaderAction }
-						headerBackgroundColor="#fff"
-						headerTextColor="#000"
 					/>
 				</div>
 			) }

@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -205,32 +204,17 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		[ siteId, pluginSlugs ]
 	);
 
-	const ThankYouHeaderAction = styled.div`
-		padding: 20px 24px 0 24px;
-		@media ( max-width: 480px ) {
-			text-align: left;
-		}
-	`;
-
-	const ThankYouHeaderActionButton = styled( Button )`
-		border-radius: 4px;
-	`;
-
 	const thankYouHeaderAction =
 		pluginsInformationList.length > 1 ? (
-			<>
-				<ThankYouHeaderAction>
-					<ThankYouHeaderActionButton
-						primary
-						href={ `https://${ siteSlug }/wp-admin/plugins.php` }
-						onClick={ () => {
-							sendTrackEvent( 'calypso_plugin_thank_you_setup_plugins_click' );
-						} }
-					>
-						{ translate( 'Setup the plugins' ) }
-					</ThankYouHeaderActionButton>
-				</ThankYouHeaderAction>
-			</>
+			<Button
+				variant="primary"
+				href={ `https://${ siteSlug }/wp-admin/plugins.php` }
+				onClick={ () => {
+					sendTrackEvent( 'calypso_plugin_thank_you_setup_plugins_click' );
+				} }
+			>
+				{ translate( 'Setup the plugins' ) }
+			</Button>
 		) : null;
 
 	// Plugins are only installed in atomic sites
