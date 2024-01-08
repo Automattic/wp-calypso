@@ -38,7 +38,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 				? emailManagementPurchaseNewEmailAccount(
 						selectedSite?.slug,
 						domain?.name,
-						null,
+						'',
 						'login-redirect'
 				  )
 				: emailManagement( selectedSite?.slug, domain?.name );
