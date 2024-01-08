@@ -4,7 +4,7 @@ import { getUnlock } from '../utils';
 const unlock = getUnlock();
 
 let useLocation = () => null;
-if ( unlock && routerPrivateApis && unlock( routerPrivateApis ) ) {
+if ( unlock && unlock( routerPrivateApis ) ) {
 	useLocation = unlock( routerPrivateApis ).useLocation;
 }
 
