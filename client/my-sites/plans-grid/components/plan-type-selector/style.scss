@@ -71,12 +71,12 @@
 }
 
 .plan-type-selector .plan-type-selector__interval-type-dropdown-container {
+	width: 259px;
+	margin: 0 auto;
+	.is-sticky-plan-type-selector & {
+		margin: unset;
+	}
 	.plan-type-selector__interval-type-dropdown {
-		width: 259px;
-		margin: 0 auto;
-		.is-sticky-plan-type-selector & {
-			margin: unset;
-		}
 		&,
 		&:visited,
 		&:hover span.name {
