@@ -36,7 +36,7 @@ describe( 'path helper functions', () => {
 			'/email/:domain/forwarding/add/:site'
 		);
 		expect( getAddEmailForwardsPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getAddEmailForwardsPath( null, null ) ).toEqual( `/email` );
+		expect( getAddEmailForwardsPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getAddGSuiteUsersPath', () => {
@@ -55,7 +55,7 @@ describe( 'path helper functions', () => {
 		expect( getAddGSuiteUsersPath( siteName, null, 'google-workspace' ) ).toEqual(
 			`/email/google-workspace/add-users/${ siteName }`
 		);
-		expect( getAddGSuiteUsersPath( null, null, 'google-workspace' ) ).toEqual( `/email` );
+		expect( getAddGSuiteUsersPath( null, null, 'google-workspace' ) ).toEqual( '/email' );
 	} );
 
 	it( 'getManageTitanAccountPath', () => {
@@ -102,7 +102,7 @@ describe( 'path helper functions', () => {
 			'/email/:domain/titan/set-up-mailbox/:site'
 		);
 		expect( getTitanSetUpMailboxPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getTitanSetUpMailboxPath( null, null ) ).toEqual( `/email` );
+		expect( getTitanSetUpMailboxPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getTitanSetUpThankYouPath', () => {
@@ -113,7 +113,7 @@ describe( 'path helper functions', () => {
 			getTitanSetUpThankYouPath( ':site', ':domain', null, emailManagementAllSitesPrefix )
 		).toEqual( '/email/all/:domain/titan/set-up-mailbox/thank-you/:site' );
 		expect( getTitanSetUpThankYouPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getTitanSetUpThankYouPath( null, null ) ).toEqual( `/email` );
+		expect( getTitanSetUpThankYouPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getTitanControlPanelRedirectPath', () => {
@@ -127,7 +127,7 @@ describe( 'path helper functions', () => {
 			'/email/:domain/titan/control-panel/:site'
 		);
 		expect( getTitanControlPanelRedirectPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getTitanControlPanelRedirectPath( null, null ) ).toEqual( `/email` );
+		expect( getTitanControlPanelRedirectPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getEmailManagementPath', () => {
@@ -140,7 +140,7 @@ describe( 'path helper functions', () => {
 		expect( getEmailManagementPath( ':site', ':domain' ) ).toEqual( '/email/:domain/manage/:site' );
 		expect( getEmailManagementPath( ':site' ) ).toEqual( '/email/:site' );
 		expect( getEmailManagementPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getEmailManagementPath( null, null ) ).toEqual( `/email` );
+		expect( getEmailManagementPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getForwardingPath', () => {
@@ -152,7 +152,7 @@ describe( 'path helper functions', () => {
 		);
 		expect( getForwardingPath( ':site', ':domain' ) ).toEqual( '/email/:domain/forwarding/:site' );
 		expect( getForwardingPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getForwardingPath( null, null ) ).toEqual( `/email` );
+		expect( getForwardingPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getPurchaseNewEmailAccountPath', () => {
@@ -166,7 +166,7 @@ describe( 'path helper functions', () => {
 			'/email/:domain/purchase/:site'
 		);
 		expect( getPurchaseNewEmailAccountPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getPurchaseNewEmailAccountPath( null, null ) ).toEqual( `/email` );
+		expect( getPurchaseNewEmailAccountPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getEmailInDepthComparisonPath', () => {
@@ -177,7 +177,7 @@ describe( 'path helper functions', () => {
 			'/email/:domain/compare/:site'
 		);
 		expect( getEmailInDepthComparisonPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
-		expect( getEmailInDepthComparisonPath( null, null ) ).toEqual( `/email` );
+		expect( getEmailInDepthComparisonPath( null, null ) ).toEqual( '/email' );
 	} );
 
 	it( 'getMailboxesPath', () => {
