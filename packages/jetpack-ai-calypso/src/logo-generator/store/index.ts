@@ -20,15 +20,6 @@ const jetpackAiLogoGeneratorStore = createReduxStore( STORE_NAME, {
 	reducer,
 
 	selectors,
-
-	resolvers: {
-		getAiAssistantFeature: ( siteId: string ) => {
-			if ( ! siteId ) {
-				return;
-			}
-			return actions.fetchAiAssistantFeature( String( siteId ) );
-		},
-	},
 } );
 
 register( jetpackAiLogoGeneratorStore );
