@@ -58,6 +58,7 @@ const CommandBoxWrapper = styled.div( {
 	gridTemplateColumns: '1fr',
 	flexGrow: 1,
 	paddingRight: 44,
+	userSelect: 'none',
 } );
 
 const CommandBox = styled.div( {
