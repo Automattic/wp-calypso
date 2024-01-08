@@ -25,12 +25,15 @@ const AddOnOption = styled.a`
 		margin-right: 4px;
 		line-height: 19px;
 	}
-	padding: 16px;
-	padding-right: 25px;
 	display: flex;
 	justify-content: space-between;
 	.is-highlighted & {
 		background-color: #f6f7f7;
+	}
+
+	padding: 13px 13px 16px;
+	button & {
+		padding-right: 32px;
 	}
 `;
 
