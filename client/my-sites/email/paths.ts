@@ -5,8 +5,8 @@ type QueryStringParameters = { [ key: string ]: string | undefined };
 
 type EmailPathUtilityFunction = (
 	siteName: string | null | undefined,
-	domainName?: string | null | undefined,
-	relativeTo?: string,
+	domainName?: string | null,
+	relativeTo?: string | null,
 	urlParameters?: QueryStringParameters
 ) => string;
 
