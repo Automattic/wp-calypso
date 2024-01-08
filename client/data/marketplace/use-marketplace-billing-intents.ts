@@ -52,6 +52,7 @@ export const getCartProductByBillingIntentId = async (
 			meta: String( billingIntent.billing_plan_id ),
 			extra: {
 				isMarketplaceSitelessCheckout: true,
+				intentId: intentId,
 			},
 			volume: 1,
 			quantity: null,

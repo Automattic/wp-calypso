@@ -621,6 +621,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
+	intentId?: number;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
