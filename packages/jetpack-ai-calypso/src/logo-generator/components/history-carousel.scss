@@ -2,6 +2,7 @@
 	display: flex;
 	gap: 8px;
 	overflow-x: auto;
+	flex-shrink: 0;
 
 	.components-button {
 		height: unset;
