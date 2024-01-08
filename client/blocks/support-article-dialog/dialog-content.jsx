@@ -7,6 +7,7 @@ import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import EmbedContainer from 'calypso/components/embed-container';
 import useSupportArticleAlternatesQuery from 'calypso/data/support-article-alternates/use-support-article-alternates-query';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import SupportArticleHeader from './header';
 import Placeholders from './placeholders';
 
@@ -16,7 +17,9 @@ import './content.scss';
 const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
 
 const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
-	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
+	const locale = useSelector( getCurrentLocaleSlug );
+
+	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId, locale );
 	if ( supportArticleAlternates.isInitialLoading ) {
 		return null;
 	}

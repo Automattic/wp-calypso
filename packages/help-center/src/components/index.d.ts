@@ -45,7 +45,8 @@ declare module 'calypso/components/embed-container' {
 declare module 'calypso/data/support-article-alternates/use-support-article-alternates-query' {
 	const useSupportArticleAlternatesQuery: (
 		blogId: number,
-		postId: number
+		postId: number,
+		locale: string
 	) => { isInitialLoading: boolean; data?: { blog_id: number; page_id: number } };
 	export default useSupportArticleAlternatesQuery;
 }
