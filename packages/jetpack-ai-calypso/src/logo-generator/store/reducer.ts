@@ -50,6 +50,10 @@ export default function reducer( state = INITIAL_STATE, action: any ) {
 					...state.features,
 					aiAssistantFeature: {
 						...action.feature,
+						// re evaluate requireUpgrade as the logo generator does not allow free usage
+						requireUpgrade: action.feature.currentTier
+							? action.feature.currentTier.value === 0
+							: action.feature.requireUpgrade,
 						_meta: {
 							...state?.features?.aiAssistantFeature?._meta,
 							isRequesting: false,
